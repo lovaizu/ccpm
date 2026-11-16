@@ -74,7 +74,12 @@ def mark_ready(worktree: str, ready: bool) -> PullRequest:
     again`, and `RP->>GH: marks it a draft`.
     """
     _logged_in(worktree)
-    raise NotImplementedError("gh.mark_ready")
+    branch = _branch(worktree)
+    viewed = _run(worktree, "pr", "view", branch, "--json", "url")
+    if viewed.returncode != 0:
+        raise Missing(f"the branch {branch} has no pull request to mark; push it with tree.py push")
+    _gh(worktree, "pr", "ready", branch, *(() if ready else ("--undo",)))
+    return PullRequest(json.loads(viewed.stdout)["url"], not ready)
 
 
 def comments(worktree: str, since: str) -> tuple[Comment, ...]:
@@ -125,8 +130,11 @@ def open_issue(repository: str, title: str, body: str) -> str:
     Carries: S7 `T->>RP: opens the issue on rn's repository (Sign-off)`, and `RP->>GH: opens the
     issue, with the lesson's words`.
     """
-    _logged_in(os.getcwd())
-    raise NotImplementedError("gh.open_issue")
+    here = os.getcwd()
+    _logged_in(here)
+    return _gh(
+        here, "issue", "create", "--repo", repository, "--title", title, "--body", body
+    ).strip()
 
 
 def _run(worktree: str, *args: str) -> subprocess.CompletedProcess[str]:

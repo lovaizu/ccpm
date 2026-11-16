@@ -4,6 +4,9 @@ each lesson the user signs off on rn's repository."""
 
 from __future__ import annotations
 
+import json
+import os
+
 from repository import gh
 from repository.gh import Comment, PullRequest
 
@@ -35,7 +38,7 @@ def hand_over(run: Run, ready: bool) -> PullRequest:
     Carries: S6 `O->>T: marks the pull request ready`, `T->>RP: marks it ready`, and `T->>RP: marks
     it a draft again`.
     """
-    raise NotImplementedError("github.hand_over")
+    return gh.mark_ready(run.worktree, ready)
 
 
 def comments(run: Run, since: str) -> tuple[Comment, ...]:
@@ -57,8 +60,14 @@ def open_lesson(plugin_root: str, lesson: str) -> str:
 
     Takes: rn's folder, whose manifest names its repository, and the lesson's words.
     Gives: the issue's URL.
-    Changes: through `repository.gh.open_issue`, with the lesson's words as they were signed off.
+    Changes: through `repository.gh.open_issue`, with the lesson's words as they were signed off
+    as its body, and `rn: ` with the lesson's first line as its title, in the title shape of rn's
+    issues.
     Refuses: fault.Missing, naming what's missing, where gh can't open it.
     Carries: S7 `T->>RP: opens the issue on rn's repository (Sign-off)`.
     """
-    raise NotImplementedError("github.open_lesson")
+    with open(os.path.join(plugin_root, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
+        # rn's own manifest, which names its repository as https://github.com/<owner>/<name>.
+        repository = "/".join(json.load(f)["repository"].rstrip("/").split("/")[-2:])
+    title = "rn: " + lesson.strip().splitlines()[0]
+    return gh.open_issue(repository, title, lesson)

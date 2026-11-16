@@ -39,7 +39,7 @@ usage: tree.py start <goal>
        tree.py put-up plan | put-up deliverable <path>
        tree.py put-up lesson   (its words on standard input)
        tree.py pause   (where each role stood on standard input)
-       tree.py approve | send-back | comments | runs
+       tree.py ready | approve | send-back | comments | runs
 """
 
 
@@ -216,6 +216,13 @@ def _put_up(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
     return sign_offs.as_json(sign_offs.put_up(_run(cwd), kind, what))
 
 
+def _ready(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    run = _run(cwd)
+    url = github.hand_over(run, True).url
+    sign_offs.put_up(run, Kind.PULL_REQUEST, url)
+    return url
+
+
 def _decided(approved: bool) -> Callable[[list[str], TextIO, str, str], Any]:
     def decide(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
         run = _run(cwd)
@@ -223,9 +230,7 @@ def _decided(approved: bool) -> Callable[[list[str], TextIO, str, str], Any]:
         shown: dict[str, Any] = sign_offs.as_json(given)
         if approved and given.kind is Kind.LESSON:
             shown["issue"] = github.open_lesson(plugin_root, given.what)
-        # Runs only for the pull request handed over, as in the case xfail until hand_over is built,
-        # test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again.
-        if not approved and given.kind is Kind.PULL_REQUEST:  # pragma: no cover
+        if not approved and given.kind is Kind.PULL_REQUEST:
             github.hand_over(run, False)
         return shown
 
@@ -314,6 +319,7 @@ _COMMANDS: dict[str, tuple[Callable[[list[str], TextIO, str, str], Any], tuple[i
     "round": (_round, (1,)),
     "push": (_push, (0,)),
     "put-up": (_put_up, (1, 2)),
+    "ready": (_ready, (0,)),
     "approve": (_decided(True), (0,)),
     "send-back": (_decided(False), (0,)),
     "comments": (_comments, (0,)),

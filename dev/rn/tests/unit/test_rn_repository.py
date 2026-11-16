@@ -15,11 +15,6 @@ from repository import gh, git
 
 from dev.rn.tests.unit import rn_data as d
 
-LATER = pytest.mark.xfail(
-    strict=True,
-    reason="repository/gh.py's mark_ready and open_issue refuse no login, and go no further",
-)
-
 BRANCH = f"rn-{d.NAME}"
 
 
@@ -186,7 +181,6 @@ def test_each_command_with_no_login_is_missing_it(
             gh.open_issue("lovaizu/ccpm", "t", "b")
 
 
-@LATER
 @pytest.mark.supports("test_the_pull_request_is_marked_ready_once_no_deliverable_is_left")
 @pytest.mark.parametrize("ready", [True, False])
 def test_a_pull_request_is_marked_ready_or_a_draft_again(
@@ -202,7 +196,6 @@ def test_a_pull_request_is_marked_ready_or_a_draft_again(
     assert d.read_json(held)["pulls"][run.branch]["draft"] is (not ready)
 
 
-@LATER
 @pytest.mark.supports("test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again")
 def test_a_branch_with_no_pull_request_cant_be_marked(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch
@@ -305,7 +298,6 @@ def test_comments_of_any_other_account_bots_among_them_are_left_out(
     assert given == [("<account>", "The user's talk."), ("<account>", "The user's line.")]
 
 
-@LATER
 @pytest.mark.supports("test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word")
 def test_an_issue_is_opened_with_its_words(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> None:
     """Given: gh logged in.

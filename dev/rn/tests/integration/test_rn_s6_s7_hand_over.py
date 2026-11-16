@@ -14,16 +14,12 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
-
-
 LESSON = (
     "The code best practice asks for each public function's types, but says nothing of a"
     " library's py.typed marker, without which no caller's type checker reads them."
 )
 
 
-@LATER
 @pytest.mark.supports("S6", "Round", "More kept")
 def test_every_round_of_a_deliverable_is_read_for_its_lessons(b: Bench) -> None:
     """Given: "Type hints in each file of invoicer" judged twice: a first round with N2 in more,
@@ -38,8 +34,10 @@ def test_every_round_of_a_deliverable_is_read_for_its_lessons(b: Bench) -> None:
     w.evaluated(b, walk, w.kinds_of(again))
     rounds = w.printed(walk.c.bash(b.tree("round", cut["deliverable"])))
     assert [r["number"] for r in rounds] == [1, 2]
+    # The code best practice's first group holds its N2, and the refactor one's second group an N2
+    # of its own, which the first round puts in more alike.
     first = [m for each in rounds[0]["answers"] for m in each["more"]]
-    assert first == [{"question": "N2", "good_when": w.SHOWN_AS_TYPED}]
+    assert first == [{"question": "N2", "good_when": w.SHOWN_AS_TYPED}] * 2
     assert not [m for each in rounds[1]["answers"] for m in each["more"]]
 
 
@@ -62,7 +60,6 @@ def test_a_change_to_a_best_practice_the_user_takes_is_added_as_a_deliverable(b:
     assert paths == [w.HINTS_PATH, w.TYPED_PATH, ".rn/best-practices/code"]
 
 
-@LATER
 @pytest.mark.supports("S7", "rn's developers", "Sign-off", "repository")
 def test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, and a general lesson found in its rounds.
@@ -94,7 +91,6 @@ def test_a_lesson_sent_back_opens_no_issue(b: Bench) -> None:
     assert b.github_holds()["issues"] == []
 
 
-@LATER
 @pytest.mark.supports("S6", "repository", "Sign-off", "orchestrator")
 def test_the_pull_request_is_marked_ready_once_no_deliverable_is_left(b: Bench) -> None:
     """Given: a plan of "Type hints in each file of invoicer" alone, its deliverable signed off.
@@ -108,7 +104,6 @@ def test_the_pull_request_is_marked_ready_once_no_deliverable_is_left(b: Bench) 
     assert (last["kind"], last["what"], last["state"]) == ("pull request", url, "waiting")
 
 
-@LATER
 @pytest.mark.supports("S6", "user", "Sign-off")
 def test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again(b: Bench) -> None:
     """Given: the pull request of "Type hints in each file of invoicer" handed over, ready.
@@ -121,7 +116,6 @@ def test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again(b: Bench) -> 
     assert b.github_holds()["pulls"][walk.branch()]["draft"] is True
 
 
-@LATER
 @pytest.mark.supports("S6", "user", "Sign-off", "repository")
 def test_ty_on_the_pull_request_leaves_it_ready_and_merges_nothing(b: Bench) -> None:
     """Given: the pull request of "Type hints in each file of invoicer" handed over, ready.
@@ -137,7 +131,6 @@ def test_ty_on_the_pull_request_leaves_it_ready_and_merges_nothing(b: Bench) -> 
     assert w.git(b.repo, "ls-remote", "origin", "main").split()[0] == main
 
 
-@LATER
 @pytest.mark.supports("S6", "orchestrator", "Decision", "Deliverable")
 def test_a_miss_found_in_the_whole_pull_request_starts_the_rounds_again(b: Bench) -> None:
     """Given: a plan of "Type hints in each file of invoicer" alone, its deliverable signed off and

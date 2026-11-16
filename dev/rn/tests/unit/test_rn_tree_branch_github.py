@@ -19,10 +19,6 @@ from tree import branch, github
 
 from dev.rn.tests.unit import rn_data as d
 
-LATER = pytest.mark.xfail(
-    strict=True,
-    reason="tree/github.py's hand_over and open_lesson have empty bodies",
-)
 NOT_DONE_AT = pytest.mark.xfail(strict=True, reason="branch.done_at has an empty body")
 # The status of "Type hints in each file of invoicer" in each commit of the design tree, in order,
 # beside "invoicer marked as typed"'s; and which of those commits marked it done last, None where
@@ -169,7 +165,6 @@ def test_a_draft_with_no_login_says_whats_missing(
         github.keep_draft(run)
 
 
-@LATER
 @pytest.mark.supports("test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again")
 @pytest.mark.parametrize("ready", [True, False])
 def test_the_pull_request_is_handed_over_ready_or_marked_a_draft_again(
@@ -205,7 +200,6 @@ def test_the_comments_are_those_since_the_sign_off(
     assert [c.body for c in github.comments(run, "2026-11-15T09:00:00Z")] == ["After."]
 
 
-@LATER
 @pytest.mark.supports("test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word")
 def test_a_lesson_opens_an_issue_on_the_repository_rns_manifest_names(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch

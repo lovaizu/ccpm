@@ -18,11 +18,6 @@ from tree.place import Place
 
 from dev.rn.tests.unit import rn_data as d
 
-AGAIN = pytest.mark.xfail(
-    strict=True,
-    reason="cut._generator_due starts a new round only for a More kept, not yet for a decision"
-    " changed since the round's cut",
-)
 NOT_DONE_AT = pytest.mark.xfail(
     strict=True,
     reason="cut._generator doesn't yet give done_at, and branch.done_at has an empty body",
@@ -97,7 +92,6 @@ def test_the_generators_cut_of_a_deliverable_done_before_gives_the_commit_it_was
     assert d.part(given)["cut"]["done_at"] == done_at
 
 
-@AGAIN
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 def test_a_generator_starts_a_new_round_once_a_decision_changes_after_the_rounds_cut(
     tmp_path: Any,

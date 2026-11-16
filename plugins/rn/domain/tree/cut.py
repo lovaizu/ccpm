@@ -40,15 +40,16 @@ def next_start(
     Gives: for the tree-keeper, the Cut of the run's design tree, or None while a start of it runs,
     as the main conversation resumes that one with each change; for the generator, the Cut of the
     first deliverable doing that no start that runs holds and whose latest round is none, holds no
-    Made yet, keeps a More for the next round, or was cut before a decision under the deliverable
-    changed, as the rounds start again from the design, with the commit at which the deliverable was
-    last done, from `branch.done_at`, where it was done before; for an evaluator, the Cut of the
-    first group of necessary conditions, of the kind's best practice and then of the refactor one,
-    of a deliverable doing whose latest round holds a Made, that has no Answers there and that no
-    start that runs holds; each with the path of a new record from `records.new_record`, after each
-    record that a start that runs took, and, where a start of the same round and group stood at a
-    step, the step of the latest one's Place, from `rounds.stood_place` and `place.read`, in the
-    generator's `cut` or beside the evaluator's conditions; or None where no work waits.
+    Made yet, or was cut before a decision under the deliverable changed, as a More kept for the
+    next round is kept only then, and the rounds start again from the design, with the commit at
+    which the deliverable was last done, from `branch.done_at`, where it was done before; for an
+    evaluator, the Cut of the first group of necessary conditions, of the kind's best practice and
+    then of the refactor one, of a deliverable doing whose latest round holds a Made, that has no
+    Answers there and that no start that runs holds; each with the path of a new record from
+    `records.new_record`, after each record that a start that runs took, and, where a start of the
+    same round and group stood at a step, the step of the latest one's Place, from
+    `rounds.stood_place` and `place.read`, in the generator's `cut` or beside the evaluator's
+    conditions; or None where no work waits.
     Changes: nothing.
     Refuses: fault.Wrong, where the role is none of rn's or that Place leaves its form;
     fault.CantRun, where that Place can't be read.
@@ -108,9 +109,18 @@ def _generator_due(
     made = number and _there(run, rounds.path_in(run, deliverable, number, "made.json"))
     if not made:
         return rounds.start_name(deliverable, number or 1)
-    if rounds.kept_more(run, deliverable, number):
+    # A More kept is kept only once a decision under its condition changed, as more.keepable holds,
+    # so a decision changed since the round's cut starts the next round for both.
+    if _decisions_of(rounds.at_cut(run, deliverable), deliverable) != _decisions_of(
+        tree, deliverable
+    ):
         return rounds.start_name(deliverable, number + 1)
     return ""
+
+
+def _decisions_of(tree: DesignTree, deliverable: str) -> list[Any]:
+    """Each decision under the deliverable, as the tree holds it."""
+    return [decision for _, _, decision in _decisions(tree, deliverable)]
 
 
 def _evaluator_due(
