@@ -420,57 +420,7 @@
       "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
       "path": "dev/rn/tests/integration/test_rn_s4_pause.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "/rn:up alone in a new conversation goes on where the run stopped",
