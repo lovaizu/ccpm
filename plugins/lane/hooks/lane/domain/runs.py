@@ -122,15 +122,6 @@ class Run:
 
 
 @dataclass(frozen=True)
-class Marker:
-    """One whose Marks a script of Lane's takes for a role: a Start of the role that runs, or, for
-    the skill, its Run, by its run values and each Mark and Read it made."""
-
-    values: Mapping[str, str]
-    reports: tuple[Report, ...]
-
-
-@dataclass(frozen=True)
 class Conversation:
     """Each Run of one conversation."""
 
@@ -298,9 +289,7 @@ def where(root: str, session_id: str) -> Conversation:
     Changes: nothing.
     Refuses: run_record.Unreadable, and form.OutOfForm or FileNotFoundError for lanes.json, so
     that the script refuses with why.
-    Carries: S2 `L->>G: asks where up's Run stands`, S6 `R->>G: asks where each Run stands`, and,
-    through `markers`, S6 `SP->>G: asks where the role's Marks stand` and `IP->>G: asks for the
-    Step due and its Items`.
+    Carries: S2 `L->>G: asks where up's Run stands`, and S6 `R->>G: asks where each Run stands`.
     """
     lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
     name = plugin_name(root)
@@ -334,22 +323,6 @@ def may_give(conversation: Conversation, role: str, routes: Sequence[Route]) -> 
     return tuple(dict.fromkeys(given))
 
 
-def markers(conversation: Conversation, role: str) -> tuple[Marker, ...]:
-    """Each one whose Marks a script of Lane's takes for the role now.
-
-    Takes: the Conversation, and the role or skill that the script names.
-    Gives: for a role, each Start of it that runs, in a Run that hasn't ended; for the skill, each
-    Run of it that hasn't ended; each by its run values and its Marks and Reads; none where none
-    runs. The script can't tell which of several gives it, as its environment names no subagent;
-    dev/lane/skeleton-gaps.md holds that gap.
-    Changes: nothing.
-    Refuses: nothing.
-    Carries: S6 `SP->>G: asks where the role's Marks stand` and `IP->>G: asks for the Step due and
-    its Items`.
-    """
-    raise NotImplementedError("runs.markers")
-
-
 def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> tuple[Result, ...]:
     """The Results that a Run picked up in a new conversation takes from the Kept results.
 
@@ -359,7 +332,7 @@ def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> 
     Changes: nothing.
     Refuses: OffRoutes, naming the first Kept result whose role no move due before it starts, or
     that no Route of the skill goes after.
-    Carries: S7 `alt results that follow the Routes` and `results that don't follow them`.
+    Carries: S7 `else results that follow the Routes` and `else results that don't follow them`.
     """
     due = _moves(routes, skill, lambda after: after.kind == "first")
     for each in kept:

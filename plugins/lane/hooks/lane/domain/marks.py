@@ -18,8 +18,9 @@ def step_due(reports: Sequence[Report], last_step: int) -> int | None:
     latest Mark of Step 1; None where that pass has marked the last Step.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `alt Step n is due in the latest pass`, `IP->>G: asks for the Step due and its
-    Items`, and `else a Lane of keeps_steps finds a Step unmarked in the latest pass`.
+    Carries: S6 `alt Step n isn't due in the latest pass of its Start`, the Step due of `G->>A:
+    asks for the Items of the Step due, with the role and the Start's run values`, and `else a
+    Lane of keeps_steps finds a Step unmarked in the latest pass`.
     """
     raise NotImplementedError("marks.step_due")
 
@@ -27,13 +28,13 @@ def step_due(reports: Sequence[Report], last_step: int) -> int | None:
 def may_mark(reports: Sequence[Report], step: int, last_step: int) -> bool:
     """Whether the role may mark the Step now.
 
-    Takes: the Marks and Reads, as `step_due` takes them; the Step that step.py names; and the
-    number of the role's last Step.
+    Takes: the Marks and Reads, as `step_due` takes them; the Step that the run of step.py names;
+    and the number of the role's last Step.
     Gives: True for Step 1, whose Mark begins a new pass, and for the Step that `step_due` gives;
     False for any other.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `alt Step n is due in the latest pass` and its `else`.
+    Carries: S6 `alt Step n isn't due in the latest pass of its Start` and its `else`.
     """
     raise NotImplementedError("marks.may_mark")
 
@@ -62,6 +63,6 @@ def items_left(reports: Sequence[Report], items: Sequence[str]) -> tuple[str, ..
     Changes: nothing.
     Refuses: nothing.
     Carries: S6 `else a path a Lane of reads_whole names wasn't read whole, or an Item isn't
-    marked`, and `IP-->>SA: refuses it, with the Items left`.
+    marked`, and `G-->>SA: stops it, with the Items left`.
     """
     raise NotImplementedError("marks.items_left")

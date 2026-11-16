@@ -127,8 +127,8 @@ def step_items(
     """The IDs of the Items of a Step's checklist this run.
 
     Takes: the adapter of a step's items that lanes.json names; the role or skill; the Step's
-    number; the run values of the role's Start, none for the skill; and the folder to run it in,
-    the hook event's cwd for the guard and the script's own for item.py.
+    number, Step n of a run of step.py or the Step due of a run of item.py; the run values of the
+    role's Start, none for the skill; and the hook event's cwd, to run it in.
     Gives: what the adapter prints, `{"items": [<id>, ...]}`, given the role and the Step's number
     as its two arguments and `{"values": {<name>: <value>}}` on standard input; none where the
     Step keeps no checklist this run.
@@ -136,10 +136,9 @@ def step_items(
     Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
     (why being what it wrote to standard error), or prints other than a JSON object whose `items`
     is a list of strings.
-    Carries: S6 `G->>A: asks for the Step's Items, with the role, Step n, and the run values`, its
-    `A-->>G: each Item's ID`, and `alt the adapter fails`; and item.py's `G->>A: asks for the
-    Step's Items, with the role, the Step due, and the run values`, its answer, and `else the
-    adapter fails`.
+    Carries: S6 `G->>A: asks for the Step's Items, with the role, Step n, and the Start's run
+    values`, `G->>A: asks for the Items of the Step due, with the role and the Start's run values`,
+    each one's `A-->>G: each Item's ID`, and each one's `alt the adapter fails`.
     """
     raise NotImplementedError("adapters.step_items")
 

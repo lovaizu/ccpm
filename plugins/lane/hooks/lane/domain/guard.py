@@ -77,14 +77,22 @@ def handle(event: Event, root: str) -> Answer:
     - the PostToolUse of result.py that gave 0 (S2, S5, S6): adds the Result, for the subagent's
       Start where it has an agent_id;
     - the PostToolUse of lay.py print (S1): adds what it showed, with the Proposal's ID;
-    - a run of step.py (S5's Note, S6): asks the adapter of a step's items for the Step's Items,
-      with the role, the Step, and the Start's run values, where `lanes.needs_items` gives True;
-      checks the Mark by `lanes.check_mark` with the Lanes of the role and the Reads and Marks that
-      `marks.since_step_began` gives; and stops it with why and who must fix it where the adapter
-      fails, with the Lane's sentence and what the Step lacks where a Lane is broken, or lets it
-      through;
-    - a run of item.py (S5's Note, S6): lets it through, as item.py itself takes or refuses the
-      Item;
+    - a run of step.py (S5's Note, S6), by the Start whose subagent runs it, or by the main
+      conversation for the skill of a Run: stops it with the Step due where `marks.may_mark`
+      doesn't take Step n for that Start's Marks and Reads, or the Run's, with the last Step that
+      `lanes.keeps_steps.last_step` gives, and where the role it names isn't the Start's role or
+      the Run's skill, or has no Lane of keeps_steps, as no Step of it is due then; else asks the
+      adapter of a step's items for the Step's Items, with the role, Step n, and the Start's run
+      values, where `lanes.needs_items` gives True; checks the Mark by `lanes.check_mark` with the
+      Lanes of the role and the Reads and Marks that `marks.since_step_began` gives; and stops it
+      with why and who must fix it where the adapter fails, with the Lane's sentence and what the
+      Step lacks where a Lane is broken, or lets it through;
+    - a run of item.py (S5's Note, S6), by a Start or the main conversation as a run of step.py
+      is: asks the adapter of a step's items for the Items of the Step that `marks.step_due`
+      gives, with the role and the Start's run values; stops it with why and who must fix it where
+      the adapter fails, and with the Items that `marks.items_left` gives where the ID isn't one
+      of the Step's Items, where no Step is due, or where lanes.json names no adapter of a step's
+      items, as the Step then keeps no checklist; else lets it through;
     - the PostToolUse of step.py or item.py that gave 0 (S5's Note, S6): adds the Mark, an Item's
       with the Step that `marks.step_due` gives as it's marked, for the subagent's Start where it
       has an agent_id, else for the skill's Run;
@@ -115,9 +123,10 @@ def handle(event: Event, root: str) -> Answer:
     why while it lets the call run, adding that it failed, and one that fails as a subagent's end
     reaches the main conversation, whose why and who it gives in place of the moves.
     Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, S6 `G->>A: asks for the Step's
-    Items`, and S5 `G->>G: leaves that
-    start out of the moves due, with why in its place` and `G->>G: gives that start with why, and
-    lets the call run`, with the Notes after it and after the tie of a Start.
+    Items, with the role, Step n, and the Start's run values` and `G->>A: asks for the Items of the
+    Step due, with the role and the Start's run values`, and S5 `G->>G: leaves that start out of
+    the moves due, with why in its place` and `G->>G: gives that start with why, and lets the call
+    run`, with the Notes after it and after the tie of a Start.
     """
     name = plugin_name(root)
     try:

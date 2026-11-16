@@ -69,7 +69,8 @@ class KeepsSteps:
         raise NotImplementedError("keeps_steps.check_start")
 
     def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
-        """Kept: step.py takes a Mark only for the Step due, and the Lane checks no Mark.
+        """Kept: the guard takes a Mark only for the Step due, as `marks.may_mark` gives, before
+        it asks the Lanes on the Step, and the Lane checks no Mark.
 
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
         """
@@ -98,7 +99,8 @@ def last_step(lanes: Sequence[Lane], role: str) -> int | None:
     no Steps.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `SP->>G: asks where the role's Marks stand` and `IP->>G: asks for the Step due and
-    its Items`, for the Step that ends a pass.
+    Carries: S6 `alt Step n isn't due in the latest pass of its Start` and `G->>A: asks for the
+    Items of the Step due, with the role and the Start's run values`, for the Step that ends a
+    pass.
     """
     raise NotImplementedError("keeps_steps.last_step")

@@ -51,7 +51,8 @@ class KeepsItems:
         raise NotImplementedError("keeps_items.sentence")
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
-        """None: the guard lets a run of item.py through, and the Lane judges no Call.
+        """None: the guard checks a run of item.py by the Items that the adapter gives for the
+        Step due, and the Lane judges no Call.
 
         Carries: the Call checks of S2, S5, and S6.
         """
