@@ -181,6 +181,7 @@ When `reviewer` tries to end without running its result script, Lane shows:
 
 ```text
 changelog: End by running `python3 /home/you/tally/changelog/hooks/lane/result.py reviewer more` or `python3 /home/you/tally/changelog/hooks/lane/result.py reviewer good`.
+Run it as a command of its own: result.py run inside a longer command gives no Result.
 ```
 
 When `reviewer` gives `more`, Lane shows:

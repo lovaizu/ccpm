@@ -97,16 +97,13 @@ def test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence(
 ) -> None:
     """Given: the walkthrough's Proposal laid, and reviewer started after writer's `written`.
     When: reviewer ends with the reply `more`, without running result.py.
-    Then: the guard stops the end with reviewer's last Step's sentence, word for word as the
-    README shows, and no start of writer is due."""
+    Then: the guard stops the end with reviewer's last Step's sentence and that the script runs as
+    a command of its own, word for word as the README shows, and no start of writer is due."""
     c = w.laid(b)
     reviewer = w.to_reviewer(b, c)
     stopped, reached = reviewer.end("more")
     assert stopped.blocked and reached is None
-    assert stopped.said == (
-        f"changelog: End by running `{b.result('reviewer', 'more')}`"
-        f" or `{b.result('reviewer', 'good')}`."
-    )
+    assert stopped.said == w.ENDED_WITHOUT.replace("/home/you/tally/changelog", b.changelog)
 
 
 @pytest.mark.supports("S6", "lane types", "Result")

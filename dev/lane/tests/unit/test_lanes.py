@@ -70,6 +70,10 @@ def end_of(role: str, *results: str, gives: str = d.GIVES) -> str:
     return f"End by running {named}."
 
 
+# What a role may do where its end holds no Result.
+ALONE = "Run it as a command of its own: result.py run inside a longer command gives no Result."
+
+
 def stop_of(role: str, *results: str) -> str:
     """The sentence of the Lane on the role's last Step, as a Broken gives it to the role."""
     return end_of(role, *results, gives=d.RESULT)
@@ -499,12 +503,13 @@ def test_ends_by_result_holds_a_subagents_end_to_a_result_since_its_start(
     When: the type checks an end of writer's Start, or of the main conversation.
     Then: it breaks writer's end where its Start holds no Result, with the Lane's sentence, and
     keeps it where the Start holds one or more, and the main conversation's end, which the moves
-    due hold."""
+    due hold. A broken end says to run the script as a command of its own, as one run inside a
+    longer command gives no Result."""
     verdict = TYPES["ends_by_result"].check_end(d.WRITER_END, EndAsked("Wrote."), held)
     if kept:
         assert verdict == Kept()
     else:
-        assert isinstance(verdict, Broken) and verdict.sentence == stop_of("writer", "written")
+        assert verdict == Broken(d.WRITER_END, stop_of("writer", "written"), ALONE)
 
 
 @pytest.mark.supports("test_an_end_held_to_the_plugins_command_goes_once_it_gives_0")

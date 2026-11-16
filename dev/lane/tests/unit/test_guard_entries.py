@@ -479,13 +479,15 @@ def test_a_subagents_end_with_no_result_is_stopped_with_its_last_lanes_sentence(
     """Given: changelog laid, and write's Run with writer's Start tied to a01, which gave no
     Result.
     When: handle answers a01's SubagentStop.
-    Then: it stops the end with the sentence of the Lane on writer's last Step."""
+    Then: it stops the end with the sentence of the Lane on writer's last Step, then that the
+    script runs as a command of its own."""
     writer_tied(plugin)
     event = d.event(
         "SubagentStop", agent_id="a01", agent_type="changelog:writer", last_message="Done."
     )
     answer = handle(event, plugin)
-    assert answer.stop and answer.words == end(plugin)
+    alone = "Run it as a command of its own: result.py run inside a longer command gives no Result."
+    assert answer.stop and answer.words == f"{end(plugin)}\n{alone}"
 
 
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")

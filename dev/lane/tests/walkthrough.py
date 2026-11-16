@@ -61,6 +61,7 @@ with open(os.path.join(TOP, "dev", "lane", "tests", "earlier-form.txt"), encodin
 # What Lane shows at each move of the walkthrough, as the README shows it.
 SHOWN = readme_block(README, "You type:\n\n```text\n/lane:up changelog\n```\n\nLane shows:")
 WROTE = readme_block(README, "```text\nyes\n```\n\nLane shows:")
+ENDED_WITHOUT = readme_block(README, "tries to end without running its result script, Lane shows:")
 README_ID = "6d9b4389"
 
 
