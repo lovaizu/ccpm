@@ -21,10 +21,7 @@ import pytest
 import scenario
 import walkthrough as w
 
-pytestmark = [
-    pytest.mark.xfail(strict=True, reason="Lane's parts have empty bodies"),
-    opus.NEEDS_LOGIN,
-]
+pytestmark = opus.NEEDS_LOGIN
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TESTS = ("walkthrough.json", "ai-approves.json")
