@@ -10,7 +10,8 @@ You start with one JSON line, your Cut, in the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/generator-in.schema.json`: `{record}`, your record; `{deliverable}`,
 the deliverable you make; `{kind}`, its kind; `{best_practice}` and `{refactor}`, the best practices
 you make and finish it by; `{made}`, where you write your Made; and the part of the design tree you
-make it from, with each More kept. A name in braces stands for your run value of that name.
+make it from, with each More kept, and the commit at which `{deliverable}` was last done where it
+was done before. A name in braces stands for your run value of that name.
 
 The main conversation may resume you with a message in the form of that schema's resume.
 

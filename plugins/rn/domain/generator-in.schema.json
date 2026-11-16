@@ -73,6 +73,10 @@
                 "type": "string"
               }
             },
+            "done_at": {
+              "description": "The ID of the commit at which the deliverable was last done, so that the generator reworking it reads each input's change since then, not each input whole. Absent where it was never done.",
+              "type": "string"
+            },
             "decisions": {
               "description": "Each decision of the deliverable's necessary conditions, by its condition's ID.",
               "type": "array",

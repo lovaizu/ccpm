@@ -1,6 +1,6 @@
 """Decides what tree.py commits on the work's branch, when, and with what message, when it pushes,
-through repository, and how it reads back a decision's ground, the message of the commit that made
-it."""
+through repository, and how it reads the design tree's past back from the branch: a decision's
+ground, the message of the commit that made it, and the commit at which a deliverable was done."""
 
 from __future__ import annotations
 
@@ -64,6 +64,22 @@ def ground(run: Run, path: str) -> str:
         != (_node(git.file_at(run.worktree, before[0], tree), path) if before else None)
     )
     return next(changed, "")
+
+
+def done_at(run: Run, deliverable: str) -> str:
+    """The commit at which a deliverable was last done.
+
+    Takes: the run, and the deliverable's path, as its `path` in the design tree holds it.
+    Gives: the ID of the latest commit that changed the deliverable's status in the design tree to
+    `done`, found by the deliverable's path, not its place among the deliverables, which changes
+    as the plan does; or "" where no commit did, as for a deliverable never done.
+    Changes: nothing.
+    Refuses: fault.CantRun, where git fails.
+    Carries: S1 `A->>T: gets each deliverable doing, and the Cut of the first that no start that
+    runs holds, with the path of a new Record for the start (Cut)`, as the Cut of a deliverable
+    done before gives the commit it was done at, which the design tree keeps only in git.
+    """
+    raise NotImplementedError("branch.done_at")
 
 
 def _node(text: str, path: str) -> Any:
