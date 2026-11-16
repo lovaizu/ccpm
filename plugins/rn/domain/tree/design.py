@@ -173,8 +173,8 @@ def _set(data: dict[str, Any], path: str, node: object) -> None:
             held = held[int(part)] if isinstance(held, list) else held[part]
         if isinstance(held, list):
             _set_item(held, int(last), node)
-        # Runs only where a field is taken out, as a deliverable marked done drops its conditions
-        # in the case xfail until it's built, test_a_deliverable_put_up_and_approved_is_marked_done.
+        # Runs only where a change takes a field out of a node, which no case reaches, as a
+        # deliverable marked done is written whole; taken back to the cases' designer.
         elif node is None:  # pragma: no cover
             del held[last]
         elif isinstance(held, dict) and (last in held or not above):

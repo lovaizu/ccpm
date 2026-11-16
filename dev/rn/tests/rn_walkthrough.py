@@ -270,6 +270,21 @@ def give(b: Bench, agent: Agent, result: str, message: str) -> tuple[Answer, Ans
     return agent.end(message)
 
 
+def lacks_of(agent: Agent, ended: Answer, result: str, cut: Mapping[str, Any]) -> str:
+    """What the role reads of its held end's lacks: it runs the check that the Lane's sentence of
+    the stop names, filling `{result}` with the result it gave and each other slot with its Cut's
+    value, as its prompt's last Step does; the check must give 1, and this gives its output."""
+    found = re.search(r"End once `([^`]*record\.py check [^`]*)` gives 0\.", ended.said)
+    assert ended.blocked and found, f"the stop names no check of rn: {ended.said!r}"
+    command = found.group(1)
+    for name, value in {**cut, "result": result}.items():
+        if isinstance(value, str):
+            command = command.replace(f"{{{name}}}", shlex.quote(value))
+    ran = agent.bash(command)
+    assert ran.exit_code == 1, ran.output or ran.said
+    return ran.output
+
+
 def reached(b: Bench, agent: Agent, result: str, message: str) -> Answer:
     """What the main conversation reads as the role's end, with its result, reaches it; the end
     must pass."""

@@ -3,7 +3,6 @@ what it prints with the exit code by which a role or the orchestrator reads its 
 
 from __future__ import annotations
 
-import dataclasses
 import datetime
 import json
 import os
@@ -20,6 +19,7 @@ from tree import (
     more,
     place,
     records,
+    results,
     rounds,
     runs,
     sign_offs,
@@ -60,7 +60,8 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
     - `commit <record> <step>`: 0, once `place.write` keeps the start's Place and `branch.commit`
       commits its work, the message naming the record and the step.
     - `round <deliverable>`: 0, with `[{"number", "made", "answers"}]`, each round from
-      `rounds.each`, the latest last.
+      `rounds.each`, the latest last, its Made, or null before the generator wrote it, and each
+      evaluator's Answers, by group, in the forms that the generator and the evaluator wrote them.
     - `push`: 0, with the pull request's URL, from `branch.push` and `github.keep_draft`.
     - `put-up plan`, `put-up deliverable <path>`, or `put-up lesson` with its words on standard
       input: 0, with the sign-off waiting, from `sign_offs.put_up`.
@@ -151,11 +152,30 @@ def _round(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
     return [
         {
             "number": each.number,
-            "made": dataclasses.asdict(each.made) if each.made else None,
-            "answers": [dataclasses.asdict(a) for a in each.answers],
+            "made": _made_as_written(each.made) if each.made else None,
+            "answers": [_answers_as_written(a) for a in each.answers],
         }
         for each in rounds.each(run, args[0])
     ]
+
+
+def _made_as_written(made: results.Made) -> Any:
+    """A Made in the form of generator-out.schema.json's `made`, as the generator wrote it."""
+    return {
+        "decisions": [{"path": p, "where": w} for p, w in made.decisions.items()],
+        "more": [{"condition": c, "where": w} for c, w in made.more.items()],
+        "settled": [
+            {"point": s.point, "decided": s.decided, "ground": s.ground} for s in made.settled
+        ],
+    }
+
+
+def _answers_as_written(answers: results.Answers) -> Any:
+    """An evaluator's Answers in the form of evaluator-out.schema.json's `answers`."""
+    return {
+        "good": [{"question": q, "lines": list(lines)} for q, lines in answers.good.items()],
+        "more": [{"question": q, "good_when": g} for q, g in answers.more.items()],
+    }
 
 
 def _push(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:

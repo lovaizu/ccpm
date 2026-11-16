@@ -101,9 +101,7 @@ def _generator_due(
     made = number and _there(run, rounds.path_in(run, deliverable, number, "made.json"))
     if not made:
         return rounds.start_name(deliverable, number or 1)
-    # Runs only once a round keeps a More, as in the case xfail until keep_more is built,
-    # test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator.
-    if rounds.kept_more(run, deliverable, number):  # pragma: no cover
+    if rounds.kept_more(run, deliverable, number):
         return rounds.start_name(deliverable, number + 1)
     return ""
 

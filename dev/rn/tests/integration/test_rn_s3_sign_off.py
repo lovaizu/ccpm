@@ -115,7 +115,6 @@ def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
     assert [c["body"] for c in comments] == ["Leave out invoicer/render.py."]
 
 
-@LATER
 @pytest.mark.supports("S3", "Sign-off", "Made", "Deliverable")
 def test_a_deliverable_put_up_and_approved_is_marked_done(b: Bench) -> None:
     """Given: "Type hints in each file of invoicer" judged good in its first round, and put up for

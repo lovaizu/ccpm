@@ -16,8 +16,6 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
-
 
 @pytest.mark.supports("S1", "adapters", "S5")
 def test_words_after_up_start_a_new_run_beside_a_run_left(b: Bench) -> None:
@@ -116,23 +114,22 @@ def test_a_generators_done_result_is_kept_in_its_record(b: Bench) -> None:
     assert record["entries"]
 
 
-@LATER
 @pytest.mark.supports("S1", "record.py", "Best practice", "guard")
 def test_a_generators_end_with_its_deliverable_off_its_template_is_held(b: Bench) -> None:
     """Given: a plan of invoicer's README alone, signed off, and its generator, which recorded each
     step and practice and wrote a README.md of one heading, leaving out every section of the readme
     best practice's template.
     When: it gives done and ends.
-    Then: the guard holds its end with each place where README.md leaves the template, by its line,
-    and the record keeps no result."""
+    Then: the guard holds its end with the Lane's sentence naming rn's check, which, once the
+    generator runs it, gives each place where README.md leaves the template, by its line, and the
+    record keeps no result."""
     walk = w.planned(b, w.readme_plan())
     generator, cut = w.generator_started(walk)
     w.made(b, walk, generator, cut)
     readme = os.path.join(walk.run["worktree"], "README.md")
     assert not generator.write(readme, "# invoicer\n").blocked
     ended, _ = w.give(b, generator, "done", "Made.")
-    assert ended.blocked
-    assert re.search(r"README\.md:\d+: ", ended.said)
+    assert re.search(r"README\.md:\d+: ", w.lacks_of(generator, ended, "done", cut))
     with open(os.path.join(walk.run["worktree"], cut["record"]), encoding="utf-8") as f:
         assert "kept" not in json.load(f)
 
@@ -154,7 +151,6 @@ def test_a_generator_sent_back_by_the_orchestrator_goes_on_from_the_ground(b: Be
     assert w.cut_of(w.due_text(then.said, "evaluator"))["deliverable"] == w.HINTS_PATH
 
 
-@LATER
 @pytest.mark.supports("S1", "Round", "Made", "Answers", "tree.py")
 def test_the_round_gives_each_evaluators_answers_and_what_the_generator_made(b: Bench) -> None:
     """Given: the first round of "Type hints in each file of invoicer": its Made, and each
@@ -172,7 +168,6 @@ def test_the_round_gives_each_evaluators_answers_and_what_the_generator_made(b: 
     assert answered == asked
 
 
-@LATER
 @pytest.mark.supports("S1", "More kept", "tree-keeper", "Decision")
 def test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator(b: Bench) -> None:
     """Given: the first round of "Type hints in each file of invoicer", with N2 in more.
@@ -189,7 +184,6 @@ def test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator(b: Be
     assert os.path.dirname(again["made"]) != os.path.dirname(cut["made"])
 
 
-@LATER
 @pytest.mark.supports("S1", "adapters", "S3")
 def test_no_generator_start_is_due_while_every_deliverable_doing_waits(b: Bench) -> None:
     """Given: a plan of "Type hints in each file of invoicer" alone, made, judged good, and put up

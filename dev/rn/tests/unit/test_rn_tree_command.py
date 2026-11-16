@@ -17,7 +17,7 @@ from dev.rn.tests.unit import rn_data as d
 
 LATER = pytest.mark.xfail(
     strict=True,
-    reason="tree.py has no pause yet, and rounds.each has an empty body",
+    reason="tree.py has no pause yet",
 )
 
 
@@ -220,7 +220,6 @@ def test_pause_with_no_remote_commits_and_says_it_didnt_push(tmp_path: Any) -> N
     assert code == 1 and "committed" in err and "remote" in err
 
 
-@LATER
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_round_of_a_deliverable_with_no_round_gives_1(tmp_path: Any) -> None:
     """Given: a run started with the walkthrough's tree.

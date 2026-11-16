@@ -14,15 +14,18 @@ from dataclasses import dataclass
 from urllib.parse import quote, unquote
 
 from fault import Wrong
+from repository import git
 
 from tree import records
 from tree.design import DesignTree
 from tree.more import More
-from tree.results import Answers, Made
+from tree.results import Answers, Made, read_answers, read_made
 from tree.runs import Run
 
 # A start of a round, as a record's name keeps it.
 _START = re.compile(r"^([^.]+)\.r(\d+)(?:\.g(\d+))?$")
+# An evaluator's Answers in a round, by its group.
+_ANSWERS = re.compile(r"^answers-(\d+)\.json$")
 
 
 @dataclass(frozen=True)
@@ -57,7 +60,10 @@ def each(run: Run, deliverable: str) -> tuple[Round, ...]:
     what the generator made`; S6 `O->>O: finds each change to a best practice and each general
     lesson in what the run's evaluators put in more`, which reads every round.
     """
-    raise NotImplementedError("rounds.each")
+    numbers = range(1, latest(run, deliverable) + 1)
+    if not numbers:
+        raise Wrong(f"{deliverable} has no round yet; its generator opens the first")
+    return tuple(_round(run, deliverable, number) for number in numbers)
 
 
 def latest(run: Run, deliverable: str) -> int:
@@ -113,9 +119,7 @@ def try_path(run: Run, deliverable: str) -> str:
     Refuses: fault.Wrong, where the deliverable has no round.
     Carries: S1 `G->>W: tries it (Try record)`.
     """
-    number = latest(run, deliverable)
-    if not number:
-        raise Wrong(f"{deliverable} has no round yet, in which a command it tries is kept")
+    number = _held(run, deliverable, "in which a command it tries is kept")
     return _in(run, deliverable, number, "try.jsonl")
 
 
@@ -177,7 +181,16 @@ def keep_more(run: Run, more: Sequence[More]) -> tuple[str, ...]:
     Refuses: fault.Wrong, where a deliverable has no round.
     Carries: S1 `K->>T: writes the decision, and keeps the more (Design tree, More kept)`.
     """
-    raise NotImplementedError("rounds.keep_more")
+    written = []
+    for deliverable in dict.fromkeys(each.deliverable for each in more):
+        number = _held(run, deliverable, "for whose next round a more is kept")
+        kept = kept_more(run, deliverable, number)
+        kept += tuple(m for m in more if m.deliverable == deliverable and m not in kept)
+        path = _in(run, deliverable, number, "more.json")
+        with open(os.path.join(run.worktree, path), "w", encoding="utf-8") as f:
+            json.dump([{"condition": m.condition, "good_when": m.good_when} for m in kept], f)
+        written.append(path)
+    return tuple(written)
 
 
 def kept_more(run: Run, deliverable: str, number: int | None = None) -> tuple[More, ...]:
@@ -194,9 +207,7 @@ def kept_more(run: Run, deliverable: str, number: int | None = None) -> tuple[Mo
     path = os.path.join(run.worktree, _in(run, deliverable, found, "more.json"))
     if not found or not os.path.exists(path):
         return ()
-    # Runs only once keep_more keeps a More, as in the case xfail until it's built,
-    # test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator.
-    with open(path, encoding="utf-8") as f:  # pragma: no cover
+    with open(path, encoding="utf-8") as f:
         held = json.load(f)
         return tuple(More(deliverable, e["condition"], e["good_when"]) for e in held)
 
@@ -208,11 +219,43 @@ def at_cut(run: Run, deliverable: str) -> DesignTree:
     Gives: the tree as the commit that opened the round holds it, through
     `repository.git.file_at`.
     Changes: nothing.
-    Refuses: fault.Wrong, where the deliverable has no round; fault.CantRun, where git fails.
+    Refuses: fault.Wrong, where the deliverable has no round; fault.CantRun, where git fails. A
+    round that no commit holds stops with its trace, as each step's end commits the round's files
+    before an evaluator judges it.
     Carries: S1 `alt no decision that answers the more's necessary condition changed since the
     round's cut`.
     """
-    raise NotImplementedError("rounds.at_cut")
+    number = _held(run, deliverable, "whose cut a more answers to")
+    opened = git.history(run.worktree, os.path.join(_folder(run, deliverable), str(number)))
+    tree = os.path.relpath(os.path.join(run.folder, "design-tree.json"), run.worktree)
+    # design.write wrote the tree at that commit once design.apply held it to its form.
+    return DesignTree(json.loads(git.file_at(run.worktree, opened[-1][0], tree)))
+
+
+def _round(run: Run, deliverable: str, number: int) -> Round:
+    """The round of the number, with the Made and each Answers written in it, by group."""
+    folder = os.path.join(_folder(run, deliverable), str(number))
+    made = os.path.join(folder, "made.json")
+    groups = sorted(
+        (int(found[1]), name)
+        for name in (os.listdir(folder) if os.path.isdir(folder) else [])
+        if (found := _ANSWERS.match(name))
+    )
+    return Round(
+        deliverable,
+        number,
+        read_made(made) if os.path.exists(made) else None,
+        tuple(read_answers(os.path.join(folder, name)) for _, name in groups),
+    )
+
+
+def _held(run: Run, deliverable: str, why: str) -> int:
+    """The number of the deliverable's latest round; raises Wrong, saying why a round is needed,
+    where it has none."""
+    number = latest(run, deliverable)
+    if not number:
+        raise Wrong(f"{deliverable} has no round yet, {why}")
+    return number
 
 
 def _key(deliverable: str) -> str:

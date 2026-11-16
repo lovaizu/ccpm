@@ -36,14 +36,14 @@ def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, brok
     assert paths and all(p.startswith("deliverables/0/") for p in paths)
 
 
-@LATER
 @pytest.mark.supports("Every step by best practice", "S1", "record.py", "Record", "guard")
 def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: None) -> None:
     """Given: the generator of "Type hints in each file of invoicer", which made it and wrote its
     Made, but recorded every practice of the code best practice save N4.1.
     When: it gives done and ends.
-    Then: the guard holds its end, naming code's N4.1, and once the generator records N4.1 and
-    ends again, the guard passes the end."""
+    Then: the guard holds its end, and the check its stop names gives code's N4.1, and once the
+    generator records N4.1 and carries out again each step after making, as a practice comes
+    before the steps it shapes, and ends again, the guard passes the end."""
     walk = w.planned(b)
     generator, cut = w.generator_started(walk)
     w.made(b, walk, generator, cut)
@@ -56,18 +56,18 @@ def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: 
     with open(record, "w", encoding="utf-8") as f:
         json.dump(held, f)
     ended, _ = w.give(b, generator, "done", "Made.")
-    assert ended.blocked and "N4.1" in ended.said
-    assert (
-        generator.bash(
-            b.record("add", cut["record"], "code", "N4.1", "Typed each module.")
-        ).exit_code
-        == 0
-    )
+    assert "N4.1" in w.lacks_of(generator, ended, "done", cut)
+    after = [("code", "N4.1", "Typed each module.")]
+    after += [
+        ("generator", str(n), "Carried out again after N4.1.")
+        for n in w.steps_of(b.rn, w.prompt_file("generator"))[4:]
+    ]
+    for what, number, words in after:
+        assert generator.bash(b.record("add", cut["record"], what, number, words)).exit_code == 0
     again, _ = generator.end("Made.")
     assert not again.blocked, again.said
 
 
-@LATER
 @pytest.mark.supports("Every item handled", "S1", "Made", "record.py")
 def test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it(
     b: Bench, broken: None
@@ -75,13 +75,14 @@ def test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it(
     """Given: the generator of "Type hints in each file of invoicer", which recorded each step and
     practice and wrote a Made that names none of the decisions of its Cut.
     When: it gives done and ends.
-    Then: the guard holds its end, naming the path of the user's decision on which files."""
+    Then: the guard holds its end, and the check its stop names gives the path of the user's
+    decision on which files."""
     walk = w.planned(b)
     generator, cut = w.generator_started(walk)
     w.made(b, walk, generator, cut, every_item=False)
     ended, _ = w.give(b, generator, "done", "Made.")
-    assert ended.blocked
-    assert "deliverables/0/necessary_conditions/0/decisions/0" in ended.said
+    lacking = w.lacks_of(generator, ended, "done", cut)
+    assert "deliverables/0/necessary_conditions/0/decisions/0" in lacking
 
 
 @pytest.mark.supports("Judged by the people it's for", "S1", "evaluator", "Cut")
