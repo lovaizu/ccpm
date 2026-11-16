@@ -464,7 +464,7 @@ sequenceDiagram
     end
     opt the main conversation ends its turn
       CC->>G: the stop
-      alt a move is due, and no subagent of the Run runs
+      alt a move is due with its text, and no subagent of the Run runs
         G-->>M: stops it, with the moves due
       else
         G->>T: checks the end by each Lane of each Run's skill
@@ -607,6 +607,7 @@ sequenceDiagram
     else results that follow the Routes
       G->>RS: adds the call and each Result, where the record doesn't hold them
       G-->>M: where the run picks up, and the start due
+      Note over G,M: A resume due of a role that this conversation never started is due as a start of it, as no subagent of it is here to resume.
     else results that don't follow them, or it fails
       G-->>U: stops the command, with why and who must fix it
     end

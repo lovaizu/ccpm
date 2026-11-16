@@ -52,7 +52,8 @@ until each item is marked, and takes the items from your adapter of a step's ite
 - Where your skill's steps choose the next move by their own judgment, the route lists each move
   they choose among. A move is one of these: start a subagent, resume one by SendMessage, wait for
   the person's reply, or start no more by the skill's own result. Lane lets through only those
-  moves. It holds the main conversation's stop unless one of them waits for the person.
+  moves. It holds the main conversation's stop unless one of them waits for the person, or your
+  adapter can't give a start's text yet.
 - Your skill's steps can start subagents side by side. Lane lets a start through beside those that
   run, where your adapter gives it a text other than theirs. It holds each subagent to the values of
   its own start, and keeps the moves after each result due until your steps make them.
@@ -142,4 +143,5 @@ It prints the results in the order the run gave them:
 {"results": [{"role": "<subagent>", "result": "<result>"}]}
 ```
 
-Without one, a run in a new conversation starts over.
+A resume due then starts its subagent anew, as the new conversation holds none to resume. Without
+one, a run in a new conversation starts over.
