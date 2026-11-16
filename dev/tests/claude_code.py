@@ -282,8 +282,12 @@ def run_python(script: str, args: list[str], stdin: str, env: dict[str, str], cw
     modules, stdin_before, tempdir = set(sys.modules), sys.stdin, tempfile.tempdir
     no_cache = sys.dont_write_bytecode
     here = os.path.dirname(os.path.abspath(script))
-    # A module the process already holds is the one an import gives, as before.
-    sys.modules.update({k: v for k, v in _kept_imports(here).items() if k not in modules})
+    # A module the process already holds is the one an import gives, as before, so the modules kept
+    # from the last run come back only where the process holds none of their names, as each kept one
+    # holds what it imported then.
+    kept = _kept_imports(here)
+    if not kept.keys() & modules:
+        sys.modules.update(kept)
     code = 0
     try:
         # A new process decodes its arguments into strings of its own, which are never the constants

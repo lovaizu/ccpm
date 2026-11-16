@@ -500,23 +500,41 @@ def test_the_skills_mark_lies_on_its_run_with_no_agent_id(tmp_path: Any) -> None
     _, reviewer = w.start(c, "reviewer")
     assert reviewer
     w.give(b, reviewer, "good")
-    assert c.bash(b.result("write", "good")).exit_code == 0
+    given = c.bash(b.result("write", "good"))
+    assert given.exit_code == 0, given.output
     assert not c.stop("The entries are reviewed good.").blocked
 
 
-@pytest.mark.supports("S5", "lane types", "Mark")
-def test_the_skills_end_with_its_step_unmarked_is_stopped(tmp_path: Any) -> None:
+@pytest.mark.supports("S5", "result.py", "lane types", "Mark")
+def test_the_skills_result_with_its_step_unmarked_is_refused(tmp_path: Any) -> None:
     """Given: the Proposal laid with keeps_steps on write's step 1, and a run of /changelog:write in
-    which reviewer gave `good` and the main conversation ran result.py write good, with no
-    step.py.
-    When: the main conversation ends its turn.
-    Then: the guard stops the end with keeps_steps' sentence for write and Step 1 due."""
+    which reviewer gave `good`, with no step.py.
+    When: the main conversation runs result.py write good.
+    Then: result.py refuses it with keeps_steps' sentence for write and Step 1 due, and write's Run
+    holds no Result and goes on."""
     b = w.bench(str(tmp_path))
     c = w.laid(b, make=with_skills_steps)
     w.give(b, w.to_reviewer(b, c), "good")
-    assert c.bash(b.result("write", "good")).exit_code == 0
-    stopped = c.stop("The entries are reviewed good.")
-    assert stopped.blocked and names_step(stopped.said, keeps_steps(b, "write"), 1)
+    refused = c.bash(b.result("write", "good"))
+    assert refused.exit_code == 1
+    assert keeps_steps(b, "write") in refused.output, "the Lane's sentence is named"
+    assert re.search(r"\b1\b", refused.output.replace(keeps_steps(b, "write"), "")), "Step 1"
+    (run,) = w.where(b.changelog, b, c.session_id).runs
+    assert (run.results[-1].role, run.ended) == ("reviewer", False)
+
+
+@pytest.mark.supports("S5", "lane types", "Mark")
+def test_the_skills_turn_end_with_its_step_unmarked_goes_while_it_waits(tmp_path: Any) -> None:
+    """Given: the Proposal laid with keeps_steps on write's step 1, and a run of /changelog:write in
+    which writer runs in the background, with no step.py.
+    When: the main conversation ends its turn to wait on writer.
+    Then: the guard lets the turn end, as keeps_steps holds the skill's Steps at its Result."""
+    b = w.bench(str(tmp_path))
+    c = w.laid(b, make=with_skills_steps)
+    assert not c.type("/changelog:write").blocked
+    _, writer = w.start(c, "writer")
+    assert writer
+    assert not c.stop("writer runs; I'll wait for it.").blocked
 
 
 @pytest.mark.supports("S7", "Mark", "Run")

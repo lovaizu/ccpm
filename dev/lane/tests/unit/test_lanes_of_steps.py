@@ -524,19 +524,11 @@ def test_keeps_items_keeps_a_mark_of_a_step_with_no_items_this_run() -> None:
         (lambda: held((d.marked(1), d.marked(2))), 3),
         (lambda: held(tuple(d.marked(n) for n in range(1, 5))), None),
         (lambda: held((*(d.marked(n) for n in range(1, 5)), d.marked(1))), 2),
-        (lambda: held((d.marked(1, agent=None),), main=True), 2),
     ],
-    ids=[
-        "no Step marked",
-        "two Steps marked",
-        "each Step marked",
-        "a new pass begun",
-        "the main conversation's Marks on its Run",
-    ],
+    ids=["no Step marked", "two Steps marked", "each Step marked", "a new pass begun"],
 )
 def test_keeps_steps_holds_the_end_until_each_step_is_marked(given: Any, due: int | None) -> None:
-    """Given: writer's keeps_steps Lane on its step 4, its last, and writer's Start with its Marks,
-    or the main conversation with the Marks on the Run.
+    """Given: writer's keeps_steps Lane on its step 4, its last, and writer's Start with its Marks.
     When: the type checks the end.
     Then: it keeps the end where the latest pass marked each Step, and breaks it with its sentence
     and the Step due where it didn't."""
@@ -549,6 +541,61 @@ def test_keeps_steps_holds_the_end_until_each_step_is_marked(given: Any, due: in
             " of its own, with the step's number."
         )
         assert str(due) in verdict.may
+
+
+@pytest.mark.supports("test_the_skills_turn_end_with_its_step_unmarked_goes_while_it_waits")
+def test_keeps_steps_lets_the_main_conversations_turn_end() -> None:
+    """Given: writer's keeps_steps Lane on its step 4, and the main conversation, no Step marked on
+    the Run.
+    When: the type checks the main conversation's end of its turn.
+    Then: it keeps the end, as a Step may wait on a subagent."""
+    verdict = TYPES["keeps_steps"].check_end(d.KEEPS_STEPS, EndAsked("Done."), held(main=True))
+    assert verdict == Kept()
+
+
+SKILLS_STEPS = d.lane("write", "skills/write/SKILL.md", 1, "keeps_steps")
+
+
+def skills_marked(*steps: int) -> Any:
+    """write's Run, with the main conversation's Marks of the Steps on it."""
+    marks = tuple(dataclasses.replace(d.marked(n, agent=None), role="write") for n in steps)
+    return d.run(due=(), reports=marks)
+
+
+@pytest.mark.supports("test_the_skills_result_with_its_step_unmarked_is_refused")
+@pytest.mark.parametrize(
+    "lanes, run, due",
+    [
+        (lambda: (d.ROUTES, SKILLS_STEPS), lambda: skills_marked(), 1),
+        (lambda: (d.ROUTES, SKILLS_STEPS), lambda: skills_marked(1), None),
+        (lambda: (d.ROUTES, d.KEEPS_STEPS, SKILLS_STEPS), lambda: skills_marked(), 1),
+        (lambda: (d.ROUTES, d.KEEPS_STEPS), lambda: skills_marked(), None),
+    ],
+    ids=[
+        "its Step unmarked",
+        "each Step marked",
+        "a role's Lane of keeps_steps before it",
+        "no Lane of keeps_steps on the skill",
+    ],
+)
+def test_keeps_steps_holds_the_skills_result_until_each_step_is_marked(
+    lanes: Any, run: Any, due: int | None
+) -> None:
+    """Given: the Lanes of lanes.json, with or without keeps_steps on write's step 1, its last, and
+    write's Run with the main conversation's Marks.
+    When: keeps_steps checks write's Result.
+    Then: it keeps it where write has no Lane of keeps_steps or its latest pass marked each Step,
+    and breaks it with write's sentence and the Step due where it didn't."""
+    verdict = keeps_steps.at_result(lanes(), run(), d.ROOT, d.ROUTES_OF_WRITE)
+    if due is None:
+        assert verdict == Kept()
+    else:
+        assert verdict == Broken(
+            SKILLS_STEPS,
+            f"As each step ends, run `python3 {d.ROOT}/hooks/lane/step.py write <n>` as a command"
+            " of its own, with the step's number.",
+            f"Step {due} is due.",
+        )
 
 
 @pytest.mark.supports("test_a_step_marked_out_of_order_is_stopped_with_the_step_due")

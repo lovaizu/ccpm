@@ -1,6 +1,6 @@
 """The rule that a role marks each Step done in order by step.py, laid on its last Step: the
-sentence that names the script, and the check that holds the role's end until each Step is marked
-in its latest pass."""
+sentence that names the script, and the checks that hold a subagent's end, and the skill's Result,
+until each Step is marked in its latest pass."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from collections.abc import Sequence
 from form import Lane, Route
 from marks import step_due
 from place import Call, EndAsked, StartCall
-from runs import Due
+from runs import Due, Run
 from script_calls import step_command
 
 from lanes.kind import Broken, Held, Kept, Marking, TypeInfo, Verdict
@@ -34,8 +34,8 @@ class KeepsSteps:
             " `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/step.py <role> <n>` as a command of its"
             " own, with the step's number.",
             suits="the last Step of a role whose Steps are done in order",
-            allows="nothing: it holds the role's end until each Step is marked since its last"
-            " Mark of Step 1",
+            allows="nothing: it holds a subagent's end, and the skill's Result, until each Step is"
+            " marked since its last Mark of Step 1",
             args=ARGS,
         )
 
@@ -86,15 +86,18 @@ class KeepsSteps:
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Broken, with the Lane's sentence and the Step due, where `marks.step_due` gives a Step
-        for the Start's Marks, or the skill's Run's for the main conversation, with the Lane's
-        Step as the last; else Kept.
+        for a subagent's Start's Marks, with the Lane's Step as the last; else Kept, and Kept for
+        the main conversation's end of its turn, as a Step may wait on a subagent, so that
+        `at_result` holds the skill's Steps.
 
         Carries: S6 `else a Lane of keeps_steps finds a Step unmarked in the latest pass` and
-        `G-->>SA: stops the end, with that Lane's sentence and the Step due`; S5 `G->>T: checks the
-        end by each Lane of each Run's skill`.
+        `G-->>SA: stops the end, with that Lane's sentence and the Step due`; S5's Note `keeps_steps
+        lets a turn end, as a Step may wait on a subagent, and holds the skill's Steps at its
+        Result.`
         """
-        reports = held.start.reports if held.start else held.run.reports
-        due = step_due(reports, lane.step)
+        if held.start is None:
+            return Kept()
+        due = step_due(held.start.reports, lane.step)
         if due is None:
             return Kept()
         return broken(lane, held, due)
@@ -116,6 +119,26 @@ def last_step(lanes: Sequence[Lane], role: str) -> int | None:
     pass.
     """
     return next((x.step for x in lanes if x.role == role and x.type == "keeps_steps"), None)
+
+
+def at_result(lanes: Sequence[Lane], run: Run, root: str, routes: Sequence[Route]) -> Verdict:
+    """The check of the skill's Result by its Lane of keeps_steps.
+
+    Takes: the Lanes of lanes.json; the skill's Run, whose Marks are the main conversation's; the
+    plugin's folder; and the plugin's Routes.
+    Gives: Broken, with the sentence of the skill's Lane of keeps_steps and the Step due, where
+    `marks.step_due` gives a Step for the Run's Marks; else Kept, and Kept where the skill has no
+    Lane of keeps_steps.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S5 `alt a Lane of keeps_steps on the skill finds a Step unmarked in the latest pass`
+    and `CC-->>M: result.py refuses it, with that Lane's sentence and the Step due`.
+    """
+    lane = next((x for x in lanes if x.role == run.skill and x.type == "keeps_steps"), None)
+    due = step_due(run.reports, lane.step) if lane else None
+    if lane is None or due is None:
+        return Kept()
+    return broken(lane, Held(run, None, root, routes), due)
 
 
 def broken(lane: Lane, held: Held, due: int | None) -> Broken:

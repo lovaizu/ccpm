@@ -26,6 +26,7 @@ from run_record import (
     Called,
     Ended,
     Gave,
+    Marked,
     Started,
     TextFailed,
     TextGiven,
@@ -701,6 +702,40 @@ def test_result_py_takes_only_a_result_the_role_may_give(
     assert given == code
     if code:
         assert "written" in out + err
+
+
+@pytest.mark.supports("test_the_skills_result_with_its_step_unmarked_is_refused")
+@pytest.mark.parametrize("marked, code", [(False, 1), (True, 0)], ids=["unmarked", "marked"])
+def test_result_py_holds_the_skills_result_until_its_steps_are_marked(
+    plugin: str, marked: bool, code: int
+) -> None:
+    """Given: changelog laid with keeps_steps on write's step 1, and write's Run after reviewer's
+    `good`, its Step 1 unmarked or marked by the main conversation.
+    When: result.py's main takes write's `good`.
+    Then: it gives 0 where Step 1 is marked; else 1, with write's keeps_steps sentence and Step 1
+    due."""
+    lanes = d.lanes_file()
+    skills = d.lane("write", "skills/write/SKILL.md", 1, "keeps_steps")
+    proposal = replace(lanes.proposal, lanes=(*lanes.proposal.lanes, skills))
+    write_lanes(os.path.join(plugin, "hooks", "lanes.json"), replace(lanes, proposal=proposal))
+    path = record_path("changelog", d.SESSION)
+    for line in (
+        Called("r1", "write", "person", ""),
+        Started("r1", "reviewer", "Carry out your steps", {}, "t1", False),
+        Tied("r1", "t1", "a01"),
+        Gave("r1", "reviewer", "good", "a01"),
+        Ended("r1", "a01", False),
+    ):
+        add(path, line)
+    if marked:
+        add(path, Marked("r1", "write", 1, None, None))
+    env = {"CLAUDE_CODE_SESSION_ID": d.SESSION}
+    given, out, _ = entry("result").main(["write", "good"], env, plugin)
+    sentence = (
+        f"As each step ends, run `python3 {plugin}/hooks/lane/step.py write <n>` as a command of"
+        " its own, with the step's number."
+    )
+    assert (given, out) == (code, f"result.py: {sentence}\nStep 1 is due.\n" if code else "")
 
 
 @pytest.mark.supports("test_a_result_the_role_may_not_give_is_refused")

@@ -5,6 +5,7 @@ hooks reference says. A plugin of the test's own logs each payload that the doub
 from __future__ import annotations
 
 import copy
+import importlib
 import json
 import os
 import shutil
@@ -1385,6 +1386,33 @@ class RunPythonTest(unittest.TestCase):
 
         with open(imports, encoding="utf-8") as f:
             self.assertEqual(f.read(), "imported\n", "one import for the two runs")
+
+    def test_a_script_run_again_once_this_process_holds_one_of_its_modules_imports_them_alike(
+        self,
+    ):
+        folder = tempfile.mkdtemp(prefix="run-python-")
+        self.addCleanup(shutil.rmtree, folder)
+        with open(os.path.join(folder, "thing_double.py"), "w", encoding="utf-8") as f:
+            f.write("class Thing:\n    pass\n")
+        with open(os.path.join(folder, "checks_double.py"), "w", encoding="utf-8") as f:
+            f.write(
+                "from thing_double import Thing\n\ndef check(x):\n    return isinstance(x, Thing)\n"
+            )
+        script = os.path.join(folder, "uses.py")
+        with open(script, "w", encoding="utf-8") as f:
+            f.write(
+                "import checks_double, thing_double\n"
+                "print(checks_double.check(thing_double.Thing()))\n"
+            )
+        run_python(script, [], "", dict(os.environ), folder)
+        sys.path.insert(0, folder)
+        self.addCleanup(sys.path.remove, folder)
+        self.addCleanup(sys.modules.pop, "thing_double")
+        importlib.import_module("thing_double")
+
+        code, out, _ = run_python(script, [], "", dict(os.environ), folder)
+
+        self.assertEqual((code, out), (0, "True\n"), "one Thing for the script and its module")
 
     def test_a_script_run_again_from_its_folder_gets_its_module_as_the_file_now_reads(self):
         folder = tempfile.mkdtemp(prefix="run-python-")
