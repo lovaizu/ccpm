@@ -37,8 +37,8 @@ class EndsByResult:
         return TypeInfo(
             name="ends_by_result",
             sentence="End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py <role>"
-            " <result>` as a command of its own, with each Result the Routes name for the role, joined"
-            " by `or`.",
+            " <result>` as a command of its own, with each Result the Routes name for the role,"
+            " joined by `or`.",
             suits="the last Step of the skill and of each subagent, which Lane lays it on",
             allows="the role's run of the result script, whatever the other Lanes of the role say",
             args=ARGS,

@@ -587,7 +587,8 @@ def writer_tied(plugin: str) -> str:
 def end(plugin: str) -> str:
     """The stop of writer's end, its result script named by the plugin's folder, as the README
     shows a stop."""
-    return f"changelog: End by running `python3 {plugin}/hooks/lane/result.py writer written`, as a command of its own."
+    result = f"python3 {plugin}/hooks/lane/result.py writer written"
+    return f"changelog: End by running `{result}`, as a command of its own."
 
 
 @pytest.mark.supports("test_a_subagents_start_of_a_role_is_stopped")

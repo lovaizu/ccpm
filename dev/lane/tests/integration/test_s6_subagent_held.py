@@ -51,7 +51,9 @@ def test_a_subagents_start_of_a_role_is_stopped(b: w.Bench, broken: None) -> Non
     assert writer.bash(b.result("writer", "written")).exit_code == 0
     stopped, agent = writer.start("changelog:reviewer", w.TEXT, "reviewer")
     assert stopped.blocked and agent is None
-    assert stopped.said == f"changelog: End by running `{b.result('writer', 'written')}`, as a command of its own."
+    assert stopped.said == (
+        f"changelog: End by running `{b.result('writer', 'written')}`, as a command of its own."
+    )
 
 
 @pytest.mark.supports("S6", "guard")
