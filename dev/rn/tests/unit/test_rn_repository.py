@@ -17,7 +17,7 @@ from dev.rn.tests.unit import rn_data as d
 
 LATER = pytest.mark.xfail(
     strict=True,
-    reason="repository/gh.py's mark_ready, comments, and open_issue have empty bodies",
+    reason="repository/gh.py's mark_ready and open_issue refuse no login, and go no further",
 )
 
 BRANCH = f"rn-{d.NAME}"
@@ -166,9 +166,7 @@ def test_a_draft_pull_request_is_opened_once_and_kept(
 
 
 @pytest.mark.supports("test_a_push_without_a_login_of_gh_says_what_is_missing")
-@pytest.mark.parametrize(
-    "call", ["draft", *(pytest.param(c, marks=LATER) for c in ("ready", "comments", "issue"))]
-)
+@pytest.mark.parametrize("call", ["draft", "ready", "comments", "issue"])
 def test_each_command_with_no_login_is_missing_it(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch, call: str
 ) -> None:
@@ -218,7 +216,6 @@ def test_a_branch_with_no_pull_request_cant_be_marked(
         gh.mark_ready(run.worktree, True)
 
 
-@LATER
 @pytest.mark.supports("test_gm_alone_reads_the_users_comments_since_the_sign_off")
 @pytest.mark.parametrize(
     ("since", "bodies"),
