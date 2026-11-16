@@ -269,7 +269,11 @@ def matches(matcher: str | None, value: str) -> bool:
 def run_python(script: str, args: list[str], stdin: str, env: dict[str, str], cwd: str):
     """Runs the script in this process as `python3 <script> <args>` would in a new one, with the
     standard input, the environment, and the folder given, and gives its exit code, standard output,
-    and standard error. The modules it imports go once it ends, as they would with its process."""
+    and standard error. The modules it imports go once it ends, as they would with its process, and
+    come back for the next run of a script from the same folder while each file they came from reads
+    as when it was imported, each functools cache in them empty, as a new process would find them.
+    A module that keeps any other state of its own across calls gets it back too, which no module of
+    the plugins does."""
     out, err = io.StringIO(), io.StringIO()
     if not os.path.isfile(script):
         err.write(f"python3: can't open file '{script}': [Errno 2] No such file or directory\n")
@@ -277,6 +281,9 @@ def run_python(script: str, args: list[str], stdin: str, env: dict[str, str], cw
     argv, path, environ, folder = sys.argv, sys.path[:], dict(os.environ), os.getcwd()
     modules, stdin_before, tempdir = set(sys.modules), sys.stdin, tempfile.tempdir
     no_cache = sys.dont_write_bytecode
+    here = os.path.dirname(os.path.abspath(script))
+    # A module the process already holds is the one an import gives, as before.
+    sys.modules.update({k: v for k, v in _kept_imports(here).items() if k not in modules})
     code = 0
     try:
         # A new process decodes its arguments into strings of its own, which are never the constants
@@ -308,9 +315,44 @@ def run_python(script: str, args: list[str], stdin: str, env: dict[str, str], cw
         tempfile.tempdir = tempdir
         # A script's setting of its own process goes with its run.
         sys.dont_write_bytecode = no_cache
-        for name in set(sys.modules) - modules:
-            del sys.modules[name]
+        _keep_imports(here, {name: sys.modules.pop(name) for name in set(sys.modules) - modules})
     return code, out.getvalue(), err.getvalue()
+
+
+# The modules that the last run of a script imported, by the script's folder, with the state of
+# each file they came from when they were imported. Importing the plugins' code anew on each run
+# took most of a case's time, as a case runs a script or a hook some 1800 times.
+_IMPORTED: dict[str, tuple[dict[str, Any], dict[str, tuple[int, int] | None]]] = {}
+
+
+def _file_state(path: str) -> tuple[int, int] | None:
+    try:
+        stat = os.stat(path)
+    except OSError:
+        return None
+    return stat.st_mtime_ns, stat.st_size
+
+
+def _keep_imports(folder: str, imported: dict[str, Any]) -> None:
+    files = {
+        path: _file_state(path)
+        for path in (getattr(module, "__file__", None) for module in imported.values())
+        if path
+    }
+    _IMPORTED[folder] = (imported, files)
+
+
+def _kept_imports(folder: str) -> dict[str, Any]:
+    """The modules that the last run from the folder imported, each cache in them emptied, or none
+    where a file they came from changed since."""
+    imported, files = _IMPORTED.pop(folder, ({}, {}))
+    if any(_file_state(path) != state for path, state in files.items()):
+        return {}
+    for module in imported.values():
+        for value in list(vars(module).values()):
+            if callable(getattr(value, "cache_clear", None)):
+                value.cache_clear()
+    return imported
 
 
 def hook_answer(

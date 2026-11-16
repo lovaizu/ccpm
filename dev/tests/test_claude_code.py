@@ -1370,6 +1370,77 @@ class RunPythonTest(unittest.TestCase):
         self.assertEqual((code, out), (0, "beside\n"))
         self.assertNotIn("beside_double", sys.modules, "the module goes with the run")
 
+    def test_a_script_run_again_from_its_folder_imports_its_unchanged_module_once(self):
+        folder = tempfile.mkdtemp(prefix="run-python-")
+        self.addCleanup(shutil.rmtree, folder)
+        imports = os.path.join(folder, "imports.txt")
+        with open(os.path.join(folder, "counted_double.py"), "w", encoding="utf-8") as f:
+            f.write(f"with open({imports!r}, 'a') as f:\n    f.write('imported\\n')\n")
+        script = os.path.join(folder, "uses.py")
+        with open(script, "w", encoding="utf-8") as f:
+            f.write("import counted_double\n")
+
+        run_python(script, [], "", dict(os.environ), folder)
+        run_python(script, [], "", dict(os.environ), folder)
+
+        with open(imports, encoding="utf-8") as f:
+            self.assertEqual(f.read(), "imported\n", "one import for the two runs")
+
+    def test_a_script_run_again_from_its_folder_gets_its_module_as_the_file_now_reads(self):
+        folder = tempfile.mkdtemp(prefix="run-python-")
+        self.addCleanup(shutil.rmtree, folder)
+        module = os.path.join(folder, "changed_double.py")
+        with open(module, "w", encoding="utf-8") as f:
+            f.write("NAME = 'before'\n")
+        script = os.path.join(folder, "uses.py")
+        with open(script, "w", encoding="utf-8") as f:
+            f.write("import changed_double\nprint(changed_double.NAME)\n")
+        run_python(script, [], "", dict(os.environ), folder)
+        with open(module, "w", encoding="utf-8") as f:
+            f.write("NAME = 'after, longer'\n")
+
+        code, out, _ = run_python(script, [], "", dict(os.environ), folder)
+
+        self.assertEqual((code, out), (0, "after, longer\n"), "the module as its file now reads")
+
+    def test_a_script_run_again_from_its_folder_starts_each_cache_of_its_module_empty(self):
+        folder = tempfile.mkdtemp(prefix="run-python-")
+        self.addCleanup(shutil.rmtree, folder)
+        data = os.path.join(folder, "data.txt")
+        with open(data, "w", encoding="utf-8") as f:
+            f.write("before")
+        with open(os.path.join(folder, "cached_double.py"), "w", encoding="utf-8") as f:
+            f.write(
+                "import functools\n@functools.cache\ndef data():\n"
+                f"    return open({data!r}).read()\n"
+            )
+        script = os.path.join(folder, "uses.py")
+        with open(script, "w", encoding="utf-8") as f:
+            f.write("import cached_double\nprint(cached_double.data())\n")
+        run_python(script, [], "", dict(os.environ), folder)
+        with open(data, "w", encoding="utf-8") as f:
+            f.write("after")
+
+        code, out, _ = run_python(script, [], "", dict(os.environ), folder)
+
+        self.assertEqual((code, out), (0, "after\n"), "the file read anew, as by a new process")
+
+    def test_a_script_of_another_folder_gets_the_module_of_its_own_folder(self):
+        folders = [tempfile.mkdtemp(prefix="run-python-") for _ in range(2)]
+        for folder, name in zip(folders, ("first", "second"), strict=True):
+            self.addCleanup(shutil.rmtree, folder)
+            with open(os.path.join(folder, "named_double.py"), "w", encoding="utf-8") as f:
+                f.write(f"NAME = {name!r}\n")
+            with open(os.path.join(folder, "uses.py"), "w", encoding="utf-8") as f:
+                f.write("import named_double\nprint(named_double.NAME)\n")
+        run_python(os.path.join(folders[0], "uses.py"), [], "", dict(os.environ), folders[0])
+
+        code, out, _ = run_python(
+            os.path.join(folders[1], "uses.py"), [], "", dict(os.environ), folders[1]
+        )
+
+        self.assertEqual((code, out), (0, "second\n"), "the module beside the script")
+
 
 if __name__ == "__main__":
     unittest.main()
