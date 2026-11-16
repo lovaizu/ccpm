@@ -371,41 +371,7 @@
       "name": "A builder's /lane:up, typed or asked of an AI, proposes their plugin's lanes and routes from its steps alone, shows them as they'll read, and lays what the caller approves",
       "path": "plugins/lane/domain/up.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane/README.md",
-        "plugins/lane/docs/steps-routes-adapters.md",
-        "dev/lane/tests"
-      ],
-      "preconditions": [
-        "dev/lane/tests/integration/test_s1_proposal.py",
-        "dev/lane/tests/integration/test_s2_approval.py",
-        "dev/lane/tests/integration/test_s3_s4_again.py",
-        "dev/lane/tests/integration/test_steps_marked.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
