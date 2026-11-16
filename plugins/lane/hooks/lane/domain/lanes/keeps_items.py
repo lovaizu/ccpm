@@ -6,10 +6,12 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from form import Lane, Route
+from marks import items_left
 from place import Call, EndAsked, StartCall
 from runs import Due
+from script_calls import item_command
 
-from lanes.kind import Held, Marking, TypeInfo, Verdict
+from lanes.kind import Broken, Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. It takes none, as the adapter gives the Items.
@@ -39,7 +41,7 @@ class KeepsItems:
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError("keeps_items.faults")
+        return ()
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on its Step: to run `script_calls.item_command` for the
@@ -48,7 +50,10 @@ class KeepsItems:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError("keeps_items.sentence")
+        return (
+            "As each item of this step's checklist is done, run"
+            f" `{item_command(lane.role)}`, with the item's ID."
+        )
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: the guard checks a run of item.py by the Items that the adapter gives for the
@@ -56,14 +61,14 @@ class KeepsItems:
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError("keeps_items.allows")
+        return None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError("keeps_items.check_start")
+        return Kept()
 
     def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
         """Kept where `marks.items_left` gives none of `marking.items` since the Step began;
@@ -72,14 +77,18 @@ class KeepsItems:
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since
         the Step began`, and `else ... an Item isn't marked`.
         """
-        raise NotImplementedError("keeps_items.check_mark")
+        left = items_left(marking.since, marking.items or ())
+        if not left:
+            return Kept()
+        said = self.sentence(lane, held.routes).replace("${CLAUDE_PLUGIN_ROOT}", held.root)
+        return Broken(lane, said, f"The items left: {', '.join(f'`{x}`' for x in left)}.")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end, as keeps_steps holds the end until the Step is marked.
 
         Carries: S6 `G->>T: checks the end by each Lane of the role`.
         """
-        raise NotImplementedError("keeps_items.check_end")
+        return Kept()
 
 
 TYPE = KeepsItems()

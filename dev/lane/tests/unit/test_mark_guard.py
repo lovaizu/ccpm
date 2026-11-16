@@ -23,12 +23,6 @@ from lay.show import render
 from lay.steps import read_steps
 from run_record import Called, Marked, Read, Started, Tied, add, lines, record_path
 
-pytestmark = pytest.mark.xfail(
-    strict=True,
-    reason="the guard's handling of Marks and Reads, and lay.py's and form.py's of their lane types"
-    " and adapter, have empty bodies",
-)
-
 ITEMS = "hooks/adapters/items.py"
 GIVES = (
     "import json, sys\njson.load(sys.stdin)\nprint(json.dumps({'items': ['dated', 'linked']}))\n"
@@ -45,7 +39,9 @@ def plugin(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> str:
     monkeypatch.setattr(tempfile, "tempdir", None)
     os.makedirs(tmp_path / "temp")
     os.makedirs(tmp_path / "tally" / ".git")
-    (tmp_path / "tally" / "CHANGELOG.md").write_text("# Changelog\n\n## 0.1.0\n\n- Counts lines.\n")
+    (tmp_path / "tally" / "CHANGELOG.md").write_text(
+        "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n- Reads standard input.\n"
+    )
     os.makedirs(tmp_path / "tally" / "changelog" / ".claude-plugin")
     os.makedirs(tmp_path / "tally" / "changelog" / "hooks")
     (tmp_path / "tally" / "changelog" / ".claude-plugin" / "plugin.json").write_text(
@@ -311,7 +307,7 @@ def test_the_post_tool_use_of_a_read_adds_it_where_reads_whole_names_its_path(
         tool_response=response,
     )
     assert not handle(event, plugin).stop
-    added = lines(record)[len(before) :]
+    added = list(lines(record)[len(before) :])
     assert added == ([Read("r1", "writer", "CHANGELOG.md", 1, 7, "a01")] if kept else [])
 
 

@@ -22,6 +22,7 @@ GUARD = (
     "script_calls",
     "lanes",
     "manifest",
+    "marks",
 )
 
 

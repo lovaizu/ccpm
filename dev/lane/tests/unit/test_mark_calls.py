@@ -14,10 +14,6 @@ import pytest
 from adapters import AdapterFailed, step_items
 from script_calls import item_args, item_command, step_args, step_command
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="the parts that carry a Mark and a Step's Items have empty bodies"
-)
-
 ROOT = "/home/you/tally/changelog"
 
 

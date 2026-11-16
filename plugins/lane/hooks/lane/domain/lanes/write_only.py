@@ -10,6 +10,7 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
+from lanes import paths
 from lanes.kind import Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
@@ -45,10 +46,7 @@ class WriteOnly:
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        given = lane.args.get("paths")
-        if not isinstance(given, list) or not given or not all(isinstance(x, str) for x in given):
-            return ("write_only takes `paths`, a list of one string or more",)
-        return ()
+        return paths.fault(lane)
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on its Step: `Write only` each of `paths`, joined by
@@ -84,7 +82,7 @@ class WriteOnly:
 
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
         """
-        raise NotImplementedError("write_only.check_mark")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.

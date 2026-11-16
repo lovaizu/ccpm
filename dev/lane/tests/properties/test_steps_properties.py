@@ -22,10 +22,6 @@ from lanes.reads_whole import TYPE as READS_WHOLE
 from marks import step_due
 from place import EndAsked
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="the lane types that hold a role's Steps have empty bodies"
-)
-
 NAME = st.text("abcdefghijklmnopqrstuvwxyz_", min_size=1, max_size=8)
 LAST = 4
 

@@ -184,8 +184,15 @@ def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
 
 def _reported(run: Run, line: Report) -> Run:
     """The Run after a Mark or a Read: on the Start whose agent_id the line gives, or, with none,
-    on the Run itself, as the skill's."""
-    raise NotImplementedError("runs._reported")
+    on the Run itself, as the skill's. A subagent resumed reports on its latest Start."""
+    if line.agent_id is None:
+        return dataclasses.replace(run, reports=(*run.reports, line))
+    tied = [i for i, s in enumerate(run.starts) if s.agent_id == line.agent_id]
+    starts = tuple(
+        dataclasses.replace(s, reports=(*s.reports, line)) if tied[-1:] == [i] else s
+        for i, s in enumerate(run.starts)
+    )
+    return dataclasses.replace(run, starts=starts)
 
 
 def _of_start(run: Run, line: Started | Tied | Ended | Report) -> Run:

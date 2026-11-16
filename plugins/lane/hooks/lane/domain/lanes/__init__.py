@@ -14,7 +14,7 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes import ends_by_result
+from lanes import ends_by_result, reads_whole
 from lanes.kind import Broken, CantCheck, Held, Kept, LaneType, Marking, TypeInfo, Verdict
 
 
@@ -150,7 +150,7 @@ def needs_items(lanes: Sequence[Lane], step: int) -> bool:
     Refuses: nothing.
     Carries: S6 `opt a Lane of keeps_items lies on Step n`.
     """
-    raise NotImplementedError("lanes.needs_items")
+    return any(lane.type == "keeps_items" and lane.step == step for lane in lanes)
 
 
 def check_mark(lanes: Sequence[Lane], marking: Marking, held: Held) -> Verdict:
@@ -167,7 +167,12 @@ def check_mark(lanes: Sequence[Lane], marking: Marking, held: Held) -> Verdict:
     Step began`, and its `else a path a Lane of reads_whole names wasn't read whole, or an Item
     isn't marked`.
     """
-    raise NotImplementedError("lanes.check_mark")
+    types = _types()
+    for lane in (lane for lane in lanes if lane.step == marking.step):
+        verdict = types[lane.type].check_mark(lane, marking, held)
+        if verdict != Kept():
+            return verdict
+    return Kept()
 
 
 def read_kept(lanes: Sequence[Lane], call: Call, held: Held) -> str | None:
@@ -182,7 +187,8 @@ def read_kept(lanes: Sequence[Lane], call: Call, held: Held) -> str | None:
     Refuses: nothing.
     Carries: S6 `opt a Read of a path that a Lane of reads_whole names`.
     """
-    raise NotImplementedError("lanes.read_kept")
+    named = (reads_whole.named(lane, call, held) for lane in lanes if lane.type == "reads_whole")
+    return next((path for path in named if path), None)
 
 
 def check_end(lanes: Sequence[Lane], end: EndAsked, held: Held) -> Verdict:

@@ -18,6 +18,10 @@ LABELS = {
     "write_only": "write",
     "ends_checked": "check",
     "ends_by_result": "end",
+    "reads_whole": "read",
+    "reads_none": "never",
+    "keeps_items": "items",
+    "keeps_steps": "steps",
 }
 
 

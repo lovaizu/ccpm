@@ -14,13 +14,7 @@ from typing import Any
 import pytest
 import walkthrough as w
 
-pytestmark = pytest.mark.xfail(
-    strict=True,
-    reason="the parts that hold Marks and Reads, and lay.py's print and write of their lane types,"
-    " have empty bodies",
-)
-
-CHANGELOG = "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n"
+CHANGELOG = "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n- Reads standard input.\n"
 
 
 def keeps_steps(b: w.Bench, role: str = "writer") -> str:
@@ -114,7 +108,9 @@ def test_a_proposal_of_the_lane_types_of_steps_shows_each_steps_sentence(tmp_pat
 def test_a_lane_that_only_keeps_steps_bounds_goes_back_to_up(
     tmp_path: Any, kind: str, named: str
 ) -> None:
-    """Given: changelog whose writer keeps its Steps, with an adapter of a step's items.
+    """Given: changelog whose writer keeps its Steps, with an adapter of a step's items, or with
+    none for keeps_items with no adapter of a step's items, as an adapter in hooks/adapters/ that
+    the Proposal doesn't name is the user's to fix.
     When: up hands lay.py print the Proposal with writer's Lane of reads_whole or keeps_items and
     no Lane of keeps_steps, or keeps_items with no adapter of a step's items.
     Then: lay.py print exits 1, naming writer and what it lacks, and shows no ID, as only the
@@ -125,6 +121,7 @@ def test_a_lane_that_only_keeps_steps_bounds_goes_back_to_up(
         proposal["lanes"] = [x for x in proposal["lanes"] if x["type"] != "keeps_steps"]
     else:
         proposal["adapters"] = {}
+        os.remove(os.path.join(b.changelog, w.ITEMS))
     c = w.converse(b)
     assert not c.type("/lane:up changelog").blocked
     printed = w.print_proposal(b, c, proposal)

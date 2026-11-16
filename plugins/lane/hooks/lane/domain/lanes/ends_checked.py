@@ -78,7 +78,7 @@ class EndsChecked:
 
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
         """
-        raise NotImplementedError("ends_checked.check_mark")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept where `command` gives 0, run by the shell in the hook event's cwd with each run

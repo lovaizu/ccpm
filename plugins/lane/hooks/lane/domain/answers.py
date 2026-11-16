@@ -116,3 +116,31 @@ def cant_check(plugin: str, cant: CantCheck) -> str:
     it`, S7 `G-->>U: stops the command, with why and who must fix it`.
     """
     return f"{plugin}: Lane can't check this: {cant.why}. {cant.who}."
+
+
+def no_steps(plugin: str, named: str, role: str) -> str:
+    """A run of step.py or item.py that marks nothing, as it names another role than the one that
+    runs it, or a role whose Steps no Lane of keeps_steps holds.
+
+    Gives: such as ``changelog: No step of reviewer is due here: writer marks only its own steps,
+    and only where a Lane of keeps_steps lies on its last step.``
+
+    Carries: S6 `G-->>SA: stops it, with the Step due`, where no Step is due.
+    """
+    return (
+        f"{plugin}: No step of {named} is due here: {role} marks only its own steps, and only where"
+        " a Lane of keeps_steps lies on its last step."
+    )
+
+
+def item_refused(plugin: str, item: str, step: int | None, left: Sequence[str]) -> str:
+    """A run of item.py whose ID isn't one of the Items of the Step due, with the Items left.
+
+    Gives: such as ``changelog: `undated` is no item of step 3. The items left: `dated`,
+    `linked`.``, or, where no Step is due, that none is.
+
+    Carries: S6 `G-->>SA: stops it, with the Items left`.
+    """
+    named = ", ".join(f"`{each}`" for each in left) or "none"
+    at = f"step {step}" if step else "a step due, as none is"
+    return f"{plugin}: `{item}` is no item of {at}. The items left: {named}."

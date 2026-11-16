@@ -11,8 +11,6 @@ import lane_data as d
 import pytest
 from marks import items_left, may_mark, since_step_began, step_due
 
-pytestmark = pytest.mark.xfail(strict=True, reason="marks.py's bodies are empty")
-
 LAST = 4
 
 

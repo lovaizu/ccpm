@@ -15,7 +15,7 @@ from events import Event
 from form import LanesFile, Move
 from manifest import plugin_name
 from runs import Conversation, Run, Start
-from script_calls import printed, result_args, write_call
+from script_calls import item_args, printed, result_args, step_args, write_call
 
 # A subagent's end as it reaches the main conversation, by its agent_id.
 NOTIFICATION = re.compile(r"<task-notification>\s*<task-id>([^<]+)</task-id>")
@@ -285,7 +285,10 @@ def _called(
     resumed = _resumed(event, tool_input, conversation)
     if resumed is not None:
         return resumed
-    return ToolCall(Call(str(event.tool_name), tool_input, event.cwd, _top(event.cwd)))
+    marked = _marked(event, tool_input, root, StepAsked, ItemAsked)
+    if marked is not None:
+        return marked
+    return ToolCall(Call(str(event.tool_name), tool_input, event.cwd, top(event.cwd)))
 
 
 def _unnamed(tool_input: Mapping[str, Any], conversation: Conversation, root: str) -> bool:
@@ -313,19 +316,55 @@ def _resumed(
 
 
 def _posted(event: Event, tool_input: Mapping[str, Any], root: str) -> What | None:
-    """What the PostToolUse of a call tells: a subagent started, a Result given, or a Proposal
-    shown."""
+    """What the PostToolUse of a call tells: a subagent started, a Read with the lines it read, a
+    Result given, a Step's or an Item's Mark given, or a Proposal shown."""
     response = event.tool_response if isinstance(event.tool_response, dict) else {}
     if event.tool_name == "Agent" and response.get("agentId"):
         return AgentPosted(str(event.tool_use_id), str(response["agentId"]))
+    if event.tool_name == "Read":
+        call = Call("Read", tool_input, event.cwd, top(event.cwd))
+        return ReadPosted(call, *_lines_read(response))
     command = tool_input.get("command")
     if event.tool_name != "Bash" or not isinstance(command, str):
         return None
     given = result_args(command, root)
     if given:
         return ResultPosted(*given)
+    marked = _marked(event, tool_input, root, StepPosted, ItemPosted)
+    if marked is not None:
+        return marked
     shown = printed(command, str(response.get("stdout", "")))
     return PrintPosted(*shown) if shown else None
+
+
+def _marked(
+    event: Event,
+    tool_input: Mapping[str, Any],
+    root: str,
+    step: type[StepAsked | StepPosted],
+    item: type[ItemAsked | ItemPosted],
+) -> What | None:
+    """A run of step.py or item.py, as `step` or `item` holds it, by the role and the Step or Item
+    that its Bash command names; None for any other call."""
+    command = tool_input.get("command")
+    if event.tool_name != "Bash" or not isinstance(command, str):
+        return None
+    stepped = step_args(command, root)
+    if stepped:
+        return step(*stepped)
+    itemed = item_args(command, root)
+    return item(*itemed) if itemed else None
+
+
+def _lines_read(response: Mapping[str, Any]) -> tuple[int, int]:
+    """The first and the last line that a Read read, from `tool_response.file`'s `startLine` and
+    `startLine` plus `numLines` less one; none, as 1 to 0, where it gives no whole numbers, such as
+    for a Read of an image."""
+    file = response.get("file")
+    held = file if isinstance(file, dict) else {}
+    first, count = held.get("startLine"), held.get("numLines")
+    whole = isinstance(first, int) and isinstance(count, int)
+    return (first, first + count - 1) if whole else (1, 0)
 
 
 def _laid_id(what: What | None) -> str | None:
@@ -344,8 +383,16 @@ def _notified(event: Event) -> str | None:
     return found[1] if found else None
 
 
-def _top(cwd: str) -> str:
-    """The top of the worktree that the folder lies in, or the folder where no .git lies above."""
+def top(cwd: str) -> str:
+    """The top of the worktree that a folder lies in.
+
+    Takes: a folder, such as a hook event's cwd.
+    Gives: the nearest folder at or above it that holds .git, or the folder itself where none does.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: the Deployment's strategy that each lane's path is read from the top of its worktree,
+    for a Call's `top` and for the files that a Lane of reads_whole reads at a Mark.
+    """
     folder = cwd
     while not os.path.exists(os.path.join(folder, ".git")):
         if os.path.dirname(folder) == folder:

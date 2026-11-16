@@ -15,9 +15,6 @@ from place import ItemAsked, ItemPosted, ReadPosted, StepAsked, StepPosted, Tool
 from run_record import Called, Marked, Read, Started, Tied, add, lines, record_path
 from runs import stand
 
-LATER = pytest.mark.xfail(
-    strict=True, reason="place.py's and runs.py's reading of Marks and Reads has empty bodies"
-)
 WRITER = d.start("writer", agent_id="a01")
 RUN = d.run(starts=(WRITER,), due=())
 STEP = f"python3 {d.ROOT}/hooks/lane/step.py"
@@ -34,7 +31,6 @@ def bash(command: str, **fields: Any) -> dict[str, Any]:
     return dict({"tool_name": "Bash", "tool_input": {"command": command}}, **fields)
 
 
-@LATER
 @pytest.mark.supports("test_a_step_marked_out_of_order_is_stopped_with_the_step_due")
 @pytest.mark.parametrize(
     "command, what",
@@ -55,7 +51,6 @@ def test_a_subagents_run_of_lanes_scripts_is_a_mark_asked_on_its_start(
     assert (got.what, got.runs, got.start) == (what, (RUN,), WRITER)
 
 
-@LATER
 @pytest.mark.supports("test_a_step_marked_in_its_turn_is_added_for_the_subagents_start")
 @pytest.mark.parametrize(
     "command, what",
@@ -74,7 +69,6 @@ def test_the_post_tool_use_of_lanes_scripts_is_a_mark_posted(command: str, what:
     assert (got.what, got.start, got.agent_id) == (what, WRITER, "a01")
 
 
-@LATER
 @pytest.mark.supports("test_the_skills_mark_lies_on_its_run_with_no_agent_id")
 def test_the_main_conversations_run_of_step_py_lies_on_its_run() -> None:
     """Given: write's Run.
@@ -99,7 +93,6 @@ def read_response(first: int, count: int, total: int) -> dict[str, Any]:
     return {"type": "text", "file": dict(file, startLine=first, totalLines=total)}
 
 
-@LATER
 @pytest.mark.supports("test_a_file_read_in_part_leaves_its_step_unmarked")
 @pytest.mark.parametrize(
     "response, lines_read",
@@ -160,7 +153,6 @@ STARTED = Started("r1", "writer", "Carry out your steps", {}, "toolu_w", False)
 TIED = Tied("r1", "toolu_w", "a01")
 
 
-@LATER
 @pytest.mark.supports("test_a_step_marked_in_its_turn_is_added_for_the_subagents_start")
 def test_a_subagents_marks_and_reads_lie_on_its_start_in_the_order_added() -> None:
     """Given: the lines of write's Run with writer's Start tied to a01.
@@ -176,7 +168,6 @@ def test_a_subagents_marks_and_reads_lie_on_its_start_in_the_order_added() -> No
     assert (start.reports, run.reports) == (reports, ())
 
 
-@LATER
 @pytest.mark.supports("test_each_subagent_of_a_role_is_held_to_its_own_marks")
 def test_each_start_of_a_role_holds_only_its_own_marks() -> None:
     """Given: the lines of write's Run with two Starts of writer, tied to a01 and a02.
@@ -189,7 +180,6 @@ def test_each_start_of_a_role_holds_only_its_own_marks() -> None:
     assert [s.reports for s in run.starts] == [(), (mark,)]
 
 
-@LATER
 @pytest.mark.supports("test_the_skills_mark_lies_on_its_run_with_no_agent_id")
 def test_the_skills_marks_and_reads_lie_on_its_run() -> None:
     """Given: the lines of write's Run with writer's Start tied to a01.

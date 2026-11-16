@@ -113,7 +113,10 @@ def bench(tmp: str, files: dict[str, str] | None = None) -> Bench:
     git(repo, "init", "-q", "-b", "main")
     git(repo, "config", "user.email", "tally@example.com")
     git(repo, "config", "user.name", "tally")
-    write_files(repo, {"CHANGELOG.md": "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n"})
+    write_files(
+        repo,
+        {"CHANGELOG.md": "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n- Reads standard input.\n"},
+    )
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "Release 0.1.0")
     write_files(repo, {"tally.py": "print(sum(1 for _ in open(0)))\n"})

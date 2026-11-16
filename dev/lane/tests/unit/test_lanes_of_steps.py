@@ -35,10 +35,6 @@ from lanes import (
 from lanes.kind import Broken, CantCheck, Held, Kept, Marking
 from place import EndAsked, StartCall
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="the lane types that hold a role's Steps have empty bodies"
-)
-
 TYPES = {
     "reads_whole": reads_whole.TYPE,
     "reads_none": reads_none.TYPE,
@@ -72,7 +68,10 @@ def held(
     return Held(d.run(starts=(start,), due=()), start, d.ROOT, d.ROUTES_OF_WRITE, cwd)
 
 
-def worktree(tmp_path: Any, changelog: str = "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n") -> str:
+def worktree(
+    tmp_path: Any,
+    changelog: str = "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n- Reads standard input.\n",
+) -> str:
     """A worktree whose top holds .git and CHANGELOG.md, with the text given; gives its top."""
     top = str(tmp_path)
     os.makedirs(os.path.join(top, ".git"))

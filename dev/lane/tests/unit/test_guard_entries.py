@@ -1,8 +1,8 @@
 """The unit cases of guard.py and of the entries that Claude Code and up run, hook.py, result.py,
-and lay.py's command line, through `guard.handle`, `hook.main`, `result.main`, `step.main`,
-`item.main`, and `command.main`: an event in and outside a Run, a lanes.json the guard can't
-read, each exit code that result.py, step.py, item.py, and lay.py give, and each call that they
-refuse."""
+and lay.py's command line, through `guard.handle`, `hook.main`, `result.main`, step.py and item.py
+as the shell runs them, and `command.main`: an event in and outside a Run, a lanes.json the guard
+can't read, each exit code that result.py, step.py, item.py, and lay.py give, and each call that
+they refuse."""
 
 from __future__ import annotations
 
@@ -618,10 +618,6 @@ def test_lay_refuses_a_command_line_it_cant_read(argv: list[str]) -> None:
     assert code == 2 and "lay.py" in err
 
 
-# step.py and item.py, whose bodies are empty.
-LATER = pytest.mark.xfail(strict=True, reason="step.py's and item.py's bodies are empty")
-
-
 def run_script(
     name: str, argv: list[str], monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> tuple[int, str]:
@@ -636,7 +632,6 @@ def run_script(
     return int(exited.value.code or 0), said.out + said.err
 
 
-@LATER
 @pytest.mark.supports("test_a_step_marked_in_its_turn_is_added_for_the_subagents_start")
 def test_step_py_exits_0_with_no_words(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
@@ -647,7 +642,6 @@ def test_step_py_exits_0_with_no_words(
     assert run_script("step", ["writer", "1"], monkeypatch, capsys) == (0, "")
 
 
-@LATER
 @pytest.mark.supports("test_an_item_of_the_step_due_is_marked")
 def test_item_py_exits_0_with_no_words(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]

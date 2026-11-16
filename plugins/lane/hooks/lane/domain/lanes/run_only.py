@@ -82,7 +82,7 @@ class RunOnly:
 
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
         """
-        raise NotImplementedError("run_only.check_mark")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.

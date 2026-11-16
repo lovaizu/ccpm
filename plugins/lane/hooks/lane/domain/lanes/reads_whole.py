@@ -3,13 +3,16 @@ since the Step began, each path read from the top of its worktree with the run v
 
 from __future__ import annotations
 
+import os
 from collections.abc import Sequence
 
 from form import Lane, Route
-from place import Call, EndAsked, StartCall
+from place import Call, EndAsked, StartCall, top
+from run_record import Read, Report
 from runs import Due
 
-from lanes.kind import Held, Marking, TypeInfo, Verdict
+from lanes import paths
+from lanes.kind import Broken, CantCheck, Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
@@ -45,7 +48,7 @@ class ReadsWhole:
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError("reads_whole.faults")
+        return paths.fault(lane)
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on its Step, naming each of `paths` to read whole by
@@ -54,21 +57,22 @@ class ReadsWhole:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError("reads_whole.sentence")
+        named = " and ".join(f"`{path}`" for path in lane.args["paths"])
+        return f"Read {named} whole."
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: the Lane judges no Call, and holds the Step's Mark.
 
         Carries: the Call checks of S2, S5, and S6.
         """
-        raise NotImplementedError("reads_whole.allows")
+        return None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError("reads_whole.check_start")
+        return Kept()
 
     def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
         """Kept where, for each of `paths` with the Start's run values filled in, the Reads since
@@ -80,17 +84,48 @@ class ReadsWhole:
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since
         the Step began`, and `else a path a Lane of reads_whole names wasn't read whole`.
         """
-        raise NotImplementedError("reads_whole.check_mark")
+        values = held.start.values if held.start else {}
+        unread = []
+        for path in paths.filled(lane, values):
+            try:
+                with open(os.path.join(top(held.cwd), path), encoding="utf-8") as f:
+                    count = len(f.read().split("\n"))
+            except OSError as e:
+                why = f"`{path}`, which a Lane of reads_whole names, can't be read: {e.strerror}"
+                return CantCheck(why, f"The developer of the plugin must fix {lane.file}")
+            unread += [f"`{path}`, {span}" for span in _unread(path, count, marking.since)]
+        if unread:
+            said, left = self.sentence(lane, held.routes), ", ".join(unread)
+            return Broken(lane, said, f"Not read by Read since the step began: {left}.")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end, as keeps_steps holds the end until the Step is marked.
 
         Carries: S6 `G->>T: checks the end by each Lane of the role`.
         """
-        raise NotImplementedError("reads_whole.check_end")
+        return Kept()
 
 
 TYPE = ReadsWhole()
+
+
+def _unread(path: str, count: int, since: Sequence[Report]) -> list[str]:
+    """Each run of the file's lines, of the count it holds, that no Read of the path since the
+    Step began read, such as `lines 4 to 7` or `line 1`."""
+    read = {
+        n
+        for r in since
+        if isinstance(r, Read) and r.path == path
+        for n in range(r.first, r.last + 1)
+    }
+    runs: list[list[int]] = []
+    for n in (n for n in range(1, count + 1) if n not in read):
+        if runs and runs[-1][-1] == n - 1:
+            runs[-1].append(n)
+        else:
+            runs.append([n])
+    return [f"line {r[0]}" if len(r) == 1 else f"lines {r[0]} to {r[-1]}" for r in runs]
 
 
 def named(lane: Lane, call: Call, held: Held) -> str | None:
@@ -104,4 +139,8 @@ def named(lane: Lane, call: Call, held: Held) -> str | None:
     Carries: S6 `opt a Read of a path that a Lane of reads_whole names`, through
     `lanes.read_kept`.
     """
-    raise NotImplementedError("reads_whole.named")
+    if call.tool != "Read":
+        return None
+    path = paths.named(call, str(call.input.get("file_path")))
+    values = held.start.values if held.start else {}
+    return path if path in paths.filled(lane, values) else None

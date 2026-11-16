@@ -18,6 +18,8 @@ ID_LINE = re.compile(r"^ID: (\S+)$", re.MULTILINE)
 # What in a command makes the shell run more than one program, or read another file than the words
 # name, so that the command is no single run of a script.
 MORE = re.compile(r"[|&;<>()$`\\\n]")
+# A Step's number as a run of step.py gives it: a whole number of 1 or more.
+STEP = re.compile(r"[1-9][0-9]*")
 
 
 def id_line(proposal_id: str) -> str:
@@ -109,13 +111,8 @@ def result_args(command: str, root: str) -> tuple[str, str] | None:
     Carries: S6 `SA->>R: result.py <role> <result>` as the guard lets it through, its `CC->>G: the
     PostToolUse, with its agent_id`, and S2 and S5's `CC->>G: the PostToolUse, with no agent_id`.
     """
-    if MORE.search(command.replace(ROOT, "")):
-        return None
-    words = _words(command.replace(ROOT, root))
-    script = os.path.join(root, "hooks", "lane", "result.py")
-    if len(words) == 4 and words[0] == "python3" and os.path.normpath(words[1]) == script:
-        return words[2], words[3]
-    return None
+    given = _script_args(command, root, "result.py")
+    return (given[0], given[1]) if given else None
 
 
 def step_command(role: str) -> str:
@@ -128,7 +125,7 @@ def step_command(role: str) -> str:
     Refuses: nothing.
     Carries: S1 `L->>T: checks each Lane, and makes its sentence`, for a Lane of keeps_steps.
     """
-    raise NotImplementedError("script_calls.step_command")
+    return f"python3 {ROOT}/hooks/lane/step.py {role} <n>"
 
 
 def step_args(command: str, root: str) -> tuple[str, int] | None:
@@ -142,7 +139,10 @@ def step_args(command: str, root: str) -> tuple[str, int] | None:
     Carries: S6 `alt a run of step.py <role> <n>`, and its `CC->>G: the PostToolUse, with its
     agent_id`; S5's Note that the skill's runs of step.py go as S6 draws.
     """
-    raise NotImplementedError("script_calls.step_args")
+    given = _script_args(command, root, "step.py")
+    if given and STEP.fullmatch(given[1]):
+        return given[0], int(given[1])
+    return None
 
 
 def item_command(role: str) -> str:
@@ -156,7 +156,7 @@ def item_command(role: str) -> str:
     Refuses: nothing.
     Carries: S1 `L->>T: checks each Lane, and makes its sentence`, for a Lane of keeps_items.
     """
-    raise NotImplementedError("script_calls.item_command")
+    return f"python3 {ROOT}/hooks/lane/item.py {role} <id>"
 
 
 def item_args(command: str, root: str) -> tuple[str, str] | None:
@@ -170,7 +170,21 @@ def item_args(command: str, root: str) -> tuple[str, str] | None:
     Carries: S6 `else a run of item.py <role> <id>`, and its `CC->>G: the PostToolUse, with its
     agent_id`; S5's Note that the skill's runs of item.py go as S6 draws.
     """
-    raise NotImplementedError("script_calls.item_args")
+    given = _script_args(command, root, "item.py")
+    return (given[0], given[1]) if given else None
+
+
+def _script_args(command: str, root: str, script: str) -> list[str] | None:
+    """The two arguments of one run of the plugin's script of Lane's, by `python3` and the script's
+    path, which `${CLAUDE_PLUGIN_ROOT}` may name; None where the command runs anything else beside
+    it, or gives the script other than two arguments."""
+    if MORE.search(command.replace(ROOT, "")):
+        return None
+    words = _words(command.replace(ROOT, root))
+    path = os.path.join(root, "hooks", "lane", script)
+    if len(words) == 4 and words[0] == "python3" and os.path.normpath(words[1]) == path:
+        return words[2:]
+    return None
 
 
 def _words(command: str) -> list[str]:

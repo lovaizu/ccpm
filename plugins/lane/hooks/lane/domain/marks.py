@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from run_record import Report
+from run_record import Marked, Report
 
 
 def step_due(reports: Sequence[Report], last_step: int) -> int | None:
@@ -22,7 +22,9 @@ def step_due(reports: Sequence[Report], last_step: int) -> int | None:
     asks for the Items of the Step due, with the role and the Start's run values`, and `else a
     Lane of keeps_steps finds a Step unmarked in the latest pass`.
     """
-    raise NotImplementedError("marks.step_due")
+    steps = [r.step for r in reports if isinstance(r, Marked) and r.item is None]
+    done = steps[-1] if steps else 0
+    return done + 1 if done < last_step else None
 
 
 def may_mark(reports: Sequence[Report], step: int, last_step: int) -> bool:
@@ -36,7 +38,7 @@ def may_mark(reports: Sequence[Report], step: int, last_step: int) -> bool:
     Refuses: nothing.
     Carries: S6 `alt Step n isn't due in the latest pass of its Start` and its `else`.
     """
-    raise NotImplementedError("marks.may_mark")
+    return step == 1 or step == step_due(reports, last_step)
 
 
 def since_step_began(reports: Sequence[Report]) -> tuple[Report, ...]:
@@ -50,7 +52,8 @@ def since_step_began(reports: Sequence[Report]) -> tuple[Report, ...]:
     Carries: S6 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since the
     Step began`.
     """
-    raise NotImplementedError("marks.since_step_began")
+    ends = [i for i, r in enumerate(reports) if isinstance(r, Marked) and r.item is None]
+    return tuple(reports[ends[-1] + 1 :] if ends else reports)
 
 
 def items_left(reports: Sequence[Report], items: Sequence[str]) -> tuple[str, ...]:
@@ -65,4 +68,5 @@ def items_left(reports: Sequence[Report], items: Sequence[str]) -> tuple[str, ..
     Carries: S6 `else a path a Lane of reads_whole names wasn't read whole, or an Item isn't
     marked`, and `G-->>SA: stops it, with the Items left`.
     """
-    raise NotImplementedError("marks.items_left")
+    marked = {r.item for r in since_step_began(reports) if isinstance(r, Marked)}
+    return tuple(item for item in items if item not in marked)

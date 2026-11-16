@@ -69,7 +69,7 @@ def check(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> Checked | F
             faults += [f"{lane.role}'s Lane on step {lane.step}: {fault}" for fault in e.faults]
             continue
         sentences.setdefault((lane.file, lane.step), []).append(said)
-    faults += _unended(proposal)
+    faults += _unended(proposal) + _unbounded(proposal)
     plugin_faults = _files(plugin, proposal, steps)
     if faults or plugin_faults:
         return Faults(tuple(faults), plugin_faults)
@@ -92,6 +92,26 @@ def _unended(proposal: Proposal) -> list[str]:
         " end only by the Result it gives"
         for role in roles
         if role not in ended
+    ]
+
+
+def _unbounded(proposal: Proposal) -> list[str]:
+    """A fault for each role with a Lane of `reads_whole` or `keeps_items` and no Lane of
+    `keeps_steps`, as only its Marks bound a Step, and for each Lane of `keeps_items` in a
+    Proposal that names no adapter of a step's items, as only the adapter gives the Items."""
+    kept = {lane.role for lane in proposal.lanes if lane.type == "keeps_steps"}
+    bounded = [lane for lane in proposal.lanes if lane.type in ("reads_whole", "keeps_items")]
+    faults = [
+        f"{lane.role}'s Lane of {lane.type} on step {lane.step} needs a Lane of keeps_steps on"
+        f" {lane.role}'s last Step, as only the Marks of its Steps bound a Step"
+        for lane in bounded
+        if lane.role not in kept
+    ]
+    return faults + [
+        f"{lane.role}'s Lane of keeps_items on step {lane.step} needs the adapter of a step's"
+        " items, in the Proposal's adapters as `items`, as only it gives the Items"
+        for lane in bounded
+        if lane.type == "keeps_items" and proposal.adapters.items is None
     ]
 
 
@@ -127,13 +147,14 @@ def _model_called(plugin: str, proposal: Proposal) -> list[str]:
 def _unnamed_adapters(plugin: str, proposal: Proposal) -> list[str]:
     """A fault for each file of hooks/adapters/ that the Proposal's adapters don't name; a folder
     there, such as __pycache__/, is no adapter."""
-    named = {proposal.adapters.text, proposal.adapters.records}
+    named = {proposal.adapters.text, proposal.adapters.records, proposal.adapters.items}
     folder = os.path.join(plugin, "hooks", "adapters")
     listed = sorted(os.listdir(folder)) if os.path.isdir(folder) else []
     return [
-        f"hooks/adapters/{name}: the Proposal names it as neither the adapter of a start's text nor"
-        " that of the kept results; move it out of hooks/adapters/, which holds only those, or make"
-        " it one of them as Lane's page of steps, routes, and adapters says"
+        f"hooks/adapters/{name}: the Proposal names it as none of the adapter of a start's text,"
+        " that of the kept results, and that of a step's items; move it out of hooks/adapters/,"
+        " which holds only those, or make it one of them as Lane's page of steps, routes, and"
+        " adapters says"
         for name in listed
         if os.path.isfile(os.path.join(folder, name)) and f"hooks/adapters/{name}" not in named
     ]

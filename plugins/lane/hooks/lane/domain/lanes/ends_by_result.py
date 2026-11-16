@@ -95,7 +95,7 @@ class EndsByResult:
 
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
         """
-        raise NotImplementedError("ends_by_result.check_mark")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Broken, with the Lane's sentence and `ALONE`, where the subagent's Start holds no

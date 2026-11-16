@@ -54,4 +54,4 @@ class UpOnly:
 
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
         """
-        raise NotImplementedError("up_only.check_mark")
+        return Kept()

@@ -7,25 +7,50 @@ from __future__ import annotations
 
 import os
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 
-from adapters import AdapterFailed, NoWork, Running, kept_results, start_text
-from answers import cant_check, due, ended_unheld, gave, picked_up, stopped, text_failed
+from adapters import AdapterFailed, NoWork, Running, kept_results, start_text, step_items
+from answers import (
+    cant_check,
+    due,
+    ended_unheld,
+    gave,
+    item_refused,
+    no_steps,
+    picked_up,
+    stopped,
+    text_failed,
+)
 from events import Answer, Event
 from form import Lane, LanesFile, Move, OutOfForm, read_lanes
-from lanes import check_call, check_end, check_start
-from lanes.kind import Broken, CantCheck, Held, Kept, Verdict
+from lanes import (
+    check_call,
+    check_end,
+    check_mark,
+    check_start,
+    keeps_steps,
+    needs_items,
+    read_kept,
+)
+from lanes.kind import Broken, CantCheck, Held, Kept, Marking, Verdict
 from manifest import plugin_name
+from marks import items_left, may_mark, since_step_began, step_due
 from place import (
     AgentPosted,
     EndAsked,
+    ItemAsked,
+    ItemPosted,
     Notification,
     Placed,
     PrintPosted,
     Prompt,
+    ReadPosted,
     ResultPosted,
     SkillCall,
     StartCall,
+    StepAsked,
+    StepPosted,
     ToolCall,
     place,
 )
@@ -34,7 +59,10 @@ from run_record import (
     Ended,
     Gave,
     Line,
+    Marked,
     Prompted,
+    Read,
+    Report,
     Shown,
     Started,
     SteppedAside,
@@ -156,17 +184,18 @@ def _cant(event: Event, name: str, cant: CantCheck) -> Answer:
 def _answered(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """The answer to an event within a Run, by what the event is."""
     what = placed.what
-    if isinstance(what, Notification):
-        return _notified(plugin, placed, cwd)
-    if isinstance(what, StartCall):
-        return _started(plugin, placed, what, cwd)
     if isinstance(what, EndAsked) and placed.start is None:
         return _turn_ended(plugin, placed, cwd)
     if isinstance(what, (ToolCall, EndAsked)):
         return _checked(plugin, placed, cwd)
-    if isinstance(what, Prompt):
-        return _prompted(plugin, placed, cwd)
-    return _posted(plugin, placed, cwd)
+    handlers: dict[type, Callable[[Plugin, Placed, str], Answer]] = {
+        Notification: _notified,
+        StartCall: _started,
+        Prompt: _prompted,
+        StepAsked: _step_asked,
+        ItemAsked: _item_asked,
+    }
+    return handlers.get(type(what), _posted)(plugin, placed, cwd)
 
 
 @dataclass(frozen=True)
@@ -246,30 +275,127 @@ def _now(plugin: Plugin, run_id: str) -> Run:
     return run
 
 
-def _record(plugin: Plugin, placed: Placed) -> None:
-    """Adds the line that a prompt, a start's tie, a Result, or a Proposal shown makes."""
-    what = placed.what
+def _record(plugin: Plugin, placed: Placed, cwd: str) -> None:
+    """Adds, for each Run that holds the event, the line that `_line` gives."""
     for run in placed.runs:
-        line: Line | None = None
-        if isinstance(what, Prompt):
-            line = Prompted(run.id, what.text)
-        elif isinstance(what, AgentPosted):
-            if any(s.tool_use_id == what.tool_use_id for s in run.starts):
-                line = Tied(run.id, what.tool_use_id, what.agent_id)
-        elif isinstance(what, ResultPosted):
-            if placed.start is not None or what.role == run.skill:
-                line = Gave(run.id, what.role, what.result, placed.agent_id)
-        elif isinstance(what, PrintPosted):
-            line = Shown(run.id, what.proposal_id, what.words)
+        line = _line(plugin, placed, run, cwd)
         if line is not None:
             add(plugin.record, line)
+
+
+def _line(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Line | None:
+    """The line of the Run that a prompt, a start's tie, a Result, a Proposal shown, a Mark, or a
+    Read makes; none for a tie of another Run's Start, or another role's Result."""
+    what = placed.what
+    if isinstance(what, (StepPosted, ItemPosted, ReadPosted)):
+        return _reported(plugin, placed, run, cwd)
+    if isinstance(what, Prompt):
+        return Prompted(run.id, what.text)
+    if isinstance(what, AgentPosted):
+        tied = any(s.tool_use_id == what.tool_use_id for s in run.starts)
+        return Tied(run.id, what.tool_use_id, what.agent_id) if tied else None
+    if isinstance(what, ResultPosted):
+        ours = placed.start is not None or what.role == run.skill
+        return Gave(run.id, what.role, what.result, placed.agent_id) if ours else None
+    return Shown(run.id, what.proposal_id, what.words) if isinstance(what, PrintPosted) else None
+
+
+def _reported(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Line | None:
+    """The Mark or the Read that the PostToolUse of a run of step.py or item.py, or of a Read,
+    adds: a Step's Mark of the role that ran it; an Item's, with the Step due as it's marked; a
+    Read of a path that a Lane of reads_whole names; none for another role's or path's."""
+    what = placed.what
+    role = _role(placed, run)
+    if isinstance(what, ReadPosted):
+        path = read_kept(_lanes(plugin, placed, run), what.call, _held(plugin, placed, run, cwd))
+        return Read(run.id, role, path, what.first, what.last, placed.agent_id) if path else None
+    assert isinstance(what, (StepPosted, ItemPosted))
+    if isinstance(what, StepPosted):
+        return Marked(run.id, role, what.step, None, placed.agent_id) if what.role == role else None
+    lane = _kept_steps(plugin, placed, run, what.role)
+    step = step_due(_reports(placed, run), lane.step) if lane else None
+    return Marked(run.id, role, step, what.item, placed.agent_id) if step else None
+
+
+def _step_asked(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
+    """A run of step.py: stopped with the Step due where no Step of the role it names is due or
+    Step n isn't; else checked by the Lanes on Step n, with the Step's Items where a Lane of
+    keeps_items lies on it."""
+    what = placed.what
+    assert isinstance(what, StepAsked)
+    run = _marking_run(placed, what.role)
+    held = _held(plugin, placed, run, cwd)
+    role = _role(placed, run)
+    lane = _kept_steps(plugin, placed, run, what.role)
+    if lane is None:
+        return Answer(True, no_steps(plugin.name, what.role, role))
+    reports = _reports(placed, run)
+    if not may_mark(reports, what.step, lane.step):
+        return _stop(plugin.name, keeps_steps.broken(lane, held, step_due(reports, lane.step)))
+    lanes = _lanes(plugin, placed, run)
+    items = _items(plugin, role, what.step, held) if needs_items(lanes, what.step) else None
+    verdict = check_mark(lanes, Marking(what.step, since_step_began(reports), items), held)
+    return PASS if verdict == Kept() else _stop(plugin.name, verdict)
+
+
+def _item_asked(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
+    """A run of item.py: let through where the ID is one of the Items of the Step due; else
+    stopped with the Items left."""
+    what = placed.what
+    assert isinstance(what, ItemAsked)
+    run = _marking_run(placed, what.role)
+    held = _held(plugin, placed, run, cwd)
+    role = _role(placed, run)
+    lane = _kept_steps(plugin, placed, run, what.role)
+    reports = _reports(placed, run)
+    step = step_due(reports, lane.step) if lane else None
+    items = _items(plugin, role, step, held) if step else ()
+    if what.item in items:
+        return PASS
+    return Answer(True, item_refused(plugin.name, what.item, step, items_left(reports, items)))
+
+
+def _marking_run(placed: Placed, named: str) -> Run:
+    """The Run that a run of step.py or item.py lies on: the subagent's; for the main conversation,
+    the Run of the skill it names, or else the first, whose skill then isn't the role named."""
+    return next((r for r in placed.runs if placed.start or r.skill == named), placed.runs[0])
+
+
+def _kept_steps(plugin: Plugin, placed: Placed, run: Run, named: str) -> Lane | None:
+    """The Lane of keeps_steps on the last Step of the role that runs Lane's script, where the
+    script names that role; None where it names another, or the role keeps no Steps."""
+    role = _role(placed, run)
+    last = keeps_steps.last_step(plugin.lanes.proposal.lanes, role) if named == role else None
+    kept = [x for x in _lanes(plugin, placed, run) if x.type == "keeps_steps" and x.step == last]
+    return kept[0] if kept else None
+
+
+def _role(placed: Placed, run: Run) -> str:
+    """The role that makes the event: its Start's, or the Run's skill for the main conversation."""
+    return placed.start.role if placed.start else run.skill
+
+
+def _reports(placed: Placed, run: Run) -> tuple[Report, ...]:
+    """The Marks and Reads of the role that makes the event: its Start's, or the skill's Run's."""
+    return placed.start.reports if placed.start else run.reports
+
+
+def _items(plugin: Plugin, role: str, step: int, held: Held) -> tuple[str, ...]:
+    """The Items of the role's Step that the adapter of a step's items gives, with the Start's run
+    values, run in the hook event's cwd; none where lanes.json names no such adapter, as the Step
+    then keeps no checklist. Raises AdapterFailed where the adapter fails."""
+    adapter = plugin.lanes.proposal.adapters.items
+    if adapter is None:
+        return ()
+    values = held.start.values if held.start else {}
+    return step_items(os.path.join(plugin.root, adapter), role, step, values, held.cwd)
 
 
 def _posted(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """The PostToolUse of a call: its line added; and, for the main conversation's, each start due
     with its text once the adapter that failed at the skill's call answers, and the moves due after
     a Start tied, where a start stays due beside it with another text."""
-    _record(plugin, placed)
+    _record(plugin, placed, cwd)
     if placed.start is not None:
         return PASS
     said = [_asked_again(plugin, run, cwd) for run in placed.runs if run.awaiting]
@@ -306,7 +432,7 @@ def _beside(plugin: Plugin, run: Run, cwd: str) -> str:
 def _prompted(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """A prompt typed: added to each Run, with the moves due of each Run whose moves it changed,
     as a Route goes after the command typed."""
-    _record(plugin, placed)
+    _record(plugin, placed, cwd)
     said = []
     for run in placed.runs:
         now = _now(plugin, run.id)
@@ -329,11 +455,13 @@ def _notified(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     return Answer(False, gave(plugin.name, role, placed.start.results[-1], told))
 
 
-def _started(plugin: Plugin, placed: Placed, asked: StartCall, cwd: str) -> Answer:
+def _started(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """A start: the Start added in the Run whose Lanes keep it, or stopped by the first Lane that
     breaks it; a resume let through, with a Start marked resumed where a Route makes it due; a
     resume that no move due opens, or a subagent's start of no role, let through with no Start
     added."""
+    asked = placed.what
+    assert isinstance(asked, StartCall)
     verdicts: list[Verdict] = []
     for run in placed.runs:
         moves = tuple(d for d in _told(plugin, run, cwd) if isinstance(d, Due))
@@ -411,7 +539,7 @@ def _stop(name: str, verdict: Verdict) -> Answer:
 
 def _lanes(plugin: Plugin, placed: Placed, run: Run) -> tuple[Lane, ...]:
     """The Lanes of the role that makes the event: the Start's, or the Run's skill's."""
-    role = placed.start.role if placed.start else run.skill
+    role = _role(placed, run)
     return tuple(lane for lane in plugin.lanes.proposal.lanes if lane.role == role)
 
 

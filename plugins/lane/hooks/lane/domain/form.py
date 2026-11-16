@@ -325,7 +325,8 @@ def _proposal(held: Mapping[str, Any]) -> Proposal:
         for x in held["routes"]
     )
     adapters = held["adapters"]
-    return Proposal(lanes, routes, Adapters(adapters.get("text"), adapters.get("records")))
+    given = Adapters(adapters.get("text"), adapters.get("records"), adapters.get("items"))
+    return Proposal(lanes, routes, given)
 
 
 def _after(held: Mapping[str, Any]) -> After:
@@ -350,7 +351,11 @@ def _laid(held: Mapping[str, Any]) -> Laid:
 
 
 def _proposal_json(proposal: Proposal) -> dict[str, Any]:
-    adapters = {"text": proposal.adapters.text, "records": proposal.adapters.records}
+    adapters = {
+        "text": proposal.adapters.text,
+        "records": proposal.adapters.records,
+        "items": proposal.adapters.items,
+    }
     return {
         "lanes": [
             {"role": x.role, "file": x.file, "step": x.step, "type": x.type, "args": dict(x.args)}

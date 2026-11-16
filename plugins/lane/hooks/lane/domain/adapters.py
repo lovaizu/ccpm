@@ -140,7 +140,11 @@ def step_items(
     values`, `G->>A: asks for the Items of the Step due, with the role and the Start's run values`,
     each one's `A-->>G: each Item's ID`, and each one's `alt the adapter fails`.
     """
-    raise NotImplementedError("adapters.step_items")
+    printed = _run(program, [role, str(step)], {"values": dict(values)}, cwd)
+    items = printed.get("items")
+    if not isinstance(items, list) or not all(isinstance(each, str) for each in items):
+        raise AdapterFailed(f"{program}: `items` must be a list of strings, not {items!r}")
+    return tuple(items)
 
 
 def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:

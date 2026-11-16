@@ -3,13 +3,16 @@ Bash command, each path read from the top of its worktree with the run values fi
 
 from __future__ import annotations
 
+import os
+import re
 from collections.abc import Sequence
 
 from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, Marking, TypeInfo, Verdict
+from lanes import paths
+from lanes.kind import Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
@@ -19,6 +22,11 @@ ARGS: dict[str, str] = {
         " value."
     ),
 }
+
+
+# What parts a Bash command into the words that may name a path: spaces, quotes, the shell's
+# operators, and the `=` of an option, so that `cat 'tally.py'` and `--file=tally.py` name it.
+WORDS = re.compile(r"[\s'\"=;|&<>()`]+")
 
 
 class ReadsNone:
@@ -45,7 +53,7 @@ class ReadsNone:
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        raise NotImplementedError("reads_none.faults")
+        return paths.fault(lane)
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on its Step, naming each of `paths` never to read.
@@ -53,7 +61,8 @@ class ReadsNone:
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        raise NotImplementedError("reads_none.sentence")
+        named = " or ".join(f"`{path}`" for path in lane.args["paths"])
+        return f"Never read {named}."
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """False for a call that reaches one of `paths`, read from `call.top` with the Start's run
@@ -65,28 +74,50 @@ class ReadsNone:
         Carries: the Call checks of S5 and S6, as a Lane of reads_none stops the call at its
         PreToolUse.
         """
-        raise NotImplementedError("reads_none.allows")
+        never = paths.filled(lane, held.start.values if held.start else {})
+        return False if any(path in never for path in _reached(call, never)) else None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
-        raise NotImplementedError("reads_none.check_start")
+        return Kept()
 
     def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
         """Kept: the Lane checks no Mark, as it stops the read itself.
 
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
         """
-        raise NotImplementedError("reads_none.check_mark")
+        return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.
 
         Carries: S6 `G->>T: checks the end by each Lane of the role`.
         """
-        raise NotImplementedError("reads_none.check_end")
+        return Kept()
 
 
 TYPE = ReadsNone()
+
+
+def _reached(call: Call, never: Sequence[str]) -> tuple[str, ...]:
+    """Each path, from the top of the worktree, that the Call reaches: a Read's file; for a Grep of
+    a folder, each of `never` that the folder holds, as a Grep reads each file's contents; the
+    path that a Glob's pattern names in its folder; and each word of a Bash command, read as a
+    path, its words parted by `WORDS`; none for any other Call."""
+    given = call.input
+    if call.tool == "Read":
+        return (paths.named(call, str(given.get("file_path"))),)
+    if call.tool == "Grep":
+        folder = paths.named(call, str(given.get("path") or os.curdir))
+        inside = [p for p in never if folder == os.curdir or p.startswith(folder + os.sep)]
+        return (folder, *inside)
+    if call.tool == "Glob":
+        pattern = os.path.join(str(given.get("path") or os.curdir), str(given.get("pattern")))
+        return (paths.named(call, pattern),)
+    if call.tool == "Bash":
+        words = WORDS.split(str(given.get("command")))
+        return tuple(paths.named(call, word) for word in words if word)
+    return ()
