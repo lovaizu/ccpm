@@ -713,7 +713,8 @@ def test_of_kind_refuses_a_kind_without_a_template_naming_the_kinds_that_have_on
         of_kind(RN, "design-tree")
     assert str(raised.value) == (
         "no kind 'design-tree' has a Markdown template; the kinds that have one are architecture,"
-        " code, product-vision, prompt, readme, software-design, test-design"
+        " code, product-vision, prompt, readme, software-design, test-design,"
+        " test-implementation"
     )
 
 
@@ -826,7 +827,7 @@ def test_template_gives_1_naming_the_kinds_for_a_kind_without_a_template(folder:
         (
             "template.py: no kind 'design-tree' has a Markdown template; the kinds that have one"
             " are architecture, code, product-vision, prompt, readme, software-design,"
-            " test-design\n"
+            " test-design, test-implementation\n"
         ),
     )
 

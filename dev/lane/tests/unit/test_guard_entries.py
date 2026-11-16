@@ -479,13 +479,15 @@ def test_a_subagents_end_with_no_result_is_stopped_with_its_last_lanes_sentence(
     """Given: changelog laid, and write's Run with writer's Start tied to a01, which gave no
     Result.
     When: handle answers a01's SubagentStop.
-    Then: it stops the end with the sentence of the Lane on writer's last Step."""
+    Then: it stops the end with the sentence of the Lane on writer's last Step, then that the
+    script runs as a command of its own."""
     writer_tied(plugin)
     event = d.event(
         "SubagentStop", agent_id="a01", agent_type="changelog:writer", last_message="Done."
     )
     answer = handle(event, plugin)
-    assert answer.stop and answer.words == end(plugin)
+    alone = "Run it as a command of its own: result.py run inside a longer command gives no Result."
+    assert answer.stop and answer.words == f"{end(plugin)}\n{alone}"
 
 
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
@@ -573,13 +575,13 @@ def test_lay_types_gives_the_types_and_the_form(plugin: str) -> None:
 def test_lay_steps_gives_the_steps_and_notes(tmp_path: Any) -> None:
     """Given: a copy of the walkthrough's changelog.
     When: lay.py's main runs `steps` on it.
-    Then: it gives 0 with JSON of seven Steps and no notes."""
+    Then: it gives 0 with JSON of eight Steps and no notes."""
     import walkthrough
 
     walkthrough.write_files(str(tmp_path / "changelog"), walkthrough.FILES)
     code, out, _ = lay_main(["steps", str(tmp_path / "changelog")], io.StringIO(""), {}, LANE)
     given = json.loads(out)
-    assert code == 0 and len(given["steps"]) == 7 and given["notes"] == []
+    assert code == 0 and len(given["steps"]) == 8 and given["notes"] == []
 
 
 @pytest.mark.supports("test_a_proposal_that_cant_stand_goes_back_to_up")

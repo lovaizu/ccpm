@@ -403,10 +403,6 @@
         "text": "For the trace of the architecture, set as the criterion that every element of this document, each story, rule, component, and kind of data, has an integration test, and that every test names an element or a case one level up that exists. Name the script that checks this by the names of the elements, not by reading, since only a check by name finds each element that no test reaches."
        },
        {
-        "at": "decide",
-        "text": "Where an AI judges a key result, trust the judge only once it's right on every kept record whose answer you know."
-       },
-       {
         "at": "make",
         "text": "Write one row for each check picked, in the guide's order, in the template's table. Give each its kind as the guide or the prompt rule makes it."
        }
@@ -449,22 +445,6 @@
        {
         "at": "decide",
         "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and measure it by the prompt's unit tests on the model, as N12.8 sets."
-       },
-       {
-        "at": "make",
-        "text": "The lower levels show a part only if each double behaves like the part it replaces, so give each double only results in the form the part's contract gives, refusals among them."
-       },
-       {
-        "at": "make",
-        "text": "Test each double as the part's unit tests test the part."
-       },
-       {
-        "at": "make",
-        "text": "Draw a double of something outside the product from its documentation or from a recorded run of the real thing, and name that source beside what the double gives, so that the script that checks the trace, which the test design makes, can check it. A double that gives what the real thing never would passes a test that the real one fails."
-       },
-       {
-        "at": "make",
-        "text": "Trust a check, such as a test, a hook, or the judge of an E2E test, only once you have seen it fail on a case that breaks what it checks, such as a test of a rule run with the part that holds the rule taken out, which the script that checks the trace can run. Trust a judge once it's right on kept records whose answer you know."
        }
       ]
      }

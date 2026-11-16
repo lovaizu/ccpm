@@ -1,12 +1,13 @@
 """How the plugins' E2E cases measure a key result and try an installation: a run of
 dev/scripts/e2e.py on an E2E test file, the records it keeps, runs added until the mean holds, and a
-fresh home that a shell command runs in."""
+fresh home that a README's install commands and a shell command run in."""
 
 from __future__ import annotations
 
 import datetime
 import json
 import os
+import re
 import statistics
 import subprocess
 import sys
@@ -53,6 +54,22 @@ def fresh_home(folder: str) -> dict[str, str]:
     """The environment with the folder as the home and Claude Code's settings in it, which hold no
     plugin yet."""
     return dict(os.environ, HOME=folder, CLAUDE_CONFIG_DIR=os.path.join(folder, ".claude"))
+
+
+def install(readme: str, env: Mapping[str, str]) -> None:
+    """Runs each command of the README's `console` block under `## Installation`, in a shell with
+    the environment, with the source of `claude plugin marketplace add` as the top of this
+    repository: a plugin under test isn't released, so the marketplace on GitHub doesn't hold the
+    version the test tries, while the commands and the marketplace's file are the ones users get.
+    Raises CalledProcessError where a command fails."""
+    with open(readme, encoding="utf-8") as f:
+        found = re.search(r"## Installation\n+```console\n(.*?)```", f.read(), re.DOTALL)
+    assert found, f"{readme} holds no console block under ## Installation"
+    for command in found[1].splitlines():
+        words = command.split()
+        if words[:4] == ["claude", "plugin", "marketplace", "add"]:
+            command = " ".join([*words[:4], TOP])
+        subprocess.run(command, shell=True, env=env, check=True, capture_output=True)
 
 
 def shell(command: str, env: Mapping[str, str]) -> str:

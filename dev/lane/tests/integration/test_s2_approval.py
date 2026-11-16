@@ -59,7 +59,7 @@ def test_a_change_is_written_into_its_step_and_proposed_again(b: w.Bench, broken
     assert not c.type("/lane:up changelog").blocked
     assert not c.type("Have writer read README.md too.").blocked
     path = os.path.join(b.changelog, "agents", "writer.md")
-    step = "1. Read `CHANGELOG.md` to learn its last version and its form."
+    step = next(line for line in w.WRITER.splitlines() if line.startswith("1. "))
     assert not c.edit(path, step, step[:-1] + ", and `README.md`.").blocked
     ran = c.bash(b.lay_py("steps", "changelog"))
     assert ran.exit_code == 0

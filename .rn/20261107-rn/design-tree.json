@@ -65,6 +65,51 @@
       "status": "done"
     },
     {
+      "name": "The developers learn from a test that runs the product whole what the product does, as each run ran as they meant and measured what they meant",
+      "path": "plugins/rn/domain/best-practices/test-implementation",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": [],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
@@ -145,43 +190,43 @@
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
       "path": "dev/lane/tests/integration/test_lane_walking_skeleton.py",
-      "kind": "specific",
+      "kind": "code",
       "status": "done"
     },
     {
       "name": "The user's plugin starts each subagent in the order they set, and only that one",
       "path": "dev/lane/tests/integration/test_s5_run_order.py",
-      "kind": "specific",
+      "kind": "code",
       "status": "done"
     },
     {
       "name": "Each subagent that leaves a step goes back to it",
       "path": "dev/lane/tests/integration/test_s6_subagent_held.py",
-      "kind": "specific",
+      "kind": "code",
       "status": "done"
     },
     {
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
       "path": "dev/lane/tests/integration/test_s7_picked_up.py",
-      "kind": "specific",
+      "kind": "code",
       "status": "done"
     },
     {
       "name": "The user reads each step as it'll read with its rules, and the order, before anything holds their plugin",
       "path": "dev/lane/tests/integration/test_s1_proposal.py",
-      "kind": "specific",
+      "kind": "code",
       "status": "done"
     },
     {
       "name": "Lane lays only what a person approved, and proposes again on a change they ask for",
       "path": "dev/lane/tests/integration/test_s2_approval.py",
-      "kind": "specific",
+      "kind": "code",
       "status": "done"
     },
     {
       "name": "An AI that builds a plugin approves Lane's proposal by its own act, and after the steps change or Lane updates, the checks hold the steps as they now read",
       "path": "dev/lane/tests/integration/test_s3_s4_again.py",
-      "kind": "specific",
+      "kind": "code",
       "status": "done"
     },
     {
@@ -193,12 +238,14 @@
     {
       "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
       "path": "dev/lane/tests/e2e",
-      "kind": "specific",
+      "kind": "test-implementation",
       "inputs": [
+        "dev/lane/product-vision.md",
         "dev/lane/architecture.md",
         "dev/lane/tests"
       ],
       "preconditions": [
+        "dev/lane/tests",
         "dev/lane/tests/integration/test_lane_walking_skeleton.py",
         "dev/lane/tests/integration/test_s5_run_order.py",
         "dev/lane/tests/integration/test_s6_subagent_held.py",
@@ -209,23 +256,36 @@
         "plugins/lane/domain/up.md"
       ],
       "status": "doing",
-      "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
-      "good": false,
-      "decisions": [
+      "necessary_conditions": [
         {
-          "about": "The plugin's folder",
-          "decided": "lane's folder holds everything lane needs and its own copy of the repository's LICENSE, links any page outside it by its URL on GitHub, and sets homepage and repository in plugin.json, and Lane uses no other plugin, as rn uses Lane",
-          "by": "user"
+          "id": "N1",
+          "good": false,
+          "decisions": []
         },
         {
-          "about": "The release",
-          "decided": "Lane releases together with rn, in one pull request, once rn is done",
-          "by": "user"
+          "id": "N2",
+          "good": false,
+          "decisions": []
         },
         {
-          "about": "The README after the E2E test",
-          "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short, as the README was made before the product existed",
-          "by": "reasoning"
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The judge's marked messages",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
         }
       ]
     },
@@ -244,13 +304,13 @@
     {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
       "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py",
-      "kind": "specific",
+      "kind": "code",
       "status": "done"
     },
     {
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
       "path": "dev/rn/tests/integration/test_rn_s1_request.py",
-      "kind": "specific",
+      "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
@@ -260,14 +320,59 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "doing",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_s1_request.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Deliverables that rest on none of each other",
+              "decided": "the orchestrator's steps start, side by side, each deliverable of the tree whose inputs and preconditions have passed, each in a worktree of its own, as the orchestrator gives the work its plan; it comes with the package of the story that first needs it, after the walking skeleton",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
       "path": "dev/rn/tests/integration/test_rn_s2_points.py",
-      "kind": "specific",
+      "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
@@ -277,14 +382,53 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_s2_points.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
       "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py",
-      "kind": "specific",
+      "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
@@ -294,14 +438,53 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_s3_sign_off.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
       "path": "dev/rn/tests/integration/test_rn_s4_pause.py",
-      "kind": "specific",
+      "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
@@ -311,14 +494,53 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_s4_pause.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "/rn:up alone in a new conversation goes on where the run stopped",
       "path": "dev/rn/tests/integration/test_rn_s5_pick_up.py",
-      "kind": "specific",
+      "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
@@ -328,14 +550,53 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_s5_pick_up.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons, and rn's developers get each lesson signed off in rn's issues",
       "path": "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
-      "kind": "specific",
+      "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
@@ -345,14 +606,53 @@
         "dev/rn/tests/integration/test_rn_walking_skeleton.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_s6_s7_hand_over.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
       "path": "dev/rn/tests/integration/test_rn_components.py",
-      "kind": "specific",
+      "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
@@ -367,14 +667,53 @@
         "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_components.py pass, each seen to fail first",
-      "good": false,
-      "decisions": []
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each rule of the Solution strategy of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
       "path": "dev/rn/tests/integration/test_rn_rules.py",
-      "kind": "specific",
+      "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
@@ -389,9 +728,48 @@
         "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
       ],
       "status": "open",
-      "check": "the integration tests in dev/rn/tests/integration/test_rn_rules.py pass, each seen to fail first, and each fails with the part that holds its rule taken out, through the fixture `broken`",
-      "good": false,
-      "decisions": []
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /rn:up, /rn:ty, /rn:gm, and /rn:dn, typed or asked for, carry their request from the goal through each sign-off to one pull request, asking them only what's theirs",
@@ -403,6 +781,7 @@
         "dev/rn/tests"
       ],
       "preconditions": [
+        "dev/rn/architecture.md",
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
         "dev/rn/tests/integration/test_rn_s1_request.py",
         "dev/rn/tests/integration/test_rn_s2_points.py",
@@ -512,6 +891,7 @@
         "dev/rn/tests"
       ],
       "preconditions": [
+        "dev/rn/architecture.md",
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
         "dev/rn/tests/integration/test_rn_s1_request.py",
         "dev/rn/tests/integration/test_rn_s2_points.py",
@@ -621,6 +1001,7 @@
         "dev/rn/tests"
       ],
       "preconditions": [
+        "dev/rn/architecture.md",
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
         "dev/rn/tests/integration/test_rn_s1_request.py",
         "dev/rn/tests/integration/test_rn_s2_points.py",
@@ -735,6 +1116,7 @@
         "dev/rn/tests"
       ],
       "preconditions": [
+        "dev/rn/architecture.md",
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
         "dev/rn/tests/integration/test_rn_s1_request.py",
         "dev/rn/tests/integration/test_rn_s2_points.py",
@@ -837,12 +1219,14 @@
     {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
       "path": "dev/rn/tests/e2e",
-      "kind": "specific",
+      "kind": "test-implementation",
       "inputs": [
+        "dev/rn/product-vision.md",
         "dev/rn/architecture.md",
         "dev/rn/tests"
       ],
       "preconditions": [
+        "dev/rn/tests",
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
         "dev/rn/tests/integration/test_rn_s2_points.py",
         "dev/rn/tests/integration/test_rn_s3_sign_off.py",
@@ -858,32 +1242,71 @@
         "plugins/rn/domain/evaluator.md"
       ],
       "status": "open",
-      "check": "the E2E tests of the README's main use, judged from their records, show KR1.1 and KR1.2 of the product vision",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The E2E test's request",
+              "decided": "the README's walkthrough, type hints for a library the size of invoicer in lovaizu/playground, so that the E2E test runs what the README shows its readers",
+              "by": "reasoning"
+            },
+            {
+              "about": "A comparison with Claude Code alone",
+              "decided": "none: the E2E test shows KR1.1 and KR1.2 alone, as rn's worth is that once the user has answered what's theirs, a deliverable that meets their purpose comes without them, which a request this small, where Claude Code alone wins plainly, can't show, nor the two deliverables' quality side by side",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Users install Lane and rn together from one pull request, each plugin's folder holding all it needs and its README's walkthrough taken from its E2E test's records",
+      "path": ".claude-plugin/marketplace.json",
+      "kind": "specific",
+      "inputs": [
+        "plugins/lane/README.md",
+        "plugins/rn/README.md",
+        "dev/lane/tests/e2e",
+        "dev/rn/tests/e2e"
+      ],
+      "preconditions": [
+        "dev/lane/tests/e2e",
+        "dev/rn/tests/e2e"
+      ],
+      "status": "open",
+      "check": "claude plugin validate passes on each plugin's folder, each README's walkthrough is its E2E test's recorded run, and one pull request holds both plugins",
       "good": false,
       "decisions": [
         {
-          "about": "The plugin's folder",
-          "decided": "rn's folder holds everything rn needs and its own copy of the repository's LICENSE, links any page outside it by its URL on GitHub, and sets homepage and repository in plugin.json, and rn uses Lane through dependencies, never the other way",
+          "about": "Each plugin's folder",
+          "decided": "each plugin's folder holds everything it needs and its own copy of the repository's LICENSE, links any page outside it by its URL on GitHub, and sets homepage and repository in plugin.json; rn uses Lane through dependencies, and Lane uses no other plugin",
           "by": "user"
         },
         {
-          "about": "The E2E test's request",
-          "decided": "the README's walkthrough, type hints for a library the size of invoicer in lovaizu/playground, so that the E2E test runs what the README shows its readers",
-          "by": "reasoning"
-        },
-        {
-          "about": "A comparison with Claude Code alone",
-          "decided": "none: the E2E test shows KR1.1 and KR1.2 alone, as rn's worth is that once the user has answered what's theirs, a deliverable that meets their purpose comes without them, which a request this small, where Claude Code alone wins plainly, can't show, nor the two deliverables' quality side by side",
-          "by": "user"
-        },
-        {
-          "about": "Deliverables that rest on none of each other",
-          "decided": "the orchestrator's steps start, side by side, each deliverable of the tree whose inputs and preconditions have passed, each in a worktree of its own, as the orchestrator gives the work its plan; it comes with the package of the story that first needs it, after the walking skeleton",
-          "by": "user"
-        },
-        {
-          "about": "The design tree's file",
-          "decided": "JSON in the form of the design tree's schema, written through tree.py, whose tree_file.py alone decides the form, as the deliverables rest on one another many to many by path, which no nested list holds",
+          "about": "The release",
+          "decided": "Lane releases together with rn, in one pull request, once rn is done",
           "by": "user"
         },
         {

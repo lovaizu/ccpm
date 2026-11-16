@@ -18,6 +18,11 @@ from lanes.kind import Broken, Held, Kept, TypeInfo, Verdict
 # what it is, as lay.py types shows it. It takes none, as the Routes name each Result that its
 # sentence gives.
 ARGS: dict[str, str] = {}
+# What a role may do where its end holds no Result: the guard takes a Result only from a command
+# that runs the result script alone, as only its exit tells that the script gave 0, and the run
+# record keeps no Call to tell a role that ran it inside a longer command from one that never ran
+# it, so every such stop says it.
+ALONE = "Run it as a command of its own: result.py run inside a longer command gives no Result."
 
 
 class EndsByResult:
@@ -86,20 +91,22 @@ class EndsByResult:
         return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
-        """Broken, with the Lane's sentence, where the subagent's Start holds no Result; Kept for
-        the main conversation's end, which the moves due hold, and for a Start with a Result.
+        """Broken, with the Lane's sentence and `ALONE`, where the subagent's Start holds no
+        Result; Kept for the main conversation's end, which the moves due hold, and for a Start
+        with a Result.
 
         Carries: S6 `alt the Lane on its last Step finds no Result since its Start` and `G-->>SA:
         stops the end, with that Lane's sentence`.
         """
         if held.start is not None and not held.start.results:
-            return self._broken(lane, held)
+            return self._broken(lane, held, ALONE)
         return Kept()
 
-    def _broken(self, lane: Lane, held: Held) -> Broken:
-        """The Lane broken, its sentence naming the result script by the plugin's folder."""
+    def _broken(self, lane: Lane, held: Held, may: str = "") -> Broken:
+        """The Lane broken, its sentence naming the result script by the plugin's folder, with what
+        the role may do."""
         said = self.sentence(lane, held.routes).replace("${CLAUDE_PLUGIN_ROOT}", held.root)
-        return Broken(lane, said, "")
+        return Broken(lane, said, may)
 
 
 TYPE = EndsByResult()

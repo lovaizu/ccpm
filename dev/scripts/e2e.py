@@ -67,8 +67,11 @@ project's git repository. What you mean to do: {intent}
 
 Each message gives you what your screen shows so far: each prompt you typed, after `> `, and what \
 Claude Code showed after it. Give what you type next as `prompt`, in your own words, with `done` \
-false. Give `done` true once you have what you came for, or where you would stop here. You see \
-only the screen, and you type only into Claude Code."""
+false. Give `done` true once you have what you came for, or where you would stop here. Ask for \
+what you mean to do, and judge what the screen shows against it. Don't tell Claude Code how it or \
+its plugins should do the work, such as which steps to take, in what order, or which sentences of \
+a file to keep, unless what you mean to do says so. You see only the screen, and you type only \
+into Claude Code."""
 REPLY = {
     "type": "object",
     "properties": {"done": {"type": "boolean"}, "prompt": {"type": "string"}},

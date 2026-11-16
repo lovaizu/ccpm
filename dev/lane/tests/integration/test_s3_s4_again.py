@@ -172,5 +172,23 @@ def test_a_plugin_laid_by_an_earlier_lane_is_read_by_its_own_copy(b: w.Bench) ->
     given = json.loads(ran.output)
     texts = {(s["file"], s["number"]): s["text"] for s in given["steps"]}
     assert texts[("agents/writer.md", 2)] == "Read the commits since then with `git log --oneline`."
-    assert texts[("agents/reviewer.md", 2)] == w.REVIEWER.splitlines()[-1][3:]
+    assert texts[("agents/reviewer.md", 3)] == w.REVIEWER.splitlines()[-1][3:]
     assert given["notes"] == []
+
+
+@pytest.mark.supports("S3", "S5", "Run")
+def test_a_start_of_another_plugins_role_in_ups_run_goes(b: w.Bench) -> None:
+    """Given: an AI called up by the Skill tool and laid the Proposal by lay.py write, but ran
+    up's result.py after `cd`, inside a longer command, so up's Run gave no Result and still runs,
+    and the person typed /reload-plugins, as S3's E2E run went.
+    When: the AI calls changelog:write by the Skill tool and starts writer with Lane's text.
+    Then: the start goes and writer runs, as up's Lanes hold no start of changelog's roles."""
+    c = w.converse(b)
+    _, pid = w.propose(b, c, by_ai=True)
+    assert c.bash(b.lay_py("write", "changelog", pid)).exit_code == 0
+    assert c.bash(f"cd {b.repo}; {b.up_result('laid')}").exit_code == 0
+    assert not c.reload_plugins().blocked
+    assert not c.skill("changelog:write", "").blocked
+    started, writer = w.start(c, "writer")
+    assert not started.blocked, started.said
+    assert writer is not None

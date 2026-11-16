@@ -22,6 +22,8 @@
 ## Inputs
 
 - [architecture](../architecture/best-practice.md)
+- [software-design](../software-design/best-practice.md)
+- [test-design](../test-design/best-practice.md)
 
 ## Practices
 

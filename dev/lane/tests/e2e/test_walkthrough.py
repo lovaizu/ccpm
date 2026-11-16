@@ -10,11 +10,12 @@ skipped, as opus.NEEDS_LOGIN says."""
 
 from __future__ import annotations
 
+import itertools
 import os
-import subprocess
-from dataclasses import dataclass
+import re
 from typing import Any
 
+import measures as m
 import opus
 import pytest
 import scenario
@@ -27,68 +28,47 @@ pytestmark = [
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TESTS = ("walkthrough.json", "ai-approves.json")
-# The routes of the walkthrough's write, as each start after each Result.
-NEXT = {None: "writer", ("writer", "written"): "reviewer", ("reviewer", "more"): "writer"}
-JUDGE = """You read the records of one run of the Claude Code plugin changelog, whose skill write \
-and subagents writer and reviewer must keep the numbered steps of their files, given below with \
-what the run changed in them. Count \
-each place where a role did other than its step says, as a run's transcript shows it, such as a \
-step skipped or work its step doesn't name. Reply with JSON {"off_steps": <count>}."""
+# The records of each E2E run of each test file in this session that ran as its case means, so that
+# KR1.1 and KR1.2 are measured on the same runs, as Test strategy measures them, and no run is made
+# twice.
+RECORDS: dict[str, list[str]] = {}
 
 
-@dataclass
-class Run:
-    """One run of changelog's write in one E2E run, as its records show it."""
-
-    starts: list[str]
-    results: list[tuple[str, str]]
-    ended: str | None
-
-
-def runs_of_write(records: str) -> list[Run]:
-    """Each run of changelog's write that the records' hook events show: each subagent it started,
-    each Result given by result.py, and the time it ended by write's own Result."""
-    runs: list[Run] = []
-    for each in scenario.jsonl(os.path.join(records, "hooks.jsonl")):
-        event = each.get("payload", each)
-        name, tool = event.get("hook_event_name"), event.get("tool_name")
-        if name == "UserPromptExpansion" and event.get("command_name") == "changelog:write":
-            runs.append(Run([], [], None))
-        elif not runs or name != "PostToolUse":
-            continue
-        elif tool == "Agent":
-            runs[-1].starts.append(event["tool_input"]["subagent_type"].split(":")[-1])
-        elif tool == "Bash" and "hooks/lane/result.py" in event["tool_input"]["command"]:
-            role, result = event["tool_input"]["command"].split()[-2:]
-            if role == "write":
-                runs[-1].ended = each.get("time")
-            else:
-                runs[-1].results.append((role, result))
-    return runs
+def records_of(test: str, n: int) -> str:
+    """The folder of the records of the n-th E2E run of the test file that ran as its case means,
+    counted from 0, which e2e.py makes where this session has made none yet. Each other run is
+    listed apart, with where it went otherwise, and counts toward no key result, as N3 of the test
+    implementation best practice says."""
+    made = RECORDS.setdefault(test, [])
+    while len(made) <= n:
+        records = scenario.e2e(os.path.join(HERE, test))
+        went = m.otherwise(records, test)
+        if went:
+            print(f"left out {records}, as it went otherwise: {went}")
+        else:
+            made.append(records)
+    return made[n]
 
 
-def order_faults(run: Run) -> int:
-    """Each start of the run that its routes didn't make due, and each start due that never came."""
-    due, faults = [NEXT[None]], 0
-    for role in run.starts:
-        faults += 0 if due and role == due.pop(0) else 1
-    for result in run.results:
-        if result in NEXT:
-            due.append(NEXT[result])
-    return faults + len(due) + (0 if run.ended else 1)
+# The judge's verdict on each run of write in the records of each E2E run, so that KR1.1 and KR1.2
+# read the same verdicts, and no run is judged twice.
+VERDICTS: dict[str, list[bool]] = {}
 
 
-def off_steps(records: str) -> int:
-    """How many places the run's roles left their steps, judged on Opus from the transcripts."""
-    paths = sorted(
-        os.path.join(folder, name)
-        for folder, _, names in os.walk(os.path.join(records, "transcripts"))
-        for name in names
-    )
-    steps = "\n\n".join(f"<!-- changelog/{name} -->\n{text}" for name, text in w.FILES.items())
-    diff = w.read(os.path.join(records, "run.diff"))
-    text = "\n\n".join([steps, f"What the run changed:\n{diff}", *map(w.read, paths)])
-    return int(opus.judged(JUDGE + "\n\n" + text)["off_steps"])
+def keeps(records: str, runs: list[m.Run]) -> list[bool]:
+    """Whether each run of write keeps its steps, as the judge on Opus rules on each one alone."""
+    if records not in VERDICTS:
+        VERDICTS[records] = [judged(records, run, n, len(runs)) for n, run in enumerate(runs, 1)]
+    return VERDICTS[records]
+
+
+def judged(records: str, run: m.Run, n: int, count: int) -> bool:
+    """The judge's verdict on the n-th run of write, with each place it failed printed, which
+    pytest shows where a case fails, so that the maintainer tells a fault of Lane's from one of the
+    judge's."""
+    verdict = opus.judged(m.judge_prompt(records, run, n, count))
+    print(f"run {n} of {count} in {records}: {verdict}")
+    return bool(verdict["keeps"])
 
 
 @pytest.mark.supports("KR1.1")
@@ -97,15 +77,17 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
     """Given: tally with changelog as the walkthrough gives it, and Lane loaded.
     When: the person, played by e2e.py's stand-in, has Lane laid, by their reply or by the AI's own
     act, and runs /changelog:write, then changes a step, lays again, and runs it once more.
-    Then: the share of changelog's runs whose steps or order differ from the user's design is
-    measured, and no run of the walkthrough leaves its order."""
+    Then: no hook of Lane's fails, the share of changelog's runs whose steps or order differ from
+    the user's design is measured, and no run of the walkthrough leaves its order."""
+
+    count = itertools.count()
 
     def share() -> float:
-        records = scenario.e2e(os.path.join(HERE, test))
-        runs = runs_of_write(records)
-        off = sum(1 for run in runs if order_faults(run))
-        off += min(off_steps(records), len(runs) - off)
-        return 100 * off / max(len(runs), 1)
+        records = records_of(test, next(count))
+        failed = m.hook_faults(records)
+        assert not failed, f"Lane's hooks failed in {records}: {failed}"
+        runs = m.runs_of_write(records)
+        return m.share_off(runs, keeps(records, runs))
 
     measured = scenario.until_steady(share, 1)
     print(f"KR1.1 of {test}: {measured:.1f}% of runs off the user's design")
@@ -120,26 +102,32 @@ def test_the_first_run_that_keeps_the_steps_comes_soon(test: str) -> None:
     Then: the time from their first turn to the end of the first run that keeps the steps is
     measured, and such a run comes."""
 
+    count = itertools.count()
+
     def minutes() -> float:
-        records = scenario.e2e(os.path.join(HERE, test))
-        turns = scenario.jsonl(os.path.join(records, "turns.jsonl"))
-        kept = [run for run in runs_of_write(records) if not order_faults(run) and run.ended]
-        assert kept, "no run kept the steps"
-        return (scenario.seconds(kept[0].ended or "") - scenario.seconds(turns[0]["started"])) / 60
+        records = records_of(test, next(count))
+        runs = m.runs_of_write(records)
+        measured = m.minutes_to_kept(records, runs, keeps(records, runs))
+        assert measured is not None, "no run kept the steps"
+        return measured
 
     print(f"KR1.2 of {test}: {scenario.until_steady(minutes, 1):.1f} minutes")
 
 
 @pytest.mark.supports("KR1.2")
 def test_lane_installs_by_the_readmes_commands(tmp_path: Any) -> None:
-    """Given: a fresh home, with no plugin installed.
-    When: the person runs the README's two commands of Installation in a shell.
-    Then: `claude plugin details lane@ccpm` shows `lane 0.1.0`, with the skill up."""
-    env = scenario.fresh_home(str(tmp_path))
-    for command in (
-        "claude plugin marketplace add lovaizu/ccpm",
-        "claude plugin install lane@ccpm",
-    ):
-        subprocess.run(command, shell=True, env=env, check=True, capture_output=True)
+    """Given: a fresh home, with no plugin installed, and tally with changelog as the walkthrough
+    gives it.
+    When: the person runs the README's commands of Installation in a shell, then types
+    `/lane:up changelog` in tally.
+    Then: `claude plugin details lane@ccpm` shows `lane 0.1.0`, with the skill up and six hooks, and
+    /lane:up answers with what it would lay, asking for yes or a change."""
+    env = scenario.fresh_home(os.path.join(str(tmp_path), "home"))
+    scenario.install(w.README, env)
     details = scenario.shell("claude plugin details lane@ccpm", env)
-    assert "lane 0.1.0" in details and "up" in details
+    assert "lane 0.1.0" in details, details
+    assert re.search(r"Skills \(1\)\s+up\n", details), details
+    assert "Hooks (6)" in details, details
+    tally = w.bench(os.path.join(str(tmp_path), "bench")).repo
+    answer = opus.prompted("/lane:up changelog", tally, env, [], 1800)
+    assert "Reply yes to lay these into changelog, or say what to change." in answer, answer

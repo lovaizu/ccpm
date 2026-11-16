@@ -97,21 +97,18 @@ def test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence(
 ) -> None:
     """Given: the walkthrough's Proposal laid, and reviewer started after writer's `written`.
     When: reviewer ends with the reply `more`, without running result.py.
-    Then: the guard stops the end with reviewer's last Step's sentence, word for word as the
-    README shows, and no start of writer is due."""
+    Then: the guard stops the end with reviewer's last Step's sentence and that the script runs as
+    a command of its own, word for word as the README shows, and no start of writer is due."""
     c = w.laid(b)
     reviewer = w.to_reviewer(b, c)
     stopped, reached = reviewer.end("more")
     assert stopped.blocked and reached is None
-    assert stopped.said == (
-        f"changelog: End by running `{b.result('reviewer', 'more')}`"
-        f" or `{b.result('reviewer', 'good')}`."
-    )
+    assert stopped.said == w.ENDED_WITHOUT.replace("/home/you/tally/changelog", b.changelog)
 
 
 @pytest.mark.supports("S6", "lane types", "Result")
 def test_an_end_held_to_the_plugins_command_goes_once_it_gives_0(tmp_path: Any) -> None:
-    """Given: the Proposal laid with an ends_checked Lane on reviewer's step 2 whose command passes
+    """Given: the Proposal laid with an ends_checked Lane on reviewer's step 3 whose command passes
     only where CHANGELOG.md names 0.2.0, and reviewer started.
     When: reviewer gives `good` and ends, first before CHANGELOG.md names 0.2.0, then after.
     Then: the guard stops the first end with the Lane's sentence, and lets the second end."""
@@ -120,7 +117,7 @@ def test_an_end_held_to_the_plugins_command_goes_once_it_gives_0(tmp_path: Any) 
 
     def make() -> dict[str, Any]:
         proposal = w.walkthrough_proposal()
-        lane = w.lane("reviewer", "agents/reviewer.md", 2, "ends_checked", command=check)
+        lane = w.lane("reviewer", "agents/reviewer.md", 3, "ends_checked", command=check)
         proposal["lanes"].append(lane)
         return proposal
 
@@ -136,7 +133,7 @@ def test_an_end_held_to_the_plugins_command_goes_once_it_gives_0(tmp_path: Any) 
 
 @pytest.mark.supports("S6", "lane types", "Lane")
 def test_an_end_with_no_result_runs_no_command_of_the_plugins(tmp_path: Any) -> None:
-    """Given: the Proposal laid with an ends_checked Lane on reviewer's step 2 whose command writes
+    """Given: the Proposal laid with an ends_checked Lane on reviewer's step 3 whose command writes
     checked.txt, and reviewer started.
     When: reviewer ends without running result.py.
     Then: the guard stops the end with the sentence of the Lane on reviewer's last Step, and the
@@ -146,7 +143,7 @@ def test_an_end_with_no_result_runs_no_command_of_the_plugins(tmp_path: Any) -> 
 
     def make() -> dict[str, Any]:
         proposal = w.walkthrough_proposal()
-        lane = w.lane("reviewer", "agents/reviewer.md", 2, "ends_checked", command=check)
+        lane = w.lane("reviewer", "agents/reviewer.md", 3, "ends_checked", command=check)
         proposal["lanes"].append(lane)
         return proposal
 

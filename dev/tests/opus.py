@@ -68,16 +68,21 @@ def prompted(
 
 def judged(prompt: str) -> Any:
     """The JSON that Opus replies with to the prompt, run by `claude -p` with a settings folder of
-    its own."""
+    its own. The prompt goes on standard input, as the records of a run that a judge reads can pass
+    what the system takes as a command's arguments, such as ARG_MAX's 2 MiB on Linux."""
     with tempfile.TemporaryDirectory() as config:
         done = subprocess.run(
-            ["claude", "-p", "--model", "opus", "--output-format", "json", prompt],
+            ["claude", "-p", "--model", "opus", "--output-format", "json"],
+            input=prompt,
             capture_output=True,
             text=True,
             check=True,
             env=logged_in(dict(os.environ, CLAUDE_CONFIG_DIR=config)),
         )
-    return json.loads(json.loads(done.stdout)["result"])
+    reply = json.loads(done.stdout)["result"]
+    # Opus may put the JSON in a code block or after a sentence, so the reply's object is read from
+    # its first brace to its last.
+    return json.loads(reply[reply.index("{") : reply.rindex("}") + 1])
 
 
 def logged_in(env: Mapping[str, str]) -> dict[str, str]:

@@ -25,7 +25,6 @@
     - **N15** Does each claim that the AI reports rest on a check it ran on the real thing, with what it didn't check stated? (Output)
   - **C6** The writer knows from tests how the prompt does over several runs and in real use.
     - **N16** Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do the end-to-end (E2E) tests of the product it's part of confirm it on real requests? (the whole)
-    - **N17** Can the maintainer tell from a failed test's record whether the prompt or the test went wrong? (the whole)
 
 ## Template
 
@@ -34,10 +33,13 @@
 ## Inputs
 
 - [architecture](../architecture/best-practice.md)
+- [readme](../readme/best-practice.md)
+- [test-design](../test-design/best-practice.md)
 
 ## Preconditions
 
 - [architecture](../architecture/best-practice.md)
+- [code](../code/best-practice.md)
 
 ## Practices
 
@@ -209,24 +211,7 @@ Do the prompt's unit tests run each case several times on the model its users ru
 
 The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. The results vary from run to run, so a criterion would pass or fail by chance, and the writer judges from the results of several runs, as the architecture's [test strategy guide](../architecture/test-strategy-guide.md) says of a test that runs a prompt.
 
-1. *While making.* Run each case of the prompt once, in the folders that the architecture's Test strategy names for its test cases, on the model its users run, with the test's parts as they stand, and keep the record of the run beside the case, such as the JSON lines that `claude -p --output-format stream-json --verbose` writes. Nothing relies on its result yet: it's the first record, on which N17 checks the test's parts. The trace: `{case}` run.
-2. *While making.* Once each part of the test gives the right result on the kept records, as N17.2 to N17.7 check it, run each case on the model its users run, as many times as Test strategy sets. A rule that must hold on every run rests on a hook, as N12 says, so the unit tests try the rest. The trace: `{tests}` run.
-3. *While making.* Open the record of each run, and see from what the AI did, not from its last message, which runs reached the result.
-4. *While making.* Where a run didn't reach the result, find the cause in its record, as N17 says, and change the prompt only for a cause in the prompt. Run the cases again, and judge from their results whether the change helps.
-5. *While making.* Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up.
-
-### N17
-
-Can the maintainer tell from a failed test's record whether the prompt or the test went wrong?
-
-A test's own parts, its set-up, its doubles, its judges, and its checks, are code and prompts of their own, and can fail like the prompt. Anthropic's [demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) is how eval writers keep the two apart: they grade by code where they can, check a model grader against people's judgment, and read the records to tell a failure of the agent from a failure of the test.
-
-1. *While deciding.* Decide by code every point that the record shows, such as a tool called, a file's content, or a command's output. Leave to a judge only what code can't decide.
-2. *While making.* Build each check by code alone, test first, and run it on the first records that N16.1 kept, before any whole run relies on it, so that a whole run only confirms, and a failure in it points to the prompt.
-3. *While making.* Give each judge one point, its definitions, and a pass or fail result.
-4. *While making.* Where a judge has no messages that the maintainer has marked, end with `asks`, handing the maintainer the messages of its point from the first records, each with the mark you'd give it, since only the maintainer's marks say what passes. Their marks come back as the person's words when you're resumed.
-5. *While making.* Run each judge on the marked messages, and use it only once it gives each message the maintainer's mark.
-6. *While making.* Give the stand-in for the person only their intent, which the test case gives and the prompt never gets, and the whole of each message it answers.
-7. *While making.* Read the stand-in's answers in the conversations of the first records, and check that each answer comes from the intent alone and invents nothing.
-8. *While making.* Between two runs, change one thing, the prompt or a part of the test, never both.
-9. *While making.* Where a test fails, open its record and look first at the test's own parts, and change the prompt only for a cause in the prompt.
+1. *While making.* Build and run the prompt's unit tests by [the test-implementation best practice](../test-implementation/best-practice.md), on the model its users run, from one run of each case up to as many runs as Test strategy sets, in the folders that the architecture's Test strategy names for its test cases.
+2. *While making.* Open the record of each run, and see from what the AI did, not from its last message, which runs reached the result.
+3. *While making.* Where a run didn't reach the result, find the cause in its record, as the test-implementation best practice says, and change the prompt only for a cause in the prompt. Run the cases again, and judge from their results whether the change helps.
+4. *While making.* Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up.
