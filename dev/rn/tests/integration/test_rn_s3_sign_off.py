@@ -92,24 +92,39 @@ def test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes(b: Bench) 
 
 @pytest.mark.supports("S3", "Comment", "repository", "user")
 def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
-    """Given: the walkthrough's plan put up, and the user's comment on its pull request after it.
+    """Given: the walkthrough's plan put up, and on its pull request after it the user's comment,
+    the user's line comment on invoicer/render.py, and a bot's comment, with the user's comment from
+    before the sign-off.
     When: the user types /rn:gm alone, and the orchestrator runs tree.py send-back, then tree.py
     comments.
-    Then: tree.py comments gives the user's comment with its words, and none from before the
-    sign-off was put up."""
+    Then: tree.py comments gives the user's comment and line comment with their words, the line
+    comment with its path and line, and none from before the sign-off was put up or by the bot."""
     walk = w.plan_put_up(b)
     held = b.github_holds()
     pull = held["pulls"][walk.branch()]
+    bot = {"login": "github-actions[bot]"}
     pull["comments"] = [
         {"body": "Before the sign-off.", "createdAt": "2000-01-01T00:00:00Z"},
         {"body": "Leave out invoicer/render.py.", "createdAt": "2999-01-01T00:00:00Z"},
+        {"body": "A bot's check.", "createdAt": "2999-01-01T00:01:00Z", "author": bot},
+    ]
+    pull["review_comments"] = [
+        {
+            "body": "No hints here.",
+            "created_at": "2999-01-01T00:02:00Z",
+            "path": "invoicer/render.py",
+            "line": 12,
+        }
     ]
     with open(b.github, "w", encoding="utf-8") as f:
         json.dump(held, f)
     assert not walk.c.type("/rn:gm").blocked
     w.printed(walk.c.bash(b.tree("send-back")))
     comments = w.printed(walk.c.bash(b.tree("comments")))
-    assert [c["body"] for c in comments] == ["Leave out invoicer/render.py."]
+    assert [(c["body"], c["path"], c["line"]) for c in comments] == [
+        ("Leave out invoicer/render.py.", "", None),
+        ("No hints here.", "invoicer/render.py", 12),
+    ]
 
 
 @pytest.mark.supports("S3", "Sign-off", "Made", "Deliverable")
