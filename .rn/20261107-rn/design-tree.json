@@ -411,7 +411,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where the skeleton of the More kept stands",
+              "decided": "on branch rn-skeleton-more at 2a494828, a More kept keyed by its best practice and condition with the decision it changes, each body whose contract changed emptied; it merges into rn-rebuild with rn's test cases, which mark each case its emptied bodies fail, as rn's cases fail on it until then",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N2",
