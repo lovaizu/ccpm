@@ -24,6 +24,24 @@ check of a record that the subagent keeps. Lane runs the command as the subagent
 skill ends its turn. `{result}` in the command stands for the result given. Lane holds the end until
 the command gives 0.
 
+## Steps done in order
+
+Where a role must do its steps in order, Lane has it run Lane's step script as each step ends, by a
+sentence on its last step: `step.py <role> <n>`. Lane refuses a step out of order, and holds the
+role's end until each step is marked since it last marked step 1.
+
+## A step that reads a file whole, or never reads one
+
+Where a step says to read a file whole, such as `` Read `{plan}` whole. ``, Lane holds the step's mark
+until the role has read each line of the file by Read. Where a step says never to read a path, Lane
+stops each Read, Grep, Glob, or Bash command that reaches it. A path may name run values in braces.
+
+## A step with a checklist
+
+Where a step keeps a checklist of your plugin's, such as each practice of a standard, Lane has the
+role run Lane's item script as each item is done: `item.py <role> <id>`. Lane holds the step's mark
+until each item is marked, and takes the items from your adapter of a step's items.
+
 ## Routes
 
 - A route can wait until the person who uses your plugin types a command you name, such as an
@@ -89,6 +107,21 @@ adapter prints why in place of a text:
 ```
 
 Lane then leaves that start out of the moves due, and gives the main conversation why in its place.
+
+### A step's items
+
+The adapter of a step's items takes the role and the step's number as its two arguments. It gets the
+role's run values on standard input:
+
+```json
+{"values": {"deliverable": "<the value>"}}
+```
+
+It prints the ID of each item of the step's checklist, or none where the step keeps none this run:
+
+```json
+{"items": ["<id>"]}
+```
 
 ### The results your plugin keeps
 
