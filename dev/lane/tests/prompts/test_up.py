@@ -127,6 +127,72 @@ def test_an_ais_ask_calls_up_and_lays_by_its_own_act(tmp_path: Any, run: int) ->
     assert lanes_and_routes(laid(b)) == (WALKTHROUGH_LANES, walkthrough_routes())
 
 
+# The words of S3's first E2E stand-in, whose run went on to write's work before /reload-plugins.
+S3_ASK = (
+    "I'm working on the Claude Code plugin in changelog/. Please have Lane keep the plugin on its"
+    " steps without me. When Lane makes a proposal, approve it yourself and don't stop to ask me."
+    " After that, do the work of /changelog:write and keep going until the entries pass review."
+)
+
+
+def plugin_calls(tmp: str) -> list[dict[str, Any]]:
+    """Each call that the run's record shows of changelog's skill, its roles, or its result.py."""
+    with open(os.path.join(tmp, "record.jsonl"), encoding="utf-8") as f:
+        events = [json.loads(line) for line in f if line.startswith("{")]
+    uses = [
+        block["input"]
+        for e in events
+        if e.get("type") == "assistant"
+        for block in e["message"].get("content", [])
+        if isinstance(block, dict) and block.get("type") == "tool_use"
+    ]
+    named = ("changelog:", "changelog/hooks/lane/result.py")
+    return [u for u in uses if any(n in json.dumps(u) for n in named)]
+
+
+@pytest.mark.supports("test_an_ai_lays_by_its_own_run_of_lay")
+@pytest.mark.parametrize("run", range(RUNS))
+def test_an_ai_asks_for_reload_plugins_before_the_plugins_work(tmp_path: Any, run: int) -> None:
+    """Given: tally with the walkthrough's changelog, and Lane loaded.
+    When: the main conversation is asked to have Lane hold changelog to its steps, approving the
+    Proposal itself, and then to do /changelog:write's work.
+    Then: lay.py write lays the Proposal, the run calls no skill, role, or result.py of changelog,
+    and its last message asks for /reload-plugins, as the rules hold only after it."""
+    b, said = up(str(tmp_path), S3_ASK)
+    assert os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
+    assert plugin_calls(str(tmp_path)) == []
+    assert "/reload-plugins" in said
+
+
+def ups_results(b: w.Bench) -> list[str]:
+    """Each Result of up that Lane's run record of the run holds, as the guard took it."""
+    results = []
+    for path in glob.glob(os.path.join(b.env["TMPDIR"], "lane", "*", "record.jsonl")):
+        with open(path, encoding="utf-8") as f:
+            lines = [json.loads(line) for line in f if line.strip()]
+        results += [x["result"] for x in lines if x["kind"] == "Gave" and x["role"] == "up"]
+    return results
+
+
+@pytest.mark.supports("test_an_ai_lays_by_its_own_run_of_lay")
+@pytest.mark.parametrize("run", range(RUNS))
+def test_an_ais_up_ends_its_run_by_its_result(tmp_path: Any, run: int) -> None:
+    """Given: tally with the walkthrough's changelog, and Lane loaded.
+    When: the main conversation is asked to have Lane hold changelog to its steps, approving the
+    Proposal itself, and then to do /changelog:write's work.
+    Then: lay.py write lays the Proposal, and the guard takes up's Result `laid`, which ends up's
+    Run, as it takes one only from result.py run as a command of its own, by its path."""
+    # The words of S3's second E2E stand-in, whose AI ran up's result.py after `cd`.
+    ask = (
+        "I'm working on the changelog plugin in changelog/. Could you have Lane keep the plugin on"
+        " its steps by itself? Approve Lane's proposal yourself so you don't have to check with"
+        " me, then run what /changelog:write does until the entries pass review."
+    )
+    b, _ = up(str(tmp_path), ask)
+    assert os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
+    assert ups_results(b) == ["laid"], "up's Result is taken once, as `laid`"
+
+
 @pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")
 @pytest.mark.parametrize("run", range(RUNS))
 def test_an_ask_up_isnt_for_leaves_up_uncalled(tmp_path: Any, run: int) -> None:
@@ -161,7 +227,7 @@ def test_up_proposes_from_the_steps_alone_and_names_a_missing_result(
     Result's name it proposes."""
     reviewer = w.REVIEWER.replace(
         w.REVIEWER.splitlines()[-1],
-        "2. Check each entry against its commit.",
+        "3. Check each entry against its commit.",
     )
     files = dict(w.FILES, **{"agents/reviewer.md": reviewer})
     b, printed = up(str(tmp_path), "/lane:up changelog", files)

@@ -91,20 +91,22 @@ Proposal.
      of the plugin, tell the person what to change in it, as Lane writes the rest only by lay.py
      write once they approve.
    - Yes: go on to step 6.
-   - Neither, such as `Leave it for now.`: run `result.py up left`, and tell them that nothing was
-     laid. Where you can't tell whether a reply approves, ask them, as only their yes lays the
-     rules.
+   - Neither, such as `Leave it for now.`: run `result.py up left`, as step 7 runs `laid`, and
+     tell them that nothing was laid. Where you can't tell whether a reply approves, ask them, as
+     only their yes lays the rules.
 6. Run `lay.py write <plugin> <ID>`, with the ID that lay.py print showed last. Run lay.py write
    only after the person's reply to the Proposal it lays, or in a run an AI called. Where it gives
    1, it laid nothing: where the Steps changed since lay.py print showed them, go back to step 1, as
    the caller approved the Steps as they read then; else tell the caller why, in its words, and
    stop.
-7. Run `result.py up laid`. Then give the caller what lay.py write printed, word for word, as it
-   ends by asking for `/reload-plugins`, which only whoever gives the conversation its prompts can
-   type, and without which the rules don't hold. In a run an AI called, put what lay.py print
-   showed before it in the same message, word for word, as no person replied to it, so the guard
-   holds the end of that turn to those words, and whoever reads the AI's work sees what it
-   approved.
+7. Run `result.py up laid` by the path that your entry gives, as a command of its own, with nothing
+   before it, not even a `cd`, as the guard takes up's Result only from such a command, and without
+   it up's run stays open and holds the work that comes after it. Then give the caller what lay.py
+   write printed, word for word, as it ends by asking for `/reload-plugins`, which only whoever
+   gives the conversation its prompts can type, and without which the rules don't hold. In a run an
+   AI called, put what lay.py print showed before it in the same message, word for word, as no
+   person replied to it, so the guard holds the end of that turn to those words, and whoever reads
+   the AI's work sees what it approved.
 
 ## What you give
 
