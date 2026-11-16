@@ -33,7 +33,8 @@ Proposal.
 - Lane's page of steps, routes, and adapters, `docs/steps-routes-adapters.md` in Lane's folder,
   which says what a plugin's steps, routes, and adapters may hold. Read it where the plugin holds
   more than subagents that start one after another: a command that the person types, a wait for
-  their reply, a program in `hooks/adapters/`, or a step that ends on the plugin's own check.
+  their reply, a program in `hooks/adapters/`, a step that ends on the plugin's own check, a file
+  read whole or never read, a checklist, or steps done in order.
 
 ## Steps
 
@@ -44,13 +45,23 @@ Proposal.
    edits, and a rule kept apart from them is lost at the next `/lane:up`.
 2. Write the Proposal, in the form of the `proposal` schema, from what the Steps mean as their
    builder would read them:
-   - A Lane stops every call that its type doesn't allow, so a rule that a Step doesn't say stops
-     a move that the builder meant. Lay a type only on a Step that says what the type holds, by its
-     `suits`, with only the values that the Step names, word for word. `` Read the commits since then
-     with `git log --oneline`. `` takes run_only with `git log --oneline`, and `` Write the new
-     entries into `CHANGELOG.md`. `` takes write_only with `CHANGELOG.md`, while `` Read
-     `CHANGELOG.md` to learn its last version and its form. `` takes none, as no type holds
-     reading.
+   - A Lane stops every call that its type doesn't allow, and holds a Step until the role does
+     what its type asks, so a rule that a Step doesn't say stops a move that the builder meant. Lay
+     a type only on a Step that says what the type holds, by its `suits`, with only the values that
+     the Step names, word for word. `` Read the commits since then with `git log --oneline`. ``
+     takes run_only with `git log --oneline`, `` Write the new entries into `CHANGELOG.md`. ``
+     takes write_only with `CHANGELOG.md`, `` Read `{plan}` whole. `` takes reads_whole with
+     `{plan}`, and `` Don't open `tests/`, so the plan stays your own. `` takes reads_none with
+     `tests/`, while `` Read `CHANGELOG.md` to learn its last version and its form. `` takes none,
+     as it doesn't say to read all of it.
+   - Lay keeps_steps on a role's last Step where its Steps say that they're done in order, such as
+     `Finish each step before the next.`, and also where a Step of the role takes reads_whole or
+     keeps_items, as those hold a Step only at its mark, which only keeps_steps has the role give.
+     Numbered Steps alone don't say it, as every role's Steps are numbered. Lay keeps_items on a
+     Step that keeps a checklist of the plugin's, such as `Apply each practice of the standard.`,
+     only where `hooks/adapters/` holds an adapter of a step's items, as only it gives the
+     checklist's items; where it holds none, leave keeps_items out, and tell the caller as step 4
+     says.
    - Lay ends_by_result on the last Step of the skill and of each subagent that a Route starts,
      since the guard learns how a role ended only from the Result it gives.
    - Lay routes on the skill's Step that has its subagents do the work, and write the Routes from
@@ -66,7 +77,8 @@ Proposal.
      apart. Name the skill's own Result, after which it starts no more, by the outcome it ends on,
      such as `good` after the reviewer's `good`, so that the builder reads how the run ended.
    - Read what each program in the plugin's `hooks/adapters/` takes and prints. Name it by that as
-     the adapter of a start's text or as the adapter of the kept results.
+     the adapter of a start's text, of a step's items, or of the kept results, and name each one,
+     as Lane runs only the adapters that the Proposal names.
 3. Hand the Proposal to `lay.py print <plugin>` on its standard input, by a here-document, so that
    no file of it is left behind.
    - Exit 1: mend the Proposal by what it says, and print again.
@@ -76,9 +88,12 @@ Proposal.
    - Exit 0: what it printed is what the caller approves, ending with the Proposal's ID.
 4. Give the caller what lay.py print showed, word for word. Your message is those words alone, as
    they show each rule and Step as they'll read and end by asking for yes or a change, and the
-   README shows the person them alone. Only where `lay.py steps` gave notes, say before them, for
-   each, which Step keeps the user's words in place of the sentence that Lane laid, so that the
-   builder sees where their words now hold the rule.
+   README shows the person them alone. Only where `lay.py steps` gave notes, or you left
+   keeps_items off a Step for want of an adapter of a step's items, say so before them: for each
+   note, which Step keeps the user's words in place of the sentence that Lane laid, so that the
+   builder sees where their words now hold the rule; for each such Step, that Lane can't hold its
+   checklist until `hooks/adapters/` holds that adapter, as Lane's page says, so that the builder
+   doesn't take the checklist for held.
    - A person: end your turn there, as only their reply approves.
    - An AI: read what lay.py print showed against what the plugin's steps are for, and against
      what the work you call up for asks. Where it falls short, write the change into its Step, as

@@ -247,10 +247,6 @@ STEPS_WRITER = w.MARKED_WRITER.replace(
 
 
 @pytest.mark.supports("test_a_proposal_of_the_lane_types_of_steps_shows_each_steps_sentence")
-@pytest.mark.xfail(
-    strict=True,
-    reason="up's part doesn't yet propose reads_whole, reads_none, keeps_items, or keeps_steps",
-)
 @pytest.mark.parametrize("run", range(RUNS))
 def test_up_proposes_the_lane_types_of_steps_where_the_steps_say_them(
     tmp_path: Any, run: int
