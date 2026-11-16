@@ -38,6 +38,7 @@ usage: tree.py start <goal>
        tree.py push
        tree.py put-up plan | put-up deliverable <path>
        tree.py put-up lesson   (its words on standard input)
+       tree.py pause   (where each role stood on standard input)
        tree.py approve | send-back | comments | runs
 """
 
@@ -71,9 +72,10 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
     - `comments`: 0, with `[{"author", "at", "path", "line", "body"}]`, each of the user's
       comments on the pull request, of its conversation and on its lines, since the last sign-off
       sent back was put up, from `github.comments`; 1, where no sign-off was sent back.
-    - `pause`, with `{"stood": [{"record", "step"}]}` on standard input: 0, once each Place is
-      written and `branch.commit`, its message naming each record and step, and `branch.push` take
-      it.
+    - `pause`, with `{"stood": [{"record", "step"}]}` on standard input, each step a whole number
+      from 1: 0, with `[{"record", "step"}]` as given, once `place.write` keeps each start's Place,
+      `branch.commit` commits the work, its message naming each record and step, and `branch.push`
+      pushes it.
     - `runs`: 0, with `[{"name", "worktree", "record"}]` from `runs.left`.
     - `ready`: 0, with the pull request's URL, once `github.hand_over` marks it ready and
       `sign_offs.put_up` puts up the pull request handed over.
@@ -137,15 +139,30 @@ def _commit(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
     record, step = args
     if not step.isdigit() or int(step) < 1:
         raise Wrong(f"<step> must be a step's number from 1, not {step!r}")
-    run = _run(cwd)
-    records.role_of(record)
-    work = git.changed(run.worktree)
-    place.write(
-        os.path.join(run.worktree, rounds.place_path(run, record)),
-        place.Place(record, int(step), work),
-    )
-    branch.commit(run, ["."], f"{record}: step {step} ended")
+    _kept(_run(cwd), [(record, int(step))], f"{record}: step {step} ended")
     return {"record": record, "step": int(step)}
+
+
+def _pause(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    stood = _stood(stdin.read())
+    run = _run(cwd)
+    _kept(run, stood, "paused: " + "; ".join(f"{r} at step {s}" for r, s in stood))
+    try:
+        branch.push(run)
+    except Missing as e:
+        raise Missing(f"the work is committed but not pushed, as {e}") from None
+    return [{"record": r, "step": s} for r, s in stood]
+
+
+def _kept(run: Run, stood: list[tuple[str, int]], message: str) -> None:
+    """Keeps the Place of each start at the step it stands at, with the files of the work, and
+    commits the work with the message; refuses, before it writes, a record that names no start of
+    the run."""
+    paths = [rounds.place_path(run, record) for record, _ in stood]
+    work = git.changed(run.worktree)
+    for path, (record, step) in zip(paths, stood):
+        place.write(path, place.Place(record, step, work))
+    branch.commit(run, ["."], message)
 
 
 def _round(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
@@ -235,6 +252,29 @@ def _runs(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
     ]
 
 
+def _stood(text: str) -> list[tuple[str, int]]:
+    """Where each start stood, as tree.py pause reads it on standard input: each record and step."""
+    form = 'the pause on standard input must be {"stood": [{"record": <path>, "step": <from 1>}]}'
+    # Each refusal below runs only on a pause out of form, which no case gives; taken back to the
+    # cases' designer.
+    try:
+        given = json.loads(text)
+    except ValueError as e:  # pragma: no cover
+        raise Wrong(f"{form}; it isn't JSON: {e}") from None
+    try:
+        stood = [(each["record"], each["step"]) for each in given["stood"]]
+    except (KeyError, TypeError):  # pragma: no cover
+        raise Wrong(f"{form}, not {json.dumps(given)}") from None
+    wrong = [
+        json.dumps({"record": r, "step": s})
+        for r, s in stood
+        if not (isinstance(r, str) and type(s) is int and s >= 1)
+    ]
+    if wrong:  # pragma: no cover
+        raise Wrong(f"{form}, not {', '.join(wrong)}")
+    return stood
+
+
 def _change(text: str) -> tuple[dict[str, Any], list[more.More]]:
     """The change that tree.py write reads on standard input: its nodes, and each More to keep."""
     try:
@@ -277,5 +317,6 @@ _COMMANDS: dict[str, tuple[Callable[[list[str], TextIO, str, str], Any], tuple[i
     "approve": (_decided(True), (0,)),
     "send-back": (_decided(False), (0,)),
     "comments": (_comments, (0,)),
+    "pause": (_pause, (0,)),
     "runs": (_runs, (0,)),
 }
