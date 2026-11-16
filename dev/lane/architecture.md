@@ -60,6 +60,12 @@ reply.
 
 *Why*: a reply read as a result starts a role the order doesn't name, which raises KR1.1.
 
+### What no hook shows only from Lane's scripts
+
+The guard checks what hooks show from the calls, and takes the rest only from Lane's scripts.
+
+*Why*: a reply taken for a read or a Step done lets a skipped Step pass, raising KR1.1.
+
 ### Only the main conversation starts the roles
 
 The guard lets a start of a role through only from the main conversation, as a Start due.
@@ -112,8 +118,13 @@ raising KR1.1.
   Places each hook event in its Run, and gives each start due, each stop, and each approval.
 - result.py\
   Takes a result only where the role may give it in a Run of the conversation.
+- step.py\
+  Takes a Step's Mark only for the Step due in the role's latest pass, else gives the Step due.
+- item.py\
+  Takes an Item's Mark only where the adapter gives it for the Step due, else gives the Items left.
 - adapter\
-  Gives each start's text and the kept results in Lane's form, and names the work a call picks up.
+  Gives each start's text, a Step's Items, and kept results in Lane's form, and names what a call
+  picks up.
 
 Strategies:
 
@@ -132,16 +143,21 @@ Strategies:
   raising KR1.1.
 - A sentence left out of a step that already says it\
   A rule said twice takes the role's attention from its step, so the step says each once, keeping KR1.1 low.
-- A call kept where one Lane of each lane type allows it, the end's result script by every type\
-  Else one Lane stops what another of its type allows, or the end's result script, raising KR1.1.
+- A call kept where one Lane of each lane type allows it, and Lane's scripts by every type\
+  Else one Lane stops what another of its type allows, or a role's Result or Mark, raising KR1.1.
+- A Step's Mark held only by its own Lanes of reads_whole and keeps_items, laid only with keeps_steps\
+  The Marks alone bound a Step, so only there does a Lane see its reads and Items, keeping KR1.1
+  low.
+- A Step's Items given by the plugin's adapter, from the role, the Step, and the run values\
+  Only the plugin knows each Step's checklist, and Lane names no plugin, keeping KR1.1 low.
 - Each event placed by `session_id` and `agent_id`, a Start tied at its Agent call's PostToolUse\
   Only this placing holds each call to its own Start, as [Claude Code's states](claude-code-states.md)
   shows, keeping KR1.1 low.
 - The runs of several skills side by side, each held to its own routes\
   A person types another command while a subagent of the first runs, and leaving it unheld raises
   KR1.1.
-- Each Result added by the guard at the PostToolUse of a `result.py` run that gave 0\
-  A Bash command carries no `agent_id`, so only the hook event ties a Result to its subagent, keeping
+- Each Result and Mark added by the guard at the PostToolUse of a run of Lane's scripts that gave 0\
+  A Bash command carries no `agent_id`, so only the hook event ties each to its subagent, keeping
   KR1.1 low.
 - The adapter naming the work a call picks up, from the words typed after the command\
   Only the adapter, run before the guard answers, separates a new request from a pick-up, keeping KR1.1
@@ -172,7 +188,11 @@ Strategies:
 - Start\
   One start or resume of a role, made due by a Route, that holds its text and its run values.
 - Call\
-  One tool call of a role, which the guard checks as it comes and the run record doesn't keep.
+  One tool call of a role, checked as it comes, and kept only as a Read that reads_whole needs.
+- Item\
+  One item of a Step's checklist, by the ID that the plugin's adapter gives.
+- Mark\
+  A role's report of a Step or an Item done, each Mark of Step 1 beginning a new pass.
 - Run\
   One run of one skill in one conversation, with each prompt typed in it, until a route starts no
   more.
@@ -418,6 +438,7 @@ sequenceDiagram
       else
         G-->>CC: lets it through
       end
+      Note over M,G: The skill's runs of step.py and item.py, its Reads, and its Marks go as S6 draws, with no agent_id.
     else it ends its turn, where a move waits for the person
       U->>CC: replies, or types the command the move waits for
       CC->>G: the prompt
@@ -470,23 +491,70 @@ sequenceDiagram
   participant CC as Claude Code
   participant G as guard
   participant T as lane types
+  participant A as adapter
+  participant SP as step.py
+  participant IP as item.py
   participant R as result.py
   participant RS as run record
   participant PC as the plugin's command
   loop each call the subagent makes
     SA->>CC: a tool call (Call)
     CC->>G: the call, with its agent_id
-    G->>RS: reads the lines, for its Start and Run
-    G->>T: checks the Call by each Lane of the role, with the Start's run values
-    alt it keeps every Lane
+    G->>RS: reads the lines, for its Start, its Marks, and its Run
+    alt a run of step.py <role> <n>
+      opt a Lane of keeps_items lies on Step n
+        G->>A: asks for the Step's Items, with the role, Step n, and the run values
+        A-->>G: each Item's ID
+      end
+      G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since the Step began
+      alt the adapter fails
+        G-->>SA: stops it, with why and who must fix it
+      else a path a Lane of reads_whole names wasn't read whole, or an Item isn't marked
+        G-->>SA: stops it, with the Lane's sentence and what the Step lacks
+        SA->>SA: goes back to the Step
+      else
+        G-->>CC: lets it through
+        SA->>SP: step.py <role> <n>
+        SP->>G: asks where the role's Marks stand
+        alt Step n is due in the latest pass
+          SP-->>SA: exits 0
+          CC->>G: the PostToolUse, with its agent_id
+          G->>RS: adds the Mark of Step n, for that subagent's Start
+        else
+          SP-->>SA: refuses it, with the Step due
+        end
+      end
+    else a run of item.py <role> <id>
       G-->>CC: lets it through
-    else it breaks a Lane
-      G-->>SA: stops it, with the Step's sentence and what it may do
-      SA->>SA: goes back to the Step
-    else it starts a role of the plugin
-      G-->>SA: stops it, with the sentence of the Lane on its last Step
-    else the guard can't check it
-      G-->>SA: stops it, with why and who must fix it
+      SA->>IP: item.py <role> <id>
+      IP->>G: asks for the Step due and its Items
+      G->>A: asks for the Step's Items, with the role, the Step due, and the run values
+      A-->>G: each Item's ID
+      alt an Item of the Step due
+        IP-->>SA: exits 0
+        CC->>G: the PostToolUse, with its agent_id
+        G->>RS: adds the Mark of the Item, for that subagent's Start
+      else the adapter fails
+        IP-->>SA: refuses it, with why and who must fix it
+      else
+        IP-->>SA: refuses it, with the Items left
+      end
+    else any other call
+      G->>T: checks the Call by each Lane of the role, with the Start's run values
+      alt it keeps every Lane
+        G-->>CC: lets it through
+        opt a Read of a path that a Lane of reads_whole names
+          CC->>G: the PostToolUse, with the lines it read
+          G->>RS: adds the Read (Call), for that subagent's Start
+        end
+      else it breaks a Lane
+        G-->>SA: stops it, with the Step's sentence and what it may do
+        SA->>SA: goes back to the Step
+      else it starts a role of the plugin
+        G-->>SA: stops it, with the sentence of the Lane on its last Step
+      else the guard can't check it
+        G-->>SA: stops it, with why and who must fix it
+      end
     end
   end
   SA->>R: result.py <role> <result>
@@ -503,6 +571,8 @@ sequenceDiagram
   G->>T: checks the end by each Lane of the role
   alt the Lane on its last Step finds no Result since its Start
     G-->>SA: stops the end, with that Lane's sentence
+  else a Lane of keeps_steps finds a Step unmarked in the latest pass
+    G-->>SA: stops the end, with that Lane's sentence and the Step due
   else
     opt a Lane holds the end to a command of the plugin's
       T->>PC: runs it, with the run values and the Result filled in
@@ -591,6 +661,8 @@ plugins/lane/
 │   └── lane/                     Lane's code, copied whole into each plugin
 │       ├── hook.py               the guard
 │       ├── result.py             the result script
+│       ├── step.py               the script by which a role marks a Step done
+│       ├── item.py               the script by which a role marks an Item of a Step done
 │       └── domain/               the guard's code, the form of lanes.json, and lanes/, the lane types
 ├── CHANGELOG.md                  the changes in each version
 └── README.md                     for Lane's users
