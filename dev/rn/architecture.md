@@ -239,8 +239,8 @@ sequenceDiagram
       GD->>R: checks its record, its result, and the deliverable (Record)
       R-->>GD: each step, practice, or item they lack, and each place where the deliverable leaves its kind's template, or none, keeping the result in the record
       opt they lack one
-        GD-->>G: holds its end, with what they lack
-        Note over G,R: The generator carries out what they lack, and ends again. The guard holds each role's end, and each end of the orchestrator's turn, in the same way.
+        GD-->>G: holds its end, with the Lane's sentence that names the check
+        Note over G,R: The generator runs that check, which gives what they lack, carries it out, and ends again. The guard holds each role's end, and each end of the orchestrator's turn, in the same way.
       end
       GD-->>O: done
       O->>O: checks it against the cut and the best practice
