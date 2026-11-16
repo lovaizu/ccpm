@@ -63,7 +63,7 @@ LAID = Laid(
     sentences=(
         LaidSentence("agents/writer.md", 2, "Run only `git log --oneline`."),
         LaidSentence("agents/writer.md", 3, "Write only `CHANGELOG.md`."),
-        LaidSentence("agents/writer.md", 4, f"End by running `{GIVES} writer written`."),
+        LaidSentence("agents/writer.md", 4, f"End by running `{GIVES} writer written`, as a command of its own."),
     ),
 )
 

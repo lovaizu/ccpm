@@ -103,24 +103,24 @@ Routes of write, laid on its step 1:
   reviewer `more`   start writer
   reviewer `good`   start no more
 
-1. Have the entries written and reviewed. Start each subagent you are told to start, until you are told to start no more. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py write good`.
+1. Have the entries written and reviewed. Start each subagent you are told to start, until you are told to start no more. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py write good`, as a command of its own.
 
 Lanes of writer, each checked only in writer:
   step 2  run:   Run only `git log --oneline`.  type run_only
   step 3  write: Write only `CHANGELOG.md`.     type write_only
-  step 4  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`.
+  step 4  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`, as a command of its own.
   commands: writer may run only `git log --oneline` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`
 
 2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`.
 3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.
-4. Reply with the entries you wrote. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`.
+4. Reply with the entries you wrote. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`, as a command of its own.
 
 Lanes of reviewer, each checked only in reviewer:
   step 2  write: Write only `REVIEW.md`.  type write_only
-  step 3  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`.
+  step 3  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`, as a command of its own.
 
 2. Write into `REVIEW.md` what each wrong entry lacks, or leave it empty when every entry is right. Write only `REVIEW.md`.
-3. Give `more` when an entry needs the writer again, and `good` when every entry is right. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`.
+3. Give `more` when an entry needs the writer again, and `good` when every entry is right. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`, as a command of its own.
 
 ID: 6d9b4389
 Reply yes to lay these into changelog, or say what to change.
@@ -179,7 +179,7 @@ changelog: writer gave `written`. Start `changelog:reviewer` with `Carry out you
 When `reviewer` tries to end without running its result script, Lane shows:
 
 ```text
-changelog: End by running `python3 /home/you/tally/changelog/hooks/lane/result.py reviewer more` or `python3 /home/you/tally/changelog/hooks/lane/result.py reviewer good`.
+changelog: End by running `python3 /home/you/tally/changelog/hooks/lane/result.py reviewer more` or `python3 /home/you/tally/changelog/hooks/lane/result.py reviewer good`, as a command of its own.
 Run it as a command of its own: result.py run inside a longer command gives no Result.
 ```
 

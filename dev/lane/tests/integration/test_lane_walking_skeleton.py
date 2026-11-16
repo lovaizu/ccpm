@@ -43,7 +43,7 @@ def test_yes_lays_the_proposal_into_the_plugin(b: w.Bench) -> None:
     assert "2. Read the commits since then with `git log --oneline`. Run only `git log" in writer
     assert (
         "4. Reply with the entries you wrote. End by running"
-        f" `{w.RESULT} writer written`." in writer
+        f" `{w.RESULT} writer written`, as a command of its own." in writer
     )
     assert os.path.isfile(os.path.join(b.changelog, "hooks", "lane", "hook.py"))
     lanes = json.loads(w.read(os.path.join(b.changelog, "hooks", "lanes.json")))

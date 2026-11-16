@@ -37,7 +37,8 @@ class EndsByResult:
         return TypeInfo(
             name="ends_by_result",
             sentence="End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py <role>"
-            " <result>`, with each Result the Routes name for the role, joined by `or`.",
+            " <result>` as a command of its own, with each Result the Routes name for the role, joined"
+            " by `or`.",
             suits="the last Step of the skill and of each subagent, which Lane lays it on",
             allows="the role's run of the result script, whatever the other Lanes of the role say",
             args=ARGS,
@@ -59,13 +60,14 @@ class EndsByResult:
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on the role's last Step: `End by running` the result
         script with each Result that the Routes name for the role, a Route's `after` for a
-        subagent and a move's `no_more` for the skill, joined by `or`.
+        subagent and a move's `no_more` for the skill, joined by `or`, as a command of its own, as
+        ALONE says why.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
         named = " or ".join(f"`{command}`" for command in commands(lane.role, routes))
-        return f"End by running {named}."
+        return f"End by running {named}, as a command of its own."
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """True for a Bash run of the result script for the Lane's role, as

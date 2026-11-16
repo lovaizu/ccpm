@@ -75,7 +75,7 @@ def end_of(role: str, *results: str, gives: str = d.GIVES) -> str:
     """The sentence of the Lane on the role's last Step, naming each Result, the result script by
     `${CLAUDE_PLUGIN_ROOT}` as laid, or by changelog's folder as a stop gives it."""
     named = " or ".join(f"`{gives} {role} {result}`" for result in results)
-    return f"End by running {named}."
+    return f"End by running {named}, as a command of its own."
 
 
 # What a role may do where its end holds no Result.
