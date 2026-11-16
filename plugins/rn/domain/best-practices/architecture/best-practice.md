@@ -187,8 +187,7 @@ A failure that no test looks for reaches the users unseen, and a case's pass or 
 7. *While deciding.* For each benchmark, name what it measures, such as a key result or each case's results over several runs of a prompt. Set no criterion, as a person judges from the results.
 8. *While deciding.* Set how many times a benchmark runs each case by its first runs: add runs until one more no longer changes what the results show, such as the mean of a key result by a step of its measure, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it.
 9. *While deciding.* For the trace of the architecture, set as the criterion that every element of this document, each story, rule, component, and kind of data, has an integration test, and that every test names an element or a case one level up that exists. Name the script that checks this by the names of the elements, not by reading, since only a check by name finds each element that no test reaches.
-10. *While deciding.* Where an AI judges a key result, trust the judge only once it's right on every kept record whose answer you know.
-11. *While making.* Write one row for each check picked, in the guide's order, in the template's table. Give each its kind as the guide or the prompt rule makes it.
+10. *While making.* Write one row for each check picked, in the guide's order, in the template's table. Give each its kind as the guide or the prompt rule makes it.
 
 ### N13
 
@@ -209,10 +208,6 @@ The E2E tests are slow and few, so they can only confirm what the lower levels a
 1. *While deciding.* For each thing the document says the product does, name the part that holds it.
 2. *While deciding.* Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components.
 3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and measure it by the prompt's unit tests on the model, as N12.8 sets.
-4. *While making.* The lower levels show a part only if each double behaves like the part it replaces, so give each double only results in the form the part's contract gives, refusals among them.
-5. *While making.* Test each double as the part's unit tests test the part.
-6. *While making.* Draw a double of something outside the product from its documentation or from a recorded run of the real thing, and name that source beside what the double gives, so that the script that checks the trace, which the test design makes, can check it. A double that gives what the real thing never would passes a test that the real one fails.
-7. *While making.* Trust a check, such as a test, a hook, or the judge of an E2E test, only once you have seen it fail on a case that breaks what it checks, such as a test of a rule run with the part that holds the rule taken out, which the script that checks the trace can run. Trust a judge once it's right on kept records whose answer you know.
 
 ### N15
 

@@ -78,7 +78,7 @@
        },
        {
         "at": "decide",
-        "text": "Where no such guides agree, give the deliverable the kind `specific`, such as a file that keeps a run's state, a file of the product's own specification, an integration test of its architecture, or an end-to-end test, and name in `check` the check that judges it, such as the test that passes once the deliverable exists."
+        "text": "Where no such guides agree, give the deliverable the kind `specific`, such as a file that keeps a run's state or a file of the product's own specification, and name in `check` the check that judges it, such as the test that passes once the deliverable exists."
        }
       ]
      },
@@ -95,10 +95,6 @@
        {
         "at": "decide",
         "text": "For a `specific` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and in `preconditions` the path of each deliverable it runs, such as the parts that the test calls."
-       },
-       {
-        "at": "decide",
-        "text": "Put in the preconditions of each integration test the unit-tested parts it runs, and in those of each end-to-end (E2E) test the integration tests of the parts it runs, since a higher level finds a fault later, at a higher cost."
        },
        {
         "at": "decide",
