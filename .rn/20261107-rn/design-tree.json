@@ -332,7 +332,7 @@
           "decisions": [
             {
               "about": "Where the skeleton of the More kept stands",
-              "decided": "on branch rn-skeleton-more at 2a494828, a More kept keyed by its best practice and condition with the decision it changes, each body whose contract changed emptied; more.keepable's contract and skeleton-gaps.md still take in the refusal of a decision not under the deliverable, which 06834b33 added; it merges into rn-rebuild with rn's test cases, which mark each case its emptied bodies fail, as rn's cases fail on it until then",
+              "decided": "on branch rn-skeleton-more at b585430e, a More kept keyed by its best practice and condition with the decision it changes, refused where that decision isn't under its deliverable or didn't change since the round's cut, each body whose contract changed emptied, and skeleton-gaps.md naming no gap; it merges into rn-rebuild with rn's test cases, which mark each case its emptied bodies fail, as rn's cases fail on it until then",
               "by": "maker"
             }
           ]
