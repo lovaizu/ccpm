@@ -291,7 +291,8 @@
           "decisions": [
             {
               "about": "The judge's marked messages",
-              "decided": null
+              "decided": "each run of write in fixtures/judge/messages.json marked as its maker proposed: a guard's stop of an end after the role ran result.py inside a longer command that gave 0 fails the run, as the step's laid sentence doesn't say to run it alone, so the guard stopped an end the step allows",
+              "by": "user"
             }
           ]
         },

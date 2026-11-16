@@ -12,7 +12,7 @@
         "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/walkthrough/20261116T043329Z",
@@ -23,7 +23,7 @@
         "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/ai-approves/20261116T042955Z",
@@ -35,7 +35,7 @@
         "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/walkthrough/20261116T041426Z",
@@ -47,7 +47,7 @@
         "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/walkthrough/20261116T041426Z",
@@ -58,7 +58,7 @@
         "reviewer ran result.py alone, and no call or end was stopped"
       ],
       "judge_today": true,
-      "mark": null
+      "mark": true
     },
     {
       "records": "dev/lane/tests/e2e/records/ai-approves/20261116T041228Z",
@@ -70,7 +70,7 @@
         "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
       ],
       "judge_today": true,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/walkthrough/20261116T035611Z",
@@ -82,7 +82,7 @@
         "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/walkthrough/20261116T035611Z",
@@ -95,7 +95,7 @@
         "the main conversation ran `head -15 CHANGELOG.md` after `result.py write good`, which ended the run: outside the run, so no fail"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/ai-approves/20261116T035503Z",
@@ -106,7 +106,7 @@
         "the main conversation then read Lane's guard code and ran `result.py up laid`, work no step of write names, and the calls went through: fail"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/ai-approves/20261116T035503Z",
@@ -116,7 +116,7 @@
         "write was called again, started no subagent, and the turn ended without write's Result, so the entries were neither written nor reviewed: fail, as step 1 wasn't carried out"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     },
     {
       "records": "dev/lane/tests/e2e/records/ai-approves/20261116T035503Z",
@@ -128,7 +128,7 @@
         "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
       ],
       "judge_today": false,
-      "mark": null
+      "mark": false
     }
   ]
 }
