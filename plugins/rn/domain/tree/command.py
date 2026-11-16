@@ -19,7 +19,6 @@ from tree import (
     more,
     place,
     records,
-    results,
     rounds,
     runs,
     sign_offs,
@@ -52,17 +51,21 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
     - `start <goal>`: 0, with `{"worktree", "folder", "record"}`, the orchestrator's record among
       them, from `runs.start` and `records.orchestrator_record`.
     - `write <record> <ground>`, with `{"nodes": {<path>: <node>}, "more": [{"deliverable",
-      "condition", "good_when"}]}` on standard input, and `<ground>` why the change decides as it
-      does: 0, with `{"changed", "touched", "doing"}`, once `design.apply`, `more.keepable` against
+      "best_practice", "condition", "decision", "good_when"}]}` on standard input, each more's
+      best_practice the kind that `tree.py round` names for its Answers and its decision the path
+      of the decision it changes, and `<ground>` why the change decides as it does: 0, with
+      `{"changed", "touched", "doing"}`, once `design.apply`, `more.keepable` against
       `rounds.at_cut`, `turn.mark_doing`, `design.write`, `rounds.keep_more`, and `branch.commit`
-      take it, the commit's message `<ground>` word for word; 1, naming the more's necessary
-      condition, where `more.keepable` refuses it; 1, where `<ground>` is empty, as a decision
-      committed with no ground is one no one can trace.
+      take it, the commit's message `<ground>` word for word; 1, naming the more's best practice
+      and necessary condition, where `more.keepable` refuses it; 1, where `<ground>` is empty, as
+      a decision committed with no ground is one no one can trace.
     - `commit <record> <step>`: 0, once `place.write` keeps the start's Place and `branch.commit`
       commits its work, the message naming the record and the step.
     - `round <deliverable>`: 0, with `[{"number", "made", "answers"}]`, each round from
       `rounds.each`, the latest last, its Made, or null before the generator wrote it, and each
-      evaluator's Answers, by group, in the forms that the generator and the evaluator wrote them.
+      evaluator's Answers, by group, in the forms that the generator and the evaluator wrote them,
+      each Answers with `"best_practice"`, the kind of its group's best practice from
+      `practices.judged_by`, as the kind's best practice and the refactor one share condition IDs.
     - `push`: 0, with the pull request's URL, from `branch.push` and `github.keep_draft`.
     - `put-up plan`, `put-up deliverable <path>`, or `put-up lesson` with its words on standard
       input: 0, with the sign-off waiting, from `sign_offs.put_up`.
@@ -167,35 +170,7 @@ def _kept(run: Run, stood: list[tuple[str, int]], message: str) -> None:
 
 
 def _round(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
-    run = _run(cwd)
-    design.read(run)
-    return [
-        {
-            "number": each.number,
-            "made": _made_as_written(each.made) if each.made else None,
-            "answers": [_answers_as_written(a) for a in each.answers],
-        }
-        for each in rounds.each(run, args[0])
-    ]
-
-
-def _made_as_written(made: results.Made) -> Any:
-    """A Made in the form of generator-out.schema.json's `made`, as the generator wrote it."""
-    return {
-        "decisions": [{"path": p, "where": w} for p, w in made.decisions.items()],
-        "more": [{"condition": c, "where": w} for c, w in made.more.items()],
-        "settled": [
-            {"point": s.point, "decided": s.decided, "ground": s.ground} for s in made.settled
-        ],
-    }
-
-
-def _answers_as_written(answers: results.Answers) -> Any:
-    """An evaluator's Answers in the form of evaluator-out.schema.json's `answers`."""
-    return {
-        "good": [{"question": q, "lines": list(lines)} for q, lines in answers.good.items()],
-        "more": [{"question": q, "good_when": g} for q, g in answers.more.items()],
-    }
+    raise NotImplementedError("tree.py round")
 
 
 def _push(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
@@ -283,20 +258,10 @@ def _stood(text: str) -> list[tuple[str, int]]:
 
 
 def _change(text: str) -> tuple[dict[str, Any], list[more.More]]:
-    """The change that tree.py write reads on standard input: its nodes, and each More to keep."""
-    try:
-        given = json.loads(text)
-    except ValueError as e:
-        raise Wrong(f"the change on standard input isn't JSON: {e}") from None
-    if not (isinstance(given, dict) and set(given) == {"nodes", "more"}):
-        raise Wrong('the change must be {"nodes": {<path>: <node>}, "more": [<more>]}')
-    if not isinstance(given["nodes"], dict) or not isinstance(given["more"], list):
-        raise Wrong('the change\'s "nodes" must be an object, and its "more" a list')
-    try:
-        kept = [more.More(m["deliverable"], m["condition"], m["good_when"]) for m in given["more"]]
-    except (KeyError, TypeError):
-        raise Wrong('each more must be {"deliverable", "condition", "good_when"}') from None
-    return given["nodes"], kept
+    """The change that tree.py write reads on standard input, `{"nodes": {<path>: <node>}, "more":
+    [{"deliverable", "best_practice", "condition", "decision", "good_when"}]}`: its nodes, and each
+    More to keep; raises Wrong, saying the form, where the text isn't JSON or leaves the form."""
+    raise NotImplementedError("tree.py write's change")
 
 
 def _run(cwd: str) -> Run:

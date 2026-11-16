@@ -16,10 +16,10 @@ def lacks(cut: Cut, result: str, made: Made | None, answers: Answers | None) -> 
     Takes: the start's Cut, the result given, and the Made or Answers it wrote, or None where it
     wrote none.
     Gives: each item that the result names nowhere, said so that the role takes it: for a
-    generator, each decision of its Cut by its path and each More kept by its condition that its
-    Made names no place for; for an evaluator, each condition of its group that its Answers answer
-    neither good nor more; none where it names each, where the result is asks or lacks, or for the
-    tree-keeper, whose reply the check doesn't read.
+    generator, each decision of its Cut by its path and each More kept by its best practice and
+    condition, which key it, that its Made names no place for; for an evaluator, each condition of
+    its group that its Answers answer neither good nor more; none where it names each, where the
+    result is asks or lacks, or for the tree-keeper, whose reply the check doesn't read.
     Changes: nothing.
     Refuses: nothing.
     Carries: S1 `R-->>GD: each step, practice, or item they lack`.
@@ -36,18 +36,6 @@ def lacks(cut: Cut, result: str, made: Made | None, answers: Answers | None) -> 
 
 
 def _made(cut: Cut, made: Made | None) -> tuple[str, ...]:
-    """Each decision and More kept of the generator's Cut that its Made names no place for."""
-    part = cast(Any, cut.part)["cut"]
-    decisions = made.decisions if made else {}
-    kept = made.more if made else {}
-    found = [
-        f"the Made names no place where it carries out the decision {d['decision']['path']}"
-        for d in part["decisions"]
-        if d["decision"]["path"] not in decisions
-    ]
-    found += [
-        f"the Made names no place where it makes the More kept of {m['condition']} good"
-        for m in part["more"]
-        if m["condition"] not in kept
-    ]
-    return tuple(found)
+    """Each decision and More kept of the generator's Cut that its Made names no place for, each
+    More kept by its best practice and condition."""
+    raise NotImplementedError("items.lacks of a generator")

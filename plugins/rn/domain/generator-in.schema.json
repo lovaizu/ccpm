@@ -125,12 +125,22 @@
               "items": {
                 "type": "object",
                 "required": [
+                  "best_practice",
                   "condition",
+                  "decision",
                   "good_when"
                 ],
                 "additionalProperties": false,
                 "properties": {
+                  "best_practice": {
+                    "description": "The kind of the best practice whose necessary condition it falls short of, the deliverable's kind or that of the refactor best practice, as the two share condition IDs.",
+                    "type": "string"
+                  },
                   "condition": {
+                    "type": "string"
+                  },
+                  "decision": {
+                    "description": "The decision it changed, by its path in the design tree.",
                     "type": "string"
                   },
                   "good_when": {

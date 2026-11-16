@@ -109,8 +109,8 @@ def _generator_due(
     made = number and _there(run, rounds.path_in(run, deliverable, number, "made.json"))
     if not made:
         return rounds.start_name(deliverable, number or 1)
-    # A More kept is kept only once a decision under its condition changed, as more.keepable holds,
-    # so a decision changed since the round's cut starts the next round for both.
+    # A decision changed since the round's cut starts the next round, and with it each More kept,
+    # which more.keepable keeps only once the decision it names changed.
     if _decisions_of(rounds.at_cut(run, deliverable), deliverable) != _decisions_of(
         tree, deliverable
     ):
@@ -131,7 +131,7 @@ def _evaluator_due(
     if not number or not _there(run, rounds.path_in(run, deliverable, number, "made.json")):
         return ""
     held = {v.get("answers") for v in running}
-    for group in range(len(_groups(run, _node(tree, deliverable)))):
+    for group in range(len(practices.judged_by(run, _ROOT, _node(tree, deliverable)["kind"]))):
         answers = rounds.path_in(run, deliverable, number, f"answers-{group}.json")
         if answers not in held and not _there(run, answers):
             return rounds.start_name(deliverable, number, group)
@@ -147,7 +147,8 @@ def _of_start(run: Run, tree: DesignTree, role: str, record: str) -> Cut:
     if start.group is None:
         raise Wrong(f"{record} names no group of necessary conditions for an evaluator")
     group = start.group
-    kinds, ids = _groups(run, node)[group]
+    judged = practices.judged_by(run, _ROOT, node["kind"])[group]
+    kinds, ids = judged.folder, judged.conditions
     answers = rounds.path_in(run, start.deliverable, start.number, f"answers-{group}.json")
     values = {"record": record, "deliverable": start.deliverable, "answers": answers}
     part = {
@@ -194,7 +195,15 @@ def _generator(
         "name": node["name"],
         "inputs": list(node["inputs"]),
         "decisions": decisions,
-        "more": [{"condition": m.condition, "good_when": m.good_when} for m in more],
+        "more": [
+            {
+                "best_practice": m.best_practice,
+                "condition": m.condition,
+                "decision": m.decision,
+                "good_when": m.good_when,
+            }
+            for m in more
+        ],
     }
     part = {
         "record": record,
@@ -227,16 +236,6 @@ def _decisions(tree: DesignTree, deliverable: str) -> list[tuple[str, Any, Any]]
         for n, condition in enumerate(each[number].get("necessary_conditions", []))
         for k, decision in enumerate(condition["decisions"])
     ]
-
-
-def _groups(run: Run, node: Mapping[str, Any]) -> list[tuple[str, tuple[str, ...]]]:
-    """Each group of necessary conditions that the deliverable is judged by, of its kind's best
-    practice and then of the refactor one, each with the folder of its best practice."""
-    found = []
-    for kind in (node["kind"], practices.refactor(node["kind"])):
-        best = practices.folder(run, _ROOT, kind)
-        found += [(best, ids) for ids in practices.groups(best)]
-    return found
 
 
 def _node(tree: DesignTree, deliverable: str) -> Mapping[str, Any]:

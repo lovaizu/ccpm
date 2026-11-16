@@ -23,11 +23,13 @@ class Settled:
 
 @dataclass(frozen=True)
 class Made:
-    """What a generator made: where it carries out each decision and each More kept, by their
-    paths, and each point it settled without asking, with its ground."""
+    """What a generator made: where it carries out each decision, by its path, and each More kept,
+    by its best practice's kind and its necessary condition's ID, which key it as the kind's best
+    practice and the refactor one share condition IDs; and each point it settled without asking,
+    with its ground."""
 
     decisions: Mapping[str, str]
-    more: Mapping[str, str]
+    more: Mapping[tuple[str, str], str]
     settled: tuple[Settled, ...]
 
 
@@ -44,18 +46,14 @@ def read_made(path: str) -> Made:
     """A generator's Made.
 
     Takes: the path of the file it wrote.
-    Gives: the Made.
+    Gives: the Made, each place where it makes a More kept good keyed by `(best_practice,
+    condition)`.
     Changes: nothing.
     Refuses: fault.Wrong, naming each place, where the file leaves the form; fault.CantRun, where it
     can't be read.
     Carries: S1 `T-->>O: each evaluator's Answers, and what the generator made (Answers, Made)`.
     """
-    held = _read(path, "generator-out.schema.json", "made")
-    return Made(
-        {each["path"]: each["where"] for each in held["decisions"]},
-        {each["condition"]: each["where"] for each in held["more"]},
-        tuple(Settled(e["point"], e["decided"], e["ground"]) for e in held["settled"]),
-    )
+    raise NotImplementedError("results.read_made")
 
 
 def read_answers(path: str) -> Answers:
