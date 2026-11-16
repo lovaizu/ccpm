@@ -179,36 +179,7 @@
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
       "path": "plugins/lane",
       "kind": "software-design",
-      "inputs": [
-        "dev/lane/architecture.md"
-      ],
-      "preconditions": [
-        "dev/lane/architecture.md"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Where a Mark is checked",
-              "decided": "the guard checks a Step's or an Item's Mark at the PreToolUse of the step.py or item.py call, by its agent_id, as the architecture's S6 now draws; step.py and item.py only exit 0, so runs.markers and the scripts' checks move to the guard",
-              "by": "reasoning"
-            },
-            {
-              "about": "The lines a Read read",
-              "decided": "from the Read's PostToolUse, tool_response.file's startLine to startLine plus numLines less one, as claude-code-2.1.325-read.jsonl:6 and 8 show for a Read whole and in part",
-              "by": "research"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
@@ -224,7 +195,7 @@
         "dev/lane/architecture.md",
         "plugins/lane"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N2",
