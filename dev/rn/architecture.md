@@ -485,6 +485,7 @@ sequenceDiagram
     end
   end
   O->>T: marks the pull request ready
+  T->>RP: pushes the run's branch, so the pull request holds each commit
   T->>RP: marks it ready
   RP->>GH: marks it ready
   T-->>O: its URL, with the pull request handed over put up (Sign-off)

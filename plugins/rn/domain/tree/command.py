@@ -77,7 +77,8 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
       `branch.commit` commits the work, its message naming each record and step, and `branch.push`
       pushes it.
     - `runs`: 0, with `[{"name", "worktree", "record"}]` from `runs.left`.
-    - `ready`: 0, with the pull request's URL, once `github.hand_over` marks it ready and
+    - `ready`: 0, with the pull request's URL, once `branch.push` pushes the work, so that the pull
+      request holds each commit, `github.hand_over` marks it ready, and
       `sign_offs.put_up` puts up the pull request handed over.
     - 1, with what's wrong, where an input is out of form, as fault.Wrong says; 1, with what's
       missing, where git or gh can't do it, as fault.Missing says, `pause` saying it committed but
@@ -218,6 +219,7 @@ def _put_up(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
 
 def _ready(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
     run = _run(cwd)
+    branch.push(run)
     url = github.hand_over(run, True).url
     sign_offs.put_up(run, Kind.PULL_REQUEST, url)
     return url
