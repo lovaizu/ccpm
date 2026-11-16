@@ -8,9 +8,10 @@ PATH fails as recorded/claude-code-2.1.322-hook-failures.jsonl shows, and an ent
 runs in /bin/sh, as that record shows. /compact sends the events that
 recorded/claude-code-2.1.322-compact.jsonl shows, in the same conversation, a call of the Skill tool
 the events that recorded/claude-code-2.1.322-skill.jsonl shows, and a subagent resumed by
-SendMessage the events that recorded/claude-code-2.1.322-send-message.jsonl shows. An Edit and a
-Read, which no record of a run holds, carry the input that the hooks reference gives them, as
-recorded/claude-code-hooks-reference.jsonl takes it from there. A subagent's start of a subagent,
+SendMessage the events that recorded/claude-code-2.1.322-send-message.jsonl shows. An Edit, which
+no record of a run holds, carries the input that the hooks reference gives it, as
+recorded/claude-code-hooks-reference.jsonl takes it from there, and a Read sends the events that
+recorded/claude-code-2.1.325-read.jsonl shows, whole or in part. A subagent's start of a subagent,
 and a message queued by SendMessage for a subagent that runs, send the events that
 recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, and a start in the foreground, or
 one whose SubagentStart comes after the PostToolUse of its Agent call, those that `start` names.
@@ -69,6 +70,9 @@ WORKTREE = "claude-code-2.1.323-worktree.jsonl"
 # The record of a plugin's hooks.json written during a session, which holds only from the prompt
 # after the person types /reload-plugins.
 HOOKS_RELOAD = "claude-code-2.1.323-hooks-reload.jsonl"
+# The record of a Read whole and in part, of Claude Code 2.1.325, whose PostToolUse gives the lines
+# it read.
+READ = "claude-code-2.1.325-read.jsonl"
 # What the hooks reference shows of a call that no record of a run holds.
 REFERENCE = "claude-code-hooks-reference.jsonl"
 # The record of a subagent that a subagent starts, and of a message queued for a subagent that runs,
@@ -770,22 +774,48 @@ class Conversation:
         answer.ran += after.ran
         return answer
 
-    def read(self, agent: Agent, path: str) -> Answer:
-        """The agent calls the Read tool on the file at the path. The double sends the PreToolUse
-        that the record holds of a subagent's call, with the tool's name and input as the hooks
-        reference gives Read's: `file_path`, as recorded/claude-code-hooks-reference.jsonl takes
-        them from there. It sends no PostToolUse, as neither the record nor the
-        hooks reference shows Read's `tool_response`. The answer says whether a hook stopped the
-        call, and what the agent reads."""
-        shown = line(REFERENCE, "a Read call's input")
-        use = {
-            "tool_name": shown["tool_name"],
-            "tool_input": dict(shown["tool_input"], file_path=path),
-            "tool_use_id": self.next_id("toolu_", 24),
-            "agent_id": agent.id,
-            "agent_type": agent.type,
-        }
-        return self.send("PreToolUse", line(RUN, "writer writes CHANGELOG.md"), use)
+    def read(
+        self, agent: Agent | None, path: str, offset: int | None = None, limit: int | None = None
+    ) -> Answer:
+        """The agent, or the main conversation where `agent` is None, calls the Read tool on the
+        file at the path, whole, or from the line `offset` for `limit` lines where either is given.
+        The double sends the PreToolUse and, where the hooks let it through, the PostToolUse that
+        recorded/claude-code-2.1.325-read.jsonl shows, a subagent's with its `agent_id` and
+        `agent_type`. The PostToolUse's `tool_response.file` gives the lines read as the record
+        shows Read count them: `startLine` the first, `numLines` how many, and `totalLines` those
+        of the file, the empty line after a last newline among them, as a Read with no limit reads
+        a file of 2500 lines whole. The answer says what the hooks said."""
+        assert os.path.isfile(path), f"the record holds only a Read of a file that's there: {path}"
+        if offset is not None or limit is not None:
+            before = line(READ, "the main conversation runs `Read long.txt offset 10 limit 5`")
+            ran = line(READ, "the main conversation's `Read long.txt offset 10 limit 5` ran")
+        else:
+            before = line(READ, "the main conversation runs `Read long.txt`")
+            ran = line(READ, "the main conversation's `Read long.txt` ran")
+        tool_input: dict[str, Any] = {"file_path": path}
+        tool_input.update({k: v for k, v in (("offset", offset), ("limit", limit)) if v})
+        use: dict[str, Any] = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
+        if agent:
+            use.update(agent_id=agent.id, agent_type=agent.type)
+        answer = self.send("PreToolUse", before, use)
+        if answer.blocked:
+            return answer
+        with open(path, encoding="utf-8") as f:
+            every = f.read().split("\n")
+        first = offset or 1
+        read = every[first - 1 : first - 1 + limit if limit else None]
+        response = copy.deepcopy(ran["payload"]["tool_response"])
+        response["file"].update(
+            filePath=path,
+            content="\n".join(read),
+            numLines=len(read),
+            startLine=first,
+            totalLines=len(every),
+        )
+        after = self.send("PostToolUse", ran, {**use, "tool_response": response})
+        answer.said = "\n".join(s for s in (answer.said, after.said) if s)
+        answer.ran += after.ran
+        return answer
 
     def edit(self, path: str, old: str, new: str) -> Answer:
         """The main conversation calls the Edit tool to replace the one place of `old` in the file
@@ -1215,9 +1245,9 @@ class Agent:
         """The subagent calls the Write tool to create the file."""
         return self.conversation.write(self, path, content)
 
-    def read(self, path: str) -> Answer:
-        """The subagent calls the Read tool on the file."""
-        return self.conversation.read(self, path)
+    def read(self, path: str, offset: int | None = None, limit: int | None = None) -> Answer:
+        """The subagent calls the Read tool on the file, whole or in part."""
+        return self.conversation.read(self, path, offset, limit)
 
     def start(
         self, subagent_type: str, prompt: str, description: str

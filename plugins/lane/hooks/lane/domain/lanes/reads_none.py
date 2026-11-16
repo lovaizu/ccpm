@@ -56,9 +56,11 @@ class ReadsNone:
         raise NotImplementedError("reads_none.sentence")
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
-        """False for a Read, Grep, or Glob whose path reaches one of `paths`, read from `call.top`
-        with the Start's run values filled in, or a Bash command that names one; None for any
-        other Call, so that a Lane of this type that names another path never outweighs it.
+        """False for a call that reaches one of `paths`, read from `call.top` with the Start's run
+        values filled in: a Read of it, a Grep of it or of a folder that holds it, as a Grep reads
+        each file's contents, a Glob whose pattern names it, and a Bash command that names it; None
+        for any other Call, a Glob of its folder by another pattern among them, as a Glob reads no
+        file, so that a Lane of this type that names another path never outweighs it.
 
         Carries: the Call checks of S5 and S6, as a Lane of reads_none stops the call at its
         PreToolUse.

@@ -21,7 +21,11 @@ from lanes import (
     ends_by_result,
     ends_checked,
     gives_shown,
+    keeps_items,
+    keeps_steps,
     lays_after_reply,
+    reads_none,
+    reads_whole,
     routes,
     run_only,
     sentence,
@@ -41,6 +45,10 @@ MODULES = {
     "ends_checked": ends_checked,
     "lays_after_reply": lays_after_reply,
     "gives_shown": gives_shown,
+    "reads_whole": reads_whole,
+    "reads_none": reads_none,
+    "keeps_steps": keeps_steps,
+    "keeps_items": keeps_items,
 }
 TYPES = {name: module.TYPE for name, module in MODULES.items()}
 WRITER = d.start("writer")
@@ -99,7 +107,7 @@ def start_call(role: str, text: str = "Carry out your steps", **fields: Any) -> 
 
 @pytest.mark.supports("test_types_give_each_lane_type_and_the_form_of_a_proposal")
 def test_types_give_each_module_of_lanes() -> None:
-    """Given: lanes/ with its seven type modules.
+    """Given: lanes/ with its eleven type modules.
     When: types gives each lane type.
     Then: it gives one TypeInfo for each, by its name, with a sentence, steps it suits, and what it
     allows."""
@@ -621,3 +629,17 @@ def test_an_end_with_no_result_breaks_before_any_command_runs(tmp_path: Any) -> 
     verdict = check_end((checked, d.WRITER_END), EndAsked("Done."), held_with())
     assert isinstance(verdict, Broken) and verdict.sentence == stop_of("writer", "written")
     assert not os.path.exists(marker)
+
+
+@pytest.mark.supports("test_an_end_with_no_result_is_stopped_before_its_steps_are_checked")
+def test_an_end_with_no_result_breaks_the_lane_on_the_last_step_before_keeps_steps() -> None:
+    """Given: writer's keeps_steps Lane listed before the Lane on its last Step, and writer's Start
+    with no Result and no Mark.
+    When: check_end checks writer's end.
+    Then: it breaks it with the sentence of the Lane on writer's last Step."""
+    verdict = check_end(
+        (d.lane("writer", "agents/writer.md", 4, "keeps_steps"), d.WRITER_END),
+        EndAsked("Done."),
+        held_with(),
+    )
+    assert isinstance(verdict, Broken) and verdict.lane == d.WRITER_END

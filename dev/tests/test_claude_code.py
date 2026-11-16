@@ -18,6 +18,7 @@ from claude_code import (
     COMPACT,
     FOREGROUND,
     POSTED_FIRST,
+    READ,
     RECORDED,
     RUN,
     SEND_MESSAGE,
@@ -354,33 +355,65 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         )
         self.assertEqual(self.sent()[-2]["tool_input"]["file_path"], path)
 
-    def test_a_subagent_that_reads_a_file_sends_the_pre_tool_use_that_the_hooks_reference_gives(
-        self,
-    ):
+    def test_a_subagent_that_reads_a_file_whole_sends_the_events_of_the_record_of_a_read(self):
         _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
         assert agent is not None  # No hook of the test's plugin stops the start.
         path = os.path.join(self.repo, "CHANGELOG.md")
+        self.write("CHANGELOG.md", "# Changelog\n\n## 0.1.0\n")
         answer = agent.read(path)
         self.assertFalse(answer.blocked)
+        reads = payloads(READ)
+        whole = "the main conversation runs `Read long.txt`"
+        ran = "the main conversation's `Read long.txt` ran"
+        who = {"agent_id": agent.id, "agent_type": agent.type}
         self.assert_sent_as_recorded(
             [
                 "session started",
                 "the main conversation starts writer in the background",
                 "writer starts",
                 "writer runs in the background",
-                "writer writes CHANGELOG.md",
+                whole,
+                ran,
             ],
-            dict(recorded(), **{"writer writes CHANGELOG.md": self.read_record()}),
+            dict(recorded(), **{whole: dict(reads[whole], **who), ran: dict(reads[ran], **who)}),
         )
-        self.assertEqual(self.sent()[-1]["tool_input"], {"file_path": path})
+        self.assertEqual(self.sent()[-2]["tool_input"], {"file_path": path})
+        file = self.sent()[-1]["tool_response"]["file"]
+        self.assertEqual(
+            file,
+            {
+                "filePath": path,
+                "content": "# Changelog\n\n## 0.1.0\n",
+                "numLines": 4,
+                "startLine": 1,
+                "totalLines": 4,
+            },
+            "a Read with no limit reads the file whole, the empty line after its last newline among"
+            " its lines",
+        )
 
-    @staticmethod
-    def read_record():
-        """The recorded PreToolUse of a subagent's call, with Read's name and the field of its
-        input that the hooks reference gives."""
-        return dict(
-            recorded()["writer writes CHANGELOG.md"], tool_name="Read", tool_input={"file_path": 0}
+    def test_a_read_in_part_gives_the_lines_from_its_offset_for_its_limit(self):
+        self.write("CHANGELOG.md", "".join(f"line {n}\n" for n in range(1, 21)))
+        path = os.path.join(self.repo, "CHANGELOG.md")
+        answer = self.conversation.read(None, path, offset=10, limit=5)
+        self.assertFalse(answer.blocked)
+        before = "the main conversation runs `Read long.txt offset 10 limit 5`"
+        ran = "the main conversation's `Read long.txt offset 10 limit 5` ran"
+        self.assert_sent_as_recorded(
+            ["session started", before, ran], dict(recorded(), **payloads(READ))
         )
+        file = self.sent()[-1]["tool_response"]["file"]
+        self.assertEqual(
+            (file["content"], file["numLines"], file["startLine"], file["totalLines"]),
+            ("line 10\nline 11\nline 12\nline 13\nline 14", 5, 10, 21),
+        )
+
+    def test_a_read_a_hook_stops_sends_no_post_tool_use(self):
+        self.write("CHANGELOG.md", "# Changelog\n")
+        self.conversation.env["DENY"] = "Read"
+        answer = self.conversation.read(None, os.path.join(self.repo, "CHANGELOG.md"))
+        self.assertTrue(answer.blocked)
+        self.assertEqual(self.sent()[-1]["hook_event_name"], "PreToolUse")
 
     def test_a_write_of_the_main_conversation_sends_its_own_calls_events_with_writes_fields(self):
         path = os.path.join(self.temp, "lesson.json")

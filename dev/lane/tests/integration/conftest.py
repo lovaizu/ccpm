@@ -105,6 +105,9 @@ RULES: dict[str, Callable[[pytest.MonkeyPatch, pytest.FixtureRequest], None]] = 
     "A result only from the result script": stand_in(
         "place", "place", lambda: result_from_reply(sys.modules)
     ),
+    "What no hook shows only from Lane's scripts": stand_in(
+        "place", "place", lambda: marks_from_reply(sys.modules)
+    ),
     "Only the main conversation starts the roles": stand_in(
         "place", "place", lambda: starts_as_main(sys.modules)
     ),
@@ -126,6 +129,26 @@ def result_from_reply(modules: dict[str, Any]) -> Callable[..., Any]:
         if isinstance(placed.what, place.EndAsked) and placed.start is not None:
             word = placed.what.last_message.strip().strip(".").split()[-1]
             return dataclasses.replace(placed, what=place.ResultPosted(placed.start.role, word))
+        return placed
+
+    return stand_in
+
+
+def marks_from_reply(modules: dict[str, Any]) -> Callable[..., Any]:
+    """place, made to read a subagent's end whose last message says a Step is done as the Mark of
+    the Step it names, in place of the end."""
+    __import__("place")
+    place = modules["place"]
+    original = place.place
+
+    def stand_in(event: Any, conversation: Any, lanes: Any, root: str) -> Any:
+        placed = original(event, conversation, lanes, root)
+        if isinstance(placed.what, place.EndAsked) and placed.start is not None:
+            said = placed.what.last_message
+            if "done" in said:
+                step = int(next(w for w in said.split() if w.isdigit()))
+                posted = place.StepPosted(placed.start.role, step)
+                return dataclasses.replace(placed, what=posted)
         return placed
 
     return stand_in

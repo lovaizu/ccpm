@@ -1,7 +1,8 @@
 """The unit cases of guard.py and of the entries that Claude Code and up run, hook.py, result.py,
-and lay.py's command line, through `guard.handle`, `hook.main`, `result.main`, and
-`command.main`: an event in and outside a Run, a lanes.json the guard can't read, each exit code
-that result.py and lay.py give, and each call that they refuse."""
+and lay.py's command line, through `guard.handle`, `hook.main`, `result.main`, `step.main`,
+`item.main`, and `command.main`: an event in and outside a Run, a lanes.json the guard can't
+read, each exit code that result.py, step.py, item.py, and lay.py give, and each call that they
+refuse."""
 
 from __future__ import annotations
 
@@ -9,6 +10,7 @@ import importlib.util
 import io
 import json
 import os
+import runpy
 import sys
 import tempfile
 from dataclasses import replace
@@ -614,3 +616,43 @@ def test_lay_refuses_a_command_line_it_cant_read(argv: list[str]) -> None:
     Then: it gives 2 with how to call lay.py."""
     code, _, err = lay_main(argv, io.StringIO(""), {}, LANE)
     assert code == 2 and "lay.py" in err
+
+
+# step.py and item.py, whose bodies are empty.
+LATER = pytest.mark.xfail(strict=True, reason="step.py's and item.py's bodies are empty")
+
+
+def run_script(
+    name: str, argv: list[str], monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> tuple[int, str]:
+    """The exit code and the words of one of Lane's scripts in hooks/lane/, run as the shell runs
+    it, with the arguments and an environment that names no conversation."""
+    path = os.path.join(LANE, "hooks", "lane", f"{name}.py")
+    monkeypatch.setattr(sys, "argv", [path, *argv])
+    monkeypatch.delenv("CLAUDE_CODE_SESSION_ID", raising=False)
+    with pytest.raises(SystemExit) as exited:
+        runpy.run_path(path, run_name="__main__")
+    said = capsys.readouterr()
+    return int(exited.value.code or 0), said.out + said.err
+
+
+@LATER
+@pytest.mark.supports("test_a_step_marked_in_its_turn_is_added_for_the_subagents_start")
+def test_step_py_exits_0_with_no_words(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Given: an environment that names no conversation.
+    When: step.py runs with writer and Step 1, as the shell runs it.
+    Then: it exits 0 with no words, as the guard checked the Mark at its call."""
+    assert run_script("step", ["writer", "1"], monkeypatch, capsys) == (0, "")
+
+
+@LATER
+@pytest.mark.supports("test_an_item_of_the_step_due_is_marked")
+def test_item_py_exits_0_with_no_words(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Given: an environment that names no conversation.
+    When: item.py runs with writer and the Item `dated`, as the shell runs it.
+    Then: it exits 0 with no words, as the guard checked the Mark at its call."""
+    assert run_script("item", ["writer", "dated"], monkeypatch, capsys) == (0, "")

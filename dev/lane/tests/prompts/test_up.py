@@ -235,3 +235,45 @@ def test_up_proposes_from_the_steps_alone_and_names_a_missing_result(
     moves = [m for after, each in routes if after.role == "reviewer" for m in each]
     assert {m.kind for m in moves} == {"start", "no_more"}
     assert [m.role for m in moves if m.kind == "start"] == ["writer"]
+
+
+# writer's Steps as Lane's page of steps, routes, and adapters writes each kind that the lane types
+# of Steps hold: a file read whole, a path never read, a checklist of the plugin's, and Steps done
+# in order.
+STEPS_WRITER = w.MARKED_WRITER.replace(
+    "4. Reply with the entries you wrote.",
+    "4. Reply with the entries you wrote. Do these steps in order, each one done before the next.",
+)
+
+
+@pytest.mark.supports("test_a_proposal_of_the_lane_types_of_steps_shows_each_steps_sentence")
+@pytest.mark.xfail(
+    strict=True,
+    reason="up's part doesn't yet propose reads_whole, reads_none, keeps_items, or keeps_steps",
+)
+@pytest.mark.parametrize("run", range(RUNS))
+def test_up_proposes_the_lane_types_of_steps_where_the_steps_say_them(
+    tmp_path: Any, run: int
+) -> None:
+    """Given: changelog whose writer reads CHANGELOG.md whole, never reads tally.py, keeps the
+    changelog's checklist on its step 3, and does its steps in order, with an adapter of a step's
+    items in hooks/adapters/.
+    When: the person types /lane:up changelog.
+    Then: up's kept Proposal lays reads_whole on writer's step 1 for `CHANGELOG.md`, reads_none on
+    its step 2 for `tally.py`, keeps_items on its step 3, and keeps_steps on its step 4, and names
+    the adapter as that of a step's items, while reviewer, whose steps say none of them, gets
+    none."""
+    files = dict(w.FILES, **{"agents/writer.md": STEPS_WRITER, w.ITEMS: w.ITEMS_ADAPTER})
+    b, printed = up(str(tmp_path), "/lane:up changelog", files)
+    proposal = kept(b, printed)
+    lanes, _ = lanes_and_routes(proposal)
+    steps_kinds = {"reads_whole", "reads_none", "keeps_items", "keeps_steps"}
+    assert {x for x in lanes if x[3] in steps_kinds} == {
+        ("writer", "agents/writer.md", 1, "reads_whole"),
+        ("writer", "agents/writer.md", 2, "reads_none"),
+        ("writer", "agents/writer.md", 3, "keeps_items"),
+        ("writer", "agents/writer.md", 4, "keeps_steps"),
+    }
+    paths = {x.type: x.args.get("paths") for x in proposal.lanes if x.type.startswith("reads")}
+    assert paths == {"reads_whole": ["CHANGELOG.md"], "reads_none": ["tally.py"]}
+    assert proposal.adapters.items == w.ITEMS

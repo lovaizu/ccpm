@@ -12,3 +12,7 @@ architecture.
   `scenario.install` runs the README's commands with the top of this repository as the
   marketplace's source, which tries the same commands and marketplace file on the version under
   test.
+- S6 and claude-code-states.md, a role's Read, Grep, or Glob: no record in `dev/tests/recorded/`
+  holds a Grep's or a Glob's events, so the double of Claude Code sends neither, and no
+  integration case shows a Lane of reads_none stopping a Grep or a Glob. Only the unit cases of
+  reads_none show it, by Calls of their own.

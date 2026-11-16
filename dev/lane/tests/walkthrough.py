@@ -89,6 +89,15 @@ class Bench:
         """The command by which up gives its Result."""
         return f"python3 {self.lane}/hooks/lane/result.py up {result}"
 
+    def step(self, role: str, step: int) -> str:
+        """The command by which a role of changelog marks a Step done, as Lane lays it."""
+        return f"python3 {self.changelog}/hooks/lane/step.py {role} {step}"
+
+    def item(self, role: str, item: str) -> str:
+        """The command by which a role of changelog marks an Item of its Step due done, as Lane
+        lays it."""
+        return f"python3 {self.changelog}/hooks/lane/item.py {role} {item}"
+
     def lay_py(self, *args: str) -> str:
         """The command that runs lay.py with the arguments."""
         return " ".join(["python3", os.path.join(self.lane, "scripts", "lay.py"), *args])
@@ -310,3 +319,72 @@ def where(root: str, b: Bench, session_id: str) -> Any:
     from runs import where as stands
 
     return in_temp(b, stands, root, session_id)
+
+
+# changelog with writer's Steps held as Lane's page of steps, routes, and adapters says: its step 1
+# reads CHANGELOG.md whole, its step 2 never reads tally.py, its step 3 keeps the changelog's
+# checklist, whose Items the adapter of a step's items gives, and its Steps are done in order.
+MARKED_WRITER = (
+    WRITER.replace(
+        "1. Read `CHANGELOG.md` to learn its last version and its form, and `REVIEW.md`, where it"
+        " exists, to learn what the entries lack.",
+        "1. Read `CHANGELOG.md` whole, to learn its last version and its form.",
+    )
+    .replace(
+        "2. Read the commits since then with `git log --oneline`.",
+        "2. Read the commits since then with `git log --oneline`. Never read `tally.py`.",
+    )
+    .replace(
+        "3. Write the new entries into `CHANGELOG.md`.",
+        "3. Write the new entries into `CHANGELOG.md`, each item of the changelog's checklist"
+        " kept.",
+    )
+)
+ITEMS = "hooks/adapters/items.py"
+# The adapter of a step's items: it gives writer's step 3 the Items `dated` and `linked`, and every
+# other Step none, and adds what it was handed to items-handed.jsonl in the folder it runs in.
+ITEMS_ADAPTER = """#!/usr/bin/env python3
+import json, sys
+handed = {"args": sys.argv[1:], "values": json.load(sys.stdin)["values"]}
+with open("items-handed.jsonl", "a") as f:
+    f.write(json.dumps(handed) + "\\n")
+print(json.dumps({"items": ["dated", "linked"] if sys.argv[1:] == ["writer", "3"] else []}))
+"""
+FAILING_ITEMS = "#!/usr/bin/env python3\nimport sys\nsys.exit('CHECKLIST.md is not there')\n"
+
+
+def marked_proposal() -> dict[str, Any]:
+    """The walkthrough's Proposal, with writer's Lanes of reads_whole on its step 1, reads_none on
+    its step 2, keeps_items on its step 3, and keeps_steps on its step 4, and the adapter of a
+    step's items."""
+    proposal = walkthrough_proposal()
+    proposal["lanes"] += [
+        lane("writer", "agents/writer.md", 1, "reads_whole", paths=["CHANGELOG.md"]),
+        lane("writer", "agents/writer.md", 2, "reads_none", paths=["tally.py"]),
+        lane("writer", "agents/writer.md", 3, "keeps_items"),
+        lane("writer", "agents/writer.md", 4, "keeps_steps"),
+    ]
+    proposal["adapters"] = {"items": ITEMS}
+    return proposal
+
+
+def marked_bench(tmp: str, adapter: str = ITEMS_ADAPTER) -> Bench:
+    """The bench, with writer's Steps of MARKED_WRITER and the adapter of a step's items."""
+    files = dict(FILES, **{"agents/writer.md": MARKED_WRITER, ITEMS: adapter})
+    b = bench(tmp, files)
+    executable(os.path.join(b.changelog, ITEMS))
+    return b
+
+
+def marked_writer(b: Bench, make: Make = marked_proposal) -> tuple[Conversation, Agent]:
+    """The marked Proposal laid, or the one `make` makes, and writer started by /changelog:write."""
+    return writer_started(b, make=make)
+
+
+def handed(b: Bench) -> list[dict[str, Any]]:
+    """What the adapter of a step's items was handed, each time it ran, in the order it ran."""
+    path = os.path.join(b.repo, "items-handed.jsonl")
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        return [json.loads(line) for line in f]

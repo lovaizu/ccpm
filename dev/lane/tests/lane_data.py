@@ -10,6 +10,7 @@ from typing import Any
 from events import Event
 from form import Adapters, After, Laid, LaidSentence, Lane, LanesFile, Move, Proposal, Route
 from place import Call
+from run_record import Marked, Read
 from runs import Conversation, Due, Run, Start
 
 SESSION = "4f7c1d2e-0000-4000-8000-000000000001"
@@ -181,3 +182,30 @@ def write(path: str, tool: str = "Write") -> Call:
 
 def values(**given: str) -> Mapping[str, str]:
     return given
+
+
+# writer's Lanes that hold its Steps: its step 1 read whole, tally.py never read, the checklist of
+# its step 3, and its Steps marked done in order, by the Lane on its last Step.
+READS_WHOLE = lane("writer", "agents/writer.md", 1, "reads_whole", paths=["CHANGELOG.md"])
+READS_NONE = lane("writer", "agents/writer.md", 2, "reads_none", paths=["tally.py"])
+KEEPS_ITEMS = lane("writer", "agents/writer.md", 3, "keeps_items")
+KEEPS_STEPS = lane("writer", "agents/writer.md", 4, "keeps_steps")
+# The commands by which a role marks a Step or an Item done, as a Lane's sentence names them.
+STEP = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/step.py"
+ITEM = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/item.py"
+
+
+def marked(step: int, item: str | None = None, agent: str | None = "a01") -> Marked:
+    """writer's Mark of the Step, or of the Item of that Step, in write's Run."""
+    return Marked(run="r1", role="writer", step=step, item=item, agent_id=agent)
+
+
+def read(first: int, last: int, path: str = "CHANGELOG.md", agent: str | None = "a01") -> Read:
+    """writer's Read of the lines of the path, as reads_whole names it, in write's Run."""
+    return Read(run="r1", role="writer", path=path, first=first, last=last, agent_id=agent)
+
+
+def tool(name: str, top: str = REPO, **given: Any) -> Call:
+    """A Call of the tool, such as Read, Grep, or Glob, with its input, in the worktree whose top is
+    given."""
+    return Call(tool=name, input=given, cwd=top, top=top)
