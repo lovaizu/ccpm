@@ -7,11 +7,11 @@ from __future__ import annotations
 import os
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from fault import Wrong
 
-from tree import branch, design, practices, records, rounds, turn
+from tree import branch, design, place, practices, records, rounds, turn
 from tree.design import DesignTree, read
 from tree.runs import Run
 
@@ -46,11 +46,15 @@ def next_start(
     first group of necessary conditions, of the kind's best practice and then of the refactor one,
     of a deliverable doing whose latest round holds a Made, that has no Answers there and that no
     start that runs holds; each with the path of a new record from `records.new_record`, after each
-    record that a start that runs took; or None where no work waits.
+    record that a start that runs took, and, where a start of the same round and group stood at a
+    step, the step of the latest one's Place, from `rounds.stood_place` and `place.read`, in the
+    generator's `cut` or beside the evaluator's conditions; or None where no work waits.
     Changes: nothing.
-    Refuses: fault.Wrong, where the role is none of rn's.
+    Refuses: fault.Wrong, where the role is none of rn's or that Place leaves its form;
+    fault.CantRun, where that Place can't be read.
     Carries: S1 `A->>T: gets each deliverable doing, and the Cut of the first that no start that
-    runs holds, with the path of a new Record for the start (Cut)`.
+    runs holds, with the path of a new Record for the start (Cut)`; S5 `O->>G: starts each that
+    stood in a step, at that step (Cut, Place)`, and the same of each evaluator.
     """
     if role not in _ROLES:
         raise Wrong(f"{role!r} is none of rn's roles, which are {', '.join(_ROLES)}")
@@ -63,7 +67,8 @@ def next_start(
     for deliverable in turn.doing(tree):
         start = due(run, tree, deliverable, running)
         if start:
-            return _of_start(run, tree, role, records.new_record(run, role, taken, start))
+            found = _of_start(run, tree, role, records.new_record(run, role, taken, start))
+            return _at_place(run, found, start)
     return None
 
 
@@ -144,6 +149,21 @@ def _of_start(run: Run, tree: DesignTree, role: str, record: str) -> Cut:
         "answers": answers,
     }
     return Cut(role, values, part)
+
+
+def _at_place(run: Run, found: Cut, start: str) -> Cut:
+    """The Cut of a start anew of a round, with the step that the latest start of that round
+    stood at, by its Place, where one stood: in the generator's cut, or beside an evaluator's
+    conditions."""
+    path = rounds.stood_place(run, start)
+    if path is None:
+        return found
+    step = place.read(path).step
+    if found.role == "generator":
+        part = dict(found.part, cut=dict(cast(Any, found.part)["cut"], step=step))
+    else:
+        part = dict(found.part, step=step)
+    return Cut(found.role, found.values, part)
 
 
 def _generator(

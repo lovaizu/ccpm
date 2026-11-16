@@ -26,6 +26,8 @@ from tree.runs import Run
 _START = re.compile(r"^([^.]+)\.r(\d+)(?:\.g(\d+))?$")
 # An evaluator's Answers in a round, by its group.
 _ANSWERS = re.compile(r"^answers-(\d+)\.json$")
+# What a Place's name holds before the name of its start's record.
+_PLACE = "place-"
 
 
 @dataclass(frozen=True)
@@ -134,12 +136,35 @@ def place_path(run: Run, record: str) -> str:
     Carries: S1 `G->>T: commits its work at the end of each step (Place)`; S5 `O->>G: starts each
     that stood in a step, at that step (Cut, Place)`.
     """
-    name = f"place-{os.path.basename(record)}"
+    name = f"{_PLACE}{os.path.basename(record)}"
     start = records.start_of(record)
     if not start:
         return os.path.join(run.folder, "rounds", name)
     of = start_of(start)
     return os.path.join(_folder(run, of.deliverable), str(of.number), name)
+
+
+def stood_place(run: Run, start: str) -> str | None:
+    """Where the Place of the latest start that stood in a start of a round lies.
+
+    Takes: the run, and the start of the round, as `start_name` gives it.
+    Gives: the full path of the Place of the latest start, in the order of the starts, whose record
+    keeps that start of the round, or None where no start of it kept a Place.
+    Changes: nothing.
+    Refuses: fault.Wrong, where it names no start of a round.
+    Carries: S5 `O->>G: starts each that stood in a step, at that step (Cut, Place)`, and the same
+    of each evaluator, as each start anew of a round that one stood in takes its Place.
+    """
+    of = start_of(start)
+    folder = os.path.join(_folder(run, of.deliverable), str(of.number))
+    held = sorted(os.listdir(folder)) if os.path.isdir(folder) else []
+    stood = [
+        name
+        for name in held
+        if name.startswith(_PLACE)
+        and records.start_of(os.path.join("records", name[len(_PLACE) :])) == start
+    ]
+    return os.path.join(folder, stood[-1]) if stood else None
 
 
 def start_name(deliverable: str, number: int, group: int | None = None) -> str:

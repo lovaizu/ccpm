@@ -7,6 +7,21 @@ import json
 import os
 from dataclasses import dataclass
 
+import json_form
+from fault import CantRun
+
+# The form of a Place's file, as `write` writes it.
+_FORM = {
+    "type": "object",
+    "required": ["record", "step", "work"],
+    "additionalProperties": False,
+    "properties": {
+        "record": {"type": "string"},
+        "step": {"type": "integer", "minimum": 1},
+        "work": {"type": "array", "items": {"type": "string"}},
+    },
+}
+
 
 @dataclass(frozen=True)
 class Place:
@@ -46,4 +61,10 @@ def read(path: str) -> Place:
     Carries: S5 `O->>G: starts each that stood in a step, at that step (Cut, Place)`, and the same
     of each evaluator.
     """
-    raise NotImplementedError("place.read")
+    try:
+        with open(path, encoding="utf-8") as f:
+            held = json.load(f)
+    except (OSError, ValueError) as e:
+        raise CantRun(f"{path} can't be read: {e}") from None
+    json_form.hold(held, _FORM, path)
+    return Place(held["record"], held["step"], tuple(held["work"]))
