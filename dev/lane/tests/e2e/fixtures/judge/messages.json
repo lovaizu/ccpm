@@ -1,0 +1,134 @@
+{
+  "point": "Whether one run of changelog's write keeps its steps, as measures.JUDGE says: a role did other than its step says and the call went through, or Lane's guard stopped a call or an end that the role's step allows, fails it.",
+  "how_to_mark": "Set `mark` to true where the run keeps its steps and false where it fails them. `proposed` is the mark the maker of the test would give, with its grounds; `judge_today` is what the judge gave on 2026-11-16 before any mark, which isn't used until it gives each marked run its mark. Each run is the n-th run of write that measures.runs_of_write reads from the records, which stay in the worktree, as git ignores them.",
+  "messages": [
+    {
+      "records": "dev/lane/tests/e2e/records/walkthrough/20261116T043329Z",
+      "run": 1,
+      "proposed": false,
+      "grounds": [
+        "writer's `cat CHANGELOG.md; cat REVIEW.md` was stopped by `Run only `git log --oneline``, and it then read both by Read, as step 1 says: no fail, as the stop holds the rule the user approved on step 2",
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
+      ],
+      "judge_today": false,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/walkthrough/20261116T043329Z",
+      "run": 2,
+      "proposed": false,
+      "grounds": [
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
+      ],
+      "judge_today": false,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/ai-approves/20261116T042955Z",
+      "run": 1,
+      "proposed": false,
+      "grounds": [
+        "writer's `cat CHANGELOG.md; cat REVIEW.md` was stopped by `Run only `git log --oneline``, and it then read both by Read, as step 1 says: no fail, as the stop holds the rule the user approved on step 2",
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
+      ],
+      "judge_today": false,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/walkthrough/20261116T041426Z",
+      "run": 1,
+      "proposed": false,
+      "grounds": [
+        "writer's `cat CHANGELOG.md; cat REVIEW.md` was stopped by `Run only `git log --oneline``, and it then read both by Read, as step 1 says: no fail, as the stop holds the rule the user approved on step 2",
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
+      ],
+      "judge_today": false,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/walkthrough/20261116T041426Z",
+      "run": 2,
+      "proposed": true,
+      "grounds": [
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran result.py alone, and no call or end was stopped"
+      ],
+      "judge_today": true,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/ai-approves/20261116T041228Z",
+      "run": 1,
+      "proposed": false,
+      "grounds": [
+        "writer's `cat CHANGELOG.md; cat REVIEW.md` was stopped by `Run only `git log --oneline``, and it then read both by Read, as step 1 says: no fail, as the stop holds the rule the user approved on step 2",
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
+      ],
+      "judge_today": true,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/walkthrough/20261116T035611Z",
+      "run": 1,
+      "proposed": false,
+      "grounds": [
+        "writer's `cat CHANGELOG.md; cat REVIEW.md` was stopped by `Run only `git log --oneline``, and it then read both by Read, as step 1 says: no fail, as the stop holds the rule the user approved on step 2",
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
+      ],
+      "judge_today": false,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/walkthrough/20261116T035611Z",
+      "run": 2,
+      "proposed": false,
+      "grounds": [
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows",
+        "after step 3 became `Write the new entries at the top of CHANGELOG.md.`, writer added its entry below the one already under `## Unreleased`, the top section: no fail, as the new entries stand in the top section",
+        "the main conversation ran `head -15 CHANGELOG.md` after `result.py write good`, which ended the run: outside the run, so no fail"
+      ],
+      "judge_today": false,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/ai-approves/20261116T035503Z",
+      "run": 1,
+      "proposed": false,
+      "grounds": [
+        "Lane's own guard failed with a traceback at writer's start, which the Routes made due, and Claude Code blocked it; changelog's guard had already added the Start, so it stopped the retry: fail, as the guard stopped a start the step allows",
+        "the main conversation then read Lane's guard code and ran `result.py up laid`, work no step of write names, and the calls went through: fail"
+      ],
+      "judge_today": false,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/ai-approves/20261116T035503Z",
+      "run": 2,
+      "proposed": false,
+      "grounds": [
+        "write was called again, started no subagent, and the turn ended without write's Result, so the entries were neither written nor reviewed: fail, as step 1 wasn't carried out"
+      ],
+      "judge_today": false,
+      "mark": null
+    },
+    {
+      "records": "dev/lane/tests/e2e/records/ai-approves/20261116T035503Z",
+      "run": 3,
+      "proposed": false,
+      "grounds": [
+        "writer's `cat CHANGELOG.md; cat REVIEW.md` was stopped by `Run only `git log --oneline``, and it then read both by Read, as step 1 says: no fail, as the stop holds the rule the user approved on step 2",
+        "reviewer also read files no step names (its own and writer's agent file, the skill, README.md or tally.py) and the calls went through: no fail, as reading to check entries is step 1's work and nothing was written outside REVIEW.md",
+        "reviewer ran `: > REVIEW.md` and `result.py reviewer good` in one command, gave 0, and the guard stopped its end; it then ran result.py alone and ended: fail, as step 3's laid sentence `End by running ...result.py reviewer good` doesn't say to run it alone, so the guard stopped an end the step allows"
+      ],
+      "judge_today": false,
+      "mark": null
+    }
+  ]
+}
