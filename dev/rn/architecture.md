@@ -22,8 +22,11 @@ keeps these rules.
 ### Drawn out along the design tree
 
 Each role starts with only the cut that `tree.py` gave for it, and the guard stops any other start.
+A cut gives each input of a deliverable done before with the commit it was done at, and the role
+reworking it reads each input's change since then.
 
-*Why*: a role that reads decisions not its own makes what the user didn't mean, which raises KR1.1.
+*Why*: a role that reads decisions not its own makes what the user didn't mean, which raises KR1.1,
+and one that reads each input whole again to rework a deliverable adds to KR1.2.
 
 ### Every step by best practice
 
@@ -145,7 +148,8 @@ Strategies:
 ![rn's data](images/data-model.svg)
 
 - Cut\
-  The part of the design tree that a role starts with.
+  The part of the design tree that a role starts with, each input of a deliverable done before with
+  the commit it was done at.
 - Design tree\
   The goal, its decisions, and the plan of deliverables, in
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s
@@ -220,7 +224,7 @@ sequenceDiagram
     GD-->>O: the generator's start due, with its text
     O->>G: starts it, with that text (Cut, More kept)
     Note over O,A: The guard lets a start through only with the text the adapters gave for its role, and stops any other. Each start of the tree-keeper and of each evaluator goes the same way.
-    G->>G: makes the deliverable from the design, and checks it by the best practice
+    G->>G: makes the deliverable from the design, of one done before from each input's change since then, and checks it by the best practice
     G->>R: records each step and practice as it takes it (Record)
     G->>T: commits its work at the end of each step (Place)
     G->>W: tries it (Try record)
