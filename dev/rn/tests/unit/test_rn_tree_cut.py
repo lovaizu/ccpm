@@ -8,7 +8,6 @@ that a start took, by its record, or a record that names no start."""
 from __future__ import annotations
 
 import copy
-
 import os
 from typing import Any
 
