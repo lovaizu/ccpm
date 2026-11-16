@@ -182,6 +182,69 @@
       "status": "done"
     },
     {
+      "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
+      "path": "dev/tests/claude_code.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Why the cases are slow",
+              "decided": "run_python drops each module a script imported once it ends, so each of the 1816 runs of one rn S2 case imports Lane's guard and rn's modules again, 87,885 dataclasses made, most of its 19 seconds; rn_walkthrough.keeps has each role record each step and practice by record.py add, about 350 Bash calls each with two hooks; git takes about 1 second; CI's Tests take 23 to 38 minutes for it",
+              "by": "research"
+            },
+            {
+              "about": "The fix",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
@@ -272,7 +335,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where the guard's bodies stand",
+              "decided": "uncommitted in rn-rebuild, made by their maker as done: runs.py and guard.py, with the xfail marks of S5's and S7's cases taken off and two cases added; to read whole and take",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N2",
