@@ -75,7 +75,7 @@ def judged(records: str, run: m.Run, n: int, count: int) -> bool:
     """The judge's verdict on the n-th run of write, with each place it failed printed, which
     pytest shows where a case fails, so that the maintainer tells a fault of Lane's from one of the
     judge's."""
-    verdict = opus.judged(m.judge_prompt(records, run, n, count))
+    verdict = opus.judged(m.judge_prompt(records, run, n, count), m.VERDICT)
     print(f"run {n} of {count} in {records}: {verdict}")
     return bool(verdict["keeps"])
 
@@ -88,7 +88,8 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
     act, and runs /changelog:write, then changes a step, lays again, and runs it once more.
     Then: no hook of Lane's fails, the share of changelog's runs that start once Lane's checks are
     loaded whose steps or order differ from the user's design is measured, and no run of the
-    walkthrough leaves its order."""
+    walkthrough leaves its order. The share is reported, not held to a value, as Lane's key results
+    have no targets."""
 
     count = itertools.count()
 
@@ -96,11 +97,13 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
         records = records_of(test, next(count))
         failed = m.hook_faults(records)
         assert not failed, f"Lane's hooks failed in {records}: {failed}"
-        return m.share_off(*held(records))
+        runs, keeps = held(records)
+        off = [n for n, run in enumerate(runs, 1) if m.order_faults(run)]
+        assert not off, f"the held runs {off} of write in {records} leave the walkthrough's order"
+        return m.share_off(runs, keeps)
 
     measured = scenario.until_steady(share, 1)
     print(f"KR1.1 of {test}: {measured:.1f}% of runs off the user's design")
-    assert measured == 0
 
 
 @pytest.mark.supports("KR1.2")

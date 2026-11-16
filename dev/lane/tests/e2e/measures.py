@@ -40,6 +40,16 @@ then kept the step. Reading a file, such as the plugin's own files, to do a step
 step's work, not work that no step names, where the call writes nothing. Reply with JSON \
 {{"keeps": true or false, "places": [<each place that fails it: the role, its step, and what \
 happened>]}}."""
+# The form of the judge's reply, as JUDGE asks for it.
+VERDICT = {
+    "type": "object",
+    "required": ["keeps", "places"],
+    "additionalProperties": False,
+    "properties": {
+        "keeps": {"type": "boolean"},
+        "places": {"type": "array", "items": {"type": "string"}},
+    },
+}
 
 
 @dataclass

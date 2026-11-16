@@ -32,6 +32,13 @@ JUDGE = (
     " have: its name and what it changed in the repository, given below. Judge whether you could"
     ' use it for what its name says you\'re after. Reply with JSON {"usable": <true or false>}.'
 )
+# The form of the judge's reply, as JUDGE asks for it.
+USABLE = {
+    "type": "object",
+    "required": ["usable"],
+    "additionalProperties": False,
+    "properties": {"usable": {"type": "boolean"}},
+}
 
 
 def handed_over(records: str) -> list[tuple[str, str]]:
@@ -61,7 +68,7 @@ def design_tree_in(diff: str) -> dict[str, Any] | None:
 
 def usable(name: str, diff: str) -> bool:
     """Whether the deliverable's people could use it, judged on Opus from its name and change."""
-    return bool(opus.judged(f"{JUDGE}\n\n{name}\n\n{diff}")["usable"])
+    return bool(opus.judged(f"{JUDGE}\n\n{name}\n\n{diff}", USABLE)["usable"])
 
 
 @pytest.mark.supports("KR1.1")

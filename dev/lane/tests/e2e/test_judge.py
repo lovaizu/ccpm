@@ -40,5 +40,5 @@ def test_the_judge_gives_each_marked_run_its_mark(message: dict[str, Any]) -> No
         pytest.skip(f"{message['records']} isn't in this worktree")
     runs = m.runs_of_write(records)
     run = runs[message["run"] - 1]
-    verdict = opus.judged(m.judge_prompt(records, run, message["run"], len(runs)))
+    verdict = opus.judged(m.judge_prompt(records, run, message["run"], len(runs)), m.VERDICT)
     assert verdict["keeps"] is message["mark"], f"the judge's places: {verdict.get('places')}"
