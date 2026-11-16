@@ -10,8 +10,9 @@ skipped, as opus.NEEDS_LOGIN says."""
 
 from __future__ import annotations
 
+import itertools
 import os
-import subprocess
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -43,6 +44,20 @@ class Run:
     starts: list[str]
     results: list[tuple[str, str]]
     ended: str | None
+
+
+# The records of each E2E run of each test file in this session, so that KR1.1 and KR1.2 are
+# measured on the same runs, as Test strategy measures them, and no run is made twice.
+RECORDS: dict[str, list[str]] = {}
+
+
+def records_of(test: str, n: int) -> str:
+    """The folder of the records of the n-th E2E run of the test file, counted from 0, which e2e.py
+    makes where this session has made none yet."""
+    made = RECORDS.setdefault(test, [])
+    while len(made) <= n:
+        made.append(scenario.e2e(os.path.join(HERE, test)))
+    return made[n]
 
 
 def runs_of_write(records: str) -> list[Run]:
@@ -100,8 +115,10 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
     Then: the share of changelog's runs whose steps or order differ from the user's design is
     measured, and no run of the walkthrough leaves its order."""
 
+    count = itertools.count()
+
     def share() -> float:
-        records = scenario.e2e(os.path.join(HERE, test))
+        records = records_of(test, next(count))
         runs = runs_of_write(records)
         off = sum(1 for run in runs if order_faults(run))
         off += min(off_steps(records), len(runs) - off)
@@ -120,8 +137,10 @@ def test_the_first_run_that_keeps_the_steps_comes_soon(test: str) -> None:
     Then: the time from their first turn to the end of the first run that keeps the steps is
     measured, and such a run comes."""
 
+    count = itertools.count()
+
     def minutes() -> float:
-        records = scenario.e2e(os.path.join(HERE, test))
+        records = records_of(test, next(count))
         turns = scenario.jsonl(os.path.join(records, "turns.jsonl"))
         kept = [run for run in runs_of_write(records) if not order_faults(run) and run.ended]
         assert kept, "no run kept the steps"
@@ -132,14 +151,18 @@ def test_the_first_run_that_keeps_the_steps_comes_soon(test: str) -> None:
 
 @pytest.mark.supports("KR1.2")
 def test_lane_installs_by_the_readmes_commands(tmp_path: Any) -> None:
-    """Given: a fresh home, with no plugin installed.
-    When: the person runs the README's two commands of Installation in a shell.
-    Then: `claude plugin details lane@ccpm` shows `lane 0.1.0`, with the skill up."""
-    env = scenario.fresh_home(str(tmp_path))
-    for command in (
-        "claude plugin marketplace add lovaizu/ccpm",
-        "claude plugin install lane@ccpm",
-    ):
-        subprocess.run(command, shell=True, env=env, check=True, capture_output=True)
+    """Given: a fresh home, with no plugin installed, and tally with changelog as the walkthrough
+    gives it.
+    When: the person runs the README's commands of Installation in a shell, then types
+    `/lane:up changelog` in tally.
+    Then: `claude plugin details lane@ccpm` shows `lane 0.1.0`, with the skill up and six hooks, and
+    /lane:up answers with what it would lay, asking for yes or a change."""
+    env = scenario.fresh_home(os.path.join(str(tmp_path), "home"))
+    scenario.install(w.README, env)
     details = scenario.shell("claude plugin details lane@ccpm", env)
-    assert "lane 0.1.0" in details and "up" in details
+    assert "lane 0.1.0" in details, details
+    assert re.search(r"Skills \(1\)\s+up\n", details), details
+    assert "Hooks (6)" in details, details
+    tally = w.bench(os.path.join(str(tmp_path), "bench")).repo
+    answer = opus.prompted("/lane:up changelog", tally, env, [], 1800)
+    assert "Reply yes to lay these into changelog, or say what to change." in answer, answer

@@ -7,3 +7,8 @@ architecture.
 - Test strategy, Installation testing: `dev/scripts/e2e.py` runs Claude Code on plugin folders, and
   has no way to run the README's install commands in a fresh home's shell. So
   `test_lane_installs_by_the_readmes_commands` runs them by itself.
+- Test strategy, Installation testing: the README's `claude plugin marketplace add lovaizu/ccpm`
+  reads the marketplace on GitHub's main, which holds no Lane until Lane releases with rn. So
+  `scenario.install` runs the README's commands with the top of this repository as the
+  marketplace's source, which tries the same commands and marketplace file on the version under
+  test.
