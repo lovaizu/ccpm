@@ -283,7 +283,13 @@
         {
           "id": "N3",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The runs that count",
+              "decided": "KR1.1 and KR1.2 count only the runs of write that start after a /reload-plugins typed after the last lay before them, as Lane holds a plugin only once its checks are loaded; an earlier run is listed apart with why",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N4",
@@ -302,12 +308,12 @@
           "decisions": [
             {
               "about": "The stages that held",
-              "decided": "one run of walkthrough.json, records/walkthrough/20261116T140206Z, and each case once, with records/ai-approves/20261116T141050Z: each ran as meant, no order fault, no stop of the guard, each run of write keeping its steps by the judge; the records stay in the worktree, as git ignores them",
+              "decided": "after Lane lays each Mark of a Step or an Item as running step.py or item.py as a command of its own, the pilot, records/walkthrough/20261116T150421Z, ran as meant, with no order fault, no stop of the guard, and each run of write keeping its steps by the judge; the records stay in the worktree, as git ignores them",
               "by": "maker"
             },
             {
               "about": "The stage of the size Test strategy sets",
-              "decided": "test_walkthrough.py run whole on Opus, runs added until one more moves no mean by a step, started on 2026-11-16 at 14:20 UTC; its records are those of records/walkthrough/ and records/ai-approves/ after 20261116T141050Z, to read by N3 and N4 before the stage counts as held; the E2E's document of the test implementation template, with its Stages, comes once it holds",
+              "decided": "after each case runs once with the runs that count cut as N3 decides: test_walkthrough.py run whole on Opus, runs added until one more moves no mean by a step, its records read by N3 and N4 before the stage counts as held; the E2E's document of the test implementation template, with its Stages, comes once it holds",
               "by": "maker"
             }
           ]
