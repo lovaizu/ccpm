@@ -3,8 +3,8 @@
 Lane is a Claude Code plugin that keeps your plugin's skill and subagents on the steps and order you
 wrote.
 
-In development: the rebuild of Lane isn't released, and so far it holds subagents to their steps
-and order.
+In development: Lane's rebuild isn't released, and doesn't yet hold steps marked done, checklists, or
+files read whole.
 
 Lane is for you when you build a Claude Code plugin whose skill and subagents must keep numbered
 steps. With it, you have your plugin run as you designed it, and write no check.
@@ -15,8 +15,7 @@ steps. With it, you have your plugin run as you designed it, and write no check.
   skill.
 - Lane doesn't guard security: hold what must never happen with branch protection or Claude Code's
   permission rules.
-- Lane doesn't judge a step's work: add a review subagent to your order, or end a step on your
-  check.
+- Lane doesn't judge how well a step was done: add a review subagent, or end the step on your check.
 
 ## Requirements
 
@@ -212,6 +211,11 @@ Lane holds your plugin's skill and subagents to the steps and order you wrote, o
 ### "A hook that only refuses leaves the subagent to find another way."
 
 When Lane stops a call, the subagent gets its own step's sentence, so it goes back to the step.
+
+### "A subagent skips a step, an item of its checklist, or part of a file."
+
+Lane holds each step until the subagent marks it and its checklist done, in order, and reads its
+files whole. A mark counts only from the script Lane lays, and a read only from the Read itself.
 
 ### "The next move comes from what a subagent wrote."
 
