@@ -3,14 +3,12 @@ Answers, in the forms that generator-out.schema.json and evaluator-out.schema.js
 
 from __future__ import annotations
 
-import json
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
 import json_form
-from fault import CantRun
 
 
 @dataclass(frozen=True)
@@ -79,10 +77,5 @@ def read_answers(path: str) -> Answers:
 
 def _read(path: str, form: str, field: str) -> Any:
     """The JSON in the file at the path, held to the field's form in the role's out-schema."""
-    try:
-        with open(path, encoding="utf-8") as f:
-            held = json.load(f)
-    except (OSError, ValueError) as e:
-        raise CantRun(f"{path} can't be read: {e}") from None
-    json_form.hold(held, json_form.load(form)["properties"][field], os.path.basename(path))
-    return held
+    schema = json_form.load(form)["properties"][field]
+    return json_form.read(path, schema, os.path.basename(path))

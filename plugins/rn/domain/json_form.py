@@ -10,7 +10,7 @@ import re
 from collections.abc import Mapping
 from typing import Any
 
-from fault import Wrong
+from fault import CantRun, Wrong
 
 # The test of each JSON type, as Python reads JSON, and its name in a message.
 _TYPES = {
@@ -29,6 +29,23 @@ def load(path: str) -> dict[str, Any]:
     rn ships is never the caller's to mend, so a fault in reading it stops with its trace."""
     with open(os.path.join(_DOMAIN, path), encoding="utf-8") as f:
         return json.load(f)
+
+
+def read(path: str, schema: Mapping[str, Any], named: str) -> Any:
+    """The JSON in a file that rn's run wrote, held to its form.
+
+    Takes: the file's path, the schema, and the name that a fault names first.
+    Gives: the value, as Python reads JSON.
+    Raises CantRun, where the file can't be read or holds no JSON; Wrong, as `hold` gives it, where
+    the value leaves its form.
+    """
+    try:
+        with open(path, encoding="utf-8") as f:
+            held = json.load(f)
+    except (OSError, ValueError) as e:
+        raise CantRun(f"{path} can't be read: {e}") from None
+    hold(held, schema, named)
+    return held
 
 
 def hold(value: Any, schema: Mapping[str, Any], named: str) -> None:
