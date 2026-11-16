@@ -1,0 +1,23 @@
+{"time": "2026-11-16T15:05:29.692216Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "changelog:write"}}}
+{"time": "2026-11-16T15:05:29.731441Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Skill", "tool_input": {"skill": "changelog:write"}}}
+{"time": "2026-11-16T15:05:35.046783Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "lane:up", "args": "changelog"}}}
+{"time": "2026-11-16T15:05:35.088565Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Skill", "tool_input": {"skill": "lane:up", "args": "changelog"}}}
+{"time": "2026-11-16T15:05:51.207117Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "python3 <top>/plugins/lane/scripts/lay.py write changelog 160e825c"}}}
+{"time": "2026-11-16T15:05:53.079812Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "python3 <top>/plugins/lane/hooks/lane/result.py up laid"}}}
+{"time": "2026-11-16T15:05:58.736762Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:writer"}}}
+{"time": "2026-11-16T15:05:58.782377Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:writer"}, "tool_response": {"agentId": "acc1d09fff1619014"}}}
+{"time": "2026-11-16T15:06:10.036355Z", "payload": {"hook_event_name": "SubagentStop", "agent_id": "acc1d09fff1619014"}}
+{"time": "2026-11-16T15:06:12.493737Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:reviewer"}}}
+{"time": "2026-11-16T15:06:12.537238Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:reviewer"}, "tool_response": {"agentId": "a44e5dc7b9226785f"}}}
+{"time": "2026-11-16T15:06:24.649262Z", "payload": {"hook_event_name": "SubagentStop", "agent_id": "a44e5dc7b9226785f"}}
+{"time": "2026-11-16T15:07:07.747814Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "changelog:write"}}}
+{"time": "2026-11-16T15:07:07.791467Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Skill", "tool_input": {"skill": "changelog:write"}}}
+{"time": "2026-11-16T15:07:09.480344Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:writer"}}}
+{"time": "2026-11-16T15:07:09.527671Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:writer"}, "tool_response": {"agentId": "afbe40994849bbb9f"}}}
+{"time": "2026-11-16T15:07:19.765296Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "python3 <run>/clone/changelog/hooks/lane/result.py writer written"}}}
+{"time": "2026-11-16T15:07:22.794513Z", "payload": {"hook_event_name": "SubagentStop", "agent_id": "afbe40994849bbb9f"}}
+{"time": "2026-11-16T15:07:24.707629Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:reviewer"}}}
+{"time": "2026-11-16T15:07:24.752264Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:reviewer"}, "tool_response": {"agentId": "a938537719ede6cdf"}}}
+{"time": "2026-11-16T15:07:37.767289Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "python3 <run>/clone/changelog/hooks/lane/result.py reviewer good"}}}
+{"time": "2026-11-16T15:07:42.386172Z", "payload": {"hook_event_name": "SubagentStop", "agent_id": "a938537719ede6cdf"}}
+{"time": "2026-11-16T15:07:44.722238Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "python3 <run>/clone/changelog/hooks/lane/result.py write good"}}}

@@ -3,7 +3,8 @@ implementation best practice asks: each check by code gives the right result on 
 and on a copy of them broken in the way it must catch, before any E2E run relies on it, so that a
 failed E2E case points to Lane, not to the test. The fixtures in fixtures/ are an excerpt of the
 hook events, the turns, and the changes to the plugin's steps of the pilot run of each E2E test
-file, walkthrough.json and ai-approves.json, on Claude Code 2.1.325 and Opus."""
+file, walkthrough.json and ai-approves.json, on Claude Code 2.1.325 and Opus, and of ai-approves's
+run 20261116T150759Z, where the AI called changelog:write before it called up."""
 
 from __future__ import annotations
 
@@ -18,6 +19,8 @@ import pytest
 FIXTURES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures")
 WALKTHROUGH = os.path.join(FIXTURES, "walkthrough")
 AI_APPROVES = os.path.join(FIXTURES, "ai-approves")
+# The records of an ai-approves run where the AI laid Lane inside its first run of write.
+LAID_IN_A_RUN = os.path.join(FIXTURES, "laid-in-a-run", "ai-approves")
 # A whole run of write, as the walkthrough's first records show both of its runs.
 KEPT = ["writer", ("writer", "written"), "reviewer", ("reviewer", "good"), ("reviewer", "good")]
 RESULT = "python3 <run>/clone/changelog/hooks/lane/result.py"
@@ -147,6 +150,54 @@ def test_order_faults_counts_each_start_against_its_route(
     assert m.order_faults(m.Run(moves, ended, [])) == faults
 
 
+@pytest.mark.supports("KR1.1", "KR1.2")
+@pytest.mark.parametrize(
+    "records, unheld",
+    [
+        (WALKTHROUGH, ["", ""]),
+        (
+            AI_APPROVES,
+            [
+                (
+                    "started at 2026-11-16T02:24:32.787033Z, with no /reload-plugins after"
+                    " lay.py write at 2026-11-16T02:24:21.974611Z"
+                ),
+                "",
+            ],
+        ),
+        (LAID_IN_A_RUN, ["started at 2026-11-16T15:05:29.731441Z, before any lay.py write", ""]),
+    ],
+    ids=["both after a reload", "one before the reload", "one before the lay"],
+)
+def test_a_run_of_write_counts_only_once_lanes_checks_are_loaded(
+    records: str, unheld: list[str]
+) -> None:
+    """Given: the first records, where each run of write started after a /reload-plugins typed
+    after the last lay.py write before it, or one started after a lay but before the reload, or
+    before any lay, as the AI laid Lane inside its run.
+    When: unheld reads each run of write.
+    Then: it gives nothing for each run that Lane's checks held, and for each other run when it
+    started and the lay that no reload followed, or that no lay came before it."""
+    assert m.unheld(records, m.runs_of_write(records)) == unheld
+
+
+@pytest.mark.supports("KR1.1", "KR1.2")
+def test_a_run_after_a_lay_with_no_reload_since_is_unheld(tmp_path: Any) -> None:
+    """Given: a copy of the walkthrough's first records with no /reload-plugins after the second
+    lay, so that the reload after the first lay comes before the second run's lay.
+    When: unheld reads each run of write.
+    Then: it names the second run, by the second lay, as the reload before it loaded only the
+    first."""
+    copy = broken(tmp_path, WALKTHROUGH, "turns.jsonl", second_without("/reload-plugins"))
+    assert m.unheld(copy, m.runs_of_write(copy)) == [
+        "",
+        (
+            "started at 2026-11-16T02:26:52.251439Z, with no /reload-plugins after lay.py write at"
+            " 2026-11-16T02:26:35.346500Z"
+        ),
+    ]
+
+
 @pytest.mark.supports("KR1.1")
 @pytest.mark.parametrize(
     "records, keeps, share",
@@ -265,9 +316,10 @@ def second_without(*words: str) -> Any:
 
 
 @pytest.mark.supports("KR1.1", "KR1.2")
-@pytest.mark.parametrize("records", [WALKTHROUGH, AI_APPROVES])
+@pytest.mark.parametrize("records", [WALKTHROUGH, AI_APPROVES, LAID_IN_A_RUN])
 def test_the_pilot_runs_ran_as_their_cases_mean(records: str) -> None:
-    """Given: the pilot records of the E2E test file.
+    """Given: the pilot records of the E2E test file, and the records where the AI laid Lane inside
+    its first run of write and ran write again after /reload-plugins.
     When: otherwise checks them.
     Then: it finds nothing that went otherwise than the case means."""
     assert m.otherwise(records, file_of(records)) == []
@@ -331,6 +383,12 @@ def test_the_pilot_runs_ran_as_their_cases_mean(records: str) -> None:
             ],
             "the person typed /lane:up, where the AI calls up",
         ),
+        (
+            AI_APPROVES,
+            "hooks.jsonl",
+            second_without('"PostToolUse"', '"skill": "changelog:write"'),
+            "no run of write started with Lane's checks loaded",
+        ),
     ],
     ids=[
         "a turn that failed",
@@ -340,6 +398,7 @@ def test_the_pilot_runs_ran_as_their_cases_mean(records: str) -> None:
         "the step unchanged",
         "up uncalled",
         "up typed",
+        "no run held",
     ],
 )
 def test_a_run_that_went_otherwise_is_named_where(
@@ -348,7 +407,7 @@ def test_a_run_that_went_otherwise_is_named_where(
     """Given: a copy of the pilot records, broken in one way that the case doesn't mean: a turn that
     failed, such as at the usage limit; no /reload-plugins after a lay; the walkthrough's
     /changelog:write typed once, or Lane laid once, or writer's step 3 left as it was; or, for S3,
-    up never called by the AI, or typed by the person.
+    up never called by the AI, or typed by the person, or write called only before the reload.
     When: otherwise checks it.
     Then: it names where the run went otherwise."""
     assert m.otherwise(broken(tmp_path, records, name, change), file_of(records)) == [said]

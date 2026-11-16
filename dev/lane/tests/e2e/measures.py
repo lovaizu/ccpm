@@ -1,8 +1,9 @@
 """How Lane's E2E cases read the records of a run of e2e.py into the key results: each run of
-changelog's write, by code, from the hook events; whether each keeps its steps, by a judge on Opus
-where only reading the steps tells; then KR1.1, the share of runs off the user's design, and KR1.2,
-the time to the first run that keeps it. test_checks.py tries each check by code on the first
-records, so that a failed E2E case points to Lane, not to the reading."""
+changelog's write, by code, from the hook events; which of them Lane's checks held, as each other
+counts toward no key result; whether each held run keeps its steps, by a judge on Opus where only
+reading the steps tells; then KR1.1, the share of runs off the user's design, and KR1.2, the time to
+the first run that keeps it. test_checks.py tries each check by code on the first records, so
+that a failed E2E case points to Lane, not to the reading."""
 
 from __future__ import annotations
 
@@ -45,11 +46,12 @@ happened>]}}."""
 class Run:
     """One run of changelog's write in one E2E run, as its records show it: each subagent it
     started, by its role, and each Result given, as (role, result), in the order they came; when
-    write ended by its own Result; and the agent_id of each subagent it started."""
+    write ended by its own Result; the agent_id of each subagent it started; and when it started."""
 
     moves: list[str | tuple[str, str]]
     ended: str | None
     agents: list[str]
+    started: str = ""
 
     def take(self, event: dict[str, Any], time: str | None) -> None:
         """Adds what the hook event, which came at the time, shows of the run: a start with its
@@ -72,7 +74,7 @@ def runs_of_write(records: str) -> list[Run]:
     for each in scenario.jsonl(os.path.join(records, "hooks.jsonl")):
         event = each.get("payload", each)
         if write_starts(event):
-            runs.append(Run([], None, []))
+            runs.append(Run([], None, [], each.get("time", "")))
         elif runs:
             runs[-1].take(event, each.get("time"))
     return runs
@@ -96,6 +98,38 @@ def write_starts(event: dict[str, Any]) -> bool:
         return event.get("command_name") == "changelog:write"
     called = event.get("hook_event_name") == "PostToolUse" and event.get("tool_name") == "Skill"
     return called and event["tool_input"].get("skill") == "changelog:write"
+
+
+def unheld(records: str, runs: list[Run]) -> list[str]:
+    """Why each run of write counts toward no key result, in the runs' order, or "" for each run
+    that Lane's checks held: one that started after a /reload-plugins typed after the last lay.py
+    write before it, as Lane's README says the checks hold from the next prompt after the reload.
+    A run that started earlier is one that Lane can't hold, so it measures the test, not Lane."""
+    lays, reloads = lay_times(records), reload_times(records)
+    found = []
+    for run in runs:
+        last = max((t for t in lays if t < run.started), default=None)
+        if last is None:
+            found.append(f"started at {run.started}, before any lay.py write")
+        elif not any(last < t < run.started for t in reloads):
+            found.append(
+                f"started at {run.started}, with no /reload-plugins after lay.py write at {last}"
+            )
+        else:
+            found.append("")
+    return found
+
+
+def lay_times(records: str) -> list[str]:
+    """The time of each run of lay.py write that the records' hook events show."""
+    hooks = scenario.jsonl(os.path.join(records, "hooks.jsonl"))
+    return [each.get("time", "") for each in hooks if laid(each.get("payload", each))]
+
+
+def reload_times(records: str) -> list[str]:
+    """The time of each /reload-plugins that the person typed, by the records' turns."""
+    turns = scenario.jsonl(os.path.join(records, "turns.jsonl"))
+    return [t["started"] for t in turns if t["prompt"].strip() == "/reload-plugins"]
 
 
 def order_faults(run: Run) -> int:
@@ -202,20 +236,21 @@ def otherwise(records: str, test: str) -> list[str]:
     """Each place where the E2E run of the test file went otherwise than its case means, as N3 of
     the test implementation best practice checks, so that a run that measures the test, not Lane,
     counts toward no key result: a turn that failed, such as at the usage limit; a lay with no
-    /reload-plugins typed after it; and what the case's own moves need."""
+    /reload-plugins typed after it; no run of write that Lane's checks held, as unheld tells, so
+    that no key result is counted from none; and what the case's own moves need."""
     events = [
         each.get("payload", each) for each in scenario.jsonl(os.path.join(records, "hooks.jsonl"))
     ]
-    times = [each.get("time", "") for each in scenario.jsonl(os.path.join(records, "hooks.jsonl"))]
     turns = scenario.jsonl(os.path.join(records, "turns.jsonl"))
     found = [f"turn {t['turn']} exited {t['exit']}" for t in turns if t.get("exit") != 0]
-    reloads = [t["started"] for t in turns if t["prompt"].strip() == "/reload-plugins"]
-    lays = [time for time, event in zip(times, events) if laid(event)]
+    reloads, lays = reload_times(records), lay_times(records)
     found += [
         f"no /reload-plugins after lay.py write at {t}"
         for t in lays
         if max(reloads, default="") < t
     ]
+    if all(unheld(records, runs_of_write(records))):
+        found.append("no run of write started with Lane's checks loaded")
     return found + CASES[test](records, events, len(lays))
 
 

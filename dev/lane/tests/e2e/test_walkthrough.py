@@ -1,11 +1,12 @@
 """The E2E cases of Lane: the README's walkthrough, with S4's steps changed and laid again, and S3's
 AI that approves by its own act, each run by dev/scripts/e2e.py on the real Claude Code on Opus, as
 Lane's Test strategy says under Scenario testing, and Lane installed by the README's commands, as it
-says under Installation testing. Each run's records give the key results: KR1.1 from the starts,
-calls, and ends of each run of changelog's write, judged on Opus where only reading the steps
-tells, and KR1.2 from the time of the person's first turn to the end of the first run that keeps
-the steps. Runs are added until one more moves no mean by a step: a percent of KR1.1's share, a
-minute of KR1.2's time. They run on the developer's login, so a case without one is
+says under Installation testing. Each run's records give the key results from each run of
+changelog's write that started once Lane's checks were loaded, as Lane can't hold an earlier one:
+KR1.1 from the starts, calls, and ends of each such run, judged on Opus where only reading the
+steps tells, and KR1.2 from the time of the person's first turn to the end of the first such run
+that keeps the steps. Runs are added until one more moves no mean by a step: a percent of KR1.1's
+share, a minute of KR1.2's time. They run on the developer's login, so a case without one is
 skipped, as opus.NEEDS_LOGIN says."""
 
 from __future__ import annotations
@@ -47,16 +48,27 @@ def records_of(test: str, n: int) -> str:
     return made[n]
 
 
-# The judge's verdict on each run of write in the records of each E2E run, so that KR1.1 and KR1.2
-# read the same verdicts, and no run is judged twice.
+# The judge's verdict on each run of write that Lane's checks held in the records of each E2E run,
+# so that KR1.1 and KR1.2 read the same verdicts, and no run is judged twice.
 VERDICTS: dict[str, list[bool]] = {}
 
 
-def keeps(records: str, runs: list[m.Run]) -> list[bool]:
-    """Whether each run of write keeps its steps, as the judge on Opus rules on each one alone."""
+def held(records: str) -> tuple[list[m.Run], list[bool]]:
+    """Each run of write in the records that Lane's checks held, with whether it keeps its steps,
+    as the judge on Opus rules on each one alone. Each other run is listed apart, with why, and
+    counts toward no key result, as N3 of the test implementation best practice says."""
+    runs = m.runs_of_write(records)
+    why = m.unheld(records, runs)
     if records not in VERDICTS:
-        VERDICTS[records] = [judged(records, run, n, len(runs)) for n, run in enumerate(runs, 1)]
-    return VERDICTS[records]
+        for n, apart in enumerate(why, 1):
+            if apart:
+                print(f"left out run {n} of {len(runs)} of write in {records}, as it {apart}")
+        VERDICTS[records] = [
+            judged(records, run, n, len(runs))
+            for n, (run, apart) in enumerate(zip(runs, why), 1)
+            if not apart
+        ]
+    return [run for run, apart in zip(runs, why) if not apart], VERDICTS[records]
 
 
 def judged(records: str, run: m.Run, n: int, count: int) -> bool:
@@ -74,8 +86,9 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
     """Given: tally with changelog as the walkthrough gives it, and Lane loaded.
     When: the person, played by e2e.py's stand-in, has Lane laid, by their reply or by the AI's own
     act, and runs /changelog:write, then changes a step, lays again, and runs it once more.
-    Then: no hook of Lane's fails, the share of changelog's runs whose steps or order differ from
-    the user's design is measured, and no run of the walkthrough leaves its order."""
+    Then: no hook of Lane's fails, the share of changelog's runs that start once Lane's checks are
+    loaded whose steps or order differ from the user's design is measured, and no run of the
+    walkthrough leaves its order."""
 
     count = itertools.count()
 
@@ -83,8 +96,7 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
         records = records_of(test, next(count))
         failed = m.hook_faults(records)
         assert not failed, f"Lane's hooks failed in {records}: {failed}"
-        runs = m.runs_of_write(records)
-        return m.share_off(runs, keeps(records, runs))
+        return m.share_off(*held(records))
 
     measured = scenario.until_steady(share, 1)
     print(f"KR1.1 of {test}: {measured:.1f}% of runs off the user's design")
@@ -96,15 +108,14 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
 def test_the_first_run_that_keeps_the_steps_comes_soon(test: str) -> None:
     """Given: tally with changelog as the walkthrough gives it, and Lane loaded.
     When: the person, played by e2e.py's stand-in, has Lane laid and runs /changelog:write.
-    Then: the time from their first turn to the end of the first run that keeps the steps is
-    measured, and such a run comes."""
+    Then: the time from their first turn to the end of the first run that starts once Lane's checks
+    are loaded and keeps the steps is measured, and such a run comes."""
 
     count = itertools.count()
 
     def minutes() -> float:
         records = records_of(test, next(count))
-        runs = m.runs_of_write(records)
-        measured = m.minutes_to_kept(records, runs, keeps(records, runs))
+        measured = m.minutes_to_kept(records, *held(records))
         assert measured is not None, "no run kept the steps"
         return measured
 
