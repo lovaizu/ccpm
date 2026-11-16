@@ -158,6 +158,12 @@
       "status": "done"
     },
     {
+      "name": "Lane's developers build its parts so that together they give what its README promises",
+      "path": "dev/lane/architecture.md",
+      "kind": "architecture",
+      "status": "done"
+    },
+    {
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
@@ -183,68 +189,6 @@
         },
         {
           "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "Lane's developers build its parts so that together they give what its README promises",
-      "path": "dev/lane/architecture.md",
-      "kind": "architecture",
-      "inputs": [
-        "dev/lane/product-vision.md",
-        "plugins/lane/README.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/architecture",
-        "plugins/rn/domain/template"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What Lane holds of a role's steps beyond its calls and its end",
-              "decided": "Lane gives four lane types that any plugin lays, each with inputs and outputs set by Lane's purpose and met by the plugin's own adapter, with no knowledge of any plugin: reads_whole holds a step until each path it names, with run values filled in, was read by Read over all its lines; reads_none stops a Read, Grep, Glob, or Bash command that reaches a path it names; keeps_steps, on a role's last step, has the role run step.py <role> <n> as each step ends, refuses a step out of order, and holds the end until each step is marked in the latest pass; keeps_items has the role run item.py <role> <id> as each item of a step's checklist is done, the items given by an adapter of the plugin that takes the role and the step and prints their IDs, and holds the step's mark until each is marked; step.py and item.py are let through by every lane type, as result.py is, and the guard keeps each mark in the run record at the PostToolUse of a run that gave 0. A self-report holds what no hook shows, as result.py does, while reads are checked from the calls, as hooks show them",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
           "good": false,
           "decisions": []
         }
