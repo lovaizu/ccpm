@@ -33,10 +33,13 @@
 ## Inputs
 
 - [architecture](../architecture/best-practice.md)
+- [readme](../readme/best-practice.md)
+- [test-design](../test-design/best-practice.md)
 
 ## Preconditions
 
 - [architecture](../architecture/best-practice.md)
+- [code](../code/best-practice.md)
 
 ## Practices
 

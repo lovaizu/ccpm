@@ -296,7 +296,9 @@
  },
  "template": "template.md",
  "inputs": [
-  "architecture"
+  "architecture",
+  "software-design",
+  "test-design"
  ],
  "preconditions": []
 }
