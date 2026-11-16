@@ -48,7 +48,7 @@ def comments(run: Run, since: str) -> tuple[Comment, ...]:
     Carries: S3 `O->>T: gets the user's comments since the sign-off`, `T->>RP: gets them`, and
     `T-->>O: the comments (Comment)`.
     """
-    raise NotImplementedError("github.comments")
+    return gh.comments(run.worktree, since)
 
 
 def open_lesson(plugin_root: str, lesson: str) -> str:

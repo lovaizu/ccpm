@@ -28,7 +28,7 @@ from tree import (
 )
 from tree.design import Change, DesignTree
 from tree.runs import Run
-from tree.sign_offs import Kind
+from tree.sign_offs import Kind, State
 
 USAGE = """\
 usage: tree.py start <goal>
@@ -38,7 +38,7 @@ usage: tree.py start <goal>
        tree.py push
        tree.py put-up plan | put-up deliverable <path>
        tree.py put-up lesson   (its words on standard input)
-       tree.py approve | send-back | runs
+       tree.py approve | send-back | comments | runs
 """
 
 
@@ -68,7 +68,9 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
     - `approve` or `send-back`: 0, with the sign-off decided, from `sign_offs.decide`; for a lesson
       approved, with its issue's URL from `github.open_lesson`; for the pull request handed over and
       sent back, once `github.hand_over` marks it a draft again.
-    - `comments`: 0, with each comment since the last sign-off sent back, from `github.comments`.
+    - `comments`: 0, with `[{"author", "at", "path", "body"}]`, each comment on the pull request
+      since the last sign-off sent back was put up, from `github.comments`; 1, where no sign-off
+      was sent back.
     - `pause`, with `{"stood": [{"record", "step"}]}` on standard input: 0, once each Place is
       written and `branch.commit`, its message naming each record and step, and `branch.push` take
       it.
@@ -213,6 +215,19 @@ def _decided(approved: bool) -> Callable[[list[str], TextIO, str, str], Any]:
     return decide
 
 
+def _comments(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    run = _run(cwd)
+    sent = [s for s in sign_offs.read(run).each if s.state is State.SENT_BACK]
+    # Runs only where the orchestrator asks the comments before /rn:gm sent a sign-off back, which
+    # no case does; taken back to the cases' designer.
+    if not sent:  # pragma: no cover
+        raise Wrong("no sign-off was sent back; run comments after send-back, as /rn:gm loads")
+    return [
+        {"author": c.author, "at": c.at, "path": c.path, "body": c.body}
+        for c in github.comments(run, sent[-1].at)
+    ]
+
+
 def _runs(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
     return [
         {"name": r.name, "worktree": r.worktree, "record": records.orchestrator_record(r)}
@@ -261,5 +276,6 @@ _COMMANDS: dict[str, tuple[Callable[[list[str], TextIO, str, str], Any], tuple[i
     "put-up": (_put_up, (1, 2)),
     "approve": (_decided(True), (0,)),
     "send-back": (_decided(False), (0,)),
+    "comments": (_comments, (0,)),
     "runs": (_runs, (0,)),
 }

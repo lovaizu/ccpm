@@ -17,7 +17,7 @@ from dev.rn.tests.unit import rn_data as d
 
 LATER = pytest.mark.xfail(
     strict=True,
-    reason="tree/github.py's hand_over, comments, and open_lesson have empty bodies",
+    reason="tree/github.py's hand_over and open_lesson have empty bodies",
 )
 
 
@@ -105,7 +105,6 @@ def test_the_pull_request_is_handed_over_ready_or_marked_a_draft_again(
     assert github.hand_over(run, ready).draft is (not ready)
 
 
-@LATER
 @pytest.mark.supports("test_gm_alone_reads_the_users_comments_since_the_sign_off")
 def test_the_comments_are_those_since_the_sign_off(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch

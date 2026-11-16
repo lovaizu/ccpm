@@ -13,8 +13,6 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
-
 
 @pytest.mark.supports("S3", "repository", "Point")
 def test_a_push_without_a_login_of_gh_says_what_is_missing(tmp_path: object) -> None:
@@ -92,7 +90,6 @@ def test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes(b: Bench) 
     assert w.tree_in(walk)["deliverables"][0]["necessary_conditions"][0]["decisions"] == [decided]
 
 
-@LATER
 @pytest.mark.supports("S3", "Comment", "repository", "user")
 def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
     """Given: the walkthrough's plan put up, and the user's comment on its pull request after it.
