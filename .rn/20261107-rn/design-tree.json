@@ -149,43 +149,7 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/architecture",
-        "plugins/rn/domain/template"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What a role's Cut gives of its inputs",
-              "decided": "each input in a role's Cut carries the commit at which the deliverable was last done, none for a deliverable never done, so that a role reworking it reads each input's change since that commit and the parts of its deliverable that the change touches, not each input whole",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -400,7 +364,7 @@
       "preconditions": [
         "dev/rn/architecture.md"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
