@@ -1403,6 +1403,23 @@ class RunPythonTest(unittest.TestCase):
 
         self.assertEqual((code, out), (0, "after, longer\n"), "the module as its file now reads")
 
+    def test_a_script_run_again_from_its_folder_fails_on_its_module_taken_away(self):
+        folder = tempfile.mkdtemp(prefix="run-python-")
+        self.addCleanup(shutil.rmtree, folder)
+        module = os.path.join(folder, "gone_double.py")
+        with open(module, "w", encoding="utf-8") as f:
+            f.write("NAME = 'here'\n")
+        script = os.path.join(folder, "uses.py")
+        with open(script, "w", encoding="utf-8") as f:
+            f.write("import gone_double\n")
+        run_python(script, [], "", dict(os.environ), folder)
+        os.remove(module)
+
+        code, _, err = run_python(script, [], "", dict(os.environ), folder)
+
+        self.assertEqual(code, 1, "an import of no module")
+        self.assertIn("No module named 'gone_double'", err, "as a new process says")
+
     def test_a_script_run_again_from_its_folder_starts_each_cache_of_its_module_empty(self):
         folder = tempfile.mkdtemp(prefix="run-python-")
         self.addCleanup(shutil.rmtree, folder)
