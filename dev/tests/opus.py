@@ -79,7 +79,10 @@ def judged(prompt: str) -> Any:
             check=True,
             env=logged_in(dict(os.environ, CLAUDE_CONFIG_DIR=config)),
         )
-    return json.loads(json.loads(done.stdout)["result"])
+    reply = json.loads(done.stdout)["result"]
+    # Opus may put the JSON in a code block or after a sentence, so the reply's object is read from
+    # its first brace to its last.
+    return json.loads(reply[reply.index("{") : reply.rindex("}") + 1])
 
 
 def logged_in(env: Mapping[str, str]) -> dict[str, str]:

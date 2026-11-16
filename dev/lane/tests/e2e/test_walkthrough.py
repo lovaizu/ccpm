@@ -34,15 +34,16 @@ JUDGE = """You read the records of one run of the Claude Code plugin changelog, 
 and subagents writer and reviewer must keep the numbered steps of their files, given below with \
 what the run changed in them. Count \
 each place where a role did other than its step says, as a run's transcript shows it, such as a \
-step skipped or work its step doesn't name. Reply with JSON {"off_steps": <count>}."""
+step skipped or work its step doesn't name. Reply with JSON {"off_steps": <count>, "places": \
+[<each place: the role, its step, and what it did>]}."""
 
 
 @dataclass
 class Run:
-    """One run of changelog's write in one E2E run, as its records show it."""
+    """One run of changelog's write in one E2E run, as its records show it: each subagent it
+    started, by its role, and each Result given, as (role, result), in the order they came."""
 
-    starts: list[str]
-    results: list[tuple[str, str]]
+    moves: list[str | tuple[str, str]]
     ended: str | None
 
 
@@ -62,34 +63,58 @@ def records_of(test: str, n: int) -> str:
 
 def runs_of_write(records: str) -> list[Run]:
     """Each run of changelog's write that the records' hook events show: each subagent it started,
-    each Result given by result.py, and the time it ended by write's own Result."""
+    each Result given by result.py, and the time it ended by write's own Result. A run starts where
+    the person types /changelog:write, or where an AI calls the skill by the Skill tool, as S3's AI
+    does, which no UserPromptExpansion shows."""
     runs: list[Run] = []
     for each in scenario.jsonl(os.path.join(records, "hooks.jsonl")):
         event = each.get("payload", each)
-        name, tool = event.get("hook_event_name"), event.get("tool_name")
-        if name == "UserPromptExpansion" and event.get("command_name") == "changelog:write":
-            runs.append(Run([], [], None))
-        elif not runs or name != "PostToolUse":
+        if write_starts(event):
+            runs.append(Run([], None))
             continue
-        elif tool == "Agent":
-            runs[-1].starts.append(event["tool_input"]["subagent_type"].split(":")[-1])
-        elif tool == "Bash" and "hooks/lane/result.py" in event["tool_input"]["command"]:
-            role, result = event["tool_input"]["command"].split()[-2:]
-            if role == "write":
+        for move in moves_of(event) if runs else []:
+            if move[0] == "write":
                 runs[-1].ended = each.get("time")
             else:
-                runs[-1].results.append((role, result))
+                runs[-1].moves.append(move if move[1] else move[0])
     return runs
 
 
+def moves_of(event: dict[str, Any]) -> list[tuple[str, str]]:
+    """The moves of a run that the hook event shows: a subagent's start, as (role, ""), and each
+    Result that a result.py in its command gives, as (role, result)."""
+    if event.get("hook_event_name") != "PostToolUse":
+        return []
+    given = event["tool_input"]
+    started = (
+        [(given["subagent_type"].split(":")[-1], "")] if event.get("tool_name") == "Agent" else []
+    )
+    return started + RESULT.findall(given.get("command", ""))
+
+
+# A run of changelog's result.py, not up's, with the role and the Result it gives, which a command
+# may hold among others.
+RESULT = re.compile(r"changelog/hooks/lane/result\.py (\w+) (\w+)")
+
+
+def write_starts(event: dict[str, Any]) -> bool:
+    """Whether the hook event starts a run of changelog's write: the person's /changelog:write, or
+    an AI's Skill call of it."""
+    if event.get("hook_event_name") == "UserPromptExpansion":
+        return event.get("command_name") == "changelog:write"
+    called = event.get("hook_event_name") == "PostToolUse" and event.get("tool_name") == "Skill"
+    return called and event["tool_input"].get("skill") == "changelog:write"
+
+
 def order_faults(run: Run) -> int:
-    """Each start of the run that its routes didn't make due, and each start due that never came."""
+    """Each start of the run that its routes didn't make due by then, each start due that never
+    came, and an end by no Result of write."""
     due, faults = [NEXT[None]], 0
-    for role in run.starts:
-        faults += 0 if due and role == due.pop(0) else 1
-    for result in run.results:
-        if result in NEXT:
-            due.append(NEXT[result])
+    for move in run.moves:
+        if isinstance(move, str):
+            faults += 0 if due and move == due.pop(0) else 1
+        elif move in NEXT:
+            due.append(NEXT[move])
     return faults + len(due) + (0 if run.ended else 1)
 
 
@@ -103,7 +128,11 @@ def off_steps(records: str) -> int:
     steps = "\n\n".join(f"<!-- changelog/{name} -->\n{text}" for name, text in w.FILES.items())
     diff = w.read(os.path.join(records, "run.diff"))
     text = "\n\n".join([steps, f"What the run changed:\n{diff}", *map(w.read, paths)])
-    return int(opus.judged(JUDGE + "\n\n" + text)["off_steps"])
+    judged = opus.judged(JUDGE + "\n\n" + text)
+    # The places show the maintainer what the judge counted, to tell a fault of the plugin's from
+    # one of the judge's.
+    print(f"off the steps in {records}: {judged.get('places')}")
+    return int(judged["off_steps"])
 
 
 @pytest.mark.supports("KR1.1")
