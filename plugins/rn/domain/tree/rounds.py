@@ -231,7 +231,8 @@ def at_cut(run: Run, deliverable: str) -> DesignTree:
     Refuses: fault.Wrong, where the deliverable has no round; fault.CantRun, where git fails. A
     round that no commit holds stops with its trace, as each step's end commits the round's files
     before an evaluator judges it.
-    Carries: S1 `alt the decision that the more names didn't change since the round's cut`.
+    Carries: S1 `alt the decision that the more names isn't under its deliverable, or didn't change
+    since the round's cut`.
     """
     number = _held(run, deliverable, "whose cut a more answers to")
     opened = git.history(run.worktree, os.path.join(_folder(run, deliverable), str(number)))

@@ -110,7 +110,7 @@ def _generator_due(
     if not made:
         return rounds.start_name(deliverable, number or 1)
     # A decision changed since the round's cut starts the next round, and with it each More kept,
-    # which more.keepable keeps only once the decision it names changed.
+    # which more.keepable keeps only once the decision it names, under the deliverable, changed.
     if _decisions_of(rounds.at_cut(run, deliverable), deliverable) != _decisions_of(
         tree, deliverable
     ):
