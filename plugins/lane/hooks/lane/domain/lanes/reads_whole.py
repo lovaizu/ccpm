@@ -72,9 +72,10 @@ class ReadsWhole:
 
     def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
         """Kept where, for each of `paths` with the Start's run values filled in, the Reads since
-        the Step began cover each line that the file holds now; Broken, with the Lane's sentence
-        and each path with the lines not read, where they don't; CantCheck, with why and the
-        plugin's developer to fix it, where a path can't be read.
+        the Step began cover each line that the file holds now, counted as Read counts them, the
+        empty line after a last newline among them; Broken, with the Lane's sentence and each path
+        with the lines not read, where they don't; CantCheck, with why and the plugin's developer
+        to fix it, where a path can't be read.
 
         Carries: S6 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since
         the Step began`, and `else a path a Lane of reads_whole names wasn't read whole`.

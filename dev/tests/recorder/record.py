@@ -66,6 +66,11 @@ SLEEPER_TWO = (
     " word two.` Don't wait for them. Reply with the word started. " + TOLD
 )
 
+READ = (
+    "Read the file long.txt by the Read tool with no offset and no limit. Then read it again by the"
+    " Read tool with offset 10 and limit 5. Then reply with the word read. " + TOLD
+)
+
 # Each scenario: its prompts, each with the condition on (folder, stream) that it waits for, and
 # the condition of its end.
 SCENARIOS = {
@@ -87,17 +92,27 @@ SCENARIOS = {
         ],
         lambda folder, stream: stopped(folder, 1) and results(stream) >= 3,
     ),
+    "read": (
+        [(READ, lambda folder, stream: True)],
+        lambda folder, stream: results(stream) >= 1,
+    ),
 }
 
+# Each file that a scenario's repository holds beside README.md.
+FILES = {"read": {"long.txt": "".join(f"line {n}\n" for n in range(1, 2501))}}
 
-def repository(folder):
+
+def repository(folder, scenario):
     repo = os.path.join(folder, "repo")
     os.makedirs(repo)
     with open(os.path.join(repo, "README.md"), "w") as readme:
         readme.write("A throwaway repository.\n")
+    for name, text in FILES.get(scenario, {}).items():
+        with open(os.path.join(repo, name), "w") as each:
+            each.write(text)
     for command in (
         ["git", "init", "-q", "-b", "main"],
-        ["git", "add", "README.md"],
+        ["git", "add", "."],
         [
             "git",
             "-c",
@@ -116,7 +131,7 @@ def repository(folder):
 def main(scenario, folder):
     prompts, end = SCENARIOS[scenario]
     os.makedirs(folder)
-    repo = repository(folder)
+    repo = repository(folder, scenario)
     version = subprocess.run(["claude", "--version"], capture_output=True, text=True, check=True)
     with open(os.path.join(folder, "version.txt"), "w") as out:
         out.write(version.stdout)

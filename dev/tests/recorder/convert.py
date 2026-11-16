@@ -42,7 +42,11 @@ def scrub(text, repo):
 
 
 def command(payload):
-    return payload["tool_input"].get("command") or payload["tool_input"].get("description")
+    given = payload["tool_input"]
+    if payload["tool_name"] == "Read":
+        lines = [f"{key} {given[key]}" for key in ("offset", "limit") if key in given]
+        return " ".join(["Read", os.path.basename(given["file_path"]), *lines])
+    return given.get("command") or given.get("description")
 
 
 def label(description):

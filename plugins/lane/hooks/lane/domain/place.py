@@ -142,7 +142,9 @@ class ItemPosted:
 
 @dataclass(frozen=True)
 class ReadPosted:
-    """The PostToolUse of a Read: the Call, and the first and the last line it read."""
+    """The PostToolUse of a Read: the Call, and the first and the last line it read, from
+    `tool_response.file`'s `startLine` and `startLine` plus `numLines` less one, as Claude Code's
+    states give them."""
 
     call: Call
     first: int
