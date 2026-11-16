@@ -1,0 +1,25 @@
+{"time": "2026-11-16T02:23:54.520398Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "lane:up", "args": "changelog"}}}
+{"time": "2026-11-16T02:23:54.556121Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Skill", "tool_input": {"skill": "lane:up", "args": "changelog"}}}
+{"time": "2026-11-16T02:24:21.974611Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "python3 <top>/plugins/lane/scripts/lay.py write changelog 2fcd0368"}}}
+{"time": "2026-11-16T02:24:27.177531Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "python3 <top>/plugins/lane/hooks/lane/result.py up laid"}}}
+{"time": "2026-11-16T02:24:32.756790Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "changelog:write"}}}
+{"time": "2026-11-16T02:24:32.787033Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Skill", "tool_input": {"skill": "changelog:write"}}}
+{"time": "2026-11-16T02:24:38.192791Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:writer"}}}
+{"time": "2026-11-16T02:24:38.228499Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:writer"}, "tool_response": {"agentId": "a96d70dc126fd5c23"}}}
+{"time": "2026-11-16T02:24:51.358126Z", "payload": {"hook_event_name": "SubagentStop", "agent_id": "a96d70dc126fd5c23"}}
+{"time": "2026-11-16T02:24:55.009378Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:reviewer"}}}
+{"time": "2026-11-16T02:24:55.040760Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:reviewer"}, "tool_response": {"agentId": "a16bc77c2d465f2d1"}}}
+{"time": "2026-11-16T02:25:08.277268Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "agent_id": "a16bc77c2d465f2d1", "tool_input": {"command": ": > REVIEW.md && python3 <run>/clone/changelog/hooks/lane/result.py reviewer good; echo \"exit $?\""}}}
+{"time": "2026-11-16T02:25:11.401165Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "agent_id": "a16bc77c2d465f2d1", "tool_input": {"command": "cd <run>/clone/changelog/hooks && cat lane/result.py | head -80; cat lanes.json"}}}
+{"time": "2026-11-16T02:25:18.795795Z", "payload": {"hook_event_name": "SubagentStop", "agent_id": "a16bc77c2d465f2d1"}}
+{"time": "2026-11-16T02:25:57.612337Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "changelog:write"}}}
+{"time": "2026-11-16T02:25:57.652514Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Skill", "tool_input": {"skill": "changelog:write"}}}
+{"time": "2026-11-16T02:26:00.362858Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:writer"}}}
+{"time": "2026-11-16T02:26:00.399274Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:writer"}, "tool_response": {"agentId": "a8448314c24fa9941"}}}
+{"time": "2026-11-16T02:26:13.309786Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "agent_id": "a8448314c24fa9941", "tool_input": {"command": "python3 <run>/clone/changelog/hooks/lane/result.py writer written"}}}
+{"time": "2026-11-16T02:26:17.887939Z", "payload": {"hook_event_name": "SubagentStop", "agent_id": "a8448314c24fa9941"}}
+{"time": "2026-11-16T02:26:20.853336Z", "payload": {"hook_event_name": "PreToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:reviewer"}}}
+{"time": "2026-11-16T02:26:20.916077Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Agent", "tool_input": {"subagent_type": "changelog:reviewer"}, "tool_response": {"agentId": "a7d7cf5a5694453f6"}}}
+{"time": "2026-11-16T02:26:32.811809Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "agent_id": "a7d7cf5a5694453f6", "tool_input": {"command": "python3 <run>/clone/changelog/hooks/lane/result.py reviewer good"}}}
+{"time": "2026-11-16T02:26:37.089296Z", "payload": {"hook_event_name": "SubagentStop", "agent_id": "a7d7cf5a5694453f6"}}
+{"time": "2026-11-16T02:26:40.285908Z", "payload": {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "python3 <run>/clone/changelog/hooks/lane/result.py write good"}}}

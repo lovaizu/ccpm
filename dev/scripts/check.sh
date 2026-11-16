@@ -80,7 +80,7 @@ held design pyrefly check $properties --search-path plugins/rn/domain \
 # Claude Code.
 held design pyrefly check $properties --search-path plugins/lane/hooks/lane/domain \
   --search-path plugins/lane/domain --search-path dev/tests --search-path dev/lane/tests \
-  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/domain/*.py \
+  --search-path dev/lane/tests/e2e plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/domain/*.py \
   plugins/lane/hooks/lane/domain/*/*.py plugins/lane/domain/*/*.py plugins/lane/scripts/*.py \
   dev/lane/tests/*.py dev/lane/tests/*/*.py
 

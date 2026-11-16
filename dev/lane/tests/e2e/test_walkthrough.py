@@ -13,9 +13,9 @@ from __future__ import annotations
 import itertools
 import os
 import re
-from dataclasses import dataclass
 from typing import Any
 
+import measures as m
 import opus
 import pytest
 import scenario
@@ -28,111 +28,47 @@ pytestmark = [
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TESTS = ("walkthrough.json", "ai-approves.json")
-# The routes of the walkthrough's write, as each start after each Result.
-NEXT = {None: "writer", ("writer", "written"): "reviewer", ("reviewer", "more"): "writer"}
-JUDGE = """You read the records of one run of the Claude Code plugin changelog, whose skill write \
-and subagents writer and reviewer must keep the numbered steps of their files, given below with \
-what the run changed in them. Count \
-each place where a role did other than its step says, as a run's transcript shows it, such as a \
-step skipped or work its step doesn't name. Reply with JSON {"off_steps": <count>, "places": \
-[<each place: the role, its step, and what it did>]}."""
-
-
-@dataclass
-class Run:
-    """One run of changelog's write in one E2E run, as its records show it: each subagent it
-    started, by its role, and each Result given, as (role, result), in the order they came."""
-
-    moves: list[str | tuple[str, str]]
-    ended: str | None
-
-
-# The records of each E2E run of each test file in this session, so that KR1.1 and KR1.2 are
-# measured on the same runs, as Test strategy measures them, and no run is made twice.
+# The records of each E2E run of each test file in this session that ran as its case means, so that
+# KR1.1 and KR1.2 are measured on the same runs, as Test strategy measures them, and no run is made
+# twice.
 RECORDS: dict[str, list[str]] = {}
 
 
 def records_of(test: str, n: int) -> str:
-    """The folder of the records of the n-th E2E run of the test file, counted from 0, which e2e.py
-    makes where this session has made none yet."""
+    """The folder of the records of the n-th E2E run of the test file that ran as its case means,
+    counted from 0, which e2e.py makes where this session has made none yet. Each other run is
+    listed apart, with where it went otherwise, and counts toward no key result, as N3 of the test
+    implementation best practice says."""
     made = RECORDS.setdefault(test, [])
     while len(made) <= n:
-        made.append(scenario.e2e(os.path.join(HERE, test)))
+        records = scenario.e2e(os.path.join(HERE, test))
+        went = m.otherwise(records, test)
+        if went:
+            print(f"left out {records}, as it went otherwise: {went}")
+        else:
+            made.append(records)
     return made[n]
 
 
-def runs_of_write(records: str) -> list[Run]:
-    """Each run of changelog's write that the records' hook events show: each subagent it started,
-    each Result given by result.py, and the time it ended by write's own Result. A run starts where
-    the person types /changelog:write, or where an AI calls the skill by the Skill tool, as S3's AI
-    does, which no UserPromptExpansion shows."""
-    runs: list[Run] = []
-    for each in scenario.jsonl(os.path.join(records, "hooks.jsonl")):
-        event = each.get("payload", each)
-        if write_starts(event):
-            runs.append(Run([], None))
-            continue
-        for move in moves_of(event) if runs else []:
-            if move[0] == "write":
-                runs[-1].ended = each.get("time")
-            else:
-                runs[-1].moves.append(move if move[1] else move[0])
-    return runs
+# The judge's verdict on each run of write in the records of each E2E run, so that KR1.1 and KR1.2
+# read the same verdicts, and no run is judged twice.
+VERDICTS: dict[str, list[bool]] = {}
 
 
-def moves_of(event: dict[str, Any]) -> list[tuple[str, str]]:
-    """The moves of a run that the hook event shows: a subagent's start, as (role, ""), and each
-    Result that a result.py in its command gives, as (role, result)."""
-    if event.get("hook_event_name") != "PostToolUse":
-        return []
-    given = event["tool_input"]
-    started = (
-        [(given["subagent_type"].split(":")[-1], "")] if event.get("tool_name") == "Agent" else []
-    )
-    return started + RESULT.findall(given.get("command", ""))
+def keeps(records: str, runs: list[m.Run]) -> list[bool]:
+    """Whether each run of write keeps its steps, as the judge on Opus rules on each one alone."""
+    if records not in VERDICTS:
+        VERDICTS[records] = [judged(records, run, n, len(runs)) for n, run in enumerate(runs, 1)]
+    return VERDICTS[records]
 
 
-# A run of changelog's result.py, not up's, with the role and the Result it gives, which a command
-# may hold among others.
-RESULT = re.compile(r"changelog/hooks/lane/result\.py (\w+) (\w+)")
-
-
-def write_starts(event: dict[str, Any]) -> bool:
-    """Whether the hook event starts a run of changelog's write: the person's /changelog:write, or
-    an AI's Skill call of it."""
-    if event.get("hook_event_name") == "UserPromptExpansion":
-        return event.get("command_name") == "changelog:write"
-    called = event.get("hook_event_name") == "PostToolUse" and event.get("tool_name") == "Skill"
-    return called and event["tool_input"].get("skill") == "changelog:write"
-
-
-def order_faults(run: Run) -> int:
-    """Each start of the run that its routes didn't make due by then, each start due that never
-    came, and an end by no Result of write."""
-    due, faults = [NEXT[None]], 0
-    for move in run.moves:
-        if isinstance(move, str):
-            faults += 0 if due and move == due.pop(0) else 1
-        elif move in NEXT:
-            due.append(NEXT[move])
-    return faults + len(due) + (0 if run.ended else 1)
-
-
-def off_steps(records: str) -> int:
-    """How many places the run's roles left their steps, judged on Opus from the transcripts."""
-    paths = sorted(
-        os.path.join(folder, name)
-        for folder, _, names in os.walk(os.path.join(records, "transcripts"))
-        for name in names
-    )
-    steps = "\n\n".join(f"<!-- changelog/{name} -->\n{text}" for name, text in w.FILES.items())
-    diff = w.read(os.path.join(records, "run.diff"))
-    text = "\n\n".join([steps, f"What the run changed:\n{diff}", *map(w.read, paths)])
-    judged = opus.judged(JUDGE + "\n\n" + text)
-    # The places show the maintainer what the judge counted, to tell a fault of the plugin's from
-    # one of the judge's.
-    print(f"off the steps in {records}: {judged.get('places')}")
-    return int(judged["off_steps"])
+def judged(records: str, run: m.Run, n: int, count: int) -> bool:
+    """The judge's verdict on the n-th run of write, with each place it failed printed, which
+    pytest shows where a case fails, so that the maintainer tells a fault of Lane's from one of the
+    judge's."""
+    verdict = opus.judged(m.judge_prompt(records, run, n, count))
+    print(f"run {n} of {count} in {records}: {verdict}")
+    return bool(verdict["keeps"])
 
 
 @pytest.mark.supports("KR1.1")
@@ -141,17 +77,17 @@ def test_runs_keep_the_steps_and_order_the_user_designed(test: str) -> None:
     """Given: tally with changelog as the walkthrough gives it, and Lane loaded.
     When: the person, played by e2e.py's stand-in, has Lane laid, by their reply or by the AI's own
     act, and runs /changelog:write, then changes a step, lays again, and runs it once more.
-    Then: the share of changelog's runs whose steps or order differ from the user's design is
-    measured, and no run of the walkthrough leaves its order."""
+    Then: no hook of Lane's fails, the share of changelog's runs whose steps or order differ from
+    the user's design is measured, and no run of the walkthrough leaves its order."""
 
     count = itertools.count()
 
     def share() -> float:
         records = records_of(test, next(count))
-        runs = runs_of_write(records)
-        off = sum(1 for run in runs if order_faults(run))
-        off += min(off_steps(records), len(runs) - off)
-        return 100 * off / max(len(runs), 1)
+        failed = m.hook_faults(records)
+        assert not failed, f"Lane's hooks failed in {records}: {failed}"
+        runs = m.runs_of_write(records)
+        return m.share_off(runs, keeps(records, runs))
 
     measured = scenario.until_steady(share, 1)
     print(f"KR1.1 of {test}: {measured:.1f}% of runs off the user's design")
@@ -170,10 +106,10 @@ def test_the_first_run_that_keeps_the_steps_comes_soon(test: str) -> None:
 
     def minutes() -> float:
         records = records_of(test, next(count))
-        turns = scenario.jsonl(os.path.join(records, "turns.jsonl"))
-        kept = [run for run in runs_of_write(records) if not order_faults(run) and run.ended]
-        assert kept, "no run kept the steps"
-        return (scenario.seconds(kept[0].ended or "") - scenario.seconds(turns[0]["started"])) / 60
+        runs = m.runs_of_write(records)
+        measured = m.minutes_to_kept(records, runs, keeps(records, runs))
+        assert measured is not None, "no run kept the steps"
+        return measured
 
     print(f"KR1.2 of {test}: {scenario.until_steady(minutes, 1):.1f} minutes")
 
