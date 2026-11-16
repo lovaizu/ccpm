@@ -22,11 +22,8 @@ keeps these rules.
 ### Drawn out along the design tree
 
 Each role starts with only the cut that `tree.py` gave for it, and the guard stops any other start.
-The cut of a deliverable done before gives the commit it was done at, and the role reworking it
-reads each input's change since then.
 
-*Why*: a role that reads decisions not its own makes what the user didn't mean, which raises KR1.1,
-and one that reads each input whole again to rework a deliverable adds to KR1.2.
+*Why*: a role that reads decisions not its own makes what the user didn't mean, which raises KR1.1.
 
 ### Every step by best practice
 
@@ -148,8 +145,7 @@ Strategies:
 ![rn's data](images/data-model.svg)
 
 - Cut\
-  The part of the design tree that a role starts with, with the commit at which its deliverable was
-  last done.
+  The part of the design tree that a role starts with.
 - Design tree\
   The goal, its decisions, and the plan of deliverables, in
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s
@@ -177,6 +173,8 @@ Strategies:
 - The design tree as JSON written through `tree.py`\
   Deliverables rest on one another many to many by path, which no nested list holds, keeping KR1.1
   low.
+- A Cut naming the commit at which its deliverable was last done\
+  A generator reworking it reads only each input's change since then, keeping KR1.2 short.
 
 ## Sequences
 
