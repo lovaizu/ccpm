@@ -468,6 +468,7 @@ sequenceDiagram
         G-->>M: stops it, with the moves due
       else
         G->>T: checks the end by each Lane of each Run's skill
+        Note over G,T: keeps_steps lets a turn end, as a Step may wait on a subagent, and holds the skill's Steps at its Result.
         opt a Lane holds the end to a command of the plugin's
           T->>PC: runs it, with the Result filled in
           PC-->>T: its exit code
@@ -482,8 +483,12 @@ sequenceDiagram
   end
   G-->>M: start no more subagents, where the move after a Result starts no more
   M->>CC: result.py <skill> <result>
-  CC->>G: the PostToolUse, with no agent_id
-  G->>RS: adds the skill's Result, which ends the Run
+  alt a Lane of keeps_steps on the skill finds a Step unmarked in the latest pass
+    CC-->>M: result.py refuses it, with that Lane's sentence and the Step due
+  else
+    CC->>G: the PostToolUse, with no agent_id
+    G->>RS: adds the skill's Result, which ends the Run
+  end
 ```
 
 ### S6: a subagent held to its steps
