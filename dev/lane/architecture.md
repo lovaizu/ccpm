@@ -119,9 +119,9 @@ raising KR1.1.
 - result.py\
   Takes a result only where the role may give it in a Run of the conversation.
 - step.py\
-  Takes a Step's Mark only for the Step due in the role's latest pass, else gives the Step due.
+  Gives a Step's Mark as a command of its own, which the guard checks at its call.
 - item.py\
-  Takes an Item's Mark only where the adapter gives it for the Step due, else gives the Items left.
+  Gives an Item's Mark as a command of its own, which the guard checks at its call.
 - adapter\
   Gives each start's text, a Step's Items, and kept results in Lane's form, and names what a call
   picks up.
@@ -148,6 +148,9 @@ Strategies:
 - A Step's Mark held only by its own Lanes of reads_whole and keeps_items, laid only with keeps_steps\
   The Marks alone bound a Step, so only there does a Lane see its reads and Items, keeping KR1.1
   low.
+- Each Mark checked by the guard at its script's call, which names the subagent\
+  The script's environment names no subagent, so only the call's agent_id tells whose Step is due,
+  keeping KR1.1 low.
 - A Step's Items given by the plugin's adapter, from the role, the Step, and the run values\
   Only the plugin knows each Step's checklist, and Lane names no plugin, keeping KR1.1 low.
 - Each event placed by `session_id` and `agent_id`, a Start tied at its Agent call's PostToolUse\
@@ -502,42 +505,40 @@ sequenceDiagram
     CC->>G: the call, with its agent_id
     G->>RS: reads the lines, for its Start, its Marks, and its Run
     alt a run of step.py <role> <n>
-      opt a Lane of keeps_items lies on Step n
-        G->>A: asks for the Step's Items, with the role, Step n, and the run values
-        A-->>G: each Item's ID
-      end
-      G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since the Step began
-      alt the adapter fails
-        G-->>SA: stops it, with why and who must fix it
-      else a path a Lane of reads_whole names wasn't read whole, or an Item isn't marked
-        G-->>SA: stops it, with the Lane's sentence and what the Step lacks
-        SA->>SA: goes back to the Step
+      alt Step n isn't due in the latest pass of its Start
+        G-->>SA: stops it, with the Step due
       else
-        G-->>CC: lets it through
-        SA->>SP: step.py <role> <n>
-        SP->>G: asks where the role's Marks stand
-        alt Step n is due in the latest pass
+        opt a Lane of keeps_items lies on Step n
+          G->>A: asks for the Step's Items, with the role, Step n, and the Start's run values
+          A-->>G: each Item's ID
+        end
+        G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since the Step began
+        alt the adapter fails
+          G-->>SA: stops it, with why and who must fix it
+        else a path a Lane of reads_whole names wasn't read whole, or an Item isn't marked
+          G-->>SA: stops it, with the Lane's sentence and what the Step lacks
+          SA->>SA: goes back to the Step
+        else
+          G-->>CC: lets it through
+          SA->>SP: step.py <role> <n>
           SP-->>SA: exits 0
           CC->>G: the PostToolUse, with its agent_id
           G->>RS: adds the Mark of Step n, for that subagent's Start
-        else
-          SP-->>SA: refuses it, with the Step due
         end
       end
     else a run of item.py <role> <id>
-      G-->>CC: lets it through
-      SA->>IP: item.py <role> <id>
-      IP->>G: asks for the Step due and its Items
-      G->>A: asks for the Step's Items, with the role, the Step due, and the run values
+      G->>A: asks for the Items of the Step due, with the role and the Start's run values
       A-->>G: each Item's ID
-      alt an Item of the Step due
+      alt the adapter fails
+        G-->>SA: stops it, with why and who must fix it
+      else no Item of the Step due
+        G-->>SA: stops it, with the Items left
+      else
+        G-->>CC: lets it through
+        SA->>IP: item.py <role> <id>
         IP-->>SA: exits 0
         CC->>G: the PostToolUse, with its agent_id
         G->>RS: adds the Mark of the Item, for that subagent's Start
-      else the adapter fails
-        IP-->>SA: refuses it, with why and who must fix it
-      else
-        IP-->>SA: refuses it, with the Items left
       end
     else any other call
       G->>T: checks the Call by each Lane of the role, with the Start's run values
