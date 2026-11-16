@@ -1,0 +1,286 @@
+{
+  "lanes": [
+    {
+      "role": "up",
+      "file": "skills/up/SKILL.md",
+      "step": 2,
+      "type": "routes",
+      "args": {}
+    },
+    {
+      "role": "up",
+      "file": "domain/orchestrator.md",
+      "step": 6,
+      "type": "ends_checked",
+      "args": {
+        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check orchestrator '{result}'"
+      }
+    },
+    {
+      "role": "up",
+      "file": "domain/orchestrator.md",
+      "step": 7,
+      "type": "ends_by_result",
+      "args": {}
+    },
+    {
+      "role": "tree-keeper",
+      "file": "domain/tree-keeper.md",
+      "step": 4,
+      "type": "ends_checked",
+      "args": {
+        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check tree-keeper {result} {record}"
+      }
+    },
+    {
+      "role": "tree-keeper",
+      "file": "domain/tree-keeper.md",
+      "step": 4,
+      "type": "ends_by_result",
+      "args": {}
+    },
+    {
+      "role": "generator",
+      "file": "domain/generator.md",
+      "step": 7,
+      "type": "ends_checked",
+      "args": {
+        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check generator {result} {record}"
+      }
+    },
+    {
+      "role": "generator",
+      "file": "domain/generator.md",
+      "step": 7,
+      "type": "ends_by_result",
+      "args": {}
+    },
+    {
+      "role": "evaluator",
+      "file": "domain/evaluator.md",
+      "step": 4,
+      "type": "ends_checked",
+      "args": {
+        "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}"
+      }
+    },
+    {
+      "role": "evaluator",
+      "file": "domain/evaluator.md",
+      "step": 4,
+      "type": "ends_by_result",
+      "args": {}
+    }
+  ],
+  "routes": [
+    {
+      "skill": "up",
+      "after": {
+        "first": true
+      },
+      "moves": [
+        {
+          "start": "tree-keeper"
+        },
+        {
+          "no_more": "none"
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "tree-keeper",
+        "result": "done"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "start": "generator"
+        },
+        {
+          "start": "evaluator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "tree-keeper",
+        "result": "refused"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "generator",
+        "result": "done"
+      },
+      "moves": [
+        {
+          "start": "evaluator"
+        },
+        {
+          "resume": "generator"
+        },
+        {
+          "start": "generator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "generator",
+        "result": "asks"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "resume": "generator"
+        },
+        {
+          "start": "generator"
+        },
+        {
+          "start": "evaluator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "generator",
+        "result": "lacks"
+      },
+      "moves": [
+        {
+          "resume": "generator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "role": "evaluator",
+        "result": "done"
+      },
+      "moves": [
+        {
+          "start": "evaluator"
+        },
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "start": "generator"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "command": "ty"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "command": "gm"
+      },
+      "moves": [
+        {
+          "resume": "tree-keeper"
+        },
+        {
+          "wait": ""
+        }
+      ]
+    },
+    {
+      "skill": "up",
+      "after": {
+        "command": "dn"
+      },
+      "moves": [
+        {
+          "wait": ""
+        }
+      ]
+    }
+  ],
+  "adapters": {
+    "text": "hooks/adapters/text.py",
+    "records": "hooks/adapters/records.py"
+  },
+  "laid": {
+    "version": "0.1.0",
+    "sentences": [
+      {
+        "file": "skills/up/SKILL.md",
+        "step": 2,
+        "text": "Start each subagent you are told to start, until you are told to start no more."
+      },
+      {
+        "file": "domain/orchestrator.md",
+        "step": 6,
+        "text": "End once `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check orchestrator '{result}'` gives 0."
+      },
+      {
+        "file": "domain/orchestrator.md",
+        "step": 7,
+        "text": "End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py up none`."
+      },
+      {
+        "file": "domain/evaluator.md",
+        "step": 4,
+        "text": "End once `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}` gives 0. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py evaluator done`."
+      },
+      {
+        "file": "domain/generator.md",
+        "step": 7,
+        "text": "End once `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check generator {result} {record}` gives 0. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator done` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator asks` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py generator lacks`."
+      },
+      {
+        "file": "domain/tree-keeper.md",
+        "step": 4,
+        "text": "End once `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check tree-keeper {result} {record}` gives 0. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py tree-keeper done` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py tree-keeper refused`."
+      }
+    ]
+  }
+}

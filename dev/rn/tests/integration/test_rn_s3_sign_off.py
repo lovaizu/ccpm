@@ -13,9 +13,7 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="rn's parts have empty bodies, and Lane hasn't laid rn's guard"
-)
+LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
 
 
 @pytest.mark.supports("S3", "repository", "Point")
@@ -94,6 +92,7 @@ def test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes(b: Bench) 
     assert w.tree_in(walk)["deliverables"][0]["necessary_conditions"][0]["decisions"] == [decided]
 
 
+@LATER
 @pytest.mark.supports("S3", "Comment", "repository", "user")
 def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
     """Given: the walkthrough's plan put up, and the user's comment on its pull request after it.
@@ -116,6 +115,7 @@ def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
     assert [c["body"] for c in comments] == ["Leave out invoicer/render.py."]
 
 
+@LATER
 @pytest.mark.supports("S3", "Sign-off", "Made", "Deliverable")
 def test_a_deliverable_put_up_and_approved_is_marked_done(b: Bench) -> None:
     """Given: "Type hints in each file of invoicer" judged good in its first round, and put up for

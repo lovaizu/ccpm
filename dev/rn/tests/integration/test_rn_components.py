@@ -10,10 +10,6 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="rn's parts have empty bodies, and Lane hasn't laid rn's guard"
-)
-
 
 @pytest.mark.supports("tree.py", "Design tree", "tree-keeper")
 def test_tree_py_refuses_a_change_that_leaves_the_design_trees_form(b: Bench) -> None:

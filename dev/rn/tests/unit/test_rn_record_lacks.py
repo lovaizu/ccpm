@@ -9,6 +9,7 @@ one out, or being asks or lacks."""
 from __future__ import annotations
 
 import os
+import re
 import shutil
 from typing import Any
 
@@ -22,20 +23,21 @@ from tree.results import Answers, Made
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="record/ has empty bodies")
-
-STEPS = "\n## Steps\n\n1. Read your Cut.\n2. Decide.\n3. Make.\n\n## What you give\n"
+STEPS = "\n## Steps\n\n1. Read your Cut.\n2. Decide.\n3. Make.\n"
 DECIDE, MAKE = Practice("N1.1", Phase.DECIDE), Practice("N1.2", Phase.MAKE)
 DECISION = "deliverables/0/necessary_conditions/0/decisions/0"
 
 
-def plugin_with_steps(tmp: Any) -> str:
-    """A copy of rn whose generator's part and /rn:dn hold three steps each."""
+def plugin_with_steps(tmp: Any, held: dict[str, str]) -> str:
+    """A copy of rn whose prompt in each file given holds the Steps given in place of its own."""
     root = os.path.join(tmp, "rn")
     shutil.copytree(d.RN, root, ignore=shutil.ignore_patterns("__pycache__", "best-practices"))
-    for file in ("domain/generator.md", os.path.join("skills", "dn", "SKILL.md")):
-        with open(os.path.join(root, file), "a", encoding="utf-8") as f:
-            f.write(STEPS)
+    for file, given in held.items():
+        with open(os.path.join(root, file), encoding="utf-8") as f:
+            text = f.read()
+        text = re.sub(r"\n## Steps\n.*?(?=\n## |\Z)", "", text, flags=re.DOTALL) + given
+        with open(os.path.join(root, file), "w", encoding="utf-8") as f:
+            f.write(text)
     return root
 
 
@@ -47,15 +49,17 @@ def test_the_steps_of_a_roles_part_or_a_command_are_numbered_in_order(
     """Given: rn with the generator's part and /rn:dn each holding steps 1 to 3 under Steps.
     When: the steps of the generator, and of dn, are asked.
     Then: each gives 1, 2, and 3."""
-    assert steps.numbers(plugin_with_steps(tmp_path), of) == (1, 2, 3)
+    held = {"domain/generator.md": STEPS, os.path.join("skills", "dn", "SKILL.md"): STEPS}
+    assert steps.numbers(plugin_with_steps(tmp_path, held), of) == (1, 2, 3)
 
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
-def test_a_prompt_with_no_steps_gives_none() -> None:
-    """Given: rn as its skeleton holds it, the evaluator's part with Steps empty.
+def test_a_prompt_with_no_steps_gives_none(tmp_path: Any) -> None:
+    """Given: rn with the evaluator's part holding Steps empty.
     When: the evaluator's steps are asked.
     Then: it gives none."""
-    assert steps.numbers(d.RN, "evaluator") == ()
+    held = {"domain/evaluator.md": "\n## Steps\n"}
+    assert steps.numbers(plugin_with_steps(tmp_path, held), "evaluator") == ()
 
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
@@ -135,13 +139,23 @@ def test_a_record_with_each_step_and_practice_in_order_lacks_nothing() -> None:
             "1",
         ),
         (record(), "1"),
+        (
+            record(
+                ("generator", 1),
+                ("code", "N1.2"),
+                ("code", "N1.1"),
+                ("generator", 2),
+                ("generator", 3),
+            ),
+            "N1.1",
+        ),
     ],
 )
 def test_a_record_lacking_a_step_or_practice_or_out_of_order_names_it(
     held: Record, named: str
 ) -> None:
-    """Given: a record missing step 3, missing the deciding practice, with step 2 before step 1, or
-    empty.
+    """Given: a record missing step 3, missing the deciding practice, with step 2 before step 1,
+    empty, or with the deciding practice after the making one.
     When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
     Then: it names the step or practice lacking or out of place."""
     found = order.lacks(held, "generator", (1, 2, 3), CODE)

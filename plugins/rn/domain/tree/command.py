@@ -3,8 +3,43 @@ what it prints with the exit code by which a role or the orchestrator reads its 
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-from typing import TextIO
+import dataclasses
+import datetime
+import json
+import os
+from collections.abc import Callable, Sequence
+from typing import Any, TextIO
+
+from fault import CantRun, Missing, Wrong
+from repository import git
+
+from tree import (
+    branch,
+    design,
+    github,
+    more,
+    place,
+    records,
+    rounds,
+    runs,
+    sign_offs,
+    touched,
+    turn,
+)
+from tree.design import Change, DesignTree
+from tree.runs import Run
+from tree.sign_offs import Kind
+
+USAGE = """\
+usage: tree.py start <goal>
+       tree.py write <record> <ground>   (the change on standard input)
+       tree.py commit <record> <step>
+       tree.py round <deliverable>
+       tree.py push
+       tree.py put-up plan | put-up deliverable <path>
+       tree.py put-up lesson   (its words on standard input)
+       tree.py approve | send-back | runs
+"""
 
 
 def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tuple[int, str, str]:
@@ -54,4 +89,157 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
     `O->>T: lists the runs left`; S6 and S7 `O->>T: puts it up`, `marks the pull request ready`,
     `sends the pull request handed over back`, and `approves the pull request handed over`.
     """
-    raise NotImplementedError("tree.command.main")
+    found = _COMMANDS.get(argv[0] if argv else "")
+    if found is None or len(argv) - 1 not in found[1]:
+        return 2, "", USAGE
+    try:
+        given = found[0](list(argv[1:]), stdin, cwd, plugin_root)
+    except (Wrong, Missing) as e:
+        return 1, "", f"tree.py {argv[0]}: {e}\n"
+    except CantRun as e:
+        return 2, "", f"tree.py {argv[0]}: {e}\n"
+    return 0, json.dumps(given) + "\n", ""
+
+
+def _start(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    root = git.worktrees(cwd)[0][0]
+    run = runs.start(root, args[0], datetime.date.today().strftime("%Y%m%d"))
+    folder = os.path.relpath(run.folder, run.worktree)
+    return {"worktree": run.worktree, "folder": folder, "record": records.orchestrator_record(run)}
+
+
+def _write(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    record, ground = args
+    if not ground.strip():
+        raise Wrong("<ground> is empty; give why the change decides as it does, its commit message")
+    nodes, kept = _change(stdin.read())
+    run = _run(cwd)
+    records.role_of(record)
+    before = _tree_or_empty(run)
+    after = design.apply(before, Change(nodes))
+    marked_tree, marked = turn.mark_doing(after, sign_offs.read(run))
+    for each in kept:
+        more.keepable(rounds.at_cut(run, each.deliverable), marked_tree, each)
+    paths = [design.write(run, marked_tree), *(rounds.keep_more(run, kept) if kept else ())]
+    branch.commit(run, paths, ground)
+    changed = design.changed(before, marked_tree)
+    return {
+        "changed": list(changed),
+        "touched": list(touched.touched(marked_tree, changed)),
+        "doing": list(marked),
+    }
+
+
+def _commit(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    record, step = args
+    if not step.isdigit() or int(step) < 1:
+        raise Wrong(f"<step> must be a step's number from 1, not {step!r}")
+    run = _run(cwd)
+    records.role_of(record)
+    work = git.changed(run.worktree)
+    place.write(
+        os.path.join(run.worktree, rounds.place_path(run, record)),
+        place.Place(record, int(step), work),
+    )
+    branch.commit(run, ["."], f"{record}: step {step} ended")
+    return {"record": record, "step": int(step)}
+
+
+def _round(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    run = _run(cwd)
+    design.read(run)
+    return [
+        {
+            "number": each.number,
+            "made": dataclasses.asdict(each.made) if each.made else None,
+            "answers": [dataclasses.asdict(a) for a in each.answers],
+        }
+        for each in rounds.each(run, args[0])
+    ]
+
+
+def _push(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    run = _run(cwd)
+    branch.push(run)
+    return github.keep_draft(run).url
+
+
+def _put_up(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    kinds = {
+        "plan": (Kind.PLAN, 0),
+        "deliverable": (Kind.DELIVERABLE, 1),
+        "lesson": (Kind.LESSON, 0),
+    }
+    if args[0] not in kinds or len(args) - 1 != kinds[args[0]][1]:
+        raise Wrong("put-up takes `plan`, `deliverable <path>`, or `lesson`")
+    kind = kinds[args[0]][0]
+    what = args[1] if kind is Kind.DELIVERABLE else stdin.read() if kind is Kind.LESSON else ""
+    return sign_offs.as_json(sign_offs.put_up(_run(cwd), kind, what))
+
+
+def _decided(approved: bool) -> Callable[[list[str], TextIO, str, str], Any]:
+    def decide(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+        run = _run(cwd)
+        given = sign_offs.decide(run, approved)
+        shown: dict[str, Any] = sign_offs.as_json(given)
+        if approved and given.kind is Kind.LESSON:
+            shown["issue"] = github.open_lesson(plugin_root, given.what)
+        # Runs only for the pull request handed over, as in the case xfail until hand_over is built,
+        # test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again.
+        if not approved and given.kind is Kind.PULL_REQUEST:  # pragma: no cover
+            github.hand_over(run, False)
+        return shown
+
+    return decide
+
+
+def _runs(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
+    return [
+        {"name": r.name, "worktree": r.worktree, "record": records.orchestrator_record(r)}
+        for r in runs.left(cwd)
+    ]
+
+
+def _change(text: str) -> tuple[dict[str, Any], list[more.More]]:
+    """The change that tree.py write reads on standard input: its nodes, and each More to keep."""
+    try:
+        given = json.loads(text)
+    except ValueError as e:
+        raise Wrong(f"the change on standard input isn't JSON: {e}") from None
+    if not (isinstance(given, dict) and set(given) == {"nodes", "more"}):
+        raise Wrong('the change must be {"nodes": {<path>: <node>}, "more": [<more>]}')
+    if not isinstance(given["nodes"], dict) or not isinstance(given["more"], list):
+        raise Wrong('the change\'s "nodes" must be an object, and its "more" a list')
+    try:
+        kept = [more.More(m["deliverable"], m["condition"], m["good_when"]) for m in given["more"]]
+    except (KeyError, TypeError):
+        raise Wrong('each more must be {"deliverable", "condition", "good_when"}') from None
+    return given["nodes"], kept
+
+
+def _run(cwd: str) -> Run:
+    run = runs.of_folder(cwd)
+    if run is None:
+        raise Wrong(f"{cwd} lies in no run's worktree; run it in the worktree that start gave")
+    return run
+
+
+def _tree_or_empty(run: Run) -> DesignTree:
+    """The run's design tree, or an empty one before the first change writes it."""
+    if os.path.exists(os.path.join(run.folder, "design-tree.json")):
+        return design.read(run)
+    return DesignTree({})
+
+
+# Each command, with what runs it and how many arguments it takes after its name.
+_COMMANDS: dict[str, tuple[Callable[[list[str], TextIO, str, str], Any], tuple[int, ...]]] = {
+    "start": (_start, (1,)),
+    "write": (_write, (2,)),
+    "commit": (_commit, (2,)),
+    "round": (_round, (1,)),
+    "push": (_push, (0,)),
+    "put-up": (_put_up, (1, 2)),
+    "approve": (_decided(True), (0,)),
+    "send-back": (_decided(False), (0,)),
+    "runs": (_runs, (0,)),
+}

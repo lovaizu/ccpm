@@ -16,7 +16,16 @@ from dev.tests import fresh_imports
 
 # The modules of rn's code and of Lane's guard, by name, which a case's process holds no copy of
 # while the case runs, so that each script and hook imports the code of the bench's copy.
-MODULES = ("fault", "throwaway", "tree", "record", "repository", "template", *fresh_imports.GUARD)
+MODULES = (
+    "fault",
+    "json_form",
+    "throwaway",
+    "tree",
+    "record",
+    "repository",
+    "template",
+    *fresh_imports.GUARD,
+)
 
 
 @pytest.fixture(autouse=True)

@@ -15,7 +15,10 @@ from tree import branch, github
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/branch.py and github.py have empty bodies")
+LATER = pytest.mark.xfail(
+    strict=True,
+    reason="tree/github.py's hand_over, comments, and open_lesson have empty bodies",
+)
 
 
 def on_github(monkeypatch: pytest.MonkeyPatch, tmp: Any, **held: Any) -> str:
@@ -86,6 +89,7 @@ def test_a_draft_with_no_login_says_whats_missing(
         github.keep_draft(run)
 
 
+@LATER
 @pytest.mark.supports("test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again")
 @pytest.mark.parametrize("ready", [True, False])
 def test_the_pull_request_is_handed_over_ready_or_marked_a_draft_again(
@@ -101,6 +105,7 @@ def test_the_pull_request_is_handed_over_ready_or_marked_a_draft_again(
     assert github.hand_over(run, ready).draft is (not ready)
 
 
+@LATER
 @pytest.mark.supports("test_gm_alone_reads_the_users_comments_since_the_sign_off")
 def test_the_comments_are_those_since_the_sign_off(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch
@@ -121,6 +126,7 @@ def test_the_comments_are_those_since_the_sign_off(
     assert [c.body for c in github.comments(run, "2026-11-15T09:00:00Z")] == ["After."]
 
 
+@LATER
 @pytest.mark.supports("test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word")
 def test_a_lesson_opens_an_issue_on_the_repository_rns_manifest_names(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch

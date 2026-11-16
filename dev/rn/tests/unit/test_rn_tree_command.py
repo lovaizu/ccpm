@@ -15,7 +15,10 @@ from tree.command import main
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/command.py has empty bodies")
+LATER = pytest.mark.xfail(
+    strict=True,
+    reason="tree.py has no pause yet, and rounds.each has an empty body",
+)
 
 
 def run(argv: list[str], cwd: str, given: Any = "") -> tuple[int, str, str]:
@@ -92,10 +95,20 @@ def test_write_with_no_ground_gives_1_and_commits_nothing(tmp_path: Any, ground:
 
 
 @pytest.mark.supports("test_tree_py_refuses_a_change_that_leaves_the_design_trees_form")
-@pytest.mark.parametrize("given", ["not JSON", {"nodes": {}}, {"nodes": {"goals": 1}, "more": []}])
+@pytest.mark.parametrize(
+    "given",
+    [
+        "not JSON",
+        {"nodes": {}},
+        {"nodes": {"goals": 1}, "more": []},
+        {"nodes": [], "more": []},
+        {"nodes": {}, "more": [{"deliverable": "invoicer"}]},
+    ],
+)
 def test_write_out_of_form_gives_1_with_whats_wrong(tmp_path: Any, given: Any) -> None:
     """Given: a run started.
-    When: tree.py write runs with input that isn't JSON, lacks more, or names no node.
+    When: tree.py write runs with input that isn't JSON, lacks more, names no node, holds nodes
+    that aren't an object, or a more without its condition and good_when.
     Then: it gives 1 with what's wrong, and prints nothing on standard output."""
     _, printed = started(tmp_path)
     code, out, err = run(["write", printed["record"], "The plan."], printed["worktree"], given)
@@ -115,6 +128,29 @@ def test_commit_keeps_the_place_and_commits(tmp_path: Any) -> None:
     assert "invoicer/py.typed" in d.git(printed["worktree"], "show", "--name-only", "HEAD")
     message = d.git(printed["worktree"], "log", "-1", "--format=%B")
     assert printed["record"] in message and "1" in message
+
+
+@pytest.mark.supports("test_each_steps_end_commits_the_work_with_its_place")
+@pytest.mark.parametrize(
+    ("argv", "at_root"),
+    [
+        (["commit", "{record}", "one"], False),
+        (["put-up", "nothing"], False),
+        (["put-up", "plan", "more"], False),
+        (["approve"], True),
+    ],
+)
+def test_arguments_out_of_form_or_a_folder_in_no_run_give_1(
+    tmp_path: Any, argv: list[str], at_root: bool
+) -> None:
+    """Given: a run started.
+    When: tree.py commit runs with a step that isn't a number, put-up with a kind it doesn't take
+    or a word too many, or approve at the repository's root, which lies in no run's worktree.
+    Then: it gives 1 with what's wrong, and prints nothing on standard output."""
+    repo, printed = started(tmp_path)
+    given = [each.format(record=printed["record"]) for each in argv]
+    code, out, err = run(given, repo if at_root else printed["worktree"])
+    assert (code, out) == (1, "") and err
 
 
 @pytest.mark.supports("test_up_alone_with_no_run_left_says_so_and_starts_no_role")
@@ -172,6 +208,7 @@ def test_put_up_lesson_takes_its_words_from_standard_input(tmp_path: Any) -> Non
     assert code == 0 and json.loads(out)["state"] == "sent back"
 
 
+@LATER
 @pytest.mark.supports("test_dn_where_git_cant_push_commits_and_says_what_is_missing")
 def test_pause_with_no_remote_commits_and_says_it_didnt_push(tmp_path: Any) -> None:
     """Given: a run started in a repository with no remote.
@@ -183,6 +220,7 @@ def test_pause_with_no_remote_commits_and_says_it_didnt_push(tmp_path: Any) -> N
     assert code == 1 and "committed" in err and "remote" in err
 
 
+@LATER
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_round_of_a_deliverable_with_no_round_gives_1(tmp_path: Any) -> None:
     """Given: a run started with the walkthrough's tree.

@@ -3,7 +3,11 @@ comments, and an issue, each as one gh command."""
 
 from __future__ import annotations
 
+import json
+import subprocess
 from dataclasses import dataclass
+
+from fault import CantRun, Missing
 
 
 @dataclass(frozen=True)
@@ -34,7 +38,21 @@ def draft_pull_request(worktree: str, branch: str, title: str, body: str) -> Pul
     GitHub remote; fault.CantRun, where gh fails otherwise.
     Carries: S3 `T->>RP: pushes, and opens or keeps the draft pull request`, and `RP->>GH`.
     """
-    raise NotImplementedError("gh.draft_pull_request")
+    _logged_in(worktree)
+    viewed = _run(worktree, "pr", "view", branch, "--json", "url,isDraft")
+    if viewed.returncode == 0:
+        shown = json.loads(viewed.stdout)
+        return PullRequest(shown["url"], shown["isDraft"])
+    # Where view failed for want of a pull request, create opens one; where it failed otherwise,
+    # create fails alike, and says why.
+    made = _run(
+        worktree, "pr", "create", "--draft", "--head", branch, "--title", title, "--body", body
+    )
+    # Runs only where gh pr create fails, which no line of the double's record holds; taken back to
+    # the cases' designer.
+    if made.returncode != 0:  # pragma: no cover
+        raise CantRun(f"gh pr create failed: {made.stderr.strip()}")
+    return PullRequest(made.stdout.strip(), True)
 
 
 def mark_ready(worktree: str, ready: bool) -> PullRequest:
@@ -75,3 +93,14 @@ def open_issue(repository: str, title: str, body: str) -> str:
     issue, with the lesson's words`.
     """
     raise NotImplementedError("gh.open_issue")
+
+
+def _run(worktree: str, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(["gh", *args], cwd=worktree, capture_output=True, text=True, check=False)
+
+
+def _logged_in(worktree: str) -> None:
+    """Raises Missing where gh is logged in to no account, as no command of it can then change
+    GitHub."""
+    if _run(worktree, "auth", "status").returncode != 0:
+        raise Missing("gh isn't logged in to GitHub; log in with `gh auth login`")

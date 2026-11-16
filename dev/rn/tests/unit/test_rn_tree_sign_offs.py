@@ -16,8 +16,6 @@ from tree.sign_offs import Kind, State
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/sign_offs.py has empty bodies")
-
 
 def a_run(tmp: Any) -> Any:
     run = d.run_of(d.repository(str(tmp)))

@@ -5,6 +5,7 @@ and its run values, which the guard holds the role to, or why no work waits for 
 
 from __future__ import annotations
 
+import json
 import os
 import sys
 from collections.abc import Sequence
@@ -12,7 +13,10 @@ from typing import TextIO
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "domain"))
 
-from tree import cut, design, runs  # noqa: F401
+from fault import CantRun, Missing, Wrong
+from tree import cut, design, runs
+
+USAGE = 'usage: text.py <role>, with {"running": [...]} on standard input\n'
 
 
 def main(argv: Sequence[str], stdin: TextIO, cwd: str) -> tuple[int, str, str]:
@@ -25,8 +29,8 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str) -> tuple[int, str, str]:
     `cut.next_start`; 0, with `{"none": <why no work waits for the role>}`, where
     `cut.next_start` gives None, such as while every deliverable doing waits for a sign-off, so
     that Lane leaves the start out of the moves due with why in its place; 1, with why, where the
-    folder lies in no run's worktree, as before the orchestrator makes and enters it; 2, with the
-    usage.
+    folder lies in no run's worktree, as before the orchestrator makes and enters it, or where
+    standard input or a file of the run leaves its form; 2, with the usage.
     Changes: nothing.
     Refuses: by exit 1 or 2, as Gives says, which Lane reads as a failure with why.
     Carries: S1 `GD->>A: asks for the text of the tree-keeper's start`, `A-->>GD: fails, as the
@@ -35,7 +39,36 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str) -> tuple[int, str, str]:
     that start's text and run values in Lane's form, or none where no work waits`; S5 `GD->>A:
     asks for the text of the tree-keeper's start` and `A-->>GD: fails`.
     """
-    raise NotImplementedError("text.main")
+    if len(argv) != 1:
+        return 2, "", USAGE
+    try:
+        running = _running(stdin.read())
+        run = runs.of_folder(cwd)
+        if run is None:
+            raise Wrong(
+                f"{cwd} lies in no run's worktree; the orchestrator makes and enters it first"
+            )
+        there = os.path.exists(os.path.join(run.folder, "design-tree.json"))
+        tree = design.read(run) if there else design.DesignTree({})
+        found = cut.next_start(run, tree, argv[0], running)
+    except (Wrong, Missing, CantRun) as e:
+        return 1, "", f"rn's adapter of a start's text: {e}\n"
+    if found is None:
+        why = f"no work waits for {argv[0]}: each deliverable doing is held, judged, or waits"
+        return 0, json.dumps({"none": why}) + "\n", ""
+    shown = {"text": json.dumps(found.part), "values": dict(found.values)}
+    return 0, json.dumps(shown) + "\n", ""
+
+
+def _running(text: str) -> list[dict[str, str]]:
+    """The run values of each start that runs, from what Lane gives on standard input."""
+    try:
+        given = json.loads(text)
+        return [dict(each.get("values", {})) for each in given["running"]]
+    # Runs only on input out of form, which dev/scripts/quality.sh's property test gives,
+    # test_any_input_of_the_adapter_of_a_starts_text_gives_a_text_none_or_why.
+    except (ValueError, KeyError, TypeError, AttributeError):  # pragma: no cover
+        raise Wrong('standard input must be {"running": [{"role", "text", "values"}]}') from None
 
 
 if __name__ == "__main__":

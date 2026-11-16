@@ -16,10 +16,6 @@ from tree.results import Settled
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="tree/records.py and results.py have empty bodies"
-)
-
 
 def touch(path: str) -> str:
     return d.write_json(path, {"entries": []})

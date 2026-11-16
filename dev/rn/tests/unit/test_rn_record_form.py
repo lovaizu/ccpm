@@ -15,8 +15,6 @@ from record.form import Entry, Kept
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="record/form.py has empty bodies")
-
 STEP = Entry("generator", 1, None, "Read the Cut.")
 PRACTICE = Entry("code", None, "N6.2", "Wrote the test first.")
 

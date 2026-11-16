@@ -4,8 +4,10 @@ each lesson the user signs off on rn's repository."""
 
 from __future__ import annotations
 
+from repository import gh
 from repository.gh import Comment, PullRequest
 
+from tree import design
 from tree.runs import Run
 
 
@@ -18,7 +20,9 @@ def keep_draft(run: Run) -> PullRequest:
     Refuses: fault.Missing, naming what's missing, where gh can't open it.
     Carries: S3 `T->>RP: pushes, and opens or keeps the draft pull request`.
     """
-    raise NotImplementedError("github.keep_draft")
+    goal = design.goal(design.read(run))
+    body = f"The work of rn's run {run.name}, toward this goal: {goal}"
+    return gh.draft_pull_request(run.worktree, run.branch, goal, body)
 
 
 def hand_over(run: Run, ready: bool) -> PullRequest:

@@ -16,7 +16,10 @@ from tree.place import Place
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/cut.py has empty bodies")
+LATER = pytest.mark.xfail(
+    strict=True,
+    reason="a start at the step its Place names waits for place.read, whose body is empty",
+)
 
 BOTH_DOING = d.with_status(d.walkthrough_tree(), "doing", "doing")
 
@@ -39,6 +42,17 @@ def test_the_tree_keepers_cut_names_the_design_tree_and_its_best_practice(tmp_pa
     assert set(given.part) == {"record", "tree", "best_practice"}
     assert d.part(given)["tree"].endswith(os.path.join(".rn", d.NAME, "design-tree.json"))
     assert given.values["record"] == given.part["record"]
+
+
+@pytest.mark.supports("test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first")
+def test_no_tree_keeper_start_is_due_while_one_runs(tmp_path: Any) -> None:
+    """Given: a run with the walkthrough's tree, whose tree-keeper runs.
+    When: the Cut of the tree-keeper's next start is asked.
+    Then: it gives none, as the main conversation resumes the tree-keeper that runs."""
+    run = doing_run(tmp_path)
+    first = cut.next_start(run, d.design(BOTH_DOING), "tree-keeper", [])
+    assert first is not None
+    assert cut.next_start(run, d.design(BOTH_DOING), "tree-keeper", [dict(first.values)]) is None
 
 
 @pytest.mark.supports("test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing")
@@ -105,6 +119,7 @@ def test_each_evaluator_takes_the_first_group_that_no_running_start_holds(tmp_pa
     assert set(first.part) == people
 
 
+@LATER
 @pytest.mark.supports("test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped")
 def test_a_start_of_a_deliverable_that_stood_at_a_step_starts_at_it(tmp_path: Any) -> None:
     """Given: a run with invoicer doing, whose generator stood at step 2 by its Place.
@@ -144,10 +159,21 @@ def test_the_cut_a_start_took_is_given_by_its_record(tmp_path: Any) -> None:
 
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
-def test_a_record_that_names_no_start_is_refused(tmp_path: Any) -> None:
+@pytest.mark.parametrize(
+    "name",
+    [
+        "nobody.json",
+        "001-generator.json",
+        "001-generator.invoicer.json",
+        "001-evaluator.invoicer.r1.json",
+        "001-generator.nowhere.r1.json",
+    ],
+)
+def test_a_record_that_names_no_start_is_refused(tmp_path: Any, name: str) -> None:
     """Given: a run with no start.
-    When: the Cut is asked by a record that names no start of the run.
-    Then: it's refused, naming the record."""
+    When: the Cut is asked by a record that names no role, no start of a round, a start out of its
+    form, an evaluator's start with no group, or a deliverable the tree doesn't hold.
+    Then: it's refused."""
     run = doing_run(tmp_path)
     with pytest.raises(Wrong):
-        cut.of_record(run, os.path.join(run.folder, "records", "nobody.json"))
+        cut.of_record(run, os.path.join(run.folder, "records", name))

@@ -20,8 +20,9 @@ from tree.place import Place
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="tree/more.py, place.py, and practices.py have empty bodies"
+LATER = pytest.mark.xfail(
+    strict=True,
+    reason="tree/more.py and place.read have empty bodies",
 )
 
 GOOD_WHEN = "A caller's editor shows the type of each argument as they type the call."
@@ -40,6 +41,7 @@ def changed_under(index: int, decided: str = "some files") -> Any:
     return d.design(data)
 
 
+@LATER
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 @pytest.mark.parametrize("now", [changed_under(0), changed_under(0, "only callers' functions")])
 def test_a_more_whose_condition_has_a_decision_changed_may_be_kept(now: Any) -> None:
@@ -49,6 +51,7 @@ def test_a_more_whose_condition_has_a_decision_changed_may_be_kept(now: Any) -> 
     assert more.keepable(d.design(), now, N1) is None
 
 
+@LATER
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_a_more_whose_condition_has_a_decision_added_may_be_kept() -> None:
     """Given: the tree as the round's cut took it, and the tree with a decision added under N2.
@@ -57,6 +60,7 @@ def test_a_more_whose_condition_has_a_decision_added_may_be_kept() -> None:
     assert more.keepable(d.design(), changed_under(1), More("invoicer", "N2", GOOD_WHEN)) is None
 
 
+@LATER
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 @pytest.mark.parametrize("now", [d.design(), changed_under(1)])
 def test_a_more_with_no_decision_changed_under_its_condition_is_refused(now: Any) -> None:
@@ -68,6 +72,7 @@ def test_a_more_with_no_decision_changed_under_its_condition_is_refused(now: Any
         more.keepable(d.design(), now, N1)
 
 
+@LATER
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_more_of_a_deliverable_the_tree_doesnt_hold_is_refused() -> None:
     """Given: the walkthrough's tree before and after a change under N1.
@@ -77,6 +82,7 @@ def test_a_more_of_a_deliverable_the_tree_doesnt_hold_is_refused() -> None:
         more.keepable(d.design(), changed_under(0), More("README.md", "N1", GOOD_WHEN))
 
 
+@LATER
 @pytest.mark.supports("test_each_steps_end_commits_the_work_with_its_place")
 @pytest.mark.parametrize("work", [(), ("invoicer/totals.py", "invoicer/tax.py")])
 def test_a_place_written_is_read_back_alike(tmp_path: Any, work: tuple[str, ...]) -> None:
@@ -89,6 +95,7 @@ def test_a_place_written_is_read_back_alike(tmp_path: Any, work: tuple[str, ...]
     assert place.read(path) == given
 
 
+@LATER
 @pytest.mark.supports("test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped")
 @pytest.mark.parametrize("held", [{"record": "r", "step": 0, "work": []}, {"step": 1}, []])
 def test_a_place_out_of_its_form_is_refused(tmp_path: Any, held: Any) -> None:
@@ -100,6 +107,7 @@ def test_a_place_out_of_its_form_is_refused(tmp_path: Any, held: Any) -> None:
         place.read(path)
 
 
+@LATER
 @pytest.mark.supports("test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped")
 def test_a_place_missing_cant_be_read(tmp_path: Any) -> None:
     """Given: no Place file.

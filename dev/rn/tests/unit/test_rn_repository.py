@@ -15,7 +15,10 @@ from repository import gh, git
 
 from dev.rn.tests.unit import rn_data as d
 
-pytestmark = pytest.mark.xfail(strict=True, reason="repository/ has empty bodies")
+LATER = pytest.mark.xfail(
+    strict=True,
+    reason="repository/gh.py's mark_ready, comments, and open_issue have empty bodies",
+)
 
 BRANCH = f"rn-{d.NAME}"
 
@@ -118,6 +121,18 @@ def test_a_push_with_no_remote_is_missing_it(tmp_path: Any) -> None:
         git.push(run.worktree, run.branch)
 
 
+@pytest.mark.supports("test_a_push_without_a_remote_says_what_is_missing")
+def test_a_push_to_a_remote_that_isnt_there_cant_run(tmp_path: Any) -> None:
+    """Given: a run's worktree in a repository whose remote origin names a folder that isn't there.
+    When: its branch is pushed.
+    Then: it couldn't run, with what git said."""
+    repo = d.repository(str(tmp_path))
+    d.git(repo, "remote", "add", "origin", os.path.join(str(tmp_path), "gone.git"))
+    run = d.run_of(repo)
+    with pytest.raises(CantRun, match="git push failed"):
+        git.push(run.worktree, run.branch)
+
+
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_file_is_given_as_a_commit_holds_it(tmp_path: Any) -> None:
     """Given: a run's worktree whose design tree was committed, then changed.
@@ -151,7 +166,9 @@ def test_a_draft_pull_request_is_opened_once_and_kept(
 
 
 @pytest.mark.supports("test_a_push_without_a_login_of_gh_says_what_is_missing")
-@pytest.mark.parametrize("call", ["draft", "ready", "comments", "issue"])
+@pytest.mark.parametrize(
+    "call", ["draft", *(pytest.param(c, marks=LATER) for c in ("ready", "comments", "issue"))]
+)
 def test_each_command_with_no_login_is_missing_it(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch, call: str
 ) -> None:
@@ -171,6 +188,7 @@ def test_each_command_with_no_login_is_missing_it(
             gh.open_issue("lovaizu/ccpm", "t", "b")
 
 
+@LATER
 @pytest.mark.supports("test_the_pull_request_is_marked_ready_once_no_deliverable_is_left")
 @pytest.mark.parametrize("ready", [True, False])
 def test_a_pull_request_is_marked_ready_or_a_draft_again(
@@ -186,6 +204,7 @@ def test_a_pull_request_is_marked_ready_or_a_draft_again(
     assert d.read_json(held)["pulls"][run.branch]["draft"] is (not ready)
 
 
+@LATER
 @pytest.mark.supports("test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again")
 def test_a_branch_with_no_pull_request_cant_be_marked(
     tmp_path: Any, monkeypatch: pytest.MonkeyPatch
@@ -199,6 +218,7 @@ def test_a_branch_with_no_pull_request_cant_be_marked(
         gh.mark_ready(run.worktree, True)
 
 
+@LATER
 @pytest.mark.supports("test_gm_alone_reads_the_users_comments_since_the_sign_off")
 @pytest.mark.parametrize(
     ("since", "bodies"),
@@ -224,6 +244,7 @@ def test_comments_are_given_from_after_a_moment_in_the_order_made(
     assert [c.body for c in gh.comments(run.worktree, since)] == bodies
 
 
+@LATER
 @pytest.mark.supports("test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word")
 def test_an_issue_is_opened_with_its_words(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> None:
     """Given: gh logged in.
