@@ -153,6 +153,10 @@
   <text class="label small halo" x="875" y="832" text-anchor="middle">falls short of</text>
   <text class="label small" x="796" y="862" text-anchor="start">0..*</text>
   <text class="label small" x="1146" y="330" text-anchor="start">1</text>
+  <path class="line" d="M700,848 L700,880 L300,880 L300,340 L330,340"/>
+  <text class="label small halo" x="500" y="872" text-anchor="middle">changes</text>
+  <text class="label small" x="706" y="866" text-anchor="start">0..*</text>
+  <text class="label small" x="324" y="356" text-anchor="end">1</text>
   <rect class="box" x="40" y="200" width="180" height="48" rx="0"/>
   <text class="name" x="130.0" y="229.0" text-anchor="middle">Sign-off</text>
   <path class="line" d="M220,218 L360,218 L360,148"/>

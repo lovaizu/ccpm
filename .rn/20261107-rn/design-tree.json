@@ -400,13 +400,63 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "status": "done"
+      "status": "doing",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "preconditions": [
+        "dev/rn/architecture.md"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "dev/rn/architecture.md",
+        "plugins/rn"
+      ],
+      "preconditions": [
+        "dev/rn/architecture.md",
+        "plugins/rn"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
@@ -418,7 +468,57 @@
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
       "path": "dev/rn/tests/integration/test_rn_s1_request.py",
       "kind": "code",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
@@ -500,57 +600,7 @@
       "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons, and rn's developers get each lesson signed off in rn's issues",
       "path": "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",

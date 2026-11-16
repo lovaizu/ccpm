@@ -162,8 +162,8 @@ Strategies:
   An evaluator's answer to each necessary condition of its group, apart from the user's answer to a
   Point.
 - More kept\
-  An evaluator's `more` that the orchestrator judged the people fall short by, for the next round's
-  generator.
+  An evaluator's `more`, by its best practice and necessary condition, that the orchestrator judged
+  the people fall short by, with the decision it changes, for the next round's generator.
 - Record\
   What one start of a role, or the orchestrator, carried out, apart from a Try record of commands
   tried.
@@ -261,8 +261,8 @@ sequenceDiagram
         alt a more the people fall short by
           O->>K: the decision it changes, and the more to keep (Decision, More kept)
           K->>T: writes the decision, commits it with its ground as the message, and keeps the more (Design tree, More kept)
-          alt no decision that answers the more's necessary condition changed since the round's cut
-            T-->>K: refuses the more, naming its necessary condition
+          alt the decision that the more names didn't change since the round's cut
+            T-->>K: refuses the more, naming its best practice and necessary condition
             K-->>O: that tree.py refused it, and why
             Note over O,K: The orchestrator takes the more back to the decision it comes from, as a fix beside the design rests on no decision.
           else
