@@ -21,6 +21,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from dev.tests.claude_code import Agent, Answer, Conversation
+from dev.tests.givens import kept
 from dev.tests.repo_files import git, readme_block, write_files
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
@@ -84,7 +85,8 @@ NO_RUN_SHOWN = "rn has no run to pick up"
 class Bench:
     """The folders of one case: rn's and Lane's copies, the repository of invoicer with its remote,
     the double's own folder, the file of what GitHub holds for the double of gh, and the
-    environment that Claude Code runs with."""
+    environment that Claude Code runs with, all under `root`; and the folder that keeps each Given
+    played on it, or None where each Given is played anew."""
 
     rn: str
     lane: str
@@ -93,6 +95,8 @@ class Bench:
     temp: str
     github: str
     env: dict[str, str]
+    root: str
+    givens: str | None = None
 
     def script(self, name: str, *args: str) -> str:
         """The command that runs rn's script with the arguments, as a role or the orchestrator runs
@@ -141,9 +145,12 @@ def invoicer_files() -> dict[str, str]:
     return found
 
 
-def bench(tmp: str, logged_in: bool = True, remote: bool = True) -> Bench:
+def bench(
+    tmp: str, logged_in: bool = True, remote: bool = True, givens: str | None = None
+) -> Bench:
     """A copy of rn and of Lane, and the repository of invoicer, with a bare repository as its
-    remote where `remote` is true, and gh logged in where `logged_in` is true."""
+    remote where `remote` is true, and gh logged in where `logged_in` is true; each Given played
+    on it kept in `givens`, a folder outside `tmp`, where it's given."""
     plugins = os.path.join(tmp, "plugins")
     rn, lane = os.path.join(plugins, "rn"), os.path.join(plugins, "lane")
     shutil.copytree(RN, rn, ignore=shutil.ignore_patterns("__pycache__"))
@@ -175,7 +182,7 @@ def bench(tmp: str, logged_in: bool = True, remote: bool = True) -> Bench:
     env.update({name: os.environ[name] for name in COVERAGE_SETTINGS if name in os.environ})
     os.makedirs(env["TMPDIR"])
     temp = os.path.join(tmp, "claude")
-    return Bench(rn, lane, os.path.realpath(repo), origin, temp, github, env)
+    return Bench(rn, lane, os.path.realpath(repo), origin, temp, github, env, tmp, givens)
 
 
 def converse(b: Bench) -> Conversation:
@@ -457,6 +464,7 @@ def keeper_writes(
     return wrote
 
 
+@kept
 def opened(b: Bench, change: Any = None) -> Walk:
     """The walkthrough up to the goal and the plan in the design tree: the request, the run made and
     entered, the tree-keeper started, and the goal drafted and the plan written."""
@@ -475,6 +483,7 @@ def orchestrator_ends(b: Bench, w: Walk, command: str, shown: str) -> Answer:
     return w.c.stop(shown)
 
 
+@kept
 def confirmed(b: Bench, change: Any = None) -> Walk:
     """The walkthrough up to the user's point answered: the goal put to the user and confirmed, the
     point written open and put to them, and their answer written by them."""
@@ -493,6 +502,7 @@ def confirmed(b: Bench, change: Any = None) -> Walk:
     return w
 
 
+@kept
 def plan_put_up(b: Bench, change: Any = None) -> Walk:
     """The walkthrough up to the plan put up for the user's sign-off: the work pushed with its draft
     pull request, the plan put up, and the orchestrator's turn ended with it."""
@@ -514,6 +524,7 @@ def approved(b: Bench, w: Walk, grounds: str, change: Any = None) -> dict[str, A
     return keeper_writes(b, w, grounds, change or {"nodes": {}, "more": []}, "/rn:ty")
 
 
+@kept
 def planned(b: Bench, change: Any = None) -> Walk:
     """The walkthrough up to the plan signed off, each deliverable whose turn has come doing."""
     w = plan_put_up(b, change)
@@ -596,6 +607,7 @@ def evaluated(
     return cuts
 
 
+@kept
 def generator_in_step_2(b: Bench) -> tuple[Walk, Agent, dict[str, Any]]:
     """The walkthrough up to its generator in step 2: the plan signed off, and the generator of the
     first deliverable started, which committed the end of its step 1; gives the walk, the
@@ -607,6 +619,7 @@ def generator_in_step_2(b: Bench) -> tuple[Walk, Agent, dict[str, Any]]:
     return w, generator, cut
 
 
+@kept
 def deliverable_made(b: Bench, change: Any = None) -> tuple[Walk, dict[str, Any]]:
     """The walkthrough up to its first deliverable made: the plan signed off, and the generator's
     deliverable made and its end passed; gives the walk and the generator's Cut."""
@@ -617,6 +630,7 @@ def deliverable_made(b: Bench, change: Any = None) -> tuple[Walk, dict[str, Any]
     return w, cut
 
 
+@kept
 def first_round(
     b: Bench, more: Mapping[str, str] | None = None, change: Any = None
 ) -> tuple[Walk, dict[str, Any], list[dict[str, Any]]]:
@@ -636,6 +650,7 @@ def short_by_n2_kept(b: Bench, w: Walk) -> None:
     keeper_writes(b, w, "The people fall short by N2.", {"nodes": nodes, "more": more})
 
 
+@kept
 def sign_off_put_up(b: Bench, change: Any = None) -> tuple[Walk, dict[str, Any]]:
     """The walkthrough up to its first deliverable put up for the user's sign-off, every necessary
     condition good; gives the walk and the generator's Cut."""
@@ -648,6 +663,7 @@ def sign_off_put_up(b: Bench, change: Any = None) -> tuple[Walk, dict[str, Any]]
     return w, cut
 
 
+@kept
 def handed_over(b: Bench) -> tuple[Walk, str]:
     """A run of the walkthrough's first deliverable alone up to the pull request handed over: the
     deliverable signed off and marked done, and tree.py ready; gives the walk and the pull

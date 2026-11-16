@@ -1,13 +1,13 @@
-"""What rn's integration cases share: a bench for each case; rn's and Lane's code imported afresh
-by each script and hook that the double runs, as a new process of Python would import the copy it
-runs; and the fixture `broken`, which takes out the part that holds a rule where TRACE_BROKEN is 1,
-as the plugin guide's A principle's test seen to fail says."""
+"""What rn's integration cases share: a bench for each case, with each Given kept once played;
+rn's and Lane's code imported afresh by each script and hook that the double runs, as a new process
+of Python would import the copy it runs; and the fixture `broken`, which takes out the part that
+holds a rule where TRACE_BROKEN is 1, as the plugin guide's A principle's test seen to fail says."""
 
 from __future__ import annotations
 
 import os
+import shutil
 from collections.abc import Iterator
-from typing import Any
 
 import pytest
 
@@ -37,9 +37,18 @@ def fresh_modules() -> Iterator[None]:
 
 
 @pytest.fixture
-def b(tmp_path: Any) -> rn_walkthrough.Bench:
-    """The bench of the walkthrough: a copy of rn and of Lane, and invoicer with its remote."""
-    return rn_walkthrough.bench(str(tmp_path))
+def b(tmp_path_factory: pytest.TempPathFactory) -> rn_walkthrough.Bench:
+    """The bench of the walkthrough: a copy of rn and of Lane, and invoicer with its remote, at the
+    one folder of the test process that each case's bench takes in turn, so that each Given played
+    there is kept and put back for each later case that takes it. Where TRACE_BROKEN is 1, each
+    Given is played anew, as `broken` changes rn's code before it."""
+    top = os.path.realpath(tmp_path_factory.getbasetemp())
+    root = os.path.join(top, "bench")
+    if os.path.isdir(root):
+        shutil.rmtree(root)
+    os.makedirs(root)
+    givens = None if os.environ.get("TRACE_BROKEN") == "1" else os.path.join(top, "givens")
+    return rn_walkthrough.bench(root, givens=givens)
 
 
 # What takes out the part that holds each rule of Solution strategy, by the rule's heading: the file
