@@ -19,10 +19,21 @@ from typing import Any
 import lane_data as d
 import pytest
 from events import NotAnEvent
-from form import Adapters, write_lanes
+from form import Adapters, After, Move, write_lanes
 from guard import handle
 from lay.command import main as lay_main
-from run_record import Called, Started, TextFailed, TextGiven, Tied, add, lines, record_path
+from run_record import (
+    Called,
+    Ended,
+    Gave,
+    Started,
+    TextFailed,
+    TextGiven,
+    Tied,
+    add,
+    lines,
+    record_path,
+)
 
 LANE = os.path.join(os.path.dirname(d.__file__), *[".."] * 3, "plugins", "lane")
 
@@ -398,6 +409,188 @@ def test_a_start_with_the_text_of_one_of_its_role_that_runs_is_stopped(
     answer = handle(started(plugin, text), plugin)
     assert answer.stop
     assert lines(path) == before
+
+
+# The adapter of changelog's records' body that gives writer's `written`, then reviewer's `more`.
+WRITTEN_THEN_MORE = (
+    "json.load(sys.stdin)\n"
+    "print(json.dumps({'results': [{'role': 'writer', 'result': 'written'},"
+    " {'role': 'reviewer', 'result': 'more'}]}))\n"
+)
+# The adapter of changelog's records' body that gives writer's `written`.
+WRITTEN = (
+    "json.load(sys.stdin)\n"
+    "print(json.dumps({'results': [{'role': 'writer', 'result': 'written'}]}))\n"
+)
+
+
+def adapter(plugin: str, name: str, body: str) -> str:
+    """Writes the adapter of hooks/adapters/<name>.py whose Python, after `import json, sys`, is
+    the body, and gives its path under the plugin."""
+    path = os.path.join(plugin, "hooks", "adapters", f"{name}.py")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(f"#!{sys.executable}\nimport json, sys\n{body}")
+    os.chmod(path, 0o755)
+    return f"hooks/adapters/{name}.py"
+
+
+def laid_resuming(plugin: str, records: str, text: str | None = None) -> str:
+    """Writes the walkthrough's lanes.json into the plugin, with the Route after reviewer's `more`
+    resuming writer, an adapter of the plugin's records whose body is given, and an adapter of a
+    start's text where its body is given; gives the run record's path."""
+    lanes = d.lanes_file()
+    more = d.route(After("result", role="reviewer", result="more"), Move("resume", role="writer"))
+    routes = tuple(more if r.after == more.after else r for r in lanes.proposal.routes)
+    adapters = Adapters(
+        adapter(plugin, "text", text) if text else None, adapter(plugin, "records", records)
+    )
+    proposal = replace(lanes.proposal, routes=routes, adapters=adapters)
+    write_lanes(os.path.join(plugin, "hooks", "lanes.json"), replace(lanes, proposal=proposal))
+    return record_path("changelog", d.SESSION)
+
+
+NEVER_STARTED = pytest.mark.xfail(
+    strict=True, reason="the guard doesn't yet give a resume of a role never started as a start"
+)
+
+
+@pytest.mark.supports("test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start")
+@NEVER_STARTED
+def test_a_pick_up_gives_a_resume_of_a_role_never_started_as_its_start(plugin: str) -> None:
+    """Given: changelog laid with the Route after reviewer's `more` resuming writer, and an adapter
+    of its records that gives writer's `written`, then reviewer's `more`; no Run.
+    When: handle answers the UserPromptExpansion of /changelog:write.
+    Then: it lets the call run, giving writer's start with Lane's text, not its resume."""
+    laid_resuming(plugin, WRITTEN_THEN_MORE)
+    answer = handle(called(plugin), plugin)
+    assert not answer.stop
+    assert "changelog: Start `changelog:writer` with `Carry out your steps`." in answer.words
+    assert "Resume `changelog:writer`" not in answer.words
+
+
+def picked_up_run(path: str) -> None:
+    """Adds write's Run r1, picked up from writer's `written` and reviewer's `more`, with no
+    Start."""
+    for line in (
+        Called("r1", "write", "person", ""),
+        Gave("r1", "writer", "written", None),
+        Gave("r1", "reviewer", "more", None),
+    ):
+        add(path, line)
+
+
+def run_with_starts(path: str) -> None:
+    """Adds write's Run r1 in which writer, tied to a01, gave `written`, and reviewer, tied to a02,
+    gave `more`, each ended."""
+    for line in (
+        Called("r1", "write", "person", ""),
+        Started("r1", "writer", "Carry out your steps", {}, "t1", False),
+        Tied("r1", "t1", "a01"),
+        Gave("r1", "writer", "written", "a01"),
+        Ended("r1", "a01", False),
+        Started("r1", "reviewer", "Carry out your steps", {}, "t2", False),
+        Tied("r1", "t2", "a02"),
+        Gave("r1", "reviewer", "more", "a02"),
+        Ended("r1", "a02", False),
+    ):
+        add(path, line)
+
+
+@pytest.mark.supports("test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start")
+@pytest.mark.parametrize(
+    "run, said",
+    [
+        pytest.param(
+            picked_up_run,
+            "changelog: Start `changelog:writer` with `Carry out your steps`.",
+            marks=NEVER_STARTED,
+        ),
+        (run_with_starts, "changelog: Resume `changelog:writer` by SendMessage."),
+    ],
+    ids=["writer never started here", "writer started here"],
+)
+def test_the_end_stops_with_a_resume_only_where_its_role_was_started(
+    plugin: str, run: Any, said: str
+) -> None:
+    """Given: changelog laid with the Route after reviewer's `more` resuming writer, and write's Run
+    after reviewer's `more`, picked up with no Start of writer, or with writer's Start tied to
+    a01.
+    When: handle answers the main conversation's Stop.
+    Then: it stops the end, with writer's start due where the Run never started writer, and its
+    resume where it did."""
+    path = laid_resuming(plugin, WRITTEN_THEN_MORE)
+    run(path)
+    answer = handle(d.event("Stop", cwd=plugin, last_message="Waiting."), plugin)
+    assert answer.stop and said in answer.words
+
+
+@pytest.mark.supports("test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start")
+@NEVER_STARTED
+def test_a_start_of_a_role_whose_resume_is_due_never_started_is_added(plugin: str) -> None:
+    """Given: changelog laid with the Route after reviewer's `more` resuming writer, and write's Run
+    picked up after reviewer's `more`, with no Start of writer.
+    When: handle answers the main conversation's Agent call t2 of changelog:writer with Lane's
+    text.
+    Then: it lets the start through, and adds writer's Start, resuming none."""
+    path = laid_resuming(plugin, WRITTEN_THEN_MORE)
+    picked_up_run(path)
+    answer = handle(started(plugin, "Carry out your steps"), plugin)
+    assert (answer.stop, answer.words) == (False, "")
+    assert lines(path)[-1] == Started("r1", "writer", "Carry out your steps", {}, "t2", False)
+
+
+@pytest.mark.supports("test_the_turns_end_goes_while_the_adapter_cant_give_a_starts_text_yet")
+@pytest.mark.parametrize(
+    "body, stops",
+    [
+        pytest.param(
+            FAILS,
+            False,
+            marks=pytest.mark.xfail(
+                strict=True,
+                reason="the guard doesn't yet let the turn end while a start's text can't be given",
+            ),
+        ),
+        (BY_VERSION, True),
+    ],
+    ids=["the adapter still fails", "the adapter gives the text now"],
+)
+def test_the_end_after_the_adapter_failed_at_the_call_stops_only_for_a_text(
+    plugin: str, body: str, stops: bool
+) -> None:
+    """Given: changelog laid with an adapter of a start's text that failed at the call of
+    /changelog:write, and that still fails, or since gives writer `Write 0.2.0`; no subagent
+    started.
+    When: handle answers the main conversation's Stop.
+    Then: it lets the end go while the adapter can't give writer's text, and stops it with
+    writer's start and its text once the adapter gives it."""
+    laid_with_program(plugin, FAILS)
+    handle(called(plugin), plugin)
+    laid_with_program(plugin, body)
+    answer = handle(d.event("Stop", cwd=plugin, last_message="Which version?"), plugin)
+    assert answer.stop is stops
+    if stops:
+        assert "changelog: Start `changelog:writer` with `Write 0.2.0`." in answer.words
+
+
+@pytest.mark.supports("test_a_pick_up_whose_adapter_fails_at_the_call_lets_the_call_run")
+@pytest.mark.xfail(
+    strict=True, reason="the guard doesn't yet catch a text adapter that fails on a pick-up"
+)
+def test_a_pick_up_whose_adapter_fails_keeps_that_it_failed(plugin: str) -> None:
+    """Given: changelog laid with an adapter of its records that gives writer's `written`, and an
+    adapter of a start's text that fails with `no version to write yet`; no Run.
+    When: handle answers the UserPromptExpansion of /changelog:write.
+    Then: it lets the call run, giving reviewer's start with why; and adds the call of write's
+    Run, writer's `written`, and that the text failed."""
+    path = laid_resuming(plugin, WRITTEN, FAILS)
+    answer = handle(called(plugin), plugin)
+    assert not answer.stop
+    assert "changelog:reviewer" in answer.words and "no version to write yet" in answer.words
+    (call, written, failed) = lines(path)
+    assert isinstance(call, Called)
+    assert (written, failed) == (Gave(call.run, "writer", "written", None), TextFailed(call.run))
 
 
 def writer_tied(plugin: str) -> str:

@@ -185,39 +185,7 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "doing",
-      "inputs": [
-        "dev/lane/product-vision.md",
-        "plugins/lane/README.md",
-        "dev/lane/architecture.md",
-        "plugins/lane"
-      ],
-      "preconditions": [
-        "dev/lane/architecture.md",
-        "plugins/lane"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",

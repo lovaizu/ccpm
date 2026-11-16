@@ -4,6 +4,7 @@ sequence, with the rules and strategies that S5 keeps."""
 
 from __future__ import annotations
 
+import json
 import os
 from typing import Any
 
@@ -240,6 +241,80 @@ def test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_tex
     assert (ran.blocked, ran.said) == (False, ""), "the start is given once"
     started, writer = c.start("changelog:writer", text, "writer")
     assert not started.blocked and writer
+
+
+@pytest.mark.xfail(
+    strict=True, reason="the guard doesn't yet let the turn end while a start's text can't be given"
+)
+@pytest.mark.supports("S5", "adapter", "guard", "user")
+def test_the_turns_end_goes_while_the_adapter_cant_give_a_starts_text_yet(tmp_path: Any) -> None:
+    """Given: the Proposal laid with an adapter of a start's text that fails with `enter the run's
+    worktree first` until the conversation works in a worktree, and then gives writer `Write the
+    entries in the run's worktree`.
+    When: the person types /changelog:write; the main conversation ends its turn to ask which
+    worktree; the person replies `run`; the main conversation enters the worktree run by
+    EnterWorktree, and ends its turn again.
+    Then: the guard lets the first end go, as no move is due with its text; gives writer's start
+    with the adapter's text after EnterWorktree; and stops the second end with that start due."""
+    b = adapter_bench(str(tmp_path), WORKTREE_ADAPTER)
+    c = w.laid(b, make=with_adapter)
+    assert not c.type("/changelog:write").blocked
+    assert not c.stop("Which worktree shall the entries go in?").blocked
+    assert not c.type("run").blocked
+    due = "changelog: Start `changelog:writer` with `Write the entries in the run's worktree`."
+    assert due in c.enter_worktree(name="run").said
+    stopped = c.stop("Entered the worktree.")
+    assert stopped.blocked and due in stopped.said
+
+
+def picking_up_bench(tmp: str) -> w.Bench:
+    """The bench with an adapter of changelog's records that gives writer's `written`, and
+    WORKTREE_ADAPTER as the adapter of a start's text."""
+    written = json.dumps({"results": [{"role": "writer", "result": "written"}]})
+    records = f"#!/usr/bin/env python3\nprint({written!r})\n"
+    adapters = {"hooks/adapters/text.py": WORKTREE_ADAPTER, "hooks/adapters/records.py": records}
+    b = w.bench(tmp, dict(w.FILES, **adapters))
+    for name in adapters:
+        w.executable(os.path.join(b.changelog, name))
+    return b
+
+
+def with_both_adapters() -> dict[str, Any]:
+    proposal = w.walkthrough_proposal()
+    proposal["adapters"] = {
+        "text": "hooks/adapters/text.py",
+        "records": "hooks/adapters/records.py",
+    }
+    return proposal
+
+
+@pytest.mark.xfail(
+    strict=True, reason="the guard doesn't yet catch a text adapter that fails on a pick-up"
+)
+@pytest.mark.supports("S5", "S7", "adapter", "Kept results", "Start")
+def test_a_pick_up_whose_adapter_fails_at_the_call_lets_the_call_run(tmp_path: Any) -> None:
+    """Given: the Proposal laid with an adapter of changelog's records that gives writer's
+    `written`, and an adapter of a start's text that fails with `enter the run's worktree first`
+    until the conversation works in a worktree, and then gives `Write the entries in the run's
+    worktree`.
+    When: the person types /changelog:write in a new conversation; the main conversation ends its
+    turn, then enters the worktree run by EnterWorktree, and starts reviewer with the adapter's
+    text.
+    Then: the guard lets the call run, saying where the run picks up and giving reviewer's start
+    with why; lets the turn end; gives reviewer's start with the adapter's text after
+    EnterWorktree; and lets the start through."""
+    b = picking_up_bench(str(tmp_path))
+    c = w.laid(b, make=with_both_adapters)
+    called = c.type("/changelog:write")
+    assert not called.blocked
+    assert "written" in called.said and "changelog:reviewer" in called.said
+    assert "enter the run's worktree first" in called.said
+    assert not c.stop("Which worktree shall the review go in?").blocked
+    text = "Write the entries in the run's worktree"
+    entered = c.enter_worktree(name="run")
+    assert f"changelog: Start `changelog:reviewer` with `{text}`." in entered.said
+    started, reviewer = c.start("changelog:reviewer", text, "reviewer")
+    assert not started.blocked and reviewer
 
 
 # An adapter of a start's text that gives writer a text for each version that no Start that runs

@@ -107,6 +107,41 @@ def test_a_new_conversation_picks_up_from_the_kept_results(tmp_path: Any) -> Non
     assert "written" in called.said and reviewer in called.said
 
 
+def resumes_writer_after_more() -> dict[str, Any]:
+    """The Proposal with an adapter of changelog's records, and the Route after reviewer's `more`
+    resuming writer."""
+    proposal = with_records()
+    proposal["routes"][2]["moves"] = [{"resume": "writer"}]
+    return proposal
+
+
+@pytest.mark.xfail(
+    strict=True, reason="the guard doesn't yet give a resume of a role never started as a start"
+)
+@pytest.mark.supports("S7", "adapter", "Kept results", "Start", "Route")
+def test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start(tmp_path: Any) -> None:
+    """Given: the Proposal laid with the Route after reviewer's `more` resuming writer, and an
+    adapter of changelog's records that gives writer's `written`, then reviewer's `more`.
+    When: the person types /changelog:write in a new conversation, the main conversation starts
+    writer with Lane's text, and writer gives `written`.
+    Then: the guard says where the run picks up and gives writer's start due, not its resume, as
+    no subagent of writer is here to resume; lets the start through, adding a Start of writer that
+    resumes none; and gives reviewer's start due once writer's Result reaches the main
+    conversation."""
+    results = [{"role": "writer", "result": "written"}, {"role": "reviewer", "result": "more"}]
+    b = records_bench(str(tmp_path), results)
+    c = w.laid(b, make=resumes_writer_after_more)
+    called = c.type("/changelog:write")
+    assert not called.blocked
+    assert "more" in called.said and w.due("writer") in called.said
+    assert "Resume `changelog:writer`" not in called.said
+    started, writer = w.start(c, "writer")
+    assert not started.blocked and writer
+    (run,) = w.where(b.changelog, b, c.session_id).runs
+    assert [(s.role, s.resumed) for s in run.starts] == [("writer", False)]
+    assert w.due("reviewer") in w.give(b, writer, "written").said
+
+
 @pytest.mark.supports("S7", "adapter", "Kept results")
 def test_the_words_typed_tell_a_new_request_from_a_pick_up(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
