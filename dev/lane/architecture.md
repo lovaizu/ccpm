@@ -117,8 +117,7 @@ raising KR1.1.
 - guard\
   Places each hook event in its Run, and gives each start due, each stop, and each approval.
 - result.py\
-  Takes a result only where the role may give it in a Run of the conversation, run as a command of
-  its own, as only then is its exit the script's.
+  Takes a result given as a command of its own, only where a Run lets its role give it.
 - step.py\
   Gives a Step's Mark as a command of its own, which the guard checks at its call.
 - item.py\
