@@ -173,23 +173,7 @@
       "name": "A builder whose plugin goes beyond the README's walkthrough finds each form of steps, routes, and adapters that Lane takes",
       "path": "plugins/lane/docs/steps-routes-adapters.md",
       "kind": "specific",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane/README.md"
-      ],
-      "preconditions": [
-        "dev/lane/architecture.md"
-      ],
-      "status": "doing",
-      "check": "each form that Lane's architecture gives a plugin's steps, routes, and adapters is on the page, as the architecture names it",
-      "good": false,
-      "decisions": [
-        {
-          "about": "Why a page of its own",
-          "decided": "the forms beyond the walkthrough leave the README for this page, which its Documentation links, as the readme best practice links what a newcomer needs neither to decide nor to start",
-          "by": "reasoning"
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
@@ -201,7 +185,7 @@
       "preconditions": [
         "dev/lane/architecture.md"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
