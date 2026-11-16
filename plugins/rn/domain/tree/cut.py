@@ -40,13 +40,13 @@ def next_start(
     Gives: for the tree-keeper, the Cut of the run's design tree, or None while a start of it runs,
     as the main conversation resumes that one with each change; for the generator, the Cut of the
     first deliverable doing that no start that runs holds and whose latest round is none, holds no
-    Made yet, or keeps a More for the next round, with the commit at which the deliverable was
-    last done, from `branch.done_at`, where it was done before; for an
-    evaluator, the Cut of the first group of necessary conditions, of the kind's best practice and
-    then of the refactor one, of a deliverable doing whose latest round holds a Made, that has no
-    Answers there and that no start that runs holds; each with the path of a new record from
-    `records.new_record`, after each record that a start that runs took; or None where no work
-    waits.
+    Made yet, keeps a More for the next round, or was cut before a decision under the deliverable
+    changed, as the rounds start again from the design, with the commit at which the deliverable was
+    last done, from `branch.done_at`, where it was done before; for an evaluator, the Cut of the
+    first group of necessary conditions, of the kind's best practice and then of the refactor one,
+    of a deliverable doing whose latest round holds a Made, that has no Answers there and that no
+    start that runs holds; each with the path of a new record from `records.new_record`, after each
+    record that a start that runs took; or None where no work waits.
     Changes: nothing.
     Refuses: fault.Wrong, where the role is none of rn's.
     Carries: S1 `A->>T: gets each deliverable doing, and the Cut of the first that no start that

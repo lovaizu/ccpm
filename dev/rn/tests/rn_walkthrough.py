@@ -55,6 +55,10 @@ DECIMAL = {
 # the decision under N2 that the tree-keeper changes for it.
 SHOWN_AS_TYPED = "A caller's editor shows the type of each argument as they type the call."
 EVERY_ARGUMENT = {"about": "what the hints name", "decided": "every argument", "by": "reasoning"}
+# How a deliverable done before comes back: its input pyproject.toml changes, as the lines added to
+# it show, and the user's answer to their point changes with it.
+TESTS_LEFT_OUT = '\n[tool.mypy]\nexclude = ["tests"]\n'
+BUT_THE_TESTS = "each file but the tests"
 # The best practice that finishes a deliverable of each kind, as the generator's Cut names it.
 REFACTOR = {"code": "refactor-code", "readme": "refactor-doc"}
 # What a README deliverable is for, in a plan of one.
@@ -331,6 +335,35 @@ def plan(*deliverables: dict[str, Any]) -> dict[str, Any]:
     """The goal drafted and a plan of the deliverables, as tree.py write takes them."""
     nodes = {"goal": {"decided": GOAL, "by": "reasoning"}, "deliverables": list(deliverables)}
     return {"nodes": nodes, "more": []}
+
+
+def hints_from_pyproject(decided: str | None = None) -> dict[str, Any]:
+    """The walkthrough's first deliverable, open, taking pyproject.toml as its input, with the
+    user's answer to their point where `decided` gives one."""
+    hints = dict(deliverable(HINTS, HINTS_PATH))
+    hints["inputs"] = ["pyproject.toml"]
+    if decided is not None:
+        point = {"about": POINT, "decided": decided, "by": "user"}
+        hints["necessary_conditions"][0]["decisions"] = [point]
+    return hints
+
+
+def hints_done() -> dict[str, Any]:
+    """The walkthrough's first deliverable marked done, in the one line that keeps it."""
+    return {"name": HINTS, "path": HINTS_PATH, "kind": "code", "status": "done"}
+
+
+def last_tree_commit(worktree: str, folder: str) -> str:
+    """The ID of the latest commit that changed the run's design tree."""
+    tree = os.path.join(folder, "design-tree.json")
+    return git(worktree, "log", "-1", "--format=%H", "--", tree).strip()
+
+
+def pyproject_changed(worktree: str) -> None:
+    """pyproject.toml leaves the tests out of mypy, committed on the work's branch."""
+    with open(os.path.join(worktree, "pyproject.toml"), "a", encoding="utf-8") as f:
+        f.write(TESTS_LEFT_OUT)
+    git(worktree, "commit", "-q", "-am", "mypy leaves out the tests")
 
 
 def walkthrough_plan() -> dict[str, Any]:

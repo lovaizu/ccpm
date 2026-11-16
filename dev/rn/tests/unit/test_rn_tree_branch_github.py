@@ -1,16 +1,20 @@
-"""The unit cases of tree/branch.py, which decides what tree.py commits and when it pushes, and of
+"""The unit cases of tree/branch.py, which decides what tree.py commits, when it pushes, and how it
+reads the design tree's past back, and of
 tree/github.py, which decides what a run shows on GitHub. A commit names the run and why; a push
-finds a remote or none; the pull request is opened or kept, marked ready or a draft again; the
-comments are those since a sign-off; and a lesson's issue lies on the repository that rn's
-manifest names, each with gh logged in or not."""
+finds a remote or none; the commit at which a deliverable was done turns on how its status went
+from commit to commit, never done, done, left done, opened again, and done again, on its place
+among the deliverables, and on git failing; the pull request is opened or kept, marked ready or a
+draft again; the comments are those since a sign-off; and a lesson's issue lies on the repository
+that rn's manifest names, each with gh logged in or not."""
 
 from __future__ import annotations
 
+import dataclasses
 import os
 from typing import Any
 
 import pytest
-from fault import Missing
+from fault import CantRun, Missing
 from tree import branch, github
 
 from dev.rn.tests.unit import rn_data as d
@@ -19,6 +23,17 @@ LATER = pytest.mark.xfail(
     strict=True,
     reason="tree/github.py's hand_over and open_lesson have empty bodies",
 )
+NOT_DONE_AT = pytest.mark.xfail(strict=True, reason="branch.done_at has an empty body")
+# The status of "Type hints in each file of invoicer" in each commit of the design tree, in order,
+# beside "invoicer marked as typed"'s; and which of those commits marked it done last, None where
+# none did.
+HISTORIES = [
+    ([("doing", "open")], None),
+    ([("doing", "open"), ("done", "open")], 1),
+    ([("doing", "open"), ("done", "open"), ("done", "doing")], 1),
+    ([("doing", "open"), ("done", "open"), ("doing", "open")], 1),
+    ([("doing", "open"), ("done", "open"), ("doing", "open"), ("done", "open")], 3),
+]
 
 
 def on_github(monkeypatch: pytest.MonkeyPatch, tmp: Any, **held: Any) -> str:
@@ -37,6 +52,71 @@ def test_a_commit_of_the_runs_files_holds_its_message_word_for_word(tmp_path: An
     ground = "PEP 561 settles where the marker lies.\nA checker reads it only there."
     commit = branch.commit(run, ["invoicer/py.typed"], ground)
     assert d.git(run.worktree, "log", "-1", "--format=%B", commit).strip() == ground
+
+
+def committed(run: Any, *trees: dict[str, Any]) -> list[str]:
+    """Each design tree written and committed on the run's branch in turn; gives each commit."""
+    found = []
+    for data in trees:
+        d.tree_written(run, data)
+        found.append(d.git(run.worktree, "rev-parse", "HEAD").strip())
+    return found
+
+
+@NOT_DONE_AT
+@pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
+@pytest.mark.parametrize(("statuses", "last_done"), HISTORIES)
+def test_the_commit_a_deliverable_was_last_done_at_is_the_last_that_marked_it_done(
+    tmp_path: Any, statuses: list[tuple[str, str]], last_done: int | None
+) -> None:
+    """Given: a run whose design tree was committed once for each pair of statuses: never done;
+    done; done and left done while the other deliverable changed; done and opened again; and done
+    again.
+    When: the commit at which invoicer was last done is asked.
+    Then: it gives the last commit that marked it done, or "" where none did."""
+    run = d.run_of(d.repository(str(tmp_path)))
+    ids = committed(run, *[d.with_status(d.walkthrough_tree(), *each) for each in statuses])
+    assert branch.done_at(run, "invoicer") == ("" if last_done is None else ids[last_done])
+
+
+@NOT_DONE_AT
+@pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
+def test_a_deliverable_moved_among_the_deliverables_keeps_the_commit_it_was_done_at(
+    tmp_path: Any,
+) -> None:
+    """Given: a run whose design tree marked invoicer done, then took a new deliverable before it.
+    When: the commit at which invoicer was last done is asked.
+    Then: it gives the commit that marked it done, not the one that moved it."""
+    run = d.run_of(d.repository(str(tmp_path)))
+    done = d.with_status(d.walkthrough_tree(), "done", "open")
+    moved = dict(done, deliverables=[d.open_deliverable("pyproject.toml typed", "pyproject.toml")])
+    moved["deliverables"] += done["deliverables"]
+    ids = committed(run, d.walkthrough_tree(), done, moved)
+    assert branch.done_at(run, "invoicer") == ids[1]
+
+
+@NOT_DONE_AT
+@pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
+def test_a_deliverable_the_tree_never_held_was_never_done(tmp_path: Any) -> None:
+    """Given: a run whose design tree marked invoicer done.
+    When: the commit at which README.md was last done is asked.
+    Then: it gives ""."""
+    run = d.run_of(d.repository(str(tmp_path)))
+    committed(run, d.with_status(d.walkthrough_tree(), "done", "done"))
+    assert branch.done_at(run, "README.md") == ""
+
+
+@NOT_DONE_AT
+@pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
+def test_the_commit_a_deliverable_was_done_at_where_git_fails_cant_run(tmp_path: Any) -> None:
+    """Given: a run whose worktree is no longer there.
+    When: the commit at which invoicer was last done is asked.
+    Then: it couldn't run."""
+    run = d.run_of(d.repository(str(tmp_path)))
+    gone = str(tmp_path / "gone")
+    run = dataclasses.replace(run, worktree=gone, folder=os.path.join(gone, ".rn", d.NAME))
+    with pytest.raises(CantRun):
+        branch.done_at(run, "invoicer")
 
 
 @pytest.mark.supports("test_dn_stops_the_generator_and_pushes_its_work_with_the_step_it_stood_at")

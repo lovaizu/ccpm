@@ -50,9 +50,15 @@ _held_next_start = next_start
 
 
 def next_start(run, tree, role, running):
-    """The Cut of the next start, with the whole design tree beside the role's part."""
+    """The Cut of the next start, with the whole design tree beside the role's part, and no commit
+    at which its deliverable was done, so that a role reads each input whole."""
     cut = _held_next_start(run, tree, role, running)
-    return None if cut is None else Cut(cut.role, cut.values, dict(cut.part, tree=dict(tree.data)))
+    if cut is None:
+        return None
+    part = dict(cut.part, tree=dict(tree.data))
+    if isinstance(part.get("cut"), dict):
+        part["cut"] = {k: v for k, v in part["cut"].items() if k != "done_at"}
+    return Cut(cut.role, cut.values, part)
 '''
 MAKERS_VIEW = '''
 _held_next_start = next_start

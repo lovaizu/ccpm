@@ -29,7 +29,16 @@ NO_MYPY = pytest.mark.xfail(
     strict=True, reason="mypy, which the walkthrough's check runs, isn't installed"
 )
 
+# Why the case of a deliverable done before still fails: the Cut doesn't yet give the commit it was
+# done at, as cut._generator doesn't and branch.done_at has an empty body, and the generator's steps
+# don't yet say to read each input's change since then.
+NOT_DONE_AT = pytest.mark.xfail(
+    strict=True, reason="the generator's Cut doesn't yet give done_at, nor its steps read by it"
+)
+
 RUNS = 5
+# A change to the design tree that changes nothing.
+NOTHING: dict[str, Any] = {"nodes": {}, "more": []}
 
 
 def claude(b: w.Bench, folder: str, prompt: str, agent: str | None = None) -> str:
@@ -54,32 +63,72 @@ def entries(path: str) -> list[dict[str, Any]]:
         return json.load(f)["entries"]
 
 
-def planned_run(b: w.Bench) -> dict[str, Any]:
-    """A run of the walkthrough set up by rn's own scripts: started, its goal and plan written, and
-    its plan put up for the user's sign-off; gives what tree.py start printed."""
+def tree_py(b: w.Bench, *args: str, cwd: str, given: str = "") -> str:
+    """What rn's tree.py printed for the arguments, run in the folder with the input given."""
+    done = subprocess.run(
+        ["python3", os.path.join(b.rn, "scripts", "tree.py"), *args],
+        cwd=cwd,
+        input=given,
+        env=dict(os.environ, **b.env),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return done.stdout
 
-    def tree(*args: str, cwd: str, given: str = "") -> str:
-        done = subprocess.run(
-            ["python3", os.path.join(b.rn, "scripts", "tree.py"), *args],
-            cwd=cwd,
-            input=given,
-            env=dict(os.environ, **b.env),
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        return done.stdout
 
-    run = json.loads(tree("start", w.GOAL_NAME, cwd=b.repo))
-    tree(
+def planned_run(b: w.Bench, plan: dict[str, Any] | None = None) -> dict[str, Any]:
+    """A run of the walkthrough set up by rn's own scripts: started, its goal and the plan, the
+    walkthrough's by default, written, and its plan put up for the user's sign-off; gives what
+    tree.py start printed."""
+    run = json.loads(tree_py(b, "start", w.GOAL_NAME, cwd=b.repo))
+    tree_py(
+        b,
         "write",
         run["record"],
         "The goal drafted, and the plan.",
         cwd=run["worktree"],
-        given=json.dumps(w.walkthrough_plan()),
+        given=json.dumps(plan or w.walkthrough_plan()),
     )
-    tree("put-up", "plan", cwd=run["worktree"])
+    tree_py(b, "put-up", "plan", cwd=run["worktree"])
     return run
+
+
+def signed_off(b: w.Bench, run: dict[str, Any]) -> None:
+    """The plan of the run approved, and the tree-keeper's write of the sign-off, which marks each
+    deliverable whose turn came doing, as S3 draws after /rn:ty."""
+    tree_py(b, "approve", cwd=run["worktree"])
+    tree_py(
+        b, "write", run["record"], "Signed off.", cwd=run["worktree"], given=json.dumps(NOTHING)
+    )
+
+
+def generator_text(b: w.Bench, run: dict[str, Any]) -> str:
+    """The text of the generator's next start, as its adapter gives it with no start running."""
+    adapter = subprocess.run(
+        ["python3", os.path.join(b.rn, "hooks", "adapters", "text.py"), "generator"],
+        cwd=run["worktree"],
+        input='{"running": []}',
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return json.loads(adapter.stdout)["text"]
+
+
+def bash_run(b: w.Bench) -> list[str]:
+    """Each command that a run of Claude Code on the bench ran by Bash, from its transcripts."""
+    commands = []
+    for path in glob.glob(
+        os.path.join(b.temp, "config", "projects", "**", "*.jsonl"), recursive=True
+    ):
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                content = json.loads(line).get("message", {}).get("content")
+                for each in content if isinstance(content, list) else []:
+                    if each.get("type") == "tool_use" and each.get("name") == "Bash":
+                        commands.append(each["input"].get("command", ""))
+    return commands
 
 
 @pytest.mark.supports("test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first")
@@ -199,33 +248,8 @@ def test_the_generator_started_with_its_cut_records_and_writes_its_made(
     Then: its record holds each step of its part, and its Made names the user's decision."""
     b = w.bench(str(tmp_path))
     started = planned_run(b)
-    tree = os.path.join(b.rn, "scripts", "tree.py")
-    subprocess.run(
-        ["python3", tree, "approve"],
-        cwd=started["worktree"],
-        env=dict(os.environ, **b.env),
-        check=True,
-    )
-    # The tree-keeper writes the sign-off, which marks each deliverable whose turn came doing, as
-    # S3 draws after /rn:ty.
-    subprocess.run(
-        ["python3", tree, "write", started["record"], "Signed off."],
-        cwd=started["worktree"],
-        input=json.dumps({"nodes": {}, "more": []}),
-        env=dict(os.environ, **b.env),
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    adapter = subprocess.run(
-        ["python3", os.path.join(b.rn, "hooks", "adapters", "text.py"), "generator"],
-        cwd=started["worktree"],
-        input='{"running": []}',
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    text = json.loads(adapter.stdout)["text"]
+    signed_off(b, started)
+    text = generator_text(b, started)
     cut = w.cut_of(text)
     claude(b, started["worktree"], text, "rn:generator")
     recorded = {
@@ -237,3 +261,33 @@ def test_the_generator_started_with_its_cut_records_and_writes_its_made(
     assert [d["path"] for d in made["decisions"]] == [
         e["decision"]["path"] for e in cut["cut"]["decisions"]
     ]
+
+
+@NOT_DONE_AT
+@pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
+@pytest.mark.parametrize("run", range(RUNS))
+def test_the_generator_reworking_a_deliverable_done_before_reads_the_change_since_then(
+    tmp_path: Any, run: int
+) -> None:
+    """Given: "Type hints in each file of invoicer", which takes pyproject.toml as its input, marked
+    done; then pyproject.toml changed, and the deliverable open again with the user's decision on
+    which files changed; and the generator's Cut of it, as its adapter gives it.
+    When: the generator runs alone with the Cut as its prompt.
+    Then: the Cut gives the commit that marked the deliverable done, and the generator runs a
+    command that names that commit, as it reads each input's change since then."""
+    b = w.bench(str(tmp_path))
+    started = planned_run(b, w.plan(w.hints_from_pyproject()))
+    signed_off(b, started)
+    worktree, record = started["worktree"], started["record"]
+    done = {"nodes": {"deliverables/0": w.hints_done()}, "more": []}
+    tree_py(b, "write", record, "The user signed it off.", cwd=worktree, given=json.dumps(done))
+    done_at = w.last_tree_commit(worktree, started["folder"])
+    w.pyproject_changed(worktree)
+    again = {"nodes": {"deliverables/0": w.hints_from_pyproject(w.BUT_THE_TESTS)}, "more": []}
+    tree_py(
+        b, "write", record, "The user leaves out the tests.", cwd=worktree, given=json.dumps(again)
+    )
+    text = generator_text(b, started)
+    assert w.cut_of(text)["cut"]["done_at"] == done_at
+    claude(b, worktree, text, "rn:generator")
+    assert any(done_at[:7] in command for command in bash_run(b))

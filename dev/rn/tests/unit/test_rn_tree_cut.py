@@ -1,10 +1,13 @@
 """The unit cases of tree/cut.py, which decides the Cut of each start of a role. The Cut turns on
-the role, which deliverables are doing, which of them a start that runs holds, and where a start of
-the deliverable stood, so the cases take each role and one that isn't rn's, none doing, the first
-and the second held, each group of an evaluator, and a start that stood at a step; and the Cut
+the role, which deliverables are doing, which of them a start that runs holds, whether the
+deliverable was done before, and where a start of the deliverable stood, so the cases take each
+role and one that isn't rn's, none doing, the first and the second held, a deliverable never done
+and one done before, each group of an evaluator, and a start that stood at a step; and the Cut
 that a start took, by its record, or a record that names no start."""
 
 from __future__ import annotations
+
+import copy
 
 import os
 from typing import Any
@@ -19,6 +22,15 @@ from dev.rn.tests.unit import rn_data as d
 LATER = pytest.mark.xfail(
     strict=True,
     reason="a start at the step its Place names waits for place.read, whose body is empty",
+)
+AGAIN = pytest.mark.xfail(
+    strict=True,
+    reason="cut._generator_due starts a new round only for a More kept, not yet for a decision"
+    " changed since the round's cut",
+)
+NOT_DONE_AT = pytest.mark.xfail(
+    strict=True,
+    reason="cut._generator doesn't yet give done_at, and branch.done_at has an empty body",
 )
 
 BOTH_DOING = d.with_status(d.walkthrough_tree(), "doing", "doing")
@@ -60,7 +72,8 @@ def test_the_generators_cut_is_of_the_first_deliverable_doing(tmp_path: Any) -> 
     """Given: a run with both of the walkthrough's deliverables doing, and no start running.
     When: the Cut of the generator's next start is asked.
     Then: it names invoicer, its kind, its best practices, where it writes its Made, and the part
-    of the tree it makes it from, with only its own decision."""
+    of the tree it makes it from, with only its own decision, and no commit it was done at, as it
+    was never done."""
     run = doing_run(tmp_path)
     given = cut.next_start(run, d.design(BOTH_DOING), "generator", [])
     assert given is not None
@@ -69,6 +82,49 @@ def test_the_generators_cut_is_of_the_first_deliverable_doing(tmp_path: Any) -> 
     assert isinstance(part, dict) and part["name"] == "Type hints in each file of invoicer"
     assert [e["condition"] for e in part["decisions"]] == ["N1"]
     assert part["more"] == []
+    assert "done_at" not in part
+
+
+@NOT_DONE_AT
+@pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
+def test_the_generators_cut_of_a_deliverable_done_before_gives_the_commit_it_was_done_at(
+    tmp_path: Any,
+) -> None:
+    """Given: a run whose design tree marked invoicer done, then doing again, with no start running.
+    When: the Cut of the generator's next start is asked.
+    Then: its part of the tree gives the commit that marked invoicer done."""
+    run = doing_run(tmp_path, d.with_status(d.walkthrough_tree(), "done", "open"))
+    done_at = d.git(run.worktree, "rev-parse", "HEAD").strip()
+    data = d.with_status(d.walkthrough_tree(), "doing", "open")
+    d.tree_written(run, data)
+    given = cut.next_start(run, d.design(data), "generator", [])
+    assert given is not None and given.part["deliverable"] == "invoicer"
+    assert d.part(given)["cut"]["done_at"] == done_at
+
+
+@AGAIN
+@pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
+def test_a_generator_starts_a_new_round_once_a_decision_changes_after_the_rounds_cut(
+    tmp_path: Any,
+) -> None:
+    """Given: a run with invoicer alone doing, made in its first round with no More kept, and then
+    its decision of N1 changed in the design tree.
+    When: the Cut of the generator's next start is asked.
+    Then: it's of invoicer, writing its Made in round 2, as the rounds start again from the
+    design."""
+    data = d.with_status(d.walkthrough_tree(), "doing", "open")
+    run = doing_run(tmp_path, data)
+    d.write_json(os.path.join(run.worktree, rounds.made_path(run, "invoicer", True)), d.made())
+    d.git(run.worktree, "add", "-A")
+    d.git(run.worktree, "commit", "-q", "-m", "Round 1 made")
+    assert cut.next_start(run, d.design(data), "generator", []) is None
+    changed = copy.deepcopy(data)
+    (decision,) = changed["deliverables"][0]["necessary_conditions"][0]["decisions"]
+    decision["decided"] = "each file of invoicer but its tests"
+    d.tree_written(run, changed)
+    given = cut.next_start(run, d.design(changed), "generator", [])
+    assert given is not None and given.part["deliverable"] == "invoicer"
+    assert given.values["made"] == rounds.made_path(run, "invoicer", True)
 
 
 @pytest.mark.supports("test_a_second_generator_starts_with_the_next_deliverable_doing")

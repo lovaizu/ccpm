@@ -36,6 +36,35 @@ def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, brok
     assert paths and all(p.startswith("deliverables/0/") for p in paths)
 
 
+@LATER
+@pytest.mark.supports("Drawn out along the design tree", "S1", "Cut", "tree-keeper")
+def test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at(
+    b: Bench, broken: None
+) -> None:
+    """Given: "Type hints in each file of invoicer", which takes pyproject.toml as its input, made,
+    signed off, and marked done; then pyproject.toml changed, and the user's decision on which
+    files changed, which the tree-keeper writes with the deliverable open again, with no More, as
+    the rounds start again from the design.
+    When: the orchestrator starts the generator with the text that the guard gives due.
+    Then: its Cut holds only its part of the tree and the commit that marked the deliverable done,
+    from which git gives the input's change since then."""
+    walk, _ = w.sign_off_put_up(b, w.plan(w.hints_from_pyproject()))
+    done = {"nodes": {"deliverables/0": w.hints_done()}, "more": []}
+    w.approved(b, walk, "The user signed it off.", done)
+    done_at = w.last_tree_commit(walk.run["worktree"], walk.run["folder"])
+    w.pyproject_changed(walk.run["worktree"])
+    again = w.hints_from_pyproject(w.BUT_THE_TESTS)
+    change = {"nodes": {"deliverables/0": again}, "more": []}
+    w.keeper_writes(b, walk, "The user leaves out the tests.", change, w.BUT_THE_TESTS)
+    _, cut = w.generator_started(walk)
+    values = {"record", "deliverable", "kind", "best_practice", "refactor", "made"}
+    assert set(cut) == values | {"cut"}, "the Cut holds nothing of the tree beside its part"
+    assert set(cut["cut"]) == {"goal", "name", "inputs", "decisions", "more", "done_at"}
+    assert cut["cut"]["done_at"] == done_at
+    changed = w.git(walk.run["worktree"], "diff", cut["cut"]["done_at"], "--", "pyproject.toml")
+    assert w.TESTS_LEFT_OUT.strip() in changed
+
+
 @pytest.mark.supports("Every step by best practice", "S1", "record.py", "Record", "guard")
 def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: None) -> None:
     """Given: the generator of "Type hints in each file of invoicer", which made it and wrote its
