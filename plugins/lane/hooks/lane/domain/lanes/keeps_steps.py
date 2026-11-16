@@ -31,8 +31,8 @@ class KeepsSteps:
         return TypeInfo(
             name="keeps_steps",
             sentence="As each step ends, run"
-            " `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/step.py <role> <n>`, with the step's"
-            " number.",
+            " `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/step.py <role> <n>` as a command of its"
+            " own, with the step's number.",
             suits="the last Step of a role whose Steps are done in order",
             allows="nothing: it holds the role's end until each Step is marked since its last"
             " Mark of Step 1",
@@ -50,12 +50,16 @@ class KeepsSteps:
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on the role's last Step: to run
-        `script_calls.step_command` for the role as each Step ends, with its number.
+        `script_calls.step_command` for the role as each Step ends, as a command of its own, with
+        its number, as the guard takes a Mark only from such a run.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
-        return f"As each step ends, run `{step_command(lane.role)}`, with the step's number."
+        return (
+            f"As each step ends, run `{step_command(lane.role)}` as a command of its own, with the"
+            " step's number."
+        )
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: the guard checks a run of step.py by the Lanes on its Step, and the Lane judges no

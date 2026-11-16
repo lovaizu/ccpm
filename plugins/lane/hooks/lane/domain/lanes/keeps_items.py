@@ -30,7 +30,8 @@ class KeepsItems:
         return TypeInfo(
             name="keeps_items",
             sentence="As each item of this step's checklist is done, run"
-            " `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/item.py <role> <id>`, with the item's ID.",
+            " `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/item.py <role> <id>` as a command of its"
+            " own, with the item's ID.",
             suits="a Step that keeps a checklist of the plugin's, laid with keeps_steps",
             allows="nothing: it holds the Step's Mark until each Item the adapter gives is marked",
             args=ARGS,
@@ -45,14 +46,15 @@ class KeepsItems:
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on its Step: to run `script_calls.item_command` for the
-        role as each Item is done, with its ID.
+        role as each Item is done, as a command of its own, with its ID, as the guard takes a Mark
+        only from such a run.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
         return (
             "As each item of this step's checklist is done, run"
-            f" `{item_command(lane.role)}`, with the item's ID."
+            f" `{item_command(lane.role)}` as a command of its own, with the item's ID."
         )
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:

@@ -110,12 +110,15 @@ def start_call(role: str) -> StartCall:
             lambda: d.KEEPS_ITEMS,
             (
                 "As each item of this step's checklist is done, run"
-                f" `{d.ITEM} writer <id>`, with the item's ID."
+                f" `{d.ITEM} writer <id>` as a command of its own, with the item's ID."
             ),
         ),
         (
             lambda: d.KEEPS_STEPS,
-            f"As each step ends, run `{d.STEP} writer <n>`, with the step's number.",
+            (
+                f"As each step ends, run `{d.STEP} writer <n>` as a command of its own, with the"
+                " step's number."
+            ),
         ),
     ],
     ids=[
@@ -495,7 +498,11 @@ def test_keeps_items_keeps_a_mark_only_once_each_item_is_marked(since: Any, verd
     given = TYPES["keeps_items"].check_mark(d.KEEPS_ITEMS, marking, held())
     assert isinstance(given, verdict)
     if isinstance(given, Broken):
-        assert given.sentence.startswith("As each item of this step's checklist is done")
+        assert given.sentence == (
+            "As each item of this step's checklist is done, run"
+            f" `python3 {d.ROOT}/hooks/lane/item.py writer <id>` as a command of its own, with the"
+            " item's ID."
+        )
         assert "linked" in given.may
 
 
@@ -537,7 +544,10 @@ def test_keeps_steps_holds_the_end_until_each_step_is_marked(given: Any, due: in
     if due is None:
         assert verdict == Kept()
     else:
-        assert isinstance(verdict, Broken) and verdict.sentence.startswith("As each step ends")
+        assert isinstance(verdict, Broken) and verdict.sentence == (
+            f"As each step ends, run `python3 {d.ROOT}/hooks/lane/step.py writer <n>` as a command"
+            " of its own, with the step's number."
+        )
         assert str(due) in verdict.may
 
 

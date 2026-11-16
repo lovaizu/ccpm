@@ -20,8 +20,8 @@ CHANGELOG = "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n- Reads standard input.
 def keeps_steps(b: w.Bench, role: str = "writer") -> str:
     """The sentence of the Lane of keeps_steps on the role's last Step, as a stop gives it."""
     return (
-        f"As each step ends, run `python3 {b.changelog}/hooks/lane/step.py {role} <n>`, with the"
-        " step's number."
+        f"As each step ends, run `python3 {b.changelog}/hooks/lane/step.py {role} <n>` as a command"
+        " of its own, with the step's number."
     )
 
 
@@ -29,7 +29,8 @@ def keeps_items(b: w.Bench) -> str:
     """The sentence of the Lane of keeps_items on writer's step 3, as a stop gives it."""
     return (
         "As each item of this step's checklist is done, run"
-        f" `python3 {b.changelog}/hooks/lane/item.py writer <id>`, with the item's ID."
+        f" `python3 {b.changelog}/hooks/lane/item.py writer <id>` as a command of its own, with the"
+        " item's ID."
     )
 
 
@@ -85,11 +86,12 @@ def test_a_proposal_of_the_lane_types_of_steps_shows_each_steps_sentence(tmp_pat
         "Never read `tally.py`.",
         (
             "As each item of this step's checklist is done, run"
-            " `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/item.py writer <id>`, with the item's ID."
+            " `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/item.py writer <id>` as a command of its"
+            " own, with the item's ID."
         ),
         (
-            "As each step ends, run `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/step.py writer <n>`,"
-            " with the step's number."
+            "As each step ends, run `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/step.py writer <n>`"
+            " as a command of its own, with the step's number."
         ),
     ):
         assert said in printed.output

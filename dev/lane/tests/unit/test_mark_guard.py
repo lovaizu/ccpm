@@ -102,7 +102,10 @@ def item(plugin: str, role: str, given: str) -> str:
 
 
 def sentence(plugin: str) -> str:
-    return f"As each step ends, run `python3 {plugin}/hooks/lane/step.py writer <n>`"
+    return (
+        f"As each step ends, run `python3 {plugin}/hooks/lane/step.py writer <n>` as a command of"
+        " its own, with the step's number."
+    )
 
 
 @pytest.mark.supports("test_a_step_with_no_lane_on_it_is_marked_on_its_turn_alone")
