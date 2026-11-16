@@ -1029,7 +1029,8 @@
         "dev/rn/tests/integration/test_rn_s5_pick_up.py",
         "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
         "dev/rn/tests/integration/test_rn_components.py",
-        "dev/rn/tests/integration/test_rn_rules.py"
+        "dev/rn/tests/integration/test_rn_rules.py",
+        "dev/lane/architecture.md"
       ],
       "status": "open",
       "necessary_conditions": [
@@ -1091,7 +1092,12 @@
         {
           "id": "N12",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Which hook holds each step and each practice of rn's roles",
+              "decided": null
+            }
+          ]
         },
         {
           "id": "N13",
