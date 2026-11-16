@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 import json_form
-from fault import CantRun, Wrong
+from fault import Wrong
 
 from tree import design
 from tree.runs import Run
@@ -59,20 +59,16 @@ def read(run: Run) -> SignOffs:
     Takes: the run.
     Gives: each sign-off, or none before the first is put up.
     Changes: nothing.
-    Refuses: fault.Wrong, where the file leaves its form; fault.CantRun, where it can't be read.
+    Refuses: fault.Wrong, where the file leaves its form. Only tree.py writes it, so a fault in
+    reading it stops with its trace.
     Carries: S2 `K->>T: writes it, and commits it with each deliverable whose turn has come marked
     doing`, as a turn waits for each sign-off it rests on.
     """
     path = _path(run)
     if not os.path.exists(path):
         return SignOffs(())
-    try:
-        with open(path, encoding="utf-8") as f:
-            data = json.load(f)
-    except OSError as e:
-        raise CantRun(f"the sign-offs {path} can't be read: {e}") from None
-    except ValueError as e:
-        raise Wrong(f"sign-offs.json: isn't JSON: {e}") from None
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
     json_form.hold(data, json_form.load("sign-off.schema.json"), "sign-offs.json")
     return SignOffs(
         tuple(
@@ -136,12 +132,9 @@ def as_json(given: SignOff) -> dict[str, str]:
 
 def _write(run: Run, each: tuple[SignOff, ...]) -> None:
     path = _path(run)
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump({"sign_offs": [as_json(s) for s in each]}, f, indent=2)
-            f.write("\n")
-    except OSError as e:
-        raise CantRun(f"the sign-offs {path} can't be written: {e}") from None
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"sign_offs": [as_json(s) for s in each]}, f, indent=2)
+        f.write("\n")
 
 
 def _path(run: Run) -> str:

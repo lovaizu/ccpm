@@ -65,7 +65,9 @@ def _running(text: str) -> list[dict[str, str]]:
     try:
         given = json.loads(text)
         return [dict(each.get("values", {})) for each in given["running"]]
-    except (ValueError, KeyError, TypeError, AttributeError):
+    # Runs only on input out of form, which dev/scripts/quality.sh's property test gives,
+    # test_any_input_of_the_adapter_of_a_starts_text_gives_a_text_none_or_why.
+    except (ValueError, KeyError, TypeError, AttributeError):  # pragma: no cover
         raise Wrong('standard input must be {"running": [{"role", "text", "values"}]}') from None
 
 

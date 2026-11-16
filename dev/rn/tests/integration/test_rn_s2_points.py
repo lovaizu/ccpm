@@ -13,10 +13,6 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="rn's parts have empty bodies, and Lane hasn't laid rn's guard"
-)
-
 MARKER = "deliverables/1/necessary_conditions/0/decisions/0"
 WHERE = "where the marker lies"
 

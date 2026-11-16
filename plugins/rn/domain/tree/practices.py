@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import os
 
-from fault import CantRun, Wrong
+from fault import Wrong
 
 from tree.runs import Run
 
@@ -54,14 +54,11 @@ def groups(best_practice: str) -> tuple[tuple[str, ...], ...]:
     Takes: the best practice's folder.
     Gives: the ID of each necessary condition of each critical success factor, in its order.
     Changes: nothing.
-    Refuses: fault.CantRun, where its best-practice.json can't be read or leaves its form, as rn
-    or the run's own best practice made it.
+    Refuses: nothing; `folder` gave a best practice whose form record.py holds, so a fault in it
+    stops with its trace.
     Carries: S1 `par one for each group of necessary conditions`, each evaluator's Cut naming one.
     """
     path = os.path.join(best_practice, "best-practice.json")
-    try:
-        with open(path, encoding="utf-8") as f:
-            factors = json.load(f)["goal"]["critical_success_factors"]
-        return tuple(tuple(n["id"] for n in f["necessary_conditions"]) for f in factors)
-    except (OSError, ValueError, KeyError, TypeError) as e:
-        raise CantRun(f"the groups of {path} can't be read: {e!r}") from None
+    with open(path, encoding="utf-8") as f:
+        factors = json.load(f)["goal"]["critical_success_factors"]
+    return tuple(tuple(n["id"] for n in f["necessary_conditions"]) for f in factors)

@@ -60,13 +60,11 @@ REFACTOR = {"code": "refactor-code", "readme": "refactor-doc"}
 # What a README deliverable is for, in a plan of one.
 NEWCOMER = "A newcomer decides from invoicer's README alone whether invoicer fits their work"
 RESUMED = "The main conversation's grounds:\n"
-# Why a case of the walkthrough beyond the walking skeleton still fails: the parts it reaches, and
-# what Lane at rn-rebuild's HEAD doesn't yet do for rn.
-NOT_YET = (
-    "rn's later parts have empty bodies, and Lane at rn-rebuild's HEAD tells no start due as the"
-    " orchestrator enters the run's worktree, lets no second start of a role beside the first, and"
-    " takes no result of a role resumed"
-)
+# What coverage.py reads in a new process to measure it, and where it writes what it measured.
+COVERAGE_SETTINGS = ("COVERAGE_PROCESS_START", "COVERAGE_FILE")
+# Why a case of the walkthrough beyond the walking skeleton still fails: a part it reaches that a
+# later deliverable builds.
+NOT_YET = "a part of rn that the case reaches has an empty body or a step not yet written"
 
 
 # What rn shows at each move of the walkthrough, as the README shows it.
@@ -168,6 +166,9 @@ def bench(tmp: str, logged_in: bool = True, remote: bool = True) -> Bench:
         "TMPDIR": os.path.join(tmp, "system-temp"),
         "RN_GH_STATE": github,
     }
+    # Where check.sh measures coverage, each script and hook that a case starts in a new process,
+    # such as record.py check at a role's end, counts toward it as well.
+    env.update({name: os.environ[name] for name in COVERAGE_SETTINGS if name in os.environ})
     os.makedirs(env["TMPDIR"])
     temp = os.path.join(tmp, "claude")
     return Bench(rn, lane, os.path.realpath(repo), origin, temp, github, env)
@@ -185,9 +186,9 @@ def printed(answer: Answer) -> Any:
 
 
 def due_text(said: str, role: str) -> str:
-    """The text of the role's start that the guard gives due, as Lane gives each start due:
-    ``rn: Start `rn:<role>` with `<text>`.``"""
-    found = re.search(rf"rn: Start `rn:{re.escape(role)}` with `(.*?)`\.$", said, re.MULTILINE)
+    """The text of the role's start that the guard gives due, as Lane gives each start due among
+    the moves of one line after `rn: `: ``Start `rn:<role>` with `<text>`.``"""
+    found = re.search(rf"Start `rn:{re.escape(role)}` with `(.*?)`\.(?: |$)", said, re.MULTILINE)
     assert found, f"the guard gives no start of {role} due: {said!r}"
     return found[1]
 
@@ -476,7 +477,7 @@ def generator_started(w: Walk) -> tuple[Agent, dict[str, Any]]:
     """The orchestrator starts the generator with the text that the guard gives due; gives it with
     its Cut."""
     answer, generator = started(w.c, "generator", w.said)
-    w.said = answer.said
+    w.said = answer.posted
     w.agents.append(generator)
     return generator, cut_of(due_text_of(generator))
 
@@ -532,7 +533,7 @@ def evaluated(
     cuts, evaluators = [], []
     for _ in range(sum(len(groups_of(b.rn, kind)) for kind in kinds)):
         answer, evaluator = started(w.c, "evaluator", w.said)
-        w.said = answer.said
+        w.said = answer.posted
         evaluators.append(evaluator)
         cut = cut_of(due_text_of(evaluator))
         cuts.append(cut)

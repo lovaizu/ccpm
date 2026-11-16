@@ -19,10 +19,15 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.tests import opus
 
-pytestmark = [
-    pytest.mark.xfail(strict=True, reason="rn's prompts' steps are empty"),
-    opus.NEEDS_LOGIN,
-]
+pytestmark = opus.NEEDS_LOGIN
+
+# Why a case beyond the walking skeleton still fails: the steps of a prompt it runs aren't written.
+LATER = pytest.mark.xfail(strict=True, reason="rn's prompts' steps are empty")
+# Why the generator's case still fails: the walkthrough's deliverable is checked by mypy --strict,
+# which the bench lacks, so the generator ends with lacks before it writes its Made.
+NO_MYPY = pytest.mark.xfail(
+    strict=True, reason="mypy, which the walkthrough's check runs, isn't installed"
+)
 
 RUNS = 5
 
@@ -91,6 +96,7 @@ def test_up_acts_on_a_request_typed_or_asked_for(tmp_path: Any, prompt: str, run
     assert any(e["of"] == "up" for path in record for e in entries(path))
 
 
+@LATER
 @pytest.mark.supports("test_up_alone_with_no_run_left_says_so_and_starts_no_role")
 @pytest.mark.parametrize("prompt", ["What does invoicer's total take?", "/rn:up"])
 @pytest.mark.parametrize("run", range(RUNS))
@@ -106,6 +112,7 @@ def test_up_starts_no_run_on_a_question_or_with_nothing_to_pick_up(
     assert prompt != "/rn:up" or w.NO_RUN_SHOWN in printed
 
 
+@LATER
 @pytest.mark.supports("test_ty_approves_the_plan_and_starts_the_work_resting_on_it")
 @pytest.mark.parametrize(
     ("prompt", "state"), [("/rn:ty", "signed off"), ("Looks fine, go on.", "waiting")]
@@ -125,6 +132,7 @@ def test_only_the_typed_ty_signs_off_the_plan(
         assert json.load(f)["sign_offs"][0]["state"] == state
 
 
+@LATER
 @pytest.mark.supports("test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes")
 @pytest.mark.parametrize(
     ("prompt", "state"),
@@ -148,6 +156,7 @@ def test_only_the_typed_gm_sends_the_plan_back(
         assert json.load(f)["sign_offs"][0]["state"] == state
 
 
+@LATER
 @pytest.mark.supports("test_dn_stops_the_generator_and_pushes_its_work_with_the_step_it_stood_at")
 @pytest.mark.parametrize(("prompt", "pushed"), [("/rn:dn", True), ("I'll stop for today.", False)])
 @pytest.mark.parametrize("run", range(RUNS))
@@ -178,6 +187,7 @@ def test_no_role_starts_for_a_request_made_without_rn(tmp_path: Any, role: str, 
     assert not glob.glob(os.path.join(b.repo, "**", f"*{role}*.json"), recursive=True)
 
 
+@NO_MYPY
 @pytest.mark.supports("test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing")
 @pytest.mark.parametrize("run", range(RUNS))
 def test_the_generator_started_with_its_cut_records_and_writes_its_made(
@@ -189,10 +199,22 @@ def test_the_generator_started_with_its_cut_records_and_writes_its_made(
     Then: its record holds each step of its part, and its Made names the user's decision."""
     b = w.bench(str(tmp_path))
     started = planned_run(b)
+    tree = os.path.join(b.rn, "scripts", "tree.py")
     subprocess.run(
-        ["python3", os.path.join(b.rn, "scripts", "tree.py"), "approve"],
+        ["python3", tree, "approve"],
         cwd=started["worktree"],
         env=dict(os.environ, **b.env),
+        check=True,
+    )
+    # The tree-keeper writes the sign-off, which marks each deliverable whose turn came doing, as
+    # S3 draws after /rn:ty.
+    subprocess.run(
+        ["python3", tree, "write", started["record"], "Signed off."],
+        cwd=started["worktree"],
+        input=json.dumps({"nodes": {}, "more": []}),
+        env=dict(os.environ, **b.env),
+        capture_output=True,
+        text=True,
         check=True,
     )
     adapter = subprocess.run(

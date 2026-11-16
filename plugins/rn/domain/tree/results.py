@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import json_form
-from fault import CantRun, Wrong
+from fault import CantRun
 
 
 @dataclass(frozen=True)
@@ -81,12 +81,8 @@ def _read(path: str, form: str, field: str) -> Any:
     """The JSON in the file at the path, held to the field's form in the role's out-schema."""
     try:
         with open(path, encoding="utf-8") as f:
-            text = f.read()
-    except OSError as e:
+            held = json.load(f)
+    except (OSError, ValueError) as e:
         raise CantRun(f"{path} can't be read: {e}") from None
-    try:
-        held = json.loads(text)
-    except ValueError as e:
-        raise Wrong(f"{os.path.basename(path)}: isn't JSON: {e}") from None
     json_form.hold(held, json_form.load(form)["properties"][field], os.path.basename(path))
     return held

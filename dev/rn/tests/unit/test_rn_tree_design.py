@@ -97,7 +97,9 @@ def test_a_change_removes_a_node_given_none(tmp_path: Any) -> None:
 
 
 @pytest.mark.supports("test_tree_py_refuses_a_change_that_leaves_the_design_trees_form")
-@pytest.mark.parametrize("path", ["deliverables/7/name", "deliverables/0/nothing/0", "goals"])
+@pytest.mark.parametrize(
+    "path", ["deliverables/7/name", "deliverables/0/nothing/0", "deliverables/0/nothing", "goals"]
+)
 def test_a_change_whose_path_names_no_node_is_refused(path: str) -> None:
     """Given: the walkthrough's tree.
     When: a change sets a node by a path past the end of a list, through a field that isn't there,

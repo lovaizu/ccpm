@@ -51,7 +51,7 @@ def add(path: str, entry: Entry) -> None:
     Gives: nothing.
     Changes: the record, made where it isn't there yet, the entry after each one it holds.
     Refuses: fault.Wrong, saying what the entry takes, where the entry or the record leaves the
-    form, before it changes anything; fault.CantRun, where it can't be written.
+    form, before it changes anything; fault.CantRun, where the record held can't be read.
     Carries: S1 `G->>R: records each step and practice as it takes it (Record)`, and the same of
     each role and the orchestrator.
     """
@@ -76,7 +76,7 @@ def read(path: str) -> Record:
     Gives: the record, with no entries and no result kept where it isn't there yet.
     Changes: nothing.
     Refuses: fault.Wrong, naming the place, where it leaves the form; fault.CantRun, where it can't
-    be read.
+    be read or isn't JSON.
     Carries: S1 `GD->>R: checks its record`; S5 `A->>R: gets the result kept in each of those
     records (Record)`.
     """
@@ -84,13 +84,9 @@ def read(path: str) -> Record:
         return Record((), None)
     try:
         with open(path, encoding="utf-8") as f:
-            text = f.read()
-    except OSError as e:
+            held = json.load(f)
+    except (OSError, ValueError) as e:
         raise CantRun(f"the record {path} can't be read: {e}") from None
-    try:
-        held = json.loads(text)
-    except ValueError as e:
-        raise Wrong(f"{path}: isn't JSON: {e}") from None
     json_form.hold(held, json_form.load("record.schema.json"), path)
     entries = tuple(
         Entry(e["of"], e.get("step"), e.get("practice"), e["gave"]) for e in held["entries"]
@@ -106,7 +102,7 @@ def keep(path: str, kept: Kept) -> None:
     Gives: nothing.
     Changes: the record, its result kept in place of any kept before.
     Refuses: fault.Wrong, where the record leaves the form; fault.CantRun, where it can't be
-    written.
+    read.
     Carries: S1 `R-->>GD: ... or none, keeping the result in the record`.
     """
     _write(path, Record(read(path).entries, kept))
@@ -122,10 +118,7 @@ def _write(path: str, record: Record) -> None:
     held: dict[str, Any] = {"entries": entries}
     if record.kept:
         held["kept"] = {"role": record.kept.role, "result": record.kept.result}
-    try:
-        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(held, f, indent=2)
-            f.write("\n")
-    except OSError as e:
-        raise CantRun(f"the record {path} can't be written: {e}") from None
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(held, f, indent=2)
+        f.write("\n")

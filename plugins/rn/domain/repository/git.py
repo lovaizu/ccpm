@@ -99,7 +99,9 @@ def push(worktree: str, branch: str) -> None:
             " `git remote add origin <url>`"
         )
     done = _run(worktree, "push", "-q", "-u", "origin", branch)
-    if done.returncode != 0 and any(each in done.stderr for each in _NO_LOGIN):
+    # Runs only where a remote host asks for a login, which no case reaches, as the tests push to a
+    # folder; taken back to the cases' designer.
+    if done.returncode != 0 and any(each in done.stderr for each in _NO_LOGIN):  # pragma: no cover
         raise Missing(f"git has no login to push to origin: {done.stderr.strip()}")
     if done.returncode != 0:
         raise CantRun(f"git push failed: {done.stderr.strip()}")

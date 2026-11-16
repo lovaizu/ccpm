@@ -11,9 +11,7 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="rn's parts have empty bodies, and Lane hasn't laid rn's guard"
-)
+LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
 
 
 def stood(walk: w.Walk, record: str) -> list[dict[str, object]]:
@@ -28,6 +26,7 @@ def stood(walk: w.Walk, record: str) -> list[dict[str, object]]:
     return found
 
 
+@LATER
 @pytest.mark.supports("S4", "generator", "Place", "repository", "tree.py")
 def test_dn_stops_the_generator_and_pushes_its_work_with_the_step_it_stood_at(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running, which ended its
@@ -47,6 +46,7 @@ def test_dn_stops_the_generator_and_pushes_its_work_with_the_step_it_stood_at(b:
     assert not w.orchestrator_ends(b, walk, "dn", w.PAUSED_SHOWN).blocked
 
 
+@LATER
 @pytest.mark.supports("S4", "evaluator", "Place")
 def test_dn_stops_each_evaluator_still_running_and_keeps_where_each_stood(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer" ended done, and two of its
@@ -68,6 +68,7 @@ def test_dn_stops_each_evaluator_still_running_and_keeps_where_each_stood(b: Ben
     assert all(stood(walk, record) for _, record in evaluators)
 
 
+@LATER
 @pytest.mark.supports("S4", "repository", "Point")
 def test_dn_where_git_cant_push_commits_and_says_what_is_missing(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running, and the repository's

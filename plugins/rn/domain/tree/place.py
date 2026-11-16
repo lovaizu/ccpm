@@ -7,8 +7,6 @@ import json
 import os
 from dataclasses import dataclass
 
-from fault import CantRun
-
 
 @dataclass(frozen=True)
 class Place:
@@ -26,19 +24,16 @@ def write(path: str, place: Place) -> None:
     Takes: the path of its file, whose folder it makes where it isn't there, and the Place.
     Gives: nothing.
     Changes: the file.
-    Refuses: fault.CantRun, where it can't be written.
+    Refuses: nothing; the round's folder is rn's own, so a fault in writing it stops with its trace.
     Carries: S1 `G->>T: commits its work at the end of each step (Place)`, `E->>T: commits its work
     at the end of each step (Place)`; S4 `O->>T: commits and pushes each role's work so far, with
     the step it stood at (Place)`.
     """
     held = {"record": place.record, "step": place.step, "work": list(place.work)}
-    try:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(held, f, indent=2)
-            f.write("\n")
-    except OSError as e:
-        raise CantRun(f"the Place {path} can't be written: {e}") from None
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(held, f, indent=2)
+        f.write("\n")
 
 
 def read(path: str) -> Place:

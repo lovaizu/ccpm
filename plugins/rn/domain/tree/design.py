@@ -48,20 +48,16 @@ def read(run: Run) -> DesignTree:
     Gives: the tree in its folder.
     Changes: nothing.
     Refuses: fault.Wrong, naming each place out of form, where the file leaves the schema;
-    fault.CantRun, where it can't be read.
+    fault.CantRun, where it can't be read or isn't JSON.
     Carries: S1 `A->>T: gets each deliverable doing, and the Cut`, `O->>T: gets the round`, and each
     `K->>T: writes`, which read the tree first.
     """
     path = _path(run)
     try:
         with open(path, encoding="utf-8") as f:
-            text = f.read()
-    except OSError as e:
+            data = json.load(f)
+    except (OSError, ValueError) as e:
         raise CantRun(f"the design tree {path} can't be read: {e}") from None
-    try:
-        data = json.loads(text)
-    except ValueError as e:
-        raise Wrong(f"design-tree.json: isn't JSON: {e}") from None
     json_form.hold(data, json_form.load(_FORM), "design-tree.json")
     return DesignTree(data)
 
@@ -102,16 +98,13 @@ def write(run: Run, tree: DesignTree) -> str:
     Takes: the run, and the tree.
     Gives: the path written, from the worktree.
     Changes: the run's design-tree.json.
-    Refuses: fault.CantRun, where it can't be written.
+    Refuses: nothing; the run's folder is rn's own, so a fault in writing it stops with its trace.
     Carries: S1 `K->>T: writes them, and commits (Design tree)`.
     """
     path = _path(run)
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(tree.data, f, indent=2)
-            f.write("\n")
-    except OSError as e:
-        raise CantRun(f"the design tree {path} can't be written: {e}") from None
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(tree.data, f, indent=2)
+        f.write("\n")
     return os.path.relpath(path, run.worktree)
 
 
@@ -180,7 +173,9 @@ def _set(data: dict[str, Any], path: str, node: object) -> None:
             held = held[int(part)] if isinstance(held, list) else held[part]
         if isinstance(held, list):
             _set_item(held, int(last), node)
-        elif node is None:
+        # Runs only where a field is taken out, as a deliverable marked done drops its conditions
+        # in the case xfail until it's built, test_a_deliverable_put_up_and_approved_is_marked_done.
+        elif node is None:  # pragma: no cover
             del held[last]
         elif isinstance(held, dict) and (last in held or not above):
             held[last] = node

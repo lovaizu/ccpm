@@ -13,9 +13,7 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="rn's parts have empty bodies, and Lane hasn't laid rn's guard"
-)
+LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
 
 
 @pytest.mark.supports("Drawn out along the design tree", "S1", "Cut", "guard")
@@ -31,11 +29,14 @@ def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, brok
     stopped, agent = walk.c.start("rn:generator", whole, "generator")
     assert stopped.blocked and agent is None
     _, cut = w.generator_started(walk)
+    values = {"record", "deliverable", "kind", "best_practice", "refactor", "made"}
+    assert set(cut) == values | {"cut"}, "the Cut holds nothing of the tree beside its part"
     assert set(cut["cut"]) == {"goal", "name", "inputs", "decisions", "more"}
     paths = [each["decision"]["path"] for each in cut["cut"]["decisions"]]
     assert paths and all(p.startswith("deliverables/0/") for p in paths)
 
 
+@LATER
 @pytest.mark.supports("Every step by best practice", "S1", "record.py", "Record", "guard")
 def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: None) -> None:
     """Given: the generator of "Type hints in each file of invoicer", which made it and wrote its
@@ -66,6 +67,7 @@ def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: 
     assert not again.blocked, again.said
 
 
+@LATER
 @pytest.mark.supports("Every item handled", "S1", "Made", "record.py")
 def test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it(
     b: Bench, broken: None
@@ -113,6 +115,7 @@ def test_work_resting_on_the_plan_waits_until_the_user_signs_it_off(b: Bench, br
     assert w.cut_of(w.due_text(walk.said, "generator"))["deliverable"] == w.HINTS_PATH
 
 
+@LATER
 @pytest.mark.supports("Back to the design tree on a problem", "S1", "More kept", "tree-keeper")
 def test_a_more_kept_with_no_decision_changed_is_refused(b: Bench, broken: None) -> None:
     """Given: the first round of "Type hints in each file of invoicer", with N2 in more.
@@ -132,6 +135,7 @@ def test_a_more_kept_with_no_decision_changed_is_refused(b: Bench, broken: None)
     assert not w.files_holding(walk.folder("rounds"), w.SHOWN_AS_TYPED)
 
 
+@LATER
 @pytest.mark.supports("The design tree revised on each run", "S1", "Best practice")
 def test_a_best_practice_made_on_the_run_is_taken_over_rns_own(b: Bench, broken: None) -> None:
     """Given: the walkthrough's plan signed off, and a code best practice made on the run in
@@ -147,6 +151,7 @@ def test_a_best_practice_made_on_the_run_is_taken_over_rns_own(b: Bench, broken:
     assert cut["best_practice"].rstrip("/").endswith(".rn/best-practices/code")
 
 
+@LATER
 @pytest.mark.supports("Tried in a throwaway copy", "S1", "throwaway.py", "Try record", "guard")
 def test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept(b: Bench, broken: None) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running.

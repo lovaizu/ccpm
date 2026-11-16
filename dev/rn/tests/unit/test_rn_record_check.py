@@ -18,13 +18,8 @@ from record.command import main
 from record.form import Entry
 from tree import cut, rounds
 
+from dev.rn.tests.rn_walkthrough import steps_of
 from dev.rn.tests.unit import rn_data as d
-
-LATER = pytest.mark.xfail(
-    strict=True,
-    reason="the case's generator records no step, as the generator's part held none when it was"
-    " written, and its part now holds steps 1 to 7",
-)
 
 
 def practice_ids(kind: str) -> list[str]:
@@ -45,9 +40,10 @@ def practice_ids(kind: str) -> list[str]:
 def generator_ended(
     tmp: Any, data: dict[str, Any] | None = None, leave_out: str = ""
 ) -> tuple[Any, str]:
-    """A run whose generator took the Cut of its first deliverable doing, recorded each practice
-    of its best practices but `leave_out`, and wrote its Made, committed; gives the run and the
-    record's path from the worktree."""
+    """A run whose generator took the Cut of its first deliverable doing, recorded the first step
+    of its part, each practice of its best practices but `leave_out`, and each other step, as its
+    part says, and wrote its Made, committed; gives the run and the record's path from the
+    worktree."""
     run = d.run_of(d.repository(str(tmp)))
     tree = data or d.with_status(d.walkthrough_tree(), "doing", "open")
     d.tree_written(run, tree)
@@ -55,12 +51,13 @@ def generator_ended(
     assert given is not None
     record = given.values["record"]
     kinds = (str(given.part["kind"]), os.path.basename(str(given.part["refactor"]).rstrip("/")))
-    for kind in kinds:
-        for each in practice_ids(kind):
-            if each != leave_out:
-                form.add(
-                    os.path.join(run.worktree, record), Entry(kind, None, each, "Carried out.")
-                )
+    first, *others = steps_of(d.RN, "domain/generator.md")
+    entries = [Entry("generator", first, None, "Read it.")]
+    entries += [Entry(k, None, p, "Carried out.") for k in kinds for p in practice_ids(k)]
+    entries += [Entry("generator", step, None, "Its result holds.") for step in others]
+    for entry in entries:
+        if entry.practice != leave_out:
+            form.add(os.path.join(run.worktree, record), entry)
     d.write_json(
         os.path.join(run.worktree, rounds.made_path(run, str(given.part["deliverable"]), True)),
         d.made(),
@@ -70,10 +67,10 @@ def generator_ended(
     return run, record
 
 
-@LATER
 @pytest.mark.supports("test_a_generators_done_result_is_kept_in_its_record")
 def test_an_end_that_lacks_nothing_passes_and_keeps_its_result(tmp_path: Any) -> None:
-    """Given: a generator that recorded each practice, and wrote a Made naming its decision.
+    """Given: a generator that recorded each step and practice, and wrote a Made naming its
+    decision.
     When: its end with done is checked.
     Then: it lacks nothing, and its record keeps done by the generator."""
     run, record = generator_ended(tmp_path)
@@ -83,7 +80,7 @@ def test_an_end_that_lacks_nothing_passes_and_keeps_its_result(tmp_path: Any) ->
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
 def test_an_end_whose_record_lacks_a_practice_names_it_and_keeps_nothing(tmp_path: Any) -> None:
-    """Given: a generator that recorded each practice but code's N4.1.
+    """Given: a generator that recorded each step and practice but code's N4.1.
     When: its end with done is checked.
     Then: it names N4.1, and its record keeps no result."""
     run, record = generator_ended(tmp_path, leave_out="N4.1")
@@ -94,8 +91,8 @@ def test_an_end_whose_record_lacks_a_practice_names_it_and_keeps_nothing(tmp_pat
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_an_end_whose_deliverable_leaves_its_template_names_each_place(tmp_path: Any) -> None:
-    """Given: a generator of invoicer's README, which recorded each practice and wrote a README.md
-    of one heading.
+    """Given: a generator of invoicer's README, which recorded each step and practice and wrote a
+    README.md of one heading.
     When: its end with done is checked.
     Then: it names README.md with a line where it leaves the readme template."""
     readme = d.open_deliverable(
@@ -135,6 +132,20 @@ def test_an_end_whose_record_is_out_of_form_is_refused(tmp_path: Any) -> None:
         check.check(d.RN, run.worktree, "generator", "done", record)
 
 
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+@pytest.mark.parametrize("where", ["with no record", "outside a run's worktree"])
+def test_a_roles_end_with_no_record_or_outside_a_run_is_refused(tmp_path: Any, where: str) -> None:
+    """Given: a generator that recorded each step and practice, and wrote its Made.
+    When: its end is checked with no record, or from the repository's root, which lies in no run's
+    worktree.
+    Then: it's refused."""
+    run, record = generator_ended(tmp_path)
+    root = os.path.dirname(os.path.dirname(os.path.dirname(run.worktree)))
+    cwd, named = (run.worktree, None) if where == "with no record" else (root, record)
+    with pytest.raises(Wrong):
+        check.check(d.RN, cwd, "generator", "done", named)
+
+
 @pytest.mark.supports("test_record_py_refuses_an_entry_out_of_its_form")
 def test_add_records_an_entry_and_refuses_one_out_of_form(tmp_path: Any) -> None:
     """Given: no record at the path.
@@ -148,10 +159,10 @@ def test_add_records_an_entry_and_refuses_one_out_of_form(tmp_path: Any) -> None
     assert (code, out) == (1, "") and err
 
 
-@LATER
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
 def test_check_gives_0_or_1_with_each_thing_lacking_on_a_line(tmp_path: Any) -> None:
-    """Given: a generator that recorded each practice, and one that left out code's N4.1.
+    """Given: a generator that recorded each step and practice, and one that left out code's
+    N4.1.
     When: record.py check generator done runs on each record.
     Then: the first gives 0, and the second 1 with N4.1 on a line of its own."""
     run, record = generator_ended(tmp_path / "whole")

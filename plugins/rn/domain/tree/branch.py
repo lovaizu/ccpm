@@ -57,12 +57,13 @@ def ground(run: Run, path: str) -> str:
     """
     tree = os.path.relpath(os.path.join(run.folder, "design-tree.json"), run.worktree)
     commits = git.history(run.worktree, tree)
-    for (commit_id, message), before in zip(commits, [*commits[1:], None]):
-        then = _node(git.file_at(run.worktree, commit_id, tree), path)
-        earlier = _node(git.file_at(run.worktree, before[0], tree), path) if before else None
-        if then != earlier:
-            return message
-    return ""
+    changed = (
+        message
+        for (commit_id, message), before in zip(commits, [*commits[1:], None])
+        if _node(git.file_at(run.worktree, commit_id, tree), path)
+        != (_node(git.file_at(run.worktree, before[0], tree), path) if before else None)
+    )
+    return next(changed, "")
 
 
 def _node(text: str, path: str) -> Any:

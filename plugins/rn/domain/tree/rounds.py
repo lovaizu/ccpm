@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from urllib.parse import quote, unquote
 
-from fault import CantRun, Wrong
+from fault import Wrong
 
 from tree import records
 from tree.design import DesignTree
@@ -116,7 +116,7 @@ def try_path(run: Run, deliverable: str) -> str:
     number = latest(run, deliverable)
     if not number:
         raise Wrong(f"{deliverable} has no round yet, in which a command it tries is kept")
-    return _in(run, deliverable, number, "try.json")
+    return _in(run, deliverable, number, "try.jsonl")
 
 
 def place_path(run: Run, record: str) -> str:
@@ -187,23 +187,18 @@ def kept_more(run: Run, deliverable: str, number: int | None = None) -> tuple[Mo
     where None.
     Gives: each More kept in that round, none where it keeps none.
     Changes: nothing.
-    Refuses: fault.Wrong, where a file of the round leaves its form.
+    Refuses: nothing; only `keep_more` writes the More kept, so a fault in it stops with its trace.
     Carries: S1 `O->>G: starts it, with that text (Cut, More kept)`, whose Cut holds them.
     """
     found = latest(run, deliverable) if number is None else number
     path = os.path.join(run.worktree, _in(run, deliverable, found, "more.json"))
     if not found or not os.path.exists(path):
         return ()
-    try:
-        with open(path, encoding="utf-8") as f:
-            held = json.load(f)
+    # Runs only once keep_more keeps a More, as in the case xfail until it's built,
+    # test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator.
+    with open(path, encoding="utf-8") as f:  # pragma: no cover
+        held = json.load(f)
         return tuple(More(deliverable, e["condition"], e["good_when"]) for e in held)
-    except OSError as e:
-        raise CantRun(f"the More kept {path} can't be read: {e}") from None
-    except (ValueError, KeyError, TypeError):
-        raise Wrong(
-            f"{path}: isn't a list of More kept, each its condition and good_when"
-        ) from None
 
 
 def at_cut(run: Run, deliverable: str) -> DesignTree:

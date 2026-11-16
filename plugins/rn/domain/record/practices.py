@@ -33,17 +33,15 @@ def practices(folder: str) -> tuple[Practice, ...]:
     Gives: each practice, in the order of its conditions and items, the item's place from 1.
     Changes: nothing.
     Refuses: fault.Wrong, where best-practice.json leaves its form; fault.CantRun, where it can't be
-    read.
+    read or isn't JSON.
     Carries: S1 `GD->>R: checks its record`, against the practices of the role's best practices.
     """
     path = os.path.join(folder, "best-practice.json")
     try:
         with open(path, encoding="utf-8") as f:
             held = json.load(f)
-    except OSError as e:
+    except (OSError, ValueError) as e:
         raise CantRun(f"the best practice {path} can't be read: {e}") from None
-    except ValueError as e:
-        raise Wrong(f"{path}: isn't JSON: {e}") from None
     try:
         return tuple(
             Practice(f"{condition['id']}.{number}", Phase(item["at"]))

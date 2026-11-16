@@ -10,7 +10,7 @@ import re
 from collections.abc import Mapping
 from typing import Any
 
-from fault import CantRun, Wrong
+from fault import Wrong
 
 # The test of each JSON type, as Python reads JSON, and its name in a message.
 _TYPES = {
@@ -25,14 +25,10 @@ _DOMAIN = os.path.dirname(os.path.abspath(__file__))
 
 
 def load(path: str) -> dict[str, Any]:
-    """The JSON Schema in the file at the path, from rn's domain/ where it's relative.
-
-    Raises CantRun where it can't be read, as a form rn ships is never the caller's to mend."""
-    try:
-        with open(os.path.join(_DOMAIN, path), encoding="utf-8") as f:
-            return json.load(f)
-    except (OSError, ValueError) as e:
-        raise CantRun(f"rn's form {path} can't be read: {e}") from None
+    """The JSON Schema in the file at the path, from rn's domain/ where it's relative. A form that
+    rn ships is never the caller's to mend, so a fault in reading it stops with its trace."""
+    with open(os.path.join(_DOMAIN, path), encoding="utf-8") as f:
+        return json.load(f)
 
 
 def hold(value: Any, schema: Mapping[str, Any], named: str) -> None:

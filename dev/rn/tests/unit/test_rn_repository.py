@@ -121,6 +121,18 @@ def test_a_push_with_no_remote_is_missing_it(tmp_path: Any) -> None:
         git.push(run.worktree, run.branch)
 
 
+@pytest.mark.supports("test_a_push_without_a_remote_says_what_is_missing")
+def test_a_push_to_a_remote_that_isnt_there_cant_run(tmp_path: Any) -> None:
+    """Given: a run's worktree in a repository whose remote origin names a folder that isn't there.
+    When: its branch is pushed.
+    Then: it couldn't run, with what git said."""
+    repo = d.repository(str(tmp_path))
+    d.git(repo, "remote", "add", "origin", os.path.join(str(tmp_path), "gone.git"))
+    run = d.run_of(repo)
+    with pytest.raises(CantRun, match="git push failed"):
+        git.push(run.worktree, run.branch)
+
+
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_file_is_given_as_a_commit_holds_it(tmp_path: Any) -> None:
     """Given: a run's worktree whose design tree was committed, then changed.

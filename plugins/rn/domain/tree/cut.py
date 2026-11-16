@@ -37,7 +37,8 @@ def next_start(
     """The Cut of the next start of a role.
 
     Takes: the run, its design tree, the role, and the run values of each start that runs.
-    Gives: for the tree-keeper, the Cut of the run's design tree; for the generator, the Cut of the
+    Gives: for the tree-keeper, the Cut of the run's design tree, or None while a start of it runs,
+    as the main conversation resumes that one with each change; for the generator, the Cut of the
     first deliverable doing that no start that runs holds and whose latest round is none, holds no
     Made yet, or keeps a More for the next round; for an evaluator, the Cut of the first group of
     necessary conditions, of the kind's best practice and then of the refactor one, of a deliverable
@@ -53,6 +54,8 @@ def next_start(
         raise Wrong(f"{role!r} is none of rn's roles, which are {', '.join(_ROLES)}")
     taken = [each["record"] for each in running if "record" in each]
     if role == "tree-keeper":
+        if any(records.role_of(each) == role for each in taken):
+            return None
         return _keeper(run, records.new_record(run, role, taken))
     due = _generator_due if role == "generator" else _evaluator_due
     for deliverable in turn.doing(tree):
@@ -98,7 +101,9 @@ def _generator_due(
     made = number and _there(run, rounds.path_in(run, deliverable, number, "made.json"))
     if not made:
         return rounds.start_name(deliverable, number or 1)
-    if rounds.kept_more(run, deliverable, number):
+    # Runs only once a round keeps a More, as in the case xfail until keep_more is built,
+    # test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator.
+    if rounds.kept_more(run, deliverable, number):  # pragma: no cover
         return rounds.start_name(deliverable, number + 1)
     return ""
 

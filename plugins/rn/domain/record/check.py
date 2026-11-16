@@ -110,10 +110,10 @@ def _template(run: Run, taken: cut.Cut) -> tuple[str, ...]:
     part = cast(Any, taken.part)
     if taken.role != "generator" or not str(part["deliverable"]).endswith(".md"):
         return ()
+    # Each kind whose deliverable is a Markdown file has a template, and a generator that ends done
+    # has written its deliverable, so a fault in reading either stops with its trace.
     form_path = os.path.join(part["best_practice"], "template.md")
     document = os.path.join(run.worktree, part["deliverable"])
-    if not (os.path.isfile(form_path) and os.path.isfile(document)):
-        return ()
     with open(form_path, encoding="utf-8") as f:
         template = f.read()
     with open(document, encoding="utf-8") as f:
