@@ -35,8 +35,10 @@ where either holds:
 that no step names.
 - Lane's guard stopped a call or an end that the role's step allows.
 A call that the guard stopped where the step doesn't allow it doesn't fail the run, as the run \
-then kept the step. Reply with JSON {{"keeps": true or false, "places": [<each place that fails \
-it: the role, its step, and what happened>]}}."""
+then kept the step. Reading a file, such as the plugin's own files, to do a step's work is that \
+step's work, not work that no step names, where the call writes nothing. Reply with JSON \
+{{"keeps": true or false, "places": [<each place that fails it: the role, its step, and what \
+happened>]}}."""
 
 
 @dataclass
