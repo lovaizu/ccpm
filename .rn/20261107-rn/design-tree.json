@@ -161,31 +161,178 @@
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/readme",
+        "plugins/rn/domain/template",
+        "dev/lane/architecture.md"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/architecture",
+        "plugins/rn/domain/template"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What Lane holds of a role's steps beyond its calls and its end",
+              "decided": "Lane gives four lane types that any plugin lays, each with inputs and outputs set by Lane's purpose and met by the plugin's own adapter, with no knowledge of any plugin: reads_whole holds a step until each path it names, with run values filled in, was read by Read over all its lines; reads_none stops a Read, Grep, Glob, or Bash command that reaches a path it names; keeps_steps, on a role's last step, has the role run step.py <role> <n> as each step ends, refuses a step out of order, and holds the end until each step is marked in the latest pass; keeps_items has the role run item.py <role> <id> as each item of a step's checklist is done, the items given by an adapter of the plugin that takes the role and the step and prints their IDs, and holds the step's mark until each is marked; step.py and item.py are let through by every lane type, as result.py is, and the guard keeps each mark in the run record at the PostToolUse of a run that gave 0. A self-report holds what no hook shows, as result.py does, while reads are checked from the calls, as hooks show them",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A builder whose plugin goes beyond the README's walkthrough finds each form of steps, routes, and adapters that Lane takes",
       "path": "plugins/lane/docs/steps-routes-adapters.md",
       "kind": "specific",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane/README.md"
+      ],
+      "preconditions": [
+        "dev/lane/architecture.md"
+      ],
+      "status": "open",
+      "check": "each form that Lane's architecture gives a plugin's steps, routes, and adapters is on the page, as the architecture names it",
+      "good": false,
+      "decisions": [
+        {
+          "about": "Why a page of its own",
+          "decided": "the forms beyond the walkthrough leave the README for this page, which its Documentation links, as the readme best practice links what a newcomer needs neither to decide nor to start",
+          "by": "reasoning"
+        }
+      ]
     },
     {
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md"
+      ],
+      "preconditions": [
+        "dev/lane/architecture.md"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md",
+        "dev/lane/architecture.md",
+        "plugins/lane"
+      ],
+      "preconditions": [
+        "dev/lane/architecture.md",
+        "plugins/lane"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
@@ -233,7 +380,40 @@
       "name": "A builder's /lane:up, typed or asked of an AI, proposes their plugin's lanes and routes from its steps alone, shows them as they'll read, and lays what the caller approves",
       "path": "plugins/lane/domain/up.md",
       "kind": "prompt",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane/README.md",
+        "plugins/lane/docs/steps-routes-adapters.md",
+        "dev/lane/tests"
+      ],
+      "preconditions": [
+        "dev/lane/tests/integration/test_s1_proposal.py",
+        "dev/lane/tests/integration/test_s2_approval.py",
+        "dev/lane/tests/integration/test_s3_s4_again.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin held by Lane runs as its maker designed it at the size of a real request, as the product vision's key results show",
