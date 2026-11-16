@@ -10,7 +10,7 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Broken, CantCheck, Held, Kept, TypeInfo, Verdict
+from lanes.kind import Broken, CantCheck, Held, Kept, Marking, TypeInfo, Verdict
 
 # The exit codes by which the shell says a command couldn't run: found but not executable, and not
 # found, as POSIX's Shell Command Language gives them.
@@ -72,6 +72,13 @@ class EndsChecked:
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
         return Kept()
+
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
+
+        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        """
+        raise NotImplementedError("ends_checked.check_mark")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept where `command` gives 0, run by the shell in the hook event's cwd with each run

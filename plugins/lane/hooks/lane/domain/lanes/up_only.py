@@ -1,5 +1,6 @@
 """What the lane types that hold only up share: their Lane lies only on up's Steps, takes no value,
-lays the sentence that lay.py types shows of its type as it stands, and checks no start."""
+lays the sentence that lay.py types shows of its type as it stands, and checks no start and no
+Mark."""
 
 from __future__ import annotations
 
@@ -9,7 +10,7 @@ from form import Lane, Route
 from place import StartCall
 from runs import Due
 
-from lanes.kind import Held, Kept, Verdict
+from lanes.kind import Held, Kept, Marking, Verdict
 
 # Each value that a Lane of these types takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. They take none.
@@ -47,3 +48,10 @@ class UpOnly:
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
         return Kept()
+
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
+
+        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        """
+        raise NotImplementedError("up_only.check_mark")

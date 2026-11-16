@@ -12,7 +12,7 @@ from manifest import plugin_name
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Broken, Held, Kept, TypeInfo, Verdict
+from lanes.kind import Broken, Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. A Lane of Routes takes none, as the Proposal's Routes hold
@@ -85,6 +85,13 @@ class Routes:
             return Kept()
         moves_due = answers.due(plugin_name(held.root), starts)
         return Broken(lane, self.sentence(lane, held.routes), moves_due)
+
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
+
+        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        """
+        raise NotImplementedError("routes.check_mark")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the main conversation's end is held by the moves due, which the guard checks.

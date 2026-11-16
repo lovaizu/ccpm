@@ -107,6 +107,49 @@ class PrintPosted:
 
 
 @dataclass(frozen=True)
+class StepAsked:
+    """A run of step.py, before it runs, as `script_calls.step_args` reads its command: the role
+    and the Step it marks."""
+
+    role: str
+    step: int
+
+
+@dataclass(frozen=True)
+class ItemAsked:
+    """A run of item.py, before it runs, as `script_calls.item_args` reads its command: the role
+    and the Item it marks."""
+
+    role: str
+    item: str
+
+
+@dataclass(frozen=True)
+class StepPosted:
+    """The PostToolUse of a run of step.py that gave 0: the role and the Step it marked."""
+
+    role: str
+    step: int
+
+
+@dataclass(frozen=True)
+class ItemPosted:
+    """The PostToolUse of a run of item.py that gave 0: the role and the Item it marked."""
+
+    role: str
+    item: str
+
+
+@dataclass(frozen=True)
+class ReadPosted:
+    """The PostToolUse of a Read: the Call, and the first and the last line it read."""
+
+    call: Call
+    first: int
+    last: int
+
+
+@dataclass(frozen=True)
 class EndAsked:
     """The main conversation's end of its turn, or a subagent's end, with its last message."""
 
@@ -122,6 +165,11 @@ What = Union[
     AgentPosted,
     ResultPosted,
     PrintPosted,
+    StepAsked,
+    ItemAsked,
+    StepPosted,
+    ItemPosted,
+    ReadPosted,
     EndAsked,
 ]
 
@@ -142,12 +190,15 @@ def place(event: Event, conversation: Conversation, lanes: LanesFile, root: str)
     """The event as Lane's data, on its Runs and its Start.
 
     Takes: the event, the Conversation as it stands, the plugin's lanes.json, and the plugin's
-    folder, by which `script_calls.result_args` reads a run of its result script.
+    folder, by which `script_calls.result_args`, `step_args`, and `item_args` read a run of its
+    scripts.
     Gives: what the event is, with no `what` for an event that Lane hooks only for another state,
     a call by the Skill tool being a SkillCall by an AI, save one of another plugin's skill that a
-    Run holds and no move due names, which is a ToolCall, and a SendMessage to the subagent of a
-    role's Start a StartCall that resumes that role; for the main conversation's event, each Run of
-    the conversation that hasn't ended and isn't aside, and, for its end or a prompt, each Run that
+    Run holds and no move due names, which is a ToolCall, a SendMessage to the subagent of a role's
+    Start a StartCall that resumes that role, a run of step.py or item.py a StepAsked or an
+    ItemAsked, its PostToolUse a StepPosted or an ItemPosted, and the PostToolUse of a Read a
+    ReadPosted, with the lines it read; for the main conversation's event, each Run of the
+    conversation that hasn't ended and isn't aside, and, for its end or a prompt, each Run that
     its skill's Result ended in the turn (`Run.closing`), and, for a start, each Run aside whose
     moves due start its role; for a subagent's event, the Run of the Start tied to its agent_id;
     for a call of lay.py write, the Run of up that showed its ID; for what lay.py print showed, the

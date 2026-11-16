@@ -1,6 +1,6 @@
 """How each Run of a conversation stands, worked out from the run record's lines, the Routes, and
-the Kept results alone: its Starts, its Results, its Approvals, the moves due, and whether it waits,
-stands aside, or has ended."""
+the Kept results alone: its Starts, its Results, its Approvals, each role's Marks and Reads, the
+moves due, and whether it waits, stands aside, or has ended."""
 
 from __future__ import annotations
 
@@ -18,7 +18,10 @@ from run_record import (
     Ended,
     Gave,
     Line,
+    Marked,
     Prompted,
+    Read,
+    Report,
     Shown,
     Started,
     SteppedAside,
@@ -30,7 +33,9 @@ from run_record import (
 )
 
 # Each line of a Run's record after its call.
-Moving = Union[Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside, TextFailed, TextGiven]
+Moving = Union[
+    Prompted, Shown, Started, Tied, Gave, Marked, Read, Ended, SteppedAside, TextFailed, TextGiven
+]
 
 
 class OffRoutes(Exception):
@@ -49,8 +54,9 @@ class Result:
 @dataclass(frozen=True)
 class Start:
     """One start or resume of a role in the Run: its role, text, and run values, the call that made
-    it, the agent_id it's tied to once tied, each Result it gave, whether it has ended, and whether
-    it resumes a subagent that a Start before it started."""
+    it, the agent_id it's tied to once tied, each Result it gave, whether it has ended, whether it
+    resumes a subagent that a Start before it started, and each Mark and Read of its subagent, in
+    the order the record added them."""
 
     role: str
     text: str
@@ -60,6 +66,7 @@ class Start:
     results: tuple[str, ...]
     ended: bool
     resumed: bool = False
+    reports: tuple[Report, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -95,7 +102,8 @@ class Run:
     Result ended it and no prompt has been typed since, so that the end of that turn is still held
     by the skill's Lanes; `awaiting` where the adapter of a start's text failed at the skill's call
     and hasn't answered since, so that the guard asks it again after each call of the main
-    conversation."""
+    conversation; `reports`, each Mark and Read of the main conversation for the skill, in the
+    order the record added them."""
 
     id: str
     skill: str
@@ -110,6 +118,16 @@ class Run:
     ended: bool
     closing: bool = False
     awaiting: bool = False
+    reports: tuple[Report, ...] = ()
+
+
+@dataclass(frozen=True)
+class Marker:
+    """One whose Marks a script of Lane's takes for a role: a Start of the role that runs, or, for
+    the skill, its Run, by its run values and each Mark and Read it made."""
+
+    values: Mapping[str, str]
+    reports: tuple[Report, ...]
 
 
 @dataclass(frozen=True)
@@ -132,7 +150,8 @@ def stand(
     each prompt typed, a Route after the plugin's command typed taking the place of those
     before, a start staying due beside each Start it made, as the guard gives it where the adapter
     gives a text other than theirs, a resume taken by its Start, and a start whose subagent ended
-    with no Result due again; `awaiting` from the adapter's failure at the skill's call until it
+    with no Result due again; each Mark and Read on the Start whose agent_id it gives, or, with
+    none, on the skill's Run; `awaiting` from the adapter's failure at the skill's call until it
     answers; a Run ended, and closing,
     by the skill's own Result where a move due starts no more by it, until a prompt is typed; a
     Run aside from the call of another plugin's skill, with the moves of the Route after that call
@@ -159,7 +178,7 @@ def _called(line: Called, routes: Sequence[Route]) -> Run:
 
 def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
     """The Run after one more line of its record."""
-    if isinstance(line, (Started, Tied, Ended)):
+    if isinstance(line, (Started, Tied, Ended, Marked, Read)):
         return _of_start(run, line)
     if isinstance(line, Gave):
         return _gave(run, line, routes)
@@ -172,9 +191,16 @@ def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
     return dataclasses.replace(run, shown=(*run.shown, line))
 
 
-def _of_start(run: Run, line: Started | Tied | Ended) -> Run:
+def _reported(run: Run, line: Report) -> Run:
+    """The Run after a Mark or a Read: on the Start whose agent_id the line gives, or, with none,
+    on the Run itself, as the skill's."""
+    raise NotImplementedError("runs._reported")
+
+
+def _of_start(run: Run, line: Started | Tied | Ended | Report) -> Run:
     """The Run after a Start, which ends its standing aside and takes the resume it makes, while a
-    start stays due beside it; its tie to an agent_id; or its subagent's end."""
+    start stays due beside it; its tie to an agent_id; its subagent's Mark or Read; or its
+    subagent's end."""
     if isinstance(line, Started):
         start = Start(
             line.role, line.text, line.values, line.tool_use_id, None, (), False, line.resumed
@@ -191,6 +217,8 @@ def _of_start(run: Run, line: Started | Tied | Ended) -> Run:
             for s in run.starts
         )
         return dataclasses.replace(run, starts=starts)
+    if isinstance(line, (Marked, Read)):
+        return _reported(run, line)
     return _ended(run, line)
 
 
@@ -270,7 +298,9 @@ def where(root: str, session_id: str) -> Conversation:
     Changes: nothing.
     Refuses: run_record.Unreadable, and form.OutOfForm or FileNotFoundError for lanes.json, so
     that the script refuses with why.
-    Carries: S2 `L->>G: asks where up's Run stands`, S6 `R->>G: asks where each Run stands`.
+    Carries: S2 `L->>G: asks where up's Run stands`, S6 `R->>G: asks where each Run stands`, and,
+    through `markers`, S6 `SP->>G: asks where the role's Marks stand` and `IP->>G: asks for the
+    Step due and its Items`.
     """
     lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
     name = plugin_name(root)
@@ -302,6 +332,22 @@ def may_give(conversation: Conversation, role: str, routes: Sequence[Route]) -> 
                 and r.after.result
             ]
     return tuple(dict.fromkeys(given))
+
+
+def markers(conversation: Conversation, role: str) -> tuple[Marker, ...]:
+    """Each one whose Marks a script of Lane's takes for the role now.
+
+    Takes: the Conversation, and the role or skill that the script names.
+    Gives: for a role, each Start of it that runs, in a Run that hasn't ended; for the skill, each
+    Run of it that hasn't ended; each by its run values and its Marks and Reads; none where none
+    runs. The script can't tell which of several gives it, as its environment names no subagent;
+    dev/lane/skeleton-gaps.md holds that gap.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S6 `SP->>G: asks where the role's Marks stand` and `IP->>G: asks for the Step due and
+    its Items`.
+    """
+    raise NotImplementedError("runs.markers")
 
 
 def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> tuple[Result, ...]:

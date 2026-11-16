@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.join(HERE, "domain"))
 from form import OutOfForm, read_lanes
 from run_record import Unreadable
 from runs import may_give, where
+from shell import run
 
 
 def main(argv: Sequence[str], env: Mapping[str, str], root: str) -> tuple[int, str, str]:
@@ -50,7 +51,4 @@ def main(argv: Sequence[str], env: Mapping[str, str], root: str) -> tuple[int, s
 
 
 if __name__ == "__main__":
-    code, out, err = main(sys.argv[1:], os.environ, os.path.dirname(os.path.dirname(HERE)))
-    sys.stdout.write(out)
-    sys.stderr.write(err)
-    raise SystemExit(code)
+    run(main, HERE)

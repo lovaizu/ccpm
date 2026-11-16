@@ -1,7 +1,7 @@
 """The words of a run of Lane's own scripts, as a role types it and the guard reads it in a Bash
 command: lay.py print with the line of its output that names a Proposal's ID, lay.py write with
-its plugin and ID, and result.py with its role and Result, so that whoever writes them and whoever
-reads them hold one form."""
+its plugin and ID, result.py with its role and Result, step.py with its role and Step, and item.py
+with its role and Item, so that whoever writes them and whoever reads them hold one form."""
 
 from __future__ import annotations
 
@@ -116,6 +116,61 @@ def result_args(command: str, root: str) -> tuple[str, str] | None:
     if len(words) == 4 and words[0] == "python3" and os.path.normpath(words[1]) == script:
         return words[2], words[3]
     return None
+
+
+def step_command(role: str) -> str:
+    """The command by which a role marks a Step done, as the sentence of keeps_steps names it.
+
+    Takes: the role or skill.
+    Gives: `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/step.py <role> <n>`, `<n>` standing for the
+    Step's number, which the role fills in.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S1 `L->>T: checks each Lane, and makes its sentence`, for a Lane of keeps_steps.
+    """
+    raise NotImplementedError("script_calls.step_command")
+
+
+def step_args(command: str, root: str) -> tuple[str, int] | None:
+    """The role and the Step that a Bash command marks by the plugin's step.py.
+
+    Takes: the Bash command, and the plugin's folder, which `${CLAUDE_PLUGIN_ROOT}` names.
+    Gives: the role and the Step's number, or None where the command isn't one run of the
+    plugin's step.py with a role and a whole number of 1 or more.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S6 `alt a run of step.py <role> <n>`, and its `CC->>G: the PostToolUse, with its
+    agent_id`; S5's Note that the skill's runs of step.py go as S6 draws.
+    """
+    raise NotImplementedError("script_calls.step_args")
+
+
+def item_command(role: str) -> str:
+    """The command by which a role marks an Item of a Step done, as the sentence of keeps_items
+    names it.
+
+    Takes: the role or skill.
+    Gives: `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/item.py <role> <id>`, `<id>` standing for the
+    Item's ID, which the role fills in.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S1 `L->>T: checks each Lane, and makes its sentence`, for a Lane of keeps_items.
+    """
+    raise NotImplementedError("script_calls.item_command")
+
+
+def item_args(command: str, root: str) -> tuple[str, str] | None:
+    """The role and the Item that a Bash command marks by the plugin's item.py.
+
+    Takes: the Bash command, and the plugin's folder, which `${CLAUDE_PLUGIN_ROOT}` names.
+    Gives: the role and the Item's ID, or None where the command isn't one run of the plugin's
+    item.py with two arguments.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S6 `else a run of item.py <role> <id>`, and its `CC->>G: the PostToolUse, with its
+    agent_id`; S5's Note that the skill's runs of item.py go as S6 draws.
+    """
+    raise NotImplementedError("script_calls.item_args")
 
 
 def _words(command: str) -> list[str]:

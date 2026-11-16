@@ -12,7 +12,7 @@ from place import Call, EndAsked, StartCall
 from runs import Due
 from script_calls import result_args, result_command
 
-from lanes.kind import Broken, Held, Kept, TypeInfo, Verdict
+from lanes.kind import Broken, Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. It takes none, as the Routes name each Result that its
@@ -89,6 +89,13 @@ class EndsByResult:
         if held.start is not None and asked.ours:
             return self._broken(lane, held)
         return Kept()
+
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
+
+        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        """
+        raise NotImplementedError("ends_by_result.check_mark")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Broken, with the Lane's sentence and `ALONE`, where the subagent's Start holds no

@@ -1,6 +1,8 @@
-"""How the lane types join to judge a Lane, a start, a Call, or an end: each type found by its name
-among the modules of lanes/, a Call kept where one Lane of each lane type allows it and the end's
-result script kept by every type, and a start or an end kept where it keeps every Lane."""
+"""How the lane types join to judge a Lane, a start, a Call, a Mark, or an end: each type found by
+its name among the modules of lanes/, a Call kept where one Lane of each lane type allows it and
+the end's result script kept by every type, a start or an end kept where it keeps every Lane, a
+Mark of a Step kept where it keeps every Lane on that Step, and a Read kept where a Lane of
+reads_whole names its path."""
 
 from __future__ import annotations
 
@@ -13,7 +15,7 @@ from place import Call, EndAsked, StartCall
 from runs import Due
 
 from lanes import ends_by_result
-from lanes.kind import Broken, CantCheck, Held, Kept, LaneType, TypeInfo, Verdict
+from lanes.kind import Broken, CantCheck, Held, Kept, LaneType, Marking, TypeInfo, Verdict
 
 
 class LaneRefused(Exception):
@@ -137,6 +139,50 @@ def _filled(said: str, held: Held) -> str:
     """The words with the plugin's folder in place of `${CLAUDE_PLUGIN_ROOT}`, as a stop reaches
     the role."""
     return said.replace("${CLAUDE_PLUGIN_ROOT}", held.root)
+
+
+def needs_items(lanes: Sequence[Lane], step: int) -> bool:
+    """Whether a Mark of the Step needs the Step's Items from the adapter.
+
+    Takes: the role's Lanes, and the Step's number.
+    Gives: True where a Lane of keeps_items lies on the Step; else False.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S6 `opt a Lane of keeps_items lies on Step n`.
+    """
+    raise NotImplementedError("lanes.needs_items")
+
+
+def check_mark(lanes: Sequence[Lane], marking: Marking, held: Held) -> Verdict:
+    """The check of a Mark of a Step by each Lane on that Step.
+
+    Takes: the role's Lanes; the Mark asked, with the Reads and Marks since the Step began and the
+    Step's Items; and what it's held to, the Start's run values among it.
+    Gives: Kept where every Lane on the Step keeps it, and where no Lane lies on it; else the
+    first Broken, with the Lane's sentence and what the Step lacks, such as a path not read whole
+    or an Item not marked; CantCheck where a Lane can't judge it, such as a file it can't read.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S6 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since the
+    Step began`, and its `else a path a Lane of reads_whole names wasn't read whole, or an Item
+    isn't marked`.
+    """
+    raise NotImplementedError("lanes.check_mark")
+
+
+def read_kept(lanes: Sequence[Lane], call: Call, held: Held) -> str | None:
+    """The path that a Read reads, where a Lane of reads_whole names it, so that the guard adds the
+    Read.
+
+    Takes: the role's Lanes, the Call of a Read's PostToolUse, and what it's held to, the Start's
+    run values among it.
+    Gives: the path as the Lane names it, with the run values filled in; None where the Call isn't
+    a Read or no Lane of reads_whole names its path.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S6 `opt a Read of a path that a Lane of reads_whole names`.
+    """
+    raise NotImplementedError("lanes.read_kept")
 
 
 def check_end(lanes: Sequence[Lane], end: EndAsked, held: Held) -> Verdict:

@@ -195,7 +195,17 @@
         {
           "id": "N2",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where a Mark is checked",
+              "decided": "the guard checks a Step's or an Item's Mark at the PreToolUse of the step.py or item.py call, by its agent_id, as the architecture's S6 now draws; step.py and item.py only exit 0, so runs.markers and the scripts' checks move to the guard",
+              "by": "reasoning"
+            },
+            {
+              "about": "The lines a Read read",
+              "decided": null
+            }
+          ]
         }
       ]
     },

@@ -84,6 +84,33 @@ class Gave:
 
 
 @dataclass(frozen=True)
+class Marked:
+    """A Mark given by step.py or item.py that gave 0: the role or skill, the Step it marks, or for
+    an Item the Step due as it was marked, the Item's ID, None for a Step's Mark, and the
+    subagent's agent_id, None where the main conversation gave it."""
+
+    run: str
+    role: str
+    step: int
+    item: str | None
+    agent_id: str | None
+
+
+@dataclass(frozen=True)
+class Read:
+    """A Read of a path that a Lane of reads_whole names, as its PostToolUse gave it: the role or
+    skill, the path as the Lane names it with the run values filled in, the first and the last
+    line it read, and the subagent's agent_id, None where the main conversation read it."""
+
+    run: str
+    role: str
+    path: str
+    first: int
+    last: int
+    agent_id: str | None
+
+
+@dataclass(frozen=True)
 class Ended:
     """A subagent's end as it reached the main conversation, and whether TaskStop stopped it."""
 
@@ -119,8 +146,21 @@ class TextGiven:
 
 
 Line = Union[
-    Called, Prompted, Shown, Started, Tied, Gave, Ended, SteppedAside, TextFailed, TextGiven
+    Called,
+    Prompted,
+    Shown,
+    Started,
+    Tied,
+    Gave,
+    Marked,
+    Read,
+    Ended,
+    SteppedAside,
+    TextFailed,
+    TextGiven,
 ]
+# What a role did on its Steps that the record keeps, in the order added: each Mark and each Read.
+Report = Union[Marked, Read]
 # Each kind of line, by the name that a line of the record gives as its `kind`.
 _KINDS = {
     kind.__name__: kind
@@ -131,6 +171,8 @@ _KINDS = {
         Started,
         Tied,
         Gave,
+        Marked,
+        Read,
         Ended,
         SteppedAside,
         TextFailed,
@@ -183,7 +225,8 @@ def lines(path: str) -> tuple[Line, ...]:
     Gives: its lines, none where the record isn't there yet.
     Changes: nothing.
     Refuses: Unreadable.
-    Carries: S2 `G->>RS: reads the lines`, S6 `G->>RS: reads the lines, for its Start and Run`.
+    Carries: S2 `G->>RS: reads the lines`, S6 `G->>RS: reads the lines, for its Start, its Marks,
+    and its Run`.
     """
     if not os.path.exists(path):
         return ()

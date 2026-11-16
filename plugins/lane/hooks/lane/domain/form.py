@@ -81,10 +81,12 @@ class Route:
 @dataclass(frozen=True)
 class Adapters:
     """The adapters that lanes.json names, each a path under the plugin's hooks/adapters/: the one
-    that gives a start's text, and the one that gives the Kept results."""
+    that gives a start's text, the one that gives the Kept results, and the one that gives a Step's
+    Items."""
 
     text: str | None
     records: str | None
+    items: str | None = None
 
 
 @dataclass(frozen=True)

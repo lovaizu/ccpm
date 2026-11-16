@@ -1,7 +1,7 @@
 """What the guard does on each hook event: which line it adds to the run record, which check it asks
 of the lane types or the adapter, and what it answers, by Lane's rules that only the main
-conversation starts the roles, that a Run moves only on a Result from result.py, and that the guard
-checks only within a Run."""
+conversation starts the roles, that a Run moves only on a Result from result.py, that what no hook
+shows comes only from Lane's scripts, and that the guard checks only within a Run."""
 
 from __future__ import annotations
 
@@ -77,10 +77,25 @@ def handle(event: Event, root: str) -> Answer:
     - the PostToolUse of result.py that gave 0 (S2, S5, S6): adds the Result, for the subagent's
       Start where it has an agent_id;
     - the PostToolUse of lay.py print (S1): adds what it showed, with the Proposal's ID;
+    - a run of step.py (S5's Note, S6): asks the adapter of a step's items for the Step's Items,
+      with the role, the Step, and the Start's run values, where `lanes.needs_items` gives True;
+      checks the Mark by `lanes.check_mark` with the Lanes of the role and the Reads and Marks that
+      `marks.since_step_began` gives; and stops it with why and who must fix it where the adapter
+      fails, with the Lane's sentence and what the Step lacks where a Lane is broken, or lets it
+      through;
+    - a run of item.py (S5's Note, S6): lets it through, as item.py itself takes or refuses the
+      Item;
+    - the PostToolUse of step.py or item.py that gave 0 (S5's Note, S6): adds the Mark, an Item's
+      with the Step that `marks.step_due` gives as it's marked, for the subagent's Start where it
+      has an agent_id, else for the skill's Run;
+    - the PostToolUse of a Read of a path that `lanes.read_kept` gives (S5's Note, S6): adds the
+      Read, with the lines it read, for the subagent's Start where it has an agent_id, else for the
+      skill's Run;
     - any other call (S2, S5, S6): checks it by each Lane of each Run that holds it, and lets it
       through or stops it with the Lane's sentence and what the role may do;
     - a subagent's end (S6): checks it by each Lane of the role, and stops it with a broken Lane's
-      sentence, that of the Lane on its last Step where it gave no Result since its Start;
+      sentence, that of the Lane on its last Step where it gave no Result since its Start, and that
+      of keeps_steps with the Step due where a Step is unmarked in the latest pass;
     - a subagent's end reaching the main conversation (S5): adds the end, and answers the Result and
       the moves of its Route, or, ended with no Result, its start due again;
     - the main conversation's end of its turn (S2, S5): stops it with the moves due where a move is
@@ -99,7 +114,8 @@ def handle(event: Event, root: str) -> Answer:
     except an adapter of a start's text that fails at the skill's call, whose start it gives with
     why while it lets the call run, adding that it failed, and one that fails as a subagent's end
     reaches the main conversation, whose why and who it gives in place of the moves.
-    Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, and S5 `G->>G: leaves that
+    Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, S6 `G->>A: asks for the Step's
+    Items`, and S5 `G->>G: leaves that
     start out of the moves due, with why in its place` and `G->>G: gives that start with why, and
     lets the call run`, with the Notes after it and after the tie of a Start.
     """

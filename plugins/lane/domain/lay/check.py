@@ -3,7 +3,8 @@ that its type refuses, a Step it names that isn't there, or a role that a Route 
 with no `ends_by_result` Lane on its last Step is up's, and a plugin's file that can't carry the
 Proposal is the user's, such as a Route's command that the model may call, an adapter in
 hooks/adapters/ that the Proposal doesn't name, a file of Steps that two roles share, or a
-subagent's file that doesn't set `background: true`."""
+subagent's file that doesn't set `background: true`; a Lane of reads_whole or keeps_items on a role
+with no Lane of keeps_steps, or of keeps_items with no adapter of a step's items, is up's too."""
 
 from __future__ import annotations
 
@@ -37,12 +38,15 @@ def check(plugin: str, proposal: Proposal, steps: Sequence[Step]) -> Checked | F
 
     Takes: the plugin's folder, the Proposal, and the Steps without the Laid's text.
     Gives: Checked, with each Lane's sentence from `lanes.sentence` with its role's last Step and
-    the Proposal's Routes; or Faults, where a Lane is refused, or the skill of a Route or a role
-    that a Route starts has no Lane of `ends_by_result`, each fault naming the role and the lane
-    type; and where a subagent that a Route starts doesn't set `background: true`, a command that
-    a Route waits for or goes after doesn't set `disable-model-invocation: true`, hooks/adapters/
-    holds a file that the Proposal's adapters don't name, or one file holds the Steps of two roles,
-    each fault of the plugin naming the file and what to fix in it.
+    the Proposal's Routes; or Faults, where a Lane is refused, the skill of a Route or a role that
+    a Route starts has no Lane of `ends_by_result`, a role with a Lane of `reads_whole` or
+    `keeps_items` has no Lane of `keeps_steps`, as only its Marks bound a Step, or a Lane of
+    `keeps_items` lies in a Proposal that names no adapter of a step's items, each fault naming
+    the role and the lane type; and where a subagent that a Route starts doesn't set
+    `background: true`, a command that a Route waits for or goes after doesn't set
+    `disable-model-invocation: true`, hooks/adapters/ holds a file that the Proposal's adapters
+    don't name as that of a start's text, of the kept results, or of a step's items, or one file
+    holds the Steps of two roles, each fault of the plugin naming the file and what to fix in it.
     Changes: nothing.
     Refuses: nothing.
     Carries: S1 `L->>T: checks each Lane, and makes its sentence`, `L->>ST: checks the Proposal

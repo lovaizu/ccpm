@@ -308,6 +308,10 @@
         "records": {
           "description": "The adapter that gives the Kept results.",
           "type": "string"
+        },
+        "items": {
+          "description": "The adapter that gives the Items of a Step's checklist.",
+          "type": "string"
         }
       }
     }

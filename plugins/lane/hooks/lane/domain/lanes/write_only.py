@@ -10,7 +10,7 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, Kept, TypeInfo, Verdict
+from lanes.kind import Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
@@ -78,6 +78,13 @@ class WriteOnly:
         Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
         return Kept()
+
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
+
+        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        """
+        raise NotImplementedError("write_only.check_mark")
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.
