@@ -226,6 +226,11 @@
           "about": "The README after the E2E test",
           "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short, as the README was made before the product existed",
           "by": "reasoning"
+        },
+        {
+          "about": "How the walkthrough's writer learns the reviewer's findings",
+          "decided": "the reviewer writes what each wrong entry lacks into REVIEW.md, under a write_only Lane, and the writer reads REVIEW.md where it exists, as a subagent gets nothing of the talk that started it and reads what it needs by its steps, as plugins/lane/docs/steps-routes-adapters.md says, so Lane's signed-off Start stays as it is",
+          "by": "reasoning"
         }
       ]
     },

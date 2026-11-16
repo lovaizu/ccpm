@@ -68,7 +68,7 @@ background: true
 
 ## Steps
 
-1. Read `CHANGELOG.md` to learn its last version and its form.
+1. Read `CHANGELOG.md` to learn its last version and its form, and `REVIEW.md`, where it exists, to learn what the entries lack.
 2. Read the commits since then with `git log --oneline`.
 3. Write the new entries into `CHANGELOG.md`.
 4. Reply with the entries you wrote.
@@ -85,7 +85,8 @@ background: true
 ## Steps
 
 1. Read the new entries in `CHANGELOG.md` against the commits they name.
-2. Give `more` when an entry needs the writer again, and `good` when every entry is right.
+2. Write into `REVIEW.md` what each wrong entry lacks, or leave it empty when every entry is right.
+3. Give `more` when an entry needs the writer again, and `good` when every entry is right.
 ```
 
 You type:
@@ -116,11 +117,13 @@ Lanes of writer, each checked only in writer:
 4. Reply with the entries you wrote. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`.
 
 Lanes of reviewer, each checked only in reviewer:
-  step 2  end: End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`.
+  step 2  write: Write only `REVIEW.md`.  type write_only
+  step 3  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`.
 
-2. Give `more` when an entry needs the writer again, and `good` when every entry is right. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`.
+2. Write into `REVIEW.md` what each wrong entry lacks, or leave it empty when every entry is right. Write only `REVIEW.md`.
+3. Give `more` when an entry needs the writer again, and `good` when every entry is right. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`.
 
-ID: b9fd8fd8
+ID: 6d9b4389
 Reply yes to lay these into changelog, or say what to change.
 ```
 
@@ -135,7 +138,7 @@ Lane shows:
 ```text
 Wrote step 1 of write into skills/write/SKILL.md.
 Wrote steps 2, 3 and 4 of writer into agents/writer.md.
-Wrote step 2 of reviewer into agents/reviewer.md.
+Wrote steps 2 and 3 of reviewer into agents/reviewer.md.
 Wrote the checks of write, writer and reviewer into hooks/hooks.json.
 Wrote the lanes laid and the routes into hooks/lanes.json.
 Put lane's code in hooks/lane/.
