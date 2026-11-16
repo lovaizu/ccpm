@@ -162,8 +162,8 @@ Strategies:
   An evaluator's answer to each necessary condition of its group, apart from the user's answer to a
   Point.
 - More kept\
-  An evaluator's `more`, by its best practice and necessary condition, that the orchestrator judged
-  the people fall short by, with the decision it changes, for the next round's generator.
+  An evaluator's `more` the orchestrator kept for the next round, naming its best practice, condition,
+  and the decision it changes.
 - Record\
   What one start of a role, or the orchestrator, carried out, apart from a Try record of commands
   tried.
