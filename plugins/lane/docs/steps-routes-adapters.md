@@ -14,9 +14,8 @@ This page is for you when your plugin's steps go beyond the [README](../README.m
 
 ## A step that already says its rule
 
-Where a step already says a rule, word for word, Lane doesn't add the sentence again. The same goes
-for a step that names a command of your own that checks how it ends. So the subagent reads each
-rule once, with the reason you give it.
+Where a step already says a rule's sentence, word for word, Lane doesn't add it again. So the
+subagent reads each rule once, with the reason you give it.
 
 ## A step that ends on your own check
 
