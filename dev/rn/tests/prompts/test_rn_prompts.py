@@ -139,9 +139,10 @@ def results_of(b: w.Bench, role: str) -> list[str]:
     return [found for c in bash_run(b) for found in re.findall(rf"result\.py {role} (\w+)", c)]
 
 
-def bash_run(b: w.Bench) -> list[str]:
-    """Each command that a run of Claude Code on the bench ran by Bash, from its transcripts."""
-    commands = []
+def calls(b: w.Bench) -> list[tuple[str, dict[str, Any]]]:
+    """Each tool call of a run of Claude Code on the bench, by the tool's name with its input, from
+    its transcripts."""
+    made = []
     for path in glob.glob(
         os.path.join(b.temp, "config", "projects", "**", "*.jsonl"), recursive=True
     ):
@@ -149,9 +150,14 @@ def bash_run(b: w.Bench) -> list[str]:
             for line in f:
                 content = json.loads(line).get("message", {}).get("content")
                 for each in content if isinstance(content, list) else []:
-                    if each.get("type") == "tool_use" and each.get("name") == "Bash":
-                        commands.append(each["input"].get("command", ""))
-    return commands
+                    if each.get("type") == "tool_use":
+                        made.append((each.get("name", ""), each.get("input", {})))
+    return made
+
+
+def bash_run(b: w.Bench) -> list[str]:
+    """Each command that a run of Claude Code on the bench ran by Bash."""
+    return [str(given.get("command", "")) for name, given in calls(b) if name == "Bash"]
 
 
 @pytest.mark.supports("test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first")
@@ -371,3 +377,75 @@ def test_the_tree_keeper_hands_back_a_change_out_of_form_unwritten(tmp_path: Any
     assert tree_of(started) == before
     assert results_of(b, "tree-keeper")[-1:] == ["done"]
     assert "deliverables/0/status" in printed
+
+
+@pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
+@pytest.mark.parametrize("run", range(RUNS))
+def test_the_evaluator_answers_its_group_with_only_what_the_people_have(
+    tmp_path: Any, run: int
+) -> None:
+    """Given: a plan of invoicer.__version__, with the user's decision on the version it gives,
+    signed off; its generator's work, the version in invoicer/__init__.py, committed, with its
+    Made; and the first evaluator's Cut, as its adapter gives it.
+    When: the evaluator runs alone with the Cut as its prompt.
+    Then: its Answers answer each condition of its group, and it opened none of the design tree,
+    the Made, and the records but by rn's scripts, as the people never see what the maker meant."""
+    b = w.bench(str(tmp_path))
+    versioned = w.deliverable(VERSIONED, "invoicer/__init__.py")
+    versioned["necessary_conditions"][0]["decisions"] = [SAME_VERSION]
+    started = planned_run(b, w.plan(versioned))
+    signed_off(b, started)
+    worktree, cut = started["worktree"], w.cut_of(start_text(b, started))
+    with open(os.path.join(worktree, "invoicer", "__init__.py"), "a", encoding="utf-8") as f:
+        f.write('\n__version__ = "1.4.0"\n')
+    tree_py(b, "commit", cut["record"], "4", cwd=worktree)
+    decided = [
+        {"path": e["decision"]["path"], "where": cut["deliverable"]}
+        for e in cut["cut"]["decisions"]
+    ]
+    made = {"decisions": decided, "more": [], "settled": []}
+    with open(os.path.join(worktree, cut["made"]), "w", encoding="utf-8") as f:
+        json.dump(made, f)
+    tree_py(b, "commit", cut["record"], "6", cwd=worktree)
+    text = start_text(b, started, "evaluator")
+    judged = w.cut_of(text)
+    claude(b, worktree, text, "rn:evaluator")
+    with open(os.path.join(worktree, judged["answers"]), encoding="utf-8") as f:
+        answers = json.load(f)
+    answered = {each["question"] for each in answers["good"] + answers["more"]}
+    assert answered == set(judged["conditions"])
+    assert not opened_of_the_maker(b)
+
+
+def opened_of_the_maker(b: w.Bench) -> list[str]:
+    """Each call of a run on the bench that opens the design tree, a Made, or a record but by
+    rn's own scripts: a read by a tool, or a part of a Bash command, its variables filled in."""
+    maker = ("design-tree.json", "made.json", "/records/")
+    found = []
+    for name, given in calls(b):
+        if name in ("Read", "Grep", "Glob"):
+            parts = [json.dumps(given)]
+        elif name == "Bash":
+            parts = command_parts(str(given.get("command", "")))
+        else:
+            continue
+        found += [p for p in parts if any(m in p for m in maker)]
+    return found
+
+
+def command_parts(command: str) -> list[str]:
+    """Each part of a Bash command that runs a program other than rn's record.py and tree.py, each
+    variable that an earlier part sets filled in."""
+    values: dict[str, str] = {}
+    parts = []
+    for part in re.split(r"&&|\|\||;|\||\n", command):
+        part = part.strip()
+        set_here = re.fullmatch(r"(\w+)=(\S+)", part)
+        if set_here:
+            values[set_here[1]] = set_here[2].strip("'\"")
+            continue
+        for key, value in values.items():
+            part = part.replace(f"${key}", value).replace(f"${{{key}}}", value)
+        if part and not re.search(r"(record|tree)\.py\b", part):
+            parts.append(part)
+    return parts
