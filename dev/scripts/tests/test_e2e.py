@@ -53,7 +53,9 @@ def refused(text: Any) -> dict[str, Any]:
     return {"type": "user", "parent_tool_use_id": None, "message": {"content": content}}
 
 
-class E2ERunnerTest(FolderTest):
+class E2EBase(FolderTest):
+    """A repository in place of GitHub's, and the double on the PATH as `claude`."""
+
     def setUp(self) -> None:
         super().setUp()
         self.remote = os.path.join(self.base, "remote.git")
@@ -129,6 +131,8 @@ class E2ERunnerTest(FolderTest):
         self.assertIn(why, err)
         self.assertEqual(os.listdir(self.temp), [], "the test left its temporary folder")
 
+
+class E2ERunnerTest(E2EBase):
     # Refusals
 
     def test_a_test_without_the_developers_login_is_refused(self):
@@ -562,3 +566,119 @@ class E2ERunnerTest(FolderTest):
             code, _, _ = self.main("hook", "events.jsonl")
         self.assertEqual(code, 0)
         self.assertEqual(json.loads(self.read("events.jsonl"))["unread"], "{")
+
+
+class E2ETryTest(E2EBase):
+    """`e2e.py try`: a stand-in of a deliverable's people tries it on a checkout of a run's branch,
+    with only what those people have."""
+
+    BRANCH = "rn-20261117-invoices"
+
+    def setUp(self) -> None:
+        super().setUp()
+        branches = {self.BRANCH: {"tally.py": "print('tallied')\n"}}
+        self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"branches": branches}])
+        self.run_test()
+        self.made = self.records()
+        os.remove("calls.jsonl")
+        self.given: dict[str, Any] = {
+            "branch": self.BRANCH,
+            "intent": "You want an invoice for the lines in lines.csv.",
+            "has": "a terminal at the repository, and the command `python3 tally.py`",
+            "files": {"lines.csv": "Hosting;40.00;1\n"},
+        }
+
+    def try_it(self, turn: dict[str, Any]) -> tuple[int, str, str]:
+        self.plan([], [turn])
+        self.write_json("command.json", self.given)
+        return self.main("try", self.made, "command.json")
+
+    def tried(self) -> str:
+        return os.path.join(self.made, "tries", "command")
+
+    def test_the_stand_in_runs_on_opus_in_a_checkout_of_the_branch_with_the_given_files(self):
+        # Given a run's records that hold a branch, and a try file of that branch,
+        # When the try runs,
+        # Then Claude Code runs once on Opus, with no plugin, in a clone with the test's commits,
+        # the branch's change, and the try's files, as the people would have it.
+        code, _, err = self.try_it({"show": ["tally.py", "lines.csv"]})
+        self.assertEqual(code, 0, err)
+        (call,) = self.calls(stand_in=False)
+        argv = call["argv"]
+        self.assertEqual(argv[:3], ["-p", "--model", "opus"])
+        self.assertNotIn("--plugin-dir", argv)
+        self.assertEqual(
+            call["log"], ["What the people have", "Add the plugin", "Add tally", "Initial commit"]
+        )
+        self.assertEqual(
+            call["shown"], {"tally.py": "print('tallied')\n", "lines.csv": "Hosting;40.00;1\n"}
+        )
+
+    def test_the_stand_in_holds_the_intent_and_what_the_people_have_and_a_terminal(self):
+        self.try_it({})
+        (call,) = self.calls(stand_in=False)
+        argv = call["argv"]
+        brief = argv[argv.index("--system-prompt") + 1]
+        self.assertIn(self.given["intent"], brief)
+        self.assertIn(self.given["has"], brief)
+        self.assertEqual(argv[argv.index("--tools") + 1], "Bash,Read")
+        self.assertIn("Install nothing", argv[argv.index("--append-system-prompt") + 1])
+        self.assertEqual(argv[argv.index("--permission-mode") + 1], "bypassPermissions")
+        self.assertEqual(call["env"]["CLAUDE_CODE_OAUTH_TOKEN"], TOKEN)
+        self.assertTrue(call["env"]["CLAUDE_CONFIG_DIR"].startswith(self.temp))
+
+    def test_python_writes_no_bytecode_into_the_checkout(self):
+        self.try_it({})
+        (call,) = self.calls(stand_in=False)
+        self.assertEqual(call["python_bytecode"], "1")
+
+    def test_the_try_keeps_its_file_what_the_screen_showed_and_prints_its_folder(self):
+        stream = [said("Hosting 40.00 EUR")]
+        code, out, err = self.try_it({"stream": stream})
+        self.assertEqual((code, out.strip()), (0, self.tried()), err)
+        self.assertEqual(json.loads(self.read(os.path.join(self.tried(), "try.json"))), self.given)
+        (kept,) = (
+            json.loads(line)
+            for line in self.read(os.path.join(self.tried(), "stream.jsonl")).splitlines()
+        )
+        self.assertEqual(kept, stream[0])
+        self.assertEqual(os.listdir(self.temp), [])
+
+    def test_the_try_keeps_each_file_the_stand_in_changed_in_the_checkout(self):
+        self.try_it({"files": {"tally.py": "print('changed')\n", "out.txt": "x\n"}})
+        diff = self.read(os.path.join(self.tried(), "changed.diff"))
+        self.assertIn("+print('changed')", diff)
+        self.assertIn("out.txt", diff)
+        self.assertNotIn("lines.csv", diff)
+
+    def test_a_try_that_changes_nothing_keeps_an_empty_diff(self):
+        self.try_it({})
+        self.assertEqual(self.read(os.path.join(self.tried(), "changed.diff")), "")
+
+    def test_a_branch_the_run_didnt_make_is_refused(self):
+        self.given["branch"] = "elsewhere"
+        code, _, err = self.try_it({})
+        self.assertEqual(code, 1)
+        self.assertIn("elsewhere", err)
+        self.assertEqual(os.listdir(self.temp), [])
+
+    def test_a_try_file_missing_a_field_is_refused(self):
+        del self.given["has"]
+        code, _, err = self.try_it({})
+        self.assertEqual(code, 1)
+        self.assertIn("`has`", err)
+
+    def test_a_branch_that_changed_nothing_gives_the_checkout_of_the_tests_commits(self):
+        self.write(os.path.join(self.made, "branches", "empty.diff"), "")
+        self.given["branch"] = "empty"
+        code, _, err = self.try_it({"show": ["tally.py"]})
+        self.assertEqual(code, 0, err)
+        (call,) = self.calls(stand_in=False)
+        self.assertEqual(call["shown"], {"tally.py": "print(1)\n"})
+
+    def test_a_try_past_its_time_keeps_what_it_printed_before(self):
+        with mock.patch.object(e2e, "TURN_SECONDS", 1):
+            code, _, err = self.try_it({"stream": [said("Hosting")], "sleep": 3})
+        self.assertEqual(code, 0, err)
+        stream = self.read(os.path.join(self.tried(), "stream.jsonl"))
+        self.assertIn("Hosting", stream)

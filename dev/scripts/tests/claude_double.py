@@ -15,8 +15,8 @@ branch of that name in a worktree `.claude/worktrees/<name>/` of the working fol
 commit its work, prints its `stream` lines, as `--output-format stream-json` does, sleeps its
 `sleep` seconds, and exits with its `exit`. Each call notes what the working folder's `git log
 --oneline` gives, the text of each file the turn's `show` names, whether a push from it succeeded,
-and the credentials file it ran on, so that a test checks the clone and the login that e2e.py
-removed."""
+the credentials file it ran on, and whether Python writes bytecode there, so that a test checks the
+clone and the login that e2e.py removed."""
 
 from __future__ import annotations
 
@@ -47,6 +47,7 @@ def main(argv: list[str]) -> int:
         "stand_in": stand_in,
         "env": {k: v for k, v in os.environ.items() if k.startswith("CLAUDE") or k == "TMPDIR"},
         "credentials": _credentials(),
+        "python_bytecode": os.environ.get("PYTHONDONTWRITEBYTECODE"),
     }
     if stand_in:
         _note(log, call)
@@ -108,8 +109,11 @@ def _shown(turn: dict) -> dict[str, str]:
 def _play(turn: dict, argv: list[str]) -> int:
     """Plays the turn of the Claude Code under test, and gives its exit code."""
     config = os.environ["CLAUDE_CONFIG_DIR"]
-    with open(os.path.join(config, "settings.json"), encoding="utf-8") as f:
-        settings = json.load(f)
+    # A configuration with no settings, as a try's, runs no hook.
+    settings: dict = {}
+    if os.path.isfile(os.path.join(config, "settings.json")):
+        with open(os.path.join(config, "settings.json"), encoding="utf-8") as f:
+            settings = json.load(f)
     # A turn that starts a new conversation, as /clear does, sends its SessionStart with the new ID.
     session = turn.get("session", after(argv, "--session-id") or after(argv, "--resume"))
     if turn.get("hooks", True):
@@ -119,6 +123,8 @@ def _play(turn: dict, argv: list[str]) -> int:
     _commit_branches(turn)
     for line in turn.get("stream", []):
         print(line if isinstance(line, str) else json.dumps(line))
+    # Claude Code streams each line as it comes, so a turn stopped while it sleeps has shown them.
+    sys.stdout.flush()
     time.sleep(turn.get("sleep", 0))
     return turn.get("exit", 0)
 
@@ -130,7 +136,7 @@ def _run_hooks(settings: dict, session: str | None, prompt: str) -> None:
         {"hook_event_name": "UserPromptSubmit", "session_id": session, "prompt": prompt},
     ]
     for event in events:
-        for entry in settings["hooks"][event["hook_event_name"]]:
+        for entry in settings.get("hooks", {}).get(event["hook_event_name"], []):
             for hook in entry["hooks"]:
                 subprocess.run(
                     hook["command"], shell=True, input=json.dumps(event), text=True, check=True
@@ -150,7 +156,7 @@ def _write_transcripts(project: str, session: str, turn: dict) -> None:
 
 def _write_files(turn: dict) -> None:
     """Writes the turn's `tmp` files under $TMPDIR and its `files` into the working folder."""
-    for base, files in ((os.environ["TMPDIR"], "tmp"), (os.getcwd(), "files")):
+    for base, files in ((os.environ.get("TMPDIR", ""), "tmp"), (os.getcwd(), "files")):
         for path, text in turn.get(files, {}).items():
             full = os.path.join(base, path)
             os.makedirs(os.path.dirname(full), exist_ok=True)

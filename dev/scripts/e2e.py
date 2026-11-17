@@ -37,6 +37,23 @@ name without `.json`:
 - `branches/<branch>.diff`: what the run committed on each branch it made, such as a plugin's work
   in its worktree, after the test's commits.
 
+`python3 dev/scripts/e2e.py try <records> <try file>` has a stand-in of a deliverable's people try
+it, where a test counts whether its people could use it: the real Claude Code on Opus, with no
+plugin and with only Bash and Read, in a fresh clone with the test's commits, the change of a
+branch that the run of `<records>` made, and the files the people bring. Its brief holds only what
+they mean to do and what they have, such as the deliverable's text or a terminal with its command.
+It prints the folder of the try's records. A try file is one JSON object:
+- `branch`: the branch whose change the clone holds, as `branches/` of the records names it.
+- `intent`: what the people mean to do with the deliverable.
+- `has`: what they have, which the stand-in alone uses, such as `the guide docs/printing.md`.
+- `files`: each file the people bring, `{<path in the clone>: <text>}`, such as their lines.
+
+The records of a try lie in `<records>/tries/<try>/`, where `<try>` is the try file's name without
+`.json`:
+- `try.json`: the try file as given.
+- `stream.jsonl`: Claude Code's stream-json of the try, each command it ran and what it printed.
+- `changed.diff`: what the stand-in changed in the clone, beside the people's files.
+
 The records hold neither the login nor an email address, nor the lines of Claude Code's requests to
 its API, as they hold the developer's account and not the run. They give `<top>` for the top of the
 repository and `<run>` for the run's temporary folder, whose clone is `<run>/clone`."""
@@ -121,7 +138,18 @@ SHOWN = {
     "Agent": "subagent_type",
     "Skill": "skill",
 }
-USAGE = "usage: python3 dev/scripts/e2e.py run <E2E test file> | hook <file>"
+USAGE = (
+    "usage: python3 dev/scripts/e2e.py run <E2E test file> | try <records> <try file> | hook <file>"
+)
+# The brief of a stand-in of a deliverable's people, who try it with only what they have.
+PEOPLE = """You are one of the people a deliverable is for, at a terminal in a folder that holds \
+your team's repository. What you mean to do: {intent}
+
+What you have: {has}. Use only that, as such a person would, and read no other file of the \
+repository. Write no file of the repository. Stop once you've done what you mean to do, or where \
+you would give up, and say which."""
+# The fields of a try file, each with its type.
+TRY = {"branch": str, "intent": str, "has": str, "files": dict}
 
 
 class Refused(Exception):
@@ -180,7 +208,7 @@ class E2ETest:
 def main(argv: list[str]) -> int:
     if argv[:1] == ["hook"] and len(argv) == 2:
         return hook(argv[1], sys.stdin.read())
-    if argv[:1] != ["run"] or len(argv) != 2:
+    if not (argv[:1] == ["run"] and len(argv) == 2 or argv[:1] == ["try"] and len(argv) == 3):
         print(USAGE, file=sys.stderr)
         return 2
     try:
@@ -191,7 +219,10 @@ def main(argv: list[str]) -> int:
                 f" at {_credentials()}. Set CLAUDE_CODE_OAUTH_TOKEN to the developer's login, as"
                 " `claude setup-token` gives it, or log in to Claude Code."
             )
-        print(run(read(argv[1]), os.getcwd(), token))
+        if argv[0] == "try":
+            print(tried(argv[1], argv[2], os.getcwd(), token))
+        else:
+            print(run(read(argv[1]), os.getcwd(), token))
     except Refused as e:
         print(f"e2e.py: {e}", file=sys.stderr)
         return 1
@@ -213,7 +244,10 @@ def hook(path: str, stdin: str) -> int:
 def read(path: str) -> E2ETest:
     """The E2E test of the file. Raises Refused, naming the file and the field, where it isn't
     one."""
-    given = _json(path)
+    return _test(_json(path), path)
+
+
+def _test(given: Any, path: str) -> E2ETest:
     if not isinstance(given, dict):
         raise Refused(f"{path} isn't a JSON object")
     fields = {
@@ -341,6 +375,69 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
     finally:
         if held is not None:
             _unpush(clone, held)
+        shutil.rmtree(root)
+
+
+def tried(records: str, path: str, top: str, token: str | None) -> str:
+    """Has a stand-in of a deliverable's people try it, on a checkout of the branch that the run
+    of the records made, and gives the folder of the try's records, from the top."""
+    given = _json(path)
+    for key, kind in TRY.items():
+        if not isinstance(given, dict) or not isinstance(given.get(key), kind):
+            raise Refused(f"{path} needs `{key}` as {kind.__name__}")
+    diff = os.path.join(records, "branches", f"{given['branch']}.diff")
+    if not os.path.isfile(diff):
+        raise Refused(f"the run of {records} made no branch {given['branch']}")
+    # The records give `<top>` for the top, which the test as given may name, such as its commits.
+    with open(os.path.join(records, "run.json"), encoding="utf-8") as f:
+        test = _test(json.loads(f.read().replace("<top>", top))["test"], path)
+    test.push = False
+    root = tempfile.mkdtemp(prefix="e2e-")
+    try:
+        clone = os.path.join(root, "clone")
+        _setup(test, top, clone)
+        if os.path.getsize(diff):
+            _git(["apply", "--index", os.path.abspath(diff)], clone)
+        for name, text in given["files"].items():
+            with open(os.path.join(clone, name), "w", encoding="utf-8") as f:
+                f.write(text)
+        _git(["add", "-A"], clone)
+        _git(["commit", "-q", "--allow-empty", "-m", "What the people have"], clone)
+        claude = os.path.join(root, "claude")
+        os.makedirs(claude)
+        env = dict(
+            _logged_in(token, (claude,)), CLAUDE_CONFIG_DIR=claude, PYTHONDONTWRITEBYTECODE="1"
+        )
+        command = [
+            *("claude", "-p", "--model", MODEL, "--tools", "Bash,Read"),
+            *("--permission-mode", "bypassPermissions"),
+            *("--system-prompt", PEOPLE.format(intent=given["intent"], has=given["has"])),
+            *("--append-system-prompt", RULE, "--output-format", "stream-json", "--verbose"),
+            given["intent"],
+        ]
+        try:
+            stream = subprocess.run(
+                command,
+                cwd=clone,
+                env=env,
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=TURN_SECONDS,
+            ).stdout
+        except subprocess.TimeoutExpired as stopped:
+            # What it printed before e2e.py stopped it, as text in either form the stop gives.
+            out = stopped.stdout or ""
+            stream = out.decode(errors="replace") if isinstance(out, bytes) else out
+        name = os.path.basename(path).rsplit(".json", 1)[0]
+        folder = os.path.join(records, "tries", name)
+        kept = RunRecords(os.path.join(top, folder), top, root, token)
+        kept.write("try.json", json.dumps(given, ensure_ascii=False, indent=1) + "\n")
+        kept.write("stream.jsonl", stream)
+        _git(["add", "-A"], clone)
+        kept.write("changed.diff", _git(["diff", "--cached", "HEAD"], clone))
+        return folder
+    finally:
         shutil.rmtree(root)
 
 
