@@ -216,6 +216,8 @@ sequenceDiagram
   U->>O: answers
   Note over U,O: The orchestrator has the goal written as the user confirmed it, and settles each other point, as S2 draws, and puts up the plan, as S3 draws.
   loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
+    O->>O: reviews the design tree by what the run has shown, and takes the next work where the people gain most
+    O->>K: each change it decides (Decision, Deliverable)
     GD->>A: asks for the text of the generator's start, with each start that runs
     A->>T: gets each deliverable doing, and the Cut of the first that no start that runs holds, with the path of a new Record for the start (Cut)
     A-->>GD: that start's text and run values in Lane's form, or none where no work waits
