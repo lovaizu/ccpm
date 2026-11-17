@@ -155,52 +155,7 @@
       "name": "Lane's product vision says what Lane is for",
       "path": "dev/lane/product-vision.md",
       "kind": "product-vision",
-      "status": "doing",
-      "inputs": [],
-      "preconditions": [],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What Lane is",
-              "decided": "a product of hooks: each hook part takes Claude Code's hook event and gives a stop with the step's sentence or lets it through, so that the AI notices its step; whether the AI then keeps the step is the user's plugin's, not Lane's",
-              "by": "user"
-            },
-            {
-              "about": "The words of each key result, measured from Lane's own outputs on hook events by its parts and their combinations under mocks, not from a plugin's runs, which rest on the plugin and the model",
-              "decided": null,
-              "by": null
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers build its parts so that together they give what its README promises",
