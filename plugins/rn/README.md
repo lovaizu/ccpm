@@ -38,8 +38,7 @@ At your repository's root in Claude Code, `/rn:up` alone says that rn has no run
 
 ## Walkthrough
 
-At the end, you have a pull request, ready to merge, that adds a command and its guide for your
-accounting team.
+At the end, you have a pull request that adds a command and its guide for your accounting team.
 
 `invoicer`, a Python library that your team calls, renders invoices. Your accounting team writes no
 Python, so they ask a developer for each invoice. You type:
@@ -146,8 +145,8 @@ rn shows:
 Done. The pull request is ready for your merge: https://github.com/<owner>/invoicer/pull/12
 ```
 
-On the pull request's branch, a colleague from accounting follows the guide alone, saves the lines
-from their spreadsheet as `lines.csv`, and types:
+On the pull request's branch, a colleague from accounting follows the guide alone. They save the
+lines from their spreadsheet as `lines.csv`, and type:
 
 ```console
 $ python3 -m invoicer lines.csv --rate 0.19

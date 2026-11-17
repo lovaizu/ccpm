@@ -57,7 +57,7 @@ def test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper(b: 
     assert wrote["doing"] == []
     tree = w.tree_in(walk)
     assert tree["goal"] == {"decided": w.GOAL, "by": "reasoning"}
-    assert [d["name"] for d in tree["deliverables"]] == [w.HINTS, w.TYPED]
+    assert [d["name"] for d in tree["deliverables"]] == [w.COMMAND, w.GUIDE]
     held = w.git(run["worktree"], "show", f"HEAD:{run['folder']}/design-tree.json")
     assert json.loads(held) == tree
 
@@ -66,30 +66,30 @@ def test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper(b: 
 def test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, both deliverables doing.
     When: the orchestrator starts the generator with the text that the guard gives due.
-    Then: its Cut names its record, "Type hints in each file of invoicer" at invoicer, its kind,
-    the code and refactor-code best practices, where it writes its Made, and the part of the design
-    tree it makes it from: the goal, its name, its inputs, the user's decision on which files, and
-    no More kept."""
+    Then: its Cut names its record, the command at invoicer/__main__.py, its kind, the code and
+    refactor-code best practices, where it writes its Made, and the part of the design tree it
+    makes it from: the goal, its name, its inputs, the user's decision on how the tax rate is
+    given, and no More kept."""
     walk = w.planned(b)
     _, cut = w.generator_started(walk)
     assert set(cut) == {"record", "deliverable", "kind", "best_practice", "refactor", "made", "cut"}
-    assert cut["deliverable"] == w.HINTS_PATH and cut["kind"] == "code"
+    assert cut["deliverable"] == w.COMMAND_PATH and cut["kind"] == "code"
     assert cut["best_practice"].rstrip("/").endswith("best-practices/code")
     assert cut["refactor"].rstrip("/").endswith("best-practices/refactor-code")
     assert cut["record"].startswith(f"{walk.run['folder']}/records/")
     assert cut["made"].startswith(f"{walk.run['folder']}/rounds/")
     part = cut["cut"]
-    assert (part["goal"], part["name"], part["inputs"], part["more"]) == (w.GOAL, w.HINTS, [], [])
+    assert (part["goal"], part["name"], part["inputs"], part["more"]) == (w.GOAL, w.COMMAND, [], [])
     [decision] = part["decisions"]
     assert decision["condition"] == "N1"
     assert decision["decision"]["path"] == "deliverables/0/necessary_conditions/0/decisions/0"
     assert decision["decision"]["point"] == w.POINT
-    assert decision["decision"]["decided"] == w.EACH_FILE
+    assert decision["decision"]["decided"] == w.WITH_EACH
 
 
 @pytest.mark.supports("S1", "evaluator", "Necessary condition", "Best practice", "Answers")
 def test_one_evaluator_starts_for_each_group_of_necessary_conditions(b: Bench) -> None:
-    """Given: the generator of "Type hints in each file of invoicer" ended done.
+    """Given: the generator of the command ended done.
     When: the orchestrator starts each evaluator that the guard gives due.
     Then: one evaluator starts for each group of necessary conditions of the code best practice
     and of the refactor-code one, each Cut naming its best practice, the IDs of its group, and

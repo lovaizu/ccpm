@@ -42,7 +42,7 @@ def test_tree_py_refuses_a_run_whose_name_a_run_left_holds(b: Bench) -> None:
 
 @pytest.mark.supports("record.py", "Record", "generator")
 def test_record_py_refuses_an_entry_out_of_its_form(b: Bench) -> None:
-    """Given: the generator of "Type hints in each file of invoicer" running.
+    """Given: the generator of the command running.
     When: it records a step 0, a practice named X1, and a step with nothing it left.
     Then: record.py add gives 1 for each, saying what's wrong, and the record holds none of them."""
     walk = w.planned(b)
@@ -61,7 +61,7 @@ def test_throwaway_py_refuses_a_folder_in_no_runs_worktree(b: Bench) -> None:
     Then: throwaway.py gives 1, saying the folder lies in no run's worktree with no traceback, and
     runs nothing."""
     c = w.converse(b)
-    tried = c.bash(b.throwaway(w.HINTS_PATH, "touch tried.txt"))
+    tried = c.bash(b.throwaway(w.COMMAND_PATH, "touch tried.txt"))
     assert tried.exit_code == 1 and "worktree" in tried.output
     assert "Traceback" not in tried.output
     assert w.git(b.repo, "status", "--porcelain") == ""

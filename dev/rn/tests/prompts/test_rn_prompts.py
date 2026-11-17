@@ -252,11 +252,12 @@ def test_only_the_typed_dn_pauses_the_run(
 @pytest.mark.parametrize("run", range(RUNS))
 def test_no_role_starts_for_a_request_made_without_rn(tmp_path: Any, role: str, run: int) -> None:
     """Given: invoicer with rn installed, and no run.
-    When: the person asks Claude Code itself to add type hints to invoicer/totals.py, naming no rn.
+    When: the person asks Claude Code itself to round the tax in invoicer/tax.py half to even,
+    naming no rn.
     Then: no run of rn starts and no record of the role is made, as each role says it's started by
     /rn:up alone."""
     b = w.bench(str(tmp_path))
-    claude(b, b.repo, "Add type hints to invoicer/totals.py.")
+    claude(b, b.repo, "Round the tax in invoicer/tax.py half to even.")
     assert worktrees(b) == []
     assert not glob.glob(os.path.join(b.repo, "**", f"*{role}*.json"), recursive=True)
 
@@ -294,23 +295,28 @@ def test_the_generator_started_with_its_cut_records_and_writes_its_made(
 def test_the_generator_reworking_a_deliverable_done_before_reads_the_change_since_then(
     tmp_path: Any, run: int
 ) -> None:
-    """Given: "Type hints in each file of invoicer", which takes pyproject.toml as its input, marked
-    done; then pyproject.toml changed, and the deliverable open again with the user's decision on
-    which files changed; and the generator's Cut of it, as its adapter gives it.
+    """Given: the command, which takes pyproject.toml as its input, marked done; then
+    pyproject.toml changed, and the deliverable open again with the user's decision on how the tax
+    rate is given changed; and the generator's Cut of it, as its adapter gives it.
     When: the generator runs alone with the Cut as its prompt.
     Then: the Cut gives the commit that marked the deliverable done, and the generator runs a
     command that names that commit, as it reads each input's change since then."""
     b = w.bench(str(tmp_path))
-    started = planned_run(b, w.plan(w.hints_from_pyproject()))
+    started = planned_run(b, w.plan(w.command_from_pyproject()))
     signed_off(b, started)
     worktree, record = started["worktree"], started["record"]
-    done = {"nodes": {"deliverables/0": w.hints_done()}, "more": []}
+    done = {"nodes": {"deliverables/0": w.command_done()}, "more": []}
     tree_py(b, "write", record, "The user signed it off.", cwd=worktree, given=json.dumps(done))
     done_at = w.last_tree_commit(worktree, started["folder"])
     w.pyproject_changed(worktree)
-    again = {"nodes": {"deliverables/0": w.hints_from_pyproject(w.BUT_THE_TESTS)}, "more": []}
+    again = {"nodes": {"deliverables/0": w.command_from_pyproject(w.OR_THE_DEFAULT)}, "more": []}
     tree_py(
-        b, "write", record, "The user leaves out the tests.", cwd=worktree, given=json.dumps(again)
+        b,
+        "write",
+        record,
+        "The user lets the rate default to pyproject.toml's.",
+        cwd=worktree,
+        given=json.dumps(again),
     )
     text = start_text(b, started)
     assert w.cut_of(text)["cut"]["done_at"] == done_at
@@ -331,7 +337,7 @@ def test_the_tree_keeper_writes_the_change_it_is_resumed_with(tmp_path: Any, run
     grounds = "The goal drafted from the request, and the plan of its two deliverables."
     keeper_resumed(b, started, grounds, w.walkthrough_plan())
     tree = json.loads(tree_of(started) or "{}")
-    assert [d["name"] for d in tree.get("deliverables", [])] == [w.HINTS, w.TYPED]
+    assert [d["name"] for d in tree.get("deliverables", [])] == [w.COMMAND, w.GUIDE]
     path = os.path.join(started["folder"], "design-tree.json")
     assert w.git(started["worktree"], "log", "-1", "--format=%B", "--", path).strip() == grounds
     assert results_of(b, "tree-keeper")[-1:] == ["done"]
@@ -342,14 +348,14 @@ def test_the_tree_keeper_writes_the_change_it_is_resumed_with(tmp_path: Any, run
 def test_the_tree_keeper_gives_refused_for_a_more_whose_decision_didnt_change(
     tmp_path: Any, run: int
 ) -> None:
-    """Given: the plan of "Type hints in each file of invoicer", with the user's decision on which
-    files, signed off, and its first round opened by the generator's first step's commit.
+    """Given: the plan of the command, with the user's decision on how the tax rate is given,
+    signed off, and its first round opened by the generator's first step's commit.
     When: the tree-keeper is resumed with the more of N2 of code to keep, naming the user's
     decision, which the change leaves as it was.
     Then: the design tree is as it was, and the tree-keeper ends with refused, naming the code
     best practice and N2."""
     b = w.bench(str(tmp_path))
-    started = planned_run(b, w.plan(w.hints_from_pyproject(w.EACH_FILE)))
+    started = planned_run(b, w.plan(w.command_from_pyproject(w.WITH_EACH)))
     signed_off(b, started)
     cut = w.cut_of(start_text(b, started))
     tree_py(b, "commit", cut["record"], "1", cwd=started["worktree"])

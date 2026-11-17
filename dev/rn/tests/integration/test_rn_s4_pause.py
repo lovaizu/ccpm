@@ -26,8 +26,7 @@ def stood(walk: w.Walk, record: str) -> list[dict[str, object]]:
 
 @pytest.mark.supports("S4", "generator", "Place", "repository", "tree.py")
 def test_dn_stops_the_generator_and_pushes_its_work_with_the_step_it_stood_at(b: Bench) -> None:
-    """Given: the generator of "Type hints in each file of invoicer" running, which ended its
-    step 1.
+    """Given: the generator of the command running, which ended its step 1.
     When: the user types /rn:dn, the orchestrator stops the generator by TaskStop, runs tree.py
     pause with the generator standing at step 2, and ends its turn with Paused.
     Then: the stop and tree.py pause pass, the remote holds the work's branch at the worktree's
@@ -45,8 +44,8 @@ def test_dn_stops_the_generator_and_pushes_its_work_with_the_step_it_stood_at(b:
 
 @pytest.mark.supports("S4", "evaluator", "Place")
 def test_dn_stops_each_evaluator_still_running_and_keeps_where_each_stood(b: Bench) -> None:
-    """Given: the generator of "Type hints in each file of invoicer" ended done, and two of its
-    evaluators running, each at step 1.
+    """Given: the generator of the command ended done, and two of its evaluators
+    running, each at step 1.
     When: the user types /rn:dn, the orchestrator stops each by TaskStop, and runs tree.py pause
     with each at step 1.
     Then: each stop and tree.py pause pass, and the work's branch holds each evaluator's Place."""
@@ -66,8 +65,7 @@ def test_dn_stops_each_evaluator_still_running_and_keeps_where_each_stood(b: Ben
 
 @pytest.mark.supports("S4", "repository", "Point")
 def test_dn_where_git_cant_push_commits_and_says_what_is_missing(b: Bench) -> None:
-    """Given: the generator of "Type hints in each file of invoicer" running, and the repository's
-    remote gone.
+    """Given: the generator of the command running, and the repository's remote gone.
     When: the user types /rn:dn, the orchestrator stops the generator, and runs tree.py pause.
     Then: tree.py pause gives 1, saying the work is committed but not pushed and naming the
     remote, and the worktree's last commit holds the generator's Place."""

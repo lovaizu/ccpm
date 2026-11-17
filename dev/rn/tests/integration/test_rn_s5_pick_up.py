@@ -15,8 +15,8 @@ from dev.tests.claude_code import Conversation
 
 
 def paused(b: Bench) -> tuple[w.Walk, dict[str, object]]:
-    """The walkthrough paused by /rn:dn while its generator stood at step 2 of "Type hints in each
-    file of invoicer"; gives the walk and the generator's Cut."""
+    """The walkthrough paused by /rn:dn while its generator stood at step 2 of the command; gives
+    the walk and the generator's Cut."""
     walk, generator, cut = w.generator_in_step_2(b)
     assert not walk.c.type("/rn:dn").blocked
     assert not walk.c.task_stop(generator).blocked
@@ -37,8 +37,7 @@ def test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped(b: Bench) -> No
     When: the user types /rn:up alone in a new conversation in the run's worktree, and the
     orchestrator starts the tree-keeper with the text that the guard gives due, which ends done.
     Then: the guard picks the run up from the results kept in its records, giving the tree-keeper's
-    start due, and then the generator's, its Cut naming "Type hints in each file of invoicer" at
-    step 2."""
+    start due, and then the generator's, its Cut naming the command at step 2."""
     walk, cut = paused(b)
     c = new_conversation(b, walk.run["worktree"])
     typed = c.type("/rn:up")
@@ -110,8 +109,8 @@ def test_up_alone_with_no_run_left_says_so_and_starts_no_role(b: Bench) -> None:
 
 @pytest.mark.supports("S5", "evaluator", "Place")
 def test_each_evaluator_that_stood_in_a_step_starts_again_at_it(b: Bench) -> None:
-    """Given: the walkthrough paused by /rn:dn while an evaluator of "Type hints in each file of
-    invoicer" stood at step 2, after the generator gave done.
+    """Given: the walkthrough paused by /rn:dn while an evaluator of the command stood at step 2,
+    after the generator gave done.
     When: the user types /rn:up alone in a new conversation in the run's worktree.
     Then: the guard gives an evaluator's start due again, with no start of the tree-keeper before
     it, as the generator's done opens none, its Cut naming the same group at step 2."""

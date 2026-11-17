@@ -32,38 +32,45 @@ INVOICER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "invoicer")
 README = os.path.join(RN, "README.md")
 
 # The walkthrough's request, the few words that name its goal, and the goal as the user confirms it.
-WORDS = "type hints for invoicer, so that the people who call it see what each function takes"
-GOAL_NAME = "type hints for invoicer"
-GOAL = (
-    "The people who call invoicer learn from their editor and their type checker what each"
-    " function takes and returns, before their code runs."
+WORDS = (
+    "a command with which the accounting team prints an invoice from its lines, without writing"
+    " Python"
 )
-# The walkthrough's two deliverables, as the plan names them, with the path each lies at.
-HINTS = "Type hints in each file of invoicer, checked by mypy --strict"
-HINTS_PATH = "invoicer"
-TYPED = "invoicer marked as typed, so that the callers' type checkers read its hints"
-TYPED_PATH = "invoicer/py.typed"
+GOAL_NAME = "invoices for the accounting team"
+GOAL = (
+    "The accounting team prints each invoice themselves from the lines they keep in a"
+    " spreadsheet, without asking a developer."
+)
+# The walkthrough's two deliverables, as the plan names them, with the path and the kind of each.
+COMMAND = (
+    "A command that prints an invoice from a file of its lines, with the tax rate given each time"
+)
+COMMAND_PATH = "invoicer/__main__.py"
+GUIDE = "A guide from which the accounting team prints an invoice on its own"
+GUIDE_PATH = "docs/printing-invoices.md"
 # The user's point of the walkthrough, and their answer.
-POINT = "which files the hints cover"
-EACH_FILE = "each file"
+POINT = "how the tax rate is given"
+WITH_EACH = "with each invoice"
 # The decision that the generator takes without asking, as the walkthrough's sign-off shows it.
-DECIMAL = {
-    "point": "the type of amounts and rates",
-    "decided": "Decimal",
-    "ground": "the code already computes with Decimal",
+LINE_FORM = {
+    "point": "the form of a line",
+    "decided": "description;price;quantity, as invoicer already reads it",
+    "ground": "a spreadsheet saves it as CSV with semicolons",
 }
 # What an evaluator gives under N2 of the first deliverable where the people fall short by it, and
 # the decision under N2 that the tree-keeper changes for it.
-SHOWN_AS_TYPED = "A caller's editor shows the type of each argument as they type the call."
-EVERY_ARGUMENT = {"about": "what the hints name", "decided": "every argument", "by": "reasoning"}
+WRONG_LINE_NAMED = "A colleague whose file holds a line the command can't read learns which line."
+LINE_NUMBER = {
+    "about": "a line the command can't read",
+    "decided": "the command names its number and prints no invoice",
+    "by": "reasoning",
+}
 # How a deliverable done before comes back: its input pyproject.toml changes, as the lines added to
 # it show, and the user's answer to their point changes with it.
-TESTS_LEFT_OUT = '\n[tool.mypy]\nexclude = ["tests"]\n'
-BUT_THE_TESTS = "each file but the tests"
+RATE_SET = '\n[tool.invoicer]\ndefault-rate = "0.19"\n'
+OR_THE_DEFAULT = "with each invoice, or the default rate in pyproject.toml where none is given"
 # The best practice that finishes a deliverable of each kind, as the generator's Cut names it.
 REFACTOR = {"code": "refactor-code", "readme": "refactor-doc"}
-# What a README deliverable is for, in a plan of one.
-NEWCOMER = "A newcomer decides from invoicer's README alone whether invoicer fits their work"
 RESUMED = "The main conversation's grounds:\n"
 # What coverage.py reads in a new process to measure it, and where it writes what it measured.
 COVERAGE_SETTINGS = ("COVERAGE_PROCESS_START", "COVERAGE_FILE")
@@ -75,7 +82,7 @@ NOT_YET = "a part of rn that the case reaches has an empty body or a step not ye
 # What rn shows at each move of the walkthrough, as the README shows it.
 GOAL_SHOWN = readme_block(README, f"/rn:up {WORDS}\n```\n\nrn shows:")
 POINT_SHOWN = readme_block(README, "```text\nyes\n```\n\nrn shows:")
-PLAN_SHOWN = readme_block(README, f"```text\n{EACH_FILE}\n```\n\nrn shows:")
+PLAN_SHOWN = readme_block(README, f"```text\n{WITH_EACH}\n```\n\nrn shows:")
 PAUSED_SHOWN = readme_block(README, "```text\n/rn:dn\n```\n\nrn shows:")
 PICKED_SHOWN = readme_block(README, "```text\n/rn:up\n```\n\nrn shows:")
 NO_RUN_SHOWN = "rn has no run to pick up"
@@ -134,8 +141,8 @@ class Bench:
 
 
 def invoicer_files() -> dict[str, str]:
-    """Each file of invoicer, by its path, as the walkthrough's library holds it before type
-    hints."""
+    """Each file of invoicer, by its path, as the walkthrough's library holds it before its
+    command."""
     found = {}
     for folder, _, names in os.walk(INVOICER):
         for name in names:
@@ -344,20 +351,20 @@ def plan(*deliverables: dict[str, Any]) -> dict[str, Any]:
     return {"nodes": nodes, "more": []}
 
 
-def hints_from_pyproject(decided: str | None = None) -> dict[str, Any]:
+def command_from_pyproject(decided: str | None = None) -> dict[str, Any]:
     """The walkthrough's first deliverable, open, taking pyproject.toml as its input, with the
     user's answer to their point where `decided` gives one."""
-    hints = dict(deliverable(HINTS, HINTS_PATH))
-    hints["inputs"] = ["pyproject.toml"]
+    command = dict(deliverable(COMMAND, COMMAND_PATH))
+    command["inputs"] = ["pyproject.toml"]
     if decided is not None:
         point = {"about": POINT, "decided": decided, "by": "user"}
-        hints["necessary_conditions"][0]["decisions"] = [point]
-    return hints
+        command["necessary_conditions"][0]["decisions"] = [point]
+    return command
 
 
-def hints_done() -> dict[str, Any]:
+def command_done() -> dict[str, Any]:
     """The walkthrough's first deliverable marked done, in the one line that keeps it."""
-    return {"name": HINTS, "path": HINTS_PATH, "kind": "code", "status": "done"}
+    return {"name": COMMAND, "path": COMMAND_PATH, "kind": "code", "status": "done"}
 
 
 def last_tree_commit(worktree: str, folder: str) -> str:
@@ -367,25 +374,26 @@ def last_tree_commit(worktree: str, folder: str) -> str:
 
 
 def pyproject_changed(worktree: str) -> None:
-    """pyproject.toml leaves the tests out of mypy, committed on the work's branch."""
+    """pyproject.toml sets a default tax rate, committed on the work's branch."""
     with open(os.path.join(worktree, "pyproject.toml"), "a", encoding="utf-8") as f:
-        f.write(TESTS_LEFT_OUT)
-    git(worktree, "commit", "-q", "-am", "mypy leaves out the tests")
+        f.write(RATE_SET)
+    git(worktree, "commit", "-q", "-am", "invoicer sets a default tax rate")
 
 
 def walkthrough_plan() -> dict[str, Any]:
-    """The walkthrough's plan: type hints in each file, then invoicer marked as typed."""
-    return plan(deliverable(HINTS, HINTS_PATH), deliverable(TYPED, TYPED_PATH))
+    """The walkthrough's plan: the command, then its guide."""
+    return plan(deliverable(COMMAND, COMMAND_PATH), deliverable(GUIDE, GUIDE_PATH, "readme"))
 
 
-def hints_plan() -> dict[str, Any]:
+def command_plan() -> dict[str, Any]:
     """A plan of the walkthrough's first deliverable alone."""
-    return plan(deliverable(HINTS, HINTS_PATH))
+    return plan(deliverable(COMMAND, COMMAND_PATH))
 
 
-def readme_plan() -> dict[str, Any]:
-    """A plan of invoicer's README alone, a kind whose best practice holds a Markdown template."""
-    return plan(deliverable(NEWCOMER, "README.md", "readme"))
+def guide_plan() -> dict[str, Any]:
+    """A plan of the walkthrough's guide alone, a kind whose best practice holds a Markdown
+    template."""
+    return plan(deliverable(GUIDE, GUIDE_PATH, "readme"))
 
 
 @dataclass
@@ -495,10 +503,10 @@ def confirmed(b: Bench, change: Any = None) -> Walk:
     open_point = {"goal": goal, "deliverables/0/necessary_conditions/0/decisions/0": point}
     keeper_writes(b, w, "The user confirmed the goal.", {"nodes": open_point, "more": []}, "yes")
     assert not orchestrator_ends(b, w, "up", POINT_SHOWN).blocked
-    assert not w.c.type(EACH_FILE).blocked
-    answered = {"about": POINT, "decided": EACH_FILE, "by": "user"}
+    assert not w.c.type(WITH_EACH).blocked
+    answered = {"about": POINT, "decided": WITH_EACH, "by": "user"}
     nodes = {"deliverables/0/necessary_conditions/0/decisions/0": answered}
-    keeper_writes(b, w, "The user's answer.", {"nodes": nodes, "more": []}, EACH_FILE)
+    keeper_writes(b, w, "The user's answer.", {"nodes": nodes, "more": []}, WITH_EACH)
     return w
 
 
@@ -567,7 +575,7 @@ def made(
         "more": [
             {"best_practice": b, "condition": c, "where": where} for b, c in more if every_item
         ],
-        "settled": [DECIMAL],
+        "settled": [LINE_FORM],
     }
     written = generator.write(os.path.join(w.c.cwd, cut["made"]), json.dumps(result))
     assert not written.blocked, written.said
@@ -578,7 +586,7 @@ def answers(conditions: Sequence[str], more: Mapping[str, str] | None = None) ->
     """An evaluator's Answers: each condition in good with a line that meets it, but each that
     `more` names, in more with its good_when."""
     more = more or {}
-    line = "def total(lines: list[Line], rate: Decimal) -> Decimal:"
+    line = "print(render(parse_lines(text), Decimal(arguments.rate)))"
     return {
         "good": [{"question": c, "lines": [line]} for c in conditions if c not in more],
         "more": [{"question": c, "good_when": more[c]} for c in conditions if c in more],
@@ -647,22 +655,22 @@ N2_DECISION = "deliverables/0/necessary_conditions/1/decisions/0"
 
 
 def n2_more(decision: str) -> dict[str, str]:
-    """The more of N2 of the code best practice of the first deliverable, SHOWN_AS_TYPED, naming the
-    decision at the path given, as tree.py write takes it."""
+    """The more of N2 of the code best practice of the first deliverable, WRONG_LINE_NAMED, naming
+    the decision at the path given, as tree.py write takes it."""
     return {
-        "deliverable": HINTS_PATH,
+        "deliverable": COMMAND_PATH,
         "best_practice": "code",
         "condition": "N2",
         "decision": decision,
-        "good_when": SHOWN_AS_TYPED,
+        "good_when": WRONG_LINE_NAMED,
     }
 
 
 def short_by_n2_kept(b: Bench, w: Walk) -> None:
     """The orchestrator judges that the people fall short by N2 of the first round, and the
-    tree-keeper writes EVERY_ARGUMENT under N2 of the first deliverable, with the more of N2 of the
-    code best practice, SHOWN_AS_TYPED, to keep, naming that decision."""
-    nodes = {N2_DECISION: EVERY_ARGUMENT}
+    tree-keeper writes LINE_NUMBER under N2 of the first deliverable, with the more of N2 of the
+    code best practice, WRONG_LINE_NAMED, to keep, naming that decision."""
+    nodes = {N2_DECISION: LINE_NUMBER}
     more = [n2_more(N2_DECISION)]
     keeper_writes(b, w, "The people fall short by N2.", {"nodes": nodes, "more": more})
 
@@ -675,7 +683,7 @@ def sign_off_put_up(b: Bench, change: Any = None) -> tuple[Walk, dict[str, Any]]
     printed(w.c.bash(b.tree("round", cut["deliverable"])))
     printed(w.c.bash(b.tree("push")))
     printed(w.c.bash(b.tree("put-up", "deliverable", cut["deliverable"])))
-    stopped = orchestrator_ends(b, w, "up", f'"{HINTS}", for your sign-off:')
+    stopped = orchestrator_ends(b, w, "up", f'"{COMMAND}", for your sign-off:')
     assert not stopped.blocked, stopped.said
     return w, cut
 
@@ -685,9 +693,9 @@ def handed_over(b: Bench) -> tuple[Walk, str]:
     """A run of the walkthrough's first deliverable alone up to the pull request handed over: the
     deliverable signed off and marked done, and tree.py ready; gives the walk and the pull
     request's URL."""
-    w, _ = sign_off_put_up(b, hints_plan())
-    done = {"name": HINTS, "path": HINTS_PATH, "kind": "code", "status": "done"}
-    approved(b, w, "The user signed it off.", {"nodes": {"deliverables/0": done}, "more": []})
+    w, _ = sign_off_put_up(b, command_plan())
+    done = {"nodes": {"deliverables/0": command_done()}, "more": []}
+    approved(b, w, "The user signed it off.", done)
     url = printed(w.c.bash(b.tree("ready")))
     stopped = orchestrator_ends(
         b, w, "up", f"Done. The pull request is ready for your merge: {url}"

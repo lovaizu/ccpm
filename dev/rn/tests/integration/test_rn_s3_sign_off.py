@@ -65,7 +65,7 @@ def test_ty_approves_the_plan_and_starts_the_work_resting_on_it(b: Bench) -> Non
     signed = w.printed(walk.c.bash(b.tree("approve")))
     assert (signed["kind"], signed["state"]) == ("plan", "signed off")
     wrote = w.keeper_writes(b, walk, "Signed off.", {"nodes": {}, "more": []}, "/rn:ty")
-    assert wrote["doing"] == [w.HINTS_PATH, w.TYPED_PATH]
+    assert wrote["doing"] == [w.COMMAND_PATH, w.GUIDE_PATH]
     assert w.due_text(walk.said, "generator")
 
 
@@ -105,12 +105,12 @@ def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
     bot = {"login": "github-actions[bot]"}
     pull["comments"] = [
         {"body": "Before the sign-off.", "createdAt": "2000-01-01T00:00:00Z"},
-        {"body": "Leave out invoicer/render.py.", "createdAt": "2999-01-01T00:00:00Z"},
+        {"body": "Print the currency each client pays in.", "createdAt": "2999-01-01T00:00:00Z"},
         {"body": "A bot's check.", "createdAt": "2999-01-01T00:01:00Z", "author": bot},
     ]
     pull["review_comments"] = [
         {
-            "body": "No hints here.",
+            "body": "Round the tax here.",
             "created_at": "2999-01-01T00:02:00Z",
             "path": "invoicer/render.py",
             "line": 12,
@@ -122,15 +122,15 @@ def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
     w.printed(walk.c.bash(b.tree("send-back")))
     comments = w.printed(walk.c.bash(b.tree("comments")))
     assert [(c["body"], c["path"], c["line"]) for c in comments] == [
-        ("Leave out invoicer/render.py.", "", None),
-        ("No hints here.", "invoicer/render.py", 12),
+        ("Print the currency each client pays in.", "", None),
+        ("Round the tax here.", "invoicer/render.py", 12),
     ]
 
 
 @pytest.mark.supports("S3", "Sign-off", "Made", "Deliverable")
 def test_a_deliverable_put_up_and_approved_is_marked_done(b: Bench) -> None:
-    """Given: "Type hints in each file of invoicer" judged good in its first round, and put up for
-    the user's sign-off with the decision its Made names.
+    """Given: the command judged good in its first round, and put up for the user's sign-off with
+    the decision its Made names.
     When: the user types /rn:ty, the orchestrator runs tree.py approve, and the tree-keeper writes
     it done.
     Then: the sign-off of the deliverable waits until /rn:ty and is signed off after it, and the
@@ -142,7 +142,7 @@ def test_a_deliverable_put_up_and_approved_is_marked_done(b: Bench) -> None:
         "what": cut["deliverable"],
         "state": "waiting",
     }
-    done = {"name": w.HINTS, "path": w.HINTS_PATH, "kind": "code", "status": "done"}
+    done = {"name": w.COMMAND, "path": w.COMMAND_PATH, "kind": "code", "status": "done"}
     w.approved(b, walk, "Signed off.", {"nodes": {"deliverables/0": done}, "more": []})
     assert w.sign_offs_in(walk)[-1]["state"] == "signed off"
     assert w.tree_in(walk)["deliverables"][0] == done
