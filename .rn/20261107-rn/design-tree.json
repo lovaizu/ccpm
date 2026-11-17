@@ -404,7 +404,8 @@
           "decisions": [
             {
               "about": "Which hook holds each step and each practice of rn's roles",
-              "decided": null
+              "decided": "the ends_checked Lane on step 7, which runs record.py check at the generator's end, holds each step and practice, as the plugin guide's decision on each step and practice carried out says; a run_only Lane on step 5 holds every command to the generator's own, throwaway.py's tries among them, as the README promises that rn runs commands in a throwaway copy, and Lane's run_only must take a quoted argument, such as a command to try or what a step left, as the one shell word that a name the run values don't give stands for",
+              "by": "reasoning"
             }
           ]
         },
@@ -428,8 +429,9 @@
           "good": false,
           "decisions": [
             {
-              "about": "How the generator's unit case checks the walkthrough's deliverable, whose decision names mypy --strict, which no environment of the repository holds",
-              "decided": null
+              "about": "How the generator's unit case shows that it records each step and writes its Made",
+              "decided": "it makes \"invoicer marked as typed\", with the user's decision under it, which needs no tool beyond the README's requirements, as the case is of the generator's steps and Made, not of a check; a generator that meets a missing tool ends with lacks, as its steps say",
+              "by": "reasoning"
             }
           ]
         }
