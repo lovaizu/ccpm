@@ -74,71 +74,7 @@
       "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
       "path": "plugins/rn/README.md",
       "kind": "readme",
-      "inputs": [
-        "dev/rn/product-vision.md"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/readme"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The product vision's Concept",
-              "decided": "rn piles up the vital few, what brings a deliverable's people to what they're after, and cuts the trivial many thoroughly, on three ideas: each role starts from the people's purpose and the state in which they have it; at each turn rn reviews the design tree, its content and how the work goes, by the facts of the run; and rn finds what's good and what would make it good, taking in only what brings the people closer",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",

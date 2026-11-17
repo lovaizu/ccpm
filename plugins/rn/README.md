@@ -187,6 +187,11 @@ rn takes each shortfall back to the decision it comes from, and makes the delive
 the decisions. A shortfall the people would never meet changes nothing, so the deliverable doesn't
 grow with each round.
 
+### "Does it keep working on what no one needs?"
+
+No. Each turn, rn reviews the plan by what the run showed, and works next where the people gain
+most.
+
 ### "Does it skip a step when no one watches?"
 
 No. Lane, installed with rn, stops any part of rn that leaves its steps, and shows it its step.

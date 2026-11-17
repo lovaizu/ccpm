@@ -69,6 +69,8 @@
   <text class="kind" x="420" y="136">your goal and each decision</text>
   <text class="quote start" x="552" y="104">“It builds the wrong thing.”</text>
   <text class="gets start" x="552" y="121">You get the deliverable you mean.</text>
+  <text class="quote start" x="552" y="146">“It keeps working on what no one needs.”</text>
+  <text class="gets start" x="552" y="163">Each turn reviews the plan by what the run showed.</text>
 
   <path class="line" d="M172,105 L306,105" marker-end="url(#arrow)"/>
   <text class="label halo mid" x="239" y="80">your request, answers,</text>
