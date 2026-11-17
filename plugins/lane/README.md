@@ -1,13 +1,12 @@
 # Lane
 
-Lane is a Claude Code plugin that keeps your plugin's skill and subagents on the steps and order you
-wrote.
+Lane is a Claude Code plugin that gives your plugin's roles the step they leave, as they leave it.
 
-In development: Lane's rebuild isn't released, and doesn't yet hold steps marked done, checklists, or
-files read whole.
+In development: Lane's rebuild isn't released, and doesn't yet check steps marked done, checklists,
+or files read whole.
 
 Lane is for you when you build a Claude Code plugin whose skill and subagents must keep numbered
-steps. With it, you have your plugin run as you designed it, and write no check.
+steps. With it, you have each of them notice the moment it leaves a step or your order.
 
 ## Non-goals
 
@@ -16,6 +15,7 @@ steps. With it, you have your plugin run as you designed it, and write no check.
 - Lane doesn't guard security: hold what must never happen with branch protection or Claude Code's
   permission rules.
 - Lane doesn't judge how well a step was done: add a review subagent, or end the step on your check.
+- Lane doesn't make a role go back to its step: that rests on your plugin's steps and the model.
 
 ## Requirements
 
@@ -204,18 +204,18 @@ changelog: reviewer gave `good`. Start no more subagents.
 
 ## How it works
 
-Lane holds your plugin's skill and subagents to the steps and order you wrote, on every run.
+Lane gives your plugin's skill and subagents the step's own sentence the moment they leave a step or
+your order.
 
-![How Lane works, from your steps to each run it holds](images/how-it-works.svg)
+![How Lane works, from your steps to each move it checks](images/how-it-works.svg)
 
 ### "A hook that only refuses leaves the subagent to find another way."
 
-When Lane stops a call, the subagent gets its own step's sentence, so it goes back to the step.
+When Lane stops a call, the subagent gets its own step's sentence, so it sees which step it left.
 
 ### "A subagent skips a step, an item of its checklist, or part of a file."
 
-Lane holds each step until the subagent marks it and its checklist done, in order, and reads its
-files whole. A mark counts only from the script Lane lays, and a read only from the Read itself.
+Lane stops a step's mark until the subagent has marked its checklist and read its files whole. A mark counts only from the script Lane lays, and a read only from the Read itself.
 
 ### "The next move comes from what a subagent wrote."
 
@@ -224,8 +224,8 @@ as "No more entries" never passes for `more`.
 
 ### "The skill forgets a start, starts the wrong one, or stops while one is due."
 
-Lane gives the main conversation each start your routes make due, and stops any other. It holds the
-main conversation's stop while a start is due.
+Lane gives the main conversation each start your routes make due, and stops any other with the
+starts due. It stops the main conversation's end while a start is due.
 
 ### "Each check is code to write and test."
 
@@ -239,8 +239,7 @@ Lane decides each move from a record of the run's starts and results, so a run g
 
 ### "Does it check other work in the same conversation?"
 
-No. Lane holds only your skill's run, from its call until its routes end, not another
-plugin's within it.
+No. Lane checks only your skill's run, from its call until its routes end.
 
 ### "Does whoever runs the plugin need Lane?"
 

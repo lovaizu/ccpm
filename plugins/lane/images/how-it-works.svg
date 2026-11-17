@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 500">
-  <title>How Lane works: you approve the rules and routes that /lane:up proposes from your steps, and it lays the checks into your plugin, and on a run the guard gives the main conversation only the start due, gives a subagent that leaves its steps the step's own sentence, holds each step until the subagent marks it and its items done and reads its files whole, counts a result only from the result script, and picks a run up from what your plugin kept</title>
+  <title>How Lane works: you approve the rules and routes that /lane:up proposes from your steps, and it lays the checks into your plugin, and on a run the guard gives the main conversation only the start due, gives a subagent that leaves its steps the step's own sentence, stops a step&#x27;s mark until the subagent marks its items done and reads its files whole, counts a result only from the result script, and picks a run up from what your plugin kept</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
