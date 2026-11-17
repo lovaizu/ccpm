@@ -19,7 +19,7 @@
    "additionalProperties": false,
    "properties": {
     "decided": {
-     "description": "The end, as one sentence with the user as its subject.",
+     "description": "The end, as one sentence with the user as its subject, followed by the state its people are in once it holds: what they do then that they couldn't before.",
      "type": "string"
     },
     "by": {

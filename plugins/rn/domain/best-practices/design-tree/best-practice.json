@@ -1,15 +1,15 @@
 {
  "goal": {
-  "what": "The maker builds every deliverable that the user's goal needs, each after what it needs and from settled decisions, and the user knows where the work stands.",
+  "what": "The people a goal serves reach it through only the deliverables and decisions that bring them there, as the maker reviews the design tree at each turn by the run's facts.",
   "critical_success_factors": [
    {
     "id": "C1",
-    "what": "The design tree holds every deliverable that the goal needs, each after the deliverables it needs.",
+    "what": "The design tree holds the goal, the state its people are in once it holds, and only the deliverables that bring them there, each after the deliverables it needs.",
     "necessary_conditions": [
      {
       "id": "N1",
       "about": "goal",
-      "what": "Does the goal state, in one sentence, what the user is trying to achieve?",
+      "what": "Does the goal state, in one sentence, what the user is trying to achieve, and the state its people are in once it holds?",
       "why": "Every deliverable in the design tree is there to serve the goal, so the goal decides what goes in and what stays out, and shows the user that the work is after what they want.",
       "items": [
        {
@@ -22,7 +22,11 @@
        },
        {
         "at": "decide",
-        "text": "Put the sentence to the user to confirm, beside the words of the request it came from, and write it as they confirm it, since only the user knows what they're after."
+        "text": "Write after the goal's sentence, in the same `decided`, the state its people are in once it holds: what they do then that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`, since each later choice is judged by whether it brings them there."
+       },
+       {
+        "at": "decide",
+        "text": "Put the sentence and the state to the user to confirm, beside the words of the request they came from, and write them as they confirm them, since only the user knows what they're after."
        },
        {
         "at": "decide",
@@ -37,12 +41,12 @@
      {
       "id": "N2",
       "about": "deliverables",
-      "what": "Does the tree hold every deliverable that the goal needs?",
+      "what": "Does the tree hold the deliverables that bring the people to the goal's state, and only those?",
       "why": "A deliverable left out shows up only when the work reaches it, and the work stops there. The items follow a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure), which practitioners build down from the end objective until the parts together hold all of the work.",
       "items": [
        {
         "at": "decide",
-        "text": "Open the goal and the user's request, and list each deliverable that the user holds or uses once the goal holds, such as a plugin with its README. Keep one only where the goal fails without it, and ask the user about one you can't tell."
+        "text": "Open the goal and the user's request, and list each deliverable that the people use in the goal's state, such as a plugin with its README. Keep one only where the goal fails without it, and ask the user about one you can't tell."
        },
        {
         "at": "decide",
@@ -54,7 +58,7 @@
        },
        {
         "at": "decide",
-        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens, and add a deliverable of that kind at a new path where no such file exists. Repeat N2.3 and this item for each deliverable you add, until one takes nothing."
+        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens. Where no such file exists, add a deliverable of that kind only where the goal's state fails without it, such as an architecture for a plugin whose parts must fit together. Elsewhere, write that kind's vital few as decisions of the deliverable that takes it, such as the people of a guide added beside a command, since a deliverable that brings the people nothing new only lengthens the work. Repeat N2.3 and this item for each deliverable you add, until one takes nothing."
        },
        {
         "at": "decide",
@@ -118,7 +122,7 @@
    },
    {
     "id": "C2",
-    "what": "The maker builds each deliverable from settled decisions, and asks the user only what's theirs to decide.",
+    "what": "Each deliverable is made from decisions that bring its people closer to the goal's state.",
     "necessary_conditions": [
      {
       "id": "N5",
@@ -140,7 +144,7 @@
        },
        {
         "at": "decide",
-        "text": "Leave a point's `decided` null while a deliverable of the tree that it takes from isn't done, such as a README's people before the product vision is done, and put it to no one until then, since an answer given before its grounds exist rests on a guess."
+        "text": "Leave a point's `decided` null while a deliverable of the tree that it takes from isn't done, such as a README's people before the product vision is done, and settle it or put it to the user once that deliverable is done, since an answer given before its grounds exist rests on a guess."
        },
        {
         "at": "decide",
@@ -167,6 +171,10 @@
         "text": "Put each point still open to the user, one in each message, with your recommendation and its ground, where the answers left differ in what the user gets, such as which people a product serves, and leave its `decided` null until they answer."
        },
        {
+        "at": "decide",
+        "text": "Take each feedback, a more of a round, a point, or the person's words, into the decision it bears on where it brings the people closer to the goal's state, and say how in the ground, such as a more that names what a guide's reader lacks to print an invoice. Keep the rest in the round's records, since a deliverable that takes in each thing named grows round by round away from its people."
+       },
+       {
         "at": "make",
         "text": "When a deliverable becomes done, take each null point of the later deliverables that takes from it, and settle it or put it to the user as this practice's decide items say."
        }
@@ -184,7 +192,7 @@
        },
        {
         "at": "make",
-        "text": "Write the grounds of each decision that a change makes, the point and why it holds, as `<ground>` of `tree.py write`, which commits the change with it as the commit message, and keep them out of the tree, so that the user finds them in git."
+        "text": "Write the grounds of each decision that a change makes, the point and why it holds, as `<ground>` of `tree.py write`, which commits the change with it as the commit message, so that the user finds them in git and the tree holds the decision alone."
        }
       ]
      }
@@ -192,6 +200,36 @@
    },
    {
     "id": "C3",
+    "what": "At each turn, the maker reviews the design tree by the run's facts, its content and how the work goes, and keeps the work on the vital few.",
+    "necessary_conditions": [
+     {
+      "id": "N11",
+      "about": "goal, deliverables",
+      "what": "Does each node of the tree hold what the run's facts so far show brings the people to the goal's state: each deliverable, decision, open point, and the work next?",
+      "why": "A plan holds what was known when it was laid, and each round, try, and answer shows more. Reviewed at each turn, the tree takes the work where the people gain most, while a tree kept as laid piles up rounds on points that bring them nothing.",
+      "items": [
+       {
+        "at": "make",
+        "text": "At the start of each turn, list the facts since the last turn: each round's answers, each try's output, and each word of the person."
+       },
+       {
+        "at": "make",
+        "text": "For each deliverable, ask whether the facts show that it still brings the people to the goal's state, and how far it stands from it. Take out a deliverable that no longer does, and add one that the facts show the state needs."
+       },
+       {
+        "at": "make",
+        "text": "Where a round's answers name a point that came back from an earlier round, or two points whose fixes undo each other, go to the decision they rest on, and decide it again from the goal's state, since another round on the same decision ends the same way."
+       },
+       {
+        "at": "make",
+        "text": "Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, and write the tree's order so."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C4",
     "what": "The maker and the user see where the work stands, and pick it up from there.",
     "necessary_conditions": [
      {
@@ -206,7 +244,7 @@
        },
        {
         "at": "decide",
-        "text": "Leave out its path and its kind, which have fields of their own."
+        "text": "Write its path and its kind in their own fields, so that the name says only what it brings."
        }
       ]
      },
@@ -245,7 +283,7 @@
     ]
    },
    {
-    "id": "C4",
+    "id": "C5",
     "what": "The design tree stays true as the work changes it.",
     "necessary_conditions": [
      {
@@ -276,7 +314,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Write a changed decision over its old text, with no note of what it said before."
+        "text": "Write a changed decision over its old text, so that it reads as what holds now."
        },
        {
         "at": "make",

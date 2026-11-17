@@ -26,76 +26,7 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The goal",
-              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The factors",
-              "decided": "at each turn the tree is reviewed by the run's facts, its content and how the work goes, from the goal and the state its people reach, so that each deliverable, decision, round, and point holds only where it brings them there, as rn's product vision now says",
-              "by": "user"
-            },
-            {
-              "about": "A kind that a deliverable's best practice names in its inputs, where the product holds no file of it",
-              "decided": "it becomes a deliverable of its own only where the goal fails without it, as N2.1 tests each deliverable; elsewhere the deliverable that takes it carries that kind's vital few as its own decisions, as the user decided that rn's README walkthrough plans a command and its guide alone",
-              "by": "reasoning"
-            },
-            {
-              "about": "Feedback: a more, a point, or the person's words",
-              "decided": "each is taken in only where it brings the people closer to the state the goal names, judged in the tree from that state",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Each practice",
-              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -684,6 +615,16 @@
               "about": "The product vision's Concept",
               "decided": "rn piles up the vital few, what brings a deliverable's people to what they're after, and cuts the trivial many thoroughly, on three ideas: each role starts from the people's purpose and the state in which they have it; at each turn rn reviews the design tree, its content and how the work goes, by the facts of the run; and rn finds what's good and what would make it good, taking in only what brings the people closer",
               "by": "user"
+            },
+            {
+              "about": "Where a role's record commits",
+              "decided": "only on the run's branch in the work's repository, as the rule The repository holds the work says, as rn's E2E pilot of 2026-11-17 committed a place file of its record into ccpm's own branch rn-rebuild, which was dropped",
+              "by": "reasoning"
+            },
+            {
+              "about": "Test strategy's Scenario testing",
+              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed, as the E2E test's KR1.1 decision says, in place of a judge on Opus",
+              "by": "user"
             }
           ]
         },
@@ -1046,6 +987,11 @@
             {
               "about": "Stages",
               "decided": "one run of the walkthrough as the pilot, then the installation case and the walkthrough once each, then runs of the walkthrough from three, added until one more moves no mean by a step: a percent of KR1.1's share, a minute of KR1.2's time",
+              "by": "reasoning"
+            },
+            {
+              "about": "Watching a run",
+              "decided": "the developer watches each run's records as it goes, and stops it at the first place it departs from the walkthrough; e2e.py keeps the records of a run it stops and removes its folder even where a branch's removal fails, as the pilot of 2026-11-17 ran two and a half hours past its plan of eight deliverables, and lost its records and folder when stopped",
               "by": "reasoning"
             }
           ]
