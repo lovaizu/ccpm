@@ -395,6 +395,16 @@
               "about": "Watching a run",
               "decided": "the developer watches each run's records as it goes, and stops it at the first place it departs from the walkthrough; e2e.py keeps the records of a run it stops and removes its folder even where a branch's removal fails, as the pilot of 2026-11-17 ran two and a half hours past its plan of eight deliverables, and lost its records and folder when stopped",
               "by": "reasoning"
+            },
+            {
+              "about": "The pilot run",
+              "decided": "the run of 2026-11-18, records walkthrough/20261117T204638Z, held as the first stage: the stand-in followed the walkthrough to the pull request ready, rn asked only the person's points, and a stand-in of accounting printed the invoice from the guide alone by try-guide.json, so KR1.1 counted none of the two deliverables unusable, and KR1.2 was 184 minutes, the command taking six rounds; the three runs before it were stopped at their first departure, each mended at its cause",
+              "by": "reasoning"
+            },
+            {
+              "about": "Before the next stage",
+              "decided": "the faults the pilot showed, each mended at its cause before the installation case and the walkthrough run again: the tree-keeper writes its changes in the shared /tmp, where a later run read another's; the orchestrator takes in a more that comes back in place of deciding again the decision it rests on (design tree N11.3); the readme kind and its template check hold a guide for the accounting team to Non-goals, How it works, and a License, which its people never need; the orchestrator runs the tests in the worktree, whose __pycache__ tree.py commits; the E2E test's intent names no machine for accounting, so the stand-in made one up; and claude -p ends a turn ten minutes after its main conversation while a subagent works, cutting it mid-step",
+              "by": "reasoning"
             }
           ]
         }

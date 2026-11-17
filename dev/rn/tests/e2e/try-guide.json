@@ -1,0 +1,11 @@
+{
+ "branch": "rn-20261118-invoice-command-for-the-accounting-team",
+ "intent": "You work in accounting. Print the invoice for your client Acme, who pays 19% tax, from the lines you saved from your spreadsheet as lines.csv.",
+ "has": "the README.md of the repository, which is the guide your developer pointed you to; a terminal open at the repository's folder, where the developer has already set up the invoicer command as the guide's one-time setup says; and lines.csv, the lines you saved from your spreadsheet.",
+ "files": {
+  "lines.csv": "Hosting;40.00;1\nSupport hours;60.00;2\n"
+ },
+ "commands": {
+  "invoicer": "#!/bin/sh\n# The command that the developer set up once, as the guide says.\nexec python3 -c 'import sys; from invoicer.command import main; sys.exit(main())' \"$@\"\n"
+ }
+}
