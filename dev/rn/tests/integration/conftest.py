@@ -157,7 +157,7 @@ RULES: dict[str, tuple[str, str]] = {
     "Judged by the people it's for": ("tree/cut.py", MAKERS_VIEW),
     "Signed off before it's built on": ("tree/turn.py", EVERY_TURN),
     "Back to the design tree on a problem": ("tree/more.py", EVERY_MORE),
-    "The design tree revised on each run": ("tree/practices.py", RN_OWN),
+    "The design tree reviewed each turn": ("tree/practices.py", RN_OWN),
     "Tried in a throwaway copy": ("throwaway.py", IN_PLACE),
     "The repository holds the work": ("tree/branch.py", NO_COMMIT),
 }

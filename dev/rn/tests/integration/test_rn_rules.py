@@ -178,7 +178,7 @@ def test_a_more_kept_with_no_decision_changed_is_refused(
     assert not [p for p in held if os.path.basename(p) == "more.json"]
 
 
-@pytest.mark.supports("The design tree revised on each run", "S1", "Best practice")
+@pytest.mark.supports("The design tree reviewed each turn", "S1", "Best practice")
 def test_a_best_practice_made_on_the_run_is_taken_over_rns_own(b: Bench, broken: None) -> None:
     """Given: the walkthrough's plan signed off, and a code best practice made on the run in
     .rn/best-practices/code/ of the run's worktree, committed.

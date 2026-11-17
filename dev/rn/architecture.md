@@ -62,13 +62,13 @@ A `more` or a `/rn:gm` changes the decision it comes from, and `tree.py` keeps a
 *Why*: a fix beside the design rests on no decision, so the next round loses or breaks it, raising
 KR1.1.
 
-### The design tree revised on each run
+### The design tree reviewed each turn
 
-What a run finds changes the design tree before the next deliverable, and a best practice once
-taken.
+Each turn, what the run has shown changes the tree's content and course, and a best practice
+once taken.
 
-*Why*: a design tree or best practice kept as first laid out makes the same miss again, raising
-KR1.1.
+*Why*: a tree kept as first laid out piles up rounds that the people never use, raising KR1.1
+and KR1.2.
 
 ### Tried in a throwaway copy
 
@@ -80,7 +80,7 @@ KR1.2.
 
 ### The repository holds the work
 
-The run's state lives only in its folder on the work's branch, which `tree.py` commits at each step
+The run's state lives only in its folder on the work's branch, committed by `tree.py` at each step
 and pause.
 
 *Why*: work kept only in a conversation that ends makes the user answer or wait again, adding to
@@ -95,13 +95,13 @@ KR1.2.
 - rn's developers\
   Change rn's own best practices by each lesson that reaches rn's repository.
 - orchestrator\
-  Judges whose each point is, settles the rest, plans, and checks each result before taking it.
+  Keeps the work on what brings the people closer: reviews the tree each turn, asking the user only theirs.
 - tree-keeper\
-  Writes each decision into the design tree, and checks that each node it touches agrees.
+  Keeps the design tree true to each decision, so every role builds on what holds now.
 - generator\
-  Makes the deliverable from its cut, and hands back with `asks` each point it can't settle.
+  Makes the deliverable from its cut with only what brings its people closer, handing back each point it can't settle.
 - evaluator\
-  Judges whether the deliverable meets each condition of its group for its people.
+  Finds, as the deliverable's people, what's good for them and what would make it good, condition by condition.
 - tree.py\
   Keeps the tree's form, finds each deliverable's turn and cut, and holds the run's files and branch.
 - repository\
@@ -619,7 +619,7 @@ Each test case lies in `dev/rn/tests/`, written as Given, When, and Then before 
 | Integration testing | Architecture | Quality | pytest, with the double of Claude Code: every case passes, each handoff giving the data the data model names. |
 | Contract testing | Architecture | Quality | `dev/rn/tests/gh/compatibility.py` on each new gh: each recorded command gives what its line shows. Claude Code's is Lane's test. |
 | Traceability | Architecture | Quality | `dev/scripts/trace.py`: every element tested, every case naming one level up, each rule's case failing broken. A review: 0 cases that miss what their element says. |
-| Scenario testing | Product | Benchmark | `dev/scripts/e2e.py` on the walkthrough, judged on Opus: the key results KR1.1, then KR1.2, over several runs. Runs: added until one more moves no mean by a step. |
+| Scenario testing | Product | Benchmark | `dev/scripts/e2e.py` on the walkthrough, the key results KR1.1, then KR1.2, over several runs. A stand-in of each deliverable's people tries it, and code checks. Runs: added until one more moves no mean by a step. |
 | Installation testing | Product | Quality | `dev/scripts/e2e.py`: rn installs by the README's commands in a fresh home, and `/rn:up` answers. |
 | Configuration testing | Product | Quality | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
 | Conformance and compliance testing | Product | Quality | `claude plugin validate --strict`: passes. |
