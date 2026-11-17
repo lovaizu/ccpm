@@ -86,6 +86,9 @@ PRODUCT_VISION = """\
   - KR1.2: the time from the request to the deliverable. Shorter is better.
 """
 
+# A combination that one hook event meets, as the Strategies of a sequence name it.
+COMBINATION = "Strategies:\n\n- A call judged by two lanes\\\n  Each holds, serving KR1.1.\n\n"
+
 # Every element of ARCHITECTURE and DATA_MODEL, as an integration case names it.
 ELEMENTS = ["S1", "S2", "user", "tree.py", "Cut", "Lack's kept", "The repository holds the work"]
 
@@ -238,6 +241,26 @@ class ElementTest(TraceTest):
         last = bare.replace("## Data model", "- guard\\\n  Holds each call.\n\n## Data model")
         self.write("dev/p/architecture.md", last)
         self.fails_with(1, "component guard has no integration test")
+
+    def test_a_combination_that_no_case_names_is_reported_at_its_line(self):
+        self.every_element_named()
+        added = ARCHITECTURE.replace("## Test strategy", f"{COMBINATION}## Test strategy")
+        self.write("dev/p/architecture.md", added)
+        line = added.split("\n").index("- A call judged by two lanes\\") + 1
+        self.fails_with(
+            1, f"dev/p/architecture.md:{line}: combination A call judged by two lanes has no"
+        )
+
+    def test_a_combination_that_a_case_names_passes(self):
+        self.every_element_named()
+        added = ARCHITECTURE.replace("## Test strategy", f"{COMBINATION}## Test strategy")
+        self.write("dev/p/architecture.md", added)
+        self.write(
+            "dev/p/tests/integration/test_combination.py",
+            cases_file(case("test_two", "A call judged by two lanes")),
+        )
+        result = self.trace()
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
 
     def test_a_kind_of_data_that_no_case_names_is_reported(self):
         self.every_element_named()

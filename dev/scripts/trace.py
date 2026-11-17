@@ -10,6 +10,7 @@ template of the architecture best practice names them:
 - each story by its `S<n>` in User stories of `dev/<plugin>/architecture.md`
 - each rule by its heading under Solution strategy
 - each role and component by its name in Components' list, above its Strategies
+- each combination of parts that one hook event meets by its name in the Strategies of a sequence
 - each kind of data by each `<text class="name">` of `dev/<plugin>/images/data-model.svg`, the one
   place that names every kind, as Data model's text names only the kinds a reader could confuse
 - each key result by its `KR<n>.<m>` in `dev/<plugin>/product-vision.md`
@@ -118,6 +119,21 @@ def components(lines: list[tuple[int, str]], path: str) -> list[tuple[int, str]]
     return found
 
 
+def combinations(lines: list[tuple[int, str]]) -> list[tuple[int, str]]:
+    """Each name in the Strategies of each sequence, a combination of parts that one hook event
+    meets, with its line number."""
+    found = []
+    listed = False
+    for number, line in lines:
+        if line.startswith("### "):
+            listed = False
+        elif line == "Strategies:":
+            listed = True
+        elif listed and (named := COMPONENT.match(line)):
+            found.append((number, named.group(1)))
+    return found
+
+
 def read(path: str) -> str:
     """The text of the file, which must be there."""
     try:
@@ -141,6 +157,8 @@ def elements(plugin: str) -> list[tuple[str, str, str]]:
             found.append((f"{path}:{number}", "rule", line[4:].strip()))
     for number, name in components(section(lines, "## Components", path), path):
         found.append((f"{path}:{number}", "component", name))
+    for number, name in combinations(section(lines, "## Sequences", path)):
+        found.append((f"{path}:{number}", "combination", name))
     figure = f"dev/{plugin}/images/data-model.svg"
     try:
         root = ET.fromstring(read(figure))
