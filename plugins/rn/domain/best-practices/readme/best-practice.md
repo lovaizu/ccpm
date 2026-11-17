@@ -130,7 +130,7 @@ A reader tries a product when what it gives them for their problem outweighs the
 
 1. *While deciding.* Open the product vision, and for each objective, write the problem its role has in that work today, in their words, such as, for a backup tool, `my backups fail without warning`.
 2. *While deciding.* For each key result, write the doubt a reader would raise about whether the product gives it, in their words, such as `does it work with my network drive?`
-3. *While deciding.* Where the product has an issue tracker or discussions, add each problem or doubt that someone raised there before they used the product.
+3. *While deciding.* Where the product has an issue tracker or discussions, read there what people raised before they used the product, and add a problem or doubt only where it bears on an objective or a key result and the list doesn't hold it yet.
 4. *While deciding.* Keep only those whose answer would change whether the reader tries the product, and drop each that the walkthrough already settles.
 5. *While deciding.* For each one left, take from the concept the idea that answers it.
 6. *While deciding.* Where the concept has none, tell what's missing: an idea that matters to the users, where the answer would change what they do or get, or only the way to make it work, where they'd do and get the same.
