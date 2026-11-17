@@ -79,7 +79,24 @@ def done_at(run: Run, deliverable: str) -> str:
     runs holds, with the path of a new Record for the start (Cut)`, as the Cut of a deliverable
     done before gives the commit it was done at, which the design tree keeps only in git.
     """
-    raise NotImplementedError("branch.done_at")
+    tree = os.path.relpath(os.path.join(run.folder, "design-tree.json"), run.worktree)
+    statuses = [
+        (commit_id, _status(git.file_at(run.worktree, commit_id, tree), deliverable))
+        for commit_id, _ in git.history(run.worktree, tree)
+    ]
+    marked = (
+        commit_id
+        for (commit_id, status), (_, before) in zip(statuses, [*statuses[1:], ("", None)])
+        if status == "done" != before
+    )
+    return next(marked, "")
+
+
+def _status(text: str, deliverable: str) -> Any:
+    """The status of the deliverable at the path in the design tree's text, None where it holds
+    none."""
+    each = json.loads(text).get("deliverables", [])
+    return next((d.get("status") for d in each if d.get("path") == deliverable), None)
 
 
 def _node(text: str, path: str) -> Any:

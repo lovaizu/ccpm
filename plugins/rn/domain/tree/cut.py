@@ -192,10 +192,12 @@ def _generator(
         for at, condition, decision in _decisions(tree, path)
     ]
     more = rounds.kept_more(run, path, start.number - 1) if start.number > 1 else ()
+    done_at = branch.done_at(run, path)
     cut = {
         "goal": design.goal(tree),
         "name": node["name"],
         "inputs": list(node["inputs"]),
+        **({"done_at": done_at} if done_at else {}),
         "decisions": decisions,
         "more": [
             {

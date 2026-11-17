@@ -19,7 +19,6 @@ from tree import branch, github
 
 from dev.rn.tests.unit import rn_data as d
 
-NOT_DONE_AT = pytest.mark.xfail(strict=True, reason="branch.done_at has an empty body")
 # The status of "Type hints in each file of invoicer" in each commit of the design tree, in order,
 # beside "invoicer marked as typed"'s; and which of those commits marked it done last, None where
 # none did.
@@ -59,7 +58,6 @@ def committed(run: Any, *trees: dict[str, Any]) -> list[str]:
     return found
 
 
-@NOT_DONE_AT
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 @pytest.mark.parametrize(("statuses", "last_done"), HISTORIES)
 def test_the_commit_a_deliverable_was_last_done_at_is_the_last_that_marked_it_done(
@@ -75,7 +73,6 @@ def test_the_commit_a_deliverable_was_last_done_at_is_the_last_that_marked_it_do
     assert branch.done_at(run, "invoicer") == ("" if last_done is None else ids[last_done])
 
 
-@NOT_DONE_AT
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 def test_a_deliverable_moved_among_the_deliverables_keeps_the_commit_it_was_done_at(
     tmp_path: Any,
@@ -91,7 +88,6 @@ def test_a_deliverable_moved_among_the_deliverables_keeps_the_commit_it_was_done
     assert branch.done_at(run, "invoicer") == ids[1]
 
 
-@NOT_DONE_AT
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 def test_a_deliverable_the_tree_never_held_was_never_done(tmp_path: Any) -> None:
     """Given: a run whose design tree marked invoicer done.
@@ -102,7 +98,6 @@ def test_a_deliverable_the_tree_never_held_was_never_done(tmp_path: Any) -> None
     assert branch.done_at(run, "README.md") == ""
 
 
-@NOT_DONE_AT
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 def test_the_commit_a_deliverable_was_done_at_where_git_fails_cant_run(tmp_path: Any) -> None:
     """Given: a run whose worktree is no longer there.

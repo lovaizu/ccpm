@@ -13,7 +13,11 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
+# Why the case of a command run by itself still fails: the guard stops it only by a run_only Lane
+# of the generator's step that tries commands, which /lane:up lays once its prompt has steps.
+NO_RUN_ONLY = pytest.mark.xfail(
+    strict=True, reason="the generator's Lanes hold no run_only, as its prompt's steps are empty"
+)
 
 
 @pytest.mark.supports("Drawn out along the design tree", "S1", "Cut", "guard")
@@ -36,7 +40,6 @@ def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, brok
     assert paths and all(p.startswith("deliverables/0/") for p in paths)
 
 
-@LATER
 @pytest.mark.supports("Drawn out along the design tree", "S1", "Cut", "tree-keeper")
 def test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at(
     b: Bench, broken: None
@@ -62,7 +65,7 @@ def test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at(
     assert set(cut["cut"]) == {"goal", "name", "inputs", "decisions", "more", "done_at"}
     assert cut["cut"]["done_at"] == done_at
     changed = w.git(walk.run["worktree"], "diff", cut["cut"]["done_at"], "--", "pyproject.toml")
-    assert w.TESTS_LEFT_OUT.strip() in changed
+    assert all(f"+{line}" in changed for line in w.TESTS_LEFT_OUT.strip().splitlines())
 
 
 @pytest.mark.supports("Every step by best practice", "S1", "record.py", "Record", "guard")
@@ -180,26 +183,31 @@ def test_a_more_kept_with_no_decision_changed_is_refused(
     assert not [p for p in held if os.path.basename(p) == "more.json"]
 
 
-@LATER
 @pytest.mark.supports("The design tree revised on each run", "S1", "Best practice")
 def test_a_best_practice_made_on_the_run_is_taken_over_rns_own(b: Bench, broken: None) -> None:
     """Given: the walkthrough's plan signed off, and a code best practice made on the run in
     .rn/best-practices/code/ of the run's worktree, committed.
-    When: the orchestrator starts the generator with the text that the guard gives due.
-    Then: its Cut names the best practice made on the run, not rn's own."""
+    When: the orchestrator starts the generator with the text that the guard gave before the best
+    practice was made, then with the text that the guard gives due.
+    Then: the guard stops the first start, and the Cut of the second names the best practice made
+    on the run, not rn's own."""
     walk = w.planned(b)
     made = os.path.join(walk.run["worktree"], ".rn", "best-practices", "code")
     shutil.copytree(os.path.join(b.rn, "domain", "best-practices", "code"), made)
     w.git(walk.run["worktree"], "add", "-A")
     w.git(walk.run["worktree"], "commit", "-q", "-m", "The code best practice made on the run")
+    stopped, agent = walk.c.start("rn:generator", w.due_text(walk.said, "generator"), "generator")
+    assert stopped.blocked and agent is None
+    walk.said = stopped.said
     _, cut = w.generator_started(walk)
     assert cut["best_practice"].rstrip("/").endswith(".rn/best-practices/code")
 
 
-@LATER
+@NO_RUN_ONLY
 @pytest.mark.supports("Tried in a throwaway copy", "S1", "throwaway.py", "Try record", "guard")
 def test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept(b: Bench, broken: None) -> None:
-    """Given: the generator of "Type hints in each file of invoicer" running.
+    """Given: the generator of "Type hints in each file of invoicer" running, at the end of its
+    step 1, committed, as S1 has a role try a command after a step's commit.
     When: it tries a command that writes a file by throwaway.py, then runs the same command by
     itself.
     Then: throwaway.py gives the command's own exit code and output, the worktree holds no file it
@@ -207,6 +215,7 @@ def test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept(b: Bench, bro
     itself."""
     walk = w.planned(b)
     generator, cut = w.generator_started(walk)
+    assert generator.bash(b.tree("commit", cut["record"], "1")).exit_code == 0
     command = "touch tried.txt && echo tried"
     tried = generator.bash(b.throwaway(cut["deliverable"], command))
     assert tried.exit_code == 0 and "tried" in tried.output

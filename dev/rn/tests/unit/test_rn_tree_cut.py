@@ -19,12 +19,6 @@ from tree.place import Place
 
 from dev.rn.tests.unit import rn_data as d
 
-NOT_DONE_AT = pytest.mark.xfail(
-    strict=True,
-    reason="cut._generator doesn't yet give done_at, and branch.done_at has an empty body",
-)
-
-
 BOTH_DOING = d.with_status(d.walkthrough_tree(), "doing", "doing")
 
 
@@ -77,7 +71,6 @@ def test_the_generators_cut_is_of_the_first_deliverable_doing(tmp_path: Any) -> 
     assert "done_at" not in part
 
 
-@NOT_DONE_AT
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 def test_the_generators_cut_of_a_deliverable_done_before_gives_the_commit_it_was_done_at(
     tmp_path: Any,

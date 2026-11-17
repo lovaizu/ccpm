@@ -299,62 +299,7 @@
       "name": "Each rule of the Solution strategy of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
       "path": "dev/rn/tests/integration/test_rn_rules.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
-        "dev/rn/tests/integration/test_rn_s1_request.py",
-        "dev/rn/tests/integration/test_rn_s2_points.py",
-        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
-        "dev/rn/tests/integration/test_rn_s4_pause.py",
-        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
-        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /rn:up, /rn:ty, /rn:gm, and /rn:dn, typed or asked for, carry their request from the goal through each sign-off to one pull request, asking them only what's theirs",
@@ -603,7 +548,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Which case of rn's rules waits for the generator's prompt",
+              "decided": "test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept, as the guard stops a command the generator runs by itself only by a run_only Lane of the step that tries commands, which /lane:up lays from the generator's steps; its NO_RUN_ONLY mark goes once rn holds that Lane laid",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
