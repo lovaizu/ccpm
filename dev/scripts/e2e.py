@@ -7,8 +7,9 @@ results. It names no plugin, so the E2E tests of every plugin of the repository 
 
 Run it from the top of the repository as `python3 dev/scripts/e2e.py run <E2E test file>`, on the
 developer's login, as dev/plugin-development-guide.md says of the Claude Code of a test on the
-model. It prints the folder of the run's records. Claude Code's hooks run
-`e2e.py hook <file>`, which adds each event to the file.
+model. It prints the folder of the run's records, also of a run that the developer stops with an
+interrupt at its first departure from the case, its last turn kept as stopped. Claude Code's hooks
+run `e2e.py hook <file>`, which adds each event to the file.
 
 An E2E test file is one JSON object:
 - `intent`: what the person means to do, which only the stand-in reads.
@@ -28,7 +29,8 @@ An E2E test file is one JSON object:
 The records of a run lie in `<records>/<test>/<UTC time>/`, where `<test>` is the E2E test file's
 name without `.json`:
 - `run.json`: what the run took: the commit at the top and whether the top held changes beside it,
-  Claude Code's version, the model, and the E2E test file as given.
+  Claude Code's version, the model, the E2E test file as given, and whether the developer stopped
+  the run.
 - `turns.jsonl`: each turn's prompt, its times, Claude Code's exit code, and what the screen showed.
 - `hooks.jsonl`: each hook event, with the time it came.
 - `transcripts/`: Claude Code's transcript of the conversation, and of each subagent beside it.
@@ -327,9 +329,35 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
         env = _logged_in(token, (claude, os.path.join(root, "stand-in-claude")))
         person = dict(env, CLAUDE_CONFIG_DIR=claude, TMPDIR=os.path.join(root, "tmp"))
         standing = dict(env, CLAUDE_CONFIG_DIR=os.path.join(root, "stand-in-claude"))
-        session = str(uuid.uuid4())
-        screen: list[str] = []
-        turns = []
+        turns, stopped = _converse(test, dirs, (clone, stand_in, events), (person, standing))
+        stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+        folder = os.path.join(test.records, test.name, stamp)
+        records = RunRecords(os.path.join(top, folder), top, root, token)
+        took["stopped"] = stopped
+        records.write("run.json", json.dumps(took, ensure_ascii=False, indent=1) + "\n")
+        _keep(records, head, turns)
+        return folder
+    finally:
+        try:
+            if held is not None:
+                _unpush(clone, held)
+        finally:
+            shutil.rmtree(root)
+
+
+def _converse(
+    test: E2ETest, dirs: list[str], places: tuple[str, str, str], envs: tuple[dict[str, str], ...]
+) -> tuple[list[dict[str, Any]], bool]:
+    """Plays the person's turns, each prompt from the stand-in, until it's done, a turn ends with
+    no exit code, or the test's turns run out, and gives each turn, and whether the developer
+    stopped the run, as the test implementation best practice's N5.4 has them do at its first
+    departure from the case, inside a turn or between two."""
+    clone, stand_in, events = places
+    person, standing = envs
+    session = str(uuid.uuid4())
+    screen: list[str] = []
+    turns: list[dict[str, Any]] = []
+    try:
         for n in range(1, test.turns + 1):
             prompt = _ask(test.intent, "\n\n".join(screen), stand_in, standing)
             if prompt is None:
@@ -342,40 +370,48 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
                 *(word for d in dirs for word in ("--plugin-dir", d)),
                 *(begun, session, prompt),
             ]
-            try:
-                done = subprocess.run(
-                    command,
-                    cwd=clone,
-                    env=person,
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                    timeout=TURN_SECONDS,
-                )
-                code, shown = done.returncode, _screen(prompt, done.stdout)
-            except subprocess.TimeoutExpired:
-                code, shown = (
-                    None,
-                    f"> {prompt}\n(e2e.py stopped the turn after {TURN_SECONDS} s)",
-                )
+            code, shown, stopped = _turn(command, clone, person, prompt)
             screen.append(shown)
             turns.append(
                 {"turn": n, "prompt": prompt, "started": started, "ended": _now(), "exit": code}
             )
             turns[-1]["screen"] = shown
+            if stopped:
+                return turns, True
             if code is None:
                 break
             session = _session(events, session)
-        stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
-        folder = os.path.join(test.records, test.name, stamp)
-        records = RunRecords(os.path.join(top, folder), top, root, token)
-        records.write("run.json", json.dumps(took, ensure_ascii=False, indent=1) + "\n")
-        _keep(records, head, turns)
-        return folder
-    finally:
-        if held is not None:
-            _unpush(clone, held)
-        shutil.rmtree(root)
+    except KeyboardInterrupt:
+        return turns, True
+    return turns, False
+
+
+def _turn(
+    command: list[str], clone: str, person: dict[str, str], prompt: str
+) -> tuple[int | None, str, bool]:
+    """Runs one turn of Claude Code, and gives its exit code, what the screen showed, and whether
+    the developer stopped it, with no exit code for a turn past its time or stopped, whose screen
+    keeps what Claude Code showed before it."""
+    with subprocess.Popen(
+        command,
+        cwd=clone,
+        env=person,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ) as turn:
+        try:
+            out, _ = turn.communicate(timeout=TURN_SECONDS)
+        except subprocess.TimeoutExpired:
+            turn.kill()
+            out, _ = turn.communicate()
+            note = f"(e2e.py stopped the turn after {TURN_SECONDS} s)"
+            return None, f"{_screen(prompt, out)}\n{note}", False
+        except KeyboardInterrupt:
+            turn.terminate()
+            out, _ = turn.communicate()
+            return None, f"{_screen(prompt, out)}\n(the developer stopped the run)", True
+    return turn.returncode, _screen(prompt, out), False
 
 
 def tried(records: str, path: str, top: str, token: str | None) -> str:

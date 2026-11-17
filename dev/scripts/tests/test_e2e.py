@@ -13,9 +13,11 @@ import os
 import re
 import runpy
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
+import threading
 from typing import Any
 from unittest import mock
 
@@ -349,6 +351,60 @@ class E2ERunnerTest(E2EBase):
         self.plan([{"done": False, "prompt": ""}], [])
         self.refuses("stand-in")
 
+    def test_a_run_the_developer_stops_keeps_its_records_and_removes_its_folder(self):
+        # Given a run whose turn goes on, as a run that departs from the walkthrough does,
+        # When the developer stops it with an interrupt during the turn,
+        # Then the turn is kept as stopped, the records lie where a whole run's lie, and the
+        # temporary folder is gone.
+        shown = [said("I am on the wrong path")]
+        self.plan(
+            [{"done": False, "prompt": "go"}, {"done": False, "prompt": "again"}],
+            [{"stream": shown, "sleep": 30}],
+        )
+        timer = threading.Timer(1, os.kill, (os.getpid(), signal.SIGINT))
+        timer.start()
+        self.addCleanup(timer.cancel)
+        code, out, err = self.run_test()
+        self.assertEqual(code, 0, err)
+        self.assertEqual(out.strip(), self.records())
+        (turn,) = self.kept("turns.jsonl")
+        self.assertIsNone(turn["exit"])
+        self.assertIn("the developer stopped the run", turn["screen"])
+        self.assertIn("I am on the wrong path", turn["screen"])
+        self.assertTrue(self.took()["stopped"])
+        self.assertEqual(os.listdir(self.temp), [], "the stopped run left its temporary folder")
+
+    def test_a_run_stopped_between_turns_keeps_its_records(self):
+        # Given a run whose first turn ended,
+        # When the developer stops it while the stand-in works out the next prompt,
+        # Then the first turn's records are kept, and the run is marked stopped.
+        self.plan([{"done": False, "prompt": "go"}], [{}])
+        asked = mock.Mock(side_effect=["go", KeyboardInterrupt()])
+        with mock.patch.object(e2e, "_ask", asked):
+            code, out, err = self.run_test()
+        self.assertEqual(code, 0, err)
+        self.assertEqual(out.strip(), self.records())
+        (turn,) = self.kept("turns.jsonl")
+        self.assertEqual(turn["exit"], 0)
+        self.assertTrue(self.took()["stopped"])
+        self.assertEqual(os.listdir(self.temp), [], "the stopped run left its temporary folder")
+
+    def took(self) -> dict[str, Any]:
+        with open(os.path.join(self.records(), "run.json"), encoding="utf-8") as f:
+            return json.load(f)
+
+    def test_a_branch_that_cant_be_removed_leaves_no_temporary_folder(self):
+        # Given a test that pushes, whose branch the repository refuses to remove,
+        # When the run ends,
+        # Then e2e.py says why with 1, and the temporary folder is gone.
+        self.fields["push"] = True
+        self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
+        with mock.patch.object(e2e, "_unpush", side_effect=e2e.Refused("the branch stays")):
+            code, _, err = self.run_test()
+        self.assertEqual(code, 1)
+        self.assertIn("the branch stays", err)
+        self.assertEqual(os.listdir(self.temp), [], "the run left its temporary folder")
+
     def test_a_turn_past_its_time_is_kept_and_ends_the_test(self):
         self.plan(
             [{"done": False, "prompt": "go"}, {"done": False, "prompt": "again"}], [{"sleep": 3}]
@@ -441,6 +497,7 @@ class E2ERunnerTest(E2EBase):
         self.assertEqual(took["claude"], "2.1.999 (Claude Code)")
         self.assertEqual(took["test"], dict(self.fields, repository="<top>/remote.git"))
         self.assertEqual((took["commit"], took["uncommitted"]), (None, False))
+        self.assertFalse(took["stopped"])
 
     def test_the_records_name_the_tops_commit_and_whether_it_held_changes(self):
         env = dict(os.environ, **GIT_ENV)
