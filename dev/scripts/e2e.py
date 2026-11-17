@@ -330,7 +330,14 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
             os.makedirs(folder)
         dirs = [d.replace("{top}", top).replace("{clone}", clone) for d in test.plugin_dirs]
         env = _logged_in(token, (claude, os.path.join(root, "stand-in-claude")))
-        person = dict(env, CLAUDE_CONFIG_DIR=claude, TMPDIR=os.path.join(root, "tmp"))
+        # claude -p stops waiting for subagents 10 minutes after its last turn, where a person at
+        # the prompt waits for them, so a turn waits as long as a turn may take.
+        person = dict(
+            env,
+            CLAUDE_CONFIG_DIR=claude,
+            TMPDIR=os.path.join(root, "tmp"),
+            CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=str(TURN_SECONDS * 1000),
+        )
         standing = dict(env, CLAUDE_CONFIG_DIR=os.path.join(root, "stand-in-claude"))
         turns, stopped = _converse(test, dirs, (clone, stand_in, events), (person, standing))
         stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())

@@ -288,6 +288,14 @@ class E2ERunnerTest(E2EBase):
         self.assertTrue(env["TMPDIR"].startswith(self.temp))
         self.assertNotEqual(env["TMPDIR"], self.temp)
 
+    def test_claude_waits_for_its_subagents_as_long_as_a_turn_may_take(self):
+        """A turn of claude -p waits for its subagents as a person at the prompt does, up to the
+        longest a turn may take, where Claude Code's own ceiling stops at 10 minutes."""
+        self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{}])
+        self.run_test()
+        (turn,) = self.calls(stand_in=False)
+        self.assertEqual(turn["env"]["CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS"], "3600000")
+
     def test_without_a_token_claude_runs_on_a_copy_of_the_developers_credentials_file(self):
         del os.environ["CLAUDE_CODE_OAUTH_TOKEN"]
         os.environ["CLAUDE_CONFIG_DIR"] = os.path.join(self.base, "login")
