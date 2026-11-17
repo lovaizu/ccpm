@@ -551,7 +551,7 @@
           "decisions": [
             {
               "about": "Which case of rn's rules waits for the generator's prompt",
-              "decided": "test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept, as the guard stops a command the generator runs by itself only by a run_only Lane of the step that tries commands, which /lane:up lays from the generator's steps; its NO_RUN_ONLY mark goes once rn holds that Lane laid",
+              "decided": "test_a_command_run_by_itself_is_stopped, as the guard stops a command the generator runs by itself only by a run_only Lane of the step that tries commands, which /lane:up lays from the generator's steps; its NO_RUN_ONLY mark goes once rn holds that Lane laid",
               "by": "reasoning"
             }
           ]

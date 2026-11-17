@@ -203,16 +203,13 @@ def test_a_best_practice_made_on_the_run_is_taken_over_rns_own(b: Bench, broken:
     assert cut["best_practice"].rstrip("/").endswith(".rn/best-practices/code")
 
 
-@NO_RUN_ONLY
-@pytest.mark.supports("Tried in a throwaway copy", "S1", "throwaway.py", "Try record", "guard")
+@pytest.mark.supports("Tried in a throwaway copy", "S1", "throwaway.py", "Try record")
 def test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept(b: Bench, broken: None) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running, at the end of its
     step 1, committed, as S1 has a role try a command after a step's commit.
-    When: it tries a command that writes a file by throwaway.py, then runs the same command by
-    itself.
+    When: it tries a command that writes a file by throwaway.py.
     Then: throwaway.py gives the command's own exit code and output, the worktree holds no file it
-    wrote, the round's Try record keeps the command, and the guard stops the command run by
-    itself."""
+    wrote, and the round's Try record keeps the command."""
     walk = w.planned(b)
     generator, cut = w.generator_started(walk)
     assert generator.bash(b.tree("commit", cut["record"], "1")).exit_code == 0
@@ -223,7 +220,17 @@ def test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept(b: Bench, bro
     outside = ("--", ".", ":(exclude).rn")
     assert w.git(walk.run["worktree"], "status", "--porcelain", "-uall", *outside) == ""
     assert w.files_holding(walk.folder("rounds"), command)
-    assert generator.bash(command).blocked
+
+
+@NO_RUN_ONLY
+@pytest.mark.supports("Tried in a throwaway copy", "S1", "guard")
+def test_a_command_run_by_itself_is_stopped(b: Bench, broken: None) -> None:
+    """Given: the generator of "Type hints in each file of invoicer" running.
+    When: it runs a command of the deliverable by itself, not by throwaway.py.
+    Then: the guard stops it."""
+    walk = w.planned(b)
+    generator, _ = w.generator_started(walk)
+    assert generator.bash("touch tried.txt && echo tried").blocked
 
 
 @pytest.mark.supports("The repository holds the work", "S1", "Place", "repository", "tree.py")
