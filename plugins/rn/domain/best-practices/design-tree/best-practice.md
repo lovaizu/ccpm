@@ -37,7 +37,7 @@ Every deliverable in the design tree is there to serve the goal, so the goal dec
 3. *While deciding.* Write after the goal's sentence, in the same `decided`, the state its people are in once it holds: what they do then that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`, since each later choice is judged by whether it brings them there.
 4. *While deciding.* Put the sentence and the state to the user to confirm, beside the words of the request they came from, and write them as they confirm them, since only the user knows what they're after.
 5. *While deciding.* Write `user` in `by` once they confirm it.
-6. *While making.* For each deliverable, name the part of the goal's sentence it helps make true, and drop a deliverable for which you can name none.
+6. *While deciding.* For each deliverable, name the part of the goal's sentence it helps make true, and drop a deliverable for which you can name none.
 
 ### N2
 
@@ -91,7 +91,7 @@ The maker builds a deliverable from the decisions that answer its best practice'
 9. *While deciding.* Settle each point where the user's words, the goal, the deliverables done, and the best practice leave one answer, or answers that differ only in how the work is done, not in what the user gets.
 10. *While deciding.* Put each point still open to the user, one in each message, with your recommendation and its ground, where the answers left differ in what the user gets, such as which people a product serves, and leave its `decided` null until they answer.
 11. *While deciding.* Take each feedback, a more of a round, a point, or the person's words, into the decision it bears on where it brings the people closer to the goal's state, and say how in the ground, such as a more that names what a guide's reader lacks to print an invoice. Keep the rest in the round's records, since a deliverable that takes in each thing named grows round by round away from its people.
-12. *While making.* When a deliverable becomes done, take each null point of the later deliverables that takes from it, and settle it or put it to the user as this practice's decide items say.
+12. *While deciding.* When a deliverable becomes done, take each null point of the later deliverables that takes from it, and settle it or put it to the user as this practice's decide items say.
 
 ### N6
 
@@ -150,7 +150,7 @@ Does each node of the tree hold what the run's facts so far show brings the peop
 
 A plan holds what was known when it was laid, and each round, try, and answer shows more. Reviewed at each turn, the tree takes the work where the people gain most, while a tree kept as laid piles up rounds on points that bring them nothing.
 
-1. *While making.* At the start of each turn, list the facts since the last turn: each round's answers, each try's output, and each word of the person.
-2. *While making.* For each deliverable, ask whether the facts show that it still brings the people to the goal's state, and how far it stands from it. Take out a deliverable that no longer does, and add one that the facts show the state needs.
-3. *While making.* Where a round's answers name a point that came back from an earlier round, or two points whose fixes undo each other, go to the decision they rest on, and decide it again from the goal's state, since another round on the same decision ends the same way.
-4. *While making.* Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, and write the tree's order so.
+1. *While deciding.* At the start of each turn, list the facts since the last turn: each round's answers, each try's output, and each word of the person.
+2. *While deciding.* For each deliverable, ask whether the facts show that it still brings the people to the goal's state, and how far it stands from it. Take out a deliverable that no longer does, and add one that the facts show the state needs.
+3. *While deciding.* Where a round's answers name a point that came back from an earlier round, or two points whose fixes undo each other, go to the decision they rest on, and decide it again from the goal's state, since another round on the same decision ends the same way.
+4. *While deciding.* Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, and write the tree's order so.

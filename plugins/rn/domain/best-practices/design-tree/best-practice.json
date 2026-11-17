@@ -33,7 +33,7 @@
         "text": "Write `user` in `by` once they confirm it."
        },
        {
-        "at": "make",
+        "at": "decide",
         "text": "For each deliverable, name the part of the goal's sentence it helps make true, and drop a deliverable for which you can name none."
        }
       ]
@@ -175,7 +175,7 @@
         "text": "Take each feedback, a more of a round, a point, or the person's words, into the decision it bears on where it brings the people closer to the goal's state, and say how in the ground, such as a more that names what a guide's reader lacks to print an invoice. Keep the rest in the round's records, since a deliverable that takes in each thing named grows round by round away from its people."
        },
        {
-        "at": "make",
+        "at": "decide",
         "text": "When a deliverable becomes done, take each null point of the later deliverables that takes from it, and settle it or put it to the user as this practice's decide items say."
        }
       ]
@@ -209,19 +209,19 @@
       "why": "A plan holds what was known when it was laid, and each round, try, and answer shows more. Reviewed at each turn, the tree takes the work where the people gain most, while a tree kept as laid piles up rounds on points that bring them nothing.",
       "items": [
        {
-        "at": "make",
+        "at": "decide",
         "text": "At the start of each turn, list the facts since the last turn: each round's answers, each try's output, and each word of the person."
        },
        {
-        "at": "make",
+        "at": "decide",
         "text": "For each deliverable, ask whether the facts show that it still brings the people to the goal's state, and how far it stands from it. Take out a deliverable that no longer does, and add one that the facts show the state needs."
        },
        {
-        "at": "make",
+        "at": "decide",
         "text": "Where a round's answers name a point that came back from an earlier round, or two points whose fixes undo each other, go to the decision they rest on, and decide it again from the goal's state, since another round on the same decision ends the same way."
        },
        {
-        "at": "make",
+        "at": "decide",
         "text": "Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, and write the tree's order so."
        }
       ]

@@ -78,6 +78,46 @@ def test_an_end_that_lacks_nothing_passes_and_keeps_its_result(tmp_path: Any) ->
     assert form.read(os.path.join(run.worktree, record)).kept == form.Kept("generator", "done")
 
 
+def making_ids(kind: str) -> list[str]:
+    """The ID of each practice of rn's best practice of the kind marked make."""
+    with open(
+        os.path.join(d.RN, "domain", "best-practices", kind, "best-practice.json"), encoding="utf-8"
+    ) as f:
+        goal = json.load(f)["goal"]
+    return [
+        f"{n['id']}.{i}"
+        for factor in goal["critical_success_factors"]
+        for n in factor["necessary_conditions"]
+        for i, item in enumerate(n["items"], 1)
+        if item["at"] == "make"
+    ]
+
+
+@pytest.mark.supports("test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper")
+def test_a_tree_keeper_resumed_with_a_change_is_held_to_the_making_practices_alone(
+    tmp_path: Any,
+) -> None:
+    """Given: a tree-keeper resumed with a change, which recorded its steps and each practice of
+    the design tree best practice marked make, and none marked decide, as the orchestrator
+    decides each change and the tree-keeper writes it.
+    When: its end with done is checked.
+    Then: it lacks nothing."""
+    run = d.run_of(d.repository(str(tmp_path)))
+    d.tree_written(run)
+    given = cut.next_start(run, d.design(d.walkthrough_tree()), "tree-keeper", [])
+    assert given is not None
+    record = os.path.join(run.worktree, given.values["record"])
+    first, *others = steps_of(d.RN, "domain/tree-keeper.md")
+    entries = [Entry("tree-keeper", first, None, "Read it.")]
+    entries += [Entry("tree-keeper", step, None, "Its result holds.") for step in others]
+    entries += [Entry("tree-keeper", first, None, "Read it again.")]
+    entries += [Entry("design-tree", None, p, "Carried out.") for p in making_ids("design-tree")]
+    entries += [Entry("tree-keeper", step, None, "Its result holds.") for step in others]
+    for entry in entries:
+        form.add(record, entry)
+    assert check.check(d.RN, run.worktree, "tree-keeper", "done", given.values["record"]) == ()
+
+
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
 def test_an_end_whose_record_lacks_a_practice_names_it_and_keeps_nothing(tmp_path: Any) -> None:
     """Given: a generator that recorded each step and practice but code's N4.1.

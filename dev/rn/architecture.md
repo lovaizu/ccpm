@@ -35,8 +35,8 @@ raising KR1.1.
 
 ### Every item handled
 
-Each role reads all it starts with, records each step and practice, and names each item its result
-carries.
+Each role reads its start whole, records each step and practice it takes, and names each item its
+result carries.
 
 *Why*: an item dropped takes from the deliverable what the item holds, which raises KR1.1.
 

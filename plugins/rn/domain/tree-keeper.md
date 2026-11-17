@@ -19,7 +19,8 @@ necessary condition, where it refuses a more; or exit 1 with what's wrong or mis
 change leaves the design tree's form, names a node the tree doesn't hold, gives an empty
 `<ground>`, or git can't commit. Each exit 1 leaves the tree as it was.
 
-Record each step once its result holds, and each practice as you carry it out, by
+Record each step once its result holds, and each practice of the design tree best practice marked
+*While making* as you carry it out, as the main conversation decides each change and you write it, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} tree-keeper <the step's number> '<what it left>'`
 or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} design-tree <the practice's ID> '<what it gave>'`.
 
