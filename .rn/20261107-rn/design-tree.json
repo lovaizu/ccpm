@@ -173,18 +173,7 @@
       "name": "A builder whose plugin goes beyond the README's walkthrough finds each form of steps, routes, and adapters that Lane takes",
       "path": "plugins/lane/docs/steps-routes-adapters.md",
       "kind": "specific",
-      "status": "doing",
-      "inputs": [],
-      "preconditions": [],
-      "good": false,
-      "decisions": [
-        {
-          "about": "Its forms",
-          "decided": "only those the architecture after the cut keeps, with no move that calls another plugin's skill",
-          "by": "user"
-        }
-      ],
-      "check": "each form the page names is one the architecture keeps, and the page names each"
+      "status": "done"
     },
     {
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
