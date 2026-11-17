@@ -143,46 +143,16 @@
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
       "path": "dev/scripts/trace.py",
       "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "rn's developers build its parts so that together they give what its README promises",
-      "path": "dev/rn/architecture.md",
-      "kind": "architecture",
-      "status": "done"
-    },
-    {
-      "name": "Lane's product vision says what Lane is for",
-      "path": "dev/lane/product-vision.md",
-      "kind": "product-vision",
-      "status": "done"
-    },
-    {
-      "name": "Lane's developers build its parts so that together they give what its README promises",
-      "path": "dev/lane/architecture.md",
-      "kind": "architecture",
       "status": "doing",
-      "inputs": [],
-      "preconditions": [],
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
           "decisions": [
             {
-              "about": "The cut",
-              "decided": "the trivial many cut out, as no user of a plugin reaches the goal with them: Lane's guard on its own up and the approval it holds (up_only, gives_shown, lays_after_reply, the Shown and Approval of up's Run, lay.py write's refusal where up's Run no longer waits, result.py up laid or left); a move that calls another plugin's skill and the Run standing aside for it; reading a plugin that an earlier Lane laid by its own copy of form.py, and the Data compatibility testing of released plugins, as nothing is released yet",
-              "by": "user"
-            },
-            {
               "about": "The combinations",
-              "decided": "the architecture defines each combination of parts and lane types that one hook event meets, such as keeps_steps on a skill whose subagents run in the background, and each has an integration case",
-              "by": "user"
-            },
-            {
-              "about": "Test strategy",
-              "decided": "unit cases for each part, integration cases for each combination, every case under the double of Claude Code; no E2E test, no Scenario or Installation testing; up's prompt tested by its unit cases alone, a pinpoint prompt to Claude Code whose result code reads; Lane is then put to real use by rn",
-              "by": "user"
+              "decided": "each strategy under Sequences of an architecture is a combination of parts that one hook event meets, an element that an integration case names, as Lane's architecture defines its combinations there and its Test strategy has trace.py test each",
+              "by": "reasoning"
             }
           ]
         },
@@ -220,48 +190,26 @@
           "id": "N8",
           "good": false,
           "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
         }
       ]
+    },
+    {
+      "name": "rn's developers build its parts so that together they give what its README promises",
+      "path": "dev/rn/architecture.md",
+      "kind": "architecture",
+      "status": "done"
+    },
+    {
+      "name": "Lane's product vision says what Lane is for",
+      "path": "dev/lane/product-vision.md",
+      "kind": "product-vision",
+      "status": "done"
+    },
+    {
+      "name": "Lane's developers build its parts so that together they give what its README promises",
+      "path": "dev/lane/architecture.md",
+      "kind": "architecture",
+      "status": "done"
     },
     {
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
@@ -435,50 +383,38 @@
       ]
     },
     {
-      "name": "A person's /lane:up lays a lane that stops a subagent's command outside its step with the step's sentence, and the run starts that subagent and ends on its result",
-      "path": "dev/lane/tests/integration/test_lane_walking_skeleton.py",
-      "kind": "code",
-      "status": "open"
-    },
-    {
-      "name": "The user's plugin starts each subagent in the order they set, and only that one",
-      "path": "dev/lane/tests/integration/test_s5_run_order.py",
-      "kind": "code",
-      "status": "open"
-    },
-    {
-      "name": "Each subagent that leaves a step goes back to it",
-      "path": "dev/lane/tests/integration/test_s6_subagent_held.py",
-      "kind": "code",
-      "status": "open"
-    },
-    {
-      "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation",
-      "path": "dev/lane/tests/integration/test_s7_picked_up.py",
-      "kind": "code",
-      "status": "open"
-    },
-    {
-      "name": "The user reads each step as it'll read with its rules, and the order, before anything holds their plugin",
+      "name": "The user reads what Lane would hold, each step as it'll read and the order, before anything holds their plugin",
       "path": "dev/lane/tests/integration/test_s1_proposal.py",
       "kind": "code",
       "status": "open"
     },
     {
-      "name": "Lane lays only what a person approved, and proposes again on a change they ask for",
+      "name": "Lane lays only what the user, a person or an AI, approved, and proposes again on a change they ask for",
       "path": "dev/lane/tests/integration/test_s2_approval.py",
       "kind": "code",
       "status": "open"
     },
     {
-      "name": "An AI that builds a plugin approves Lane's proposal by its own act, and after the steps change or Lane updates, the checks hold the steps as they now read",
-      "path": "dev/lane/tests/integration/test_s3_s4_again.py",
+      "name": "After the steps change or Lane updates, the checks follow the steps as they now read",
+      "path": "dev/lane/tests/integration/test_s3_again.py",
       "kind": "code",
       "status": "open"
     },
     {
-      "name": "A subagent held by Lane does each step of its role in order, reads whole each file its step names and none it must never read, keeps each item of its step's checklist, and ends only once each step is marked",
-      "path": "dev/lane/tests/integration/test_steps_marked.py",
+      "name": "A start off the order the user set gets the moves due, and each start on it goes through",
+      "path": "dev/lane/tests/integration/test_s4_run_order.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "A subagent that leaves a step, by a call, a Mark, or an end, gets that step's sentence",
+      "path": "dev/lane/tests/integration/test_s5_subagent_held.py",
+      "kind": "code",
+      "status": "open"
+    },
+    {
+      "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation, so Lane still tells the order",
+      "path": "dev/lane/tests/integration/test_s6_picked_up.py",
       "kind": "code",
       "status": "open"
     },
@@ -737,8 +673,8 @@
       ],
       "preconditions": [
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
-        "dev/lane/tests/integration/test_s5_run_order.py",
-        "dev/lane/tests/integration/test_s7_picked_up.py"
+        "dev/lane/tests/integration/test_s4_run_order.py",
+        "dev/lane/tests/integration/test_s6_picked_up.py"
       ],
       "status": "open",
       "necessary_conditions": [

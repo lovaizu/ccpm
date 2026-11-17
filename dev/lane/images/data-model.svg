@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 980">
-  <title>Lane&#x27;s data: the Roles, Steps, Items, and kept results of the user&#x27;s plugin, the lane types, the Proposal, the Lanes, Routes, and Laid of lanes.json, and each Run, worked out from the lines of the run record, with its Starts, Results, and Marks and the Approval of a Proposal, and the Calls that lie in it, of which the record keeps only a Read that a Lane of reads_whole names, each relation named with how many of each it joins</title>
+  <title>Lane&#x27;s data: the Roles, Steps, Items, and kept results of the user&#x27;s plugin, the lane types, the Proposal, the Lanes, Routes, and Laid of lanes.json, and each Run, worked out from the lines of the run record, with its Starts, Results, and Marks, and the Calls that lie in it, of which the record keeps only a Read that a Lane of reads_whole names, each relation named with how many of each it joins</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
@@ -58,7 +58,7 @@
   <rect class="frame" x="260" y="30" width="920" height="120" rx="6"/>
   <rect class="frame" x="20" y="280" width="200" height="120" rx="6"/>
   <rect class="frame" x="260" y="280" width="620" height="120" rx="6"/>
-  <polygon class="frame" points="20,580 270,580 270,700 460,700 460,580 1180,580 1180,890 20,890"/>
+  <rect class="frame" x="480" y="580" width="700" height="310" rx="6"/>
   <polyline class="line" points="620,100 440,100" marker-start="url(#diamond)"/>
   <polyline class="line" points="150,326 150,200 310,200 310,124" marker-end="url(#arrow)"/>
   <polyline class="line" points="375,326 375,124" marker-end="url(#arrow)"/>
@@ -69,8 +69,6 @@
   <polyline class="line" points="720,326 720,124" marker-end="url(#arrow)"/>
   <polyline class="line" points="840,326 840,100 770,100" marker-end="url(#arrow)"/>
   <polyline class="line" points="850,350 1060,350 1060,620" marker-end="url(#arrow)"/>
-  <polyline class="line" points="100,620 100,374" marker-end="url(#arrow)"/>
-  <polyline class="line" points="140,374 140,520 560,520 560,620" marker-end="url(#arrow)"/>
   <polyline class="line" points="640,620 640,124" marker-end="url(#arrow)"/>
   <polyline class="line" points="780,620 780,560 675,560 675,124" marker-end="url(#arrow)"/>
   <polyline class="line" points="670,644 760,644" marker-start="url(#diamond)"/>
@@ -106,8 +104,6 @@
   <text class="name" x="555" y="355">Laid</text>
   <rect class="box" x="700.0" y="326.0" width="150" height="48" rx="4"/>
   <text class="name" x="775" y="355">Route</text>
-  <rect class="box" x="45.0" y="620.0" width="150" height="48" rx="4"/>
-  <text class="name" x="120" y="649">Approval</text>
   <rect class="box" x="290.0" y="620.0" width="150" height="48" rx="4"/>
   <text class="name" x="365" y="649">Call</text>
   <rect class="box" x="520.0" y="620.0" width="150" height="48" rx="4"/>
@@ -146,12 +142,6 @@
   <text class="label small halo mid" x="955" y="342">goes after</text>
   <text class="data halo start" x="858" y="366">1</text>
   <text class="data halo end" x="1052" y="612">0..*</text>
-  <text class="label small halo end" x="92" y="500">approves</text>
-  <text class="data halo end" x="92" y="615">0..1</text>
-  <text class="data halo end" x="92" y="390">1</text>
-  <text class="label small halo mid" x="470" y="514">shown in</text>
-  <text class="data halo start" x="148" y="404">0..*</text>
-  <text class="data halo start" x="568" y="612">0..1</text>
   <text class="label small halo end" x="632" y="296">runs</text>
   <text class="data halo end" x="632" y="612">0..*</text>
   <text class="data halo end" x="632" y="142">1</text>
@@ -206,5 +196,5 @@
   <text class="frame-name halo" x="274" y="50">the user&#x27;s plugin</text>
   <text class="frame-name halo" x="34" y="300">the proposal</text>
   <text class="frame-name halo" x="274" y="300">lanes.json</text>
-  <text class="frame-name halo" x="34" y="600">the run record</text>
+  <text class="frame-name halo" x="494" y="600">the run record</text>
 </svg>

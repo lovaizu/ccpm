@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -100 1720 1170">
-  <title>Lane&#x27;s components: the user, up, lay.py, the lane types and the guard of Lane&#x27;s code, which lies in Lane&#x27;s plugin, where its guard holds up, and in each plugin that lay.py lays it into, the result script, step.py and item.py, by which a role marks a step or an item done, the adapter, the plugin&#x27;s command, Claude Code, which the user and the roles call, with the plugin&#x27;s roles, and the stores of the proposal, the steps, the laid set, the kept results, and the run record</title>
+  <title>Lane&#x27;s components: the user, up, lay.py, the lane types and the guard of Lane&#x27;s code, which lies in Lane&#x27;s plugin, where lay.py takes it, and in each plugin that lay.py lays it into, the result script, step.py and item.py, by which a role marks a step or an item done, the adapter, the plugin&#x27;s command, Claude Code, which the user and the roles call, with the plugin&#x27;s roles, and the stores of the proposal, the steps, the laid set, the kept results, and the run record</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
@@ -61,16 +61,13 @@
   <polyline class="line" points="382,150 158,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="120,390 120,840" marker-end="url(#arrow)"/>
   <polyline class="line" points="210,360 315,360" marker-end="url(#arrow)"/>
-  <polyline class="line" points="360,90 360,22 12,22 12,885 30,885" marker-end="url(#arrow)"/>
   <polyline class="line" points="1650,900 1650,990 70,990 70,900" marker-end="url(#arrow)"/>
   <polyline class="line" points="525,120 625,120" marker-end="url(#arrow)"/>
   <polyline class="line" points="770,90 770,0" marker-end="url(#arrow)"/>
   <polyline class="line" points="815,135 905,135" marker-end="url(#arrow)"/>
   <polyline class="line" points="800,90 800,62 1240,62 1240,94" marker-end="url(#arrow)"/>
-  <polyline class="line" points="30,895 6,895 6,-80 1300,-80 1300,94" marker-end="url(#arrow)"/>
   <polyline class="line" points="1170,154 1110,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="812,150 812,190 1300,190 1300,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1335,140 1712,140 1712,925 1110,925 1110,900" marker-end="url(#arrow)"/>
   <polyline class="line" points="420,150 420,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="682,150 458,330" marker-end="url(#arrow)"/>
   <polyline class="line" points="758,150 982,330" marker-end="url(#arrow)"/>
@@ -154,23 +151,18 @@
   <text class="label small halo start" x="130" y="550">approves, and types</text>
   <text class="label small halo start" x="130" y="565">/reload-plugins</text>
   <text class="label small halo end" x="296" y="352">writes Steps</text>
-  <text class="label small halo start" x="372" y="16">makes each tool call of up&#x27;s steps, and ends its turn</text>
   <text class="label small halo mid" x="860" y="984">makes each tool call, start of a subagent, and end</text>
   <text class="label small start" x="12" y="1022">Each arrow reads from the one that acts to the one it acts on, and a reply goes back along it.</text>
   <text class="label small start" x="12" y="1040">The guard&#x27;s answer to a hook event, such as a stop or the start due, reaches the role or the user through Claude Code.</text>
-  <text class="label small start" x="12" y="1058">Lane&#x27;s code lies twice: in Lane&#x27;s plugin, where its guard holds up and lay.py takes the lane types from it, and in the user&#x27;s plugin, where lay.py copies it.</text>
+  <text class="label small start" x="12" y="1058">Lane&#x27;s code lies twice: in Lane&#x27;s plugin, where lay.py takes the lane types and the form of lanes.json from it, and in the user&#x27;s plugin, where lay.py copies it.</text>
   <text class="label small halo mid" x="570" y="82">runs types, steps, print, write</text>
   <text class="label small halo start" x="780" y="30">keeps the Proposal</text>
   <text class="label small halo mid" x="848" y="106">takes</text>
   <text class="label small halo mid" x="848" y="120">each type</text>
-  <text class="label small halo start" x="810" y="55">asks where the Run of up stands, writes lanes.json through its code</text>
-  <text class="label small halo start" x="1310" y="-45">sends each hook event of up;</text>
-  <text class="label small halo start" x="1310" y="-30">gets a stop, or lets it through</text>
+  <text class="label small halo start" x="810" y="55">writes lanes.json through its code</text>
   <text class="label small halo start" x="1165" y="240">writes lanes.json</text>
   <text class="label small halo start" x="1165" y="255">for lay.py write</text>
   <text class="label small halo start" x="860" y="184">checks each program in hooks/adapters/</text>
-  <text class="label small halo end" x="1704" y="162">adds each fact of up&#x27;s Run,</text>
-  <text class="label small halo end" x="1704" y="177">works out where it stands</text>
   <text class="label small halo start" x="430" y="220">writes a change</text>
   <text class="label small halo start" x="530" y="300">reads and checks each Step&#x27;s</text>
   <text class="label small halo start" x="530" y="315">file, writes each Lane&#x27;s</text>
