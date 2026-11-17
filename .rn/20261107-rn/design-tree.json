@@ -83,6 +83,59 @@
       "status": "done"
     },
     {
+      "name": "Maintainers change the structure of code quickly, and every behavior its people use still holds",
+      "path": "plugins/rn/domain/best-practices/refactor-code",
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "maintainers change the code's structure while every behavior that its people use stays, as the meta best practice's goal piles up only what brings the people to their aim: its N1 asks that each caller get every behavior it got before, and in rn's E2E pilot of 2026-11-18 its evaluator found in each round another behavior that no one the goal names uses, such as a quantity written 1_000 or total() given a generator",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
       "path": "plugins/rn/domain/template",
       "kind": "code",
@@ -309,7 +362,8 @@
         "plugins/rn/domain/orchestrator.md",
         "plugins/rn/domain/tree-keeper.md",
         "plugins/rn/domain/generator.md",
-        "plugins/rn/domain/evaluator.md"
+        "plugins/rn/domain/evaluator.md",
+        "plugins/rn/domain/best-practices/refactor-code"
       ],
       "status": "doing",
       "necessary_conditions": [
@@ -403,7 +457,7 @@
             },
             {
               "about": "Before the next stage",
-              "decided": "the faults the pilot showed, each mended at its cause before the installation case and the walkthrough run again: the tree-keeper writes its changes in the shared /tmp, where a later run read another's; the orchestrator takes in a more that comes back in place of deciding again the decision it rests on (design tree N11.3); the readme kind and its template check hold a guide for the accounting team to Non-goals, How it works, and a License, which its people never need; the orchestrator runs the tests in the worktree, whose __pycache__ tree.py commits; the E2E test's intent names no machine for accounting, so the stand-in made one up; and claude -p ends a turn ten minutes after its main conversation while a subagent works, cutting it mid-step",
+              "decided": "the faults the pilot showed, each mended at its cause before the installation case and the walkthrough run again: the tree-keeper writes its changes in the shared /tmp, where a later run read another's; the orchestrator takes in a more by the people that the more names, not the people that the goal names, as orchestrator.md:63 asks \"for the people it names\", so that four of the command's six rounds took in mores for code that calls invoicer 1.4.0 and for inputs no colleague of accounting makes, such as --rate given twice, and it takes in a more that comes back in place of deciding again the decision it rests on (design tree N11.3); the readme kind and its template check hold a guide for the accounting team to Non-goals, How it works, and a License, which its people never need; the orchestrator runs the tests in the worktree, whose __pycache__ tree.py commits; the E2E test's intent names no machine for accounting, so the stand-in made one up; and claude -p ends a turn ten minutes after its main conversation while a subagent works, cutting it mid-step",
               "by": "reasoning"
             }
           ]
