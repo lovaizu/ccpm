@@ -462,11 +462,15 @@ def _started(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """A start: the Start added in the Run whose Lanes keep it, or stopped by the first Lane that
     breaks it; a resume let through, with a Start marked resumed where a Route makes it due; a
     resume that no move due opens, or a subagent's start of no role, let through with no Start
-    added."""
+    added. A resume lies only on the Run that holds its subagent's Start, and on none where that
+    Run has ended."""
     asked = placed.what
     assert isinstance(asked, StartCall)
+    runs = placed.runs
+    if asked.resume:
+        runs = tuple(r for r in runs if any(s.agent_id == asked.agent_id for s in r.starts))
     verdicts: list[Verdict] = []
-    for run in placed.runs:
+    for run in runs:
         moves = tuple(d for d in _told(plugin, run, cwd) if isinstance(d, Due))
         verdict = check_start(
             _lanes(plugin, placed, run), asked, _held(plugin, placed, run, cwd), moves
@@ -477,7 +481,7 @@ def _started(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
         if placed.start is None:
             _add_start(plugin, run, asked, moves)
         return PASS
-    return _stop(plugin.name, verdicts[0])
+    return _stop(plugin.name, verdicts[0]) if verdicts else PASS
 
 
 def _add_start(plugin: Plugin, run: Run, asked: StartCall, moves: tuple[Due, ...]) -> None:
@@ -495,11 +499,9 @@ def _add_start(plugin: Plugin, run: Run, asked: StartCall, moves: tuple[Due, ...
         )
         add(plugin.record, started)
         return
-    before = [s for s in reversed(run.starts) if s.agent_id == asked.agent_id]
-    if not before or asked.agent_id is None:
-        return
+    (before, *_) = [s for s in reversed(run.starts) if s.agent_id == asked.agent_id]
     opened = Move("resume", role=asked.role) in run.due
-    values = dict(before[0].values)
+    values = dict(before.values)
     resumed = Started(run.id, asked.role, asked.text, values, asked.tool_use_id, True, opened)
     add(plugin.record, resumed)
     add(plugin.record, Tied(run.id, asked.tool_use_id, asked.agent_id))

@@ -585,6 +585,53 @@ def writer_tied(plugin: str) -> str:
     return path
 
 
+@pytest.mark.supports("test_a_second_skills_run_beside_the_first_keeps_its_own_routes")
+def test_a_resume_lies_on_the_run_that_holds_its_subagent(plugin: str) -> None:
+    """Given: changelog laid, and two Runs of write, the second with writer's Start tied to a02,
+    which gave `written` and ended.
+    When: handle answers the main conversation's SendMessage to a02.
+    Then: it lets it through, and adds writer's Start again in the second Run, tied to a02."""
+    path = laid(plugin)
+    for line in (
+        Called("r1", "write", ""),
+        Called("r2", "write", ""),
+        Started("r2", "writer", "Carry out your steps", {}, "t1", False),
+        Tied("r2", "t1", "a02"),
+        Gave("r2", "writer", "written", "a02"),
+        Ended("r2", "a02", False),
+    ):
+        add(path, line)
+    tool_input = {"to": "a02", "message": "Which version?", "summary": "Ask"}
+    event = d.event("PreToolUse", tool_name="SendMessage", tool_input=tool_input, tool_use_id="t2")
+    assert not handle(event, plugin).stop
+    resumed = [x for x in lines(path) if isinstance(x, Started) and x.resumed]
+    assert [(x.run, x.tool_use_id) for x in resumed] == [("r2", "t2")]
+
+
+@pytest.mark.supports("test_calls_outside_the_run_go_unchecked")
+def test_a_resume_of_a_subagent_of_a_run_that_ended_goes_and_adds_nothing(plugin: str) -> None:
+    """Given: changelog laid, write's Run r1 with writer's Start tied to a01, ended by write's
+    `good` after reviewer's `good`, and write's Run r2 going.
+    When: handle answers the main conversation's SendMessage to a01.
+    Then: it lets it through and adds nothing, as the Run that held a01 has ended."""
+    path = laid(plugin)
+    for line in (
+        Called("r1", "write", ""),
+        Started("r1", "writer", "Carry out your steps", {}, "t1", False),
+        Tied("r1", "t1", "a01"),
+        Gave("r1", "writer", "written", "a01"),
+        Gave("r1", "reviewer", "good", None),
+        Gave("r1", "write", "good", None),
+        Called("r2", "write", ""),
+    ):
+        add(path, line)
+    before = lines(path)
+    tool_input = {"to": "a01", "message": "Thanks.", "summary": "Thank"}
+    event = d.event("PreToolUse", tool_name="SendMessage", tool_input=tool_input, tool_use_id="t2")
+    assert not handle(event, plugin).stop
+    assert lines(path) == before
+
+
 def end(plugin: str) -> str:
     """The stop of writer's end, its result script named by the plugin's folder, as the README
     shows a stop."""
