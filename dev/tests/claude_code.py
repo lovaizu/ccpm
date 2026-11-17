@@ -48,6 +48,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import traceback
 import uuid
 from dataclasses import dataclass, field
@@ -60,6 +61,9 @@ COMPACT = "claude-code-2.1.322-compact.jsonl"
 SKILL = "claude-code-2.1.322-skill.jsonl"
 SEND_MESSAGE = "claude-code-2.1.322-send-message.jsonl"
 ENVIRONMENT = "claude-code-2.1.322-bash-environment.jsonl"
+# The file that, where the environment names it, keeps each hook's time, each hook then run as a
+# process of its own, as Claude Code starts it, so that the time holds the start of Python too.
+HOOK_TIMES = "CLAUDE_CODE_DOUBLE_HOOK_TIMES"
 # The records of what 2.1.322's records don't hold: TaskStop, a skill's command run as the skill
 # loads, and EnterWorktree, each of a run of 2.1.323. Each event of `claude -p` that both versions'
 # records hold carries the same fields in each, save `bashEditDiff` in the response of one Bash call
@@ -533,7 +537,13 @@ class Conversation:
             "${CLAUDE_PROJECT_DIR}": self.repo,
             "${CLAUDE_PLUGIN_DATA}": os.path.join(self.temp, "data", os.path.basename(plugin.root)),
         }
+        began = time.perf_counter()
         done = self.run_command(entry, values, json.dumps(payload))
+        times = os.environ.get(HOOK_TIMES)
+        if times:
+            kept = {"event": payload.get("hook_event_name"), "seconds": time.perf_counter() - began}
+            with open(times, "a", encoding="utf-8") as f:
+                f.write(json.dumps(kept) + "\n")
         answer = hook_answer(entry, payload, done)
         answer.ran = [" ".join(done.args)]
         return answer
@@ -561,7 +571,7 @@ class Conversation:
             script = python_call(shell)
         env = dict(self.env)
         env.update({k.strip("${}"): v for k, v in values.items()})
-        if script and found(words[0], env):
+        if script and found(words[0], env) and not os.environ.get(HOOK_TIMES):
             code, out, err = run_python(script[0], script[1:], stdin, env, self.cwd)
             return subprocess.CompletedProcess(words, code, out, err)
         if shell is None and not found(words[0], env):

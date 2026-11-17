@@ -14,6 +14,7 @@ import sys
 import tempfile
 import unittest
 from typing import Any
+from unittest import mock
 
 from claude_code import (
     COMPACT,
@@ -1171,6 +1172,24 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         # Then: the answer carries nothing of a PostToolUse, which comes only at writer's end.
         assert agent is not None  # No hook of the test's own stops the start.
         self.assertEqual(answer.posted, "")
+
+    def test_with_hook_times_set_each_hook_runs_as_its_own_process_and_its_time_is_kept(self):
+        # Given: a hook that writes the ID of its process, and CLAUDE_CODE_DOUBLE_HOOK_TIMES naming
+        # a file, as Lane's Performance testing sets it.
+        pid_file = os.path.join(self.temp, "pid.txt")
+        script = f"import os\nopen({pid_file!r}, 'w').write(str(os.getpid()))\n"
+        conversation = self.hooked("PreToolUse", script)
+        times = os.path.join(self.temp, "times.jsonl")
+        # When: the main conversation runs a Bash command.
+        with mock.patch.dict(os.environ, {"CLAUDE_CODE_DOUBLE_HOOK_TIMES": times}):
+            conversation.bash("true")
+        # Then: the hook ran in a process of its own, and the file keeps its time in seconds.
+        with open(pid_file, encoding="utf-8") as f:
+            self.assertNotEqual(int(f.read()), os.getpid())
+        with open(times, encoding="utf-8") as f:
+            (kept,) = [json.loads(line) for line in f]
+        self.assertEqual(kept["event"], "PreToolUse")
+        self.assertGreater(kept["seconds"], 0)
 
     def test_a_plugin_with_no_hooks_file_runs_no_hook(self):
         # Given: the plugin holds no hooks/hooks.json.

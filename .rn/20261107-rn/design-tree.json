@@ -191,89 +191,43 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "doing",
-      "inputs": [],
-      "preconditions": [],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The E2E cases",
-              "decided": "none, as Lane has no E2E test; KR1.1 and KR1.2 come from the integration cases",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "How Performance testing times each hook event with Python's start in it, as the double runs each hook in the case's process",
-              "decided": null,
-              "by": null
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The user reads what Lane would hold, each step as it'll read and the order, before anything holds their plugin",
       "path": "dev/lane/tests/integration/test_s1_proposal.py",
       "kind": "code",
-      "status": "open"
+      "status": "done"
     },
     {
       "name": "Lane lays only what the user, a person or an AI, approved, and proposes again on a change they ask for",
       "path": "dev/lane/tests/integration/test_s2_approval.py",
       "kind": "code",
-      "status": "open"
+      "status": "done"
     },
     {
       "name": "After the steps change or Lane updates, the checks follow the steps as they now read",
       "path": "dev/lane/tests/integration/test_s3_again.py",
       "kind": "code",
-      "status": "open"
+      "status": "done"
     },
     {
       "name": "A start off the order the user set gets the moves due, and each start on it goes through",
       "path": "dev/lane/tests/integration/test_s4_run_order.py",
       "kind": "code",
-      "status": "open"
+      "status": "done"
     },
     {
       "name": "A subagent that leaves a step, by a call, a Mark, or an end, gets that step's sentence",
       "path": "dev/lane/tests/integration/test_s5_subagent_held.py",
       "kind": "code",
-      "status": "open"
+      "status": "done"
     },
     {
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation, so Lane still tells the order",
       "path": "dev/lane/tests/integration/test_s6_picked_up.py",
       "kind": "code",
-      "status": "open"
+      "status": "done"
     },
     {
       "name": "A builder's /lane:up, typed or asked of an AI, proposes their plugin's lanes and routes from its steps alone, shows them as they'll read, and lays what the caller approves",

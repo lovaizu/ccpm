@@ -676,4 +676,4 @@ Each test case lies in `dev/lane/tests/`, written as Given, When, and Then befor
 | Traceability | Architecture | Quality | `dev/scripts/trace.py`: every element and every combination tested, every case naming one level up, each rule's case failing broken. A review: 0 cases that miss what their element says. |
 | Configuration testing | Product | Quality | CI's Tests on Python 3.9 and the newest Python: every case passes on each. |
 | Conformance and compliance testing | Product | Quality | `claude plugin validate --strict` on each laid plugin: passes. |
-| Performance testing | Architecture | Benchmark | pytest, with the double of Claude Code: each event's time to the guard's answer over the integration cases, for KR1.2. Lane has no E2E test, so the joined parts give it. |
+| Performance testing | Architecture | Benchmark | pytest, with the double of Claude Code and `CLAUDE_CODE_DOUBLE_HOOK_TIMES` set: each event's time to the guard's answer, for KR1.2. The double then starts each hook as its own process, as Claude Code does. |
