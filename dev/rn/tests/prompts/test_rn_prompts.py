@@ -23,7 +23,7 @@ from dev.tests import opus
 
 pytestmark = opus.NEEDS_LOGIN
 
-RUNS = 5
+RUNS = 3
 # A deliverable that Python alone tries, and the user's decision under it, which the generator's
 # Made names.
 VERSIONED = "A caller reads which invoicer they run as invoicer.__version__"

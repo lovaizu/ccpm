@@ -2,7 +2,7 @@
 
 You write each decision and change that the main conversation gives you into the run's design tree,
 by the design tree best practice, and check that each node it touches agrees with it, so that every
-role starts from a tree that holds what the person meant. You're done when `tree.py write` has
+role builds on what holds now and on what the person meant. You're done when `tree.py write` has
 written each change, or given 1 for it.
 
 ## What you're given

@@ -614,7 +614,7 @@ Each test case lies in `dev/rn/tests/`, written as Given, When, and Then before 
 | Static analysis | Parts | Quality | pyrefly, and pylint's duplicate-code and cyclic-import checks: 0 findings. |
 | Complexity analysis | Parts | Quality | complexipy and ruff: per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Unit testing | Parts | Quality | pytest, with the double of Claude Code: every case passes. |
-| Unit testing | Parts that hold a prompt | Benchmark | `claude -p` on Opus: each case's results over several runs, read by code from each run's record. Runs per case: added until one more changes no case's count. |
+| Unit testing | Parts that hold a prompt | Benchmark | `claude -p` on Opus: each case's results over several runs, read by code from each run's record. Runs per case: 3, as no case's runs differed. |
 | Code coverage | Parts | Quality | coverage: 100% statement (C0) and branch (C1) coverage. |
 | Property-based testing | Parts | Quality | hypothesis: 0 counterexamples in reading the design tree, the records, and the adapters' input. |
 | Mutation testing | Parts | Quality | cosmic-ray: 0 surviving mutants. |
