@@ -68,46 +68,7 @@
       "name": "The developers learn from a test that runs the product whole what the product does, as each run ran as they meant and measured what they meant",
       "path": "plugins/rn/domain/best-practices/test-implementation",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
