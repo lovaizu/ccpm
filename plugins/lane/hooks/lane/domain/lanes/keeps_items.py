@@ -61,14 +61,14 @@ class KeepsItems:
         """None: the guard checks a run of item.py by the Items that the adapter gives for the
         Step due, and the Lane judges no Call.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         return None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
-        Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
         return Kept()
 
@@ -76,7 +76,7 @@ class KeepsItems:
         """Kept where `marks.items_left` gives none of `marking.items` since the Step began;
         Broken, with the Lane's sentence and the Items left, where it gives some.
 
-        Carries: S6 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since
         the Step began`, and `else ... an Item isn't marked`.
         """
         left = items_left(marking.since, marking.items or ())
@@ -88,7 +88,7 @@ class KeepsItems:
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end, as keeps_steps holds the end until the Step is marked.
 
-        Carries: S6 `G->>T: checks the end by each Lane of the role`.
+        Carries: S5 `G->>T: checks the end by each Lane of the role`.
         """
         return Kept()
 

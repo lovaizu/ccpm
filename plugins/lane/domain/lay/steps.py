@@ -43,7 +43,7 @@ def read_steps(plugin: str) -> tuple[Step, ...]:
     Steps once, as the skill's, where the skill's own files stand.
     Changes: nothing.
     Refuses: FileNotFoundError, where the folder isn't there.
-    Carries: S1 `L->>ST: reads each Step`, S4 `L->>ST: reads each Step`.
+    Carries: S1 `L->>ST: reads each Step`, S3 `L->>ST: reads each Step`.
     """
     if not os.path.isdir(plugin):
         raise FileNotFoundError(f"{plugin} is no folder")

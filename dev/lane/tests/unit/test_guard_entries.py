@@ -84,27 +84,14 @@ def test_an_event_outside_every_run_goes_and_adds_nothing(plugin: str) -> None:
 def test_a_skills_call_adds_a_run_and_gives_the_first_start(plugin: str) -> None:
     """Given: changelog laid, and a conversation with no Run.
     When: handle answers the UserPromptExpansion of /changelog:write.
-    Then: it adds the call of write's Run by a person, and gives writer's start due."""
+    Then: it adds the call of write's Run, and gives writer's start due."""
     path = laid(plugin)
     event = d.event("UserPromptExpansion", command_name="changelog:write", command_args="")
     answer = handle(event, plugin)
     assert not answer.stop
     assert answer.words == "changelog: Start `changelog:writer` with `Carry out your steps`."
     ((called,),) = [[line for line in lines(path) if isinstance(line, Called)]]
-    assert (called.skill, called.by) == ("write", "person")
-
-
-@pytest.mark.supports("test_an_ais_run_keeps_a_persons_waiting_proposal")
-def test_an_ais_call_beside_a_persons_run_adds_its_own_run(plugin: str) -> None:
-    """Given: changelog laid, and write's Run, which a person called, going.
-    When: handle answers the main conversation's Skill call of changelog:write.
-    Then: it adds the call of a second Run of write, by an AI, and keeps the person's."""
-    path = laid(plugin)
-    add(path, Called("r1", "write", "person", ""))
-    event = d.event("PreToolUse", tool_name="Skill", tool_input={"skill": "changelog:write"})
-    assert not handle(event, plugin).stop
-    called = [line for line in lines(path) if isinstance(line, Called)]
-    assert [(c.run == "r1", c.by) for c in called] == [(True, "person"), (False, "ai")]
+    assert called.skill == "write"
 
 
 @pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
@@ -115,7 +102,7 @@ def test_an_event_with_lanes_json_unreadable_is_stopped_with_who_must_fix_it(plu
     Then: it stops the call, saying lanes.json can't be read and who must fix it."""
     path = record_path("changelog", d.SESSION)
     for line in (
-        Called("r1", "write", "person", ""),
+        Called("r1", "write", ""),
         Started("r1", "writer", "Carry out your steps", {}, "t1", False),
         Tied("r1", "t1", "a01"),
     ):
@@ -176,7 +163,7 @@ def test_a_start_of_a_role_no_work_waits_for_is_stopped(plugin: str) -> None:
     When: handle answers the main conversation's Agent call of changelog:writer.
     Then: it stops the start, and adds no Start."""
     path = laid_with_adapter(plugin, "none")
-    add(path, Called("r1", "write", "person", ""))
+    add(path, Called("r1", "write", ""))
     tool_input = {"subagent_type": "changelog:writer", "prompt": "Carry out your steps"}
     event = d.event(
         "PreToolUse", cwd=plugin, tool_name="Agent", tool_input=tool_input, tool_use_id="t1"
@@ -299,7 +286,7 @@ def test_a_subagents_call_asks_no_adapter_again(plugin: str) -> None:
     Then: it says nothing, and adds no line, as only the main conversation's calls follow the
     skill's own steps."""
     path = laid_with_program(plugin, FAILS)
-    add(path, Called("r1", "write", "person", ""))
+    add(path, Called("r1", "write", ""))
     add(path, TextFailed("r1"))
     add(path, Started("r1", "writer", "Write 0.2.0", {}, "t1", False))
     add(path, Tied("r1", "t1", "a01"))
@@ -330,7 +317,7 @@ def writer_running(plugin: str, body: str | None) -> str:
     """changelog laid with an adapter of a start's text whose body is given, or none, and write's
     Run with writer's Start for 0.2.0 running; gives the record's path."""
     path = laid_with_program(plugin, body) if body else laid(plugin)
-    add(path, Called("r1", "write", "person", ""))
+    add(path, Called("r1", "write", ""))
     text = "Write 0.2.0" if body else "Carry out your steps"
     values = {"version": "0.2.0"} if body else {}
     add(path, Started("r1", "writer", text, values, "t1", False))
@@ -464,11 +451,24 @@ def test_a_pick_up_gives_a_resume_of_a_role_never_started_as_its_start(plugin: s
     assert "Resume `changelog:writer`" not in answer.words
 
 
+@pytest.mark.supports("test_a_run_with_an_adapter_goes_on_after_compact")
+def test_a_call_whose_run_the_record_holds_asks_no_adapter_of_records(plugin: str) -> None:
+    """Given: changelog laid with an adapter of its records that exits 1, and write's Run in the
+    record, with writer's start due, as after /compact.
+    When: handle answers the UserPromptExpansion of /changelog:write.
+    Then: it lets the call run with writer's start due, as the record holds the Run."""
+    path = laid_resuming(plugin, "sys.exit(1)\n")
+    add(path, Called("r1", "write", ""))
+    answer = handle(called(plugin), plugin)
+    assert not answer.stop
+    assert answer.words == "changelog: Start `changelog:writer` with `Carry out your steps`."
+
+
 def picked_up_run(path: str) -> None:
     """Adds write's Run r1, picked up from writer's `written` and reviewer's `more`, with no
     Start."""
     for line in (
-        Called("r1", "write", "person", ""),
+        Called("r1", "write", ""),
         Gave("r1", "writer", "written", None),
         Gave("r1", "reviewer", "more", None),
     ):
@@ -479,7 +479,7 @@ def run_with_starts(path: str) -> None:
     """Adds write's Run r1 in which writer, tied to a01, gave `written`, and reviewer, tied to a02,
     gave `more`, each ended."""
     for line in (
-        Called("r1", "write", "person", ""),
+        Called("r1", "write", ""),
         Started("r1", "writer", "Carry out your steps", {}, "t1", False),
         Tied("r1", "t1", "a01"),
         Gave("r1", "writer", "written", "a01"),
@@ -577,7 +577,7 @@ def writer_tied(plugin: str) -> str:
     """changelog laid, and write's Run with writer's Start tied to a01; gives the record's path."""
     path = laid(plugin)
     for line in (
-        Called("r1", "write", "person", ""),
+        Called("r1", "write", ""),
         Started("r1", "writer", "Carry out your steps", {}, "t1", False),
         Tied("r1", "t1", "a01"),
     ):
@@ -720,7 +720,7 @@ def test_result_py_holds_the_skills_result_until_its_steps_are_marked(
     write_lanes(os.path.join(plugin, "hooks", "lanes.json"), replace(lanes, proposal=proposal))
     path = record_path("changelog", d.SESSION)
     for line in (
-        Called("r1", "write", "person", ""),
+        Called("r1", "write", ""),
         Started("r1", "reviewer", "Carry out your steps", {}, "t1", False),
         Tied("r1", "t1", "a01"),
         Gave("r1", "reviewer", "good", "a01"),
@@ -775,7 +775,7 @@ def test_lay_types_gives_the_types_and_the_form(plugin: str) -> None:
     """Given: Lane's folder.
     When: lay.py's main runs `types`.
     Then: it gives 0 with JSON of each type and the Proposal's form."""
-    code, out, _ = lay_main(["types"], io.StringIO(""), {}, LANE)
+    code, out, _ = lay_main(["types"], io.StringIO(""), LANE)
     given = json.loads(out)
     assert code == 0 and given["proposal"]["required"] == ["lanes", "routes", "adapters"]
     assert "ends_by_result" in {each["name"] for each in given["types"]}
@@ -789,7 +789,7 @@ def test_lay_steps_gives_the_steps_and_notes(tmp_path: Any) -> None:
     import walkthrough
 
     walkthrough.write_files(str(tmp_path / "changelog"), walkthrough.FILES)
-    code, out, _ = lay_main(["steps", str(tmp_path / "changelog")], io.StringIO(""), {}, LANE)
+    code, out, _ = lay_main(["steps", str(tmp_path / "changelog")], io.StringIO(""), LANE)
     given = json.loads(out)
     assert code == 0 and len(given["steps"]) == 8 and given["notes"] == []
 
@@ -802,7 +802,7 @@ def test_lay_print_of_a_proposal_out_of_form_gives_1(tmp_path: Any) -> None:
     import walkthrough
 
     walkthrough.write_files(str(tmp_path / "changelog"), walkthrough.FILES)
-    code, out, err = lay_main(["print", str(tmp_path / "changelog")], io.StringIO("{"), {}, LANE)
+    code, out, err = lay_main(["print", str(tmp_path / "changelog")], io.StringIO("{"), LANE)
     assert code == 1 and (out + err)
 
 
@@ -822,7 +822,7 @@ def test_lay_refuses_a_command_line_it_cant_read(argv: list[str]) -> None:
     """Given: Lane's folder.
     When: lay.py's main runs a command line that isn't one of its commands.
     Then: it gives 2 with how to call lay.py."""
-    code, _, err = lay_main(argv, io.StringIO(""), {}, LANE)
+    code, _, err = lay_main(argv, io.StringIO(""), LANE)
     assert code == 2 and "lay.py" in err
 
 

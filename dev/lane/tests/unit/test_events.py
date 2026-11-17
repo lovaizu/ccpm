@@ -133,7 +133,13 @@ def test_a_stopped_prompt_is_blocked_with_the_words(name: str) -> None:
 def test_lanes_entries_run_the_guard_on_each_event_it_needs() -> None:
     """Given: Lane's code.
     When: hook_entries gives Lane's entries of hooks.json.
-    Then: they are those of Lane's own hooks/hooks.json: six events, each running hook.py by
-    python3 with onFailure block."""
-    with open(os.path.join(HOOKS, "hooks.json"), encoding="utf-8") as f:
-        assert hook_entries() == json.load(f)["hooks"]
+    Then: six events, each running hook.py by python3 with onFailure block."""
+    entry = {
+        "type": "command",
+        "command": "python3",
+        "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"],
+        "onFailure": "block",
+    }
+    events = ["UserPromptSubmit", "UserPromptExpansion", "PreToolUse", "PostToolUse", "Stop"]
+    expected = {name: [{"hooks": [entry]}] for name in [*events, "SubagentStop"]}
+    assert hook_entries() == expected

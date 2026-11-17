@@ -63,14 +63,14 @@ class ReadsWhole:
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: the Lane judges no Call, and holds the Step's Mark.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         return None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
-        Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
         return Kept()
 
@@ -81,7 +81,7 @@ class ReadsWhole:
         with the lines not read, where they don't; CantCheck, with why and the plugin's developer
         to fix it, where a path can't be read.
 
-        Carries: S6 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since
         the Step began`, and `else a path a Lane of reads_whole names wasn't read whole`.
         """
         values = held.start.values if held.start else {}
@@ -102,7 +102,7 @@ class ReadsWhole:
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end, as keeps_steps holds the end until the Step is marked.
 
-        Carries: S6 `G->>T: checks the end by each Lane of the role`.
+        Carries: S5 `G->>T: checks the end by each Lane of the role`.
         """
         return Kept()
 
@@ -136,7 +136,7 @@ def named(lane: Lane, call: Call, held: Held) -> str | None:
     from `call.top`; None for a Call of another tool, or a Read of another path.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `opt a Read of a path that a Lane of reads_whole names`, through
+    Carries: S5 `opt a Read of a path that a Lane of reads_whole names`, through
     `lanes.read_kept`.
     """
     if call.tool != "Read":

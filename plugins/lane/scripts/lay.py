@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(ROOT, "domain"))
 from lay.command import main
 
 if __name__ == "__main__":
-    code, out, err = main(sys.argv[1:], sys.stdin, os.environ, ROOT)
+    code, out, err = main(sys.argv[1:], sys.stdin, ROOT)
     sys.stdout.write(out)
     sys.stderr.write(err)
     raise SystemExit(code)

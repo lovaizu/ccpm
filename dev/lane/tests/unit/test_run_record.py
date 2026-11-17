@@ -15,9 +15,7 @@ from run_record import (
     Ended,
     Gave,
     Prompted,
-    Shown,
     Started,
-    SteppedAside,
     TextFailed,
     TextGiven,
     Tied,
@@ -28,15 +26,13 @@ from run_record import (
 )
 
 EACH_LINE = [
-    Called("r1", "write", "person", "0.2.0"),
+    Called("r1", "write", "0.2.0"),
     Prompted("r1", "/changelog:pause"),
-    Shown("r1", "b9fd8fd8", "Routes of write..."),
     Started("r1", "writer", "Carry out your steps", {"version": "0.2.0"}, "toolu_1", False),
     Tied("r1", "toolu_1", "a01"),
     Gave("r1", "writer", "written", "a01"),
     Gave("r1", "write", "good", None),
     Ended("r1", "a01", True),
-    SteppedAside("r1", "lint:check"),
     TextFailed("r1"),
     TextGiven("r1"),
 ]

@@ -8,7 +8,6 @@ from collections.abc import Sequence
 
 from form import After, Lane, Move, Proposal, Route
 from lanes import ends_by_result, sentence
-from script_calls import id_line
 
 from lay.steps import Step
 
@@ -30,7 +29,7 @@ def render(proposal: Proposal, steps: Sequence[Step], proposal_id: str, plugin: 
 
     Takes: the Proposal, each Step as it will read once laid, the ID it's kept by, and the
     plugin's name, which the line that asks for yes or a change names.
-    Gives: the words, ending with `script_calls.id_line` and the line that asks for yes or a
+    Gives: the words, ending with the line `ID: <ID>` and the line that asks for yes or a
     change, as the README's walkthrough shows.
     Changes: nothing.
     Refuses: nothing.
@@ -39,7 +38,7 @@ def render(proposal: Proposal, steps: Sequence[Step], proposal_id: str, plugin: 
     roles = list(dict.fromkeys(lane.role for lane in proposal.lanes))
     blocks = [_role(proposal, steps, role) for role in roles]
     asked = f"Reply yes to lay these into {plugin}, or say what to change."
-    return "\n\n".join([*blocks, f"{id_line(proposal_id)}\n{asked}"]) + "\n"
+    return "\n\n".join([*blocks, f"ID: {proposal_id}\n{asked}"]) + "\n"
 
 
 def _role(proposal: Proposal, steps: Sequence[Step], role: str) -> str:
@@ -67,12 +66,9 @@ def _routes(routes: Sequence[Route], lane: Lane) -> str:
 
 def _after(after: After) -> str:
     """What a Route goes after, in the words of Lane's page of steps, routes, and adapters: `first`,
-    such as ``writer `written` `` for a Result, `the person types pause` for a command, and `the
-    call of lint:check` for another plugin's run that hands its work back."""
+    such as ``writer `written` `` for a Result, and `the person types pause` for a command."""
     if after.kind == "command":
         return f"the person types {after.command}"
-    if after.kind == "returned":
-        return f"the call of {after.skill}"
     return "first" if after.kind == "first" else f"{after.role} `{after.result}`"
 
 
@@ -80,7 +76,7 @@ def _move(move: Move) -> str:
     """A move as the table of Routes names it, such as `start writer` or `start no more`."""
     if move.kind == "no_more":
         return "start no more"
-    named = move.role or move.command or move.skill or ""
+    named = move.role or move.command or ""
     return f"{move.kind} {named}".rstrip()
 
 

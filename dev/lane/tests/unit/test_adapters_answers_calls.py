@@ -24,7 +24,7 @@ from answers import cant_check, due, ended_unheld, gave, picked_up, stopped
 from form import Move
 from lanes.kind import Broken, CantCheck
 from runs import Due, Left, Result
-from script_calls import id_line, printed, result_args, result_command, write_args
+from script_calls import result_args, result_command
 
 ECHO = """import json, os, sys
 handed = json.load(sys.stdin)
@@ -332,43 +332,6 @@ def test_a_check_that_cant_be_made_is_said_with_why_and_who() -> None:
 
 
 @pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")
-def test_the_id_line_names_the_id() -> None:
-    """Given: the ID b9fd8fd8.
-    When: id_line gives print's line of it.
-    Then: it reads `ID: b9fd8fd8`."""
-    assert id_line("b9fd8fd8") == "ID: b9fd8fd8"
-
-
-@pytest.mark.supports("test_what_print_showed_is_kept_in_ups_run")
-def test_a_run_of_print_gives_its_id_and_words() -> None:
-    """Given: a Bash command that ran lay.py print, and its output ending with the ID line.
-    When: printed reads them.
-    Then: it gives the ID, and the whole output."""
-    output = "Routes of write, laid on its step 1:\n...\nID: b9fd8fd8\nReply yes to lay these.\n"
-    command = "python3 /lane/scripts/lay.py print changelog < /tmp/proposal.json"
-    assert printed(command, output) == ("b9fd8fd8", output)
-
-
-@pytest.mark.supports("test_what_print_showed_is_kept_in_ups_run")
-@pytest.mark.parametrize(
-    "command, output",
-    [
-        ("python3 /lane/scripts/lay.py steps changelog", "ID: b9fd8fd8\n"),
-        ("python3 /lane/scripts/lay.py print changelog", "Lane x: not a lane type\n"),
-        ("git log --oneline", "ID: b9fd8fd8\n"),
-        ("python3 /lane/scripts/lay.py print changelog <<'EOF'\nIt's\nEOF", "ID: b9fd8fd8\n"),
-    ],
-    ids=["steps", "print with no ID", "another command", "a command shlex can't split"],
-)
-def test_what_isnt_a_shown_proposal_gives_none(command: str, output: str) -> None:
-    """Given: another command of lay.py, a print whose output names no ID, another command, or a
-    command whose quotes shlex can't split, such as a here-document that holds an apostrophe.
-    When: printed reads them.
-    Then: it gives None."""
-    assert printed(command, output) is None
-
-
-@pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")
 def test_the_result_command_names_the_role_and_its_result() -> None:
     """Given: writer and its Result `written`.
     When: result_command gives the command by which writer gives it.
@@ -411,21 +374,3 @@ def test_a_run_of_result_py_names_its_role_and_result(command: str, read: Any) -
     arguments."""
     assert result_args(command, ROOT) == read
 
-
-@pytest.mark.supports("test_lay_before_the_persons_reply_is_stopped")
-@pytest.mark.parametrize(
-    "words, read",
-    [
-        (["/lane/scripts/lay.py", "write", "changelog", "b9fd8fd8"], ("changelog", "b9fd8fd8")),
-        (["/lane/scripts/lay.py", "write", "changelog"], None),
-        (["/lane/scripts/lay.py", "write", "changelog", "b9fd8fd8", "more"], None),
-        (["/lane/scripts/lay.py", "print", "changelog"], None),
-        (["/other/write.py", "write", "changelog", "b9fd8fd8"], None),
-    ],
-    ids=["write", "no ID", "a word more", "print", "another script"],
-)
-def test_a_call_of_write_names_its_plugin_and_id(words: list[str], read: Any) -> None:
-    """Given: the words of a command, from the script on.
-    When: write_args reads them.
-    Then: it gives the plugin and the ID only for `lay.py write <plugin> <ID>`."""
-    assert write_args(words) == read

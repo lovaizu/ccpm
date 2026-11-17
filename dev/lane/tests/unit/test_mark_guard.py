@@ -71,7 +71,7 @@ def laid(plugin: str, adapter: str | None = GIVES, lanes: tuple[Any, ...] = WRIT
     write_lanes(os.path.join(plugin, "hooks", "lanes.json"), replace(given, proposal=proposal))
     record = record_path("changelog", d.SESSION)
     for line in (
-        Called("r1", "write", "person", ""),
+        Called("r1", "write", ""),
         Started("r1", "writer", "Carry out your steps", {}, "t1", False),
         Tied("r1", "t1", "a01"),
     ):

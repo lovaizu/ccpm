@@ -33,7 +33,7 @@ def filled(lane: Lane, values: Mapping[str, str]) -> tuple[str, ...]:
     Gives: each path, from the top of the worktree, in the Lane's order.
     Changes: nothing.
     Refuses: nothing.
-    Carries: the run values of S6 `G->>T: checks the Call by each Lane of the role, with the
+    Carries: the run values of S5 `G->>T: checks the Call by each Lane of the role, with the
     Start's run values` and of `G->>T: checks the Mark by each Lane on Step n`.
     """
     found = []
@@ -51,6 +51,6 @@ def named(call: Call, given: str) -> str:
     Gives: the path from `call.top`, such as `CHANGELOG.md`.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6's reading of each path that a Read, Grep, Glob, or Bash command names.
+    Carries: S5's reading of each path that a Read, Grep, Glob, or Bash command names.
     """
     return os.path.relpath(os.path.join(call.cwd, given), call.top)

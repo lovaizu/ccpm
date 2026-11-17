@@ -16,7 +16,6 @@ from form import (
     After,
     Move,
     OutOfForm,
-    Route,
     proposal_form,
     read_lanes,
     read_proposal,
@@ -66,31 +65,29 @@ def test_a_proposal_is_read_with_its_lanes_routes_and_adapters() -> None:
     "after, read",
     [
         ({"command": "approve"}, After("command", command="approve")),
-        ({"returned": "lint:check"}, After("returned", skill="lint:check")),
     ],
-    ids=["command", "returned"],
+    ids=["command"],
 )
 def test_each_kind_of_after_is_read_as_its_own(after: dict[str, str], read: After) -> None:
-    """Given: a Proposal with a Route after a typed command, or after another plugin's run.
+    """Given: a Proposal with a Route after a typed command.
     When: read_proposal reads it.
     Then: the Route goes after what its kind names."""
     routes = [{"skill": "write", "after": after, "moves": [{"no_more": "good"}]}]
     assert read_proposal(proposal_with(routes=routes)).routes[0].after == read
 
 
-@pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
+@pytest.mark.supports("test_a_move_that_waits_for_the_person_lets_the_turn_end")
 @pytest.mark.parametrize(
     "move, read",
     [
         ({"resume": "writer"}, Move("resume", role="writer")),
         ({"wait": "approve"}, Move("wait", command="approve")),
         ({"wait": ""}, Move("wait", command="")),
-        ({"call": "lint:check"}, Move("call", skill="lint:check")),
     ],
-    ids=["resume", "wait for a command", "wait for a reply", "call"],
+    ids=["resume", "wait for a command", "wait for a reply"],
 )
 def test_each_kind_of_move_is_read_as_its_own(move: dict[str, str], read: Move) -> None:
-    """Given: a Proposal with a Route whose move resumes, waits, or calls another plugin's skill.
+    """Given: a Proposal with a Route whose move resumes or waits.
     When: read_proposal reads it.
     Then: the move is of its kind, with what it names."""
     routes = [{"skill": "write", "after": {"first": True}, "moves": [move]}]
@@ -142,27 +139,6 @@ def test_a_steps_number_starts_at_1(step: int, stands: bool) -> None:
     else:
         with pytest.raises(OutOfForm):
             read_proposal(proposal_with(lanes=lanes))
-
-
-@pytest.mark.supports("test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it")
-def test_lanes_json_with_nothing_laid_is_read() -> None:
-    """Given: Lane's own hooks/lanes.json, which holds up's Lanes of gives_shown and
-    lays_after_reply, and only up's Route after its start, which waits for the person's reply and
-    ends by up's `laid` or `left`.
-    When: read_lanes reads it.
-    Then: it gives those two Lanes, that one Route, and a Laid of 0.1.0 with no sentences."""
-    lanes = read_lanes(os.path.join(LANE, "hooks", "lanes.json"))
-    moves = (
-        Move("wait", command=""),
-        Move("no_more", result="laid"),
-        Move("no_more", result="left"),
-    )
-    assert [(x.role, x.type) for x in lanes.proposal.lanes] == [
-        ("up", "gives_shown"),
-        ("up", "lays_after_reply"),
-    ]
-    assert lanes.proposal.routes == (Route("up", After("first"), moves),)
-    assert (lanes.laid.version, lanes.laid.sentences) == ("0.1.0", ())
 
 
 @pytest.mark.supports("test_yes_lays_the_proposal_into_the_plugin")

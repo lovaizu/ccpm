@@ -65,14 +65,14 @@ class KeepsSteps:
         """None: the guard checks a run of step.py by the Lanes on its Step, and the Lane judges no
         Call.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         return None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
-        Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
         return Kept()
 
@@ -80,7 +80,7 @@ class KeepsSteps:
         """Kept: the guard takes a Mark only for the Step due, as `marks.may_mark` gives, before
         it asks the Lanes on the Step, and the Lane checks no Mark.
 
-        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n`.
         """
         return Kept()
 
@@ -90,8 +90,8 @@ class KeepsSteps:
         the main conversation's end of its turn, as a Step may wait on a subagent, so that
         `at_result` holds the skill's Steps.
 
-        Carries: S6 `else a Lane of keeps_steps finds a Step unmarked in the latest pass` and
-        `G-->>SA: stops the end, with that Lane's sentence and the Step due`; S5's Note `keeps_steps
+        Carries: S5 `else a Lane of keeps_steps finds a Step unmarked in the latest pass` and
+        `G-->>SA: stops the end, with that Lane's sentence and the Step due`; S4's Note `keeps_steps
         lets a turn end, as a Step may wait on a subagent, and holds the skill's Steps at its
         Result.`
         """
@@ -114,7 +114,7 @@ def last_step(lanes: Sequence[Lane], role: str) -> int | None:
     no Steps.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `alt Step n isn't due in the latest pass of its Start` and `G->>A: asks for the
+    Carries: S5 `alt Step n isn't due in the latest pass of its Start` and `G->>A: asks for the
     Items of the Step due, with the role and the Start's run values`, for the Step that ends a
     pass.
     """
@@ -131,7 +131,7 @@ def at_result(lanes: Sequence[Lane], run: Run, root: str, routes: Sequence[Route
     Lane of keeps_steps.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S5 `alt a Lane of keeps_steps on the skill finds a Step unmarked in the latest pass`
+    Carries: S4 `alt a Lane of keeps_steps on the skill finds a Step unmarked in the latest pass`
     and `CC-->>M: result.py refuses it, with that Lane's sentence and the Step due`.
     """
     lane = next((x for x in lanes if x.role == run.skill and x.type == "keeps_steps"), None)
@@ -151,7 +151,7 @@ def broken(lane: Lane, held: Held, due: int | None) -> Broken:
     Step 1.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `G-->>SA: stops it, with the Step due` and `G-->>SA: stops the end, with that
+    Carries: S5 `G-->>SA: stops it, with the Step due` and `G-->>SA: stops the end, with that
     Lane's sentence and the Step due`.
     """
     said = TYPE.sentence(lane, held.routes).replace("${CLAUDE_PLUGIN_ROOT}", held.root)

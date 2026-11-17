@@ -7,8 +7,8 @@ guard read them from the command at its call.
 Gives: 0, with no words, as the guard let the run through only where it took the Mark.
 Changes: nothing; the guard adds the Mark at the PostToolUse.
 Refuses: nothing.
-Carries: S6 `SA->>SP: step.py <role> <n>` and `SP-->>SA: exits 0`; S5's Note that the skill's runs
-of step.py go as S6 draws.
+Carries: S5 `SA->>SP: step.py <role> <n>` and `SP-->>SA: exits 0`; S4's Note that the skill's runs
+of step.py go as S5 draws.
 """
 
 raise SystemExit(0)

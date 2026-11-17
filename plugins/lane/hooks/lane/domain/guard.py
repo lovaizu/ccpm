@@ -43,7 +43,6 @@ from place import (
     ItemPosted,
     Notification,
     Placed,
-    PrintPosted,
     Prompt,
     ReadPosted,
     ResultPosted,
@@ -63,9 +62,7 @@ from run_record import (
     Prompted,
     Read,
     Report,
-    Shown,
     Started,
-    SteppedAside,
     TextFailed,
     TextGiven,
     Tied,
@@ -85,27 +82,24 @@ def handle(event: Event, root: str) -> Answer:
     Takes: the event, and the plugin's folder, whose hooks/lanes.json holds the Lanes, the Routes,
     and the adapters.
     Gives, and adds to the run record, by what the event is:
-    - a skill's call (S1, S3, S5, S7): adds the call of a new Run, by a person or an AI, or picks
-      the Run up from the record, where it holds one going by the same kind of caller, or from the
-      Kept results, and answers the first start due or where the run picks up, an AI's call
-      keeping beside its new Run a person's Run that waits for their reply; for another plugin's
-      skill that a move names, adds it so that the Run stands aside;
-    - a prompt typed (S2, S5): adds it to each Run of the conversation, so that the moves of a
+    - a skill's call (S4, S6): adds the call of a new Run, or picks the Run up from the record,
+      where it holds one of the skill going, or from the Kept results, and answers the first start
+      due or where the run picks up;
+    - a prompt typed (S4): adds it to each Run of the conversation, so that the moves of a
       Route after a typed command are due, and answers those moves;
-    - a start or resume (S5, S6): checks it by `lanes.check_start` with the Lanes of the role that
+    - a start or resume (S4, S5): checks it by `lanes.check_start` with the Lanes of the role that
       makes it, and adds the Start where it's due, lets a resume, or a subagent's start of no
       role, through with no Start added, and stops any other with the moves due, or a subagent's
       start of a role with the sentence of the Lane on its last Step;
-    - the PostToolUse of a start (S5): adds the tie of the Start to its agent_id, and answers the
+    - the PostToolUse of a start (S4): adds the tie of the Start to its agent_id, and answers the
       moves due where a start stays due beside it, as the adapter gives a text other than that of
       each Start of its role that runs;
     - the PostToolUse of each call of the main conversation after an adapter of a start's text
-      failed at the skill's call (S5): asks it again, and once it answers, adds that it did and
+      failed at the skill's call (S4): asks it again, and once it answers, adds that it did and
       answers the moves due, each start with its text; says nothing while it still fails;
-    - the PostToolUse of result.py that gave 0 (S2, S5, S6): adds the Result, for the subagent's
+    - the PostToolUse of result.py that gave 0 (S4, S5): adds the Result, for the subagent's
       Start where it has an agent_id;
-    - the PostToolUse of lay.py print (S1): adds what it showed, with the Proposal's ID;
-    - a run of step.py (S5's Note, S6), by the Start whose subagent runs it, or by the main
+    - a run of step.py (S4's Note, S5), by the Start whose subagent runs it, or by the main
       conversation for the skill of a Run: stops it with the Step due where `marks.may_mark`
       doesn't take Step n for that Start's Marks and Reads, or the Run's, with the last Step that
       `lanes.keeps_steps.last_step` gives, and where the role it names isn't the Start's role or
@@ -115,30 +109,30 @@ def handle(event: Event, root: str) -> Answer:
       Lanes of the role and the Reads and Marks that `marks.since_step_began` gives; and stops it
       with why and who must fix it where the adapter fails, with the Lane's sentence and what the
       Step lacks where a Lane is broken, or lets it through;
-    - a run of item.py (S5's Note, S6), by a Start or the main conversation as a run of step.py
+    - a run of item.py (S4's Note, S5), by a Start or the main conversation as a run of step.py
       is: asks the adapter of a step's items for the Items of the Step that `marks.step_due`
       gives, with the role and the Start's run values; stops it with why and who must fix it where
       the adapter fails, and with the Items that `marks.items_left` gives where the ID isn't one
       of the Step's Items, where no Step is due, or where lanes.json names no adapter of a step's
       items, as the Step then keeps no checklist; else lets it through;
-    - the PostToolUse of step.py or item.py that gave 0 (S5's Note, S6): adds the Mark, an Item's
+    - the PostToolUse of step.py or item.py that gave 0 (S4's Note, S5): adds the Mark, an Item's
       with the Step that `marks.step_due` gives as it's marked, for the subagent's Start where it
       has an agent_id, else for the skill's Run;
-    - the PostToolUse of a Read of a path that `lanes.read_kept` gives (S5's Note, S6): adds the
+    - the PostToolUse of a Read of a path that `lanes.read_kept` gives (S4's Note, S5): adds the
       Read, with the lines it read, for the subagent's Start where it has an agent_id, else for the
       skill's Run;
-    - any other call (S2, S5, S6): checks it by each Lane of each Run that holds it, and lets it
+    - any other call (S4, S5): checks it by each Lane of each Run that holds it, and lets it
       through or stops it with the Lane's sentence and what the role may do;
-    - a subagent's end (S6): checks it by each Lane of the role, and stops it with a broken Lane's
+    - a subagent's end (S5): checks it by each Lane of the role, and stops it with a broken Lane's
       sentence, that of the Lane on its last Step where it gave no Result since its Start, and that
       of keeps_steps with the Step due where a Step is unmarked in the latest pass;
-    - a subagent's end reaching the main conversation (S5): adds the end, and answers the Result and
+    - a subagent's end reaching the main conversation (S4): adds the end, and answers the Result and
       the moves of its Route, or, ended with no Result, its start due again;
-    - the main conversation's end of its turn (S2, S5): stops it with the moves due where a move is
+    - the main conversation's end of its turn (S4): stops it with the moves due where a move is
       due with its text and no subagent of the Run runs, unless a move waits for the person, a Run
       whose adapter of a start's text fails having none; else checks it by each Lane of each Run's
       skill, a Run that its skill's Result ended in that turn among them;
-    - each start due, wherever the guard names the moves due (S5): asks the adapter of a start's
+    - each start due, wherever the guard names the moves due (S4): asks the adapter of a start's
       text for it, where lanes.json names one, and where it gives that no work waits for the
       start, leaves the start out of the moves due, with why in its place in the answer; a start
       of that role then stops with the moves due, and the main conversation's end stops for none
@@ -153,9 +147,9 @@ def handle(event: Event, root: str) -> Answer:
     fails at the main conversation's end, which then holds no move due, and one that fails as a
     subagent's end reaches the main conversation, whose why and who it gives in place of the
     moves.
-    Carries: each `CC->>G` arrow of S1 to S7, each `G-->>` answer, S6 `G->>A: asks for the Step's
+    Carries: each `CC->>G` arrow of S4 to S6, each `G-->>` answer, S5 `G->>A: asks for the Step's
     Items, with the role, Step n, and the Start's run values` and `G->>A: asks for the Items of the
-    Step due, with the role and the Start's run values`, and S5 `G->>G: leaves that start out of
+    Step due, with the role and the Start's run values`, and S4 `G->>G: leaves that start out of
     the moves due, with why in its place` and `G->>G: gives that start with why, and lets the call
     run`, with the Notes after it and after the tie of a Start.
     """
@@ -215,20 +209,17 @@ class Plugin:
 
 def _called(plugin: Plugin, placed: Placed, what: SkillCall, cwd: str) -> Answer:
     """A skill's call, where the skill is the plugin's and a Route goes after its start: the moves
-    due of the latest Run of the skill that the record holds going by the same kind of caller, as
-    after /compact, since a Run's caller decides its Approval; else the Run picked up from the Kept
-    results, where lanes.json names an adapter of the plugin's records; else the call of a new Run
-    with the first moves due; stopped with why and who must fix it where the Kept results leave
-    the Routes. Or each Run set aside whose move due calls the skill of another plugin."""
+    due of the latest Run of the skill that the record holds going, as after /compact; else the Run
+    picked up from the Kept results, where lanes.json names an adapter of the plugin's records; else
+    the call of a new Run with the first moves due; stopped with why and who must fix it where the
+    Kept results leave the Routes."""
     routes = plugin.lanes.proposal.routes
     first = [r for r in routes if r.skill == what.skill and r.after.kind == "first"]
-    if what.plugin != plugin.name:
-        skill = f"{what.plugin}:{what.skill}"
-        for run in [r for r in placed.runs if Move("call", skill=skill) in r.due]:
-            add(plugin.record, SteppedAside(run.id, skill))
+    if what.plugin != plugin.name or not first:
         return PASS
-    if not first:
-        return PASS
+    going = [r for r in placed.runs if r.skill == what.skill]
+    if going:
+        return Answer(False, due(plugin.name, _told(plugin, going[-1], cwd)))
     records = plugin.lanes.proposal.adapters.records
     picked: tuple[Result, ...] = ()
     if records:
@@ -238,9 +229,6 @@ def _called(plugin: Plugin, placed: Placed, what: SkillCall, cwd: str) -> Answer
         except OffRoutes as e:
             who = f"The developer of {plugin.name} must fix its adapter of records"
             return _stop(plugin.name, CantCheck(str(e), who))
-    going = [r for r in placed.runs if (r.skill, r.by) == (what.skill, what.by)]
-    if going:
-        return Answer(False, due(plugin.name, _told(plugin, going[-1], cwd)))
     if picked:
         return _picked_up(plugin, what, picked, cwd)
     return _begun(plugin, what, cwd)
@@ -251,7 +239,7 @@ def _picked_up(plugin: Plugin, what: SkillCall, picked: tuple[Result, ...], cwd:
     up with the moves due, as `_at_call` gives them; the Run holds the words typed now, as any call
     does."""
     run_id = uuid.uuid4().hex[:8]
-    add(plugin.record, Called(run_id, what.skill, what.by, what.words))
+    add(plugin.record, Called(run_id, what.skill, what.words))
     for result in picked:
         add(plugin.record, Gave(run_id, result.role, result.result, None))
     return _at_call(plugin, run_id, cwd, lambda told: picked_up(plugin.name, picked, told))
@@ -260,7 +248,7 @@ def _picked_up(plugin: Plugin, what: SkillCall, picked: tuple[Result, ...], cwd:
 def _begun(plugin: Plugin, what: SkillCall, cwd: str) -> Answer:
     """The call of a new Run, with the first moves due, as `_at_call` gives them."""
     run_id = uuid.uuid4().hex[:8]
-    add(plugin.record, Called(run_id, what.skill, what.by, what.words))
+    add(plugin.record, Called(run_id, what.skill, what.words))
     return _at_call(plugin, run_id, cwd, lambda told: due(plugin.name, told))
 
 
@@ -296,8 +284,8 @@ def _record(plugin: Plugin, placed: Placed, cwd: str) -> None:
 
 
 def _line(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Line | None:
-    """The line of the Run that a prompt, a start's tie, a Result, a Proposal shown, a Mark, or a
-    Read makes; none for a tie of another Run's Start, or another role's Result."""
+    """The line of the Run that a prompt, a start's tie, a Result, a Mark, or a Read makes; none
+    for a tie of another Run's Start, or another role's Result."""
     what = placed.what
     if isinstance(what, (StepPosted, ItemPosted, ReadPosted)):
         return _reported(plugin, placed, run, cwd)
@@ -309,7 +297,7 @@ def _line(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Line | None:
     if isinstance(what, ResultPosted):
         ours = placed.start is not None or what.role == run.skill
         return Gave(run.id, what.role, what.result, placed.agent_id) if ours else None
-    return Shown(run.id, what.proposal_id, what.words) if isinstance(what, PrintPosted) else None
+    return None
 
 
 def _reported(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Line | None:
@@ -493,8 +481,7 @@ def _add_start(plugin: Plugin, run: Run, asked: StartCall, moves: tuple[Due, ...
     """Adds the main conversation's Start that the Routes keep: a start due, with the run values
     of its text; or a resume due, with the run values of the Start it resumes, tied at once to the
     subagent it resumes, as no later payload ties a SendMessage to it. A start or a resume that no
-    move due opens adds nothing, such as another plugin's start in a Run of a skill with no Routes,
-    as up's, whose Lanes keep every start."""
+    move due opens adds nothing, such as another plugin's start in a Run."""
     if not asked.resume:
         due = [d for d in moves if (d.move.role, d.text) == (asked.role, asked.text)]
         if not due:

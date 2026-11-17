@@ -12,7 +12,7 @@ import os
 import tempfile
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Literal, Union
+from typing import Union
 
 
 class Unreadable(Exception):
@@ -22,12 +22,10 @@ class Unreadable(Exception):
 
 @dataclass(frozen=True)
 class Called:
-    """The call of a skill that starts a Run, by a person or an AI, with the words typed after
-    it."""
+    """The call of a skill that starts a Run, with the words typed after it."""
 
     run: str
     skill: str
-    by: Literal["person", "ai"]
     words: str
 
 
@@ -38,15 +36,6 @@ class Prompted:
 
     run: str
     text: str
-
-
-@dataclass(frozen=True)
-class Shown:
-    """What lay.py print showed in up's Run, with the Proposal's ID."""
-
-    run: str
-    proposal_id: str
-    words: str
 
 
 @dataclass(frozen=True)
@@ -120,15 +109,6 @@ class Ended:
 
 
 @dataclass(frozen=True)
-class SteppedAside:
-    """The main conversation's call of another plugin's skill that a move names, which sets the Run
-    aside until the move after it."""
-
-    run: str
-    skill: str
-
-
-@dataclass(frozen=True)
 class TextFailed:
     """The adapter of a start's text, failed at the skill's call, so that the guard asks it again
     after each later call of the main conversation, as the skill's own steps may make what it
@@ -148,14 +128,12 @@ class TextGiven:
 Line = Union[
     Called,
     Prompted,
-    Shown,
     Started,
     Tied,
     Gave,
     Marked,
     Read,
     Ended,
-    SteppedAside,
     TextFailed,
     TextGiven,
 ]
@@ -167,14 +145,12 @@ _KINDS = {
     for kind in (
         Called,
         Prompted,
-        Shown,
         Started,
         Tied,
         Gave,
         Marked,
         Read,
         Ended,
-        SteppedAside,
         TextFailed,
         TextGiven,
     )
@@ -191,7 +167,7 @@ def record_path(plugin: str, session_id: str) -> str:
     the record's file in it, the day being the one the record was first written on.
     Changes: nothing.
     Refuses: nothing.
-    Carries: where each `G->>RS` arrow of S1 to S7 reaches, and S2 `G->>RS: reads the lines`.
+    Carries: where each `G->>RS` arrow of S4 to S6 reaches.
     """
     plugin_folder = os.path.join(tempfile.gettempdir(), plugin)
     begun = sorted(
@@ -210,7 +186,7 @@ def add(path: str, line: Line) -> None:
     Changes: the record, one line appended, its folder made where it isn't there.
     Refuses: OSError, where the record can't be written, so that the guard stops the event's call
     with why.
-    Carries: each `G->>RS: adds ...` arrow of S1 to S7.
+    Carries: each `G->>RS: adds ...` arrow of S4 to S6.
     """
     os.makedirs(os.path.dirname(path), exist_ok=True)
     held = {"kind": type(line).__name__, **dataclasses.asdict(line)}
@@ -225,7 +201,7 @@ def lines(path: str) -> tuple[Line, ...]:
     Gives: its lines, none where the record isn't there yet.
     Changes: nothing.
     Refuses: Unreadable.
-    Carries: S2 `G->>RS: reads the lines`, S6 `G->>RS: reads the lines, for its Start, its Marks,
+    Carries: S5 `G->>RS: reads the lines, for its Start, its Marks,
     and its Run`.
     """
     if not os.path.exists(path):

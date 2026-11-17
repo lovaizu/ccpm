@@ -20,10 +20,8 @@ from lanes import (
     check_start,
     ends_by_result,
     ends_checked,
-    gives_shown,
     keeps_items,
     keeps_steps,
-    lays_after_reply,
     reads_none,
     reads_whole,
     routes,
@@ -34,8 +32,6 @@ from lanes import (
 )
 from lanes.kind import Broken, CantCheck, Held, Kept
 from place import EndAsked, StartCall
-from run_record import Shown
-from runs import Approval
 
 MODULES = {
     "routes": routes,
@@ -43,8 +39,6 @@ MODULES = {
     "run_only": run_only,
     "write_only": write_only,
     "ends_checked": ends_checked,
-    "lays_after_reply": lays_after_reply,
-    "gives_shown": gives_shown,
     "reads_whole": reads_whole,
     "reads_none": reads_none,
     "keeps_steps": keeps_steps,
@@ -54,21 +48,6 @@ TYPES = {name: module.TYPE for name, module in MODULES.items()}
 WRITER = d.start("writer")
 HELD = Held(d.run(starts=(WRITER,), due=()), WRITER, d.ROOT, d.ROUTES_OF_WRITE)
 MAIN = Held(d.run(starts=(WRITER,), due=()), None, d.ROOT, d.ROUTES_OF_WRITE)
-LAY = "python3 /lane/scripts/lay.py write changelog b9fd8fd8"
-SHOWN = "Routes of write...\nID: b9fd8fd8\nReply yes to lay these into changelog."
-
-
-def up_held(by: str = "person", approved: bool = False) -> Held:
-    """Up's Run that showed b9fd8fd8, by a person or an AI, with or without its Approval."""
-    approvals = (Approval("b9fd8fd8", "person"),) if approved else ()
-    run = d.run(
-        skill="up", by=by, shown=(Shown("r1", "b9fd8fd8", SHOWN),), approvals=approvals, due=()
-    )
-    return Held(run, None, d.ROOT, d.ROUTES_OF_WRITE)
-
-
-def up_lane(kind: str) -> Any:
-    return d.lane("up", "domain/up.md", 1, kind)
 
 
 def end_of(role: str, *results: str, gives: str = d.GIVES) -> str:
@@ -210,10 +189,8 @@ def test_a_lane_without_its_value_is_refused(name: str, args: dict[str, Any]) ->
         lambda: d.ROUTES,
         lambda: d.WRITE_END,
         lambda: d.WRITER_END,
-        lambda: up_lane("lays_after_reply"),
-        lambda: up_lane("gives_shown"),
     ],
-    ids=["routes", "the skill's end", "a subagent's end", "lays_after_reply", "gives_shown"],
+    ids=["routes", "the skill's end", "a subagent's end"],
 )
 def test_a_lane_of_a_type_that_takes_no_value_has_no_fault(lane: Any) -> None:
     """Given: a Lane of a type that takes no value, with none, on a Step it suits.
@@ -221,23 +198,6 @@ def test_a_lane_of_a_type_that_takes_no_value_has_no_fault(lane: Any) -> None:
     Then: it finds none."""
     given = lane()
     assert faults(given) == ()
-
-
-@pytest.mark.supports("test_a_proposal_that_cant_stand_goes_back_to_up")
-@pytest.mark.parametrize(
-    "lane",
-    [
-        lambda: d.lane("write", "skills/write/SKILL.md", 1, "lays_after_reply"),
-        lambda: d.lane("write", "skills/write/SKILL.md", 1, "gives_shown"),
-    ],
-    ids=["lays_after_reply", "gives_shown"],
-)
-def test_a_lane_of_ups_own_type_on_another_roles_step_is_refused(lane: Any) -> None:
-    """Given: a Lane of a type that holds only up, on write's step 1.
-    When: the type finds its faults.
-    Then: it finds one."""
-    given = lane()
-    assert faults(given)
 
 
 @pytest.mark.supports("test_a_role_with_no_end_on_its_last_step_goes_back_to_up")
@@ -328,10 +288,8 @@ def test_a_subagents_start_with_no_lane_that_checks_starts_cant_be_checked() -> 
         lambda: d.run_only(),
         lambda: d.write_only(),
         lambda: d.lane("writer", "agents/writer.md", 4, "ends_checked", command="true"),
-        lambda: up_lane("lays_after_reply"),
-        lambda: up_lane("gives_shown"),
     ],
-    ids=["run_only", "write_only", "ends_checked", "lays_after_reply", "gives_shown"],
+    ids=["run_only", "write_only", "ends_checked"],
 )
 def test_a_type_that_checks_no_start_keeps_every_start(lane: Any) -> None:
     """Given: a Lane of a type that checks no start.
@@ -452,47 +410,6 @@ def test_ends_by_result_allows_its_roles_run_of_the_result_script(
     assert TYPES["ends_by_result"].allows(d.WRITER_END, d.bash(command), HELD) is allowed
 
 
-@pytest.mark.supports("test_lay_before_the_persons_reply_is_stopped")
-@pytest.mark.parametrize(
-    "held, call, allowed",
-    [
-        (up_held(), d.bash(LAY), False),
-        (up_held(approved=True), d.bash(LAY), True),
-        (up_held(by="ai"), d.bash(LAY), True),
-        (up_held(), d.bash("git status"), None),
-    ],
-    ids=["a person's Run before the reply", "after the reply", "an AI's Run", "another call"],
-)
-def test_lays_after_reply_holds_write_to_the_callers_own_act(
-    held: Held, call: Any, allowed: Any
-) -> None:
-    """Given: up's Lane that holds lay.py write to the caller's own act, in up's Run that showed
-    b9fd8fd8.
-    When: the type judges a Call.
-    Then: it stops lay.py write in a person's Run before their reply, allows it after the reply or
-    in an AI's Run, and judges no other Call."""
-    lane = up_lane("lays_after_reply")
-    assert TYPES["lays_after_reply"].allows(lane, call, held) is allowed
-
-
-@pytest.mark.supports("test_ups_end_without_what_print_showed_is_stopped")
-@pytest.mark.parametrize(
-    "message, kept",
-    [(SHOWN, True), (f"Here it is:\n{SHOWN}", True), ("I proposed rules.", False)],
-    ids=["the words alone", "the words within", "a summary"],
-)
-def test_gives_shown_holds_ups_end_to_what_print_showed(message: str, kept: bool) -> None:
-    """Given: up's Lane that holds its end to what lay.py print showed, in up's Run that showed it.
-    When: the type checks up's end with a last message.
-    Then: it keeps an end that holds the words word for word, and breaks any other with them."""
-    lane = up_lane("gives_shown")
-    verdict = TYPES["gives_shown"].check_end(lane, EndAsked(message), up_held())
-    if kept:
-        assert verdict == Kept()
-    else:
-        assert isinstance(verdict, Broken) and SHOWN in verdict.sentence + verdict.may
-
-
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence")
 @pytest.mark.parametrize(
     "held, kept",
@@ -546,10 +463,9 @@ def test_ends_checked_holds_an_end_to_the_plugins_command(command: str, verdict:
     [
         lambda: d.run_only(),
         lambda: d.write_only(),
-        lambda: up_lane("lays_after_reply"),
         lambda: d.ROUTES,
     ],
-    ids=["run_only", "write_only", "lays_after_reply", "routes"],
+    ids=["run_only", "write_only", "routes"],
 )
 def test_a_type_that_checks_no_end_keeps_every_end(lane: Any) -> None:
     """Given: a Lane of a type that checks no end.

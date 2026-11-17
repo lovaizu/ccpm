@@ -69,7 +69,7 @@ def start_text(
     Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
     (why being what it wrote to standard error), or prints other than a JSON object with a
     string `text` or `none` and, beside `text`, `values` that map strings to strings.
-    Carries: S5 `G->>A: asks for the text of each start due, with each Start that runs`, and its
+    Carries: S4 `G->>A: asks for the text of each start due, with each Start that runs`, and its
     `A-->>G` answers: `the text, and the run values` and, after `it gives none, as no work waits
     for that start`, and each way it fails, `why`.
     """
@@ -136,7 +136,7 @@ def step_items(
     Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
     (why being what it wrote to standard error), or prints other than a JSON object whose `items`
     is a list of strings.
-    Carries: S6 `G->>A: asks for the Step's Items, with the role, Step n, and the Start's run
+    Carries: S5 `G->>A: asks for the Step's Items, with the role, Step n, and the Start's run
     values`, `G->>A: asks for the Items of the Step due, with the role and the Start's run values`,
     each one's `A-->>G: each Item's ID`, and each one's `alt the adapter fails`.
     """
@@ -159,7 +159,7 @@ def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:
     Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
     (why being what it wrote to standard error), or prints other than a JSON object whose
     `results` is a list of objects, each with a string `role` and a string `result`.
-    Carries: S7 `G->>A: asks for the Kept results, with those words`, and its `A-->>G` answers.
+    Carries: S6 `G->>A: asks for the Kept results, with those words`, and its `A-->>G` answers.
     """
     printed = _run(program, [], {"words": words}, cwd)
     results = printed.get("results")

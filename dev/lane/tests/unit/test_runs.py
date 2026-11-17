@@ -20,7 +20,6 @@ from run_record import (
     Gave,
     Prompted,
     Started,
-    SteppedAside,
     TextFailed,
     TextGiven,
     Tied,
@@ -30,7 +29,7 @@ from run_record import (
 )
 from runs import OffRoutes, Result, may_give, pick_up, stand, where
 
-CALLED = Called("r1", "write", "person", "")
+CALLED = Called("r1", "write", "")
 WRITER = Started("r1", "writer", "Carry out your steps", {}, "toolu_w", False)
 TIED = Tied("r1", "toolu_w", "a01")
 REVIEWER = Started("r1", "reviewer", "Carry out your steps", {}, "toolu_r", False)
@@ -48,11 +47,11 @@ def test_no_lines_hold_no_run() -> None:
 
 @pytest.mark.supports("test_the_walkthroughs_run_moves_in_the_order_the_user_set")
 def test_a_skills_call_makes_the_first_moves_due() -> None:
-    """Given: the call of write, by a person.
+    """Given: the call of write.
     When: stand works out the conversation.
-    Then: write's Run, by a person, has writer's start due."""
+    Then: write's Run has writer's start due."""
     (run,) = stand(d.SESSION, (CALLED,), d.ROUTES_OF_WRITE).runs
-    assert (run.skill, run.by, run.due, run.ended) == ("write", "person", START_WRITER, False)
+    assert (run.skill, run.due, run.ended) == ("write", START_WRITER, False)
 
 
 @pytest.mark.supports("test_a_start_stays_due_beside_a_start_of_its_role_with_another_text")
@@ -158,25 +157,6 @@ def test_a_command_of_another_plugin_leaves_the_moves_due() -> None:
     assert run.due == START_REVIEWER
 
 
-@pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
-def test_a_call_of_another_plugins_skill_sets_the_run_aside() -> None:
-    """Given: write's call, and the main conversation's call of lint:check that a move names.
-    When: stand works out the conversation.
-    Then: the Run stands aside."""
-    (run,) = stand(d.SESSION, (CALLED, SteppedAside("r1", "lint:check")), d.ROUTES_OF_WRITE).runs
-    assert run.aside
-
-
-@pytest.mark.supports("test_the_move_after_another_plugins_skill_brings_the_run_back")
-def test_a_start_on_an_aside_run_ends_the_aside() -> None:
-    """Given: write's call, its call of lint:check that sets it aside, and writer's Start.
-    When: stand works out the conversation.
-    Then: the Run no longer stands aside."""
-    given = (CALLED, SteppedAside("r1", "lint:check"), WRITER)
-    (run,) = stand(d.SESSION, given, d.ROUTES_OF_WRITE).runs
-    assert not run.aside
-
-
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
 def test_a_start_ended_with_no_result_is_due_again() -> None:
     """Given: writer's Start, and its end by TaskStop with no Result.
@@ -193,7 +173,7 @@ def test_two_skills_calls_make_two_runs() -> None:
     When: stand works out the conversation.
     Then: it holds two Runs, each with its own first moves due."""
     check = d.Route("check", d.After("first"), (Move("start", role="reviewer"),))
-    given = (CALLED, Called("r2", "check", "person", ""))
+    given = (CALLED, Called("r2", "check", ""))
     runs = stand(d.SESSION, given, (*d.ROUTES_OF_WRITE, check)).runs
     assert [(r.skill, r.due) for r in runs] == [("write", START_WRITER), ("check", START_REVIEWER)]
 

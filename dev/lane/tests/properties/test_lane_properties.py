@@ -62,10 +62,9 @@ def proposals(draw: Any) -> dict[str, Any]:
         st.just({"first": True}),
         st.fixed_dictionaries({"role": NAME, "result": NAME}),
         st.fixed_dictionaries({"command": NAME}),
-        st.fixed_dictionaries({"returned": NAME}),
     )
     move = st.one_of(
-        *[st.fixed_dictionaries({kind: NAME}) for kind in ("start", "resume", "no_more", "call")],
+        *[st.fixed_dictionaries({kind: NAME}) for kind in ("start", "resume", "no_more")],
         st.fixed_dictionaries({"wait": st.one_of(st.just(""), NAME)}),
     )
     route = st.fixed_dictionaries(
@@ -86,7 +85,7 @@ def test_steps_laid_then_stripped_read_as_written(given_: Any) -> None:
     When: as_laid lays the sentences, and strip takes out the Laid of them.
     Then: each Step reads as it was written, with no note."""
     steps, sentences = given_
-    laid = Laid("0.1.0", tuple(LaidSentence(f, n, t) for (f, n), t in sentences.items()))
+    laid = Laid(tuple(LaidSentence(f, n, t) for (f, n), t in sentences.items()))
     assert strip(as_laid(steps, sentences), laid) == (steps, ())
 
 

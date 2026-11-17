@@ -75,7 +75,7 @@ class EndsByResult:
         role may not give; None for any other Call. lanes/ keeps a Call that this allows,
         whatever the other types say.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         command = call.input.get("command") if call.tool == "Bash" else None
         given = result_args(command, held.root) if isinstance(command, str) else None
@@ -85,7 +85,7 @@ class EndsByResult:
         """Broken, with the Lane's sentence, where a subagent starts or resumes a role of the plugin
         (`asked.ours`), as only the main conversation starts the roles; else Kept.
 
-        Carries: S6 `else it starts a role of the plugin` and `G-->>SA: stops it, with the
+        Carries: S5 `else it starts a role of the plugin` and `G-->>SA: stops it, with the
         sentence of the Lane on its last Step`.
         """
         if held.start is not None and asked.ours:
@@ -95,7 +95,7 @@ class EndsByResult:
     def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
         """Kept: the Lane checks no Mark.
 
-        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n`.
         """
         return Kept()
 
@@ -104,7 +104,7 @@ class EndsByResult:
         Result; Kept for the main conversation's end, which the moves due hold, and for a Start
         with a Result.
 
-        Carries: S6 `alt the Lane on its last Step finds no Result since its Start` and `G-->>SA:
+        Carries: S5 `alt the Lane on its last Step finds no Result since its Start` and `G-->>SA:
         stops the end, with that Lane's sentence`.
         """
         if held.start is not None and not held.start.results:

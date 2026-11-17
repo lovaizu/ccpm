@@ -148,7 +148,7 @@ def test_a_mark_and_a_read_are_kept_as_added(
     assert lines(path) == (line,)
 
 
-CALLED = Called("r1", "write", "person", "")
+CALLED = Called("r1", "write", "")
 STARTED = Started("r1", "writer", "Carry out your steps", {}, "toolu_w", False)
 TIED = Tied("r1", "toolu_w", "a01")
 

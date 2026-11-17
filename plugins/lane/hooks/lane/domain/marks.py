@@ -18,7 +18,7 @@ def step_due(reports: Sequence[Report], last_step: int) -> int | None:
     latest Mark of Step 1; None where that pass has marked the last Step.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `alt Step n isn't due in the latest pass of its Start`, the Step due of `G->>A:
+    Carries: S5 `alt Step n isn't due in the latest pass of its Start`, the Step due of `G->>A:
     asks for the Items of the Step due, with the role and the Start's run values`, and `else a
     Lane of keeps_steps finds a Step unmarked in the latest pass`.
     """
@@ -36,7 +36,7 @@ def may_mark(reports: Sequence[Report], step: int, last_step: int) -> bool:
     False for any other.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `alt Step n isn't due in the latest pass of its Start` and its `else`.
+    Carries: S5 `alt Step n isn't due in the latest pass of its Start` and its `else`.
     """
     return step == 1 or step == step_due(reports, last_step)
 
@@ -49,7 +49,7 @@ def since_step_began(reports: Sequence[Report]) -> tuple[Report, ...]:
     as the Start began the first Step; Marks of Items among them.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since the
+    Carries: S5 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since the
     Step began`.
     """
     ends = [i for i, r in enumerate(reports) if isinstance(r, Marked) and r.item is None]
@@ -65,7 +65,7 @@ def items_left(reports: Sequence[Report], items: Sequence[str]) -> tuple[str, ..
     where each is marked.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `else a path a Lane of reads_whole names wasn't read whole, or an Item isn't
+    Carries: S5 `else a path a Lane of reads_whole names wasn't read whole, or an Item isn't
     marked`, and `G-->>SA: stops it, with the Items left`.
     """
     marked = {r.item for r in since_step_began(reports) if isinstance(r, Marked)}

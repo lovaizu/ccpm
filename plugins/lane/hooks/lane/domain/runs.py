@@ -1,6 +1,6 @@
 """How each Run of a conversation stands, worked out from the run record's lines, the Routes, and
-the Kept results alone: its Starts, its Results, its Approvals, each role's Marks and Reads, the
-moves due, and whether it waits, stands aside, or has ended."""
+the Kept results alone: its Starts, its Results, each role's Marks and Reads, the moves due, and
+whether it waits or has ended."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import dataclasses
 import os
 from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Literal, Union
+from typing import Union
 
 from adapters import KeptResult
 from form import After, Move, Route, read_lanes
@@ -22,9 +22,7 @@ from run_record import (
     Prompted,
     Read,
     Report,
-    Shown,
     Started,
-    SteppedAside,
     TextFailed,
     TextGiven,
     Tied,
@@ -33,9 +31,7 @@ from run_record import (
 )
 
 # Each line of a Run's record after its call.
-Moving = Union[
-    Prompted, Shown, Started, Tied, Gave, Marked, Read, Ended, SteppedAside, TextFailed, TextGiven
-]
+Moving = Union[Prompted, Started, Tied, Gave, Marked, Read, Ended, TextFailed, TextGiven]
 
 
 class OffRoutes(Exception):
@@ -70,15 +66,6 @@ class Start:
 
 
 @dataclass(frozen=True)
-class Approval:
-    """The caller's own act on a Proposal that the Run showed: a person's reply after it, or the
-    Run's call by an AI."""
-
-    proposal_id: str
-    by: Literal["person", "ai"]
-
-
-@dataclass(frozen=True)
 class Due:
     """A move due, with the text and run values of a start or resume."""
 
@@ -107,14 +94,10 @@ class Run:
 
     id: str
     skill: str
-    by: Literal["person", "ai"]
     words: str
     starts: tuple[Start, ...]
     results: tuple[Result, ...]
-    shown: tuple[Shown, ...]
-    approvals: tuple[Approval, ...]
     due: tuple[Move, ...]
-    aside: bool
     ended: bool
     closing: bool = False
     awaiting: bool = False
@@ -136,21 +119,18 @@ def stand(
 
     Takes: the conversation's session_id, the run record's lines, the plugin's Routes, and the
     plugin's name, by which a prompt `/<plugin>:<command>` is the plugin's command.
-    Gives: each Run, its moves due those of the Route after its latest start, Result, typed
-    command, or returned call, a resume after a Result given as a start where no Start of the Run
-    started its role, its Approvals, the person's of the Proposal it showed last before
-    each prompt typed, a Route after the plugin's command typed taking the place of those
-    before, a start staying due beside each Start it made, as the guard gives it where the adapter
-    gives a text other than theirs, a resume taken by its Start, and a start whose subagent ended
+    Gives: each Run, its moves due those of the Route after its latest start, Result, or typed
+    command, a resume after a Result given as a start where no Start of the Run started its role,
+    a Route after the plugin's command typed taking the place of those before, a start staying due
+    beside each Start it made, as the guard gives it where the adapter gives a text other than
+    theirs, a resume taken by its Start, and a start whose subagent ended
     with no Result due again; each Mark and Read on the Start whose agent_id it gives, or, with
     none, on the skill's Run; `awaiting` from the adapter's failure at the skill's call until it
-    answers; a Run ended, and closing,
-    by the skill's own Result where a move due starts no more by it, until a prompt is typed; a
-    Run aside from the call of another plugin's skill, with the moves of the Route after that call
-    due, until a Start.
+    answers; a Run ended, and closing, by the skill's own Result where a move due starts no more by
+    it, until a prompt is typed.
     Changes: nothing.
     Refuses: nothing; a line of a Run that the Routes no longer name leaves that Run no moves due.
-    Carries: the guard's working out of each Run on each event of S1 to S7, from `G->>RS: reads
+    Carries: the guard's working out of each Run on each event of S4 to S6, from `G->>RS: reads
     the lines`.
     """
     runs: dict[str, Run] = {}
@@ -165,7 +145,7 @@ def stand(
 def _called(line: Called, routes: Sequence[Route]) -> Run:
     """A Run as its skill's call starts it, with the moves of the Route after its start due."""
     due = _moves(routes, line.skill, lambda after: after.kind == "first")
-    return Run(line.run, line.skill, line.by, line.words, (), (), (), (), due, False, False)
+    return Run(line.run, line.skill, line.words, (), (), due, False)
 
 
 def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
@@ -176,11 +156,7 @@ def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
         return _gave(run, line, routes)
     if isinstance(line, Prompted):
         return _prompted(run, line, routes, plugin)
-    if isinstance(line, SteppedAside):
-        return _aside(run, line, routes)
-    if isinstance(line, (TextFailed, TextGiven)):
-        return dataclasses.replace(run, awaiting=isinstance(line, TextFailed))
-    return dataclasses.replace(run, shown=(*run.shown, line))
+    return dataclasses.replace(run, awaiting=isinstance(line, TextFailed))
 
 
 def _reported(run: Run, line: Report) -> Run:
@@ -197,9 +173,8 @@ def _reported(run: Run, line: Report) -> Run:
 
 
 def _of_start(run: Run, line: Started | Tied | Ended | Report) -> Run:
-    """The Run after a Start, which ends its standing aside and takes the resume it makes, while a
-    start stays due beside it; its tie to an agent_id; its subagent's Mark or Read; or its
-    subagent's end."""
+    """The Run after a Start, which takes the resume it makes, while a start stays due beside it;
+    its tie to an agent_id; its subagent's Mark or Read; or its subagent's end."""
     if isinstance(line, Started):
         start = Start(
             line.role, line.text, line.values, line.tool_use_id, None, (), False, line.resumed
@@ -207,7 +182,7 @@ def _of_start(run: Run, line: Started | Tied | Ended | Report) -> Run:
         due = list(run.due)
         if line.resumed and Move("resume", role=line.role) in due:
             due.remove(Move("resume", role=line.role))
-        return dataclasses.replace(run, starts=(*run.starts, start), due=tuple(due), aside=False)
+        return dataclasses.replace(run, starts=(*run.starts, start), due=tuple(due))
     if isinstance(line, Tied):
         starts = tuple(
             dataclasses.replace(s, agent_id=line.agent_id)
@@ -232,27 +207,15 @@ def _ended(run: Run, line: Ended) -> Run:
 
 def _prompted(run: Run, line: Prompted, routes: Sequence[Route], plugin: str) -> Run:
     """The Run after a prompt: the moves of a Route after the plugin's command typed, as
-    `/<plugin>:<command>`, in place of those before; a Run that its skill's Result ended no
-    longer closing; and the person's Approval of the Proposal that the Run showed last, as the
-    prompt is their reply to it."""
+    `/<plugin>:<command>`, in place of those before; and a Run that its skill's Result ended no
+    longer closing."""
     typed = line.text.split(maxsplit=1)[0] if line.text.strip() else ""
     due = _moves(
         routes,
         run.skill,
         lambda after: after.kind == "command" and typed == f"/{plugin}:{after.command}",
     )
-    replied = tuple(Approval(s.proposal_id, "person") for s in run.shown[-1:])
-    approvals = tuple(dict.fromkeys((*run.approvals, *replied)))
-    return dataclasses.replace(run, due=due or run.due, closing=False, approvals=approvals)
-
-
-def _aside(run: Run, line: SteppedAside, routes: Sequence[Route]) -> Run:
-    """The Run set aside by the call of another plugin's skill, with the moves of the Route after
-    that call due."""
-    due = _moves(
-        routes, run.skill, lambda after: after.kind == "returned" and after.skill == line.skill
-    )
-    return dataclasses.replace(run, aside=True, due=due)
+    return dataclasses.replace(run, due=due or run.due, closing=False)
 
 
 def _gave(run: Run, line: Gave, routes: Sequence[Route]) -> Run:
@@ -308,7 +271,7 @@ def where(root: str, session_id: str) -> Conversation:
     Changes: nothing.
     Refuses: run_record.Unreadable, and form.OutOfForm or FileNotFoundError for lanes.json, so
     that the script refuses with why.
-    Carries: S2 `L->>G: asks where up's Run stands`, and S6 `R->>G: asks where each Run stands`.
+    Carries: S5 `R->>G: asks where each Run stands`.
     """
     lanes = read_lanes(os.path.join(root, "hooks", "lanes.json"))
     name = plugin_name(root)
@@ -324,7 +287,7 @@ def may_give(conversation: Conversation, role: str, routes: Sequence[Route]) -> 
     none where no Run allows it.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S6 `alt a Result the role may give`.
+    Carries: S5 `alt a Result the role may give`.
     """
     given: list[str] = []
     for run in (r for r in conversation.runs if not r.ended):
@@ -352,7 +315,7 @@ def pick_up(routes: Sequence[Route], skill: str, kept: Sequence[KeptResult]) -> 
     Changes: nothing.
     Refuses: OffRoutes, naming the first Kept result whose role no move due before it starts, or
     that no Route of the skill goes after.
-    Carries: S7 `else results that follow the Routes`, with its Note on a resume due of a role
+    Carries: S6 `else results that follow the Routes`, with its Note on a resume due of a role
     never started, and `else results that don't follow them`.
     """
     due = _moves(routes, skill, lambda after: after.kind == "first")

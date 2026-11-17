@@ -8,8 +8,8 @@ Gives: 0, with no words, as the guard let the run through only where the adapter
 the Step due.
 Changes: nothing; the guard adds the Mark at the PostToolUse.
 Refuses: nothing.
-Carries: S6 `SA->>IP: item.py <role> <id>` and `IP-->>SA: exits 0`; S5's Note that the skill's
-runs of item.py go as S6 draws.
+Carries: S5 `SA->>IP: item.py <role> <id>` and `IP-->>SA: exits 0`; S4's Note that the skill's
+runs of item.py go as S5 draws.
 """
 
 raise SystemExit(0)

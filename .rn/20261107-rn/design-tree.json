@@ -179,37 +179,7 @@
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "doing",
-      "inputs": [],
-      "preconditions": [],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The skeleton",
-              "decided": "each part and interface the architecture after the cut draws; each body that holds and still fits kept, each part or body that traces to no element of the architecture deleted",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",

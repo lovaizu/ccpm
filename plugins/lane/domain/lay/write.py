@@ -3,7 +3,6 @@ changes a file, and how it puts back each file it changed where a later step fai
 
 from __future__ import annotations
 
-import json
 import os
 import shutil
 from collections.abc import Sequence
@@ -12,7 +11,6 @@ from dataclasses import dataclass
 from events import hook_entries
 from form import LanesFile, Proposal, write_lanes
 from manifest import plugin_name
-from runs import where
 
 from lay import claude, hooks_file, laid, proposals, steps
 from lay.check import Checked, check
@@ -21,8 +19,8 @@ from lay.steps import Step
 
 
 class Refused(Exception):
-    """lay.py write laid nothing, and why: no such Proposal, its Run no longer waits, the Steps
-    changed since print, or validate didn't pass and each file was put back, with what it said."""
+    """lay.py write laid nothing, and why: no such Proposal, the Steps changed since print, or
+    validate didn't pass and each file was put back, with what it said."""
 
 
 @dataclass(frozen=True)
@@ -38,20 +36,18 @@ class Written:
     validated: str
 
 
-def write(plugin: str, proposal_id: str, session_id: str, root: str) -> Written:
+def write(plugin: str, proposal_id: str, root: str) -> Written:
     """Lays the Proposal of the ID in the plugin.
 
-    Takes: the plugin's folder, the Proposal's ID, the session_id from CLAUDE_CODE_SESSION_ID, and
-    Lane's folder, whose hooks/lane/ it copies.
+    Takes: the plugin's folder, the Proposal's ID, and Lane's folder, whose hooks/lane/ it copies.
     Gives: each file written, once `claude plugin validate` passes.
     Changes: in this order, each Step's file by `laid.lay`, hooks/hooks.json by
     `hooks_file.replace_entries`, hooks/lane/ by a copy of Lane's whole in place of what it held,
     and hooks/lanes.json by `form.write_lanes`; and, where validate doesn't pass or a step raises,
     each Step's file and each file under hooks/ put back as it was, a file it made removed, and
     an empty folder under hooks/ not kept.
-    Refuses: Refused, where `proposals.find` finds no Proposal; where `runs.where` shows that the
-    Run of up that showed the ID has ended or showed a later one; where the Steps that
-    `laid.unlaid` reads now, held as print held them, differ from those kept; and where validate
+    Refuses: Refused, where `proposals.find` finds no Proposal; where the Steps that `laid.unlaid`
+    reads now, held as print held them, differ from those kept; and where validate
     doesn't pass. An error that a step raises comes out as it was raised, once each file is put
     back.
     Carries: S2 `UP->>L: write <plugin> <ID>` through each arrow from L to `L-->>UP: each file
@@ -60,18 +56,6 @@ def write(plugin: str, proposal_id: str, session_id: str, root: str) -> Written:
     kept = proposals.find(plugin, proposal_id)
     if kept is None:
         raise Refused(f"no Proposal for {plugin} has the ID {proposal_id}")
-    waiting = [
-        run
-        for run in where(root, session_id).runs
-        if run.skill == "up"
-        and not run.ended
-        and run.shown[-1:]
-        and run.shown[-1].proposal_id == proposal_id
-    ]
-    if not waiting:
-        raise Refused(
-            f"no run of up in this conversation waits to lay {proposal_id}; propose again"
-        )
     if steps.as_held(laid.unlaid(plugin)[0], kept.proposal.routes) != kept.steps:
         raise Refused(
             f"the steps in {plugin} changed since lay.py print showed {proposal_id}; propose again"
@@ -104,7 +88,7 @@ def write(plugin: str, proposal_id: str, session_id: str, root: str) -> Written:
 def _lay(plugin: str, proposal: Proposal, laid_steps: Sequence[Step], root: str) -> Validation:
     """Writes each file of the lay in its order, and gives what validate said once it passes;
     Refused where it doesn't."""
-    written = laid.lay(plugin, laid_steps, _version(root))
+    written = laid.lay(plugin, laid_steps)
     hooks_file.replace_entries(plugin, hook_entries())
     copy = os.path.join(plugin, "hooks", "lane")
     if os.path.isdir(copy):
@@ -148,9 +132,3 @@ def _put_back(plugin: str, held: Held) -> None:
         with open(path, "wb") as f:
             f.write(data)
         os.chmod(path, mode)
-
-
-def _version(root: str) -> str:
-    """Lane's version, as its plugin.json gives it."""
-    with open(os.path.join(root, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
-        return str(json.load(f)["version"])

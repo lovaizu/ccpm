@@ -33,9 +33,9 @@ def main(argv: Sequence[str], env: Mapping[str, str], root: str) -> tuple[int, s
     or lanes.json can't be read.
     Changes: nothing; the guard adds the Result at the PostToolUse.
     Refuses: as Gives says, by its exit code.
-    Carries: S6 `SA->>R: result.py <role> <result>`, `R->>G: asks where each Run stands`, and
-    `R-->>SA: exits 0` or `refuses it, with the Results it may give`; S2 and S5's `result.py`;
-    S5 `alt a Lane of keeps_steps on the skill finds a Step unmarked in the latest pass` and
+    Carries: S5 `SA->>R: result.py <role> <result>`, `R->>G: asks where each Run stands`, and
+    `R-->>SA: exits 0` or `refuses it, with the Results it may give`; S4's `result.py`;
+    S4 `alt a Lane of keeps_steps on the skill finds a Step unmarked in the latest pass` and
     `CC-->>M: result.py refuses it, with that Lane's sentence and the Step due`.
     """
     if len(argv) != 2:

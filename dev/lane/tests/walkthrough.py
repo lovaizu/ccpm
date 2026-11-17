@@ -50,14 +50,6 @@ FILES = {
 }
 
 
-# The guard's form of an earlier Lane, as its copy in a plugin's hooks/lane/domain/ held it: its
-# lanes.json keeps the Laid under `added`, and each sentence as [file, step, text], while the
-# Laid it gives keeps the fields that every version keeps. It's kept as text, as it's a file an
-# earlier Lane wrote, which no fix changes, not code this repository keeps.
-with open(os.path.join(TOP, "dev", "lane", "tests", "earlier-form.txt"), encoding="utf-8") as f:
-    EARLIER_FORM = f.read()
-
-
 # What Lane shows at each move of the walkthrough, as the README shows it.
 SHOWN = readme_block(README, "You type:\n\n```text\n/lane:up changelog\n```\n\nLane shows:")
 WROTE = readme_block(README, "```text\nyes\n```\n\nLane shows:")

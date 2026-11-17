@@ -62,21 +62,21 @@ class EndsChecked:
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """None: Lane runs the command at the end, and the Lane judges no Call.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         return None
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
-        Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
         return Kept()
 
     def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
         """Kept: the Lane checks no Mark.
 
-        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n`.
         """
         return Kept()
 
@@ -86,7 +86,7 @@ class EndsChecked:
         for the main conversation; Broken, with the Lane's sentence, where it gives another code;
         CantCheck, with why and the plugin's developer to fix it, where the shell can't run it.
 
-        Carries: S5 and S6 `opt a Lane holds the end to a command of the plugin's`, and `alt a Lane
+        Carries: S4 and S5 `opt a Lane holds the end to a command of the plugin's`, and `alt a Lane
         is broken`.
         """
         start = held.start
@@ -117,6 +117,6 @@ def run(command: Sequence[str], cwd: str) -> int:
     Gives: its exit code.
     Changes: whatever the command changes.
     Refuses: OSError, where the command can't start, which the Lane gives as CantCheck.
-    Carries: S5 and S6 `T->>PC: runs it` and `PC-->>T: its exit code`.
+    Carries: S4 and S5 `T->>PC: runs it` and `PC-->>T: its exit code`.
     """
     return subprocess.run(list(command), cwd=cwd, check=False).returncode

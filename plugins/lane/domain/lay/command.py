@@ -6,7 +6,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import os
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from typing import TextIO
 
 from form import OutOfForm, proposal_form, read_proposal
@@ -23,13 +23,11 @@ USAGE = (
 )
 
 
-def main(
-    argv: Sequence[str], stdin: TextIO, env: Mapping[str, str], root: str
-) -> tuple[int, str, str]:
+def main(argv: Sequence[str], stdin: TextIO, root: str) -> tuple[int, str, str]:
     """Runs one command of lay.py.
 
-    Takes: the command line after `lay.py`; standard input, which only print reads; the environment,
-    whose CLAUDE_CODE_SESSION_ID names the conversation; and Lane's folder.
+    Takes: the command line after `lay.py`; standard input, which only print reads; and Lane's
+    folder.
     Gives, as the exit code, standard output, and standard error:
     - `types`: 0, with the JSON `{"types": [...], "proposal": <JSON Schema>}` from `lanes.types`
       and `form.proposal_form`, in the form that up's part names.
@@ -45,7 +43,7 @@ def main(
     Changes: what `proposals.keep` and `write.write` change.
     Refuses: as Gives says, by its exit code.
     Carries: S1 `UP->>L: types`, `UP->>L: steps <plugin>`, `UP->>L: print (Proposal)`; S2
-    `UP->>L: write <plugin> <ID>`; S4 `UP->>L: steps <plugin>`; and each `L-->>UP` answer.
+    `UP->>L: write <plugin> <ID>`; S3 `UP->>L: steps <plugin>`; and each `L-->>UP` answer.
     """
     command, args = (argv[0], list(argv[1:])) if argv else ("", [])
     if command == "types" and not args:
@@ -61,7 +59,7 @@ def main(
     if command == "print" and len(args) == 1:
         return _print(os.path.abspath(args[0]), stdin.read())
     if command == "write" and len(args) == 2:
-        return _write(os.path.abspath(args[0]), args[1], env, root)
+        return _write(os.path.abspath(args[0]), args[1], root)
     return 2, "", USAGE
 
 
@@ -81,12 +79,10 @@ def _print(plugin: str, text: str) -> tuple[int, str, str]:
     return 0, show.render(proposal, shown, proposal_id, plugin_name(plugin)), ""
 
 
-def _write(
-    plugin: str, proposal_id: str, env: Mapping[str, str], root: str
-) -> tuple[int, str, str]:
+def _write(plugin: str, proposal_id: str, root: str) -> tuple[int, str, str]:
     """lay.py write: the Proposal laid, and each file written."""
     try:
-        written = write.write(plugin, proposal_id, env.get("CLAUDE_CODE_SESSION_ID", ""), root)
+        written = write.write(plugin, proposal_id, root)
     except write.Refused as e:
         return 1, "", f"lay.py write: laid nothing: {e}\n"
     lines = []

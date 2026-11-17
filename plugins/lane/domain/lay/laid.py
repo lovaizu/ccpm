@@ -9,9 +9,8 @@ import os
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
-from form import Laid, LaidSentence
+from form import Laid, LaidSentence, read_lanes
 
-from lay.laid_copy import read_laid
 from lay.steps import Step, items, read_steps
 
 
@@ -36,7 +35,7 @@ def strip(steps: Sequence[Step], laid: Laid) -> tuple[tuple[Step, ...], tuple[No
     words. A sentence ends at a `.`, `!`, or `?` outside backticks that a space follows.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S1 `L-->>UP: each Step without the text that the Laid names`, S4's loop over each
+    Carries: S1 `L-->>UP: each Step without the text that the Laid names`, S3's loop over each
     sentence that the Laid added, and `L-->>UP: each Step that remains, with the notes`.
     """
     added = {(x.file, x.step): x.text for x in laid.sentences}
@@ -76,14 +75,17 @@ def unlaid(plugin: str) -> tuple[tuple[Step, ...], tuple[Note, ...]]:
     """Each Step of the plugin without the text that its Laid names.
 
     Takes: the plugin's folder.
-    Gives: what `strip` gives of the Steps that `steps.read_steps` reads, by the Laid that
-    `laid_copy.read_laid` reads.
+    Gives: what `strip` gives of the Steps that `steps.read_steps` reads, by the Laid of the
+    plugin's hooks/lanes.json, none where it holds no such file, as Lane never laid in it.
     Changes: nothing.
-    Refuses: what `steps.read_steps` and `laid_copy.read_laid` refuse.
+    Refuses: what `steps.read_steps` refuses, and form.OutOfForm where hooks/lanes.json is out of
+    its form.
     Carries: S1 `L->>ST: reads each Step` and `L->>LS: reads the Laid`, S2's check that the Steps
-    read as print read them, and S4's reading of each Step.
+    read as print read them, and S3's reading of the Laid and each Step.
     """
-    return strip(read_steps(plugin), read_laid(plugin))
+    path = os.path.join(plugin, "hooks", "lanes.json")
+    laid = read_lanes(path).laid if os.path.isfile(path) else Laid(())
+    return strip(read_steps(plugin), laid)
 
 
 def as_laid(steps: Sequence[Step], sentences: Mapping[tuple[str, int], str]) -> tuple[Step, ...]:
@@ -106,11 +108,11 @@ def as_laid(steps: Sequence[Step], sentences: Mapping[tuple[str, int], str]) -> 
     return tuple(laid)
 
 
-def lay(plugin: str, steps: Sequence[Step], version: str) -> Laid:
+def lay(plugin: str, steps: Sequence[Step]) -> Laid:
     """Writes each Step as laid in place of what the Laid added.
 
     Takes: the plugin's folder, each Step as it will read once laid, its own words first, as
-    `as_laid` gives it, and Lane's version.
+    `as_laid` gives it.
     Gives: the new Laid, which names the text after each Step's own words, as `unlaid` reads them
     before the lay.
     Changes: each file of the plugin that holds a Step whose text changes.
@@ -125,7 +127,7 @@ def lay(plugin: str, steps: Sequence[Step], version: str) -> Laid:
     )
     for file in dict.fromkeys(step.file for step in steps):
         _write(plugin, file, {step.number: step.text for step in steps if step.file == file})
-    return Laid(version, written)
+    return Laid(written)
 
 
 def _write(plugin: str, file: str, texts: Mapping[int, str]) -> None:

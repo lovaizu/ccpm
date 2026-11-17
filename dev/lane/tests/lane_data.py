@@ -59,7 +59,6 @@ ROUTES_OF_WRITE = (
 # The command by which a role gives a Result, as a Lane's sentence names it.
 GIVES = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
 LAID = Laid(
-    version="0.1.0",
     sentences=(
         LaidSentence("agents/writer.md", 2, "Run only `git log --oneline`."),
         LaidSentence("agents/writer.md", 3, "Write only `CHANGELOG.md`."),
@@ -133,20 +132,15 @@ def run(
     starts: tuple[Start, ...] = (),
     due: tuple[Move, ...] = (Move("start", role="writer"),),
     skill: str = "write",
-    by: str = "person",
     **fields: Any,
 ) -> Run:
     values: dict[str, Any] = {
         "id": "r1",
         "skill": skill,
-        "by": by,
         "words": "",
         "starts": starts,
         "results": (),
-        "shown": (),
-        "approvals": (),
         "due": due,
-        "aside": False,
         "ended": False,
     }
     values.update(fields)

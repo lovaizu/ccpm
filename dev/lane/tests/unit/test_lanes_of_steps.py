@@ -16,13 +16,12 @@ import lane_data as d
 import pytest
 from lanes import (
     check_call,
+    check_end,
     check_mark,
     ends_by_result,
     ends_checked,
-    gives_shown,
     keeps_items,
     keeps_steps,
-    lays_after_reply,
     needs_items,
     read_kept,
     reads_none,
@@ -47,8 +46,6 @@ OTHERS = {
     "run_only": run_only.TYPE,
     "write_only": write_only.TYPE,
     "ends_checked": ends_checked.TYPE,
-    "lays_after_reply": lays_after_reply.TYPE,
-    "gives_shown": gives_shown.TYPE,
 }
 TALLY = "/home/you/tally/tally.py"
 
@@ -338,8 +335,6 @@ def test_a_lane_on_a_step_keeps_every_end(lane: Any) -> None:
         lambda: d.run_only(),
         lambda: d.write_only(),
         lambda: d.lane("writer", "agents/writer.md", 4, "ends_checked", command="false"),
-        lambda: d.lane("up", "domain/up.md", 1, "lays_after_reply"),
-        lambda: d.lane("up", "domain/up.md", 1, "gives_shown"),
         lambda: d.READS_NONE,
         lambda: d.KEEPS_STEPS,
     ],
@@ -349,8 +344,6 @@ def test_a_lane_on_a_step_keeps_every_end(lane: Any) -> None:
         "run_only",
         "write_only",
         "ends_checked",
-        "lays_after_reply",
-        "gives_shown",
         "reads_none",
         "keeps_steps",
     ],
@@ -551,6 +544,18 @@ def test_keeps_steps_lets_the_main_conversations_turn_end() -> None:
     Then: it keeps the end, as a Step may wait on a subagent."""
     verdict = TYPES["keeps_steps"].check_end(d.KEEPS_STEPS, EndAsked("Done."), held(main=True))
     assert verdict == Kept()
+
+
+@pytest.mark.supports("test_an_end_held_to_the_plugins_command_goes_once_it_gives_0")
+def test_keeps_steps_checks_an_end_before_the_plugins_command() -> None:
+    """Given: writer's Lanes of ends_checked, whose command gives 1, and of keeps_steps, in that
+    order, on its step 4, and writer's Start with no Step marked.
+    When: check_end checks writer's end.
+    Then: it breaks it with keeps_steps' sentence, so that the plugin's command runs only once each
+    Step holds."""
+    checked = d.lane("writer", "agents/writer.md", 4, "ends_checked", command="false")
+    verdict = check_end((checked, d.KEEPS_STEPS), EndAsked("Done."), held())
+    assert isinstance(verdict, Broken) and verdict.lane == d.KEEPS_STEPS
 
 
 SKILLS_STEPS = d.lane("write", "skills/write/SKILL.md", 1, "keeps_steps")

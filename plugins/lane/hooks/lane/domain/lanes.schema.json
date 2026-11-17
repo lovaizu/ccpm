@@ -24,15 +24,10 @@
       "description": "What Lane added to the plugin, so that a later Lane takes out its own words and keeps the user's.",
       "type": "object",
       "required": [
-        "version",
         "sentences"
       ],
       "additionalProperties": false,
       "properties": {
-        "version": {
-          "description": "The version of the Lane that laid it, by which a later Lane reads it in that Lane's form.",
-          "type": "string"
-        },
         "sentences": {
           "type": "array",
           "items": {
@@ -203,19 +198,6 @@
                     "type": "string"
                   }
                 }
-              },
-              {
-                "type": "object",
-                "required": [
-                  "returned"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                  "returned": {
-                    "description": "Another plugin's skill that a move called, once its run hands its work back.",
-                    "type": "string"
-                  }
-                }
               }
             ]
           },
@@ -273,19 +255,6 @@
                   "properties": {
                     "no_more": {
                       "description": "The skill's own Result, given by result.py, after which it starts no more.",
-                      "type": "string"
-                    }
-                  }
-                },
-                {
-                  "type": "object",
-                  "required": [
-                    "call"
-                  ],
-                  "additionalProperties": false,
-                  "properties": {
-                    "call": {
-                      "description": "Another plugin's skill to call, as `<plugin>:<skill>`.",
                       "type": "string"
                     }
                   }

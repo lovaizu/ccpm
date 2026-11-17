@@ -71,7 +71,7 @@ class ReadsNone:
         for any other Call, a Glob of its folder by another pattern among them, as a Glob reads no
         file, so that a Lane of this type that names another path never outweighs it.
 
-        Carries: the Call checks of S5 and S6, as a Lane of reads_none stops the call at its
+        Carries: the Call checks of S4 and S5, as a Lane of reads_none stops the call at its
         PreToolUse.
         """
         never = paths.filled(lane, held.start.values if held.start else {})
@@ -80,21 +80,21 @@ class ReadsNone:
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
-        Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
         """
         return Kept()
 
     def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
         """Kept: the Lane checks no Mark, as it stops the read itself.
 
-        Carries: S6 `G->>T: checks the Mark by each Lane on Step n`.
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n`.
         """
         return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.
 
-        Carries: S6 `G->>T: checks the end by each Lane of the role`.
+        Carries: S5 `G->>T: checks the end by each Lane of the role`.
         """
         return Kept()
 

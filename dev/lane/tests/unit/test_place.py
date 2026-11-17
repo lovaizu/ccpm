@@ -9,13 +9,11 @@ from typing import Any
 
 import lane_data as d
 import pytest
-from form import Move
 from place import (
     AgentPosted,
     Call,
     EndAsked,
     Notification,
-    PrintPosted,
     Prompt,
     ResultPosted,
     SkillCall,
@@ -23,8 +21,6 @@ from place import (
     ToolCall,
     place,
 )
-from run_record import Shown
-from runs import Approval
 
 WRITER = d.start("writer", agent_id="a01")
 RUN = d.run(starts=(WRITER,), due=())
@@ -45,7 +41,7 @@ def test_a_typed_command_is_a_persons_skill_call() -> None:
     When: place reads it.
     Then: it is a SkillCall of changelog's write by a person, with the words 0.2.0."""
     got = placed("UserPromptExpansion", command_name="changelog:write", command_args="0.2.0")
-    assert got.what == SkillCall("changelog", "write", "person", "0.2.0")
+    assert got.what == SkillCall("changelog", "write", "0.2.0")
 
 
 @pytest.mark.supports("test_an_ai_lays_by_its_own_run_of_lay")
@@ -56,7 +52,7 @@ def test_a_skill_tool_call_is_an_ais_skill_call() -> None:
     got = placed(
         "PreToolUse", tool_name="Skill", tool_input={"skill": "lane:up", "args": "changelog"}
     )
-    assert got.what == SkillCall("lane", "up", "ai", "changelog")
+    assert got.what == SkillCall("lane", "up", "changelog")
 
 
 @pytest.mark.supports("test_a_move_that_waits_for_the_person_lets_the_turn_end")
@@ -190,41 +186,6 @@ def test_the_post_tool_use_of_result_py_is_a_result() -> None:
     assert got.what == ResultPosted("writer", "written")
 
 
-@pytest.mark.supports("test_what_print_showed_is_kept_in_ups_run")
-def test_the_post_tool_use_of_print_is_what_it_showed() -> None:
-    """Given: up's Run, and the PostToolUse of lay.py print, whose output names ID b9fd8fd8.
-    When: place reads it.
-    Then: it is a PrintPosted of b9fd8fd8 with the output."""
-    up = d.run(skill="up", due=())
-    output = "Routes of write...\nID: b9fd8fd8\nReply yes to lay these into changelog."
-    got = placed(
-        "PostToolUse",
-        up,
-        tool_name="Bash",
-        tool_input={"command": "python3 /lane/scripts/lay.py print changelog < /tmp/p.json"},
-        tool_response={"stdout": output, "stderr": ""},
-    )
-    assert got.what == PrintPosted("b9fd8fd8", output)
-
-
-@pytest.mark.supports("test_an_ais_run_keeps_a_persons_waiting_proposal")
-def test_what_print_showed_lies_on_the_run_whose_call_came_last() -> None:
-    """Given: two Runs of up, the first a person's, the second an AI's, called after it.
-    When: place reads the PostToolUse of lay.py print, whose output names ID c0ffee00.
-    Then: it lies on the AI's Run alone."""
-    first = d.run(skill="up", id="r1", due=())
-    second = d.run(skill="up", id="r2", by="ai", due=())
-    got = placed(
-        "PostToolUse",
-        first,
-        second,
-        tool_name="Bash",
-        tool_input={"command": "python3 /lane/scripts/lay.py print changelog < /tmp/p.json"},
-        tool_response={"stdout": "ID: c0ffee00\n", "stderr": ""},
-    )
-    assert got.runs == (second,)
-
-
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence")
 @pytest.mark.parametrize("name, agent", [("Stop", None), ("SubagentStop", "a01")])
 def test_an_end_is_an_end_asked_with_its_last_message(name: str, agent: Any) -> None:
@@ -254,41 +215,10 @@ def test_an_untied_subagents_event_lies_outside() -> None:
     assert got.runs == () and got.start is None
 
 
-@pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
-def test_the_main_conversations_event_while_every_run_stands_aside_lies_outside() -> None:
-    """Given: write's Run, standing aside, and the main conversation's Bash call.
-    When: place reads it.
-    Then: it lies on no Run."""
-    aside = d.run(aside=True)
-    assert placed("PreToolUse", aside, tool_name="Bash", tool_input={"command": "ls"}).runs == ()
-
-
-@pytest.mark.supports("test_the_move_after_another_plugins_skill_brings_the_run_back")
-def test_the_main_conversations_start_due_on_an_aside_run_lies_on_it() -> None:
-    """Given: write's Run, standing aside with writer's start due after lint's run hands back.
-    When: place reads the main conversation's Agent call of changelog:writer.
-    Then: it lies on write's Run."""
-    aside = d.run(aside=True)
-    tool_input = {"subagent_type": "changelog:writer", "prompt": "Carry out your steps"}
-    got = placed("PreToolUse", aside, tool_name="Agent", tool_input=tool_input, tool_use_id="t1")
-    assert got.runs == (aside,)
-
-
-@pytest.mark.supports("test_the_move_after_another_plugins_skill_brings_the_run_back")
-def test_the_main_conversations_start_not_due_on_an_aside_run_lies_outside() -> None:
-    """Given: write's Run, standing aside with writer's start due after lint's run hands back.
-    When: place reads the main conversation's Agent call of changelog:reviewer.
-    Then: it lies on no Run."""
-    aside = d.run(aside=True)
-    tool_input = {"subagent_type": "changelog:reviewer", "prompt": "Carry out your steps"}
-    got = placed("PreToolUse", aside, tool_name="Agent", tool_input=tool_input, tool_use_id="t1")
-    assert got.runs == ()
-
-
 @pytest.mark.supports("test_another_plugins_skill_no_move_names_is_checked_as_a_call")
-def test_a_skill_call_of_another_plugin_that_no_move_names_is_a_call() -> None:
+def test_a_skill_call_of_another_plugin_is_a_call() -> None:
     """Given: write's Run, with writer's start due.
-    When: place reads the main conversation's Skill call of lint:check, which no move names.
+    When: place reads the main conversation's Skill call of lint:check.
     Then: it is a ToolCall of the Skill tool, on write's Run."""
     tool_input = {"skill": "lint:check", "args": ""}
     run = d.run()
@@ -296,57 +226,3 @@ def test_a_skill_call_of_another_plugin_that_no_move_names_is_a_call() -> None:
     assert got.what == ToolCall(Call("Skill", tool_input, d.REPO, d.REPO))
     assert got.runs == (run,)
 
-
-@pytest.mark.supports("test_the_run_stands_aside_while_another_plugins_skill_runs")
-def test_a_skill_call_of_another_plugin_that_a_move_names_is_a_skill_call() -> None:
-    """Given: write's Run, with the call of lint:check due.
-    When: place reads the main conversation's Skill call of lint:check.
-    Then: it is a SkillCall of lint's check by an AI."""
-    run = d.run(due=(Move("call", skill="lint:check"),))
-    tool_input = {"skill": "lint:check", "args": ""}
-    got = placed("PreToolUse", run, tool_name="Skill", tool_input=tool_input)
-    assert got.what == SkillCall("lint", "check", "ai", "")
-
-
-@pytest.mark.supports("test_an_ais_run_keeps_a_persons_waiting_proposal")
-def test_a_call_of_write_lies_on_the_run_of_up_that_showed_its_id() -> None:
-    """Given: two Runs of up, the first a person's that showed b9fd8fd8, the second an AI's that
-    showed c0ffee00.
-    When: place reads the Bash call `lay.py write changelog b9fd8fd8`.
-    Then: it lies on the person's Run alone."""
-    first = d.run(skill="up", id="r1", shown=(Shown("r1", "b9fd8fd8", "..."),), due=())
-    second = d.run(
-        skill="up",
-        id="r2",
-        by="ai",
-        shown=(Shown("r2", "c0ffee00", "..."),),
-        approvals=(Approval("c0ffee00", "ai"),),
-        due=(),
-    )
-    command = "python3 /lane/scripts/lay.py write changelog b9fd8fd8"
-    got = placed("PreToolUse", first, second, tool_name="Bash", tool_input={"command": command})
-    assert got.runs == (first,)
-
-
-@pytest.mark.supports("test_a_lay_chained_after_another_command_waits_for_the_persons_reply")
-@pytest.mark.parametrize(
-    "command",
-    [
-        "python3 /lane/scripts/lay.py write changelog b9fd8fd8; echo laid",
-        "python3 /lane/scripts/lay.py write changelog b9fd8fd8&&echo laid",
-        "true;lay.py write changelog b9fd8fd8",
-    ],
-    ids=["a command after it", "a command after it, with no space", "a command before it"],
-)
-def test_a_call_of_write_chained_with_another_command_lies_on_the_run_that_showed_its_id(
-    command: str,
-) -> None:
-    """Given: two Runs of up, the first a person's that showed b9fd8fd8, the second an AI's that
-    showed c0ffee00.
-    When: place reads a Bash call that runs `lay.py write changelog b9fd8fd8` chained with another
-    command.
-    Then: it lies on the person's Run alone, as the ID is read apart from the command beside it."""
-    first = d.run(skill="up", id="r1", shown=(Shown("r1", "b9fd8fd8", "..."),), due=())
-    second = d.run(skill="up", id="r2", by="ai", shown=(Shown("r2", "c0ffee00", "..."),), due=())
-    got = placed("PreToolUse", first, second, tool_name="Bash", tool_input={"command": command})
-    assert got.runs == (first,)
