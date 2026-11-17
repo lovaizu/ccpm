@@ -1,6 +1,6 @@
 {
   "goal": {
-    "decided": "The user gets from rn each deliverable they mean, every one meeting each necessary condition of its best practice, and answers only what's theirs.",
+    "decided": "The user gets from rn each deliverable they mean, every one meeting each necessary condition of its best practice, and answers only what's theirs. Once it holds, a person who asks rn for a deliverable, as rn's README walkthrough does, gets one that its people use alone toward their aim, as a colleague from accounting prints an invoice from the guide alone.",
     "by": "user"
   },
   "deliverables": [
@@ -44,8 +44,8 @@
           "decisions": [
             {
               "about": "The state the goal's people are in once it holds",
-              "decided": null,
-              "by": null
+              "decided": "a person who asks rn for a deliverable, as rn's README walkthrough does, gets one that its people use alone toward their aim, as a colleague from accounting prints an invoice from the guide alone, which rn's E2E test counts as KR1.1",
+              "by": "user"
             }
           ]
         },
