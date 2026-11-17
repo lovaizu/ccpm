@@ -13,8 +13,6 @@ from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 from dev.tests.claude_code import Conversation
 
-LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
-
 
 def paused(b: Bench) -> tuple[w.Walk, dict[str, object]]:
     """The walkthrough paused by /rn:dn while its generator stood at step 2 of "Type hints in each
@@ -110,15 +108,13 @@ def test_up_alone_with_no_run_left_says_so_and_starts_no_role(b: Bench) -> None:
     assert not c.bash("git status").blocked
 
 
-@LATER
 @pytest.mark.supports("S5", "evaluator", "Place")
 def test_each_evaluator_that_stood_in_a_step_starts_again_at_it(b: Bench) -> None:
     """Given: the walkthrough paused by /rn:dn while an evaluator of "Type hints in each file of
-    invoicer" stood at step 2.
-    When: the user types /rn:up alone in a new conversation in the run's worktree, and the
-    orchestrator starts the tree-keeper with the text that the guard gives due, which ends done.
-    Then: the guard gives an evaluator's start due again, its Cut naming the same group at step
-    2."""
+    invoicer" stood at step 2, after the generator gave done.
+    When: the user types /rn:up alone in a new conversation in the run's worktree.
+    Then: the guard gives an evaluator's start due again, with no start of the tree-keeper before
+    it, as the generator's done opens none, its Cut naming the same group at step 2."""
     walk, _ = w.deliverable_made(b)
     _, evaluator = w.started(walk.c, "evaluator", walk.said)
     first = w.cut_of(w.due_text_of(evaluator))
@@ -129,6 +125,5 @@ def test_each_evaluator_that_stood_in_a_step_starts_again_at_it(b: Bench) -> Non
     c = new_conversation(b, walk.run["worktree"])
     typed = c.type("/rn:up")
     assert not typed.blocked
-    picked = w.keeper_started(b, c, walk.run, typed.said)
-    again = w.cut_of(w.due_text(picked.said, "evaluator"))
+    again = w.cut_of(w.due_text(typed.said, "evaluator"))
     assert again["conditions"] == first["conditions"] and again["step"] == 2

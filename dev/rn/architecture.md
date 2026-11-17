@@ -434,10 +434,10 @@ sequenceDiagram
     end
     O->>O: enters the run's worktree
     O->>U: Picking up, where it stopped, and the point or sign-off waiting
-    O->>K: starts it, on the run picked up (Cut)
+    O->>K: starts it, where the guard gives its start due (Cut)
     O->>G: starts each that stood in a step, at that step (Cut, Place)
     O->>E: starts each that stood in a step, at that step (Cut, Place)
-    Note over O,E: Each start goes through the guard and the adapters in the run's worktree, the tree-keeper's first where the guard started the run anew, and the work goes on, as S1, S2, or S3 draws.
+    Note over O,E: Each start goes through the guard and the adapters in the run's worktree, and the work goes on, as S1, S2, or S3 draws. The tree-keeper starts first where the guard started the run anew or the next move resumes it, and else once a later move does.
   end
 ```
 
