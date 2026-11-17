@@ -22,10 +22,6 @@ from tree.place import Place
 
 from dev.rn.tests.unit import rn_data as d
 
-KEEPABLE = pytest.mark.xfail(
-    strict=True, raises=NotImplementedError, reason="more.keepable has an empty body"
-)
-
 GOOD_WHEN = "A caller's editor shows the type of each argument as they type the call."
 N1_DECISION = "deliverables/0/necessary_conditions/0/decisions/0"
 N2_DECISION = "deliverables/0/necessary_conditions/1/decisions/0"
@@ -53,7 +49,6 @@ def changed_under(index: int, decided: str = "some files", deliverable: int = 0)
     return d.design(data)
 
 
-@KEEPABLE
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 @pytest.mark.parametrize("now", [changed_under(0), changed_under(0, "only callers' functions")])
 def test_a_more_whose_decision_changed_may_be_kept(now: Any) -> None:
@@ -64,7 +59,6 @@ def test_a_more_whose_decision_changed_may_be_kept(now: Any) -> None:
     assert more.keepable(d.design(), now, a_more()) is None
 
 
-@KEEPABLE
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_a_more_whose_decision_the_cut_didnt_hold_may_be_kept() -> None:
     """Given: the tree as the round's cut took it, and the tree with a decision added under N2.
@@ -73,7 +67,6 @@ def test_a_more_whose_decision_the_cut_didnt_hold_may_be_kept() -> None:
     assert more.keepable(d.design(), changed_under(1), a_more(N2_DECISION, condition="N2")) is None
 
 
-@KEEPABLE
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_a_more_of_the_refactor_practice_goes_by_its_decision_not_its_condition_id() -> None:
     """Given: the tree as the round's cut took it, and the tree with the decision under N1 changed
@@ -85,7 +78,6 @@ def test_a_more_of_the_refactor_practice_goes_by_its_decision_not_its_condition_
     assert more.keepable(d.design(), changed_under(0), kept) is None
 
 
-@KEEPABLE
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 @pytest.mark.parametrize("now", [d.design(), changed_under(1)])
 def test_a_more_whose_decision_didnt_change_is_refused(now: Any) -> None:
@@ -98,7 +90,6 @@ def test_a_more_whose_decision_didnt_change_is_refused(now: Any) -> None:
     assert "N1" in str(refused.value)
 
 
-@KEEPABLE
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_more_whose_decision_lies_under_another_deliverable_is_refused() -> None:
     """Given: the tree as the round's cut took it, and the tree with a decision added under N1 of
@@ -112,7 +103,6 @@ def test_a_more_whose_decision_lies_under_another_deliverable_is_refused() -> No
     assert "N1" in str(refused.value)
 
 
-@KEEPABLE
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_more_naming_no_decision_of_the_tree_is_refused_naming_the_path() -> None:
     """Given: the tree as the round's cut took it, and the tree with the decision under N1 changed.
@@ -123,7 +113,6 @@ def test_a_more_naming_no_decision_of_the_tree_is_refused_naming_the_path() -> N
         more.keepable(d.design(), changed_under(0), a_more(missing))
 
 
-@KEEPABLE
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_more_of_a_deliverable_the_tree_doesnt_hold_is_refused() -> None:
     """Given: the walkthrough's tree before and after a change under N1.

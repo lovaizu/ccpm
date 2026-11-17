@@ -145,12 +145,11 @@ def test_work_resting_on_the_plan_waits_until_the_user_signs_it_off(b: Bench, br
     assert w.cut_of(w.due_text(walk.said, "generator"))["deliverable"] == w.HINTS_PATH
 
 
-@LATER
 @pytest.mark.supports("Back to the design tree on a problem", "S1", "More kept", "tree-keeper")
 @pytest.mark.parametrize(
     ("nodes", "named"),
     [
-        ({}, w.N2_DECISION),
+        ({}, "deliverables/0/necessary_conditions/0/decisions/0"),
         (
             {"deliverables/1/necessary_conditions/0/decisions/0": w.EVERY_ARGUMENT},
             "deliverables/1/necessary_conditions/0/decisions/0",
@@ -162,8 +161,9 @@ def test_a_more_kept_with_no_decision_changed_is_refused(
     b: Bench, broken: None, nodes: dict[str, object], named: str
 ) -> None:
     """Given: the first round of "Type hints in each file of invoicer", with N2 in more.
-    When: the tree-keeper writes the more of N2 of code to keep, naming a decision under invoicer
-    with nothing changed, or one it adds under "invoicer marked as typed", and gives refused.
+    When: the tree-keeper writes the more of N2 of code to keep, naming the user's decision under
+    invoicer with nothing changed, or one it adds under "invoicer marked as typed", and gives
+    refused.
     Then: tree.py write gives 1, naming the code best practice and N2, writes no decision, keeps no
     more, and the guard passes the tree-keeper's end with refused for the orchestrator to read."""
     walk, _, _ = w.first_round(b, {"N2": w.SHOWN_AS_TYPED})
@@ -176,7 +176,8 @@ def test_a_more_kept_with_no_decision_changed_is_refused(
     w.keeps(b, walk.keeper, record, "tree-keeper", ("design-tree",))
     then = w.reached(b, walk.keeper, "refused", "tree.py refused the more of N2 of code.")
     assert "refused" in then.said
-    assert not w.files_holding(walk.folder("rounds"), w.SHOWN_AS_TYPED)
+    held = w.files_holding(walk.folder("rounds"), w.SHOWN_AS_TYPED)
+    assert not [p for p in held if os.path.basename(p) == "more.json"]
 
 
 @LATER

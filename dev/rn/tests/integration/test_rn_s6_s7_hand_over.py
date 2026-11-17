@@ -19,10 +19,7 @@ LESSON = (
     " library's py.typed marker, without which no caller's type checker reads them."
 )
 
-MORE = pytest.mark.xfail(strict=True, reason=w.MORE_EMPTY)
 
-
-@MORE
 @pytest.mark.supports("S6", "Round", "More kept")
 def test_every_round_of_a_deliverable_is_read_for_its_lessons(b: Bench) -> None:
     """Given: "Type hints in each file of invoicer" judged twice: a first round with N2 in more,
@@ -134,7 +131,6 @@ def test_ty_on_the_pull_request_leaves_it_ready_and_merges_nothing(b: Bench) -> 
     assert w.git(b.repo, "ls-remote", "origin", "main").split()[0] == main
 
 
-@MORE
 @pytest.mark.supports("S6", "orchestrator", "Decision", "Deliverable")
 def test_a_miss_found_in_the_whole_pull_request_starts_the_rounds_again(b: Bench) -> None:
     """Given: a plan of "Type hints in each file of invoicer" alone, its deliverable signed off and

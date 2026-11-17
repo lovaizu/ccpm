@@ -16,8 +16,6 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-MORE = pytest.mark.xfail(strict=True, reason=w.MORE_EMPTY)
-
 
 @pytest.mark.supports("S1", "adapters", "S5")
 def test_words_after_up_start_a_new_run_beside_a_run_left(b: Bench) -> None:
@@ -170,7 +168,6 @@ def test_the_round_gives_each_evaluators_answers_and_what_the_generator_made(b: 
     assert answered == asked
 
 
-@MORE
 @pytest.mark.supports("S1", "More kept", "tree-keeper", "Decision")
 def test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator(b: Bench) -> None:
     """Given: the first round of "Type hints in each file of invoicer", with N2 in more.

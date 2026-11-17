@@ -24,9 +24,6 @@ NOT_DONE_AT = pytest.mark.xfail(
     reason="cut._generator doesn't yet give done_at, and branch.done_at has an empty body",
 )
 
-KEPT = pytest.mark.xfail(
-    strict=True, raises=NotImplementedError, reason="rounds.kept_more has an empty body"
-)
 
 BOTH_DOING = d.with_status(d.walkthrough_tree(), "doing", "doing")
 
@@ -97,7 +94,6 @@ def test_the_generators_cut_of_a_deliverable_done_before_gives_the_commit_it_was
     assert d.part(given)["cut"]["done_at"] == done_at
 
 
-@KEPT
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 def test_a_generator_starts_a_new_round_once_a_decision_changes_after_the_rounds_cut(
     tmp_path: Any,
@@ -122,7 +118,6 @@ def test_a_generator_starts_a_new_round_once_a_decision_changes_after_the_rounds
     assert given.values["made"] == rounds.made_path(run, "invoicer", True)
 
 
-@KEPT
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_the_next_rounds_cut_carries_each_more_kept_with_its_best_practice_and_decision(
     tmp_path: Any,

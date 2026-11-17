@@ -209,7 +209,16 @@ def keep_more(run: Run, more: Sequence[More]) -> tuple[str, ...]:
     Refuses: fault.Wrong, where a deliverable has no round.
     Carries: S1 `K->>T: writes the decision, ... and keeps the more (Design tree, More kept)`.
     """
-    raise NotImplementedError("rounds.keep_more")
+    written = []
+    for deliverable in dict.fromkeys(each.deliverable for each in more):
+        number = _held(run, deliverable, "for whose next round a more is kept")
+        kept = {(m.best_practice, m.condition): m for m in kept_more(run, deliverable, number)}
+        kept |= {(m.best_practice, m.condition): m for m in more if m.deliverable == deliverable}
+        path = _in(run, deliverable, number, "more.json")
+        with open(os.path.join(run.worktree, path), "w", encoding="utf-8") as f:
+            json.dump([_as_written(m) for m in kept.values()], f)
+        written.append(path)
+    return tuple(written)
 
 
 def kept_more(run: Run, deliverable: str, number: int | None = None) -> tuple[More, ...]:
@@ -223,7 +232,16 @@ def kept_more(run: Run, deliverable: str, number: int | None = None) -> tuple[Mo
     Refuses: nothing; only `keep_more` writes the More kept, so a fault in it stops with its trace.
     Carries: S1 `O->>G: starts it, with that text (Cut, More kept)`, whose Cut holds them.
     """
-    raise NotImplementedError("rounds.kept_more")
+    found = latest(run, deliverable) if number is None else number
+    path = os.path.join(run.worktree, _in(run, deliverable, found, "more.json"))
+    if not found or not os.path.exists(path):
+        return ()
+    with open(path, encoding="utf-8") as f:
+        held = json.load(f)
+    return tuple(
+        More(deliverable, e["best_practice"], e["condition"], e["decision"], e["good_when"])
+        for e in held
+    )
 
 
 def at_cut(run: Run, deliverable: str) -> DesignTree:
@@ -258,6 +276,16 @@ def _round(run: Run, deliverable: str, number: int) -> Round:
         read_made(made) if os.path.exists(made) else None,
         {group: read_answers(os.path.join(folder, name)) for group, name in groups},
     )
+
+
+def _as_written(more: More) -> dict[str, str]:
+    """A More kept as more.json holds it, apart from its deliverable, which the folder names."""
+    return {
+        "best_practice": more.best_practice,
+        "condition": more.condition,
+        "decision": more.decision,
+        "good_when": more.good_when,
+    }
 
 
 def _held(run: Run, deliverable: str, why: str) -> int:

@@ -16,12 +16,6 @@ from tree.more import More
 
 from dev.rn.tests.unit import rn_data as d
 
-KEPT = pytest.mark.xfail(
-    strict=True,
-    raises=NotImplementedError,
-    reason="rounds.keep_more and rounds.kept_more have empty bodies",
-)
-
 GOOD_WHEN = "A caller's editor shows the type of each argument as they type the call."
 N2_DECISION = "deliverables/0/necessary_conditions/1/decisions/0"
 
@@ -136,7 +130,6 @@ def test_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
         rounds.each(a_run(tmp_path), "invoicer")
 
 
-@KEPT
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_a_more_kept_is_read_back_for_the_next_round(tmp_path: Any) -> None:
     """Given: a run whose invoicer has one round, and nothing kept yet.
@@ -152,7 +145,6 @@ def test_a_more_kept_is_read_back_for_the_next_round(tmp_path: Any) -> None:
     assert rounds.kept_more(run, "invoicer") == (kept,)
 
 
-@KEPT
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_a_more_kept_is_one_for_each_best_practice_and_condition(tmp_path: Any) -> None:
     """Given: a run whose invoicer has one round, with the more of N2 of code kept.
@@ -169,7 +161,6 @@ def test_a_more_kept_is_one_for_each_best_practice_and_condition(tmp_path: Any) 
     assert set(rounds.kept_more(run, "invoicer")) == {refactor, later}
 
 
-@KEPT
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_more_of_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
     """Given: a run whose invoicer/py.typed has no round.

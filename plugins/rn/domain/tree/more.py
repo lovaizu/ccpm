@@ -5,9 +5,16 @@ deliverable starts its next round."""
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
+from typing import Any
 
-from tree.design import DesignTree
+from fault import Wrong
+
+from tree.design import DesignTree, deliverables
+
+# The path of a decision in the design tree.
+_DECISION = re.compile(r"^deliverables/\d+/necessary_conditions/\d+/decisions/\d+$")
 
 
 @dataclass(frozen=True)
@@ -44,4 +51,39 @@ def keepable(at_cut: DesignTree, now: DesignTree, more: More) -> None:
     since the round's cut`, and `T-->>K: refuses the more, naming its best practice and necessary
     condition`.
     """
-    raise NotImplementedError("more.keepable")
+    tree_path = _tree_path(now, more.deliverable)
+    named = f"the more of {more.condition} of the {more.best_practice} best practice"
+    if not more.decision.startswith(tree_path + "/"):
+        raise Wrong(
+            f"{named} isn't kept, as its decision {more.decision} isn't under {more.deliverable};"
+            " take it back to the deliverable whose decision it changes"
+        )
+    if not _DECISION.match(more.decision) or _at(now, more.decision) is None:
+        raise Wrong(f"the design tree holds no decision at {more.decision}")
+    if _at(at_cut, more.decision) == _at(now, more.decision):
+        raise Wrong(
+            f"{named} isn't kept, as its decision {more.decision} didn't change since the round's"
+            " cut; change the decision it comes from"
+        )
+
+
+def _tree_path(tree: DesignTree, deliverable: str) -> str:
+    """The path in the tree of the deliverable at the file path; raises Wrong where the tree holds
+    none."""
+    for number, each in enumerate(deliverables(tree)):
+        if each["path"] == deliverable:
+            return f"deliverables/{number}"
+    raise Wrong(f"the more's deliverable {deliverable} is no deliverable of the design tree")
+
+
+def _at(tree: DesignTree, path: str) -> Any:
+    """The node at the path of a decision in the tree, or None where it holds none."""
+    held: Any = tree.data
+    for part in path.split("/"):
+        held = held.get(part) if isinstance(held, dict) else _item(held, int(part))
+    return held
+
+
+def _item(held: Any, number: int) -> Any:
+    """The item of the number in a list, or None where it holds none."""
+    return held[number] if isinstance(held, list) and number < len(held) else None

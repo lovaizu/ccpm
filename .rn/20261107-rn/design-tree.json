@@ -257,7 +257,7 @@
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
       "path": "dev/rn/tests/integration/test_rn_s1_request.py",
       "kind": "code",
-      "status": "open",
+      "status": "doing",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
