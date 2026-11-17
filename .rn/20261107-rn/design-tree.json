@@ -333,7 +333,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "What of the tree-keeper's part the review of S1's More kept found stale",
+              "decided": "its part says tree.py write gives 1 only for a more refused or an empty ground, and has it reply only the more's necessary condition; it gives 1 for any change out of the tree's form too, and a refusal names the more's best practice and necessary condition, as S1 draws, so the part names both and has a change out of form go back to the main conversation as other than a more refused",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
