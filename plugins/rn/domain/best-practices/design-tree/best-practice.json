@@ -110,11 +110,11 @@
        },
        {
         "at": "make",
-        "text": "After each change, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {run} {deliverable} '<ground>'`, where `{run}` is the run's folder, `.rn/<yyyymmdd>-<goal>`, `{deliverable}` is the design tree's path in it, and `<ground>` is why the change decides as it does, as N6.2 says. It gives 1 with each deliverable before one it takes from or waits for, each path that's neither a deliverable nor a file, and each two deliverables at one path, and leaves the run's tree as it was, so fix each fault it names and run it again. It gives 0 once it has committed the tree with `<ground>` as the commit message, and prints `changed`, `touched`, and `doing` as JSON."
+        "text": "After each change, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {record} '<ground>'` with the change on its standard input as one JSON object, `{\"nodes\": {<path>: <node>}}`, where `{record}` is your record and `<ground>` is why the change decides as it does, as N6.2 says. It gives 1 where a path names no node or the tree changed leaves the schema, and leaves the run's tree as it was, so fix what it names and run it again. It gives 0 once it has committed the tree with `<ground>` as the commit message, and prints `changed`, `touched`, and `doing` as JSON."
        },
        {
         "at": "make",
-        "text": "Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` doesn't check these."
+        "text": "Check that each deliverable comes after each one it takes from or waits for, that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` checks none of these."
        }
       ]
      }
@@ -260,7 +260,7 @@
        },
        {
         "at": "make",
-        "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round {run} <path>`, with `<path>` the deliverable's `path` in the tree. It prints as JSON the deliverable's last round, the generator's making of it and the judging of that by one evaluator for each group of its best practice's conditions, with each evaluator's answers: `good` with each condition good and the lines that meet it, and `more` with each condition not yet good and its `good_when`, what its people get once it's good. It gives 1 where the deliverable has had no round."
+        "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round <path>`, with `<path>` the deliverable's `path` in the tree. It prints as JSON each round of the deliverable, the latest last, each the generator's making of it and the judging of that by one evaluator for each group of its best practice's conditions, with each evaluator's answers: `good` with each condition good and the lines that meet it, and `more` with each condition not yet good and its `good_when`, what its people get once it's good. It gives 1 where the deliverable has had no round."
        },
        {
         "at": "make",

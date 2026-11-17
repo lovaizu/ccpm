@@ -32,7 +32,74 @@
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
       "path": ".rn/20261107-rn/design-tree.json",
       "kind": "design-tree",
-      "status": "done"
+      "status": "open",
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/design-tree"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The state the goal's people are in once it holds",
+              "decided": null,
+              "by": null
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer builds from the product vision a product with which its users achieve their aim",
