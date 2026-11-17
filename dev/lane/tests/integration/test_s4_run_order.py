@@ -84,17 +84,58 @@ def test_a_start_that_isnt_due_is_stopped_with_the_moves_due(b: w.Bench) -> None
 
 
 @pytest.mark.supports(
-    "S4", "Start", "A resume let through where the Routes open none, moving no Run"
+    "S4",
+    "Start",
+    "A resume let through where the Routes open none, moving no Run, its Start running again",
 )
 def test_a_resume_where_the_routes_open_none_moves_no_run(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid; writer gave `written` and ended.
-    When: the main conversation resumes writer by SendMessage, which no Route opens.
-    Then: the guard lets it through, and the start of reviewer is still due."""
+    When: the main conversation resumes writer by SendMessage, which no Route opens, ends its turn
+    while writer works, and ends it again once writer's end reaches it.
+    Then: the guard lets the resume through, lets the first end go as writer runs, and stops the
+    second with the start of reviewer still due."""
     c, writer = w.writer_started(b)
     w.give(b, writer, "written")
     assert not c.resume(writer, "Which version did you write?").blocked
-    stopped = c.stop("Asked writer.")
+    assert not c.stop("Asked writer.").blocked
+    ended, reached = writer.end("I wrote 0.2.0.")
+    assert not ended.blocked and reached is not None
+    stopped = c.stop("Writer answered.")
     assert stopped.blocked and w.due("reviewer") in stopped.said
+
+
+@pytest.mark.supports(
+    "S4", "Start", "A start of a subagent not the plugin's let through with no Start"
+)
+def test_a_helper_the_main_conversation_starts_is_let_through(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.
+    When: the main conversation starts Explore, which isn't changelog's, then ends its turn once
+    Explore's end reaches it.
+    Then: the guard lets the start through, adds no Start, and stops the end with writer's start
+    still due."""
+    c = w.laid(b)
+    assert not c.type("/changelog:write").blocked
+    started, helper = c.start("Explore", "Find the last version", "Find")
+    assert not started.blocked and helper is not None, started.said
+    ended, reached = helper.end("0.1.0.")
+    assert not ended.blocked and reached is not None
+    stopped = c.stop("Found it.")
+    assert stopped.blocked and w.due("writer") in stopped.said
+
+
+@pytest.mark.supports(
+    "S4", "Result", "A turn's end stopped by a move due while no subagent runs, before any Lane"
+)
+def test_the_turns_end_with_no_more_due_names_the_skills_result_script(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid; writer gave `written`, and reviewer gave `good`.
+    When: the main conversation ends its turn without giving the skill's Result.
+    Then: the guard stops it with the sentence of the Lane on write's last Step, which names
+    `result.py write good`."""
+    c = w.laid(b)
+    reviewer = w.to_reviewer(b, c)
+    w.give(b, reviewer, "good")
+    stopped = c.stop("The entries are good.")
+    assert stopped.blocked and b.result("write", "good") in stopped.said
 
 
 def resumes_writer_after_more() -> dict[str, Any]:
@@ -569,7 +610,7 @@ def test_a_subagent_stopped_by_task_stop_is_due_again(b: w.Bench) -> None:
 @pytest.mark.supports(
     "S4",
     "guard",
-    "A turn's end stopped by a move due with its text while no subagent runs, before any Lane",
+    "A turn's end stopped by a move due while no subagent runs, before any Lane",
 )
 def test_the_turns_end_while_a_start_is_due_is_stopped(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid; reviewer gave `more`, and writer gave `written`

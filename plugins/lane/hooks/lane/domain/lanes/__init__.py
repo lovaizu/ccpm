@@ -13,6 +13,7 @@ from collections.abc import Sequence
 from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
+from script_calls import item_command, step_command
 
 from lanes import ends_by_result, reads_whole
 from lanes.kind import Broken, CantCheck, Held, Kept, LaneType, Marking, TypeInfo, Verdict
@@ -123,13 +124,17 @@ def check_call(lanes: Sequence[Lane], call: Call, held: Held) -> Verdict:
 
 def _may(lane: Lane, lanes: Sequence[Lane], held: Held) -> str:
     """What the role may do in place of a Call that the Lane stops: for run_only, each command
-    that a Lane of the role lets it run, the end's result script among them."""
+    that a Lane of the role lets it run, Lane's scripts that its Lanes name among them."""
     if lane.type != "run_only":
         return ""
     allowed = [c for x in lanes if x.type == "run_only" for c in x.args["commands"]]
     role = held.start.role if held.start else held.run.skill
     if any(x.type == "ends_by_result" for x in lanes):
         allowed += ends_by_result.commands(role, held.routes)
+    if any(x.type == "keeps_steps" for x in lanes):
+        allowed.append(step_command(role))
+    if any(x.type == "keeps_items" for x in lanes):
+        allowed.append(item_command(role))
     named = ", ".join(f"`{c}`" for c in dict.fromkeys(allowed))
     return f"The commands you may run, each word for word: {named}."
 

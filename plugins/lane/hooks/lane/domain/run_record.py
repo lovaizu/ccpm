@@ -41,7 +41,8 @@ class Prompted:
 @dataclass(frozen=True)
 class Started:
     """A Start that the guard let through: its role, its text and run values, the Agent or
-    SendMessage call that made it, and whether it resumes a subagent."""
+    SendMessage call that made it, whether it resumes a subagent, and whether a Route made it due,
+    false for a resume that the Routes open none."""
 
     run: str
     role: str
@@ -49,6 +50,7 @@ class Started:
     values: Mapping[str, str]
     tool_use_id: str
     resumed: bool
+    due: bool = True
 
 
 @dataclass(frozen=True)

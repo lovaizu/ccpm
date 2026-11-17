@@ -88,14 +88,15 @@ class KeepsSteps:
         """Broken, with the Lane's sentence and the Step due, where `marks.step_due` gives a Step
         for a subagent's Start's Marks, with the Lane's Step as the last; else Kept, and Kept for
         the main conversation's end of its turn, as a Step may wait on a subagent, so that
-        `at_result` holds the skill's Steps.
+        `at_result` holds the skill's Steps, and for a resume that no Route made due, which answers
+        with its Steps done.
 
         Carries: S5 `else a Lane of keeps_steps finds a Step unmarked in the latest pass` and
         `G-->>SA: stops the end, with that Lane's sentence and the Step due`; S4's Note `keeps_steps
         lets a turn end, as a Step may wait on a subagent, and holds the skill's Steps at its
         Result.`
         """
-        if held.start is None:
+        if held.start is None or not held.start.due:
             return Kept()
         due = step_due(held.start.reports, lane.step)
         if due is None:

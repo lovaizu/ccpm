@@ -12,6 +12,8 @@ from runs import Due
 
 from lanes.kind import Broken, CantCheck, Held, Kept, Marking, TypeInfo, Verdict
 
+# How many of the command's last lines of output a stop gives as what to do.
+SHOWN = 10
 # The exit codes by which the shell says a command couldn't run: found but not executable, and not
 # found, as POSIX's Shell Command Language gives them.
 CANT_RUN = (126, 127)
@@ -83,7 +85,8 @@ class EndsChecked:
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept where `command` gives 0, run by the shell in the hook event's cwd with each run
         value of the Start filled in and `{result}` as the Start's last Result, or the skill's own
-        for the main conversation; Broken, with the Lane's sentence, where it gives another code;
+        for the main conversation; Broken, with the Lane's sentence and the command's last lines of
+        output as what to do, where it gives another code;
         CantCheck, with why and the plugin's developer to fix it, where the shell can't run it.
 
         Carries: S4 and S5 `opt a Lane holds the end to a command of the plugin's`, and `alt a Lane
@@ -97,26 +100,37 @@ class EndsChecked:
         command = str(lane.args["command"])
         for name, value in values.items():
             command = command.replace(f"{{{name}}}", value)
-        code = run(["sh", "-c", command], held.cwd)
+        code, output = run(["sh", "-c", command], held.cwd)
         if code in CANT_RUN:
             why = f"`{command}` couldn't run, as the shell gave {code}"
             return CantCheck(why, f"The developer of the plugin must fix {lane.file}")
         if code != 0:
             said = self.sentence(lane, held.routes).replace("${CLAUDE_PLUGIN_ROOT}", held.root)
-            return Broken(lane, said, "")
+            shown = "\n".join(output.strip().splitlines()[-SHOWN:])
+            return Broken(lane, said, f"`{command}` gave {code}:\n{shown}" if shown else "")
         return Kept()
 
 
 TYPE = EndsChecked()
 
 
-def run(command: Sequence[str], cwd: str) -> int:
+def run(command: Sequence[str], cwd: str) -> tuple[int, str]:
     """Runs a command of the plugin's, as an ends_checked Lane names it with its values filled in.
 
     Takes: the command's words, and the hook event's cwd.
-    Gives: its exit code.
+    Gives: its exit code, and its standard output and error, kept from the hook's own output, which
+    Claude Code reads as the guard's answer.
     Changes: whatever the command changes.
     Refuses: OSError, where the command can't start, which the Lane gives as CantCheck.
     Carries: S4 and S5 `T->>PC: runs it` and `PC-->>T: its exit code`.
     """
-    return subprocess.run(list(command), cwd=cwd, check=False).returncode
+    done = subprocess.run(
+        list(command),
+        cwd=cwd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        errors="replace",
+        check=False,
+    )
+    return done.returncode, done.stdout

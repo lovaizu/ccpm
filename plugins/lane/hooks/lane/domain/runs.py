@@ -63,6 +63,7 @@ class Start:
     ended: bool
     resumed: bool = False
     reports: tuple[Report, ...] = ()
+    due: bool = True
 
 
 @dataclass(frozen=True)
@@ -179,6 +180,7 @@ def _of_start(run: Run, line: Started | Tied | Ended | Report) -> Run:
         start = Start(
             line.role, line.text, line.values, line.tool_use_id, None, (), False, line.resumed
         )
+        start = dataclasses.replace(start, due=line.due)
         due = list(run.due)
         if line.resumed and Move("resume", role=line.role) in due:
             due.remove(Move("resume", role=line.role))
@@ -197,10 +199,11 @@ def _of_start(run: Run, line: Started | Tied | Ended | Report) -> Run:
 
 
 def _ended(run: Run, line: Ended) -> Run:
-    """The Run after a subagent's end: its Start ended, and due again where it gave no Result."""
+    """The Run after a subagent's end: its Start ended, and due again where it gave no Result and a
+    Route made it due."""
     ended = [s for s in run.starts if s.agent_id == line.agent_id]
     starts = tuple(dataclasses.replace(s, ended=True) if s in ended else s for s in run.starts)
-    again = [Move("start", role=s.role) for s in ended if not s.results]
+    again = [Move("start", role=s.role) for s in ended if not s.results and s.due]
     due = tuple(dict.fromkeys((*run.due, *again)))
     return dataclasses.replace(run, starts=starts, due=due)
 

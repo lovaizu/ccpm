@@ -558,6 +558,21 @@ def test_keeps_steps_checks_an_end_before_the_plugins_command() -> None:
     assert isinstance(verdict, Broken) and verdict.lane == d.KEEPS_STEPS
 
 
+@pytest.mark.supports("test_lanes_scripts_go_beside_a_lane_that_runs_only_some_commands")
+def test_a_stop_of_run_only_names_the_scripts_that_mark_steps_and_items() -> None:
+    """Given: writer's Lanes of run_only for `git log --oneline`, keeps_items on its step 3, and
+    keeps_steps on its step 4.
+    When: check_call checks writer's `rm REVIEW.md`.
+    Then: it breaks it with run_only's sentence, and the commands it may run name step.py and
+    item.py beside `git log --oneline`."""
+    items = d.lane("writer", "agents/writer.md", 3, "keeps_items")
+    lanes = (d.run_only("git log --oneline"), items, d.KEEPS_STEPS)
+    verdict = check_call(lanes, d.bash("rm REVIEW.md"), held())
+    assert isinstance(verdict, Broken)
+    assert f"python3 {d.ROOT}/hooks/lane/step.py writer <n>" in verdict.may
+    assert f"python3 {d.ROOT}/hooks/lane/item.py writer <id>" in verdict.may
+
+
 SKILLS_STEPS = d.lane("write", "skills/write/SKILL.md", 1, "keeps_steps")
 
 

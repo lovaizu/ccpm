@@ -101,13 +101,13 @@ class EndsByResult:
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Broken, with the Lane's sentence and `ALONE`, where the subagent's Start holds no
-        Result; Kept for the main conversation's end, which the moves due hold, and for a Start
-        with a Result.
+        Result; Kept for the main conversation's end, which the moves due hold, for a Start with a
+        Result, and for a resume that no Route made due, which answers with no new Result.
 
         Carries: S5 `alt the Lane on its last Step finds no Result since its Start` and `G-->>SA:
         stops the end, with that Lane's sentence`.
         """
-        if held.start is not None and not held.start.results:
+        if held.start is not None and held.start.due and not held.start.results:
             return self._broken(lane, held, ALONE)
         return Kept()
 

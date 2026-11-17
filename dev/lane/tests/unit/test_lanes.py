@@ -353,6 +353,23 @@ def test_run_only_fills_in_the_starts_run_values(
 
 @pytest.mark.supports("test_the_sentence_laid_is_the_sentence_a_stop_gives")
 @pytest.mark.parametrize(
+    "path, allowed",
+    [("/home/you/tally/notes/0.2.0.md", True), ("/home/you/tally/notes/0.3.0.md", False)],
+    ids=["the Start's value", "another value"],
+)
+def test_write_only_fills_in_the_starts_run_values(path: str, allowed: bool) -> None:
+    """Given: writer's write_only Lane for `notes/{version}.md`, and writer's Start with the value
+    version 0.2.0.
+    When: the type judges a Write.
+    Then: it allows the Write of notes/0.2.0.md and stops one of notes/0.3.0.md."""
+    start = dataclasses.replace(d.start("writer"), values={"version": "0.2.0"})
+    held = Held(d.run(starts=(start,), due=()), start, d.ROOT, d.ROUTES_OF_WRITE)
+    lane = d.write_only("notes/{version}.md")
+    assert TYPES["write_only"].allows(lane, d.write(path), held) is allowed
+
+
+@pytest.mark.supports("test_the_sentence_laid_is_the_sentence_a_stop_gives")
+@pytest.mark.parametrize(
     "call, allowed",
     [
         (d.write("/home/you/tally/CHANGELOG.md"), True),
@@ -455,6 +472,22 @@ def test_ends_checked_holds_an_end_to_the_plugins_command(command: str, verdict:
     lane = d.lane("writer", "agents/writer.md", 4, "ends_checked", command=command)
     given = TYPES["ends_checked"].check_end(lane, EndAsked("Wrote."), held_with("written"))
     assert isinstance(given, verdict)
+
+
+@pytest.mark.supports("test_an_end_held_to_the_plugins_command_goes_once_it_gives_0")
+def test_ends_checked_keeps_the_commands_output_from_the_hooks_answer(
+    capfd: pytest.CaptureFixture[str],
+) -> None:
+    """Given: writer's ends_checked Lane whose command prints two lines and gives 1, and writer's
+    Start with its Result `written`.
+    When: the type checks writer's end.
+    Then: nothing reaches the hook's own output, and the stop gives the command's last line as what
+    to do."""
+    command = "echo checking; echo 'entry 0.2.0 has no date'; false"
+    lane = d.lane("writer", "agents/writer.md", 4, "ends_checked", command=command)
+    given = TYPES["ends_checked"].check_end(lane, EndAsked("Wrote."), held_with("written"))
+    assert isinstance(given, Broken) and "entry 0.2.0 has no date" in given.may
+    assert capfd.readouterr().out == ""
 
 
 @pytest.mark.supports("test_an_end_held_to_the_plugins_command_goes_once_it_gives_0")

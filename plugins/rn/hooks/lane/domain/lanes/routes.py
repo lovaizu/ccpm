@@ -69,17 +69,18 @@ class Routes:
 
         Takes: the Lane of the skill's Routes, the start, the Run, and the moves due with their
         texts.
-        Gives: Kept for a start due with its text, or a resume where the Routes open none; Broken,
-        with the starts due as `answers.due` says them, as what the main conversation may do, for
-        any other start; Kept for a
-        subagent's start, which the Lane on the role's last Step checks.
+        Gives: Kept for a start due with its text, a resume, or a start of a subagent not the
+        plugin's, which starts no role; Broken, with the starts due as `answers.due` says them, as
+        what the main conversation may do, for any other start; Kept for a subagent's start, which
+        the Lane on the role's last Step checks.
         Changes: nothing.
         Refuses: nothing.
         Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`,
-        and its `alt a start due`, `else a resume`, and `else any other start`.
+        and its `alt a start due`, `else a resume`, `else a start of a subagent not the plugin's`,
+        and `else any other start`.
         """
         starts = [d for d in due if d.move.kind == "start"]
-        if held.start is not None or asked.resume:
+        if held.start is not None or asked.resume or not asked.ours:
             return Kept()
         if any(d.move.role == asked.role and d.text == asked.text for d in starts):
             return Kept()

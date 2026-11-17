@@ -2,8 +2,7 @@
 
 Lane is a Claude Code plugin that gives your plugin's roles the step they leave, as they leave it.
 
-In development: Lane's rebuild isn't released, and doesn't yet check steps marked done, checklists,
-or files read whole.
+In development: Lane's rebuild isn't released.
 
 Lane is for you when you build a Claude Code plugin whose skill and subagents must keep numbered
 steps. With it, you have each of them notice the moment it leaves a step or your order.

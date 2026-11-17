@@ -29,6 +29,7 @@ from lanes import (
     check_end,
     check_mark,
     check_start,
+    ends_by_result,
     keeps_steps,
     needs_items,
     read_kept,
@@ -450,6 +451,8 @@ def _notified(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     add(plugin.record, Ended(run.id, what.agent_id, what.killed))
     told = _told(plugin, _now(plugin, run.id), cwd)
     role = placed.start.role
+    if not placed.start.results and not placed.start.due:
+        return Answer(False, due(plugin.name, told))
     if not placed.start.results:
         return Answer(False, ended_unheld(plugin.name, role, told))
     return Answer(False, gave(plugin.name, role, placed.start.results[-1], told))
@@ -480,29 +483,35 @@ def _started(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
 def _add_start(plugin: Plugin, run: Run, asked: StartCall, moves: tuple[Due, ...]) -> None:
     """Adds the main conversation's Start that the Routes keep: a start due, with the run values
     of its text; or a resume due, with the run values of the Start it resumes, tied at once to the
-    subagent it resumes, as no later payload ties a SendMessage to it. A resume that no move due
-    opens adds nothing."""
+    subagent it resumes, as no later payload ties a SendMessage to it; or a resume that no move due
+    opens, so that its subagent runs again, marked as made due by no Route. A start of a subagent
+    not the plugin's adds nothing."""
     if not asked.resume:
-        due = next(d for d in moves if (d.move.role, d.text) == (asked.role, asked.text))
+        due = next((d for d in moves if (d.move.role, d.text) == (asked.role, asked.text)), None)
+        if due is None:
+            return
         started = Started(
             run.id, asked.role, asked.text, dict(due.values), asked.tool_use_id, False
         )
         add(plugin.record, started)
         return
-    if Move("resume", role=asked.role) not in run.due or asked.agent_id is None:
+    before = [s for s in reversed(run.starts) if s.agent_id == asked.agent_id]
+    if not before or asked.agent_id is None:
         return
-    (before, *_) = [s for s in reversed(run.starts) if s.agent_id == asked.agent_id]
-    resumed = Started(run.id, asked.role, asked.text, dict(before.values), asked.tool_use_id, True)
+    opened = Move("resume", role=asked.role) in run.due
+    values = dict(before[0].values)
+    resumed = Started(run.id, asked.role, asked.text, values, asked.tool_use_id, True, opened)
     add(plugin.record, resumed)
     add(plugin.record, Tied(run.id, asked.tool_use_id, asked.agent_id))
 
 
 def _turn_ended(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     """The main conversation's end of its turn: stopped with the moves due where a Run has a move
-    due with its text, none of them waiting for the person, and no subagent of the Run runs; else
-    checked by each Lane of each Run's skill. A Run whose adapter of a start's text fails has no
-    move due with its text, so that the main conversation may ask the person what the adapter
-    waits for, such as after it failed at the skill's call."""
+    due, none of them waiting for the person, and no subagent of the Run runs, a stop where only the
+    move to start no more is due giving the sentence of the Lane on the skill's last Step, which
+    names its result script; else checked by each Lane of each Run's skill. A Run whose adapter of
+    a start's text fails has no move due with its text, so that the main conversation may ask the
+    person what the adapter waits for, such as after it failed at the skill's call."""
     for run in placed.runs:
         try:
             told = _told(plugin, run, cwd)
@@ -511,6 +520,11 @@ def _turn_ended(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
         moves = [d.move.kind for d in told if isinstance(d, Due)]
         running = any(not s.ended for s in run.starts)
         if moves and "wait" not in moves and not running:
+            ends = [x for x in _lanes(plugin, placed, run) if x.type == "ends_by_result"]
+            if set(moves) == {"no_more"} and ends:
+                said = ends_by_result.TYPE.sentence(ends[0], plugin.lanes.proposal.routes)
+                broken = Broken(ends[0], said.replace("${CLAUDE_PLUGIN_ROOT}", plugin.root), "")
+                return Answer(True, stopped(plugin.name, broken))
             return Answer(True, due(plugin.name, told))
     return _checked(plugin, placed, cwd)
 

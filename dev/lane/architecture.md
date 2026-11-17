@@ -411,7 +411,7 @@ Strategies:
   The skill's steps may start one role for several pieces of work at once, and stopping the second
   lowers KR1.1.
 - A resume let through where the Routes open none, moving no Run, its Start running again\
-  A resume to answer a subagent leaves the order as it stands, while its subagent works again.
+  A resume to answer leaves the order as it stands, and its end needs no new Result or Step marked.
 - A start of a subagent not the plugin's let through with no Start\
   A helper, such as Explore, starts no role, so stopping it lowers KR1.1.
 - The main conversation's call judged by each Lane of each Run's skill\

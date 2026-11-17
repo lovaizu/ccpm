@@ -3,7 +3,6 @@ with the run values filled in."""
 
 from __future__ import annotations
 
-import os
 from collections.abc import Sequence
 
 from form import Lane, Route
@@ -67,8 +66,8 @@ class WriteOnly:
         """
         if call.tool not in ("Write", "Edit"):
             return None
-        path = os.path.relpath(os.path.join(call.cwd, str(call.input.get("file_path"))), call.top)
-        return path in lane.args["paths"]
+        values = held.start.values if held.start else {}
+        return paths.named(call, str(call.input.get("file_path"))) in paths.filled(lane, values)
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
