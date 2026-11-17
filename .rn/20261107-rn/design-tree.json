@@ -251,28 +251,7 @@
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
       "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py",
       "kind": "code",
-      "status": "doing",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
-        "dev/rn/tests"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Which bodies the walking skeleton builds again, as rn's skeleton of the More kept emptied them",
-              "decided": "tree.py write's change, results.read_made, rounds.each, and tree.py round, in the forms that key a More kept by its best practice and condition and give each Answers its best practice, as every case that writes the design tree fails on the first, and the walking skeleton's round on the rest; each case marked CHANGE loses its mark as it passes",
-              "by": "reasoning"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
@@ -294,7 +273,7 @@
           "decisions": [
             {
               "about": "Which bodies S1 builds of the More kept",
-              "decided": "more.keepable, rounds.keep_more and rounds.kept_more, and items.lacks of a generator, each by its contract in the skeleton, so that a More kept is one for each best practice and condition, and refused where the decision it names isn't under its deliverable or didn't change",
+              "decided": "more.keepable, rounds.keep_more, and rounds.kept_more, each by its contract in the skeleton, so that a More kept is one for each best practice and condition, and refused where the decision it names isn't under its deliverable or didn't change; each case marked MORE loses its mark as it passes",
               "by": "reasoning"
             }
           ]

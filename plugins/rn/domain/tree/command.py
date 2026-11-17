@@ -18,7 +18,9 @@ from tree import (
     github,
     more,
     place,
+    practices,
     records,
+    results,
     rounds,
     runs,
     sign_offs,
@@ -170,7 +172,42 @@ def _kept(run: Run, stood: list[tuple[str, int]], message: str) -> None:
 
 
 def _round(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
-    raise NotImplementedError("tree.py round")
+    run = _run(cwd)
+    kind = design.deliverable(design.read(run), args[0])["kind"]
+    found = rounds.each(run, args[0])
+    judged = practices.judged_by(run, plugin_root, kind)
+    return [
+        {
+            "number": each.number,
+            "made": _made_as_written(each.made) if each.made else None,
+            "answers": [
+                {"best_practice": judged[group].kind, **_answers_as_written(answers)}
+                for group, answers in sorted(each.answers.items())
+            ],
+        }
+        for each in found
+    ]
+
+
+def _made_as_written(made: results.Made) -> Any:
+    """A Made in the form of generator-out.schema.json's `made`, as the generator wrote it."""
+    return {
+        "decisions": [{"path": p, "where": w} for p, w in made.decisions.items()],
+        "more": [
+            {"best_practice": b, "condition": c, "where": w} for (b, c), w in made.more.items()
+        ],
+        "settled": [
+            {"point": s.point, "decided": s.decided, "ground": s.ground} for s in made.settled
+        ],
+    }
+
+
+def _answers_as_written(answers: results.Answers) -> Any:
+    """An evaluator's Answers in the form of evaluator-out.schema.json's `answers`."""
+    return {
+        "good": [{"question": q, "lines": list(lines)} for q, lines in answers.good.items()],
+        "more": [{"question": q, "good_when": g} for q, g in answers.more.items()],
+    }
 
 
 def _push(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
@@ -261,7 +298,20 @@ def _change(text: str) -> tuple[dict[str, Any], list[more.More]]:
     """The change that tree.py write reads on standard input, `{"nodes": {<path>: <node>}, "more":
     [{"deliverable", "best_practice", "condition", "decision", "good_when"}]}`: its nodes, and each
     More to keep; raises Wrong, saying the form, where the text isn't JSON or leaves the form."""
-    raise NotImplementedError("tree.py write's change")
+    try:
+        given = json.loads(text)
+    except ValueError as e:
+        raise Wrong(f"the change on standard input isn't JSON: {e}") from None
+    if not (isinstance(given, dict) and set(given) == {"nodes", "more"}):
+        raise Wrong('the change must be {"nodes": {<path>: <node>}, "more": [<more>]}')
+    if not isinstance(given["nodes"], dict) or not isinstance(given["more"], list):
+        raise Wrong('the change\'s "nodes" must be an object, and its "more" a list')
+    fields = ("deliverable", "best_practice", "condition", "decision", "good_when")
+    try:
+        kept = [more.More(*(m[f] for f in fields)) for m in given["more"]]
+    except (KeyError, TypeError):
+        raise Wrong(f"each more must be {{{', '.join(repr(f) for f in fields)}}}") from None
+    return given["nodes"], kept
 
 
 def _run(cwd: str) -> Run:

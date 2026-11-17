@@ -131,7 +131,9 @@ def _evaluator_due(
     if not number or not _there(run, rounds.path_in(run, deliverable, number, "made.json")):
         return ""
     held = {v.get("answers") for v in running}
-    for group in range(len(practices.judged_by(run, _ROOT, _node(tree, deliverable)["kind"]))):
+    for group in range(
+        len(practices.judged_by(run, _ROOT, design.deliverable(tree, deliverable)["kind"]))
+    ):
         answers = rounds.path_in(run, deliverable, number, f"answers-{group}.json")
         if answers not in held and not _there(run, answers):
             return rounds.start_name(deliverable, number, group)
@@ -141,7 +143,7 @@ def _evaluator_due(
 def _of_start(run: Run, tree: DesignTree, role: str, record: str) -> Cut:
     """The Cut of the start of a round that the record keeps."""
     start = rounds.start_of(records.start_of(record))
-    node = _node(tree, start.deliverable)
+    node = design.deliverable(tree, start.deliverable)
     if role == "generator":
         return _generator(run, tree, node, start, record)
     if start.group is None:
@@ -236,14 +238,6 @@ def _decisions(tree: DesignTree, deliverable: str) -> list[tuple[str, Any, Any]]
         for n, condition in enumerate(each[number].get("necessary_conditions", []))
         for k, decision in enumerate(condition["decisions"])
     ]
-
-
-def _node(tree: DesignTree, deliverable: str) -> Mapping[str, Any]:
-    """The deliverable of the tree at the path."""
-    for each in design.deliverables(tree):
-        if each["path"] == deliverable:
-            return each
-    raise Wrong(f"{deliverable} is no deliverable of the design tree")
 
 
 def _there(run: Run, path: str) -> bool:

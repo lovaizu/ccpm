@@ -136,6 +136,22 @@ def deliverables(tree: DesignTree) -> list[Any]:
     return list(cast(Any, tree.data).get("deliverables", []))
 
 
+def deliverable(tree: DesignTree, path: str) -> Mapping[str, Any]:
+    """The deliverable of the tree at the path.
+
+    Takes: the tree, and the deliverable's path.
+    Gives: the deliverable as the tree holds it.
+    Changes: nothing.
+    Refuses: fault.Wrong, naming the path, where the tree holds no deliverable there.
+    Carries: S1 `T-->>K: refuses the more`, for a more of no deliverable of the tree, and each
+    module of tree.py that reads one deliverable.
+    """
+    for each in deliverables(tree):
+        if each["path"] == path:
+            return cast(Mapping[str, Any], each)
+    raise Wrong(f"{path} is no deliverable of the design tree")
+
+
 def goal(tree: DesignTree) -> str:
     """The tree's goal, as it was decided.
 

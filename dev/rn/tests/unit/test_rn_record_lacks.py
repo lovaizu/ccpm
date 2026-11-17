@@ -26,9 +26,6 @@ from dev.rn.tests.unit import rn_data as d
 STEPS = "\n## Steps\n\n1. Read your Cut.\n2. Decide.\n3. Make.\n"
 DECIDE, MAKE = Practice("N1.1", Phase.DECIDE), Practice("N1.2", Phase.MAKE)
 DECISION = "deliverables/0/necessary_conditions/0/decisions/0"
-ITEMS = pytest.mark.xfail(
-    strict=True, raises=NotImplementedError, reason="items.lacks of a generator has an empty body"
-)
 
 
 def plugin_with_steps(tmp: Any, held: dict[str, str]) -> str:
@@ -193,7 +190,6 @@ def generator_cut(*more: str) -> Cut:
     return Cut("generator", {"deliverable": "invoicer"}, part)
 
 
-@ITEMS
 @pytest.mark.supports("test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it")
 def test_a_made_naming_each_decision_and_more_lacks_nothing() -> None:
     """Given: a generator's Cut with one decision and the More kept of N2 of code, and a Made
@@ -204,7 +200,6 @@ def test_a_made_naming_each_decision_and_more_lacks_nothing() -> None:
     assert items.lacks(generator_cut("code"), "done", made, None) == ()
 
 
-@ITEMS
 @pytest.mark.supports("test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it")
 @pytest.mark.parametrize(
     ("more", "made", "named"),

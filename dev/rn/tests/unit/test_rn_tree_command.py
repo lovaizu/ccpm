@@ -16,13 +16,6 @@ from tree.command import main
 
 from dev.rn.tests.unit import rn_data as d
 
-CHANGE = pytest.mark.xfail(
-    strict=True, raises=NotImplementedError, reason="tree.py write's change has an empty body"
-)
-ROUND = pytest.mark.xfail(
-    strict=True, raises=NotImplementedError, reason="tree.py round has an empty body"
-)
-
 
 def run(argv: list[str], cwd: str, given: Any = "") -> tuple[int, str, str]:
     """tree.py with the arguments, in the folder, with the JSON or text given on its standard
@@ -52,7 +45,6 @@ def test_start_gives_the_worktree_the_folder_and_the_orchestrators_record(tmp_pa
     assert os.path.dirname(printed["worktree"]) == os.path.join(repo, ".claude", "worktrees")
 
 
-@CHANGE
 @pytest.mark.supports("test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper")
 def test_write_takes_a_change_and_gives_what_changed_touched_and_doing(tmp_path: Any) -> None:
     """Given: a run started.
@@ -68,7 +60,6 @@ def test_write_takes_a_change_and_gives_what_changed_touched_and_doing(tmp_path:
     assert "design-tree.json" in d.git(printed["worktree"], "show", "--name-only", "HEAD")
 
 
-@CHANGE
 @pytest.mark.supports("test_a_settled_decisions_ground_is_the_message_of_its_commit")
 def test_write_commits_the_change_with_its_ground_as_the_message(tmp_path: Any) -> None:
     """Given: a run started.
@@ -99,7 +90,6 @@ def test_write_with_no_ground_gives_1_and_commits_nothing(tmp_path: Any, ground:
     assert d.git(printed["worktree"], "rev-parse", "HEAD") == head
 
 
-@CHANGE
 @pytest.mark.supports("test_tree_py_refuses_a_change_that_leaves_the_design_trees_form")
 @pytest.mark.parametrize(
     "given",
@@ -187,7 +177,6 @@ def test_push_with_no_remote_gives_1_with_whats_missing(tmp_path: Any) -> None:
     assert code == 1 and "remote" in err
 
 
-@CHANGE
 @pytest.mark.supports("test_a_sign_off_pushes_the_work_and_keeps_a_draft_pull_request")
 def test_put_up_plan_and_approve_give_the_sign_off(tmp_path: Any) -> None:
     """Given: a run started with the walkthrough's tree.
@@ -231,7 +220,6 @@ def test_pause_with_no_remote_commits_and_says_it_didnt_push(tmp_path: Any) -> N
     assert code == 1 and "committed" in err and "remote" in err
 
 
-@CHANGE
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_round_of_a_deliverable_with_no_round_gives_1(tmp_path: Any) -> None:
     """Given: a run started with the walkthrough's tree.
@@ -247,7 +235,6 @@ def test_round_of_a_deliverable_with_no_round_gives_1(tmp_path: Any) -> None:
     assert (code, out) == (1, "") and err
 
 
-@ROUND
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_a_design_tree_that_cant_be_read_gives_2(tmp_path: Any) -> None:
     """Given: a run started whose design-tree.json is a folder.
@@ -259,7 +246,6 @@ def test_a_design_tree_that_cant_be_read_gives_2(tmp_path: Any) -> None:
     assert code == 2 and err
 
 
-@ROUND
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_round_names_the_best_practice_of_each_answers(tmp_path: Any) -> None:
     """Given: a run whose invoicer has one round, with its Made and the Answers of its first group

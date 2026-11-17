@@ -70,9 +70,9 @@ COVERAGE_SETTINGS = ("COVERAGE_PROCESS_START", "COVERAGE_FILE")
 # Why a case of the walkthrough beyond the walking skeleton still fails: a part it reaches that a
 # later deliverable builds.
 NOT_YET = "a part of rn that the case reaches has an empty body or a step not yet written"
-# Why each case that writes the design tree fails until S1's deliverable builds the bodies that
-# rn's skeleton emptied for the More kept.
-CHANGE_EMPTY = "tree.py write's change, which the case's walk writes the design tree by, is empty"
+# Why each case that keeps a more fails until S1's deliverable builds the bodies that rn's skeleton
+# emptied for the More kept.
+MORE_EMPTY = "more.keepable, rounds.keep_more, and rounds.kept_more have empty bodies"
 
 
 # What rn shows at each move of the walkthrough, as the README shows it.

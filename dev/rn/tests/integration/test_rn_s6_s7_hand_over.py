@@ -19,10 +19,10 @@ LESSON = (
     " library's py.typed marker, without which no caller's type checker reads them."
 )
 
-CHANGE = pytest.mark.xfail(strict=True, reason=w.CHANGE_EMPTY)
+MORE = pytest.mark.xfail(strict=True, reason=w.MORE_EMPTY)
 
 
-@CHANGE
+@MORE
 @pytest.mark.supports("S6", "Round", "More kept")
 def test_every_round_of_a_deliverable_is_read_for_its_lessons(b: Bench) -> None:
     """Given: "Type hints in each file of invoicer" judged twice: a first round with N2 in more,
@@ -44,7 +44,6 @@ def test_every_round_of_a_deliverable_is_read_for_its_lessons(b: Bench) -> None:
     assert not [m for each in rounds[1]["answers"] for m in each["more"]]
 
 
-@CHANGE
 @pytest.mark.supports("S6", "Deliverable", "Point", "Best practice")
 def test_a_change_to_a_best_practice_the_user_takes_is_added_as_a_deliverable(b: Bench) -> None:
     """Given: the walkthrough's plan signed off.
@@ -64,7 +63,6 @@ def test_a_change_to_a_best_practice_the_user_takes_is_added_as_a_deliverable(b:
     assert paths == [w.HINTS_PATH, w.TYPED_PATH, ".rn/best-practices/code"]
 
 
-@CHANGE
 @pytest.mark.supports("S7", "rn's developers", "Sign-off", "repository")
 def test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, and a general lesson found in its rounds.
@@ -83,7 +81,6 @@ def test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word(b: Ben
     assert "/issues/1" in json.dumps(approved)
 
 
-@CHANGE
 @pytest.mark.supports("S7", "user", "Sign-off")
 def test_a_lesson_sent_back_opens_no_issue(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, and a lesson put up for the user's sign-off.
@@ -97,7 +94,6 @@ def test_a_lesson_sent_back_opens_no_issue(b: Bench) -> None:
     assert b.github_holds()["issues"] == []
 
 
-@CHANGE
 @pytest.mark.supports("S6", "repository", "Sign-off", "orchestrator")
 def test_the_pull_request_is_marked_ready_once_no_deliverable_is_left(b: Bench) -> None:
     """Given: a plan of "Type hints in each file of invoicer" alone, its deliverable signed off.
@@ -111,7 +107,6 @@ def test_the_pull_request_is_marked_ready_once_no_deliverable_is_left(b: Bench) 
     assert (last["kind"], last["what"], last["state"]) == ("pull request", url, "waiting")
 
 
-@CHANGE
 @pytest.mark.supports("S6", "user", "Sign-off")
 def test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again(b: Bench) -> None:
     """Given: the pull request of "Type hints in each file of invoicer" handed over, ready.
@@ -124,7 +119,6 @@ def test_gm_on_the_pull_request_handed_over_marks_it_a_draft_again(b: Bench) -> 
     assert b.github_holds()["pulls"][walk.branch()]["draft"] is True
 
 
-@CHANGE
 @pytest.mark.supports("S6", "user", "Sign-off", "repository")
 def test_ty_on_the_pull_request_leaves_it_ready_and_merges_nothing(b: Bench) -> None:
     """Given: the pull request of "Type hints in each file of invoicer" handed over, ready.
@@ -140,7 +134,7 @@ def test_ty_on_the_pull_request_leaves_it_ready_and_merges_nothing(b: Bench) -> 
     assert w.git(b.repo, "ls-remote", "origin", "main").split()[0] == main
 
 
-@CHANGE
+@MORE
 @pytest.mark.supports("S6", "orchestrator", "Decision", "Deliverable")
 def test_a_miss_found_in_the_whole_pull_request_starts_the_rounds_again(b: Bench) -> None:
     """Given: a plan of "Type hints in each file of invoicer" alone, its deliverable signed off and

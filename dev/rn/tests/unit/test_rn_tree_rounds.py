@@ -16,7 +16,6 @@ from tree.more import More
 
 from dev.rn.tests.unit import rn_data as d
 
-EACH = pytest.mark.xfail(strict=True, raises=NotImplementedError, reason="rounds.each is empty")
 KEPT = pytest.mark.xfail(
     strict=True,
     raises=NotImplementedError,
@@ -110,7 +109,6 @@ def test_a_place_lies_in_the_round_of_its_start(tmp_path: Any) -> None:
         rounds.place_path(run, record)
 
 
-@EACH
 @pytest.mark.supports("test_every_round_of_a_deliverable_is_read_for_its_lessons")
 def test_each_round_is_given_the_latest_last(tmp_path: Any) -> None:
     """Given: a run whose invoicer has two rounds, the first with the Answers of group 1 alone.
@@ -129,7 +127,6 @@ def test_each_round_is_given_the_latest_last(tmp_path: Any) -> None:
     assert all(r.made is not None for r in each)
 
 
-@EACH
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
     """Given: a run whose invoicer has no round.

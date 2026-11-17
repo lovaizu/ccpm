@@ -17,10 +17,6 @@ from tree.results import Settled
 
 from dev.rn.tests.unit import rn_data as d
 
-READ_MADE = pytest.mark.xfail(
-    strict=True, raises=NotImplementedError, reason="results.read_made has an empty body"
-)
-
 
 def touch(path: str) -> str:
     return d.write_json(path, {"entries": []})
@@ -86,7 +82,6 @@ def test_a_path_that_names_no_record_has_no_role(path: str) -> None:
         records.role_of(path)
 
 
-@READ_MADE
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_a_made_in_its_form_is_read(tmp_path: Any) -> None:
     """Given: a generator's Made with one decision carried out and one point settled.
@@ -103,7 +98,6 @@ def test_a_made_in_its_form_is_read(tmp_path: Any) -> None:
     )
 
 
-@READ_MADE
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_a_made_keeps_the_more_of_each_best_practice_apart(tmp_path: Any) -> None:
     """Given: a Made that makes the More kept of N2 of code good in one place, and that of N2 of
@@ -124,7 +118,6 @@ def test_a_made_keeps_the_more_of_each_best_practice_apart(tmp_path: Any) -> Non
     }
 
 
-@READ_MADE
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 @pytest.mark.parametrize(
     "held",
@@ -177,7 +170,6 @@ def test_answers_out_of_their_form_are_refused(tmp_path: Any, held: Any) -> None
         results.read_answers(d.write_json(os.path.join(tmp_path, "answers.json"), held))
 
 
-@READ_MADE
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_a_made_missing_cant_be_read(tmp_path: Any) -> None:
     """Given: no file of a Made.

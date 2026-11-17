@@ -16,8 +16,6 @@ from dev.rn.tests.rn_walkthrough import Bench
 MARKER = "deliverables/1/necessary_conditions/0/decisions/0"
 WHERE = "where the marker lies"
 
-CHANGE = pytest.mark.xfail(strict=True, reason=w.CHANGE_EMPTY)
-
 
 def signed_with_a_point_open(b: Bench) -> w.Walk:
     """The walkthrough's plan signed off with a point open under "invoicer marked as typed", so
@@ -33,7 +31,6 @@ def signed_with_a_point_open(b: Bench) -> w.Walk:
     return walk
 
 
-@CHANGE
 @pytest.mark.supports("S2", "Point", "Decision", "Deliverable")
 def test_a_users_point_written_open_keeps_its_deliverable_waiting(b: Bench) -> None:
     """Given: the walkthrough's plan, with a point of the user's open under "invoicer marked as
@@ -47,7 +44,6 @@ def test_a_users_point_written_open_keeps_its_deliverable_waiting(b: Bench) -> N
     assert typed["necessary_conditions"][0]["decisions"] == [{"about": WHERE, "decided": None}]
 
 
-@CHANGE
 @pytest.mark.supports("S2", "user", "tree-keeper", "Decision")
 def test_a_users_point_answered_marks_its_deliverable_doing(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, with the user's point open under "invoicer marked
@@ -65,7 +61,6 @@ def test_a_users_point_answered_marks_its_deliverable_doing(b: Bench) -> None:
     assert wrote["doing"] == [w.TYPED_PATH]
 
 
-@CHANGE
 @pytest.mark.supports("S2", "orchestrator", "Decision")
 def test_a_point_the_purpose_settles_marks_its_deliverable_doing_with_no_question(
     b: Bench,
@@ -85,7 +80,6 @@ def test_a_point_the_purpose_settles_marks_its_deliverable_doing_with_no_questio
     assert held == [decided]
 
 
-@CHANGE
 @pytest.mark.supports("S2", "tree-keeper", "tree.py", "Decision", "repository")
 def test_a_settled_decisions_ground_is_the_message_of_its_commit(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, with a point open under "invoicer marked as typed".
@@ -106,7 +100,6 @@ def test_a_settled_decisions_ground_is_the_message_of_its_commit(b: Bench) -> No
     )
 
 
-@CHANGE
 @pytest.mark.supports("S2", "tree-keeper", "Design tree")
 def test_a_change_sent_back_to_the_tree_keeper_is_written_again(b: Bench) -> None:
     """Given: the walkthrough's goal and plan written, and the tree-keeper's write of a decision
@@ -128,7 +121,6 @@ def test_a_change_sent_back_to_the_tree_keeper_is_written_again(b: Bench) -> Non
     assert tree["deliverables"][1]["necessary_conditions"][0]["decisions"] == []
 
 
-@CHANGE
 @pytest.mark.supports("S2", "tree.py", "Design tree")
 def test_a_change_gives_each_node_it_touches_with_the_path_up(b: Bench) -> None:
     """Given: the walkthrough's goal and plan written.

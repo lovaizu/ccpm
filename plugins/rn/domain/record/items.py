@@ -38,4 +38,18 @@ def lacks(cut: Cut, result: str, made: Made | None, answers: Answers | None) -> 
 def _made(cut: Cut, made: Made | None) -> tuple[str, ...]:
     """Each decision and More kept of the generator's Cut that its Made names no place for, each
     More kept by its best practice and condition."""
-    raise NotImplementedError("items.lacks of a generator")
+    part = cast(Any, cut.part)["cut"]
+    decisions = made.decisions if made else {}
+    kept = made.more if made else {}
+    found = [
+        f"the Made names no place where it carries out the decision {d['decision']['path']}"
+        for d in part["decisions"]
+        if d["decision"]["path"] not in decisions
+    ]
+    found += [
+        f"the Made names no place where it makes the More kept of {m['condition']} of the"
+        f" {m['best_practice']} best practice good"
+        for m in part["more"]
+        if (m["best_practice"], m["condition"]) not in kept
+    ]
+    return tuple(found)

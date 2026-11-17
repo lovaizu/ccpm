@@ -14,10 +14,8 @@ from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
 LATER = pytest.mark.xfail(strict=True, reason=w.NOT_YET)
-CHANGE = pytest.mark.xfail(strict=True, reason=w.CHANGE_EMPTY)
 
 
-@CHANGE
 @pytest.mark.supports("Drawn out along the design tree", "S1", "Cut", "guard")
 def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, broken: None) -> None:
     """Given: the walkthrough's plan signed off, with the user's decision under "Type hints in each
@@ -67,7 +65,6 @@ def test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at(
     assert w.TESTS_LEFT_OUT.strip() in changed
 
 
-@CHANGE
 @pytest.mark.supports("Every step by best practice", "S1", "record.py", "Record", "guard")
 def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: None) -> None:
     """Given: the generator of "Type hints in each file of invoicer", which made it and wrote its
@@ -100,7 +97,6 @@ def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: 
     assert not again.blocked, again.said
 
 
-@CHANGE
 @pytest.mark.supports("Every item handled", "S1", "Made", "record.py")
 def test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it(
     b: Bench, broken: None
@@ -118,7 +114,6 @@ def test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it(
     assert "deliverables/0/necessary_conditions/0/decisions/0" in lacking
 
 
-@CHANGE
 @pytest.mark.supports("Judged by the people it's for", "S1", "evaluator", "Cut")
 def test_an_evaluator_starts_with_only_what_the_deliverables_people_have(
     b: Bench, broken: None
@@ -134,7 +129,6 @@ def test_an_evaluator_starts_with_only_what_the_deliverables_people_have(
     assert all(cut["name"] == w.HINTS for cut in cuts)
 
 
-@CHANGE
 @pytest.mark.supports("Signed off before it's built on", "S3", "Sign-off", "Deliverable")
 def test_work_resting_on_the_plan_waits_until_the_user_signs_it_off(b: Bench, broken: None) -> None:
     """Given: the walkthrough's plan put up for the user's sign-off.
@@ -222,7 +216,6 @@ def test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept(b: Bench, bro
     assert generator.bash(command).blocked
 
 
-@CHANGE
 @pytest.mark.supports("The repository holds the work", "S1", "Place", "repository", "tree.py")
 def test_each_steps_end_commits_the_work_with_its_place(b: Bench, broken: None) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running, which wrote

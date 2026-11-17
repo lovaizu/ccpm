@@ -53,7 +53,12 @@ def read_made(path: str) -> Made:
     can't be read.
     Carries: S1 `T-->>O: each evaluator's Answers, and what the generator made (Answers, Made)`.
     """
-    raise NotImplementedError("results.read_made")
+    held = _read(path, "generator-out.schema.json", "made")
+    return Made(
+        {each["path"]: each["where"] for each in held["decisions"]},
+        {(each["best_practice"], each["condition"]): each["where"] for each in held["more"]},
+        tuple(Settled(e["point"], e["decided"], e["ground"]) for e in held["settled"]),
+    )
 
 
 def read_answers(path: str) -> Answers:

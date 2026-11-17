@@ -15,8 +15,6 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-CHANGE = pytest.mark.xfail(strict=True, reason=w.CHANGE_EMPTY)
-
 
 @pytest.mark.supports("S1", "orchestrator", "adapters", "guard", "tree.py")
 def test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first(b: Bench) -> None:
@@ -42,7 +40,6 @@ def test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first(b: Bench)
     assert cut["best_practice"].rstrip("/").endswith("best-practices/design-tree")
 
 
-@CHANGE
 @pytest.mark.supports("S1", "tree-keeper", "Design tree", "Decision", "Deliverable")
 def test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper(b: Bench) -> None:
     """Given: the walkthrough's run started, and its tree-keeper started with its Cut.
@@ -65,7 +62,6 @@ def test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper(b: 
     assert json.loads(held) == tree
 
 
-@CHANGE
 @pytest.mark.supports("S1", "generator", "Cut", "Deliverable", "Best practice", "adapters")
 def test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, both deliverables doing.
@@ -91,7 +87,6 @@ def test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing(b: Ben
     assert decision["decision"]["decided"] == w.EACH_FILE
 
 
-@CHANGE
 @pytest.mark.supports("S1", "evaluator", "Necessary condition", "Best practice", "Answers")
 def test_one_evaluator_starts_for_each_group_of_necessary_conditions(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer" ended done.
@@ -109,7 +104,6 @@ def test_one_evaluator_starts_for_each_group_of_necessary_conditions(b: Bench) -
     assert len({c["answers"] for c in cuts}) == len(cuts)
 
 
-@CHANGE
 @pytest.mark.supports("S3", "repository", "Sign-off", "tree.py")
 def test_a_sign_off_pushes_the_work_and_keeps_a_draft_pull_request(b: Bench) -> None:
     """Given: the walkthrough's goal confirmed and the user's point answered.
