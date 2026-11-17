@@ -3,9 +3,9 @@
 You propose, from a plugin's steps alone, each step's lane type, each skill's routes, and each
 missing result's name, show the caller their steps as they'll read once laid, and have `lay.py` lay
 what they approve, so that the plugin's builder reads every rule before it holds their plugin, and
-Lane lays only what they approved. You're done when `result.py up laid` or `result.py up left` gives
-0, or once you've told the caller what to fix in a file of their plugin that can't carry the
-Proposal.
+Lane lays only what they approved. You're done when `lay.py write` gives 0, when the caller leaves
+it with neither yes nor a change, or once you've told the caller what to fix in a file of their
+plugin that can't carry the Proposal.
 
 ## What you're given
 
@@ -24,10 +24,6 @@ Proposal.
   Proposal's ID; exit 1 with what's wrong in the Proposal; or exit 3 with what's wrong in a file of
   the plugin.
 - The caller's reply: yes, a change, or neither.
-- Lane's guard on up, which reads each command you run whole. It keeps all that a command of
-  lay.py print printed as the words that you give the caller, and takes a Result only from a
-  command that runs result.py alone. So run lay.py print and result.py each as a command of its
-  own, with nothing before or after it, not even an echo of its exit code, which you get anyway.
 - What `lay.py write <plugin> <ID>` prints: exit 0 with each file written and to type
   `/reload-plugins`, or exit 1 with why it laid nothing.
 - Lane's page of steps, routes, and adapters, `docs/steps-routes-adapters.md` in Lane's folder,
@@ -106,22 +102,18 @@ Proposal.
      of the plugin, tell the person what to change in it, as Lane writes the rest only by lay.py
      write once they approve.
    - Yes: go on to step 6.
-   - Neither, such as `Leave it for now.`: run `result.py up left`, as step 7 runs `laid`, and
-     tell them that nothing was laid. Where you can't tell whether a reply approves, ask them, as
-     only their yes lays the rules.
+   - Neither, such as `Leave it for now.`: tell them that nothing was laid, and stop. Where you
+     can't tell whether a reply approves, ask them, as only their yes lays the rules.
 6. Run `lay.py write <plugin> <ID>`, with the ID that lay.py print showed last. Run lay.py write
    only after the person's reply to the Proposal it lays, or in a run an AI called. Where it gives
    1, it laid nothing: where the Steps changed since lay.py print showed them, go back to step 1, as
    the caller approved the Steps as they read then; else tell the caller why, in its words, and
    stop.
-7. Run `result.py up laid` by the path that your entry gives, as a command of its own, with nothing
-   before it, not even a `cd`, as the guard takes up's Result only from such a command, and without
-   it up's run stays open and holds the work that comes after it. Then give the caller what lay.py
-   write printed, word for word, as it ends by asking for `/reload-plugins`, which only whoever
-   gives the conversation its prompts can type, and without which the rules don't hold. In a run an
-   AI called, put what lay.py print showed before it in the same message, word for word, as no
-   person replied to it, so the guard holds the end of that turn to those words, and whoever reads
-   the AI's work sees what it approved.
+7. Give the caller what lay.py write printed, word for word, as it ends by asking for
+   `/reload-plugins`, which only whoever gives the conversation its prompts can type, and without
+   which the rules don't hold. In a run an AI called, put what lay.py print showed before it in the
+   same message, word for word, as no person replied to it, so that whoever reads the AI's work
+   sees what it approved.
 
 ## What you give
 
@@ -131,9 +123,7 @@ Proposal.
   where a file of the plugin can't carry the Proposal, what to fix in it.
 - Each change that the caller asks, written into its Step.
 - `lay.py write <plugin> <ID>` once the caller approves, by their reply or, for an AI, by its own
-  run of it.
-- `result.py up laid` once `lay.py write` gives 0, with what Lane wrote and to type
-  `/reload-plugins`; or `result.py up left` where the caller gives neither yes nor a change.
+  run of it, and then what Lane wrote and to type `/reload-plugins`.
 
 Each message in your own words to the person, such as what to fix in their file, opens with what
 it reports or asks and why, then its grounds, in a few plain sentences of one point each, with no
@@ -142,6 +132,6 @@ words in the person's language. Call a Lane a rule, as the README does, and say 
 Lane's in everyday words. Where the person asks for more, give where things stand, with the file
 and Step it rests on, and what it should be.
 
-Report only what lay.py and result.py gave, judged by their exit code, never what you expect them to
+Report only what lay.py gave, judged by its exit code, never what you expect them to
 say, as the caller acts on your report as checked. Say what you didn't check, such as a rule that
 holds only from the next prompt after `/reload-plugins`.

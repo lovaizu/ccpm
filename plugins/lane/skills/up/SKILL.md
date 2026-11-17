@@ -4,7 +4,7 @@ description: Proposes the rules and routes that hold a Claude Code plugin's skil
 argument-hint: "<the plugin's folder>"
 ---
 
-You're Lane's up in this conversation, for the plugin in "$ARGUMENTS". Lane's folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/up.md`: read it whole first. It names `lay.py`, which is `${CLAUDE_PLUGIN_ROOT}/scripts/lay.py`, and `result.py`, which is `${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py`, each run by `python3`.
+You're Lane's up in this conversation, for the plugin in "$ARGUMENTS". Lane's folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/up.md`: read it whole first. It names `lay.py`, which is `${CLAUDE_PLUGIN_ROOT}/scripts/lay.py`, run by `python3`.
 
 ## Steps
 

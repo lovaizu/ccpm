@@ -164,35 +164,6 @@ def test_an_ai_asks_for_reload_plugins_before_the_plugins_work(tmp_path: Any, ru
     assert "/reload-plugins" in said
 
 
-def ups_results(b: w.Bench) -> list[str]:
-    """Each Result of up that Lane's run record of the run holds, as the guard took it."""
-    results = []
-    for path in glob.glob(os.path.join(b.env["TMPDIR"], "lane", "*", "record.jsonl")):
-        with open(path, encoding="utf-8") as f:
-            lines = [json.loads(line) for line in f if line.strip()]
-        results += [x["result"] for x in lines if x["kind"] == "Gave" and x["role"] == "up"]
-    return results
-
-
-@pytest.mark.supports("test_an_ai_lays_by_its_own_run_of_lay")
-@pytest.mark.parametrize("run", range(RUNS))
-def test_an_ais_up_ends_its_run_by_its_result(tmp_path: Any, run: int) -> None:
-    """Given: tally with the walkthrough's changelog, and Lane loaded.
-    When: the main conversation is asked to have Lane hold changelog to its steps, approving the
-    Proposal itself, and then to do /changelog:write's work.
-    Then: lay.py write lays the Proposal, and the guard takes up's Result `laid`, which ends up's
-    Run, as it takes one only from result.py run as a command of its own, by its path."""
-    # The words of S3's second E2E stand-in, whose AI ran up's result.py after `cd`.
-    ask = (
-        "I'm working on the changelog plugin in changelog/. Could you have Lane keep the plugin on"
-        " its steps by itself? Approve Lane's proposal yourself so you don't have to check with"
-        " me, then run what /changelog:write does until the entries pass review."
-    )
-    b, _ = up(str(tmp_path), ask)
-    assert os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
-    assert ups_results(b) == ["laid"], "up's Result is taken once, as `laid`"
-
-
 @pytest.mark.supports("test_up_shows_the_walkthroughs_proposal")
 @pytest.mark.parametrize("run", range(RUNS))
 def test_an_ask_up_isnt_for_leaves_up_uncalled(tmp_path: Any, run: int) -> None:
