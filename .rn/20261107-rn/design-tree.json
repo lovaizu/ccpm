@@ -350,7 +350,7 @@
         "plugins/rn/domain/generator.md",
         "plugins/rn/domain/evaluator.md"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -365,28 +365,72 @@
               "about": "A comparison with Claude Code alone",
               "decided": "none: the E2E test shows KR1.1 and KR1.2 alone, as rn's worth is that once the user has answered what's theirs, a deliverable that meets their purpose comes without them, which a request this small, where Claude Code alone wins plainly, can't show, nor the two deliverables' quality side by side",
               "by": "user"
+            },
+            {
+              "about": "The decision the report serves",
+              "decided": "whether KR1.1, then KR1.2, came closer, as Test strategy's Scenario testing row measures them over runs, and whether rn installs by the README's commands in a fresh home and /rn:up answers, as its Installation testing row sets",
+              "by": "reasoning"
+            },
+            {
+              "about": "KR1.1 from one run",
+              "decided": "each deliverable done in the design tree on the work's branch is tried by a stand-in of its people, given a checkout of the branch, the walkthrough's lines.csv and rate, and only what those people have: a document's people its text, and a command's people a terminal and what the command shows of itself; it counts as usable where code finds, in what the stand-in's terminal printed, the invoice that invoicer's own render gives for those lines and that rate, as the user decided that Python alone checks it; a deliverable whose people aren't after printing an invoice is listed apart, unjudged",
+              "by": "reasoning"
+            },
+            {
+              "about": "KR1.2 from one run",
+              "decided": "the minutes from the person's first turn to the turn whose screen shows the pull request ready, their own turns included, from turns.jsonl",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "N2",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The records",
+              "decided": "e2e.py's records of each run, with run.json beside them holding what the run took: rn's commit, Claude Code's version, the model, and the E2E test file; and for each deliverable tried, its people stand-in's transcript with each command and what it printed",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N3",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "A run as meant",
+              "decided": "the person's stand-in types /rn:up with the request first and then only answers and rn's commands, writes no file itself, and the run shows the pull request ready within its turns; each people stand-in reads only what its deliverable's people have and writes no file of the checkout; a run that misses any is listed apart with where it went otherwise, and counts toward no value",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N4",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Judges",
+              "decided": "none, as code decides each value from the records, so no message waits for the developer's marks",
+              "by": "reasoning"
+            },
+            {
+              "about": "The checks shown right",
+              "decided": "each check's tests run on the pilot run's records and on a copy broken as the check must catch, each seen failing before its check is written; the person's and the people's stand-ins are read in the pilot records for acting on their intent and on what they're given alone",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N5",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Stages",
+              "decided": "one run of the walkthrough as the pilot, then the installation case and the walkthrough once each, then runs of the walkthrough from three, added until one more moves no mean by a step: a percent of KR1.1's share, a minute of KR1.2's time",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
