@@ -166,7 +166,7 @@ Strategies:
 - Laid\
   What Lane added to the plugin, kept in a form that a later Lane separates from the user's text.
 - Start\
-  One start or resume of a role, made due by a Route, that holds its text and its run values.
+  One start or resume of a role, that holds its text and its run values.
 - Call\
   One tool call of a role, checked as it comes, and kept only as a Read that reads_whole needs.
 - Item\
@@ -334,7 +334,10 @@ sequenceDiagram
         CC->>G: the PostToolUse, with its agent_id
         G->>RS: adds the tie of the Start to that agent_id
       else a resume, where the Routes open none
+        G->>RS: adds the Start again, for its subagent runs again
         G-->>CC: lets it through, and moves no Run
+      else a start of a subagent not the plugin's
+        G-->>CC: lets it through, and adds no Start
       else any other start
         G-->>M: stops it, with the moves due
       end
@@ -372,6 +375,8 @@ sequenceDiagram
       CC->>G: the stop
       alt a move is due with its text, and no subagent of the Run runs
         G-->>M: stops it, with the moves due
+      else the move due starts no more, and no subagent of the Run runs
+        G-->>M: stops it, with the sentence of the Lane on the skill's last Step
       else
         G->>T: checks the end by each Lane of each Run's skill
         opt a Lane holds the end to a command of the plugin's
@@ -399,20 +404,21 @@ sequenceDiagram
 Strategies:
 
 - A start judged by the Lane of the Routes, with the adapter of a start's text\
-  Only a start due with the adapter's text goes through, and any other gets the moves due, keeping
-  KR1.1 high.
+  Only a start due with the adapter's text goes through, and any other of a role gets the moves due.
 - The adapter of a start's text failing at the skill's call, asked again after each later call\
   The skill's own steps may make what the adapter reads, so a stop there stops a right move.
 - A start due beside each Start of its role that runs, while the adapter gives another text\
   The skill's steps may start one role for several pieces of work at once, and stopping the second
   lowers KR1.1.
-- A resume let through where the Routes open none, moving no Run\
-  A resume to answer a subagent leaves the order as it stands, and stopping it lowers KR1.1.
+- A resume let through where the Routes open none, moving no Run, its Start running again\
+  A resume to answer a subagent leaves the order as it stands, while its subagent works again.
+- A start of a subagent not the plugin's let through with no Start\
+  A helper, such as Explore, starts no role, so stopping it lowers KR1.1.
 - The main conversation's call judged by each Lane of each Run's skill\
   A person types another command while a subagent of the first runs, so each skill's Steps hold,
   keeping KR1.1 high.
-- A turn's end stopped by a move due with its text while no subagent runs, before any Lane\
-  The end then leaves the order, while an end beside a running subagent waits on it.
+- A turn's end stopped by a move due while no subagent runs, before any Lane\
+  The end then leaves the order, and a stop that starts no more names the skill's result script.
 - A typed command that a Route goes after, its moves due in place of those before\
   The person's pause or approval changes the order, and the moves before it would stop a right move.
 - A subagent that ends with no Result, its start due again\

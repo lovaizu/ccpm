@@ -167,7 +167,20 @@
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "done"
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where Lane isn't ready",
+              "decided": "only that the rebuild isn't released, as Lane checks steps marked done, checklists, and files read whole",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A builder whose plugin goes beyond the README's walkthrough finds each form of steps, routes, and adapters that Lane takes",
@@ -215,13 +228,129 @@
       "name": "A start off the order the user set gets the moves due, and each start on it goes through",
       "path": "dev/lane/tests/integration/test_s4_run_order.py",
       "kind": "code",
-      "status": "done"
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A resume the Routes open none",
+              "decided": "its Start is added again, so its subagent counts as running and may give a Result, as the review found the turn's end stopped while it worked and its Result refused",
+              "by": "reasoning"
+            },
+            {
+              "about": "A main conversation's start of a subagent not the plugin's",
+              "decided": "let through with no Start, as a helper such as Explore starts no role and the review found it stopped",
+              "by": "reasoning"
+            },
+            {
+              "about": "A turn's end while only a move to start no more is due",
+              "decided": "stopped with the sentence of the Lane on the skill's last Step, which names its result script, as the review found the stop said only to start no more",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A subagent that leaves a step, by a call, a Mark, or an end, gets that step's sentence",
       "path": "dev/lane/tests/integration/test_s5_subagent_held.py",
       "kind": "code",
-      "status": "done"
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "write_only's paths",
+              "decided": "each path filled with the Start's run values, as the page of steps names `{deliverable}` and the review found every such write stopped",
+              "by": "reasoning"
+            },
+            {
+              "about": "ends_checked's command's output",
+              "decided": "kept apart from the hook's answer, and its last lines given as what to do, as the review found a printing check spoils the answer",
+              "by": "reasoning"
+            },
+            {
+              "about": "The commands a stopped role may run",
+              "decided": "step.py and item.py among them where a Lane of keeps_steps or keeps_items lies on the role, as the review found a role told it may not mark its Steps",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation, so Lane still tells the order",
