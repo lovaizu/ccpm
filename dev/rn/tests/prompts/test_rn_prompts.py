@@ -11,7 +11,9 @@ from __future__ import annotations
 import glob
 import json
 import os
+import re
 import subprocess
+import uuid
 from typing import Any
 
 import pytest
@@ -38,11 +40,14 @@ RUNS = 5
 NOTHING: dict[str, Any] = {"nodes": {}, "more": []}
 
 
-def claude(b: w.Bench, folder: str, prompt: str, agent: str | None = None) -> str:
+def claude(
+    b: w.Bench, folder: str, prompt: str, agent: str | None = None, talk: tuple[str, ...] = ()
+) -> str:
     """Runs the prompt on Opus with rn and Lane loaded, in the folder, as the role `agent` where
-    given, and gives what Claude Code printed."""
+    given, in the conversation that `talk`'s flags start or resume where given, as the orchestrator
+    resumes a role, and gives what Claude Code printed."""
     env = dict(b.env, CLAUDE_CONFIG_DIR=os.path.join(b.temp, "config"))
-    flags = ["--plugin-dir", b.lane, "--plugin-dir", b.rn]
+    flags = ["--plugin-dir", b.lane, "--plugin-dir", b.rn, *talk]
     flags += ["--agent", agent] if agent else []
     return opus.prompted(prompt, folder, env, flags, 1800)
 
@@ -100,10 +105,10 @@ def signed_off(b: w.Bench, run: dict[str, Any]) -> None:
     )
 
 
-def generator_text(b: w.Bench, run: dict[str, Any]) -> str:
-    """The text of the generator's next start, as its adapter gives it with no start running."""
+def start_text(b: w.Bench, run: dict[str, Any], role: str = "generator") -> str:
+    """The text of the role's next start, as its adapter gives it with no start running."""
     adapter = subprocess.run(
-        ["python3", os.path.join(b.rn, "hooks", "adapters", "text.py"), "generator"],
+        ["python3", os.path.join(b.rn, "hooks", "adapters", "text.py"), role],
         cwd=run["worktree"],
         input='{"running": []}',
         capture_output=True,
@@ -111,6 +116,31 @@ def generator_text(b: w.Bench, run: dict[str, Any]) -> str:
         check=True,
     )
     return json.loads(adapter.stdout)["text"]
+
+
+def keeper_resumed(b: w.Bench, run: dict[str, Any], grounds: str, change: Any) -> str:
+    """The tree-keeper started alone with its Cut, as its adapter gives it, then resumed in the
+    same conversation with the change and its grounds, as the orchestrator resumes it; gives what
+    Claude Code printed at the resume."""
+    session = str(uuid.uuid4())
+    text = start_text(b, run, "tree-keeper")
+    claude(b, run["worktree"], text, "rn:tree-keeper", ("--session-id", session))
+    resume = w.resume_text(grounds, None, change)
+    return claude(b, run["worktree"], resume, "rn:tree-keeper", ("--resume", session))
+
+
+def tree_of(run: dict[str, Any]) -> str:
+    """The text of the run's design tree, or none where it isn't there."""
+    path = os.path.join(run["worktree"], run["folder"], "design-tree.json")
+    if not os.path.isfile(path):
+        return ""
+    with open(path, encoding="utf-8") as f:
+        return f.read()
+
+
+def results_of(b: w.Bench, role: str) -> list[str]:
+    """Each result the role gave by Lane's result.py in a run on the bench, in order."""
+    return [found for c in bash_run(b) for found in re.findall(rf"result\.py {role} (\w+)", c)]
 
 
 def bash_run(b: w.Bench) -> list[str]:
@@ -242,7 +272,7 @@ def test_the_generator_started_with_its_cut_records_and_writes_its_made(
     b = w.bench(str(tmp_path))
     started = planned_run(b)
     signed_off(b, started)
-    text = generator_text(b, started)
+    text = start_text(b, started)
     cut = w.cut_of(text)
     claude(b, started["worktree"], text, "rn:generator")
     recorded = {
@@ -280,7 +310,68 @@ def test_the_generator_reworking_a_deliverable_done_before_reads_the_change_sinc
     tree_py(
         b, "write", record, "The user leaves out the tests.", cwd=worktree, given=json.dumps(again)
     )
-    text = generator_text(b, started)
+    text = start_text(b, started)
     assert w.cut_of(text)["cut"]["done_at"] == done_at
     claude(b, worktree, text, "rn:generator")
     assert any(done_at[:7] in command for command in bash_run(b))
+
+
+@pytest.mark.supports("test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper")
+@pytest.mark.parametrize("run", range(RUNS))
+def test_the_tree_keeper_writes_the_change_it_is_resumed_with(tmp_path: Any, run: int) -> None:
+    """Given: the walkthrough's run started, with no design tree yet.
+    When: the tree-keeper starts alone with its Cut, then is resumed with the goal drafted and the
+    walkthrough's plan.
+    Then: the run's design tree holds the plan, committed with the grounds word for word as its
+    message, and the tree-keeper ends with done."""
+    b = w.bench(str(tmp_path))
+    started = json.loads(tree_py(b, "start", w.GOAL_NAME, cwd=b.repo))
+    grounds = "The goal drafted from the request, and the plan of its two deliverables."
+    keeper_resumed(b, started, grounds, w.walkthrough_plan())
+    tree = json.loads(tree_of(started) or "{}")
+    assert [d["name"] for d in tree.get("deliverables", [])] == [w.HINTS, w.TYPED]
+    path = os.path.join(started["folder"], "design-tree.json")
+    assert w.git(started["worktree"], "log", "-1", "--format=%B", "--", path).strip() == grounds
+    assert results_of(b, "tree-keeper")[-1:] == ["done"]
+
+
+@pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
+@pytest.mark.parametrize("run", range(RUNS))
+def test_the_tree_keeper_gives_refused_for_a_more_whose_decision_didnt_change(
+    tmp_path: Any, run: int
+) -> None:
+    """Given: the plan of "Type hints in each file of invoicer", with the user's decision on which
+    files, signed off, and its first round opened by the generator's first step's commit.
+    When: the tree-keeper is resumed with the more of N2 of code to keep, naming the user's
+    decision, which the change leaves as it was.
+    Then: the design tree is as it was, and the tree-keeper ends with refused, naming the code
+    best practice and N2."""
+    b = w.bench(str(tmp_path))
+    started = planned_run(b, w.plan(w.hints_from_pyproject(w.EACH_FILE)))
+    signed_off(b, started)
+    cut = w.cut_of(start_text(b, started))
+    tree_py(b, "commit", cut["record"], "1", cwd=started["worktree"])
+    before = tree_of(started)
+    decision = "deliverables/0/necessary_conditions/0/decisions/0"
+    change = {"nodes": {}, "more": [w.n2_more(decision)]}
+    printed = keeper_resumed(b, started, "The people fall short by N2.", change)
+    assert tree_of(started) == before
+    assert results_of(b, "tree-keeper")[-1:] == ["refused"]
+    assert "code" in printed and "N2" in printed
+
+
+@pytest.mark.supports("test_tree_py_refuses_a_change_that_leaves_the_design_trees_form")
+@pytest.mark.parametrize("run", range(RUNS))
+def test_the_tree_keeper_hands_back_a_change_out_of_form_unwritten(tmp_path: Any, run: int) -> None:
+    """Given: the walkthrough's plan written.
+    When: the tree-keeper is resumed with a status that the design tree's form has no place for.
+    Then: the design tree is as it was, and the tree-keeper ends with done, not refused, naming
+    the path, as no more was refused."""
+    b = w.bench(str(tmp_path))
+    started = planned_run(b)
+    before = tree_of(started)
+    change = {"nodes": {"deliverables/0/status": "finished"}, "more": []}
+    printed = keeper_resumed(b, started, "The first deliverable is finished.", change)
+    assert tree_of(started) == before
+    assert results_of(b, "tree-keeper")[-1:] == ["done"]
+    assert "deliverables/0/status" in printed
