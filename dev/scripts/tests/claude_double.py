@@ -148,7 +148,11 @@ def _write_transcripts(project: str, session: str, turn: dict) -> None:
     its `subagents` lines to each subagent's beside it."""
     os.makedirs(os.path.join(project, session, "subagents"), exist_ok=True)
     with open(os.path.join(project, f"{session}.jsonl"), "a", encoding="utf-8") as f:
-        f.writelines(json.dumps(line) + "\n" for line in turn.get("transcript", []))
+        # A line given as text is written as it is, as a transcript cut while it was written ends.
+        f.writelines(
+            (line if isinstance(line, str) else json.dumps(line) + "\n")
+            for line in turn.get("transcript", [])
+        )
     for name, lines in turn.get("subagents", {}).items():
         with open(os.path.join(project, session, "subagents", name), "a") as f:
             f.writelines(json.dumps(line) + "\n" for line in lines)

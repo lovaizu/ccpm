@@ -556,6 +556,22 @@ class E2ERunnerTest(E2EBase):
         kept = self.kept(os.path.join("transcripts", name, "subagents", "agent-a1.jsonl"))
         self.assertEqual(kept, subagent)
 
+    def test_a_transcript_cut_while_it_was_written_is_kept_to_its_last_whole_line(self):
+        # Given a transcript whose last line was cut while it was written, as when Claude Code
+        # ends a subagent that writes it,
+        # When the run ends,
+        # Then the records keep its whole lines, and each other record, such as the branches.
+        whole = {"type": "assistant", "message": {"content": "done"}}
+        turn = {"transcript": [whole, '{"type": "assistant", "message": {"cont']}
+        self.plan([{"done": False, "prompt": "go"}, {"done": True}], [turn])
+        code, _, err = self.run_test()
+        self.assertEqual(code, 0, err)
+        (session,) = (
+            n for n in os.listdir(os.path.join(self.records(), "transcripts")) if "." in n
+        )
+        self.assertEqual(self.kept(os.path.join("transcripts", session)), [whole])
+        self.assertTrue(os.path.exists(os.path.join(self.records(), "run.diff")))
+
     def test_the_records_name_the_top_and_the_clone_by_no_path_of_the_machine(self):
         line = {"type": "user", "message": {"content": f"{self.base}/plugins/lane"}}
         turn = {"transcript": [line], "stream": [said("in the clone")], "show": []}

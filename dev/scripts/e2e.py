@@ -696,10 +696,15 @@ def _keep(records: RunRecords, head: str, turns: list[dict[str, Any]]) -> None:
 
 
 def _transcript(text: str) -> str:
-    """The transcript's lines without those of the account and the requests to the API."""
+    """The transcript's lines without those of the account and the requests to the API, and
+    without a line that isn't whole, such as the last one when Claude Code ends a subagent that
+    writes it."""
     kept = []
     for line in text.splitlines():
-        entry = json.loads(line)
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
         attachment = entry.get("attachment")
         dropped = isinstance(attachment, dict) and attachment.get("type") in DROPPED_ATTACHMENTS
         if entry.get("type") not in DROPPED and not dropped:
