@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/lovaizu/playground",
+  "commits": "dev/rn/tests/e2e/commits.json",
+  "plugin_dirs": [],
+  "install": [
+    "claude plugin marketplace add {top}",
+    "claude plugin install rn@ccpm"
+  ],
+  "records": "dev/rn/tests/e2e/records",
+  "push": false,
+  "intent": "You're a developer who has just installed rn by its README, at the root of your team's repository. Type /rn:up alone to see that rn answers, and stop once it has answered.",
+  "turns": 2
+}

@@ -166,6 +166,10 @@ class E2ERunnerTest(E2EBase):
         self.fields["plugin_dirs"] = ["{top}/plugins/lane", 1]
         self.refuses("`plugin_dirs` as a list of text")
 
+    def test_an_install_command_that_isnt_text_is_refused(self):
+        self.fields["install"] = ["claude plugin install rn@ccpm", 1]
+        self.refuses("`install` as a list of text")
+
     def test_a_push_that_isnt_true_or_false_is_refused(self):
         self.fields["push"] = "yes"
         self.refuses("`push`")
@@ -287,6 +291,31 @@ class E2ERunnerTest(E2EBase):
         self.assertTrue(env["CLAUDE_CONFIG_DIR"].startswith(self.temp))
         self.assertTrue(env["TMPDIR"].startswith(self.temp))
         self.assertNotEqual(env["TMPDIR"], self.temp)
+
+    def test_the_install_commands_run_in_the_persons_fresh_home_before_the_first_turn(self):
+        """Each command of `install` runs in the clone with the person's own config of Claude
+        Code, `{top}` standing for the top, before the first turn, and install.jsonl keeps each
+        command with its exit code and what it printed."""
+        self.fields["install"] = ['printf "%s" "$CLAUDE_CONFIG_DIR"', "echo {top}; pwd"]
+        self.plan([{"done": False, "prompt": "/rn:up"}, {"done": True}], [{}])
+        self.run_test()
+        (turn,) = self.calls(stand_in=False)
+        first, second = self.kept("install.jsonl")
+        self.assertEqual(first["command"], 'printf "%s" "$CLAUDE_CONFIG_DIR"')
+        self.assertEqual((first["exit"], first["printed"]), (0, "<run>/claude"))
+        self.assertTrue(turn["env"]["CLAUDE_CONFIG_DIR"].endswith(os.path.join("", "claude")))
+        self.assertEqual(second["printed"], "<top>\n<run>/clone\n")
+
+    def test_an_install_command_that_fails_ends_the_run_before_any_turn(self):
+        """Where a command of `install` exits other than 0, no later command and no turn runs, and
+        the records keep what it printed."""
+        self.fields["install"] = ["echo no marketplace; exit 3", "echo later"]
+        self.plan([{"done": False, "prompt": "/rn:up"}, {"done": True}], [{}])
+        code, _, err = self.run_test()
+        self.assertEqual(code, 0, err)
+        self.assertFalse(os.path.exists("calls.jsonl"), "a turn or the stand-in ran")
+        (failed,) = self.kept("install.jsonl")
+        self.assertEqual((failed["exit"], failed["printed"]), (3, "no marketplace\n"))
 
     def test_claude_waits_for_its_subagents_as_long_as_a_turn_may_take(self):
         """A turn of claude -p waits for its subagents as a person at the prompt does, up to the

@@ -19,6 +19,10 @@ An E2E test file is one JSON object:
   may be `{"from": <path of a file from the top>}`.
 - `plugin_dirs`: each folder that Claude Code loads by `--plugin-dir`, where `{top}` stands for the
   top of the repository and `{clone}` for the clone.
+- `install`: optional, each shell command that installs the plugins under test before the first
+  turn, run in the clone with the person's own config of Claude Code, where `{top}` stands for the
+  top, such as the README's install commands for an installation case. A command that exits other
+  than 0 ends the run before any turn.
 - `turns`: the most prompts that the stand-in gives, 1 or more.
 - `records`: the folder, from the top, under which the run's records lie.
 - `push`: whether the clone pushes to the repository, true where the plugin needs a repository it
@@ -31,6 +35,7 @@ name without `.json`:
 - `run.json`: what the run took: the commit at the top and whether the top held changes beside it,
   Claude Code's version, the model, the E2E test file as given, and whether the developer stopped
   the run.
+- `install.jsonl`: each command of `install` that ran, its exit code, and what it printed.
 - `turns.jsonl`: each turn's prompt, its times, Claude Code's exit code, and what the screen showed.
 - `hooks.jsonl`: each hook event, with the time it came.
 - `transcripts/`: Claude Code's transcript of the conversation, and of each subagent beside it.
@@ -207,6 +212,7 @@ class E2ETest:
     turns: int
     records: str
     push: bool
+    install: list[str]
     given: dict[str, Any]
 
 
@@ -269,6 +275,9 @@ def _test(given: Any, path: str) -> E2ETest:
             raise Refused(f"{path} needs `{key}` as {kind.__name__}")
     if not all(isinstance(each, str) for each in given["plugin_dirs"]):
         raise Refused(f"{path} needs `plugin_dirs` as a list of text")
+    install = given.get("install", [])
+    if not (isinstance(install, list) and all(isinstance(each, str) for each in install)):
+        raise Refused(f"{path} needs `install` as a list of text")
     if given["turns"] < 1:
         raise Refused(f"{path} needs `turns` as 1 or more")
     name = os.path.basename(path).rsplit(".json", 1)[0]
@@ -282,6 +291,7 @@ def _test(given: Any, path: str) -> E2ETest:
         given["turns"],
         given["records"],
         given["push"],
+        install,
         given,
     )
 
@@ -339,12 +349,18 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
             CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=str(TURN_SECONDS * 1000),
         )
         standing = dict(env, CLAUDE_CONFIG_DIR=os.path.join(root, "stand-in-claude"))
-        turns, stopped = _converse(test, dirs, (clone, stand_in, events), (person, standing))
+        installed = _install(test.install, top, clone, person)
+        turns, stopped = [], False
+        if all(each["exit"] == 0 for each in installed):
+            turns, stopped = _converse(test, dirs, (clone, stand_in, events), (person, standing))
         stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
         folder = os.path.join(test.records, test.name, stamp)
         records = RunRecords(os.path.join(top, folder), top, root, token)
         took["stopped"] = stopped
         records.write("run.json", json.dumps(took, ensure_ascii=False, indent=1) + "\n")
+        if test.install:
+            lines = "".join(json.dumps(each, ensure_ascii=False) + "\n" for each in installed)
+            records.write("install.jsonl", lines)
         _keep(records, head, turns)
         return folder
     finally:
@@ -353,6 +369,29 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
                 _unpush(clone, held)
         finally:
             shutil.rmtree(root)
+
+
+def _install(
+    commands: list[str], top: str, clone: str, person: dict[str, str]
+) -> list[dict[str, Any]]:
+    """Runs each install command in the clone with the person's environment, until one exits other
+    than 0, and gives each that ran with its exit code and what it printed."""
+    ran = []
+    for command in commands:
+        done = subprocess.run(
+            command.replace("{top}", top),
+            shell=True,
+            cwd=clone,
+            env=person,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            check=False,
+        )
+        ran.append({"command": command, "exit": done.returncode, "printed": done.stdout})
+        if done.returncode != 0:
+            break
+    return ran
 
 
 def _commands(folder: str, commands: dict[str, str]) -> str:
