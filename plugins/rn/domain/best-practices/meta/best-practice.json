@@ -1,10 +1,10 @@
 {
  "goal": {
-  "what": "A generator that follows a best practice produces deliverables that serve their users' purpose.",
+  "what": "A maker who follows a best practice piles up in each deliverable the vital few that bring its people to their aim, and cuts the trivial many.",
   "critical_success_factors": [
    {
     "id": "C1",
-    "what": "The necessary conditions cover what users need from the deliverable.",
+    "what": "The best practice names the vital few: the few states of the deliverable that bring its people to their aim.",
     "necessary_conditions": [
      {
       "id": "N1",
@@ -101,32 +101,12 @@
         "text": "Read that deliverable from the top as its users would. Where they would stop or go wrong in a part that every condition passes, find the level that caused it, whether the goal, a factor, a condition, or a practice, and rebuild that level from the level it serves."
        }
       ]
-     },
-     {
-      "id": "N7",
-      "about": "the whole",
-      "what": "Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?",
-      "why": "A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more, so when every part serves what the users can't go without, they find what they need at once.",
-      "items": [
-       {
-        "at": "make",
-        "text": "Read each item by which the generator finds the content it writes, such as the item by which a README's generator finds the problems it names, and ask what the item starts from. Where it gathers every thing of a kind and then keeps some, such as every problem that readers have, rewrite it to take the things from the part of an input or of the goal that its condition serves, such as the problems from the product vision's objectives and their key results, since gathering first fills the deliverable with the many."
-       },
-       {
-        "at": "make",
-        "text": "Read the best practice from its goal down, and for each factor, condition, and item, name what it makes true in the level it serves, such as the factor that a condition makes true. Drop each that makes nothing there true."
-       },
-       {
-        "at": "make",
-        "text": "Read the conditions and the items for any that counts or caps the parts, such as `at most five sections`, and remove it, since the few follow from the build, and such a check adds findings of its own."
-       }
-      ]
      }
     ]
    },
    {
     "id": "C2",
-    "what": "The generator meets every necessary condition in every deliverable.",
+    "what": "Following the best practice, the maker thinks from the people's aim toward each of those states, and piles up those alone.",
     "necessary_conditions": [
      {
       "id": "N4",
@@ -197,8 +177,8 @@
      {
       "id": "N5",
       "about": "why, items",
-      "what": "Does each practice give the steps that produce its condition's state, in the order that a practitioner who makes that kind of deliverable takes them on site, each an act on something at hand with the question to ask, the criterion for choosing where there are options, and an example where the act alone would leave the reader unsure, so that a reader of a step can say what they open next and what they do there?",
-      "why": "A practice is the only place where the generator learns how to meet a condition well, and a theory, model, or standard in place of the steps, such as a list of quality characteristics, leaves each run to work out what to do in its own way. So a practice writes the acts that practitioners of the kind take, in the way the procedures page of the Google developer documentation style guide writes a procedure: one action for each step, and the step's place and goal stated before its action.",
+      "what": "Does each practice lead its maker toward its condition's state from what the people are after, by the steps that practitioners of the kind take on site, each an act on something at hand with the question to think through, and, where there are options, the criterion that picks the one bringing the people closer?",
+      "why": "A practice is where the maker learns how to bring the people to a condition's state. A maker who sees that state thinks each step toward it, while a list of acts, rules, or a standard alone gets carried out in full and piles up the trivial many. So a practice writes the acts that practitioners of the kind take, in the way the procedures page of the Google developer documentation style guide writes a procedure: one action for each step, and the step's place and goal stated before its action.",
       "items": [
        {
         "at": "decide",
@@ -218,7 +198,11 @@
        },
        {
         "at": "make",
-        "text": "Write each item as an act on something that the generator has, such as a file, a list, or a command, with the question to ask and, where there are options, the criterion for choosing, such as `Open the product vision and list its key results` in place of `Consider the quality characteristics`."
+        "text": "Write each item in positive form, as what to do toward the condition's state, such as `Name the problem that the product vision's objective holds` in place of `Don't list every problem`, since a maker aims at what a step names, and a ban names nothing to aim at."
+       },
+       {
+        "at": "make",
+        "text": "Write each item as an act on something that the generator has, such as a file, a list, or a command, with the question to think through toward the condition's state and, where there are options, the criterion that picks the one bringing the people closer, such as `Open the product vision and list its key results` in place of `Consider the quality characteristics`."
        },
        {
         "at": "make",
@@ -251,6 +235,26 @@
        {
         "at": "make",
         "text": "Name a language or a tool only as an example, so that each deliverable's plan chooses its own."
+       }
+      ]
+     },
+     {
+      "id": "N7",
+      "about": "the whole",
+      "what": "Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?",
+      "why": "A deliverable that holds only the vital few gives its people what they need at once, while each part of the trivial many buries it a little more and draws more in each round. So following the best practice piles up only what brings the people to their aim.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Read each item by which the generator finds the content it writes, such as the item by which a README's generator finds the problems it names, and ask what the item starts from. Where it gathers every thing of a kind and then keeps some, such as every problem that readers have, rewrite it to take the things from the part of an input or of the goal that its condition serves, such as the problems from the product vision's objectives and their key results, since gathering first fills the deliverable with the many."
+       },
+       {
+        "at": "make",
+        "text": "Read the best practice from its goal down, and for each factor, condition, and item, name what it makes true in the level it serves, such as the factor that a condition makes true. Drop each that makes nothing there true."
+       },
+       {
+        "at": "make",
+        "text": "Read the conditions and the items for any that counts or caps the parts, such as `at most five sections`, and remove it, since the few follow from the build, and such a check adds findings of its own."
        }
       ]
      }

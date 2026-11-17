@@ -20,13 +20,135 @@
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
       "path": "plugins/rn/domain/best-practices/prompt",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
-      "kind": "design-tree",
-      "status": "done"
+      "kind": "meta",
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The factors",
+              "decided": "at each turn the tree is reviewed by the run's facts, its content and how the work goes, from the goal and the state its people reach, so that each deliverable, decision, round, and point holds only where it brings them there, as rn's product vision now says",
+              "by": "user"
+            },
+            {
+              "about": "A kind that a deliverable's best practice names in its inputs, where the product holds no file of it",
+              "decided": "it becomes a deliverable of its own only where the goal fails without it, as N2.1 tests each deliverable; elsewhere the deliverable that takes it carries that kind's vital few as its own decisions, as the user decided that rn's README walkthrough plans a command and its guide alone",
+              "by": "reasoning"
+            },
+            {
+              "about": "Feedback: a more, a point, or the person's words",
+              "decided": "each is taken in only where it brings the people closer to the state the goal names, judged in the tree from that state",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -38,49 +160,473 @@
       "name": "A developer builds from the product vision a product with which its users achieve their aim",
       "path": "plugins/rn/domain/best-practices/product-vision",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A newcomer starts using the product from its README alone, only when it serves their work",
       "path": "plugins/rn/domain/best-practices/readme",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A reader takes in a reworked document as its writer meant, reading once from the top",
       "path": "plugins/rn/domain/best-practices/refactor-doc",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before writing any body, whether the architecture can be built as parts that fit together, from a skeleton of each part, and each gap where it can't",
       "path": "plugins/rn/domain/best-practices/software-design",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The developers learn from a test that runs the product whole what the product does, as each run ran as they meant and measured what they meant",
       "path": "plugins/rn/domain/best-practices/test-implementation",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The goal",
+              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each practice",
+              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",

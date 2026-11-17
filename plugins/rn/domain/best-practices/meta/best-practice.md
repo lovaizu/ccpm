@@ -2,15 +2,15 @@
 
 ## Goal tree
 
-- A generator that follows a best practice produces deliverables that serve their users' purpose.
-  - **C1** The necessary conditions cover what users need from the deliverable.
+- A maker who follows a best practice piles up in each deliverable the vital few that bring its people to their aim, and cuts the trivial many.
+  - **C1** The best practice names the vital few: the few states of the deliverable that bring its people to their aim.
     - **N1** Does the goal state, in one sentence, who uses the deliverable and what purpose it serves for them? (goal)
     - **N2** Do the critical success factors name the few things that must all hold for the users to reach the goal? (critical_success_factors)
     - **N3** Does each necessary condition ask, as a yes-or-no question, whether the deliverable holds a state that its factor needs? (necessary_conditions)
-    - **N7** Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal? (the whole)
-  - **C2** The generator meets every necessary condition in every deliverable.
+  - **C2** Following the best practice, the maker thinks from the people's aim toward each of those states, and piles up those alone.
     - **N4** Does the template place each necessary condition in a section, and give each slot a note on what it holds and in what form? (template)
-    - **N5** Does each practice give the steps that produce its condition's state, in the order that a practitioner who makes that kind of deliverable takes them on site, each an act on something at hand with the question to ask, the criterion for choosing where there are options, and an example where the act alone would leave the reader unsure, so that a reader of a step can say what they open next and what they do there? (why, items)
+    - **N5** Does each practice lead its maker toward its condition's state from what the people are after, by the steps that practitioners of the kind take on site, each an act on something at hand with the question to think through, and, where there are options, the criterion that picks the one bringing the people closer? (why, items)
+    - **N7** Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal? (the whole)
   - **C3** Each deliverable stays consistent with the deliverables it builds on and the deliverables built on it.
     - **N6** Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts? (inputs, preconditions)
 
@@ -81,23 +81,24 @@ The template makes every deliverable of the kind hold each condition in the same
 
 ### N5
 
-Does each practice give the steps that produce its condition's state, in the order that a practitioner who makes that kind of deliverable takes them on site, each an act on something at hand with the question to ask, the criterion for choosing where there are options, and an example where the act alone would leave the reader unsure, so that a reader of a step can say what they open next and what they do there?
+Does each practice lead its maker toward its condition's state from what the people are after, by the steps that practitioners of the kind take on site, each an act on something at hand with the question to think through, and, where there are options, the criterion that picks the one bringing the people closer?
 
-A practice is the only place where the generator learns how to meet a condition well, and a theory, model, or standard in place of the steps, such as a list of quality characteristics, leaves each run to work out what to do in its own way. So a practice writes the acts that practitioners of the kind take, in the way the procedures page of the Google developer documentation style guide writes a procedure: one action for each step, and the step's place and goal stated before its action.
+A practice is where the maker learns how to bring the people to a condition's state. A maker who sees that state thinks each step toward it, while a list of acts, rules, or a standard alone gets carried out in full and piles up the trivial many. So a practice writes the acts that practitioners of the kind take, in the way the procedures page of the Google developer documentation style guide writes a procedure: one action for each step, and the step's place and goal stated before its action.
 
 1. *While deciding.* Search the field's guides, handbooks, and worked examples of the deliverable's kind for how practitioners who make it do the work, and write down the acts they take in the order they take them, such as a test lead who lists the key results, asks of each which failure would stop the users, and picks a type of testing for each failure. Take an act only where the source says what the practitioner opens and what they do there, since a method's name or a model alone doesn't tell the generator what to do.
 2. *While deciding.* For each theory, model, standard, or list that the research turned up, such as the quality characteristics of ISO/IEC 25010, ask which act walks through it. Keep it only as the list that act uses, such as the types of testing that the act of picking a type for each failure chooses from, and drop it where no act uses it, since a step that starts from an abstract list leaves the reader to work out what to do.
 3. *While making.* Write in `why`, in one or two sentences, what the condition gives the users. Name a source only where it's itself a practitioner's way of doing the work, in `why`, such as a style guide's page on writing procedures, or the list that an item uses, in that item, never a method only to cite it.
 4. *While making.* List the items in the order the generator takes them on site: each decision, then each step, and last, only where the condition's own question doesn't already say how to check it, how to check the result from the users' side, such as asking whether a newcomer can say the point back.
-5. *While making.* Write each item as an act on something that the generator has, such as a file, a list, or a command, with the question to ask and, where there are options, the criterion for choosing, such as `Open the product vision and list its key results` in place of `Consider the quality characteristics`.
-6. *While making.* Give an example from the deliverable's kind only where the act alone would leave the generator unsure what to open or what to write, such as the form of a sentence it must write, since an example beside a plain act is one more line to read past.
-7. *While making.* Make each item one thing to take, since a role names each item it took by its ID, its condition's ID and its place, such as N6.2, and a check finds one left out.
-8. *While making.* Ask of each item whether the maker of this kind takes it while making a deliverable of the kind, with what that deliverable's inputs give it. Where another kind's maker takes it, such as an item on trusting a test's judge in the best practice of an architecture, whose maker has no run to judge, move it to that kind's best practice, since a maker opens no best practice of another kind.
-9. *While making.* Give a trace to each item that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. An item with a trace takes its place by its call, among the decisions or steps whose content it supplies, such as the read of an input just before the decision that takes from it, since a checker such as Lane checks each item by its trace in the order of the calls, and the evaluator checks what the judgments made.
-10. *While making.* Mark each item `decide` where the maker takes it while it settles the work's decisions, and `make` where it takes it while it makes the deliverable. No `decide` item follows a `make` item, since the maker settles the decisions before it makes the deliverable.
-11. *While making.* Where the generator must find the content before it writes it, such as the users of a product vision, say what the content serves, how to derive it from that, and when to ask the user.
-12. *While making.* Write each reason and each way to find the content in the item that uses it, and the form of each slot in the template's note, so that each fact stands in one place.
-13. *While making.* Name a language or a tool only as an example, so that each deliverable's plan chooses its own.
+5. *While making.* Write each item in positive form, as what to do toward the condition's state, such as `Name the problem that the product vision's objective holds` in place of `Don't list every problem`, since a maker aims at what a step names, and a ban names nothing to aim at.
+6. *While making.* Write each item as an act on something that the generator has, such as a file, a list, or a command, with the question to think through toward the condition's state and, where there are options, the criterion that picks the one bringing the people closer, such as `Open the product vision and list its key results` in place of `Consider the quality characteristics`.
+7. *While making.* Give an example from the deliverable's kind only where the act alone would leave the generator unsure what to open or what to write, such as the form of a sentence it must write, since an example beside a plain act is one more line to read past.
+8. *While making.* Make each item one thing to take, since a role names each item it took by its ID, its condition's ID and its place, such as N6.2, and a check finds one left out.
+9. *While making.* Ask of each item whether the maker of this kind takes it while making a deliverable of the kind, with what that deliverable's inputs give it. Where another kind's maker takes it, such as an item on trusting a test's judge in the best practice of an architecture, whose maker has no run to judge, move it to that kind's best practice, since a maker opens no best practice of another kind.
+10. *While making.* Give a trace to each item that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. An item with a trace takes its place by its call, among the decisions or steps whose content it supplies, such as the read of an input just before the decision that takes from it, since a checker such as Lane checks each item by its trace in the order of the calls, and the evaluator checks what the judgments made.
+11. *While making.* Mark each item `decide` where the maker takes it while it settles the work's decisions, and `make` where it takes it while it makes the deliverable. No `decide` item follows a `make` item, since the maker settles the decisions before it makes the deliverable.
+12. *While making.* Where the generator must find the content before it writes it, such as the users of a product vision, say what the content serves, how to derive it from that, and when to ask the user.
+13. *While making.* Write each reason and each way to find the content in the item that uses it, and the form of each slot in the template's note, so that each fact stands in one place.
+14. *While making.* Name a language or a tool only as an example, so that each deliverable's plan chooses its own.
 
 ### N6
 
@@ -120,7 +121,7 @@ A deliverable must say what the deliverables it builds on say, and the deliverab
 
 Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?
 
-A deliverable that holds the trivial many beside the vital few buries what its users need, and each round of work adds more, so when every part serves what the users can't go without, they find what they need at once.
+A deliverable that holds only the vital few gives its people what they need at once, while each part of the trivial many buries it a little more and draws more in each round. So following the best practice piles up only what brings the people to their aim.
 
 1. *While making.* Read each item by which the generator finds the content it writes, such as the item by which a README's generator finds the problems it names, and ask what the item starts from. Where it gathers every thing of a kind and then keeps some, such as every problem that readers have, rewrite it to take the things from the part of an input or of the goal that its condition serves, such as the problems from the product vision's objectives and their key results, since gathering first fills the deliverable with the many.
 2. *While making.* Read the best practice from its goal down, and for each factor, condition, and item, name what it makes true in the level it serves, such as the factor that a condition makes true. Drop each that makes nothing there true.
