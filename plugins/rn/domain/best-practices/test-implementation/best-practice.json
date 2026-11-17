@@ -123,6 +123,10 @@
         "text": "Set the stages, each larger than the one before: one run of one case, then each case once, then the number of runs or the load that Test strategy sets, such as a performance test's steps of load."
        },
        {
+        "at": "decide",
+        "text": "Where Test strategy gives the rule for the number of runs in place of a number, as it does before the product runs, take three runs of each case as the last stage, the fewest in which one run that differs from the others shows. Add runs only to a case whose runs differ, until one more changes no case's count, and write the number reached in Test strategy."
+       },
+       {
         "at": "make",
         "text": "Run the first stage, and keep its records as the pilot records that N4 tests the checks on."
        },
