@@ -55,7 +55,8 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
     - `write <record> <ground>`, with `{"nodes": {<path>: <node>}, "more": [{"deliverable",
       "best_practice", "condition", "decision", "good_when"}]}` on standard input, each more's
       best_practice the kind that `tree.py round` names for its Answers and its decision the path
-      of the decision it changes, and `<ground>` why the change decides as it does: 0, with
+      of the decision it changes, `"more"` left out where none is kept, and `<ground>` why the
+      change decides as it does: 0, with
       `{"changed", "touched", "doing"}`, once `design.apply`, `more.keepable` against
       `rounds.at_cut`, `turn.mark_doing`, `design.write`, `rounds.keep_more`, and `branch.commit`
       take it, the commit's message `<ground>` word for word; 1, naming the more's best practice
@@ -297,13 +298,15 @@ def _stood(text: str) -> list[tuple[str, int]]:
 def _change(text: str) -> tuple[dict[str, Any], list[more.More]]:
     """The change that tree.py write reads on standard input, `{"nodes": {<path>: <node>}, "more":
     [{"deliverable", "best_practice", "condition", "decision", "good_when"}]}`: its nodes, and each
-    More to keep; raises Wrong, saying the form, where the text isn't JSON or leaves the form."""
+    More to keep, none where it holds no `more`, as a change before any round has none; raises
+    Wrong, saying the form, where the text isn't JSON or leaves the form."""
     try:
         given = json.loads(text)
     except ValueError as e:
         raise Wrong(f"the change on standard input isn't JSON: {e}") from None
-    if not (isinstance(given, dict) and set(given) == {"nodes", "more"}):
+    if not (isinstance(given, dict) and "nodes" in given and set(given) <= {"nodes", "more"}):
         raise Wrong('the change must be {"nodes": {<path>: <node>}, "more": [<more>]}')
+    given.setdefault("more", [])
     if not isinstance(given["nodes"], dict) or not isinstance(given["more"], list):
         raise Wrong('the change\'s "nodes" must be an object, and its "more" a list')
     fields = ("deliverable", "best_practice", "condition", "decision", "good_when")

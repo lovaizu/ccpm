@@ -264,7 +264,7 @@
        },
        {
         "at": "make",
-        "text": "Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `good` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where `more` names it."
+        "text": "Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `good` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where a `more` that N5.11 takes in names it, and answer a condition that only a `more` left in the round's records names by the goal's state, as that more brings its people nothing."
        },
        {
         "at": "make",

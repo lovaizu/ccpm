@@ -60,6 +60,19 @@ def test_write_takes_a_change_and_gives_what_changed_touched_and_doing(tmp_path:
     assert "design-tree.json" in d.git(printed["worktree"], "show", "--name-only", "HEAD")
 
 
+@pytest.mark.supports("test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper")
+def test_write_takes_a_change_with_no_more_as_one_that_keeps_none(tmp_path: Any) -> None:
+    """Given: a run started.
+    When: tree.py write runs with the walkthrough's tree as the change, with no more field, as a
+    change before any round has none to keep.
+    Then: it gives 0, and commits the design tree."""
+    _, printed = started(tmp_path)
+    change = {"nodes": d.walkthrough_tree()}
+    code, _, err = run(["write", printed["record"], "The plan."], printed["worktree"], change)
+    assert code == 0, err
+    assert "design-tree.json" in d.git(printed["worktree"], "show", "--name-only", "HEAD")
+
+
 @pytest.mark.supports("test_a_settled_decisions_ground_is_the_message_of_its_commit")
 def test_write_commits_the_change_with_its_ground_as_the_message(tmp_path: Any) -> None:
     """Given: a run started.
@@ -95,7 +108,7 @@ def test_write_with_no_ground_gives_1_and_commits_nothing(tmp_path: Any, ground:
     "given",
     [
         "not JSON",
-        {"nodes": {}},
+        {"nodes": {}, "mores": []},
         {"nodes": {"goals": 1}, "more": []},
         {"nodes": [], "more": []},
         {"nodes": {}, "more": [{"deliverable": "invoicer"}]},
@@ -107,7 +120,7 @@ def test_write_with_no_ground_gives_1_and_commits_nothing(tmp_path: Any, ground:
 )
 def test_write_out_of_form_gives_1_with_whats_wrong(tmp_path: Any, given: Any) -> None:
     """Given: a run started.
-    When: tree.py write runs with input that isn't JSON, lacks more, names no node, holds nodes
+    When: tree.py write runs with input that isn't JSON, holds a field of no change, names no node, holds nodes
     that aren't an object, a more without its condition and good_when, or one without its best
     practice and decision.
     Then: it gives 1 with what's wrong, and prints nothing on standard output."""
