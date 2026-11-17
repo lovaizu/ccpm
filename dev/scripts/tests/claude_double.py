@@ -22,9 +22,11 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
+from typing import Any
 
 
 def after(argv: list[str], flag: str) -> str | None:
@@ -41,7 +43,7 @@ def main(argv: list[str]) -> int:
     log = os.path.join(os.path.dirname(plan_path), "calls.jsonl")
     stand_in = "--json-schema" in argv
     n = sum(1 for each in _calls(log) if each["stand_in"] == stand_in)
-    call = {
+    call: dict[str, Any] = {
         "argv": argv,
         "cwd": os.getcwd(),
         "stand_in": stand_in,
@@ -57,6 +59,8 @@ def main(argv: list[str]) -> int:
     call.update(_clone())
     turn = plan["turns"][n]
     call["shown"] = _shown(turn)
+    # The text of each command that the turn's `which` names, as the PATH finds it, or None.
+    call["found"] = {name: _text(shutil.which(name)) for name in turn.get("which", [])}
     _note(log, call)
     return _play(turn, argv)
 
@@ -104,6 +108,14 @@ def _shown(turn: dict) -> dict[str, str]:
         with open(path, encoding="utf-8") as f:
             shown[path] = f.read()
     return shown
+
+
+def _text(path: str | None) -> str | None:
+    """The text of the file at the path, None where there's no path."""
+    if path is None:
+        return None
+    with open(path, encoding="utf-8") as f:
+        return f.read()
 
 
 def _play(turn: dict, argv: list[str]) -> int:

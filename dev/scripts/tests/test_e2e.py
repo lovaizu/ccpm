@@ -700,6 +700,17 @@ class E2ETryTest(E2EBase):
         self.assertEqual(call["env"]["CLAUDE_CODE_OAUTH_TOKEN"], TOKEN)
         self.assertTrue(call["env"]["CLAUDE_CONFIG_DIR"].startswith(self.temp))
 
+    def test_the_stand_in_finds_on_its_path_each_command_the_people_have(self):
+        # Given a try file that names a command the people have, as one that a developer set up
+        # for them once,
+        # When the try runs,
+        # Then the stand-in's PATH finds that command with its text.
+        self.given["commands"] = {"invoicer": "#!/bin/sh\necho invoiced\n"}
+        code, _, err = self.try_it({"which": ["invoicer"]})
+        self.assertEqual(code, 0, err)
+        (call,) = self.calls(stand_in=False)
+        self.assertEqual(call["found"], {"invoicer": "#!/bin/sh\necho invoiced\n"})
+
     def test_python_writes_no_bytecode_into_the_checkout(self):
         self.try_it({})
         (call,) = self.calls(stand_in=False)
@@ -740,6 +751,12 @@ class E2ETryTest(E2EBase):
         code, _, err = self.try_it({})
         self.assertEqual(code, 1)
         self.assertIn("`has`", err)
+
+    def test_a_try_file_whose_commands_arent_texts_is_refused(self):
+        self.given["commands"] = {"invoicer": ["python3", "-m", "invoicer"]}
+        code, _, err = self.try_it({})
+        self.assertEqual(code, 1)
+        self.assertIn("`commands`", err)
 
     def test_a_branch_that_changed_nothing_gives_the_checkout_of_the_tests_commits(self):
         self.write(os.path.join(self.made, "branches", "empty.diff"), "")

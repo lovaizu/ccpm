@@ -49,6 +49,9 @@ It prints the folder of the try's records. A try file is one JSON object:
 - `intent`: what the people mean to do with the deliverable.
 - `has`: what they have, which the stand-in alone uses, such as `the guide docs/printing.md`.
 - `files`: each file the people bring, `{<path in the clone>: <text>}`, such as their lines.
+- `commands`, where the people have commands that the clone doesn't set up: each one's text,
+  `{<name>: <text>}`, which the stand-in's PATH finds, such as a command a developer installed
+  for them once.
 
 The records of a try lie in `<records>/tries/<try>/`, where `<try>` is the try file's name without
 `.json`:
@@ -345,6 +348,19 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
             shutil.rmtree(root)
 
 
+def _commands(folder: str, commands: dict[str, str]) -> str:
+    """Writes each command that the people have, such as one that a developer set up for them
+    once, into the folder as a program, and gives the folder, which the stand-in's PATH finds
+    first."""
+    os.makedirs(folder)
+    for name, text in commands.items():
+        program = os.path.join(folder, name)
+        with open(program, "w", encoding="utf-8") as f:
+            f.write(text)
+        os.chmod(program, 0o755)
+    return folder
+
+
 def _converse(
     test: E2ETest, dirs: list[str], places: tuple[str, str, str], envs: tuple[dict[str, str], ...]
 ) -> tuple[list[dict[str, Any]], bool]:
@@ -421,6 +437,9 @@ def tried(records: str, path: str, top: str, token: str | None) -> str:
     for key, kind in TRY.items():
         if not isinstance(given, dict) or not isinstance(given.get(key), kind):
             raise Refused(f"{path} needs `{key}` as {kind.__name__}")
+    commands = given.get("commands", {})
+    if not isinstance(commands, dict) or not all(isinstance(t, str) for t in commands.values()):
+        raise Refused(f"{path} gives `commands` as an object of texts, where it gives it")
     diff = os.path.join(records, "branches", f"{given['branch']}.diff")
     if not os.path.isfile(diff):
         raise Refused(f"the run of {records} made no branch {given['branch']}")
@@ -444,6 +463,7 @@ def tried(records: str, path: str, top: str, token: str | None) -> str:
         env = dict(
             _logged_in(token, (claude,)), CLAUDE_CONFIG_DIR=claude, PYTHONDONTWRITEBYTECODE="1"
         )
+        env["PATH"] = _commands(os.path.join(root, "bin"), commands) + os.pathsep + env["PATH"]
         command = [
             *("claude", "-p", "--model", MODEL, "--tools", "Bash,Read"),
             *("--permission-mode", "bypassPermissions"),
