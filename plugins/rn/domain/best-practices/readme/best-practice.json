@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "A newcomer decides from the README alone whether the product fits their work, and if it does, starts using it.",
+  "what": "A newcomer decides from the README alone whether the product fits their work, and if it does, starts using it, as the README holds only what brings them to that decision and that start.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -46,7 +46,7 @@
        },
        {
         "at": "make",
-        "text": "Write the opening by the template from these, and leave out feature names and internals."
+        "text": "Write the opening by the template from these, each sentence on the reader's work and what the product gives them in it, as the reader decides from these and How it works holds the parts."
        },
        {
         "at": "make",
@@ -70,7 +70,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the READMEs of two or three products of the kind that the opening names, such as those that the product's issues mention or that a search for the kind finds first, and list what each does that a reader of this product might expect too."
+        "text": "Open the READMEs of two or three products of the kind that the opening names, such as those that the product's issues mention or that a search for the kind finds first, and list what each does that a reader bringing the role's work to this product would count on too."
        },
        {
         "at": "decide",
@@ -358,7 +358,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "List each requirement and install command that the manifest and the code show, such as `engines` in package.json or `requires-python` in pyproject.toml, never from memory."
+        "text": "List each requirement and install command that the manifest and the code show, such as `engines` in package.json or `requires-python` in pyproject.toml, since a list from memory holds the author's setup in place of what a newcomer lacks."
        },
        {
         "at": "decide",

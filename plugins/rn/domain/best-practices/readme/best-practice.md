@@ -2,7 +2,7 @@
 
 ## Goal tree
 
-- A newcomer decides from the README alone whether the product fits their work, and if it does, starts using it.
+- A newcomer decides from the README alone whether the product fits their work, and if it does, starts using it, as the README holds only what brings them to that decision and that start.
   - **C1** The reader knows whether the product fits their work.
     - **N1** Does the opening say what the product is, who it's for, and what it lets them achieve? (the opening)
     - **N2** Does the README list what readers might expect the product to do but it doesn't? (Non-goals)
@@ -39,7 +39,7 @@ Most readers decide from the opening alone whether to read on, so it lets a newc
 3. *While deciding.* Take from the concept's one way the one thing the product gives the reader, in words the reader already uses, such as `finds each change in a release that breaks code that calls it`.
 4. *While deciding.* Open the product's manifest, such as plugin.json or pyproject.toml, which N3 and N9 take from too. The trace: `{manifest}` read to its end.
 5. *While deciding.* Name the kind of thing the reader installs, as the manifest shows it, by the word they already use for things of that kind, such as a command-line tool or a Claude Code plugin, so that they have something to compare it with.
-6. *While making.* Write the opening by the template from these, and leave out feature names and internals.
+6. *While making.* Write the opening by the template from these, each sentence on the reader's work and what the product gives them in it, as the reader decides from these and How it works holds the parts.
 7. *While making.* Take out each sentence of the opening in turn, and ask whether the rest still says what the product is, who it's for, what they achieve with it, and, where the product isn't ready, what works now. Where it does, delete that sentence.
 8. *While making.* Replace each vague or praising word in the opening, such as powerful or seamless, with what the product does.
 9. *While making.* Read the opening as someone outside the role, such as, for a tool for those who publish libraries, a developer of an app who publishes none. If they couldn't tell that the product isn't for them, name the role's work more narrowly.
@@ -50,7 +50,7 @@ Does the README list what readers might expect the product to do but it doesn't?
 
 A reader who needs something the product doesn't do finds out before they install it, not after their work depends on it.
 
-1. *While deciding.* Open the READMEs of two or three products of the kind that the opening names, such as those that the product's issues mention or that a search for the kind finds first, and list what each does that a reader of this product might expect too.
+1. *While deciding.* Open the READMEs of two or three products of the kind that the opening names, such as those that the product's issues mention or that a search for the kind finds first, and list what each does that a reader bringing the role's work to this product would count on too.
 2. *While deciding.* Add what the opening's benefit leads a reader to expect on the way to that end, such as undoing its changes, from a tool that edits files.
 3. *While deciding.* Where the product has an issue tracker, add each request it closed without doing, such as one labeled `wontfix`.
 4. *While deciding.* For each expectation, find whether the product meets it, in its commands and settings in the manifest and code, or by trying it.
@@ -148,7 +148,7 @@ Can a reader with nothing set up install the product by the README alone, and se
 
 A reader who can't install the product never gets to use it, and the author's own setup hides what a newcomer lacks.
 
-1. *While deciding.* List each requirement and install command that the manifest and the code show, such as `engines` in package.json or `requires-python` in pyproject.toml, never from memory.
+1. *While deciding.* List each requirement and install command that the manifest and the code show, such as `engines` in package.json or `requires-python` in pyproject.toml, since a list from memory holds the author's setup in place of what a newcomer lacks.
 2. *While deciding.* For each install command, list what it needs on a machine with nothing on it, such as the tool it calls or an account it signs in to, and add each to the requirements.
 3. *While deciding.* For each requirement, choose a command whose output shows the reader they have it, such as `git --version`.
 4. *While making.* Write each install step as a command the reader can copy.
