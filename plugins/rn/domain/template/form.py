@@ -113,13 +113,13 @@ def form(blocks: tuple[Block, ...]) -> Form:
     )
     # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
     # `is` changes nothing.
-    headings = {
+    # Each section may be left out, as the maker leaves out one that the deliverable's people
+    # don't need, such as a License that the person leaves out of a guide.
+    optional = frozenset(
         node.block.text
         for node in _walk(nodes)
-        if node.block.kind == HEADING  # pragma: no mutate
-    }
-    left = {words for note in _all_notes(nodes) for words in _left_sections(note)}
-    optional = frozenset(left & headings)
+        if node.block.kind == HEADING and node.block.level == 2  # pragma: no mutate
+    )
     units = _units(nodes, _Context(scoped, optional, holders))
     slots = frozenset(name for block in flat(blocks) for name in _slots(block))
     figures = frozenset(block.info for block in flat(blocks) if block.kind == FIGURE)

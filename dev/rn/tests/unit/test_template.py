@@ -58,13 +58,14 @@ def test_a_document_that_fills_each_slot_and_drops_each_note_has_no_fault():
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
-def test_a_section_left_out_is_named_at_the_line_where_it_belongs():
+def test_a_section_left_out_has_no_fault():
     """Given a template of sections A, B, and C, and a document without B
     When the document is checked
-    Then the one fault, at C's line, names B by its line in the template"""
+    Then it has no fault, as the maker leaves out a section that the deliverable's people don't
+    need, such as a License that the person leaves out of a guide"""
     template = lines("# T", "", "## A", "", "## B", "", "## C")
     document = lines("# T", "", "## A", "", "## C")
-    assert faults(template, document) == (Fault(5, 'lacks the template\'s "## B" at its line 5'),)
+    assert faults(template, document) == ()
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
@@ -81,13 +82,10 @@ def test_a_section_beside_the_templates_is_named():
 def test_sections_out_of_order_are_named():
     """Given a template of sections A, B, and C, and a document of A, C, and B
     When the document is checked
-    Then a fault names the section out of its place"""
+    Then the one fault names the section out of its place"""
     template = lines("# T", "", "## A", "", "## B", "", "## C")
     document = lines("# T", "", "## A", "", "## C", "", "## B")
-    assert faults(template, document) == (
-        Fault(5, 'lacks the template\'s "## B" at its line 5'),
-        Fault(7, '"## B" lies beside the template'),
-    )
+    assert faults(template, document) == (Fault(7, '"## B" lies beside the template'),)
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
@@ -763,12 +761,12 @@ def test_template_gives_0_and_prints_nothing_for_a_document_that_holds_its_kinds
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_template_gives_1_with_each_fault_at_the_documents_path_and_line(folder: str):
-    """Given a document that is a title alone
+    """Given a document of a title and a section FAQ
     When `template.py product-vision <document>` runs
     Then it gives 1, with each fault of the document on a line of its own, at its path and line,
     after a line on why the template holds and before a line on when to change the template"""
     with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
-        file.write("# Product vision of tally\n")
+        file.write("# Product vision of tally\n\n## FAQ\n")
     before = (
         "rn's template check: the template holds only the vital few. Cut each place below as"
         " trivia, or put its vital point in the template's form."
@@ -781,9 +779,7 @@ def test_template_gives_1_with_each_fault_at_the_documents_path_and_line(folder:
     assert (code, printed) == (1, "")
     assert said.splitlines() == [
         before,
-        'vision.md:1: lacks the template\'s "## Roles" at its line 3',
-        'vision.md:1: lacks the template\'s "## Objectives and key results" at its line 14',
-        'vision.md:1: lacks the template\'s "## Concept" at its line 33',
+        'vision.md:3: "## FAQ" lies beside the template',
         after,
     ]
 
@@ -879,14 +875,10 @@ def test_a_numbered_slot_takes_only_a_number():
     """Given a template whose heading is `S<n>`: `<path>`, and a document whose heading is Sx: a
     request
     When the document is checked
-    Then the fault names the heading by the template's words"""
+    Then the one fault names the heading"""
     template = lines("# T", "", "## `S<n>`: `<path>`")
     assert faults(template, lines("# T", "", "## Sx: a request")) == (
-        Fault(
-            3,
-            '"## Sx: a request" leaves the form of the template\'s "## `S<n>`: `<path>`" at its'
-            " line 3",
-        ),
+        Fault(3, '"## Sx: a request" lies beside the template'),
     )
 
 
@@ -998,13 +990,12 @@ def test_a_title_with_a_slot_stands_once():
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
-def test_a_heading_reworded_in_the_place_of_the_first_of_two_leaves_its_form():
+def test_a_heading_reworded_in_the_place_of_the_first_of_two_lies_beside_the_template():
     """Given a template of sections A and B, and a document of a section X alone
     When the document is checked
-    Then X leaves the form of A, and B is missing"""
+    Then the one fault names X, as A and B may be left out"""
     assert faults(lines("# T", "", "## A", "", "## B"), lines("# T", "", "## X")) == (
-        Fault(3, '"## X" leaves the form of the template\'s "## A" at its line 3'),
-        Fault(3, 'lacks the template\'s "## B" at its line 5'),
+        Fault(3, '"## X" lies beside the template'),
     )
 
 
@@ -1012,9 +1003,8 @@ def test_a_heading_reworded_in_the_place_of_the_first_of_two_leaves_its_form():
 def test_a_heading_a_level_below_the_templates_lies_beside_it():
     """Given a template of the section A at level 2, and a document whose section A is at level 3
     When the document is checked
-    Then A at level 2 is missing, and A at level 3 lies beside the template"""
+    Then A at level 3 lies beside the template"""
     assert faults(lines("# T", "", "## A"), lines("# T", "", "### A")) == (
-        Fault(3, 'lacks the template\'s "## A" at its line 3'),
         Fault(3, '"### A" lies beside the template'),
     )
 
