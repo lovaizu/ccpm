@@ -94,7 +94,7 @@
        },
        {
         "at": "make",
-        "text": "Write each check's tests first, on the records of the pilot run that N5.2 keeps and on a copy of them broken in the way the check must catch, and see each test fail before you write the check."
+        "text": "Write each check's tests first, on the records of the pilot run that N5.3 keeps and on a copy of them broken in the way the check must catch, and see each test fail before you write the check."
        },
        {
         "at": "make",

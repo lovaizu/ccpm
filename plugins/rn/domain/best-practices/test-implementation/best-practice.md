@@ -68,7 +68,7 @@ Does each check by code, each judge, and each stand-in give the right result on 
 A check never seen failing may pass anything, and a judge or a stand-in that errs makes a value of the test, not of the product. Anthropic's evals guide prefers checks by code, gives each model judge one point, and calibrates it against people's judgment.
 
 1. *While deciding.* Decide by code each point that the records show, such as a tool called, a file's content, or a command's output, and leave to a judge only what code can't decide, each judge with one point, its definitions, and a pass or fail result.
-2. *While making.* Write each check's tests first, on the records of the pilot run that N5.2 keeps and on a copy of them broken in the way the check must catch, and see each test fail before you write the check.
+2. *While making.* Write each check's tests first, on the records of the pilot run that N5.3 keeps and on a copy of them broken in the way the check must catch, and see each test fail before you write the check.
 3. *While making.* Where a judge has no messages that the developer has marked, end with `asks`, handing them the messages of its point from the pilot records, each with the mark you'd give it, since only their marks say what passes. Use the judge only once it gives each marked message their mark.
 4. *While making.* For each stand-in or double that the test runs in place of a person or of something outside the product, read what it did in the pilot records, and check that it acts on its intent and on what it's given alone. Check too that it gives only what the real thing gives, by the real thing's documentation or a recorded run of it.
 
