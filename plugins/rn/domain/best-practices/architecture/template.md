@@ -54,7 +54,8 @@ Strategies:
 >   Each arrow says what one does to another, with the data it hands on, named as in the data
 >   model. A legend explains every symbol.
 > - `<component>`, `<responsibility>`: each role of the figure and each component, by its name in
->   the figure, and what it's expected to do, in one sentence.
+>   the figure, and what it brings the users toward their aim, then what it's expected to do, in
+>   one sentence.
 > - `<strategy>`, `<intent>`: each decision of the view that a key result rests on, such as a
 >   technology or a tool, in a few words, and why it's taken, ending with the key result it serves,
 >   in one sentence. Leave out Strategies where the view takes no such decision.

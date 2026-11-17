@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "The developers build and change the parts of the product so that together they deliver what the README promises the users.",
+  "what": "The developers build and change the parts of the product so that together they deliver what the README promises the users, each part putting its work on what brings the users there.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -126,7 +126,7 @@
        },
        {
         "at": "decide",
-        "text": "Leave out what a single view already says, since a rule of Solution strategy holds only what spans the views."
+        "text": "Keep in Solution strategy only what spans the views, since a single view already says the rest."
        },
        {
         "at": "make",
@@ -149,7 +149,7 @@
      {
       "id": "N5",
       "about": "User stories, Components",
-      "what": "Does each component state its responsibility, and does each decision that the stories need belong to exactly one component?",
+      "what": "Does each component state its responsibility, as what it brings the users toward their aim, and does each decision that the stories need belong to exactly one component?",
       "why": "Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's hard to make or likely to change, and hides it from the rest.",
       "items": [
        {
@@ -170,11 +170,11 @@
        },
        {
         "at": "make",
-        "text": "Write under the figure each component's responsibility in one sentence: what the others expect it to do, the decisions it holds among it, such as `renders each page and sends what the user enters to the API`, so that a developer knows what to build and what to leave to the others."
+        "text": "Write under the figure each component's responsibility in one sentence: what it brings the users toward the benefit of the stories it takes part in, then what the others expect it to do, the decisions it holds among it, such as `lets the reader act on each page they open, rendering it and sending what they enter to the API`, so that a developer knows what to build, what to leave to the others, and where the part's effort goes. For a component that an AI runs, such as a subagent, ask which few things of its work bring the users there, and name them, since an AI given only its means carries each out in full and piles up what the users never use."
        },
        {
         "at": "make",
-        "text": "Label each arrow with what one component does to another and the data it passes, not a word such as `uses`."
+        "text": "Label each arrow with what one component does to another and the data it passes, as a word such as `uses` names no act."
        }
       ]
      },
@@ -308,7 +308,7 @@
        },
        {
         "at": "decide",
-        "text": "Add each thing outside the product that the components depend on, with what they use of it, and no infrastructure that they don't need."
+        "text": "Add each thing outside the product that the components depend on, with what they use of it, so that the figure holds what a developer sets up for the components."
        },
        {
         "at": "make",
@@ -376,7 +376,7 @@
        },
        {
         "at": "decide",
-        "text": "Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write no row for a check left out."
+        "text": "Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write a row for each check picked."
        },
        {
         "at": "decide",
@@ -470,7 +470,7 @@
        },
        {
         "at": "make",
-        "text": "Leave out a decision that no key result rests on, since its intent gives a developer nothing to keep."
+        "text": "Keep under Strategies only the decisions that a key result rests on, since the intent of any other gives a developer nothing to keep."
        }
       ]
      },

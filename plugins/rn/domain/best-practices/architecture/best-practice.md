@@ -2,14 +2,14 @@
 
 ## Goal tree
 
-- The developers build and change the parts of the product so that together they deliver what the README promises the users.
+- The developers build and change the parts of the product so that together they deliver what the README promises the users, each part putting its work on what brings the users there.
   - **C1** The developers know what each part must do, for the users or for the product's development and operation, and why.
     - **N1** Does Solution strategy state first the one idea by which the product delivers what its README promises? (Solution strategy)
     - **N2** Does each user story state what a role wants, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README? (User stories)
     - **N3** Does each rule of Solution strategy, user story, component, and kind of data trace to what the README promises the users, or to a need of the product's development or operation? (Solution strategy, User stories, Components, Data model, Sequences)
   - **C2** Parts that different developers build fit together.
     - **N4** Does each rule of Solution strategy give a rule and a reason from which two developers decide a case that no line names the same way? (Solution strategy)
-    - **N5** Does each component state its responsibility, and does each decision that the stories need belong to exactly one component? (User stories, Components)
+    - **N5** Does each component state its responsibility, as what it brings the users toward their aim, and does each decision that the stories need belong to exactly one component? (User stories, Components)
     - **N6** Does each component state its type and its technology? (Components)
     - **N7** Does the data model show how each kind of data relates to the others, without its fields? (Data model)
     - **N8** Does each user story have a sequence that shows, at each step, which component acts, along which arrow, and with which data? (User stories, Components, Data model, Sequences)
@@ -82,7 +82,7 @@ Developers of different parts meet the same kind of decision, and decide it apar
 
 1. *While deciding.* Derive the rules from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation.
 2. *While deciding.* For each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each thing that every part must hold alike is a rule of Solution strategy.
-3. *While deciding.* Leave out what a single view already says, since a rule of Solution strategy holds only what spans the views.
+3. *While deciding.* Keep in Solution strategy only what spans the views, since a single view already says the rest.
 4. *While making.* For each rule, write it in one sentence, naming the parts as Components names them.
 5. *While making.* Write the reason in one sentence: what goes wrong without the rule, for a role of the product vision, naming the key result it guards, or for the developers or the operators. A developer carries the reason to a case that the rule doesn't name.
 6. *While making.* Where your cut names an architecture that the product builds on, point to its rules, and write only what this product adds or changes.
@@ -90,7 +90,7 @@ Developers of different parts meet the same kind of decision, and decide it apar
 
 ### N5
 
-Does each component state its responsibility, and does each decision that the stories need belong to exactly one component?
+Does each component state its responsibility, as what it brings the users toward their aim, and does each decision that the stories need belong to exactly one component?
 
 Two components that make the same decision make it twice, and the two copies drift apart. David Parnas's information hiding gives each module one decision that's hard to make or likely to change, and hides it from the rest.
 
@@ -98,8 +98,8 @@ Two components that make the same decision make it twice, and the two copies dri
 2. *While deciding.* Take from the stories the decisions that are hard to make or likely to change, such as where the product keeps the work's state, or the form of a file that two parts share.
 3. *While deciding.* Give each decision to the one component that holds what it decides on, such as the form of the work's state to the component that writes the state. Where no component holds it, make a component for it.
 4. *While deciding.* Where another component needs the same decision, leave it with the component that holds it, and draw an arrow by which the other asks it, such as a hook that asks a script whether a step is done instead of reading the state itself.
-5. *While making.* Write under the figure each component's responsibility in one sentence: what the others expect it to do, the decisions it holds among it, such as `renders each page and sends what the user enters to the API`, so that a developer knows what to build and what to leave to the others.
-6. *While making.* Label each arrow with what one component does to another and the data it passes, not a word such as `uses`.
+5. *While making.* Write under the figure each component's responsibility in one sentence: what it brings the users toward the benefit of the stories it takes part in, then what the others expect it to do, the decisions it holds among it, such as `lets the reader act on each page they open, rendering it and sending what they enter to the API`, so that a developer knows what to build, what to leave to the others, and where the part's effort goes. For a component that an AI runs, such as a subagent, ask which few things of its work bring the users there, and name them, since an AI given only its means carries each out in full and piles up what the users never use.
+6. *While making.* Label each arrow with what one component does to another and the data it passes, as a word such as `uses` names no act.
 
 ### N6
 
@@ -156,7 +156,7 @@ A developer setting up the product needs to know where each part runs, what it c
 
 1. *While deciding.* List each environment the product runs in, such as the user's computer or CI, with its technology.
 2. *While deciding.* Place each component and each kind of data in one deployment unit within its environment, such as the plugin's folder that the host installs, or the run's folder in the user's repository.
-3. *While deciding.* Add each thing outside the product that the components depend on, with what they use of it, and no infrastructure that they don't need.
+3. *While deciding.* Add each thing outside the product that the components depend on, with what they use of it, so that the figure holds what a developer sets up for the components.
 4. *While making.* Write in one sentence how the product starts.
 5. *While making.* Check that a developer could set the product up from nothing by the figure and that sentence.
 
@@ -180,7 +180,7 @@ A failure that no test looks for reaches the users unseen, and a case's pass or 
 
 1. *While deciding.* Read [the test strategy guide](test-strategy-guide.md) to its end. The trace: `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/architecture/test-strategy-guide.md` read to its end.
 2. *While deciding.* Take each check's test target from the guide. Unit tests try the parts against their contracts, each prompt among them. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks.
-3. *While deciding.* Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write no row for a check left out.
+3. *While deciding.* Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write a row for each check picked.
 4. *While deciding.* Make each check a benchmark where its test's path runs a prompt, as the guide's rule says, and each other check as the guide gives it.
 5. *While deciding.* For each check the product runs, choose its tool from the product's constraints, such as the runtime its users have, and name it.
 6. *While deciding.* Take each quality's criterion that the guide recommends, or the one that the architecture the product builds on sets. Change it only where the product can't meet it, or a key result needs more, and say why in the row.
@@ -217,7 +217,7 @@ A developer who doubts a decision and can't see what it was for may undo it and 
 
 1. *While deciding.* For each view, take each decision that a key result rests on, such as a technology, a tool, or the form of a file that two parts share, and ask why it's taken, ending with the key result it serves.
 2. *While making.* Write each under its view's Strategies: the decision in a few words, and its intent in one sentence.
-3. *While making.* Leave out a decision that no key result rests on, since its intent gives a developer nothing to keep.
+3. *While making.* Keep under Strategies only the decisions that a key result rests on, since the intent of any other gives a developer nothing to keep.
 
 ### N16
 
