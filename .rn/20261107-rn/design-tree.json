@@ -415,11 +415,6 @@
           "id": "N16",
           "good": false,
           "decisions": []
-        },
-        {
-          "id": "N17",
-          "good": false,
-          "decisions": []
         }
       ]
     },
@@ -536,11 +531,6 @@
         {
           "id": "N16",
           "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N17",
-          "good": false,
           "decisions": [
             {
               "about": "How the generator's unit case checks the walkthrough's deliverable, whose decision names mypy --strict, which no environment of the repository holds",
@@ -650,11 +640,6 @@
         },
         {
           "id": "N16",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N17",
           "good": false,
           "decisions": []
         }
