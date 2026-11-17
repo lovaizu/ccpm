@@ -1,6 +1,8 @@
-"""How the lane types join to judge a Lane, a start, a Call, or an end: each type found by its name
-among the modules of lanes/, a Call kept where one Lane of each lane type allows it and the end's
-result script kept by every type, and a start or an end kept where it keeps every Lane."""
+"""How the lane types join to judge a Lane, a start, a Call, a Mark, or an end: each type found by
+its name among the modules of lanes/, a Call kept where one Lane of each lane type allows it and
+the end's result script kept by every type, a start or an end kept where it keeps every Lane, a
+Mark of a Step kept where it keeps every Lane on that Step, and a Read kept where a Lane of
+reads_whole names its path."""
 
 from __future__ import annotations
 
@@ -12,8 +14,8 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes import ends_by_result
-from lanes.kind import Broken, CantCheck, Held, Kept, LaneType, TypeInfo, Verdict
+from lanes import ends_by_result, reads_whole
+from lanes.kind import Broken, CantCheck, Held, Kept, LaneType, Marking, TypeInfo, Verdict
 
 
 class LaneRefused(Exception):
@@ -79,8 +81,8 @@ def check_start(lanes: Sequence[Lane], asked: StartCall, held: Held, due: Sequen
     no Lane that checks its starts.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`,
-    and S6 `else it starts a role of the plugin`.
+    Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`,
+    and S5 `else it starts a role of the plugin`.
     """
     types = _types()
     for lane in lanes:
@@ -104,9 +106,8 @@ def check_call(lanes: Sequence[Lane], call: Call, held: Held) -> Verdict:
     sentence, and what the role may do; CantCheck where a Lane can't judge it.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S2 `G->>T: checks the Call by each Lane of the Run of up that showed that ID`, S5
-    `G->>T: checks the Call by each Lane of each Run's skill`, S6 `G->>T: checks the Call by each
-    Lane of the role, with the Start's run values`.
+    Carries: S4 `G->>T: checks the Call by each Lane of each Run's skill`, S5 `G->>T: checks the
+    Call by each Lane of the role, with the Start's run values`.
     """
     types = _types()
     judged = [(lane, types[lane.type].allows(lane, call, held)) for lane in lanes]
@@ -139,20 +140,71 @@ def _filled(said: str, held: Held) -> str:
     return said.replace("${CLAUDE_PLUGIN_ROOT}", held.root)
 
 
+def needs_items(lanes: Sequence[Lane], step: int) -> bool:
+    """Whether a Mark of the Step needs the Step's Items from the adapter.
+
+    Takes: the role's Lanes, and the Step's number.
+    Gives: True where a Lane of keeps_items lies on the Step; else False.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S5 `opt a Lane of keeps_items lies on Step n`.
+    """
+    return any(lane.type == "keeps_items" and lane.step == step for lane in lanes)
+
+
+def check_mark(lanes: Sequence[Lane], marking: Marking, held: Held) -> Verdict:
+    """The check of a Mark of a Step by each Lane on that Step.
+
+    Takes: the role's Lanes; the Mark asked, with the Reads and Marks since the Step began and the
+    Step's Items; and what it's held to, the Start's run values among it.
+    Gives: Kept where every Lane on the Step keeps it, and where no Lane lies on it; else the
+    first Broken, with the Lane's sentence and what the Step lacks, such as a path not read whole
+    or an Item not marked; CantCheck where a Lane can't judge it, such as a file it can't read.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S5 `G->>T: checks the Mark by each Lane on Step n, with the Reads and Marks since the
+    Step began`, and its `else a path a Lane of reads_whole names wasn't read whole, or an Item
+    isn't marked`.
+    """
+    types = _types()
+    for lane in (lane for lane in lanes if lane.step == marking.step):
+        verdict = types[lane.type].check_mark(lane, marking, held)
+        if verdict != Kept():
+            return verdict
+    return Kept()
+
+
+def read_kept(lanes: Sequence[Lane], call: Call, held: Held) -> str | None:
+    """The path that a Read reads, where a Lane of reads_whole names it, so that the guard adds the
+    Read.
+
+    Takes: the role's Lanes, the Call of a Read's PostToolUse, and what it's held to, the Start's
+    run values among it.
+    Gives: the path as the Lane names it, with the run values filled in; None where the Call isn't
+    a Read or no Lane of reads_whole names its path.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S5 `opt a Read of a path that a Lane of reads_whole names`.
+    """
+    named = (reads_whole.named(lane, call, held) for lane in lanes if lane.type == "reads_whole")
+    return next((path for path in named if path), None)
+
+
 def check_end(lanes: Sequence[Lane], end: EndAsked, held: Held) -> Verdict:
     """The check of an end by each Lane of the role.
 
     Takes: the role's Lanes, the end with its last message, and what it's held to.
     Gives: Kept where every Lane keeps it; else the first Broken or CantCheck, the Lane of
-    `ends_by_result` checked first, so that no command of the plugin's runs for an end with no
-    Result.
+    `ends_by_result` checked first and then that of `keeps_steps`, so that a command of the
+    plugin's runs only for an end that holds its Result and each Step.
     Changes: whatever a command of the plugin's that a Lane runs changes.
     Refuses: nothing.
-    Carries: S2 `G->>T: checks the end by each Lane of up`, S5 `G->>T: checks the end by each Lane
-    of each Run's skill`, S6 `G->>T: checks the end by each Lane of the role`.
+    Carries: S4 `G->>T: checks the end by each Lane of each Run's skill`, S5 `G->>T: checks the end
+    by each Lane of the role`.
     """
     types = _types()
-    ordered = sorted(lanes, key=lambda lane: lane.type != "ends_by_result")
+    first = ("ends_by_result", "keeps_steps")
+    ordered = sorted(lanes, key=lambda lane: first.index(lane.type) if lane.type in first else 2)
     for lane in ordered:
         verdict = types[lane.type].check_end(lane, end, held)
         if verdict != Kept():

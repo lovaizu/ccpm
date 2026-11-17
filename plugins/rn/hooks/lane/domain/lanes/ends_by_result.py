@@ -12,12 +12,17 @@ from place import Call, EndAsked, StartCall
 from runs import Due
 from script_calls import result_args, result_command
 
-from lanes.kind import Broken, Held, Kept, TypeInfo, Verdict
+from lanes.kind import Broken, Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. It takes none, as the Routes name each Result that its
 # sentence gives.
 ARGS: dict[str, str] = {}
+# What a role may do where its end holds no Result: the guard takes a Result only from a command
+# that runs the result script alone, as only its exit tells that the script gave 0, and the run
+# record keeps no Call to tell a role that ran it inside a longer command from one that never ran
+# it, so every such stop says it.
+ALONE = "Run it as a command of its own: result.py run inside a longer command gives no Result."
 
 
 class EndsByResult:
@@ -32,7 +37,8 @@ class EndsByResult:
         return TypeInfo(
             name="ends_by_result",
             sentence="End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py <role>"
-            " <result>`, with each Result the Routes name for the role, joined by `or`.",
+            " <result>` as a command of its own, with each Result the Routes name for the role,"
+            " joined by `or`.",
             suits="the last Step of the skill and of each subagent, which Lane lays it on",
             allows="the role's run of the result script, whatever the other Lanes of the role say",
             args=ARGS,
@@ -54,13 +60,14 @@ class EndsByResult:
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on the role's last Step: `End by running` the result
         script with each Result that the Routes name for the role, a Route's `after` for a
-        subagent and a move's `no_more` for the skill, joined by `or`.
+        subagent and a move's `no_more` for the skill, joined by `or`, as a command of its own, as
+        ALONE says why.
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`, and the sentence of each
         Broken.
         """
         named = " or ".join(f"`{command}`" for command in commands(lane.role, routes))
-        return f"End by running {named}."
+        return f"End by running {named}, as a command of its own."
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """True for a Bash run of the result script for the Lane's role, as
@@ -68,7 +75,7 @@ class EndsByResult:
         role may not give; None for any other Call. lanes/ keeps a Call that this allows,
         whatever the other types say.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         command = call.input.get("command") if call.tool == "Bash" else None
         given = result_args(command, held.root) if isinstance(command, str) else None
@@ -78,28 +85,37 @@ class EndsByResult:
         """Broken, with the Lane's sentence, where a subagent starts or resumes a role of the plugin
         (`asked.ours`), as only the main conversation starts the roles; else Kept.
 
-        Carries: S6 `else it starts a role of the plugin` and `G-->>SA: stops it, with the
+        Carries: S5 `else it starts a role of the plugin` and `G-->>SA: stops it, with the
         sentence of the Lane on its last Step`.
         """
         if held.start is not None and asked.ours:
             return self._broken(lane, held)
         return Kept()
 
-    def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
-        """Broken, with the Lane's sentence, where the subagent's Start holds no Result; Kept for
-        the main conversation's end, which the moves due hold, and for a Start with a Result.
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
 
-        Carries: S6 `alt the Lane on its last Step finds no Result since its Start` and `G-->>SA:
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n`.
+        """
+        return Kept()
+
+    def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
+        """Broken, with the Lane's sentence and `ALONE`, where the subagent's Start holds no
+        Result; Kept for the main conversation's end, which the moves due hold, and for a Start
+        with a Result.
+
+        Carries: S5 `alt the Lane on its last Step finds no Result since its Start` and `G-->>SA:
         stops the end, with that Lane's sentence`.
         """
         if held.start is not None and not held.start.results:
-            return self._broken(lane, held)
+            return self._broken(lane, held, ALONE)
         return Kept()
 
-    def _broken(self, lane: Lane, held: Held) -> Broken:
-        """The Lane broken, its sentence naming the result script by the plugin's folder."""
+    def _broken(self, lane: Lane, held: Held, may: str = "") -> Broken:
+        """The Lane broken, its sentence naming the result script by the plugin's folder, with what
+        the role may do."""
         said = self.sentence(lane, held.routes).replace("${CLAUDE_PLUGIN_ROOT}", held.root)
-        return Broken(lane, said, "")
+        return Broken(lane, said, may)
 
 
 TYPE = EndsByResult()

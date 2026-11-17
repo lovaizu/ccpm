@@ -9,13 +9,13 @@ import os
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Literal, Union
+from typing import Any, Union
 
 from events import Event
-from form import LanesFile, Move
+from form import LanesFile
 from manifest import plugin_name
 from runs import Conversation, Run, Start
-from script_calls import printed, result_args, write_call
+from script_calls import item_args, result_args, step_args
 
 # A subagent's end as it reaches the main conversation, by its agent_id.
 NOTIFICATION = re.compile(r"<task-notification>\s*<task-id>([^<]+)</task-id>")
@@ -39,7 +39,6 @@ class SkillCall:
 
     plugin: str
     skill: str
-    by: Literal["person", "ai"]
     words: str
 
 
@@ -98,12 +97,48 @@ class ResultPosted:
 
 
 @dataclass(frozen=True)
-class PrintPosted:
-    """The PostToolUse of a run of lay.py print, with the Proposal's ID and what it showed, as
-    `script_calls.printed` reads them."""
+class StepAsked:
+    """A run of step.py, before it runs, as `script_calls.step_args` reads its command: the role
+    and the Step it marks."""
 
-    proposal_id: str
-    words: str
+    role: str
+    step: int
+
+
+@dataclass(frozen=True)
+class ItemAsked:
+    """A run of item.py, before it runs, as `script_calls.item_args` reads its command: the role
+    and the Item it marks."""
+
+    role: str
+    item: str
+
+
+@dataclass(frozen=True)
+class StepPosted:
+    """The PostToolUse of a run of step.py that gave 0: the role and the Step it marked."""
+
+    role: str
+    step: int
+
+
+@dataclass(frozen=True)
+class ItemPosted:
+    """The PostToolUse of a run of item.py that gave 0: the role and the Item it marked."""
+
+    role: str
+    item: str
+
+
+@dataclass(frozen=True)
+class ReadPosted:
+    """The PostToolUse of a Read: the Call, and the first and the last line it read, from
+    `tool_response.file`'s `startLine` and `startLine` plus `numLines` less one, as Claude Code's
+    states give them."""
+
+    call: Call
+    first: int
+    last: int
 
 
 @dataclass(frozen=True)
@@ -121,7 +156,11 @@ What = Union[
     StartCall,
     AgentPosted,
     ResultPosted,
-    PrintPosted,
+    StepAsked,
+    ItemAsked,
+    StepPosted,
+    ItemPosted,
+    ReadPosted,
     EndAsked,
 ]
 
@@ -142,20 +181,20 @@ def place(event: Event, conversation: Conversation, lanes: LanesFile, root: str)
     """The event as Lane's data, on its Runs and its Start.
 
     Takes: the event, the Conversation as it stands, the plugin's lanes.json, and the plugin's
-    folder, by which `script_calls.result_args` reads a run of its result script.
+    folder, by which `script_calls.result_args`, `step_args`, and `item_args` read a run of its
+    scripts.
     Gives: what the event is, with no `what` for an event that Lane hooks only for another state,
-    a call by the Skill tool being a SkillCall by an AI, save one of another plugin's skill that a
-    Run holds and no move due names, which is a ToolCall, and a SendMessage to the subagent of a
-    role's Start a StartCall that resumes that role; for the main conversation's event, each Run of
-    the conversation that hasn't ended and isn't aside, and, for its end or a prompt, each Run that
-    its skill's Result ended in the turn (`Run.closing`), and, for a start, each Run aside whose
-    moves due start its role; for a subagent's event, the Run of the Start tied to its agent_id;
-    for a call of lay.py write, the Run of up that showed its ID; for what lay.py print showed, the
-    latest of the main conversation's Runs, whose call came last; no Run for an event of a subagent
-    that no Start ties, or of the main conversation while every Run stands aside.
+    a call by the Skill tool being a SkillCall, save one of another plugin's skill while a Run
+    goes, which is a ToolCall, a SendMessage to the subagent of a role's
+    Start a StartCall that resumes that role, a run of step.py or item.py a StepAsked or an
+    ItemAsked, its PostToolUse a StepPosted or an ItemPosted, and the PostToolUse of a Read a
+    ReadPosted, with the lines it read; for the main conversation's event, each Run of the
+    conversation that hasn't ended, and, for its end or a prompt, each Run that its skill's Result
+    ended in the turn (`Run.closing`); for a subagent's event, the Run of the Start tied to its
+    agent_id; no Run for an event of a subagent that no Start ties.
     Changes: nothing.
     Refuses: nothing.
-    Carries: the placing of each `CC->>G` arrow of S1 to S7 on its Run, Start, and role.
+    Carries: the placing of each `CC->>G` arrow of S4 to S6 on its Run, Start, and role.
     """
     what = _what(event, conversation, root)
     start, runs = _where(event, conversation, what)
@@ -167,21 +206,13 @@ def _where(
 ) -> tuple[Start | None, tuple[Run, ...]]:
     """The Start that the event comes from and the Runs that hold it: for a subagent's event, or
     the end of one that reaches the main conversation, its tied Start and that Start's Run; for the
-    main conversation's, each Run that hasn't ended and doesn't stand aside, and, for its end or a
-    prompt, each Run whose turn's end is still held after its skill's Result ended it. A subagent
-    resumed lies on its latest Start. A call of lay.py write lies only on each of those Runs that
-    showed its ID, and what lay.py print showed only on the latest of them, the Run whose call came
-    last."""
+    main conversation's, each Run that hasn't ended, and, for its end or a prompt, each Run whose
+    turn's end is still held after its skill's Result ended it. A subagent resumed lies on its
+    latest Start."""
     agent = event.agent_id or _notified(event)
     going = tuple(r for r in conversation.runs if not r.ended)
     if agent is None:
-        runs = tuple(r for r in conversation.runs if _main(r, what))
-        laid = _laid_id(what)
-        if laid is not None:
-            runs = tuple(r for r in runs if any(s.proposal_id == laid for s in r.shown))
-        if isinstance(what, PrintPosted):
-            runs = runs[-1:]
-        return None, runs
+        return None, tuple(r for r in conversation.runs if _main(r, what))
     for run in going:
         for start in reversed(run.starts):
             if start.agent_id == agent:
@@ -190,13 +221,10 @@ def _where(
 
 
 def _main(run: Run, what: What | None) -> bool:
-    """Whether the Run holds an event of the main conversation: a Run going and not aside; for a
-    start, one aside whose moves due after the other plugin's run start that role, the move after
-    that call; and, for its end or a prompt, one that its skill's Result ended in this turn."""
-    if isinstance(what, StartCall) and run.aside:
-        return Move("start", role=what.role) in run.due
+    """Whether the Run holds an event of the main conversation: a Run going, and, for its end or a
+    prompt, one that its skill's Result ended in this turn."""
     closing = isinstance(what, (EndAsked, Prompt))
-    return (not run.ended and not run.aside) or (closing and run.closing)
+    return not run.ended or (closing and run.closing)
 
 
 def _what(event: Event, conversation: Conversation, root: str) -> What | None:
@@ -204,7 +232,7 @@ def _what(event: Event, conversation: Conversation, root: str) -> What | None:
     if event.name == "UserPromptExpansion":
         # A UserPromptExpansion names the command typed, as dev/lane/claude-code-states.md records.
         plugin, _, skill = (event.command_name or "").partition(":")
-        return SkillCall(plugin, skill, "person", event.command_args or "")
+        return SkillCall(plugin, skill, event.command_args or "")
     if event.name == "UserPromptSubmit":
         agent = _notified(event)
         killed = "<status>killed</status>" in (event.prompt or "")
@@ -228,20 +256,22 @@ def _called(
         return StartCall(role, owner == plugin_name(root), text, False, str(event.tool_use_id))
     if event.tool_name == "Skill" and not _unnamed(tool_input, conversation, root):
         plugin, _, skill = str(tool_input.get("skill", "")).partition(":")
-        return SkillCall(plugin, skill, "ai", str(tool_input.get("args", "")))
+        return SkillCall(plugin, skill, str(tool_input.get("args", "")))
     resumed = _resumed(event, tool_input, conversation)
     if resumed is not None:
         return resumed
-    return ToolCall(Call(str(event.tool_name), tool_input, event.cwd, _top(event.cwd)))
+    marked = _marked(event, tool_input, root, StepAsked, ItemAsked)
+    if marked is not None:
+        return marked
+    return ToolCall(Call(str(event.tool_name), tool_input, event.cwd, top(event.cwd)))
 
 
 def _unnamed(tool_input: Mapping[str, Any], conversation: Conversation, root: str) -> bool:
-    """Whether a Skill call is of another plugin's skill that a Run holds and no move due of it
-    names, so that it is any other call."""
+    """Whether a Skill call is of another plugin's skill while a Run goes, so that it is any other
+    call."""
     name = str(tool_input.get("skill", ""))
-    going = [r for r in conversation.runs if not r.ended and not r.aside]
-    named = any(Move("call", skill=name) in r.due for r in going)
-    return bool(going) and not named and not name.startswith(f"{plugin_name(root)}:")
+    going = [r for r in conversation.runs if not r.ended]
+    return bool(going) and not name.startswith(f"{plugin_name(root)}:")
 
 
 def _resumed(
@@ -260,27 +290,51 @@ def _resumed(
 
 
 def _posted(event: Event, tool_input: Mapping[str, Any], root: str) -> What | None:
-    """What the PostToolUse of a call tells: a subagent started, a Result given, or a Proposal
-    shown."""
+    """What the PostToolUse of a call tells: a subagent started, a Read with the lines it read, a
+    Result given, or a Step's or an Item's Mark given."""
     response = event.tool_response if isinstance(event.tool_response, dict) else {}
     if event.tool_name == "Agent" and response.get("agentId"):
         return AgentPosted(str(event.tool_use_id), str(response["agentId"]))
+    if event.tool_name == "Read":
+        call = Call("Read", tool_input, event.cwd, top(event.cwd))
+        return ReadPosted(call, *_lines_read(response))
     command = tool_input.get("command")
     if event.tool_name != "Bash" or not isinstance(command, str):
         return None
     given = result_args(command, root)
     if given:
         return ResultPosted(*given)
-    shown = printed(command, str(response.get("stdout", "")))
-    return PrintPosted(*shown) if shown else None
+    return _marked(event, tool_input, root, StepPosted, ItemPosted)
 
 
-def _laid_id(what: What | None) -> str | None:
-    """The Proposal's ID that a call of lay.py write lays; None for any other event."""
-    if not isinstance(what, ToolCall):
+def _marked(
+    event: Event,
+    tool_input: Mapping[str, Any],
+    root: str,
+    step: type[StepAsked | StepPosted],
+    item: type[ItemAsked | ItemPosted],
+) -> What | None:
+    """A run of step.py or item.py, as `step` or `item` holds it, by the role and the Step or Item
+    that its Bash command names; None for any other call."""
+    command = tool_input.get("command")
+    if event.tool_name != "Bash" or not isinstance(command, str):
         return None
-    found = write_call(str(what.call.input.get("command", "")))
-    return found[1] if found else None
+    stepped = step_args(command, root)
+    if stepped:
+        return step(*stepped)
+    itemed = item_args(command, root)
+    return item(*itemed) if itemed else None
+
+
+def _lines_read(response: Mapping[str, Any]) -> tuple[int, int]:
+    """The first and the last line that a Read read, from `tool_response.file`'s `startLine` and
+    `startLine` plus `numLines` less one; none, as 1 to 0, where it gives no whole numbers, such as
+    for a Read of an image."""
+    file = response.get("file")
+    held = file if isinstance(file, dict) else {}
+    first, count = held.get("startLine"), held.get("numLines")
+    whole = isinstance(first, int) and isinstance(count, int)
+    return (first, first + count - 1) if whole else (1, 0)
 
 
 def _notified(event: Event) -> str | None:
@@ -291,8 +345,16 @@ def _notified(event: Event) -> str | None:
     return found[1] if found else None
 
 
-def _top(cwd: str) -> str:
-    """The top of the worktree that the folder lies in, or the folder where no .git lies above."""
+def top(cwd: str) -> str:
+    """The top of the worktree that a folder lies in.
+
+    Takes: a folder, such as a hook event's cwd.
+    Gives: the nearest folder at or above it that holds .git, or the folder itself where none does.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: the Deployment's strategy that each lane's path is read from the top of its worktree,
+    for a Call's `top` and for the files that a Lane of reads_whole reads at a Mark.
+    """
     folder = cwd
     while not os.path.exists(os.path.join(folder, ".git")):
         if os.path.dirname(folder) == folder:

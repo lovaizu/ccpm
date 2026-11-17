@@ -41,32 +41,28 @@ class Lane:
 
 @dataclass(frozen=True)
 class After:
-    """What a Route goes after: the skill's start (`first`), a Result that a role gave (`result`), a
-    command that the person types (`command`), or another plugin's run that a move called, once it
-    hands its work back (`returned`)."""
+    """What a Route goes after: the skill's start (`first`), a Result that a role gave
+    (`result`), or a command that the person types (`command`)."""
 
-    kind: Literal["first", "result", "command", "returned"]
+    kind: Literal["first", "result", "command"]
     role: str | None = None
     result: str | None = None
     command: str | None = None
-    skill: str | None = None
 
 
 # Each kind of Move.
-MoveKind = Literal["start", "resume", "wait", "no_more", "call"]
+MoveKind = Literal["start", "resume", "wait", "no_more"]
 
 
 @dataclass(frozen=True)
 class Move:
     """One move that a Route makes due: start a subagent, resume one by SendMessage, wait for the
-    person's reply or the command they type, start no more by the skill's own Result, or call
-    another plugin's skill."""
+    person's reply or the command they type, or start no more by the skill's own Result."""
 
     kind: MoveKind
     role: str | None = None
     command: str | None = None
     result: str | None = None
-    skill: str | None = None
 
 
 @dataclass(frozen=True)
@@ -81,10 +77,12 @@ class Route:
 @dataclass(frozen=True)
 class Adapters:
     """The adapters that lanes.json names, each a path under the plugin's hooks/adapters/: the one
-    that gives a start's text, and the one that gives the Kept results."""
+    that gives a start's text, the one that gives the Kept results, and the one that gives a Step's
+    Items."""
 
     text: str | None
     records: str | None
+    items: str | None = None
 
 
 @dataclass(frozen=True)
@@ -98,11 +96,8 @@ class LaidSentence:
 
 @dataclass(frozen=True)
 class Laid:
-    """What Lane added to the plugin: the version of the Lane that laid it, and each sentence it
-    added to a Step. Every version keeps these fields and those of LaidSentence, as a later
-    lay.py reads them through the copy of this code that laid them."""
+    """What Lane added to the plugin: each sentence it added to a Step."""
 
-    version: str
     sentences: tuple[LaidSentence, ...]
 
 
@@ -159,7 +154,7 @@ def read_lanes(path: str) -> LanesFile:
     Changes: nothing.
     Refuses: OutOfForm, where the file isn't in the form, and FileNotFoundError, where it isn't
     there, so that the guard says it can't check and who must fix it.
-    Carries: the guard's reading of the Lanes and Routes on each event of S1 to S7, and S4 `L->>LS:
+    Carries: the guard's reading of the Lanes and Routes on each event of S4 to S6, and S3 `L->>LS:
     reads the Laid by the guard's code in its hooks/lane/`, as the plugin's copy of this code
     reads it for a later lay.py.
     """
@@ -177,7 +172,7 @@ def write_lanes(path: str, lanes: LanesFile) -> None:
     Changes: the file, replaced at once.
     Refuses: OSError, where the file can't be written, so that lay.py write puts back each file it
     changed.
-    Carries: S2 `L->>G: writes lanes.json through the guard's code`.
+    Carries: S2 `L->>LS: writes lanes.json through the guard's code`.
     """
     held = {**_proposal_json(lanes.proposal), "laid": _laid_json(lanes.laid)}
     staged = f"{path}.{os.getpid()}"
@@ -310,7 +305,6 @@ _MOVES: dict[MoveKind, str] = {
     "resume": "role",
     "wait": "command",
     "no_more": "result",
-    "call": "skill",
 }
 
 
@@ -323,7 +317,8 @@ def _proposal(held: Mapping[str, Any]) -> Proposal:
         for x in held["routes"]
     )
     adapters = held["adapters"]
-    return Proposal(lanes, routes, Adapters(adapters.get("text"), adapters.get("records")))
+    given = Adapters(adapters.get("text"), adapters.get("records"), adapters.get("items"))
+    return Proposal(lanes, routes, given)
 
 
 def _after(held: Mapping[str, Any]) -> After:
@@ -331,8 +326,6 @@ def _after(held: Mapping[str, Any]) -> After:
         return After("first")
     if "command" in held:
         return After("command", command=held["command"])
-    if "returned" in held:
-        return After("returned", skill=held["returned"])
     return After("result", role=held["role"], result=held["result"])
 
 
@@ -344,11 +337,15 @@ def _move(held: Mapping[str, str]) -> Move:
 
 def _laid(held: Mapping[str, Any]) -> Laid:
     sentences = tuple(LaidSentence(x["file"], x["step"], x["text"]) for x in held["sentences"])
-    return Laid(held["version"], sentences)
+    return Laid(sentences)
 
 
 def _proposal_json(proposal: Proposal) -> dict[str, Any]:
-    adapters = {"text": proposal.adapters.text, "records": proposal.adapters.records}
+    adapters = {
+        "text": proposal.adapters.text,
+        "records": proposal.adapters.records,
+        "items": proposal.adapters.items,
+    }
     return {
         "lanes": [
             {"role": x.role, "file": x.file, "step": x.step, "type": x.type, "args": dict(x.args)}
@@ -371,11 +368,9 @@ def _after_json(after: After) -> dict[str, Any]:
         return {"first": True}
     if after.kind == "command":
         return {"command": after.command}
-    if after.kind == "returned":
-        return {"returned": after.skill}
     return {"role": after.role, "result": after.result}
 
 
 def _laid_json(laid: Laid) -> dict[str, Any]:
     sentences = [{"file": x.file, "step": x.step, "text": x.text} for x in laid.sentences]
-    return {"version": laid.version, "sentences": sentences}
+    return {"sentences": sentences}

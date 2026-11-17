@@ -1,6 +1,6 @@
-"""How a start's text and the Kept results come from the user's plugin: the adapter that lanes.json
-names, run in the hook event's cwd, what it's handed, and how its output is read, with Lane's own
-text where the plugin names no adapter of a start's text."""
+"""How a start's text, a Step's Items, and the Kept results come from the user's plugin: the adapter
+that lanes.json names, run in the hook event's cwd, what it's handed, and how its output is read,
+with Lane's own text where the plugin names no adapter of a start's text."""
 
 from __future__ import annotations
 
@@ -69,7 +69,7 @@ def start_text(
     Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
     (why being what it wrote to standard error), or prints other than a JSON object with a
     string `text` or `none` and, beside `text`, `values` that map strings to strings.
-    Carries: S5 `G->>A: asks for the text of each start due, with each Start that runs`, and its
+    Carries: S4 `G->>A: asks for the text of each start due, with each Start that runs`, and its
     `A-->>G` answers: `the text, and the run values` and, after `it gives none, as no work waits
     for that start`, and each way it fails, `why`.
     """
@@ -121,6 +121,32 @@ def _text(program: str, printed: Mapping[str, Any], key: str) -> str:
     return given
 
 
+def step_items(
+    program: str, role: str, step: int, values: Mapping[str, str], cwd: str
+) -> tuple[str, ...]:
+    """The IDs of the Items of a Step's checklist this run.
+
+    Takes: the adapter of a step's items that lanes.json names; the role or skill; the Step's
+    number, Step n of a run of step.py or the Step due of a run of item.py; the run values of the
+    role's Start, none for the skill; and the hook event's cwd, to run it in.
+    Gives: what the adapter prints, `{"items": [<id>, ...]}`, given the role and the Step's number
+    as its two arguments and `{"values": {<name>: <value>}}` on standard input; none where the
+    Step keeps no checklist this run.
+    Changes: nothing of Lane's; the adapter may read the plugin's files.
+    Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
+    (why being what it wrote to standard error), or prints other than a JSON object whose `items`
+    is a list of strings.
+    Carries: S5 `G->>A: asks for the Step's Items, with the role, Step n, and the Start's run
+    values`, `G->>A: asks for the Items of the Step due, with the role and the Start's run values`,
+    each one's `A-->>G: each Item's ID`, and each one's `alt the adapter fails`.
+    """
+    printed = _run(program, [role, str(step)], {"values": dict(values)}, cwd)
+    items = printed.get("items")
+    if not isinstance(items, list) or not all(isinstance(each, str) for each in items):
+        raise AdapterFailed(f"{program}: `items` must be a list of strings, not {items!r}")
+    return tuple(items)
+
+
 def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:
     """The Results that the user's plugin keeps, in the order the run gave them.
 
@@ -133,7 +159,7 @@ def kept_results(program: str, words: str, cwd: str) -> tuple[KeptResult, ...]:
     Refuses: AdapterFailed, naming the adapter and why, where it can't run, exits other than 0
     (why being what it wrote to standard error), or prints other than a JSON object whose
     `results` is a list of objects, each with a string `role` and a string `result`.
-    Carries: S7 `G->>A: asks for the Kept results, with those words`, and its `A-->>G` answers.
+    Carries: S6 `G->>A: asks for the Kept results, with those words`, and its `A-->>G` answers.
     """
     printed = _run(program, [], {"words": words}, cwd)
     results = printed.get("results")

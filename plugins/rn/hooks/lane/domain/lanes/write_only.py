@@ -10,7 +10,8 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, Kept, TypeInfo, Verdict
+from lanes import paths
+from lanes.kind import Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
@@ -45,10 +46,7 @@ class WriteOnly:
 
         Carries: S1 `L->>T: checks each Lane, and makes its sentence`.
         """
-        given = lane.args.get("paths")
-        if not isinstance(given, list) or not given or not all(isinstance(x, str) for x in given):
-            return ("write_only takes `paths`, a list of one string or more",)
-        return ()
+        return paths.fault(lane)
 
     def sentence(self, lane: Lane, routes: Sequence[Route]) -> str:
         """The sentence that the Lane lays on its Step: `Write only` each of `paths`, joined by
@@ -65,7 +63,7 @@ class WriteOnly:
         values filled in from the Start; False for one of any other path; None for a Call of
         another tool.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         if call.tool not in ("Write", "Edit"):
             return None
@@ -75,15 +73,22 @@ class WriteOnly:
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
-        Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        """
+        return Kept()
+
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
+
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n`.
         """
         return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.
 
-        Carries: S2 `G->>T: checks the end by each Lane of up`, S5 `G->>T: checks the end by each
-        Lane of each Run's skill`, S6 `G->>T: checks the end by each Lane of the role`.
+        Carries: S4 `G->>T: checks the end by each
+        Lane of each Run's skill`, S5 `G->>T: checks the end by each Lane of the role`.
         """
         return Kept()
 

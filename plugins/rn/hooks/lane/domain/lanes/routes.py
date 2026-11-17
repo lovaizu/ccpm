@@ -12,7 +12,7 @@ from manifest import plugin_name
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Broken, Held, Kept, TypeInfo, Verdict
+from lanes.kind import Broken, Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it. A Lane of Routes takes none, as the Proposal's Routes hold
@@ -60,7 +60,7 @@ class Routes:
         """None: the Lane judges no Call, as the skill's result script is the Lane on its last
         Step's.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         return None
 
@@ -75,7 +75,7 @@ class Routes:
         subagent's start, which the Lane on the role's last Step checks.
         Changes: nothing.
         Refuses: nothing.
-        Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`,
+        Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`,
         and its `alt a start due`, `else a resume`, and `else any other start`.
         """
         starts = [d for d in due if d.move.kind == "start"]
@@ -86,10 +86,17 @@ class Routes:
         moves_due = answers.due(plugin_name(held.root), starts)
         return Broken(lane, self.sentence(lane, held.routes), moves_due)
 
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
+
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n`.
+        """
+        return Kept()
+
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the main conversation's end is held by the moves due, which the guard checks.
 
-        Carries: S5 `G->>T: checks the end by each Lane of each Run's skill`.
+        Carries: S4 `G->>T: checks the end by each Lane of each Run's skill`.
         """
         return Kept()
 

@@ -17,7 +17,7 @@ def plugin_name(root: str) -> str:
     lay.py write runs, refuses such a plugin.json.
     Changes: nothing.
     Refuses: ValueError, where plugin.json isn't JSON.
-    Carries: the plugin's name that each answer of S1 to S7 opens with, and the run record's place.
+    Carries: the plugin's name that each answer of S4 to S6 opens with, and the run record's place.
     """
     path = os.path.join(root, ".claude-plugin", "plugin.json")
     held = {}

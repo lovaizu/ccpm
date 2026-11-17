@@ -33,7 +33,6 @@ def new_conversation(b: Bench, folder: str) -> Conversation:
     return Conversation(folder, [b.lane, b.rn], b.env, b.temp)
 
 
-@LATER
 @pytest.mark.supports("S5", "adapters", "record.py", "Record", "Place", "orchestrator")
 def test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped(b: Bench) -> None:
     """Given: the walkthrough paused while its generator stood at step 2.
@@ -52,7 +51,6 @@ def test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped(b: Bench) -> No
     assert again["cut"]["step"] == 2
 
 
-@LATER
 @pytest.mark.supports("S5", "adapters", "orchestrator", "user")
 def test_up_alone_at_the_root_picks_up_the_one_run_left(b: Bench) -> None:
     """Given: the walkthrough paused, the one run left.
@@ -72,7 +70,6 @@ def test_up_alone_at_the_root_picks_up_the_one_run_left(b: Bench) -> None:
     assert not c.stop(w.PICKED_SHOWN).blocked
 
 
-@LATER
 @pytest.mark.supports("S5", "Point", "user", "adapters")
 def test_up_alone_with_two_runs_left_asks_which(b: Bench) -> None:
     """Given: the walkthrough paused, and a second run left beside it.

@@ -249,7 +249,6 @@
     "records": "hooks/adapters/records.py"
   },
   "laid": {
-    "version": "0.1.0",
     "sentences": [
       {
         "file": "skills/up/SKILL.md",

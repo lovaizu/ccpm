@@ -71,7 +71,7 @@ def read_event(text: str) -> Event:
     Gives: the Event.
     Changes: nothing.
     Refuses: NotAnEvent, where the text isn't JSON or lacks `hook_event_name` or `session_id`.
-    Carries: each `CC->>G` arrow of S1 to S7, as it comes in.
+    Carries: each `CC->>G` arrow of S4 to S6, as it comes in.
     """
     try:
         held = json.loads(text)
@@ -108,7 +108,7 @@ def write_answer(event: Event, answer: Answer) -> Output:
     `block`.
     Changes: nothing.
     Refuses: nothing.
-    Carries: each `G-->>` arrow of S1 to S7 that reaches a role, the main conversation, or the
+    Carries: each `G-->>` arrow of S4 to S6 that reaches a role, the main conversation, or the
     person through Claude Code.
     """
     if event.name == "PreToolUse" and answer.stop:

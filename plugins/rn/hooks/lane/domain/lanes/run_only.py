@@ -10,7 +10,7 @@ from form import Lane, Route
 from place import Call, EndAsked, StartCall
 from runs import Due
 
-from lanes.kind import Held, Kept, TypeInfo, Verdict
+from lanes.kind import Held, Kept, Marking, TypeInfo, Verdict
 
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
@@ -62,7 +62,7 @@ class RunOnly:
         Start, a name that the values don't give standing for any word; False for any other Bash
         command; None for a Call of another tool.
 
-        Carries: the Call checks of S2, S5, and S6.
+        Carries: the Call checks of S4 and S5.
         """
         if call.tool != "Bash":
             return None
@@ -73,15 +73,22 @@ class RunOnly:
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
 
-        Carries: S5 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        Carries: S4 `G->>T: checks the start by the Lane of the skill's Routes, with the moves due`.
+        """
+        return Kept()
+
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """Kept: the Lane checks no Mark.
+
+        Carries: S5 `G->>T: checks the Mark by each Lane on Step n`.
         """
         return Kept()
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
         """Kept: the Lane checks no end.
 
-        Carries: S2 `G->>T: checks the end by each Lane of up`, S5 `G->>T: checks the end by each
-        Lane of each Run's skill`, S6 `G->>T: checks the end by each Lane of the role`.
+        Carries: S4 `G->>T: checks the end by each
+        Lane of each Run's skill`, S5 `G->>T: checks the end by each Lane of the role`.
         """
         return Kept()
 

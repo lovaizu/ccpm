@@ -1,6 +1,6 @@
 """What every lane type offers: what lay.py types shows of it, the faults of a Lane of it, its
-sentence, what it allows of a Call, and its checks of a start and an end, with the verdict each
-check gives."""
+sentence, what it allows of a Call, and its checks of a start, a Mark, and an end, with the verdict
+each check gives."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ from typing import Protocol, Union
 
 from form import Lane, Route
 from place import Call, EndAsked, StartCall
+from run_record import Report
 from runs import Due, Run, Start
 
 
@@ -69,6 +70,17 @@ class Held:
     cwd: str = os.curdir
 
 
+@dataclass(frozen=True)
+class Marking:
+    """A Mark of a Step that a role asks by step.py: the Step's number, the Reads and Marks since
+    the Step began, and the Step's Items as the adapter gave them, None where no Lane of
+    keeps_items lies on the Step, so the adapter wasn't asked."""
+
+    step: int
+    since: tuple[Report, ...]
+    items: tuple[str, ...] | None
+
+
 class LaneType(Protocol):
     """A lane type, which one module of lanes/ gives as `TYPE`."""
 
@@ -94,6 +106,11 @@ class LaneType(Protocol):
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """The Lane's check of a start or resume, with the moves due; Kept where the type doesn't
         check starts."""
+        ...
+
+    def check_mark(self, lane: Lane, marking: Marking, held: Held) -> Verdict:
+        """The Lane's check of a Mark of its Step, with the Reads and Marks since the Step began;
+        Kept where the type doesn't check Marks."""
         ...
 
     def check_end(self, lane: Lane, end: EndAsked, held: Held) -> Verdict:
