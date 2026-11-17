@@ -480,14 +480,12 @@ def _started(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
 def _add_start(plugin: Plugin, run: Run, asked: StartCall, moves: tuple[Due, ...]) -> None:
     """Adds the main conversation's Start that the Routes keep: a start due, with the run values
     of its text; or a resume due, with the run values of the Start it resumes, tied at once to the
-    subagent it resumes, as no later payload ties a SendMessage to it. A start or a resume that no
-    move due opens adds nothing, such as another plugin's start in a Run."""
+    subagent it resumes, as no later payload ties a SendMessage to it. A resume that no move due
+    opens adds nothing."""
     if not asked.resume:
-        due = [d for d in moves if (d.move.role, d.text) == (asked.role, asked.text)]
-        if not due:
-            return
+        due = next(d for d in moves if (d.move.role, d.text) == (asked.role, asked.text))
         started = Started(
-            run.id, asked.role, asked.text, dict(due[0].values), asked.tool_use_id, False
+            run.id, asked.role, asked.text, dict(due.values), asked.tool_use_id, False
         )
         add(plugin.record, started)
         return

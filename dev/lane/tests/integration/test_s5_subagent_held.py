@@ -751,3 +751,15 @@ def test_marks_go_on_after_compact(tmp_path: Any) -> None:
     c.compact()
     stopped = writer.bash(b.step("writer", 4))
     assert stopped.blocked and names_step(stopped.said, keeps_steps(b), 3)
+
+
+@pytest.mark.supports("S5", "Call")
+def test_a_subagents_own_helper_is_left_to_it(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, and writer started.
+    When: writer starts Explore, which isn't changelog's, then sends it a message by SendMessage.
+    Then: the guard lets both through, as neither starts nor resumes a role of changelog."""
+    _, writer = w.writer_started(b)
+    started, helper = writer.start("Explore", "Find the last version", "Find")
+    assert not started.blocked and helper is not None, started.said
+    sent = writer.send(helper, "Look in CHANGELOG.md first.")
+    assert not sent.blocked, sent.said
