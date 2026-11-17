@@ -351,6 +351,59 @@ def test_run_only_fills_in_the_starts_run_values(
     assert TYPES["run_only"].allows(lane, d.bash(command), held) is allowed
 
 
+@pytest.mark.supports("test_an_adapter_gives_each_start_its_text_and_values")
+@pytest.mark.parametrize(
+    "command, allowed",
+    [
+        ("git tag -m 'the first release' v1", True),
+        ('git tag -m "the first release" v1', True),
+        ("git tag -m 'it'\\''s; out' v1", True),
+        ("git tag -m 'the first' release v1", False),
+        ("git tag -m 'the first'; rm CHANGELOG.md v1", False),
+        ('git tag -m "$(rm CHANGELOG.md)" v1', False),
+        ("git tag -m #'\nrm CHANGELOG.md #' v1", False),
+        ("git tag -m *.md v1", False),
+        ("git tag -m {a,b} v1", False),
+        ("git tag -m ~ v1", False),
+    ],
+    ids=[
+        "single quotes",
+        "double quotes",
+        "quotes joined, a semicolon quoted",
+        "two words",
+        "a command after the quotes",
+        "a command in double quotes",
+        "a comment that hides a command",
+        "a glob",
+        "a brace",
+        "a tilde",
+    ],
+)
+def test_run_only_takes_a_quoted_string_as_one_word(command: str, allowed: bool) -> None:
+    """Given: writer's run_only Lane for `git tag -m {message} v1`, and writer's Start with no
+    message among its values.
+    When: the type judges a `git tag` command.
+    Then: it allows a message in quotes as the one shell word that the name stands for, and stops
+    a second word, a command after it, a command that double quotes would run or a comment would
+    hide, and a word that the shell would make into others."""
+    lane = d.run_only("git tag -m {message} v1")
+    assert TYPES["run_only"].allows(lane, d.bash(command), HELD) is allowed
+
+
+@pytest.mark.supports("test_calls_that_keep_every_lane_go_through")
+@pytest.mark.parametrize(
+    "root", [HELD.root, "${CLAUDE_PLUGIN_ROOT}"], ids=["the plugin's folder", "the name of it"]
+)
+def test_run_only_fills_in_the_plugins_folder(root: str) -> None:
+    """Given: writer's run_only Lane for `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tally.py`.
+    When: the type judges the command with the plugin's folder, or the name of it, as the role
+    may type either.
+    Then: it allows both."""
+    lane = d.run_only("python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tally.py")
+    command = f"python3 {root}/scripts/tally.py"
+    assert TYPES["run_only"].allows(lane, d.bash(command), HELD) is True
+
+
 @pytest.mark.supports("test_the_sentence_laid_is_the_sentence_a_stop_gives")
 @pytest.mark.parametrize(
     "path, allowed",

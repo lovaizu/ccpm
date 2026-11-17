@@ -12,10 +12,21 @@ from runs import Due
 
 from lanes.kind import Held, Kept, Marking, TypeInfo, Verdict
 
+# One shell word: characters that end no word, start no command or comment, and expand to no other
+# words, a string in single quotes, which the shell takes as it stands, a string in double quotes
+# that expands nothing, or a character after a backslash, joined with no space between, as
+# `'it'\''s'` is one word.
+_WORD = r"""(?:[^\s;&|<>()$`'"\\#*?\[\]{}~]|'[^']*'|"(?:[^"$`\\]|\\[^\n])*"|\\[^\n])+"""
+# What names the plugin's folder in a command, as a Lane lists it and as a role may type it.
+_ROOT = "${CLAUDE_PLUGIN_ROOT}"
+
 # Each value that a Lane of this type takes, by the name it lies under in the Lane's `args`, with
 # what it is, as lay.py types shows it.
 ARGS: dict[str, str] = {
-    "commands": ("Each command the role may run, word for word, with `{<name>}` for a run value."),
+    "commands": (
+        "Each command the role may run, word for word, with `{<name>}` for a run value, or for"
+        " any one shell word, a quoted string among them, where the Start gives no such value."
+    ),
 }
 
 
@@ -59,16 +70,18 @@ class RunOnly:
 
     def allows(self, lane: Lane, call: Call, held: Held) -> bool | None:
         """True for a Bash command that is one of `commands`, its run values filled in from the
-        Start, a name that the values don't give standing for any word; False for any other Bash
-        command; None for a Call of another tool.
+        Start and the plugin's folder in place of `${CLAUDE_PLUGIN_ROOT}` in both, a name that the
+        values don't give standing for any one shell word; False for any other Bash command; None
+        for a Call of another tool.
 
         Carries: the Call checks of S4 and S5.
         """
         if call.tool != "Bash":
             return None
         values = held.start.values if held.start else {}
-        command = str(call.input.get("command"))
-        return any(re.fullmatch(_pattern(each, values), command) for each in lane.args["commands"])
+        command = str(call.input.get("command")).replace(_ROOT, held.root)
+        commands = (each.replace(_ROOT, held.root) for each in lane.args["commands"])
+        return any(re.fullmatch(_pattern(each, values), command) for each in commands)
 
     def check_start(self, lane: Lane, asked: StartCall, held: Held, due: Sequence[Due]) -> Verdict:
         """Kept: the Lane checks no start.
@@ -97,10 +110,10 @@ TYPE = RunOnly()
 
 
 def _pattern(command: str, values: Mapping[str, str]) -> str:
-    """The command as a pattern: each `{<name>}` its run value, or any word where the values give
-    none, and every other character as it stands."""
+    """The command as a pattern: each `{<name>}` its run value, or any one shell word where the
+    values give none, and every other character as it stands."""
     parts = re.split(r"\{(\w+)\}", command)
     return "".join(
-        re.escape(part) if i % 2 == 0 else re.escape(values[part]) if part in values else r"\S+"
+        re.escape(part) if i % 2 == 0 else re.escape(values[part]) if part in values else _WORD
         for i, part in enumerate(parts)
     )
