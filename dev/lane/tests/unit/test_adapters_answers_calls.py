@@ -373,4 +373,3 @@ def test_a_run_of_result_py_names_its_role_and_result(command: str, read: Any) -
     Then: it gives the role and the Result only for one run of changelog's result.py with two
     arguments."""
     assert result_args(command, ROOT) == read
-

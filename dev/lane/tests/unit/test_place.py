@@ -225,4 +225,3 @@ def test_a_skill_call_of_another_plugin_is_a_call() -> None:
     got = placed("PreToolUse", run, tool_name="Skill", tool_input=tool_input)
     assert got.what == ToolCall(Call("Skill", tool_input, d.REPO, d.REPO))
     assert got.runs == (run,)
-

@@ -543,7 +543,7 @@ def test_a_route_after_a_command_shows_the_person_typing_it() -> None:
     assert rows[-1] == "  the person types approve  start no more"
 
 
-@pytest.mark.supports("test_what_print_showed_is_kept_in_ups_run")
+@pytest.mark.supports("test_lay_of_an_id_no_proposal_has_is_refused")
 def test_a_kept_proposal_is_found_by_its_id(plugin: str) -> None:
     """Given: the walkthrough's Proposal and Steps.
     When: keep keeps it, and find looks for its ID.

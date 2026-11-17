@@ -77,10 +77,6 @@ class Bench:
         """The command by which a role of changelog gives its Result, as Lane lays it."""
         return f"python3 {self.changelog}/hooks/lane/result.py {role} {result}"
 
-    def up_result(self, result: str) -> str:
-        """The command by which up gives its Result."""
-        return f"python3 {self.lane}/hooks/lane/result.py up {result}"
-
     def step(self, role: str, step: int) -> str:
         """The command by which a role of changelog marks a Step done, as Lane lays it."""
         return f"python3 {self.changelog}/hooks/lane/step.py {role} {step}"
@@ -218,7 +214,7 @@ def propose(
     b: Bench, c: Conversation, by_ai: bool = False, make: Make | None = None
 ) -> tuple[Answer, str]:
     """up proposes the walkthrough's Proposal, called by the person's /lane:up changelog or by an
-    AI's Skill call, as S1 and S3 draw, and gives what lay.py print gave, with the ID."""
+    AI's Skill call, as S1 draws, and gives what lay.py print gave, with the ID."""
     called = c.skill("lane:up", "changelog") if by_ai else c.type("/lane:up changelog")
     assert not called.blocked, called.said
     names = {each["name"] for each in types(b, c)["types"]}
@@ -231,17 +227,13 @@ def propose(
 
 
 def lay(b: Bench, make: Make | None = None) -> None:
-    """The person lays the walkthrough's Proposal, as S1 and S2 draw: up proposes, gives what
-    lay.py print showed, the person replies yes, lay.py write lays it, up gives `laid`, and the
-    person types /reload-plugins."""
+    """The person lays the walkthrough's Proposal, as S1 and S2 draw: up proposes, the person
+    replies yes, and lay.py write lays it."""
     c = converse(b)
-    printed, pid = propose(b, c, make=make)
-    assert not c.stop(printed.output).blocked
+    _, pid = propose(b, c, make=make)
     assert not c.type("yes").blocked
     written = c.bash(b.lay_py("write", "changelog", pid))
     assert written.exit_code == 0, written.output
-    assert c.bash(b.up_result("laid")).exit_code == 0
-    assert not c.stop(written.output).blocked
 
 
 def laid(b: Bench, lane: bool = True, make: Make | None = None) -> Conversation:

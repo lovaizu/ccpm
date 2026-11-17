@@ -1,9 +1,7 @@
-"""The integration cases of a role's Steps held by its Marks and Reads: lay.py, the laid guard, the
-lane types reads_whole, reads_none, keeps_steps, and keeps_items, step.py, item.py, and the adapter
-of a step's items, joined through the double of Claude Code, on each path of S6 that a run of
-step.py or item.py, a Read, or an end with a Step unmarked takes, S5's Note on the skill's own
-Marks and Reads, the Proposals that S1 shows or sends back, the Marks that S7 keeps, and the rule
-that what no hook shows comes only from Lane's scripts."""
+"""The integration cases of S5, a subagent held to its steps: the laid guard, the lane types,
+result.py, step.py, item.py, the adapter of a step's items, and the plugin's command joined through
+the double of Claude Code, on each path of S5's sequence, with the rules that S5 keeps and each
+combination that its Strategies name."""
 
 from __future__ import annotations
 
@@ -13,6 +11,158 @@ from typing import Any
 
 import pytest
 import walkthrough as w
+
+
+@pytest.mark.supports("S5", "Lane", "Call")
+def test_calls_that_keep_every_lane_go_through(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, and writer started.
+    When: writer reads CHANGELOG.md, runs `git log --oneline`, and writes CHANGELOG.md anew.
+    Then: the guard lets each call through."""
+    _, writer = w.writer_started(b)
+    assert not writer.read(os.path.join(b.repo, "CHANGELOG.md")).blocked
+    ran = writer.bash("git log --oneline")
+    assert not ran.blocked and "Count lines" in ran.output
+    os.remove(os.path.join(b.repo, "CHANGELOG.md"))
+    assert not writer.write(os.path.join(b.repo, "CHANGELOG.md"), "# Changelog\n").blocked
+
+
+@pytest.mark.supports("S5", "One type gives the sentence, the check, and the steps it suits")
+def test_the_sentence_laid_is_the_sentence_a_stop_gives(b: w.Bench, broken: None) -> None:
+    """Given: the walkthrough's Proposal laid, and writer started.
+    When: writer writes NOTES.md, which its step 3 doesn't name.
+    Then: the guard stops it with the very sentence that agents/writer.md's step 3 holds."""
+    _, writer = w.writer_started(b)
+    stopped = writer.write(os.path.join(b.repo, "NOTES.md"), "notes\n")
+    assert stopped.blocked
+    step = next(
+        line
+        for line in w.read(os.path.join(b.changelog, "agents", "writer.md")).splitlines()
+        if line.startswith("3. ")
+    )
+    sentence = step.removeprefix("3. Write the new entries into `CHANGELOG.md`. ")
+    assert sentence and sentence in stopped.said
+
+
+@pytest.mark.supports(
+    "S5",
+    "Only the main conversation starts the roles",
+    "Role",
+    "A subagent's start of a role stopped by the Lane on its last Step",
+)
+def test_a_subagents_start_of_a_role_is_stopped(b: w.Bench, broken: None) -> None:
+    """Given: the walkthrough's Proposal laid; writer started and gave `written`, so reviewer's
+    start is due.
+    When: writer, before it ends, starts changelog:reviewer itself.
+    Then: the guard stops the start, with the sentence of the Lane on writer's last Step."""
+    _, writer = w.writer_started(b)
+    assert writer.bash(b.result("writer", "written")).exit_code == 0
+    stopped, agent = writer.start("changelog:reviewer", w.TEXT, "reviewer")
+    assert stopped.blocked and agent is None
+    assert stopped.said == (
+        f"changelog: End by running `{b.result('writer', 'written')}`, as a command of its own."
+    )
+
+
+@pytest.mark.supports("S5", "guard")
+def test_a_call_the_guard_cant_check_is_stopped_with_who_must_fix_it(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, writer started, then changelog's hooks/lanes.json
+    left unreadable.
+    When: writer runs `git log --oneline`.
+    Then: the guard stops it, saying it can't read hooks/lanes.json and who must fix it."""
+    _, writer = w.writer_started(b)
+    w.write_files(b.changelog, {"hooks/lanes.json": "{"})
+    stopped = writer.bash("git log --oneline")
+    assert stopped.blocked
+    assert "lanes.json" in stopped.said and "/lane:up" in stopped.said
+
+
+@pytest.mark.supports("S5", "result.py", "Result")
+def test_a_result_the_role_may_not_give_is_refused(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, and writer started.
+    When: writer runs result.py writer good.
+    Then: result.py exits 1 with the Results writer may give, `written`, and no Result moves the
+    Run."""
+    c, writer = w.writer_started(b)
+    refused = writer.bash(b.result("writer", "good"))
+    assert refused.exit_code == 1 and "written" in refused.output
+    run = next(r for r in w.where(b.changelog, b, c.session_id).runs if r.skill == "write")
+    assert run.results == ()
+
+
+@pytest.mark.supports("S5", "result.py", "Start")
+def test_a_result_is_added_for_the_subagents_start(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, and writer started.
+    When: writer runs result.py writer written, and its PostToolUse reaches the guard.
+    Then: writer's Start in the Run holds the Result `written`."""
+    c, writer = w.writer_started(b)
+    assert writer.bash(b.result("writer", "written")).exit_code == 0
+    run = next(r for r in w.where(b.changelog, b, c.session_id).runs if r.skill == "write")
+    assert [s.results for s in run.starts if s.role == "writer"] == [("written",)]
+
+
+@pytest.mark.supports("S5", "A result only from the result script")
+def test_an_end_with_no_result_is_stopped_with_its_last_steps_sentence(
+    b: w.Bench, broken: None
+) -> None:
+    """Given: the walkthrough's Proposal laid, and reviewer started after writer's `written`.
+    When: reviewer ends with the reply `more`, without running result.py.
+    Then: the guard stops the end with reviewer's last Step's sentence and that the script runs as
+    a command of its own, word for word as the README shows, and no start of writer is due."""
+    c = w.laid(b)
+    reviewer = w.to_reviewer(b, c)
+    stopped, reached = reviewer.end("more")
+    assert stopped.blocked and reached is None
+    assert stopped.said == w.ENDED_WITHOUT.replace("/home/you/tally/changelog", b.changelog)
+
+
+@pytest.mark.supports("S5", "lane types", "Result")
+def test_an_end_held_to_the_plugins_command_goes_once_it_gives_0(tmp_path: Any) -> None:
+    """Given: the Proposal laid with an ends_checked Lane on reviewer's step 3 whose command passes
+    only where CHANGELOG.md names 0.2.0, and reviewer started.
+    When: reviewer gives `good` and ends, first before CHANGELOG.md names 0.2.0, then after.
+    Then: the guard stops the first end with the Lane's sentence, and lets the second end."""
+    b = w.bench(str(tmp_path))
+    check = "grep -q 0.2.0 CHANGELOG.md"
+
+    def make() -> dict[str, Any]:
+        proposal = w.walkthrough_proposal()
+        lane = w.lane("reviewer", "agents/reviewer.md", 3, "ends_checked", command=check)
+        proposal["lanes"].append(lane)
+        return proposal
+
+    c = w.laid(b, make=make)
+    reviewer = w.to_reviewer(b, c)
+    assert reviewer.bash(b.result("reviewer", "good")).exit_code == 0
+    stopped, _ = reviewer.end("Gave good.")
+    assert stopped.blocked and check in stopped.said
+    w.write_files(b.repo, {"CHANGELOG.md": "# Changelog\n\n## 0.2.0\n\n- Counts.\n"})
+    ended, reached = reviewer.end("Gave good.")
+    assert not ended.blocked and reached is not None
+
+
+@pytest.mark.supports("S5", "lane types", "Lane")
+def test_an_end_with_no_result_runs_no_command_of_the_plugins(tmp_path: Any) -> None:
+    """Given: the Proposal laid with an ends_checked Lane on reviewer's step 3 whose command writes
+    checked.txt, and reviewer started.
+    When: reviewer ends without running result.py.
+    Then: the guard stops the end with the sentence of the Lane on reviewer's last Step, and the
+    command didn't run, as that Lane is checked first."""
+    b = w.bench(str(tmp_path))
+    check = "touch checked.txt"
+
+    def make() -> dict[str, Any]:
+        proposal = w.walkthrough_proposal()
+        lane = w.lane("reviewer", "agents/reviewer.md", 3, "ends_checked", command=check)
+        proposal["lanes"].append(lane)
+        return proposal
+
+    c = w.laid(b, make=make)
+    reviewer = w.to_reviewer(b, c)
+    stopped, reached = reviewer.end("Every entry is right.")
+    assert stopped.blocked and reached is None
+    assert b.result("reviewer", "good") in stopped.said
+    assert not os.path.exists(os.path.join(b.repo, "checked.txt"))
+
 
 CHANGELOG = "# Changelog\n\n## 0.1.0\n\n- Counts lines.\n- Reads standard input.\n"
 
@@ -150,7 +300,7 @@ def test_lay_writes_the_adapter_of_a_steps_items_into_lanes_json(tmp_path: Any) 
     assert "Never read `tally.py`." in w.read(os.path.join(b.changelog, "agents", "writer.md"))
 
 
-@pytest.mark.supports("S6", "step.py", "Mark", "guard")
+@pytest.mark.supports("S5", "step.py", "Mark", "guard")
 def test_a_step_marked_out_of_order_is_stopped_with_the_step_due(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, and writer started, with no Step marked.
     When: writer runs step.py writer 2.
@@ -162,7 +312,7 @@ def test_a_step_marked_out_of_order_is_stopped_with_the_step_due(tmp_path: Any) 
     assert writers_start(b, c).reports == ()
 
 
-@pytest.mark.supports("S6", "step.py", "Mark", "Start")
+@pytest.mark.supports("S5", "step.py", "Mark", "Start")
 def test_a_step_marked_in_its_turn_is_added_for_the_subagents_start(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, and writer started, which read CHANGELOG.md whole.
     When: writer runs step.py writer 1, and its PostToolUse reaches the guard.
@@ -177,7 +327,13 @@ def test_a_step_marked_in_its_turn_is_added_for_the_subagents_start(tmp_path: An
     assert (mark.role, mark.step, mark.item, mark.agent_id) == ("writer", 1, None, writer.id)
 
 
-@pytest.mark.supports("S6", "Call", "Mark", "lane types")
+@pytest.mark.supports(
+    "S5",
+    "Call",
+    "Mark",
+    "lane types",
+    "A Step's Mark checked for the Step due, then by its Lanes of reads_whole and keeps_items",
+)
 def test_a_step_marked_before_its_file_is_read_whole_goes_back_to_the_step(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, and writer started.
     When: writer runs step.py writer 1 before any Read, then reads CHANGELOG.md whole, then runs
@@ -193,7 +349,7 @@ def test_a_step_marked_before_its_file_is_read_whole_goes_back_to_the_step(tmp_p
     assert not writer.bash(b.step("writer", 1)).blocked
 
 
-@pytest.mark.supports("S6", "Call", "guard")
+@pytest.mark.supports("S5", "Call", "guard")
 def test_a_file_read_in_part_leaves_its_step_unmarked(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, writer started, and CHANGELOG.md of 7 lines, as Read counts
     them.
@@ -214,7 +370,7 @@ def test_a_file_read_in_part_leaves_its_step_unmarked(tmp_path: Any) -> None:
     assert reads == [("CHANGELOG.md", 1, 3), ("CHANGELOG.md", 4, 7)]
 
 
-@pytest.mark.supports("S6", "Call", "guard")
+@pytest.mark.supports("S5", "Call", "guard")
 def test_only_a_read_of_a_path_reads_whole_names_is_kept(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, and writer started.
     When: writer reads README.md, then CHANGELOG.md whole.
@@ -229,7 +385,7 @@ def test_only_a_read_of_a_path_reads_whole_names_is_kept(tmp_path: Any) -> None:
     assert (read.path, read.first, read.last, read.agent_id) == ("CHANGELOG.md", 1, 7, writer.id)
 
 
-@pytest.mark.supports("S6", "lane types", "Call", "A stop gives the step back")
+@pytest.mark.supports("S5", "lane types", "Call", "A stop gives the step back")
 def test_a_call_that_reaches_a_path_never_to_read_is_stopped(tmp_path: Any, broken: None) -> None:
     """Given: the marked Proposal laid, and writer started.
     When: writer reads tally.py by Read.
@@ -240,7 +396,7 @@ def test_a_call_that_reaches_a_path_never_to_read_is_stopped(tmp_path: Any, brok
     assert read.blocked and read.said.startswith("changelog: Never read `tally.py`.")
 
 
-@pytest.mark.supports("S6", "item.py", "Item", "Mark", "adapter")
+@pytest.mark.supports("S5", "item.py", "Item", "Mark", "adapter")
 def test_an_item_of_the_step_due_is_marked(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, writer started, which marked its steps 1 and 2.
     When: writer runs item.py writer dated, and its PostToolUse reaches the guard.
@@ -255,7 +411,12 @@ def test_an_item_of_the_step_due_is_marked(tmp_path: Any) -> None:
     assert (mark.step, mark.item, mark.agent_id) == (3, "dated", writer.id)
 
 
-@pytest.mark.supports("S6", "item.py", "Item")
+@pytest.mark.supports(
+    "S5",
+    "item.py",
+    "Item",
+    "An Item's Mark checked by keeps_items against the adapter's Items for the Step due",
+)
 def test_an_item_not_of_the_step_due_is_stopped_with_the_items_left(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, writer started, which marked its steps 1 and 2.
     When: writer runs item.py writer undated, which the adapter doesn't give for Step 3.
@@ -270,7 +431,7 @@ def test_an_item_not_of_the_step_due_is_stopped_with_the_items_left(tmp_path: An
     assert writers_start(b, c).reports == before
 
 
-@pytest.mark.supports("S6", "Item", "adapter", "lane types")
+@pytest.mark.supports("S5", "Item", "adapter", "lane types")
 def test_a_step_with_an_item_left_goes_back_to_the_step(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, writer started, which marked its steps 1 and 2 and the Item
     `dated`.
@@ -288,7 +449,7 @@ def test_a_step_with_an_item_left_goes_back_to_the_step(tmp_path: Any) -> None:
     assert not writer.bash(b.step("writer", 3)).blocked
 
 
-@pytest.mark.supports("S6", "adapter", "Item")
+@pytest.mark.supports("S5", "adapter", "Item")
 def test_the_adapter_of_a_steps_items_is_handed_the_role_the_step_and_the_run_values(
     tmp_path: Any,
 ) -> None:
@@ -308,7 +469,7 @@ def test_the_adapter_of_a_steps_items_is_handed_the_role_the_step_and_the_run_va
     assert w.handed(b) == [{"args": ["writer", "3"], "values": {}}] * 3
 
 
-@pytest.mark.supports("S6", "adapter", "guard")
+@pytest.mark.supports("S5", "adapter", "guard")
 def test_an_adapter_of_a_steps_items_that_fails_stops_the_mark_with_who_must_fix_it(
     tmp_path: Any,
 ) -> None:
@@ -325,7 +486,7 @@ def test_an_adapter_of_a_steps_items_that_fails_stops_the_mark_with_who_must_fix
         assert "The developer of changelog must fix its adapter" in stopped.said
 
 
-@pytest.mark.supports("S6", "lane types", "Mark")
+@pytest.mark.supports("S5", "lane types", "Mark")
 def test_a_step_with_no_lane_on_it_is_marked_on_its_turn_alone(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, writer started, which read CHANGELOG.md whole and marked
     its step 1.
@@ -339,7 +500,13 @@ def test_a_step_with_no_lane_on_it_is_marked_on_its_turn_alone(tmp_path: Any) ->
     assert not ran.blocked and ran.exit_code == 0
 
 
-@pytest.mark.supports("S6", "step.py", "item.py", "lane types")
+@pytest.mark.supports(
+    "S5",
+    "step.py",
+    "item.py",
+    "lane types",
+    "A call kept where one Lane of each lane type allows it, and Lane's scripts by every type",
+)
 def test_lanes_scripts_go_beside_a_lane_that_runs_only_some_commands(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, whose run_only Lane on writer's step 2 lets it run only
     `git log --oneline` and its result script, and writer started.
@@ -353,7 +520,7 @@ def test_lanes_scripts_go_beside_a_lane_that_runs_only_some_commands(tmp_path: A
     assert stopped.blocked and "Run only `git log --oneline`." in stopped.said
 
 
-@pytest.mark.supports("S6", "step.py", "Mark")
+@pytest.mark.supports("S5", "step.py", "Mark")
 def test_a_run_of_step_py_that_fails_adds_no_mark(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, writer started, which read CHANGELOG.md whole, and
     changelog's hooks/lane/step.py taken away after the lay.
@@ -369,7 +536,7 @@ def test_a_run_of_step_py_that_fails_adds_no_mark(tmp_path: Any) -> None:
     assert all(not hasattr(r, "step") for r in writers_start(b, c).reports)
 
 
-@pytest.mark.supports("S6", "lane types", "Mark")
+@pytest.mark.supports("S5", "lane types", "Mark")
 def test_an_end_with_a_step_unmarked_is_stopped_with_the_step_due(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, writer started, which marked its steps 1 and 2 and gave
     `written`.
@@ -390,7 +557,37 @@ def test_an_end_with_a_step_unmarked_is_stopped_with_the_step_due(tmp_path: Any)
     assert not ended.blocked and reached is not None
 
 
-@pytest.mark.supports("S6", "Mark")
+@pytest.mark.supports(
+    "S5",
+    "lane types",
+    "A subagent's end checked by ends_by_result first, then keeps_steps, then ends_checked",
+)
+def test_an_end_with_a_step_unmarked_runs_no_command_of_the_plugins(tmp_path: Any) -> None:
+    """Given: the marked Proposal laid with an ends_checked Lane on writer's step 4, before its
+    keeps_steps Lane, whose command writes checked.txt, and writer started, which marked its steps
+    1 and 2 and gave `written`.
+    When: writer ends.
+    Then: the guard stops the end with keeps_steps' sentence and Step 3 due, and the command didn't
+    run, as keeps_steps is checked before it."""
+    b = w.marked_bench(str(tmp_path))
+
+    def make() -> dict[str, Any]:
+        proposal = w.marked_proposal()
+        checked = w.lane(
+            "writer", "agents/writer.md", 4, "ends_checked", command="touch checked.txt"
+        )
+        proposal["lanes"].insert(len(proposal["lanes"]) - 1, checked)
+        return proposal
+
+    _, writer = w.marked_writer(b, make=make)
+    through_step_2(b, writer)
+    assert writer.bash(b.result("writer", "written")).exit_code == 0
+    stopped, reached = writer.end("Gave written.")
+    assert stopped.blocked and reached is None and names_step(stopped.said, keeps_steps(b), 3)
+    assert not os.path.exists(os.path.join(b.repo, "checked.txt"))
+
+
+@pytest.mark.supports("S5", "Mark")
 def test_a_mark_of_step_1_begins_a_new_pass(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, writer started, which marked each of its Steps and gave
     `written`.
@@ -407,7 +604,7 @@ def test_a_mark_of_step_1_begins_a_new_pass(tmp_path: Any) -> None:
     assert stopped.blocked and names_step(stopped.said, keeps_steps(b), 2)
 
 
-@pytest.mark.supports("S6", "Result", "lane types")
+@pytest.mark.supports("S5", "Result", "lane types")
 def test_an_end_with_no_result_is_stopped_before_its_steps_are_checked(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, and writer started, with no Step marked and no Result.
     When: writer ends.
@@ -420,7 +617,7 @@ def test_an_end_with_no_result_is_stopped_before_its_steps_are_checked(tmp_path:
     assert keeps_steps(b) not in stopped.said
 
 
-@pytest.mark.supports("S6", "S5", "Mark", "Start")
+@pytest.mark.supports("S5", "S4", "Mark", "Start")
 def test_each_subagent_of_a_role_is_held_to_its_own_marks(tmp_path: Any) -> None:
     """Given: the Proposal laid with keeps_steps on writer's step 4 and an adapter of a start's
     text that gives writer a text for 0.2.0, then 0.3.0, and two Starts of writer running side by
@@ -457,7 +654,7 @@ def test_each_subagent_of_a_role_is_held_to_its_own_marks(tmp_path: Any) -> None
     assert [len(s.reports) for s in run.starts] == [2, 0]
 
 
-@pytest.mark.supports("What no hook shows only from Lane's scripts", "S6", "Mark")
+@pytest.mark.supports("What no hook shows only from Lane's scripts", "S5", "Mark")
 def test_a_reply_that_says_the_steps_are_done_marks_none(tmp_path: Any, broken: None) -> None:
     """Given: the marked Proposal laid, and writer started, which gave `written` and ran no
     step.py.
@@ -478,7 +675,7 @@ def with_skills_steps() -> dict[str, Any]:
     return proposal
 
 
-@pytest.mark.supports("S5", "step.py", "Mark", "Run")
+@pytest.mark.supports("S4", "step.py", "Mark", "Run")
 def test_the_skills_mark_lies_on_its_run_with_no_agent_id(tmp_path: Any) -> None:
     """Given: the Proposal laid with keeps_steps on write's step 1, and the person typed
     /changelog:write.
@@ -505,7 +702,13 @@ def test_the_skills_mark_lies_on_its_run_with_no_agent_id(tmp_path: Any) -> None
     assert not c.stop("The entries are reviewed good.").blocked
 
 
-@pytest.mark.supports("S5", "result.py", "lane types", "Mark")
+@pytest.mark.supports(
+    "S4",
+    "result.py",
+    "lane types",
+    "Mark",
+    "The skill's Result refused by `result.py` while keeps_steps finds a Step unmarked",
+)
 def test_the_skills_result_with_its_step_unmarked_is_refused(tmp_path: Any) -> None:
     """Given: the Proposal laid with keeps_steps on write's step 1, and a run of /changelog:write in
     which reviewer gave `good`, with no step.py.
@@ -523,7 +726,7 @@ def test_the_skills_result_with_its_step_unmarked_is_refused(tmp_path: Any) -> N
     assert (run.results[-1].role, run.ended) == ("reviewer", False)
 
 
-@pytest.mark.supports("S5", "lane types", "Mark")
+@pytest.mark.supports("S4", "lane types", "Mark")
 def test_the_skills_turn_end_with_its_step_unmarked_goes_while_it_waits(tmp_path: Any) -> None:
     """Given: the Proposal laid with keeps_steps on write's step 1, and a run of /changelog:write in
     which writer runs in the background, with no step.py.
@@ -537,7 +740,7 @@ def test_the_skills_turn_end_with_its_step_unmarked_goes_while_it_waits(tmp_path
     assert not c.stop("writer runs; I'll wait for it.").blocked
 
 
-@pytest.mark.supports("S7", "Mark", "Run")
+@pytest.mark.supports("S6", "Mark", "Run")
 def test_marks_go_on_after_compact(tmp_path: Any) -> None:
     """Given: the marked Proposal laid, and writer started, which marked its steps 1 and 2.
     When: the person types /compact, and writer runs step.py writer 4.

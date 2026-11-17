@@ -70,10 +70,21 @@ def only_lanes_entries(plugin: str, entries: Any) -> None:
         json.dump({"hooks": dict(entries)}, f)
 
 
-def lays_without_reply(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) -> None:
-    from lanes.lays_after_reply import LaysAfterReply
+def lays_unshown(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) -> None:
+    """lay.py write, made to find each Proposal with the Steps as they read now, so that it lays
+    what print never showed."""
+    __import__("lay.write")
+    proposals, steps, laid = (sys.modules[f"lay.{m}"] for m in ("proposals", "steps", "laid"))
+    original = proposals.find
 
-    monkeypatch.setattr(LaysAfterReply, "allows", lambda self, lane, call, held: None)
+    def find(plugin: str, proposal_id: str) -> Any:
+        kept = original(plugin, proposal_id)
+        if kept is None:
+            return None
+        now = steps.as_held(laid.unlaid(plugin)[0], kept.proposal.routes)
+        return dataclasses.replace(kept, steps=now)
+
+    take_out(monkeypatch, "lay.proposals", "find", find)
 
 
 def hooks_off_the_copy(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) -> None:
@@ -98,7 +109,7 @@ RULES: dict[str, Callable[[pytest.MonkeyPatch, pytest.FixtureRequest], None]] = 
     "One type gives the sentence, the check, and the steps it suits": stand_in(
         "lanes", "sentence", lambda: lambda lane, last_step, routes: f"Keep to step {lane.step}."
     ),
-    "Laid only on the caller's own act": lays_without_reply,
+    "Laid only as shown": lays_unshown,
     "Lane's part replaced whole": stand_in(
         "lay.hooks_file", "replace_entries", lambda: only_lanes_entries
     ),

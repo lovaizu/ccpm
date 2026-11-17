@@ -1,6 +1,6 @@
-"""The integration cases of S5, a run in the order the user set: the laid guard, the lane types, the
-adapter, and the plugin's command joined through the double of Claude Code, on each path of S5's
-sequence, with the rules and strategies that S5 keeps."""
+"""The integration cases of S4, a run in the order the user set: the laid guard, the lane types, the
+adapter, and the plugin's command joined through the double of Claude Code, on each path of S4's
+sequence, with the rules that S4 keeps and each combination that its Strategies name."""
 
 from __future__ import annotations
 
@@ -71,7 +71,7 @@ def adapter_bench(tmp: str, program: str) -> w.Bench:
     return b
 
 
-@pytest.mark.supports("S5", "Route", "guard")
+@pytest.mark.supports("S4", "Route", "guard")
 def test_a_start_that_isnt_due_is_stopped_with_the_moves_due(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.
     When: the main conversation starts reviewer first.
@@ -83,7 +83,9 @@ def test_a_start_that_isnt_due_is_stopped_with_the_moves_due(b: w.Bench) -> None
     assert w.due("writer") in stopped.said
 
 
-@pytest.mark.supports("S5", "Start")
+@pytest.mark.supports(
+    "S4", "Start", "A resume let through where the Routes open none, moving no Run"
+)
 def test_a_resume_where_the_routes_open_none_moves_no_run(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid; writer gave `written` and ended.
     When: the main conversation resumes writer by SendMessage, which no Route opens.
@@ -102,7 +104,7 @@ def resumes_writer_after_more() -> dict[str, Any]:
     return proposal
 
 
-@pytest.mark.supports("S5", "Start", "Route")
+@pytest.mark.supports("S4", "Start", "Route")
 def test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid with the Route after reviewer's `more` resuming
     writer; writer gave `written`, and reviewer gave `more`.
@@ -126,7 +128,7 @@ def test_a_resume_a_route_makes_due_adds_a_start_and_moves_the_run(b: w.Bench) -
     )
 
 
-@pytest.mark.supports("S5", "Start", "guard")
+@pytest.mark.supports("S4", "Start", "guard")
 def test_a_start_whose_subagent_starts_after_its_post_tool_use_is_held(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.
     When: the main conversation starts writer, whose SubagentStart comes after the PostToolUse of
@@ -140,7 +142,12 @@ def test_a_start_whose_subagent_starts_after_its_post_tool_use_is_held(b: w.Benc
     assert stopped.blocked and "Run only `git log --oneline`." in stopped.said
 
 
-@pytest.mark.supports("S5", "adapter", "Start")
+@pytest.mark.supports(
+    "S4",
+    "adapter",
+    "Start",
+    "A start judged by the Lane of the Routes, with the adapter of a start's text",
+)
 def test_an_adapter_gives_each_start_its_text_and_values(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that gives writer `Write the
     entries for 0.2.0 as writer` and the value version 0.2.0.
@@ -155,7 +162,7 @@ def test_an_adapter_gives_each_start_its_text_and_values(tmp_path: Any) -> None:
     assert not started.blocked and writer
 
 
-@pytest.mark.supports("S5", "adapter", "Start", "guard")
+@pytest.mark.supports("S4", "adapter", "Start", "guard")
 def test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that gives, for writer, that no
     work waits for it, as `0.2.0 waits for your approval`.
@@ -174,7 +181,7 @@ def test_a_start_no_work_waits_for_is_left_out_and_the_turn_ends(tmp_path: Any) 
     assert not c.stop("0.2.0 waits for your approval.").blocked
 
 
-@pytest.mark.supports("S5", "adapter", "Result")
+@pytest.mark.supports("S4", "adapter", "Result")
 def test_a_start_no_work_waits_for_after_a_result_is_said_with_why(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that gives writer Lane's text,
     and, for reviewer, that no work waits for it, as `0.2.0 waits for your approval`.
@@ -191,7 +198,7 @@ def test_a_start_no_work_waits_for_after_a_result_is_said_with_why(tmp_path: Any
     assert "Start `changelog:reviewer`" not in reached.said
 
 
-@pytest.mark.supports("S5", "adapter")
+@pytest.mark.supports("S4", "adapter")
 def test_an_adapter_that_fails_at_the_skills_call_lets_the_call_run(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that exits 1 with `no version to
     write yet`.
@@ -215,7 +222,13 @@ print(json.dumps({"text": "Write the entries in the run's worktree"}))
 """
 
 
-@pytest.mark.supports("S5", "adapter", "Start", "Run")
+@pytest.mark.supports(
+    "S4",
+    "adapter",
+    "Start",
+    "Run",
+    "The adapter of a start's text failing at the skill's call, asked again after each later call",
+)
 def test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_text(
     tmp_path: Any,
 ) -> None:
@@ -243,7 +256,7 @@ def test_a_start_whose_adapter_failed_at_the_call_is_given_once_it_gives_its_tex
     assert not started.blocked and writer
 
 
-@pytest.mark.supports("S5", "adapter", "guard", "user")
+@pytest.mark.supports("S4", "adapter", "guard", "user")
 def test_the_turns_end_goes_while_the_adapter_cant_give_a_starts_text_yet(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that fails with `enter the run's
     worktree first` until the conversation works in a worktree, and then gives writer `Write the
@@ -285,7 +298,7 @@ def with_both_adapters() -> dict[str, Any]:
     return proposal
 
 
-@pytest.mark.supports("S5", "S7", "adapter", "Kept results", "Start")
+@pytest.mark.supports("S4", "S6", "adapter", "Kept results", "Start")
 def test_a_pick_up_whose_adapter_fails_at_the_call_lets_the_call_run(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
     `written`, and an adapter of a start's text that fails with `enter the run's worktree first`
@@ -325,7 +338,13 @@ else:
 """
 
 
-@pytest.mark.supports("S5", "adapter", "Start", "Route")
+@pytest.mark.supports(
+    "S4",
+    "adapter",
+    "Start",
+    "Route",
+    "A start due beside each Start of its role that runs, while the adapter gives another text",
+)
 def test_a_start_stays_due_beside_a_start_of_its_role_with_another_text(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text that gives writer `Write the
     entries for <version>` and the value version for 0.2.0, then 0.3.0, each while no Start that
@@ -359,7 +378,7 @@ def test_a_start_stays_due_beside_a_start_of_its_role_with_another_text(tmp_path
     ]
 
 
-@pytest.mark.supports("S5", "adapter")
+@pytest.mark.supports("S4", "adapter")
 def test_an_adapter_that_fails_at_a_later_move_gives_why_and_who(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of a start's text, which gives writer's text, then
     fails as writer gives `written`.
@@ -411,44 +430,7 @@ def aside_bench(tmp: str) -> tuple[w.Bench, w.Conversation]:
     return b, w.Conversation(b.repo, [b.lane, b.changelog, lint], b.env, b.temp)
 
 
-@pytest.mark.supports("S5", "guard", "Run")
-def test_the_run_stands_aside_while_another_plugins_skill_runs(tmp_path: Any) -> None:
-    """Given: the Proposal laid with reviewer's `good` calling the skill check of another plugin,
-    lint, and a Route after lint's run hands back that starts writer or starts no more.
-    When: reviewer gives `good`, and the main conversation calls lint:check by the Skill tool, then
-    runs `git status`, then starts writer.
-    Then: the guard lets each call through while lint's run holds the main conversation."""
-    b, c = aside_bench(str(tmp_path))
-    reviewer = w.to_reviewer(b, c)
-    assert "lint:check" in w.give(b, reviewer, "good").said
-    assert not c.skill("lint:check", "").blocked
-    assert not c.bash("git status").blocked
-    started, _ = w.start(c, "writer")
-    assert not started.blocked
-
-
-@pytest.mark.supports("S5", "guard", "Run", "Start")
-def test_the_move_after_another_plugins_skill_brings_the_run_back(tmp_path: Any) -> None:
-    """Given: the Proposal laid with reviewer's `good` calling lint's skill check, and a Route after
-    lint's run hands back that starts writer; reviewer gave `good`, and the main conversation
-    called lint:check.
-    When: the main conversation starts writer, the move after that call, and writer runs
-    `git status`.
-    Then: the guard adds writer's Start on write's Run, which no longer stands aside, and stops
-    writer's call with its step's sentence."""
-    b, c = aside_bench(str(tmp_path))
-    w.give(b, w.to_reviewer(b, c), "good")
-    assert not c.skill("lint:check", "").blocked
-    started, writer = w.start(c, "writer")
-    assert not started.blocked and writer
-    (run,) = w.where(b.changelog, b, c.session_id).runs
-    assert not run.aside, "the Run comes back"
-    assert [s.role for s in run.starts] == ["writer", "reviewer", "writer"]
-    stopped = writer.bash("git status")
-    assert stopped.blocked and "Run only `git log --oneline`." in stopped.said
-
-
-@pytest.mark.supports("S5", "lane types", "Call")
+@pytest.mark.supports("S4", "lane types", "Call")
 def test_another_plugins_skill_no_move_names_is_checked_as_a_call(tmp_path: Any) -> None:
     """Given: the Proposal laid with a write_only Lane on write's step 1 for `CHANGELOG.md`, lint
     loaded, and the person typed /changelog:write.
@@ -466,7 +448,7 @@ def test_another_plugins_skill_no_move_names_is_checked_as_a_call(tmp_path: Any)
     assert stopped.blocked and "Write only `CHANGELOG.md`." in stopped.said
 
 
-@pytest.mark.supports("S5", "Run", "user")
+@pytest.mark.supports("S4", "Run", "user")
 def test_a_command_of_another_plugin_starts_no_run(tmp_path: Any) -> None:
     """Given: the walkthrough's Proposal laid, and another plugin, other, with its skill write.
     When: the person types /other:write.
@@ -479,7 +461,7 @@ def test_a_command_of_another_plugin_starts_no_run(tmp_path: Any) -> None:
     assert w.where(b.changelog, b, c.session_id).runs == ()
 
 
-@pytest.mark.supports("S5", "Route", "Run")
+@pytest.mark.supports("S4", "Route", "Run")
 def test_a_command_of_another_plugin_leaves_the_moves_due(tmp_path: Any) -> None:
     """Given: the Proposal laid with a Route after /changelog:pause that starts no more, another
     plugin, other, with its skill pause, and writer gave `written`, so reviewer's start is due.
@@ -498,7 +480,7 @@ def test_a_command_of_another_plugin_leaves_the_moves_due(tmp_path: Any) -> None
     assert not started.blocked
 
 
-@pytest.mark.supports("S5", "lane types", "Call")
+@pytest.mark.supports("S4", "lane types", "Call")
 def test_a_call_of_the_main_conversation_that_breaks_a_lane_is_stopped(tmp_path: Any) -> None:
     """Given: the Proposal laid with a write_only Lane on write's step 1 for `CHANGELOG.md`, and the
     person typed /changelog:write.
@@ -512,7 +494,7 @@ def test_a_call_of_the_main_conversation_that_breaks_a_lane_is_stopped(tmp_path:
     assert not c.bash("git status").blocked
 
 
-@pytest.mark.supports("S5", "lane types", "result.py")
+@pytest.mark.supports("S4", "lane types", "result.py")
 def test_the_skills_result_script_goes_beside_a_lane_that_allows_other_calls(tmp_path: Any) -> None:
     """Given: the Proposal laid with a write_only Lane on write's step 1 for `CHANGELOG.md`, and
     reviewer gave `good`.
@@ -527,7 +509,7 @@ def test_the_skills_result_script_goes_beside_a_lane_that_allows_other_calls(tmp
     assert all(r.ended for r in w.where(b.changelog, b, c.session_id).runs)
 
 
-@pytest.mark.supports("S5", "Route", "Run", "user")
+@pytest.mark.supports("S4", "Route", "Run", "user")
 def test_a_move_that_waits_for_the_person_lets_the_turn_end(tmp_path: Any) -> None:
     """Given: the Proposal laid with reviewer's `good` waiting for /changelog:approve, and a Route
     after approve that starts no more.
@@ -550,7 +532,12 @@ def test_a_move_that_waits_for_the_person_lets_the_turn_end(tmp_path: Any) -> No
     assert "Start no more subagents." in c.type("/changelog:approve").said
 
 
-@pytest.mark.supports("S5", "Route", "Run")
+@pytest.mark.supports(
+    "S4",
+    "Route",
+    "Run",
+    "A typed command that a Route goes after, its moves due in place of those before",
+)
 def test_a_command_a_route_goes_after_takes_the_place_of_the_moves_due(tmp_path: Any) -> None:
     """Given: the Proposal laid with a Route after /changelog:pause that starts no more, and
     writer gave `written`, so reviewer's start is due.
@@ -567,7 +554,9 @@ def test_a_command_a_route_goes_after_takes_the_place_of_the_moves_due(tmp_path:
     assert stopped.blocked
 
 
-@pytest.mark.supports("S5", "Start", "Result")
+@pytest.mark.supports(
+    "S4", "Start", "Result", "A subagent that ends with no Result, its start due again"
+)
 def test_a_subagent_stopped_by_task_stop_is_due_again(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and writer started by /changelog:write.
     When: the main conversation stops writer by TaskStop.
@@ -577,7 +566,11 @@ def test_a_subagent_stopped_by_task_stop_is_due_again(b: w.Bench) -> None:
     assert "writer" in told.said and w.due("writer") in told.said
 
 
-@pytest.mark.supports("S5", "guard")
+@pytest.mark.supports(
+    "S4",
+    "guard",
+    "A turn's end stopped by a move due with its text while no subagent runs, before any Lane",
+)
 def test_the_turns_end_while_a_start_is_due_is_stopped(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid; reviewer gave `more`, and writer gave `written`
     again.
@@ -594,7 +587,7 @@ def test_the_turns_end_while_a_start_is_due_is_stopped(b: w.Bench) -> None:
     assert w.due("reviewer") in stopped.said
 
 
-@pytest.mark.supports("S5", "guard", "Start")
+@pytest.mark.supports("S4", "guard", "Start")
 def test_the_turns_end_while_the_runs_subagent_runs_goes(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and writer started in the background.
     When: the main conversation ends its turn while writer runs.
@@ -603,7 +596,7 @@ def test_the_turns_end_while_the_runs_subagent_runs_goes(b: w.Bench) -> None:
     assert not c.stop("writer is working.").blocked
 
 
-@pytest.mark.supports("S5", "lane types", "Result")
+@pytest.mark.supports("S4", "lane types", "Result")
 def test_the_skills_end_held_to_its_command_goes_once_it_gives_0(tmp_path: Any) -> None:
     """Given: the Proposal laid with an ends_checked Lane on write's step 1 whose command passes
     only where the Result is `good` and CHANGELOG.md names 0.2.0.
@@ -621,7 +614,9 @@ def test_the_skills_end_held_to_its_command_goes_once_it_gives_0(tmp_path: Any) 
     assert not c.stop("Done.").blocked
 
 
-@pytest.mark.supports("S5", "Run", "Route")
+@pytest.mark.supports(
+    "S4", "Run", "Route", "The main conversation's call judged by each Lane of each Run's skill"
+)
 def test_a_second_skills_run_beside_the_first_keeps_its_own_routes(tmp_path: Any) -> None:
     """Given: the Proposal laid with a second skill, check, whose Route starts reviewer first, and
     writer started by /changelog:write.
@@ -660,3 +655,56 @@ def test_a_second_skills_run_beside_the_first_keeps_its_own_routes(tmp_path: Any
         "changelog: writer gave `written`. Start `changelog:reviewer` with `Carry out your steps`."
     )
     assert gave in reached.said
+
+
+@pytest.mark.supports("S1", "up", "user", "Proposal")
+def test_up_shows_the_walkthroughs_proposal(b: w.Bench) -> None:
+    """Given: changelog as the walkthrough gives it, with no Lane laid.
+    When: the person types /lane:up changelog, and up hands the walkthrough's Proposal to lay.py
+    print.
+    Then: lay.py print exits 0 and shows the Routes, each Step as it'll read, and the ID, word for
+    word as the README shows them."""
+    c = w.converse(b)
+    printed, pid = w.propose(b, c)
+    assert printed.exit_code == 0
+    assert printed.output.rstrip("\n") == w.shown(pid)
+
+
+@pytest.mark.supports("S4", "Route", "Start", "Result", "Run", "guard")
+def test_the_walkthroughs_run_moves_in_the_order_the_user_set(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, and Claude Code's plugins reloaded.
+    When: the person types /changelog:write, and the main conversation starts each subagent it's
+    told to, writer giving `written`, reviewer `more`, writer `written`, and reviewer `good`.
+    Then: Lane gives each start due and each Result with its moves, word for word as the README
+    shows, and the skill's result.py write good ends the Run."""
+    c = w.laid(b)
+    assert w.due("writer") in c.type("/changelog:write").said
+    for role, result, then in (
+        ("writer", "written", w.due("reviewer")),
+        ("reviewer", "more", w.due("writer")),
+        ("writer", "written", w.due("reviewer")),
+        ("reviewer", "good", "changelog: reviewer gave `good`. Start no more subagents."),
+    ):
+        started, agent = w.start(c, role)
+        assert not started.blocked and agent
+        reached = w.give(b, agent, result)
+        assert f"changelog: {role} gave `{result}`." in reached.said
+        assert then.split(": ", 1)[-1] in reached.said
+    assert c.bash(b.result("write", "good")).exit_code == 0
+    assert all(r.ended for r in w.where(b.changelog, b, c.session_id).runs)
+
+
+@pytest.mark.supports("S5", "A stop gives the step back", "Lane")
+def test_a_call_that_breaks_a_lane_gets_its_steps_sentence(b: w.Bench, broken: None) -> None:
+    """Given: the walkthrough's Proposal laid, and writer started.
+    When: writer runs `git -C <tally> log --oneline`.
+    Then: the guard stops it with the step's sentence and each command writer may run, word for
+    word as the README shows."""
+    _, writer = w.writer_started(b)
+    stopped = writer.bash(f"git -C {b.repo} log --oneline")
+    assert stopped.blocked
+    assert stopped.said == (
+        "changelog: Run only `git log --oneline`.\n"
+        "The commands you may run, each word for word: `git log --oneline`,"
+        f" `{b.result('writer', 'written')}`."
+    )

@@ -39,7 +39,6 @@ def test_types_give_each_lane_type_and_the_form_of_a_proposal(b: w.Bench) -> Non
     given = propose_part(b, c)
     args = {each["name"]: set(each["args"]) for each in given["types"]}
     assert args["routes"] == args["ends_by_result"] == set()
-    assert args["gives_shown"] == args["lays_after_reply"] == set()
     assert (args["run_only"], args["write_only"]) == ({"commands"}, {"paths"})
     assert args["ends_checked"] == {"command"}
     for each in given["types"]:
@@ -241,16 +240,3 @@ def test_a_steps_file_a_skill_and_its_command_share_is_the_skills(tmp_path: obje
     write_block = printed.output.split("\n\n")[1]
     assert write_block.startswith("1. Have the entries written and reviewed."), "write's step 1"
     assert printed.output.count("Have the entries written and reviewed.") == 1, "shown once"
-
-
-@pytest.mark.supports("S1", "guard", "Run")
-def test_what_print_showed_is_kept_in_ups_run(b: w.Bench) -> None:
-    """Given: the person typed /lane:up changelog.
-    When: lay.py print shows the walkthrough's Proposal, and its PostToolUse reaches the guard.
-    Then: up's Run, called by a person, holds what lay.py print showed with the Proposal's ID."""
-    c = w.converse(b)
-    printed, pid = w.propose(b, c)
-    run = next(r for r in w.where(b.lane, b, c.session_id).runs if r.skill == "up")
-    assert run.by == "person"
-    assert run.shown[-1].proposal_id == pid
-    assert run.shown[-1].words.rstrip("\n") == printed.output.rstrip("\n")

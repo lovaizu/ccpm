@@ -1,6 +1,6 @@
-"""The integration cases of S2, a person approves or asks a change: the guard on up, lay.py write,
-and up joined through the double of Claude Code, on each path of S2's sequence, with the rules that
-S2 keeps."""
+"""The integration cases of S2, the user, a person or an AI, approves or asks a change: up and
+lay.py write joined through the double of Claude Code, on each path of S2's sequence, with the
+rules that S2 keeps."""
 
 from __future__ import annotations
 
@@ -9,42 +9,6 @@ import os
 
 import pytest
 import walkthrough as w
-
-
-@pytest.mark.supports("S2", "guard", "lane types")
-def test_ups_end_without_what_print_showed_is_stopped(b: w.Bench) -> None:
-    """Given: lay.py print showed the walkthrough's Proposal in up's Run.
-    When: up ends its turn with a summary in place of what lay.py print showed.
-    Then: the guard stops the end, with what lay.py print showed."""
-    c = w.converse(b)
-    printed, _ = w.propose(b, c)
-    stopped = c.stop("I proposed three rules and four routes. Reply yes to lay them.")
-    assert stopped.blocked
-    assert printed.output.rstrip("\n") in stopped.said
-
-
-@pytest.mark.supports("S2", "guard")
-def test_ups_end_with_what_print_showed_goes(b: w.Bench) -> None:
-    """Given: lay.py print showed the walkthrough's Proposal in up's Run.
-    When: up ends its turn with what lay.py print showed, word for word.
-    Then: the guard lets it end."""
-    c = w.converse(b)
-    printed, _ = w.propose(b, c)
-    assert not c.stop(printed.output).blocked
-
-
-@pytest.mark.supports("S2", "Laid only on the caller's own act", "Approval")
-def test_lay_before_the_persons_reply_is_stopped(b: w.Bench, broken: None) -> None:
-    """Given: lay.py print showed the walkthrough's Proposal in a Run of up that a person called.
-    When: up runs lay.py write changelog with the ID before the person replies.
-    Then: the guard stops it, saying to lay only after the person's reply, and nothing is laid."""
-    c = w.converse(b)
-    printed, pid = w.propose(b, c)
-    assert not c.stop(printed.output).blocked
-    stopped = c.bash(b.lay_py("write", "changelog", pid))
-    assert stopped.blocked
-    assert "reply" in stopped.said
-    assert not os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
 
 
 @pytest.mark.supports("S2", "Step", "The steps are the one source")
@@ -68,22 +32,6 @@ def test_a_change_is_written_into_its_step_and_proposed_again(b: w.Bench, broken
     assert not any("Run only" in t or "Write only" in t or "End by" in t for t in texts)
 
 
-@pytest.mark.supports("S2", "Result")
-def test_neither_yes_nor_a_change_ends_ups_run_unlaid(b: w.Bench) -> None:
-    """Given: up gave what lay.py print showed of the walkthrough's Proposal.
-    When: the person replies that they'll leave it, and up runs result.py up left.
-    Then: result.py gives 0, and a later lay.py write of that ID is refused, as up's Run has
-    ended."""
-    c = w.converse(b)
-    printed, pid = w.propose(b, c)
-    assert not c.stop(printed.output).blocked
-    assert not c.type("Leave it for now.").blocked
-    assert c.bash(b.up_result("left")).exit_code == 0
-    later = c.bash(b.lay_py("write", "changelog", pid))
-    assert later.blocked or later.exit_code == 1
-    assert not os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
-
-
 @pytest.mark.supports("S2", "lay.py")
 def test_lay_of_an_id_no_proposal_has_is_refused(b: w.Bench) -> None:
     """Given: up gave what lay.py print showed, and the person replied yes.
@@ -99,8 +47,8 @@ def test_lay_of_an_id_no_proposal_has_is_refused(b: w.Bench) -> None:
     assert not os.path.exists(os.path.join(b.changelog, "hooks", "lanes.json"))
 
 
-@pytest.mark.supports("S2", "lay.py", "Step")
-def test_lay_after_the_steps_changed_is_refused(b: w.Bench) -> None:
+@pytest.mark.supports("S2", "lay.py", "Step", "Laid only as shown")
+def test_lay_after_the_steps_changed_is_refused(b: w.Bench, broken: None) -> None:
     """Given: up gave what lay.py print showed, then reviewer's step 1 changed in its file.
     When: the person replies yes, and up runs lay.py write changelog with the ID.
     Then: lay.py write exits 1, saying the Steps changed, and every file stands as it was."""
@@ -167,3 +115,45 @@ def test_lay_again_replaces_what_the_earlier_lay_added(b: w.Bench, broken: None)
     written = json.loads(w.read(path))["hooks"]
     assert written["SessionStart"] == [{"hooks": [own]}]
     assert len(written["PreToolUse"]) == 1
+
+
+@pytest.mark.supports("S2", "user")
+def test_an_ai_lays_by_its_own_run_of_lay(b: w.Bench) -> None:
+    """Given: an AI in the main conversation called up by the Skill tool, and lay.py print showed
+    the walkthrough's Proposal.
+    When: it runs lay.py write changelog with the ID, with no person's prompt since.
+    Then: the guard lets it through, and lay.py write lays the Proposal."""
+    c = w.converse(b)
+    printed, pid = w.propose(b, c, by_ai=True)
+    assert not c.stop(printed.output).blocked
+    written = c.bash(b.lay_py("write", "changelog", pid))
+    assert not written.blocked
+    assert written.exit_code == 0
+    assert os.path.isfile(os.path.join(b.changelog, "hooks", "lanes.json"))
+
+
+@pytest.mark.supports("S2", "Laid", "lay.py", "user")
+def test_yes_lays_the_proposal_into_the_plugin(b: w.Bench) -> None:
+    """Given: up gave what lay.py print showed of the walkthrough's Proposal.
+    When: the person replies yes, and up runs lay.py write changelog with the ID.
+    Then: lay.py write exits 0 and shows each file written, as the README shows; each Step holds
+    its sentence; hooks/lane/ holds Lane's code; lanes.json holds the Proposal and the Laid; and
+    result.py up laid gives 0."""
+    c = w.converse(b)
+    printed, pid = w.propose(b, c)
+    assert not c.stop(printed.output).blocked
+    assert not c.type("yes").blocked
+    written = c.bash(b.lay_py("write", "changelog", pid))
+    assert written.exit_code == 0
+    assert written.output.rstrip("\n") == w.WROTE
+    writer = w.read(os.path.join(b.changelog, "agents", "writer.md"))
+    assert "2. Read the commits since then with `git log --oneline`. Run only `git log" in writer
+    assert (
+        "4. Reply with the entries you wrote. End by running"
+        f" `{w.RESULT} writer written`, as a command of its own." in writer
+    )
+    assert os.path.isfile(os.path.join(b.changelog, "hooks", "lane", "hook.py"))
+    lanes = json.loads(w.read(os.path.join(b.changelog, "hooks", "lanes.json")))
+    assert len(lanes["routes"]) == 4
+    files = {"skills/write/SKILL.md", "agents/writer.md", "agents/reviewer.md"}
+    assert {s["file"] for s in lanes["laid"]["sentences"]} == files

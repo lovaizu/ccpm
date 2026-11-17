@@ -529,7 +529,7 @@ Strategies:
 - A Step's Mark checked for the Step due, then by its Lanes of reads_whole and keeps_items\
   The Marks alone bound a Step, so only there does a Lane see its reads and Items, keeping KR1.1
   high.
-- An Item's Mark checked by keeps_items against the Items that the adapter gives for the Step due\
+- An Item's Mark checked by keeps_items against the adapter's Items for the Step due\
   Only the plugin knows each Step's checklist, and Lane names no plugin, keeping KR1.1 high.
 - A subagent's end checked by ends_by_result first, then keeps_steps, then ends_checked\
   The plugin's command runs only once the Result and each Step hold, so a stop names the step left.

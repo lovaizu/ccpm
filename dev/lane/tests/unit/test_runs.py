@@ -213,7 +213,7 @@ def test_the_skill_may_give_the_result_a_move_due_names() -> None:
     assert may_give(c, "write", d.ROUTES_OF_WRITE) == ("good",)
 
 
-@pytest.mark.supports("test_neither_yes_nor_a_change_ends_ups_run_unlaid")
+@pytest.mark.supports("test_a_result_the_role_may_not_give_is_refused")
 def test_nothing_may_be_given_in_a_run_that_ended() -> None:
     """Given: write's Run, ended, with writer's Start still marked running.
     When: may_give asks what writer may give.

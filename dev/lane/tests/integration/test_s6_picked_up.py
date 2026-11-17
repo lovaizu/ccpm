@@ -1,6 +1,7 @@
-"""The integration cases of S7, a run picked up, and of the rules that hold a Run apart from all
+"""The integration cases of S6, a run picked up, and of the rules that hold a Run apart from all
 else: the laid guard, the run record, and the adapter of the plugin's records joined through the
-double of Claude Code, on each path of S7's sequence."""
+double of Claude Code, on each path of S6's sequence, with each combination that its Strategies
+name."""
 
 from __future__ import annotations
 
@@ -52,7 +53,7 @@ def with_records() -> dict[str, Any]:
     return proposal
 
 
-@pytest.mark.supports("S7", "The run kept in a file", "Run")
+@pytest.mark.supports("S6", "The run kept in a file", "Run")
 def test_a_run_goes_on_after_compact(b: w.Bench, broken: None) -> None:
     """Given: the walkthrough's Proposal laid, and writer gave `written` in a run of
     /changelog:write.
@@ -64,7 +65,12 @@ def test_a_run_goes_on_after_compact(b: w.Bench, broken: None) -> None:
     assert w.due("reviewer") in c.type("/changelog:write").said
 
 
-@pytest.mark.supports("S7", "adapter", "Run")
+@pytest.mark.supports(
+    "S6",
+    "adapter",
+    "Run",
+    "The skill's call placed by the run record first, then by the adapter of the plugin's records",
+)
 def test_a_run_with_an_adapter_goes_on_after_compact(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records, and writer gave `written`
     in a run of /changelog:write, which changelog's records then hold.
@@ -81,7 +87,7 @@ def test_a_run_with_an_adapter_goes_on_after_compact(tmp_path: Any) -> None:
     assert [(r.role, r.result) for r in run.results] == [("writer", "written")]
 
 
-@pytest.mark.supports("S7", "Run")
+@pytest.mark.supports("S6", "Run")
 def test_a_new_conversation_without_an_adapter_starts_over(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid with no adapter, and writer gave `written` in an
     earlier conversation.
@@ -92,7 +98,7 @@ def test_a_new_conversation_without_an_adapter_starts_over(b: w.Bench) -> None:
     assert w.due("writer") in w.converse(b).type("/changelog:write").said
 
 
-@pytest.mark.supports("S7", "adapter", "Kept results")
+@pytest.mark.supports("S6", "adapter", "Kept results")
 def test_a_new_conversation_picks_up_from_the_kept_results(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
     `written`.
@@ -115,7 +121,14 @@ def resumes_writer_after_more() -> dict[str, Any]:
     return proposal
 
 
-@pytest.mark.supports("S7", "adapter", "Kept results", "Start", "Route")
+@pytest.mark.supports(
+    "S6",
+    "adapter",
+    "Kept results",
+    "Start",
+    "Route",
+    "A resume due of a role that this conversation never started, given as its start",
+)
 def test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start(tmp_path: Any) -> None:
     """Given: the Proposal laid with the Route after reviewer's `more` resuming writer, and an
     adapter of changelog's records that gives writer's `written`, then reviewer's `more`.
@@ -142,7 +155,7 @@ def test_a_resume_due_of_a_role_never_started_here_is_due_as_its_start(tmp_path:
     assert reviewer in w.give(b, writer, "written").said
 
 
-@pytest.mark.supports("S7", "adapter", "Kept results", "Route")
+@pytest.mark.supports("S6", "adapter", "Kept results", "Route")
 def test_kept_results_past_a_route_that_resumes_a_role_are_picked_up(tmp_path: Any) -> None:
     """Given: the Proposal laid with the Route after reviewer's `more` resuming writer, and an
     adapter of changelog's records that gives writer's `written`, reviewer's `more`, then writer's
@@ -166,7 +179,7 @@ def test_kept_results_past_a_route_that_resumes_a_role_are_picked_up(tmp_path: A
     assert where in called.said and w.due("reviewer") in called.said
 
 
-@pytest.mark.supports("S7", "adapter", "Kept results")
+@pytest.mark.supports("S6", "adapter", "Kept results")
 def test_the_words_typed_tell_a_new_request_from_a_pick_up(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
     `written` only where the words it reads on standard input begin with `--continue`.
@@ -182,7 +195,7 @@ def test_the_words_typed_tell_a_new_request_from_a_pick_up(tmp_path: Any) -> Non
     assert new_run in w.converse(b).type("/changelog:write 0.3.0").said
 
 
-@pytest.mark.supports("S7", "adapter", "Kept results")
+@pytest.mark.supports("S6", "adapter", "Kept results")
 def test_kept_results_that_reach_the_end_start_a_new_run(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives writer's
     `written` and reviewer's `good`, which reaches a Route that starts no more.
@@ -193,7 +206,7 @@ def test_kept_results_that_reach_the_end_start_a_new_run(tmp_path: Any) -> None:
     assert w.due("writer") in c.type("/changelog:write").said
 
 
-@pytest.mark.supports("S7", "adapter")
+@pytest.mark.supports("S6", "adapter")
 def test_no_kept_results_start_a_new_run(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives no results.
     When: the person types /changelog:write in a new conversation.
@@ -202,7 +215,7 @@ def test_no_kept_results_start_a_new_run(tmp_path: Any) -> None:
     assert w.due("writer") in c.type("/changelog:write").said
 
 
-@pytest.mark.supports("S7", "adapter", "Kept results")
+@pytest.mark.supports("S6", "adapter", "Kept results")
 def test_kept_results_off_the_routes_stop_the_command(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that gives reviewer's
     `good` first, which no Route leads to.
@@ -214,7 +227,7 @@ def test_kept_results_off_the_routes_stop_the_command(tmp_path: Any) -> None:
     assert stopped.blocked and "reviewer" in stopped.said
 
 
-@pytest.mark.supports("S7", "adapter")
+@pytest.mark.supports("S6", "adapter")
 def test_an_adapter_of_records_that_fails_stops_the_command(tmp_path: Any) -> None:
     """Given: the Proposal laid with an adapter of changelog's records that exits 1 with
     `records.jsonl is not JSON`.

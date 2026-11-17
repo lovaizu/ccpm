@@ -197,39 +197,45 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
-              "about": "The cases",
-              "decided": "from the architecture after the cut: a unit case for each part, an integration case for each combination it defines; each case of an element the cut removed deleted",
+              "about": "The E2E cases",
+              "decided": "none, as Lane has no E2E test; KR1.1 and KR1.2 come from the integration cases",
               "by": "user"
             }
           ]
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "How Performance testing times each hook event with Python's start in it, as the double runs each hook in the case's process",
+              "decided": null,
+              "by": null
+            }
+          ]
         }
       ]
     },
