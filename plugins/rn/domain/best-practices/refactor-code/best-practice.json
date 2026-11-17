@@ -1,16 +1,16 @@
 {
  "goal": {
-  "what": "Maintainers, people or AI agents who come to the code at any time, change it quickly without breaking another behavior.",
+  "what": "Maintainers, people or AI agents who come to the code at any time, change it quickly in one place, as each change of structure keeps every behavior that it reaches.",
   "critical_success_factors": [
    {
     "id": "C1",
-    "what": "Every caller gets the same behavior after a change of structure.",
+    "what": "Each behavior that a change of structure reaches holds as it did, as a test shows.",
     "necessary_conditions": [
      {
       "id": "N1",
       "about": "the whole",
-      "what": "After a change of structure, does each caller, whether a person, a script, or other code, get every behavior it got before?",
-      "why": "A maintainer changes the structure without fear only when no caller can tell that it changed. Practitioners do this by Martin Fowler's [refactoring](https://refactoring.com): a series of small steps, each of which keeps every behavior, with the tests run after each one, so that the tests catch a step that broke something while it's still the only one to undo.",
+      "what": "Does a test pin each behavior that the change of structure reaches, with the result it gave before?",
+      "why": "A maintainer changes the structure without fear only where a test shows that each behavior it reaches holds. Practitioners do this by Martin Fowler's [refactoring](https://refactoring.com): a series of small steps, each of which keeps every behavior, with the tests run after each one, so that the tests catch a step that broke something while it's still the only one to undo. A behavior that the work's decisions change is the work's to decide, and its tests come with that decision, so the refactoring holds the behaviors as the work left them.",
       "items": [
        {
         "at": "decide",
@@ -70,7 +70,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Search the repository for each function, class, and constant by its name, such as `grep -rn old_format .`, and remove each one that nothing names but its definition: no code, test, entry point in the manifest, or document that a person follows. Version control keeps what you remove."
+        "text": "Search the repository by its name for each function, class, and constant that your work added or changed, or whose callers it changed, such as `grep -rn old_format .`, and remove each one that nothing names but its definition: no code, test, entry point in the manifest, or document that a person follows. Version control keeps what you remove."
        },
        {
         "at": "make",
@@ -94,7 +94,7 @@
       "items": [
        {
         "at": "make",
-        "text": "For each name, read it at a place that uses it, and write in a few words what it holds or does from that place alone."
+        "text": "For each name that your work added or changed, read it at a place that uses it, and write in a few words what it holds or does from that place alone."
        },
        {
         "at": "make",
@@ -110,7 +110,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "List the things that the code handles, and, for each, every name that the code gives it, such as `user`, `account`, and `member` for one record, by reading its types, its parameters, and its variables."
+        "text": "List the things that the code your work changed handles, and, for each, every name that the code gives it, such as `user`, `account`, and `member` for one record, by reading its types, its parameters, and its variables."
        },
        {
         "at": "decide",
@@ -138,7 +138,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Read each function, test functions included, once from the top, and write in one sentence what it does."
+        "text": "Read each function that your work added or changed, test functions included, once from the top, and write in one sentence what it does."
        },
        {
         "at": "make",
@@ -170,7 +170,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Read each line as a maintainer who knows the language but not the purpose, and mark code that looks wrong, roundabout, or more than it needs, such as a sleep before a retry or a copy of a list that nothing changes."
+        "text": "Read each line that your work added or changed as a maintainer who knows the language but not the purpose, and mark code that looks wrong, roundabout, or more than it needs, such as a sleep before a retry or a copy of a list that nothing changes."
        },
        {
         "at": "make",
@@ -204,7 +204,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each rule or design decision that the code holds, such as a limit, a format, or a path, search for every place that writes it, such as `grep -rn '%Y-%m-%d'`."
+        "text": "For each rule or design decision that the code your work changed holds, such as a limit, a format, or a path, search for every place that writes it, such as `grep -rn '%Y-%m-%d'`."
        },
        {
         "at": "decide",
@@ -240,7 +240,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "List the kinds of thing that the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test."
+        "text": "List the kinds of thing that the code your work changed does, and that other places of the code do too, such as reporting an error, checking an input, reading a file, or laying out a module or a test."
        },
        {
         "at": "decide",

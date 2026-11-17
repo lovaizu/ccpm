@@ -2,9 +2,9 @@
 
 ## Goal tree
 
-- Maintainers, people or AI agents who come to the code at any time, change it quickly without breaking another behavior.
-  - **C1** Every caller gets the same behavior after a change of structure.
-    - **N1** After a change of structure, does each caller, whether a person, a script, or other code, get every behavior it got before? (the whole)
+- Maintainers, people or AI agents who come to the code at any time, change it quickly in one place, as each change of structure keeps every behavior that it reaches.
+  - **C1** Each behavior that a change of structure reaches holds as it did, as a test shows.
+    - **N1** Does a test pin each behavior that the change of structure reaches, with the result it gave before? (the whole)
   - **C2** The maintainer understands each part in one reading.
     - **N2** Does each line, whether code or a comment, give the maintainer something they need? (the whole)
     - **N3** Does each name say what it holds or does, without its definition? (the whole)
@@ -19,9 +19,9 @@
 
 ### N1
 
-After a change of structure, does each caller, whether a person, a script, or other code, get every behavior it got before?
+Does a test pin each behavior that the change of structure reaches, with the result it gave before?
 
-A maintainer changes the structure without fear only when no caller can tell that it changed. Practitioners do this by Martin Fowler's [refactoring](https://refactoring.com): a series of small steps, each of which keeps every behavior, with the tests run after each one, so that the tests catch a step that broke something while it's still the only one to undo.
+A maintainer changes the structure without fear only where a test shows that each behavior it reaches holds. Practitioners do this by Martin Fowler's [refactoring](https://refactoring.com): a series of small steps, each of which keeps every behavior, with the tests run after each one, so that the tests catch a step that broke something while it's still the only one to undo. A behavior that the work's decisions change is the work's to decide, and its tests come with that decision, so the refactoring holds the behaviors as the work left them.
 
 1. *While deciding.* Before any change, open the code's manifest, the file that says how to set the code up and run its tests, such as pyproject.toml or a Makefile, and take the command it gives for the tests, else the one that the code's README or the Test strategy of the architecture in your cut's inputs gives.
 2. *While deciding.* Where none of them gives a command, search the repository for test files, such as by `find . -name 'test_*.py'`, and take the runner that those files import, such as `python -m pytest` for files that import pytest. Where the code has no tests, take the runner that the Test strategy names, else the one that comes with the language, such as `python -m unittest`, since the tests that you write before each step run by it.
@@ -39,7 +39,7 @@ Does each line, whether code or a comment, give the maintainer something they ne
 
 Every line costs the maintainer reading time on each change, so a line that gives them nothing slows every change to come.
 
-1. *While making.* Search the repository for each function, class, and constant by its name, such as `grep -rn old_format .`, and remove each one that nothing names but its definition: no code, test, entry point in the manifest, or document that a person follows. Version control keeps what you remove.
+1. *While making.* Search the repository by its name for each function, class, and constant that your work added or changed, or whose callers it changed, such as `grep -rn old_format .`, and remove each one that nothing names but its definition: no code, test, entry point in the manifest, or document that a person follows. Version control keeps what you remove.
 2. *While making.* Fold into its caller each function or class whose body only passes the call on, adding no check, conversion, or name that says more, such as `def load(path): return read_file(path)`, unless another module calls it as what its module offers.
 3. *While making.* For each parameter, read every call of its function, and drop the parameter where every call gives it the same value, writing that value in the body, such as `retries=3` at each call, unless an entry point in the manifest or a document that a person follows names the function, since a caller outside the repository may give it another value.
 4. *While making.* Read each comment against the code under it, and remove one that says only what the code already says plainly, such as `# add one to the count` over `count += 1`, or that holds code taken out of use. Keep one that says what the code can't, such as what a regular expression matches.
@@ -50,7 +50,7 @@ Does each name say what it holds or does, without its definition?
 
 A name that says what it holds or does lets the maintainer read each line where it stands, without opening a definition.
 
-1. *While making.* For each name, read it at a place that uses it, and write in a few words what it holds or does from that place alone.
+1. *While making.* For each name that your work added or changed, read it at a place that uses it, and write in a few words what it holds or does from that place alone.
 2. *While making.* Open the definition and compare it with those words. Where the two differ, rename the name at every place to words that say what the definition holds or does, with as many words as a reader at its farthest use needs: a loop index read within three lines may be `i`, and a name that another module imports says its thing in full, such as `open_orders` in place of `data` for a list of open orders.
 
 ### N4
@@ -59,7 +59,7 @@ Does each thing have one name, and does each name refer to one thing?
 
 A maintainer who meets two names takes them for two things, and one name used for two things merges them in the maintainer's mind, so each change misses a place or reaches a wrong one.
 
-1. *While deciding.* List the things that the code handles, and, for each, every name that the code gives it, such as `user`, `account`, and `member` for one record, by reading its types, its parameters, and its variables.
+1. *While deciding.* List the things that the code your work changed handles, and, for each, every name that the code gives it, such as `user`, `account`, and `member` for one record, by reading its types, its parameters, and its variables.
 2. *While deciding.* Open the inputs of your cut, such as the architecture, and the code's README, and note for each thing on the list the word they use for it, such as the name in the architecture's data model.
 3. *While deciding.* Where two names refer to one thing, keep the word that the documents use, else the name that the code uses most, such as `account` where the data model says account.
 4. *While deciding.* Where one name refers to two things, such as `id` for a user's ID and for a session's ID, keep the name for the thing that the documents use it for, and give the other the documents' word for it, else a word that tells the two apart, such as `session_id`.
@@ -71,7 +71,7 @@ Can the maintainer say in one sentence what each function does after one reading
 
 A maintainer who can sum up a function after one reading can change it without reading what it calls or what calls it.
 
-1. *While making.* Read each function, test functions included, once from the top, and write in one sentence what it does.
+1. *While making.* Read each function that your work added or changed, test functions included, once from the top, and write in one sentence what it does.
 2. *While making.* Where a line stopped you in that reading, such as a nested comprehension, a chained conditional expression, or a trick with bits, rewrite it in a plain form that does the same, such as a loop with named steps, and run the tests.
 3. *While making.* Where the sentence needs `and` to join two tasks that a caller could want apart, such as `reads the file and checks each row`, extract each task into a function named for it, so that the function becomes calls to those functions.
 4. *While making.* Where you had to read something outside the function to write the sentence, such as a global setting it reads, make the function take that thing as a parameter, and where it was another function's body, rename that function so that its name says what it gives, as N3 does.
@@ -84,7 +84,7 @@ Where code looks wrong or roundabout, does it say why right there?
 
 A maintainer who doesn't know why odd code is there may straighten it and undo what it's there for.
 
-1. *While making.* Read each line as a maintainer who knows the language but not the purpose, and mark code that looks wrong, roundabout, or more than it needs, such as a sleep before a retry or a copy of a list that nothing changes.
+1. *While making.* Read each line that your work added or changed as a maintainer who knows the language but not the purpose, and mark code that looks wrong, roundabout, or more than it needs, such as a sleep before a retry or a copy of a list that nothing changes.
 2. *While making.* For each mark, where a name of a few words can say the reason, extract the code into a function or a constant of that name, such as `time.sleep(2)` into `wait_for_lock_release()`.
 3. *While making.* Where no name can say the reason, find it in the commit that brought the line, such as by `git log -L 40,42:sync.py`, in the decisions of your cut, or in its inputs, and write it in a comment right there, such as `# The API refuses a second call within a second.`
 4. *While making.* Where none of these gives the reason, leave the code unchanged, and name the line in the `asks` you end with, since a guessed reason misleads the next maintainer.
@@ -96,7 +96,7 @@ Does the code write each rule or design decision once, in the module that has th
 
 A rule written in several places changes in some of them and not the others, so a maintainer's change works in one place and breaks in another.
 
-1. *While deciding.* For each rule or design decision that the code holds, such as a limit, a format, or a path, search for every place that writes it, such as `grep -rn '%Y-%m-%d'`.
+1. *While deciding.* For each rule or design decision that the code your work changed holds, such as a limit, a format, or a path, search for every place that writes it, such as `grep -rn '%Y-%m-%d'`.
 2. *While deciding.* For each set of places that look alike, ask whether a change of the rule would have to change every one of them, and take apart those that wouldn't, such as two `30`s, of which one is a timeout in seconds and the other is a page size.
 3. *While deciding.* For each rule that several places write, choose the module that keeps it: the one whose job, as its opening or the architecture says, the rule belongs to, such as the date format in the module that writes the reports. Where neither says a job that the rule belongs to, choose the module whose code reads or writes what the rule acts on, such as a page size in the module that queries the pages, and, where several such modules do, the one that the others already import, so that no two modules come to import each other.
 4. *While making.* Write each rule once in the module that keeps it, and have each other place use it from there, such as by importing a constant or calling a function.
@@ -110,7 +110,7 @@ Does the code do each kind of thing the same way throughout, with a reason besid
 
 When the code does each kind of thing one way, the maintainer who learned the way once reads it everywhere, and a difference tells them of a real difference.
 
-1. *While deciding.* List the kinds of thing that the code does in many places, such as reporting an error, checking an input, reading a file, or laying out a module or a test.
+1. *While deciding.* List the kinds of thing that the code your work changed does, and that other places of the code do too, such as reporting an error, checking an input, reading a file, or laying out a module or a test.
 2. *While deciding.* For each kind, list each way the code does it and where, such as `raise ValueError` in three modules and a message with `sys.exit(1)` in two.
 3. *While deciding.* For each kind, take the way that the project's style settings name, such as the rules of ruff in pyproject.toml. Where they name none, take the way that the code uses most, and where the code uses two alike, the way nearest the place, within its function, then its module, then the project, the order of consistency that [Python's style guide](https://peps.python.org/pep-0008/#a-foolish-consistency-is-the-hobgoblin-of-little-minds) gives.
 4. *While deciding.* Choose a way that the code doesn't use yet only where it removes a fault that the present ways have, such as errors that lose their cause, and where you put it in every place of the kind in this work.

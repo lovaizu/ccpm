@@ -86,54 +86,7 @@
       "name": "Maintainers change the structure of code quickly, and every behavior its people use still holds",
       "path": "plugins/rn/domain/best-practices/refactor-code",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The goal",
-              "decided": "maintainers change the code's structure while every behavior that its people use stays, as the meta best practice's goal piles up only what brings the people to their aim: its N1 asks that each caller get every behavior it got before, and in rn's E2E pilot of 2026-11-18 its evaluator found in each round another behavior that no one the goal names uses, such as a quantity written 1_000 or total() given a generator",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
