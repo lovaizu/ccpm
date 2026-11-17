@@ -21,19 +21,16 @@ from dev.tests import opus
 
 pytestmark = opus.NEEDS_LOGIN
 
-# Why a case beyond the walking skeleton still fails: the steps of a prompt it runs aren't written.
-LATER = pytest.mark.xfail(strict=True, reason="rn's prompts' steps are empty")
 # Why the generator's case still fails: the walkthrough's deliverable is checked by mypy --strict,
 # which the bench lacks, so the generator ends with lacks before it writes its Made.
 NO_MYPY = pytest.mark.xfail(
     strict=True, reason="mypy, which the walkthrough's check runs, isn't installed"
 )
 
-# Why the case of a deliverable done before still fails: the Cut doesn't yet give the commit it was
-# done at, as cut._generator doesn't and branch.done_at has an empty body, and the generator's steps
-# don't yet say to read each input's change since then.
+# Why the case of a deliverable done before still fails: the generator's steps don't yet say to
+# read each input's change since the commit that its Cut's done_at names.
 NOT_DONE_AT = pytest.mark.xfail(
-    strict=True, reason="the generator's Cut doesn't yet give done_at, nor its steps read by it"
+    strict=True, reason="the generator's steps don't yet read each input's change since done_at"
 )
 
 RUNS = 5
@@ -145,7 +142,6 @@ def test_up_acts_on_a_request_typed_or_asked_for(tmp_path: Any, prompt: str, run
     assert any(e["of"] == "up" for path in record for e in entries(path))
 
 
-@LATER
 @pytest.mark.supports("test_up_alone_with_no_run_left_says_so_and_starts_no_role")
 @pytest.mark.parametrize("prompt", ["What does invoicer's total take?", "/rn:up"])
 @pytest.mark.parametrize("run", range(RUNS))
@@ -161,7 +157,6 @@ def test_up_starts_no_run_on_a_question_or_with_nothing_to_pick_up(
     assert prompt != "/rn:up" or w.NO_RUN_SHOWN in printed
 
 
-@LATER
 @pytest.mark.supports("test_ty_approves_the_plan_and_starts_the_work_resting_on_it")
 @pytest.mark.parametrize(
     ("prompt", "state"), [("/rn:ty", "signed off"), ("Looks fine, go on.", "waiting")]
@@ -181,7 +176,6 @@ def test_only_the_typed_ty_signs_off_the_plan(
         assert json.load(f)["sign_offs"][0]["state"] == state
 
 
-@LATER
 @pytest.mark.supports("test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes")
 @pytest.mark.parametrize(
     ("prompt", "state"),
@@ -205,7 +199,6 @@ def test_only_the_typed_gm_sends_the_plan_back(
         assert json.load(f)["sign_offs"][0]["state"] == state
 
 
-@LATER
 @pytest.mark.supports("test_dn_stops_the_generator_and_pushes_its_work_with_the_step_it_stood_at")
 @pytest.mark.parametrize(("prompt", "pushed"), [("/rn:dn", True), ("I'll stop for today.", False)])
 @pytest.mark.parametrize("run", range(RUNS))

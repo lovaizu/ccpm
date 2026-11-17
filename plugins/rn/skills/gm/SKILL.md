@@ -10,3 +10,7 @@ The person typed /rn:gm to send the sign-off waiting back. As `rn`'s orchestrato
 $ARGUMENTS
 
 ## Steps
+
+1. Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py send-back`, which keeps the sign-off waiting sent back and prints it. Only the person's typed /rn:gm sends a sign-off back, so this is the one moment you run it.
+2. Where they typed the command with no words, read what they want changed by `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py comments`, which prints their comments on the pull request since you put the sign-off up.
+3. Judge each thing they want by the purpose and the best practices, for the decision it changes, and have the tree-keeper write each such decision, with their words word for word, as your part's step 2 says, so that the rounds start again from the design. Then go on by your part's steps.
