@@ -207,8 +207,8 @@
               "by": "user"
             },
             {
-              "about": "The tools the walkthrough's run needs",
-              "decided": "none beyond the README's requirements: the plan's first deliverable is \"Type hints in each file of invoicer\", with no type checker named, and the caller sees what each function takes from Python's inspect.signature, as the walkthrough shows rn, and a checker that invoicer doesn't hold would stop the generator's try with lacks, and the E2E test with it",
+              "about": "The walkthrough's request",
+              "decided": "the accounting team prints an invoice from its lines without writing Python: in invoicer's own repository, rn adds a command with its tests and a Markdown guide for the accounting team, as a newcomer pictures its readers, a document and code are both made, and the E2E test checks with Python alone whether a stand-in of the accounting team prints an invoice from the guide alone, which a type checker that the repository doesn't hold would stop",
               "by": "user"
             }
           ]
@@ -466,7 +466,7 @@
           "decisions": [
             {
               "about": "The E2E test's request",
-              "decided": "the README's walkthrough, type hints for a library the size of invoicer in lovaizu/playground, so that the E2E test runs what the README shows its readers",
+              "decided": "the README's walkthrough, a command and its guide with which the accounting team prints an invoice from its lines, in invoicer, a library the size of invoicer in lovaizu/playground, so that the E2E test runs what the README shows its readers",
               "by": "reasoning"
             },
             {
