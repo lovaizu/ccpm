@@ -120,9 +120,9 @@ def test_write_with_no_ground_gives_1_and_commits_nothing(tmp_path: Any, ground:
 )
 def test_write_out_of_form_gives_1_with_whats_wrong(tmp_path: Any, given: Any) -> None:
     """Given: a run started.
-    When: tree.py write runs with input that isn't JSON, holds a field of no change, names no node, holds nodes
-    that aren't an object, a more without its condition and good_when, or one without its best
-    practice and decision.
+    When: tree.py write runs with input that isn't JSON, holds a field of no change, names no
+    node, holds nodes that aren't an object, a more without its condition and good_when, or one
+    without its best practice and decision.
     Then: it gives 1 with what's wrong, and prints nothing on standard output."""
     _, printed = started(tmp_path)
     code, out, err = run(["write", printed["record"], "The plan."], printed["worktree"], given)
