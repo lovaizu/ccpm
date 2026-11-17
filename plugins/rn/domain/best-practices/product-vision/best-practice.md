@@ -2,7 +2,7 @@
 
 ## Goal tree
 
-- The developers build a product with which its users achieve their goals.
+- The developers build a product with which its users achieve their goals, each choice leaning on the few things that the vision names.
   - **C1** The developers know whom the product serves and what each of them is trying to achieve.
     - **N1** Does Roles list every kind of person who comes to the product with a goal of their own? (Roles)
     - **N2** Does each objective state, in one sentence, what one role is trying to achieve in their own work? (Objectives and key results)
@@ -26,7 +26,7 @@ Does Roles list every kind of person who comes to the product with a goal of the
 The developers build for the people Roles lists, so a missing role goes unserved, and two roles merged into one get a product that fits neither.
 
 1. *While deciding.* Find the job that the product exists to do in the goal and the decisions of your cut, and, where the repository already holds the product, in its README. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom.
-2. *While deciding.* Name each kind of person who comes to the product for that job by the part of it they come to get done, not by a job title, such as `one who asks rn for a deliverable` in place of `developer`.
+2. *While deciding.* Name each kind of person who comes to the product for that job by the part of it they come to get done, such as `one who asks rn for a deliverable` in place of `developer`.
 3. *While deciding.* Ask whether that job gets done only if someone else also does a job with the product, such as an administrator who sets it up on a shared server for a team. Name each such person as a role as well.
 4. *While deciding.* For each person whose job the goal, the decisions, and what the product does leave unclear, ask the user `What does <person> come to the product to get done?`, with the job you'd guess as your recommendation.
 5. *While deciding.* Split a role where two of its members would count different results as their job done, such as a guest who browses a shop and a member who buys from it.
@@ -63,7 +63,7 @@ The developers keep a change only if it brings the users closer to their goals, 
 3. *While deciding.* Make the second key result measure how fast: the time from the task's start to its result, the role's own time in it included, such as the time the user spends answering questions. Where that time depends mostly on things outside the product, such as the speed of the machine, count the role's own effort instead, such as the questions they answer.
 4. *While deciding.* Give each key result the direction that's better, such as `Lower is better.`
 5. *While deciding.* Rank the key results, how well before how fast, so that a developer keeps a change that improves one only if none ranked before it gets worse.
-6. *While deciding.* Give no targets, since developers who aim at a number improve the number in place of the users' result.
+6. *While deciding.* Give each key result its direction alone, since developers who aim at a number improve the number in place of the users' result.
 7. *While making.* For each key result, write down what one end-to-end (E2E) run of the role's task would record that a developer counts the key result from, such as each deliverable that a judge marks unusable, or the times at which the task starts and ends. Where no record of such a run would show it, rewrite the key result.
 
 ### N5

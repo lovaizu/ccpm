@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "The developers build a product with which its users achieve their goals.",
+  "what": "The developers build a product with which its users achieve their goals, each choice leaning on the few things that the vision names.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -18,7 +18,7 @@
        },
        {
         "at": "decide",
-        "text": "Name each kind of person who comes to the product for that job by the part of it they come to get done, not by a job title, such as `one who asks rn for a deliverable` in place of `developer`."
+        "text": "Name each kind of person who comes to the product for that job by the part of it they come to get done, such as `one who asks rn for a deliverable` in place of `developer`."
        },
        {
         "at": "decide",
@@ -112,7 +112,7 @@
        },
        {
         "at": "decide",
-        "text": "Give no targets, since developers who aim at a number improve the number in place of the users' result."
+        "text": "Give each key result its direction alone, since developers who aim at a number improve the number in place of the users' result."
        },
        {
         "at": "make",
