@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "An AI agent that gets the prompt for a request it's meant for does the task as the writer means, with only what its run gives it, on every run, and in cases the writer didn't foresee.",
+  "what": "An AI agent that gets the prompt for a request it's meant for thinks each step toward what its task is for, and piles up what brings the task's people closer, as the writer means, with only what its run gives it, on every run, and in cases the writer didn't foresee.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -73,12 +73,12 @@
      {
       "id": "N3",
       "about": "Goal",
-      "what": "Does the goal say what the task is for, and how the AI checks that it has reached it?",
+      "what": "Does the goal say what the task is for, as the people it serves reach their aim, and how the AI checks that it has reached it?",
       "why": "The AI stops when its work looks done, so the prompt must say what the result is for, and give a check that separates done from looking done, as Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run) give the AI something to run that comes back pass or fail.",
       "items": [
        {
         "at": "decide",
-        "text": "Write what the task is for in one sentence: whom the result serves, the story's role of each user story whose sequence the prompt's component takes part in, and what they gain by it, the story's benefit, such as `so that the developer gets a plan they can approve in one reading`."
+        "text": "Write what the task is for in one sentence: whom the result serves, the story's role of each user story whose sequence the prompt's component takes part in, what they gain by it, the story's benefit, and the few things of the task that bring them there, from the line of the prompt's component in the architecture, such as `so that the developer gets a plan they can approve in one reading, holding only the deliverables their request needs`."
        },
        {
         "at": "decide",
@@ -123,8 +123,8 @@
      {
       "id": "N5",
       "about": "Goal, Steps",
-      "what": "Does each step lead toward what the goal says the task is for, with the last step reaching it?",
-      "why": "An AI that knows what each step's result is for chooses how to reach it, and follows the purpose where a step doesn't fit the case.",
+      "what": "Does each step lead toward what the goal says the task is for, with the question the AI thinks through there from the facts at hand, and the last step reaching it?",
+      "why": "An AI that knows what each step's result is for, and thinks there from the facts in front of it, chooses how to reach it, puts its effort where the people gain most, and follows the purpose where a step doesn't fit the case.",
       "items": [
        {
         "at": "decide",
@@ -132,7 +132,7 @@
        },
        {
         "at": "decide",
-        "text": "Give each step the result it leaves and what that result is for, such as `Run check.sh. Its exit code 0 is the check that the goal names.`"
+        "text": "Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the design tree.`"
        },
        {
         "at": "make",
@@ -168,7 +168,7 @@
        },
        {
         "at": "make",
-        "text": "Use no capitals or warnings for emphasis, since they make the AI apply the rule too widely."
+        "text": "Write each rule in plain case and calm words, since capitals and warnings for emphasis make the AI apply the rule too widely."
        },
        {
         "at": "make",

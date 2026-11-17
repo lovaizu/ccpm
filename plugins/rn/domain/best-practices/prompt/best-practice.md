@@ -2,15 +2,15 @@
 
 ## Goal tree
 
-- An AI agent that gets the prompt for a request it's meant for does the task as the writer means, with only what its run gives it, on every run, and in cases the writer didn't foresee.
+- An AI agent that gets the prompt for a request it's meant for thinks each step toward what its task is for, and piles up what brings the task's people closer, as the writer means, with only what its run gives it, on every run, and in cases the writer didn't foresee.
   - **C1** The host runs the prompt for exactly the requests it's for.
     - **N1** Do the name and the description let the host choose the prompt for each request it's for, and pass it over for a near request it isn't for? (Description)
     - **N2** Does the body do exactly the task that the description says, which the architecture gives the prompt's component? (Description, Goal)
   - **C2** The AI knows what the task is for, and has every fact it needs.
-    - **N3** Does the goal say what the task is for, and how the AI checks that it has reached it? (Goal)
+    - **N3** Does the goal say what the task is for, as the people it serves reach their aim, and how the AI checks that it has reached it? (Goal)
     - **N4** Does the prompt give every fact that the AI can't find or know on its own, and say where the rest lies? (Context)
   - **C3** The AI's steps lead to the task's purpose, also in cases that the writer didn't foresee.
-    - **N5** Does each step lead toward what the goal says the task is for, with the last step reaching it? (Goal, Steps)
+    - **N5** Does each step lead toward what the goal says the task is for, with the question the AI thinks through there from the facts at hand, and the last step reaching it? (Goal, Steps)
     - **N6** Does each rule give the reason from which the AI decides a case that the rule doesn't name? (Steps)
     - **N7** Does the prompt name the choices that are the user's, and how the AI hands them to the user? (Goal)
     - **N8** Does every line change what the AI does toward the task? (the whole)
@@ -68,11 +68,11 @@ The caller gets what the description promised, and the product gets what the arc
 
 ### N3
 
-Does the goal say what the task is for, and how the AI checks that it has reached it?
+Does the goal say what the task is for, as the people it serves reach their aim, and how the AI checks that it has reached it?
 
 The AI stops when its work looks done, so the prompt must say what the result is for, and give a check that separates done from looking done, as Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run) give the AI something to run that comes back pass or fail.
 
-1. *While deciding.* Write what the task is for in one sentence: whom the result serves, the story's role of each user story whose sequence the prompt's component takes part in, and what they gain by it, the story's benefit, such as `so that the developer gets a plan they can approve in one reading`.
+1. *While deciding.* Write what the task is for in one sentence: whom the result serves, the story's role of each user story whose sequence the prompt's component takes part in, what they gain by it, the story's benefit, and the few things of the task that bring them there, from the line of the prompt's component in the architecture, such as `so that the developer gets a plan they can approve in one reading, holding only the deliverables their request needs`.
 2. *While deciding.* List what holds once the AI has done the task: each thing it hands on at its last arrow in Sequences, and each file or state it leaves, such as a plan written in its form.
 3. *While deciding.* For each thing on the list, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request.
 4. *While deciding.* Decide when the AI stops: once every check passes, or at a blocker it can't pass, which it hands back with what it found.
@@ -89,12 +89,12 @@ The AI is able but new to this place, and gets nothing of the conversation that 
 
 ### N5
 
-Does each step lead toward what the goal says the task is for, with the last step reaching it?
+Does each step lead toward what the goal says the task is for, with the question the AI thinks through there from the facts at hand, and the last step reaching it?
 
-An AI that knows what each step's result is for chooses how to reach it, and follows the purpose where a step doesn't fit the case.
+An AI that knows what each step's result is for, and thinks there from the facts in front of it, chooses how to reach it, puts its effort where the people gain most, and follows the purpose where a step doesn't fit the case.
 
 1. *While deciding.* Go through the steps that the arrows of the prompt's component in the architecture's Sequences give it, and ask of each whether an AI that holds the goal, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI.
-2. *While deciding.* Give each step the result it leaves and what that result is for, such as `Run check.sh. Its exit code 0 is the check that the goal names.`
+2. *While deciding.* Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the design tree.`
 3. *While making.* Write the steps in the order their results must hold, such as in a numbered list.
 4. *While making.* Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.
 5. *While making.* Check that the last step leaves what the goal says the task is for.
@@ -108,7 +108,7 @@ A rule that says what it's for lets the AI apply it where the writer meant it, a
 1. *While making.* Write each rule as what to do, in plain words, with its reason, such as `Your response is read aloud by a text-to-speech engine, so never use ellipses, which it can't pronounce` in place of `NEVER use ellipses`.
 2. *While making.* Where a rule says always or never, say what the AI does when it can't keep the rule, such as `Never push to main. Where a push is needed, hand it back as a question.`
 3. *While making.* In place of a list of edge cases, give the way of judging and a few examples that are like the real requests and unlike one another.
-4. *While making.* Use no capitals or warnings for emphasis, since they make the AI apply the rule too widely.
+4. *While making.* Write each rule in plain case and calm words, since capitals and warnings for emphasis make the AI apply the rule too widely.
 5. *While making.* Think of a case that the rule doesn't name, read only the rule and its reason, and check that they lead where the writer would go. Where they don't, fix the reason.
 
 ### N7
