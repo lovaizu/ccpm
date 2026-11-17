@@ -499,6 +499,8 @@ def _add_start(plugin: Plugin, run: Run, asked: StartCall, moves: tuple[Due, ...
         )
         add(plugin.record, started)
         return
+    # place gives each resume with the agent_id of the Start whose subagent it messages.
+    assert asked.agent_id is not None
     (before, *_) = [s for s in reversed(run.starts) if s.agent_id == asked.agent_id]
     opened = Move("resume", role=asked.role) in run.due
     values = dict(before.values)
