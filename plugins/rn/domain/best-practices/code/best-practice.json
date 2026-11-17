@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "Maintainers, people or AI agents, change what the code does and know that every behavior its specification asks for still holds, and whoever runs the code can fix a wrong input from outside.",
+  "what": "Maintainers, people or AI agents, change what the code does and know that every behavior its specification asks for still holds, as the code holds only those behaviors, and whoever runs the code can fix a wrong input from outside.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -32,7 +32,7 @@
        },
        {
         "at": "decide",
-        "text": "Where a decision has variants that the cases call for now, such as two remotes that each take their own commands, give each variant its own module behind one interface, and name that shape by its design pattern, such as Adapter, in the module that chooses among them, since the name tells the maintainer where a new variant goes. Make no variant that no case calls for, as N3 says."
+        "text": "Where a decision has variants that the cases call for now, such as two remotes that each take their own commands, give each variant its own module behind one interface, and name that shape by its design pattern, such as Adapter, in the module that chooses among them, since the name tells the maintainer where a new variant goes. Make a variant only where a case calls for it, as N3 says."
        },
        {
         "at": "make",
@@ -144,7 +144,7 @@
        },
        {
         "at": "decide",
-        "text": "Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to whoever set the unit cases, such as the architecture's maker, and don't write it, since it tests what no element asks for."
+        "text": "Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for."
        },
        {
         "at": "make",
@@ -152,7 +152,7 @@
        },
        {
         "at": "make",
-        "text": "Take each value that a test expects from its case's Then, never from what the code gives when run, since a value copied from the code passes whatever the code does."
+        "text": "Take each value that a test expects from its case's Then, since a value copied from what the code gives when run passes whatever the code does."
        },
        {
         "at": "make",
@@ -220,7 +220,7 @@
        },
        {
         "at": "make",
-        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `asks`, and write no test for it."
+        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `asks`, and write its test once they add it."
        },
        {
         "at": "make",
@@ -244,7 +244,7 @@
        },
        {
         "at": "make",
-        "text": "Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Add no case for a mutant, since such a case comes from the code that exists, not from what the part must do."
+        "text": "Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Keep the cases as the design made them, since a case added for a mutant comes from the code that exists, not from what the part must do."
        }
       ]
      }
@@ -274,7 +274,7 @@
        },
        {
         "at": "make",
-        "text": "Catch an error only where the code can tell whoever ran it what to fix, such as a file they named that doesn't exist, and let every other error stop the program with its trace, never catching all errors at once, such as with a bare `except`."
+        "text": "Catch an error only where the code can tell whoever ran it what to fix, such as a file they named that doesn't exist, and let every other error stop the program with its trace, catching each error by its own type, since a catch of all errors at once, such as a bare `except`, hides the trace of each it wasn't written for."
        },
        {
         "at": "make",
@@ -282,7 +282,7 @@
        },
        {
         "at": "make",
-        "text": "Write each check so that it runs however the code is run, such as an `if` that raises, never an `assert`, which `python -O` drops."
+        "text": "Write each check so that it runs however the code is run, such as an `if` that raises, since `python -O` drops an `assert`."
        },
        {
         "at": "make",

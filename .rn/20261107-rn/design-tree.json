@@ -56,60 +56,7 @@
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The goal",
-              "decided": "its people's aim, toward which the best practice piles up the vital few of its kind and cuts the trivial many, as the meta best practice's goal now says",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Each practice",
-              "decided": "each opens with the state its condition asks, and each item says in positive form what to do toward that state, with the question to think through and the criterion that picks the option bringing the people closer, as meta N5.5 and N5.6 ask",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
