@@ -210,6 +210,11 @@
               "about": "The walkthrough's request",
               "decided": "the accounting team prints an invoice from its lines without writing Python: in invoicer's own repository, rn adds a command with its tests and a Markdown guide for the accounting team, as a newcomer pictures its readers, a document and code are both made, and the E2E test checks with Python alone whether a stand-in of the accounting team prints an invoice from the guide alone, which a type checker that the repository doesn't hold would stop",
               "by": "user"
+            },
+            {
+              "about": "The cases built on the walkthrough",
+              "decided": "dev/rn/tests/rn_walkthrough.py takes the walkthrough's new request, goal, point, plan, deliverables, and sign-off from the README, and the bench's invoicer, the integration cases, and the prompt cases built on the type hints follow it, before the README is done, as each of them reads the README's blocks and fails on the request it no longer holds",
+              "by": "reasoning"
             }
           ]
         },

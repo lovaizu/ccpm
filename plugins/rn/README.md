@@ -38,21 +38,22 @@ At your repository's root in Claude Code, `/rn:up` alone says that rn has no run
 
 ## Walkthrough
 
-At the end, you have a pull request, ready to merge, that adds type hints to your whole library.
+At the end, you have a pull request, ready to merge, that adds a command and its guide for your
+accounting team.
 
-`invoicer`, a Python library that other teams call, has no type hints, so wrong arguments fail only
-at run time. You type:
+`invoicer`, a Python library that your team calls, renders invoices. Your accounting team writes no
+Python, so they ask a developer for each invoice. You type:
 
 ```text
-/rn:up type hints for invoicer, so that the people who call it see what each function takes
+/rn:up a command with which the accounting team prints an invoice from its lines, without writing Python
 ```
 
 rn shows:
 
 ```text
 The goal, as I'd put it:
-  The people who call invoicer learn from their editor and their type checker what each
-  function takes and returns, before their code runs.
+  The accounting team prints each invoice themselves from the lines they keep in a
+  spreadsheet, without asking a developer.
 Is that what you're after?
 ```
 
@@ -66,22 +67,22 @@ rn shows:
 
 ```text
 A question that's yours:
-  Should the hints cover each file, or only the functions that callers import?
-  I recommend only those functions, as they're all that callers see.
+  Should the tax rate be given with each invoice, or set once?
+  I recommend setting it once, as the rate rarely changes.
 ```
 
 You type:
 
 ```text
-each file
+with each invoice
 ```
 
 rn shows:
 
 ```text
 The plan, for your sign-off:
-  1. Type hints in each file of invoicer, checked by mypy --strict
-  2. invoicer marked as typed, so that the callers' type checkers read its hints
+  1. A command that prints an invoice from a file of its lines, with the tax rate given each time
+  2. A guide from which the accounting team prints an invoice on its own
 /rn:ty to approve, or /rn:gm with what to change.
 ```
 
@@ -100,7 +101,8 @@ rn makes both deliverables. That evening, before rn finishes, you type:
 rn shows:
 
 ```text
-Paused "type hints for invoicer" while making "Type hints in each file of invoicer".
+Paused "invoices for the accounting team" while making "A command that prints an invoice
+from a file of its lines".
 Its work so far is pushed. Type /rn:up in any conversation to go on.
 ```
 
@@ -113,18 +115,19 @@ The next day, in a new conversation, you type:
 rn shows:
 
 ```text
-Picking up "type hints for invoicer", making "Type hints in each file of invoicer",
-where it stopped.
+Picking up "invoices for the accounting team", making "A command that prints an invoice
+from a file of its lines", where it stopped.
 ```
 
 Later, rn shows:
 
 ```text
-"Type hints in each file of invoicer", for your sign-off:
-  What its people can do with it: a caller's type checker names a wrong argument before
-  the code runs.
+"A command that prints an invoice from a file of its lines", for your sign-off:
+  What its people can do with it: anyone at a terminal prints an invoice from a file of
+  its lines with one command.
   Decisions I took without asking:
-  - Typed amounts and rates as Decimal, as the code already computes with Decimal.
+  - Read each line as invoicer already does, description;price;quantity, which a
+    spreadsheet saves as CSV with semicolons.
   Changes: https://github.com/<owner>/invoicer/pull/12/files
 /rn:ty to approve, or /rn:gm with what to change.
 ```
@@ -135,7 +138,7 @@ You type:
 /rn:ty
 ```
 
-rn puts up "invoicer marked as typed" in the same form, and you type `/rn:ty` again.
+rn puts up the guide in the same form, and you type `/rn:ty` again.
 
 rn shows:
 
@@ -143,22 +146,16 @@ rn shows:
 Done. The pull request is ready for your merge: https://github.com/<owner>/invoicer/pull/12
 ```
 
-A caller on the pull request's branch passes the tax rate as text in `app.py`:
-
-```python
-from decimal import Decimal
-from invoicer import Line, total
-
-lines = [Line("Hosting", Decimal("40.00"))]
-print(total(lines, "0.19"))
-```
-
-mypy shows, before the code runs:
+On the pull request's branch, a colleague from accounting follows the guide alone, saves the lines
+from their spreadsheet as `lines.csv`, and types:
 
 ```console
-$ mypy app.py
-app.py:5: error: Argument 2 to "total" has incompatible type "str"; expected "Decimal"  [arg-type]
-Found 1 error in 1 file (checked 1 source file)
+$ python3 -m invoicer lines.csv --rate 0.19
+Hosting                              40.00 EUR
+Support hours                       120.00 EUR
+Subtotal                            160.00 EUR
+Tax                                  30.40 EUR
+Total                               190.40 EUR
 ```
 
 You then merge the pull request.
