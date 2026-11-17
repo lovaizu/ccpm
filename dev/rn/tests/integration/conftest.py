@@ -1,10 +1,12 @@
 """What rn's integration cases share: a bench for each case, with each Given kept once played;
 rn's and Lane's code imported afresh by each script and hook that the double runs, as a new process
 of Python would import the copy it runs; and the fixture `broken`, which takes out the part that
-holds a rule where TRACE_BROKEN is 1, as the plugin guide's A principle's test seen to fail says."""
+holds a rule, and each Lane that holds it beside, where TRACE_BROKEN is 1, as the plugin guide's A
+principle's test seen to fail says."""
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 from collections.abc import Iterator
@@ -143,6 +145,11 @@ def push(run):
     """No push."""
     return None
 '''
+# The Lanes that hold a rule beside its part of rn's code, by the rule, each by its role and lane
+# type, as the guard holds a role's calls to its throwaway copy by the generator's run_only Lane.
+LANES: dict[str, tuple[str, str]] = {
+    "Tried in a throwaway copy": ("generator", "run_only"),
+}
 RULES: dict[str, tuple[str, str]] = {
     "Drawn out along the design tree": ("tree/cut.py", WHOLE_TREE),
     "Every step by best practice": ("record/order.py", NO_STEP_LACKS),
@@ -169,3 +176,15 @@ def broken(request: pytest.FixtureRequest, b: rn_walkthrough.Bench) -> None:
         file, stand_in = RULES[rule]
         with open(os.path.join(b.rn, "domain", file), "a", encoding="utf-8") as f:
             f.write(stand_in)
+        if rule in LANES:
+            _lane_taken_out(b, *LANES[rule])
+
+
+def _lane_taken_out(b: rn_walkthrough.Bench, role: str, kind: str) -> None:
+    """The bench's copy of rn without the role's Lanes of the type, as Lane laid them."""
+    path = os.path.join(b.rn, "hooks", "lanes.json")
+    with open(path, encoding="utf-8") as f:
+        laid = json.load(f)
+    laid["lanes"] = [x for x in laid["lanes"] if (x["role"], x["type"]) != (role, kind)]
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(laid, f)

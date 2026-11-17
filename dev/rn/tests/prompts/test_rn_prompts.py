@@ -23,19 +23,15 @@ from dev.tests import opus
 
 pytestmark = opus.NEEDS_LOGIN
 
-# Why the generator's case still fails: the walkthrough's deliverable is checked by mypy --strict,
-# which the bench lacks, so the generator ends with lacks before it writes its Made.
-NO_MYPY = pytest.mark.xfail(
-    strict=True, reason="mypy, which the walkthrough's check runs, isn't installed"
-)
-
-# Why the case of a deliverable done before still fails: the generator's steps don't yet say to
-# read each input's change since the commit that its Cut's done_at names.
-NOT_DONE_AT = pytest.mark.xfail(
-    strict=True, reason="the generator's steps don't yet read each input's change since done_at"
-)
-
 RUNS = 5
+# A deliverable that Python alone tries, and the user's decision under it, which the generator's
+# Made names.
+VERSIONED = "A caller reads which invoicer they run as invoicer.__version__"
+SAME_VERSION = {
+    "about": "the version it gives",
+    "decided": "the version that pyproject.toml gives, kept beside it in invoicer/__init__.py",
+    "by": "user",
+}
 # A change to the design tree that changes nothing.
 NOTHING: dict[str, Any] = {"nodes": {}, "more": []}
 
@@ -259,18 +255,19 @@ def test_no_role_starts_for_a_request_made_without_rn(tmp_path: Any, role: str, 
     assert not glob.glob(os.path.join(b.repo, "**", f"*{role}*.json"), recursive=True)
 
 
-@NO_MYPY
 @pytest.mark.supports("test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing")
 @pytest.mark.parametrize("run", range(RUNS))
 def test_the_generator_started_with_its_cut_records_and_writes_its_made(
     tmp_path: Any, run: int
 ) -> None:
-    """Given: the walkthrough's plan signed off, and the generator's Cut of "Type hints in each file
-    of invoicer" as its adapter gives it.
+    """Given: a plan of invoicer.__version__, with the user's decision on the version it gives,
+    signed off, and the generator's Cut of it as its adapter gives it, as Python alone tries it.
     When: the generator runs alone with the Cut as its prompt.
     Then: its record holds each step of its part, and its Made names the user's decision."""
     b = w.bench(str(tmp_path))
-    started = planned_run(b)
+    versioned = w.deliverable(VERSIONED, "invoicer/__init__.py")
+    versioned["necessary_conditions"][0]["decisions"] = [SAME_VERSION]
+    started = planned_run(b, w.plan(versioned))
     signed_off(b, started)
     text = start_text(b, started)
     cut = w.cut_of(text)
@@ -286,7 +283,6 @@ def test_the_generator_started_with_its_cut_records_and_writes_its_made(
     ]
 
 
-@NOT_DONE_AT
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 @pytest.mark.parametrize("run", range(RUNS))
 def test_the_generator_reworking_a_deliverable_done_before_reads_the_change_since_then(

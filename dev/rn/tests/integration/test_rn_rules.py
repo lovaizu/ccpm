@@ -13,12 +13,6 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
-# Why the case of a command run by itself still fails: the guard stops it only by a run_only Lane
-# of the generator's step that tries commands, which /lane:up lays once its prompt has steps.
-NO_RUN_ONLY = pytest.mark.xfail(
-    strict=True, reason="the generator's Lanes hold no run_only, as its prompt's steps are empty"
-)
-
 
 @pytest.mark.supports("Drawn out along the design tree", "S1", "Cut", "guard")
 def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, broken: None) -> None:
@@ -222,7 +216,6 @@ def test_a_command_tried_leaves_the_worktree_as_it_was_and_is_kept(b: Bench, bro
     assert w.files_holding(walk.folder("rounds"), command)
 
 
-@NO_RUN_ONLY
 @pytest.mark.supports("Tried in a throwaway copy", "S1", "guard")
 def test_a_command_run_by_itself_is_stopped(b: Bench, broken: None) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running.
