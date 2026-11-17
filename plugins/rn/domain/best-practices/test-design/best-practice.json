@@ -90,7 +90,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and write no list of the cases in a document, since a list beside the code says each case twice."
+        "text": "Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and keep the cases in the test code alone, since a list beside the code says each case twice."
        },
        {
         "at": "make",
@@ -138,7 +138,7 @@
        },
        {
         "at": "make",
-        "text": "Write each gap in the form that the note of Gaps in the template gives, and write no case of a part, an interface, or a behavior that the architecture doesn't draw, leaving the case that meets the gap as the architecture draws it, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend."
+        "text": "Write each gap in the form that the note of Gaps in the template gives, and write the case that meets the gap as the architecture draws it, with only the parts, interfaces, and behaviors that the architecture draws, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend."
        },
        {
         "at": "make",

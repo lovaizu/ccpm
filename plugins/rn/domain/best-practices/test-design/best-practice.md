@@ -64,7 +64,7 @@ Is each case a test in the test code, with its Given, When, and Then stated, tha
 
 A case kept as a test is the one statement of what a part must do, and a case that passes on an empty body tests nothing. Dan North's [behaviour-driven development](https://dannorth.net/introducing-bdd/) writes each scenario as Given, When, and Then.
 
-1. *While making.* Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and write no list of the cases in a document, since a list beside the code says each case twice.
+1. *While making.* Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and keep the cases in the test code alone, since a list beside the code says each case twice.
 2. *While making.* Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point.
 
 ### N5
@@ -83,5 +83,5 @@ Does the list of gaps name each place where the cases can't follow the architect
 A gap that the cases show is mended in the architecture while nothing rests on it, and a case bent around it leaves the document wrong for every developer after.
 
 1. *While making.* Read the cases against the architecture and the skeleton, and list each gap: a case that no part can hold; a part that no case reaches; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries.
-2. *While making.* Write each gap in the form that the note of Gaps in the template gives, and write no case of a part, an interface, or a behavior that the architecture doesn't draw, leaving the case that meets the gap as the architecture draws it, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend.
+2. *While making.* Write each gap in the form that the note of Gaps in the template gives, and write the case that meets the gap as the architecture draws it, with only the parts, interfaces, and behaviors that the architecture draws, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend.
 3. *While making.* Where the architecture or the skeleton changes, change the cases to it as N1 to N4 say, and read them again for gaps, until you list none.
