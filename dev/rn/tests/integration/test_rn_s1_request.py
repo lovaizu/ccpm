@@ -157,7 +157,7 @@ def test_the_round_gives_each_evaluators_answers_and_what_the_generator_made(b: 
     evaluator's Answers, every condition good.
     When: the orchestrator runs tree.py round invoicer.
     Then: it gives one round, numbered 1, with the Made as the generator wrote it, and the Answers
-    of each evaluator."""
+    of each evaluator, each naming the best practice that the evaluator judged by."""
     walk, cut, cuts = w.first_round(b)
     [round_] = w.printed(walk.c.bash(b.tree("round", cut["deliverable"])))
     assert round_["number"] == 1
@@ -166,6 +166,8 @@ def test_the_round_gives_each_evaluators_answers_and_what_the_generator_made(b: 
     asked = sorted(c for each in cuts for c in each["conditions"])
     answered = sorted(g["question"] for each in round_["answers"] for g in each["good"])
     assert answered == asked
+    judged = [os.path.basename(c["best_practice"].rstrip("/")) for c in cuts]
+    assert [each["best_practice"] for each in round_["answers"]] == judged
 
 
 @pytest.mark.supports("S1", "More kept", "tree-keeper", "Decision")

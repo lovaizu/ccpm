@@ -257,63 +257,7 @@
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
       "path": "dev/rn/tests/integration/test_rn_s1_request.py",
       "kind": "code",
-      "status": "doing",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Which bodies S1 builds of the More kept",
-              "decided": "more.keepable, rounds.keep_more, and rounds.kept_more, each by its contract in the skeleton, so that a More kept is one for each best practice and condition, and refused where the decision it names isn't under its deliverable or didn't change; each case marked MORE loses its mark as it passes",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",

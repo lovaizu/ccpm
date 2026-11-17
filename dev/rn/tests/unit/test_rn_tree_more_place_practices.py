@@ -91,6 +91,21 @@ def test_a_more_whose_decision_didnt_change_is_refused(now: Any) -> None:
 
 
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
+def test_a_more_whose_decision_moved_in_the_list_but_didnt_change_is_refused() -> None:
+    """Given: the tree as the round's cut took it, and the tree with a deliverable added before
+    invoicer, which moves invoicer to deliverables/1, its decisions unchanged.
+    When: whether a more of invoicer naming its decision under N1 at its new path may be kept is
+    asked.
+    Then: it's refused, naming the code best practice and N1, as that decision didn't change."""
+    data = copy.deepcopy(d.walkthrough_tree())
+    data["deliverables"].insert(0, d.open_deliverable("invoicer's README", "README.md"))
+    moved = "deliverables/1/necessary_conditions/0/decisions/0"
+    with pytest.raises(Wrong, match="code") as refused:
+        more.keepable(d.design(), d.design(data), a_more(moved))
+    assert "N1" in str(refused.value)
+
+
+@pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_more_whose_decision_lies_under_another_deliverable_is_refused() -> None:
     """Given: the tree as the round's cut took it, and the tree with a decision added under N1 of
     "invoicer marked as typed".

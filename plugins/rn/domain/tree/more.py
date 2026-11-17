@@ -52,6 +52,10 @@ def keepable(at_cut: DesignTree, now: DesignTree, more: More) -> None:
     condition`.
     """
     tree_path = _tree_path(now, more.deliverable)
+    if tree_path is None:
+        raise Wrong(
+            f"the more's deliverable {more.deliverable} is no deliverable of the design tree"
+        )
     named = f"the more of {more.condition} of the {more.best_practice} best practice"
     if not more.decision.startswith(tree_path + "/"):
         raise Wrong(
@@ -60,20 +64,31 @@ def keepable(at_cut: DesignTree, now: DesignTree, more: More) -> None:
         )
     if not _DECISION.match(more.decision) or _at(now, more.decision) is None:
         raise Wrong(f"the design tree holds no decision at {more.decision}")
-    if _at(at_cut, more.decision) == _at(now, more.decision):
+    if _at_cut(at_cut, more.deliverable, more.decision[len(tree_path) :]) == _at(
+        now, more.decision
+    ):
         raise Wrong(
             f"{named} isn't kept, as its decision {more.decision} didn't change since the round's"
             " cut; change the decision it comes from"
         )
 
 
-def _tree_path(tree: DesignTree, deliverable: str) -> str:
-    """The path in the tree of the deliverable at the file path; raises Wrong where the tree holds
+def _tree_path(tree: DesignTree, deliverable: str) -> str | None:
+    """The path in the tree of the deliverable at the file path, or None where the tree holds
     none."""
     for number, each in enumerate(deliverables(tree)):
         if each["path"] == deliverable:
             return f"deliverables/{number}"
-    raise Wrong(f"the more's deliverable {deliverable} is no deliverable of the design tree")
+    return None
+
+
+def _at_cut(at_cut: DesignTree, deliverable: str, under: str) -> Any:
+    """The decision at the path under the deliverable in the round's cut, or None where the cut
+    holds none, found by the deliverable's file path, as a deliverable added or taken out before it
+    since moves its place in the list. The cut holds the deliverable, as its round opened on it."""
+    tree_path = _tree_path(at_cut, deliverable)
+    assert tree_path is not None, f"the round's cut holds no deliverable {deliverable}"
+    return _at(at_cut, tree_path + under)
 
 
 def _at(tree: DesignTree, path: str) -> Any:
