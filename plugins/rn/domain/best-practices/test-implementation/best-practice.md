@@ -2,7 +2,7 @@
 
 ## Goal tree
 
-- The developers learn from a test that runs the product whole, such as an E2E test, a performance test, or a benchmark of a prompt, what the product does, as each run ran as they meant and measured what they meant.
+- The developers learn from a test that runs the product whole, such as an E2E test, a performance test, or a benchmark of a prompt, what the product does, as each run ran as they meant and measured what their decision takes.
   - **C1** The test is built back from the decision that its report serves.
     - **N1** Does the report state the decision it serves, and give each value for it with the runs it's counted from and the place in each run's records? (Report)
     - **N2** Does each run keep, in a form a program reads, every record that a value of the report is counted or checked from, with what the run took? (Records)
@@ -49,7 +49,8 @@ A value that no record holds can't be checked, and a run that started from anoth
 
 1. *While deciding.* For each value of N1.3, list what a run must keep for it to be counted and checked: each event with its time, each result and output, and what the monitoring reads, such as each hook event, each command run, and the memory used.
 2. *While making.* Make the harness start each run from a clean environment, such as a fresh home and a fresh copy of the repository, and keep each record of N2.1 in a folder of the run's own.
-3. *While making.* Keep beside the records what the run took: the product's version, the model, the settings, and the case, so that two runs that differ show why.
+3. *While making.* Make the harness keep a run's records where the run is stopped before its end, and remove the run's clean environment however the run ends, so that a run stopped at its first fault still shows where it went.
+4. *While making.* Keep beside the records what the run took: the product's version, the model, the settings, and the case, so that two runs that differ show why.
 
 ### N3
 
@@ -81,6 +82,7 @@ A large run that goes wrong mixes the test's faults with the product's, and cost
 1. *While deciding.* Set the stages, each larger than the one before: one run of one case, then each case once, then the number of runs or the load that Test strategy sets, such as a performance test's steps of load.
 2. *While deciding.* Where Test strategy gives the rule for the number of runs in place of a number, as it does before the product runs, take three runs of each case as the last stage, the fewest in which one run that differs from the others shows. Add runs only to a case whose runs differ, until one more changes no case's count, and write the number reached in Test strategy.
 3. *While making.* Run the first stage, and keep its records as the pilot records that N4 tests the checks on.
-4. *While making.* Open the records of each stage, and check by N3 and N4 that each run ran as meant, and that each value of the report matches what you count by reading the records yourself.
-5. *While making.* Where a stage doesn't hold, look first at the test's own parts, the harness, the checks, the judges, and the stand-ins, mend the one at fault, and run the stage again, changing one thing between two runs, the test or the product, never both. Take a stage where nearly every run fails as a fault of the test until its records show otherwise.
-6. *While making.* Start the next stage only once the stage before held, and write each stage in Stages, with its size and the records that showed it held.
+4. *While making.* Watch each run's records as it goes, ask at each step whether it still runs as the case means, and stop it at the first place it departs, since the rest of a run gone astray spends hours that show nothing the stage needs.
+5. *While making.* Open the records of each stage, and check by N3 and N4 that each run ran as meant, and that each value of the report matches what you count by reading the records yourself.
+6. *While making.* Where a stage doesn't hold, look first at the test's own parts, the harness, the checks, the judges, and the stand-ins, mend the one at fault, and run the stage again, changing one thing between two runs, the test or the product, so that the records show which one made the difference. Take a stage where nearly every run fails as a fault of the test until its records show otherwise.
+7. *While making.* Start the next stage only once the stage before held, and write each stage in Stages, with its size and the records that showed it held.

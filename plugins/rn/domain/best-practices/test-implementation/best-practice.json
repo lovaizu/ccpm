@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "The developers learn from a test that runs the product whole, such as an E2E test, a performance test, or a benchmark of a prompt, what the product does, as each run ran as they meant and measured what they meant.",
+  "what": "The developers learn from a test that runs the product whole, such as an E2E test, a performance test, or a benchmark of a prompt, what the product does, as each run ran as they meant and measured what their decision takes.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -49,6 +49,10 @@
        {
         "at": "make",
         "text": "Make the harness start each run from a clean environment, such as a fresh home and a fresh copy of the repository, and keep each record of N2.1 in a folder of the run's own."
+       },
+       {
+        "at": "make",
+        "text": "Make the harness keep a run's records where the run is stopped before its end, and remove the run's clean environment however the run ends, so that a run stopped at its first fault still shows where it went."
        },
        {
         "at": "make",
@@ -132,11 +136,15 @@
        },
        {
         "at": "make",
+        "text": "Watch each run's records as it goes, ask at each step whether it still runs as the case means, and stop it at the first place it departs, since the rest of a run gone astray spends hours that show nothing the stage needs."
+       },
+       {
+        "at": "make",
         "text": "Open the records of each stage, and check by N3 and N4 that each run ran as meant, and that each value of the report matches what you count by reading the records yourself."
        },
        {
         "at": "make",
-        "text": "Where a stage doesn't hold, look first at the test's own parts, the harness, the checks, the judges, and the stand-ins, mend the one at fault, and run the stage again, changing one thing between two runs, the test or the product, never both. Take a stage where nearly every run fails as a fault of the test until its records show otherwise."
+        "text": "Where a stage doesn't hold, look first at the test's own parts, the harness, the checks, the judges, and the stand-ins, mend the one at fault, and run the stage again, changing one thing between two runs, the test or the product, so that the records show which one made the difference. Take a stage where nearly every run fails as a fault of the test until its records show otherwise."
        },
        {
         "at": "make",
