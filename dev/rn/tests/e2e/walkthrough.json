@@ -7,6 +7,6 @@
   ],
   "records": "dev/rn/tests/e2e/records",
   "push": true,
-  "intent": "You're a developer on the team that keeps invoicer, a Python library in this repository that renders invoices. Your accounting team writes no Python, so they ask a developer each time they need an invoice. You want a command with which they print an invoice from the lines they keep in a spreadsheet, without writing Python, as one pull request you can merge. Your clients pay different tax rates, so the rate changes from invoice to invoice. Ask rn for it with /rn:up, answer what it asks as that developer would, sign off with /rn:ty what serves you, ask a change with /rn:gm where something doesn't, and stop once the pull request is ready for your merge.",
+  "intent": "You're a developer on the team that keeps invoicer, a Python library in this repository that renders invoices. Your accounting team writes no Python, so they ask a developer each time they need an invoice. They work on Linux laptops, keep the lines in LibreOffice Calc, and open a terminal where a guide tells them to. You want a command with which they print an invoice from the lines they keep in a spreadsheet, without writing Python, as one pull request you can merge. Your clients pay different tax rates, so the rate changes from invoice to invoice. Ask rn for it with /rn:up, answer what it asks as that developer would, sign off with /rn:ty what serves you, ask a change with /rn:gm where something doesn't, and stop once the pull request is ready for your merge.",
   "turns": 30
 }
