@@ -20,12 +20,13 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-rn works only on the [vital few](https://en.wikipedia.org/wiki/Pareto_principle), what decides
-whether a deliverable's people can use it.
+rn piles up the [vital few](https://en.wikipedia.org/wiki/Pareto_principle) that bring a
+deliverable's people to their aim, and cuts the trivial many thoroughly.
 
-- Only the user's decisions asked, for O1\
-  rn asks only what the user alone can decide, so they get what they mean without a specification.
-- Every deliverable by best practice, for O1\
-  rn makes each deliverable by its kind's best practice, so it holds what that work needs.
-- Judged by the people it's for, for O1\
-  rn judges each deliverable as its people would use it, so it improves only what they need.
+- From the people's purpose, for O1\
+  Each role starts from what the people are after, and makes what brings them there.
+- Reviewed each turn by the facts, for O1\
+  At each turn, rn reviews the design tree's content and course by the run's facts, keeping to the
+  vital few.
+- Good found and made good, for O1\
+  rn finds what's good for the people and what would make it good, taking in only what helps them.
