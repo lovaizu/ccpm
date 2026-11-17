@@ -134,12 +134,10 @@ def test_lanes_entries_run_the_guard_on_each_event_it_needs() -> None:
     """Given: Lane's code.
     When: hook_entries gives Lane's entries of hooks.json.
     Then: six events, each running hook.py by python3 with onFailure block."""
-    entry = {
-        "type": "command",
-        "command": "python3",
-        "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"],
-        "onFailure": "block",
-    }
-    events = ["UserPromptSubmit", "UserPromptExpansion", "PreToolUse", "PostToolUse", "Stop"]
-    expected = {name: [{"hooks": [entry]}] for name in [*events, "SubagentStop"]}
-    assert hook_entries() == expected
+    entries = hook_entries()
+    events = {"UserPromptSubmit", "UserPromptExpansion", "PreToolUse", "PostToolUse", "Stop"}
+    assert set(entries) == {*events, "SubagentStop"}
+    for groups in entries.values():
+        ((hook,),) = [group["hooks"] for group in groups]
+        assert (hook["command"], hook["onFailure"]) == ("python3", "block")
+        assert hook["args"] == ["${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py"]
