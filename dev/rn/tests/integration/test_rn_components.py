@@ -10,7 +10,10 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
+CHANGE = pytest.mark.xfail(strict=True, reason=w.CHANGE_EMPTY)
 
+
+@CHANGE
 @pytest.mark.supports("tree.py", "Design tree", "tree-keeper")
 def test_tree_py_refuses_a_change_that_leaves_the_design_trees_form(b: Bench) -> None:
     """Given: the walkthrough's goal and plan written.
@@ -40,6 +43,7 @@ def test_tree_py_refuses_a_run_whose_name_a_run_left_holds(b: Bench) -> None:
     assert len(w.printed(c.bash(b.tree("runs")))) == 1
 
 
+@CHANGE
 @pytest.mark.supports("record.py", "Record", "generator")
 def test_record_py_refuses_an_entry_out_of_its_form(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running.

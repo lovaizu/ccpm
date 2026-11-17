@@ -21,6 +21,12 @@ from tree import cut, rounds
 from dev.rn.tests.rn_walkthrough import steps_of
 from dev.rn.tests.unit import rn_data as d
 
+READ_MADE = pytest.mark.xfail(
+    strict=True,
+    raises=NotImplementedError,
+    reason="results.read_made, which the check reads a generator's Made by, has an empty body",
+)
+
 
 def practice_ids(kind: str) -> list[str]:
     """The ID of each practice of rn's best practice of the kind, deciding ones first."""
@@ -67,6 +73,7 @@ def generator_ended(
     return run, record
 
 
+@READ_MADE
 @pytest.mark.supports("test_a_generators_done_result_is_kept_in_its_record")
 def test_an_end_that_lacks_nothing_passes_and_keeps_its_result(tmp_path: Any) -> None:
     """Given: a generator that recorded each step and practice, and wrote a Made naming its
@@ -78,6 +85,7 @@ def test_an_end_that_lacks_nothing_passes_and_keeps_its_result(tmp_path: Any) ->
     assert form.read(os.path.join(run.worktree, record)).kept == form.Kept("generator", "done")
 
 
+@READ_MADE
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
 def test_an_end_whose_record_lacks_a_practice_names_it_and_keeps_nothing(tmp_path: Any) -> None:
     """Given: a generator that recorded each step and practice but code's N4.1.
@@ -89,6 +97,7 @@ def test_an_end_whose_record_lacks_a_practice_names_it_and_keeps_nothing(tmp_pat
     assert form.read(os.path.join(run.worktree, record)).kept is None
 
 
+@READ_MADE
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_an_end_whose_deliverable_leaves_its_template_names_each_place(tmp_path: Any) -> None:
     """Given: a generator of invoicer's README, which recorded each step and practice and wrote a
@@ -159,6 +168,7 @@ def test_add_records_an_entry_and_refuses_one_out_of_form(tmp_path: Any) -> None
     assert (code, out) == (1, "") and err
 
 
+@READ_MADE
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
 def test_check_gives_0_or_1_with_each_thing_lacking_on_a_line(tmp_path: Any) -> None:
     """Given: a generator that recorded each step and practice, and one that left out code's

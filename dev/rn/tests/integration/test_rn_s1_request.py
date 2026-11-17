@@ -16,6 +16,8 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
+CHANGE = pytest.mark.xfail(strict=True, reason=w.CHANGE_EMPTY)
+
 
 @pytest.mark.supports("S1", "adapters", "S5")
 def test_words_after_up_start_a_new_run_beside_a_run_left(b: Bench) -> None:
@@ -34,6 +36,7 @@ def test_words_after_up_start_a_new_run_beside_a_run_left(b: Bench) -> None:
     assert sorted(names) == sorted([first["worktree"], second["worktree"]])
 
 
+@CHANGE
 @pytest.mark.supports("S1", "Point", "user")
 def test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it(b: Bench) -> None:
     """Given: the walkthrough's goal drafted and its plan in the design tree.
@@ -46,6 +49,7 @@ def test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it(b: Bench) -> 
     assert w.tree_in(walk)["goal"] == {"decided": w.GOAL, "by": "user"}
 
 
+@CHANGE
 @pytest.mark.supports("S1", "adapters", "Cut")
 def test_a_second_generator_starts_with_the_next_deliverable_doing(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, and the generator of its first deliverable running.
@@ -60,6 +64,7 @@ def test_a_second_generator_starts_with_the_next_deliverable_doing(b: Bench) -> 
     assert sorted([first["record"], second["record"]]) == [first["record"], second["record"]]
 
 
+@CHANGE
 @pytest.mark.supports("S1", "S2", "generator", "Decision", "Point")
 def test_a_generator_that_asks_is_resumed_once_the_tree_holds_the_decision(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running.
@@ -82,6 +87,7 @@ def test_a_generator_that_asks_is_resumed_once_the_tree_holds_the_decision(b: Be
     assert not walk.c.resume(generator, text).blocked
 
 
+@CHANGE
 @pytest.mark.supports("S1", "generator", "Point", "user")
 def test_a_generator_that_lacks_a_tool_has_it_put_to_the_user(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer" running.
@@ -98,6 +104,7 @@ def test_a_generator_that_lacks_a_tool_has_it_put_to_the_user(b: Bench) -> None:
     assert not walk.c.resume(generator, w.resume_text("mypy is installed.", "installed")).blocked
 
 
+@CHANGE
 @pytest.mark.supports("S1", "record.py", "Record", "generator")
 def test_a_generators_done_result_is_kept_in_its_record(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer", which made it and recorded
@@ -114,6 +121,7 @@ def test_a_generators_done_result_is_kept_in_its_record(b: Bench) -> None:
     assert record["entries"]
 
 
+@CHANGE
 @pytest.mark.supports("S1", "record.py", "Best practice", "guard")
 def test_a_generators_end_with_its_deliverable_off_its_template_is_held(b: Bench) -> None:
     """Given: a plan of invoicer's README alone, signed off, and its generator, which recorded each
@@ -134,6 +142,7 @@ def test_a_generators_end_with_its_deliverable_off_its_template_is_held(b: Bench
         assert "kept" not in json.load(f)
 
 
+@CHANGE
 @pytest.mark.supports("S1", "orchestrator", "generator")
 def test_a_generator_sent_back_by_the_orchestrator_goes_on_from_the_ground(b: Bench) -> None:
     """Given: the generator of "Type hints in each file of invoicer", whose end passed.
@@ -151,6 +160,7 @@ def test_a_generator_sent_back_by_the_orchestrator_goes_on_from_the_ground(b: Be
     assert w.cut_of(w.due_text(then.said, "evaluator"))["deliverable"] == w.HINTS_PATH
 
 
+@CHANGE
 @pytest.mark.supports("S1", "Round", "Made", "Answers", "tree.py")
 def test_the_round_gives_each_evaluators_answers_and_what_the_generator_made(b: Bench) -> None:
     """Given: the first round of "Type hints in each file of invoicer": its Made, and each
@@ -168,22 +178,26 @@ def test_the_round_gives_each_evaluators_answers_and_what_the_generator_made(b: 
     assert answered == asked
 
 
+@CHANGE
 @pytest.mark.supports("S1", "More kept", "tree-keeper", "Decision")
 def test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator(b: Bench) -> None:
     """Given: the first round of "Type hints in each file of invoicer", with N2 in more.
     When: the orchestrator judges the people fall short by it, and the tree-keeper writes the
     decision it changes under N2 with the more to keep.
     Then: tree.py write keeps the more, and the guard gives the generator's start due again, its
-    Cut holding the decision and the More kept, with its Made in a new round."""
+    Cut holding the decision and the More kept with its best practice and that decision, with its
+    Made in a new round."""
     walk, cut, _ = w.first_round(b, {"N2": w.SHOWN_AS_TYPED})
     w.short_by_n2_kept(b, walk)
     _, again = w.generator_started(walk)
-    assert again["cut"]["more"] == [{"condition": "N2", "good_when": w.SHOWN_AS_TYPED}]
+    kept = {k: v for k, v in w.n2_more(w.N2_DECISION).items() if k != "deliverable"}
+    assert again["cut"]["more"] == [kept]
     decided = [d["decision"]["decided"] for d in again["cut"]["decisions"]]
     assert w.EVERY_ARGUMENT["decided"] in decided
     assert os.path.dirname(again["made"]) != os.path.dirname(cut["made"])
 
 
+@CHANGE
 @pytest.mark.supports("S1", "adapters", "S3")
 def test_no_generator_start_is_due_while_every_deliverable_doing_waits(b: Bench) -> None:
     """Given: a plan of "Type hints in each file of invoicer" alone, made, judged good, and put up

@@ -52,16 +52,21 @@
           }
         },
         "more": {
-          "description": "Where it makes each More kept good: the necessary condition, and the places in the deliverable.",
+          "description": "Where it makes each More kept good: the best practice and the necessary condition, which key the More kept, and the places in the deliverable.",
           "type": "array",
           "items": {
             "type": "object",
             "required": [
+              "best_practice",
               "condition",
               "where"
             ],
             "additionalProperties": false,
             "properties": {
+              "best_practice": {
+                "description": "The kind of the best practice, as the More kept names it.",
+                "type": "string"
+              },
               "condition": {
                 "type": "string"
               },

@@ -1,7 +1,8 @@
 """The unit cases of tree/rounds.py, which decides where each round of a deliverable keeps its files
 and which round is the latest. Each path turns on how many rounds the deliverable has, none, one,
-or two, and whether a start opens a new one; each More kept is written and read back, or none; and
-the tree at a round's cut is the one its opening commit holds."""
+or two, and whether a start opens a new one; each Answers is given by its group; each More kept is
+written and read back, or none, one for each best practice and necessary condition; and the tree at
+a round's cut is the one its opening commit holds."""
 
 from __future__ import annotations
 
@@ -15,7 +16,20 @@ from tree.more import More
 
 from dev.rn.tests.unit import rn_data as d
 
+EACH = pytest.mark.xfail(strict=True, raises=NotImplementedError, reason="rounds.each is empty")
+KEPT = pytest.mark.xfail(
+    strict=True,
+    raises=NotImplementedError,
+    reason="rounds.keep_more and rounds.kept_more have empty bodies",
+)
+
 GOOD_WHEN = "A caller's editor shows the type of each argument as they type the call."
+N2_DECISION = "deliverables/0/necessary_conditions/1/decisions/0"
+
+
+def a_more(best_practice: str, good_when: str = GOOD_WHEN, deliverable: str = "invoicer") -> More:
+    """A more of N2 of the best practice, naming the decision under N2 of invoicer."""
+    return More(deliverable, best_practice, "N2", N2_DECISION, good_when)
 
 
 def a_run(tmp: Any) -> Any:
@@ -96,23 +110,26 @@ def test_a_place_lies_in_the_round_of_its_start(tmp_path: Any) -> None:
         rounds.place_path(run, record)
 
 
+@EACH
 @pytest.mark.supports("test_every_round_of_a_deliverable_is_read_for_its_lessons")
 def test_each_round_is_given_the_latest_last(tmp_path: Any) -> None:
-    """Given: a run whose invoicer has two rounds, the first with an evaluator's Answers.
+    """Given: a run whose invoicer has two rounds, the first with the Answers of group 1 alone.
     When: each round of invoicer is asked.
-    Then: it gives both, numbered 1 and 2, each with its Made, the first with its Answers."""
+    Then: it gives both, numbered 1 and 2, each with its Made, the first with its Answers under
+    group 1, and the second with none."""
     run = a_run(tmp_path)
     opened(run)
     d.write_json(
-        os.path.join(run.worktree, rounds.answers_path(run, "invoicer", 0)), d.answers(["N1"])
+        os.path.join(run.worktree, rounds.answers_path(run, "invoicer", 1)), d.answers(["N1"])
     )
     opened(run)
     each = rounds.each(run, "invoicer")
     assert [r.number for r in each] == [1, 2]
-    assert len(each[0].answers) == 1 and each[1].answers == ()
+    assert set(each[0].answers) == {1} and not each[1].answers
     assert all(r.made is not None for r in each)
 
 
+@EACH
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
     """Given: a run whose invoicer has no round.
@@ -122,27 +139,47 @@ def test_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
         rounds.each(a_run(tmp_path), "invoicer")
 
 
+@KEPT
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_a_more_kept_is_read_back_for_the_next_round(tmp_path: Any) -> None:
     """Given: a run whose invoicer has one round, and nothing kept yet.
-    When: the More kept is asked, then the more of N2 is kept, and asked again.
-    Then: first none, then the more of N2, and keeping it gives the path written."""
+    When: the More kept is asked, then the more of N2 of code is kept, and asked again.
+    Then: first none, then the more of N2 with its best practice and decision, and keeping it
+    gives the path written."""
     run = a_run(tmp_path)
     opened(run)
     assert rounds.kept_more(run, "invoicer") == ()
-    kept = More("invoicer", "N2", GOOD_WHEN)
+    kept = a_more("code")
     written = rounds.keep_more(run, [kept])
     assert written and all(os.path.isfile(os.path.join(run.worktree, p)) for p in written)
     assert rounds.kept_more(run, "invoicer") == (kept,)
 
 
+@KEPT
+@pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
+def test_a_more_kept_is_one_for_each_best_practice_and_condition(tmp_path: Any) -> None:
+    """Given: a run whose invoicer has one round, with the more of N2 of code kept.
+    When: the more of N2 of refactor-code is kept, then the more of N2 of code again with another
+    good_when.
+    Then: both N2s are kept apart, and the code one holds the later good_when."""
+    run = a_run(tmp_path)
+    opened(run)
+    rounds.keep_more(run, [a_more("code")])
+    refactor = a_more("refactor-code")
+    rounds.keep_more(run, [refactor])
+    later = a_more("code", "Each argument's type shows as the caller types the call.")
+    rounds.keep_more(run, [later])
+    assert set(rounds.kept_more(run, "invoicer")) == {refactor, later}
+
+
+@KEPT
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")
 def test_a_more_of_a_deliverable_with_no_round_is_refused(tmp_path: Any) -> None:
     """Given: a run whose invoicer/py.typed has no round.
     When: a more of it is kept.
     Then: it's refused."""
     with pytest.raises(Wrong):
-        rounds.keep_more(a_run(tmp_path), [More("invoicer/py.typed", "N1", GOOD_WHEN)])
+        rounds.keep_more(a_run(tmp_path), [a_more("code", deliverable="invoicer/py.typed")])
 
 
 @pytest.mark.supports("test_a_more_kept_with_no_decision_changed_is_refused")

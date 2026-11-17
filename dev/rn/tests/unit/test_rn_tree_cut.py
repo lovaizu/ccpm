@@ -14,6 +14,7 @@ from typing import Any
 import pytest
 from fault import Wrong
 from tree import cut, place, rounds
+from tree.more import More
 from tree.place import Place
 
 from dev.rn.tests.unit import rn_data as d
@@ -21,6 +22,10 @@ from dev.rn.tests.unit import rn_data as d
 NOT_DONE_AT = pytest.mark.xfail(
     strict=True,
     reason="cut._generator doesn't yet give done_at, and branch.done_at has an empty body",
+)
+
+KEPT = pytest.mark.xfail(
+    strict=True, raises=NotImplementedError, reason="rounds.kept_more has an empty body"
 )
 
 BOTH_DOING = d.with_status(d.walkthrough_tree(), "doing", "doing")
@@ -92,6 +97,7 @@ def test_the_generators_cut_of_a_deliverable_done_before_gives_the_commit_it_was
     assert d.part(given)["cut"]["done_at"] == done_at
 
 
+@KEPT
 @pytest.mark.supports("test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at")
 def test_a_generator_starts_a_new_round_once_a_decision_changes_after_the_rounds_cut(
     tmp_path: Any,
@@ -114,6 +120,40 @@ def test_a_generator_starts_a_new_round_once_a_decision_changes_after_the_rounds
     given = cut.next_start(run, d.design(changed), "generator", [])
     assert given is not None and given.part["deliverable"] == "invoicer"
     assert given.values["made"] == rounds.made_path(run, "invoicer", True)
+
+
+@KEPT
+@pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
+def test_the_next_rounds_cut_carries_each_more_kept_with_its_best_practice_and_decision(
+    tmp_path: Any,
+) -> None:
+    """Given: a run with invoicer alone doing, made in its first round, its decision of N1 changed,
+    and the more of N2 of refactor-code kept, naming that decision.
+    When: the Cut of the generator's next start is asked.
+    Then: it's of invoicer's round 2, and its part of the tree carries the More kept with its best
+    practice, condition, decision, and good_when."""
+    data = d.with_status(d.walkthrough_tree(), "doing", "open")
+    run = doing_run(tmp_path, data)
+    d.write_json(os.path.join(run.worktree, rounds.made_path(run, "invoicer", True)), d.made())
+    d.git(run.worktree, "add", "-A")
+    d.git(run.worktree, "commit", "-q", "-m", "Round 1 made")
+    changed = copy.deepcopy(data)
+    (decision,) = changed["deliverables"][0]["necessary_conditions"][0]["decisions"]
+    decision["decided"] = "each file of invoicer but its tests"
+    d.tree_written(run, changed)
+    path = "deliverables/0/necessary_conditions/0/decisions/0"
+    kept = More("invoicer", "refactor-code", "N2", path, "Each name says what it holds.")
+    rounds.keep_more(run, [kept])
+    given = cut.next_start(run, d.design(changed), "generator", [])
+    assert given is not None and given.values["made"] == rounds.made_path(run, "invoicer", True)
+    assert d.part(given)["cut"]["more"] == [
+        {
+            "best_practice": "refactor-code",
+            "condition": "N2",
+            "decision": path,
+            "good_when": "Each name says what it holds.",
+        }
+    ]
 
 
 @pytest.mark.supports("test_a_second_generator_starts_with_the_next_deliverable_doing")

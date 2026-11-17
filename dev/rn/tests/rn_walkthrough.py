@@ -70,6 +70,9 @@ COVERAGE_SETTINGS = ("COVERAGE_PROCESS_START", "COVERAGE_FILE")
 # Why a case of the walkthrough beyond the walking skeleton still fails: a part it reaches that a
 # later deliverable builds.
 NOT_YET = "a part of rn that the case reaches has an empty body or a step not yet written"
+# Why each case that writes the design tree fails until S1's deliverable builds the bodies that
+# rn's skeleton emptied for the More kept.
+CHANGE_EMPTY = "tree.py write's change, which the case's walk writes the design tree by, is empty"
 
 
 # What rn shows at each move of the walkthrough, as the README shows it.
@@ -561,10 +564,12 @@ def made(
     assert tried.exit_code == 0, tried.output or tried.said
     where = cut["deliverable"]
     decisions = [each["decision"]["path"] for each in cut["cut"]["decisions"]]
-    more = [each["condition"] for each in cut["cut"]["more"]]
+    more = [(each["best_practice"], each["condition"]) for each in cut["cut"]["more"]]
     result = {
         "decisions": [{"path": d, "where": where} for d in decisions if every_item],
-        "more": [{"condition": m, "where": where} for m in more if every_item],
+        "more": [
+            {"best_practice": b, "condition": c, "where": where} for b, c in more if every_item
+        ],
         "settled": [DECIMAL],
     }
     written = generator.write(os.path.join(w.c.cwd, cut["made"]), json.dumps(result))
@@ -641,12 +646,27 @@ def first_round(
     return w, cut, evaluated(b, w, kinds_of(cut), more)
 
 
+N2_DECISION = "deliverables/0/necessary_conditions/1/decisions/0"
+
+
+def n2_more(decision: str) -> dict[str, str]:
+    """The more of N2 of the code best practice of the first deliverable, SHOWN_AS_TYPED, naming the
+    decision at the path given, as tree.py write takes it."""
+    return {
+        "deliverable": HINTS_PATH,
+        "best_practice": "code",
+        "condition": "N2",
+        "decision": decision,
+        "good_when": SHOWN_AS_TYPED,
+    }
+
+
 def short_by_n2_kept(b: Bench, w: Walk) -> None:
     """The orchestrator judges that the people fall short by N2 of the first round, and the
-    tree-keeper writes EVERY_ARGUMENT under N2 of the first deliverable, with the more of
-    SHOWN_AS_TYPED to keep."""
-    nodes = {"deliverables/0/necessary_conditions/1/decisions/0": EVERY_ARGUMENT}
-    more = [{"deliverable": HINTS_PATH, "condition": "N2", "good_when": SHOWN_AS_TYPED}]
+    tree-keeper writes EVERY_ARGUMENT under N2 of the first deliverable, with the more of N2 of the
+    code best practice, SHOWN_AS_TYPED, to keep, naming that decision."""
+    nodes = {N2_DECISION: EVERY_ARGUMENT}
+    more = [n2_more(N2_DECISION)]
     keeper_writes(b, w, "The people fall short by N2.", {"nodes": nodes, "more": more})
 
 

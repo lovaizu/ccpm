@@ -239,12 +239,26 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
+      "status": "done"
+    },
+    {
+      "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
+      "path": "dev/rn/tests",
+      "kind": "test-design",
+      "status": "done"
+    },
+    {
+      "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
+      "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py",
+      "kind": "code",
       "status": "doing",
       "inputs": [
-        "dev/rn/architecture.md"
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
       ],
       "preconditions": [
-        "dev/rn/architecture.md"
+        "dev/rn/tests"
       ],
       "necessary_conditions": [
         {
@@ -252,62 +266,13 @@
           "good": false,
           "decisions": [
             {
-              "about": "Where the skeleton of the More kept stands",
-              "decided": "on branch rn-skeleton-more at b585430e, a More kept keyed by its best practice and condition with the decision it changes, refused where that decision isn't under its deliverable or didn't change since the round's cut, each body whose contract changed emptied, and skeleton-gaps.md naming no gap; it merges into rn-rebuild with rn's test cases, which mark each case its emptied bodies fail, as rn's cases fail on it until then",
-              "by": "maker"
+              "about": "Which bodies the walking skeleton builds again, as rn's skeleton of the More kept emptied them",
+              "decided": "tree.py write's change, results.read_made, rounds.each, and tree.py round, in the forms that key a More kept by its best practice and condition and give each Answers its best practice, as every case that writes the design tree fails on the first, and the walking skeleton's round on the rest; each case marked CHANGE loses its mark as it passes",
+              "by": "reasoning"
             }
           ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
         }
       ]
-    },
-    {
-      "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
-      "path": "dev/rn/tests",
-      "kind": "test-design",
-      "status": "open",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md",
-        "dev/rn/architecture.md",
-        "plugins/rn"
-      ],
-      "preconditions": [
-        "dev/rn/architecture.md",
-        "plugins/rn"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
-      "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py",
-      "kind": "code",
-      "status": "done"
     },
     {
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
@@ -326,7 +291,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Which bodies S1 builds of the More kept",
+              "decided": "more.keepable, rounds.keep_more and rounds.kept_more, and items.lacks of a generator, each by its contract in the skeleton, so that a More kept is one for each best practice and condition, and refused where the decision it names isn't under its deliverable or didn't change",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",

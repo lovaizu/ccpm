@@ -6,10 +6,22 @@ from __future__ import annotations
 
 import json
 import os
+from dataclasses import dataclass
 
 from fault import Wrong
 
 from tree.runs import Run
+
+
+@dataclass(frozen=True)
+class Group:
+    """One group of necessary conditions that a deliverable is judged by, one evaluator's: the kind
+    of its best practice, such as code or refactor-code, which a More kept names, the best
+    practice's folder, and the ID of each condition."""
+
+    kind: str
+    folder: str
+    conditions: tuple[str, ...]
 
 
 def folder(run: Run, plugin_root: str, kind: str) -> str:
@@ -62,3 +74,22 @@ def groups(best_practice: str) -> tuple[tuple[str, ...], ...]:
     with open(path, encoding="utf-8") as f:
         factors = json.load(f)["goal"]["critical_success_factors"]
     return tuple(tuple(n["id"] for n in f["necessary_conditions"]) for f in factors)
+
+
+def judged_by(run: Run, plugin_root: str, kind: str) -> tuple[Group, ...]:
+    """Each group of necessary conditions that a deliverable of the kind is judged by.
+
+    Takes: the run, rn's folder, and the deliverable's kind.
+    Gives: each group of the kind's best practice, then each of the refactor one, in their order,
+    so that a group's number from 0 is its place here.
+    Changes: nothing.
+    Refuses: fault.Wrong, as `folder` does.
+    Carries: S1 `par one for each group of necessary conditions, of the kind's best practice and of
+    the refactor one`, each evaluator's Cut naming one; and `T-->>O: each evaluator's Answers`,
+    which names the best practice of each.
+    """
+    found: list[Group] = []
+    for each in (kind, refactor(kind)):
+        best = folder(run, plugin_root, each)
+        found += [Group(each, best, ids) for ids in groups(best)]
+    return tuple(found)

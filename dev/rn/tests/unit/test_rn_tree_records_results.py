@@ -2,7 +2,8 @@
 name keeps, and of tree/results.py, which decides how a Made and Answers are read. A record's path
 turns on how many records the run holds and how many starts take one, so the cases take none, one,
 and one taken but not yet written. A Made and Answers are each read in their form, out of it, at
-the least each list may hold, or missing."""
+the least each list may hold, or missing, and a Made keys each More kept by its best practice and
+necessary condition, as the kind's best practice and the refactor one share condition IDs."""
 
 from __future__ import annotations
 
@@ -15,6 +16,10 @@ from tree import records, results
 from tree.results import Settled
 
 from dev.rn.tests.unit import rn_data as d
+
+READ_MADE = pytest.mark.xfail(
+    strict=True, raises=NotImplementedError, reason="results.read_made has an empty body"
+)
 
 
 def touch(path: str) -> str:
@@ -81,6 +86,7 @@ def test_a_path_that_names_no_record_has_no_role(path: str) -> None:
         records.role_of(path)
 
 
+@READ_MADE
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 def test_a_made_in_its_form_is_read(tmp_path: Any) -> None:
     """Given: a generator's Made with one decision carried out and one point settled.
@@ -97,13 +103,41 @@ def test_a_made_in_its_form_is_read(tmp_path: Any) -> None:
     )
 
 
+@READ_MADE
+@pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
+def test_a_made_keeps_the_more_of_each_best_practice_apart(tmp_path: Any) -> None:
+    """Given: a Made that makes the More kept of N2 of code good in one place, and that of N2 of
+    refactor-code in another.
+    When: it's read.
+    Then: it gives each place under its best practice and N2."""
+    held = {
+        **d.made(),
+        "more": [
+            {"best_practice": "code", "condition": "N2", "where": "invoicer/totals.py"},
+            {"best_practice": "refactor-code", "condition": "N2", "where": "invoicer/tax.py"},
+        ],
+    }
+    given = results.read_made(d.write_json(os.path.join(tmp_path, "made.json"), held))
+    assert dict(given.more) == {
+        ("code", "N2"): "invoicer/totals.py",
+        ("refactor-code", "N2"): "invoicer/tax.py",
+    }
+
+
+@READ_MADE
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
 @pytest.mark.parametrize(
-    "held", [{"decisions": [], "more": []}, {**d.made(), "extra": 1}, {**d.made(), "settled": [{}]}]
+    "held",
+    [
+        {"decisions": [], "more": []},
+        {**d.made(), "extra": 1},
+        {**d.made(), "settled": [{}]},
+        {**d.made(), "more": [{"condition": "N2", "where": "invoicer"}]},
+    ],
 )
 def test_a_made_out_of_its_form_is_refused(tmp_path: Any, held: Any) -> None:
-    """Given: a Made that lacks settled, holds a field its form has no place for, or settles a
-    point with nothing in it.
+    """Given: a Made that lacks settled, holds a field its form has no place for, settles a point
+    with nothing in it, or makes a More kept good with no best practice.
     When: it's read.
     Then: it's refused."""
     with pytest.raises(Wrong):
@@ -143,12 +177,20 @@ def test_answers_out_of_their_form_are_refused(tmp_path: Any, held: Any) -> None
         results.read_answers(d.write_json(os.path.join(tmp_path, "answers.json"), held))
 
 
+@READ_MADE
 @pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
-def test_a_made_or_answers_missing_cant_be_read(tmp_path: Any) -> None:
-    """Given: no file of a Made or of Answers.
-    When: each is read.
-    Then: each couldn't run."""
+def test_a_made_missing_cant_be_read(tmp_path: Any) -> None:
+    """Given: no file of a Made.
+    When: it's read.
+    Then: it couldn't run."""
     with pytest.raises(CantRun):
         results.read_made(os.path.join(tmp_path, "made.json"))
+
+
+@pytest.mark.supports("test_the_round_gives_each_evaluators_answers_and_what_the_generator_made")
+def test_answers_missing_cant_be_read(tmp_path: Any) -> None:
+    """Given: no file of Answers.
+    When: they're read.
+    Then: they couldn't run."""
     with pytest.raises(CantRun):
         results.read_answers(os.path.join(tmp_path, "answers.json"))

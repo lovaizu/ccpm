@@ -4,7 +4,7 @@ of them in order; and record/items.py, what a result leaves out of its Cut. The 
 prompt, a role's part, a command, or none of rn's, with steps or none; the practices on a best
 practice in form, out of it, or missing; the order on each step and practice there and in place,
 one missing, and one out of place; and the items on each role's result naming each item, leaving
-one out, or being asks or lacks."""
+one out, or being asks or lacks, each More kept by its best practice and condition."""
 
 from __future__ import annotations
 
@@ -26,6 +26,9 @@ from dev.rn.tests.unit import rn_data as d
 STEPS = "\n## Steps\n\n1. Read your Cut.\n2. Decide.\n3. Make.\n"
 DECIDE, MAKE = Practice("N1.1", Phase.DECIDE), Practice("N1.2", Phase.MAKE)
 DECISION = "deliverables/0/necessary_conditions/0/decisions/0"
+ITEMS = pytest.mark.xfail(
+    strict=True, raises=NotImplementedError, reason="items.lacks of a generator has an empty body"
+)
 
 
 def plugin_with_steps(tmp: Any, held: dict[str, str]) -> str:
@@ -170,8 +173,9 @@ def test_a_prompt_with_no_steps_and_no_practices_lacks_nothing() -> None:
     assert order.lacks(record(), "evaluator", (), {}) == ()
 
 
-def generator_cut(more: bool = False) -> Cut:
-    """A generator's Cut of invoicer with the user's decision, and the more of N2 where `more`."""
+def generator_cut(*more: str) -> Cut:
+    """A generator's Cut of invoicer with the user's decision, and the More kept of N2 of each best
+    practice given."""
     part = {
         "cut": {
             "decisions": [
@@ -180,32 +184,49 @@ def generator_cut(more: bool = False) -> Cut:
                     "decision": {"path": DECISION, "point": "p", "decided": "d", "ground": "g"},
                 }
             ],
-            "more": [{"condition": "N2", "good_when": "w"}] if more else [],
+            "more": [
+                {"best_practice": b, "condition": "N2", "decision": DECISION, "good_when": "w"}
+                for b in more
+            ],
         }
     }
     return Cut("generator", {"deliverable": "invoicer"}, part)
 
 
+@ITEMS
 @pytest.mark.supports("test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it")
 def test_a_made_naming_each_decision_and_more_lacks_nothing() -> None:
-    """Given: a generator's Cut with one decision and the more of N2, and a Made naming both.
+    """Given: a generator's Cut with one decision and the More kept of N2 of code, and a Made
+    naming both.
     When: what the result done leaves out is asked.
     Then: it leaves out nothing."""
-    made = Made({DECISION: "invoicer"}, {"N2": "invoicer"}, ())
-    assert items.lacks(generator_cut(True), "done", made, None) == ()
+    made = Made({DECISION: "invoicer"}, {("code", "N2"): "invoicer"}, ())
+    assert items.lacks(generator_cut("code"), "done", made, None) == ()
 
 
+@ITEMS
 @pytest.mark.supports("test_a_made_that_leaves_out_a_decision_of_the_cut_is_held_with_it")
 @pytest.mark.parametrize(
-    ("made", "named"),
-    [(Made({}, {"N2": "invoicer"}, ()), DECISION), (Made({DECISION: "invoicer"}, {}, ()), "N2")],
+    ("more", "made", "named"),
+    [
+        (("code",), Made({}, {("code", "N2"): "invoicer"}, ()), (DECISION,)),
+        (("code",), Made({DECISION: "invoicer"}, {}, ()), ("code", "N2")),
+        (
+            ("code", "refactor-code"),
+            Made({DECISION: "invoicer"}, {("code", "N2"): "invoicer"}, ()),
+            ("refactor-code", "N2"),
+        ),
+    ],
 )
-def test_a_made_that_leaves_out_an_item_names_it(made: Made, named: str) -> None:
-    """Given: a generator's Cut with one decision and the more of N2, and a Made naming only one.
+def test_a_made_that_leaves_out_an_item_names_it(
+    more: tuple[str, ...], made: Made, named: tuple[str, ...]
+) -> None:
+    """Given: a generator's Cut with one decision and the More kept of N2 of code, or of code and
+    refactor-code, and a Made that leaves out the decision, the More kept, or the refactor one.
     When: what the result done leaves out is asked.
-    Then: it names the item left out."""
-    found = items.lacks(generator_cut(True), "done", made, None)
-    assert found and any(named in each for each in found)
+    Then: it names the item left out, a More kept by its best practice and condition."""
+    found = items.lacks(generator_cut(*more), "done", made, None)
+    assert found and any(all(n in each for n in named) for each in found)
 
 
 @pytest.mark.supports("test_a_generator_that_asks_is_resumed_once_the_tree_holds_the_decision")

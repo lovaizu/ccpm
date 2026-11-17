@@ -1,24 +1,27 @@
-"""Decides which `more` of an evaluator tree.py keeps for the next round: only one whose necessary
-condition has a decision that changed since the round's cut, as a fix beside the design rests on no
-decision."""
+"""Decides which `more` of an evaluator tree.py keeps for the next round: only one whose decision,
+the one it names as the decision it changes, lies under its deliverable and changed since the
+round's cut, as a fix beside the design rests on no decision, and only a decision under the
+deliverable starts its next round."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
 
-from fault import Wrong
-
-from tree.design import DesignTree, deliverables
+from tree.design import DesignTree
 
 
 @dataclass(frozen=True)
 class More:
     """An evaluator's `more` that the orchestrator judged the people fall short by: the deliverable
-    by its path, the necessary condition by its ID, and its `good_when`."""
+    by its path; the best practice by its kind, such as code or refactor-code, and the necessary
+    condition by its ID, which together key it, as the kind's best practice and the refactor one
+    share condition IDs such as N2; the decision it changes, by its path in the design tree, such as
+    `deliverables/3/necessary_conditions/0/decisions/1`; and its `good_when`."""
 
     deliverable: str
+    best_practice: str
     condition: str
+    decision: str
     good_when: str
 
 
@@ -27,25 +30,18 @@ def keepable(at_cut: DesignTree, now: DesignTree, more: More) -> None:
 
     Takes: the tree as the round's cut took it, the tree with the tree-keeper's change, and the
     more.
-    Gives: nothing, where a decision that answers the more's necessary condition differs between
-    the two.
+    Gives: nothing, where the decision at the more's path lies under the more's deliverable and
+    differs between the two, including one that the cut didn't hold yet.
     Changes: nothing.
-    Refuses: fault.Wrong, naming the more's necessary condition, where none does.
-    Carries: S1 `alt no decision that answers the more's necessary condition changed since the
-    round's cut`, and `T-->>K: refuses the more, naming its necessary condition`.
+    Refuses: fault.Wrong, naming the more's best practice and necessary condition, where that
+    decision isn't under the more's deliverable, as `cut.next_start` starts the deliverable's next
+    round only once a decision under it changed, so an input's fault goes back to that input's
+    deliverable; fault.Wrong, naming the more's best practice and necessary condition, where that
+    decision is the same in both; fault.Wrong, naming the path, where the tree with the change holds
+    no decision there, as a More kept changes one Decision; fault.Wrong, where the tree holds no
+    deliverable at the more's path.
+    Carries: S1 `alt the decision that the more names isn't under its deliverable, or didn't change
+    since the round's cut`, and `T-->>K: refuses the more, naming its best practice and necessary
+    condition`.
     """
-    if _decisions(at_cut, more) == _decisions(now, more):
-        raise Wrong(
-            f"the more of {more.condition} of {more.deliverable} isn't kept, as no decision under"
-            f" {more.condition} changed since the round's cut; change the decision it comes from"
-        )
-
-
-def _decisions(tree: DesignTree, more: More) -> list[Any]:
-    """The decisions under the more's necessary condition, none where the deliverable has no such
-    condition; raises Wrong where the tree holds no deliverable at the more's path."""
-    for each in deliverables(tree):
-        if each["path"] == more.deliverable:
-            conditions = each.get("necessary_conditions", [])
-            return [c["decisions"] for c in conditions if c["id"] == more.condition]
-    raise Wrong(f"the more's deliverable {more.deliverable} is no deliverable of the design tree")
+    raise NotImplementedError("more.keepable")

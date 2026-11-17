@@ -13,7 +13,10 @@ import pytest
 from dev.rn.tests import rn_walkthrough as w
 from dev.rn.tests.rn_walkthrough import Bench
 
+CHANGE = pytest.mark.xfail(strict=True, reason=w.CHANGE_EMPTY)
 
+
+@CHANGE
 @pytest.mark.supports("S3", "repository", "Point")
 def test_a_push_without_a_login_of_gh_says_what_is_missing(tmp_path: object) -> None:
     """Given: the walkthrough's goal confirmed and the user's point answered, with gh logged in to
@@ -28,6 +31,7 @@ def test_a_push_without_a_login_of_gh_says_what_is_missing(tmp_path: object) -> 
     assert b.github_holds()["pulls"] == {}
 
 
+@CHANGE
 @pytest.mark.supports("S3", "repository", "Point")
 def test_a_push_without_a_remote_says_what_is_missing(tmp_path: object) -> None:
     """Given: the walkthrough's goal confirmed and the user's point answered, in a repository with
@@ -40,6 +44,7 @@ def test_a_push_without_a_remote_says_what_is_missing(tmp_path: object) -> None:
     assert pushed.exit_code == 1 and "remote" in pushed.output
 
 
+@CHANGE
 @pytest.mark.supports("S3", "guard", "Sign-off")
 def test_only_the_users_own_ty_decides_a_sign_off(b: Bench) -> None:
     """Given: the walkthrough's plan put up for the user's sign-off.
@@ -52,6 +57,7 @@ def test_only_the_users_own_ty_decides_a_sign_off(b: Bench) -> None:
     assert [s["state"] for s in w.sign_offs_in(walk)] == ["waiting"]
 
 
+@CHANGE
 @pytest.mark.supports("S3", "user", "Sign-off", "Deliverable")
 def test_ty_approves_the_plan_and_starts_the_work_resting_on_it(b: Bench) -> None:
     """Given: the walkthrough's plan put up for the user's sign-off.
@@ -69,6 +75,7 @@ def test_ty_approves_the_plan_and_starts_the_work_resting_on_it(b: Bench) -> Non
     assert w.due_text(walk.said, "generator")
 
 
+@CHANGE
 @pytest.mark.supports("S3", "user", "Sign-off", "Decision")
 def test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes(b: Bench) -> None:
     """Given: the walkthrough's plan put up for the user's sign-off.
@@ -90,6 +97,7 @@ def test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes(b: Bench) 
     assert w.tree_in(walk)["deliverables"][0]["necessary_conditions"][0]["decisions"] == [decided]
 
 
+@CHANGE
 @pytest.mark.supports("S3", "Comment", "repository", "user")
 def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
     """Given: the walkthrough's plan put up, and on its pull request after it the user's comment,
@@ -127,6 +135,7 @@ def test_gm_alone_reads_the_users_comments_since_the_sign_off(b: Bench) -> None:
     ]
 
 
+@CHANGE
 @pytest.mark.supports("S3", "Sign-off", "Made", "Deliverable")
 def test_a_deliverable_put_up_and_approved_is_marked_done(b: Bench) -> None:
     """Given: "Type hints in each file of invoicer" judged good in its first round, and put up for

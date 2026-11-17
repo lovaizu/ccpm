@@ -130,7 +130,7 @@ def file_at(worktree: str, commit_id: str, path: str) -> str:
     Gives: the file's text at that commit, from `git show <commit>:<path>`.
     Changes: nothing.
     Refuses: fault.CantRun, where the commit doesn't hold the file or git fails.
-    Carries: S1 `T->>K` behind `alt no decision that answers the more's necessary condition changed
+    Carries: S1 `T->>K` behind `alt the decision that the more names didn't change
     since the round's cut`, as the round's cut is the tree as committed at the round's start.
     """
     return _git(worktree, "show", f"{commit_id}:{path}")
