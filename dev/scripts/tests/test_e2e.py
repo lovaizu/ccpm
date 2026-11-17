@@ -429,6 +429,28 @@ class E2ERunnerTest(FolderTest):
         self.assertIn("Hi.", turn["screen"])
         self.assertLessEqual(turn["started"], turn["ended"])
 
+    def test_the_records_keep_what_the_run_took(self):
+        self.plan([{"done": True}], [])
+        self.run_test()
+        took = json.loads(self.read(os.path.join(self.records(), "run.json")))
+        self.assertEqual(took["model"], "opus")
+        self.assertEqual(took["claude"], "2.1.999 (Claude Code)")
+        self.assertEqual(took["test"], dict(self.fields, repository="<top>/remote.git"))
+        self.assertEqual((took["commit"], took["uncommitted"]), (None, False))
+
+    def test_the_records_name_the_tops_commit_and_whether_it_held_changes(self):
+        env = dict(os.environ, **GIT_ENV)
+        for args in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "top"]):
+            subprocess.run(["git", *args], env=env, check=True)
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+        ).stdout.strip()
+        self.write("src/plugin.json", '{"name": "q"}\n')
+        self.plan([{"done": True}], [])
+        self.run_test()
+        took = json.loads(self.read(os.path.join(self.records(), "run.json")))
+        self.assertEqual((took["commit"], took["uncommitted"]), (head, True))
+
     def test_a_turn_that_fails_is_kept_with_its_exit_code(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"exit": 1}])
         code, _, _ = self.run_test()

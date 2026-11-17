@@ -27,6 +27,8 @@ An E2E test file is one JSON object:
 
 The records of a run lie in `<records>/<test>/<UTC time>/`, where `<test>` is the E2E test file's
 name without `.json`:
+- `run.json`: what the run took: the commit at the top and whether the top held changes beside it,
+  Claude Code's version, the model, and the E2E test file as given.
 - `turns.jsonl`: each turn's prompt, its times, Claude Code's exit code, and what the screen showed.
 - `hooks.jsonl`: each hook event, with the time it came.
 - `transcripts/`: Claude Code's transcript of the conversation, and of each subagent beside it.
@@ -172,6 +174,7 @@ class E2ETest:
     turns: int
     records: str
     push: bool
+    given: dict[str, Any]
 
 
 def main(argv: list[str]) -> int:
@@ -240,6 +243,7 @@ def read(path: str) -> E2ETest:
         given["turns"],
         given["records"],
         given["push"],
+        given,
     )
 
 
@@ -272,6 +276,7 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
     """Runs the test and gives the folder of its records, from the top. Everything it makes
     outside the records lies in one temporary folder, or, for a test that pushes, in a branch of
     the repository, and it removes each."""
+    took = _took(test, top)
     root = tempfile.mkdtemp(prefix="e2e-")
     clone = os.path.join(root, "clone")
     held = None
@@ -329,12 +334,39 @@ def run(test: E2ETest, top: str, token: str | None) -> str:
             session = _session(events, session)
         stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
         folder = os.path.join(test.records, test.name, stamp)
-        _keep(RunRecords(os.path.join(top, folder), top, root, token), head, turns)
+        records = RunRecords(os.path.join(top, folder), top, root, token)
+        records.write("run.json", json.dumps(took, ensure_ascii=False, indent=1) + "\n")
+        _keep(records, head, turns)
         return folder
     finally:
         if held is not None:
             _unpush(clone, held)
         shutil.rmtree(root)
+
+
+def _took(test: E2ETest, top: str) -> dict[str, Any]:
+    """What the run takes: the commit at the top, None where the top isn't a repository, whether
+    the top holds changes beside it, Claude Code's version, the model, and the test as given."""
+    inside = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        cwd=top,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    held = inside.returncode == 0 and os.path.realpath(inside.stdout.strip()) == os.path.realpath(
+        top
+    )
+    commit = _git(["rev-parse", "HEAD"], top).strip() if held else None
+    changed = bool(_git(["status", "--porcelain"], top).strip()) if held else False
+    version = subprocess.run(["claude", "--version"], capture_output=True, text=True, check=False)
+    return {
+        "commit": commit,
+        "uncommitted": changed,
+        "claude": version.stdout.strip(),
+        "model": MODEL,
+        "test": test.given,
+    }
 
 
 def _logged_in(token: str | None, configs: tuple[str, ...]) -> dict[str, str]:
