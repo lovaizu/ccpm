@@ -116,7 +116,133 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/architecture"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The product vision's Concept",
+              "decided": "rn piles up the vital few, what brings a deliverable's people to what they're after, and cuts the trivial many thoroughly, on three ideas: each role starts from the people's purpose and the state in which they have it; at each turn rn reviews the design tree, its content and how the work goes, by the facts of the run; and rn finds what's good and what would make it good, taking in only what brings the people closer",
+              "by": "user"
+            },
+            {
+              "about": "Where a role's record commits",
+              "decided": "only on the run's branch in the work's repository, as the rule The repository holds the work says, as rn's E2E pilot of 2026-11-17 committed a place file of its record into ccpm's own branch rn-rebuild, which was dropped",
+              "by": "reasoning"
+            },
+            {
+              "about": "Test strategy's Scenario testing",
+              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed, as the E2E test's KR1.1 decision says, in place of a judge on Opus",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The order of content and structure",
+              "decided": "a deliverable's rounds make and judge its content by its kind's best practice until each condition is good, and only then does the generator rework its structure by the refactor best practice and an evaluator judge that, as the refactor best practices change structure only on content whose tests pass, and the user decided on 2026-11-14 that adding function and reworking structure are two jobs, one at a time; rn's architecture, the generator's prompt, and rn's parts and cases had the generator finish each round by the refactor one and the evaluators of both side by side",
+              "by": "user"
+            },
+            {
+              "about": "What a later round judges",
+              "decided": "a round after the first judges again only the conditions whose decisions changed since the round before, as the E2E run of 2026-11-18 had six evaluators judge all seventeen conditions again in round 2 after a change to one",
+              "by": "user"
+            },
+            {
+              "about": "Why evaluators are split by group of conditions",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each role's expected role",
+              "decided": "each AI role's responsibility says first what it brings the people, then what the others expect of it: the orchestrator keeps the work on what brings the people closer, the tree-keeper keeps the tree true, the generator makes only what brings the deliverable's people closer, and the evaluator finds what's good for them and what would make it good",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -412,6 +538,11 @@
               "about": "The runs of 2026-11-18",
               "decided": "kept as records of the first stage's follow-up: installation/20261118T014552Z passed; walkthrough/20261118T020636Z and 20261118T030702Z were stopped at faults now mended; walkthrough/20261118T033924Z was stopped by the user at round 1's evaluators; walkthrough/20261118T052718Z, kept by e2e._keep after the run was killed, was stopped at turn 3, where rn's turn mark, now taken out, held the turn eleven times, and turns 1 and 2 followed the walkthrough. The walkthrough runs again next, on the cases judged again by the test design best practice's N3 of each transition that the use brings about",
               "by": "reasoning"
+            },
+            {
+              "about": "Before the next stage",
+              "decided": "as the user decided on 2026-11-18: rn's flow makes the content good before the structure is reworked, and judges again only what changed; then the best practices of architecture, README, prompt, and meta, the largest, are read practice by practice, each kept only where the people fail their aim without it; then the walkthrough runs again. The run walkthrough/20261118T072112Z was stopped in round 3 of the command for the first: rounds 1 and 2 took in only the mores that would give accounting a wrong invoice",
+              "by": "user"
             }
           ]
         }
