@@ -14,7 +14,62 @@
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A best practice's inputs",
+              "decided": "each kind a best practice takes, read or run, with the sections of that kind's template that it takes, which its first practice reads; a best practice names no preconditions",
+              "by": "user"
+            },
+            {
+              "about": "Each best practice's inputs",
+              "decided": "each best practice of rn moves what its first practice reads of each input into its inputs, and the prompt and test implementation best practices move their preconditions into their inputs",
+              "by": "user"
+            },
+            {
+              "about": "What practices.py checks of the inputs",
+              "decided": "each section that an input takes is a section of that kind's template",
+              "by": "user"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
@@ -70,13 +125,34 @@
               "about": "What tree.py keeps of the work order",
               "decided": "it rewrites an item whose node a change renames, and refuses an item that names no node or whose inputs and preconditions aren't done",
               "by": "user"
+            },
+            {
+              "about": "Inputs alone",
+              "decided": "a deliverable names in inputs each deliverable it rests on, read or run, and the tree holds no preconditions",
+              "by": "user"
+            },
+            {
+              "about": "A node with no file",
+              "decided": "a node of a kind with no file holds the decisions of each necessary condition of its best practice, and no file is made for it",
+              "by": "user"
+            },
+            {
+              "about": "What tree.py checks of the inputs",
+              "decided": "it refuses a deliverable whose inputs don't cover each kind that its best practice names in inputs, by a file of the product or a node of the tree",
+              "by": "user"
             }
           ]
         },
         {
           "id": "N5",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "A kind that a deliverable's best practice takes, with no file of it in the product",
+              "decided": "the tree follows each kind that a deliverable's best practice names in inputs to its end: a file of it in the product is taken, and where none exists, the tree holds a node of that kind with no file, whose decisions answer each necessary condition of its best practice, with none left out",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N7",
@@ -86,12 +162,7 @@
         {
           "id": "N6",
           "good": false,
-          "decisions": [
-            {
-              "about": "A kind that a deliverable's best practice takes, with no file of it in the product, such as the test design of a code deliverable",
-              "decided": null
-            }
-          ]
+          "decisions": []
         }
       ]
     },
@@ -135,7 +206,54 @@
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Without a test design's file",
+              "decided": "the code's maker reads the unit cases from the design tree's node of the test design, in place of the request",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The developers learn from a test that runs the product whole what the product does, as each run ran as they meant and measured what they meant",
@@ -608,7 +726,7 @@
             },
             {
               "about": "Before the next stage",
-              "decided": "the design tree best practice is discussed with the user first; then rn's flow makes the content good before the structure is reworked, and judges again only what changed; then the best practices of architecture, README, prompt, and meta are read practice by practice, each kept only where the people fail their aim without it; then the walkthrough runs again",
+              "decided": "the design tree best practice, the design tree's form, and the best practices' inputs are rebuilt first; then rn's flow makes the content good before the structure is reworked, judges again only what changed, and keeps the new design tree; then the best practices of architecture, README, prompt, and meta are read practice by practice, each kept only where the people fail their aim without it; then the walkthrough runs again",
               "by": "user"
             }
           ]
