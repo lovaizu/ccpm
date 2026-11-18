@@ -273,21 +273,6 @@
               "by": "reasoning"
             },
             {
-              "about": "Which start is due",
-              "decided": "each route of Lane's lists only the starts of the orchestrator, the generator, and the evaluator, and tree.py alone gives each start due from the run's files, which the main conversation reads by tree.py and the adapters give Lane: the orchestrator where News waits since its latest turn that ended with a Result and none runs, a generator for the first deliverable doing whose round has no Made, and an evaluator for each group due, each with a text naming it; as Lane holds the main conversation's turn only while a start is due and no role runs, and sets the moves due to the latest route alone, only the run's files keep work that runs side by side; only the routes after /rn:dn and after the orchestrator's finished end the run, by the skill's results paused and done",
-              "by": "reasoning"
-            },
-            {
-              "about": "When a run is left",
-              "decided": "until its pull request handed over is signed off, merged, or closed; Lane's run stays open after the orchestrator's done, so the guard holds the pull request's sign-off, and the orchestrator's finished, after the approval, ends it by the skill's result done",
-              "by": "reasoning"
-            },
-            {
-              "about": "A sign-off typed outside a run",
-              "decided": "/rn:ty or /rn:gm decides the sign-off by its own command as it loads, of the one run left whose sign-off waits, naming the runs where several wait; where no run of Lane's is open in the conversation, its steps call /rn:up with that run's name by the Skill tool, which picks the run up",
-              "by": "reasoning"
-            },
-            {
               "about": "A pick-up among several runs",
               "decided": "/rn:up alone picks up the one run left, and /rn:up with words that name a run left picks that run up; other words are a request; where none or several are left with no words, /rn:up names them, and the adapters fail outside a run's worktree, so no start is due and the turn ends; a pick-up starts what the run's files show undone, so no adapter replays results that Lane's routes would refuse",
               "by": "reasoning"
@@ -298,8 +283,23 @@
               "by": "reasoning"
             },
             {
+              "about": "Which start is due",
+              "decided": "each route of Lane's lists only the starts of the orchestrator, the generator, and the evaluator, but the route after /rn:ty, which also holds the skill's result done, and tree.py alone gives each start due from the run's files, once for each Cut: a start that ended comes due again only once the tree changes what it rests on; as Lane holds an idle turn only while a start is due, sets the moves due to the latest route alone, and lets a result replace a pause's moves, only the run's files keep work that runs side by side and the pause",
+              "by": "reasoning"
+            },
+            {
               "about": "A pause",
-              "decided": "/rn:dn stops each role, then ends the run of /rn:up by the skill's result paused, the move of the route after /rn:dn, as Lane holds a subagent's calls only within a run that hasn't ended; tree.py pause commits and pushes the work, leaving out an edit of the tree that tree.py write didn't check, as the orchestrator's next turn takes the same News again; each role stopped has a kept Cut and no Result, so its start comes due again at the pick-up",
+              "decided": "/rn:dn stops each role, and tree.py pause commits and pushes the work and marks the run paused, so the adapters give no start and the turn ends, with no result of Lane's that a role's result could displace; /rn:up picks it up; tree.py leaves out an edit of the tree that tree.py write didn't check, as the orchestrator's next turn takes the same News again",
+              "by": "reasoning"
+            },
+            {
+              "about": "When a run is left",
+              "decided": "until its pull request handed over is signed off, merged, or closed; Lane's run stays open after the orchestrator's done, so the guard holds the pull request's sign-off; once /rn:ty signs the pull request off, nothing is left, and the main conversation ends Lane's run by done, which check.py refuses before then; a run of Lane's left open holds only the starts of rn's roles, as the skill holds no rule on other calls",
+              "by": "reasoning"
+            },
+            {
+              "about": "A sign-off typed outside a run",
+              "decided": "/rn:ty or /rn:gm decides the sign-off by its own command as it loads, of the one run left whose sign-off waits, naming the runs where several wait; where the sign-off leaves work and no run of Lane's is open in the conversation, its steps call /rn:up with that run's name by the Skill tool, which picks the run up",
               "by": "reasoning"
             }
           ]
