@@ -27,8 +27,8 @@ Each role starts with only the cut that `tree.py` gave for it, and the guard sto
 
 ### Every step by best practice
 
-Each role works by its kind's best practice, a generator finishes by the refactor one, and Lane
-holds the steps.
+Each role works by its kind's best practice, then by the refactor one for structure, and Lane holds
+the steps.
 
 *Why*: an AI that skipped a step once skips it again, so the deliverable misses what it makes,
 raising KR1.1.
@@ -96,7 +96,7 @@ KR1.2.
 - rn's developers\
   Change rn's own best practices by each lesson that reaches rn's repository.
 - orchestrator\
-  Drafts the goal and the plan, reviews the tree each turn, checks each result, and asks the user only theirs.
+  Drafts the goal and plan, orders the work each turn, checks each result, and asks the user only theirs.
 - tree-keeper\
   Keeps the design tree true to each decision and each node it touches, so every role builds on what holds.
 - generator\
@@ -104,7 +104,7 @@ KR1.2.
 - evaluator\
   Finds, as the deliverable's people toward their aim, what's good and what would make it good, condition by condition.
 - tree.py\
-  Keeps the tree's form, finds each deliverable's turn and cut, and holds the run's files and branch.
+  Keeps the tree's form, work, and inputs, finds each turn and cut, and holds the run's files and branch.
 - repository\
   Runs each git and gh command for `tree.py`, and reads what they print.
 - record.py\
@@ -122,21 +122,25 @@ Strategies:
   Several side by side take about that many times as long for no gain shown, keeping KR1.2 short.
 - The orchestrator judging every point\
   The user talks with the one that decides, and no one rewords an answer, keeping KR1.2 short.
-- `tree.py` finding the work that waits\
+- `tree.py` finding the work that waits, in the order the orchestrator sets\
   Code holds it every run, so no work starts early or idles, keeping KR1.1 low and KR1.2 short.
+- A node with no file settled by the orchestrator\
+  The deliverables built on it read only its decisions, so rounds on it would add to KR1.2.
 - A tree-keeper writing the design tree\
   The orchestrator checks each change as another's, catching the slips a writer misses, keeping
   KR1.1 low.
 - One evaluator for each group of necessary conditions\
   Each judges its group in its own context, side by side, keeping KR1.1 low and KR1.2 short.
-- Evaluators by the refactor best practice beside the kind's\
-  Judged as one, each round's additions break the structure unseen, so its people misread it, raising
-  KR1.1.
+- A later round judging only the conditions whose decisions changed\
+  A condition judged again with nothing changed ends as before, adding to KR1.2.
+- The structure reworked by the refactor best practice once the content is good\
+  It changes structure only on content that holds, so earlier it's done twice, adding to KR1.2.
 - rn's check holding each deliverable to its template\
   Each sentence beyond the vital few buries what the people need, which evaluators pass, raising
   KR1.1.
-- Rounds until every necessary condition is good\
-  A limit would hand over a deliverable its people can't use, and KR1.1 comes before KR1.2.
+- Two rounds of content and two of structure at most\
+  A third round on the same decisions ends alike, so each `more` left goes to the user, keeping KR1.2
+  short.
 - The adapters picking up the one run left from the repository's root\
   At the root, where [Lane's S7](../lane/architecture.md#s7-a-run-picked-up) asks them, no role starts
   over, keeping KR1.2 short.
@@ -148,7 +152,7 @@ Strategies:
 - Cut\
   The part of the design tree that a role starts with.
 - Design tree\
-  The goal, its decisions, and the plan of deliverables, in
+  The goal, the deliverables with their decisions, and the work order, in
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s
   form.
 - Point\
@@ -203,16 +207,21 @@ sequenceDiagram
   O->>T: makes the run's worktree
   O->>K: starts it, with the text that the adapters give in the run's worktree (Cut)
   O->>K: resumes it, with the goal drafted and the plan (Decision, Deliverable)
-  K->>T: writes them, and commits them with each decision's ground as the message (Design tree)
-  T-->>K: what changed, and each node they touch
-  K-->>O: what changed, and each node checked
+  K->>T: writes them with the work order, and commits them with each decision's ground as the message (Design tree)
+  alt an item of work names no node or comes before an input not done, or a deliverable's inputs leave out a kind that its best practice names
+    T-->>K: refuses the change, naming each
+    K-->>O: that tree.py refused it, and why
+  else
+    T-->>K: what changed, and each node they touch
+    K-->>O: what changed, and each node checked
+  end
   O->>U: the goal, to confirm, once the tree holds it (Point)
   U->>O: answers
-  Note over U,O: The orchestrator settles each other point, as S2 draws, and puts up the plan, as S3 draws.
-  loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
-    O->>K: each change it decides on reviewing the tree (Decision, Deliverable)
+  Note over U,O: The orchestrator settles each other point, as S2 draws, and puts up the plan, as S3 draws. It settles each decision of a node with no file the same way, and puts the node up, with no generator or evaluator.
+  loop each item of work to make whose turn has come, as it rests on no open point and on nothing not signed off
+    O->>K: each change it decides on reviewing the tree, the work order among them (Decision, Deliverable)
     GD->>A: asks for the text of the generator's start, with each start that runs
-    A->>T: gets each deliverable doing, and the Cut of the first that no start that runs holds, with the path of a new Record for the start (Cut)
+    A->>T: gets each deliverable doing, and the Cut of the first in the work's order that no start that runs holds, with the path of a new Record for the start (Cut)
     A-->>GD: that start's text and run values in Lane's form, or none where no work waits
     GD-->>O: the generator's start due, with its text
     O->>G: starts it, with that text (Cut, More kept)
@@ -238,7 +247,7 @@ sequenceDiagram
       alt it falls short of its cut and best practice
         O->>G: sends it back, with the ground
       else
-        par one for each group of necessary conditions, of the kind's best practice and of the refactor one
+        par one for each group of the best practice that the round judges by, each holding a condition whose decisions changed since the round before, or any in the first round
           O->>E: starts it (Cut)
           E->>W: tries it toward the people's aim (Try record)
           E->>F: writes each necessary condition in good, with its lines, or in more, with its good_when (Answers)
@@ -246,7 +255,7 @@ sequenceDiagram
         end
         O->>T: gets the round (Answers, Made)
         T-->>O: each evaluator's Answers, and what the generator made (Answers, Made)
-        alt a more the people fall short by
+        alt a more the people fall short by, before the second round of content or of structure ends
           O->>K: the decision it changes, and the more to keep (Decision, More kept)
           K->>T: writes the decision, commits it with its ground as the message, and keeps the more (Design tree, More kept)
           alt the decision that the more names isn't under its deliverable, or didn't change since the round's cut
@@ -255,8 +264,8 @@ sequenceDiagram
           else
             T-->>K: what changed, and the More kept
           end
-        else every necessary condition is good
-          Note over U,O: The orchestrator puts up the deliverable, as S3 draws.
+        else every necessary condition is good, or the second round ends
+          Note over U,O: After the rounds of content by the kind's best practice, the generator reworks the structure in rounds by the refactor one. After those, the orchestrator puts up the deliverable, with each more left as a proposal to improve it, as S3 draws.
         end
       end
     end
@@ -317,7 +326,7 @@ sequenceDiagram
     RP->>GH: pushes, and opens or keeps the draft pull request
   end
   O->>T: puts it up (Sign-off)
-  O->>U: the plan or the deliverable, with what the people can do with it, the decisions taken without asking, and its changes, once no point or sign-off before it waits (Sign-off)
+  O->>U: the plan or the deliverable, with what the people can do with it, the decisions taken without asking, its changes, and each proposal to improve it, once no point or sign-off before it waits (Sign-off)
   O->>GD: ends its turn
   GD->>R: checks the orchestrator's record of the turn, from its latest pass from step 1 (Record)
   R-->>GD: each step it lacks, or none
