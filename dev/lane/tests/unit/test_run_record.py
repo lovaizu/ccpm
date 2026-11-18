@@ -5,6 +5,7 @@ isn't there, can't be read, or can't be written."""
 from __future__ import annotations
 
 import datetime
+import json
 import os
 import tempfile
 from typing import Any
@@ -14,7 +15,9 @@ from run_record import (
     Called,
     Ended,
     Gave,
+    Marked,
     Prompted,
+    Read,
     Started,
     TextFailed,
     TextGiven,
@@ -33,6 +36,12 @@ EACH_LINE = [
     Gave("r1", "writer", "written", "a01"),
     Gave("r1", "write", "good", None),
     Ended("r1", "a01", True),
+    Ended("r1", "a01", False, "toolu_1"),
+    Started("r1", "writer", "Go on", {"version": "0.2.0"}, "toolu_2", True, False),
+    Marked("r1", "writer", 2, None, "a01"),
+    Marked("r1", "writer", 2, "dated", "a01"),
+    Marked("r1", "write", 1, None, None),
+    Read("r1", "writer", "CHANGELOG.md", 1, 7, "a01"),
     TextFailed("r1"),
     TextGiven("r1"),
 ]
@@ -68,13 +77,53 @@ def test_a_record_begun_on_an_earlier_day_keeps_its_folder(temp: str) -> None:
 
 
 @pytest.mark.supports("test_a_run_goes_on_after_compact")
-@pytest.mark.parametrize("line", EACH_LINE, ids=lambda line: type(line).__name__)
+@pytest.mark.parametrize(
+    "line", EACH_LINE, ids=lambda line: type(line).__name__ + repr(tuple(vars(line).values())[-1])
+)
 def test_each_kind_of_line_is_read_as_added(temp: str, line: Any) -> None:
     """Given: an empty record.
     When: add adds one line of a kind, and lines reads the record.
     Then: it gives that line back, equal to the one added."""
     path = record_path("changelog", "4f7c")
     add(path, line)
+    assert lines(path) == (line,)
+
+
+@pytest.mark.supports("test_a_lay_after_lane_updates_lays_with_the_newest_code")
+@pytest.mark.parametrize(
+    ("held", "line"),
+    [
+        (
+            {"kind": "Ended", "run": "r1", "agent_id": "a01", "killed": False},
+            Ended("r1", "a01", False),
+        ),
+        (
+            {
+                "kind": "Started",
+                "run": "r1",
+                "role": "writer",
+                "text": "Go on",
+                "values": {},
+                "tool_use_id": "toolu_2",
+                "resumed": True,
+            },
+            Started("r1", "writer", "Go on", {}, "toolu_2", True),
+        ),
+    ],
+    ids=["Ended with no call", "Started with no due"],
+)
+def test_a_line_an_earlier_lane_added_is_read_with_its_new_fields_unset(
+    temp: str, held: dict[str, Any], line: Any
+) -> None:
+    """Given: a record of a conversation that an earlier Lane began, whose line lacks a field that
+    its kind took later, as hooks reload while the conversation runs.
+    When: lines reads the record.
+    Then: it gives the line with that field at its default: an end naming no call, and a Start that
+    a Route made due."""
+    path = record_path("changelog", "4f7c")
+    os.makedirs(os.path.dirname(path))
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(held) + "\n")
     assert lines(path) == (line,)
 
 
