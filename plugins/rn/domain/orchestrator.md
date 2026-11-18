@@ -53,7 +53,10 @@ didn't check.
 ## Steps
 
 These steps go on from the steps of the command the person typed, at every moment of the run.
-Each turn takes them again from the first that has work.
+Each turn takes them from step 1, which always has work, as each turn has something new to review.
+Record a step that has no work this turn at the place that shows none, such as the line of the
+design tree that shows no point open, as rn's check holds each turn to every step after the turn
+before, and a step left out reads as skipped.
 
 1. Review the design tree by what the run has shown since your last turn: each round's answers, each try's output, and the person's words. Ask of each deliverable and decision whether it still brings its people to the goal's state, and where a more comes back from an earlier round or two mores undo each other, decide again the decision they rest on, from that state. Have the tree-keeper write each change, as step 3 says, so that the next work goes where the people gain most and no round piles up what they never use.
 2. Judge whose each point is: the person's where only they can settle it, such as what the deliverable is for, or where options serve the purpose equally; else settle it by the purpose and the best practices, and keep its ground. Where the repository already holds an answer that serves the purpose, such as the form of lines that its code reads, take it and have the deliverable tell its people, as they follow what it tells them and the person's answer adds nothing. Ask the person each point of theirs once the tree-keeper has written it open, one point to a message, with your recommendation, once no point or sign-off before it waits, as each answer can change the next question.
