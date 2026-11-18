@@ -16,7 +16,8 @@ from fault import Wrong
 from record import check, form
 from record.command import main
 from record.form import Entry
-from tree import cut, rounds
+from tree import cut, records, rounds, sign_offs
+from tree.sign_offs import Kind
 
 from dev.rn.tests.rn_walkthrough import steps_of
 from dev.rn.tests.unit import rn_data as d
@@ -185,6 +186,82 @@ def test_the_orchestrators_turn_that_puts_no_work_up_lacks_nothing(tmp_path: Any
     Then: it lacks nothing."""
     run = d.run_of(d.repository(str(tmp_path)))
     d.tree_written(run)
+    assert check.check(d.RN, run.worktree, "orchestrator", "", None) == ()
+
+
+# The orchestrator's record at the end of its turn: no sign-off waits, or one waits; and what the
+# turn recorded: every step of up and of its part, a step of its part missing, a command typed whose
+# steps it left out, or each step that had work, its part's last step left out.
+
+
+def orchestrator_turn(tmp: Any, *entries: tuple[str, int]) -> Any:
+    """A run whose plan waits for the user's sign-off, and whose orchestrator recorded the entries,
+    each a step of a prompt; gives the run."""
+    run = d.run_of(d.repository(str(tmp)))
+    d.tree_written(run)
+    sign_offs.put_up(run, Kind.PLAN, "")
+    path = os.path.join(run.worktree, records.orchestrator_record(run))
+    form.add(path, *(Entry(of, n, None, "a.py:1") for of, n in entries))
+    return run
+
+
+def every_step(of: str, file: str) -> list[tuple[str, int]]:
+    return [(of, n) for n in steps_of(d.RN, file)]
+
+
+UP = every_step("up", "skills/up/SKILL.md")
+PART = every_step("orchestrator", "domain/orchestrator.md")
+
+
+@pytest.mark.supports("test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it")
+def test_a_sign_off_waiting_and_every_step_of_up_and_the_part_recorded_lacks_nothing(
+    tmp_path: Any,
+) -> None:
+    """Given: a run whose plan waits, and whose orchestrator recorded each step of up and of its
+    part in order.
+    When: the end of its turn is checked.
+    Then: it lacks nothing."""
+    run = orchestrator_turn(tmp_path, *UP, *PART)
+    assert check.check(d.RN, run.worktree, "orchestrator", "", None) == ()
+
+
+@pytest.mark.supports("test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it")
+def test_a_sign_off_waiting_and_a_step_of_the_part_missing_names_it(tmp_path: Any) -> None:
+    """Given: a run whose plan waits, and whose orchestrator recorded each step of up and each of
+    its part but step 2.
+    When: the end of its turn is checked.
+    Then: it names step 3 recorded before step 2, and each step of the part after it."""
+    run = orchestrator_turn(tmp_path, *UP, *[e for e in PART if e[1] != 2])
+    found = check.check(d.RN, run.worktree, "orchestrator", "", None)
+    assert found[0] == "orchestrator step 3 is recorded before step 2"
+
+
+@pytest.mark.supports("test_ty_approves_the_plan_and_starts_the_work_resting_on_it")
+def test_a_sign_off_waiting_and_a_typed_commands_steps_left_out_names_them(tmp_path: Any) -> None:
+    """Given: a run whose plan waits, and whose orchestrator recorded each step of up, step 1 of
+    ty alone, and each step of its part.
+    When: the end of its turn is checked.
+    Then: it names step 2 of ty."""
+    run = orchestrator_turn(tmp_path, *UP, ("ty", 1), *PART)
+    assert check.check(d.RN, run.worktree, "orchestrator", "", None) == (
+        "ty step 2 isn't recorded after step 1",
+    )
+
+
+@pytest.mark.supports("test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it")
+@pytest.mark.xfail(
+    strict=True,
+    reason="rn's check holds the orchestrator's turn to every step of its part, the steps with no"
+    " work that turn included, as the record marks no turn and the check can't tell them apart",
+)
+def test_a_sign_off_waiting_and_only_the_steps_with_work_recorded_lacks_nothing(
+    tmp_path: Any,
+) -> None:
+    """Given: a run whose plan waits, and whose orchestrator recorded each step of up and each step
+    of its part but its last, which has work only where /rn:up alone finds no run left.
+    When: the end of its turn is checked.
+    Then: it lacks nothing, as each turn takes the part's steps that have work."""
+    run = orchestrator_turn(tmp_path, *UP, *PART[:-1])
     assert check.check(d.RN, run.worktree, "orchestrator", "", None) == ()
 
 

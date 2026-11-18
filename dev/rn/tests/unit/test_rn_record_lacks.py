@@ -172,6 +172,190 @@ def test_a_prompt_with_no_steps_and_no_practices_lacks_nothing() -> None:
     assert order.lacks(record(), "evaluator", (), {}) == ()
 
 
+# The state of a pass as order.lacks reads a record entry by entry: no pass begun, at a step of it,
+# or past its last step; and each entry that can come in each state, its next step, the step again
+# in a row, the first step again, a step before the one it's at, a step past the next, a practice,
+# a practice of a best practice the role doesn't work by, and an entry of another prompt.
+FOUR = (1, 2, 3, 4)
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_before_a_pass_a_later_step_begins_none_and_each_step_lacks() -> None:
+    """Given: a record of steps 2 and 3 and the practices, with no step 1.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it names steps 1, 2, and 3 and both practices, as no pass has begun."""
+    held = record(("generator", 2), ("code", "N1.1"), ("code", "N1.2"), ("generator", 3))
+    found = order.lacks(held, "generator", (1, 2, 3), CODE)
+    assert [f for f in found if "step" in f] == [
+        f"generator step {n} isn't recorded" for n in (1, 2, 3)
+    ]
+    assert {"code N1.1 isn't recorded", "code N1.2 isn't recorded"} <= set(found)
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_before_a_pass_a_practice_lies_outside_it_and_is_named() -> None:
+    """Given: a record of the deciding practice, then steps 1, 2, and 3 with the making practice.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it names the deciding practice alone, as it lies before the pass."""
+    held = record(
+        ("code", "N1.1"), ("generator", 1), ("code", "N1.2"), ("generator", 2), ("generator", 3)
+    )
+    found = order.lacks(held, "generator", (1, 2, 3), CODE)
+    assert len(found) == 1 and "N1.1" in found[0]
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_at_a_step_the_same_step_again_in_a_row_is_taken_once() -> None:
+    """Given: a record of step 1, step 2 at three places in a row, the practices, and step 3.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it lacks nothing, as a role records a step at each place where its result lies."""
+    held = record(
+        ("generator", 1),
+        ("generator", 2),
+        ("generator", 2),
+        ("code", "N1.1"),
+        ("generator", 2),
+        ("code", "N1.2"),
+        ("generator", 3),
+    )
+    assert order.lacks(held, "generator", (1, 2, 3), CODE) == ()
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_at_a_step_the_first_step_again_begins_a_pass_that_lacks_each_step_after_it() -> None:
+    """Given: a record of steps 1 and 2 with the practices, then step 1 again, as a role resumed.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it names steps 2 and 3 and both practices, of the pass that step 1 began again."""
+    held = record(
+        ("generator", 1), ("code", "N1.1"), ("generator", 2), ("code", "N1.2"), ("generator", 1)
+    )
+    found = order.lacks(held, "generator", (1, 2, 3), CODE)
+    assert sorted(found) == sorted(
+        [
+            "generator step 2 isn't recorded after step 1",
+            "generator step 3 isn't recorded after step 1",
+            "code N1.1 isn't recorded",
+            "code N1.2 isn't recorded",
+        ]
+    )
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_at_a_step_a_step_past_the_next_is_named_out_of_its_place() -> None:
+    """Given: a record of step 1, step 3, then steps 2 and 3, with the practices between.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it names step 3 recorded before step 2, as the role took step 3 before step 2."""
+    held = record(
+        ("generator", 1),
+        ("generator", 3),
+        ("code", "N1.1"),
+        ("code", "N1.2"),
+        ("generator", 2),
+        ("generator", 3),
+    )
+    assert order.lacks(held, "generator", (1, 2, 3), CODE) == (
+        "generator step 3 is recorded before step 2",
+    )
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+@pytest.mark.xfail(
+    strict=True,
+    reason="a step taken again after a later one, mid-pass, holds the end for good, though each"
+    " step after it is then recorded in order and none was skipped",
+)
+def test_at_a_step_an_earlier_step_again_lacks_nothing_once_each_step_after_it_follows() -> None:
+    """Given: a record of steps 1, 2, and 3 with the practices, step 2 again, as the role went back
+    to decide again, then step 4.
+    When: what it lacks of steps 1 to 4 and the code practices is asked.
+    Then: it lacks nothing, as each step was taken in its order and none skipped, and a record
+    only grows, so a step named out of place can't be mended but by every step again."""
+    held = record(
+        ("generator", 1),
+        ("code", "N1.1"),
+        ("generator", 2),
+        ("code", "N1.2"),
+        ("generator", 3),
+        ("generator", 2),
+        ("generator", 4),
+    )
+    assert order.lacks(held, "generator", FOUR, CODE) == ()
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_past_the_last_step_an_earlier_step_again_lacks_nothing() -> None:
+    """Given: a record of steps 1, 2, and 3 with the practices, then step 2 again.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it lacks nothing, as each step was taken in its order."""
+    held = record(
+        ("generator", 1),
+        ("code", "N1.1"),
+        ("generator", 2),
+        ("code", "N1.2"),
+        ("generator", 3),
+        ("generator", 2),
+    )
+    assert order.lacks(held, "generator", (1, 2, 3), CODE) == ()
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_past_the_last_step_a_practice_lies_outside_the_steps_and_is_named() -> None:
+    """Given: a record of steps 1, 2, and 3 with the deciding practice, then the making one.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it names the making practice as recorded outside the steps."""
+    held = record(
+        ("generator", 1), ("code", "N1.1"), ("generator", 2), ("generator", 3), ("code", "N1.2")
+    )
+    assert order.lacks(held, "generator", (1, 2, 3), CODE) == (
+        "code N1.2 is recorded outside the steps of generator",
+    )
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+@pytest.mark.xfail(
+    strict=True,
+    reason="a practice recorded within the steps and again past the last is named outside them, as"
+    " the check reads only its latest place",
+)
+def test_past_the_last_step_a_practice_taken_within_the_steps_too_lacks_nothing() -> None:
+    """Given: a record of steps 1 to 3 with both practices between, then the making practice again
+    at another place.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it lacks nothing, as the record shows the practice taken within the steps."""
+    held = record(
+        ("generator", 1),
+        ("code", "N1.1"),
+        ("generator", 2),
+        ("code", "N1.2"),
+        ("generator", 3),
+        ("code", "N1.2"),
+    )
+    assert order.lacks(held, "generator", (1, 2, 3), CODE) == ()
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_at_any_state_another_best_practices_practice_or_another_prompts_step_is_passed_over() -> (
+    None
+):
+    """Given: a record of each step and practice in order, with a practice of the readme best
+    practice, which the role doesn't work by, and steps of up between them.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it lacks nothing."""
+    held = record(
+        ("up", 2),
+        ("generator", 1),
+        ("readme", "N1.1"),
+        ("code", "N1.1"),
+        ("up", 1),
+        ("generator", 2),
+        ("code", "N1.2"),
+        ("up", 4),
+        ("generator", 3),
+        ("readme", "N9.9"),
+    )
+    assert order.lacks(held, "generator", (1, 2, 3), CODE) == ()
+
+
 def generator_cut(*more: str) -> Cut:
     """A generator's Cut of invoicer with the user's decision, and the More kept of N2 of each best
     practice given."""

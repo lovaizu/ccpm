@@ -88,6 +88,61 @@ def test_a_decision_with_no_sign_off_waiting_is_refused(tmp_path: Any) -> None:
         sign_offs.decide(run, True)
 
 
+# The latest sign-off's state, none put up, waiting, signed off, or sent back, and the events that
+# reach it: a sign-off put up, /rn:ty, and /rn:gm.
+
+
+@pytest.mark.supports("test_only_the_users_own_ty_decides_a_sign_off")
+@pytest.mark.parametrize("approved", [True, False])
+def test_none_put_up_and_ty_or_gm_is_refused(tmp_path: Any, approved: bool) -> None:
+    """Given: a run with no sign-off put up.
+    When: a sign-off is approved, or sent back.
+    Then: it's refused, and the run still has none."""
+    run = a_run(tmp_path)
+    with pytest.raises(Wrong):
+        sign_offs.decide(run, approved)
+    assert sign_offs.read(run).each == ()
+
+
+@pytest.mark.supports("test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes")
+def test_sent_back_and_ty_is_refused(tmp_path: Any) -> None:
+    """Given: a run whose plan was sent back, and nothing waiting.
+    When: a sign-off is approved.
+    Then: it's refused, and the plan stays sent back."""
+    run = a_run(tmp_path)
+    sign_offs.put_up(run, Kind.PLAN, "")
+    sign_offs.decide(run, False)
+    with pytest.raises(Wrong):
+        sign_offs.decide(run, True)
+    assert [s.state for s in sign_offs.read(run).each] == [State.SENT_BACK]
+
+
+@pytest.mark.supports("test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes")
+def test_sent_back_and_put_up_again_waits_and_ty_signs_off_the_new_one(tmp_path: Any) -> None:
+    """Given: a run whose plan was sent back.
+    When: the plan is put up again, and approved.
+    Then: the new one is signed off, and the first stays sent back, in the order put up."""
+    run = a_run(tmp_path)
+    sign_offs.put_up(run, Kind.PLAN, "")
+    sign_offs.decide(run, False)
+    sign_offs.put_up(run, Kind.PLAN, "")
+    sign_offs.decide(run, True)
+    assert [s.state for s in sign_offs.read(run).each] == [State.SENT_BACK, State.SIGNED_OFF]
+
+
+@pytest.mark.supports("test_a_lesson_approved_opens_an_issue_on_rns_repository_word_for_word")
+def test_waiting_and_another_put_up_both_wait_and_ty_decides_the_latest(tmp_path: Any) -> None:
+    """Given: a run with a lesson waiting.
+    When: a second lesson is put up, and approved.
+    Then: the second is signed off, and the first still waits for the user."""
+    run = a_run(tmp_path)
+    sign_offs.put_up(run, Kind.LESSON, "first")
+    sign_offs.put_up(run, Kind.LESSON, "second")
+    decided = sign_offs.decide(run, True)
+    assert decided.what == "second"
+    assert [s.state for s in sign_offs.read(run).each] == [State.WAITING, State.SIGNED_OFF]
+
+
 @pytest.mark.supports("test_a_deliverable_put_up_and_approved_is_marked_done")
 def test_a_deliverable_the_tree_doesnt_hold_is_refused(tmp_path: Any) -> None:
     """Given: a run with the walkthrough's tree.

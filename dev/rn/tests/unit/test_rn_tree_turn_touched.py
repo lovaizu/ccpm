@@ -40,6 +40,44 @@ def test_the_plan_not_signed_off_marks_nothing(signed: SignOffs) -> None:
     assert marked == () and tree.data == d.walkthrough_tree()
 
 
+@pytest.mark.supports("test_gm_with_words_sends_the_plan_back_to_the_decision_it_changes")
+@pytest.mark.parametrize(
+    "signed",
+    [
+        SignOffs((SignOff(Kind.PLAN, "", State.SENT_BACK, AT),)),
+        SignOffs(PLAN_SIGNED.each + PLAN_WAITING.each),
+    ],
+)
+def test_the_plan_sent_back_or_put_up_again_after_its_sign_off_marks_nothing(
+    signed: SignOffs,
+) -> None:
+    """Given: the walkthrough's tree, and the plan sent back, or signed off and put up again,
+    waiting.
+    When: each deliverable whose turn has come is marked.
+    Then: none is, as the plan's latest sign-off isn't signed off."""
+    tree, marked = turn.mark_doing(d.design(), signed)
+    assert marked == () and tree.data == d.walkthrough_tree()
+
+
+@pytest.mark.supports("test_a_miss_found_in_the_whole_pull_request_starts_the_rounds_again")
+def test_a_deliverable_taking_from_one_put_up_again_after_its_sign_off_waits() -> None:
+    """Given: the walkthrough's tree whose second deliverable takes from the first, the plan signed
+    off, and the first deliverable signed off and then put up again, waiting.
+    When: each deliverable whose turn has come is marked.
+    Then: the second stays open."""
+    data = d.walkthrough_tree()
+    data["deliverables"][1]["inputs"] = ["invoicer"]
+    signed = SignOffs(
+        PLAN_SIGNED.each
+        + (
+            SignOff(Kind.DELIVERABLE, "invoicer", State.SIGNED_OFF, AT),
+            SignOff(Kind.DELIVERABLE, "invoicer", State.WAITING, AT),
+        )
+    )
+    _, marked = turn.mark_doing(d.design(data), signed)
+    assert "invoicer/py.typed" not in marked
+
+
 @pytest.mark.supports("test_a_users_point_written_open_keeps_its_deliverable_waiting")
 def test_a_point_open_keeps_its_deliverable_waiting() -> None:
     """Given: the walkthrough's tree with a point open under its second deliverable, and the plan

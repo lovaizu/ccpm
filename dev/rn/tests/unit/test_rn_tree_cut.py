@@ -13,7 +13,7 @@ from typing import Any
 
 import pytest
 from fault import Wrong
-from tree import cut, place, rounds
+from tree import cut, place, practices, rounds
 from tree.more import More
 from tree.place import Place
 
@@ -190,6 +190,27 @@ def test_each_evaluator_takes_the_first_group_that_no_running_start_holds(tmp_pa
     assert second is not None and second.part["conditions"] == ["N4", "N5", "N6", "N7"]
     people = {"record", "deliverable", "goal", "name", "best_practice", "conditions", "answers"}
     assert set(first.part) == people
+
+
+@pytest.mark.supports("test_no_generator_start_is_due_while_every_deliverable_doing_waits")
+@pytest.mark.parametrize("role", ["generator", "evaluator"])
+def test_a_round_made_and_answered_whole_with_no_decision_changed_gives_no_start(
+    tmp_path: Any, role: str
+) -> None:
+    """Given: a run with invoicer alone doing, made in its first round and answered by every group,
+    with no decision under it changed since the round's cut.
+    When: the Cut of a generator's or an evaluator's next start is asked.
+    Then: it gives none, as the next round waits for a decision changed."""
+    data = d.with_status(d.walkthrough_tree(), "doing", "open")
+    run = doing_run(tmp_path, data)
+    d.write_json(os.path.join(run.worktree, rounds.made_path(run, "invoicer", True)), d.made())
+    groups = practices.judged_by(run, d.RN, "code")
+    for group, judged in enumerate(groups):
+        answers = rounds.answers_path(run, "invoicer", group)
+        d.write_json(os.path.join(run.worktree, answers), d.answers(list(judged.conditions)))
+    d.git(run.worktree, "add", "-A")
+    d.git(run.worktree, "commit", "-q", "-m", "Round 1")
+    assert cut.next_start(run, d.design(data), role, []) is None
 
 
 @pytest.mark.supports("test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped")
