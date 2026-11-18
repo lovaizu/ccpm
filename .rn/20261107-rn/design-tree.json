@@ -116,7 +116,123 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/architecture"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The product vision's Concept",
+              "decided": "rn piles up the vital few, what brings a deliverable's people to what they're after, and cuts the trivial many thoroughly, on three ideas: each role starts from the people's purpose and the state in which they have it; at each turn rn reviews the design tree, its content and how the work goes, by the facts of the run; and rn finds what's good and what would make it good, taking in only what brings the people closer",
+              "by": "user"
+            },
+            {
+              "about": "Where a role's record commits",
+              "decided": "only on the run's branch in the work's repository, as the rule The repository holds the work says, as rn's E2E pilot of 2026-11-17 committed a place file of its record into ccpm's own branch rn-rebuild, which was dropped",
+              "by": "reasoning"
+            },
+            {
+              "about": "Test strategy's Scenario testing",
+              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed, as the E2E test's KR1.1 decision says, in place of a judge on Opus",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each role's expected role",
+              "decided": "each AI role's responsibility says first what it brings the people, then what the others expect of it: the orchestrator keeps the work on what brings the people closer, the tree-keeper keeps the tree true, the generator makes only what brings the deliverable's people closer, and the evaluator finds what's good for them and what would make it good",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How the orchestrator's record marks each turn, so that rn's check holds a turn to the steps it took from the first with work",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -128,7 +244,116 @@
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cut",
+              "decided": "the trivial many cut out, as no user of a plugin reaches the goal with them: Lane's guard on its own up and the approval it holds (up_only, gives_shown, lays_after_reply, the Shown and Approval of up's Run, lay.py write's refusal where up's Run no longer waits, result.py up laid or left); a move that calls another plugin's skill and the Run standing aside for it; reading a plugin that an earlier Lane laid by its own copy of form.py, and the Data compatibility testing of released plugins, as nothing is released yet",
+              "by": "user"
+            },
+            {
+              "about": "The combinations",
+              "decided": "the architecture defines each combination of parts and lane types that one hook event meets, such as keeps_steps on a skill whose subagents run in the background, and each has an integration case",
+              "by": "user"
+            },
+            {
+              "about": "Test strategy",
+              "decided": "unit cases for each part, integration cases for each combination, every case under the double of Claude Code; no E2E test, no Scenario or Installation testing; up's prompt tested by its unit cases alone, a pinpoint prompt to Claude Code whose result code reads; Lane is then put to real use by rn",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": [
+            {
+              "about": "S4: an Agent call that fails or is denied after its PreToolUse, and the Start that the guard made for it",
+              "decided": null
+            },
+            {
+              "about": "S5: the SubagentStop of a pass before a SendMessage resume queued to a subagent still running, which names no call",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
@@ -152,27 +377,38 @@
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
       "path": "dev/tests/claude_code.py",
       "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
-      "path": "dev/lane/tests",
-      "kind": "test-design",
       "inputs": [
-        "dev/lane/product-vision.md",
-        "plugins/lane/README.md",
         "dev/lane/architecture.md",
-        "plugins/lane"
+        "dev/rn/architecture.md"
       ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/test-design"
-      ],
+      "preconditions": [],
       "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Why the cases are slow",
+              "decided": "each case plays its Given from /rn:up on: in a case of rn's rules, 7.4 of its 8.4 seconds, some 2300 runs of a script or a hook and 194 of git, as rn_walkthrough.keeps has each role record each step and practice by record.py add; planned alone is the Given of 17 cases. Before, run_python dropped each module a script imported once it ended, so that each run imported Lane's guard and rn's modules again, 22 of a case's 27 seconds",
+              "by": "research"
+            },
+            {
+              "about": "The fix of the imports",
+              "decided": "run_python keeps the modules that a script imported by the script's folder, and hands them to the next run from that folder while each of their files reads as when it was imported, each functools cache in them emptied, so that a case imports a bench's code once; no module of the plugins holds other state that a run changes",
+              "by": "maker"
+            },
+            {
+              "about": "The fix of the Givens",
+              "decided": "rn's integration cases take their bench at one folder of the test process, and each Given of rn_walkthrough, such as planned, is played once for its arguments and kept as a copy of the bench's files with a copy of what it gives; a case whose Given was kept gets the files copied back to that folder and its own copy of what it gives. TRACE_BROKEN plays each Given anew, as its fixture changes rn's code before the Given",
+              "by": "maker"
+            },
+            {
+              "about": "What the double sends that the cases of 2026-11-18 lack",
+              "decided": "a subagent's Edit of an existing file, so that a case shows an evaluator mend its Answers after a hold, and an Agent call that fails after its PreToolUse, so that an integration case shows S4's branch for it, each as Claude Code's records show it",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -182,13 +418,7 @@
         {
           "id": "N3",
           "good": false,
-          "decisions": [
-            {
-              "about": "The cases derived again",
-              "decided": "each unit and integration case of Lane is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
-              "by": "user"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N4",
@@ -204,6 +434,75 @@
           "id": "N6",
           "good": false,
           "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
+      "path": "dev/lane/tests",
+      "kind": "test-design",
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md",
+        "dev/lane/architecture.md",
+        "plugins/lane"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": [
+            {
+              "about": "The cases derived again",
+              "decided": "each unit and integration case of Lane is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
@@ -223,13 +522,142 @@
       "name": "After the steps change or Lane updates, the checks follow the steps as they now read",
       "path": "dev/lane/tests/integration/test_s3_again.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "preconditions": [
+        "dev/lane/tests",
+        "dev/tests/claude_code.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "a Step that the user adds before a laid one leaves no sentence of Lane's in any Step and no note, as the Data model has a later Lane separate its sentences from the user's text, where the Laid names each sentence by its Step's number (strict xfail at dev/lane/tests/integration/test_s3_again.py:101)",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A start off the order the user set gets the moves due, and each start on it goes through",
       "path": "dev/lane/tests/integration/test_s4_run_order.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "preconditions": [
+        "dev/lane/tests",
+        "dev/tests/claude_code.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A resume the Routes open none",
+              "decided": "its Start is added again, so its subagent counts as running and may give a Result, as the review found the turn's end stopped while it worked and its Result refused",
+              "by": "reasoning"
+            },
+            {
+              "about": "A main conversation's start of a subagent not the plugin's",
+              "decided": "let through with no Start, as a helper such as Explore starts no role and the review found it stopped",
+              "by": "reasoning"
+            },
+            {
+              "about": "A turn's end while only a move to start no more is due",
+              "decided": "stopped with the sentence of the Lane on the skill's last Step, which names its result script, as the review found the stop said only to start no more",
+              "by": "reasoning"
+            },
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "a Start whose Agent call fails or is denied after the guard let it through stays running no more, as S4 draws once its gap is mended (strict xfail at dev/lane/tests/unit/test_guard_states.py:212 and :240)",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A subagent that leaves a step, by a call, a Mark, or an end, gets that step's sentence",
@@ -268,21 +696,21 @@
       "preconditions": [
         "plugins/rn/domain/best-practices/test-design"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The cases derived again",
@@ -293,18 +721,24 @@
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
@@ -330,7 +764,63 @@
       "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
       "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "a turn that puts work up passes rn's check with only the steps that had work that turn, as the orchestrator's part takes its steps from the first with work, once the architecture decides how a turn is marked (strict xfail at plugins/rn/domain/record/check.py:72)",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
@@ -342,7 +832,65 @@
       "name": "/rn:up alone in a new conversation goes on where the run stopped",
       "path": "dev/rn/tests/integration/test_rn_s5_pick_up.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py",
+        "dev/lane/tests/integration/test_s4_run_order.py",
+        "dev/lane/tests/integration/test_s6_picked_up.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "a role started again at the step it stood at passes rn's check once it takes the steps from that step, with no step 1 in its new record, as its part has it go on from there (strict xfail at plugins/rn/domain/record/order.py:31)",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons, and rn's developers get each lesson signed off in rn's issues",
@@ -360,7 +908,68 @@
       "name": "Each rule of the Solution strategy of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
       "path": "dev/rn/tests/integration/test_rn_rules.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_rn_s1_request.py",
+        "dev/rn/tests/integration/test_rn_s2_points.py",
+        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+        "dev/rn/tests/integration/test_rn_s4_pause.py",
+        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
+        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "rn's check takes a step recorded again after a later step within a pass, and a practice recorded within the steps and again after the last, as each role records a step and a practice at each place that shows it (strict xfail in dev/rn/tests/unit/test_rn_record_lacks.py, at plugins/rn/domain/record/order.py:66 and :75)",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /rn:up, /rn:ty, /rn:gm, and /rn:dn, typed or asked for, carry their request from the goal through each sign-off to one pull request, asking them only what's theirs",
@@ -504,7 +1113,7 @@
             },
             {
               "about": "Before the next stage",
-              "decided": "as the user decided on 2026-11-18, before the walkthrough runs again, rn's and Lane's unit and integration cases are each derived again by the test design best practice, which now takes state transition testing, from their architectures, and each case missing is added, as its three techniques before let the cases miss what no record showed, such as Lane's end of a pass reaching after a resume, as rn's record check also lacked the classes that the record's new form makes, a step at several places in a row, practices in any order, and a practice whose case doesn't hold. The walkthrough's runs of 2026-11-18 are kept for it: records installation/20261118T014552Z passed; walkthrough/20261118T020636Z and 20261118T030702Z were stopped at those faults, now mended; walkthrough/20261118T033924Z was stopped by the user at round 1's evaluators, as an E2E test measures KR1.1 and KR1.2, and the flow belongs to the integration cases; in it each evaluator answered by what accounting needs to print a right invoice. Seen in it, to judge once the cases are derived again: rn's check holds the orchestrator to each step of its part at each turn, the steps with no work that turn included, so it records them at places that show nothing, and tells the person so",
+              "decided": "as the user decided on 2026-11-18, the walkthrough runs again once each fault and gap that rn's and Lane's cases, derived again by state transition testing, showed is mended in the deliverables before this one. The walkthrough's runs of 2026-11-18 are kept for it: records installation/20261118T014552Z passed; walkthrough/20261118T020636Z and 20261118T030702Z were stopped at those faults, now mended; walkthrough/20261118T033924Z was stopped by the user at round 1's evaluators, as an E2E test measures KR1.1 and KR1.2, and the flow belongs to the integration cases; in it each evaluator answered by what accounting needs to print a right invoice.",
               "by": "reasoning"
             }
           ]
