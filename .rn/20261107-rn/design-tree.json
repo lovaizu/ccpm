@@ -152,134 +152,13 @@
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
       "path": "dev/tests/claude_code.py",
       "kind": "code",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "dev/rn/architecture.md"
-      ],
-      "preconditions": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Why the cases are slow",
-              "decided": "each case plays its Given from /rn:up on: in a case of rn's rules, 7.4 of its 8.4 seconds, some 2300 runs of a script or a hook and 194 of git, as rn_walkthrough.keeps has each role record each step and practice by record.py add; planned alone is the Given of 17 cases. Before, run_python dropped each module a script imported once it ended, so that each run imported Lane's guard and rn's modules again, 22 of a case's 27 seconds",
-              "by": "research"
-            },
-            {
-              "about": "The fix of the imports",
-              "decided": "run_python keeps the modules that a script imported by the script's folder, and hands them to the next run from that folder while each of their files reads as when it was imported, each functools cache in them emptied, so that a case imports a bench's code once; no module of the plugins holds other state that a run changes",
-              "by": "maker"
-            },
-            {
-              "about": "The fix of the Givens",
-              "decided": "rn's integration cases take their bench at one folder of the test process, and each Given of rn_walkthrough, such as planned, is played once for its arguments and kept as a copy of the bench's files with a copy of what it gives; a case whose Given was kept gets the files copied back to that folder and its own copy of what it gives. TRACE_BROKEN plays each Given anew, as its fixture changes rn's code before the Given",
-              "by": "maker"
-            },
-            {
-              "about": "What the double sends that the cases of 2026-11-18 lack",
-              "decided": "a subagent's Edit of an existing file, so that a case shows an evaluator mend its Answers after a hold, and an Agent call that fails after its PreToolUse, so that an integration case shows S4's branch for it, each as Claude Code's records show it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/lane/product-vision.md",
-        "plugins/lane/README.md",
-        "dev/lane/architecture.md",
-        "plugins/lane"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/test-design"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The cases derived again",
-              "decided": "each unit and integration case of Lane is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The gaps",
-              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
-              "by": "reasoning"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The user reads what Lane would hold, each step as it'll read and the order, before anything holds their plugin",
@@ -462,60 +341,7 @@
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md",
-        "dev/rn/architecture.md",
-        "plugins/rn"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/test-design"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The cases derived again",
-              "decided": "each unit and integration case of rn is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The gaps",
-              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
-              "by": "reasoning"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
