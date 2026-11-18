@@ -86,7 +86,7 @@ KR1.2.
 
 ### The repository holds the work
 
-The run's state lives only in its folder on the work's branch, committed by `tree.py` at each change
+The run's state lives only in its folder on the work's branch, committed at each change, end,
 and pause.
 
 *Why*: work kept only in a conversation that ends makes the user answer or wait again, adding to
@@ -113,7 +113,7 @@ KR1.2.
 - repository\
   Runs each git and gh command for `tree.py`, and reads what they print.
 - check.py\
-  Checks each role's result against its cut, and each deliverable against its template, keeping the result.
+  Checks each role's result against its cut and template, then keeps the result and commits the role's work.
 - throwaway.py\
   Runs a deliverable's commands in a throwaway copy and home.
 - guard\
@@ -127,8 +127,7 @@ Strategies:
   Its context holds only the tree and the news, so a long run neither slows nor forgets, keeping
   KR1.1 low.
 - A main conversation that decides nothing\
-  The user's words and each message pass word for word, so no one rewords an answer, keeping KR1.1
-  low.
+  Each word passes as it was given, and its compaction loses nothing kept in files, keeping KR1.1 low.
 - One generator for each deliverable\
   Several side by side take about that many times as long for no gain shown, keeping KR1.2 short.
 - `tree.py` finding the work that waits, in the order the orchestrator sets\
@@ -142,6 +141,8 @@ Strategies:
   Each holds what its step says every time, so rn builds no check of its own, keeping KR1.1 low.
 - One evaluator for each group of necessary conditions\
   Each judges its group in its own context, side by side, keeping KR1.1 low and KR1.2 short.
+- A round's Answers given to the orchestrator once each of its evaluators ends\
+  A turn on part of a round decides again once the rest arrive, adding to KR1.2.
 - A later round judging only the conditions whose decisions changed\
   A condition judged again with nothing changed ends as before, adding to KR1.2.
 - The structure reworked by the refactor best practice once the content is good\
@@ -233,6 +234,7 @@ sequenceDiagram
     end
     O->>GD: ends, with asks and a Point, puts-up and a Sign-off, or goes-on
     GD->>C: checks the result, and keeps it in the Start once the Point or Sign-off is in form (Start)
+    C->>T: commits the role's work, with its result as the message
     opt asks or puts-up
       M->>U: the Point or Sign-off, word for word (Point, Sign-off)
       U->>M: answers
@@ -249,15 +251,15 @@ sequenceDiagram
     G->>F: writes the deliverable, and what it made, with each point it settled without asking (Made)
     G->>GD: ends, with done, asks naming a point, or lacks naming what stops it
     GD->>C: checks that the Made carries each decision and More kept of its Cut, and the deliverable keeps its template (Start)
-    C-->>GD: the result kept in the Start, or what's missing, which holds its end
+    C-->>GD: the result kept in the Start, with the role's work committed, or what's missing, which holds its end
     Note over G,O: Its end is an event: on asks or lacks, the orchestrator settles the point or asks the user, and the generator starts again from its new Cut.
     par one for each group of the best practice that the round judges by, each holding a condition whose decisions changed since the round before, or any in the first round
       M->>E: starts it, with the text that the adapters give (Cut)
       E->>W: tries it toward the people's aim (Try record)
       E->>F: writes each necessary condition in good, with its lines, or in more, with its good_when (Answers)
-      E->>GD: ends, with done, which check.py checks against its Cut and keeps in the Start (Start)
+      E->>GD: ends, with done, which check.py checks against its Cut, keeps in the Start, and commits (Start)
     end
-    Note over E,O: Each evaluator's end is an event: the orchestrator reads the Answers in its News and keeps only a more the people fall short by, before the second round of content or of structure ends. After the rounds of content, the generator reworks the structure by the refactor best practice. Then the orchestrator puts up the deliverable, with each more left as a proposal, as S3 draws.
+    Note over E,O: Once each evaluator of the round ends, the round is an event: tree.py gives its Answers in the orchestrator's News, and none of a round in part. The orchestrator reads them and keeps only a more the people fall short by, before the second round of content or of structure ends. After the rounds of content, the generator reworks the structure by the refactor best practice. Then the orchestrator puts up the deliverable, with each more left as a proposal, as S3 draws.
   end
 ```
 
@@ -353,15 +355,16 @@ sequenceDiagram
   M->>O: stops it, where it runs
   M->>G: stops each one still running
   M->>E: stops each one still running
-  M->>T: commits and pushes the work so far
+  M->>T: commits and pushes the work so far, and gets where the run stopped
   Note over M,T: tree.py leaves out an edit of the design tree that it didn't check, as the orchestrator's next turn takes the same News again.
   T->>RP: commits, and pushes
   alt git or gh can't push
     RP-->>T: what's missing
-    T-->>M: what's missing
+    T-->>M: where the run stopped, and what's missing
     M->>U: Paused, committed but not pushed, and what's missing
   else
     RP->>GH: pushes
+    T-->>M: where the run stopped: the goal, the deliverable doing, and the point or sign-off waiting
     M->>U: Paused, where it stopped, what comes next, and the point or sign-off waiting
   end
 ```

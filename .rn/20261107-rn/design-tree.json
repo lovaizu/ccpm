@@ -183,6 +183,11 @@
               "about": "Why evaluators are split by group of conditions",
               "decided": "each evaluator judges its group of conditions in its own context, side by side, so a round of evaluators takes as long as its slowest group, and only the groups that hold a condition to judge again start",
               "by": "reasoning"
+            },
+            {
+              "about": "When a round reaches the orchestrator",
+              "decided": "once each evaluator of the round ends: tree.py gives the round's Answers in the orchestrator's News only then, and no orchestrator start for a round in part, as a turn on part of a round decides again once the rest arrive",
+              "by": "reasoning"
             }
           ]
         },
@@ -207,7 +212,7 @@
             },
             {
               "about": "Who decides a sign-off",
-              "decided": "only the user's typed /rn:ty or /rn:gm, whose skill runs tree.py approve or send-back as its own command as it loads, while the guard stops any other call of them",
+              "decided": "only the user's typed /rn:ty or /rn:gm, whose skill runs tree.py approve or send-back as its own command as it loads, while the guard stops any other call of them; a plugin skill's !`command` runs as the skill loads, in the conversation's folder, with ${CLAUDE_PLUGIN_ROOT} filled in, as a trial on Claude Code 2.1.327 showed",
               "by": "reasoning"
             },
             {
@@ -228,6 +233,11 @@
             {
               "about": "Where a start's Cut lives",
               "decided": "tree.py keeps each start's Cut in the run's folder as it gives the start, with the start's result once rn's check keeps it at its end, and every later read takes them from there, so nothing rebuilds a round from git's history",
+              "by": "reasoning"
+            },
+            {
+              "about": "Who commits a role's work",
+              "decided": "check.py, at each role's end, once it keeps the result, with the result as the message, as no role commits at each step",
               "by": "reasoning"
             }
           ]
