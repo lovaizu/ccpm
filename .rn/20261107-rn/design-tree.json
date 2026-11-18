@@ -62,7 +62,65 @@
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The unit cases' question",
+              "decided": "N3 asks for each interface a unit case for each class of what it takes and gives, and, where its result depends on what came before, for each state with each event that can reach it, an event the state doesn't expect included, as the E2E runs of 2026-11-18 showed faults of the flow that no case caught, such as Lane's end of a pass reaching after a resume",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The technique added",
+              "decided": "state transition testing, the one of the four black-box techniques of ISTQB's Foundation Level syllabus 4.0 that N3 leaves out: a table of each state and each event, with one case for each cell, the invalid ones included; white-box coverage stays with the code best practice's N7, as it reads bodies that test design comes before",
+              "by": "research"
+            },
+            {
+              "about": "What state transition testing covers",
+              "decided": "one case for each transition that the product's use can bring about, an event that its state doesn't expect included where the use can send it, in place of each cell of the table, as the meta best practice piles up only the vital few: the cases derived on 2026-11-18 by each cell took a turn that records no step 1, which no use brought about, as a gap, and the turn mark built on it held the walkthrough's turn eleven times",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -116,7 +174,128 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/architecture"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The product vision's Concept",
+              "decided": "rn piles up the vital few, what brings a deliverable's people to what they're after, and cuts the trivial many thoroughly, on three ideas: each role starts from the people's purpose and the state in which they have it; at each turn rn reviews the design tree, its content and how the work goes, by the facts of the run; and rn finds what's good and what would make it good, taking in only what brings the people closer",
+              "by": "user"
+            },
+            {
+              "about": "Where a role's record commits",
+              "decided": "only on the run's branch in the work's repository, as the rule The repository holds the work says, as rn's E2E pilot of 2026-11-17 committed a place file of its record into ccpm's own branch rn-rebuild, which was dropped",
+              "by": "reasoning"
+            },
+            {
+              "about": "Test strategy's Scenario testing",
+              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed, as the E2E test's KR1.1 decision says, in place of a judge on Opus",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each role's expected role",
+              "decided": "each AI role's responsibility says first what it brings the people, then what the others expect of it: the orchestrator keeps the work on what brings the people closer, the tree-keeper keeps the tree true, the generator makes only what brings the deliverable's people closer, and the evaluator finds what's good for them and what would make it good",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How the orchestrator's record marks each turn, so that rn's check holds a turn to the steps it took from the first with work",
+              "decided": null
+            },
+            {
+              "about": "How rn's check holds the orchestrator's turn",
+              "decided": "each turn takes the orchestrator's part from step 1, which has work at each turn, and rn's check holds the turn to the latest pass from step 1, with no mark of a turn's end, as the mark came from a gap that no use brought about, and rn's check, which a role also runs itself, then marked the turn before the guard's check",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -158,7 +337,65 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md",
+        "dev/lane/architecture.md",
+        "plugins/lane"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cases derived again",
+              "decided": "each unit and integration case of Lane is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
+              "by": "user"
+            },
+            {
+              "about": "The cases judged again",
+              "decided": "Lane's cases derived on 2026-11-18 are each judged again by the test design best practice's N3 as it now stands: a case of a transition that no use brings about is taken out",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "The user reads what Lane would hold, each step as it'll read and the order, before anything holds their plugin",
@@ -212,7 +449,65 @@
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "dev/rn/architecture.md",
+        "plugins/rn"
+      ],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cases derived again",
+              "decided": "each unit and integration case of rn is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
+              "by": "user"
+            },
+            {
+              "about": "The cases judged again",
+              "decided": "rn's cases derived on 2026-11-18 are each judged again by the test design best practice's N3 as it now stands: a case of a transition that no use brings about is taken out, the turn mark's among them",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
@@ -236,7 +531,73 @@
       "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
       "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "preconditions": [
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "a turn that puts work up is held to the pass begun after the end of the turn before, which rn's check marks in the orchestrator's record once it passes a turn, and lacks each step where it records no step 1, as rn's architecture now draws in S3 (the strict xfail at plugins/rn/domain/record/check.py:72 follows it)",
+              "by": "reasoning"
+            },
+            {
+              "about": "The commands a turn is held to",
+              "decided": "a turn after a mark is held to the steps of each command it recorded since that mark and to the orchestrator's part, and the first turn of a run to up's too, as the orchestrator's steps go on from the steps of the command the person typed",
+              "by": "reasoning"
+            },
+            {
+              "about": "The turn mark",
+              "decided": "taken out of rn's check, its record's form, and its cases, as rn's architecture now holds the turn to the latest pass from step 1",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
@@ -410,7 +771,7 @@
             },
             {
               "about": "Before the next stage",
-              "decided": "each fault and gap that rn's and Lane's cases, derived again by state transition testing on 2026-11-18, showed is mended in the deliverables before this one, so the walkthrough runs again, as the user decided. The walkthrough's runs of 2026-11-18 are kept: records installation/20261118T014552Z passed; walkthrough/20261118T020636Z and 20261118T030702Z were stopped at faults now mended; walkthrough/20261118T033924Z was stopped by the user at round 1's evaluators, as an E2E test measures KR1.1 and KR1.2, and the flow belongs to the integration cases; in it each evaluator answered by what accounting needs to print a right invoice.",
+              "decided": "as the user decided on 2026-11-18, before the walkthrough runs again: the test design best practice's state transition testing covers each transition that the product's use can bring about; rn's turn mark is taken out; rn's and Lane's cases of 2026-11-18 are judged again by it, and the record check's rule that a practice lies within the steps is judged by the record's purpose, to show each practice taken and keep the AI from skipping one. The runs of 2026-11-18 are kept: installation/20261118T014552Z passed; walkthrough/20261118T020636Z and 20261118T030702Z were stopped at faults now mended; walkthrough/20261118T033924Z was stopped by the user at round 1's evaluators; walkthrough/20261118T052718Z, kept by e2e._keep after the run was killed, was stopped at turn 3, where rn's check, run by the orchestrator itself, marked its turn, so the guard's check held the turn eleven times, and turns 1 and 2 followed the walkthrough.",
               "by": "reasoning"
             }
           ]
