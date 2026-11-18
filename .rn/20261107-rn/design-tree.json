@@ -557,6 +557,11 @@
               "about": "The fault that the cases derived again on 2026-11-18 showed",
               "decided": "a turn that puts work up is held to the pass begun after the end of the turn before, which rn's check marks in the orchestrator's record once it passes a turn, and lacks each step where it records no step 1, as rn's architecture now draws in S3 (the strict xfail at plugins/rn/domain/record/check.py:72 follows it)",
               "by": "reasoning"
+            },
+            {
+              "about": "The commands a turn is held to",
+              "decided": "a turn after a mark is held to the steps of each command it recorded since that mark and to the orchestrator's part, and the first turn of a run to up's too, as the orchestrator's steps go on from the steps of the command the person typed",
+              "by": "reasoning"
             }
           ]
         },
