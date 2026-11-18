@@ -16,9 +16,10 @@ def mark_doing(tree: DesignTree, signed: SignOffs) -> tuple[DesignTree, tuple[st
 
     Takes: the tree, and the run's sign-offs.
     Gives: the tree so marked, and the path of each deliverable it marked, in the order of the
-    work: each open deliverable once the plan's latest sign-off is signed off, no decision under it
-    is open, and each deliverable of the tree that its inputs name has its latest
-    sign-off signed off; the tree as it was, and none, while the plan isn't signed off.
+    work: each open deliverable that an item of work makes, once the plan's latest sign-off is
+    signed off, no decision under it is open, and each deliverable of the tree that its inputs name
+    has its latest sign-off signed off; the tree as it was, and none, while the plan isn't signed
+    off.
     Changes: nothing.
     Refuses: nothing.
     Carries: S2 `K->>T: writes it, and commits it with each deliverable whose turn has come marked
@@ -31,7 +32,7 @@ def mark_doing(tree: DesignTree, signed: SignOffs) -> tuple[DesignTree, tuple[st
     each = deliverables(DesignTree(data))
     paths = {other["path"] for other in each}
     marked = []
-    for deliverable in each:
+    for deliverable in _in_order(each, data):
         rests_on = set(deliverable.get("inputs", [])) & paths
         signed_off = all(latest.get((Kind.DELIVERABLE, p)) is State.SIGNED_OFF for p in rests_on)
         if deliverable["status"] == "open" and signed_off and not _open_point(deliverable):
@@ -44,12 +45,21 @@ def doing(tree: DesignTree) -> tuple[str, ...]:
     """Each deliverable doing.
 
     Takes: the tree.
-    Gives: the path of each deliverable marked doing, in the order of the work.
+    Gives: the path of each deliverable marked doing that an item of work makes, in the order of
+    the work.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S1 `A->>T: gets each deliverable doing`.
+    Carries: S1 `A->>T: gets each deliverable doing, and the Cut of the first in the work's order`.
     """
-    return tuple(d["path"] for d in deliverables(tree) if d.get("status") == "doing")
+    each = _in_order(deliverables(tree), tree.data)
+    return tuple(d["path"] for d in each if d.get("status") == "doing")
+
+
+def _in_order(each: list[Any], data: Mapping[str, Any]) -> list[Any]:
+    """Each deliverable that an item of work makes, once, in the order of the work."""
+    by_path = {d["path"]: d for d in each}
+    made = [i["path"] for i in data.get("work", []) if i["do"] == "make" and i["path"] in by_path]
+    return [by_path[p] for p in dict.fromkeys(made)]
 
 
 def _latest(signed: SignOffs) -> dict[tuple[Kind, str], State]:

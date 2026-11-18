@@ -69,13 +69,19 @@ def conditions(ids: int = 8) -> list[dict[str, Any]]:
     return [{"id": f"N{n}", "good": False, "decisions": []} for n in range(1, ids + 1)]
 
 
+# Files outside the tree, one for each kind that the code best practice takes, as the
+# architecture, the software design, and the test design that a deliverable of code rests on.
+CODE_INPUTS = ["docs/architecture.md", "docs/software-design.md", "docs/test-design.md"]
+
+
 def open_deliverable(name: str, path: str, status: str = "open", **fields: Any) -> dict[str, Any]:
-    """A deliverable of code not yet done, with the fields given over its defaults."""
+    """A deliverable of code not yet done, resting on CODE_INPUTS, with the fields given over its
+    defaults."""
     each = {
         "name": name,
         "path": path,
         "kind": "code",
-        "inputs": [],
+        "inputs": list(CODE_INPUTS),
         "status": status,
         "necessary_conditions": conditions(),
     }
@@ -91,7 +97,8 @@ def walkthrough_tree() -> dict[str, Any]:
         {"about": "which files the hints cover", "decided": "each file", "by": "user"}
     ]
     typed = open_deliverable("invoicer marked as typed", "invoicer/py.typed")
-    return {"goal": {"decided": GOAL, "by": "user"}, "deliverables": [hints, typed], "work": []}
+    work = [{"do": "make", "path": "invoicer"}, {"do": "make", "path": "invoicer/py.typed"}]
+    return {"goal": {"decided": GOAL, "by": "user"}, "deliverables": [hints, typed], "work": work}
 
 
 def with_status(data: dict[str, Any], *statuses: str) -> dict[str, Any]:

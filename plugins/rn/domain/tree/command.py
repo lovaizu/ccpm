@@ -16,6 +16,7 @@ from tree import (
     branch,
     design,
     github,
+    inputs,
     more,
     place,
     practices,
@@ -26,6 +27,7 @@ from tree import (
     sign_offs,
     touched,
     turn,
+    work,
 )
 from tree.design import Change, DesignTree
 from tree.runs import Run
@@ -57,11 +59,13 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
       best_practice the kind that `tree.py round` names for its Answers and its decision the path
       of the decision it changes, `"more"` left out where none is kept, and `<ground>` why the
       change decides as it does: 0, with
-      `{"changed", "touched", "doing"}`, once `design.apply`, `more.keepable` against
-      `rounds.at_cut`, `turn.mark_doing`, `design.write`, `rounds.keep_more`, and `branch.commit`
-      take it, the commit's message `<ground>` word for word; 1, naming the more's best practice
-      and necessary condition, where `more.keepable` refuses it; 1, where `<ground>` is empty, as
-      a decision committed with no ground is one no one can trace.
+      `{"changed", "touched", "doing"}`, once `design.apply`, `work.renamed`, `turn.mark_doing`,
+      `work.hold`, `inputs.hold`, `more.keepable` against `rounds.at_cut`, `design.write`,
+      `rounds.keep_more`, and `branch.commit` take it, the commit's message `<ground>` word for
+      word; 1, naming each item or deliverable and why, where `work.hold` or `inputs.hold` refuses
+      the tree changed; 1, naming the more's best practice and necessary condition, where
+      `more.keepable` refuses it; 1, where `<ground>` is empty, as a decision committed with no
+      ground is one no one can trace.
     - `commit <record> <step>`: 0, once `place.write` keeps the start's Place and `branch.commit`
       commits its work, the message naming the record and the step.
     - `round <deliverable>`: 0, with `[{"number", "made", "answers"}]`, each round from
@@ -128,8 +132,10 @@ def _write(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
     run = _run(cwd)
     records.role_of(record)
     before = _tree_or_empty(run)
-    after = design.apply(before, Change(nodes))
+    after = work.renamed(before, design.apply(before, Change(nodes)))
     marked_tree, marked = turn.mark_doing(after, sign_offs.read(run))
+    work.hold(marked_tree)
+    inputs.hold(run, plugin_root, marked_tree)
     for each in kept:
         more.keepable(rounds.at_cut(run, each.deliverable), marked_tree, each)
     paths = [design.write(run, marked_tree), *(rounds.keep_more(run, kept) if kept else ())]

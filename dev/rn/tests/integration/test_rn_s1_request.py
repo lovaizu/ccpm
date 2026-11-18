@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from typing import Any
 
 import pytest
 
@@ -186,6 +187,55 @@ def test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator(b: Be
     decided = [d["decision"]["decided"] for d in again["cut"]["decisions"]]
     assert w.LINE_NUMBER["decided"] in decided
     assert os.path.dirname(again["made"]) != os.path.dirname(cut["made"])
+
+
+@pytest.mark.supports("S1", "tree.py", "Design tree")
+def test_the_generator_starts_with_the_first_deliverable_in_the_works_order(b: Bench) -> None:
+    """Given: the walkthrough's plan whose work makes the guide before the command, signed off.
+    When: the orchestrator starts a generator with the text that the guard gives due.
+    Then: its Cut names the guide."""
+    plan = w.walkthrough_plan()
+    plan["nodes"]["work"].reverse()
+    _, cut = w.generator_started(w.planned(b, plan))
+    assert cut["deliverable"] == w.GUIDE_PATH
+
+
+def refused_write(b: Bench, walk: w.Walk, change: Any) -> str:
+    """The tree-keeper resumed with the change, which tree.py write refuses with 1; gives what it
+    printed, once the case checks that the design tree is as it was."""
+    before = w.tree_in(walk)
+    assert not walk.c.resume(walk.keeper, w.resume_text("Change.", None, change)).blocked
+    record = w.cut_of(w.due_text_of(walk.keeper))["record"]
+    refused = walk.keeper.bash(b.fed(b.tree("write", record, "Change."), change))
+    assert refused.exit_code == 1 and w.tree_in(walk) == before
+    return refused.output
+
+
+@pytest.mark.supports("S1", "tree.py", "tree-keeper", "Design tree")
+def test_a_change_whose_work_comes_before_an_input_not_done_is_refused(b: Bench) -> None:
+    """Given: the walkthrough's goal and plan in the design tree.
+    When: the tree-keeper writes a change in which the guide takes from the command, and the work
+    makes the guide first.
+    Then: tree.py write gives 1, naming the item and the command, and the tree is as it was."""
+    walk = w.opened(b)
+    inputs = [*w.taken_inputs("readme"), w.COMMAND_PATH]
+    work = [{"do": "make", "path": w.GUIDE_PATH}, {"do": "make", "path": w.COMMAND_PATH}]
+    change = {"nodes": {"deliverables/1/inputs": inputs, "work": work}, "more": []}
+    assert f"work/0 comes before {w.COMMAND_PATH}" in refused_write(b, walk, change)
+
+
+@pytest.mark.supports("S1", "tree.py", "tree-keeper", "Design tree")
+def test_a_change_whose_deliverable_leaves_out_an_input_kind_is_refused(b: Bench) -> None:
+    """Given: the walkthrough's goal and plan in the design tree.
+    When: the tree-keeper writes a change in which the command rests on nothing.
+    Then: tree.py write gives 1, naming the command and the kinds its inputs leave out, and the
+    tree is as it was."""
+    walk = w.opened(b)
+    change = {"nodes": {"deliverables/0/inputs": []}, "more": []}
+    output = refused_write(b, walk, change)
+    assert (
+        f"{w.COMMAND_PATH} names no input of architecture, software-design, test-design" in output
+    )
 
 
 @pytest.mark.supports("S1", "adapters", "S3")

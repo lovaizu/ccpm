@@ -344,13 +344,23 @@ def condition_nodes(kind: str) -> list[dict[str, Any]]:
     ]
 
 
+def taken_inputs(kind: str) -> list[str]:
+    """A file outside the tree for each kind that the kind's best practice takes, such as the
+    architecture that a deliverable of code rests on, as tree.py write refuses a deliverable whose
+    inputs leave one out."""
+    with open(os.path.join(RN, "domain", "best-practices", kind, "best-practice.json")) as f:
+        taken = json.load(f).get("inputs", [])
+    return [f"docs/{each['kind']}.md" for each in taken]
+
+
 def deliverable(name: str, path: str, kind: str = "code") -> dict[str, Any]:
-    """A deliverable of the kind, open, with each necessary condition of its best practice."""
+    """A deliverable of the kind, open, with each necessary condition of its best practice, resting
+    on a file of each kind that its best practice takes."""
     return {
         "name": name,
         "path": path,
         "kind": kind,
-        "inputs": [],
+        "inputs": taken_inputs(kind),
         "status": "open",
         "necessary_conditions": condition_nodes(kind),
     }
@@ -359,7 +369,8 @@ def deliverable(name: str, path: str, kind: str = "code") -> dict[str, Any]:
 def plan(*deliverables: dict[str, Any]) -> dict[str, Any]:
     """The goal drafted and a plan of the deliverables, as tree.py write takes them."""
     goal = {"decided": GOAL, "by": "reasoning"}
-    nodes = {"goal": goal, "deliverables": list(deliverables), "work": []}
+    work = [{"do": "make", "path": each["path"]} for each in deliverables]
+    nodes = {"goal": goal, "deliverables": list(deliverables), "work": work}
     return {"nodes": nodes, "more": []}
 
 
@@ -367,7 +378,7 @@ def command_from_pyproject(decided: str | None = None) -> dict[str, Any]:
     """The walkthrough's first deliverable, open, taking pyproject.toml as its input, with the
     user's answer to their point where `decided` gives one."""
     command = dict(deliverable(COMMAND, COMMAND_PATH))
-    command["inputs"] = ["pyproject.toml"]
+    command["inputs"] = ["pyproject.toml", *taken_inputs("code")]
     if decided is not None:
         point = {"about": POINT, "decided": decided, "by": "user"}
         command["necessary_conditions"][0]["decisions"] = [point]
