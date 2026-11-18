@@ -30,7 +30,7 @@ GOAL = (
 
 
 def repository(tmp: str) -> str:
-    """A repository of invoicer with one commit, its folder."""
+    """A repository of invoicer with one commit, holding CODE_INPUTS, its folder."""
     repo = os.path.join(tmp, "invoicer")
     os.makedirs(os.path.join(repo, "invoicer"))
     git(repo, "init", "-q", "-b", "main")
@@ -38,6 +38,10 @@ def repository(tmp: str) -> str:
     git(repo, "config", "user.name", "invoicer")
     with open(os.path.join(repo, "invoicer", "__init__.py"), "w", encoding="utf-8") as f:
         f.write('"""invoicer."""\n')
+    os.makedirs(os.path.join(repo, "docs"))
+    for each in CODE_INPUTS:
+        with open(os.path.join(repo, each), "w", encoding="utf-8") as f:
+            f.write(f"# invoicer's {os.path.basename(each)}\n")
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "invoicer 1.4.0")
     return os.path.realpath(repo)

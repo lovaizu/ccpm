@@ -185,6 +185,24 @@ def test_a_round_of_content_answered_with_no_decision_changed_gives_one_of_struc
 
 
 @pytest.mark.supports("test_a_node_with_no_file_gets_no_round")
+def test_a_cut_carries_the_decisions_of_each_input_node_with_no_file(tmp_path: Any) -> None:
+    """Given: a run whose first deliverable doing is a node with no file, holding the user's
+    decision under N1, and whose second takes it as an input.
+    When: the Cut of the generator's next start is asked.
+    Then: it's of the second, and its part of the tree carries the node's path, kind, and decision,
+    as the second reads them there in place of a file."""
+    data = copy.deepcopy(BOTH_DOING)
+    data["deliverables"][0]["file"] = False
+    data["deliverables"][1]["inputs"] = [*d.CODE_INPUTS, "invoicer"]
+    given = cut.next_start(doing_run(tmp_path, data), d.design(data), "generator", [])
+    assert given is not None
+    decision = {"condition": "N1", "point": "which files the hints cover", "decided": "each file"}
+    assert d.part(given)["cut"]["nodes"] == [
+        {"path": "invoicer", "kind": "code", "decisions": [decision]}
+    ]
+
+
+@pytest.mark.supports("test_a_node_with_no_file_gets_no_round")
 def test_a_node_with_no_file_gets_no_generator(tmp_path: Any) -> None:
     """Given: a run whose first deliverable doing is a node with no file.
     When: the Cut of the generator's next start is asked.

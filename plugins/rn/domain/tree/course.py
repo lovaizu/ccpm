@@ -125,6 +125,21 @@ def of_structure(
     return any(r.structure for r in each if r.number == number)
 
 
+def last(run: Run, plugin_root: str, tree: DesignTree, deliverable: str) -> int:
+    """The round after which no round of the deliverable can follow, whatever changes.
+
+    Takes: the run, rn's folder, the tree, and the deliverable's path.
+    Gives: the number of the second round of structure since its latest sign-off, or 0 where none
+    ran, as a More taken in after it would change a decision that no round carries out.
+    Changes: nothing.
+    Refuses: fault.Wrong, as `practices.judged_by` does.
+    Carries: S1 `else every necessary condition is good, or the second round ends`, as the
+    orchestrator keeps each more of that round as a proposal to improve the deliverable.
+    """
+    structure = [r.number for r in rounds_of(run, plugin_root, tree, deliverable) if r.structure]
+    return structure[_MOST - 1] if len(structure) >= _MOST else 0
+
+
 def _since(run: Run, deliverable: str) -> int:
     """The round that the deliverable's latest sign-off kept, 0 where none did."""
     kept = [

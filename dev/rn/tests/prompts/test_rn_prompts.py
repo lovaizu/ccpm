@@ -395,7 +395,8 @@ def test_the_evaluator_answers_its_group_with_only_what_the_people_have(
     Made; and the first evaluator's Cut, as its adapter gives it.
     When: the evaluator runs alone with the Cut as its prompt.
     Then: its Answers answer each condition of its group, and it opened none of the design tree,
-    the Made, and the records but by rn's scripts, as the people never see what the maker meant."""
+    the Made, and the records of the other roles but by rn's scripts, as the people never see what
+    the maker meant, while its own record holds only what it did."""
     b = w.bench(str(tmp_path))
     versioned = w.deliverable(VERSIONED, "invoicer/__init__.py")
     versioned["necessary_conditions"][0]["decisions"] = [SAME_VERSION]
@@ -420,12 +421,13 @@ def test_the_evaluator_answers_its_group_with_only_what_the_people_have(
         answers = json.load(f)
     answered = {each["question"] for each in answers["good"] + answers["more"]}
     assert answered == set(judged["conditions"])
-    assert not opened_of_the_maker(b)
+    assert not opened_of_the_maker(b, judged["record"])
 
 
-def opened_of_the_maker(b: w.Bench) -> list[str]:
-    """Each call of a run on the bench that opens the design tree, a Made, or a record but by
-    rn's own scripts: a read by a tool, or a part of a Bash command, its variables filled in."""
+def opened_of_the_maker(b: w.Bench, own: str) -> list[str]:
+    """Each call of a run on the bench that opens the design tree, a Made, or a record other than
+    `own`, the run's own, but by rn's own scripts: a read by a tool, or a part of a Bash command,
+    its variables filled in."""
     maker = ("design-tree.json", "made.json", "/records/")
     found = []
     for name, given in calls(b):
@@ -435,7 +437,7 @@ def opened_of_the_maker(b: w.Bench) -> list[str]:
             parts = command_parts(str(given.get("command", "")))
         else:
             continue
-        found += [p for p in parts if any(m in p for m in maker)]
+        found += [p for p in parts if any(m in p.replace(own, "") for m in maker)]
     return found
 
 

@@ -170,7 +170,8 @@ def _at_place(run: Run, found: Cut, start: str) -> Cut:
 def _generator(
     run: Run, tree: DesignTree, node: Mapping[str, Any], start: rounds.Start, record: str
 ) -> Cut:
-    """The Cut of a generator's start of a round: its inputs, the commit at which the deliverable
+    """The Cut of a generator's start of a round: its inputs, the decisions of each input node with
+    no file, the commit at which the deliverable
     was last done where it was done before, the deliverable's own decisions alone, each with its
     ground, and the More kept in the round before."""
     path, kind = start.deliverable, node["kind"]
@@ -187,6 +188,7 @@ def _generator(
         "goal": design.goal(tree),
         "name": node["name"],
         "inputs": list(node["inputs"]),
+        "nodes": _nodes_taken(tree, node["inputs"]),
         **({"done_at": done_at} if done_at else {}),
         "decisions": decisions,
         "more": [
@@ -208,6 +210,21 @@ def _generator(
         "cut": cut,
     }
     return Cut("generator", {"record": record, "deliverable": path, "made": made}, part)
+
+
+def _nodes_taken(tree: DesignTree, inputs: Sequence[str]) -> list[dict[str, Any]]:
+    """Each input that is a node with no file, with its kind and the decisions that hold what its
+    file would, as the deliverable built on it reads them there."""
+    found = []
+    for each in design.deliverables(tree):
+        if each["path"] in inputs and each.get("file") is False:
+            decisions = [
+                {"condition": c["id"], "point": d["about"], "decided": d["decided"]}
+                for c in each.get("necessary_conditions", [])
+                for d in c["decisions"]
+            ]
+            found.append({"path": each["path"], "kind": each["kind"], "decisions": decisions})
+    return found
 
 
 def _decision(run: Run, path: str, decision: Mapping[str, Any]) -> dict[str, str]:

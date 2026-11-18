@@ -16,8 +16,9 @@ What `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {record} '<ground>'` p
 change on standard input and `<ground>` why it decides as it does, which becomes the commit's
 message: exit 0 with `{"changed", "touched", "doing"}`; exit 1 naming the more's best practice and
 necessary condition, where it refuses a more; or exit 1 with what's wrong or missing, where the
-change leaves the design tree's form, names a node the tree doesn't hold, gives an empty
-`<ground>`, or git can't commit. Each exit 1 leaves the tree as it was.
+change leaves the design tree's form, names a node the tree doesn't hold, puts an item of `work`
+before a deliverable that its inputs name and that isn't done, leaves out of a deliverable's
+inputs a kind that its best practice takes, gives an empty `<ground>`, or git can't commit. Each exit 1 leaves the tree as it was.
 
 Record each step once its result holds, and each practice of the design tree best practice marked
 *While making* as you carry it out, as the main conversation decides each change and you write it,

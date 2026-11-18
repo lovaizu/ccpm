@@ -162,12 +162,24 @@ def test_a_node_of_a_kind_taken_covers_it(tmp_path: Any) -> None:
         "Cases",
         "docs/cases",
         kind="test-design",
-        inputs=["a.md", "b.md", "c.md", "d.md"],
+        status="done",
         file=False,
     )
     data["deliverables"].append(node)
     data["deliverables"][0]["inputs"] = [*d.CODE_INPUTS[:2], "docs/cases"]
     inputs.hold(d.run_of(d.repository(str(tmp_path))), d.RN, d.design(data))
+
+
+@pytest.mark.supports("test_a_change_whose_deliverable_leaves_out_an_input_kind_is_refused")
+def test_a_path_that_no_file_holds_covers_none(tmp_path: Any) -> None:
+    """Given: the first deliverable resting on two files outside the tree and a path where no file
+    lies.
+    When: the inputs are held.
+    Then: they're refused, as the path covers no kind."""
+    data = d.walkthrough_tree()
+    data["deliverables"][0]["inputs"] = [*d.CODE_INPUTS[:2], "docs/gone.md"]
+    with pytest.raises(Wrong, match=r"invoicer names no input"):
+        inputs.hold(d.run_of(d.repository(str(tmp_path))), d.RN, d.design(data))
 
 
 @pytest.mark.supports("test_a_change_whose_deliverable_leaves_out_an_input_kind_is_refused")

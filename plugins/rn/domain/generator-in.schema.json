@@ -48,6 +48,7 @@
             "goal",
             "name",
             "inputs",
+            "nodes",
             "decisions",
             "more"
           ],
@@ -66,6 +67,56 @@
               "type": "array",
               "items": {
                 "type": "string"
+              }
+            },
+            "nodes": {
+              "description": "Each input that is a node of the design tree with no file, such as a test design held as decisions alone, with the decisions that hold what its file would.",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "path",
+                  "kind",
+                  "decisions"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "path": {
+                    "description": "Where its file would lie, which names it.",
+                    "type": "string"
+                  },
+                  "kind": {
+                    "description": "Its kind, such as test-design.",
+                    "type": "string"
+                  },
+                  "decisions": {
+                    "description": "Each of its decisions, by its necessary condition.",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "condition",
+                        "point",
+                        "decided"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "condition": {
+                          "description": "The ID of its necessary condition, such as N3.",
+                          "type": "string"
+                        },
+                        "point": {
+                          "description": "The point it settles.",
+                          "type": "string"
+                        },
+                        "decided": {
+                          "description": "What holds for the point; a node is put up only once each is settled.",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
               }
             },
             "done_at": {

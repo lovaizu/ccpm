@@ -144,17 +144,20 @@ def test_a_round_of_structure_judges_the_refactor_groups_and_then_only_those_of_
 def test_two_rounds_of_structure_or_one_with_no_change_end_the_rounds(tmp_path: Any) -> None:
     """Given: invoicer's round of content and one of structure judged, with no decision changed;
     then a second round of structure after a change, judged, and another change.
-    When: its next round is asked at each.
-    Then: none is, each time, as the deliverable is ready to put up."""
+    When: its next round, and its last, are asked at each.
+    Then: no next round is, each time, as the deliverable is ready to put up, and the last is
+    none until the second round of structure, round 3, ran."""
     run = a_run(tmp_path)
     round_judged(run, DATA)
     round_judged(run, DATA, structure=True)
     assert course.next_round(run, d.RN, d.design(DATA), "invoicer") is None
     changed = n1_changed(DATA, "each file of invoicer but its tests")
     assert course.next_round(run, d.RN, d.design(changed), "invoicer") == course.Round(3, True, ())
+    assert course.last(run, d.RN, d.design(changed), "invoicer") == 0
     round_judged(run, changed, structure=True)
     again = n1_changed(DATA, "each file")
     assert course.next_round(run, d.RN, d.design(again), "invoicer") is None
+    assert course.last(run, d.RN, d.design(again), "invoicer") == 3
 
 
 @pytest.mark.supports("test_a_deliverable_sent_back_starts_its_rounds_again")

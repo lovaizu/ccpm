@@ -29,7 +29,7 @@ def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, brok
     _, cut = w.generator_started(walk)
     values = {"record", "deliverable", "kind", "best_practice", "made"}
     assert set(cut) == values | {"cut"}, "the Cut holds nothing of the tree beside its part"
-    assert set(cut["cut"]) == {"goal", "name", "inputs", "decisions", "more"}
+    assert set(cut["cut"]) == {"goal", "name", "inputs", "nodes", "decisions", "more"}
     paths = [each["decision"]["path"] for each in cut["cut"]["decisions"]]
     assert paths and all(p.startswith("deliverables/0/") for p in paths)
 
@@ -58,7 +58,7 @@ def test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at(
     _, cut = w.generator_started(walk)
     values = {"record", "deliverable", "kind", "best_practice", "made"}
     assert set(cut) == values | {"cut"}, "the Cut holds nothing of the tree beside its part"
-    assert set(cut["cut"]) == {"goal", "name", "inputs", "decisions", "more", "done_at"}
+    assert set(cut["cut"]) == {"goal", "name", "inputs", "nodes", "decisions", "more", "done_at"}
     assert cut["cut"]["done_at"] == done_at
     changed = w.git(walk.run["worktree"], "diff", cut["cut"]["done_at"], "--", "pyproject.toml")
     assert all(f"+{line}" in changed for line in w.RATE_SET.strip().splitlines())

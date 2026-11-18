@@ -1,7 +1,7 @@
 """Decides whether each deliverable of a best practice's kind names an input for each kind that its
-best practice takes: a node of the tree of that kind, or else a file outside the tree's nodes, one
-for each kind left, as tree.py can tell the kind of a node alone and a deliverable built on a kind
-it never read rests on a guess."""
+best practice takes: a node of the tree of that kind, or else a file outside the tree's nodes that
+exists, one for each kind left, as tree.py can tell the kind of a node alone and a deliverable
+built on a kind it never read rests on a guess."""
 
 from __future__ import annotations
 
@@ -22,7 +22,8 @@ def hold(run: Run, plugin_root: str, tree: DesignTree) -> None:
     Takes: the run, rn's folder, and the tree.
     Gives: nothing, where for each deliverable not done of a best practice's kind, each kind that
     the best practice names in `inputs` is the kind of a node that its inputs name, or, for the
-    kinds that no such node holds, its inputs name as many paths that no node of the tree holds.
+    kinds that no such node holds, its inputs name as many files of the run's worktree that no node
+    of the tree holds.
     Changes: nothing.
     Refuses: fault.Wrong, naming each deliverable and the kinds its inputs leave out; fault.Wrong,
     as `practices.folder` does, where no best practice of a deliverable's kind exists.
@@ -37,7 +38,10 @@ def hold(run: Run, plugin_root: str, tree: DesignTree) -> None:
             continue
         named = node.get("inputs", [])
         left = [k for k in _taken(run, plugin_root, node["kind"]) if k not in _kinds(named, kinds)]
-        if len([p for p in named if p not in kinds]) < len(left):
+        files = [
+            p for p in named if p not in kinds and os.path.exists(os.path.join(run.worktree, p))
+        ]
+        if len(files) < len(left):
             faults.append(f"{node['path']} names no input of {', '.join(left)}")
     if faults:
         raise Wrong("the design tree's inputs leave out a kind: " + "; ".join(faults))

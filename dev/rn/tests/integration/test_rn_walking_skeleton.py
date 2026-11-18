@@ -78,6 +78,7 @@ def test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing(b: Ben
     assert cut["record"].startswith(f"{walk.run['folder']}/records/")
     assert cut["made"].startswith(f"{walk.run['folder']}/rounds/")
     part = cut["cut"]
+    assert part["nodes"] == []
     assert (part["goal"], part["name"], part["inputs"], part["more"]) == (
         w.GOAL,
         w.COMMAND,

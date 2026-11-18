@@ -279,6 +279,7 @@ def test_round_names_the_best_practice_of_each_answers(tmp_path: Any) -> None:
     assert code == 0, err
     (given,) = json.loads(out)
     assert given["number"] == 1 and given["made"]["decisions"] == d.made()["decisions"]
+    assert given["last"] is False
     assert [a["best_practice"] for a in given["answers"]] == ["code", "refactor-code"]
     assert all(a["good"] == d.answers(["N1"])["good"] for a in given["answers"])
 

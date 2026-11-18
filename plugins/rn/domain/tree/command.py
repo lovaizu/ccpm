@@ -14,6 +14,7 @@ from repository import git
 
 from tree import (
     branch,
+    course,
     design,
     github,
     inputs,
@@ -68,8 +69,9 @@ def main(argv: Sequence[str], stdin: TextIO, cwd: str, plugin_root: str) -> tupl
       ground is one no one can trace.
     - `commit <record> <step>`: 0, once `place.write` keeps the start's Place and `branch.commit`
       commits its work, the message naming the record and the step.
-    - `round <deliverable>`: 0, with `[{"number", "made", "answers"}]`, each round from
-      `rounds.each`, the latest last, its Made, or null before the generator wrote it, and each
+    - `round <deliverable>`: 0, with `[{"number", "last", "made", "answers"}]`, each round from
+      `rounds.each`, the latest last, `last` true for the round after which `course.last` says no
+      round can follow, its Made, or null before the generator wrote it, and each
       evaluator's Answers, by group, in the forms that the generator and the evaluator wrote them,
       each Answers with `"best_practice"`, the kind of its group's best practice from
       `practices.judged_by`, as the kind's best practice and the refactor one share condition IDs.
@@ -180,12 +182,15 @@ def _kept(run: Run, stood: list[tuple[str, int]], message: str) -> None:
 
 def _round(args: list[str], stdin: TextIO, cwd: str, plugin_root: str) -> Any:
     run = _run(cwd)
-    kind = design.deliverable(design.read(run), args[0])["kind"]
+    tree = design.read(run)
+    kind = design.deliverable(tree, args[0])["kind"]
     found = rounds.each(run, args[0])
     judged = practices.judged_by(run, plugin_root, kind)
+    last = course.last(run, plugin_root, tree, args[0])
     return [
         {
             "number": each.number,
+            "last": each.number == last,
             "made": _made_as_written(each.made) if each.made else None,
             "answers": [
                 {"best_practice": judged[group].kind, **_answers_as_written(answers)}
