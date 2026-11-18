@@ -50,7 +50,13 @@
         {
           "id": "N4",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The design tree's form",
+              "decided": "the design tree holds the goal, the deliverables, and the work order. Each deliverable sits under the deepest deliverable that its inputs name, so its inputs alone make the deliverable tree, which tree.py draws, with no field of a parent. The work order is a field of the same file, first to last, each item a deliverable to make, named by its path, or a point to decide, named by its path, condition, and about; the orchestrator orders it each turn, first by inputs and preconditions, then by what the run's facts show brings the people closest. tree.py rewrites an item whose node a change renames, and refuses an item that names no node or whose inputs and preconditions aren't done. The list of deliverables no longer holds the order of the work",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N5",
