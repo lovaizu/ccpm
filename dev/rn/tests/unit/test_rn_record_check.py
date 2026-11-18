@@ -57,7 +57,7 @@ def generator_ended(
     given = cut.next_start(run, d.design(tree), "generator", [])
     assert given is not None
     record = given.values["record"]
-    kinds = (str(given.part["kind"]), os.path.basename(str(given.part["refactor"]).rstrip("/")))
+    kinds = (os.path.basename(str(given.part["best_practice"]).rstrip("/")),)
     first, *others = steps_of(d.RN, "domain/generator.md")
     entries = [Entry("generator", first, None, "a.py:1")]
     entries += [Entry(k, None, p, "a.py:1") for k in kinds for p in practice_ids(k)]

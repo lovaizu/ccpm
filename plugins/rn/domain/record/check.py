@@ -81,13 +81,13 @@ def _orchestrator(plugin_root: str, run: Run | None) -> tuple[str, ...]:
 
 def _practices(taken: cut.Cut, held: form.Record) -> Mapping[str, Sequence[Practice]]:
     """Each practice of each best practice that the start works by, by its kind: a generator's of
-    its kind and of the refactor one; the tree-keeper's of the design tree marked make, once it's
+    the one its round works by; the tree-keeper's of the design tree marked make, once it's
     resumed with a change, as its first pass only reads the tree, and the orchestrator decides
     each change that the tree-keeper writes."""
     part = cast(Any, taken.part)
     if taken.role == "generator":
-        folders = (part["best_practice"], part["refactor"])
-        return {os.path.basename(f.rstrip("/")): practices.practices(f) for f in folders}
+        folder = part["best_practice"]
+        return {os.path.basename(folder.rstrip("/")): practices.practices(folder)}
     if taken.role == "tree-keeper" and len(order.passes(held, "tree-keeper", 1)) > 1:
         each = practices.practices(part["best_practice"])
         return {"design-tree": [p for p in each if p.phase is practices.Phase.MAKE]}

@@ -200,6 +200,31 @@ def test_the_generator_starts_with_the_first_deliverable_in_the_works_order(b: B
     assert cut["deliverable"] == w.GUIDE_PATH
 
 
+@pytest.mark.supports("S1", "generator", "evaluator", "Round", "Best practice")
+def test_a_round_of_structure_follows_the_rounds_of_content(b: Bench) -> None:
+    """Given: the command's first round, of content, judged good by each group of the code best
+    practice.
+    When: the orchestrator starts the generator due, which makes the round, and each evaluator due.
+    Then: the generator's Cut is of round 2 by the refactor-code best practice, and one evaluator
+    judges each group of refactor-code alone."""
+    walk, _, _ = w.first_round(b)
+    cut, cuts = w.structure_round(b, walk)
+    assert w.kinds_of(cut) == ("refactor-code",) and cut["made"].endswith("/2/made.json")
+    given = sorted(tuple(c["conditions"]) for c in cuts)
+    assert given == sorted(tuple(g) for g in w.groups_of(b.rn, "refactor-code"))
+
+
+@pytest.mark.supports("S1", "Design tree", "Deliverable", "generator")
+def test_a_node_with_no_file_gets_no_round(b: Bench) -> None:
+    """Given: the walkthrough's plan signed off, the command a node with no file.
+    When: the orchestrator starts the generator that the guard gives due.
+    Then: its Cut names the guide, as no generator starts for the node."""
+    plan = w.walkthrough_plan()
+    plan["nodes"]["deliverables"][0]["file"] = False
+    _, cut = w.generator_started(w.planned(b, plan))
+    assert cut["deliverable"] == w.GUIDE_PATH
+
+
 def refused_write(b: Bench, walk: w.Walk, change: Any) -> str:
     """The tree-keeper resumed with the change, which tree.py write refuses with 1; gives what it
     printed, once the case checks that the design tree is as it was."""

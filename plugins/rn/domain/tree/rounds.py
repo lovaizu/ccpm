@@ -267,22 +267,27 @@ def kept_more(run: Run, deliverable: str, number: int | None = None) -> tuple[Mo
     )
 
 
-def at_cut(run: Run, deliverable: str) -> DesignTree:
-    """The design tree as the deliverable's latest round took its cut.
+def at_cut(run: Run, deliverable: str, number: int | None = None) -> DesignTree:
+    """The design tree as a round of the deliverable took its cut.
 
-    Takes: the run, and the deliverable's path.
+    Takes: the run, the deliverable's path, and the round's number, its latest where None.
     Gives: the tree as the commit that opened the round holds it, through
     `repository.git.file_at`.
     Changes: nothing.
     Refuses: fault.Wrong, where the deliverable has no round; fault.CantRun, where git fails. A
-    round that no commit holds stops with its trace, as each step's end commits the round's files
-    before an evaluator judges it.
+    round that no commit holds yet gives the tree as the run's folder holds it, as its cut is the
+    one taken now.
     Carries: S1 `alt the decision that the more names isn't under its deliverable, or didn't change
-    since the round's cut`.
+    since the round's cut`, and `par one for each group of the best practice that the round judges
+    by, each holding a condition whose decisions changed since the round before`.
     """
-    number = _held(run, deliverable, "whose cut a more answers to")
+    latest_ = _held(run, deliverable, "whose cut a more answers to")
+    number = latest_ if number is None else number
     opened = git.history(run.worktree, os.path.join(_folder(run, deliverable), str(number)))
     tree = os.path.relpath(os.path.join(run.folder, "design-tree.json"), run.worktree)
+    if not opened:
+        with open(os.path.join(run.worktree, tree), encoding="utf-8") as f:
+            return DesignTree(json.load(f))
     # design.write wrote the tree at that commit once design.apply held it to its form.
     return DesignTree(json.loads(git.file_at(run.worktree, opened[-1][0], tree)))
 

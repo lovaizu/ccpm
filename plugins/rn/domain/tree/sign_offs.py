@@ -14,7 +14,7 @@ from enum import Enum
 import json_form
 from fault import Wrong
 
-from tree import design
+from tree import design, rounds
 from tree.runs import Run
 
 
@@ -38,12 +38,14 @@ class State(Enum):
 @dataclass(frozen=True)
 class SignOff:
     """One sign-off: what it puts up, the deliverable's path, the lesson's words, or the pull
-    request's URL, where it stands, and when it was put up, in ISO 8601."""
+    request's URL, where it stands, when it was put up, in ISO 8601, and, for a deliverable, the
+    number of its latest round then, 0 where it had none, after which its rounds start again."""
 
     kind: Kind
     what: str
     state: State
     at: str
+    round: int | None = None
 
 
 @dataclass(frozen=True)
@@ -72,7 +74,7 @@ def read(run: Run) -> SignOffs:
     json_form.hold(data, json_form.load("sign-off.schema.json"), "sign-offs.json")
     return SignOffs(
         tuple(
-            SignOff(Kind(e["kind"]), e["what"], State(e["state"]), e["at"])
+            SignOff(Kind(e["kind"]), e["what"], State(e["state"]), e["at"], e.get("round"))
             for e in data["sign_offs"]
         )
     )
@@ -83,7 +85,8 @@ def put_up(run: Run, kind: Kind, what: str) -> SignOff:
 
     Takes: the run, what the sign-off puts up, and the deliverable's path, the lesson's words, or
     the pull request's URL, "" for the plan.
-    Gives: the sign-off, waiting, put up now.
+    Gives: the sign-off, waiting, put up now, a deliverable's with the number of its latest round
+    from `rounds.latest`.
     Changes: the run's sign-offs.json.
     Refuses: fault.Wrong, naming the path, where the deliverable is none of the tree's.
     Carries: S3 `O->>T: puts it up (Sign-off)`; S7 `O->>T: puts it up for the user's sign-off`; S6
@@ -94,7 +97,8 @@ def put_up(run: Run, kind: Kind, what: str) -> SignOff:
         if what not in paths:
             raise Wrong(f"{what} is no deliverable of the design tree, which holds {paths}")
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    given = SignOff(kind, what, State.WAITING, now)
+    number = rounds.latest(run, what) if kind is Kind.DELIVERABLE else None
+    given = SignOff(kind, what, State.WAITING, now, number)
     _write(run, read(run).each + (given,))
     return given
 
@@ -120,14 +124,17 @@ def decide(run: Run, approved: bool) -> SignOff:
     return each[waiting[-1]]
 
 
-def as_json(given: SignOff) -> dict[str, str]:
+def as_json(given: SignOff) -> dict[str, object]:
     """A sign-off as sign-off.schema.json gives one, as tree.py prints it."""
-    return {
+    found: dict[str, object] = {
         "kind": given.kind.value,
         "what": given.what,
         "state": given.state.value,
         "at": given.at,
     }
+    if given.round is not None:
+        found["round"] = given.round
+    return found
 
 
 def _write(run: Run, each: tuple[SignOff, ...]) -> None:

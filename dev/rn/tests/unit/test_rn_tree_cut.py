@@ -28,6 +28,18 @@ def doing_run(tmp: Any, data: dict[str, Any] | None = None) -> Any:
     return run
 
 
+def judged_round(run: Any) -> None:
+    """invoicer's first round made and answered by each group of the code best practice, which a
+    round of content judges, committed."""
+    d.write_json(os.path.join(run.worktree, rounds.made_path(run, "invoicer", True)), d.made())
+    for group, judged in enumerate(practices.judged_by(run, d.RN, "code")):
+        if judged.kind == "code":
+            answers = rounds.answers_path(run, "invoicer", group)
+            d.write_json(os.path.join(run.worktree, answers), d.answers(list(judged.conditions)))
+    d.git(run.worktree, "add", "-A")
+    d.git(run.worktree, "commit", "-q", "-m", "Round 1")
+
+
 @pytest.mark.supports("test_a_request_starts_a_run_anew_with_the_tree_keepers_start_first")
 def test_the_tree_keepers_cut_names_the_design_tree_and_its_best_practice(tmp_path: Any) -> None:
     """Given: a run with the walkthrough's tree.
@@ -91,17 +103,14 @@ def test_the_generators_cut_of_a_deliverable_done_before_gives_the_commit_it_was
 def test_a_generator_starts_a_new_round_once_a_decision_changes_after_the_rounds_cut(
     tmp_path: Any,
 ) -> None:
-    """Given: a run with invoicer alone doing, made in its first round with no More kept, and then
-    its decision of N1 changed in the design tree.
+    """Given: a run with invoicer alone doing, made in its first round with no More kept, answered,
+    and then its decision of N1 changed in the design tree.
     When: the Cut of the generator's next start is asked.
-    Then: it's of invoicer, writing its Made in round 2, as the rounds start again from the
-    design."""
+    Then: it's of invoicer, writing its Made in round 2 by the code best practice, as the rounds of
+    content start again from the design."""
     data = d.with_status(d.walkthrough_tree(), "doing", "open")
     run = doing_run(tmp_path, data)
-    d.write_json(os.path.join(run.worktree, rounds.made_path(run, "invoicer", True)), d.made())
-    d.git(run.worktree, "add", "-A")
-    d.git(run.worktree, "commit", "-q", "-m", "Round 1 made")
-    assert cut.next_start(run, d.design(data), "generator", []) is None
+    judged_round(run)
     changed = copy.deepcopy(data)
     (decision,) = changed["deliverables"][0]["necessary_conditions"][0]["decisions"]
     decision["decided"] = "each file of invoicer but its tests"
@@ -109,22 +118,22 @@ def test_a_generator_starts_a_new_round_once_a_decision_changes_after_the_rounds
     given = cut.next_start(run, d.design(changed), "generator", [])
     assert given is not None and given.part["deliverable"] == "invoicer"
     assert given.values["made"] == rounds.made_path(run, "invoicer", True)
+    assert str(given.part["best_practice"]).rstrip("/").endswith("best-practices/code")
 
 
 @pytest.mark.supports("test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator")
 def test_the_next_rounds_cut_carries_each_more_kept_with_its_best_practice_and_decision(
     tmp_path: Any,
 ) -> None:
-    """Given: a run with invoicer alone doing, made in its first round, its decision of N1 changed,
+    """Given: a run with invoicer alone doing, made in its first round and answered, its decision of
+    N1 changed,
     and the more of N2 of refactor-code kept, naming that decision.
     When: the Cut of the generator's next start is asked.
     Then: it's of invoicer's round 2, and its part of the tree carries the More kept with its best
     practice, condition, decision, and good_when."""
     data = d.with_status(d.walkthrough_tree(), "doing", "open")
     run = doing_run(tmp_path, data)
-    d.write_json(os.path.join(run.worktree, rounds.made_path(run, "invoicer", True)), d.made())
-    d.git(run.worktree, "add", "-A")
-    d.git(run.worktree, "commit", "-q", "-m", "Round 1 made")
+    judged_round(run)
     changed = copy.deepcopy(data)
     (decision,) = changed["deliverables"][0]["necessary_conditions"][0]["decisions"]
     decision["decided"] = "each file of invoicer but its tests"
@@ -157,60 +166,33 @@ def test_a_deliverable_that_a_start_runs_on_is_passed_over(tmp_path: Any) -> Non
     assert second.values["record"] != first.values["record"]
 
 
-@pytest.mark.supports("test_no_generator_start_is_due_while_every_deliverable_doing_waits")
-def test_no_work_waits_where_none_is_doing_or_each_is_held(tmp_path: Any) -> None:
-    """Given: a run with no deliverable doing, and a run with both doing and a generator running on
-    each.
-    When: the Cut of the generator's next start is asked of each.
-    Then: each gives none."""
-    idle = doing_run(tmp_path / "idle", d.walkthrough_tree())
-    assert cut.next_start(idle, d.design(), "generator", []) is None
-    run = doing_run(tmp_path / "busy")
-    tree = d.design(BOTH_DOING)
-    first = cut.next_start(run, tree, "generator", [])
-    assert first is not None
-    second = cut.next_start(run, tree, "generator", [dict(first.values)])
-    assert second is not None
-    assert cut.next_start(run, tree, "generator", [dict(first.values), dict(second.values)]) is None
-
-
-@pytest.mark.supports("test_one_evaluator_starts_for_each_group_of_necessary_conditions")
-def test_each_evaluator_takes_the_first_group_that_no_running_start_holds(tmp_path: Any) -> None:
-    """Given: a run with invoicer alone doing, made in its first round.
-    When: the Cut of an evaluator's next start is asked, then again with that start running.
-    Then: the first names the code best practice's first group, and the second its next group,
-    each with only what the deliverable's people have."""
-    data = d.with_status(d.walkthrough_tree(), "doing", "open")
-    run = doing_run(tmp_path, data)
-    d.write_json(os.path.join(run.worktree, rounds.made_path(run, "invoicer", True)), d.made())
-    tree = d.design(data)
-    first = cut.next_start(run, tree, "evaluator", [])
-    assert first is not None and first.part["conditions"] == ["N1", "N2", "N3"]
-    second = cut.next_start(run, tree, "evaluator", [dict(first.values)])
-    assert second is not None and second.part["conditions"] == ["N4", "N5", "N6", "N7"]
-    people = {"record", "deliverable", "goal", "name", "best_practice", "conditions", "answers"}
-    assert set(first.part) == people
-
-
-@pytest.mark.supports("test_no_generator_start_is_due_while_every_deliverable_doing_waits")
-@pytest.mark.parametrize("role", ["generator", "evaluator"])
-def test_a_round_made_and_answered_whole_with_no_decision_changed_gives_no_start(
-    tmp_path: Any, role: str
+@pytest.mark.supports("test_a_round_of_structure_follows_the_rounds_of_content")
+def test_a_round_of_content_answered_with_no_decision_changed_gives_one_of_structure(
+    tmp_path: Any,
 ) -> None:
-    """Given: a run with invoicer alone doing, made in its first round and answered by every group,
-    with no decision under it changed since the round's cut.
-    When: the Cut of a generator's or an evaluator's next start is asked.
-    Then: it gives none, as the next round waits for a decision changed."""
+    """Given: a run with invoicer alone doing, made in its first round and answered by each group
+    of the code best practice, with no decision under it changed since the round's cut.
+    When: the Cut of a generator's and of an evaluator's next start is asked.
+    Then: the generator's is of round 2 by the refactor-code best practice, and no evaluator's is
+    due, as the round of content is judged whole."""
     data = d.with_status(d.walkthrough_tree(), "doing", "open")
     run = doing_run(tmp_path, data)
-    d.write_json(os.path.join(run.worktree, rounds.made_path(run, "invoicer", True)), d.made())
-    groups = practices.judged_by(run, d.RN, "code")
-    for group, judged in enumerate(groups):
-        answers = rounds.answers_path(run, "invoicer", group)
-        d.write_json(os.path.join(run.worktree, answers), d.answers(list(judged.conditions)))
-    d.git(run.worktree, "add", "-A")
-    d.git(run.worktree, "commit", "-q", "-m", "Round 1")
-    assert cut.next_start(run, d.design(data), role, []) is None
+    judged_round(run)
+    given = cut.next_start(run, d.design(data), "generator", [])
+    assert given is not None and given.values["made"] == rounds.made_path(run, "invoicer", True)
+    assert str(given.part["best_practice"]).rstrip("/").endswith("best-practices/refactor-code")
+    assert cut.next_start(run, d.design(data), "evaluator", []) is None
+
+
+@pytest.mark.supports("test_a_node_with_no_file_gets_no_round")
+def test_a_node_with_no_file_gets_no_generator(tmp_path: Any) -> None:
+    """Given: a run whose first deliverable doing is a node with no file.
+    When: the Cut of the generator's next start is asked.
+    Then: it's of the second deliverable."""
+    data = copy.deepcopy(BOTH_DOING)
+    data["deliverables"][0]["file"] = False
+    given = cut.next_start(doing_run(tmp_path, data), d.design(data), "generator", [])
+    assert given is not None and given.part["deliverable"] == "invoicer/py.typed"
 
 
 @pytest.mark.supports("test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped")

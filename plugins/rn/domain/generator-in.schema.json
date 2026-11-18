@@ -16,7 +16,6 @@
         "deliverable",
         "kind",
         "best_practice",
-        "refactor",
         "made",
         "cut"
       ],
@@ -35,11 +34,7 @@
           "type": "string"
         },
         "best_practice": {
-          "description": "The folder of the best practice of the deliverable's kind.",
-          "type": "string"
-        },
-        "refactor": {
-          "description": "The folder of the refactor best practice that it finishes by, of documents or of code.",
+          "description": "The folder of the best practice that its round works by: of the deliverable's kind in a round of content, and the refactor one, of documents or of code, in a round of structure.",
           "type": "string"
         },
         "made": {

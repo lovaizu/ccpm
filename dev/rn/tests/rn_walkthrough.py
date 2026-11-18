@@ -572,9 +572,10 @@ def generator_started(w: Walk) -> tuple[Agent, dict[str, Any]]:
     return generator, cut_of(due_text_of(generator))
 
 
-def kinds_of(cut: dict[str, Any]) -> tuple[str, str]:
-    """The kind of the deliverable of a generator's Cut, and the refactor best practice's."""
-    return cut["kind"], os.path.basename(cut["refactor"].rstrip("/"))
+def kinds_of(cut: dict[str, Any]) -> tuple[str]:
+    """The kind of the best practice that the round of a generator's Cut works by: the
+    deliverable's in a round of content, the refactor one in a round of structure."""
+    return (os.path.basename(cut["best_practice"].rstrip("/")),)
 
 
 def made(
@@ -619,11 +620,14 @@ def answers(conditions: Sequence[str], more: Mapping[str, str] | None = None) ->
 def evaluated(
     b: Bench, w: Walk, kinds: Sequence[str], more: Mapping[str, str] | None = None
 ) -> list[dict[str, Any]]:
-    """One evaluator starts for each group of necessary conditions of the kinds' best practices,
-    each with the text that the guard gives due, commits its work, writes its Answers, and ends
-    done; gives each evaluator's Cut."""
+    """One evaluator starts for each group of necessary conditions of the kinds' best practices that
+    the guard gives due, as a later round judges only the groups whose conditions changed, each
+    with the text that the guard gives due, commits its work, writes its Answers, and ends done;
+    gives each evaluator's Cut."""
     cuts, evaluators = [], []
     for _ in range(sum(len(groups_of(b.rn, kind)) for kind in kinds)):
+        if "Start `rn:evaluator`" not in w.said:
+            break
         answer, evaluator = started(w.c, "evaluator", w.said)
         w.said = answer.posted
         evaluators.append(evaluator)
@@ -674,6 +678,18 @@ def first_round(
     return w, cut, evaluated(b, w, kinds_of(cut), more)
 
 
+def structure_round(
+    b: Bench, w: Walk, more: Mapping[str, str] | None = None
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """After a round of content with no decision changed, the generator's round of structure by the
+    refactor best practice, made and judged, with `more` as each condition that falls short; gives
+    the generator's Cut and each evaluator's."""
+    generator, cut = generator_started(w)
+    made(b, w, generator, cut)
+    w.said = reached(b, generator, "done", "Made.").said
+    return cut, evaluated(b, w, kinds_of(cut), more)
+
+
 N2_DECISION = "deliverables/0/necessary_conditions/1/decisions/0"
 
 
@@ -703,6 +719,7 @@ def sign_off_put_up(b: Bench, change: Any = None) -> tuple[Walk, dict[str, Any]]
     """The walkthrough up to its first deliverable put up for the user's sign-off, every necessary
     condition good; gives the walk and the generator's Cut."""
     w, cut, _ = first_round(b, change=change)
+    structure_round(b, w)
     printed(w.c.bash(b.tree("round", cut["deliverable"])))
     printed(w.c.bash(b.tree("push")))
     printed(w.c.bash(b.tree("put-up", "deliverable", cut["deliverable"])))

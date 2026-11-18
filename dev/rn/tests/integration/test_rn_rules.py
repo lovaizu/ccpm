@@ -27,7 +27,7 @@ def test_a_role_starts_with_only_the_cut_that_tree_py_gave_for_it(b: Bench, brok
     stopped, agent = walk.c.start("rn:generator", whole, "generator")
     assert stopped.blocked and agent is None
     _, cut = w.generator_started(walk)
-    values = {"record", "deliverable", "kind", "best_practice", "refactor", "made"}
+    values = {"record", "deliverable", "kind", "best_practice", "made"}
     assert set(cut) == values | {"cut"}, "the Cut holds nothing of the tree beside its part"
     assert set(cut["cut"]) == {"goal", "name", "inputs", "decisions", "more"}
     paths = [each["decision"]["path"] for each in cut["cut"]["decisions"]]
@@ -56,7 +56,7 @@ def test_a_deliverable_done_before_is_reworked_from_the_commit_it_was_done_at(
         b, walk, "The user lets the rate default to pyproject.toml's.", change, w.OR_THE_DEFAULT
     )
     _, cut = w.generator_started(walk)
-    values = {"record", "deliverable", "kind", "best_practice", "refactor", "made"}
+    values = {"record", "deliverable", "kind", "best_practice", "made"}
     assert set(cut) == values | {"cut"}, "the Cut holds nothing of the tree beside its part"
     assert set(cut["cut"]) == {"goal", "name", "inputs", "decisions", "more", "done_at"}
     assert cut["cut"]["done_at"] == done_at

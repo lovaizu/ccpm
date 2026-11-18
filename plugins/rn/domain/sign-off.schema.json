@@ -52,6 +52,10 @@
         "at": {
           "description": "When it was put up, in ISO 8601, from which tree.py gets the user's comments since.",
           "type": "string"
+        },
+        "round": {
+          "description": "For a deliverable, the number of its latest round when it was put up, after which its rounds start again once it's sent back.",
+          "type": "integer"
         }
       }
     }

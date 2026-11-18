@@ -11,7 +11,7 @@ from typing import Any, cast
 
 from fault import Wrong
 
-from tree import branch, design, place, practices, records, rounds, turn
+from tree import branch, course, design, place, practices, records, rounds, turn
 from tree.design import DesignTree, read
 from tree.runs import Run
 
@@ -39,13 +39,12 @@ def next_start(
     Takes: the run, its design tree, the role, and the run values of each start that runs.
     Gives: for the tree-keeper, the Cut of the run's design tree, or None while a start of it runs,
     as the main conversation resumes that one with each change; for the generator, the Cut of the
-    first deliverable doing that no start that runs holds and whose latest round is none, holds no
-    Made yet, or was cut before a decision under the deliverable changed, as a More kept for the
-    next round is kept only then, and the rounds start again from the design, with the commit at
-    which the deliverable was last done, from `branch.done_at`, where it was done before; for an
-    evaluator, the Cut of the first group of necessary conditions, of the kind's best practice and
-    then of the refactor one, of a deliverable doing whose latest round holds a Made, that has no
-    Answers there and that no start that runs holds; each with the path of a new record from
+    first deliverable doing, in the work's order, with a file, that no start that runs holds and
+    whose round `course.next_round` gives, naming the best practice that the round works by, with
+    the commit at which the deliverable was last done, from `branch.done_at`, where it was done
+    before; for an evaluator, the Cut of the first group that `course.rounds_of` gives the latest
+    round of such a deliverable to judge, where it holds a Made, that has no Answers there and that
+    no start that runs holds; each with the path of a new record from
     `records.new_record`, after each record that a start that runs took, and, where a start of the
     same round and group stood at a step, the step of the latest one's Place, from
     `rounds.stood_place` and `place.read`, in the generator's `cut` or beside the evaluator's
@@ -53,9 +52,10 @@ def next_start(
     Changes: nothing.
     Refuses: fault.Wrong, where the role is none of rn's or that Place leaves its form;
     fault.CantRun, where that Place can't be read.
-    Carries: S1 `A->>T: gets each deliverable doing, and the Cut of the first that no start that
-    runs holds, with the path of a new Record for the start (Cut)`; S5 `O->>G: starts each that
-    stood in a step, at that step (Cut, Place)`, and the same of each evaluator.
+    Carries: S1 `A->>T: gets each deliverable doing, and the Cut of the first in the work's order
+    that no start that runs holds, with the path of a new Record for the start (Cut)`; S5
+    `O->>G: starts each that stood in a step, at that step (Cut, Place)`, and the same of each
+    evaluator.
     """
     if role not in _ROLES:
         raise Wrong(f"{role!r} is none of rn's roles, which are {', '.join(_ROLES)}")
@@ -66,6 +66,9 @@ def next_start(
         return _keeper(run, records.new_record(run, role, taken))
     due = _generator_due if role == "generator" else _evaluator_due
     for deliverable in turn.doing(tree):
+        # A node with no file gets no round, as the orchestrator settles its decisions.
+        if design.deliverable(tree, deliverable).get("file") is False:
+            continue
         start = due(run, tree, deliverable, running)
         if start:
             found = _of_start(run, tree, role, records.new_record(run, role, taken, start))
@@ -105,38 +108,22 @@ def _generator_due(
     """The start of the deliverable's round that a generator takes, or "" where none is due."""
     if any(v.get("deliverable") == deliverable and "made" in v for v in running):
         return ""
-    number = rounds.latest(run, deliverable)
-    made = number and _there(run, rounds.path_in(run, deliverable, number, "made.json"))
-    if not made:
-        return rounds.start_name(deliverable, number or 1)
-    # A decision changed since the round's cut starts the next round, and with it each More kept,
-    # which more.keepable keeps only once the decision it names, under the deliverable, changed.
-    if _decisions_of(rounds.at_cut(run, deliverable), deliverable) != _decisions_of(
-        tree, deliverable
-    ):
-        return rounds.start_name(deliverable, number + 1)
-    return ""
-
-
-def _decisions_of(tree: DesignTree, deliverable: str) -> list[Any]:
-    """Each decision under the deliverable, as the tree holds it."""
-    return [decision for _, _, decision in _decisions(tree, deliverable)]
+    due = course.next_round(run, _ROOT, tree, deliverable)
+    return rounds.start_name(deliverable, due.number) if due else ""
 
 
 def _evaluator_due(
     run: Run, tree: DesignTree, deliverable: str, running: Sequence[Mapping[str, str]]
 ) -> str:
     """The start of the deliverable's round and group that an evaluator takes, or ""."""
-    number = rounds.latest(run, deliverable)
-    if not number or not _there(run, rounds.path_in(run, deliverable, number, "made.json")):
+    each = course.rounds_of(run, _ROOT, tree, deliverable)
+    if not each or not _there(run, rounds.path_in(run, deliverable, each[-1].number, "made.json")):
         return ""
     held = {v.get("answers") for v in running}
-    for group in range(
-        len(practices.judged_by(run, _ROOT, design.deliverable(tree, deliverable)["kind"]))
-    ):
-        answers = rounds.path_in(run, deliverable, number, f"answers-{group}.json")
+    for group in each[-1].groups:
+        answers = rounds.path_in(run, deliverable, each[-1].number, f"answers-{group}.json")
         if answers not in held and not _there(run, answers):
-            return rounds.start_name(deliverable, number, group)
+            return rounds.start_name(deliverable, each[-1].number, group)
     return ""
 
 
@@ -187,6 +174,8 @@ def _generator(
     was last done where it was done before, the deliverable's own decisions alone, each with its
     ground, and the More kept in the round before."""
     path, kind = start.deliverable, node["kind"]
+    structure = course.of_structure(run, _ROOT, tree, path, start.number)
+    works_by = practices.refactor(kind) if structure else kind
     made = rounds.path_in(run, path, start.number, "made.json")
     decisions = [
         {"condition": condition["id"], "decision": _decision(run, at, decision)}
@@ -214,8 +203,7 @@ def _generator(
         "record": record,
         "deliverable": path,
         "kind": kind,
-        "best_practice": practices.folder(run, _ROOT, kind),
-        "refactor": practices.folder(run, _ROOT, practices.refactor(kind)),
+        "best_practice": practices.folder(run, _ROOT, works_by),
         "made": made,
         "cut": cut,
     }

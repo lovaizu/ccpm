@@ -34,10 +34,8 @@ def test_every_round_of_a_deliverable_is_read_for_its_lessons(b: Bench) -> None:
     w.evaluated(b, walk, w.kinds_of(again))
     rounds = w.printed(walk.c.bash(b.tree("round", cut["deliverable"])))
     assert [r["number"] for r in rounds] == [1, 2]
-    # The code best practice's first group holds its N2, and the refactor one's second group an N2
-    # of its own, which the first round puts in more alike.
     first = [m for each in rounds[0]["answers"] for m in each["more"]]
-    assert first == [{"question": "N2", "good_when": w.WRONG_LINE_NAMED}] * 2
+    assert first == [{"question": "N2", "good_when": w.WRONG_LINE_NAMED}]
     assert not [m for each in rounds[1]["answers"] for m in each["more"]]
 
 

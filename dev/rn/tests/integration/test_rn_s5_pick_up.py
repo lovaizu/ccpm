@@ -147,12 +147,12 @@ def test_a_generator_started_again_at_its_step_ends_once_it_takes_the_steps_from
     picked = w.keeper_started(b, c, walk.run, typed.said)
     _, generator = w.started(c, "generator", picked.said)
     cut = w.cut_of(w.due_text_of(generator))
-    kind, refactor = w.kinds_of(cut)
+    kinds = w.kinds_of(cut)
     steps = [str(n) for n in w.steps_of(b.rn, "domain/generator.md")]
     runs = [("generator", steps[1:3])]
-    runs += [(k, w.practices_of(b.rn, k, "decide")) for k in (kind, refactor)]
+    runs += [(k, w.practices_of(b.rn, k, "decide")) for k in kinds]
     runs += [("generator", steps[3:4])]
-    runs += [(k, w.practices_of(b.rn, k, "make")) for k in (kind, refactor)]
+    runs += [(k, w.practices_of(b.rn, k, "make")) for k in kinds]
     runs += [("generator", steps[4:])]
     w.records(b, generator, cut["record"], [(what, named) for what, named in runs if named])
     for number in steps[1:]:

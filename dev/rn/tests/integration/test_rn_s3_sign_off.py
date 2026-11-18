@@ -149,6 +149,27 @@ def test_a_deliverable_put_up_and_approved_is_marked_done(b: Bench) -> None:
     assert w.tree_in(walk)["deliverables"][0] == done
 
 
+@pytest.mark.supports("S3", "Sign-off", "Round", "Decision")
+def test_a_deliverable_sent_back_starts_its_rounds_again(b: Bench) -> None:
+    """Given: the command alone, made in a round of content and one of structure, and put up for
+    the user's sign-off.
+    When: the user types /rn:gm with what to change, the orchestrator runs tree.py send-back, the
+    tree-keeper writes the decision it changes, and the orchestrator starts the generator due.
+    Then: the sign-off keeps round 2, and the generator's Cut is of round 3, by the code best
+    practice, as the rounds of content start again from the design."""
+    walk, cut = w.sign_off_put_up(b, w.command_plan())
+    assert w.sign_offs_in(walk)[-1]["round"] == 2
+    words = "only the functions that callers import"
+    assert not walk.c.type(f"/rn:gm {words}").blocked
+    w.printed(walk.c.bash(b.tree("send-back")))
+    decided = {"about": w.POINT, "decided": words, "by": "user"}
+    path = "deliverables/0/necessary_conditions/0/decisions/0"
+    w.keeper_writes(b, walk, "The user changed it.", {"nodes": {path: decided}, "more": []}, words)
+    _, again = w.generator_started(walk)
+    assert again["made"].endswith("/3/made.json")
+    assert w.kinds_of(again) == ("code",) and again["made"] != cut["made"]
+
+
 @pytest.mark.supports("S3", "guard", "Sign-off")
 def test_the_orchestrators_own_gm_is_stopped(b: Bench) -> None:
     """Given: the walkthrough's plan put up for the user's sign-off.

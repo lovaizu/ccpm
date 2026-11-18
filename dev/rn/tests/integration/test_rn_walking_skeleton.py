@@ -66,16 +66,15 @@ def test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper(b: 
 def test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing(b: Bench) -> None:
     """Given: the walkthrough's plan signed off, both deliverables doing.
     When: the orchestrator starts the generator with the text that the guard gives due.
-    Then: its Cut names its record, the command at invoicer/__main__.py, its kind, the code and
-    refactor-code best practices, where it writes its Made, and the part of the design tree it
-    makes it from: the goal, its name, its inputs, the user's decision on how the tax rate is
-    given, and no More kept."""
+    Then: its Cut names its record, the command at invoicer/__main__.py, its kind, the code best
+    practice that its first round works by, where it writes its Made, and the part of the design
+    tree it makes it from: the goal, its name, its inputs, the user's decision on how the tax rate
+    is given, and no More kept."""
     walk = w.planned(b)
     _, cut = w.generator_started(walk)
-    assert set(cut) == {"record", "deliverable", "kind", "best_practice", "refactor", "made", "cut"}
+    assert set(cut) == {"record", "deliverable", "kind", "best_practice", "made", "cut"}
     assert cut["deliverable"] == w.COMMAND_PATH and cut["kind"] == "code"
     assert cut["best_practice"].rstrip("/").endswith("best-practices/code")
-    assert cut["refactor"].rstrip("/").endswith("best-practices/refactor-code")
     assert cut["record"].startswith(f"{walk.run['folder']}/records/")
     assert cut["made"].startswith(f"{walk.run['folder']}/rounds/")
     part = cut["cut"]
@@ -96,9 +95,9 @@ def test_the_generator_starts_with_its_cut_of_the_first_deliverable_doing(b: Ben
 def test_one_evaluator_starts_for_each_group_of_necessary_conditions(b: Bench) -> None:
     """Given: the generator of the command ended done.
     When: the orchestrator starts each evaluator that the guard gives due.
-    Then: one evaluator starts for each group of necessary conditions of the code best practice
-    and of the refactor-code one, each Cut naming its best practice, the IDs of its group, and
-    where it writes its Answers in the round."""
+    Then: one evaluator starts for each group of necessary conditions of the code best practice,
+    which the first round, of content, judges by, each Cut naming its best practice, the IDs of
+    its group, and where it writes its Answers in the round."""
     walk, cut, cuts = w.first_round(b)
     groups = {(kind, tuple(group)) for kind in w.kinds_of(cut) for group in w.groups_of(b.rn, kind)}
     given = {
