@@ -127,8 +127,8 @@
   <text class="data halo" x="168" y="422" text-anchor="start">Comment, Sign-off</text>
   <path class="line" d="M620,312 L290,312 L290,496 L260,496" marker-end="url(#arrow)"/>
   <text class="data halo" x="465" y="304" text-anchor="middle">Start</text>
-  <text class="label small halo" x="465" y="332" text-anchor="middle">makes, lists, and pauses</text>
-  <text class="label small halo" x="465" y="346" text-anchor="middle">the run [Bash]</text>
+  <text class="label small halo" x="465" y="332" text-anchor="middle">makes, lists, and pauses the run,</text>
+  <text class="label small halo" x="465" y="346" text-anchor="middle">and gets each start due [Bash]</text>
   <path class="line" d="M440,544 L440,940" marker-end="url(#arrow)"/>
   <text class="label small halo" x="448" y="850" text-anchor="start">edits the tree,</text>
   <text class="label small halo" x="448" y="864" text-anchor="start">keeps each more</text>
