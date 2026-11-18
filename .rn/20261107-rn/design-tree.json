@@ -273,16 +273,6 @@
               "by": "reasoning"
             },
             {
-              "about": "A pause",
-              "decided": "/rn:dn ends the run of /rn:up by the skill's result paused, then stops each role, and tree.py pause commits and pushes the work, leaving out an edit of the tree that tree.py write didn't check, as the orchestrator's next turn takes the same News again; each role stopped has no Result, so its start comes due again from its kept Cut, as Lane gives a start ended with no Result due again",
-              "by": "reasoning"
-            },
-            {
-              "about": "When the orchestrator starts",
-              "decided": "at each event: a Said, a sign-off decided, or a role's end that brings News; the adapters give no orchestrator start while one runs, or where the News is empty or holds only part of a round, and fail where the folder lies in no run's worktree yet, so the guard asks again at the next call, as Lane asks the adapter again at each start's call",
-              "by": "reasoning"
-            },
-            {
               "about": "Which start is due",
               "decided": "each route of Lane's lists only the starts of the orchestrator, the generator, and the evaluator, and tree.py alone gives each start due from the run's files, which the main conversation reads by tree.py and the adapters give Lane: the orchestrator where News waits since its latest turn that ended with a Result and none runs, a generator for the first deliverable doing whose round has no Made, and an evaluator for each group due, each with a text naming it; as Lane holds the main conversation's turn only while a start is due and no role runs, and sets the moves due to the latest route alone, only the run's files keep work that runs side by side; only the routes after /rn:dn and after the orchestrator's finished end the run, by the skill's results paused and done",
               "by": "reasoning"
@@ -300,6 +290,16 @@
             {
               "about": "A pick-up among several runs",
               "decided": "/rn:up alone picks up the one run left, and /rn:up with words that name a run left picks that run up; other words are a request; where none or several are left with no words, /rn:up names them, and the adapters fail outside a run's worktree, so no start is due and the turn ends; a pick-up starts what the run's files show undone, so no adapter replays results that Lane's routes would refuse",
+              "by": "reasoning"
+            },
+            {
+              "about": "When the orchestrator starts",
+              "decided": "at each event: a Said, a sign-off decided, or another role's end that brings News, News being what the run showed since the Cut of the orchestrator's latest turn that ended with a Result; the adapters give no orchestrator start while one runs, where the News is empty or holds only part of a round, or where the folder lies in no run's worktree, as Lane works out the starts due again at each start's call, while a failing adapter would refuse the next /rn:up",
+              "by": "reasoning"
+            },
+            {
+              "about": "A pause",
+              "decided": "/rn:dn stops each role, then ends the run of /rn:up by the skill's result paused, the move of the route after /rn:dn, as Lane holds a subagent's calls only within a run that hasn't ended; tree.py pause commits and pushes the work, leaving out an edit of the tree that tree.py write didn't check, as the orchestrator's next turn takes the same News again; each role stopped has a kept Cut and no Result, so its start comes due again at the pick-up",
               "by": "reasoning"
             }
           ]

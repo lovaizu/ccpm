@@ -154,8 +154,7 @@ Strategies:
   A third round on the same decisions ends alike, so each `more` left goes to the user, keeping KR1.2
   short.
 - Routes that start any role after any result, and end the run only after a pause or the end\
-  `tree.py` gives each start due from the files, and Lane holds the turn while one is due, keeping
-  KR1.1 low.
+  `tree.py` gives each start due, and Lane holds an idle turn while one is due, keeping KR1.1 low.
 - Each run of Lane's at `/rn:up`, its starts due from the run's files\
   A pick-up starts what the files show undone, so Lane replays nothing, keeping KR1.2 short.
 
@@ -166,8 +165,8 @@ Strategies:
 - Cut\
   What a start begins with: its part of the design tree, and for the orchestrator, the news.
 - News\
-  What the run showed since the orchestrator's latest turn that ended: each Said, sign-off decided,
-  Comment, Result, and round.
+  What the run showed since the orchestrator's latest ended turn's Cut: each Said, Comment, round,
+  sign-off, and other Result.
 - Design tree\
   The goal, the deliverables with their decisions, and the work order, in
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s
@@ -219,20 +218,20 @@ sequenceDiagram
   participant F as Run's folder
   U->>M: /rn:up with what they want, words that name no run left
   GD->>A: asks for the text of the orchestrator's start, the first move of each run of /rn:up
-  A-->>GD: fails, as the folder lies in no run's worktree yet, so the guard asks again at the next call
+  A-->>GD: none, as the folder lies in no run's worktree yet, and the guard asks again at the start's call
   M->>T: makes the run's worktree
   M->>M: enters it, by EnterWorktree
   M->>F: keeps the request, word for word (Said)
   loop each event of the run: a Said, a sign-off decided, or a role's end that brings News
     GD->>A: asks for the text of the orchestrator's start, again at the start's call
-    A->>T: gets the orchestrator's Cut with the News since its latest Start that ended with a Result, written at the path its start keeps (Cut, News)
+    A->>T: gets the orchestrator's Cut with the News after the Cut of its latest turn that ended with a Result, written at the path its start keeps (Cut, News)
     alt an orchestrator runs, or the News is empty or holds only part of a round
       A-->>GD: none, so no orchestrator start is due
     else
       A-->>GD: that start's text, which names the Cut's path, and its run values
       M->>T: gets each start due, with its text, as the adapters give it
       M->>O: starts it, with that text, the Cut as it stands at the call
-      Note over M,GD: The guard lets the main conversation end its turn only once no start is due or a role runs, as each route lists only starts.
+      Note over M,GD: The guard holds the main conversation's turn while a start is due and no role runs, as each route lists only starts. Its steps start each start due before it ends a turn, as a role that runs lets the turn end.
     end
     O->>F: edits the design tree by the News: the goal and plan, a decision, a more to keep, or the work order (Design tree, More kept)
     O->>T: checks the tree as edited, and commits it with each decision's ground as the message
@@ -329,9 +328,10 @@ sequenceDiagram
     M->>U: the Sign-off, word for word, once no point or sign-off before it waits (Sign-off)
   end
   Note over U,O: Meanwhile, the rounds of each deliverable whose turn has come go on, and each that rests on this sign-off waits, as tree.py gives it no turn.
-  opt an AI moves past the sign-off itself
-    M->>GD: a call of /rn:ty or /rn:gm by the Skill tool, a run of tree.py approve or send-back, or a start of work that rests on the sign-off
+  opt an AI of the run moves past the sign-off itself
+    M->>GD: a run of tree.py approve or send-back, or a start of work that rests on the sign-off
     GD-->>M: stops it, as only the user's own /rn:ty or /rn:gm decides a sign-off
+    Note over M,GD: Claude Code refuses a call of /rn:ty or /rn:gm by the Skill tool, as each skill sets disable-model-invocation. Outside a run of Lane's, no role of rn runs.
   end
   alt the user approves
     U->>T: approves the sign-off waiting, by /rn:ty's own command as it loads (Sign-off)
@@ -365,10 +365,10 @@ sequenceDiagram
   participant RP as repository
   participant GH as GitHub
   U->>M: /rn:dn
-  M->>GD: ends the run of /rn:up by the skill's result paused, a move that every route holds, so the guard starts no role again
   M->>O: stops it, where it runs
   M->>G: stops each one still running
   M->>E: stops each one still running
+  M->>GD: ends the run of /rn:up by the skill's result paused, the move of the route after /rn:dn
   M->>T: commits and pushes the work so far, and gets where the run stopped
   Note over M,T: tree.py leaves out an edit of the design tree that it didn't check, as the orchestrator's next turn takes the same News again.
   T->>RP: commits, and pushes
@@ -396,12 +396,12 @@ sequenceDiagram
   U->>M: /rn:up, alone or with a run's name, in a new conversation at the root of the repository
   Note over U,M: Words after /rn:up that name no run left are a request, and a new run starts, as S1 draws.
   GD->>A: asks for the text of the orchestrator's start, the first move of each run of /rn:up
-  A-->>GD: fails, as the folder lies in no run's worktree yet, so the guard asks again at the next call
+  A-->>GD: none, as the folder lies in no run's worktree yet, and the guard asks again at the start's call
   M->>T: lists the runs left, each run whose pull request handed over is neither signed off, merged, nor closed
   alt the words name a run left, or they're none and exactly one run is left
     M->>M: enters the run's worktree, by EnterWorktree
     M->>U: Picking up, where it stopped, and the point or sign-off waiting
-    M->>O: starts it, where News waits since its latest turn that ended with a Result (Cut, News)
+    M->>O: starts it, where News waits (Cut, News)
     Note over M,O: Each start comes due from the run's files: each generator and evaluator that the pause stopped has a kept Cut and no Result, so it starts again from that Cut, on the deliverable as committed, and the work goes on, as S1, S2, or S3 draws.
   else no run is left, or more than one with no words
     alt no run is left
@@ -409,7 +409,7 @@ sequenceDiagram
     else
       M->>U: names each run left, and that /rn:up with a run's name picks it up
     end
-    Note over U,GD: The adapters fail, as no run's worktree holds the folder, so no start is due and the turn ends. The next /rn:up goes on with Lane's run.
+    Note over U,GD: The adapters give none, as no run's worktree holds the folder, so no start is due and the turn ends. The next /rn:up goes on with Lane's run.
   end
 ```
 
@@ -467,7 +467,7 @@ sequenceDiagram
   T-->>O: its URL, with the pull request handed over put up (Sign-off)
   O-->>M: ends with done, and the pull request
   M->>U: Done, with the pull request
-  Note over M,GD: Lane's run stays open, its route after done starting only the orchestrator, where News waits.
+  Note over M,GD: Lane's run stays open, its route after done starting each role where the files give it due, such as the orchestrator once News waits.
   alt the user sends it back
     U->>T: sends the pull request handed over back, by /rn:gm's own command as it loads (Sign-off)
     T->>RP: marks it a draft again
