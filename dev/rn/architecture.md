@@ -166,8 +166,8 @@ Strategies:
   An evaluator's `more` the orchestrator kept for the next round, naming its best practice, condition,
   and the decision it changes.
 - Record\
-  What one start of a role or the orchestrator carried out, with each turn's end that rn's check
-  passed.
+  What one start of a role, or the orchestrator, carried out, apart from a Try record of commands
+  tried.
 
 Strategies:
 
@@ -319,8 +319,8 @@ sequenceDiagram
   O->>T: puts it up (Sign-off)
   O->>U: the plan or the deliverable, with what the people can do with it, the decisions taken without asking, and its changes, once no point or sign-off before it waits (Sign-off)
   O->>GD: ends its turn
-  GD->>R: checks the orchestrator's record of the turn, from the end of the turn before (Record)
-  R-->>GD: each step it lacks, or none, marking the turn's end in the record
+  GD->>R: checks the orchestrator's record of the turn, from its latest pass from step 1 (Record)
+  R-->>GD: each step it lacks, or none
   Note over U,O: Meanwhile, the rounds of each deliverable whose turn has come go on, as S1 draws, and each that rests on this sign-off waits, as tree.py gives it no turn.
   opt the orchestrator moves past the sign-off itself
     O->>GD: a call of /rn:ty or /rn:gm by the Skill tool, or a start of work that rests on the sign-off
