@@ -101,7 +101,7 @@ def record(*entries: tuple[str, int | str]) -> Record:
     """A record of the entries, each a step by its number or a practice by its ID."""
     return Record(
         tuple(
-            Entry(of, n, None, "x") if isinstance(n, int) else Entry(of, None, n, "x")
+            Entry(of, n, None, "a.py:1") if isinstance(n, int) else Entry(of, None, n, "a.py:1")
             for of, n in entries
         ),
         None,

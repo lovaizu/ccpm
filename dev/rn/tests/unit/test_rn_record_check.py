@@ -37,6 +37,12 @@ def practice_ids(kind: str) -> list[str]:
     return [each for _, each in sorted(found, key=lambda pair: pair[0])]
 
 
+def four_lines(tmp: Any) -> None:
+    """a.py of 4 lines in the folder."""
+    with open(os.path.join(tmp, "a.py"), "w", encoding="utf-8") as f:
+        f.write("1\n2\n3\n4\n")
+
+
 def generator_ended(
     tmp: Any, data: dict[str, Any] | None = None, leave_out: str = ""
 ) -> tuple[Any, str]:
@@ -52,9 +58,9 @@ def generator_ended(
     record = given.values["record"]
     kinds = (str(given.part["kind"]), os.path.basename(str(given.part["refactor"]).rstrip("/")))
     first, *others = steps_of(d.RN, "domain/generator.md")
-    entries = [Entry("generator", first, None, "Read it.")]
-    entries += [Entry(k, None, p, "Carried out.") for k in kinds for p in practice_ids(k)]
-    entries += [Entry("generator", step, None, "Its result holds.") for step in others]
+    entries = [Entry("generator", first, None, "a.py:1")]
+    entries += [Entry(k, None, p, "a.py:1") for k in kinds for p in practice_ids(k)]
+    entries += [Entry("generator", step, None, "a.py:1") for step in others]
     for entry in entries:
         if entry.practice != leave_out:
             form.add(os.path.join(run.worktree, record), entry)
@@ -108,11 +114,11 @@ def test_a_tree_keeper_resumed_with_a_change_is_held_to_the_making_practices_alo
     assert given is not None
     record = os.path.join(run.worktree, given.values["record"])
     first, *others = steps_of(d.RN, "domain/tree-keeper.md")
-    entries = [Entry("tree-keeper", first, None, "Read it.")]
-    entries += [Entry("tree-keeper", step, None, "Its result holds.") for step in others]
-    entries += [Entry("tree-keeper", first, None, "Read it again.")]
-    entries += [Entry("design-tree", None, p, "Carried out.") for p in making_ids("design-tree")]
-    entries += [Entry("tree-keeper", step, None, "Its result holds.") for step in others]
+    entries = [Entry("tree-keeper", first, None, "a.py:1")]
+    entries += [Entry("tree-keeper", step, None, "a.py:1") for step in others]
+    entries += [Entry("tree-keeper", first, None, "a.py:1")]
+    entries += [Entry("design-tree", None, p, "a.py:1") for p in making_ids("design-tree")]
+    entries += [Entry("tree-keeper", step, None, "a.py:1") for step in others]
     for entry in entries:
         form.add(record, entry)
     assert check.check(d.RN, run.worktree, "tree-keeper", "done", given.values["record"]) == ()
@@ -166,7 +172,7 @@ def test_an_end_whose_record_is_out_of_form_is_refused(tmp_path: Any) -> None:
     run, record = generator_ended(tmp_path)
     d.write_json(
         os.path.join(run.worktree, record),
-        {"entries": [{"of": "generator", "step": 0, "gave": "x"}]},
+        {"entries": [{"of": "generator", "step": 0, "where": "a.py:1"}]},
     )
     with pytest.raises(Wrong):
         check.check(d.RN, run.worktree, "generator", "done", record)
@@ -189,14 +195,32 @@ def test_a_roles_end_with_no_record_or_outside_a_run_is_refused(tmp_path: Any, w
 @pytest.mark.supports("test_record_py_refuses_an_entry_out_of_its_form")
 def test_add_records_an_entry_and_refuses_one_out_of_form(tmp_path: Any) -> None:
     """Given: no record at the path.
-    When: record.py add runs with step 3 of the generator, then with the practice X1.
-    Then: the first gives 0 and the record holds the step, and the second gives 1 with what's
+    When: record.py add runs with steps 3 and 4 of the generator at lines of a.py, then with the
+    practice X1.
+    Then: the first gives 0 and the record holds both steps, and the second gives 1 with what's
     wrong."""
     path = os.path.join(tmp_path, "record.json")
-    assert main(["add", path, "generator", "3", "Made it."], str(tmp_path), d.RN)[0] == 0
-    assert form.read(path).entries == (Entry("generator", 3, None, "Made it."),)
-    code, out, err = main(["add", path, "code", "X1", "x"], str(tmp_path), d.RN)
+    four_lines(tmp_path)
+    given = "3=a.py:1 4=a.py:2-4"
+    assert main(["add", path, "generator", given], str(tmp_path), d.RN)[0] == 0
+    entries = (Entry("generator", 3, None, "a.py:1"), Entry("generator", 4, None, "a.py:2-4"))
+    assert form.read(path).entries == entries
+    code, out, err = main(["add", path, "code", "X1=a.py:1"], str(tmp_path), d.RN)
     assert (code, out) == (1, "") and err
+
+
+@pytest.mark.supports("test_record_py_refuses_an_entry_out_of_its_form")
+@pytest.mark.parametrize("where", ["gone.py:1", "a.py:5", "a.py:2-5", ".:1"])
+def test_add_refuses_a_place_with_no_file_or_past_its_end(tmp_path: Any, where: str) -> None:
+    """Given: a.py of 4 lines, and no record at the path.
+    When: record.py add runs with step 1 at a file that isn't there, past a.py's end, through it,
+    or at a folder.
+    Then: it gives 1 with what's wrong, and makes no record."""
+    path = os.path.join(tmp_path, "record.json")
+    four_lines(tmp_path)
+    code, out, err = main(["add", path, "generator", f"1={where}"], str(tmp_path), d.RN)
+    assert (code, out) == (1, "") and err
+    assert not os.path.exists(path)
 
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")

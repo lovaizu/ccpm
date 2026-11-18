@@ -43,12 +43,18 @@ def test_tree_py_refuses_a_run_whose_name_a_run_left_holds(b: Bench) -> None:
 @pytest.mark.supports("record.py", "Record", "generator")
 def test_record_py_refuses_an_entry_out_of_its_form(b: Bench) -> None:
     """Given: the generator of the command running.
-    When: it records a step 0, a practice named X1, and a step with nothing it left.
+    When: it records a step 0, a practice named X1, a step with no place, and a step at a file
+    that isn't there, each beside a step in form.
     Then: record.py add gives 1 for each, saying what's wrong, and the record holds none of them."""
     walk = w.planned(b)
     generator, cut = w.generator_started(walk)
-    for of, number, gave in (("generator", "0", "x"), ("code", "X1", "x"), ("generator", "1", "")):
-        ran = generator.bash(b.record("add", cut["record"], of, number, gave))
+    for of, entries in (
+        ("generator", "1=pyproject.toml:1 0=pyproject.toml:1"),
+        ("code", "N1.1=pyproject.toml:1 X1=pyproject.toml:1"),
+        ("generator", "1=pyproject.toml:1 2"),
+        ("generator", "1=pyproject.toml:1 2=gone.py:1"),
+    ):
+        ran = generator.bash(b.record("add", cut["record"], of, entries))
         assert ran.exit_code == 1 and ran.output
     held = w.files_holding(walk.folder("records"), '"X1"')
     assert held == []

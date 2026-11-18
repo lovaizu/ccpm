@@ -143,10 +143,10 @@ def run_with_results(repo: str, name: str = d.NAME) -> Any:
     from tree import records
 
     keeper = records.new_record(run, "tree-keeper", [])
-    form.add(os.path.join(run.worktree, keeper), Entry("tree-keeper", 1, None, "Read it."))
+    form.add(os.path.join(run.worktree, keeper), Entry("tree-keeper", 1, None, "a.py:1"))
     form.keep(os.path.join(run.worktree, keeper), Kept("tree-keeper", "done"))
     generator = records.new_record(run, "generator", [])
-    form.add(os.path.join(run.worktree, generator), Entry("generator", 1, None, "Read it."))
+    form.add(os.path.join(run.worktree, generator), Entry("generator", 1, None, "a.py:1"))
     return run
 
 

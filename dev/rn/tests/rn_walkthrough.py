@@ -266,16 +266,17 @@ def keeps(
     b: Bench, who: Agent | Conversation, record: str, of: str, kinds: Sequence[str] = ()
 ) -> None:
     """The role, or the orchestrator, records its prompt's first step, each practice of each kind
-    taken while deciding and then while making, and its other steps, each by record.py add, as its
-    prompt says. Each must give 0."""
+    taken while deciding and then while making, and its other steps, by record.py add, as its
+    prompt says, several in one run, each at pyproject.toml's first line. Each must give 0."""
     steps = steps_of(b.rn, prompt_file(of))
-    entries = [(of, str(n)) for n in steps[:1]]
-    entries += [
-        (k, p) for at in ("decide", "make") for k in kinds for p in practices_of(b.rn, k, at)
-    ]
-    entries += [(of, str(n)) for n in steps[1:]]
-    for what, number in entries:
-        ran = who.bash(b.record("add", record, what, number, f"{what} {number} carried out"))
+    runs = [(of, [str(n) for n in steps[:1]])]
+    runs += [(k, practices_of(b.rn, k, at)) for at in ("decide", "make") for k in kinds]
+    runs += [(of, [str(n) for n in steps[1:]])]
+    for what, named in runs:
+        if not named:
+            continue
+        entries = " ".join(f"{n}=pyproject.toml:1" for n in named)
+        ran = who.bash(b.record("add", record, what, entries))
         assert ran.exit_code == 0, ran.output or ran.said
 
 

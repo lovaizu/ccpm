@@ -47,7 +47,7 @@
       "args": {
         "commands": [
           "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {deliverable} {command}",
-          "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {number} {what}",
+          "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {entries}",
           "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} {step}",
           "git diff {done_at} -- {input}",
           "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check generator {result} {record}"
@@ -78,7 +78,7 @@
       "args": {
         "commands": [
           "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {deliverable} {command}",
-          "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {number} {what}",
+          "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {entries}",
           "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} {step}",
           "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}"
         ]
@@ -297,7 +297,7 @@
       {
         "file": "domain/evaluator.md",
         "step": 4,
-        "text": "Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {deliverable} {command}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {number} {what}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} {step}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}`."
+        "text": "Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {deliverable} {command}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {entries}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} {step}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}`."
       },
       {
         "file": "domain/evaluator.md",
@@ -307,7 +307,7 @@
       {
         "file": "domain/generator.md",
         "step": 5,
-        "text": "Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {deliverable} {command}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {number} {what}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} {step}` or `git diff {done_at} -- {input}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check generator {result} {record}`."
+        "text": "Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {deliverable} {command}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {entries}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} {step}` or `git diff {done_at} -- {input}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check generator {result} {record}`."
       },
       {
         "file": "domain/generator.md",

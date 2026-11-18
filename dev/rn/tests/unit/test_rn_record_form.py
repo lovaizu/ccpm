@@ -1,7 +1,8 @@
 """The unit cases of record/form.py, which decides a Record's form on disk: an entry added, a record
 read, and a result kept. An entry is a step from 1 up or a practice by an ID of the form N<n>.<m>,
-with what it left, so the cases take step 1, step 0, IDs in and out of that form, and what it left
-of one character and of none; a record not yet there, one in form, and one out of it."""
+with where its result lies, a path and a line or lines, so the cases take step 1, step 0, IDs in
+and out of that form, places in and out of theirs, several entries at once and none; a record not
+yet there, one in form, and one out of it."""
 
 from __future__ import annotations
 
@@ -15,8 +16,8 @@ from record.form import Entry, Kept
 
 from dev.rn.tests.unit import rn_data as d
 
-STEP = Entry("generator", 1, None, "Read the Cut.")
-PRACTICE = Entry("code", None, "N6.2", "Wrote the test first.")
+STEP = Entry("generator", 1, None, "invoicer/__init__.py:1")
+PRACTICE = Entry("code", None, "N6.2", "tests/test_lines.py:12-30")
 
 
 @pytest.mark.supports("test_a_generators_done_result_is_kept_in_its_record")
@@ -35,33 +36,49 @@ def test_entries_added_are_read_back_in_their_order(tmp_path: Any) -> None:
 @pytest.mark.parametrize(
     "entry",
     [
-        Entry("generator", 0, None, "x"),
-        Entry("code", None, "X1", "x"),
-        Entry("code", None, "N6", "x"),
+        Entry("generator", 0, None, "a.py:1"),
+        Entry("code", None, "X1", "a.py:1"),
+        Entry("code", None, "N6", "a.py:1"),
         Entry("generator", 1, None, ""),
-        Entry("generator", 1, "N6.2", "x"),
-        Entry("generator", None, None, "x"),
+        Entry("generator", 1, None, "a.py"),
+        Entry("generator", 1, None, "a.py:0"),
+        Entry("generator", 1, None, "Read the Cut."),
+        Entry("generator", 1, "N6.2", "a.py:1"),
+        Entry("generator", None, None, "a.py:1"),
+        Entry("", 1, None, "a.py:1"),
     ],
 )
 def test_an_entry_out_of_its_form_is_refused(tmp_path: Any, entry: Entry) -> None:
     """Given: no record at the path.
-    When: an entry is added with step 0, an ID out of the form N<n>.<m>, nothing it left, both a
-    step and a practice, or neither.
+    When: an entry is added after one in form, with step 0, an ID out of the form N<n>.<m>, no
+    place, a place with no line, line 0, or words, both a step and a practice, neither, or no
+    prompt or best practice.
     Then: it's refused, and no record is made."""
     path = os.path.join(tmp_path, "record.json")
     with pytest.raises(Wrong):
-        form.add(path, entry)
+        form.add(path, STEP, entry)
     assert not os.path.exists(path)
 
 
 @pytest.mark.supports("test_record_py_refuses_an_entry_out_of_its_form")
-def test_an_entry_that_left_one_character_is_taken(tmp_path: Any) -> None:
+def test_no_entry_is_refused(tmp_path: Any) -> None:
     """Given: no record at the path.
-    When: a step is added that left one character.
-    Then: the record reads it back."""
+    When: no entry is added.
+    Then: it's refused, and no record is made."""
     path = os.path.join(tmp_path, "record.json")
-    form.add(path, Entry("generator", 1, None, "x"))
-    assert form.read(path).entries == (Entry("generator", 1, None, "x"),)
+    with pytest.raises(Wrong):
+        form.add(path)
+    assert not os.path.exists(path)
+
+
+@pytest.mark.supports("test_a_generators_done_result_is_kept_in_its_record")
+def test_several_entries_added_at_once_are_read_back_in_their_order(tmp_path: Any) -> None:
+    """Given: no record at the path.
+    When: a step and a practice are added at once.
+    Then: the record reads back both in the order given."""
+    path = os.path.join(tmp_path, "record.json")
+    form.add(path, STEP, PRACTICE)
+    assert form.read(path).entries == (STEP, PRACTICE)
 
 
 @pytest.mark.supports("test_up_alone_in_the_runs_worktree_picks_up_where_it_stopped")
@@ -77,7 +94,7 @@ def test_a_record_not_yet_there_reads_with_no_entries(tmp_path: Any) -> None:
 @pytest.mark.parametrize(
     "held",
     [
-        {"entries": [{"of": "generator", "step": 0, "gave": "x"}]},
+        {"entries": [{"of": "generator", "step": 0, "where": "a.py:1"}]},
         {"items": []},
         [],
         {"entries": [], "kept": {}},

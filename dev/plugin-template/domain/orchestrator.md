@@ -19,9 +19,9 @@ The person's request, and the run's records where a run picks up. Each command t
 types gives you the steps of its moment, and says which of these steps it goes on by.
 
 Your record is `<the record's path>`, which the command that starts the run makes. Record each step
-of the command's and of these once its result holds, with what it left, and each practice of a best
-practice as you carry it out, with what it gave, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <the record's path> <the command, or orchestrator, or the best practice> <the step's number, or the practice's ID, such as N6.2> '<what it left or gave>'`.
+of the command's and of these once its result holds, and each practice of a best practice as you
+carry it out, each with the place where its result lies, a file's path and line, several in one run, by
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <the record's path> <the command, or orchestrator, or the best practice> '<the step's number, or the practice's ID, such as N6.2>=<path>:<line> ...'`.
 The guard ends a turn that puts work up for the person only once `<plugin>`'s check accepts the
 record, and gives you what the record lacks where it doesn't. A step or a practice that you skip
 leaves the work short of what it's for.

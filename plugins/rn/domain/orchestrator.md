@@ -20,9 +20,9 @@ pull request, ready, with each decision you took without asking.
 - Each role's result and last message, in the form of its out-schema in `${CLAUDE_PLUGIN_ROOT}/domain/`.
 
 Your record is the one that `tree.py start` or `tree.py runs` names. Record each step of the
-command's and of these once its result holds, with what it left, and each practice of a best
-practice as you carry it out, with what it gave, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <your record> <of> <the step's number, or the practice's ID> '<what it left or gave>'`,
+command's and of these once its result holds, and each practice of a best practice as you carry it
+out, each with the place where its result lies, a file's path and line, several in one run, by
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <your record> <of> '<the step's number, or the practice's ID>=<path>:<line> ...'`,
 where `<of>` is the command's name without its slash, `up`, `dn`, `ty`, or `gm`, for its steps;
 `orchestrator` for these; or the best practice's kind, such as `design-tree`, for its practices.
 The guard ends a turn that puts work up for the person only once rn's check accepts the record, which

@@ -28,10 +28,11 @@ answered, a line `The person's words, word for word:` follows, with their words 
 > DELETE_TEMPLATE_COMMENT: `<value>`: each run value, such as the path of the file the role
 > writes. The guard limits the role's calls to these values.
 
-`{record}` is your record. Record each step once its result holds, with what it left, and each
-practice as you carry it out, with what it gave, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <role> <the step's number> '<what it left>'`
-or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <best practice> <the practice's ID, such as N6.2> '<what it gave>'`.
+`{record}` is your record. Record each step once its result holds, and each practice as you carry
+it out, each with the place where its result lies, a file's path and line, several in one run, by
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <role> '<the step's number>=<path>:<line> ...'`
+or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <best practice> '<the practice's ID>=<path>:<line> ...'`, such as
+`'N6.1=tests/test_lines.py:12 N6.2=tests/test_lines.py:40'`.
 The guard passes your end only once `<plugin>`'s check accepts the record, and gives you what the
 record lacks where it doesn't, as a practice skipped leaves its condition unmet.
 

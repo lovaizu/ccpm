@@ -24,8 +24,8 @@ people have.
 > guard limits the role's reads to these values.
 
 `{record}`, your run value `record`, is your record. Record each step once its result holds, with
-what it left, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <role> <the step's number> '<what it left>'`.
+the place where its result lies, a file's path and line, several in one run, by
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <role> '<the step's number>=<path>:<line> ...'`.
 The guard passes your end only once `<plugin>`'s check accepts the record, and gives you what the
 record lacks where it doesn't, as a step skipped leaves an answer that rests on less than the step
 gives.

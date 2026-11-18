@@ -1,9 +1,10 @@
 """What a role or the orchestrator runs to record its work, and what the guard runs to check the
 record, as `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py <command> <args>`:
 
-- `add <record> <of> <id> <gave>` adds to the file `<record>` the step `<id>` of the prompt `<of>`,
-  such as `generator 3`, or the practice `<id>` of the best practice `<of>`, such as `code N6.2`,
-  with what it left or gave, in the form of domain/record.schema.json.
+- `add <record> <of> '<id>=<where> ...'` adds to the file `<record>` each step `<id>` of the prompt
+  `<of>`, such as `generator 3=README.md:12`, or each practice `<id>` of the best practice `<of>`,
+  such as `code N6.2=tests/test_lines.py:40`, with the place `<where>` where its result lies, in the
+  form of domain/record.schema.json.
 - `check <record> <role>` reads the record against the steps of the role's prompt and the
   practices of the best practice it works by: each step in order, and each practice within the
   step that takes it, <the step that takes the practices marked While deciding, and the one that
@@ -24,14 +25,14 @@ from __future__ import annotations
 import sys
 
 USAGE = (
-    "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <record> <of> <id> <gave>\n"
+    "usage: python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <record> <of> '<id>=<where> ...'\n"
     "       python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check <record> <role>"
 )
 
 
 def main(argv: list[str]) -> int:
     """Runs the command on its arguments, and gives the exit code that the module names."""
-    if (argv[:1], len(argv)) not in ((["add"], 5), (["check"], 3)):
+    if (argv[:1], len(argv)) not in ((["add"], 4), (["check"], 3)):
         print(USAGE, file=sys.stderr)
         return 2
     # Until the plugin's code does the command, it can't check, so it passes nothing.

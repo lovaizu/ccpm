@@ -146,7 +146,9 @@ call. A skipped test, a job that did not run or a command that failed counts as 
 Each role and the orchestrator record each step of their prompt, for the orchestrator each step of
 its command and of its part, and each practice of the best practice they work by, at the time each
 names: a step once its result holds, and a practice while they carry it out, in the phase that its
-mark names, such as *While deciding*. Each records by a command of the plugin's own, in a file of
+mark names, such as *While deciding*. Each entry names the step or the practice and the place where
+its result lies, as `path:line`, and one run of the command records several. Each records by a
+command of the plugin's own, in a file of
 [the run's folder](#where-a-plugin-writes-its-files) that its run values name, or, for the
 orchestrator, its part. Each start of a role has a record of its own, and so has the orchestrator.
 The plugin's own check reads the record against the prompt's steps and the best practice's
@@ -159,7 +161,9 @@ turn puts work up, which only the plugin knows. The guard passes the end only wh
 
 *Why*: an AI that lists at its end the practices it carried out makes a claim that no one checks,
 and a practice skipped leaves its condition unmet in the work. A record made at the time shows each
-step and practice in the order the AI took them, which a list at the end can't. Only the plugin
+step and practice in the order the AI took them, which a list at the end can't. A place lets
+whoever checks open each result, while a line of words for each costs the AI a call and repeats what
+the result shows. Only the plugin
 knows its prompts and its best practices, so its own check judges the record, and the guard runs the
 check on every run. The run's folder keeps the record for the lessons of
 [Learning from each run](#learning-from-each-run).

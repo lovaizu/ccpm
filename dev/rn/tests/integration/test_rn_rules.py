@@ -85,13 +85,11 @@ def test_an_end_whose_record_lacks_a_practice_is_held_with_it(b: Bench, broken: 
         json.dump(held, f)
     ended, _ = w.give(b, generator, "done", "Made.")
     assert "N4.1" in w.lacks_of(generator, ended, "done", cut)
-    after = [("code", "N4.1", "Typed each module.")]
-    after += [
-        ("generator", str(n), "Carried out again after N4.1.")
-        for n in w.steps_of(b.rn, w.prompt_file("generator"))[4:]
-    ]
-    for what, number, words in after:
-        assert generator.bash(b.record("add", cut["record"], what, number, words)).exit_code == 0
+    again_steps = w.steps_of(b.rn, w.prompt_file("generator"))[4:]
+    after = [("code", "N4.1=pyproject.toml:1")]
+    after += [("generator", " ".join(f"{n}=pyproject.toml:1" for n in again_steps))]
+    for what, entries in after:
+        assert generator.bash(b.record("add", cut["record"], what, entries)).exit_code == 0
     again, _ = generator.end("Made.")
     assert not again.blocked, again.said
 

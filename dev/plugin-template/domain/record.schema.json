@@ -18,7 +18,7 @@
             "required": [
               "of",
               "step",
-              "gave"
+              "where"
             ],
             "additionalProperties": false,
             "properties": {
@@ -31,8 +31,8 @@
                 "type": "integer",
                 "minimum": 1
               },
-              "gave": {
-                "$ref": "#/definitions/gave"
+              "where": {
+                "$ref": "#/definitions/where"
               }
             }
           },
@@ -41,7 +41,7 @@
             "required": [
               "of",
               "practice",
-              "gave"
+              "where"
             ],
             "additionalProperties": false,
             "properties": {
@@ -54,8 +54,8 @@
                 "type": "string",
                 "pattern": "^N[0-9]+\\.[0-9]+$"
               },
-              "gave": {
-                "$ref": "#/definitions/gave"
+              "where": {
+                "$ref": "#/definitions/where"
               }
             }
           }
@@ -64,10 +64,10 @@
     }
   },
   "definitions": {
-    "gave": {
-      "description": "What the step left, or what the practice gave, in a line, so that the orchestrator checks the result against it.",
+    "where": {
+      "description": "The place where the step's result or the practice's lies, a file's path, from the folder the command runs in or absolute, and a line or lines of it, such as invoicer/lines.py:12 or README.md:30-41, so that whoever checks the record opens it.",
       "type": "string",
-      "minLength": 1
+      "pattern": "^[^\\s:]+:[1-9][0-9]*(-[1-9][0-9]*)?$"
     }
   }
 }
