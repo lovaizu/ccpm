@@ -104,7 +104,75 @@
       "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
       "path": "plugins/rn/README.md",
       "kind": "readme",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/domain/best-practices/readme"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The product vision's Concept",
+              "decided": "rn piles up the vital few, what brings a deliverable's people to what they're after, and cuts the trivial many thoroughly, on three ideas: each role starts from the people's purpose and the state in which they have it; at each turn rn reviews the design tree, its content and how the work goes, by the facts of the run; and rn finds what's good and what would make it good, taking in only what brings the people closer",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The doubt that the people can't use what rn hands over",
+              "decided": "evaluators with only the people's view judge each deliverable, rn makes it again two rounds at most, and puts up each shortfall left beside it as a proposal to improve it, as the user decided on rounds for rn's architecture",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
@@ -645,6 +713,10 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn/README.md"
+    },
     {
       "do": "make",
       "path": "dev/rn/architecture.md"
