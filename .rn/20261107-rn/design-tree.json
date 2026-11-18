@@ -113,7 +113,13 @@
         {
           "id": "N7",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The whole read again",
+              "decided": "each condition and item of the test design best practice is read again by the meta best practice's N5 and N7, leading its maker from what the developers are after toward each case and holding only the vital few, as N3.4 was added on 2026-11-18 from the field's coverage of each cell and marked done without that reading",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N6",
