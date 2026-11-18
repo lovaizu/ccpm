@@ -242,7 +242,8 @@
             },
             {
               "about": "S5: the SubagentStop of a pass before a SendMessage resume queued to a subagent still running, which names no call",
-              "decided": null
+              "decided": "a resume by SendMessage whose PostToolUse says the message is queued, as its subagent still runs, counts as a Start of that subagent only once a SubagentStart of its agent_id follows, and each end before that is checked against the Start that runs, as Claude Code delivers a queued message at the subagent's next tool round and resumes it with the message only where it finishes first (dev/tests/recorded/claude-code-2.1.322-subagent-of-subagent.jsonl:6-8)",
+              "by": "research"
             }
           ]
         },
