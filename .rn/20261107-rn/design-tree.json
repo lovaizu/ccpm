@@ -120,14 +120,13 @@
         "dev/rn/product-vision.md",
         "plugins/rn/README.md",
         "plugins/rn/domain/best-practices/architecture",
-        "plugins/rn/domain/best-practices/design-tree",
-        "dev/lane/architecture.md"
+        "plugins/rn/domain/best-practices/design-tree"
       ],
       "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The product vision's Concept",
@@ -158,12 +157,12 @@
         },
         {
           "id": "N2",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The order of content and structure",
@@ -194,12 +193,12 @@
         },
         {
           "id": "N4",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Who orders the work",
@@ -245,12 +244,12 @@
         },
         {
           "id": "N6",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "The design tree's parts",
@@ -261,7 +260,7 @@
         },
         {
           "id": "N8",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "A deliverable's turn",
@@ -307,43 +306,49 @@
         },
         {
           "id": "N9",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N11",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N13",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N14",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "How far the architecture goes",
+              "decided": "it holds only what the README's walkthrough needs, by four principles: the orchestrator, a subagent started at each event, rebuilds the run from the design tree and its News; the run's state lives in files; tree.py alone decides which start is due; Lane holds each role to the words of its steps; the handshake with Lane's runs, routes, and results, and cases off the walkthrough, such as /rn:ty in a new conversation, several runs left, or a merge with no /rn:ty, go to the software design and its integration cases, which run Lane's own code; each mechanism added only for such a case goes, such as the skill's result done, the end-of-run check, and Lane's refusal of a Result while a subagent runs",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
@@ -357,124 +362,7 @@
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "inputs": [
-        ".rn/20261107-rn/research/agent-call-failing-after-pretooluse.md"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The cut",
-              "decided": "the trivial many cut out, as no user of a plugin reaches the goal with them: Lane's guard on its own up and the approval it holds (up_only, gives_shown, lays_after_reply, the Shown and Approval of up's Run, lay.py write's refusal where up's Run no longer waits, result.py up laid or left); a move that calls another plugin's skill and the Run standing aside for it; reading a plugin that an earlier Lane laid by its own copy of form.py, and the Data compatibility testing of released plugins, as nothing is released yet",
-              "by": "user"
-            },
-            {
-              "about": "The combinations",
-              "decided": "the architecture defines each combination of parts and lane types that one hook event meets, such as keeps_steps on a skill whose subagents run in the background, and each has an integration case",
-              "by": "user"
-            },
-            {
-              "about": "Test strategy",
-              "decided": "unit cases for each part, integration cases for each combination, every case under the double of Claude Code; no E2E test, no Scenario or Installation testing; up's prompt tested by its unit cases alone, a pinpoint prompt to Claude Code whose result code reads; Lane is then put to real use by rn",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The skill's Result while its Run works",
-              "decided": "result.py refuses the skill's Result while a subagent of its Run runs or a start is due with its text, as a Result that ends the Run then leaves the subagent's calls unchecked and the start undone, which an independent trace of rn's walkthrough through Lane's code found",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": true,
-          "decisions": [
-            {
-              "about": "S4: an Agent call that fails or is denied after its PreToolUse, and the Start that the guard made for it",
-              "decided": null
-            },
-            {
-              "about": "S5: the SubagentStop of a pass before a SendMessage resume queued to a subagent still running, which names no call",
-              "decided": "a resume by SendMessage whose PostToolUse says the message is queued, as its subagent still runs, counts as a Start of that subagent only once a SubagentStart of its agent_id follows, and each end before that is checked against the Start that runs, as Claude Code delivers a queued message at the subagent's next tool round and resumes it with the message only where it finishes first (dev/tests/recorded/claude-code-2.1.322-subagent-of-subagent.jsonl:6-8)",
-              "by": "research"
-            }
-          ]
-        },
-        {
-          "id": "N14",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
@@ -492,36 +380,7 @@
       "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "open",
-      "inputs": [],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The skeleton",
-              "decided": "each part and interface the architecture after the cut draws; each body that holds and still fits kept, each part or body that traces to no element of the architecture deleted",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
@@ -533,62 +392,7 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/lane/product-vision.md",
-        "plugins/lane/README.md",
-        "dev/lane/architecture.md",
-        "plugins/lane"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The cases derived again",
-              "decided": "each unit and integration case of Lane is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
-              "by": "user"
-            },
-            {
-              "about": "The cases judged again",
-              "decided": "Lane's cases derived on 2026-11-18 are each judged again by the test design best practice's N3 as it now stands: a case of a transition that no use brings about is taken out",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The gaps",
-              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
-              "by": "reasoning"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The user reads what Lane would hold, each step as it'll read and the order, before anything holds their plugin",
@@ -612,75 +416,7 @@
       "name": "A start off the order the user set gets the moves due, and each start on it goes through",
       "path": "dev/lane/tests/integration/test_s4_run_order.py",
       "kind": "code",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A resume the Routes open none",
-              "decided": "its Start is added again, so its subagent counts as running and may give a Result, as the review found the turn's end stopped while it worked and its Result refused",
-              "by": "reasoning"
-            },
-            {
-              "about": "A main conversation's start of a subagent not the plugin's",
-              "decided": "let through with no Start, as a helper such as Explore starts no role and the review found it stopped",
-              "by": "reasoning"
-            },
-            {
-              "about": "A turn's end while only a move to start no more is due",
-              "decided": "stopped with the sentence of the Lane on the skill's last Step, which names its result script, as the review found the stop said only to start no more",
-              "by": "reasoning"
-            },
-            {
-              "about": "The fault that the cases derived again on 2026-11-18 showed",
-              "decided": "the guard hooks PostToolUseFailure and drops the Start of a call that fails there, and drops each Start still untied at the main conversation's Stop, as S4 now draws, so the run goes on (strict xfail at dev/lane/tests/unit/test_guard_states.py:212 and :240)",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A subagent that leaves a step, by a call, a Mark, or an end, gets that step's sentence",
@@ -1914,23 +1650,7 @@
   "work": [
     {
       "do": "make",
-      "path": "dev/lane/architecture.md"
-    },
-    {
-      "do": "make",
       "path": "dev/rn/architecture.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/lane"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/tests"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/tests/integration/test_s4_run_order.py"
     },
     {
       "do": "make",
