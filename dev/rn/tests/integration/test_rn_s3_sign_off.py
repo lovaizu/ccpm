@@ -1,6 +1,7 @@
 """The integration cases of S3: a sign-off. Each path of its sequence: the work pushed with its
 draft pull request, whose case lies in test_rn_walking_skeleton.py, or what's missing put to the
-user where git or gh can't push; the orchestrator's own move past the sign-off stopped; the user's
+user where git or gh can't push; the orchestrator's own move past the sign-off, by /rn:ty or /rn:gm,
+stopped; the turn that puts the sign-off up, held where its record leaves a step out; the user's
 /rn:ty, which approves and starts the work resting on it; and the user's /rn:gm, with words or
 alone, which sends it back, alone with the user's comments read from the pull request."""
 
@@ -146,3 +147,60 @@ def test_a_deliverable_put_up_and_approved_is_marked_done(b: Bench) -> None:
     w.approved(b, walk, "Signed off.", {"nodes": {"deliverables/0": done}, "more": []})
     assert w.sign_offs_in(walk)[-1]["state"] == "signed off"
     assert w.tree_in(walk)["deliverables"][0] == done
+
+
+@pytest.mark.supports("S3", "guard", "Sign-off")
+def test_the_orchestrators_own_gm_is_stopped(b: Bench) -> None:
+    """Given: the walkthrough's plan put up for the user's sign-off.
+    When: the orchestrator calls /rn:gm by the Skill tool.
+    Then: it's stopped, and the plan still waits for the user's sign-off."""
+    walk = w.plan_put_up(b)
+    assert walk.c.skill("rn:gm", "").blocked
+    assert [s["state"] for s in w.sign_offs_in(walk)] == ["waiting"]
+
+
+@pytest.mark.supports("S3", "guard", "record.py", "orchestrator")
+def test_a_turn_putting_the_plan_up_with_a_step_of_the_part_left_out_is_held(b: Bench) -> None:
+    """Given: the walkthrough's goal confirmed and the user's point answered, the work pushed, and
+    the plan put up.
+    When: the orchestrator, which recorded each step of up and each of its part but step 6, ends
+    its turn with the plan.
+    Then: the guard holds the end, and the check its stop names gives step 6 of the orchestrator;
+    once it records each step after 5 again and ends again, the guard lets the turn end."""
+    walk = w.confirmed(b)
+    w.printed(walk.c.bash(b.tree("push")))
+    w.printed(walk.c.bash(b.tree("put-up", "plan")))
+    record = walk.run["record"]
+    up = [str(n) for n in w.steps_of(b.rn, "skills/up/SKILL.md")]
+    part = [str(n) for n in w.steps_of(b.rn, "domain/orchestrator.md")]
+    w.records(b, walk.c, record, [("up", up), ("orchestrator", [n for n in part if n != "6"])])
+    held = walk.c.stop(w.PLAN_SHOWN)
+    assert held.blocked
+    checked = walk.c.bash(b.record("check", "orchestrator", ""))
+    assert checked.exit_code == 1 and "orchestrator step 7 is recorded before step 6" in (
+        checked.output
+    )
+    w.records(b, walk.c, record, [("orchestrator", part[:1]), ("orchestrator", part)])
+    assert not walk.c.stop(w.PLAN_SHOWN).blocked
+
+
+@pytest.mark.supports("S3", "guard", "record.py", "orchestrator")
+@pytest.mark.xfail(
+    strict=True,
+    reason="rn's check holds the orchestrator's turn to every step of its part, the steps with no"
+    " work that turn included, as the record marks no turn and the check can't tell them apart",
+)
+def test_a_turn_putting_the_plan_up_with_only_the_steps_that_had_work_ends(b: Bench) -> None:
+    """Given: the walkthrough's goal confirmed and the user's point answered, the work pushed, and
+    the plan put up.
+    When: the orchestrator, which recorded each step of up and each step of its part that had work
+    this turn, all but the last, which has work only where /rn:up alone finds no run left, ends its
+    turn with the plan.
+    Then: the guard lets the turn end, as a real turn records the steps it takes."""
+    walk = w.confirmed(b)
+    w.printed(walk.c.bash(b.tree("push")))
+    w.printed(walk.c.bash(b.tree("put-up", "plan")))
+    up = [str(n) for n in w.steps_of(b.rn, "skills/up/SKILL.md")]
+    part = [str(n) for n in w.steps_of(b.rn, "domain/orchestrator.md")]
+    w.records(b, walk.c, walk.run["record"], [("up", up), ("orchestrator", part[:-1])])
+    assert not walk.c.stop(w.PLAN_SHOWN).blocked

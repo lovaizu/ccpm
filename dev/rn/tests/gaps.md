@@ -14,3 +14,7 @@ and the skeleton in `plugins/rn/`, for whoever makes the architecture.
   finds no run left, and a turn that records no step 1 to nothing, as the steps of an earlier turn
   meet each. `test_a_sign_off_waiting_and_only_the_steps_with_work_recorded_lacks_nothing` holds
   the first as the architecture draws it, and no case can show the second.
+- S1, an evaluator's end held: the double of Claude Code gives a subagent no Edit, and its Write
+  only makes a new file, so no integration case shows an evaluator mend its Answers after rn's
+  check holds its end, and pass. `test_an_evaluators_end_whose_answers_leave_out_a_condition_is_held`
+  shows only the hold.

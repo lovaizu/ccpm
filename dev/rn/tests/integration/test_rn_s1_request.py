@@ -1,9 +1,10 @@
 """The integration cases of S1: a request, and a deliverable made in rounds. Each path of its
 sequence beyond the walking skeleton's, whose cases lie in test_rn_walking_skeleton.py: a new run
-beside a run left, the goal put to the user, a second generator's start, a generator that asks,
-that lacks, that's sent back, and that ends done, with its end held where it falls short, the
-round, a more kept for the next round, and no start where no work waits. The rules that S1 keeps
-have their cases in test_rn_rules.py."""
+beside a run left, the goal put to the user, a second generator's start, a generator that asks, that
+lacks, that's sent back, and that ends done, with its end held where it falls short, the round, an
+evaluator that tries the deliverable in a throwaway copy and whose end is held where its Answers
+leave a condition out, a more kept for the next round, and no start where no work waits. The rules
+that S1 keeps have their cases in test_rn_rules.py."""
 
 from __future__ import annotations
 
@@ -196,3 +197,44 @@ def test_no_generator_start_is_due_while_every_deliverable_doing_waits(b: Bench)
     stopped = walk.c.stop(f'"{w.COMMAND}", for your sign-off:')
     assert not stopped.blocked
     assert "Start `rn:generator`" not in walk.said + stopped.said
+
+
+@pytest.mark.supports("S1", "evaluator", "record.py", "Answers", "guard")
+def test_an_evaluators_end_whose_answers_leave_out_a_condition_is_held(b: Bench) -> None:
+    """Given: the generator of the command ended done, and the first evaluator started, which
+    committed its step, recorded each step, and wrote Answers that answer every condition of its
+    group but the first.
+    When: it gives done and ends.
+    Then: the guard holds its end with the Lane's sentence naming rn's check, which gives the
+    condition left out, and the record keeps no result."""
+    walk, _ = w.deliverable_made(b)
+    _, evaluator = w.started(walk.c, "evaluator", walk.said)
+    cut = w.cut_of(w.due_text_of(evaluator))
+    assert evaluator.bash(b.tree("commit", cut["record"], "1")).exit_code == 0
+    path = os.path.join(walk.c.cwd, cut["answers"])
+    left_out, *rest = cut["conditions"]
+    assert not evaluator.write(path, json.dumps(w.answers(rest))).blocked
+    w.keeps(b, evaluator, cut["record"], "evaluator")
+    ended, _ = w.give(b, evaluator, "done", "Done.")
+    assert f"the Answers answer no {left_out}" in w.lacks_of(evaluator, ended, "done", cut)
+    with open(os.path.join(walk.run["worktree"], cut["record"]), encoding="utf-8") as f:
+        assert "kept" not in json.load(f)
+
+
+@pytest.mark.supports("S1", "evaluator", "throwaway.py", "Try record")
+def test_an_evaluator_tries_the_deliverable_in_a_throwaway_copy_and_the_round_keeps_it(
+    b: Bench,
+) -> None:
+    """Given: the generator of the command ended done, and an evaluator started, at the end of its
+    step 1, committed.
+    When: it tries the command on lines as accounting would give them, by throwaway.py.
+    Then: throwaway.py gives the command's own exit code, and the round's Try record keeps the
+    command beside the generator's."""
+    walk, _ = w.deliverable_made(b)
+    _, evaluator = w.started(walk.c, "evaluator", walk.said)
+    cut = w.cut_of(w.due_text_of(evaluator))
+    assert evaluator.bash(b.tree("commit", cut["record"], "1")).exit_code == 0
+    command = "echo evaluator-tried"
+    tried = evaluator.bash(b.throwaway(cut["deliverable"], command))
+    assert tried.exit_code == 0 and "evaluator-tried" in tried.output
+    assert w.files_holding(walk.folder("rounds"), command)

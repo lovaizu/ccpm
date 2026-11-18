@@ -1,10 +1,12 @@
 """The integration cases of S5: picking up. Each path of its sequence: /rn:up alone in a new
 conversation in the run's worktree, or at the root with one run left, which picks the run up where
-it stopped, each role at the step it stood at; at the root with more than one run left, which asks
-the user which; and with no run left, which says so and starts no role."""
+it stopped, each role at the step it stood at, and a generator so started ending once it takes the
+steps from there; at the root with more than one run left, which asks the user which; and with no
+run left, which says so and starts no role."""
 
 from __future__ import annotations
 
+import json
 import os
 
 import pytest
@@ -126,3 +128,49 @@ def test_each_evaluator_that_stood_in_a_step_starts_again_at_it(b: Bench) -> Non
     assert not typed.blocked
     again = w.cut_of(w.due_text(typed.said, "evaluator"))
     assert again["conditions"] == first["conditions"] and again["step"] == 2
+
+
+@pytest.mark.supports("S5", "generator", "record.py", "Record", "Place")
+@pytest.mark.xfail(
+    strict=True,
+    reason="a role started again at the step it stood at records no step 1 in its new record, so"
+    " rn's check finds no pass and holds its end for every step, though its part has it go on"
+    " from that step",
+)
+def test_a_generator_started_again_at_its_step_ends_once_it_takes_the_steps_from_it(
+    b: Bench,
+) -> None:
+    """Given: the walkthrough picked up in a new conversation in the run's worktree, with the
+    generator's start due at step 2, where it stood.
+    When: the generator starts with that text, records step 2, each practice while deciding and
+    then while making within its steps 3 and 4, and each step after, commits at the end of each,
+    tries the command, writes its Made, and gives done.
+    Then: the guard passes its end, as its part has it go on from the step it stood at."""
+    walk, _ = paused(b)
+    c = new_conversation(b, walk.run["worktree"])
+    typed = c.type("/rn:up")
+    assert not typed.blocked
+    picked = w.keeper_started(b, c, walk.run, typed.said)
+    _, generator = w.started(c, "generator", picked.said)
+    cut = w.cut_of(w.due_text_of(generator))
+    kind, refactor = w.kinds_of(cut)
+    steps = [str(n) for n in w.steps_of(b.rn, "domain/generator.md")]
+    runs = [("generator", steps[1:3])]
+    runs += [(k, w.practices_of(b.rn, k, "decide")) for k in (kind, refactor)]
+    runs += [("generator", steps[3:4])]
+    runs += [(k, w.practices_of(b.rn, k, "make")) for k in (kind, refactor)]
+    runs += [("generator", steps[4:])]
+    w.records(b, generator, cut["record"], [(what, named) for what, named in runs if named])
+    for number in steps[1:]:
+        assert generator.bash(b.tree("commit", cut["record"], number)).exit_code == 0
+    made = {
+        "decisions": [
+            {"path": d["decision"]["path"], "where": cut["deliverable"]}
+            for d in cut["cut"]["decisions"]
+        ],
+        "more": [],
+        "settled": [w.LINE_FORM],
+    }
+    assert not generator.write(os.path.join(c.cwd, cut["made"]), json.dumps(made)).blocked
+    ended, _ = w.give(b, generator, "done", "Made.")
+    assert not ended.blocked, w.lacks_of(generator, ended, "done", cut)

@@ -280,6 +280,17 @@ def keeps(
         assert ran.exit_code == 0, ran.output or ran.said
 
 
+def records(
+    b: Bench, who: Agent | Conversation, record: str, runs: Sequence[tuple[str, Sequence[str]]]
+) -> None:
+    """The role, or the orchestrator, records only the entries given, each run by record.py add,
+    as a real turn records what it took, each at pyproject.toml's first line. Each must give 0."""
+    for what, named in runs:
+        entries = " ".join(f"{n}=pyproject.toml:1" for n in named)
+        ran = who.bash(b.record("add", record, what, entries))
+        assert ran.exit_code == 0, ran.output or ran.said
+
+
 def give(b: Bench, agent: Agent, result: str, message: str) -> tuple[Answer, Answer | None]:
     """The role gives its result by Lane's result script, and ends with the message; gives what the
     end met, and what the main conversation reads as the end reaches it."""
