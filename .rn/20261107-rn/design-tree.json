@@ -215,7 +215,28 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where a round's best practice and the groups it judges lie",
+              "decided": "a new module of tree.py, course, decides each round's best practice, the kind's for content and then the refactor one for structure, two rounds of each at most since the deliverable's latest sign-off sent back, and the groups a round judges: each in a phase's first round, and in a later one each group that holds a condition whose decisions changed since the round before, or, of the refactor one, a condition of a More kept; cut takes the generator's and each evaluator's due round from it",
+              "by": "maker"
+            },
+            {
+              "about": "Where the work order lies",
+              "decided": "a new module of tree.py, work, decides the work's form beyond the schema: it rewrites an item whose node a change renames, and refuses an item that names no node or comes before a deliverable that its inputs name and that isn't done; turn gives each turn in its order",
+              "by": "maker"
+            },
+            {
+              "about": "Where the check of inputs lies",
+              "decided": "a new module of tree.py, inputs, refuses a deliverable of a best practice's kind where a kind that the best practice names in inputs has neither an input node of that kind nor an input file outside the tree's nodes left, one such file for each kind left, as tree.py can tell the kind of a node alone",
+              "by": "maker"
+            },
+            {
+              "about": "A node with no file",
+              "decided": "turn gives it its turn as any deliverable, and cut gives no start of a generator or an evaluator for it, as the orchestrator settles its decisions",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -230,7 +251,13 @@
         {
           "id": "N4",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "none, as the kind of an input file outside the tree, which tree.py can't tell, is checked by the count of the kinds left, as the decision on the check of inputs says",
+              "by": "maker"
+            }
+          ]
         }
       ]
     },
