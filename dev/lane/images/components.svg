@@ -146,10 +146,9 @@
   <text class="kind" x="1600" y="884">main conversation, subagents</text>
   <text class="label small halo end" x="250" y="225">shows the proposal, and</text>
   <text class="label small halo end" x="250" y="240">asks for yes or a change</text>
-  <text class="label small halo start" x="130" y="520">types or calls each</text>
-  <text class="label small halo start" x="130" y="535">command, replies or</text>
-  <text class="label small halo start" x="130" y="550">approves, and types</text>
-  <text class="label small halo start" x="130" y="565">/reload-plugins</text>
+  <text class="label small halo start" x="130" y="520">types each command,</text>
+  <text class="label small halo start" x="130" y="535">replies, approves, and</text>
+  <text class="label small halo start" x="130" y="550">types /reload-plugins</text>
   <text class="label small halo end" x="296" y="352">writes Steps</text>
   <text class="label small halo mid" x="860" y="984">makes each tool call, start of a subagent, and end</text>
   <text class="label small start" x="12" y="1022">Each arrow reads from the one that acts to the one it acts on, and a reply goes back along it.</text>
@@ -189,9 +188,7 @@
   <text class="label small halo start" x="1070" y="640">asks for the Step due and its Items</text>
   <text class="label small halo mid" x="1330" y="797">runs each to mark a Step or an Item</text>
   <text class="label small halo mid" x="565" y="508">an ends_checked</text>
-  <text class="label small halo mid" x="565" y="522">Lane names, with</text>
-  <text class="label small halo mid" x="565" y="536">the run values</text>
-  <text class="label small halo mid" x="565" y="550">and the Result</text>
+  <text class="label small halo mid" x="565" y="522">Lane names</text>
   <text class="label small halo start" x="750" y="418">copies Lane&#x27;s code into it,</text>
   <text class="label small halo start" x="750" y="433">or puts the copy before back</text>
   <!-- Frame names a line crosses, drawn last so their halo masks the line. -->

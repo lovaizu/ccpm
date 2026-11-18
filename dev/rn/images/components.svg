@@ -118,10 +118,8 @@
   <text class="label small halo" x="768" y="188" text-anchor="start">and puts up each sign-off</text>
   <text class="data halo" x="768" y="202" text-anchor="start">Point, Sign-off</text>
   <path class="line" d="M160,260 L160,144" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="168" y="168" text-anchor="start">pushes, keeps the pull request,</text>
-  <text class="label small halo" x="168" y="182" text-anchor="start">marks it ready, reads its</text>
-  <text class="label small halo" x="168" y="196" text-anchor="start">comments, opens each issue</text>
-  <text class="label small halo" x="168" y="210" text-anchor="start">the user says yes to [git, gh]</text>
+  <text class="label small halo" x="168" y="168" text-anchor="start">pushes, opens issues, and</text>
+  <text class="label small halo" x="168" y="182" text-anchor="start">reads comments [git, gh]</text>
   <path class="line" d="M160,480 L160,324" marker-end="url(#arrow)"/>
   <text class="label small halo" x="168" y="380" text-anchor="start">runs each git</text>
   <text class="label small halo" x="168" y="394" text-anchor="start">and gh command</text>
@@ -129,18 +127,13 @@
   <text class="data halo" x="168" y="422" text-anchor="start">Comment, Sign-off</text>
   <path class="line" d="M620,312 L290,312 L290,496 L260,496" marker-end="url(#arrow)"/>
   <text class="data halo" x="465" y="304" text-anchor="middle">Answers, Made, Sign-off, Place, Comment</text>
-  <text class="label small halo" x="465" y="332" text-anchor="middle">makes the run&#x27;s worktree, gets</text>
-  <text class="label small halo" x="465" y="346" text-anchor="middle">each round&#x27;s Answers and Made, lists the runs</text>
-  <text class="label small halo" x="465" y="360" text-anchor="middle">left, puts up each sign-off, approves or sends</text>
-  <text class="label small halo" x="465" y="374" text-anchor="middle">it back as /rn:ty or /rn:gm loads, pushes,</text>
-  <text class="label small halo" x="465" y="388" text-anchor="middle">commits a pause, gets the comments, marks the</text>
-  <text class="label small halo" x="465" y="402" text-anchor="middle">pull request ready, opens each issue [Bash]</text>
+  <text class="label small halo" x="465" y="332" text-anchor="middle">runs each command of the run</text>
+  <text class="label small halo" x="465" y="346" text-anchor="middle">that tree.py offers [Bash]</text>
   <path class="line" d="M380,544 L380,630"/>
   <path class="line" d="M640,544 L640,630 L210,630 L210,544" marker-end="url(#arrow)"/>
   <path class="line" d="M920,544 L920,630 L640,630"/>
-  <text class="label small halo" x="425" y="648" text-anchor="middle">the tree-keeper writes the tree and keeps each more,</text>
-  <text class="label small halo" x="425" y="662" text-anchor="middle">and the generator and each evaluator commit each</text>
-  <text class="label small halo" x="425" y="676" text-anchor="middle">step&#x27;s work [Bash]</text>
+  <text class="label small halo" x="425" y="648" text-anchor="middle">writes the tree, or commits</text>
+  <text class="label small halo" x="425" y="662" text-anchor="middle">each step's work [Bash]</text>
   <text class="data halo" x="425" y="690" text-anchor="middle">Design tree, More kept, Place</text>
   <path class="line" d="M120,544 L120,940" marker-end="url(#arrow)"/>
   <text class="label small halo" x="128" y="850" text-anchor="start">writes, reads,</text>
@@ -153,9 +146,8 @@
   <path class="line" d="M440,440 L440,480" marker-end="url(#arrow)"/>
   <path class="line" d="M720,440 L720,480" marker-end="url(#arrow)"/>
   <path class="line" d="M1000,440 L1000,480" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="730" y="346" text-anchor="start">starts each role, gets its result, resumes the</text>
-  <text class="label small halo" x="730" y="360" text-anchor="start">tree-keeper or a generator, and stops each</text>
-  <text class="label small halo" x="730" y="374" text-anchor="start">[Agent, SendMessage, TaskStop]</text>
+  <text class="label small halo" x="730" y="346" text-anchor="start">starts, resumes, and stops each role</text>
+  <text class="label small halo" x="730" y="360" text-anchor="start">[Agent, SendMessage, TaskStop]</text>
   <text class="data halo" x="730" y="390" text-anchor="start">Cut, Decision, Deliverable, More kept, Place, Sign-off</text>
   <path class="line" d="M720,544 L720,720" marker-end="url(#arrow)"/>
   <text class="label small halo" x="712" y="680" text-anchor="end">tries it [Bash]</text>
@@ -184,10 +176,9 @@
   <text class="label small halo" x="1288" y="406" text-anchor="start">at each end [stdio]</text>
   <text class="data halo" x="1288" y="420" text-anchor="start">Record</text>
   <path class="line" d="M1180,510 L1120,510" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1272" y="412" text-anchor="end">holds each call, start,</text>
-  <text class="label small halo" x="1272" y="426" text-anchor="end">and end, and gives each</text>
-  <text class="label small halo" x="1272" y="440" text-anchor="end">start due and where a</text>
-  <text class="label small halo" x="1272" y="454" text-anchor="end">run picks up [hooks]</text>
+  <text class="label small halo" x="1272" y="412" text-anchor="end">holds each call and end,</text>
+  <text class="label small halo" x="1272" y="426" text-anchor="end">and gives each start</text>
+  <text class="label small halo" x="1272" y="440" text-anchor="end">due [hooks]</text>
   <path class="line" d="M1380,510 L1420,510 L1420,112 L1380,112" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1412" y="336" text-anchor="end">runs, with the</text>
   <text class="label small halo" x="1412" y="350" text-anchor="end">words after</text>
@@ -199,8 +190,7 @@
   <text class="label small halo" x="1288" y="204" text-anchor="start">kept [import]</text>
   <text class="data halo" x="1288" y="218" text-anchor="start">Record</text>
   <path class="line" d="M1200,80 L1200,46 L30,46 L30,512 L60,512" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="600" y="24" text-anchor="middle">the adapters get each Cut, the work of each role that tree.py gave its turn, the runs left, and each Record</text>
-  <text class="label small halo" x="600" y="38" text-anchor="middle">of a run in the order of its starts, and record.py gets the Cut, the Made, the Answers, and the best practice of the role it checks [import]</text>
+  <text class="label small halo" x="600" y="24" text-anchor="middle">the adapters and record.py get what each start and each check needs [import]</text>
   <text class="data halo" x="38" y="340" text-anchor="start">Cut, Answers,</text>
   <text class="data halo" x="38" y="354" text-anchor="start">Made, Record,</text>
   <text class="data halo" x="38" y="368" text-anchor="start">Best practice</text>
