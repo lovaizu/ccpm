@@ -273,7 +273,10 @@ def ended(run: Any) -> tuple[str, ...]:
 
 
 def recorded(run: Any, *entries: tuple[str, int]) -> None:
-    """The orchestrator records the entries, each a step of a prompt, after what it recorded."""
+    """The orchestrator records the entries, each a step of a prompt, after what it recorded, or
+    records nothing where none is given."""
+    if not entries:
+        return
     form.add(
         os.path.join(run.worktree, records.orchestrator_record(run)),
         *(Entry(of, n, None, "a.py:1") for of, n in entries),
@@ -299,11 +302,6 @@ def test_a_turn_passed_and_the_next_taking_its_part_from_step_1_lacks_nothing(
 
 
 @pytest.mark.supports("test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it")
-@pytest.mark.xfail(
-    strict=True,
-    reason="rn's check leaves no mark at the end of a turn it passes, so the next turn's steps meet"
-    " the pass of the turn before, and a turn that records no step 1 lacks nothing",
-)
 @pytest.mark.parametrize("after", ["the part from step 2", "nothing"])
 def test_a_turn_passed_and_the_next_taking_no_step_1_lacks_each_step_of_the_part(
     tmp_path: Any, after: str
@@ -321,11 +319,6 @@ def test_a_turn_passed_and_the_next_taking_no_step_1_lacks_each_step_of_the_part
 
 
 @pytest.mark.supports("test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it")
-@pytest.mark.xfail(
-    strict=True,
-    reason="rn's check leaves no mark at the end of a turn that puts no work up, so the next turn's"
-    " steps meet the pass of the turn before, and a turn that records no step 1 lacks nothing",
-)
 def test_a_turn_putting_no_work_up_passed_and_the_next_taking_no_step_1_lacks_each_step(
     tmp_path: Any,
 ) -> None:

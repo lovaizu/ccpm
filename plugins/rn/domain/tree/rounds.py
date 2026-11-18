@@ -16,7 +16,7 @@ from urllib.parse import quote, unquote
 from fault import Wrong
 from repository import git
 
-from tree import records
+from tree import place, records
 from tree.design import DesignTree
 from tree.more import More
 from tree.results import Answers, Made, read_answers, read_made
@@ -156,16 +156,40 @@ def stood_place(run: Run, start: str) -> str | None:
     Carries: S5 `O->>G: starts each that stood in a step, at that step (Cut, Place)`, and the same
     of each evaluator, as each start anew of a round that one stood in takes its Place.
     """
+    stood = _stood(run, start, None)
+    return stood[-1] if stood else None
+
+
+def started_at(run: Run, record: str) -> int | None:
+    """The step that a start of a round was started at.
+
+    Takes: the run, and the start's record.
+    Gives: the step of the Place of the latest start of the same round whose record comes before
+    it, in the order of the starts, or None where the record keeps no start of a round or no
+    start of it before kept a Place.
+    Changes: nothing.
+    Refuses: fault.Wrong, where the record names no record of a run.
+    Carries: S5 `O->>G: starts each that stood in a step, at that step (Cut, Place)`, and the same
+    of each evaluator, as rn's check holds that start to the steps from it.
+    """
+    start = records.start_of(record)
+    stood = _stood(run, start, os.path.basename(record)) if start else ()
+    return place.read(stood[-1]).step if stood else None
+
+
+def _stood(run: Run, start: str, before: str | None) -> tuple[str, ...]:
+    """The full path of the Place of each start whose record keeps the start of the round, in the
+    order of the starts, only those whose record's name comes before `before` where it's given."""
     of = start_of(start)
     folder = os.path.join(_folder(run, of.deliverable), str(of.number))
     held = sorted(os.listdir(folder)) if os.path.isdir(folder) else []
-    stood = [
-        name
+    return tuple(
+        os.path.join(folder, name)
         for name in held
         if name.startswith(_PLACE)
         and records.start_of(os.path.join("records", name[len(_PLACE) :])) == start
-    ]
-    return os.path.join(folder, stood[-1]) if stood else None
+        and (before is None or name[len(_PLACE) :] < before)
+    )
 
 
 def start_name(deliverable: str, number: int, group: int | None = None) -> str:

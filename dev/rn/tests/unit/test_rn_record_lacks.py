@@ -259,11 +259,6 @@ def test_at_a_step_a_step_past_the_next_is_named_out_of_its_place() -> None:
 
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
-@pytest.mark.xfail(
-    strict=True,
-    reason="a step taken again after a later one, mid-pass, holds the end for good, though each"
-    " step after it is then recorded in order and none was skipped",
-)
 def test_at_a_step_an_earlier_step_again_lacks_nothing_once_each_step_after_it_follows() -> None:
     """Given: a record of steps 1, 2, and 3 with the practices, step 2 again, as the role went back
     to decide again, then step 4.
@@ -312,11 +307,6 @@ def test_past_the_last_step_a_practice_lies_outside_the_steps_and_is_named() -> 
 
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
-@pytest.mark.xfail(
-    strict=True,
-    reason="a practice recorded within the steps and again past the last is named outside them, as"
-    " the check reads only its latest place",
-)
 def test_past_the_last_step_a_practice_taken_within_the_steps_too_lacks_nothing() -> None:
     """Given: a record of steps 1 to 3 with both practices between, then the making practice again
     at another place.

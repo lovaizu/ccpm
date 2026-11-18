@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "A record",
-  "description": "What one start of a role, or the orchestrator of a run, carried out, in the order it did: each step of its prompt once the step's result held, and each practice of a best practice while it carried the practice out, with the result that rn's check kept once it passed the end. record.py decides this form: record.py add writes the entries, and record.py check reads them at a role's end, or at each end of the orchestrator's turn, and keeps the result.",
+  "description": "What one start of a role, or the orchestrator of a run, carried out, in the order it did: each step of its prompt once the step's result held, and each practice of a best practice while it carried the practice out, with the result that rn's check kept once it passed the end. record.py decides this form: record.py add writes the entries, and record.py check reads them at a role's end, or at each end of the orchestrator's turn, keeps the result, and marks the end of each turn of the orchestrator that it passes.",
   "type": "object",
   "required": [
     "entries"
@@ -79,6 +79,14 @@
           "description": "The fixed word the role gave by Lane's result script, such as done.",
           "type": "string"
         }
+      }
+    },
+    "turns": {
+      "description": "For the orchestrator, the number of entries the record held at the end of each turn that record.py check passed, in the order of the turns, so that the check holds each turn to what it recorded after the turn before. Absent until the first.",
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 0
       }
     }
   },

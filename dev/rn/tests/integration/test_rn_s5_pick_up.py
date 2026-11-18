@@ -131,12 +131,6 @@ def test_each_evaluator_that_stood_in_a_step_starts_again_at_it(b: Bench) -> Non
 
 
 @pytest.mark.supports("S5", "generator", "record.py", "Record", "Place")
-@pytest.mark.xfail(
-    strict=True,
-    reason="a role started again at the step it stood at records no step 1 in its new record, so"
-    " rn's check finds no pass and holds its end for every step, though its part has it go on"
-    " from that step",
-)
 def test_a_generator_started_again_at_its_step_ends_once_it_takes_the_steps_from_it(
     b: Bench,
 ) -> None:

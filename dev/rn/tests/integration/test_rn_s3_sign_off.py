@@ -185,11 +185,6 @@ def test_a_turn_putting_the_plan_up_with_a_step_of_the_part_left_out_is_held(b: 
 
 
 @pytest.mark.supports("S3", "guard", "record.py", "orchestrator", "Record")
-@pytest.mark.xfail(
-    strict=True,
-    reason="rn's check leaves no mark at the end of a turn it passes, so a turn that records no"
-    " step 1 meets the pass of the turn before, and its end goes through",
-)
 def test_a_turn_putting_the_plan_up_that_records_no_step_1_is_held(b: Bench) -> None:
     """Given: the walkthrough's goal confirmed and the user's point answered, each turn's end let
     through by rn's check, the work pushed, and the plan put up.

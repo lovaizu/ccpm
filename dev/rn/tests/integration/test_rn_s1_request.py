@@ -191,9 +191,10 @@ def test_a_more_the_people_fall_short_by_reaches_the_next_rounds_generator(b: Be
 @pytest.mark.supports("S1", "adapters", "S3")
 def test_no_generator_start_is_due_while_every_deliverable_doing_waits(b: Bench) -> None:
     """Given: a plan of the command alone, made, judged good, and put up for the user's sign-off.
-    When: the orchestrator ends its turn with the sign-off.
+    When: the orchestrator's next turn records its part from step 1 and ends with the sign-off.
     Then: the guard lets the turn end, and gives no generator's start due, as no work waits."""
     walk, _ = w.sign_off_put_up(b, w.command_plan())
+    w.keeps(b, walk.c, walk.run["record"], "orchestrator")
     stopped = walk.c.stop(f'"{w.COMMAND}", for your sign-off:')
     assert not stopped.blocked
     assert "Start `rn:generator`" not in walk.said + stopped.said

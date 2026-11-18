@@ -129,3 +129,41 @@ def test_a_result_kept_is_read_back_beside_the_entries(tmp_path: Any) -> None:
     form.keep(path, Kept("generator", "done"))
     held = form.read(path)
     assert held.entries == (STEP,) and held.kept == Kept("generator", "done")
+
+
+@pytest.mark.supports("test_a_turn_putting_the_plan_up_that_records_no_step_1_is_held")
+def test_each_turns_end_marked_is_read_back_after_the_entries_it_follows(tmp_path: Any) -> None:
+    """Given: the orchestrator's record with a step, its turn's end marked, then a practice and a
+    step added.
+    When: the next turn's end is marked, and the record read.
+    Then: it reads back the three entries, no result kept, and the turns' ends 1 and 3."""
+    path = os.path.join(tmp_path, "orchestrator.json")
+    form.add(path, STEP)
+    form.mark_turn(path)
+    form.add(path, PRACTICE, STEP)
+    form.mark_turn(path)
+    held = form.read(path)
+    assert (held.entries, held.kept, held.turns) == ((STEP, PRACTICE, STEP), None, (1, 3))
+
+
+@pytest.mark.supports("test_a_turn_putting_the_plan_up_that_records_no_step_1_is_held")
+def test_a_turns_end_marked_before_any_entry_is_read_back_as_0(tmp_path: Any) -> None:
+    """Given: no record at the path.
+    When: a turn's end is marked, and the record read.
+    Then: the record is made with no entries, and reads back the turn's end 0."""
+    path = os.path.join(tmp_path, "orchestrator.json")
+    form.mark_turn(path)
+    assert form.read(path).turns == (0,)
+
+
+@pytest.mark.supports("test_a_turn_putting_the_plan_up_that_records_no_step_1_is_held")
+def test_a_result_kept_after_a_turns_end_keeps_the_mark(tmp_path: Any) -> None:
+    """Given: a record with a step and its turn's end marked.
+    When: a result is kept, and a step added.
+    Then: the record reads back the turn's end 1 still."""
+    path = os.path.join(tmp_path, "orchestrator.json")
+    form.add(path, STEP)
+    form.mark_turn(path)
+    form.keep(path, Kept("generator", "done"))
+    form.add(path, STEP)
+    assert form.read(path).turns == (1,)

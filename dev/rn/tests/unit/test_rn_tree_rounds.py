@@ -11,8 +11,9 @@ from typing import Any
 
 import pytest
 from fault import Wrong
-from tree import records, rounds
+from tree import place, records, rounds
 from tree.more import More
+from tree.place import Place
 
 from dev.rn.tests.unit import rn_data as d
 
@@ -182,3 +183,70 @@ def test_the_tree_at_the_rounds_cut_is_the_one_its_opening_commit_holds(tmp_path
     later["goal"]["by"] = "reasoning"
     d.tree_written(run, later)
     assert rounds.at_cut(run, "invoicer").data == at_open
+
+
+def a_start_of_the_round(run: Any, taken: list[str]) -> str:
+    """The record of a new generator's start of invoicer's first round, after each record taken."""
+    return records.new_record(run, "generator", taken, rounds.start_name("invoicer", 1))
+
+
+def stood(run: Any, record: str, step: int) -> None:
+    """The start of the record stood at the step, by its Place."""
+    place.write(rounds.place_path(run, record), Place(record, step, ("invoicer/totals.py",)))
+
+
+@pytest.mark.supports(
+    "test_a_generator_started_again_at_its_step_ends_once_it_takes_the_steps_from_it"
+)
+def test_a_start_of_no_round_was_started_at_no_step(tmp_path: Any) -> None:
+    """Given: a run whose invoicer has one round, and the record of a start of the tree-keeper.
+    When: the step that start was started at is asked.
+    Then: it gives None."""
+    run = a_run(tmp_path)
+    opened(run)
+    assert rounds.started_at(run, records.new_record(run, "tree-keeper", [])) is None
+
+
+@pytest.mark.supports(
+    "test_a_generator_started_again_at_its_step_ends_once_it_takes_the_steps_from_it"
+)
+def test_the_first_start_of_a_round_was_started_at_no_step(tmp_path: Any) -> None:
+    """Given: a run whose invoicer has one round, and the record of its generator's first start.
+    When: the step that start was started at is asked.
+    Then: it gives None, as no start of the round stood at a step before it."""
+    run = a_run(tmp_path)
+    opened(run)
+    assert rounds.started_at(run, a_start_of_the_round(run, [])) is None
+
+
+@pytest.mark.supports(
+    "test_a_generator_started_again_at_its_step_ends_once_it_takes_the_steps_from_it"
+)
+def test_a_start_after_one_that_stood_at_a_step_was_started_at_it(tmp_path: Any) -> None:
+    """Given: a run whose invoicer has one round, whose generator's first start stood at step 2,
+    and the record of the generator's next start of that round, which stood at step 4.
+    When: the step the next start was started at is asked.
+    Then: it gives 2, the step of the start before it, not its own."""
+    run = a_run(tmp_path)
+    opened(run)
+    first = a_start_of_the_round(run, [])
+    stood(run, first, 2)
+    again = a_start_of_the_round(run, [first])
+    stood(run, again, 4)
+    assert rounds.started_at(run, again) == 2
+
+
+@pytest.mark.supports(
+    "test_a_generator_started_again_at_its_step_ends_once_it_takes_the_steps_from_it"
+)
+def test_a_start_whose_own_place_alone_stands_was_started_at_no_step(tmp_path: Any) -> None:
+    """Given: a run whose invoicer has one round, whose generator's first start kept no Place, and
+    the record of its next start, which stood at step 3.
+    When: the step the next start was started at is asked.
+    Then: it gives None, as only a start before it gives the step."""
+    run = a_run(tmp_path)
+    opened(run)
+    first = a_start_of_the_round(run, [])
+    again = a_start_of_the_round(run, [first])
+    stood(run, again, 3)
+    assert rounds.started_at(run, again) is None
