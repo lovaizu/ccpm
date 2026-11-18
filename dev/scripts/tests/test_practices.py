@@ -689,8 +689,8 @@ class Markdown(unittest.TestCase):
         named = dict(DATA, template="template.md", inputs=[{"kind": "a", "takes": ["X"]}])
         text = practices.markdown_of(PATH, named)
         self.assertIn(
-            "[template.md](template.md)\n\n## Inputs\n\n- [a](../a/best-practice.md), taking `X`\n\n"
-            "## Practices\n",
+            "[template.md](template.md)\n\n## Inputs\n\n"
+            "- [a](../a/best-practice.md), taking `X`\n\n## Practices\n",
             text,
         )
 

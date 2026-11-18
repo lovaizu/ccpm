@@ -358,7 +358,8 @@ def deliverable(name: str, path: str, kind: str = "code") -> dict[str, Any]:
 
 def plan(*deliverables: dict[str, Any]) -> dict[str, Any]:
     """The goal drafted and a plan of the deliverables, as tree.py write takes them."""
-    nodes = {"goal": {"decided": GOAL, "by": "reasoning"}, "deliverables": list(deliverables), "work": []}
+    goal = {"decided": GOAL, "by": "reasoning"}
+    nodes = {"goal": goal, "deliverables": list(deliverables), "work": []}
     return {"nodes": nodes, "more": []}
 
 
