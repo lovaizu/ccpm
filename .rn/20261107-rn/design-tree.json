@@ -125,10 +125,34 @@
       "status": "done"
     },
     {
+      "name": "Lane's architecture decides what its guard does with an Agent call that fails or is denied after its PreToolUse, by the events Claude Code sends then",
+      "path": ".rn/20261107-rn/research/agent-call-failing-after-pretooluse.md",
+      "kind": "specific",
+      "inputs": [],
+      "preconditions": [],
+      "status": "open",
+      "check": "each question has an answer that names its source, a page a reader can open or a command with what it printed",
+      "good": false,
+      "decisions": [
+        {
+          "about": "The question",
+          "decided": "which hook events, with which fields, does Claude Code send after the PreToolUse of an Agent call that then fails or is denied, such as one naming no subagent type that exists or one the person denies, and does any event name the call's tool_use_id",
+          "by": "reasoning"
+        },
+        {
+          "about": "The point it serves",
+          "decided": "dev/lane/architecture.md N13: S4: an Agent call that fails or is denied after its PreToolUse, and the Start that the guard made for it",
+          "by": "reasoning"
+        }
+      ]
+    },
+    {
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "inputs": [],
+      "inputs": [
+        ".rn/20261107-rn/research/agent-call-failing-after-pretooluse.md"
+      ],
       "preconditions": [],
       "status": "open",
       "necessary_conditions": [
