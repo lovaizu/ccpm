@@ -88,3 +88,39 @@ def test_a_lay_after_lane_updates_lays_with_the_newest_code(b: w.Bench) -> None:
     w.write_files(b.lane, {"hooks/lane/result.py": updated})
     w.lay(b)
     assert w.read(os.path.join(b.changelog, "hooks", "lane", "result.py")) == updated
+
+
+@pytest.mark.supports("S3", "Laid", "Step")
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "the Laid names each sentence by its Step's number, so a Step the user adds before it"
+        " leaves Lane's sentence in the Step it moved to and notes a change on the Step now there"
+    ),
+)
+def test_a_step_added_after_a_lay_leaves_each_step_without_lanes_sentences(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, then the user added a Step to writer before its step
+    2, so that each Step after it moved down by one.
+    When: the person types /lane:up changelog again, and up runs lay.py steps changelog.
+    Then: each Step reads as the user wrote it, the new one among them, without a sentence that
+    Lane laid, and no notes."""
+    w.lay(b)
+    path = os.path.join(b.changelog, "agents", "writer.md")
+    text = w.read(path)
+    for number in (4, 3, 2):
+        text = text.replace(f"\n{number}. ", f"\n{number + 1}. ")
+    text = text.replace("\n3. ", "\n2. Read `README.md` for the project's name.\n3. ", 1)
+    w.write_files(b.changelog, {"agents/writer.md": text})
+    c = w.converse(b)
+    assert not c.type("/lane:up changelog").blocked
+    given = json.loads(c.bash(b.lay_py("steps", "changelog")).output)
+    texts = {s["number"]: s["text"] for s in given["steps"] if s["file"] == "agents/writer.md"}
+    assert texts == {
+        1: "Read `CHANGELOG.md` to learn its last version and its form, and `REVIEW.md`, where it"
+        " exists, to learn what the entries lack.",
+        2: "Read `README.md` for the project's name.",
+        3: "Read the commits since then with `git log --oneline`.",
+        4: "Write the new entries into `CHANGELOG.md`.",
+        5: "Reply with the entries you wrote.",
+    }
+    assert given["notes"] == []

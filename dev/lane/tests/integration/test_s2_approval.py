@@ -157,3 +157,25 @@ def test_yes_lays_the_proposal_into_the_plugin(b: w.Bench) -> None:
     assert len(lanes["routes"]) == 4
     files = {"skills/write/SKILL.md", "agents/writer.md", "agents/reviewer.md"}
     assert {s["file"] for s in lanes["laid"]["sentences"]} == files
+
+
+@pytest.mark.supports("S2", "lay.py", "Step")
+def test_a_proposal_refused_as_the_steps_changed_lays_once_proposed_again(b: w.Bench) -> None:
+    """Given: up gave what lay.py print showed, then reviewer's step 1 changed in its file, and the
+    person's yes was refused by lay.py write, as the Steps changed.
+    When: up proposes again, as S1 draws, and the person replies yes to what it shows.
+    Then: lay.py write lays the new ID, and reviewer's step 1 holds the person's change."""
+    c = w.converse(b)
+    printed, pid = w.propose(b, c)
+    assert not c.stop(printed.output).blocked
+    changed = w.REVIEWER.replace("against the commits", "against each commit")
+    w.write_files(b.changelog, {"agents/reviewer.md": changed})
+    assert not c.type("yes").blocked
+    assert c.bash(b.lay_py("write", "changelog", pid)).exit_code == 1
+    again, new = w.propose(b, c)
+    assert new != pid
+    assert not c.stop(again.output).blocked
+    assert not c.type("yes").blocked
+    written = c.bash(b.lay_py("write", "changelog", new))
+    assert written.exit_code == 0, written.output
+    assert "against each commit" in w.read(os.path.join(b.changelog, "agents", "reviewer.md"))

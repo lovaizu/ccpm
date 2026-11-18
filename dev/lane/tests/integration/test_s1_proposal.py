@@ -240,3 +240,23 @@ def test_a_steps_file_a_skill_and_its_command_share_is_the_skills(tmp_path: obje
     write_block = printed.output.split("\n\n")[1]
     assert write_block.startswith("1. Have the entries written and reviewed."), "write's step 1"
     assert printed.output.count("Have the entries written and reviewed.") == 1, "shown once"
+
+
+@pytest.mark.supports("S1", "lay.py")
+def test_a_proposal_mended_after_it_cant_stand_is_shown_with_its_id(b: w.Bench) -> None:
+    """Given: up handed lay.py print the walkthrough's Proposal with a Lane of a type that no lane
+    type has, and lay.py print sent it back.
+    When: up mends the Lane in the Proposal, and hands it to lay.py print again.
+    Then: lay.py print exits 0 with the Steps as they'll read and an ID, and the person's yes lays
+    the mended Proposal by that ID."""
+    c = w.converse(b)
+    proposal = up_reads(b, c)
+    wrong = json.loads(json.dumps(proposal))
+    wrong["lanes"][2]["type"] = "run_once"
+    assert w.print_proposal(b, c, wrong).exit_code == 1
+    printed = w.print_proposal(b, c, proposal)
+    assert printed.exit_code == 0, printed.output
+    pid = w.proposal_id(printed.output)
+    assert not c.type("yes").blocked
+    written = c.bash(b.lay_py("write", "changelog", pid))
+    assert written.exit_code == 0, written.output

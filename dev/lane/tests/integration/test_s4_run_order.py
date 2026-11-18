@@ -773,3 +773,25 @@ def test_a_call_that_breaks_a_lane_gets_its_steps_sentence(b: w.Bench, broken: N
         "The commands you may run, each word for word: `git log --oneline`,"
         f" `{b.result('writer', 'written')}`."
     )
+
+
+@pytest.mark.supports("S4", "Start", "Result", "guard")
+def test_a_start_after_a_result_goes_while_the_subagent_that_gave_it_still_runs(
+    b: w.Bench,
+) -> None:
+    """Given: the walkthrough's Proposal laid, and writer started, which gave `written` and runs on
+    before its end.
+    When: the main conversation starts reviewer, as the guard gives it due, then writer ends, and
+    its end reaches the main conversation, and the main conversation ends its turn.
+    Then: reviewer's start goes, the main conversation reads that writer gave `written` with no
+    start of reviewer due again, and the turn's end goes while reviewer runs."""
+    c, writer = w.writer_started(b)
+    assert writer.bash(b.result("writer", "written")).exit_code == 0
+    started, reviewer = w.start(c, "reviewer")
+    assert reviewer, started.said
+    ended, reached = writer.end("Gave written.")
+    assert not ended.blocked, ended.said
+    assert reached is not None
+    assert "writer gave `written`" in reached.said, reached.said
+    assert w.due("reviewer") not in reached.said, reached.said
+    assert not c.stop("Reviewer is checking the entries.").blocked
