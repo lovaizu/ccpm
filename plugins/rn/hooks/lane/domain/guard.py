@@ -449,7 +449,7 @@ def _notified(plugin: Plugin, placed: Placed, cwd: str) -> Answer:
     what = placed.what
     assert isinstance(what, Notification) and placed.start is not None
     (run,) = placed.runs
-    add(plugin.record, Ended(run.id, what.agent_id, what.killed))
+    add(plugin.record, Ended(run.id, what.agent_id, what.killed, what.tool_use_id))
     told = _told(plugin, _now(plugin, run.id), cwd)
     role = placed.start.role
     if not placed.start.results and not placed.start.due:

@@ -18,8 +18,8 @@ def lacks(
 
     Takes: the record; the prompt, by its role or command; the number of each of its steps; and
     each practice of each best practice the role works by, by the best practice's kind.
-    Gives: each step or practice missing, or recorded out of its place, in the latest pass, which
-    begins at the last entry of the prompt's first step, each said so that the role carries it out
+    Gives: each step or practice missing, or recorded out of its place, in the latest pass, as
+    `passes` finds it, each said so that the role carries it out
     and naming the step or practice; none where that pass keeps each step in order, and each
     practice after the first step and before the last, those taken while deciding before those
     taken while making.
@@ -29,16 +29,33 @@ def lacks(
     """
     entries = list(record.entries)
     if steps:
-        firsts = [n for n, e in enumerate(entries) if (e.of, e.step) == (of, steps[0])]
-        entries = entries[firsts[-1] :] if firsts else []
+        begun = passes(record, of, steps[0])
+        entries = entries[begun[-1] :] if begun else []
     return _steps(entries, of, steps) + _practices(entries, of, steps, practices)
 
 
+def passes(record: Record, of: str, first: int) -> tuple[int, ...]:
+    """Where each pass through a prompt's steps begins.
+
+    Takes: the record; the prompt, by its role or command; and the number of its first step.
+    Gives: the place of each entry of the first step that no entry of that step comes just before,
+    as a role records its first step at each place it read in a run of entries.
+    Changes: nothing.
+    Refuses: nothing.
+    Carries: S1 `R-->>GD: each step, practice, or item they lack`, in the latest pass.
+    """
+    at_first = [(e.of, e.step) == (of, first) for e in record.entries]
+    return tuple(n for n, here in enumerate(at_first) if here and (n == 0 or not at_first[n - 1]))
+
+
 def _steps(entries: list[Entry], of: str, steps: Sequence[int]) -> tuple[str, ...]:
-    """Each step of the pass missing or out of its place."""
+    """Each step of the pass missing or out of its place, a step recorded at several places in a
+    row taken once."""
     found, expected = [], 0
     for entry in entries:
         if entry.of != of or entry.step is None or expected >= len(steps):
+            continue
+        if expected and entry.step == steps[expected - 1]:
             continue
         if entry.step == steps[expected]:
             expected += 1

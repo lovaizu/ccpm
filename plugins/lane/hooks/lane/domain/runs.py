@@ -199,9 +199,12 @@ def _of_start(run: Run, line: Started | Tied | Ended | Report) -> Run:
 
 
 def _ended(run: Run, line: Ended) -> Run:
-    """The Run after a subagent's end: its Start ended, and due again where it gave no Result and a
-    Route made it due."""
-    ended = [s for s in run.starts if s.agent_id == line.agent_id]
+    """The Run after a subagent's end: the Start of the call it names and each Start of its subagent
+    before it, or each of its Starts where it names none, ended, and due again where it gave no
+    Result and a Route made it due, as a resume may come before the end of the pass before it."""
+    ours = [s for s in run.starts if s.agent_id == line.agent_id]
+    named = [n for n, s in enumerate(ours) if s.tool_use_id == line.tool_use_id]
+    ended = ours[: named[0] + 1] if named else ours
     starts = tuple(dataclasses.replace(s, ended=True) if s in ended else s for s in run.starts)
     again = [Move("start", role=s.role) for s in ended if not s.results and s.due]
     due = tuple(dict.fromkeys((*run.due, *again)))

@@ -103,11 +103,13 @@ class Read:
 
 @dataclass(frozen=True)
 class Ended:
-    """A subagent's end as it reached the main conversation, and whether TaskStop stopped it."""
+    """A subagent's end as it reached the main conversation, whether TaskStop stopped it, and the
+    Agent or SendMessage call whose pass it ends, None where the end names none."""
 
     run: str
     agent_id: str
     killed: bool
+    tool_use_id: str | None = None
 
 
 @dataclass(frozen=True)

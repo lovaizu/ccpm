@@ -82,6 +82,9 @@ REFERENCE = "claude-code-hooks-reference.jsonl"
 # The record of a subagent that a subagent starts, and of a message queued for a subagent that runs,
 # cut from the E2E test's run of the walkthrough on Claude Code 2.1.322, as its first line says.
 SUBAGENT_OF_SUBAGENT = "claude-code-2.1.322-subagent-of-subagent.jsonl"
+# The record of a subagent resumed before its end reaches the main conversation, of Claude Code
+# 2.1.327, whose task-notification then names the Agent call of the pass that ended.
+RESUME_BEFORE_END = "claude-code-2.1.327-resume-before-end.jsonl"
 # The record of a skill command typed while a background subagent runs, of Claude Code 2.1.325,
 # whose start sends the SubagentStart after the PostToolUse of the Agent call.
 SKILL_WHILE_SUBAGENT = "claude-code-2.1.325-skill-command-while-subagent.jsonl"
@@ -1289,6 +1292,8 @@ class Agent:
         # Whether a hook stopped an end of the subagent, after which each end carries
         # `stop_hook_active`, as the record shows.
         self.stopped = False
+        # The last message and the call of an end that hasn't reached the main conversation yet.
+        self.unreached: tuple[str, str] | None = None
         self.output_file = os.path.join(
             conversation.temp, "tasks", conversation.session_id, "tasks", f"{id}.output"
         )
@@ -1315,7 +1320,7 @@ class Agent:
         """The subagent sends the agent, which runs, a message by SendMessage."""
         return self.conversation.resume(agent, message, summary, by=self)
 
-    def end(self, last_message: str) -> tuple[Answer, Answer | None]:
+    def end(self, last_message: str, reach: bool = True) -> tuple[Answer, Answer | None]:
         """The subagent ends with the message, with the `prompt_id` of the conversation's latest
         prompt, as recorded/claude-code-2.1.325-skill-command-while-subagent.jsonl shows of a
         subagent that runs on through a later prompt. The first answer says whether the hooks
@@ -1327,7 +1332,9 @@ class Agent:
         conversation reads beside it: in the background, as a UserPromptSubmit whose prompt is a
         task-notification, with a new `prompt_id`, as the record of 2.1.322 shows; in the
         foreground, as the PostToolUse of its Agent call, as
-        recorded/claude-code-2.1.323-worktree.jsonl shows."""
+        recorded/claude-code-2.1.323-worktree.jsonl shows. Where `reach` is false, the end of a
+        background subagent reaches the main conversation only at `reach`, as
+        recorded/claude-code-2.1.327-resume-before-end.jsonl shows of one resumed in between."""
         assert not self.killed, f"no end comes of a subagent that TaskStop stopped: {self.id}"
         c = self.conversation
         transcript = os.path.join(c.transcripts(), c.session_id, "subagents")
@@ -1362,7 +1369,22 @@ class Agent:
         self.running = False
         if not self.background:
             return stopped, self.completed(last_message)
+        if not reach:
+            self.unreached = (last_message, self.tool_use_id)
+            return stopped, None
         return stopped, self.notified(last_message)
+
+    def reach(self) -> Answer:
+        """The end that `end` held back reaches the main conversation, after a resume, naming the
+        Agent call of the pass that ended, as
+        recorded/claude-code-2.1.327-resume-before-end.jsonl shows; gives what the main
+        conversation reads beside it."""
+        assert self.unreached, f"no end of {self.id} waits to reach the main conversation"
+        (last_message, use), self.unreached = self.unreached, None
+        reached = line(
+            RESUME_BEFORE_END, "the end of the pass before the resume reaches the main conversation"
+        )
+        return self.notified(last_message, reached, use)
 
     def completed(self, last_message: str) -> Answer:
         """Sends the PostToolUse of the Agent call that started the subagent in the foreground,
@@ -1380,15 +1402,19 @@ class Agent:
             "PostToolUse", ran, {**self.start_use, "tool_response": response}
         )
 
-    def notified(self, last_message: str) -> Answer:
+    def notified(
+        self, last_message: str, reached: dict[str, Any] | None = None, use: str | None = None
+    ) -> Answer:
         """Sends the task-notification of the subagent's end in the background, with a new
-        `prompt_id`, and gives what the main conversation reads beside it."""
+        `prompt_id`, from the line `reached` of a record, else the record of 2.1.322's, naming the
+        call `use`, else the subagent's latest, and gives what the main conversation reads beside
+        it."""
         c = self.conversation
-        reached = line(RUN, "writer's end reaches the main conversation")
+        reached = reached or line(RUN, "writer's end reaches the main conversation")
         notification = reached["payload"]["prompt"]
         for tag, value in (
             ("task-id", self.id),
-            ("tool-use-id", self.tool_use_id),
+            ("tool-use-id", use or self.tool_use_id),
             ("output-file", self.output_file),
         ):
             notification = re.sub(rf"<{tag}>.*?</{tag}>", f"<{tag}>{value}</{tag}>", notification)

@@ -124,6 +124,30 @@ def test_a_tree_keeper_resumed_with_a_change_is_held_to_the_making_practices_alo
     assert check.check(d.RN, run.worktree, "tree-keeper", "done", given.values["record"]) == ()
 
 
+@pytest.mark.supports("test_the_goal_and_the_plan_reach_the_design_tree_through_the_tree_keeper")
+def test_a_tree_keepers_first_pass_with_its_first_step_at_two_places_lacks_no_practice(
+    tmp_path: Any,
+) -> None:
+    """Given: a tree-keeper at its start, which recorded its first step at two places in one run,
+    the best practice and the tree, then each other step, and no practice, as its first pass only
+    reads the tree.
+    When: its end with done is checked.
+    Then: it lacks nothing, as one pass holds each run of its first step's entries."""
+    run = d.run_of(d.repository(str(tmp_path)))
+    d.tree_written(run)
+    given = cut.next_start(run, d.design(d.walkthrough_tree()), "tree-keeper", [])
+    assert given is not None
+    record = os.path.join(run.worktree, given.values["record"])
+    first, *others = steps_of(d.RN, "domain/tree-keeper.md")
+    form.add(
+        record,
+        Entry("tree-keeper", first, None, "a.py:1"),
+        Entry("tree-keeper", first, None, "b.py:1"),
+    )
+    form.add(record, *(Entry("tree-keeper", step, None, "a.py:1") for step in others))
+    assert check.check(d.RN, run.worktree, "tree-keeper", "done", given.values["record"]) == ()
+
+
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
 def test_an_end_whose_record_lacks_a_practice_names_it_and_keeps_nothing(tmp_path: Any) -> None:
     """Given: a generator that recorded each step and practice but code's N4.1.

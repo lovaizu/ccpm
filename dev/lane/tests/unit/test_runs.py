@@ -167,6 +167,30 @@ def test_a_start_ended_with_no_result_is_due_again() -> None:
     assert run.due == START_WRITER
 
 
+@pytest.mark.supports("test_an_end_that_reaches_after_a_resume_ends_only_the_pass_it_names")
+def test_an_end_of_a_call_before_a_resume_leaves_the_resume_running() -> None:
+    """Given: writer's Start, its Result `written`, then its resume tied to the same subagent, and
+    the end of the first call, toolu_w, reaching after the resume.
+    When: stand works out the conversation, and may_give asks what writer may give.
+    Then: the first Start has ended, the resume runs, no start is due again, and writer may give
+    `written`."""
+    resumed = Started("r1", "writer", "Go on", {}, "toolu_w2", True)
+    given = (
+        CALLED,
+        WRITER,
+        TIED,
+        Gave("r1", "writer", "written", "a01"),
+        resumed,
+        Tied("r1", "toolu_w2", "a01"),
+        Ended("r1", "a01", False, "toolu_w"),
+    )
+    conversation = stand(d.SESSION, given, d.ROUTES_OF_WRITE)
+    (run,) = conversation.runs
+    assert [s.ended for s in run.starts] == [True, False]
+    assert Move("start", role="writer") not in run.due
+    assert may_give(conversation, "writer", d.ROUTES_OF_WRITE) == ("written",)
+
+
 @pytest.mark.supports("test_a_second_skills_run_beside_the_first_keeps_its_own_routes")
 def test_two_skills_calls_make_two_runs() -> None:
     """Given: the call of write, then the call of check, each with its own Route first.

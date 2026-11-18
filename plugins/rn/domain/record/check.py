@@ -83,8 +83,7 @@ def _practices(taken: cut.Cut, held: form.Record) -> Mapping[str, Sequence[Pract
     if taken.role == "generator":
         folders = (part["best_practice"], part["refactor"])
         return {os.path.basename(f.rstrip("/")): practices.practices(f) for f in folders}
-    first = [e for e in held.entries if (e.of, e.step) == ("tree-keeper", 1)]
-    if taken.role == "tree-keeper" and len(first) > 1:
+    if taken.role == "tree-keeper" and len(order.passes(held, "tree-keeper", 1)) > 1:
         each = practices.practices(part["best_practice"])
         return {"design-tree": [p for p in each if p.phase is practices.Phase.MAKE]}
     return {}

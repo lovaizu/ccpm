@@ -596,6 +596,30 @@ def test_a_command_a_route_goes_after_takes_the_place_of_the_moves_due(tmp_path:
 
 
 @pytest.mark.supports(
+    "S4",
+    "Start",
+    "Result",
+    "An end that ends the Start of the call it names, and each Start of its subagent before it",
+)
+def test_an_end_that_reaches_after_a_resume_ends_only_the_pass_it_names(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, and writer started, which gave `written` and ended,
+    and the main conversation resumed it before that end reached it.
+    When: that end reaches the main conversation, and writer gives `written` again and ends.
+    Then: the main conversation reads that writer gave `written`, never that it ended with no
+    Result, and the resumed writer's Result and end go through."""
+    c, writer = w.writer_started(b)
+    assert writer.bash(b.result("writer", "written")).exit_code == 0
+    ended, _ = writer.end("Gave written.", reach=False)
+    assert not ended.blocked, ended.said
+    assert not c.resume(writer, "Write it again.").blocked
+    reached = writer.reach()
+    assert "writer gave `written`" in reached.said, reached.said
+    assert writer.bash(b.result("writer", "written")).exit_code == 0
+    again, _ = writer.end("Gave written again.")
+    assert not again.blocked, again.said
+
+
+@pytest.mark.supports(
     "S4", "Start", "Result", "A subagent that ends with no Result, its start due again"
 )
 def test_a_subagent_stopped_by_task_stop_is_due_again(b: w.Bench) -> None:

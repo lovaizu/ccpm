@@ -17,8 +17,9 @@ from manifest import plugin_name
 from runs import Conversation, Run, Start
 from script_calls import item_args, result_args, step_args
 
-# A subagent's end as it reaches the main conversation, by its agent_id.
+# A subagent's end as it reaches the main conversation, by its agent_id, and the call it ends.
 NOTIFICATION = re.compile(r"<task-notification>\s*<task-id>([^<]+)</task-id>")
+CALL_ENDED = re.compile(r"<tool-use-id>([^<]+)</tool-use-id>")
 
 
 @dataclass(frozen=True)
@@ -52,10 +53,12 @@ class Prompt:
 
 @dataclass(frozen=True)
 class Notification:
-    """A subagent's end as it reaches the main conversation, and whether TaskStop stopped it."""
+    """A subagent's end as it reaches the main conversation, whether TaskStop stopped it, and the
+    call whose pass it ends, None where it names none."""
 
     agent_id: str
     killed: bool
+    tool_use_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -208,15 +211,16 @@ def _where(
     the end of one that reaches the main conversation, its tied Start and that Start's Run; for the
     main conversation's, each Run that hasn't ended, and, for its end or a prompt, each Run whose
     turn's end is still held after its skill's Result ended it. A subagent resumed lies on its
-    latest Start."""
+    latest Start, and its end on the Start of the call that the end names."""
     agent = event.agent_id or _notified(event)
     going = tuple(r for r in conversation.runs if not r.ended)
     if agent is None:
         return None, tuple(r for r in conversation.runs if _main(r, what))
+    named = what.tool_use_id if isinstance(what, Notification) else None
     for run in going:
-        for start in reversed(run.starts):
-            if start.agent_id == agent:
-                return start, (run,)
+        ours = [s for s in run.starts if s.agent_id == agent]
+        for start in [s for s in ours if s.tool_use_id == named] or ours[::-1]:
+            return start, (run,)
     return None, ()
 
 
@@ -235,8 +239,11 @@ def _what(event: Event, conversation: Conversation, root: str) -> What | None:
         return SkillCall(plugin, skill, event.command_args or "")
     if event.name == "UserPromptSubmit":
         agent = _notified(event)
+        if agent is None:
+            return Prompt(event.prompt or "")
         killed = "<status>killed</status>" in (event.prompt or "")
-        return Notification(agent, killed) if agent else Prompt(event.prompt or "")
+        called = CALL_ENDED.search(event.prompt or "")
+        return Notification(agent, killed, called[1] if called else None)
     if event.name in ("Stop", "SubagentStop"):
         return EndAsked(event.last_message or "")
     tool_input = event.tool_input or {}

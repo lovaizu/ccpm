@@ -356,8 +356,8 @@ sequenceDiagram
       G-->>M: that it ended with no Result, and its start due again
     end
     opt a subagent ends, held as S5 draws
-      CC->>G: its end, as it reaches the main conversation
-      G->>RS: adds the end
+      CC->>G: its end, as it reaches the main conversation, with the call it ends
+      G->>RS: adds the end, of the Start of that call and each before it
       G-->>M: the Result, and the moves of its Route
     end
     opt the main conversation ends its turn
@@ -410,6 +410,8 @@ Strategies:
   The end then leaves the order, and a stop that starts no more names the skill's result script.
 - A typed command that a Route goes after, its moves due in place of those before\
   The person's pause or approval changes the order, and the moves before it would stop a right move.
+- An end that ends the Start of the call it names, and each Start of its subagent before it\
+  A resume can come before the end of the pass before it, which would else refuse the resume's Result.
 - A subagent that ends with no Result, its start due again\
   TaskStop ends a subagent outside its steps, and a Run left waiting on it gives no move due,
   lowering KR1.1.
