@@ -262,9 +262,8 @@ def test_a_sign_off_waiting_and_the_parts_last_step_left_out_names_it(tmp_path: 
     )
 
 
-# The orchestrator's turns, by the mark that rn's check leaves at the end of each turn it passes:
-# no turn passed yet, a turn passed, or a turn whose check failed, so that it left no mark; and what
-# the next turn recorded after it: its part from step 1, its part from a later step, or nothing.
+# The orchestrator's turns after one: a turn passed, or a turn whose check failed; and the next
+# turn, or the same turn again, taking its part from step 1, as each turn of a run does.
 
 
 def ended(run: Any) -> tuple[str, ...]:
@@ -283,9 +282,6 @@ def recorded(run: Any, *entries: tuple[str, int]) -> None:
     )
 
 
-NONE_OF_THE_PART = tuple(f"orchestrator step {n} isn't recorded" for _, n in PART)
-
-
 @pytest.mark.supports("test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it")
 def test_a_turn_passed_and_the_next_taking_its_part_from_step_1_lacks_nothing(
     tmp_path: Any,
@@ -294,46 +290,11 @@ def test_a_turn_passed_and_the_next_taking_its_part_from_step_1_lacks_nothing(
     its part recorded, rn's check passed.
     When: the next turn, which typed no command, records each step of the part from step 1, and
     its end is checked.
-    Then: it lacks nothing, as a turn is held to the commands it recorded and its part."""
+    Then: it lacks nothing, as a turn is held to the latest pass from step 1 of its part."""
     run = orchestrator_turn(tmp_path, *UP, *PART)
     assert ended(run) == ()
     recorded(run, *PART)
     assert ended(run) == ()
-
-
-@pytest.mark.supports("test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it")
-@pytest.mark.parametrize("after", ["the part from step 2", "nothing"])
-def test_a_turn_passed_and_the_next_taking_no_step_1_lacks_each_step_of_the_part(
-    tmp_path: Any, after: str
-) -> None:
-    """Given: a run whose plan waits, and whose orchestrator's turn of up, each step of up and of
-    its part recorded, rn's check passed.
-    When: the next turn, which typed no command, records each step of the part from step 2, or
-    nothing, and its end is checked.
-    Then: it lacks each step of the part, as the turn's pass begins after the mark of the turn
-    before, and each turn takes the part from step 1."""
-    run = orchestrator_turn(tmp_path, *UP, *PART)
-    assert ended(run) == ()
-    recorded(run, *(PART[1:] if after == "the part from step 2" else []))
-    assert ended(run) == NONE_OF_THE_PART
-
-
-@pytest.mark.supports("test_the_goal_is_put_to_the_user_once_the_design_tree_holds_it")
-def test_a_turn_putting_no_work_up_passed_and_the_next_taking_no_step_1_lacks_each_step(
-    tmp_path: Any,
-) -> None:
-    """Given: a run whose orchestrator's turn of up, each step of up and of its part recorded, put
-    no work up, so that rn's check passed it.
-    When: the next turn, which typed no command, records each step of the part from step 2, puts
-    the plan up, and its end is checked.
-    Then: it lacks each step of the part, as rn's check marks the end of each turn it passes."""
-    run = d.run_of(d.repository(str(tmp_path)))
-    d.tree_written(run)
-    recorded(run, *UP, *PART)
-    assert ended(run) == ()
-    recorded(run, *PART[1:])
-    sign_offs.put_up(run, Kind.PLAN, "")
-    assert ended(run) == NONE_OF_THE_PART
 
 
 @pytest.mark.supports("test_a_turn_putting_the_plan_up_with_a_step_of_the_part_left_out_is_held")
@@ -341,11 +302,10 @@ def test_a_turn_whose_check_failed_and_that_takes_its_part_again_from_step_1_lac
     tmp_path: Any,
 ) -> None:
     """Given: a run whose plan waits, and whose orchestrator's turn of up, each step of up and of
-    its part but step 2 recorded, rn's check held, so that it left no mark.
+    its part but step 2 recorded, rn's check held.
     When: the same turn records each step of the part again from step 1, and its end is checked
     again.
-    Then: it lacks nothing, as up's steps of the turn still lie after the mark of the turn
-    before."""
+    Then: it lacks nothing, as the latest pass of the part from step 1 holds each step."""
     run = orchestrator_turn(tmp_path, *UP, *[e for e in PART if e[1] != 2])
     assert ended(run) != ()
     recorded(run, *PART)

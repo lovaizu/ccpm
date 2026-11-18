@@ -182,25 +182,3 @@ def test_a_turn_putting_the_plan_up_with_a_step_of_the_part_left_out_is_held(b: 
     )
     w.records(b, walk.c, record, [("orchestrator", part[:1]), ("orchestrator", part)])
     assert not walk.c.stop(w.PLAN_SHOWN).blocked
-
-
-@pytest.mark.supports("S3", "guard", "record.py", "orchestrator", "Record")
-def test_a_turn_putting_the_plan_up_that_records_no_step_1_is_held(b: Bench) -> None:
-    """Given: the walkthrough's goal confirmed and the user's point answered, each turn's end let
-    through by rn's check, the work pushed, and the plan put up.
-    When: the orchestrator, which recorded each step of its part from step 2 alone this turn, ends
-    its turn with the plan.
-    Then: the guard holds the end, and the check its stop names gives step 1 of the orchestrator,
-    as the turn's pass begins after the mark of the turn before; once it records its part from
-    step 1 and ends again, the guard lets the turn end."""
-    walk = w.confirmed(b)
-    w.printed(walk.c.bash(b.tree("push")))
-    w.printed(walk.c.bash(b.tree("put-up", "plan")))
-    record = walk.run["record"]
-    part = [str(n) for n in w.steps_of(b.rn, "domain/orchestrator.md")]
-    w.records(b, walk.c, record, [("orchestrator", part[1:])])
-    assert walk.c.stop(w.PLAN_SHOWN).blocked
-    checked = walk.c.bash(b.record("check", "orchestrator", ""))
-    assert checked.exit_code == 1 and "orchestrator step 1 isn't recorded" in checked.output
-    w.records(b, walk.c, record, [("orchestrator", part)])
-    assert not walk.c.stop(w.PLAN_SHOWN).blocked

@@ -1,6 +1,5 @@
 """Decides a Record's form on disk, as record.schema.json gives it: each step and practice in the
-order recorded, the result that rn's check kept once it passed the end, and the end of each turn
-of the orchestrator that it passed."""
+order recorded, and the result that rn's check kept once it passed the end."""
 
 from __future__ import annotations
 
@@ -40,13 +39,10 @@ class Kept:
 
 @dataclass(frozen=True)
 class Record:
-    """What one start of a role, or the orchestrator, carried out, the result kept, and, for the
-    orchestrator, the number of entries the record held at the end of each turn that rn's check
-    passed, in the order of the turns."""
+    """What one start of a role, or the orchestrator, carried out, and the result kept."""
 
     entries: tuple[Entry, ...]
     kept: Kept | None
-    turns: tuple[int, ...] = ()
 
 
 def add(path: str, *entries: Entry) -> None:
@@ -67,7 +63,7 @@ def add(path: str, *entries: Entry) -> None:
     for entry in entries:
         _hold(entry)
     held = read(path)
-    _write(path, Record((*held.entries, *entries), held.kept, held.turns))
+    _write(path, Record((*held.entries, *entries), held.kept))
 
 
 def _hold(entry: Entry) -> None:
@@ -112,8 +108,7 @@ def read(path: str) -> Record:
         Entry(e["of"], e.get("step"), e.get("practice"), e["where"]) for e in held["entries"]
     )
     kept = held.get("kept")
-    turns = tuple(held.get("turns", ()))
-    return Record(entries, Kept(kept["role"], kept["result"]) if kept else None, turns)
+    return Record(entries, Kept(kept["role"], kept["result"]) if kept else None)
 
 
 def keep(path: str, kept: Kept) -> None:
@@ -126,23 +121,7 @@ def keep(path: str, kept: Kept) -> None:
     read.
     Carries: S1 `R-->>GD: ... or none, keeping the result in the record`.
     """
-    held = read(path)
-    _write(path, Record(held.entries, kept, held.turns))
-
-
-def mark_turn(path: str) -> None:
-    """Marks in the orchestrator's record the end of a turn that rn's check passed.
-
-    Takes: the record's path.
-    Gives: nothing.
-    Changes: the record, made where it isn't there yet, the number of entries it holds added after
-    each turn's end it holds.
-    Refuses: fault.Wrong, where the record leaves the form; fault.CantRun, where it can't be
-    read.
-    Carries: S3 `R-->>GD: each step it lacks, or none, marking the turn's end in the record`.
-    """
-    held = read(path)
-    _write(path, Record(held.entries, held.kept, (*held.turns, len(held.entries))))
+    _write(path, Record(read(path).entries, kept))
 
 
 def _write(path: str, record: Record) -> None:
@@ -155,8 +134,6 @@ def _write(path: str, record: Record) -> None:
     held: dict[str, Any] = {"entries": entries}
     if record.kept:
         held["kept"] = {"role": record.kept.role, "result": record.kept.result}
-    if record.turns:
-        held["turns"] = list(record.turns)
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(held, f, indent=2)

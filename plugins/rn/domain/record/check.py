@@ -35,19 +35,17 @@ def check(
     <what>`, from template.check, with the Cut, Made, Answers, and best practice from tree.py's
     code; for a generator or an evaluator started again at a step, the steps from that step, by
     `rounds.started_at`; for asks or lacks, which end before the last step, none of the steps or
-    practices; for the orchestrator, from what its record holds after the end of the turn
-    before, the steps of each command recorded there, of up too in the run's first turn, and of
-    its part, in their latest pass; none where it lacks nothing, or where the orchestrator's turn
-    puts no work up, as no sign-off waits, or the folder lies in no run's worktree.
-    Changes: keeps the result in the record through `form.keep` once it lacks nothing; for the
-    orchestrator, marks the turn's end in its record through `form.mark_turn` once it lacks
-    nothing, in a run's worktree.
+    practices; for the orchestrator, the steps of up, of each other command its record holds,
+    and of its part, in their latest pass from step 1; none where it lacks nothing, or where the
+    orchestrator's turn puts no work up, as no sign-off waits, or the folder lies in no run's
+    worktree.
+    Changes: keeps the result in the record through `form.keep` once it lacks nothing.
     Refuses: fault.Wrong, where the record or a file it reads leaves its form; fault.CantRun, where
     one can't be read.
     Carries: S1 `GD->>R: checks its record, its result, and the deliverable (Record)`, and `R-->>GD:
     each step, practice, or item they lack, and each place where the deliverable leaves its kind's
     template, or none, keeping the result in the record`; S3 `R-->>GD: each step it lacks, or
-    none, marking the turn's end in the record`.
+    none`.
     """
     run = runs.of_folder(cwd)
     if role == "orchestrator":
@@ -69,26 +67,16 @@ def check(
 
 
 def _orchestrator(plugin_root: str, run: Run | None) -> tuple[str, ...]:
-    """What the orchestrator's record lacks at the end of a turn that puts work up, from what it
-    recorded after the end of the turn before, marking the turn's end once it lacks nothing."""
-    if run is None:
+    """What the orchestrator's record lacks at the end of a turn that puts work up, in the latest
+    pass from step 1 of up, of each other command it holds, and of its part."""
+    if run is None or not any(s.state is sign_offs.State.WAITING for s in sign_offs.read(run).each):
         return ()
-    path = os.path.join(run.worktree, records.orchestrator_record(run))
-    held = form.read(path)
-    lacking: tuple[str, ...] = ()
-    if any(s.state is sign_offs.State.WAITING for s in sign_offs.read(run).each):
-        turn = form.Record(held.entries[held.turns[-1] if held.turns else 0 :], None)
-        taken = {e.of for e in turn.entries if e.step is not None}
-        first = not held.turns
-        prompts = [c for c in _COMMANDS if (c == "up" and first) or c in taken] + ["orchestrator"]
-        lacking = tuple(
-            each
-            for of in prompts
-            for each in order.lacks(turn, of, steps.numbers(plugin_root, of), {})
-        )
-    if not lacking:
-        form.mark_turn(path)
-    return lacking
+    held = form.read(os.path.join(run.worktree, records.orchestrator_record(run)))
+    taken = {e.of for e in held.entries if e.step is not None}
+    prompts = [c for c in _COMMANDS if c == "up" or c in taken] + ["orchestrator"]
+    return tuple(
+        each for of in prompts for each in order.lacks(held, of, steps.numbers(plugin_root, of), {})
+    )
 
 
 def _practices(taken: cut.Cut, held: form.Record) -> Mapping[str, Sequence[Practice]]:
