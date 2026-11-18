@@ -235,6 +235,21 @@
               "about": "A node with no file",
               "decided": "turn gives it its turn as any deliverable, and cut gives no start of a generator or an evaluator for it, as the orchestrator settles its decisions",
               "by": "maker"
+            },
+            {
+              "about": "The generator's Cut in a round",
+              "decided": "it names in best_practice the best practice its round works by, the kind's in a round of content and the refactor one in a round of structure, and names no other, so that record.py holds its record to that one alone",
+              "by": "maker"
+            },
+            {
+              "about": "Where a deliverable's rounds start again",
+              "decided": "a deliverable's sign-off keeps the number of its latest round when it's put up, and course counts only the rounds after the latest such number, as a sign-off sent back starts the rounds again from the design",
+              "by": "maker"
+            },
+            {
+              "about": "When a round of structure comes",
+              "decided": "a round is of structure once the round before is of structure, or once two rounds of content have run, or once each evaluator of the latest round of content has answered and no decision under the deliverable changed since its cut",
+              "by": "maker"
             }
           ]
         },
