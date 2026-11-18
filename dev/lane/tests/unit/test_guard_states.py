@@ -157,17 +157,6 @@ def test_a_subagents_end_reaching_the_main_conversation_in_each_state(
     assert stop == then.stop and then.says in words
 
 
-# The faults of a Start whose Agent call fails after the guard let it through, as S4 draws it.
-DROPPED_AT_FAILURE = (
-    "the guard drops no Start at its Agent call's PostToolUseFailure, as Lane hooks no"
-    " PostToolUseFailure, so the Start counts as running and hides its start from the moves due"
-)
-DROPPED_AT_STOP = (
-    "the guard drops no Start still untied at the main conversation's Stop, so a Start whose call"
-    " another plugin's hook denied counts as running and lets the turn end with its start due"
-)
-
-
 @pytest.mark.supports(
     "test_the_turns_end_while_a_start_is_due_is_stopped",
     "test_the_turns_end_while_the_runs_subagent_runs_goes",
@@ -190,7 +179,6 @@ DROPPED_AT_STOP = (
             UNTIED,
             Answered(True, "Start `changelog:writer`"),
             id="untied-as-another-plugins-hook-denied-its-call",
-            marks=pytest.mark.xfail(strict=True, reason=DROPPED_AT_STOP),
         ),
     ],
 )
@@ -261,13 +249,11 @@ def failure(called: str, tool: str = "Agent") -> dict[str, Any]:
             (failure("toolu_w"), START_AGAIN),
             Answered(False),
             id="its-calls-failure-then-a-start-again",
-            marks=pytest.mark.xfail(strict=True, reason=DROPPED_AT_FAILURE),
         ),
         pytest.param(
             (failure("toolu_w"), TURNS_END),
             Answered(True, "Start `changelog:writer`"),
             id="its-calls-failure-then-the-turns-end",
-            marks=pytest.mark.xfail(strict=True, reason=DROPPED_AT_FAILURE),
         ),
         pytest.param(
             (failure("toolu_x", "Bash"), START_AGAIN),
@@ -275,10 +261,7 @@ def failure(called: str, tool: str = "Agent") -> dict[str, Any]:
             id="another-calls-failure-then-a-start-again",
         ),
         pytest.param(
-            (TURNS_END, START_AGAIN),
-            Answered(False),
-            id="the-turns-end-then-a-start-again",
-            marks=pytest.mark.xfail(strict=True, reason=DROPPED_AT_STOP),
+            (TURNS_END, START_AGAIN), Answered(False), id="the-turns-end-then-a-start-again"
         ),
     ],
 )
@@ -322,11 +305,6 @@ QUEUED = {
     },
 }
 RESUMED_START = {"name": "SubagentStart", "agent_id": "a01", "agent_type": "changelog:writer"}
-# The fault of a resume queued to a subagent that still runs.
-QUEUED_TAKEN_AT_ONCE = (
-    "the guard takes a resume queued to a running subagent as its Start at the SendMessage's"
-    " PreToolUse, so the end of the pass before it is checked against the resume"
-)
 
 
 @pytest.mark.supports("test_a_resume_queued_while_its_subagent_runs_starts_at_its_subagentstart")
@@ -334,10 +312,7 @@ QUEUED_TAKEN_AT_ONCE = (
     ("events", "then"),
     [
         pytest.param(
-            (QUEUE, QUEUED, SUBAGENTS_END),
-            Answered(False),
-            id="queued-then-the-pass-before-ends",
-            marks=pytest.mark.xfail(strict=True, reason=QUEUED_TAKEN_AT_ONCE),
+            (QUEUE, QUEUED, SUBAGENTS_END), Answered(False), id="queued-then-the-pass-before-ends"
         ),
         pytest.param(
             (QUEUE, QUEUED, SUBAGENTS_END, RESUMED_START, SUBAGENTS_END),

@@ -12,7 +12,7 @@ import os
 import tempfile
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, get_args
 
 
 class Unreadable(Exception):
@@ -113,6 +113,33 @@ class Ended:
 
 
 @dataclass(frozen=True)
+class Dropped:
+    """A Start dropped, as its Agent call failed at its PostToolUseFailure or stood untied at the
+    main conversation's end of its turn, so that its start is due again."""
+
+    run: str
+    tool_use_id: str
+
+
+@dataclass(frozen=True)
+class Queued:
+    """A resume whose SendMessage Claude Code queued, as its subagent still ran, held back until
+    that subagent's SubagentStart."""
+
+    run: str
+    tool_use_id: str
+
+
+@dataclass(frozen=True)
+class Released:
+    """The SubagentStart of a subagent with a resume held back, which makes each such resume its
+    Start."""
+
+    run: str
+    agent_id: str
+
+
+@dataclass(frozen=True)
 class TextFailed:
     """The adapter of a start's text, failed at the skill's call, so that the guard asks it again
     after each later call of the main conversation, as the skill's own steps may make what it
@@ -129,8 +156,8 @@ class TextGiven:
     run: str
 
 
-Line = Union[
-    Called,
+# Each line of a Run's record after its call.
+Moving = Union[
     Prompted,
     Started,
     Tied,
@@ -138,27 +165,17 @@ Line = Union[
     Marked,
     Read,
     Ended,
+    Dropped,
+    Queued,
+    Released,
     TextFailed,
     TextGiven,
 ]
+Line = Union[Called, Moving]
 # What a role did on its Steps that the record keeps, in the order added: each Mark and each Read.
 Report = Union[Marked, Read]
 # Each kind of line, by the name that a line of the record gives as its `kind`.
-_KINDS = {
-    kind.__name__: kind
-    for kind in (
-        Called,
-        Prompted,
-        Started,
-        Tied,
-        Gave,
-        Marked,
-        Read,
-        Ended,
-        TextFailed,
-        TextGiven,
-    )
-}
+_KINDS = {kind.__name__: kind for kind in (Called, *get_args(Moving))}
 # The file of the record in its conversation's folder.
 RECORD = "record.jsonl"
 

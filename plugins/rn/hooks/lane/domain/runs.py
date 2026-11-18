@@ -8,30 +8,29 @@ import dataclasses
 import os
 from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Union
 
 from adapters import KeptResult
 from form import After, Move, Route, read_lanes
 from manifest import plugin_name
 from run_record import (
     Called,
+    Dropped,
     Ended,
     Gave,
     Line,
     Marked,
+    Moving,
     Prompted,
+    Queued,
     Read,
+    Released,
     Report,
     Started,
     TextFailed,
-    TextGiven,
     Tied,
     lines,
     record_path,
 )
-
-# Each line of a Run's record after its call.
-Moving = Union[Prompted, Started, Tied, Gave, Marked, Read, Ended, TextFailed, TextGiven]
 
 
 class OffRoutes(Exception):
@@ -51,8 +50,9 @@ class Result:
 class Start:
     """One start or resume of a role in the Run: its role, text, and run values, the call that made
     it, the agent_id it's tied to once tied, each Result it gave, whether it has ended, whether it
-    resumes a subagent that a Start before it started, and each Mark and Read of its subagent, in
-    the order the record added them."""
+    resumes a subagent that a Start before it started, each Mark and Read of its subagent, in
+    the order the record added them, and whether it's a resume held back, as Claude Code queued
+    its message while the subagent still ran, until that subagent's SubagentStart."""
 
     role: str
     text: str
@@ -64,6 +64,7 @@ class Start:
     resumed: bool = False
     reports: tuple[Report, ...] = ()
     due: bool = True
+    held: bool = False
 
 
 @dataclass(frozen=True)
@@ -125,7 +126,9 @@ def stand(
     a Route after the plugin's command typed taking the place of those before, a start staying due
     beside each Start it made, as the guard gives it where the adapter gives a text other than
     theirs, a resume taken by its Start, and a start whose subagent ended
-    with no Result due again; each Mark and Read on the Start whose agent_id it gives, or, with
+    with no Result due again; a Start dropped, as its call never ran; a resume held back, from its
+    message queued until its subagent's SubagentStart, taking no Result, Mark, Read, or end of
+    the pass before it; each Mark and Read on the Start whose agent_id it gives, or, with
     none, on the skill's Run; `awaiting` from the adapter's failure at the skill's call until it
     answers; a Run ended, and closing, by the skill's own Result where a move due starts no more by
     it, until a prompt is typed.
@@ -153,6 +156,8 @@ def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
     """The Run after one more line of its record."""
     if isinstance(line, (Started, Tied, Ended, Marked, Read)):
         return _of_start(run, line)
+    if isinstance(line, (Dropped, Queued, Released)):
+        return _held_back(run, line)
     if isinstance(line, Gave):
         return _gave(run, line, routes)
     if isinstance(line, Prompted):
@@ -160,12 +165,31 @@ def _moved(run: Run, line: Moving, routes: Sequence[Route], plugin: str) -> Run:
     return dataclasses.replace(run, awaiting=isinstance(line, TextFailed))
 
 
+def _held_back(run: Run, line: Dropped | Queued | Released) -> Run:
+    """The Run after a Start dropped, as its call never ran, which leaves its start due; a resume
+    held back, as Claude Code queued its message; or each resume held back of a subagent made its
+    Start, at that subagent's SubagentStart."""
+    if isinstance(line, Dropped):
+        starts = tuple(s for s in run.starts if s.tool_use_id != line.tool_use_id)
+    elif isinstance(line, Queued):
+        starts = tuple(
+            dataclasses.replace(s, held=True) if s.tool_use_id == line.tool_use_id else s
+            for s in run.starts
+        )
+    else:
+        starts = tuple(
+            dataclasses.replace(s, held=False) if s.agent_id == line.agent_id else s
+            for s in run.starts
+        )
+    return dataclasses.replace(run, starts=starts)
+
+
 def _reported(run: Run, line: Report) -> Run:
     """The Run after a Mark or a Read: on the Start whose agent_id the line gives, or, with none,
     on the Run itself, as the skill's. A subagent resumed reports on its latest Start."""
     if line.agent_id is None:
         return dataclasses.replace(run, reports=(*run.reports, line))
-    tied = [i for i, s in enumerate(run.starts) if s.agent_id == line.agent_id]
+    tied = [i for i, s in enumerate(run.starts) if s.agent_id == line.agent_id and not s.held]
     starts = tuple(
         dataclasses.replace(s, reports=(*s.reports, line)) if tied[-1:] == [i] else s
         for i, s in enumerate(run.starts)
@@ -202,7 +226,7 @@ def _ended(run: Run, line: Ended) -> Run:
     """The Run after a subagent's end: the Start of the call it names and each Start of its subagent
     before it, or each of its Starts where it names none, ended, and due again where it gave no
     Result and a Route made it due, as a resume may come before the end of the pass before it."""
-    ours = [s for s in run.starts if s.agent_id == line.agent_id]
+    ours = [s for s in run.starts if s.agent_id == line.agent_id and not s.held]
     named = [n for n, s in enumerate(ours) if s.tool_use_id == line.tool_use_id]
     ended = ours[: named[0] + 1] if named else ours
     starts = tuple(dataclasses.replace(s, ended=True) if s in ended else s for s in run.starts)
@@ -233,7 +257,7 @@ def _gave(run: Run, line: Gave, routes: Sequence[Route]) -> Run:
         return dataclasses.replace(run, results=results, due=(), ended=ended, closing=ended)
     starts = tuple(
         dataclasses.replace(s, results=(*s.results, line.result))
-        if s.agent_id == line.agent_id
+        if s.agent_id == line.agent_id and not s.held
         else s
         for s in run.starts
     )

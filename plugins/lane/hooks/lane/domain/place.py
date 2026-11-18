@@ -20,6 +20,9 @@ from script_calls import item_args, result_args, step_args
 # A subagent's end as it reaches the main conversation, by its agent_id, and the call it ends.
 NOTIFICATION = re.compile(r"<task-notification>\s*<task-id>([^<]+)</task-id>")
 CALL_ENDED = re.compile(r"<tool-use-id>([^<]+)</tool-use-id>")
+# How the PostToolUse of a SendMessage to a subagent that still runs opens its message, as
+# dev/lane/claude-code-states.md records.
+QUEUED = "Message queued for delivery"
 
 
 @dataclass(frozen=True)
@@ -91,6 +94,26 @@ class AgentPosted:
 
 
 @dataclass(frozen=True)
+class CallFailed:
+    """The PostToolUseFailure of an Agent call, which started no subagent."""
+
+    tool_use_id: str
+
+
+@dataclass(frozen=True)
+class ResumeQueued:
+    """The PostToolUse of a SendMessage whose message Claude Code queued, as its subagent still
+    runs."""
+
+    tool_use_id: str
+
+
+@dataclass(frozen=True)
+class SubagentStarted:
+    """A subagent's SubagentStart, which a resume queued to it waits for."""
+
+
+@dataclass(frozen=True)
 class ResultPosted:
     """The PostToolUse of a run of result.py that gave 0, as `script_calls.result_args` reads its
     command."""
@@ -158,6 +181,9 @@ What = Union[
     ToolCall,
     StartCall,
     AgentPosted,
+    CallFailed,
+    ResumeQueued,
+    SubagentStarted,
     ResultPosted,
     StepAsked,
     ItemAsked,
@@ -189,7 +215,9 @@ def place(event: Event, conversation: Conversation, lanes: LanesFile, root: str)
     Gives: what the event is, with no `what` for an event that Lane hooks only for another state,
     a call by the Skill tool being a SkillCall, save one of another plugin's skill while a Run
     goes, which is a ToolCall, a SendMessage to the subagent of a role's
-    Start a StartCall that resumes that role, a run of step.py or item.py a StepAsked or an
+    Start a StartCall that resumes that role, its PostToolUse a ResumeQueued where Claude Code
+    queued the message, the PostToolUseFailure of an Agent call a CallFailed, of any other call
+    nothing, a SubagentStart a SubagentStarted, a run of step.py or item.py a StepAsked or an
     ItemAsked, its PostToolUse a StepPosted or an ItemPosted, and the PostToolUse of a Read a
     ReadPosted, with the lines it read; for the main conversation's event, each Run of the
     conversation that hasn't ended, and, for its end or a prompt, each Run that its skill's Result
@@ -211,7 +239,7 @@ def _where(
     the end of one that reaches the main conversation, its tied Start and that Start's Run; for the
     main conversation's, each Run that hasn't ended, and, for its end or a prompt, each Run whose
     turn's end is still held after its skill's Result ended it. A subagent resumed lies on its
-    latest Start, and its end on the Start of the call that the end names."""
+    latest Start that isn't held back, and its end on the Start of the call that the end names."""
     agent = event.agent_id or _notified(event)
     going = tuple(r for r in conversation.runs if not r.ended)
     if agent is None:
@@ -219,7 +247,8 @@ def _where(
     named = what.tool_use_id if isinstance(what, Notification) else None
     for run in going:
         ours = [s for s in run.starts if s.agent_id == agent]
-        for start in [s for s in ours if s.tool_use_id == named] or ours[::-1]:
+        running = [s for s in ours if not s.held]
+        for start in [s for s in ours if s.tool_use_id == named] or running[::-1]:
             return start, (run,)
     return None, ()
 
@@ -232,24 +261,41 @@ def _main(run: Run, what: What | None) -> bool:
 
 
 def _what(event: Event, conversation: Conversation, root: str) -> What | None:
-    """What the event is, by its kind and its tool, of the six that `events.hook_entries` hooks."""
+    """What the event is, by its kind and its tool, of those that `events.hook_entries` hooks: a
+    prompt, a tool's call or its outcome, or a subagent's start or an end."""
+    if event.name in ("UserPromptExpansion", "UserPromptSubmit"):
+        return _typed(event)
+    if event.name in ("PreToolUse", "PostToolUse", "PostToolUseFailure"):
+        return _of_tool(event, conversation, root)
+    if event.name == "SubagentStart":
+        return SubagentStarted()
+    return EndAsked(event.last_message or "")
+
+
+def _typed(event: Event) -> What:
+    """What a prompt is: the command typed, a prompt, or a subagent's end that reaches the main
+    conversation."""
     if event.name == "UserPromptExpansion":
         # A UserPromptExpansion names the command typed, as dev/lane/claude-code-states.md records.
         plugin, _, skill = (event.command_name or "").partition(":")
         return SkillCall(plugin, skill, event.command_args or "")
-    if event.name == "UserPromptSubmit":
-        agent = _notified(event)
-        if agent is None:
-            return Prompt(event.prompt or "")
-        killed = "<status>killed</status>" in (event.prompt or "")
-        called = CALL_ENDED.search(event.prompt or "")
-        return Notification(agent, killed, called[1] if called else None)
-    if event.name in ("Stop", "SubagentStop"):
-        return EndAsked(event.last_message or "")
+    agent = _notified(event)
+    if agent is None:
+        return Prompt(event.prompt or "")
+    killed = "<status>killed</status>" in (event.prompt or "")
+    called = CALL_ENDED.search(event.prompt or "")
+    return Notification(agent, killed, called[1] if called else None)
+
+
+def _of_tool(event: Event, conversation: Conversation, root: str) -> What | None:
+    """What a tool's call is, before it runs; what its PostToolUse tells; and, of its
+    PostToolUseFailure, an Agent call that started no subagent, nothing for any other tool."""
     tool_input = event.tool_input or {}
     if event.name == "PreToolUse":
         return _called(event, tool_input, conversation, root)
-    return _posted(event, tool_input, root)
+    if event.name == "PostToolUse":
+        return _posted(event, tool_input, root)
+    return CallFailed(str(event.tool_use_id)) if event.tool_name == "Agent" else None
 
 
 def _called(
@@ -302,6 +348,8 @@ def _posted(event: Event, tool_input: Mapping[str, Any], root: str) -> What | No
     response = event.tool_response if isinstance(event.tool_response, dict) else {}
     if event.tool_name == "Agent" and response.get("agentId"):
         return AgentPosted(str(event.tool_use_id), str(response["agentId"]))
+    if event.tool_name == "SendMessage" and str(response.get("message", "")).startswith(QUEUED):
+        return ResumeQueued(str(event.tool_use_id))
     if event.tool_name == "Read":
         call = Call("Read", tool_input, event.cwd, top(event.cwd))
         return ReadPosted(call, *_lines_read(response))

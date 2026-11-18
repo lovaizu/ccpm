@@ -39,6 +39,7 @@ from manifest import plugin_name
 from marks import items_left, may_mark, since_step_began, step_due
 from place import (
     AgentPosted,
+    CallFailed,
     EndAsked,
     ItemAsked,
     ItemPosted,
@@ -47,21 +48,26 @@ from place import (
     Prompt,
     ReadPosted,
     ResultPosted,
+    ResumeQueued,
     SkillCall,
     StartCall,
     StepAsked,
     StepPosted,
+    SubagentStarted,
     ToolCall,
     place,
 )
 from run_record import (
     Called,
+    Dropped,
     Ended,
     Gave,
     Line,
     Marked,
     Prompted,
+    Queued,
     Read,
+    Released,
     Report,
     Started,
     TextFailed,
@@ -71,7 +77,7 @@ from run_record import (
     lines,
     record_path,
 )
-from runs import Due, Left, OffRoutes, Result, Run, pick_up, stand
+from runs import Conversation, Due, Left, OffRoutes, Result, Run, pick_up, stand
 
 # What lets an event through and says nothing.
 PASS = Answer(False, "")
@@ -129,7 +135,12 @@ def handle(event: Event, root: str) -> Answer:
       of keeps_steps with the Step due where a Step is unmarked in the latest pass;
     - a subagent's end reaching the main conversation (S4): adds the end, and answers the Result and
       the moves of its Route, or, ended with no Result, its start due again;
-    - the main conversation's end of its turn (S4): stops it with the moves due where a move is
+    - the PostToolUseFailure of an Agent call (S4): drops the Start it made, so its start is due
+      again;
+    - the PostToolUse of a SendMessage whose message Claude Code queued (S4, S5): holds its
+      resume's Start back, and the subagent's SubagentStart makes each resume held back its Start;
+    - the main conversation's end of its turn (S4): first drops each Start still untied, as its
+      Agent call never ran; then stops it with the moves due where a move is
       due with its text and no subagent of the Run runs, unless a move waits for the person, a Run
       whose adapter of a start's text fails having none; else checks it by each Lane of each Run's
       skill, a Run that its skill's Result ended in that turn among them;
@@ -163,6 +174,8 @@ def handle(event: Event, root: str) -> Answer:
         return _cant(event, name, CantCheck(f"hooks/lanes.json can't be read: {e}", who))
     plugin = Plugin(name, root, lanes, event.session_id, record_path(name, event.session_id))
     conversation = stand(event.session_id, lines(plugin.record), lanes.proposal.routes, name)
+    if event.name == "Stop" and event.agent_id is None:
+        conversation = _untied_dropped(plugin, conversation)
     placed = place(event, conversation, lanes, root)
     try:
         if isinstance(placed.what, SkillCall):
@@ -171,6 +184,25 @@ def handle(event: Event, root: str) -> Answer:
     except AdapterFailed as e:
         cant = CantCheck(str(e), f"The developer of {name} must fix its adapter")
         return _cant(event, name, cant)
+
+
+def _untied_dropped(plugin: Plugin, conversation: Conversation) -> Conversation:
+    """The Conversation once each Start still untied at the main conversation's end of its turn is
+    dropped, as its Agent call never ran, such as one that another plugin's PreToolUse hook
+    denied, which sends no event; the drops added to the run record."""
+    untied = [
+        Dropped(r.id, s.tool_use_id)
+        for r in conversation.runs
+        if not r.ended
+        for s in r.starts
+        if s.agent_id is None
+    ]
+    for line in untied:
+        add(plugin.record, line)
+    if not untied:
+        return conversation
+    routes = plugin.lanes.proposal.routes
+    return stand(conversation.session_id, lines(plugin.record), routes, plugin.name)
 
 
 def _cant(event: Event, name: str, cant: CantCheck) -> Answer:
@@ -286,8 +318,9 @@ def _record(plugin: Plugin, placed: Placed, cwd: str) -> None:
 
 
 def _line(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Line | None:
-    """The line of the Run that a prompt, a start's tie, a Result, a Mark, or a Read makes; none
-    for a tie of another Run's Start, or another role's Result."""
+    """The line of the Run that a prompt, a start's tie, a Result, a Mark, a Read, a failed Agent
+    call, a resume queued, or a SubagentStart makes; none for a tie of another Run's Start, or
+    another role's Result."""
     what = placed.what
     if isinstance(what, (StepPosted, ItemPosted, ReadPosted)):
         return _reported(plugin, placed, run, cwd)
@@ -299,6 +332,23 @@ def _line(plugin: Plugin, placed: Placed, run: Run, cwd: str) -> Line | None:
     if isinstance(what, ResultPosted):
         ours = placed.start is not None or what.role == run.skill
         return Gave(run.id, what.role, what.result, placed.agent_id) if ours else None
+    return _held_back(placed, run)
+
+
+def _held_back(placed: Placed, run: Run) -> Line | None:
+    """The line of a Start whose Agent call failed, dropped where it's untied; of a resume whose
+    message Claude Code queued, held back; and of a subagent's SubagentStart, which makes each of
+    its resumes held back a Start; none for another Run's Start, or a subagent with none held."""
+    what = placed.what
+    if isinstance(what, CallFailed):
+        failed = any(s.tool_use_id == what.tool_use_id and s.agent_id is None for s in run.starts)
+        return Dropped(run.id, what.tool_use_id) if failed else None
+    if isinstance(what, ResumeQueued):
+        queued = any(s.tool_use_id == what.tool_use_id for s in run.starts)
+        return Queued(run.id, what.tool_use_id) if queued else None
+    if isinstance(what, SubagentStarted) and placed.agent_id is not None:
+        held = any(s.held and s.agent_id == placed.agent_id for s in run.starts)
+        return Released(run.id, placed.agent_id) if held else None
     return None
 
 

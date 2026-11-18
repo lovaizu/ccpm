@@ -821,9 +821,6 @@ DENIER = {
         ' "permissionDecision": "deny", "permissionDecisionReason": "No subagents here."}}))\n'
     ),
 }
-FAILED = "the guard drops no Start of a failed Agent call, as Lane hooks no PostToolUseFailure"
-UNTIED_AT_STOP = "the guard drops no Start still untied at the main conversation's Stop"
-QUEUED = "the guard takes a queued resume as its Start at once, so the pass before it is held"
 
 
 @pytest.mark.supports(
@@ -832,7 +829,6 @@ QUEUED = "the guard takes a queued resume as its Start at once, so the pass befo
     "guard",
     "A Start dropped at its call's PostToolUseFailure, or untied at the turn's end",
 )
-@pytest.mark.xfail(strict=True, reason=FAILED)
 def test_a_start_whose_agent_call_fails_is_due_again(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.
     When: the main conversation starts writer, as the guard gives it due, and the Agent call fails
@@ -853,7 +849,6 @@ def test_a_start_whose_agent_call_fails_is_due_again(b: w.Bench) -> None:
     "guard",
     "A Start dropped at its call's PostToolUseFailure, or untied at the turn's end",
 )
-@pytest.mark.xfail(strict=True, reason=UNTIED_AT_STOP)
 def test_a_start_whose_call_another_plugin_denies_is_due_again_at_the_turns_end(
     b: w.Bench,
 ) -> None:
@@ -882,7 +877,6 @@ def test_a_start_whose_call_another_plugin_denies_is_due_again_at_the_turns_end(
     "A resume queued to a running subagent, its Start held back until that subagent's"
     " SubagentStart",
 )
-@pytest.mark.xfail(strict=True, reason=QUEUED)
 def test_a_resume_queued_while_its_subagent_runs_starts_at_its_subagentstart(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid with the Route after reviewer's `more` resuming
     writer; writer gave `written` and runs on, and reviewer gave `more`.

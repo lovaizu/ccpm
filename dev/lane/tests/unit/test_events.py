@@ -133,10 +133,11 @@ def test_a_stopped_prompt_is_blocked_with_the_words(name: str) -> None:
 def test_lanes_entries_run_the_guard_on_each_event_it_needs() -> None:
     """Given: Lane's code.
     When: hook_entries gives Lane's entries of hooks.json.
-    Then: six events, each running hook.py by python3 with onFailure block."""
+    Then: eight events, PostToolUseFailure and SubagentStart among them as S4 draws, each running
+    hook.py by python3 with onFailure block."""
     entries = hook_entries()
     events = {"UserPromptSubmit", "UserPromptExpansion", "PreToolUse", "PostToolUse", "Stop"}
-    assert set(entries) == {*events, "SubagentStop"}
+    assert set(entries) == {*events, "SubagentStop", "PostToolUseFailure", "SubagentStart"}
     for groups in entries.values():
         ((hook,),) = [group["hooks"] for group in groups]
         assert (hook["command"], hook["onFailure"]) == ("python3", "block")

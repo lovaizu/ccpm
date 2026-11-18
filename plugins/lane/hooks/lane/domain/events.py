@@ -9,7 +9,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-# The events that the guard needs, in the order that hooks.json lists them.
+# The events that the guard needs, in the order that hooks.json lists them: each event a later
+# Lane came to need after those before it, so that a lay again changes a laid hooks.json only by
+# the entries added.
 HOOKED = (
     "UserPromptSubmit",
     "UserPromptExpansion",
@@ -17,6 +19,8 @@ HOOKED = (
     "PostToolUse",
     "Stop",
     "SubagentStop",
+    "PostToolUseFailure",
+    "SubagentStart",
 )
 
 
@@ -136,7 +140,7 @@ def hook_entries() -> dict[str, Any]:
 
     Takes: nothing.
     Gives: the `hooks` object of hooks.json for UserPromptSubmit, UserPromptExpansion, PreToolUse,
-    PostToolUse, Stop, and SubagentStop, each an entry that runs
+    PostToolUse, PostToolUseFailure, Stop, SubagentStart, and SubagentStop, each an entry that runs
     `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/hook.py` with `onFailure` `block`.
     Changes: nothing.
     Refuses: nothing.
