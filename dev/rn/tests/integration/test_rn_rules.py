@@ -119,11 +119,11 @@ def test_an_evaluator_starts_with_only_what_the_deliverables_people_have(
 ) -> None:
     """Given: the generator of the command ended done.
     When: the orchestrator starts each evaluator that the guard gives due.
-    Then: each evaluator's Cut holds only its record, the deliverable, its name, its best
-    practice, the IDs of its group, and where it writes its Answers: no goal, no decision, and no
+    Then: each evaluator's Cut holds only its record, the deliverable, the goal, its name, its
+    best practice, the IDs of its group, and where it writes its Answers: no decision and no
     Made."""
     _, _, cuts = w.first_round(b)
-    people = {"record", "deliverable", "name", "best_practice", "conditions", "answers"}
+    people = {"record", "deliverable", "goal", "name", "best_practice", "conditions", "answers"}
     assert cuts and all(set(cut) == people for cut in cuts)
     assert all(cut["name"] == w.COMMAND for cut in cuts)
 
@@ -225,6 +225,16 @@ def test_a_command_run_by_itself_is_stopped(b: Bench, broken: None) -> None:
     walk = w.planned(b)
     generator, _ = w.generator_started(walk)
     assert generator.bash("touch tried.txt && echo tried").blocked
+
+
+@pytest.mark.supports("Tried in a throwaway copy", "S1", "guard", "evaluator")
+def test_an_evaluators_command_run_by_itself_is_stopped(b: Bench, broken: None) -> None:
+    """Given: the generator of the command ended done, and an evaluator started.
+    When: the evaluator runs a command of the deliverable by itself, not by throwaway.py.
+    Then: the guard stops it, as an evaluator tries the deliverable as its people would."""
+    walk, _ = w.deliverable_made(b)
+    _, evaluator = w.started(walk.c, "evaluator", walk.said)
+    assert evaluator.bash("touch tried.txt && echo tried").blocked
 
 
 @pytest.mark.supports("The repository holds the work", "S1", "Place", "repository", "tree.py")

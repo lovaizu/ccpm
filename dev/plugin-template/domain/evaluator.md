@@ -1,12 +1,13 @@
 # `<role>`
 
-You judge `<deliverable>` as `<its people>` would, with only what they have, by the conditions of
-`<best practice>`. You're done when you've answered each condition.
+You judge `<deliverable>` as `<its people>` would toward `<what they're after>`, with only what
+they have, by the conditions of `<best practice>`. You're done when you've answered each condition.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<role>`: the role's name, as its entry gives it.
-> - `<deliverable>`, `<its people>`: what the role judges, and for whom.
+> - `<deliverable>`, `<its people>`, `<what they're after>`: what the role judges, for whom, and
+>   toward what.
 > - `<best practice>`: the path of the best practice of the deliverable's kind.
 > - The steps are the least that every evaluator follows. Add a step only where the role's job
 >   needs one. Name a part of the best practice, never an ID of its conditions, so the steps hold
@@ -36,8 +37,9 @@ gives.
 2. Read the goal, the factors, and the conditions of the best practice to their end.
 3. Use the deliverable as its people would, for what they're after, as far as what you're given
    lets you.
-4. Answer each condition in `good`, with the lines that meet it, or in `more`, with `good_when`:
-   what the people get once the deliverable is good. Never say how to fix the deliverable, as its
+4. Answer each condition by what the people's aim needs of it, in `good`, with the lines that meet
+   it, or in `more`, with `good_when`: what the people get toward their aim once the deliverable is
+   good. Never say how to fix the deliverable, as its
    generator holds the sources and decides the fix. Look for nothing beyond the conditions, as a
    hunt for defects finds something in every work and never ends.
 5. End by giving `done`, with your answer to each condition.

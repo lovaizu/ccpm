@@ -42,10 +42,11 @@ result carries.
 
 ### Judged by the people it's for
 
-An evaluator gets only what the deliverable's people have.
+An evaluator gets only what the deliverable's people have, and answers each condition by their aim,
+the goal's state.
 
-*Why*: an evaluator that knows what the maker meant judges the making, not what the people get,
-raising KR1.1.
+*Why*: an evaluator with the maker's intent, or without the people's aim, judges for someone else,
+raising KR1.1 and KR1.2.
 
 ### Signed off before it's built on
 

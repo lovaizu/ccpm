@@ -14,6 +14,7 @@
       "required": [
         "record",
         "deliverable",
+        "goal",
         "name",
         "best_practice",
         "conditions",
@@ -27,6 +28,10 @@
         },
         "deliverable": {
           "description": "The path of the deliverable it judges.",
+          "type": "string"
+        },
+        "goal": {
+          "description": "The design tree's goal: what the user is after, and the state the people are in once it holds, the aim by which it answers each condition.",
           "type": "string"
         },
         "name": {

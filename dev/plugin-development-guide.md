@@ -346,16 +346,17 @@ caller does not care about spends their time on the plugin's job
 
 ### Read by those who did not make it
 
-An evaluator that did not make the work checks it first, in the place of the work's user. The
-evaluator puts each question of the checklist in `good`, with the lines that meet it, or in `more`,
-with `good_when`. `good_when` says what the user gets once the work is good, never how to make it.
+An evaluator that did not make the work checks it first, in the place of the work's user, toward
+that user's aim. The evaluator puts each question of the checklist in `good`, with the lines that
+meet it, or in `more`, with `good_when`, by what that aim needs. `good_when` says what the user gets
+once the work is good, never how to make it.
 Where the caller reads the whole work to approve it, such as a plan, no evaluator reads it first:
 the caller is its first reader.
 
 *When*: a work whose user gets something no machine can check.
 
 *Why*: the generator reads what it meant, not what it wrote. A hunt for defects finds something in
-every work, and never ends. The generator holds the sources, so how to mend is its call
+every work, and never ends, while the user's aim says which questions matter how far. The generator holds the sources, so how to mend is its call
 ([harness design](https://www.anthropic.com/engineering/harness-design-long-running-apps)). An
 evaluator before the caller adds a reading the caller makes anyway.
 

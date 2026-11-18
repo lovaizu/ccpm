@@ -156,6 +156,7 @@ def _of_start(run: Run, tree: DesignTree, role: str, record: str) -> Cut:
     part = {
         "record": record,
         "deliverable": start.deliverable,
+        "goal": design.goal(tree),
         "name": node["name"],
         "best_practice": kinds,
         "conditions": list(ids),

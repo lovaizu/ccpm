@@ -188,7 +188,7 @@ def test_each_evaluator_takes_the_first_group_that_no_running_start_holds(tmp_pa
     assert first is not None and first.part["conditions"] == ["N1", "N2", "N3"]
     second = cut.next_start(run, tree, "evaluator", [dict(first.values)])
     assert second is not None and second.part["conditions"] == ["N4", "N5", "N6", "N7"]
-    people = {"record", "deliverable", "name", "best_practice", "conditions", "answers"}
+    people = {"record", "deliverable", "goal", "name", "best_practice", "conditions", "answers"}
     assert set(first.part) == people
 
 

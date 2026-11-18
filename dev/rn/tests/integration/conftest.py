@@ -76,14 +76,13 @@ _held_next_start = next_start
 
 
 def next_start(run, tree, role, running):
-    """The Cut of the next start, with the goal and the decisions beside an evaluator's part."""
+    """The Cut of the next start, with the decisions beside an evaluator's part."""
     cut = _held_next_start(run, tree, role, running)
     if cut is None or role != "evaluator":
         return cut
-    goal = tree.data["goal"]
     each = tree.data["deliverables"]
     decisions = [d["necessary_conditions"] for d in each if "necessary_conditions" in d]
-    return Cut(cut.role, cut.values, dict(cut.part, goal=goal, decisions=decisions))
+    return Cut(cut.role, cut.values, dict(cut.part, decisions=decisions))
 '''
 NO_STEP_LACKS = '''
 
@@ -146,9 +145,9 @@ def push(run):
     return None
 '''
 # The Lanes that hold a rule beside its part of rn's code, by the rule, each by its role and lane
-# type, as the guard holds a role's calls to its throwaway copy by the generator's run_only Lane.
-LANES: dict[str, tuple[str, str]] = {
-    "Tried in a throwaway copy": ("generator", "run_only"),
+# type, as the guard holds a role's calls to its throwaway copy by its run_only Lane.
+LANES: dict[str, tuple[tuple[str, str], ...]] = {
+    "Tried in a throwaway copy": (("generator", "run_only"), ("evaluator", "run_only")),
 }
 RULES: dict[str, tuple[str, str]] = {
     "Drawn out along the design tree": ("tree/cut.py", WHOLE_TREE),
@@ -176,8 +175,8 @@ def broken(request: pytest.FixtureRequest, b: rn_walkthrough.Bench) -> None:
         file, stand_in = RULES[rule]
         with open(os.path.join(b.rn, "domain", file), "a", encoding="utf-8") as f:
             f.write(stand_in)
-        if rule in LANES:
-            _lane_taken_out(b, *LANES[rule])
+        for role, kind in LANES.get(rule, ()):
+            _lane_taken_out(b, role, kind)
 
 
 def _lane_taken_out(b: rn_walkthrough.Bench, role: str, kind: str) -> None:

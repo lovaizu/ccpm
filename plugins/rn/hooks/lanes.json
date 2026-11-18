@@ -74,6 +74,20 @@
       "role": "evaluator",
       "file": "domain/evaluator.md",
       "step": 4,
+      "type": "run_only",
+      "args": {
+        "commands": [
+          "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {deliverable} {command}",
+          "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {number} {what}",
+          "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} {step}",
+          "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}"
+        ]
+      }
+    },
+    {
+      "role": "evaluator",
+      "file": "domain/evaluator.md",
+      "step": 6,
       "type": "ends_checked",
       "args": {
         "command": "python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}"
@@ -82,7 +96,7 @@
     {
       "role": "evaluator",
       "file": "domain/evaluator.md",
-      "step": 4,
+      "step": 6,
       "type": "ends_by_result",
       "args": {}
     }
@@ -283,6 +297,11 @@
       {
         "file": "domain/evaluator.md",
         "step": 4,
+        "text": "Run only `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/throwaway.py {deliverable} {command}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} {of} {number} {what}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} {step}` or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}`."
+      },
+      {
+        "file": "domain/evaluator.md",
+        "step": 6,
         "text": "End once `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py check evaluator {result} {record}` gives 0. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py evaluator done`, as a command of its own."
       },
       {
