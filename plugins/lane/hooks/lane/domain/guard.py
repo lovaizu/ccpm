@@ -150,9 +150,10 @@ def handle(event: Event, root: str) -> Answer:
     moves.
     Carries: each `CC->>G` arrow of S4 to S6, each `G-->>` answer, S5 `G->>A: asks for the Step's
     Items, with the role, Step n, and the Start's run values` and `G->>A: asks for the Items of the
-    Step due, with the role and the Start's run values`, and S4 `G->>G: leaves that start out of
-    the moves due, with why in its place` and `G->>G: gives that start with why, and lets the call
-    run`, with the Notes after it and after the tie of a Start.
+    Step due, with the role and the Start's run values`, and S4's branches where the adapter gives
+    no text, which the guard leaves out of the moves due with why in its place, and where it fails
+    at the skill's call, where the guard gives that start with why and lets the call run, with the
+    Notes after it and after the tie of a Start.
     """
     name = plugin_name(root)
     try:

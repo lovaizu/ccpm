@@ -272,7 +272,7 @@ sequenceDiagram
   participant K as tree-keeper
   participant T as tree.py
   loop each point open
-    alt it's the user's
+    opt it's the user's, as the purpose and the best practices settle the rest
       O->>K: the point, as a decision still open (Decision)
       K->>T: writes it, and commits
       K-->>O: what changed
@@ -282,13 +282,10 @@ sequenceDiagram
       and
         Note over O,K: Meanwhile, the orchestrator settles each other point, and the rounds of each deliverable whose turn has come go on, as S1 draws.
       end
-    else the purpose or a best practice settles it
-      O->>O: settles it
     end
     O->>K: the decision, with its ground, and the plan where the decision changes it (Decision, Deliverable)
     K->>T: writes it, and commits it with its ground as the message and each deliverable whose turn has come marked doing (Design tree)
     T-->>K: what changed, each node it touches, and each deliverable marked doing
-    K->>K: checks that the path up and each node touched agree with it
     K-->>O: what changed, each node checked, and each deliverable marked doing
     alt the change falls short
       O->>K: sends it back, with the ground
@@ -328,13 +325,10 @@ sequenceDiagram
   alt the user approves
     U->>O: /rn:ty
     O->>T: approves the sign-off waiting, as /rn:ty loads (Sign-off)
-    O->>O: plans the rest again from what the user signed off
     O->>K: it's signed off, with the plan where it changed (Sign-off, Deliverable)
     K->>T: writes it, and commits it with each deliverable whose turn has come marked doing (Design tree)
     T-->>K: what changed, each node it touches, and each deliverable marked doing
-    K->>K: checks that each node touched agrees with it
     K-->>O: what changed, each node checked, and each deliverable marked doing
-    O->>O: checks it against the design tree best practice, and takes it or sends it back
     opt no deliverable is left
       Note over U,O: The work is handed over, as S6 draws.
     end
@@ -348,8 +342,7 @@ sequenceDiagram
       RP-->>T: the comments (Comment)
       T-->>O: the comments (Comment)
     end
-    O->>O: judges each by the purpose and the best practices, for the decision it changes
-    O->>K: each decision it changes (Decision)
+    O->>K: each decision that the user's words change (Decision)
     Note over O,K: The rounds start again from the design, as S1 draws.
   end
 ```
@@ -418,7 +411,6 @@ sequenceDiagram
       O->>U: which one (Point)
       U->>O: answers
     end
-    O->>O: enters the run's worktree
     O->>U: Picking up, where it stopped, and the point or sign-off waiting
     O->>K: starts it, where the guard gives its start due (Cut)
     O->>G: starts each that stood in a step, at that step (Cut, Place)
@@ -438,7 +430,8 @@ sequenceDiagram
   participant RP as repository
   participant GH as GitHub
   actor D as rn's developers
-  O->>O: finds each change to a best practice and each general lesson in what the run's evaluators put in more
+  O->>T: gets every round, to find each change to a best practice and each general lesson in what the run's evaluators put in more (Answers)
+  T-->>O: each round's Answers (Answers)
   loop each change to a best practice found
     O->>U: the change, with a recommendation (Point)
     U->>O: answers
@@ -464,8 +457,7 @@ sequenceDiagram
       end
     end
   and
-    O->>O: reads the whole pull request at once against the goal, by its part
-    opt it finds one
+    opt the whole pull request, read at once against the goal, needs a decision changed
       O->>K: the decision it changes (Decision)
       Note over O,K: The rounds start again from the design, as S1 draws, and S6 starts again once they end.
     end

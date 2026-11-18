@@ -61,8 +61,7 @@ def each(run: Run, deliverable: str) -> tuple[Round, ...]:
     Changes: nothing.
     Refuses: fault.Wrong, where the deliverable has no round or a file of it leaves its form.
     Carries: S1 `O->>T: gets the round (Answers, Made)`, and `T-->>O: each evaluator's Answers, and
-    what the generator made`; S6 `O->>O: finds each change to a best practice and each general
-    lesson in what the run's evaluators put in more`, which reads every round.
+    what the generator made`; S6 `O->>T: gets every round` and `T-->>O: each round's Answers`.
     """
     numbers = range(1, latest(run, deliverable) + 1)
     if not numbers:

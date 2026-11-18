@@ -18,7 +18,8 @@ def due(plugin: str, moves: Sequence[Due | Left]) -> str:
     no move is one of these or the move to start no more.
 
     Carries: S4 `G-->>M: the moves due, each start with its text`, with why in place of each start
-    that `G->>G: leaves that start out of the moves due`, S6 `G-->>M: the start due`.
+    that the guard leaves out, in S4's branch `else it gives none, as no work waits for that
+    start`, S6 `G-->>M: the start due`.
     """
     said = _moves(plugin, moves)
     return f"{plugin}: {said}" if said else ""
@@ -29,7 +30,8 @@ def gave(plugin: str, role: str, result: str, moves: Sequence[Due | Left]) -> st
     with why in place of each start left out, as `due` says it.
 
     Carries: S4 `G-->>M: the Result, and the moves of its Route`, with why in place of each start
-    that `G->>G: leaves that start out of the moves due`, and `start no more subagents`.
+    that the guard leaves out, in S4's branch `else it gives none, as no work waits for that
+    start`, and `start no more subagents`.
     """
     return f"{plugin}: {role} gave `{result}`. {_moves(plugin, moves)}".rstrip()
 
@@ -68,7 +70,8 @@ def text_failed(plugin: str, moves: Sequence[Move], why: str) -> str:
     ``changelog: Start `changelog:writer` with the text its adapter gives once it can; now
     <why>.``, as the skill's own steps may make what the adapter reads.
 
-    Carries: S4 `G->>G: gives that start with why, and lets the call run`.
+    Carries: S4's branch `else it fails at the skill's call, where the guard gives that start with
+    why, and lets the call run`.
     """
     said = [
         f"Start `{plugin}:{m.role}` with the text its adapter gives once it can; now {why}."

@@ -207,14 +207,12 @@ sequenceDiagram
   L->>ST: reads each Step
   L->>LS: reads the Laid
   L-->>UP: each Step without the text that the Laid names
-  UP->>UP: writes the Lanes and the Routes (Proposal)
-  loop until the Proposal can stand
+  loop until the Proposal of the Lanes and the Routes that up writes can stand
     UP->>L: print (Proposal)
     L->>T: checks each Lane, and makes its sentence
     L->>ST: checks the Proposal against the plugin's files
     alt the Proposal can't stand
-      L-->>UP: what's wrong
-      UP->>UP: mends the Proposal
+      L-->>UP: what's wrong, which up mends in the Proposal
     else a file of the plugin can't carry it
       L-->>UP: what's wrong in the file
       UP-->>U: what to fix in their plugin, and stops
@@ -279,14 +277,7 @@ sequenceDiagram
   UP->>L: steps <plugin>
   L->>LS: reads the Laid
   L->>ST: reads each Step
-  loop each sentence that the Laid added
-    alt the Step still holds it word for word
-      L->>L: takes it out
-    else the user changed it
-      L->>L: keeps it as the user's words, and notes it
-    end
-  end
-  L-->>UP: each Step that remains, with the notes
+  L-->>UP: each Step without each sentence of the Laid that it still holds word for word, and with a note on each that the user changed, kept as the user's words
   Note over U,LS: up proposes, the user approves, and lay.py lays with the newest code, as S1 and S2 draw.
 ```
 
@@ -311,12 +302,10 @@ sequenceDiagram
       G->>A: asks for the text of each start due, with each Start that runs
       alt it gives one
         A-->>G: the text, and the run values
-      else it gives none, as no work waits for that start
+      else it gives none, as no work waits for that start, which the guard leaves out of the moves due, with why in its place
         A-->>G: why
-        G->>G: leaves that start out of the moves due, with why in its place
-      else it fails at the skill's call
+      else it fails at the skill's call, where the guard gives that start with why, and lets the call run
         A-->>G: why
-        G->>G: gives that start with why, and lets the call run
       else it fails at any other move
         A-->>G: why
         G-->>M: why and who must fix it, in place of that start
@@ -458,7 +447,6 @@ sequenceDiagram
           G-->>SA: stops it, with why and who must fix it
         else a path a Lane of reads_whole names wasn't read whole, or an Item isn't marked
           G-->>SA: stops it, with the Lane's sentence and what the Step lacks
-          SA->>SA: goes back to the Step
         else
           G-->>CC: lets it through
           SA->>SP: step.py <role> <n>
@@ -491,7 +479,6 @@ sequenceDiagram
         end
       else it breaks a Lane
         G-->>SA: stops it, with the Step's sentence and what it may do
-        SA->>SA: goes back to the Step
       else it starts a role of the plugin
         G-->>SA: stops it, with the sentence of the Lane on its last Step
       else the guard can't check it

@@ -35,8 +35,8 @@ def strip(steps: Sequence[Step], laid: Laid) -> tuple[tuple[Step, ...], tuple[No
     words. A sentence ends at a `.`, `!`, or `?` outside backticks that a space follows.
     Changes: nothing.
     Refuses: nothing.
-    Carries: S1 `L-->>UP: each Step without the text that the Laid names`, S3's loop over each
-    sentence that the Laid added, and `L-->>UP: each Step that remains, with the notes`.
+    Carries: S1 `L-->>UP: each Step without the text that the Laid names`, and S3 `L-->>UP: each
+    Step without each sentence of the Laid that it still holds word for word`.
     """
     added = {(x.file, x.step): x.text for x in laid.sentences}
     kept = []
