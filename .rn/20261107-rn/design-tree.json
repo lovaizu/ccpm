@@ -145,7 +145,12 @@
             },
             {
               "about": "How rn's parts are made",
-              "decided": "each part meets its purpose in the simplest way that the purpose allows, with no mechanism that only works around another, as the user decided on 2026-11-18 that rn be made as it should be, after rn's tree-keeper passed JSON through Bash, a temporary folder kept it from another run's file, and Claude Code refused the JSON in its commands",
+              "decided": "each part carries out the product vision's Concept or a key result in the simplest way it allows, with no mechanism that only works around another, as the user decided on 2026-11-18 that rn be made as it should be, built from rn's Concept",
+              "by": "user"
+            },
+            {
+              "about": "The bound on each context",
+              "decided": "each AI starts from its Cut and reads what it needs from files, and none carries the run's history, as the user decided on 2026-11-18 on the ACC form: in rn's E2E walkthrough of 2026-11-18 the main conversation reached 180k tokens in 42 minutes, its first of two deliverables in its second round",
               "by": "user"
             }
           ]
@@ -191,11 +196,6 @@
           "good": true,
           "decisions": [
             {
-              "about": "Each role's expected role",
-              "decided": "each AI role's responsibility says first what it brings the people, then what the others expect of it: the orchestrator keeps the work on what brings the people closer and keeps the design tree true to each decision, the generator makes only what brings the deliverable's people closer, and the evaluator finds what's good for them and what would make it good; no role only passes on another's work",
-              "by": "reasoning"
-            },
-            {
               "about": "Who orders the work",
               "decided": "the orchestrator, at each turn, by inputs first and then by what the run's facts show brings the people closest, and the tree-keeper writes it in the design tree's work",
               "by": "user"
@@ -206,18 +206,28 @@
               "by": "user"
             },
             {
-              "about": "Who writes the design tree",
-              "decided": "the orchestrator edits design-tree.json with the Edit tool, and each more it keeps in the round's file with the Write tool; tree.py write then checks the tree as edited against the last commit, by form, work, inputs, and each more kept, marks each turn, and commits it with the ground, so no change passes through a shell and no role passes on a change it may neither decide nor mend",
+              "about": "Who decides a sign-off",
+              "decided": "only the user's typed /rn:ty or /rn:gm, whose skill runs tree.py approve or send-back as its own command as it loads, while the guard stops any other call of them",
               "by": "reasoning"
+            },
+            {
+              "about": "Each role's expected role",
+              "decided": "the orchestrator, a subagent started anew at each event of the run, one at a time, rebuilds the run from the design tree and the news since its last turn, keeps the tree true, settles each point but the user's, and orders the work; the main conversation decides nothing: it shows the user each message of the orchestrator word for word, keeps each word of theirs word for word, and starts each role that the guard gives due; the generator makes only what brings the deliverable's people closer; the evaluator finds what's good for them and what would make it good",
+              "by": "user"
+            },
+            {
+              "about": "Who writes the design tree",
+              "decided": "the orchestrator edits design-tree.json with the Edit tool, and each more it keeps in the round's file with the Write tool; tree.py write checks the tree as edited against the last commit, by form, work, inputs, and each more kept, marks each turn, and commits it with the ground",
+              "by": "reasoning"
+            },
+            {
+              "about": "How Lane holds each role",
+              "decided": "each role's steps say what holds it, such as reading a best practice whole, carrying out each of its practices, writing only its deliverable, or leaving the design tree unread for the evaluator, and Lane lays the rule that each step's words call for, as Lane's up does; rn's check judges at each end only what no rule of Lane's can: each result against its Cut, and each deliverable against its template, as the user decided on 2026-11-18 that rn's use of Lane comes from Lane's up",
+              "by": "user"
             },
             {
               "about": "Where a start's Cut lives",
-              "decided": "tree.py writes each start's Cut into the round's folder as it gives the start, and every later read of the round takes it from there, its course, the tree at its cut, and the commit at which its deliverable was last done, so nothing rebuilds a round from git's history",
-              "by": "reasoning"
-            },
-            {
-              "about": "Who decides a sign-off",
-              "decided": "only the user's typed /rn:ty or /rn:gm, whose skill runs tree.py approve or send-back as its own command as it loads, while the guard stops any other call of them",
+              "decided": "tree.py keeps each start's Cut in the run's folder as it gives the start, with the start's result once rn's check keeps it at its end, and every later read takes them from there, so nothing rebuilds a round from git's history",
               "by": "reasoning"
             }
           ]
@@ -253,13 +263,13 @@
               "by": "reasoning"
             },
             {
-              "about": "A pause",
-              "decided": "the pause stops each role and commits the work; each role stopped starts again from its kept Cut on the deliverable as committed, as the deliverable holds the work done, so no role commits at each step and no Place is kept",
+              "about": "A pick-up among several runs",
+              "decided": "/rn:up alone, where several runs are left, names each and ends; /rn:up with a run's name picks that run up, as Lane's adapter names the work a call picks up from the words typed after the command, so a pick-up never goes the way of a new run",
               "by": "reasoning"
             },
             {
-              "about": "A pick-up among several runs",
-              "decided": "/rn:up alone, where several runs are left, names each and ends; /rn:up with a run's name picks that run up, as Lane's adapter names the work a call picks up from the words typed after the command, so a pick-up never goes the way of a new run",
+              "about": "A pause",
+              "decided": "the main conversation stops each role and tree.py pause commits and pushes the work, leaving out an edit of the tree that tree.py write didn't check, as the orchestrator's next turn takes the same news again; each role stopped starts again from its kept Cut",
               "by": "reasoning"
             }
           ]
@@ -1017,7 +1027,99 @@
       ]
     },
     {
-      "name": "A person's /rn:up, /rn:ty, /rn:gm, and /rn:dn, typed or asked for, carry their request from the goal through each sign-off to one pull request, asking them only what's theirs",
+      "name": "A person's /rn:up, /rn:ty, /rn:gm, and /rn:dn, typed or asked for, show them each point and sign-off word for word and keep each word of theirs, carrying their request to one pull request",
+      "path": "plugins/rn/domain/conversation.md",
+      "kind": "prompt",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/domain/best-practices/prompt"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "At each event of the run, the orchestrator rebuilds it from the design tree and its news, keeps the tree true, and asks the person only what's theirs",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
       "inputs": [
@@ -1473,13 +1575,13 @@
       "decisions": [
         {
           "about": "Where the steps of a typed command lie",
-          "decided": "each command the person types has its SKILL.md hold the steps of that moment, as Claude Code loads it when typed, and the orchestrator holds only the steps that every moment shares, as a controller and its domain logic",
+          "decided": "each command the person types has its SKILL.md hold the steps of that moment, as Claude Code loads it when typed, and the main conversation's part holds only the steps that every moment shares; where the plugin's work runs over many turns, the main conversation decides nothing and a subagent started at each event decides, so no context carries the run",
           "by": "user"
         },
         {
           "about": "Each step and each practice carried out",
-          "decided": "each role, the main conversation's skill among them, records each step of its prompt and each practice of the best practice it works by, at the time each names, and its end, or the skill's turn's end where it puts work up, passes only where the plugin's own check accepts the record, as the guard runs that check",
-          "by": "reasoning"
+          "decided": "each role's steps say each practice and file it takes, and Lane lays the rule that their words call for, as Lane's up does: a step done in order, a checklist from the plugin's adapter of a step's items, a file read whole or never read, a path written only; the plugin's own check runs at each end only for what no rule of Lane's holds, such as a result against its cut",
+          "by": "user"
         },
         {
           "about": "A prompt's tests",
@@ -1557,6 +1659,10 @@
     {
       "do": "make",
       "path": "dev/rn/tests/integration/test_rn_rules.py"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/conversation.md"
     },
     {
       "do": "make",

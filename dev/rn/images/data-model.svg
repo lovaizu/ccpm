@@ -55,16 +55,16 @@
   </defs>
   <rect class="bg" x="0" y="0" width="1500" height="960"/>
   <rect class="frame" x="20" y="70" width="230" height="130" rx="6"/>
-  <text class="frame-name" x="32" y="188">a start&#x27;s record</text>
+  <text class="frame-name" x="32" y="188">a start</text>
   <rect class="box" x="40" y="100" width="170" height="48" rx="0"/>
-  <text class="name" x="125.0" y="129.0" text-anchor="middle">Record</text>
+  <text class="name" x="125.0" y="129.0" text-anchor="middle">Start</text>
   <path class="line" d="M210,124 L340,124"/>
-  <text class="label small halo" x="275.0" y="116" text-anchor="middle">records</text>
+  <text class="label small halo" x="275.0" y="116" text-anchor="middle">began with</text>
   <text class="label small" x="216" y="140" text-anchor="start">1</text>
-  <text class="label small" x="334" y="140" text-anchor="end">0..1</text>
+  <text class="label small" x="334" y="140" text-anchor="end">1</text>
   <g transform="translate(300,0)">
-  <rect class="frame" x="20" y="70" width="240" height="420" rx="6"/>
-  <text class="frame-name" x="32" y="478">the orchestrator&#x27;s handoffs</text>
+  <rect class="frame" x="20" y="70" width="240" height="520" rx="6"/>
+  <text class="frame-name" x="32" y="578">the orchestrator&#x27;s handoffs</text>
   <rect class="frame" x="310" y="70" width="500" height="320" rx="6"/>
   <text class="frame-name" x="322" y="378">the design tree</text>
   <rect class="frame" x="940" y="70" width="220" height="320" rx="6"/>
@@ -168,11 +168,17 @@
   <text class="label small" x="226" y="252" text-anchor="start">0..*</text>
   <text class="label small" x="614" y="166" text-anchor="end">0..1</text>
   <rect class="box" x="40" y="400" width="180" height="48" rx="0"/>
-  <text class="name" x="130.0" y="429.0" text-anchor="middle">Comment</text>
-  <path class="line" d="M50,400 L50,374 L30,374 L30,224 L40,224"/>
+  <text class="name" x="130.0" y="429.0" text-anchor="middle">Said</text>
+  <path class="line" d="M200,400 L200,348"/>
+  <text class="label small halo" x="208" y="380" text-anchor="start">answers</text>
+  <text class="label small" x="194" y="364" text-anchor="end">0..1</text>
+  <text class="label small" x="194" y="394" text-anchor="end">0..*</text>
+  <rect class="box" x="40" y="500" width="180" height="48" rx="0"/>
+  <text class="name" x="130.0" y="529.0" text-anchor="middle">Comment</text>
+  <path class="line" d="M50,500 L50,474 L30,474 L30,224 L40,224"/>
   <text class="label small halo" x="38" y="278" text-anchor="start">sent back with</text>
   <text class="label small" x="34" y="216" text-anchor="end">1</text>
-  <text class="label small" x="56" y="394" text-anchor="start">0..*</text>
+  <text class="label small" x="56" y="494" text-anchor="start">0..*</text>
   </g>
   <text class="frame-name" x="30" y="910">Legend</text>
   <text class="label small" x="100" y="910" text-anchor="start">a number at a line&#x27;s end: how many of the data at that end the other joins: 1 one, 0..1 none or one, 1..* one or more, 0..* any number</text>
