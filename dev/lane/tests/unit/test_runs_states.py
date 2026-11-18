@@ -112,9 +112,6 @@ def test_an_untied_start(event: tuple[Line, ...], then: Stands) -> None:
         pytest.param(END_OF_FIRST, Stands((True,), START_WRITER, ()), id="end-of-its-call"),
         pytest.param(END_NAMING_NONE, Stands((True,), START_WRITER, ()), id="end-naming-none"),
         pytest.param(END_KILLED, Stands((True,), START_WRITER, ()), id="end-killed"),
-        pytest.param(
-            END_OF_RESUME, Stands((True,), START_WRITER, ()), id="end-naming-a-call-it-didnt-make"
-        ),
         pytest.param(END_OF_ANOTHER, Stands((False,), START_WRITER, WRITTEN), id="end-of-another"),
         pytest.param(RESUME_AGAIN, Stands((False, False), START_WRITER, WRITTEN), id="resume"),
     ],
@@ -329,12 +326,6 @@ PAUSED = (Move("no_more", result="paused"),)
             (CALLED,), REPLY, RunStands(START_WRITER, False, False, False), id="going-reply"
         ),
         pytest.param((CALLED,), PAUSE, RunStands(PAUSED, False, False, False), id="going-command"),
-        pytest.param(
-            (CALLED,),
-            (TextGiven("r1"),),
-            RunStands(START_WRITER, False, False, False),
-            id="going-text-given-unawaited",
-        ),
         pytest.param(
             AWAITING, REPLY, RunStands(START_WRITER, True, False, False), id="awaiting-reply"
         ),

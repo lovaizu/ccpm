@@ -77,18 +77,11 @@ def lies(runs: tuple[Any, ...], fields: dict[str, Any]) -> tuple[str | None, tup
         pytest.param(TIED, SUBAGENTS_CALL, ("toolu_writer", ("r1",)), id="tied-subagents-call"),
         pytest.param(TIED, SUBAGENTS_STOP, ("toolu_writer", ("r1",)), id="tied-subagents-stop"),
         pytest.param(TIED, END_OF_FIRST, ("toolu_writer", ("r1",)), id="tied-end-of-its-call"),
-        pytest.param(
-            TIED,
-            END_OF_RESUME,
-            ("toolu_writer", ("r1",)),
-            id="tied-end-naming-a-call-it-didnt-make",
-        ),
         pytest.param(TIED, END_NAMING_NONE, ("toolu_writer", ("r1",)), id="tied-end-naming-none"),
         pytest.param(TIED, MAINS_CALL, (None, ("r1",)), id="tied-mains-call"),
         pytest.param(TIED, MAINS_STOP, (None, ("r1",)), id="tied-mains-stop"),
         pytest.param(TIED, PROMPT, (None, ("r1",)), id="tied-prompt"),
         pytest.param(UNTIED, SUBAGENTS_CALL, (None, ()), id="untied-subagents-call"),
-        pytest.param(UNTIED, END_OF_FIRST, (None, ()), id="untied-end"),
         pytest.param(UNTIED, MAINS_CALL, (None, ("r1",)), id="untied-mains-call"),
         pytest.param(
             RESUMED_BEFORE_END, SUBAGENTS_CALL, ("toolu_w2", ("r1",)), id="resumed-subagents-call"

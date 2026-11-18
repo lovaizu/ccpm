@@ -158,65 +158,7 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/lane/product-vision.md",
-        "plugins/lane/README.md",
-        "dev/lane/architecture.md",
-        "plugins/lane"
-      ],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/test-design"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The cases derived again",
-              "decided": "each unit and integration case of Lane is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
-              "by": "user"
-            },
-            {
-              "about": "The cases judged again",
-              "decided": "Lane's cases derived on 2026-11-18 are each judged again by the test design best practice's N3 as it now stands: a case of a transition that no use brings about is taken out",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The gaps",
-              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
-              "by": "reasoning"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The user reads what Lane would hold, each step as it'll read and the order, before anything holds their plugin",
