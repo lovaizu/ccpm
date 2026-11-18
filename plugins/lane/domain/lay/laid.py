@@ -29,29 +29,54 @@ def strip(steps: Sequence[Step], laid: Laid) -> tuple[tuple[Step, ...], tuple[No
 
     Takes: the Steps as the files hold them, and the Laid.
     Gives: each Step with each sentence that it still holds word for word, after a space, taken
-    out, and a Note for each sentence that the Step no longer holds, which the user changed: the
-    Step stays as it reads, and the Note names the sentence laid and, as `now`, the Step's last
-    sentences, as many as the laid one holds, since Lane laid its sentence after the Step's own
-    words. A sentence ends at a `.`, `!`, or `?` outside backticks that a space follows.
+    out, and a Note for each sentence that no Step holds, which the user changed: the Step of the
+    sentence's number stays as it reads, and the Note names the sentence laid and, as `now`, that
+    Step's last sentences, as many as the laid one holds, since Lane laid its sentence after the
+    Step's own words. A sentence is sought in the Step of its number, then in each later Step of
+    its file after the one that held the sentence before it, as a Step that the user added before
+    it moves it down. A sentence ends at a `.`, `!`, or `?` outside backticks that a space
+    follows.
     Changes: nothing.
     Refuses: nothing.
     Carries: S1 `L-->>UP: each Step without the text that the Laid names`, and S3 `L-->>UP: each
     Step without each sentence of the Laid that it still holds word for word`.
     """
-    added = {(x.file, x.step): x.text for x in laid.sentences}
-    kept = []
+    kept = list(steps)
     notes = []
-    for step in steps:
-        sentence = added.get((step.file, step.number), "")
-        at = step.text.rfind(f" {sentence}")
-        if sentence and at >= 0:
-            text = step.text[:at] + step.text[at + 1 + len(sentence) :]
-            step = dataclasses.replace(step, text=text)
-        elif sentence:
-            now = _last_sentences(step.text, len(_starts(sentence)))
-            notes.append(Note(step.file, step.number, sentence, now))
-        kept.append(step)
+    after: dict[str, int] = {}
+    for sentence in sorted(laid.sentences, key=lambda x: (x.file, x.step)):
+        held = _holding(kept, sentence, after.get(sentence.file, 0))
+        if held is None:
+            notes.extend(_changed(kept, sentence))
+            continue
+        step = kept[held]
+        at = step.text.rfind(f" {sentence.text}")
+        text = step.text[:at] + step.text[at + 1 + len(sentence.text) :]
+        kept[held] = dataclasses.replace(step, text=text)
+        after[sentence.file] = step.number
     return tuple(kept), tuple(notes)
+
+
+def _holding(steps: Sequence[Step], sentence: LaidSentence, after: int) -> int | None:
+    """The index of the Step that holds the sentence after a space: the Step of its number, else
+    the first later Step of its file after the number `after`; None where none does."""
+    ours = [(i, s) for i, s in enumerate(steps) if s.file == sentence.file]
+    first = [i for i, s in ours if s.number == sentence.step]
+    later = [i for i, s in ours if s.number > max(after, sentence.step)]
+    for i in first + later:
+        if f" {sentence.text}" in steps[i].text:
+            return i
+    return None
+
+
+def _changed(steps: Sequence[Step], sentence: LaidSentence) -> list[Note]:
+    """The Note of a sentence that no Step holds, on the Step of its number, none where the file
+    holds no such Step."""
+    return [
+        Note(s.file, s.number, sentence.text, _last_sentences(s.text, len(_starts(sentence.text))))
+        for s in steps
+        if (s.file, s.number) == (sentence.file, sentence.step)
+    ]
 
 
 def _starts(text: str) -> list[int]:

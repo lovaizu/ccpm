@@ -295,6 +295,20 @@ def test_a_sentence_still_held_before_the_users_own_is_taken_out() -> None:
     assert strip((held,), d.LAID) == ((mine,), ())
 
 
+@pytest.mark.supports("test_a_step_added_after_a_lay_leaves_each_step_without_lanes_sentences")
+def test_a_sentence_on_a_step_that_moved_down_is_taken_out_where_it_now_lies() -> None:
+    """Given: writer's steps 2 to 4, each holding the sentence Lane laid, moved down to 3 to 5 by a
+    Step the user added as step 2.
+    When: strip takes out the Laid's text.
+    Then: each Step reads as the user wrote it, the new one among them, with no note."""
+    added = Step("writer", "agents/writer.md", 2, "Read `README.md` for the project's name.")
+    last = Step("writer", "agents/writer.md", 5, "Reply with the entries you wrote.")
+    ended = dataclasses.replace(last, text=f"{last.text} {WRITERS[('agents/writer.md', 4)]}")
+    moved = (dataclasses.replace(LAID_2, number=3), dataclasses.replace(LAID_3, number=4), ended)
+    mine = (dataclasses.replace(STEP_2, number=3), dataclasses.replace(STEP_3, number=4), last)
+    assert strip((added, *moved), d.LAID) == ((added, *mine), ())
+
+
 @pytest.mark.supports("test_a_sentence_the_user_changed_stays_as_theirs")
 def test_a_sentence_the_user_changed_is_kept_with_a_note() -> None:
     """Given: writer's step 3, whose laid sentence the user changed to name NEWS.md too.

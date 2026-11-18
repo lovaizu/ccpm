@@ -91,13 +91,6 @@ def test_a_lay_after_lane_updates_lays_with_the_newest_code(b: w.Bench) -> None:
 
 
 @pytest.mark.supports("S3", "Laid", "Step")
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "the Laid names each sentence by its Step's number, so a Step the user adds before it"
-        " leaves Lane's sentence in the Step it moved to and notes a change on the Step now there"
-    ),
-)
 def test_a_step_added_after_a_lay_leaves_each_step_without_lanes_sentences(b: w.Bench) -> None:
     """Given: the walkthrough's Proposal laid, then the user added a Step to writer before its step
     2, so that each Step after it moved down by one.
