@@ -96,13 +96,13 @@ KR1.2.
 - rn's developers\
   Change rn's own best practices by each lesson that reaches rn's repository.
 - orchestrator\
-  Keeps the work on what brings the people closer: reviews the tree each turn, asking the user only theirs.
+  Drafts the goal and the plan, reviews the tree each turn, checks each result, and asks the user only theirs.
 - tree-keeper\
-  Keeps the design tree true to each decision, so every role builds on what holds now.
+  Keeps the design tree true to each decision and each node it touches, so every role builds on what holds.
 - generator\
   Makes the deliverable from its cut with only what brings its people closer, handing back each point it can't settle.
 - evaluator\
-  Finds, as the deliverable's people, what's good for them and what would make it good, condition by condition.
+  Finds, as the deliverable's people toward their aim, what's good and what would make it good, condition by condition.
 - tree.py\
   Keeps the tree's form, finds each deliverable's turn and cut, and holds the run's files and branch.
 - repository\
@@ -196,84 +196,67 @@ sequenceDiagram
   participant F as Run's folder
   U->>O: /rn:up with what they want
   GD->>A: asks for the results kept, as /rn:up loads, with the words typed after it
-  A-->>GD: none, as words after /rn:up are a request, which starts a new run whatever runs are left
+  A-->>GD: none, as words after /rn:up are a request, which starts a new run
   GD->>A: asks for the text of the tree-keeper's start, the run's first move
   A-->>GD: fails, as the folder lies in no run's worktree yet
   GD-->>O: the run started anew, with the tree-keeper's start due and why its text can't be given yet
-  Note over O,A: A run of /rn:up that the conversation held before ends, as Lane's guard ends it at a run started anew.
   O->>T: makes the run's worktree
-  O->>O: enters it
-  O->>K: starts it, with the text that the adapters give in the run's worktree, as the loop below draws for the generator (Cut)
-  K->>K: reads its part, the design tree best practice, and the design tree
-  K-->>O: done
-  O->>O: drafts the goal, and plans the deliverables
+  O->>K: starts it, with the text that the adapters give in the run's worktree (Cut)
   O->>K: resumes it, with the goal drafted and the plan (Decision, Deliverable)
   K->>T: writes them, and commits them with each decision's ground as the message (Design tree)
   T-->>K: what changed, and each node they touch
-  K->>K: checks that each node touched agrees with them
   K-->>O: what changed, and each node checked
-  O->>O: checks it against the design tree best practice
   O->>U: the goal, to confirm, once the tree holds it (Point)
   U->>O: answers
-  Note over U,O: The orchestrator has the goal written as the user confirmed it, and settles each other point, as S2 draws, and puts up the plan, as S3 draws.
+  Note over U,O: The orchestrator settles each other point, as S2 draws, and puts up the plan, as S3 draws.
   loop each deliverable whose turn has come, as it rests on no open point and on nothing not signed off
-    O->>O: reviews the design tree by what the run has shown, and takes the next work where the people gain most
-    O->>K: each change it decides (Decision, Deliverable)
+    O->>K: each change it decides on reviewing the tree (Decision, Deliverable)
     GD->>A: asks for the text of the generator's start, with each start that runs
     A->>T: gets each deliverable doing, and the Cut of the first that no start that runs holds, with the path of a new Record for the start (Cut)
     A-->>GD: that start's text and run values in Lane's form, or none where no work waits
     GD-->>O: the generator's start due, with its text
     O->>G: starts it, with that text (Cut, More kept)
-    Note over O,A: The guard lets a start through only with the text the adapters gave for its role, and stops any other. Each start of the tree-keeper and of each evaluator goes the same way.
-    G->>G: makes the deliverable from the design, of one done before from each input's change since then, and checks it by the best practice
+    Note over O,A: The guard lets a start through only with the text the adapters gave for its role. Each start of the tree-keeper and of each evaluator goes the same way.
     G->>R: records each step and practice as it takes it (Record)
     G->>T: commits its work at the end of each step (Place)
     G->>W: tries it (Try record)
     G->>F: writes what it made, with each point it settled without asking (Made)
     alt the design leaves a point open
       G-->>O: asks, naming it
-      Note over O,G: The orchestrator settles it, as S2 draws, and the rounds of each other deliverable go on meanwhile.
-      O->>G: resumes it once the tree holds the decision, with its ground, and the user's words word for word where they answered
+      O->>G: resumes it once the tree holds the decision, as S2 draws
     else something outside the work stops it, such as a missing tool
       G-->>O: lacks, naming it
       O->>U: what it lacks (Point)
-      U->>O: clears it
-      O->>G: resumes it
     else done
       G->>GD: ends, with done
       GD->>R: checks its record, its result, and the deliverable (Record)
       R-->>GD: each step, practice, or item they lack, and each place where the deliverable leaves its kind's template, or none, keeping the result in the record
       opt they lack one
         GD-->>G: holds its end, with the Lane's sentence that names the check
-        Note over G,R: The generator runs that check, which gives what they lack, carries it out, and ends again. The guard holds each role's end, and each end of the orchestrator's turn, in the same way.
       end
       GD-->>O: done
-      O->>O: checks it against the cut and the best practice
-      alt it falls short
+      alt it falls short of its cut and best practice
         O->>G: sends it back, with the ground
       else
         par one for each group of necessary conditions, of the kind's best practice and of the refactor one
           O->>E: starts it (Cut)
-          E->>T: commits its work at the end of each step (Place)
+          E->>W: tries it toward the people's aim (Try record)
           E->>F: writes each necessary condition in good, with its lines, or in more, with its good_when (Answers)
           E-->>O: done
         end
         O->>T: gets the round (Answers, Made)
         T-->>O: each evaluator's Answers, and what the generator made (Answers, Made)
-        O->>O: judges each more by the purpose and the best practices
         alt a more the people fall short by
           O->>K: the decision it changes, and the more to keep (Decision, More kept)
           K->>T: writes the decision, commits it with its ground as the message, and keeps the more (Design tree, More kept)
           alt the decision that the more names isn't under its deliverable, or didn't change since the round's cut
             T-->>K: refuses the more, naming its best practice and necessary condition
             K-->>O: that tree.py refused it, and why
-            Note over O,K: The orchestrator takes the more back to the decision it comes from, as a fix beside the design rests on no decision.
           else
             T-->>K: what changed, and the More kept
-            Note over O,G: The next round starts from the design.
           end
         else every necessary condition is good
-          Note over U,O: The orchestrator puts up the deliverable, with each decision under it that the user didn't settle and each point that its Made names, as S3 draws.
+          Note over U,O: The orchestrator puts up the deliverable, as S3 draws.
         end
       end
     end
