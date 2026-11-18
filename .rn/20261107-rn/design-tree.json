@@ -52,8 +52,23 @@
           "good": false,
           "decisions": [
             {
-              "about": "The design tree's form",
-              "decided": "the design tree holds the goal, the deliverables, and the work order. Each deliverable sits under the deepest deliverable that its inputs name, so its inputs alone make the deliverable tree, which tree.py draws, with no field of a parent. The work order is a field of the same file, first to last, each item a deliverable to make, named by its path, or a point to decide, named by its path, condition, and about; the orchestrator orders it each turn, first by inputs and preconditions, then by what the run's facts show brings the people closest. tree.py rewrites an item whose node a change renames, and refuses an item that names no node or whose inputs and preconditions aren't done. The list of deliverables no longer holds the order of the work",
+              "about": "The deliverable tree",
+              "decided": "each deliverable sits under the deepest deliverable that its inputs name, as tree.py draws it, and no field holds a parent",
+              "by": "user"
+            },
+            {
+              "about": "The work order",
+              "decided": "a field of the design tree beside the goal and the deliverables, first to last, each item a deliverable to make, named by its path, or a point to decide, named by its path, condition, and about",
+              "by": "user"
+            },
+            {
+              "about": "The order of the work order",
+              "decided": "the orchestrator orders it each turn, first by inputs and preconditions, then by what the run's facts show brings the people closest, and the list of deliverables holds no order of the work",
+              "by": "user"
+            },
+            {
+              "about": "What tree.py keeps of the work order",
+              "decided": "it rewrites an item whose node a change renames, and refuses an item that names no node or whose inputs and preconditions aren't done",
               "by": "user"
             }
           ]
@@ -188,12 +203,12 @@
             },
             {
               "about": "Where a role's record commits",
-              "decided": "only on the run's branch in the work's repository, as the rule The repository holds the work says, as rn's E2E pilot of 2026-11-17 committed a place file of its record into ccpm's own branch rn-rebuild, which was dropped",
+              "decided": "only on the run's branch in the work's repository, as the rule The repository holds the work says",
               "by": "reasoning"
             },
             {
               "about": "Test strategy's Scenario testing",
-              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed, as the E2E test's KR1.1 decision says, in place of a judge on Opus",
+              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed, as the E2E test's KR1.1 decision says",
               "by": "user"
             }
           ]
@@ -209,17 +224,17 @@
           "decisions": [
             {
               "about": "The order of content and structure",
-              "decided": "a deliverable's rounds make and judge its content by its kind's best practice until each condition is good, and only then does the generator rework its structure by the refactor best practice and an evaluator judge that, as the refactor best practices change structure only on content whose tests pass, and the user decided on 2026-11-14 that adding function and reworking structure are two jobs, one at a time; rn's architecture, the generator's prompt, and rn's parts and cases had the generator finish each round by the refactor one and the evaluators of both side by side",
+              "decided": "a deliverable's rounds make and judge its content by its kind's best practice until each condition is good, and only then does the generator rework its structure by the refactor best practice and an evaluator judge that",
               "by": "user"
             },
             {
               "about": "What a later round judges",
-              "decided": "a round after the first judges again only the conditions whose decisions changed since the round before, as the E2E run of 2026-11-18 had six evaluators judge all seventeen conditions again in round 2 after a change to one",
+              "decided": "a round after the first judges again only the conditions whose decisions changed since the round before",
               "by": "user"
             },
             {
               "about": "How many rounds",
-              "decided": "two rounds of content and two of structure at most; a more still left after them goes to the user with the deliverable as a proposal to improve it, as more rounds on the same decisions end the same way, and in rn's E2E pilot the command alone took six",
+              "decided": "two rounds of content and two of structure at most; a more still left after them goes to the user with the deliverable as a proposal to improve it",
               "by": "user"
             },
             {
@@ -514,7 +529,7 @@
             },
             {
               "about": "A comparison with Claude Code alone",
-              "decided": "none: the E2E test shows KR1.1 and KR1.2 alone, as rn's worth is that once the user has answered what's theirs, a deliverable that meets their purpose comes without them, which a request this small, where Claude Code alone wins plainly, can't show, nor the two deliverables' quality side by side",
+              "decided": "none: the E2E test shows KR1.1 and KR1.2 alone",
               "by": "user"
             },
             {
@@ -524,7 +539,7 @@
             },
             {
               "about": "KR1.1 from one run",
-              "decided": "each deliverable done in the design tree on the work's branch is tried by a stand-in of its people, given a checkout of the branch, the walkthrough's lines.csv and rate, and only what those people have: a document's people its text, and a command's people a terminal and what the command shows of itself; it counts as usable where code finds, in what the stand-in's terminal printed, the invoice that invoicer's own render gives for those lines and that rate, as the user decided that Python alone checks it; a deliverable whose people aren't after printing an invoice is listed apart, unjudged",
+              "decided": "each deliverable done in the design tree on the work's branch is tried by a stand-in of its people, given a checkout of the branch, the walkthrough's lines.csv and rate, and only what those people have: a document's people its text, and a command's people a terminal and what the command shows of itself; it counts as usable where code finds, in what the stand-in's terminal printed, the invoice that invoicer's own render gives for those lines and that rate; a deliverable whose people aren't after printing an invoice is listed apart, unjudged",
               "by": "reasoning"
             },
             {
@@ -583,22 +598,17 @@
             },
             {
               "about": "Watching a run",
-              "decided": "the developer watches each run's records as it goes, and stops it at the first place it departs from the walkthrough; e2e.py keeps the records of a run it stops and removes its folder even where a branch's removal fails, as the pilot of 2026-11-17 ran two and a half hours past its plan of eight deliverables, and lost its records and folder when stopped",
+              "decided": "the developer watches each run's records as it goes, and stops it at the first place it departs from the walkthrough; e2e.py keeps the records of a run it stops and removes its folder even where a branch's removal fails",
               "by": "reasoning"
             },
             {
-              "about": "The pilot run",
-              "decided": "the run of 2026-11-18, records walkthrough/20261117T204638Z, held as the first stage: the stand-in followed the walkthrough to the pull request ready, rn asked only the person's points, and a stand-in of accounting printed the invoice from the guide alone by try-guide.json, so KR1.1 counted none of the two deliverables unusable, and KR1.2 was 184 minutes, the command taking six rounds; the three runs before it were stopped at their first departure, each mended at its cause",
-              "by": "reasoning"
-            },
-            {
-              "about": "The runs of 2026-11-18",
-              "decided": "kept as records of the first stage's follow-up: installation/20261118T014552Z passed; walkthrough/20261118T020636Z and 20261118T030702Z were stopped at faults now mended; walkthrough/20261118T033924Z was stopped by the user at round 1's evaluators; walkthrough/20261118T052718Z, kept by e2e._keep after the run was killed, was stopped at turn 3, where rn's turn mark, now taken out, held the turn eleven times, and turns 1 and 2 followed the walkthrough. The walkthrough runs again next, on the cases judged again by the test design best practice's N3 of each transition that the use brings about",
+              "about": "The pilot records",
+              "decided": "walkthrough/20261117T204638Z, the first stage, on which each check's tests run",
               "by": "reasoning"
             },
             {
               "about": "Before the next stage",
-              "decided": "as the user decided on 2026-11-18: the design tree best practice is discussed with the user first; rn's flow makes the content good before the structure is reworked, and judges again only what changed; then the best practices of architecture, README, prompt, and meta, the largest, are read practice by practice, each kept only where the people fail their aim without it; then the walkthrough runs again. The run walkthrough/20261118T072112Z was stopped in round 3 of the command for the first: rounds 1 and 2 took in only the mores that would give accounting a wrong invoice",
+              "decided": "the design tree best practice is discussed with the user first; then rn's flow makes the content good before the structure is reworked, and judges again only what changed; then the best practices of architecture, README, prompt, and meta are read practice by practice, each kept only where the people fail their aim without it; then the walkthrough runs again",
               "by": "user"
             }
           ]
@@ -633,7 +643,7 @@
         },
         {
           "about": "The README after the E2E test",
-          "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short, as the README was made before the product existed",
+          "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short",
           "by": "reasoning"
         }
       ]
@@ -665,7 +675,7 @@
         },
         {
           "about": "An evaluator's words",
-          "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer, as the guide is the one source and met, not met, and lacks say the same thing with other words",
+          "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer",
           "by": "user"
         },
         {
@@ -675,7 +685,7 @@
         },
         {
           "about": "When the guard runs the record check on the main conversation",
-          "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question, as Lane serves any plugin and can't tell which turn puts work up, which only the plugin knows",
+          "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question",
           "by": "reasoning"
         },
         {
