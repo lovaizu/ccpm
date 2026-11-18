@@ -6,7 +6,7 @@
   - **C1** Each level that Test strategy names has the cases that check what its target promises.
     - **N1** Does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result? (E2E cases)
     - **N2** Does each element of the architecture, each path through each sequence, each rule of Solution strategy, each decision of a component, and each handoff with its data, have an integration case that names it? (Integration cases)
-    - **N3** Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, each naming the integration case it supports? (Unit cases)
+    - **N3** Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, and, where its result depends on what came before, for each state with each event that can reach it, each naming the integration case it supports? (Unit cases)
   - **C2** Each case checks the parts through their interfaces, and fails until the parts are built.
     - **N4** Is each case a test in the test code, with its Given, When, and Then stated, that calls the skeleton only through its interfaces and fails on the empty bodies? (E2E cases, Integration cases, Unit cases)
   - **C3** No element and no case is left without the other.
@@ -49,14 +49,15 @@ An element that no case reaches is one whose parts no one has seen fit together,
 
 ### N3
 
-Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, each naming the integration case it supports?
+Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, and, where its result depends on what came before, for each state with each event that can reach it, each naming the integration case it supports?
 
-The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. The techniques are those of the ISTQB glossary: equivalence partitioning, boundary value analysis, and decision table testing.
+The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. A part that keeps what came before, such as the steps a run has taken, breaks where an event reaches it in a state that no sequence draws, which a case for each class of one call doesn't reach. The techniques are the four black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, decision table testing, and state transition testing.
 
 1. *While making.* Divide each input and each result that an interface's contract names into classes that the part treats alike, the refused ones among them, and write one case for each class, naming the integration case it supports.
 2. *While making.* Where a class ends on an ordered scale, such as a length or a count, write one case at each end and one at the nearest value of the next class.
 3. *While making.* Where the contract's result depends on a combination of conditions, write one case for each combination that can occur, with the result it gives.
-4. *While making.* For a part that holds a prompt, write a case where its description says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that its record shows.
+4. *While making.* Where an interface's result depends on what came before, such as a guard that keeps each start still open or a check that reads a record entry by entry, list each state the part can be in and each event that can reach it, from the architecture's sequences and from what the host can send, such as a subagent's end that reaches the main conversation after it resumed that subagent. Write one case for each state with each event, the state it moves to or the refusal it gives, an event that the state doesn't expect included, since a flow breaks unseen where an event reaches a state that no sequence draws.
+5. *While making.* For a part that holds a prompt, write a case where its description says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that its record shows.
 
 ### N4
 

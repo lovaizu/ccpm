@@ -25,8 +25,10 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<unit-cases>`: one test for each class of what an interface takes or gives, named by the
->   class, with the integration case it supports, and its Given, When, and Then stated in the test.
+> - `<unit-cases>`: one test for each class of what an interface takes or gives, and one for each
+>   state with each event where its result depends on what came before. Each test is named by its
+>   class, or by its state and event, with the integration case it supports, and its Given, When,
+>   and Then stated in the test.
 
 ## Trace
 

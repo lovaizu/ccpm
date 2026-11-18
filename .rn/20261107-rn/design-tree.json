@@ -62,60 +62,7 @@
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The unit cases' question",
-              "decided": "N3 asks for each interface a unit case for each class of what it takes and gives, and, where its result depends on what came before, for each state with each event that can reach it, an event the state doesn't expect included, as the E2E runs of 2026-11-18 showed faults of the flow that no case caught, such as Lane's end of a pass reaching after a resume",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The technique added",
-              "decided": "state transition testing, the one of the four black-box techniques of ISTQB's Foundation Level syllabus 4.0 that N3 leaves out: a table of each state and each event, with one case for each cell, the invalid ones included; white-box coverage stays with the code best practice's N7, as it reads bodies that test design comes before",
-              "by": "research"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -557,7 +504,7 @@
             },
             {
               "about": "Before the next stage",
-              "decided": "each in this order, decided by the user on 2026-11-18, before the walkthrough runs again: the test design best practice takes the field's established techniques that its N3 leaves out, state transition testing first, each state of a part with each event that can reach it, an event its state doesn't expect included, as its three techniques let the cases miss what no record showed, such as Lane's end of a pass reaching after a resume; then rn's and Lane's unit and integration cases are each derived again by it from their architectures, and each case missing is added, as rn's record check also lacked the classes that the record's new form makes, a step at several places in a row, practices in any order, and a practice whose case doesn't hold. The walkthrough's runs of 2026-11-18 are kept for it: records installation/20261118T014552Z passed; walkthrough/20261118T020636Z and 20261118T030702Z were stopped at those faults, now mended; walkthrough/20261118T033924Z was stopped by the user at round 1's evaluators, as an E2E test measures KR1.1 and KR1.2, and the flow belongs to the integration cases; in it each evaluator answered by what accounting needs to print a right invoice. Seen in it, to judge once the cases are derived again: rn's check holds the orchestrator to each step of its part at each turn, the steps with no work that turn included, so it records them at places that show nothing, and tells the person so",
+              "decided": "as the user decided on 2026-11-18, before the walkthrough runs again, rn's and Lane's unit and integration cases are each derived again by the test design best practice, which now takes state transition testing, from their architectures, and each case missing is added, as its three techniques before let the cases miss what no record showed, such as Lane's end of a pass reaching after a resume, as rn's record check also lacked the classes that the record's new form makes, a step at several places in a row, practices in any order, and a practice whose case doesn't hold. The walkthrough's runs of 2026-11-18 are kept for it: records installation/20261118T014552Z passed; walkthrough/20261118T020636Z and 20261118T030702Z were stopped at those faults, now mended; walkthrough/20261118T033924Z was stopped by the user at round 1's evaluators, as an E2E test measures KR1.1 and KR1.2, and the flow belongs to the integration cases; in it each evaluator answered by what accounting needs to print a right invoice. Seen in it, to judge once the cases are derived again: rn's check holds the orchestrator to each step of its part at each turn, the steps with no work that turn included, so it records them at places that show nothing, and tells the person so",
               "by": "reasoning"
             }
           ]
