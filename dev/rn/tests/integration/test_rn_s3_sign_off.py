@@ -184,23 +184,28 @@ def test_a_turn_putting_the_plan_up_with_a_step_of_the_part_left_out_is_held(b: 
     assert not walk.c.stop(w.PLAN_SHOWN).blocked
 
 
-@pytest.mark.supports("S3", "guard", "record.py", "orchestrator")
+@pytest.mark.supports("S3", "guard", "record.py", "orchestrator", "Record")
 @pytest.mark.xfail(
     strict=True,
-    reason="rn's check holds the orchestrator's turn to every step of its part, the steps with no"
-    " work that turn included, as the record marks no turn and the check can't tell them apart",
+    reason="rn's check leaves no mark at the end of a turn it passes, so a turn that records no"
+    " step 1 meets the pass of the turn before, and its end goes through",
 )
-def test_a_turn_putting_the_plan_up_with_only_the_steps_that_had_work_ends(b: Bench) -> None:
-    """Given: the walkthrough's goal confirmed and the user's point answered, the work pushed, and
-    the plan put up.
-    When: the orchestrator, which recorded each step of up and each step of its part that had work
-    this turn, all but the last, which has work only where /rn:up alone finds no run left, ends its
-    turn with the plan.
-    Then: the guard lets the turn end, as a real turn records the steps it takes."""
+def test_a_turn_putting_the_plan_up_that_records_no_step_1_is_held(b: Bench) -> None:
+    """Given: the walkthrough's goal confirmed and the user's point answered, each turn's end let
+    through by rn's check, the work pushed, and the plan put up.
+    When: the orchestrator, which recorded each step of its part from step 2 alone this turn, ends
+    its turn with the plan.
+    Then: the guard holds the end, and the check its stop names gives step 1 of the orchestrator,
+    as the turn's pass begins after the mark of the turn before; once it records its part from
+    step 1 and ends again, the guard lets the turn end."""
     walk = w.confirmed(b)
     w.printed(walk.c.bash(b.tree("push")))
     w.printed(walk.c.bash(b.tree("put-up", "plan")))
-    up = [str(n) for n in w.steps_of(b.rn, "skills/up/SKILL.md")]
+    record = walk.run["record"]
     part = [str(n) for n in w.steps_of(b.rn, "domain/orchestrator.md")]
-    w.records(b, walk.c, walk.run["record"], [("up", up), ("orchestrator", part[:-1])])
+    w.records(b, walk.c, record, [("orchestrator", part[1:])])
+    assert walk.c.stop(w.PLAN_SHOWN).blocked
+    checked = walk.c.bash(b.record("check", "orchestrator", ""))
+    assert checked.exit_code == 1 and "orchestrator step 1 isn't recorded" in checked.output
+    w.records(b, walk.c, record, [("orchestrator", part)])
     assert not walk.c.stop(w.PLAN_SHOWN).blocked
