@@ -141,7 +141,7 @@ Does the tree hold only what holds now?
 A reader acts on what the design tree says, and reads any history in it as part of the current decision, while git keeps how each point came about.
 
 1. *While making.* Write a changed decision over its old text, so that it reads as what holds now.
-2. *While making.* Keep one line for a deliverable that's done: its name, path, kind, and status.
+2. *While making.* Keep one line for a deliverable that's done: its name, path, kind, and status. A node with no file keeps its necessary conditions and their decisions too, as the deliverables built on it read them there.
 3. *While making.* Once each point that a research deliverable serves holds its answer, drop the research deliverable, and its path from the `inputs` that name it, since the decisions hold what it found and the run's folder keeps the file.
 
 ### N11
