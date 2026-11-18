@@ -139,27 +139,29 @@ def test_a_record_with_each_step_and_practice_in_order_lacks_nothing() -> None:
             "1",
         ),
         (record(), "1"),
-        (
-            record(
-                ("generator", 1),
-                ("code", "N1.2"),
-                ("code", "N1.1"),
-                ("generator", 2),
-                ("generator", 3),
-            ),
-            "N1.1",
-        ),
     ],
 )
 def test_a_record_lacking_a_step_or_practice_or_out_of_order_names_it(
     held: Record, named: str
 ) -> None:
     """Given: a record missing step 3, missing the deciding practice, with step 2 before step 1,
-    empty, or with the deciding practice after the making one.
+    or empty.
     When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
     Then: it names the step or practice lacking or out of place."""
     found = order.lacks(held, "generator", (1, 2, 3), CODE)
     assert found and any(named in each for each in found)
+
+
+@pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")
+def test_practices_recorded_in_one_run_in_any_order_lack_nothing() -> None:
+    """Given: a record of step 1, the making practice and then the deciding one in one run, as a
+    role records the practices of a best practice at once, then steps 2 and 3.
+    When: what it lacks of the generator's steps 1 to 3 and the code practices is asked.
+    Then: it lacks nothing, as the record shows that each practice was taken, within the steps."""
+    held = record(
+        ("generator", 1), ("code", "N1.2"), ("code", "N1.1"), ("generator", 2), ("generator", 3)
+    )
+    assert order.lacks(held, "generator", (1, 2, 3), CODE) == ()
 
 
 @pytest.mark.supports("test_an_end_whose_record_lacks_a_practice_is_held_with_it")

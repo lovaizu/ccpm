@@ -21,7 +21,7 @@ change leaves the design tree's form, names a node the tree doesn't hold, gives 
 
 Record each step once its result holds, and each practice of the design tree best practice marked
 *While making* as you carry it out, as the main conversation decides each change and you write it,
-each with the place where its result lies, a file's path and line, several in one run, by
+each with the place where its result lies, a file's path and line, or for a practice whose case doesn't hold, the place that shows it doesn't, several in one run, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} tree-keeper '<the step's number>=<path>:<line> ...'`
 or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} design-tree '<the practice's ID>=<path>:<line> ...'`.
 

@@ -147,7 +147,8 @@ Each role and the orchestrator record each step of their prompt, for the orchest
 its command and of its part, and each practice of the best practice they work by, at the time each
 names: a step once its result holds, and a practice while they carry it out, in the phase that its
 mark names, such as *While deciding*. Each entry names the step or the practice and the place where
-its result lies, as `path:line`, and one run of the command records several. Each records by a
+its result lies, as `path:line`, or for a practice whose case doesn't hold, the place that shows
+it doesn't, and one run of the command records several. Each records by a
 command of the plugin's own, in a file of
 [the run's folder](#where-a-plugin-writes-its-files) that its run values name, or, for the
 orchestrator, its part. Each start of a role has a record of its own, and so has the orchestrator.

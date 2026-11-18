@@ -22,7 +22,7 @@ command's own exit code and output, run in a throwaway copy.
 What `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit {record} <step>` prints: exit 0 once it
 committed your work with your Place.
 
-Record each step once its result holds, and each practice as you carry it out, each with the place where its result lies, a file's path and line, several in one run, by
+Record each step once its result holds, and each practice as you carry it out, each with the place where its result lies, a file's path and line, or for a practice whose case doesn't hold, the place that shows it doesn't, several in one run, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} generator '<the step's number>=<path>:<line> ...'`
 or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <the best practice's kind> '<the practice's ID>=<path>:<line> ...'`, such as
 `'N6.1=tests/test_lines.py:12 N6.2=tests/test_lines.py:40'`.

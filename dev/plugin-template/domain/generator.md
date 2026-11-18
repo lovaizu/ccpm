@@ -29,7 +29,7 @@ answered, a line `The person's words, word for word:` follows, with their words 
 > writes. The guard limits the role's calls to these values.
 
 `{record}` is your record. Record each step once its result holds, and each practice as you carry
-it out, each with the place where its result lies, a file's path and line, several in one run, by
+it out, each with the place where its result lies, a file's path and line, or for a practice whose case doesn't hold, the place that shows it doesn't, several in one run, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <role> '<the step's number>=<path>:<line> ...'`
 or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <best practice> '<the practice's ID>=<path>:<line> ...'`, such as
 `'N6.1=tests/test_lines.py:12 N6.2=tests/test_lines.py:40'`.

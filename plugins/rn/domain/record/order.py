@@ -1,14 +1,13 @@
 """Decides the order that a record must keep: each step of the prompt in its order, and each
-practice of each best practice within the steps, those taken while deciding before those taken
-while making, in the latest pass through the steps, as a role resumed, or the orchestrator at each
-turn, takes the steps again."""
+practice of each best practice within the steps, in the latest pass through the steps, as a role
+resumed, or the orchestrator at each turn, takes the steps again."""
 
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 
 from record.form import Entry, Record
-from record.practices import Phase, Practice
+from record.practices import Practice
 
 
 def lacks(
@@ -19,10 +18,9 @@ def lacks(
     Takes: the record; the prompt, by its role or command; the number of each of its steps; and
     each practice of each best practice the role works by, by the best practice's kind.
     Gives: each step or practice missing, or recorded out of its place, in the latest pass, as
-    `passes` finds it, each said so that the role carries it out
-    and naming the step or practice; none where that pass keeps each step in order, and each
-    practice after the first step and before the last, those taken while deciding before those
-    taken while making.
+    `passes` finds it, each said so that the role carries it out and naming the step or practice;
+    none where that pass keeps each step in order, and each practice after the first step and
+    before the last, in any order, as a role records a best practice's practices in one run.
     Changes: nothing.
     Refuses: nothing.
     Carries: S1 `R-->>GD: each step, practice, or item they lack`.
@@ -69,20 +67,16 @@ def _steps(entries: list[Entry], of: str, steps: Sequence[int]) -> tuple[str, ..
 def _practices(
     entries: list[Entry], of: str, steps: Sequence[int], practices: Mapping[str, Sequence[Practice]]
 ) -> tuple[str, ...]:
-    """Each practice of the pass missing, outside the steps, or taken while deciding after one
-    taken while making."""
+    """Each practice of the pass missing, or outside the steps."""
     at_steps = [n for n, e in enumerate(entries) if e.of == of and e.step is not None]
     first, last = (at_steps[0], at_steps[-1]) if at_steps else (-1, len(entries))
     found = []
     for kind, each in practices.items():
         places = {e.practice: n for n, e in enumerate(entries) if e.of == kind and e.practice}
-        making = [places[p.id] for p in each if p.phase is Phase.MAKE and p.id in places]
         for practice in each:
             place = places.get(practice.id)
             if place is None:
                 found.append(f"{kind} {practice.id} isn't recorded")
             elif steps and not first < place < last:
                 found.append(f"{kind} {practice.id} is recorded outside the steps of {of}")
-            elif practice.phase is Phase.DECIDE and making and place > min(making):
-                found.append(f"{kind} {practice.id}, taken while deciding, comes after making")
     return tuple(found)

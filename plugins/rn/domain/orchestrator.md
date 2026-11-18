@@ -21,7 +21,7 @@ pull request, ready, with each decision you took without asking.
 
 Your record is the one that `tree.py start` or `tree.py runs` names. Record each step of the
 command's and of these once its result holds, and each practice of a best practice as you carry it
-out, each with the place where its result lies, a file's path and line, several in one run, by
+out, each with the place where its result lies, a file's path and line, or for a practice whose case doesn't hold, the place that shows it doesn't, several in one run, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <your record> <of> '<the step's number, or the practice's ID>=<path>:<line> ...'`,
 where `<of>` is the command's name without its slash, `up`, `dn`, `ty`, or `gm`, for its steps;
 `orchestrator` for these; or the best practice's kind, such as `design-tree`, for its practices.

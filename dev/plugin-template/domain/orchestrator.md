@@ -20,7 +20,7 @@ types gives you the steps of its moment, and says which of these steps it goes o
 
 Your record is `<the record's path>`, which the command that starts the run makes. Record each step
 of the command's and of these once its result holds, and each practice of a best practice as you
-carry it out, each with the place where its result lies, a file's path and line, several in one run, by
+carry it out, each with the place where its result lies, a file's path and line, or for a practice whose case doesn't hold, the place that shows it doesn't, several in one run, by
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add <the record's path> <the command, or orchestrator, or the best practice> '<the step's number, or the practice's ID, such as N6.2>=<path>:<line> ...'`.
 The guard ends a turn that puts work up for the person only once `<plugin>`'s check accepts the
 record, and gives you what the record lacks where it doesn't. A step or a practice that you skip
