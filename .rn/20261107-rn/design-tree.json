@@ -125,144 +125,10 @@
       "status": "done"
     },
     {
-      "name": "Lane's architecture decides what its guard does with an Agent call that fails or is denied after its PreToolUse, by the events Claude Code sends then",
-      "path": ".rn/20261107-rn/research/agent-call-failing-after-pretooluse.md",
-      "kind": "specific",
-      "inputs": [],
-      "preconditions": [],
-      "status": "open",
-      "check": "each question has an answer that names its source, a page a reader can open or a command with what it printed",
-      "good": false,
-      "decisions": [
-        {
-          "about": "The question",
-          "decided": "which hook events, with which fields, does Claude Code send after the PreToolUse of an Agent call that then fails or is denied, such as one naming no subagent type that exists or one the person denies, and does any event name the call's tool_use_id",
-          "by": "reasoning"
-        },
-        {
-          "about": "The point it serves",
-          "decided": "dev/lane/architecture.md N13: S4: an Agent call that fails or is denied after its PreToolUse, and the Start that the guard made for it",
-          "by": "reasoning"
-        }
-      ]
-    },
-    {
       "name": "Lane's developers build its parts so that together they give what its README promises",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "inputs": [
-        ".rn/20261107-rn/research/agent-call-failing-after-pretooluse.md"
-      ],
-      "preconditions": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The cut",
-              "decided": "the trivial many cut out, as no user of a plugin reaches the goal with them: Lane's guard on its own up and the approval it holds (up_only, gives_shown, lays_after_reply, the Shown and Approval of up's Run, lay.py write's refusal where up's Run no longer waits, result.py up laid or left); a move that calls another plugin's skill and the Run standing aside for it; reading a plugin that an earlier Lane laid by its own copy of form.py, and the Data compatibility testing of released plugins, as nothing is released yet",
-              "by": "user"
-            },
-            {
-              "about": "The combinations",
-              "decided": "the architecture defines each combination of parts and lane types that one hook event meets, such as keeps_steps on a skill whose subagents run in the background, and each has an integration case",
-              "by": "user"
-            },
-            {
-              "about": "Test strategy",
-              "decided": "unit cases for each part, integration cases for each combination, every case under the double of Claude Code; no E2E test, no Scenario or Installation testing; up's prompt tested by its unit cases alone, a pinpoint prompt to Claude Code whose result code reads; Lane is then put to real use by rn",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": [
-            {
-              "about": "S4: an Agent call that fails or is denied after its PreToolUse, and the Start that the guard made for it",
-              "decided": null
-            },
-            {
-              "about": "S5: the SubagentStop of a pass before a SendMessage resume queued to a subagent still running, which names no call",
-              "decided": "a resume by SendMessage whose PostToolUse says the message is queued, as its subagent still runs, counts as a Start of that subagent only once a SubagentStart of its agent_id follows, and each end before that is checked against the Start that runs, as Claude Code delivers a queued message at the subagent's next tool round and resumes it with the message only where it finishes first (dev/tests/recorded/claude-code-2.1.322-subagent-of-subagent.jsonl:6-8)",
-              "by": "research"
-            }
-          ]
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
@@ -526,7 +392,7 @@
             },
             {
               "about": "The fault that the cases derived again on 2026-11-18 showed",
-              "decided": "a Start whose Agent call fails or is denied after the guard let it through stays running no more, as S4 draws once its gap is mended (strict xfail at dev/lane/tests/unit/test_guard_states.py:212 and :240)",
+              "decided": "the guard hooks PostToolUseFailure and drops the Start of a call that fails there, and drops each Start still untied at the main conversation's Stop, as S4 now draws, so the run goes on (strict xfail at dev/lane/tests/unit/test_guard_states.py:212 and :240)",
               "by": "reasoning"
             }
           ]

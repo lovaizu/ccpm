@@ -319,9 +319,17 @@ sequenceDiagram
       alt a start due, with its text
         G->>RS: adds the Start
         G-->>CC: lets it through
-        CC->>SA: starts it in the background
-        CC->>G: the PostToolUse, with its agent_id
-        G->>RS: adds the tie of the Start to that agent_id
+        alt the call runs
+          CC->>SA: starts it in the background
+          CC->>G: the PostToolUse, with its agent_id
+          opt a resume whose message is queued, as its subagent still runs
+            G->>RS: holds the Start back until that subagent's SubagentStart, so each end before it is the running Start's
+          end
+          G->>RS: adds the tie of the Start to that agent_id
+        else the call fails, such as naming no subagent type, or a permission rule denies it
+          CC->>G: the PostToolUseFailure, with the call's tool_use_id
+          G->>RS: drops the Start, so its start is due again
+        end
       else a resume, where the Routes open none
         G->>RS: adds the Start again, for its subagent runs again
         G-->>CC: lets it through, and moves no Run
@@ -362,6 +370,7 @@ sequenceDiagram
     end
     opt the main conversation ends its turn
       CC->>G: the stop
+      G->>RS: drops each Start still untied, as another plugin's hook stopped its call with no event
       alt a move is due with its text, and no subagent of the Run runs
         G-->>M: stops it, with the moves due
       else the move due starts no more, and no subagent of the Run runs
@@ -412,6 +421,10 @@ Strategies:
   The person's pause or approval changes the order, and the moves before it would stop a right move.
 - An end that ends the Start of the call it names, and each Start of its subagent before it\
   A resume can come before the end of the pass before it, which would else refuse the resume's Result.
+- A Start dropped at its call's PostToolUseFailure, or untied at the turn's end\
+  A call that never ran leaves its Start running, so the Run waits on it for good, lowering KR1.1.
+- A resume queued to a running subagent, its Start held back until that subagent's SubagentStart\
+  The subagent's pass ends before the queued message resumes it, so that end is the running Start's.
 - A subagent that ends with no Result, its start due again\
   TaskStop ends a subagent outside its steps, and a Run left waiting on it gives no move due,
   lowering KR1.1.
