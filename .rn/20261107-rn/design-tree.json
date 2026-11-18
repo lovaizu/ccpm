@@ -14,61 +14,7 @@
       "name": "Each best practice holds the field's established way, named so its maker grasps the intent",
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
-      "inputs": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A best practice's inputs",
-              "decided": "each kind a best practice takes, read or run, with the sections of that kind's template that it takes, which its first practice reads; a best practice names no preconditions",
-              "by": "user"
-            },
-            {
-              "about": "Each best practice's inputs",
-              "decided": "each best practice of rn moves what its first practice reads of each input into its inputs, and the prompt and test implementation best practices move their preconditions into their inputs",
-              "by": "user"
-            },
-            {
-              "about": "What practices.py checks of the inputs",
-              "decided": "each section that an input takes is a section of that kind's template",
-              "by": "user"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
@@ -80,89 +26,7 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "inputs": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The deliverable tree",
-              "decided": "each deliverable sits under the deepest deliverable that its inputs name, as tree.py draws it, and no field holds a parent",
-              "by": "user"
-            },
-            {
-              "about": "The work order",
-              "decided": "a field of the design tree beside the goal and the deliverables, first to last, each item a deliverable to make, named by its path, or a point to decide, named by its path, condition, and about",
-              "by": "user"
-            },
-            {
-              "about": "The order of the work order",
-              "decided": "the orchestrator orders it each turn, first by inputs and preconditions, then by what the run's facts show brings the people closest, and the list of deliverables holds no order of the work",
-              "by": "user"
-            },
-            {
-              "about": "What tree.py keeps of the work order",
-              "decided": "it rewrites an item whose node a change renames, and refuses an item that names no node or whose inputs and preconditions aren't done",
-              "by": "user"
-            },
-            {
-              "about": "Inputs alone",
-              "decided": "a deliverable names in inputs each deliverable it rests on, read or run, and the tree holds no preconditions",
-              "by": "user"
-            },
-            {
-              "about": "A node with no file",
-              "decided": "a node of a kind with no file holds the decisions of each necessary condition of its best practice, and no file is made for it",
-              "by": "user"
-            },
-            {
-              "about": "What tree.py checks of the inputs",
-              "decided": "it refuses a deliverable whose inputs don't cover each kind that its best practice names in inputs, by a file of the product or a node of the tree",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A kind that a deliverable's best practice takes, with no file of it in the product",
-              "decided": "the tree follows each kind that a deliverable's best practice names in inputs to its end: a file of it in the product is taken, and where none exists, the tree holds a node of that kind with no file, whose decisions answer each necessary condition of its best practice, with none left out",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -204,53 +68,7 @@
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "inputs": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Without a test design's file",
-              "decided": "the code's maker reads the unit cases from the design tree's node of the test design, in place of the request",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The developers learn from a test that runs the product whole what the product does, as each run ran as they meant and measured what they meant",
@@ -798,18 +616,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/meta"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/design-tree"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/code"
-    },
     {
       "do": "make",
       "path": "dev/rn/architecture.md"
