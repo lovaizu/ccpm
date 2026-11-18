@@ -116,7 +116,175 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "plugins/rn/domain/best-practices/architecture",
+        "plugins/rn/domain/best-practices/design-tree"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The product vision's Concept",
+              "decided": "rn piles up the vital few, what brings a deliverable's people to what they're after, and cuts the trivial many thoroughly, on three ideas: each role starts from the people's purpose and the state in which they have it; at each turn rn reviews the design tree, its content and how the work goes, by the facts of the run; and rn finds what's good and what would make it good, taking in only what brings the people closer",
+              "by": "user"
+            },
+            {
+              "about": "Where a role's record commits",
+              "decided": "only on the run's branch in the work's repository, as the rule The repository holds the work says",
+              "by": "reasoning"
+            },
+            {
+              "about": "Test strategy's Scenario testing",
+              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed, as the E2E test's KR1.1 decision says",
+              "by": "user"
+            },
+            {
+              "about": "How rn's parts are made",
+              "decided": "each part meets its purpose in the simplest way that the purpose allows, with no mechanism that only works around another, as the user decided on 2026-11-18 that rn be made as it should be, after rn's tree-keeper passed JSON through Bash, a temporary folder kept it from another run's file, and Claude Code refused the JSON in its commands",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The order of content and structure",
+              "decided": "a deliverable's rounds make and judge its content by its kind's best practice until each condition is good, and only then does the generator rework its structure by the refactor best practice and an evaluator judge that",
+              "by": "user"
+            },
+            {
+              "about": "What a later round judges",
+              "decided": "a round after the first judges again only the conditions whose decisions changed since the round before",
+              "by": "user"
+            },
+            {
+              "about": "How many rounds",
+              "decided": "two rounds of content and two of structure at most; a more still left after them goes to the user with the deliverable as a proposal to improve it",
+              "by": "user"
+            },
+            {
+              "about": "Why evaluators are split by group of conditions",
+              "decided": "each evaluator judges its group of conditions in its own context, side by side, so a round of evaluators takes as long as its slowest group, and only the groups that hold a condition to judge again start",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Each role's expected role",
+              "decided": "each AI role's responsibility says first what it brings the people, then what the others expect of it: the orchestrator keeps the work on what brings the people closer, the tree-keeper keeps the tree true, the generator makes only what brings the deliverable's people closer, and the evaluator finds what's good for them and what would make it good",
+              "by": "reasoning"
+            },
+            {
+              "about": "Who orders the work",
+              "decided": "the orchestrator, at each turn, by inputs first and then by what the run's facts show brings the people closest, and the tree-keeper writes it in the design tree's work",
+              "by": "user"
+            },
+            {
+              "about": "What tree.py holds of the work and the inputs",
+              "decided": "tree.py rewrites an item of work whose node a change renames, and refuses a change where an item names no node or comes before a deliverable that its inputs name and that isn't done, or where a deliverable's inputs leave out a kind that its best practice names in inputs",
+              "by": "user"
+            },
+            {
+              "about": "How the tree-keeper writes the design tree",
+              "decided": "it edits design-tree.json with the Edit tool, and tree.py checks the tree as edited, marks each turn, and commits it with the ground, so no change passes through a shell",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The design tree's parts",
+              "decided": "the goal, the deliverables, and the work order, in the design tree best practice's form",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A deliverable's turn",
+              "decided": "tree.py gives each item of work to make its turn once the deliverable rests on no open point and on nothing not signed off, and the adapters give the start of the first in the work's order that no start holds",
+              "by": "reasoning"
+            },
+            {
+              "about": "A node with no file",
+              "decided": "no generator or evaluator starts for it: the orchestrator settles each of its decisions, as S2 draws, sets each condition good once its decisions answer it, and puts it up, as S3 draws, so that work resting on it waits for its sign-off",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's product vision says what Lane is for",
@@ -272,399 +440,25 @@
       "name": "A person's /rn:up, /rn:ty, /rn:gm, and /rn:dn, typed or asked for, carry their request from the goal through each sign-off to one pull request, asking them only what's theirs",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Where each turn takes the orchestrator's steps from",
-              "decided": "step 1, which has work at each turn, each step with no work that turn recorded at the place that shows none, as rn's architecture now marks each turn's end in the orchestrator's record",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Keeps the work on what brings the people closer: reviews the tree each turn, asking the user only theirs, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each decision the main conversation takes lands in the design tree as it was decided, with its ground in git, and each node it touches is checked against it",
       "path": "plugins/rn/domain/tree-keeper.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Keeps the design tree true to each decision, so every role builds on what holds now, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
       "path": "plugins/rn/domain/generator.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Makes the deliverable from its cut with only what brings its people closer, handing back each point it can't settle, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
       "path": "plugins/rn/domain/evaluator.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Finds, as the deliverable's people, what's good for them and what would make it good, condition by condition, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
@@ -863,19 +657,7 @@
   "work": [
     {
       "do": "make",
-      "path": "plugins/rn/domain/orchestrator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/tree-keeper.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/generator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/evaluator.md"
+      "path": "dev/rn/architecture.md"
     },
     {
       "do": "make",

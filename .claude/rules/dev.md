@@ -46,6 +46,15 @@ tree before the tests and the code.
   copied what they saw and missed how the parts meet. A review of one unit finds the gaps that a
   reader of the whole misses, and most of what it names is trivia that the purpose leaves out.
 
+**Before any fix to a part, write the part's purpose and the simplest way that could meet it at
+all, beside how the part meets it now, and make the part that way, removing each mechanism that
+only works around another.** Have one subagent, given only the purpose and the code, name a simpler
+way where one exists.
+
+- Rationale: a fault fixed where it shows passes its tests and its conditions, so fixes pile up
+  around the first design until a plain task, such as writing a change into the design tree, runs
+  through a shell, a temporary folder, and a workaround of the host's refusal.
+
 **Until the user says yes, install nothing, and send nothing to a translator, a web API, or any
 service other than Claude Code and the repository's git and GitHub. Running `claude`, such as a
 prompt's tests and the E2E tests on Opus, needs no ask, and neither does fetching a public page to
