@@ -167,11 +167,6 @@
   <text class="label small halo" x="520" y="228" text-anchor="middle">of a deliverable</text>
   <text class="label small" x="226" y="252" text-anchor="start">0..*</text>
   <text class="label small" x="614" y="166" text-anchor="end">0..1</text>
-  <rect class="box" x="330" y="760" width="180" height="48" rx="0"/>
-  <text class="name" x="420.0" y="789.0" text-anchor="middle">Place</text>
-  <path class="line" d="M650,708 L650,784 L510,784" marker-start="url(#diamond)"/>
-  <text class="label small halo" x="580" y="776" text-anchor="middle">keeps, at each step</text>
-  <text class="label small" x="516" y="800" text-anchor="start">0..*</text>
   <rect class="box" x="40" y="400" width="180" height="48" rx="0"/>
   <text class="name" x="130.0" y="429.0" text-anchor="middle">Comment</text>
   <path class="line" d="M50,400 L50,374 L30,374 L30,224 L40,224"/>

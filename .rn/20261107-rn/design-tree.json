@@ -126,7 +126,7 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The product vision's Concept",
@@ -152,12 +152,12 @@
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The order of content and structure",
@@ -183,12 +183,12 @@
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Each role's expected role",
@@ -224,12 +224,12 @@
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The design tree's parts",
@@ -240,7 +240,7 @@
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "A deliverable's turn",
@@ -259,49 +259,49 @@
             },
             {
               "about": "A pick-up among several runs",
-              "decided": "the orchestrator asks the user which run, enters its worktree, and the adapters give that run's results kept at the next start, so a pick-up never goes the way of a new run",
+              "decided": "/rn:up alone, where several runs are left, names each and ends; /rn:up with a run's name picks that run up, as Lane's adapter names the work a call picks up from the words typed after the command, so a pick-up never goes the way of a new run",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "N9",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N11",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N13",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N14",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]
@@ -394,91 +394,927 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/domain/best-practices/software-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where a round's best practice and the groups it judges lie",
+              "decided": "a new module of tree.py, course, decides each round's best practice, the kind's for content and then the refactor one for structure, two rounds of each at most since the deliverable's latest sign-off sent back, and the groups a round judges: each in a phase's first round, and in a later one each group that holds a condition whose decisions changed since the round before, or, of the refactor one, a condition of a More kept; cut takes the generator's and each evaluator's due round from it",
+              "by": "maker"
+            },
+            {
+              "about": "Where the work order lies",
+              "decided": "a new module of tree.py, work, decides the work's form beyond the schema: it rewrites an item whose node a change renames, and refuses an item that names no node or comes before a deliverable that its inputs name and that isn't done; turn gives each turn in its order",
+              "by": "maker"
+            },
+            {
+              "about": "Where the check of inputs lies",
+              "decided": "a new module of tree.py, inputs, refuses a deliverable of a best practice's kind where a kind that the best practice names in inputs has neither an input node of that kind nor an input file outside the tree's nodes left, one such file for each kind left, as tree.py can tell the kind of a node alone",
+              "by": "maker"
+            },
+            {
+              "about": "A node with no file",
+              "decided": "turn gives it its turn as any deliverable, and cut gives no start of a generator or an evaluator for it, as the orchestrator settles its decisions",
+              "by": "maker"
+            },
+            {
+              "about": "The generator's Cut in a round",
+              "decided": "it names in best_practice the best practice its round works by, the kind's in a round of content and the refactor one in a round of structure, and names no other, so that record.py holds its record to that one alone",
+              "by": "maker"
+            },
+            {
+              "about": "Where a deliverable's rounds start again",
+              "decided": "a deliverable's sign-off keeps the number of its latest round when it's put up, and course counts only the rounds after the latest such number, as a sign-off sent back starts the rounds again from the design",
+              "by": "maker"
+            },
+            {
+              "about": "When a round of structure comes",
+              "decided": "a round is of structure once the round before is of structure, or once two rounds of content have run, or once each evaluator of the latest round of content has answered and no decision under the deliverable changed since its cut",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "none, as the kind of an input file outside the tree, which tree.py can't tell, is checked by the count of the kinds left, as the decision on the check of inputs says",
+              "by": "maker"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cases derived again",
+              "decided": "each unit and integration case of rn is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
+              "by": "user"
+            },
+            {
+              "about": "The cases judged again",
+              "decided": "rn's cases derived on 2026-11-18 are each judged again by the test design best practice's N3 as it now stands: a case of a transition that no use brings about is taken out, the turn mark's among them",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
       "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py",
       "kind": "code",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Which bodies the walking skeleton builds again, as rn's skeleton of the More kept emptied them",
+              "decided": "tree.py write's change, results.read_made, rounds.each, and tree.py round, in the forms that key a More kept by its best practice and condition and give each Answers its best practice, as every case that writes the design tree fails on the first, and the walking skeleton's round on the rest; each case marked CHANGE loses its mark as it passes",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
       "path": "dev/rn/tests/integration/test_rn_s1_request.py",
       "kind": "code",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests",
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Which bodies S1 builds of the More kept",
+              "decided": "more.keepable, rounds.keep_more, and rounds.kept_more, each by its contract in the skeleton, so that a More kept is one for each best practice and condition, and refused where the decision it names isn't under its deliverable or didn't change; each case marked MORE loses its mark as it passes",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
       "path": "dev/rn/tests/integration/test_rn_s2_points.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
       "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests",
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "a turn that puts work up is held to the pass begun after the end of the turn before, which rn's check marks in the orchestrator's record once it passes a turn, and lacks each step where it records no step 1, as rn's architecture now draws in S3 (the strict xfail at plugins/rn/domain/record/check.py:72 follows it)",
+              "by": "reasoning"
+            },
+            {
+              "about": "The commands a turn is held to",
+              "decided": "a turn after a mark is held to the steps of each command it recorded since that mark and to the orchestrator's part, and the first turn of a run to up's too, as the orchestrator's steps go on from the steps of the command the person typed",
+              "by": "reasoning"
+            },
+            {
+              "about": "The turn mark",
+              "decided": "taken out of rn's check, its record's form, and its cases, as rn's architecture now holds the turn to the latest pass from step 1",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
       "path": "dev/rn/tests/integration/test_rn_s4_pause.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "/rn:up alone in a new conversation goes on where the run stopped",
       "path": "dev/rn/tests/integration/test_rn_s5_pick_up.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "a role started again at the step it stood at passes rn's check once it takes the steps from that step, with no step 1 in its new record, as its part has it go on from there (strict xfail at plugins/rn/domain/record/order.py:31)",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons, and rn's developers get each lesson signed off in rn's issues",
       "path": "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
       "path": "dev/rn/tests/integration/test_rn_components.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each rule of the Solution strategy of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
       "path": "dev/rn/tests/integration/test_rn_rules.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests",
+        "dev/rn/tests/integration/test_rn_s1_request.py",
+        "dev/rn/tests/integration/test_rn_s2_points.py",
+        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+        "dev/rn/tests/integration/test_rn_s4_pause.py",
+        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
+        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The fault that the cases derived again on 2026-11-18 showed",
+              "decided": "rn's check takes a step recorded again after a later step within a pass, and a practice recorded within the steps and again after the last, as each role records a step and a practice at each place that shows it (strict xfail in dev/rn/tests/unit/test_rn_record_lacks.py, at plugins/rn/domain/record/order.py:66 and :75)",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /rn:up, /rn:ty, /rn:gm, and /rn:dn, typed or asked for, carry their request from the goal through each sign-off to one pull request, asking them only what's theirs",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
-      "status": "done"
-    },
-    {
-      "name": "Each decision the main conversation takes lands in the design tree as it was decided, with its ground in git, and each node it touches is checked against it",
-      "path": "plugins/rn/domain/tree-keeper.md",
-      "kind": "prompt",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/domain/best-practices/prompt"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where each turn takes the orchestrator's steps from",
+              "decided": "step 1, which has work at each turn, each step with no work that turn recorded at the place that shows none, as rn's architecture now marks each turn's end in the orchestrator's record",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the task is for",
+              "decided": "Keeps the work on what brings the people closer: reviews the tree each turn, asking the user only theirs, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
       "path": "plugins/rn/domain/generator.md",
       "kind": "prompt",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/domain/best-practices/prompt"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the task is for",
+              "decided": "Makes the deliverable from its cut with only what brings its people closer, handing back each point it can't settle, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
       "path": "plugins/rn/domain/evaluator.md",
       "kind": "prompt",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/domain/best-practices/prompt"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the task is for",
+              "decided": "Finds, as the deliverable's people, what's good for them and what would make it good, condition by condition, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
@@ -498,7 +1334,6 @@
         "dev/rn/tests/integration/test_rn_components.py",
         "dev/rn/tests/integration/test_rn_rules.py",
         "plugins/rn/domain/orchestrator.md",
-        "plugins/rn/domain/tree-keeper.md",
         "plugins/rn/domain/generator.md",
         "plugins/rn/domain/evaluator.md",
         "plugins/rn/domain/best-practices/refactor-code"
@@ -678,6 +1513,62 @@
     {
       "do": "make",
       "path": "dev/rn/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s1_request.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s2_points.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s4_pause.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s5_pick_up.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_components.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_rules.py"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/orchestrator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/generator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/evaluator.md"
     },
     {
       "do": "make",
