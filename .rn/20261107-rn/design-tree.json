@@ -26,7 +26,94 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The deliverable tree",
+              "decided": "each deliverable sits under the deepest deliverable that its inputs name, as tree.py draws it, and no field holds a parent",
+              "by": "user"
+            },
+            {
+              "about": "The work order",
+              "decided": "a field of the design tree beside the goal and the deliverables, first to last, each item a deliverable to make, named by its path, or a point to decide, named by its path, condition, and about",
+              "by": "user"
+            },
+            {
+              "about": "The order of the work order",
+              "decided": "the orchestrator orders it each turn, first by inputs, then by what the run's facts show brings the people closest, and the list of deliverables holds no order of the work",
+              "by": "user"
+            },
+            {
+              "about": "What tree.py keeps of the work order",
+              "decided": "it rewrites an item whose node a change renames, and refuses an item that names no node or whose inputs aren't done",
+              "by": "user"
+            },
+            {
+              "about": "Inputs alone",
+              "decided": "a deliverable names in inputs each deliverable it rests on, read or run, and the tree holds no preconditions",
+              "by": "user"
+            },
+            {
+              "about": "A node with no file",
+              "decided": "a node of a kind with no file holds the decisions of each necessary condition of its best practice, and no file is made for it",
+              "by": "user"
+            },
+            {
+              "about": "What tree.py checks of the inputs",
+              "decided": "it refuses a deliverable whose inputs don't cover each kind that its best practice names in inputs, by a file of the product or a node of the tree",
+              "by": "user"
+            },
+            {
+              "about": "A node with no file once done",
+              "decided": "it keeps its necessary conditions and their decisions, as the deliverables built on it read them there, and a deliverable whose file the work makes keeps one line",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A kind that a deliverable's best practice takes, with no file of it in the product",
+              "decided": "the tree follows each kind that a deliverable's best practice names in inputs to its end: a file of it in the product is taken, and where none exists, the tree holds a node of that kind with no file, whose decisions answer each necessary condition of its best practice, with none left out",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -119,7 +206,8 @@
       "inputs": [
         "dev/rn/product-vision.md",
         "plugins/rn/README.md",
-        "plugins/rn/domain/best-practices/architecture"
+        "plugins/rn/domain/best-practices/architecture",
+        "plugins/rn/domain/best-practices/design-tree"
       ],
       "status": "open",
       "necessary_conditions": [
@@ -170,7 +258,8 @@
             },
             {
               "about": "Why evaluators are split by group of conditions",
-              "decided": null
+              "decided": "each evaluator judges its group of conditions in its own context, side by side, so a round of evaluators takes as long as its slowest group, and only the groups that hold a condition to judge again start",
+              "by": "reasoning"
             }
           ]
         },
@@ -187,6 +276,16 @@
               "about": "Each role's expected role",
               "decided": "each AI role's responsibility says first what it brings the people, then what the others expect of it: the orchestrator keeps the work on what brings the people closer, the tree-keeper keeps the tree true, the generator makes only what brings the deliverable's people closer, and the evaluator finds what's good for them and what would make it good",
               "by": "reasoning"
+            },
+            {
+              "about": "Who orders the work",
+              "decided": "the orchestrator, at each turn, by inputs first and then by what the run's facts show brings the people closest, and the tree-keeper writes it in the design tree's work",
+              "by": "user"
+            },
+            {
+              "about": "What tree.py holds of the work and the inputs",
+              "decided": "tree.py rewrites an item of work whose node a change renames, and refuses a change where an item names no node or comes before a deliverable that its inputs name and that isn't done, or where a deliverable's inputs leave out a kind that its best practice names in inputs",
+              "by": "user"
             }
           ]
         },
@@ -198,12 +297,29 @@
         {
           "id": "N7",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The design tree's parts",
+              "decided": "the goal, the deliverables, and the work order, in the design tree best practice's form",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N8",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "A deliverable's turn",
+              "decided": "tree.py gives each item of work to make its turn once the deliverable rests on no open point and on nothing not signed off, and the adapters give the start of the first in the work's order that no start holds",
+              "by": "reasoning"
+            },
+            {
+              "about": "A node with no file",
+              "decided": "no generator or evaluator starts for it: the orchestrator settles each of its decisions, as S2 draws, sets each condition good once its decisions answer it, and puts it up, as S3 draws, so that work resting on it waits for its sign-off",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N9",
@@ -616,6 +732,10 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/design-tree"
+    },
     {
       "do": "make",
       "path": "dev/rn/architecture.md"
