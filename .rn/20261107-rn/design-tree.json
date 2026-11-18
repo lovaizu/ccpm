@@ -26,7 +26,53 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "preconditions": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A kind that a deliverable's best practice takes, with no file of it in the product, such as the test design of a code deliverable",
+              "decided": null
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -546,7 +592,7 @@
             },
             {
               "about": "Before the next stage",
-              "decided": "as the user decided on 2026-11-18: rn's flow makes the content good before the structure is reworked, and judges again only what changed; then the best practices of architecture, README, prompt, and meta, the largest, are read practice by practice, each kept only where the people fail their aim without it; then the walkthrough runs again. The run walkthrough/20261118T072112Z was stopped in round 3 of the command for the first: rounds 1 and 2 took in only the mores that would give accounting a wrong invoice",
+              "decided": "as the user decided on 2026-11-18: the design tree best practice is discussed with the user first; rn's flow makes the content good before the structure is reworked, and judges again only what changed; then the best practices of architecture, README, prompt, and meta, the largest, are read practice by practice, each kept only where the people fail their aim without it; then the walkthrough runs again. The run walkthrough/20261118T072112Z was stopped in round 3 of the command for the first: rounds 1 and 2 took in only the mores that would give accounting a wrong invoice",
               "by": "user"
             }
           ]
