@@ -7,12 +7,12 @@
     - **N1** Does the goal state, in one sentence, what the user is trying to achieve, and the state its people are in once it holds? (goal)
     - **N2** Does the tree hold the deliverables that bring the people to the goal's state, and only those? (deliverables)
     - **N3** Does each deliverable name its kind: the best practice of the field's established way of making it, or `specific` where the deliverable is this product's alone? (deliverables)
-    - **N4** Does each deliverable name the deliverables it takes content from and those that must pass before it starts, and come after all of them? (deliverables)
+    - **N4** Does each deliverable name in its inputs each deliverable it rests on, read or run, and does the work order take it only after them? (deliverables, work)
   - **C2** Each deliverable is made from decisions that bring its people closer to the goal's state.
     - **N5** Does each deliverable hold the decisions and the open points for each necessary condition of its best practice? (deliverables)
     - **N6** Does each decision say who settled it? (deliverables)
   - **C3** At each turn, the maker reviews the design tree by the run's facts, its content and how the work goes, and keeps the work on the vital few.
-    - **N11** Does each node of the tree hold what the run's facts so far show brings the people to the goal's state: each deliverable, decision, open point, and the work next? (goal, deliverables)
+    - **N11** Does each node of the tree hold what the run's facts so far show brings the people to the goal's state: each deliverable, decision, open point, and the work next? (goal, deliverables, work)
   - **C4** The maker and the user see where the work stands, and pick it up from there.
     - **N7** Does each deliverable's name say what it brings toward the goal? (deliverables)
     - **N8** Does each deliverable show its status and which necessary conditions it meets? (deliverables)
@@ -47,8 +47,8 @@ A deliverable left out shows up only when the work reaches it, and the work stop
 
 1. *While deciding.* Open the goal and the user's request, and list each deliverable that the people use in the goal's state, such as a plugin with its README. Keep one only where the goal fails without it, and ask the user about one you can't tell.
 2. *While deciding.* List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and for each deliverable, open `best-practice.json` of the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a README. That folder is the deliverable's kind, which N3.1 writes. A deliverable that no folder's goal fits takes its kind at N3.2 or N3.3.
-3. *While deciding.* For each deliverable, list each kind that `inputs` and `preconditions` of the best practice you opened for it name, or, where you opened none, each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks.
-4. *While deciding.* For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens. Where no such file exists, add a deliverable of that kind only where the goal's state fails without it, such as an architecture for a plugin whose parts must fit together. Elsewhere, write that kind's vital few as decisions of the deliverable that takes it, such as the people of a guide added beside a command, since a deliverable that brings the people nothing new only lengthens the work. Repeat N2.3 and this item for each deliverable you add, until one takes nothing.
+3. *While deciding.* For each deliverable, list each kind that `inputs` of the best practice you opened for it names, or, where you opened none, each deliverable whose decisions it carries out or that it runs, such as the architecture whose user story an integration test checks.
+4. *While deciding.* For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens. Where no such file exists, add a node of that kind with no file, such as the test design of a command added to a library that has none, and answer each necessary condition of its best practice in its decisions, leaving none out, since a choice of which to keep drops what the deliverable built on it needed, and a condition that turns out not to bear on the case is a fault of that best practice. Repeat N2.3 and this item for each deliverable and node you add, until one takes nothing.
 5. *While deciding.* Break each deliverable down until it's a work package: a part that ends at a check showing, on its own, that the people the goal serves get a part of what it promises them, such as one integration test for each user story of an architecture in place of one test of the whole plugin. A larger part leaves its maker to settle at once what no one checks between, and a smaller one passes checks that show nothing toward the goal.
 
 ### N3
@@ -63,16 +63,16 @@ A deliverable of a kind that every product shares has a way of making it that th
 
 ### N4
 
-Does each deliverable name the deliverables it takes content from and those that must pass before it starts, and come after all of them?
+Does each deliverable name in its inputs each deliverable it rests on, read or run, and does the work order take it only after them?
 
-A deliverable started before its inputs rests on a guess, and its maker does the work again once they arrive. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method) of scheduling, which lists each activity's predecessors before it orders the activities.
+A deliverable started before its inputs rests on a guess, and its maker does the work again once they arrive. The items follow the inputs of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html), the work products a task takes, and the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method) of scheduling, which lists each activity's predecessors before it orders the activities.
 
-1. *While deciding.* For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took or deliverable you added at N2.4 for a kind that the best practice's `inputs` name, and in its `preconditions` the path of each one for a kind that its `preconditions` name, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products.
-2. *While deciding.* For a `specific` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and in `preconditions` the path of each deliverable it runs, such as the parts that the test calls.
-3. *While deciding.* Where other deliverables' results rest on a check, such as a script that CI runs on them, put in their preconditions the check with a test that shows it failing on a case it must catch, since a check never seen failing may pass anything.
-4. *While making.* Write the deliverables in the order of the work: first each that names no deliverable of the tree in its inputs and preconditions, then each whose named deliverables all come before it, until you've placed each.
+1. *While deciding.* For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took, and of each deliverable or node you added at N2.4, for a kind that the best practice's `inputs` names, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products.
+2. *While deciding.* For a `specific` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and of each deliverable it runs, such as the parts that the test calls.
+3. *While deciding.* Where other deliverables' results rest on a check, such as a script that CI runs on them, put in their inputs the check with a test that shows it failing on a case it must catch, since a check never seen failing may pass anything.
+4. *While making.* Write in `work` the work next, first to last: each deliverable to make by its path, and each point to decide by its deliverable's path, its condition, and its `about`, each after each deliverable that its inputs name, so that `tree.py` draws the deliverables as a tree by their inputs and the list of deliverables holds no order of its own.
 5. *While making.* After each change, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {record} '<ground>'` with the change on its standard input as one JSON object, `{"nodes": {<path>: <node>}}`, where `{record}` is your record and `<ground>` is why the change decides as it does, as N6.2 says. It gives 1 where a path names no node or the tree changed leaves the schema, and leaves the run's tree as it was, so fix what it names and run it again. It gives 0 once it has committed the tree with `<ground>` as the commit message, and prints `changed`, `touched`, and `doing` as JSON.
-6. *While making.* Check that each deliverable comes after each one it takes from or waits for, that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` checks none of these.
+6. *While making.* Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` checks neither, while it refuses a deliverable whose inputs leave out a kind that its best practice's `inputs` names, and an item of `work` whose inputs aren't done.
 
 ### N5
 
@@ -130,7 +130,7 @@ After a change to a node, does every node that the change touches agree with it?
 
 A node that a change touches, left unread, goes on saying what held before, and the next role builds on it.
 
-1. *While making.* After each change to a node, list the nodes it touches: each node up to the goal, the later decisions of the same deliverable, and each deliverable that names the changed one in its inputs or preconditions or that it names there. `tree.py write` prints this list as `touched`.
+1. *While making.* After each change to a node, list the nodes it touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it. `tree.py write` prints this list as `touched`.
 2. *While making.* Read each node on the list beside the change. It holds where it names no path, kind, or decision that the change replaced or dropped, and rests on nothing that the change made false. Rewrite each other node in the same change, such as a README's decision on its people after the product vision's roles change.
 3. *While making.* List the nodes again for each node you rewrote, until a pass rewrites nothing.
 
@@ -153,4 +153,4 @@ A plan holds what was known when it was laid, and each round, try, and answer sh
 1. *While deciding.* At the start of each turn, list the facts since the last turn: each round's answers, each try's output, and each word of the person.
 2. *While deciding.* For each deliverable, ask whether the facts show that it still brings the people to the goal's state, and how far it stands from it. Take out a deliverable that no longer does, and add one that the facts show the state needs.
 3. *While deciding.* Where a round's answers name a point that came back from an earlier round, or two points whose fixes undo each other, go to the decision they rest on, and decide it again from the goal's state, since another round on the same decision ends the same way.
-4. *While deciding.* Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, and write the tree's order so.
+4. *While deciding.* Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, among those whose inputs are done, and write it first in `work`.

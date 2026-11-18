@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision, the README, the architecture, and the skeleton, and read each to its end: the key results, the walkthrough, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host.",
+        "text": "Open the product vision, the README, the architecture, and the skeleton, and read the sections that `inputs` takes from each: the key results, the walkthrough, each rule, decision, and handoff of the architecture, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host.",
         "trace": {
          "action": "read",
          "takes": [
@@ -156,10 +156,34 @@
  },
  "template": "template.md",
  "inputs": [
-  "product-vision",
-  "readme",
-  "architecture",
-  "software-design"
- ],
- "preconditions": []
+  {
+   "kind": "product-vision",
+   "takes": [
+    "Objectives and key results"
+   ]
+  },
+  {
+   "kind": "readme",
+   "takes": [
+    "Walkthrough"
+   ]
+  },
+  {
+   "kind": "architecture",
+   "takes": [
+    "Solution strategy",
+    "Components",
+    "Data model",
+    "Sequences",
+    "Test strategy"
+   ]
+  },
+  {
+   "kind": "software-design",
+   "takes": [
+    "Interface",
+    "Prompt"
+   ]
+  }
+ ]
 }

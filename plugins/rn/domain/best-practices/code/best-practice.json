@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open what the code must do: where an architecture holds the part, its line in Components, the principles, each sequence that the part takes a step in, and, where the design made them, the part's skeleton and its unit cases in the test code; elsewhere, the request for the code. Where no unit cases exist, write them first, each as a test's name with its Given, When, and Then: one for the usual input, one for each class of input that the code treats alike, refusals among them, and one at each end of a class on an ordered scale. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does.",
+        "text": "Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does.",
         "trace": {
          "action": "read",
          "takes": [
@@ -296,9 +296,27 @@
  },
  "template": "template.md",
  "inputs": [
-  "architecture",
-  "software-design",
-  "test-design"
- ],
- "preconditions": []
+  {
+   "kind": "architecture",
+   "takes": [
+    "Solution strategy",
+    "Components",
+    "Sequences",
+    "Test strategy"
+   ]
+  },
+  {
+   "kind": "software-design",
+   "takes": [
+    "Module opening",
+    "Interface"
+   ]
+  },
+  {
+   "kind": "test-design",
+   "takes": [
+    "Unit cases"
+   ]
+  }
+ ]
 }

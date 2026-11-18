@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision, the architecture, and the test cases, and read each to its end: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then.",
+        "text": "Open the product vision, the architecture, and the test cases, and read the sections that `inputs` takes from each: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then.",
         "trace": {
          "action": "read",
          "takes": [
@@ -158,13 +158,31 @@
  },
  "template": "template.md",
  "inputs": [
-  "product-vision",
-  "architecture",
-  "test-design"
- ],
- "preconditions": [
-  "test-design",
-  "code",
-  "prompt"
+  {
+   "kind": "product-vision",
+   "takes": [
+    "Objectives and key results"
+   ]
+  },
+  {
+   "kind": "architecture",
+   "takes": [
+    "Test strategy"
+   ]
+  },
+  {
+   "kind": "test-design",
+   "takes": [
+    "E2E cases"
+   ]
+  },
+  {
+   "kind": "code",
+   "takes": []
+  },
+  {
+   "kind": "prompt",
+   "takes": []
+  }
  ]
 }

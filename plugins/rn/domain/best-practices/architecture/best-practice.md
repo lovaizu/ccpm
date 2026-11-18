@@ -31,8 +31,8 @@
 
 ## Inputs
 
-- [product-vision](../product-vision/best-practice.md)
-- [readme](../readme/best-practice.md)
+- [product-vision](../product-vision/best-practice.md), taking `Roles`, `Objectives and key results`, `Concept`
+- [readme](../readme/best-practice.md), taking `the opening`, `Non-goals`, `Requirements`, `Walkthrough`, `How it works`
 
 ## Practices
 
@@ -42,7 +42,7 @@ Does Solution strategy state first the one idea by which the product delivers wh
 
 Each view carries out one idea, and a developer who knows the idea builds a part that serves it. The [solution strategy](https://docs.arc42.org/section-4/) of arc42 sums up first the few decisions that shape the whole.
 
-1. *While deciding.* Open your cut, and read to its end each input it names: the product vision, the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end. The trace: `{inputs}` read to its end.
 2. *While deciding.* In the README's How it works, take the first way it states, from the product vision's concept, by which the product brings its users to their objectives, such as keeping every decision of a run in one file that each role reads.
 3. *While deciding.* Ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into, such as a request typed in a session turned into a deliverable that passed its checks.
 4. *While making.* Write the answer in two or three sentences that a developer can hold in mind while building any part. Point to the README instead of repeating it, and put it first in Solution strategy, before the rules that follow from it.

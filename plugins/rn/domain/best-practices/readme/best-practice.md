@@ -24,7 +24,7 @@
 
 ## Inputs
 
-- [product-vision](../product-vision/best-practice.md)
+- [product-vision](../product-vision/best-practice.md), taking `Roles`, `Objectives and key results`, `Concept`
 
 ## Practices
 

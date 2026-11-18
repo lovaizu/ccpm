@@ -12,7 +12,7 @@
     - **N5** Does each practice lead its maker toward its condition's state from what the people are after, by the steps that practitioners of the kind take on site, each an act on something at hand with the question to think through, and, where there are options, the criterion that picks the one bringing the people closer? (why, items)
     - **N7** Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal? (the whole)
   - **C3** Each deliverable stays consistent with the deliverables it builds on and the deliverables built on it.
-    - **N6** Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts? (inputs, preconditions)
+    - **N6** Does the best practice name each kind of deliverable that this kind rests on, with the sections of it that this kind takes, and a condition that carries each of their vital few that its users need? (inputs)
 
 ## Template
 
@@ -102,16 +102,16 @@ A practice is where the maker learns how to bring the people to a condition's st
 
 ### N6
 
-Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts?
+Does the best practice name each kind of deliverable that this kind rests on, with the sections of it that this kind takes, and a condition that carries each of their vital few that its users need?
 
-A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it, so that the users never meet two deliverables that disagree.
+A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it, so that the users never meet two deliverables that disagree. The list follows the inputs of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html), the work products a task takes, here named by the sections taken, so that the maker of a deliverable whose input has no file in the product still knows which decisions it rests on.
 
-1. *While deciding.* Go through each section of the template and ask where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README.
-2. *While deciding.* Of each input, ask whether work on the deliverable can start while the input still changes. Where it can't, the input's kind is a precondition too, such as an agreed product vision for a README.
-3. *While deciding.* Go the other way, from each input to the deliverable, since a deliverable that drops what it rests on fails its users while every part it holds is sound: take the input's vital few, such as the concept and the key results of a product vision, and ask which of them the deliverable's users need.
-4. *While deciding.* For each of those vital few that the users need, decide which part of the deliverable carries it.
-5. *While deciding.* Make sure a condition asks for each of those vital few, such as a README showing what the key results promise.
-6. *While making.* List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice.
+1. *While deciding.* Go through each section of the template and ask where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README, and so is each kind whose deliverable this one runs, such as the code that an E2E test runs.
+2. *While deciding.* Go the other way, from each input to the deliverable, since a deliverable that drops what it rests on fails its users while every part it holds is sound: take the input's vital few, such as the concept and the key results of a product vision, and ask which of them the deliverable's users need.
+3. *While deciding.* For each of those vital few that the users need, decide which part of the deliverable carries it.
+4. *While deciding.* Make sure a condition asks for each of those vital few, such as a README showing what the key results promise.
+5. *While making.* List each input in `inputs` by the folder name of its best practice, with in `takes` each section of its template that a condition here carries, by its heading, such as `Walkthrough` of a README. A kind that this one only runs takes none.
+6. *While making.* Have the first practice read the sections that `inputs` takes, and say what it gets from each without naming the sections again, since a section named in two places drifts apart.
 7. *While making.* Leave out the kinds built on this kind, since their best practices name it in `inputs`, and listing them here as well would write the same fact twice.
 8. *While making.* Leave out the paths of the inputs, since the plan holds the paths of each deliverable's inputs and orders the deliverable after them.
 9. *While making.* Where you change a best practice that exists, search the other best practices for this kind's folder name in their `inputs`, and, in the same change, update each of their conditions that carries what you changed, such as a README's condition on the key results when the product vision's key results change.

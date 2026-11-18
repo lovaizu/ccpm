@@ -54,11 +54,11 @@
        },
        {
         "at": "decide",
-        "text": "For each deliverable, list each kind that `inputs` and `preconditions` of the best practice you opened for it name, or, where you opened none, each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks."
+        "text": "For each deliverable, list each kind that `inputs` of the best practice you opened for it names, or, where you opened none, each deliverable whose decisions it carries out or that it runs, such as the architecture whose user story an integration test checks."
        },
        {
         "at": "decide",
-        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens. Where no such file exists, add a deliverable of that kind only where the goal's state fails without it, such as an architecture for a plugin whose parts must fit together. Elsewhere, write that kind's vital few as decisions of the deliverable that takes it, such as the people of a guide added beside a command, since a deliverable that brings the people nothing new only lengthens the work. Repeat N2.3 and this item for each deliverable you add, until one takes nothing."
+        "text": "For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens. Where no such file exists, add a node of that kind with no file, such as the test design of a command added to a library that has none, and answer each necessary condition of its best practice in its decisions, leaving none out, since a choice of which to keep drops what the deliverable built on it needed, and a condition that turns out not to bear on the case is a fault of that best practice. Repeat N2.3 and this item for each deliverable and node you add, until one takes nothing."
        },
        {
         "at": "decide",
@@ -88,25 +88,25 @@
      },
      {
       "id": "N4",
-      "about": "deliverables",
-      "what": "Does each deliverable name the deliverables it takes content from and those that must pass before it starts, and come after all of them?",
-      "why": "A deliverable started before its inputs rests on a guess, and its maker does the work again once they arrive. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method) of scheduling, which lists each activity's predecessors before it orders the activities.",
+      "about": "deliverables, work",
+      "what": "Does each deliverable name in its inputs each deliverable it rests on, read or run, and does the work order take it only after them?",
+      "why": "A deliverable started before its inputs rests on a guess, and its maker does the work again once they arrive. The items follow the inputs of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html), the work products a task takes, and the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method) of scheduling, which lists each activity's predecessors before it orders the activities.",
       "items": [
        {
         "at": "decide",
-        "text": "For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took or deliverable you added at N2.4 for a kind that the best practice's `inputs` name, and in its `preconditions` the path of each one for a kind that its `preconditions` name, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products."
+        "text": "For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took, and of each deliverable or node you added at N2.4, for a kind that the best practice's `inputs` names, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products."
        },
        {
         "at": "decide",
-        "text": "For a `specific` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and in `preconditions` the path of each deliverable it runs, such as the parts that the test calls."
+        "text": "For a `specific` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and of each deliverable it runs, such as the parts that the test calls."
        },
        {
         "at": "decide",
-        "text": "Where other deliverables' results rest on a check, such as a script that CI runs on them, put in their preconditions the check with a test that shows it failing on a case it must catch, since a check never seen failing may pass anything."
+        "text": "Where other deliverables' results rest on a check, such as a script that CI runs on them, put in their inputs the check with a test that shows it failing on a case it must catch, since a check never seen failing may pass anything."
        },
        {
         "at": "make",
-        "text": "Write the deliverables in the order of the work: first each that names no deliverable of the tree in its inputs and preconditions, then each whose named deliverables all come before it, until you've placed each."
+        "text": "Write in `work` the work next, first to last: each deliverable to make by its path, and each point to decide by its deliverable's path, its condition, and its `about`, each after each deliverable that its inputs name, so that `tree.py` draws the deliverables as a tree by their inputs and the list of deliverables holds no order of its own."
        },
        {
         "at": "make",
@@ -114,7 +114,7 @@
        },
        {
         "at": "make",
-        "text": "Check that each deliverable comes after each one it takes from or waits for, that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` checks none of these."
+        "text": "Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` checks neither, while it refuses a deliverable whose inputs leave out a kind that its best practice's `inputs` names, and an item of `work` whose inputs aren't done."
        }
       ]
      }
@@ -204,7 +204,7 @@
     "necessary_conditions": [
      {
       "id": "N11",
-      "about": "goal, deliverables",
+      "about": "goal, deliverables, work",
       "what": "Does each node of the tree hold what the run's facts so far show brings the people to the goal's state: each deliverable, decision, open point, and the work next?",
       "why": "A plan holds what was known when it was laid, and each round, try, and answer shows more. Reviewed at each turn, the tree takes the work where the people gain most, while a tree kept as laid piles up rounds on points that bring them nothing.",
       "items": [
@@ -222,7 +222,7 @@
        },
        {
         "at": "decide",
-        "text": "Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, and write the tree's order so."
+        "text": "Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, among those whose inputs are done, and write it first in `work`."
        }
       ]
      }
@@ -294,7 +294,7 @@
       "items": [
        {
         "at": "make",
-        "text": "After each change to a node, list the nodes it touches: each node up to the goal, the later decisions of the same deliverable, and each deliverable that names the changed one in its inputs or preconditions or that it names there. `tree.py write` prints this list as `touched`."
+        "text": "After each change to a node, list the nodes it touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it. `tree.py write` prints this list as `touched`."
        },
        {
         "at": "make",
@@ -331,6 +331,5 @@
   ]
  },
  "template": "design-tree.schema.json",
- "inputs": [],
- "preconditions": []
+ "inputs": []
 }

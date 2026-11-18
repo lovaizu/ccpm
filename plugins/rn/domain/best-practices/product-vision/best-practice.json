@@ -199,6 +199,5 @@
   ]
  },
  "template": "template.md",
- "inputs": [],
- "preconditions": []
+ "inputs": []
 }

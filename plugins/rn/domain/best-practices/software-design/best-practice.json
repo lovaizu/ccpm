@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the architecture and read it to its end: what each component decides in Components, the kinds of data in Data model, each step in Sequences, where each component's files lie in Directory structure, and the language and the tools in Components and Test strategy.",
+        "text": "Open the architecture and read the sections that `inputs` takes from it: what each component decides, the kinds of data, each step of each sequence, where each component's files lie, and the language and the tools.",
         "trace": {
          "action": "read",
          "takes": [
@@ -118,7 +118,15 @@
  },
  "template": "template.md",
  "inputs": [
-  "architecture"
- ],
- "preconditions": []
+  {
+   "kind": "architecture",
+   "takes": [
+    "Components",
+    "Data model",
+    "Sequences",
+    "Directory structure",
+    "Test strategy"
+   ]
+  }
+ ]
 }

@@ -17,7 +17,7 @@ def mark_doing(tree: DesignTree, signed: SignOffs) -> tuple[DesignTree, tuple[st
     Takes: the tree, and the run's sign-offs.
     Gives: the tree so marked, and the path of each deliverable it marked, in the order of the
     work: each open deliverable once the plan's latest sign-off is signed off, no decision under it
-    is open, and each deliverable of the tree that its inputs or preconditions name has its latest
+    is open, and each deliverable of the tree that its inputs name has its latest
     sign-off signed off; the tree as it was, and none, while the plan isn't signed off.
     Changes: nothing.
     Refuses: nothing.
@@ -32,7 +32,7 @@ def mark_doing(tree: DesignTree, signed: SignOffs) -> tuple[DesignTree, tuple[st
     paths = {other["path"] for other in each}
     marked = []
     for deliverable in each:
-        rests_on = set(deliverable.get("inputs", []) + deliverable.get("preconditions", [])) & paths
+        rests_on = set(deliverable.get("inputs", [])) & paths
         signed_off = all(latest.get((Kind.DELIVERABLE, p)) is State.SIGNED_OFF for p in rests_on)
         if deliverable["status"] == "open" and signed_off and not _open_point(deliverable):
             deliverable["status"] = "doing"

@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open your cut, and read to its end each input it names: the product vision, the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in.",
+        "text": "Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end.",
         "trace": {
          "action": "read",
          "takes": [
@@ -500,8 +500,23 @@
  },
  "template": "template.md",
  "inputs": [
-  "product-vision",
-  "readme"
- ],
- "preconditions": []
+  {
+   "kind": "product-vision",
+   "takes": [
+    "Roles",
+    "Objectives and key results",
+    "Concept"
+   ]
+  },
+  {
+   "kind": "readme",
+   "takes": [
+    "the opening",
+    "Non-goals",
+    "Requirements",
+    "Walkthrough",
+    "How it works"
+   ]
+  }
+ ]
 }

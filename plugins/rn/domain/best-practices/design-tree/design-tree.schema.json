@@ -1,11 +1,12 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "design tree",
- "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: the goal, and the deliverables in the order of the work, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions. It keeps only what holds now, and git keeps the history of each point.",
+ "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, and the work order. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
  "type": "object",
  "required": [
   "goal",
-  "deliverables"
+  "deliverables",
+  "work"
  ],
  "additionalProperties": false,
  "properties": {
@@ -28,7 +29,7 @@
    }
   },
   "deliverables": {
-   "description": "Every deliverable the goal needs, in the order of the work, each after the deliverables its inputs and preconditions name. A research deliverable comes before the decisions it serves, and a meta deliverable before the first deliverable of its kind, each at the top level.",
+   "description": "Every deliverable the goal needs, and a node of each kind that one takes with no file of it in the product. A meta deliverable makes the best practice of a kind that later deliverables have. The list holds no order of the work, which `work` holds.",
    "type": "array",
    "items": {
     "anyOf": [
@@ -42,6 +43,13 @@
       "$ref": "#/$defs/specific"
      }
     ]
+   }
+  },
+  "work": {
+   "description": "The work next, first to last, each after each deliverable that the inputs of what it names name.",
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/work"
    }
   }
  },
@@ -60,7 +68,7 @@
    "type": "string"
   },
   "path": {
-   "description": "Where the deliverable lies, from the top of the repository: a file, or a folder for a deliverable of many files.",
+   "description": "Where the deliverable lies, from the top of the repository: a file, or a folder for a deliverable of many files. For a node with no file, where its file would lie, which names it.",
    "type": "string"
   },
   "kind": {
@@ -101,7 +109,6 @@
     "path",
     "kind",
     "inputs",
-    "preconditions",
     "status",
     "necessary_conditions"
    ],
@@ -117,14 +124,7 @@
      "$ref": "#/$defs/kind"
     },
     "inputs": {
-     "description": "The path of each deliverable this one takes its content from, each of a kind that its best practice names in inputs. A path may name a file outside the tree that already exists. The list stays empty where the deliverable takes none.",
-     "type": "array",
-     "items": {
-      "type": "string"
-     }
-    },
-    "preconditions": {
-     "description": "The path of each deliverable that must pass before this one starts, each of a kind that its best practice names in preconditions. The list stays empty where the deliverable needs none.",
+     "description": "The path of each deliverable or node this one rests on, read or run, covering each kind that its best practice names in inputs. A path may name a file outside the tree that already exists. The list stays empty where the deliverable rests on none.",
      "type": "array",
      "items": {
       "type": "string"
@@ -143,6 +143,10 @@
      "items": {
       "$ref": "#/$defs/necessary_condition"
      }
+    },
+    "file": {
+     "description": "false for a node of a kind with no file of it in the product: no file is made, its path names it where its file would lie, and its decisions answer each necessary condition of its best practice. Left out for a deliverable whose file the work makes; true is never written.",
+     "type": "boolean"
     }
    }
   },
@@ -232,7 +236,6 @@
     "path",
     "kind",
     "inputs",
-    "preconditions",
     "status",
     "check",
     "good",
@@ -250,14 +253,7 @@
      "const": "specific"
     },
     "inputs": {
-     "description": "The path of each deliverable this one takes its content from, each of a kind that its best practice names in inputs. A path may name a file outside the tree that already exists. The list stays empty where the deliverable takes none.",
-     "type": "array",
-     "items": {
-      "type": "string"
-     }
-    },
-    "preconditions": {
-     "description": "The path of each deliverable that must pass before this one starts, each of a kind that its best practice names in preconditions. The list stays empty where the deliverable needs none.",
+     "description": "The path of each deliverable or node this one rests on, read or run, covering each kind that its best practice names in inputs. A path may name a file outside the tree that already exists. The list stays empty where the deliverable rests on none.",
      "type": "array",
      "items": {
       "type": "string"
@@ -291,6 +287,36 @@
        }
       ]
      }
+    }
+   }
+  },
+  "work": {
+   "description": "One piece of the work next.",
+   "type": "object",
+   "required": [
+    "do",
+    "path"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "do": {
+     "description": "make: a round of the deliverable. decide: settle the point, or put it to the user.",
+     "enum": [
+      "make",
+      "decide"
+     ]
+    },
+    "path": {
+     "description": "The path of the deliverable that the work makes, or that holds the point.",
+     "type": "string"
+    },
+    "condition": {
+     "description": "With decide, for a deliverable of a best practice's kind: the ID of the necessary condition that holds the point, such as N3.",
+     "type": "string"
+    },
+    "about": {
+     "description": "With decide: the point's about, as the deliverable holds it.",
+     "type": "string"
     }
    }
   }

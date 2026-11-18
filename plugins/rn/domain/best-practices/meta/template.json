@@ -37,9 +37,11 @@
  },
  "template": "<kind>-template.<ext>",
  "inputs": [
-  "<kind>"
- ],
- "preconditions": [
-  "<kind>"
+  {
+   "kind": "<kind>",
+   "takes": [
+    "<section>"
+   ]
+  }
  ]
 }

@@ -15,7 +15,6 @@
       "path": "plugins/rn/domain/best-practices/meta",
       "kind": "meta",
       "inputs": [],
-      "preconditions": [],
       "status": "open",
       "necessary_conditions": [
         {
@@ -81,8 +80,7 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [
+      "inputs": [
         "plugins/rn/domain/best-practices/meta"
       ],
       "status": "open",
@@ -206,8 +204,7 @@
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [
+      "inputs": [
         "plugins/rn/domain/best-practices/meta"
       ],
       "status": "open",
@@ -303,9 +300,7 @@
       "kind": "architecture",
       "inputs": [
         "dev/rn/product-vision.md",
-        "plugins/rn/README.md"
-      ],
-      "preconditions": [
+        "plugins/rn/README.md",
         "plugins/rn/domain/best-practices/architecture"
       ],
       "status": "open",
@@ -615,9 +610,6 @@
       "inputs": [
         "dev/rn/product-vision.md",
         "dev/rn/architecture.md",
-        "dev/rn/tests"
-      ],
-      "preconditions": [
         "dev/rn/tests",
         "dev/rn/tests/integration/test_rn_walking_skeleton.py",
         "dev/rn/tests/integration/test_rn_s2_points.py",
@@ -723,11 +715,6 @@
               "about": "The pilot records",
               "decided": "walkthrough/20261117T204638Z, the first stage, on which each check's tests run",
               "by": "reasoning"
-            },
-            {
-              "about": "Before the next stage",
-              "decided": "the design tree best practice, the design tree's form, and the best practices' inputs are rebuilt first; then rn's flow makes the content good before the structure is reworked, judges again only what changed, and keeps the new design tree; then the best practices of architecture, README, prompt, and meta are read practice by practice, each kept only where the people fail their aim without it; then the walkthrough runs again",
-              "by": "user"
             }
           ]
         }
@@ -740,9 +727,6 @@
       "inputs": [
         "plugins/lane/README.md",
         "plugins/rn/README.md",
-        "dev/rn/tests/e2e"
-      ],
-      "preconditions": [
         "dev/rn/tests/e2e"
       ],
       "status": "open",
@@ -771,7 +755,6 @@
       "path": "dev/plugin-development-guide.md",
       "kind": "specific",
       "inputs": [],
-      "preconditions": [],
       "status": "doing",
       "check": "the plugin guide and dev/plugin-template say what each plugin takes from them, and rn and Lane follow them",
       "good": false,
@@ -812,6 +795,40 @@
           "by": "user"
         }
       ]
+    }
+  ],
+  "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/meta"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/design-tree"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/code"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/architecture"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/readme"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/prompt"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/e2e"
     }
   ]
 }

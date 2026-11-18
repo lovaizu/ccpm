@@ -28,7 +28,7 @@ def touched(tree: DesignTree, changed: Sequence[str]) -> tuple[str, ...]:
 
 
 def _resting_on(tree: DesignTree, deliverable: str) -> list[str]:
-    """The path of each deliverable whose inputs or preconditions name the path of the deliverable
+    """The path of each deliverable whose inputs name the path of the deliverable
     at the node's path, as it rests on it."""
     each = deliverables(tree)
     parts = deliverable.split("/")
@@ -38,5 +38,5 @@ def _resting_on(tree: DesignTree, deliverable: str) -> list[str]:
     return [
         f"deliverables/{number}"
         for number, other in enumerate(each)
-        if named in other.get("inputs", []) + other.get("preconditions", [])
+        if named in other.get("inputs", [])
     ]

@@ -21,9 +21,9 @@
 
 ## Inputs
 
-- [architecture](../architecture/best-practice.md)
-- [software-design](../software-design/best-practice.md)
-- [test-design](../test-design/best-practice.md)
+- [architecture](../architecture/best-practice.md), taking `Solution strategy`, `Components`, `Sequences`, `Test strategy`
+- [software-design](../software-design/best-practice.md), taking `Module opening`, `Interface`
+- [test-design](../test-design/best-practice.md), taking `Unit cases`
 
 ## Practices
 
@@ -33,7 +33,7 @@ Does each module say, where the maintainer first meets it, the one thing it alon
 
 A maintainer with one behavior to change finds the one module to open from what the modules say at their top, without reading a body, and changes the code in that one place.
 
-1. *While deciding.* Open what the code must do: where an architecture holds the part, its line in Components, the principles, each sequence that the part takes a step in, and, where the design made them, the part's skeleton and its unit cases in the test code; elsewhere, the request for the code. Where no unit cases exist, write them first, each as a test's name with its Given, When, and Then: one for the usual input, one for each class of input that the code treats alike, refusals among them, and one at each end of a class on an ordered scale. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does. The trace: `{inputs}` read to its end.
 2. *While deciding.* List the decisions that the specification leaves to the code: for each unit case, ask what the code could do in more than one way while the case still passes, such as the layout of a file that only the part reads, or the order in which it tries two sources. Each such choice is a decision left to the code, and a choice that a case, a principle, or the skeleton's interface already fixes isn't.
 3. *While deciding.* Give each decision to one module. Keep the skeleton's modules, where one exists, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other.
 4. *While deciding.* Where a decision has variants that the cases call for now, such as two remotes that each take their own commands, give each variant its own module behind one interface, and name that shape by its design pattern, such as Adapter, in the module that chooses among them, since the name tells the maintainer where a new variant goes. Make a variant only where a case calls for it, as N3 says.

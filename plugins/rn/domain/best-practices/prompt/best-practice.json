@@ -420,12 +420,35 @@
  },
  "template": "template.md",
  "inputs": [
-  "architecture",
-  "readme",
-  "test-design"
- ],
- "preconditions": [
-  "architecture",
-  "code"
+  {
+   "kind": "architecture",
+   "takes": [
+    "User stories",
+    "Components",
+    "Data model",
+    "Sequences",
+    "Directory structure",
+    "Test strategy"
+   ]
+  },
+  {
+   "kind": "readme",
+   "takes": [
+    "Walkthrough",
+    "How it works"
+   ]
+  },
+  {
+   "kind": "test-design",
+   "takes": [
+    "Unit cases"
+   ]
+  },
+  {
+   "kind": "code",
+   "takes": [
+    "Interface"
+   ]
+  }
  ]
 }

@@ -20,10 +20,10 @@
 
 ## Inputs
 
-- [product-vision](../product-vision/best-practice.md)
-- [readme](../readme/best-practice.md)
-- [architecture](../architecture/best-practice.md)
-- [software-design](../software-design/best-practice.md)
+- [product-vision](../product-vision/best-practice.md), taking `Objectives and key results`
+- [readme](../readme/best-practice.md), taking `Walkthrough`
+- [architecture](../architecture/best-practice.md), taking `Solution strategy`, `Components`, `Data model`, `Sequences`, `Test strategy`
+- [software-design](../software-design/best-practice.md), taking `Interface`, `Prompt`
 
 ## Practices
 
@@ -33,7 +33,7 @@ Does each key result have an E2E case that runs an objective's main use at the s
 
 The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result.
 
-1. *While deciding.* Open the product vision, the README, the architecture, and the skeleton, and read each to its end: the key results, the walkthrough, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open the product vision, the README, the architecture, and the skeleton, and read the sections that `inputs` takes from each: the key results, the walkthrough, each rule, decision, and handoff of the architecture, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host. The trace: `{inputs}` read to its end.
 2. *While making.* For each key result, write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`.
 
 ### N2

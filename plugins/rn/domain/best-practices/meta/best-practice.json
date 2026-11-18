@@ -274,17 +274,13 @@
     "necessary_conditions": [
      {
       "id": "N6",
-      "about": "inputs, preconditions",
-      "what": "Does the best practice name the kinds of deliverable that this kind builds on, with a condition that carries each of their vital few that its users need, and the kinds that must pass before work on it starts?",
-      "why": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it, so that the users never meet two deliverables that disagree.",
+      "about": "inputs",
+      "what": "Does the best practice name each kind of deliverable that this kind rests on, with the sections of it that this kind takes, and a condition that carries each of their vital few that its users need?",
+      "why": "A deliverable must say what the deliverables it builds on say, and the deliverables built on it must follow it, so that the users never meet two deliverables that disagree. The list follows the inputs of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html), the work products a task takes, here named by the sections taken, so that the maker of a deliverable whose input has no file in the product still knows which decisions it rests on.",
       "items": [
        {
         "at": "decide",
-        "text": "Go through each section of the template and ask where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README."
-       },
-       {
-        "at": "decide",
-        "text": "Of each input, ask whether work on the deliverable can start while the input still changes. Where it can't, the input's kind is a precondition too, such as an agreed product vision for a README."
+        "text": "Go through each section of the template and ask where its content comes from. Each kind of deliverable that supplies content is an input, such as the product vision for a README, and so is each kind whose deliverable this one runs, such as the code that an E2E test runs."
        },
        {
         "at": "decide",
@@ -300,7 +296,11 @@
        },
        {
         "at": "make",
-        "text": "List the inputs in `inputs` and the preconditions in `preconditions`, each by the folder name of its best practice."
+        "text": "List each input in `inputs` by the folder name of its best practice, with in `takes` each section of its template that a condition here carries, by its heading, such as `Walkthrough` of a README. A kind that this one only runs takes none."
+       },
+       {
+        "at": "make",
+        "text": "Have the first practice read the sections that `inputs` takes, and say what it gets from each without naming the sections again, since a section named in two places drifts apart."
        },
        {
         "at": "make",
@@ -325,6 +325,5 @@
   ]
  },
  "template": "template.json",
- "inputs": [],
- "preconditions": []
+ "inputs": []
 }

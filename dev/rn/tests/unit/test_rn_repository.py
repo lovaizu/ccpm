@@ -138,7 +138,7 @@ def test_a_file_is_given_as_a_commit_holds_it(tmp_path: Any) -> None:
     commit = d.git(run.worktree, "rev-parse", "HEAD").strip()
     with open(path, encoding="utf-8") as f:
         then = f.read()
-    d.tree_written(run, {"goal": {"decided": "x", "by": "user"}, "deliverables": []})
+    d.tree_written(run, {"goal": {"decided": "x", "by": "user"}, "deliverables": [], "work": []})
     relative = os.path.relpath(path, run.worktree)
     assert git.file_at(run.worktree, commit, relative) == then
     with pytest.raises(CantRun):

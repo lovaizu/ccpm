@@ -422,7 +422,13 @@
  },
  "template": "template.md",
  "inputs": [
-  "product-vision"
- ],
- "preconditions": []
+  {
+   "kind": "product-vision",
+   "takes": [
+    "Roles",
+    "Objectives and key results",
+    "Concept"
+   ]
+  }
+ ]
 }

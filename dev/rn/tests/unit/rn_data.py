@@ -76,7 +76,6 @@ def open_deliverable(name: str, path: str, status: str = "open", **fields: Any) 
         "path": path,
         "kind": "code",
         "inputs": [],
-        "preconditions": [],
         "status": status,
         "necessary_conditions": conditions(),
     }
@@ -92,7 +91,7 @@ def walkthrough_tree() -> dict[str, Any]:
         {"about": "which files the hints cover", "decided": "each file", "by": "user"}
     ]
     typed = open_deliverable("invoicer marked as typed", "invoicer/py.typed")
-    return {"goal": {"decided": GOAL, "by": "user"}, "deliverables": [hints, typed]}
+    return {"goal": {"decided": GOAL, "by": "user"}, "deliverables": [hints, typed], "work": []}
 
 
 def with_status(data: dict[str, Any], *statuses: str) -> dict[str, Any]:

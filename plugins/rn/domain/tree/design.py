@@ -23,6 +23,10 @@ _FORM = os.path.join("best-practices", "design-tree", "design-tree.schema.json")
 # deliverable of its own kind.
 _UNDER = ("deliverables", "necessary_conditions", "decisions")
 
+# The fields at the top of the tree that a change may name: the goal, the deliverables, and the
+# work order, which a change writes whole.
+_TOP = ("goal", "deliverables", "work")
+
 
 @dataclass(frozen=True)
 class DesignTree:
@@ -199,7 +203,7 @@ def _set(data: dict[str, Any], path: str, node: object) -> None:
             raise KeyError(last)
     except (KeyError, IndexError, ValueError, TypeError):
         raise Wrong(f"the change's path {path} names no node of the design tree") from None
-    if not above and last not in ("goal", "deliverables"):
+    if not above and last not in _TOP:
         raise Wrong(f"the change's path {path} names no node of the design tree")
 
 
@@ -216,9 +220,9 @@ def _differ(path: str, before: Mapping[str, Any], after: Mapping[str, Any]) -> l
     """The path of each node that differs between two nodes of one path, a node added or removed
     given once, and a node whose own fields differ given before the nodes under it that differ."""
     found = []
-    if path == "" and before.get("goal") != after.get("goal"):
-        found.append("goal")
-    own = [k for k in {**before, **after} if k not in _UNDER and (path or k != "goal")]
+    if path == "":
+        found += [k for k in ("goal", "work") if before.get(k) != after.get(k)]
+    own = [k for k in {**before, **after} if k not in _UNDER and (path or k not in _TOP)]
     if path and any(before.get(k) != after.get(k) for k in own):
         found.append(path)
     for field in _UNDER:

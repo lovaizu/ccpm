@@ -191,10 +191,6 @@ def unread(path: str, data: dict[str, Any]) -> list[str]:
     return []
 
 
-# The lists of the kinds a best practice takes, each with the word for one of them.
-TAKEN = {"inputs": "input", "preconditions": "precondition"}
-
-
 def practice_of(path: str, kind: str) -> str:
     """The path of the best practice of the kind beside the folder of the one at the path, else
     among rn's own, else beside, where neither place holds it."""
@@ -203,18 +199,39 @@ def practice_of(path: str, kind: str) -> str:
     return own if not os.path.isfile(near) and os.path.isfile(own) else near
 
 
+def lacked(path: str, taken: dict[str, Any]) -> list[str]:
+    """Each section that the input takes and its kind's template, by the best practice of the kind
+    as practice_of finds it from the path, doesn't hold, in words, or why that template can't be
+    read."""
+    kind = taken["kind"]
+    if not taken["takes"]:
+        return []
+    found = practice_of(path, kind)
+    try:
+        held = template(found, files.read(found)) or []
+    except (files.Unreadable, FileNotFoundError, ValueError) as why:
+        return [f"its input {kind} takes sections of a template it can't read: {why}"]
+    names = {" / ".join(section) for section in held}
+    return [
+        f"its input {kind} takes {name}, which is no section of {kind}'s template"
+        for name in taken["takes"]
+        if name not in names
+    ]
+
+
 def missing(path: str, data: dict[str, Any]) -> list[str]:
-    """The template the best practice at the path names, where it isn't beside it, and each kind
-    it takes that has no best practice beside its folder, in words."""
+    """The template the best practice at the path names, where it isn't beside it, each kind it
+    takes that has no best practice beside its folder, and each section it takes that the kind's
+    template doesn't hold, in words."""
     found = []
     if "template" in data and not os.path.exists(beside(path, data["template"])):
         found.append(f"its template {data['template']} is not beside it")
-    for key, called in TAKEN.items():
-        found += [
-            f"its {called} {kind} has no best practice beside it or among rn's own"
-            for kind in data[key]
-            if not os.path.isfile(practice_of(path, kind))
-        ]
+    for taken in data["inputs"]:
+        kind = taken["kind"]
+        if os.path.isfile(practice_of(path, kind)):
+            found += lacked(path, taken)
+        else:
+            found.append(f"its input {kind} has no best practice beside it or among rn's own")
     return found
 
 
@@ -430,6 +447,15 @@ def link_of(path: str, kind: str) -> str:
     return os.path.relpath(found, os.path.dirname(os.path.abspath(path))).replace(os.sep, "/")
 
 
+def line_of(path: str, taken: dict[str, Any]) -> str:
+    """The input's line in the Markdown of the best practice at the path: a link to its kind, then
+    the sections it takes, each in backticks as its template heads it, or that the kind is run
+    whole where it takes none."""
+    link = f"- [{taken['kind']}]({link_of(path, taken['kind'])})"
+    takes = ", ".join(f"`{name}`" for name in taken["takes"])
+    return f"{link}, taking {takes}" if takes else f"{link}, run whole"
+
+
 def markdown_of(path: str, data: dict[str, Any]) -> str:
     """The best practice at the path as Markdown: its goal tree, a link to its template, and a link
     to each kind it takes where it takes any, to where its best practice lies, then each
@@ -437,10 +463,9 @@ def markdown_of(path: str, data: dict[str, Any]) -> str:
     out = [f"# `{kind_of(path)}`", "", "## Goal tree", "", *tree(data)]
     if "template" in data:
         out += ["", "## Template", "", f"[{data['template']}]({data['template']})"]
-    for key in TAKEN:
-        if data[key]:
-            out += ["", f"## {key.capitalize()}", ""]
-            out += [f"- [{taken}]({link_of(path, taken)})" for taken in data[key]]
+    if data["inputs"]:
+        out += ["", "## Inputs", ""]
+        out += [line_of(path, taken) for taken in data["inputs"]]
     out += ["", "## Practices"]
     for c in by_id(conditions(data)):
         out += ["", f"### {c['id']}", "", c["what"], "", c["why"], ""]

@@ -69,7 +69,6 @@ DATA: dict[str, Any] = {
         ],
     },
     "inputs": [],
-    "preconditions": [],
 }
 
 
@@ -456,19 +455,27 @@ class Beside(helpers.FolderTest):
         self.assertEqual(practices.template(self.path, named), [("goal",)])
 
     def test_each_kind_it_takes_with_no_best_practice_beside_or_among_rn_s_own(self):
-        named = dict(DATA, inputs=["note", "gone"], preconditions=["late", "note"])
+        named = dict(DATA, inputs=[{"kind": "note", "takes": []}, {"kind": "gone", "takes": []}])
         self.write(os.path.join(self.base, "note", "best-practice.json"), "{}")
-        self.write(os.path.join(self.base, "late", "template.md"), "# <P>\n")
         self.assertEqual(
             practices.missing(self.path, named),
-            [
-                "its input gone has no best practice beside it or among rn's own",
-                "its precondition late has no best practice beside it or among rn's own",
-            ],
+            ["its input gone has no best practice beside it or among rn's own"],
+        )
+
+    def test_each_section_it_takes_that_the_input_s_template_lacks(self):
+        # Given: an input whose template holds Walkthrough, taken with a section it doesn't hold
+        late = os.path.join(self.base, "late")
+        self.write(os.path.join(late, "best-practice.json"), '{"template": "template.md"}')
+        self.write(os.path.join(late, "template.md"), "# <P>\n\n## Walkthrough\n")
+        named = dict(DATA, inputs=[{"kind": "late", "takes": ["Walkthrough", "Gone"]}])
+        # Then: the section it lacks, by name
+        self.assertEqual(
+            practices.missing(self.path, named),
+            ["its input late takes Gone, which is no section of late's template"],
         )
 
     def test_a_kind_it_takes_among_rn_s_own_where_none_lies_beside(self):
-        named = dict(DATA, inputs=["readme"])
+        named = dict(DATA, inputs=[{"kind": "readme", "takes": ["Walkthrough"]}])
         self.assertEqual(practices.missing(self.path, named), [])
         self.assertEqual(
             practices.practice_of(self.path, "readme"),
@@ -490,12 +497,20 @@ class Beside(helpers.FolderTest):
 
     def test_the_markdown_links_each_kind_it_takes_where_its_best_practice_lies(self):
         self.write(os.path.join(self.base, "late", "best-practice.json"), "{}")
-        named = dict(DATA, inputs=["late", "readme", "gone"])
+        named = dict(
+            DATA,
+            inputs=[
+                {"kind": "late", "takes": []},
+                {"kind": "readme", "takes": ["Walkthrough", "How it works"]},
+                {"kind": "gone", "takes": []},
+            ],
+        )
         own = os.path.relpath(os.path.join(practices.OWN, "readme"), self.folder)
         own = own.replace(os.sep, "/")
         self.assertIn(
-            "## Inputs\n\n- [late](../late/best-practice.md)\n"
-            f"- [readme]({own}/best-practice.md)\n- [gone](../gone/best-practice.md)\n",
+            "## Inputs\n\n- [late](../late/best-practice.md), run whole\n"
+            f"- [readme]({own}/best-practice.md), taking `Walkthrough`, `How it works`\n"
+            "- [gone](../gone/best-practice.md), run whole\n",
             practices.markdown_of(self.path, named),
         )
 
@@ -671,20 +686,16 @@ class Markdown(unittest.TestCase):
         self.assertNotIn("## Template", practices.markdown_of(PATH, DATA))
 
     def test_links_each_kind_it_takes_after_the_template(self):
-        named = dict(DATA, template="template.md", inputs=["a"], preconditions=["b", "c"])
+        named = dict(DATA, template="template.md", inputs=[{"kind": "a", "takes": ["X"]}])
         text = practices.markdown_of(PATH, named)
         self.assertIn(
-            "[template.md](template.md)\n\n## Inputs\n\n- [a](../a/best-practice.md)\n\n"
-            "## Preconditions\n\n- [b](../b/best-practice.md)\n- [c](../c/best-practice.md)\n\n"
+            "[template.md](template.md)\n\n## Inputs\n\n- [a](../a/best-practice.md), taking `X`\n\n"
             "## Practices\n",
             text,
         )
 
     def test_leaves_out_a_list_of_kinds_that_is_empty(self):
-        text = practices.markdown_of(PATH, dict(DATA, preconditions=["b"]))
-        self.assertNotIn("## Inputs", text)
-        self.assertIn("## Preconditions", text)
-        self.assertNotIn("## Preconditions", practices.markdown_of(PATH, DATA))
+        self.assertNotIn("## Inputs", practices.markdown_of(PATH, DATA))
 
     def test_lists_the_goal_each_factor_under_it_and_each_condition_under_its_factor(self):
         # Given: a best practice whose conditions lie under two factors, with a template's sections
@@ -862,17 +873,15 @@ class Practices(helpers.FolderTest):
         self.assertIn("is out of its form", err)
 
     def test_form_fails_on_a_best_practice_that_names_no_kinds_it_takes(self):
-        for key in ("inputs", "preconditions"):
-            with self.subTest(key=key):
-                data = copy.deepcopy(DATA)
-                del data[key]
-                self.write_json(self.path, data)
-                code, _, err = ran("form", self.path)
-                self.assertEqual(code, 1)
-                self.assertIn(f'is out of its form: $: expected the key "{key}"', err)
+        data = copy.deepcopy(DATA)
+        del data["inputs"]
+        self.write_json(self.path, data)
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn('is out of its form: $: expected the key "inputs"', err)
 
     def test_form_fails_on_a_kind_it_takes_that_has_no_best_practice(self):
-        self.write_json(self.path, dict(DATA, inputs=["gone"]))
+        self.write_json(self.path, dict(DATA, inputs=[{"kind": "gone", "takes": []}]))
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
         self.assertIn(

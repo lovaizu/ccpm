@@ -171,7 +171,7 @@ def test_an_end_whose_deliverable_leaves_its_template_names_each_place(tmp_path:
     )
     readme["necessary_conditions"] = d.conditions(10)
     run, record = generator_ended(
-        tmp_path, {"goal": d.walkthrough_tree()["goal"], "deliverables": [readme]}
+        tmp_path, {"goal": d.walkthrough_tree()["goal"], "deliverables": [readme], "work": []}
     )
     with open(os.path.join(run.worktree, "README.md"), "w", encoding="utf-8") as f:
         f.write("# invoicer\n")

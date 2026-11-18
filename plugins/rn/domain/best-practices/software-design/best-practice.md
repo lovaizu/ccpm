@@ -17,7 +17,7 @@
 
 ## Inputs
 
-- [architecture](../architecture/best-practice.md)
+- [architecture](../architecture/best-practice.md), taking `Components`, `Data model`, `Sequences`, `Directory structure`, `Test strategy`
 
 ## Practices
 
@@ -27,7 +27,7 @@ Does each module state at its top the one decision that it alone hides, and does
 
 A developer who builds or changes a part finds the one module that holds each decision, and a decision split across modules shows a part that the architecture cut wrong while nothing is built on it yet. David Parnas's [information hiding](https://doi.org/10.1145/361598.361623) divides a system into modules by the decisions likely to change, each hidden in one module, and arc42's [building block view](https://docs.arc42.org/section-5/) at level 2 opens each component of level 1 into its blocks in this way.
 
-1. *While deciding.* Open the architecture and read it to its end: what each component decides in Components, the kinds of data in Data model, each step in Sequences, where each component's files lie in Directory structure, and the language and the tools in Components and Test strategy. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open the architecture and read the sections that `inputs` takes from it: what each component decides, the kinds of data, each step of each sequence, where each component's files lie, and the language and the tools. The trace: `{inputs}` read to its end.
 2. *While deciding.* List, for each component, each decision that the architecture gives it: each choice its line in Components says it makes, each step it takes in Sequences, and each kind of data that only it reads or writes, such as the layout of a file that it keeps.
 3. *While deciding.* Give each decision to one module, and ask of each pair of decisions in a component whether one could change while the other stays, such as a file's layout and the rules that read it. Where one could, give each a module of its own, and where a change of one always changes the other, keep them in one module.
 4. *While making.* Make each module's file where Directory structure places its component, in the language that Components names, and write at its top the sentence that the note of Module opening in the template asks for, naming the decision, not the steps, such as `The layout of a record on disk.` Make too each other file that Directory structure places and the parts read, such as a manifest or a setting, in its form, and have each command's entry call its interface, so that a case reaches each empty body.

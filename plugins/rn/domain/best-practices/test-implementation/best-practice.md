@@ -18,15 +18,11 @@
 
 ## Inputs
 
-- [product-vision](../product-vision/best-practice.md)
-- [architecture](../architecture/best-practice.md)
-- [test-design](../test-design/best-practice.md)
-
-## Preconditions
-
-- [test-design](../test-design/best-practice.md)
-- [code](../code/best-practice.md)
-- [prompt](../prompt/best-practice.md)
+- [product-vision](../product-vision/best-practice.md), taking `Objectives and key results`
+- [architecture](../architecture/best-practice.md), taking `Test strategy`
+- [test-design](../test-design/best-practice.md), taking `E2E cases`
+- [code](../code/best-practice.md), run whole
+- [prompt](../prompt/best-practice.md), run whole
 
 ## Practices
 
@@ -36,7 +32,7 @@ Does the report state the decision it serves, and give each value for it with th
 
 A developer decides from the report, such as whether a key result came closer, and trusts a value only where they can find in the records what it was counted from. ISTQB's test process ends in a test completion report that states the results against what the testing set out to show.
 
-1. *While deciding.* Open the product vision, the architecture, and the test cases, and read each to its end: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open the product vision, the architecture, and the test cases, and read the sections that `inputs` takes from each: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then. The trace: `{inputs}` read to its end.
 2. *While deciding.* Name the decision that the report serves, from the row of Test strategy, such as whether KR1.1 came closer for a benchmark, or whether a response time stays under its criterion for a quality.
 3. *While deciding.* For each value the decision takes, write how it's counted from one run, from what the product vision says a run records, such as the share of runs whose order differs from the design.
 4. *While making.* Make the report by code from the records: the decision, each value, the runs it's counted from, and for each counted run the place in its records, such as a file and a line, so that a developer checks each value against the record.
