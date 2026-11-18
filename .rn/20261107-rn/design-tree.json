@@ -192,7 +192,7 @@
           "decisions": [
             {
               "about": "Each role's expected role",
-              "decided": "each AI role's responsibility says first what it brings the people, then what the others expect of it: the orchestrator keeps the work on what brings the people closer, the tree-keeper keeps the tree true, the generator makes only what brings the deliverable's people closer, and the evaluator finds what's good for them and what would make it good",
+              "decided": "each AI role's responsibility says first what it brings the people, then what the others expect of it: the orchestrator keeps the work on what brings the people closer and keeps the design tree true to each decision, the generator makes only what brings the deliverable's people closer, and the evaluator finds what's good for them and what would make it good; no role only passes on another's work",
               "by": "reasoning"
             },
             {
@@ -206,8 +206,18 @@
               "by": "user"
             },
             {
-              "about": "How the tree-keeper writes the design tree",
-              "decided": "it edits design-tree.json with the Edit tool, and tree.py checks the tree as edited, marks each turn, and commits it with the ground, so no change passes through a shell",
+              "about": "Who writes the design tree",
+              "decided": "the orchestrator edits design-tree.json with the Edit tool, and each more it keeps in the round's file with the Write tool; tree.py write then checks the tree as edited against the last commit, by form, work, inputs, and each more kept, marks each turn, and commits it with the ground, so no change passes through a shell and no role passes on a change it may neither decide nor mend",
+              "by": "reasoning"
+            },
+            {
+              "about": "Where a start's Cut lives",
+              "decided": "tree.py writes each start's Cut into the round's folder as it gives the start, and every later read of the round takes it from there, its course, the tree at its cut, and the commit at which its deliverable was last done, so nothing rebuilds a round from git's history",
+              "by": "reasoning"
+            },
+            {
+              "about": "Who decides a sign-off",
+              "decided": "only the user's typed /rn:ty or /rn:gm, whose skill runs tree.py approve or send-back as its own command as it loads, while the guard stops any other call of them",
               "by": "reasoning"
             }
           ]
@@ -240,6 +250,16 @@
             {
               "about": "A node with no file",
               "decided": "no generator or evaluator starts for it: the orchestrator settles each of its decisions, as S2 draws, sets each condition good once its decisions answer it, and puts it up, as S3 draws, so that work resting on it waits for its sign-off",
+              "by": "reasoning"
+            },
+            {
+              "about": "A pause",
+              "decided": "the pause stops each role and commits the work; each role stopped starts again from its kept Cut on the deliverable as committed, as the deliverable holds the work done, so no role commits at each step and no Place is kept",
+              "by": "reasoning"
+            },
+            {
+              "about": "A pick-up among several runs",
+              "decided": "the orchestrator asks the user which run, enters its worktree, and the adapters give that run's results kept at the next start, so a pick-up never goes the way of a new run",
               "by": "reasoning"
             }
           ]
