@@ -245,16 +245,16 @@
      {
       "id": "N8",
       "about": "User stories, Components, Data model, Sequences",
-      "what": "Does each user story have a sequence that shows, at each step, which component acts, along which arrow, and with which data?",
-      "why": "A developer building a step must know who acts there, on what, and what comes next. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's steps in order, from the role's first request to what the story gives them.",
+      "what": "Does each user story have a sequence that shows the handoffs that a developer needs to build its steps: which component hands what to which, along which arrow, and where the story branches?",
+      "why": "A developer building a step must know who hands them what, and what they hand on. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's handoffs in order, from the role's first request to what the story gives them, while a step that stays inside one component belongs to its responsibility, as a diagram that draws each such step buries the handoffs.",
       "items": [
        {
         "at": "make",
-        "text": "For each story, draw each step as a message from one component to another along an arrow of Components, with the data it passes, named as in the data model."
+        "text": "For each story, draw as a message each handoff from one component to another along an arrow of Components, with the data it passes, named as in the data model, and write each step that stays inside one component in that component's responsibility in place of a message."
        },
        {
         "at": "make",
-        "text": "At each step, ask what can go otherwise there, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering."
+        "text": "At each handoff, ask what can go otherwise there, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering."
        },
        {
         "at": "make",
@@ -266,7 +266,7 @@
        },
        {
         "at": "make",
-        "text": "Read each sequence as the developer who builds one of its steps, and check that they can tell, at each step, which component acts, along which arrow of Components, with which data, and what comes next. Where no arrow carries a step, add the arrow, or give the step to another component."
+        "text": "Read each sequence as the developer who builds one of its steps, and check that they can tell who hands them what, along which arrow of Components, and what they hand on. Where no arrow carries a handoff, add the arrow, or give the step to another component."
        }
       ]
      },

@@ -12,7 +12,7 @@
     - **N5** Does each component state its responsibility, as what it brings the users toward their aim, and does each decision that the stories need belong to exactly one component? (User stories, Components)
     - **N6** Does each component state its type and its technology? (Components)
     - **N7** Does the data model show how each kind of data relates to the others, without its fields? (Data model)
-    - **N8** Does each user story have a sequence that shows, at each step, which component acts, along which arrow, and with which data? (User stories, Components, Data model, Sequences)
+    - **N8** Does each user story have a sequence that shows the handoffs that a developer needs to build its steps: which component hands what to which, along which arrow, and where the story branches? (User stories, Components, Data model, Sequences)
     - **N9** Do the figures, lists, and sentences agree with one another, and with the architecture that the product builds on, on what each part does? (the whole)
   - **C3** The developers can place, set up, and start every part without asking anyone.
     - **N10** Does Deployment show where each component runs, where the product keeps each kind of data, and how the product starts? (Components, Data model, Deployment)
@@ -129,15 +129,15 @@ Two developers who build the writer and the reader of the same data must join it
 
 ### N8
 
-Does each user story have a sequence that shows, at each step, which component acts, along which arrow, and with which data?
+Does each user story have a sequence that shows the handoffs that a developer needs to build its steps: which component hands what to which, along which arrow, and where the story branches?
 
-A developer building a step must know who acts there, on what, and what comes next. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's steps in order, from the role's first request to what the story gives them.
+A developer building a step must know who hands them what, and what they hand on. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's handoffs in order, from the role's first request to what the story gives them, while a step that stays inside one component belongs to its responsibility, as a diagram that draws each such step buries the handoffs.
 
-1. *While making.* For each story, draw each step as a message from one component to another along an arrow of Components, with the data it passes, named as in the data model.
-2. *While making.* At each step, ask what can go otherwise there, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering.
+1. *While making.* For each story, draw as a message each handoff from one component to another along an arrow of Components, with the data it passes, named as in the data model, and write each step that stays inside one component in that component's responsibility in place of a message.
+2. *While making.* At each handoff, ask what can go otherwise there, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering.
 3. *While making.* Draw an input refused as a branch, a check that fails as a step that sends work back to the step it repeats, and a choice of the role as a question put to the role with its answers, since each path of the story, and its integration test, rests on them.
 4. *While making.* Let stories that share their steps share a diagram.
-5. *While making.* Read each sequence as the developer who builds one of its steps, and check that they can tell, at each step, which component acts, along which arrow of Components, with which data, and what comes next. Where no arrow carries a step, add the arrow, or give the step to another component.
+5. *While making.* Read each sequence as the developer who builds one of its steps, and check that they can tell who hands them what, along which arrow of Components, and what they hand on. Where no arrow carries a handoff, add the arrow, or give the step to another component.
 
 ### N9
 

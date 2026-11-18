@@ -67,7 +67,7 @@ Do lists, tables, and diagrams show the steps, the choices, and the relations th
 A reader takes in at once the steps, the choices, or the relations that a list, a table, or a diagram shows, but has to piece them together from prose.
 
 1. *While deciding.* For each passage, ask what relation it describes, and choose the form by the answer, as the [Google developer documentation style guide](https://developers.google.com/style/lists) chooses a list. Steps in order take a numbered list. Items in no order take a bulleted list. Things compared on the same points take a table. Who passes what to whom takes a diagram. An argument, where one point leads to the next by because or but, stays in prose, since a list drops those links.
-2. *While making.* Rewrite each passage in the form you chose for it, with one list item, table row, or element of the diagram for each step, choice, or thing that the passage names.
+2. *While making.* Rewrite each passage in the form you chose for it, with one list item or table row for each step, choice, or thing that the passage names. Draw in a diagram only what its reader needs to see at once toward their aim, such as the parts and the arrows of the main flow, and say in sentences beside it what more they need, since a diagram that draws every thing the passage names makes its reader search it for the few.
 3. *While making.* Draw a sequence diagram as text that the page renders, such as Mermaid, because its steps run from top to bottom and leave no layout to choose.
 4. *While making.* Draw a structure diagram, such as parts and what passes between them, as a file whose layout the writer sets, such as SVG, because its layout carries meaning.
 
