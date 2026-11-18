@@ -186,15 +186,11 @@
   <text class="label small halo" x="1272" y="426" text-anchor="end">and gives each start</text>
   <text class="label small halo" x="1272" y="440" text-anchor="end">due [hooks]</text>
   <path class="line" d="M1380,510 L1420,510 L1420,112 L1380,112" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1412" y="336" text-anchor="end">runs, with the</text>
-  <text class="label small halo" x="1412" y="350" text-anchor="end">words after</text>
-  <text class="label small halo" x="1412" y="364" text-anchor="end">/rn:up [stdio]</text>
+  <text class="label small halo" x="1412" y="336" text-anchor="end">asks each start&#x27;s</text>
+  <text class="label small halo" x="1412" y="350" text-anchor="end">text and each step&#x27;s</text>
+  <text class="label small halo" x="1412" y="364" text-anchor="end">practices [stdio]</text>
   <path class="line" d="M1280,544 L1280,720" marker-end="url(#arrow)"/>
   <text class="label small halo" x="1288" y="636" text-anchor="start">reads</text>
-  <path class="line" d="M1280,144 L1280,260" marker-end="url(#arrow)"/>
-  <text class="label small halo" x="1288" y="190" text-anchor="start">gets each result</text>
-  <text class="label small halo" x="1288" y="204" text-anchor="start">kept [import]</text>
-  <text class="data halo" x="1288" y="218" text-anchor="start">Start</text>
   <path class="line" d="M1200,80 L1200,46 L30,46 L30,512 L60,512" marker-end="url(#arrow)"/>
   <text class="label small halo" x="600" y="24" text-anchor="middle">the adapters and check.py get what each start and each check needs [import]</text>
   <text class="data halo" x="38" y="340" text-anchor="start">Cut, Answers,</text>

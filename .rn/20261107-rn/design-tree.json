@@ -274,12 +274,22 @@
             },
             {
               "about": "A pick-up among several runs",
-              "decided": "/rn:up alone, where several runs are left, names each and ends; /rn:up with a run's name picks that run up, as Lane's adapter names the work a call picks up from the words typed after the command, so a pick-up never goes the way of a new run",
+              "decided": "/rn:up alone picks up the one run left, and /rn:up with words that name a run left picks that run up; other words are a request; where none or several are left with no words, /rn:up names them and ends; each /rn:up begins a new run of Lane's whose first move is the orchestrator, which picks the run up from the tree and its News, so no adapter replays results that Lane's routes would refuse",
               "by": "reasoning"
             },
             {
               "about": "A pause",
-              "decided": "the main conversation stops each role and tree.py pause commits and pushes the work, leaving out an edit of the tree that tree.py write didn't check, as the orchestrator's next turn takes the same news again; each role stopped starts again from its kept Cut",
+              "decided": "/rn:dn ends the run of /rn:up by the skill's result paused, then stops each role, and tree.py pause commits and pushes the work, leaving out an edit of the tree that tree.py write didn't check, as the orchestrator's next turn takes the same News again; each role stopped has no Result, so its start comes due again from its kept Cut, as Lane gives a start ended with no Result due again",
+              "by": "reasoning"
+            },
+            {
+              "about": "When the orchestrator starts",
+              "decided": "at each event: a Said, a sign-off decided, or a role's end that brings News; the adapters give no orchestrator start while one runs, or where the News is empty or holds only part of a round, and fail where the folder lies in no run's worktree yet, so the guard asks again at the next call, as Lane asks the adapter again at each start's call",
+              "by": "reasoning"
+            },
+            {
+              "about": "A sign-off typed outside a run",
+              "decided": "/rn:ty or /rn:gm decides the sign-off by its own command as it loads, and where no run of /rn:up is open in the conversation, its steps call /rn:up by the Skill tool, which picks the run up; /rn:ty on the pull request handed over ends the run of /rn:up by the skill's result done",
               "by": "reasoning"
             }
           ]
