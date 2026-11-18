@@ -178,8 +178,8 @@ Where it has none for a kind, it makes one first, and lists what each settled wi
 
 ### "It looks done, but the people it's for can't use it."
 
-AI evaluators read each deliverable with only what its people have, never what rn meant. rn makes
-it again until they find each aim met, so you get one they can use.
+AI evaluators read each deliverable with only what its people have, never what rn meant. rn remakes
+it from what they find, twice at most, and shows you what's still short to decide on.
 
 ### "Each fix breaks something else."
 
