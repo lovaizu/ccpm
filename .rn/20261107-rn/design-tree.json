@@ -291,6 +291,16 @@
               "about": "A sign-off typed outside a run",
               "decided": "/rn:ty or /rn:gm decides the sign-off by its own command as it loads, and where no run of /rn:up is open in the conversation, its steps call /rn:up by the Skill tool, which picks the run up; /rn:ty on the pull request handed over ends the run of /rn:up by the skill's result done",
               "by": "reasoning"
+            },
+            {
+              "about": "Which start is due",
+              "decided": "one route of Lane's after every result and typed command lets each role start, with the skill's results paused and done, and tree.py alone gives each start due from the run's files: the orchestrator where News waits since its latest turn that ended and none runs, a generator for the first deliverable doing whose round has no Made, and an evaluator for each group due, each with a text naming it; as Lane sets the moves due to the latest result's route alone, only the files keep work that runs side by side",
+              "by": "reasoning"
+            },
+            {
+              "about": "When a run is left",
+              "decided": "until its pull request is merged or closed; the orchestrator's done ends the run of /rn:up by the skill's result done, and /rn:gm on the pull request later calls /rn:up with the run's name, which picks it up",
+              "by": "reasoning"
             }
           ]
         },

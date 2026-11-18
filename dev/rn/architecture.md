@@ -153,9 +153,11 @@ Strategies:
 - Two rounds of content and two of structure at most\
   A third round on the same decisions ends alike, so each `more` left goes to the user, keeping KR1.2
   short.
-- Each `/rn:up` a new run of Lane's, begun by the orchestrator\
-  The orchestrator picks the run up from the tree and its news, so Lane replays nothing, keeping
-  KR1.2 short.
+- One route after every result and command, each start due by `tree.py` alone\
+  Lane replaces the moves due at each result, so only the run's files hold parallel work, keeping
+  KR1.1 low.
+- Each `/rn:up` a new run of Lane's, its starts due from the run's files\
+  A pick-up starts what the files show undone, so Lane replays nothing, keeping KR1.2 short.
 
 ## Data model
 
@@ -164,7 +166,8 @@ Strategies:
 - Cut\
   What a start begins with: its part of the design tree, and for the orchestrator, the news.
 - News\
-  What the run showed since the orchestrator's last turn: each Said, Result, and Answers.
+  What the run showed since the orchestrator's latest turn that ended: each Said, sign-off decided,
+  Comment, Result, and round.
 - Design tree\
   The goal, the deliverables with their decisions, and the work order, in
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s
@@ -217,7 +220,8 @@ sequenceDiagram
   U->>M: /rn:up with what they want, words that name no run left
   GD->>A: asks for the text of the orchestrator's start, the first move of each run of /rn:up
   A-->>GD: fails, as the folder lies in no run's worktree yet, so the guard asks again at the next call
-  M->>T: makes the run's worktree, and enters it
+  M->>T: makes the run's worktree
+  M->>M: enters it, by EnterWorktree
   M->>F: keeps the request, word for word (Said)
   loop each event of the run: a Said, a sign-off decided, or a role's end that brings News
     GD->>A: asks for the text of the orchestrator's start, again at the start's call
@@ -257,8 +261,11 @@ sequenceDiagram
     GD->>C: checks that the Made carries each decision and More kept of its Cut, and the deliverable keeps its template (Start)
     C-->>GD: the result kept in the Start, with the role's work committed, or what's missing, which holds its end
     Note over G,O: Its end is an event: on asks or lacks, the orchestrator settles the point or asks the user, and the generator starts again from its new Cut.
-    par one for each group of the best practice that the round judges by, each holding a condition whose decisions changed since the round before, or any in the first round
-      M->>E: starts it, with the text that the adapters give (Cut)
+    GD->>A: asks for the text of each evaluator's start
+    A->>T: gets the Cut of each group due: of the best practice that the round judges by, each holding a condition whose decisions changed since the round before, or any in the first round (Cut)
+    A-->>GD: a text for each, naming its group, so that one starts beside another
+    par one for each group due
+      M->>E: starts it, with its text (Cut)
       E->>W: tries it toward the people's aim (Try record)
       E->>F: writes each necessary condition in good, with its lines, or in more, with its good_when (Answers)
       E->>GD: ends, with done, which check.py checks against its Cut, keeps in the Start, and commits (Start)
@@ -327,7 +334,7 @@ sequenceDiagram
   end
   alt the user approves
     U->>T: approves the sign-off waiting, by /rn:ty's own command as it loads (Sign-off)
-    Note over U,M: Where no run of /rn:up is open in the conversation, as in a new one, the skill's steps call /rn:up by the Skill tool, which picks the run up, as S5 draws. The same holds for /rn:gm.
+    Note over U,M: Where no run of /rn:up is open in the conversation, as in a new one, the command decides the sign-off of the one run whose sign-off waits, or names the runs and decides none where several wait. Its steps then call /rn:up with that run's name by the Skill tool, which picks the run up, as S5 draws. The same holds for /rn:gm.
     Note over U,O: The approval starts the orchestrator's next turn, which edits the plan where it changes, and tree.py marks doing each deliverable whose turn has come. Where no deliverable is left, the work is handed over, as S6 draws.
   else the user sends it back
     U->>T: sends the sign-off waiting back, by /rn:gm's own command as it loads (Sign-off)
@@ -357,7 +364,7 @@ sequenceDiagram
   participant RP as repository
   participant GH as GitHub
   U->>M: /rn:dn
-  M->>GD: ends the run of /rn:up by the skill's result paused, so the guard starts no role again
+  M->>GD: ends the run of /rn:up by the skill's result paused, a move that every route holds, so the guard starts no role again
   M->>O: stops it, where it runs
   M->>G: stops each one still running
   M->>E: stops each one still running
@@ -389,12 +396,12 @@ sequenceDiagram
   Note over U,M: Words after /rn:up that name no run left are a request, and a new run starts, as S1 draws.
   GD->>A: asks for the text of the orchestrator's start, the first move of each run of /rn:up
   A-->>GD: fails, as the folder lies in no run's worktree yet, so the guard asks again at the next call
-  M->>T: lists the runs left
+  M->>T: lists the runs left, each run whose pull request is neither merged nor closed
   alt the words name a run left, or they're none and exactly one run is left
-    M->>T: enters the run's worktree
+    M->>M: enters the run's worktree, by EnterWorktree
     M->>U: Picking up, where it stopped, and the point or sign-off waiting
-    M->>O: starts it, with the text the adapters give (Cut, News)
-    Note over M,O: The orchestrator rebuilds the run from the tree and its News, as at any turn. Each generator and evaluator that the pause stopped has no Result, so its start comes due again from its kept Cut, on the deliverable as committed, and the work goes on, as S1, S2, or S3 draws.
+    M->>O: starts it, where News waits since its latest turn that ended (Cut, News)
+    Note over M,O: Each start comes due from the run's files: each generator and evaluator that the pause stopped has a kept Cut and no Result, so it starts again from that Cut, on the deliverable as committed, and the work goes on, as S1, S2, or S3 draws.
   else no run is left, or more than one with no words
     M->>GD: gives the skill's result none, by Lane's result script
     GD-->>M: ends the run that Lane began at /rn:up, and gives no start
@@ -461,15 +468,15 @@ sequenceDiagram
   T-->>O: its URL, with the pull request handed over put up (Sign-off)
   O-->>M: ends with done, and the pull request
   M->>U: Done, with the pull request
+  M->>GD: ends the run of /rn:up by the skill's result done, the move after the orchestrator's done
   alt the user sends it back
     U->>T: sends the pull request handed over back, by /rn:gm's own command as it loads (Sign-off)
     T->>RP: marks it a draft again
     RP->>GH: marks it a draft
-    Note over U,O: The work goes on, as S3 draws after a sign-off sent back, and the pull request is marked ready again only at the next Done.
+    Note over U,O: As no run of /rn:up is open, the steps of /rn:gm call /rn:up with the run's name, which picks it up, as S5 draws. The work goes on, as S3 draws after a sign-off sent back, and the pull request is marked ready again only at the next Done.
   else the user takes it
     opt the user approves it
       U->>T: approves the pull request handed over, by /rn:ty's own command as it loads (Sign-off)
-      M->>GD: ends the run of /rn:up by the skill's result done
       Note over U,T: Nothing of the run waits for the user any more, and tree.py merges nothing, as the merge stays the user's.
     end
     U->>GH: merges the pull request
