@@ -62,71 +62,7 @@
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The unit cases' question",
-              "decided": "N3 asks for each interface a unit case for each class of what it takes and gives, and, where its result depends on what came before, for each state with each event that can reach it, an event the state doesn't expect included, as the E2E runs of 2026-11-18 showed faults of the flow that no case caught, such as Lane's end of a pass reaching after a resume",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The technique added",
-              "decided": "state transition testing, the one of the four black-box techniques of ISTQB's Foundation Level syllabus 4.0 that N3 leaves out: a table of each state and each event, with one case for each cell, the invalid ones included; white-box coverage stays with the code best practice's N7, as it reads bodies that test design comes before",
-              "by": "research"
-            },
-            {
-              "about": "What state transition testing covers",
-              "decided": "one case for each transition that the product's use can bring about, an event that its state doesn't expect included where the use can send it, in place of each cell of the table, as the meta best practice piles up only the vital few: the cases derived on 2026-11-18 by each cell took a turn that records no step 1, which no use brought about, as a gap, and the turn mark built on it held the walkthrough's turn eleven times",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The whole read again",
-              "decided": "each condition and item of the test design best practice is read again by the meta best practice's N5 and N7, leading its maker from what the developers are after toward each case and holding only the vital few, as N3.4 was added on 2026-11-18 from the field's coverage of each cell and marked done without that reading",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",

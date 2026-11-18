@@ -55,8 +55,8 @@
      {
       "id": "N3",
       "about": "Unit cases",
-      "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, and, where its result depends on what came before, for each state with each event that can reach it, each naming the integration case it supports?",
-      "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. A part that keeps what came before, such as the steps a run has taken, breaks where an event reaches it in a state that no sequence draws, which a case for each class of one call doesn't reach. The techniques are the four black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, decision table testing, and state transition testing.",
+      "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, and, where its result depends on what came before, for each transition that the product's use can bring about, each naming the integration case it supports?",
+      "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. A part that keeps what came before, such as the steps a run has taken, breaks where its use sends an event in a state that no sequence draws, such as a subagent's end that reaches the main conversation after it resumed that subagent, which a case for each class of one call doesn't reach. The techniques are the four black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, decision table testing, and state transition testing.",
       "items": [
        {
         "at": "make",
@@ -72,7 +72,7 @@
        },
        {
         "at": "make",
-        "text": "Where an interface's result depends on what came before, such as a guard that keeps each start still open or a check that reads a record entry by entry, list each state the part can be in and each event that can reach it, from the architecture's sequences and from what the host can send, such as a subagent's end that reaches the main conversation after it resumed that subagent. Write one case for each state with each event, the state it moves to or the refusal it gives, an event that the state doesn't expect included, since a flow breaks unseen where an event reaches a state that no sequence draws."
+        "text": "Where an interface's result depends on what came before, such as a guard that keeps each start still open or a check that reads a record entry by entry, list each state that the product's use brings the part into and each event that the use sends it there, from the architecture's sequences and from what the host's records show it sends. Write one case for each of those transitions, with the state it moves to or the refusal it gives, an event that its state doesn't expect included where the use sends it, since a case of a transition that no use brings about fixes a behavior that no person meets, and a mend made for it breaks the use."
        },
        {
         "at": "make",
