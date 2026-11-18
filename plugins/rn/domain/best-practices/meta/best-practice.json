@@ -242,7 +242,7 @@
       "id": "N7",
       "about": "the whole",
       "what": "Does following the best practice put into the deliverable only the vital few, the things without which its users fail their goal?",
-      "why": "A deliverable that holds only the vital few gives its people what they need at once, while each part of the trivial many buries it a little more and draws more in each round. So following the best practice piles up only what brings the people to their aim.",
+      "why": "The vital few are the parts of a deliverable without which its people fail their aim or reach it later, and every other part is the trivial many. A maker finds them from the people, their aim, and the state they're in once they reach it, by asking of each part whether they still reach that state without it. A deliverable that holds only the vital few gives its people what they need at once, while each part of the trivial many buries it a little more and draws more in each round.",
       "items": [
        {
         "at": "make",
@@ -251,6 +251,14 @@
        {
         "at": "make",
         "text": "Read the best practice from its goal down, and for each factor, condition, and item, name what it makes true in the level it serves, such as the factor that a condition makes true. Drop each that makes nothing there true."
+       },
+       {
+        "at": "make",
+        "text": "Read the conditions and the items for each that asks for each, every, or any part of a kind with no end in the people's aim, such as `each step` of a story or `every behavior` of the code, and rewrite it to the parts that the people fail their aim without, such as the steps where a developer would otherwise pick the wrong component, since such a demand has its maker, and each evaluator, add parts round after round."
+       },
+       {
+        "at": "make",
+        "text": "Read each item that has the maker draw a figure, a diagram, or a table, and rewrite it to show only the vital few for the figure's reader, such as the parts and the arrows that a developer would otherwise get wrong, and to say in sentences beside it what more the reader needs, since a figure that draws every part makes its reader search it for the few."
        },
        {
         "at": "make",
