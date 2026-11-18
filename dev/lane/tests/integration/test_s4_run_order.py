@@ -10,7 +10,7 @@ from typing import Any
 
 import pytest
 import walkthrough as w
-from claude_code import POSTED_FIRST
+from claude_code import AGENT_UNKNOWN_TYPE, POSTED_FIRST, Conversation
 
 COMMAND = "---\nname: {name}\ndescription: {what}\ndisable-model-invocation: true\n---\n\n"
 APPROVE = COMMAND.format(name="approve", what="Approves the entries.") + "## Steps\n\n1. Go on.\n"
@@ -795,3 +795,110 @@ def test_a_start_after_a_result_goes_while_the_subagent_that_gave_it_still_runs(
     assert "writer gave `written`" in reached.said, reached.said
     assert w.due("reviewer") not in reached.said, reached.said
     assert not c.stop("Reviewer is checking the entries.").blocked
+
+
+# A plugin beside changelog whose PreToolUse hook denies each Agent call, as a second plugin denied
+# one in dev/tests/recorded/claude-code-2.1.327-agent-denied-by-hook.jsonl.
+DENIER = {
+    ".claude-plugin/plugin.json": json.dumps({"name": "denier"}),
+    "hooks/hooks.json": json.dumps(
+        {
+            "hooks": {
+                "PreToolUse": [
+                    {
+                        "matcher": "Agent",
+                        "hooks": [
+                            {"type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/deny.py"}
+                        ],
+                    }
+                ]
+            }
+        }
+    ),
+    "deny.py": (
+        "import json, sys\njson.load(sys.stdin)\n"
+        'print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse",'
+        ' "permissionDecision": "deny", "permissionDecisionReason": "No subagents here."}}))\n'
+    ),
+}
+FAILED = "the guard drops no Start of a failed Agent call, as Lane hooks no PostToolUseFailure"
+UNTIED_AT_STOP = "the guard drops no Start still untied at the main conversation's Stop"
+QUEUED = "the guard takes a queued resume as its Start at once, so the pass before it is held"
+
+
+@pytest.mark.supports(
+    "S4",
+    "Start",
+    "guard",
+    "A Start dropped at its call's PostToolUseFailure, or untied at the turn's end",
+)
+@pytest.mark.xfail(strict=True, reason=FAILED)
+def test_a_start_whose_agent_call_fails_is_due_again(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid, and the person typed /changelog:write.
+    When: the main conversation starts writer, as the guard gives it due, and the Agent call fails
+    with PostToolUseFailure, as one naming no subagent type that exists does; then it starts writer
+    again.
+    Then: the second start goes, as the guard dropped the Start of the failed call."""
+    c = w.laid(b)
+    assert not c.type("/changelog:write").blocked
+    failed = c.start_failing("changelog:writer", w.TEXT, "writer", AGENT_UNKNOWN_TYPE)
+    assert failed.blocked, failed.said
+    again, writer = w.start(c, "writer")
+    assert writer, again.said
+
+
+@pytest.mark.supports(
+    "S4",
+    "Start",
+    "guard",
+    "A Start dropped at its call's PostToolUseFailure, or untied at the turn's end",
+)
+@pytest.mark.xfail(strict=True, reason=UNTIED_AT_STOP)
+def test_a_start_whose_call_another_plugin_denies_is_due_again_at_the_turns_end(
+    b: w.Bench,
+) -> None:
+    """Given: the walkthrough's Proposal laid beside a plugin whose PreToolUse hook denies each
+    Agent call, and the person typed /changelog:write.
+    When: the main conversation starts writer, which Lane lets through and the other plugin
+    denies, and then ends its turn.
+    Then: the turn's end is stopped with writer's start due, as the guard dropped the untied Start
+    at the Stop."""
+    w.lay(b)
+    denier = os.path.join(b.temp, "denier")
+    w.write_files(denier, DENIER)
+    c = Conversation(b.repo, [b.lane, b.changelog, denier], b.env, b.temp)
+    assert not c.type("/changelog:write").blocked
+    denied, agent = w.start(c, "writer")
+    assert denied.blocked and agent is None
+    stopped = c.stop("The subagent was denied.")
+    assert stopped.blocked and w.due("writer") in stopped.said, stopped.said
+
+
+@pytest.mark.supports(
+    "S4",
+    "S5",
+    "Start",
+    "Result",
+    "A resume queued to a running subagent, its Start held back until that subagent's"
+    " SubagentStart",
+)
+@pytest.mark.xfail(strict=True, reason=QUEUED)
+def test_a_resume_queued_while_its_subagent_runs_starts_at_its_subagentstart(b: w.Bench) -> None:
+    """Given: the walkthrough's Proposal laid with the Route after reviewer's `more` resuming
+    writer; writer gave `written` and runs on, and reviewer gave `more`.
+    When: the main conversation resumes writer by SendMessage, which Claude Code queues, then
+    writer's pass ends, it starts again on the message, gives `written`, and ends.
+    Then: the end of the pass that gave `written` goes, and so do the resumed writer's Result and
+    end."""
+    c, writer = w.writer_started(b, make=resumes_writer_after_more)
+    assert writer.bash(b.result("writer", "written")).exit_code == 0
+    _, reviewer = w.start(c, "reviewer")
+    assert reviewer
+    reached = w.give(b, reviewer, "more")
+    assert "Resume `changelog:writer` by SendMessage." in reached.said
+    assert not c.resume(writer, "Mend the entries reviewer named.").blocked
+    ended, _ = writer.end("Gave written.", reach=False)
+    assert not ended.blocked, ended.said
+    assert writer.bash(b.result("writer", "written")).exit_code == 0
+    again, _ = writer.end("Gave written again.")
+    assert not again.blocked, again.said

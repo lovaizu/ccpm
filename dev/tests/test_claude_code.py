@@ -17,6 +17,8 @@ from typing import Any
 from unittest import mock
 
 from claude_code import (
+    AGENT_DENIED_BY_RULE,
+    AGENT_UNKNOWN_TYPE,
     COMPACT,
     FOREGROUND,
     POSTED_FIRST,
@@ -290,6 +292,69 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         )
         self.assertEqual((call["agent_id"], call["agent_type"]), (agent.id, agent.type))
         self.assertEqual(call["tool_input"]["subagent_type"], "changelog:reviewer")
+
+    def test_an_agent_call_that_fails_sends_the_failure_recorded_and_starts_none(self):
+        for record, error in (
+            (AGENT_UNKNOWN_TYPE, "Agent type 'changelog:writer' not found."),
+            (AGENT_DENIED_BY_RULE, "Agent type 'changelog:writer' has been denied by permission"),
+        ):
+            with self.subTest(record=record):
+                # Given: a conversation whose Agent call fails as the record shows.
+                os.remove(self.log)
+                env = self.conversation.env
+                self.conversation = Conversation(self.repo, [self.plugin], env, self.temp)
+                # When: the main conversation starts writer, and its call fails.
+                answer = self.conversation.start_failing(
+                    "changelog:writer", "/changelog:write", "Write entries", record
+                )
+                # Then: no subagent starts, and the PreToolUse and the PostToolUseFailure go out,
+                # the failure with the call's tool_use_id and the record's error for its type.
+                self.assertTrue(answer.blocked, "the failed call starts nothing")
+                self.assertEqual(self.conversation.agents, [])
+                self.assertIn(error, answer.said)
+                records = dict(recorded(), **payloads(record))
+                self.assert_sent_as_recorded(
+                    [
+                        "session started",
+                        "the main conversation starts writer in the background",
+                        "PostToolUseFailure",
+                    ],
+                    records,
+                )
+                pre, failure = self.sent()[-2:]
+                self.assertEqual(failure["tool_use_id"], pre["tool_use_id"])
+                self.assertTrue(failure["error"].startswith(error), failure["error"])
+
+    def test_an_agent_call_that_a_hook_denies_sends_no_failure_after_its_pre_tool_use(self):
+        # Given: the logging plugin denies each Agent call.
+        self.conversation.env["DENY"] = "Agent"
+        # When: the main conversation starts writer by a call that would fail.
+        answer = self.conversation.start_failing(
+            "changelog:writer", "/changelog:write", "Write entries", AGENT_UNKNOWN_TYPE
+        )
+        # Then: the call is stopped at its PreToolUse, and no PostToolUseFailure goes out.
+        self.assertTrue(answer.blocked)
+        self.assertEqual(
+            [p["hook_event_name"] for p in self.sent()], ["SessionStart", "PreToolUse"]
+        )
+
+    def test_a_subagents_edit_sends_its_call_with_the_subagent_and_changes_the_file(self):
+        # Given: writer runs.
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        path = os.path.join(self.plugin, "skills", "write", "SKILL.md")
+        # When: writer edits a file that's there.
+        answer = agent.edit(path, "name: write", "name: write\ndescription: Writes.")
+        # Then: the file changes, and the Edit goes out with writer's agent_id and agent_type.
+        self.assertFalse(answer.blocked)
+        with open(path, encoding="utf-8") as f:
+            self.assertEqual(f.read(), "---\nname: write\ndescription: Writes.\n---\n")
+        call = self.sent()[-1]
+        self.assertEqual((call["tool_name"], call["agent_id"]), ("Edit", agent.id))
+        self.assertEqual(call["agent_type"], agent.type)
+        self.assertEqual(
+            sorted(call), sorted(recorded()["writer writes CHANGELOG.md"]), "a subagent's call"
+        )
 
     def test_a_subagent_that_ends_reaches_the_main_conversation_with_its_last_message(self):
         _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")

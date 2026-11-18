@@ -15,7 +15,7 @@ import pytest
 import start_states as st
 from form import write_lanes
 from guard import handle
-from run_record import Line, add, record_path
+from run_record import Ended, Gave, Line, Started, Tied, add, record_path
 
 ROUTES, TEXT = st.ROUTES, st.TEXT
 UNTIED, RUNNING, GAVE_RUNNING = st.UNTIED, st.RUNNING, st.GAVE_RUNNING
@@ -157,10 +157,14 @@ def test_a_subagents_end_reaching_the_main_conversation_in_each_state(
     assert stop == then.stop and then.says in words
 
 
-# The fault of a Start whose Agent call fails after the guard let it through.
-UNTIED_RUNS = (
-    "a Start whose Agent call failed after its PreToolUse is never tied nor ended, as Lane hooks no"
-    " PostToolUseFailure, so it counts as running and hides its start from the moves due"
+# The faults of a Start whose Agent call fails after the guard let it through, as S4 draws it.
+DROPPED_AT_FAILURE = (
+    "the guard drops no Start at its Agent call's PostToolUseFailure, as Lane hooks no"
+    " PostToolUseFailure, so the Start counts as running and hides its start from the moves due"
+)
+DROPPED_AT_STOP = (
+    "the guard drops no Start still untied at the main conversation's Stop, so a Start whose call"
+    " another plugin's hook denied counts as running and lets the turn end with its start due"
 )
 
 
@@ -185,8 +189,8 @@ UNTIED_RUNS = (
         pytest.param(
             UNTIED,
             Answered(True, "Start `changelog:writer`"),
-            id="untied-as-its-call-failed",
-            marks=pytest.mark.xfail(strict=True, reason=UNTIED_RUNS),
+            id="untied-as-another-plugins-hook-denied-its-call",
+            marks=pytest.mark.xfail(strict=True, reason=DROPPED_AT_STOP),
         ),
     ],
 )
@@ -195,10 +199,10 @@ def test_the_turns_end_in_each_state_of_the_start(
 ) -> None:
     """Given: writer's Start running, ended with no Result or with `written`, resumed and running
     after the end of its first call, or left untied at the main conversation's end of its turn, as
-    its Agent call failed after the guard let it through.
+    another plugin's PreToolUse hook denied its Agent call after the guard let it through.
     When: the main conversation ends its turn.
     Then: it goes while a subagent of the Run runs, and is stopped with the moves due where none
-    does, an untied Start's call having started none."""
+    does, as the guard drops a Start still untied at the Stop."""
     stop, words = answered(plugin, state, TURNS_END)
     assert stop == then.stop and then.says in words
 
@@ -209,20 +213,147 @@ def test_the_turns_end_in_each_state_of_the_start(
     [
         pytest.param(RUNNING, Answered(True), id="running"),
         pytest.param(ENDED_BARE, Answered(False), id="ended-with-no-result"),
-        pytest.param(
-            UNTIED,
-            Answered(False),
-            id="untied-as-its-call-failed",
-            marks=pytest.mark.xfail(strict=True, reason=UNTIED_RUNS),
-        ),
+        pytest.param(UNTIED, Answered(True), id="untied-before-its-calls-outcome"),
     ],
 )
 def test_a_start_of_writer_again_in_each_state(
     plugin: str, state: tuple[Line, ...], then: Answered
 ) -> None:
-    """Given: writer's Start running, ended with no Result, or left untied as its Agent call failed.
+    """Given: writer's Start running, ended with no Result, or untied, its Agent call's PostToolUse
+    or PostToolUseFailure not yet come.
     When: the main conversation starts writer again with the same text.
-    Then: it's stopped while a Start of that text runs, and goes where the start is due again, as
-    after an end with no Result or a call that started no subagent."""
+    Then: it's stopped while a Start of that text stands, and goes where the start is due again,
+    as after an end with no Result."""
     stop, _ = answered(plugin, state, START_AGAIN)
     assert stop == then.stop
+
+
+def answered_after(
+    plugin: str, state: tuple[Line, ...], events: tuple[dict[str, Any], ...]
+) -> tuple[bool, str]:
+    """The guard's answer to the last of the events, each handled in turn, in the state that the
+    lines bring about."""
+    record = record_path("changelog", d.SESSION)
+    for line in state:
+        add(record, line)
+    answer = None
+    for fields in events:
+        answer = handle(d.event(**fields), plugin)
+    assert answer is not None
+    return answer.stop, answer.words
+
+
+def failure(called: str, tool: str = "Agent") -> dict[str, Any]:
+    """The PostToolUseFailure of the main conversation's call, as Claude Code 2.1.327 sends it."""
+    return {
+        "name": "PostToolUseFailure",
+        "tool_name": tool,
+        "tool_use_id": called,
+        "tool_input": {"subagent_type": "changelog:writer", "prompt": TEXT},
+    }
+
+
+@pytest.mark.supports("test_a_start_whose_agent_call_fails_is_due_again")
+@pytest.mark.parametrize(
+    ("events", "then"),
+    [
+        pytest.param(
+            (failure("toolu_w"), START_AGAIN),
+            Answered(False),
+            id="its-calls-failure-then-a-start-again",
+            marks=pytest.mark.xfail(strict=True, reason=DROPPED_AT_FAILURE),
+        ),
+        pytest.param(
+            (failure("toolu_w"), TURNS_END),
+            Answered(True, "Start `changelog:writer`"),
+            id="its-calls-failure-then-the-turns-end",
+            marks=pytest.mark.xfail(strict=True, reason=DROPPED_AT_FAILURE),
+        ),
+        pytest.param(
+            (failure("toolu_x", "Bash"), START_AGAIN),
+            Answered(True),
+            id="another-calls-failure-then-a-start-again",
+        ),
+        pytest.param(
+            (TURNS_END, START_AGAIN),
+            Answered(False),
+            id="the-turns-end-then-a-start-again",
+            marks=pytest.mark.xfail(strict=True, reason=DROPPED_AT_STOP),
+        ),
+    ],
+)
+def test_an_untied_start_with_each_event_that_ends_its_call(
+    plugin: str, events: tuple[dict[str, Any], ...], then: Answered
+) -> None:
+    """Given: writer's Start untied, as the guard let its Agent call through.
+    When: its call's PostToolUseFailure, another call's, or the main conversation's Stop comes,
+    and then a start of writer again or the end of the turn.
+    Then: the guard drops the Start at its own call's failure or at the Stop, so writer's start is
+    due again and the turn's end is stopped with it; another call's failure leaves the Start."""
+    stop, words = answered_after(plugin, UNTIED, events)
+    assert stop == then.stop and then.says in words
+
+
+# writer's first pass gave `written` and runs on, reviewer gave `more` and ended, so the Route
+# after it makes a resume of writer due while a01 still runs.
+OPENED_WHILE_RUNNING = (
+    *GAVE_RUNNING,
+    Started("r1", "reviewer", TEXT, {}, "toolu_r", False),
+    Tied("r1", "toolu_r", "a02"),
+    Gave("r1", "reviewer", "more", "a02"),
+    Ended("r1", "a02", False, "toolu_r"),
+)
+QUEUE = {
+    "name": "PreToolUse",
+    "tool_name": "SendMessage",
+    "tool_use_id": "toolu_w2",
+    "tool_input": {"to": "a01", "summary": "More", "message": "Go on"},
+}
+QUEUED = {
+    "name": "PostToolUse",
+    "tool_name": "SendMessage",
+    "tool_use_id": "toolu_w2",
+    "tool_input": {"to": "a01", "summary": "More", "message": "Go on"},
+    "tool_response": {
+        "success": True,
+        "message": "Message queued for delivery to a01 at its next tool round. If it finishes"
+        " first, it is resumed with the message and its output will arrive in a later task"
+        " notification.",
+    },
+}
+RESUMED_START = {"name": "SubagentStart", "agent_id": "a01", "agent_type": "changelog:writer"}
+# The fault of a resume queued to a subagent that still runs.
+QUEUED_TAKEN_AT_ONCE = (
+    "the guard takes a resume queued to a running subagent as its Start at the SendMessage's"
+    " PreToolUse, so the end of the pass before it is checked against the resume"
+)
+
+
+@pytest.mark.supports("test_a_resume_queued_while_its_subagent_runs_starts_at_its_subagentstart")
+@pytest.mark.parametrize(
+    ("events", "then"),
+    [
+        pytest.param(
+            (QUEUE, QUEUED, SUBAGENTS_END),
+            Answered(False),
+            id="queued-then-the-pass-before-ends",
+            marks=pytest.mark.xfail(strict=True, reason=QUEUED_TAKEN_AT_ONCE),
+        ),
+        pytest.param(
+            (QUEUE, QUEUED, SUBAGENTS_END, RESUMED_START, SUBAGENTS_END),
+            Answered(True, "End by running"),
+            id="queued-then-its-resume-ends-with-no-result",
+        ),
+    ],
+)
+def test_a_resume_queued_while_its_subagent_runs_with_each_end(
+    plugin: str, events: tuple[dict[str, Any], ...], then: Answered
+) -> None:
+    """Given: writer's first pass gave `written` and runs, and reviewer's `more` made a resume of
+    writer due.
+    When: the main conversation sends a01 the resume, which Claude Code queues, and a01's pass
+    ends, then a01 starts again on the message and ends.
+    Then: the pass that gave `written` ends, as the resume is no Start until a01's SubagentStart,
+    and the resume's end with no Result is stopped with the Lane's sentence."""
+    stop, words = answered_after(plugin, OPENED_WHILE_RUNNING, events)
+    assert stop == then.stop and then.says in words

@@ -9,12 +9,16 @@ runs in /bin/sh, as that record shows. /compact sends the events that
 recorded/claude-code-2.1.322-compact.jsonl shows, in the same conversation, a call of the Skill tool
 the events that recorded/claude-code-2.1.322-skill.jsonl shows, and a subagent resumed by
 SendMessage the events that recorded/claude-code-2.1.322-send-message.jsonl shows. An Edit, which
-no record of a run holds, carries the input that the hooks reference gives it, as
-recorded/claude-code-hooks-reference.jsonl takes it from there, and a Read sends the events that
-recorded/claude-code-2.1.325-read.jsonl shows, whole or in part. A subagent's start of a subagent,
-and a message queued by SendMessage for a subagent that runs, send the events that
-recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, and a start in the foreground, or
-one whose SubagentStart comes after the PostToolUse of its Agent call, those that `start` names.
+no record of a run holds, the main conversation's or a subagent's, carries the input that the
+hooks reference gives it, as recorded/claude-code-hooks-reference.jsonl takes it from there. An
+Agent call that fails after its PreToolUse sends the events that
+recorded/claude-code-2.1.327-agent-unknown-type.jsonl and
+recorded/claude-code-2.1.327-agent-denied-by-rule.jsonl show, as `start_failing` says. A Read
+sends the events that recorded/claude-code-2.1.325-read.jsonl shows, whole or in part. A
+subagent's start of a subagent, and a message queued by SendMessage for a subagent that runs, send
+the events that recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, and a start in the
+foreground, or one whose SubagentStart comes after the PostToolUse of its Agent call, those that
+`start` names.
 Each event carries the `prompt_id` of the conversation's latest prompt, a subagent's among them, as
 recorded/claude-code-2.1.325-skill-command-while-subagent.jsonl shows. A
 subagent stopped by TaskStop sends the events that recorded/claude-code-2.1.323-task-stop.jsonl
@@ -85,6 +89,13 @@ SUBAGENT_OF_SUBAGENT = "claude-code-2.1.322-subagent-of-subagent.jsonl"
 # The record of a subagent resumed before its end reaches the main conversation, of Claude Code
 # 2.1.327, whose task-notification then names the Agent call of the pass that ended.
 RESUME_BEFORE_END = "claude-code-2.1.327-resume-before-end.jsonl"
+# The records of an Agent call that fails after its PreToolUse, of Claude Code 2.1.327: one naming
+# a subagent type that doesn't exist, and one that a permission rule denies, each sending
+# PostToolUseFailure with the call's tool_use_id. A call that another plugin's PreToolUse hook
+# denies sends no event after it, as recorded/claude-code-2.1.327-agent-denied-by-hook.jsonl
+# shows, which the double's run of each plugin's hooks gives.
+AGENT_UNKNOWN_TYPE = "claude-code-2.1.327-agent-unknown-type.jsonl"
+AGENT_DENIED_BY_RULE = "claude-code-2.1.327-agent-denied-by-rule.jsonl"
 # The record of a skill command typed while a background subagent runs, of Claude Code 2.1.325,
 # whose start sends the SubagentStart after the PostToolUse of the Agent call.
 SKILL_WHILE_SUBAGENT = "claude-code-2.1.325-skill-command-while-subagent.jsonl"
@@ -876,10 +887,11 @@ class Conversation:
         answer.ran += after.ran
         return answer
 
-    def edit(self, path: str, old: str, new: str) -> Answer:
-        """The main conversation calls the Edit tool to replace the one place of `old` in the file
-        at the path with `new`. The double sends the PreToolUse that the record holds of a call of
-        the main conversation, with the tool's name and input as the hooks reference gives Edit's:
+    def edit(self, path: str, old: str, new: str, agent: Agent | None = None) -> Answer:
+        """The main conversation, or the agent, calls the Edit tool to replace the one place of
+        `old` in the file at the path with `new`. The double sends the PreToolUse that the record
+        holds of a call of the main conversation, or of a subagent's Write with its `agent_id` and
+        `agent_type`, with the tool's name and input as the hooks reference gives Edit's:
         `file_path`, `old_string`, `new_string`, and `replace_all`, as
         recorded/claude-code-hooks-reference.jsonl takes them from there. Where the hooks let it
         through, the double changes the file. It sends no PostToolUse, as neither the record nor the
@@ -891,7 +903,11 @@ class Conversation:
         tool_input = dict(shown["tool_input"], file_path=path, old_string=old, new_string=new)
         use = {"tool_name": shown["tool_name"], "tool_input": tool_input}
         use["tool_use_id"] = self.next_id("toolu_", 24)
-        answer = self.send("PreToolUse", line(RUN, "the main conversation runs lay.py print"), use)
+        before = line(RUN, "the main conversation runs lay.py print")
+        if agent:
+            use.update(agent_id=agent.id, agent_type=agent.type)
+            before = line(RUN, "writer writes CHANGELOG.md")
+        answer = self.send("PreToolUse", before, use)
         if not answer.blocked:
             with open(path, "w", encoding="utf-8") as f:
                 f.write(text.replace(old, new))
@@ -984,6 +1000,34 @@ class Conversation:
             posted = self.posted(agent, posted_line)
         ran = answer.ran + posted.ran + started.ran
         return Answer(started.blocked, started.said, ran=ran, posted=posted.said), agent
+
+    def start_failing(
+        self, subagent_type: str, prompt: str, description: str, record: str
+    ) -> Answer:
+        """The main conversation starts the subagent in the background, as `start` says, and the
+        Agent call fails once the hooks let it through, as the record, AGENT_UNKNOWN_TYPE or
+        AGENT_DENIED_BY_RULE, shows: the double sends PostToolUseFailure with the call's
+        `tool_use_id` and the record's error for the subagent type, and starts no subagent. The
+        answer is stopped, with what the hooks said and the error."""
+        tool_input = {
+            "description": description,
+            "prompt": prompt,
+            "subagent_type": subagent_type,
+            "run_in_background": True,
+        }
+        use = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
+        answer = self.send("PreToolUse", self.start_call(BACKGROUND, None), use)
+        if answer.blocked:
+            return answer
+        if record == AGENT_UNKNOWN_TYPE:
+            ran = line(AGENT_UNKNOWN_TYPE, "PostToolUseFailure")
+        else:
+            ran = line(AGENT_DENIED_BY_RULE, "PostToolUseFailure")
+        recorded_type = ran["payload"]["tool_input"]["subagent_type"]
+        error = ran["payload"]["error"].replace(f"'{recorded_type}'", f"'{subagent_type}'", 1)
+        after = self.send("PostToolUseFailure", ran, {**use, "error": error})
+        said = "\n".join(x for x in (answer.said, after.said, error) if x)
+        return Answer(True, said, ran=answer.ran + after.ran)
 
     @staticmethod
     def start_call(how: str, by: Agent | None) -> dict[str, Any]:
@@ -1305,6 +1349,10 @@ class Agent:
     def write(self, path: str, content: str) -> Answer:
         """The subagent calls the Write tool to create the file."""
         return self.conversation.write(self, path, content)
+
+    def edit(self, path: str, old: str, new: str) -> Answer:
+        """The subagent calls the Edit tool to replace the one place of `old` in the file."""
+        return self.conversation.edit(path, old, new, self)
 
     def read(self, path: str, offset: int | None = None, limit: int | None = None) -> Answer:
         """The subagent calls the Read tool on the file, whole or in part."""

@@ -221,6 +221,31 @@ def test_an_evaluators_end_whose_answers_leave_out_a_condition_is_held(b: Bench)
         assert "kept" not in json.load(f)
 
 
+@pytest.mark.supports("S1", "evaluator", "record.py", "Answers", "guard")
+def test_an_evaluator_that_mends_its_answers_after_its_end_is_held_ends(b: Bench) -> None:
+    """Given: the first evaluator's end held, as its Answers answer every condition of its group
+    but the first.
+    When: it edits its Answers to answer that condition too, gives done again, and ends.
+    Then: the guard lets its end through, and the record keeps its result done."""
+    walk, _ = w.deliverable_made(b)
+    _, evaluator = w.started(walk.c, "evaluator", walk.said)
+    cut = w.cut_of(w.due_text_of(evaluator))
+    assert evaluator.bash(b.tree("commit", cut["record"], "1")).exit_code == 0
+    path = os.path.join(walk.c.cwd, cut["answers"])
+    left_out, *rest = cut["conditions"]
+    held = json.dumps(w.answers(rest))
+    assert not evaluator.write(path, held).blocked
+    w.keeps(b, evaluator, cut["record"], "evaluator")
+    ended, _ = w.give(b, evaluator, "done", "Done.")
+    assert f"the Answers answer no {left_out}" in w.lacks_of(evaluator, ended, "done", cut)
+    whole = json.dumps(w.answers(cut["conditions"]))
+    assert not evaluator.edit(path, held, whole).blocked
+    again, _ = w.give(b, evaluator, "done", "Done, with each condition answered.")
+    assert not again.blocked, again.said
+    with open(os.path.join(walk.run["worktree"], cut["record"]), encoding="utf-8") as f:
+        assert json.load(f)["kept"]["result"] == "done"
+
+
 @pytest.mark.supports("S1", "evaluator", "throwaway.py", "Try record")
 def test_an_evaluator_tries_the_deliverable_in_a_throwaway_copy_and_the_round_keeps_it(
     b: Bench,
