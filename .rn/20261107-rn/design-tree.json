@@ -879,22 +879,6 @@
     },
     {
       "do": "make",
-      "path": "plugins/rn/domain/best-practices/architecture"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/readme"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/prompt"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/meta"
-    },
-    {
-      "do": "make",
       "path": "dev/rn/tests/e2e"
     }
   ]

@@ -345,10 +345,6 @@
        {
         "at": "make",
         "text": "In the Output section, write that each message asks for one decision, alone on its last line, with one recommendation, such as `End with the one choice you need, and the option you recommend.`"
-       },
-       {
-        "at": "make",
-        "text": "In the Output section, write what the AI adds where the person asks for more: the current state, with the place it rests on, and the gap between that and what it should be."
        }
       ]
      },

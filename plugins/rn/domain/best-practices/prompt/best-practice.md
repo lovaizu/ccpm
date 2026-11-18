@@ -186,7 +186,6 @@ The person approves from the conclusion and its grounds, and reads further only 
 3. *While making.* In the Output section, write the form of each message: a few plain sentences with no headings or labels, in short paragraphs of one point each.
 4. *While making.* In the Output section, write the terms that the person uses, taken from the user stories and the README, and that the AI says a term of its own in everyday words or leaves it out.
 5. *While making.* In the Output section, write that each message asks for one decision, alone on its last line, with one recommendation, such as `End with the one choice you need, and the option you recommend.`
-6. *While making.* In the Output section, write what the AI adds where the person asks for more: the current state, with the place it rests on, and the gap between that and what it should be.
 
 ### N15
 

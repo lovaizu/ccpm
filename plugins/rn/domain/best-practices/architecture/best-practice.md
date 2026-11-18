@@ -59,9 +59,8 @@ The stories are the product's requirements: what each role wants, which the view
 3. *While deciding.* For each activity, ask what the role wants there and why, and write it as a story in the role's words, without a command, a screen, or a part of the product, since Sequences shows how the product meets it. One want often serves several activities, such as giving yes or a change at each sign-off.
 4. *While deciding.* Keep each story at the level of a goal the role reaches in one sitting, such as approving a deliverable, not a step within it, such as reading its changes, since stories at mixed levels leave gaps and overlaps that no one sees.
 5. *While deciding.* Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role wants something there that no story carries, add a story for it, such as going on with a run that stopped.
-6. *While deciding.* Where the product's development or operation wants something of the product, such as a release, write a story with the developer or the operator as its role.
-7. *While making.* For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it.
-8. *While making.* Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want, unless the role wants that means itself, such as working within the tool they already use.
+6. *While making.* For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it.
+7. *While making.* Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want, unless the role wants that means itself, such as working within the tool they already use.
 
 ### N3
 
@@ -108,10 +107,8 @@ Does each component state its type and its technology?
 A developer who doesn't know what kind of thing a component is, or what it's built with, chooses alone, and the components stop fitting. The [C4 model](https://c4model.com/diagrams/container) gives each box its name, its type, such as a script, a skill, or a folder of JSON files, and its technology.
 
 1. *While deciding.* For each component, decide the type and the technology from the product's constraints, such as the runtime its users have.
-2. *While making.* Copy the template's skeleton of the figure to the deliverable's own, and place the boxes in the order the main story reaches them, left to right, so that its arrows run one way and cross no other.
-3. *While making.* Draw a store of data as a box like a component's, since its type sets it apart.
-4. *While making.* Give the figure a legend for every symbol.
-5. *While making.* Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about.
+2. *While making.* Copy the template's skeleton of the figure to the deliverable's own.
+3. *While making.* Give the figure a legend for every symbol.
 
 ### N7
 
@@ -122,10 +119,8 @@ Two developers who build the writer and the reader of the same data must join it
 1. *While deciding.* Walk each story's steps and each arrow that Components draws, and list each kind of data that one component hands to another or that a store keeps, by the name the README gives it where it gives one, such as a run's record.
 2. *While deciding.* For each pair that relates, name the relation, and give how many of each it joins at both ends, such as a run that holds one or more rounds.
 3. *While making.* Draw each once, as a class by its name alone.
-4. *While making.* Where one holds the other's parts, put a filled diamond at the whole, since readers take a hollow one in different ways.
-5. *While making.* Group the data in a frame for each component or store that keeps them, in the order the stories meet them, with the data that most others join in the middle.
-6. *While making.* Leave the fields to where the developer builds the data.
-7. *While making.* Below the figure, say in a few words what a kind of data is only where a reader could take its name for another's.
+4. *While making.* Leave the fields to where the developer builds the data.
+5. *While making.* Below the figure, say in a few words what a kind of data is only where a reader could take its name for another's.
 
 ### N8
 
@@ -136,8 +131,7 @@ A developer building a step must know who hands them what, and what they hand on
 1. *While making.* For each story, draw as a message each handoff from one component to another along an arrow of Components, with the data it passes, named as in the data model, and write each step that stays inside one component in that component's responsibility in place of a message.
 2. *While making.* At each handoff, ask what can go otherwise there, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering.
 3. *While making.* Draw an input refused as a branch, a check that fails as a step that sends work back to the step it repeats, and a choice of the role as a question put to the role with its answers, since each path of the story, and its integration test, rests on them.
-4. *While making.* Let stories that share their steps share a diagram.
-5. *While making.* Read each sequence as the developer who builds one of its steps, and check that they can tell who hands them what, along which arrow of Components, and what they hand on. Where no arrow carries a handoff, add the arrow, or give the step to another component.
+4. *While making.* Read each sequence as the developer who builds one of its steps, and check that they can tell who hands them what, along which arrow of Components, and what they hand on. Where no arrow carries a handoff, add the arrow, or give the step to another component.
 
 ### N9
 
@@ -227,4 +221,3 @@ A line about how a component works inside becomes untrue at the next change to t
 
 1. *While making.* For each line, ask whether it would become untrue if a component's internals changed while the product vision and Solution strategy stayed.
 2. *While making.* If it would, move it to where the developer builds the component.
-3. *While making.* Imagine a change to how a component works inside, such as its steps, a value it uses, or a data's fields, and mark each line it would make untrue. Repeat with a change of another kind until you mark no line.

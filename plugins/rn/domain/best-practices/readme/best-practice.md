@@ -41,8 +41,7 @@ Most readers decide from the opening alone whether to read on, so it lets a newc
 5. *While deciding.* Name the kind of thing the reader installs, as the manifest shows it, by the word they already use for things of that kind, such as a command-line tool or a Claude Code plugin, so that they have something to compare it with.
 6. *While making.* Write the opening by the template from these, each sentence on the reader's work and what the product gives them in it, as the reader decides from these and How it works holds the parts.
 7. *While making.* Take out each sentence of the opening in turn, and ask whether the rest still says what the product is, who it's for, what they achieve with it, and, where the product isn't ready, what works now. Where it does, delete that sentence.
-8. *While making.* Replace each vague or praising word in the opening, such as powerful or seamless, with what the product does.
-9. *While making.* Read the opening as someone outside the role, such as, for a tool for those who publish libraries, a developer of an app who publishes none. If they couldn't tell that the product isn't for them, name the role's work more narrowly.
+8. *While making.* Read the opening as someone outside the role, such as, for a tool for those who publish libraries, a developer of an app who publishes none. If they couldn't tell that the product isn't for them, name the role's work more narrowly.
 
 ### N2
 

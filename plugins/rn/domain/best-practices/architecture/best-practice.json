@@ -67,10 +67,6 @@
         "text": "Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role wants something there that no story carries, add a story for it, such as going on with a run that stopped."
        },
        {
-        "at": "decide",
-        "text": "Where the product's development or operation wants something of the product, such as a release, write a story with the developer or the operator as its role."
-       },
-       {
         "at": "make",
         "text": "For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it."
        },
@@ -190,19 +186,11 @@
        },
        {
         "at": "make",
-        "text": "Copy the template's skeleton of the figure to the deliverable's own, and place the boxes in the order the main story reaches them, left to right, so that its arrows run one way and cross no other."
-       },
-       {
-        "at": "make",
-        "text": "Draw a store of data as a box like a component's, since its type sets it apart."
+        "text": "Copy the template's skeleton of the figure to the deliverable's own."
        },
        {
         "at": "make",
         "text": "Give the figure a legend for every symbol."
-       },
-       {
-        "at": "make",
-        "text": "Read the figure without the text around it, and add to the legend whatever symbol a reader would still have to ask about."
        }
       ]
      },
@@ -223,14 +211,6 @@
        {
         "at": "make",
         "text": "Draw each once, as a class by its name alone."
-       },
-       {
-        "at": "make",
-        "text": "Where one holds the other's parts, put a filled diamond at the whole, since readers take a hollow one in different ways."
-       },
-       {
-        "at": "make",
-        "text": "Group the data in a frame for each component or store that keeps them, in the order the stories meet them, with the data that most others join in the middle."
        },
        {
         "at": "make",
@@ -259,10 +239,6 @@
        {
         "at": "make",
         "text": "Draw an input refused as a branch, a check that fails as a step that sends work back to the step it repeats, and a choice of the role as a question put to the role with its answers, since each path of the story, and its integration test, rests on them."
-       },
-       {
-        "at": "make",
-        "text": "Let stories that share their steps share a diagram."
        },
        {
         "at": "make",
@@ -487,10 +463,6 @@
        {
         "at": "make",
         "text": "If it would, move it to where the developer builds the component."
-       },
-       {
-        "at": "make",
-        "text": "Imagine a change to how a component works inside, such as its steps, a value it uses, or a data's fields, and mark each line it would make untrue. Repeat with a change of another kind until you mark no line."
        }
       ]
      }

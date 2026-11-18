@@ -54,10 +54,6 @@
        },
        {
         "at": "make",
-        "text": "Replace each vague or praising word in the opening, such as powerful or seamless, with what the product does."
-       },
-       {
-        "at": "make",
         "text": "Read the opening as someone outside the role, such as, for a tool for those who publish libraries, a developer of an app who publishes none. If they couldn't tell that the product isn't for them, name the role's work more narrowly."
        }
       ]
