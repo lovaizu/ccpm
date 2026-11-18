@@ -156,8 +156,7 @@ Strategies:
 - Routes that start any role after any result, and end the run only once nothing is left\
   `tree.py` gives each start due, and Lane holds an idle turn while one is due, keeping KR1.1 low.
 - A start due once for each Cut\
-  A start that ended comes due again only once the tree changes what it rests on, keeping KR1.2
-  short.
+  A start ended with a Result is due again only once the tree changes its inputs, keeping KR1.2 short.
 - Each run of Lane's at `/rn:up`, its starts due from the run's files\
   A pick-up starts what the files show undone, so Lane replays nothing, keeping KR1.2 short.
 
@@ -255,7 +254,7 @@ sequenceDiagram
   end
   loop each round of a deliverable whose turn has come, as it rests on no open point and on nothing not signed off
     GD->>A: asks for the text of the generator's start, with each start that runs
-    A->>T: gets the Cut of the first in the work's order that no start holds, running or ended since its decisions last changed, written at the path its start keeps (Cut, More kept)
+    A->>T: gets the Cut of the first in the work's order that no start holds, running or ended with a Result since its decisions last changed, written at the path its start keeps (Cut, More kept)
     A-->>GD: that start's text and run values, or none where no work waits
     M->>G: starts it, with that text
     G->>W: tries it (Try record)
@@ -265,7 +264,7 @@ sequenceDiagram
     C-->>GD: the result kept in the Start, with the role's work committed, or what's missing, which holds its end
     Note over G,O: Its end is an event: on asks or lacks, the orchestrator settles the point or asks the user, and the generator starts again from its new Cut.
     GD->>A: asks for the text of each evaluator's start
-    A->>T: gets the Cut of each group due: of the best practice that the round judges by, each holding a condition whose decisions changed since the round before, or any in the first round, and no start of the round's yet (Cut)
+    A->>T: gets the Cut of each group due: of the best practice that the round judges by, each holding a condition whose decisions changed since the round before, or any in the first round, once the round's generator ended with done, and with no start of the group's in the round yet (Cut)
     A-->>GD: a text for each, naming its group, so that one starts beside another
     par one for each group due, started one after another as the guard gives each text, running side by side
       M->>E: starts it, with its text (Cut)
@@ -402,6 +401,7 @@ sequenceDiagram
   M->>T: lists the runs left, each run whose pull request handed over is neither signed off, merged, nor closed
   alt the words name a run left, or they're none and exactly one run is left
     M->>M: enters the run's worktree, by EnterWorktree
+    M->>T: picks the run up, which lifts its pause
     M->>U: Picking up, where it stopped, and the point or sign-off waiting
     M->>O: starts it, where News waits (Cut, News)
     Note over M,O: Each start comes due from the run's files: each generator and evaluator that the pause stopped has a kept Cut and no Result, so it starts again from that Cut, on the deliverable as committed, and the work goes on, as S1, S2, or S3 draws.
@@ -478,7 +478,7 @@ sequenceDiagram
   else the user takes it
     opt the user approves it
       U->>T: approves the pull request handed over, by /rn:ty's own command as it loads (Sign-off)
-      Note over U,M: Nothing is left, so the adapters give no start, and the main conversation ends Lane's run by the skill's result done, the one move to start no more, which only the route after /rn:ty holds. check.py refuses done at the end while the pull request handed over isn't signed off.
+      Note over U,M: Nothing is left, so the adapters give no start, and the main conversation ends Lane's run by the skill's result done, the one move to start no more, which only the route after /rn:ty holds. Lane refuses a skill's result while a role of its run runs or a start is due.
       Note over U,T: Nothing of the run waits for the user any more, and tree.py merges nothing, as the merge stays the user's.
     end
     U->>GH: merges the pull request

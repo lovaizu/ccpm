@@ -393,6 +393,8 @@ sequenceDiagram
   M->>CC: result.py <skill> <result>
   alt a Lane of keeps_steps on the skill finds a Step unmarked in the latest pass
     CC-->>M: result.py refuses it, with that Lane's sentence and the Step due
+  else a subagent of the Run runs, or a start is due with its text
+    CC-->>M: result.py refuses it, with the moves due
   else
     CC->>G: the PostToolUse, with no agent_id
     G->>RS: adds the skill's Result, which ends the Run
@@ -430,6 +432,9 @@ Strategies:
   lowering KR1.1.
 - The skill's Result refused by `result.py` while keeps_steps finds a Step unmarked\
   A turn may end while a Step waits on a subagent, so only the Result shows a Step left.
+- The skill's Result refused while a subagent of its Run runs or a start is due\
+  A Result that ends the Run then leaves the subagent's calls unchecked and the start undone,
+  lowering KR1.1.
 
 ### S5: a subagent held to its steps
 
