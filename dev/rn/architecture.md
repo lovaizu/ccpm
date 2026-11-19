@@ -15,8 +15,6 @@
 ## Solution strategy
 
 rn piles up the vital few that bring a deliverable's people to their aim, and cuts the trivial many.
-At each turn, the orchestrator reviews the design tree. In each round, a generator makes a
-deliverable, and evaluators judge it as its people would.
 
 ![rn's components](images/components.svg)
 
