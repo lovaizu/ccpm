@@ -686,6 +686,11 @@
               "about": "Kept results",
               "decided": "the kept adapter gives each chain's results in its order, and the guard adds a lane for each chain at the pick-up",
               "by": "reasoning"
+            },
+            {
+              "about": "Chains the plugin opens",
+              "decided": "at each move, the plugin's start adapter may give the first start of each chain to open now, each opening a lane of its own, and is given the text and the result of each start that a lane has made so far",
+              "by": "user"
             }
           ]
         },
