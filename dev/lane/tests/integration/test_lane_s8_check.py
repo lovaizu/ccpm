@@ -6,9 +6,7 @@ double of Claude Code."""
 from __future__ import annotations
 
 import pytest
-from lane_bench import CHECK_SAYS, UNBUILT, Bench, opened, reached, started, written
-
-pytestmark = UNBUILT
+from lane_bench import CHECK_SAYS, Bench, opened, reached, started, written
 
 # An entry of another version, which the check of `log` doesn't pass.
 OLD_ENTRY = "# Changelog\n\n## 1.1.0\n\n- Invoices render.\n"

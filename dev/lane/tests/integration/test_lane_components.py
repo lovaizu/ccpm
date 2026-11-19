@@ -129,7 +129,6 @@ def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_stops_the_s
 
 
 @pytest.mark.supports("guard", "S8")
-@UNBUILT
 def test_the_plugins_check_runs_in_the_worktree_the_conversation_works_in(b: Bench):
     """Given the person typed /log:up 1.2.0 and the main conversation entered a worktree
     When the writer keeps each step there, writing the worktree's CHANGELOG.md, and ends
@@ -195,7 +194,6 @@ def test_a_reporter_given_words_that_dont_fit_its_kind_exits_2_with_what_it_take
 
 
 @pytest.mark.supports("reporters", "Run")
-@UNBUILT
 def test_a_reporters_result_counts_for_the_subagent_that_ran_it(b: Bench):
     """Given two writers running after the reviewer's `split`
     When the second reports `written`, and the first ends
@@ -242,7 +240,6 @@ def test_the_run_waits_while_the_start_its_route_made_due_runs(b: Bench):
 
 
 @pytest.mark.supports("route adapter", "Route")
-@UNBUILT
 def test_a_result_that_no_route_goes_after_ends_the_run_once_no_start_runs(b: Bench):
     """Given `log` whose writer's step `write` names `unclear` among the results that end the
     start, which no route goes after, and the writer running

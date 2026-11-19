@@ -320,7 +320,6 @@ def test_the_post_tool_use_of_another_command_is_no_move(e: Events):
 
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
-@UNBUILT
 def test_a_tied_subagents_stop_is_its_end(e: Events):
     """Given the writer tied to a1
     When a1's SubagentStop comes
@@ -376,7 +375,6 @@ def test_the_main_conversations_call_after_a_command_holds_to_its_skills_steps_i
 
 @pytest.mark.supports("test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it")
 @pytest.mark.parametrize("killed", [False, True])
-@UNBUILT
 def test_a_task_notification_of_a_tied_subagent_is_its_result_reaching(e: Events, killed: bool):
     """Given the writer tied to a1 by the Agent call u1
     When a1's task-notification reaches the main conversation, of its end or of its stop by
@@ -417,7 +415,6 @@ def test_a_send_message_queued_to_a_running_subagent_is_a_queue(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-@UNBUILT
 def test_the_stop_of_a_subagent_with_a_resume_queued_ends_the_pass_that_ran(e: Events):
     """Given the writer tied to a1 by u1, and a resume u2 queued to it
     When a1's SubagentStop comes

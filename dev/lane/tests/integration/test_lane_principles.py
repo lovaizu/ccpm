@@ -147,7 +147,6 @@ def test_rules_out_of_form_stop_the_call_saying_what_the_author_mends(b: Bench, 
 
 
 @pytest.mark.supports("P1.2")
-@UNBUILT
 def test_a_result_said_only_in_the_reply_counts_for_nothing(b: Bench, broken: None):
     """Given the writer that kept each step but ran no reporter of its result
     When it ends replying `written`
@@ -160,7 +159,6 @@ def test_a_result_said_only_in_the_reply_counts_for_nothing(b: Bench, broken: No
 
 
 @pytest.mark.supports("P2.1")
-@UNBUILT
 def test_a_step_is_held_only_to_the_types_its_rules_pick(b: Bench, broken: None):
     """Given the writer done, so the reviewer, whose step picks only a rule of results, runs
     When the reviewer writes notes.txt and runs `ls`

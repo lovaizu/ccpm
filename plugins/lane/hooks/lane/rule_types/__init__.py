@@ -1,13 +1,14 @@
 """Which rule types judge a call, a mark, and an end, and the order in which the guard asks them: a
 mark for the step due, then the reads and the items its rules ask; an end for its result first,
 then each step up to the one whose result rule names the start's result among those that end it,
-then the plugin's own check."""
+then the plugin's own check of each of those steps, the step at which the start ends not done."""
 
 from __future__ import annotations
 
-from place import Move
+from place import Move, marked
+from rules import Step
 
-from rule_types import checklist, commands, order, reads_none, reads_whole, writes
+from rule_types import check, checklist, commands, order, reads_none, reads_whole, result, writes
 
 # The rule types that judge a call of each tool, by their names in a rule's `type`, in the order
 # the guard asks them.
@@ -76,7 +77,31 @@ def judge_end(move: Move) -> str | None:
     Changes: nothing, though check runs the plugin's check.
     Refuses: OSError, where the plugin's check can't be run.
     """
-    raise NotImplementedError("rule_types.judge_end")
+    steps = move.steps
+    done = marked(move.run, move.agent_id)
+    # The step at which the start ends: the first it hasn't marked done, else its last.
+    ending = [step for step in steps if step["name"] not in done][:1] or steps[-1:]
+    gave = result.given(move)
+    ends_at = next((i for i, step in enumerate(steps) if gave in _ends(step)), len(steps))
+    said = (
+        judge(rule, step, move)
+        for kind, judge, held in (
+            ("result", result.judge_end, ending),
+            ("order", order.judge_end, steps[:ends_at]),
+            ("check", check.judge_end, steps[:ends_at]),
+        )
+        for step in held
+        for rule in step["rules"]
+        if rule["type"] == kind
+    )
+    return next((each for each in said if each is not None), None)
+
+
+def _ends(step: Step) -> list[str]:
+    """The results that the step's rules name as ending the start there."""
+    return [
+        end for rule in step["rules"] if rule["type"] == "result" for end in rule.get("ends", [])
+    ]
 
 
 # The rule types that judge a mark, by their names in a rule's `type`, in the order the guard asks

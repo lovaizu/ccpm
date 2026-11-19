@@ -29,7 +29,7 @@ def judge_call(rule: Rule, step: Step, move: Move) -> str | None:
         runs = f"only {listed(rule['commands'])}" if named else "no command"
         return (
             f"You're at the step `{step['name']}` of {move.role}, which runs {runs}.\n"
-            f"Leave `{part.strip()}` to a step that names it."
+            "Run only those here, and the rest at a step that names them."
         )
     return None
 

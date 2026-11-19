@@ -6,6 +6,18 @@ from __future__ import annotations
 from place import Move
 from rules import Rule, Step
 
+from rule_types.words import listed
+
+
+def given(move: Move) -> str | None:
+    """The latest result that the move's start gave, None where it gave none."""
+    results = [
+        entry["result"]
+        for entry in move.run.entries
+        if entry["kind"] == "result" and entry.get("agent_id") == move.agent_id
+    ]
+    return results[-1] if results else None
+
 
 def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     """Judges an end by the rule.
@@ -19,4 +31,16 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("rule_types.result.judge_end")
+    results, ends = rule.get("results", []), rule.get("ends", [])
+    if given(move) in results + ends:
+        return None
+    if not results:
+        return (
+            f"You're at the step `{step['name']}` of {move.role}, whose work isn't done.\n"
+            f"Do it and mark it done with lane-step {step['name']}; give"
+            f" {listed(ends)} with lane-result only where you can't go on."
+        )
+    return (
+        f"You end the step `{step['name']}` of {move.role} with no result it may give.\n"
+        f"Give {listed(results + ends)} with lane-result first."
+    )

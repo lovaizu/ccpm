@@ -5,6 +5,7 @@ conversation holds one run of a plugin at a time."""
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, replace
 from typing import Any, Callable
 
@@ -135,9 +136,20 @@ def place(event: Event, runs: list[Run], due: Due) -> Move | None:
         return _before(event, run, rules)
     if name == "PostToolUse":
         return _after(event, run, rules)
-    if name == "UserPromptSubmit" and "<task-notification>" not in event.get("prompt", ""):
-        return None
+    if name == "SubagentStop":
+        return replace(_call(event, run, rules), kind="end")
+    if name == "UserPromptSubmit":
+        return _reached(event, run, rules)
     raise NotImplementedError(f"place.place of {name}")
+
+
+def _reached(event: Event, run: Run, rules: Rules) -> Move | None:
+    """The UserPromptSubmit of a task-notification of a subagent of the run as its result
+    reaching, by the subagent that its task-id names; none for any other prompt."""
+    told = re.search(r"<task-notification>.*?<task-id>(.*?)</task-id>", event["prompt"], re.DOTALL)
+    if told is None or not any(_ties(entry, told[1]) for entry in run.entries):
+        return None
+    return replace(_call(event, run, rules, told[1]), kind="result_reached")
 
 
 def marked(run: Run, agent_id: str | None) -> set[str]:
@@ -234,11 +246,11 @@ def _read(event: Event, run: Run, rules: Rules) -> Move | None:
     return replace(call, kind="read") if named(whole, of_call(event)) else None
 
 
-def _call(event: Event, run: Run, rules: Rules) -> Move:
+def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> Move:
     """A call of the main conversation, held to the steps of the run's latest command whose skill
-    the rules give steps of, or of a subagent, held to the steps of the start it's tied to; each
-    at the first of its steps that it hasn't marked done."""
-    agent_id = event.get("agent_id")
+    the rules give steps of, or of a subagent, the event's or the one given, held to the steps of
+    the start it's tied to; each at the first of its steps that it hasn't marked done."""
+    agent_id = agent_id or event.get("agent_id")
     if agent_id is None:
         role = run.skill
         for entry in run.entries:

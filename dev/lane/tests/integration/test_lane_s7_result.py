@@ -6,9 +6,7 @@ Each runs `log` and Lane through the double of Claude Code."""
 from __future__ import annotations
 
 import pytest
-from lane_bench import UNBUILT, Bench, reviewed, started, to_review
-
-pytestmark = UNBUILT
+from lane_bench import Bench, reviewed, started, to_review
 
 
 @pytest.mark.supports("S7", "rule types")

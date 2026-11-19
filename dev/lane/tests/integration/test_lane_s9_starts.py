@@ -123,7 +123,6 @@ def test_a_subagents_start_of_a_subagent_is_stopped(b: Bench):
 
 
 @pytest.mark.supports("S9", "S7", "Starts due")
-@UNBUILT
 def test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it(b: Bench):
     """Given the writer kept each step and reported `written`
     When its end reaches the main conversation
@@ -151,7 +150,6 @@ def test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place(b: Ben
 
 
 @pytest.mark.supports("S9", "Starts due")
-@UNBUILT
 def test_a_run_whose_order_says_it_ends_holds_no_move_after(b: Bench):
     """Given the reviewer due
     When the reviewer reports `good` and ends, and the main conversation writes a file that no

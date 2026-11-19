@@ -229,7 +229,6 @@ def test_a_start_still_untied_at_the_turns_end_is_dropped_and_due_again(g: Play)
 
 
 @pytest.mark.supports("test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it")
-@UNBUILT
 def test_an_end_that_holds_and_its_notification_give_the_result_and_the_next_starts(g: Play):
     """Given the writer a1 that kept each step
     When it ends, and its task-notification reaches the main conversation
@@ -318,7 +317,6 @@ def test_a_typed_command_puts_its_starts_in_place_of_those_before(g: Play):
 
 
 @pytest.mark.supports("test_a_run_whose_order_says_it_ends_holds_no_move_after")
-@UNBUILT
 def test_a_run_whose_routes_start_no_more_holds_no_move_after(g: Play):
     """Given the reviewer's `good`, after which the routes start no more
     When the main conversation writes notes.txt, and ends its turn
@@ -332,7 +330,6 @@ def test_a_run_whose_routes_start_no_more_holds_no_move_after(g: Play):
 
 
 @pytest.mark.supports("test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run")
-@UNBUILT
 def test_the_command_typed_once_its_run_ended_adds_a_new_run(g: Play):
     """Given a run of log:up that ended with the reviewer's `good`
     When the person's /log:up 1.3.0 expands, and the main conversation runs `git status`
@@ -412,7 +409,6 @@ def test_a_turns_end_while_the_order_gives_no_start_due_goes_through_and_the_run
 
 
 @pytest.mark.supports("test_a_run_whose_order_says_it_ends_holds_no_move_after")
-@UNBUILT
 def test_the_orders_end_of_the_run_is_kept_as_an_ended_entry(g: Play):
     """Given the reviewer due
     When the reviewer gives `good`, after which log's routes say the run ends
@@ -768,7 +764,6 @@ def test_command_typed_gives_its_routes_starts(g: Play, log: str):
 
 
 @pytest.mark.supports("test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it")
-@UNBUILT
 def test_result_reached_gives_the_result_and_its_routes_starts(g: Play, log: str):
     """Given the writer a1's result `written`
     When its end reaches the main conversation

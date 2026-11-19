@@ -18,6 +18,7 @@ from place import Event, Move, SkillCall
 from plugin import plugin_root
 from record import Run
 from report import Report
+from rule_types.result import given
 from rules import OutOfForm, Rules, read_rules
 from start_rules import asks_adapter
 
@@ -192,7 +193,14 @@ def result_reached(move: Move) -> Answer:
     with no result, such as by TaskStop; else nothing.
     Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
     """
-    raise NotImplementedError("guard.result_reached")
+    if "<status>killed</status>" in move.event["prompt"]:
+        raise NotImplementedError("guard.result_reached of a start stopped with no result")
+    gave = given(move)
+    due = _due(move.run, move.event)
+    if due.get("ends"):
+        record.add(move.run.session_id, [{"kind": "ended", "run": move.run.id}])
+    told = f"{move.role} gave {gave}." if gave else ""
+    return Answer(said=" ".join(each for each in (told, _due_said(due)) if each))
 
 
 def fact_added(move: Move) -> Answer:
@@ -266,7 +274,8 @@ def subagent_ended(move: Move) -> Answer:
     that resume's start to the subagent; else nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("guard.subagent_ended")
+    said = rule_types.judge_end(move)
+    return Answer() if said is None else Answer(True, said)
 
 
 def written(event: Event, given: Answer) -> str:

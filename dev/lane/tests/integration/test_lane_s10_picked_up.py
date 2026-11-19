@@ -21,8 +21,6 @@ from lane_bench import (
 )
 from repo_files import git, write_files
 
-pytestmark = UNBUILT
-
 
 def entry_kept(b: Bench) -> None:
     """`log` decides its order by ORDER, and the repository keeps the entry of 1.2.0 that an earlier
@@ -34,6 +32,7 @@ def entry_kept(b: Bench) -> None:
 
 
 @pytest.mark.supports("S10", "Run")
+@UNBUILT
 def test_after_compact_the_run_goes_on_with_its_starts_due(b: Bench):
     """Given the writer due
     When the person types /compact, and the main conversation ends its turn
@@ -47,6 +46,7 @@ def test_after_compact_the_run_goes_on_with_its_starts_due(b: Bench):
 
 
 @pytest.mark.supports("S10", "Run")
+@UNBUILT
 def test_the_command_typed_after_compact_gives_where_the_run_stands(b: Bench):
     """Given the writer ended with `written`, so the reviewer is due, and the person typed /compact
     When the person types /log:up 1.2.0 again, and the main conversation starts the reviewer
@@ -71,6 +71,7 @@ def test_a_subagent_running_through_compact_stays_on_its_start(b: Bench):
 
 
 @pytest.mark.supports("S10", "Starts due")
+@UNBUILT
 def test_a_new_conversation_goes_on_where_the_plugins_own_files_say(b: Bench):
     """Given `log` deciding its order from CHANGELOG.md, which holds the entry of 1.2.0 that an
     earlier conversation wrote
@@ -84,6 +85,7 @@ def test_a_new_conversation_goes_on_where_the_plugins_own_files_say(b: Bench):
 
 
 @pytest.mark.supports("S10")
+@UNBUILT
 def test_the_order_of_a_new_conversation_takes_the_words_typed_after_the_command(b: Bench):
     """Given `log` deciding its order from CHANGELOG.md, which holds the entry of 1.2.0 alone
     When the person types /log:up 1.3.0 in a new conversation, and the main conversation ends its
@@ -96,6 +98,7 @@ def test_the_order_of_a_new_conversation_takes_the_words_typed_after_the_command
 
 
 @pytest.mark.supports("S10")
+@UNBUILT
 def test_a_run_added_by_the_skill_tool_takes_its_arguments_as_the_words(b: Bench):
     """Given `log` deciding its order from CHANGELOG.md, which holds the entry of 1.2.0
     When the main conversation calls log:up by the Skill tool with 1.2.0 in a new conversation, and
@@ -108,6 +111,7 @@ def test_a_run_added_by_the_skill_tool_takes_its_arguments_as_the_words(b: Bench
 
 
 @pytest.mark.supports("S10", "route adapter")
+@UNBUILT
 def test_a_new_conversation_of_a_plugin_that_fixes_its_order_starts_from_its_command(b: Bench):
     """Given `log` fixing its order by routes alone, and the repository keeping the entry of 1.2.0
     When the person types /log:up 1.2.0 in a new conversation, and the main conversation ends its

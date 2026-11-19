@@ -21,8 +21,6 @@ from report import Report
 from rule_types import check, checklist, commands, order, reads_none, reads_whole, result, writes
 from rules import Rule, Rules, Step
 
-UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 RULES: Rules = copy.deepcopy(lane_bench.RULES)
 WRITE: Step = RULES["roles"]["log:writer"]["steps"][0]
 REPORT: Step = RULES["roles"]["log:writer"]["steps"][1]
@@ -421,7 +419,6 @@ def test_items_not_marked_give_the_steps_sentence_naming_each(
 
 @pytest.mark.supports("test_the_reviewers_more_makes_the_writer_due_again")
 @pytest.mark.parametrize("value", ["good", "more", "split"])
-@UNBUILT
 def test_an_end_with_a_named_result_holds(e: Events, value: str):
     """Given the reviewer that gave a result its rule names
     When it ends
@@ -433,7 +430,6 @@ def test_an_end_with_a_named_result_holds(e: Events, value: str):
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
 @pytest.mark.parametrize("entries", [[], [gave("fine")], [gave("good", OTHER)]])
-@UNBUILT
 def test_an_end_with_no_named_result_gives_the_results_it_may_give(e: Events, entries: list[Entry]):
     """Given the reviewer a1 that gave no result, one its rule doesn't name, or none while a2 gave
     one
@@ -450,7 +446,6 @@ def test_an_end_with_no_named_result_gives_the_results_it_may_give(e: Events, en
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_passes_goes_through")
-@UNBUILT
 def test_an_end_that_the_check_passes_holds(e: Events):
     """Given the conversation's CHANGELOG.md holding the entry of 1.2.0
     When the writer ends
@@ -460,7 +455,6 @@ def test_an_end_that_the_check_passes_holds(e: Events):
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
-@UNBUILT
 def test_an_end_that_the_check_doesnt_pass_gives_the_steps_sentence_and_what_it_said(
     e: Events, cwd: str
 ):
@@ -477,7 +471,6 @@ def test_an_end_that_the_check_doesnt_pass_gives_the_steps_sentence_and_what_it_
 
 
 @pytest.mark.supports("test_the_plugins_check_runs_in_the_worktree_the_conversation_works_in")
-@UNBUILT
 def test_the_check_runs_in_the_events_folder(e: Events, tmp_path: Any):
     """Given an event whose folder holds no CHANGELOG.md, though the case's own folder might
     When the writer ends
@@ -489,7 +482,6 @@ def test_the_check_runs_in_the_events_folder(e: Events, tmp_path: Any):
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
-@UNBUILT
 def test_a_check_that_cant_be_run_is_refused(e: Events, tmp_path: Any):
     """Given an event whose folder isn't there
     When the writer ends
@@ -529,7 +521,6 @@ def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: st
 @pytest.mark.supports(
     "test_a_bash_command_that_reads_a_file_never_to_read_is_stopped_by_its_commands"
 )
-@UNBUILT
 def test_a_bash_command_that_reaches_a_file_never_to_read_is_judged_by_commands(e: Events):
     """Given the writer at its step `write`, which never reads secrets/ and runs `git log`
     When it runs `cat secrets/key.txt`
@@ -591,7 +582,6 @@ def test_a_mark_that_breaks_no_rule_holds(e: Events):
 
 
 @pytest.mark.supports("test_an_end_with_no_result_names_the_result_before_the_check")
-@UNBUILT
 def test_an_end_is_judged_by_its_result_before_its_steps_and_its_check(e: Events, cwd: str):
     """Given a check that leaves a file where it runs, and the writer that marked each step and gave
     no result
@@ -607,7 +597,6 @@ def test_an_end_is_judged_by_its_result_before_its_steps_and_its_check(e: Events
 
 
 @pytest.mark.supports("test_an_end_with_a_step_undone_names_the_step_before_the_check")
-@UNBUILT
 def test_an_end_is_judged_by_its_steps_before_its_check(e: Events, cwd: str):
     """Given a check that leaves a file where it runs, and the writer that gave `written` and
     marked `write` alone
@@ -623,7 +612,6 @@ def test_an_end_is_judged_by_its_steps_before_its_check(e: Events, cwd: str):
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
-@UNBUILT
 def test_an_end_whose_result_and_steps_hold_is_judged_by_its_check(e: Events, cwd: str):
     """Given the writer that gave `written` and marked each step, its CHANGELOG.md holding no
     entry of 1.2.0
@@ -638,7 +626,6 @@ def test_an_end_whose_result_and_steps_hold_is_judged_by_its_check(e: Events, cw
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_passes_goes_through")
-@UNBUILT
 def test_an_end_that_breaks_no_rule_holds(e: Events):
     """Given the writer that gave `written` and marked each step, its CHANGELOG.md holding the
     entry
@@ -664,7 +651,6 @@ def ending_at(step: int) -> Rules:
 @pytest.mark.supports(
     "test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone"
 )
-@UNBUILT
 def test_a_result_that_ends_the_start_holds_its_rule(e: Events):
     """Given a rule of results that names `unclear` among those that end the start
     When the writer that gave `unclear` ends
@@ -674,8 +660,24 @@ def test_a_result_that_ends_the_start_holds_its_rule(e: Events):
     assert result.judge_end(ends, step, move("end", e.ended(WRITER), gave("unclear"))) is None
 
 
+@pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
+def test_an_end_at_a_step_whose_rule_names_only_results_that_end_the_start_says_to_mark_it(
+    e: Events,
+):
+    """Given a rule of results that names only `unclear`, among those that end the start
+    When the writer that gave no result ends at its step
+    Then the rule gives the step's sentence, telling it to mark the step done, and naming
+    `unclear` as a result only where it can't go on"""
+    ends: Rule = {"type": "result", "ends": ["unclear"]}
+    step: Step = {"name": "write", "rules": [ends]}
+    said = result.judge_end(ends, step, move("end", e.ended(WRITER)))
+    assert said is not None
+    assert "lane-step write" in said
+    assert "unclear" in said
+    assert "can't go on" in said
+
+
 @pytest.mark.supports("test_an_end_with_a_result_that_the_rule_doesnt_name_is_stopped")
-@UNBUILT
 def test_an_end_with_a_result_of_neither_kind_names_each_result_it_may_give(e: Events):
     """Given a rule of results that names `written`, and `unclear` among those that end the start
     When the writer that gave `fine` ends
@@ -691,7 +693,6 @@ def test_an_end_with_a_result_of_neither_kind_names_each_result_it_may_give(e: E
 @pytest.mark.supports(
     "test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone"
 )
-@UNBUILT
 def test_an_end_with_a_result_that_ends_the_start_at_its_step_holds_with_later_steps_undone(
     e: Events, cwd: str
 ):
@@ -709,7 +710,6 @@ def test_an_end_with_a_result_that_ends_the_start_at_its_step_holds_with_later_s
 @pytest.mark.supports(
     "test_a_result_that_ends_the_start_at_a_later_step_leaves_the_steps_before_it_held"
 )
-@UNBUILT
 def test_an_end_with_a_result_that_ends_the_start_at_a_later_step_holds_the_steps_before_it(
     e: Events,
 ):
@@ -731,7 +731,6 @@ def test_an_end_with_a_result_that_ends_the_start_at_a_later_step_holds_the_step
     "test_the_turns_end_in_a_run_of_a_plugin_with_no_order_is_held_to_its_skills_check"
 )
 @pytest.mark.parametrize("there, stops", [(False, True), (True, False)])
-@UNBUILT
 def test_the_main_conversations_turn_end_is_judged_by_its_skills_check(
     e: Events, cwd: str, there: bool, stops: bool
 ):
