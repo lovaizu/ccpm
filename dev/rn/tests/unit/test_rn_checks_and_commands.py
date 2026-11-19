@@ -381,7 +381,6 @@ def test_start_with_no_role_bad_input_a_tree_out_of_form_or_no_run_gives_its_cod
     assert (got, printed) == (code, "") and said
 
 
-@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 def test_items_gives_each_practice_of_the_cuts_best_practice_in_order(tmp_path: Any):
     """Given the generator's Cut by code
@@ -394,7 +393,6 @@ def test_items_gives_each_practice_of_the_cuts_best_practice_in_order(tmp_path: 
     assert code == 0 and items[0] == "N1.1" and len(items) == len(set(items))
 
 
-@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 @pytest.mark.parametrize(
     ("argv", "cut", "code"),
@@ -414,6 +412,16 @@ def test_items_with_no_step_or_no_best_practice_gives_its_code(
     given = json.dumps({"values": {"cut": CUT}})
     got, printed, said = command("hooks/adapters/items.py").main(argv, given, top, RN)
     assert (got, printed) == (code, "") and said
+
+
+@pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
+def test_items_of_input_naming_no_cut_gives_1(tmp_path: Any):
+    """Given Lane's input that names no Cut among the run values
+    When items.py runs for a step
+    Then it gives 1, saying so"""
+    top = run_with(str(tmp_path), {CUT: generator_cut()})
+    got, printed, said = command("hooks/adapters/items.py").main(["generator", "3"], "{}", top, RN)
+    assert (got, printed) == (1, "") and "cut" in said
 
 
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
@@ -485,10 +493,7 @@ def test_results_of_input_not_json_gives_1(tmp_path: Any):
     "path",
     [
         "scripts/check.py",
-        pytest.param(
-            "hooks/adapters/items.py",
-            marks=pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies"),
-        ),
+        "hooks/adapters/items.py",
     ],
 )
 def test_a_command_run_with_no_argument_exits_2_with_its_usage(tmp_path: Any, path: str):

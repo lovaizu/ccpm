@@ -627,36 +627,47 @@
         "dev/rn/tests/integration/test_rn_s1_deliverable.py",
         "dev/rn/tests/integration/test_rn_s2_pause.py"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
-          "decisions": []
+          "good": true,
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "hooks/adapters/items.py, which gives each practice of the Cut's best practice as N<n>.<m> in its order, as the parts of S1 and S2 already carry each other principle item",
+              "by": "reasoning"
+            },
+            {
+              "about": "The cases that wait",
+              "decided": "the sign-off before work that rests on a plan, and a role told its step where it writes beside its deliverable, as each rests on a guard of Lane's laid on rn's steps",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -666,7 +677,7 @@
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]
@@ -680,36 +691,42 @@
         "plugins/rn",
         "dev/rn/tests"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
-          "decisions": []
+          "good": true,
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "none beyond S1's and S2's, as each component's decision and each handoff of the data model already lies in them",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -719,7 +736,7 @@
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]
