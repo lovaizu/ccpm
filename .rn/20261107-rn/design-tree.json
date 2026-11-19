@@ -789,6 +789,10 @@
               "about": "What Lane holds",
               "decided": "the generator writes only its deliverable and its result, by a step's sentence that Lane holds with the paths that rn's adapter of a start gives as its values",
               "by": "reasoning"
+            },
+            {
+              "about": "The tests of a code deliverable",
+              "decided": null
             }
           ]
         },

@@ -6,6 +6,7 @@ developer's login, so a case without it is skipped, as opus.NEEDS_LOGIN says."""
 
 from __future__ import annotations
 
+import glob
 import json
 import os
 from typing import Any
@@ -18,9 +19,10 @@ from rn_bench import COMMAND, RUN, Bench
 
 pytestmark = [
     opus.NEEDS_LOGIN,
-    pytest.mark.xfail(strict=True, reason="rn's prompts have no steps, and its parts empty bodies"),
 ]
 
+# The design tree of a run's folder.
+TREE = "design-tree.json"
 # The runs of each case, as rn's Test strategy sets.
 RUNS = 3
 
@@ -62,7 +64,8 @@ def result(b: Bench, cut: str) -> Any:
 def test_up_starts_a_run_for_a_request_in_words(tmp_path: Any, each: int):
     """Given invoicer with no run's folder
     When the person asks in words for a command with which the accounting team prints invoices
-    Then the run calls rn:up, and commits a run's folder whose design tree states a goal"""
+    Then the run calls rn:up, and commits in rn's worktree of the run a run's folder whose design
+    tree states a goal"""
     b = rn_bench.bench(str(tmp_path))
     git(b.repo, "rm", "-r", "-q", RUN)
     git(b.repo, "commit", "-q", "-m", "No run")
@@ -70,8 +73,11 @@ def test_up_starts_a_run_for_a_request_in_words(tmp_path: Any, each: int):
         b, str(tmp_path), "rn, make a command with which our accounting team prints invoices"
     )
     assert "rn:up" in loaded(record)
-    runs = [name for name in os.listdir(os.path.join(b.repo, ".rn")) if name[:8].isdigit()]
-    assert len(runs) == 1, each
+    trees = glob.glob(os.path.join(b.repo, ".claude", "worktrees", "rn-*", ".rn", "*", TREE))
+    assert len(trees) == 1, each
+    worktree = os.path.dirname(os.path.dirname(os.path.dirname(trees[0])))
+    committed = json.loads(git(worktree, "show", f"HEAD:{os.path.relpath(trees[0], worktree)}"))
+    assert committed["goal"]["decided"]
 
 
 @pytest.mark.supports("test_an_edit_of_the_design_tree_is_committed_with_its_ground")

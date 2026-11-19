@@ -30,7 +30,9 @@ run ends once the person signs off the pull request.
 
 1. Find the run. Where the person's words ask for something, enter a new worktree named
    `rn-<yyyymmdd>-<goal>`, and write the run's folder with a design tree whose goal you take from
-   their words by the design tree best practice's N1. Where they gave no words, enter the worktree
+   their words by the design tree best practice's N1, then commit it as step 4 says before you ask
+   them anything, since a pick-up in another conversation finds only what's committed. Where they
+   gave no words, enter the worktree
    of the run whose design tree has work left, the one changed last where several have, read its
    folder, and tell the person where it picks up and what waits for them.
 2. Read the facts since your last turn: the person's words, and each result of a Round that ended,
