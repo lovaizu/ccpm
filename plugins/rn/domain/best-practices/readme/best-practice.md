@@ -105,7 +105,7 @@ A reader trusts a benefit they've seen happen in work like their own more than o
 2. *While deciding.* Choose the task from the work that readers bring to that use: the issues and questions they open, where the product has a tracker, or else the role's job in the product vision. Take one like most of theirs, small enough to show from start to end, and whose result shows the benefit the opening promises, such as, for a release checker, one release of a small library with one change that breaks its callers.
 3. *While deciding.* For each key result of that objective, decide what in the run shows it. For how well, show the result in use as its users would use it, such as the caller's test that fails on the broken release. For how fast, show what the reader spent, such as the questions they answered.
 4. *While deciding.* Decide the cut: keep every exchange from what the reader gives to the result they keep, and cut only output that doesn't bear on the result, such as progress lines.
-5. *While making.* Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came.
+5. *While making.* Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came. Where the product doesn't run yet, write the run that its architecture's sequences give, as the image that the work builds toward, and take it again from a recorded run once the product runs.
 6. *While making.* Write each exchange from that run in the form the reader meets it: text as a code block, and a screen as an image from the run, kept in images/.
 7. *While making.* Write the result first, so that the reader knows where the run goes.
 8. *While making.* Check that a newcomer can say, after reading, what the product would give them on their own work.
@@ -152,7 +152,7 @@ A reader who can't install the product never gets to use it, and the author's ow
 3. *While deciding.* For each requirement, choose a command whose output shows the reader they have it, such as `git --version`.
 4. *While making.* Write each install step as a command the reader can copy.
 5. *While making.* End the steps with a sign the reader can see that the product works, such as the version it prints or its first command answering.
-6. *While making.* Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again. The trace: `{install}` run.
+6. *While making.* Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again. Where the product isn't released yet, write the steps that its release takes, and run them once it's out. The trace: `{install}` run.
 
 ### N10
 

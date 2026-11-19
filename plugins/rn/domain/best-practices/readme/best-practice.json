@@ -234,7 +234,7 @@
        },
        {
         "at": "make",
-        "text": "Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came."
+        "text": "Take a recorded run where one ran the same task on the version that the manifest names, such as an end-to-end test's record, as it shows what readers get today. Otherwise run the task with the product from a fresh start, such as in a throwaway copy of the repository with an empty home folder. Keep each input and output as it came. Where the product doesn't run yet, write the run that its architecture's sequences give, as the image that the work builds toward, and take it again from a recorded run once the product runs."
        },
        {
         "at": "make",
@@ -374,7 +374,7 @@
        },
        {
         "at": "make",
-        "text": "Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again.",
+        "text": "Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again. Where the product isn't released yet, write the steps that its release takes, and run them once it's out.",
         "trace": {
          "action": "run",
          "takes": [
