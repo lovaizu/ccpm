@@ -2,7 +2,8 @@
 Claude Code. A bench holds copies of rn and Lane, the repository of `invoicer` with a remote to push
 to, and the run's folder with the design tree of the walkthrough's plan once the person signed it
 off, and each helper plays one move as the person, the orchestrator, or a role makes it, through the
-double, or runs an adapter of rn's as Lane runs it."""
+double, or runs an adapter of rn's as Lane runs it, or rn's script of a start's Cut as the
+orchestrator runs it."""
 
 from __future__ import annotations
 
@@ -123,7 +124,7 @@ class Bench:
         standard input, and gives its exit code, what it printed, as JSON where it's JSON, and what
         it said."""
         done = subprocess.run(
-            ["python3", os.path.join(self.rn, "hooks", "adapters", f"{name}.py"), *args],
+            ["python3", os.path.join(self.rn, "lane", "adapters", f"{name}.py"), *args],
             input=json.dumps(given),
             capture_output=True,
             text=True,
@@ -137,11 +138,42 @@ class Bench:
             printed = done.stdout
         return done.returncode, printed, done.stderr
 
-    def started(self, role: str, running: list[dict[str, Any]] | None = None) -> dict[str, Any]:
-        """The text and the run values that rn's adapter gives the role's start due."""
-        code, printed, said = self.adapter("start", [role], {"running": running or []})
+    def due(
+        self, words: str = "", moves: list[dict[str, Any]] | None = None
+    ) -> tuple[int, Any, str]:
+        """Runs rn's adapter of the starts due as Lane runs it, for a run of /rn:up with the words
+        and the moves given, none by default."""
+        run = {"skill": "rn:up", "words": words, "moves": moves or []}
+        return self.adapter("starts_due", [], {"run": run})
+
+    def cutting(self, role: str, running: list[str] | None = None) -> tuple[int, str, str]:
+        """Runs rn's script of a start's Cut as the orchestrator runs it, in the repository, for the
+        role with the Cut of each of its starts that runs, and gives its exit code, the path it
+        printed, and what it said."""
+        script = os.path.join(self.rn, "scripts", "cut.py")
+        done = subprocess.run(
+            ["python3", script, role, *(running or [])],
+            capture_output=True,
+            text=True,
+            cwd=self.repo,
+            env=self.env,
+            check=False,
+        )
+        return done.returncode, done.stdout.strip(), done.stderr
+
+    def cut(self, role: str) -> str:
+        """The path of the Cut that rn writes for the role's start due."""
+        code, path, said = self.cutting(role)
         assert code == 0, said
-        return printed
+        return path
+
+    def start(self, c: Conversation, role: str, does: str) -> tuple[str, Any]:
+        """The orchestrator writes the Cut of the role's start due and starts the role in the
+        conversation, with a prompt that names its Cut; gives the Cut's path and the agent, None
+        where the start was stopped."""
+        cut = self.cut(role)
+        prompt = f"Carry out your steps, from your Cut at {cut}"
+        return cut, c.start(f"rn:{role}", prompt, does)[1]
 
     def write_result(self, cut: str, result: dict[str, Any]) -> str:
         """Writes a role's result beside its Cut, as the role does, and gives its path."""
@@ -193,7 +225,7 @@ def read_json(b: Bench, path: str) -> Any:
 def made(b: Bench, carried_out: list[dict[str, str]] | None = None) -> str:
     """The generator due ends with its deliverable made and a place for each decision named, none
     by default, and gives its Cut's path."""
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     deliverable = read_json(b, cut)["deliverable"]["path"]
     write_files(b.repo, {deliverable: "import sys\n"})
     each = [{**d, "at": f"{deliverable}:1"} for d in carried_out or []]
@@ -205,14 +237,13 @@ def judged(b: Bench, more: dict[str, str]) -> list[tuple[str, str]]:
     """One evaluator for each group due ends, answering more on each condition named, with its
     good_when, and good on each other, and gives each group with its Cut's path."""
     done: list[tuple[str, str]] = []
-    running: list[dict[str, Any]] = []
+    running: list[str] = []
     # Each group of the largest best practice once, and the none after them.
     for _ in range(7):
-        code, printed, said = b.adapter("start", ["evaluator"], {"running": running})
-        assert code == 0, said
-        if "none" in printed:
+        code, cut, said = b.cutting("evaluator", running)
+        if code == 1 and "no start" in said:
             return done
-        cut = printed["values"]["cut"]
+        assert code == 0, said
         conditions = read_json(b, cut)["conditions"]
         answers = {
             "good": [{"condition": c, "lines": ["x:1"]} for c in conditions if c not in more],
@@ -220,8 +251,8 @@ def judged(b: Bench, more: dict[str, str]) -> list[tuple[str, str]]:
         }
         b.write_result(cut, answers)
         done.append((read_json(b, cut)["group"], cut))
-        running.append({"role": "evaluator", "text": printed["text"], "values": printed["values"]})
-    raise AssertionError(f"rn's adapter gave evaluators past each group: {done}")
+        running.append(cut)
+    raise AssertionError(f"rn gave evaluators past each group: {done}")
 
 
 def decided(b: Bench, condition: int, decision: dict[str, str], ground: str = "") -> None:

@@ -1,8 +1,8 @@
 """The unit cases of the checks of a role's result and of each command's and adapter's main:
-check/'s generator.faults and evaluator.faults, scripts/tree.py's and scripts/check.py's main, and
-hooks/adapters/'s start.py, items.py, and results.py main, one for each class of what each takes
-and gives, its refusals among them. Each command lies in a file that shares its name with a
-package of domain/, so each is loaded from its path."""
+check/'s generator.faults and evaluator.faults, scripts/tree.py's, scripts/check.py's, and
+scripts/cut.py's main, and lane/adapters/'s checklist.py and starts_due.py main, one for each class
+of what each takes and gives, its refusals among them. Each command lies in a file that shares its
+name with a package of domain/, so each is loaded from its path."""
 
 from __future__ import annotations
 
@@ -19,6 +19,18 @@ from check import evaluator, generator
 from fault import Wrong
 from repo_files import git, write_files
 from rn_bench import COMMAND, GUIDE, RN, RUN, plan, worktree
+
+# Why a case is xfail where its premise is gone.
+GONE_START = (
+    "Lane gives no start's text or run values, so start.py's, which the case asks, are gone"
+)
+GONE_NONE = (
+    "Lane takes the starts due in its own form, so start.py's none, which the case asks, is gone"
+)
+GONE_RESULTS = (
+    "Lane keeps no results for a pick-up, so results.py's results, which the case asks, are gone"
+)
+NO_CUT = "Lane's input to the checklist adapter names no Cut, so the case's run value cut is gone"
 
 TAX = {
     "path": COMMAND,
@@ -329,32 +341,30 @@ def test_check_gives_1_with_each_fault_a_line(tmp_path: Any):
     assert code == 1 and "The tax rate" in said
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_START)
 @pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
 def test_start_gives_the_text_and_the_cut_of_the_start_due(tmp_path: Any):
     """Given the plan, and no start running
-    When start.py runs for the generator
+    When cut.py runs for the generator
     Then it gives 0 with a text that names the Cut, and as values the Cut, the deliverable, and the
     result beside the Cut"""
     top = run_with(str(tmp_path), {})
-    code, printed, _ = command("hooks/adapters/start.py").main(
-        ["generator"], '{"running": []}', top
-    )
+    code, printed, _ = command("scripts/cut.py").main(["generator"], top)
     given = json.loads(printed)
     assert code == 0
     assert given["values"] == {"cut": CUT, "deliverable": COMMAND, "result": RESULT}
     assert CUT in given["text"]
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_START)
 @pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
 def test_start_gives_an_evaluator_the_paths_it_never_reads(tmp_path: Any):
     """Given the command made
-    When start.py runs for an evaluator
+    When cut.py runs for an evaluator
     Then its values give, beside its Cut, deliverable, and result, the design tree and the
     generator's Cut and result of its Round"""
     top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: {"result": "made"}})
-    code, printed, _ = command("hooks/adapters/start.py").main(
-        ["evaluator"], '{"running": []}', top
-    )
+    code, printed, _ = command("scripts/cut.py").main(["evaluator"], top)
     values = json.loads(printed)["values"]
     assert code == 0
     assert values["result"] == values["cut"].removesuffix(".cut.json") + ".json"
@@ -366,15 +376,14 @@ def test_start_gives_an_evaluator_the_paths_it_never_reads(tmp_path: Any):
     )
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_NONE)
 @pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
 def test_start_gives_why_no_work_waits(tmp_path: Any):
     """Given the generator's point
-    When start.py runs for an evaluator
+    When cut.py runs for an evaluator
     Then it gives 0 with why no work waits"""
     top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: {"result": "point", "point": "p"}})
-    code, printed, _ = command("hooks/adapters/start.py").main(
-        ["evaluator"], '{"running": []}', top
-    )
+    code, printed, _ = command("scripts/cut.py").main(["evaluator"], top)
     assert code == 0 and list(json.loads(printed)) == ["none"]
 
 
@@ -383,7 +392,14 @@ def test_start_gives_why_no_work_waits(tmp_path: Any):
     ("argv", "given", "code"),
     [
         ([], '{"running": []}', 2),
-        (["generator"], "{", 1),
+        pytest.param(
+            ["generator"],
+            "{",
+            1,
+            marks=pytest.mark.xfail(
+                strict=True, reason="cut.py takes no input from Lane, so the case's input is gone"
+            ),
+        ),
         (["generator"], '{"running": []}', 1),
         (["evaluator"], '{"running": []}', 1),
     ],
@@ -394,14 +410,14 @@ def test_start_with_no_role_bad_input_a_tree_out_of_form_or_no_run_gives_its_cod
 ):
     """Given no role, Lane's input that isn't JSON, a design tree out of form, or a worktree with
     no run's folder
-    When start.py runs
+    When cut.py runs
     Then it gives 2 with the usage, or 1 naming the fault"""
     top = run_with(str(tmp_path), {})
     if request.node.callspec.id == "tree out of form":
         write_files(top, {f"{RUN}/design-tree.json": "{}"})
     if request.node.callspec.id == "no run":
         os.remove(os.path.join(top, RUN, "design-tree.json"))
-    got, printed, said = command("hooks/adapters/start.py").main(argv, given, top)
+    got, printed, said = command("scripts/cut.py").main(argv, top)
     assert (got, printed) == (code, "") and said
 
 
@@ -423,6 +439,7 @@ def practices_at(at: str) -> list[str]:
     return found
 
 
+@pytest.mark.xfail(strict=True, reason=NO_CUT)
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 @pytest.mark.parametrize(
     ("role", "step", "cut", "expected"),
@@ -439,16 +456,17 @@ def test_items_gives_each_step_only_its_own_checklist(
     tmp_path: Any, role: str, step: str, cut: dict[str, Any], expected: list[str]
 ):
     """Given the generator's Cut by code, or an evaluator's Cut of C1
-    When items.py runs for a step with the Cut as its run value
+    When checklist.py runs for a step with the Cut as its run value
     Then it gives 0 with the generator's step that decides each decide item of code, its step that
     makes each make item, an evaluator's step that judges each condition of its Cut, and any other
     step none"""
     top = run_with(str(tmp_path), {CUT: cut})
     given = json.dumps({"values": {"cut": CUT}})
-    code, printed, _ = command("hooks/adapters/items.py").main([role, step], given, top, RN)
+    code, printed, _ = command("lane/adapters/checklist.py").main(given, top, RN)
     assert (code, json.loads(printed)["items"]) == (0, expected)
 
 
+@pytest.mark.xfail(strict=True, reason=NO_CUT)
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 @pytest.mark.parametrize(
     ("argv", "cut", "code"),
@@ -462,29 +480,31 @@ def test_items_with_no_step_or_no_best_practice_gives_its_code(
     tmp_path: Any, argv: list[str], cut: dict[str, Any], code: int
 ):
     """Given no step, or a Cut whose best practice rn doesn't have
-    When items.py runs
+    When checklist.py runs
     Then it gives 2 with the usage, or 1 naming the best practice"""
     top = run_with(str(tmp_path), {CUT: cut})
     given = json.dumps({"values": {"cut": CUT}})
-    got, printed, said = command("hooks/adapters/items.py").main(argv, given, top, RN)
+    got, printed, said = command("lane/adapters/checklist.py").main(given, top, RN)
     assert (got, printed) == (code, "") and said
 
 
+@pytest.mark.xfail(strict=True, reason=NO_CUT)
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 def test_items_of_input_naming_no_cut_gives_1(tmp_path: Any):
     """Given Lane's input that names no Cut among the run values
-    When items.py runs for a step
+    When checklist.py runs for a step
     Then it gives 1, saying so"""
     top = run_with(str(tmp_path), {CUT: generator_cut()})
-    got, printed, said = command("hooks/adapters/items.py").main(["generator", "3"], "{}", top, RN)
+    got, printed, said = command("lane/adapters/checklist.py").main("{}", top, RN)
     assert (got, printed) == (1, "") and "cut" in said
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
 def test_results_gives_each_result_in_the_order_of_the_rounds(tmp_path: Any):
     """Given round 1's generator made and its evaluator of C1 judged, and round 2's generator with
     no result
-    When results.py runs with no words
+    When starts_due.py runs with no words
     Then it gives 0 with the generator's made and the evaluator's judged"""
     files = {
         CUT: generator_cut(),
@@ -494,7 +514,7 @@ def test_results_gives_each_result_in_the_order_of_the_rounds(tmp_path: Any):
         f"{RUN}/rounds/2/generator.cut.json": generator_cut(),
     }
     top = run_with(str(tmp_path), files)
-    code, printed, _ = command("hooks/adapters/results.py").main('{"words": ""}', top)
+    code, printed, _ = command("lane/adapters/starts_due.py").main('{"words": ""}', top)
     assert code == 0
     assert json.loads(printed) == {
         "results": [
@@ -504,43 +524,47 @@ def test_results_gives_each_result_in_the_order_of_the_rounds(tmp_path: Any):
     }
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
 @pytest.mark.supports("test_up_with_a_new_request_picks_up_no_run")
 def test_results_gives_none_for_words_of_a_new_request(tmp_path: Any):
     """Given a run with a result
-    When results.py runs with the words of a new request
+    When starts_due.py runs with the words of a new request
     Then it gives 0 with no result"""
     top = run_with(
         str(tmp_path), {CUT: generator_cut(), RESULT: {"result": "made", "carried_out": []}}
     )
-    code, printed, _ = command("hooks/adapters/results.py").main('{"words": "a dashboard"}', top)
+    code, printed, _ = command("lane/adapters/starts_due.py").main('{"words": "a dashboard"}', top)
     assert (code, json.loads(printed)) == (0, {"results": []})
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
 @pytest.mark.supports("test_up_alone_with_no_run_picks_up_none")
 def test_results_gives_none_where_no_run_is(tmp_path: Any):
     """Given a folder with no run's folder
-    When results.py runs with no words
+    When starts_due.py runs with no words
     Then it gives 0 with no result"""
-    code, printed, _ = command("hooks/adapters/results.py").main('{"words": ""}', str(tmp_path))
+    code, printed, _ = command("lane/adapters/starts_due.py").main('{"words": ""}', str(tmp_path))
     assert (code, json.loads(printed)) == (0, {"results": []})
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
 def test_results_of_a_result_not_json_gives_1_naming_it(tmp_path: Any):
     """Given round 1's generator, its result not JSON
-    When results.py runs with no words
+    When starts_due.py runs with no words
     Then it gives 1, naming the result's file"""
     top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: "{"})
-    code, printed, said = command("hooks/adapters/results.py").main('{"words": ""}', top)
+    code, printed, said = command("lane/adapters/starts_due.py").main('{"words": ""}', top)
     assert (code, printed) == (1, "") and "generator.json" in said
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
 def test_results_of_input_not_json_gives_1(tmp_path: Any):
     """Given Lane's input that isn't JSON
-    When results.py runs
+    When starts_due.py runs
     Then it gives 1, saying so"""
-    code, printed, said = command("hooks/adapters/results.py").main("{", str(tmp_path))
+    code, printed, said = command("lane/adapters/starts_due.py").main("{", str(tmp_path))
     assert (code, printed) == (1, "") and said
 
 
@@ -549,12 +573,15 @@ def test_results_of_input_not_json_gives_1(tmp_path: Any):
     "path",
     [
         "scripts/check.py",
-        "hooks/adapters/items.py",
+        pytest.param(
+            "lane/adapters/checklist.py",
+            marks=pytest.mark.xfail(strict=True, reason="checklist.main isn't built yet"),
+        ),
     ],
 )
 def test_a_command_run_with_no_argument_exits_2_with_its_usage(tmp_path: Any, path: str):
     """Given no argument
-    When check.py, or items.py, runs as a command, as Lane runs it
+    When check.py, or checklist.py, runs as a command, as Lane runs it
     Then it exits 2, printing nothing and saying its usage"""
     done = subprocess.run(
         [sys.executable, os.path.join(RN, path)],

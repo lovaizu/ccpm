@@ -98,7 +98,7 @@ def test_the_generator_makes_the_command_from_its_cut(tmp_path: Any, each: int):
     When the generator runs alone with it
     Then it writes the command and its result made, with a place for each decision of its Cut"""
     b = rn_bench.bench(str(tmp_path))
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     run(b, str(tmp_path), f"Use the rn:generator agent with its Cut {cut}, and wait for it to end")
     written = result(b, cut)
     assert written["result"] == "made", each
@@ -116,7 +116,7 @@ def test_the_evaluator_answers_each_condition_of_its_group(tmp_path: Any, each: 
     Then it answers N1, N2, and N3 each once, good with its lines or more with its good_when"""
     b = rn_bench.bench(str(tmp_path))
     rn_bench.made(b)
-    cut = b.started("evaluator")["values"]["cut"]
+    cut = b.cut("evaluator")
     run(b, str(tmp_path), f"Use the rn:evaluator agent with its Cut {cut}, and wait for it to end")
     written = result(b, cut)
     answered = [a["condition"] for a in written["good"] + written["more"]]

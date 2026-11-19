@@ -1,7 +1,7 @@
-"""Decides the course of a deliverable's Rounds: which start is due, whether a Round makes the
-content by the kind's best practice or refactors it by the refactor best practice, the limit of two
-Rounds of each, and the groups a later Round judges, those holding a condition whose decisions
-changed."""
+"""Decides the course of the Rounds: which starts are due, each deliverable's beside those of the
+others being made, whether a Round makes the content by the kind's best practice or refactors it by
+the refactor best practice, the limit of two Rounds of each, and the groups a later Round judges,
+those holding a condition whose decisions changed."""
 
 from __future__ import annotations
 
@@ -48,28 +48,54 @@ def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence
     """Each start due, beside those that run.
 
     Takes: the design tree, each start of the run's Rounds, and each start that runs.
-    Gives: for the first item of `work` where it makes a deliverable, the generator, where its
+    Gives: for each item of `work` that makes a deliverable with no earlier item that names it or
+    one of its inputs, beside each other such item, the generator, where its
     latest Round has no result of the generator, its point's answer changed a decision, or its
     evaluators judged it short on a condition that the design tree doesn't hold good and a decision
     changed since, within the limit of two Rounds of content and two of refactoring that only the
     user's decision passes; or one evaluator for each group due once the generator made it; or
     none, such as while a point waits, or once the limit leaves each finding to the orchestrator,
-    which puts it to the user as a proposal.
+    which puts it to the user as a proposal. Each new Round takes the next number of the run.
     Refuses: nothing."""
     busy = {(r.role, r.deliverable, r.group) for r in running}
     return [d for d in _wanted(tree, starts) if (d.role, d.deliverable, d.group) not in busy]
 
 
 def _wanted(tree: Tree, starts: Sequence[Start]) -> list[Due]:
-    """Each start that the course wants next, before those that run are left out."""
-    item = tree["work"][0] if tree["work"] else None
-    if item is None or item["do"] != "make":
-        return []
-    path = item["path"]
-    node = next(d for d in tree["deliverables"] if d["path"] == path)
+    """Each start that the course wants next, before those that run are left out: of each
+    deliverable that can be made now, each new Round numbered after the run's latest and the new
+    ones before it."""
+    nodes = {d["path"]: d for d in tree["deliverables"]}
+    wanted: list[Due] = []
+    next_ = _last(starts) + 1
+    for path in _ready(tree, nodes):
+        due = _of(tree, nodes[path], starts, next_)
+        next_ += any(d.round == next_ for d in due)
+        wanted += due
+    return wanted
+
+
+def _ready(tree: Tree, nodes: Mapping[str, Mapping[str, Any]]) -> list[str]:
+    """The path of each deliverable that `work` makes and that can be made now: no earlier item of
+    `work` names it, as a point of it, or one of its inputs, as one still being made, since
+    work.faults holds each item after each input that isn't done."""
+    ready: list[str] = []
+    before: set[str] = set()
+    for item in tree["work"]:
+        path = item["path"]
+        waits = before & {path, *nodes[path].get("inputs", [])}
+        if item["do"] == "make" and not waits:
+            ready.append(path)
+        before.add(path)
+    return ready
+
+
+def _of(tree: Tree, node: Mapping[str, Any], starts: Sequence[Start], next_: int) -> list[Due]:
+    """Each start that the course wants next of the deliverable, a new Round numbered `next_`."""
+    path = node["path"]
     mine = [s for s in starts if s.cut["deliverable"]["path"] == path]
     if not mine:
-        return [Due(path, "generator", "", node["kind"], _last(starts) + 1)]
+        return [Due(path, "generator", "", node["kind"], next_)]
     made = [s for s in mine if s.role == "generator"]
     latest = made[-1]
     practice = latest.cut["best_practice"]
@@ -77,12 +103,12 @@ def _wanted(tree: Tree, starts: Sequence[Start]) -> list[Due]:
         return [Due(path, "generator", "", practice, latest.round)]
     if latest.result["result"] != "made":
         again = _changed(latest.cut["decisions"], decisions(tree, path))
-        return [Due(path, "generator", "", practice, _last(starts) + 1)] if again else []
+        return [Due(path, "generator", "", practice, next_)] if again else []
     judged = [s for s in mine if s.round == latest.round and s.role == "evaluator"]
     pending = _pending(node, made, judged)
     if pending is not None:
         return [Due(path, "evaluator", g, practice, latest.round) for g in pending]
-    return _after(tree, node, made, judged, _last(starts) + 1)
+    return _after(tree, node, made, judged, next_)
 
 
 def _last(starts: Sequence[Start]) -> int:

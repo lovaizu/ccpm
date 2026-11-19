@@ -19,9 +19,9 @@ run ends once the person signs off the pull request.
   `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/design-tree/best-practice.md`, in the form of its
   `design-tree.schema.json`. Each best practice that a deliverable's kind names lies in
   `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/<kind>/`.
-- rn's code decides which role is due from the design tree and the Rounds, and writes each role's
-  Cut. Lane gives you each start due with its text, and holds your moves to rn's routes, such as
-  work that waits for a sign-off.
+- rn's code decides which starts are due from the design tree and the Rounds, each deliverable's
+  beside those of the others being made, and writes each role's Cut. Lane gives you each role due
+  and how many, and holds your moves to rn's order and to your steps.
 - A Round's results lie beside their Cuts: `generator.json`, in the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator.schema.json`, and `evaluator-<group>.json`, in the
   form of `${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator.schema.json`.
@@ -53,8 +53,11 @@ run ends once the person signs off the pull request.
      Output says, and wait for their answer.
    - The plan, or a deliverable whose conditions are all good, not yet signed off: put it up with
      each point left as a proposal, and wait for `/rn:ty`, or `/rn:gm` with what to change.
-   - A start due that Lane gives: start each as `rn:generator` or `rn:evaluator` in the background,
-     with Lane's text word for word, since the text names the Cut, which holds all the role needs.
+   - Each start due that Lane gives: run
+     `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/cut.py <role> <each running Cut of the role>`, with the
+     role `generator` or `evaluator`, and start it as `rn:generator` or `rn:evaluator` in the
+     background, with a prompt that names the path it prints as the role's Cut, since the Cut holds
+     all the role needs. Start each due at once, since each runs beside the others.
    - No work left: push the branch, open the pull request, and put it up with each decision taken
      without asking, from the design tree's decisions whose `by` isn't `user`.
 

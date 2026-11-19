@@ -1,5 +1,5 @@
 """The integration cases of S1, a deliverable made in rounds: the orchestrator's commit of each edit
-of the design tree, each start with its Cut that rn's adapter gives, each role's end held by rn's
+of the design tree, each start with its Cut that rn's script writes, each role's end held by rn's
 check, and the course of the rounds, joined on the bench of the README's walkthrough through the
 double of Claude Code, one case for each path of S1's sequence that rn's parts carry."""
 
@@ -9,6 +9,11 @@ import pytest
 import rn_bench
 from repo_files import write_files
 from rn_bench import COMMAND, GUIDE, RUN, Bench, command_done, decided, head, read_json
+
+# Why a case is xfail where its premise is gone.
+GONE_NONE = (
+    "Lane takes the starts due in its own form, so start.py's none, which the case asks, is gone"
+)
 
 TAX_RATE = {"path": COMMAND, "condition": "N1", "about": "The tax rate"}
 LINES = {"path": COMMAND, "condition": "N1", "about": "The lines"}
@@ -45,10 +50,10 @@ def test_an_edit_of_the_design_tree_is_committed_with_its_ground(b: Bench):
 @pytest.mark.supports("S1")
 def test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut(b: Bench):
     """Given the plan signed off, the command first in the work
-    When Lane asks rn's adapter for the generator's start
-    Then it gives the path of the Cut of round 1 as the run value cut, and the Cut names the
+    When the orchestrator runs rn's script of the generator's Cut
+    Then it gives the path of the Cut of round 1, and the Cut names the
     command, the code best practice, the goal, and each decision of the command"""
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     assert cut == f"{RUN}/rounds/1/generator.cut.json"
     written = read_json(b, cut)
     assert (written["role"], written["deliverable"]["path"]) == ("generator", COMMAND)
@@ -57,17 +62,18 @@ def test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut(b: Benc
     assert [d["about"] for d in written["decisions"]] == ["The tax rate", "The lines"]
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_NONE)
 @pytest.mark.supports("S1")
 def test_a_generators_point_starts_no_evaluator(b: Bench):
     """Given the generator of the command started
     When it ends with a point it can't settle, which rn's check accepts
     Then no evaluator is due, as the point goes to the orchestrator"""
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     b.write_result(cut, {"result": "point", "point": "Print in EUR alone? I recommend EUR alone."})
     agent = b.converse().start("rn:generator", "Carry out your steps", "make the command")[1]
     assert agent is not None
     assert b.check(agent, "generator", cut).exit_code == 0
-    code, printed, _ = b.adapter("start", ["evaluator"], {"running": []})
+    code, printed, _ = b.due()
     assert (code, list(printed)) == (0, ["none"])
 
 
@@ -98,7 +104,7 @@ def test_a_generators_result_that_leaves_a_decision_out_is_held_naming_it(b: Ben
 @pytest.mark.supports("S1")
 def test_a_deliverable_made_gets_one_evaluator_for_each_group_of_its_conditions(b: Bench):
     """Given the command made, its result accepted
-    When Lane asks rn's adapter for each evaluator's start, beside those that run
+    When the orchestrator runs rn's script of each evaluator's Cut, beside those that run
     Then it gives one Cut for each group of the code best practice, each with that group's
     conditions, and then none"""
     made(b)
@@ -145,7 +151,7 @@ def test_a_finding_taken_into_its_decision_gets_the_next_round_of_content(b: Ben
     made(b)
     judged(b, {"N2": "The team sees a wrong line named, not a trace"})
     decided(b, 1, WRONG_LINE, "The accounting team mends a wrong line by its number")
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     assert cut == f"{RUN}/rounds/2/generator.cut.json"
     assert read_json(b, cut)["best_practice"] == "code"
 
@@ -153,27 +159,28 @@ def test_a_finding_taken_into_its_decision_gets_the_next_round_of_content(b: Ben
 @pytest.mark.supports("S1")
 def test_content_judged_good_gets_a_round_of_refactoring(b: Bench):
     """Given round 1 of the command judged good on each condition
-    When Lane asks rn's adapter for the generator's start
+    When the orchestrator runs rn's script of the generator's Cut
     Then the generator of round 2 is due, by the refactor-code best practice"""
     made(b)
     judged(b, {})
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     assert cut == f"{RUN}/rounds/2/generator.cut.json"
     assert read_json(b, cut)["best_practice"] == "refactor-code"
 
 
+@pytest.mark.xfail(strict=True, reason=GONE_NONE)
 @pytest.mark.supports("S1")
 def test_findings_past_two_rounds_of_content_start_no_third(b: Bench):
     """Given two rounds of the command's content, each judged with more on N2, its decision changed
     after the first
-    When Lane asks rn's adapter for the generator's start
+    When Lane asks rn's adapter of the starts due for the generator's start
     Then none is due, as each finding left goes to the user as a proposal"""
     made(b)
     judged(b, {"N2": "The team sees a wrong line named"})
     decided(b, 1, WRONG_LINE, "The accounting team mends a wrong line by its number")
     made(b)
     judged(b, {"N2": "The team sees a wrong line named"})
-    code, printed, _ = b.adapter("start", ["generator"], {"running": []})
+    code, printed, _ = b.due()
     assert (code, list(printed)) == (0, ["none"])
 
 
@@ -183,7 +190,7 @@ def test_a_generators_end_with_its_deliverable_off_its_template_is_held(b: Bench
     When it ends with a guide that holds a section FAQ, which readme's template doesn't
     Then rn's check gives 1, naming the guide's line of FAQ"""
     command_done(b)
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     write_files(b.repo, {GUIDE: "# Printing an invoice\n\n## FAQ\n"})
     b.write_result(cut, {"result": "made", "carried_out": []})
     agent = b.converse().start("rn:generator", "Carry out your steps", "make the guide")[1]

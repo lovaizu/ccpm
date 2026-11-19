@@ -74,7 +74,7 @@ held design pyrefly check --search-path dev/scripts --search-path dev/scripts/te
 held design pyrefly check $properties --search-path plugins/rn/domain \
   --search-path dev/tests --search-path dev/rn/tests \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
-  plugins/rn/hooks/adapters/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
+  plugins/rn/lane/adapters/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
 
 # Lane's guard, its rule types, and its reporters, as a type that doesn't fit across a handoff is a
 # fault that no test may reach, as Lane's architecture says under Test strategy. The reporters have

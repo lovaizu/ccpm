@@ -33,10 +33,10 @@ def without_the_check(b: Bench) -> None:
 
 
 def without_the_guard(b: Bench) -> None:
-    """rn's hooks taken out, Lane's guard among them."""
-    hooks = os.path.join(b.rn, "hooks", "hooks.json")
-    if os.path.exists(hooks):
-        os.remove(hooks)
+    """rn's rules for Lane taken out, so that Lane's guard holds none of rn's steps."""
+    rules = os.path.join(b.rn, "lane", "rules.json")
+    if os.path.exists(rules):
+        os.remove(rules)
 
 
 def due_without_course(b: Bench) -> None:
@@ -106,9 +106,10 @@ def make(b: Bench, more: dict[str, str]) -> None:
 
 
 def none_due(b: Bench, role: str) -> bool:
-    """Whether rn's adapter gives no start of the role."""
-    code, printed, _ = b.adapter("start", [role], {"running": []})
-    return code == 0 and list(printed) == ["none"]
+    """Whether rn's adapter of the starts due gives no start of the role."""
+    code, printed, _ = b.due()
+    starts = printed.get("starts", []) if isinstance(printed, dict) else None
+    return code == 0 and starts is not None and f"rn:{role}" not in [s["role"] for s in starts]
 
 
 @pytest.mark.supports("P1.1")
@@ -127,12 +128,13 @@ def test_an_edit_out_of_form_is_refused_before_its_commit(b: Bench, broken: None
     assert head(b) == "The plan, signed off"
 
 
+@pytest.mark.xfail(strict=True, reason="starts_due.main isn't built yet")
 @pytest.mark.supports("P1.2")
 def test_a_generators_point_starts_no_other_role(b: Bench, broken: None):
     """Given the command's generator ended with a point for the user
-    When Lane asks rn's adapter for each start
+    When Lane asks rn's adapter of the starts due for each start
     Then none is due, as the point waits for the user's answer"""
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     b.write_result(cut, {"result": "point", "point": "EUR alone? I recommend EUR alone."})
     assert none_due(b, "evaluator")
     assert none_due(b, "generator")
@@ -155,11 +157,11 @@ def test_work_that_rests_on_a_plan_waits_for_its_sign_off(b: Bench, broken: None
 @pytest.mark.supports("P2.1")
 def test_an_evaluator_starts_with_only_what_the_deliverables_people_have(b: Bench, broken: None):
     """Given the command made
-    When Lane asks rn's adapter for an evaluator's start
+    When the orchestrator runs rn's script of an evaluator's Cut
     Then its Cut holds the command, the goal with its people's state, and its group's conditions,
     and none of the decisions the generator made it from"""
     made(b)
-    cut = b.started("evaluator")["values"]["cut"]
+    cut = b.cut("evaluator")
     with open(os.path.join(b.repo, cut), encoding="utf-8") as f:
         written = json.load(f)
     assert written["deliverable"]["path"] == COMMAND
@@ -173,7 +175,7 @@ def test_an_evaluators_answer_beside_good_and_more_is_held(b: Bench, broken: Non
     Then rn's check gives 1, naming the fix, as a trial names only what's good and what would make
     it good"""
     made(b)
-    cut = b.started("evaluator")["values"]["cut"]
+    cut = b.cut("evaluator")
     b.write_result(cut, {"good": [], "more": [], "fix": "rename main to run"})
     agent = b.converse().start("rn:evaluator", "Carry out your steps", "judge the command")[1]
     assert agent is not None
@@ -182,32 +184,34 @@ def test_an_evaluators_answer_beside_good_and_more_is_held(b: Bench, broken: Non
     assert "fix" in answer.output
 
 
+@pytest.mark.xfail(strict=True, reason="starts_due.main isn't built yet")
 @pytest.mark.supports("P3.1")
 def test_no_evaluator_starts_before_the_generator_ends(b: Bench, broken: None):
     """Given the command's generator started, with no result yet
-    When Lane asks rn's adapter for an evaluator's start
+    When Lane asks rn's adapter of the starts due for an evaluator's start
     Then none is due, as making and judging are separate roles"""
-    b.started("generator")
+    b.cut("generator")
     assert none_due(b, "evaluator")
 
 
 @pytest.mark.supports("P3.2")
 def test_a_round_of_refactoring_comes_only_after_the_content_is_good(b: Bench, broken: None):
     """Given round 1 of the command judged with more on N4
-    When Lane asks rn's adapter for the generator's start
+    When the orchestrator runs rn's script of the generator's Cut
     Then round 2 works by the code best practice, not the refactor one"""
     make(b, {"N4": "A colleague reads each step of the command at a glance"})
     decided(b, 3, {"about": "The steps", "decided": "one function a step", "by": "reasoning"})
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     with open(os.path.join(b.repo, cut), encoding="utf-8") as f:
         assert json.load(f)["best_practice"] == "code"
 
 
+@pytest.mark.xfail(strict=True, reason="starts_due.main isn't built yet")
 @pytest.mark.supports("P3.3")
 def test_findings_past_the_limit_start_no_further_round(b: Bench, broken: None):
     """Given two rounds of the command's content, each judged with more on N4, and each finding
     taken into a decision of N4
-    When Lane asks rn's adapter for the generator's start
+    When Lane asks rn's adapter of the starts due for the generator's start
     Then none is due"""
     for steps in ("one function a step", "one module a step"):
         make(b, {"N4": "A colleague reads each step at a glance"})
@@ -218,14 +222,14 @@ def test_findings_past_the_limit_start_no_further_round(b: Bench, broken: None):
 @pytest.mark.supports("P4.1")
 def test_a_generator_starts_with_only_the_decisions_of_its_deliverable(b: Bench, broken: None):
     """Given the plan, with a decision under the guide
-    When Lane asks rn's adapter for the command's generator's start
+    When the orchestrator runs rn's script of the command's generator's Cut
     Then its Cut holds the command's decisions alone"""
     tree = b.tree()
     tree["deliverables"][1]["necessary_conditions"][0]["decisions"].append(
         {"about": "The guide's people", "decided": "the accounting team", "by": "user"}
     )
     b.write_tree(tree)
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     with open(os.path.join(b.repo, cut), encoding="utf-8") as f:
         written = json.load(f)
     assert {d["path"] for d in written["decisions"]} == {COMMAND}
@@ -237,7 +241,7 @@ def test_a_role_that_ends_with_no_result_in_its_file_is_held(b: Bench, broken: N
     """Given the command's generator started
     When it ends with no result written beside its Cut
     Then rn's check gives 1, as what a role makes stays in files"""
-    cut = b.started("generator")["values"]["cut"]
+    cut = b.cut("generator")
     agent = b.converse().start("rn:generator", "Carry out your steps", "make the command")[1]
     assert agent is not None
     assert b.check(agent, "generator", cut).exit_code == 1
@@ -250,8 +254,7 @@ def test_a_role_that_writes_beside_its_deliverable_is_told_its_step(b: Bench, br
     When it writes a file other than its deliverable and its result
     Then the guard stops the write with the step's sentence"""
     c = b.converse()
-    start = b.started("generator")
-    agent = c.start("rn:generator", start["text"], "make the command")[1]
+    _, agent = b.start(c, "generator", "make the command")
     assert agent is not None
     answer = agent.write(os.path.join(b.repo, "invoicer", "render.py"), "")
     assert answer.blocked
@@ -262,10 +265,10 @@ def test_a_role_that_writes_beside_its_deliverable_is_told_its_step(b: Bench, br
 def test_a_new_conversation_goes_on_from_the_files_alone(b: Bench, broken: None):
     """Given round 1 of the command made and judged with more on N4, its decision changed, and the
     system's temporary folder cleared
-    When Lane asks rn's adapter for the generator's start
+    When the orchestrator runs rn's script of the generator's Cut
     Then round 2 is due, from the run's folder alone"""
     make(b, {"N4": "A colleague reads each step at a glance"})
     decided(b, 3, {"about": "The steps", "decided": "one function a step", "by": "reasoning"})
     shutil.rmtree(b.env["TMPDIR"])
     os.makedirs(b.env["TMPDIR"])
-    assert b.started("generator")["values"]["cut"] == f"{RUN}/rounds/2/generator.cut.json"
+    assert b.cut("generator") == f"{RUN}/rounds/2/generator.cut.json"

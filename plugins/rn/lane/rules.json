@@ -1,0 +1,32 @@
+{
+  "roles": {
+    "rn:up": {
+      "steps": [
+        { "name": "1", "rules": [{ "type": "order" }] },
+        { "name": "2", "rules": [{ "type": "order" }] },
+        { "name": "3", "rules": [{ "type": "order" }] },
+        { "name": "4", "rules": [{ "type": "order" }] },
+        { "name": "5", "rules": [{ "type": "order" }] }
+      ]
+    },
+    "rn:generator": {
+      "steps": [
+        { "name": "1", "rules": [{ "type": "order" }] },
+        { "name": "2", "rules": [{ "type": "order" }, { "type": "checklist" }] },
+        { "name": "3", "rules": [{ "type": "order" }, { "type": "checklist" }] },
+        {
+          "name": "4",
+          "rules": [{ "type": "order" }, { "type": "result", "results": ["made", "point"] }]
+        }
+      ]
+    },
+    "rn:evaluator": {
+      "steps": [
+        { "name": "1", "rules": [{ "type": "order" }] },
+        { "name": "2", "rules": [{ "type": "order" }] },
+        { "name": "3", "rules": [{ "type": "order" }, { "type": "checklist" }] },
+        { "name": "4", "rules": [{ "type": "order" }, { "type": "result", "results": ["judged"] }] }
+      ]
+    }
+  }
+}

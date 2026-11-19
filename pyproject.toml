@@ -90,7 +90,7 @@ include = [
   "*/rn/domain/*.py",
   "*/rn/domain/**/*.py",
   "*/rn/scripts/*.py",
-  "*/rn/hooks/adapters/*.py",
+  "*/rn/lane/adapters/*.py",
 ]
 
 # rn's cases run a bench's copy of plugins/rn/, which counts as its file there.
