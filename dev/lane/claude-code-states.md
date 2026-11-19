@@ -22,6 +22,11 @@ input it got, and one with a skill `hi`.
   `transcript_path` holds a user message whose text opens
   `Base directory for this skill: <the plugin's folder>/skills/hi`. The guard reads the plugin's
   folder there.
+- The transcript holds that message only from the conversation's next event after the skill's
+  call: a hook that read the transcript at each event found it at the next PreToolUse and at the
+  Stop, but not at UserPromptExpansion of `/b:hi` nor at the PreToolUse or PostToolUse of the
+  Skill call. So the guard adds the Run at the skill's call, and reads its plugin's folder and
+  rules at the next event of the main conversation.
 - Claude Code puts each loaded plugin's `bin/` on the path of the Bash tool, so a plugin's step
   names a command of Lane's by its name alone.
 
@@ -83,8 +88,8 @@ guard.
   subagent. A resume that no Route makes due, such as one to answer a question, goes through as
   talk that moves no Run, and the subagent's Start runs again.
 - A resume queued to a subagent that still runs: the guard holds the resume's Start back until that
-  subagent's SubagentStart. The guard checks the SubagentStop before it as the end of the pass that
-  ran: its Result first, then its Steps.
+  subagent's SubagentStop, which it checks as the end of the pass that ran, its Result first, then
+  its Steps, and then ties the resume's Start to the subagent.
 - A subagent stopped by TaskStop: the guard ends its Start with no Result, and gives its start due
   again.
 - A command of another skill of the plugin typed while a subagent runs: the guard starts that

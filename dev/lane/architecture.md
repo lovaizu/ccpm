@@ -74,7 +74,7 @@ Strategies:
 Strategies:
 
 - The plugin's folder found from the base directory of its skill, which Claude Code writes into
-  the conversation as the skill starts, as
+  the conversation once the skill's call ends, as
   [its states](claude-code-states.md#where-the-guard-finds-the-plugin-it-serves) say. [P2.1]\
   Intent: Lane serves a plugin that it never names, as Claude Code gives the folder either way.
 - The reporters as commands that Claude Code puts on the AI's path. [P1.2]\
@@ -86,7 +86,8 @@ Strategies:
   Intent: each move is held to the rules of its own start, and to no other run's.
 - Each rule type judging a call, a mark, or an end of its own kind, and the guard stopping each
   that breaks a rule with the step's sentence. [S2, S3, S4, S6]\
-  Intent: a plugin gets a new kind of check by a new rule type alone.
+  Intent: the check and the sentence that the AI reads change together, in the rule type's own
+  module.
 - A mark checked for the step due, then for the reads and the items that its rules ask. [S5]\
   Intent: a skipped step, item, or part of a file shows at the step skipped.
 - An end checked for its result first, then its steps, then the plugin's own check. [S8]\
