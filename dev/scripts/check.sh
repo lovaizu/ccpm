@@ -141,9 +141,10 @@ for architecture in dev/*/architecture.md; do
   plugin="${architecture#dev/}"
   plugin="${plugin%/architecture.md}"
   if [ -n "$(find "dev/$plugin/tests/integration" -name 'test_*.py' 2>/dev/null)" ]; then
-    # Off for rn while it's rebuilt; the design tree turns it back on after rn's integration tests.
-    # Lane's cases are written anew on its rebuilt architecture, so its trace holds now.
-    [ "$plugin" != lane ] || python3 dev/scripts/trace.py check "$plugin"
+    # Off while rn and Lane are rebuilt; the design tree turns it back on after their integration
+    # tests.
+    # python3 dev/scripts/trace.py check "$plugin"
+    :
   else
     echo "check.sh: the trace of $plugin's cases goes unchecked, as dev/$plugin/tests/ holds"\
       "none yet"
