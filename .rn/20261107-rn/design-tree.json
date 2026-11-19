@@ -311,6 +311,11 @@
               "about": "Cases mended",
               "decided": "the case of a command whose run ended takes the run as ended by its ended entry, as place.skill_call's contract says; a unit case holds rules.json of a wrong type, such as a list at its top",
               "by": "reasoning"
+            },
+            {
+              "about": "Lane's surviving mutants",
+              "decided": "a ci-fix subagent mends them on the branch ci-fix/rn-rebuild-f05952f7 by dev/scripts/ci-fix.md, from the Test quality runs 44620788162, 44621860573, 44622864218, 44623923209, and 44624851060; its commits are merged into rn-rebuild once read; each survivor whose cause is a unit case short of the test design best practice's N3 goes back to Lane's test design, and code that no case calls for is removed; Lane's code deliverables are done once no mutant survives",
+              "by": "user"
             }
           ]
         },
