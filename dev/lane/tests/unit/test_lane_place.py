@@ -23,7 +23,7 @@ from report import report
 from routes import starts_due
 from rules import OutOfForm, Step
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
+UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
 
 
 def by_routes(run: Run) -> StartsDue:
@@ -143,6 +143,7 @@ def test_a_command_that_a_route_of_the_standing_run_goes_after_calls_no_skill(e:
 
 
 @pytest.mark.supports("test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run")
+@UNBUILT
 def test_a_command_of_the_plugin_whose_run_ended_calls_its_skill(e: Events):
     """Given a run of log:up in log's folder that ended with the reviewer's `good`
     When the UserPromptExpansion of /log:up 1.3.0 comes
@@ -245,6 +246,7 @@ def test_the_post_tool_use_of_a_starts_agent_call_ties_it(e: Events):
 
 
 @pytest.mark.supports("test_an_agent_call_that_fails_after_its_pre_tool_use_leaves_its_start_due")
+@UNBUILT
 def test_the_failure_of_a_starts_agent_call_drops_it(e: Events):
     """Given a run of log:up with the writer's start of u1, untied
     When the PostToolUseFailure of u1 comes
@@ -274,6 +276,7 @@ def test_a_subagents_call_after_a_step_marked_is_at_the_next_step(e: Events):
 
 
 @pytest.mark.supports("test_a_read_whole_holds_the_mark")
+@UNBUILT
 def test_the_post_tool_use_of_a_subagents_read_is_a_read(e: Events):
     """Given the writer tied to a1
     When the PostToolUse of a1's Read of NOTES.md comes
@@ -282,6 +285,7 @@ def test_the_post_tool_use_of_a_subagents_read_is_a_read(e: Events):
 
 
 @pytest.mark.supports("test_a_reporters_result_counts_for_the_subagent_that_ran_it")
+@UNBUILT
 def test_a_reporters_bash_call_is_a_report_with_what_it_printed(
     e: Events, capsys: pytest.CaptureFixture[str]
 ):
@@ -299,6 +303,7 @@ def test_a_reporters_bash_call_is_a_report_with_what_it_printed(
 
 
 @pytest.mark.supports("test_a_command_that_its_step_names_goes_through")
+@UNBUILT
 def test_the_post_tool_use_of_another_command_is_no_move(e: Events):
     """Given the writer tied to a1
     When the PostToolUse of a1's `git log` comes
@@ -307,6 +312,7 @@ def test_the_post_tool_use_of_another_command_is_no_move(e: Events):
 
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
+@UNBUILT
 def test_a_tied_subagents_stop_is_its_end(e: Events):
     """Given the writer tied to a1
     When a1's SubagentStop comes
@@ -317,6 +323,7 @@ def test_a_tied_subagents_stop_is_its_end(e: Events):
 
 
 @pytest.mark.supports("test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it")
+@UNBUILT
 def test_the_main_conversations_stop_is_the_end_of_its_turn(e: Events):
     """Given a run of log:up
     When the main conversation's Stop comes
@@ -325,6 +332,7 @@ def test_the_main_conversations_stop_is_the_end_of_its_turn(e: Events):
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place")
+@UNBUILT
 def test_a_typed_command_that_a_route_waits_for_is_typed(e: Events):
     """Given a run of log:up in log's folder, not ended
     When the UserPromptExpansion of /log:retry comes
@@ -334,6 +342,7 @@ def test_a_typed_command_that_a_route_waits_for_is_typed(e: Events):
 
 
 @pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
+@UNBUILT
 def test_a_skill_tool_call_of_the_plugins_skill_while_its_run_stands_is_typed(e: Events):
     """Given a run of log:up in log's folder whose writer is tied to a1
     When the PostToolUse of the main conversation's Skill call of log:tag comes
@@ -359,6 +368,7 @@ def test_the_main_conversations_call_after_a_command_holds_to_its_skills_steps_i
 
 @pytest.mark.supports("test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it")
 @pytest.mark.parametrize("killed", [False, True])
+@UNBUILT
 def test_a_task_notification_of_a_tied_subagent_is_its_result_reaching(e: Events, killed: bool):
     """Given the writer tied to a1 by the Agent call u1
     When a1's task-notification reaches the main conversation, of its end or of its stop by
@@ -370,6 +380,7 @@ def test_a_task_notification_of_a_tied_subagent_is_its_result_reaching(e: Events
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
+@UNBUILT
 def test_a_send_message_from_the_main_conversation_is_a_start(e: Events):
     """Given the writer tied to a1, whose end came
     When the main conversation's PreToolUse of SendMessage to a1 comes
@@ -378,6 +389,7 @@ def test_a_send_message_from_the_main_conversation_is_a_start(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
+@UNBUILT
 def test_a_send_message_that_resumed_its_subagent_ties_it(e: Events):
     """Given the writer tied to a1, and a start by SendMessage u2 to it
     When the PostToolUse of u2 says it resumed a1
@@ -387,6 +399,7 @@ def test_a_send_message_that_resumed_its_subagent_ties_it(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
+@UNBUILT
 def test_a_send_message_queued_to_a_running_subagent_is_a_queue(e: Events):
     """Given the writer tied to a1, running, and a start by SendMessage u2 to it
     When the PostToolUse of u2 says the message is queued
@@ -396,6 +409,7 @@ def test_a_send_message_queued_to_a_running_subagent_is_a_queue(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
+@UNBUILT
 def test_the_stop_of_a_subagent_with_a_resume_queued_ends_the_pass_that_ran(e: Events):
     """Given the writer tied to a1 by u1, and a resume u2 queued to it
     When a1's SubagentStop comes
@@ -443,6 +457,7 @@ def test_an_agent_calls_start_carries_its_prompt(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
+@UNBUILT
 def test_a_resumes_start_carries_the_prompt_of_the_start_it_resumes(e: Events):
     """Given the writer tied to a1, started with its prompt
     When the main conversation's PreToolUse of SendMessage to a1 comes

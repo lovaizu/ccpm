@@ -17,7 +17,7 @@ from adapters import AdapterFailed, given_steps, starts_due
 from record import Entry, Run
 from repo_files import write_files
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
+UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
 
 RULES: Any = lane_bench.RULES
 # The rules of a plugin that gives no order: steps for its skill, and no routes.
@@ -79,6 +79,7 @@ def refused(call: Any) -> str:
         {"ends": True},
     ],
 )
+@UNBUILT
 def test_the_plugins_adapter_gives_its_starts_due_or_the_runs_end(log: str, cwd: str, printed: Any):
     """Given `log`'s adapter of the starts due, which prints one start, two roles, none, or the
     run's end
@@ -89,6 +90,7 @@ def test_the_plugins_adapter_gives_its_starts_due_or_the_runs_end(log: str, cwd:
 
 
 @pytest.mark.supports("test_the_order_tells_the_starts_of_one_role_apart_by_their_prompts")
+@UNBUILT
 def test_the_plugins_adapter_takes_the_run_as_the_order_sees_it_in_the_conversations_folder(
     log: str, cwd: str
 ):
@@ -123,6 +125,7 @@ def test_a_plugin_with_routes_and_no_adapter_gets_the_route_adapters_starts_due(
 @pytest.mark.supports(
     "test_a_run_of_a_plugin_with_no_order_holds_the_main_conversation_to_its_skills_steps"
 )
+@UNBUILT
 def test_a_plugin_with_no_order_has_no_start_due(log: str, cwd: str):
     """Given rules with no routes, and no adapter of the starts due
     When Lane asks for the starts due while the turn runs
@@ -133,6 +136,7 @@ def test_a_plugin_with_no_order_has_no_start_due(log: str, cwd: str):
 @pytest.mark.supports(
     "test_a_run_of_a_plugin_with_no_order_ends_at_the_turns_end_that_its_steps_let_through"
 )
+@UNBUILT
 def test_a_plugin_with_no_order_has_its_run_end_once_the_turn_ended(log: str, cwd: str):
     """Given rules with no routes, and no adapter of the starts due
     When Lane asks for the starts due with the turn ended
@@ -143,6 +147,7 @@ def test_a_plugin_with_no_order_has_its_run_end_once_the_turn_ended(log: str, cw
 @pytest.mark.supports(
     "test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said"
 )
+@UNBUILT
 def test_an_adapter_of_the_starts_due_that_fails_is_refused_with_its_file_and_what_it_said(
     log: str, cwd: str
 ):
@@ -168,6 +173,7 @@ def test_an_adapter_of_the_starts_due_that_fails_is_refused_with_its_file_and_wh
         "print('{}')\n",
     ],
 )
+@UNBUILT
 def test_starts_due_out_of_their_form_are_refused_naming_the_adapter(log: str, cwd: str, code: str):
     """Given an adapter of the starts due that prints text that isn't JSON, a start with no count,
     a count of 0, a role with no name, `ends` false, both starts and `ends`, or neither
@@ -185,6 +191,7 @@ STEPS = [{"name": "write", "rules": [{"type": "writes", "paths": ["docs/changes/
 @pytest.mark.supports(
     "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
 )
+@UNBUILT
 def test_the_adapter_of_the_rules_gives_the_starts_steps_from_its_prompt(log: str, cwd: str):
     """Given `log`'s adapter of the rules, RULES_ADAPTER
     When Lane asks it for the steps of a writer's start whose prompt names docs/changes/1.2.0.md
@@ -197,6 +204,7 @@ def test_the_adapter_of_the_rules_gives_the_starts_steps_from_its_prompt(log: st
 @pytest.mark.supports(
     "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
 )
+@UNBUILT
 def test_the_adapter_of_the_rules_takes_the_run_the_role_and_the_prompt(log: str, cwd: str):
     """Given an adapter of the rules that writes what it's given
     When Lane asks it for the steps of a writer's start
@@ -217,6 +225,7 @@ def test_the_adapter_of_the_rules_takes_the_run_the_role_and_the_prompt(log: str
 @pytest.mark.supports(
     "test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_saying_so"
 )
+@UNBUILT
 def test_a_plugin_without_an_adapter_of_the_rules_is_refused_naming_it_and_the_role(
     log: str, cwd: str
 ):
@@ -241,6 +250,7 @@ def test_a_plugin_without_an_adapter_of_the_rules_is_refused_naming_it_and_the_r
         'print(\'{"steps": [{"name": "write", "rules": [{"type": "size"}]}]}\')\n',
     ],
 )
+@UNBUILT
 def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_is_refused(
     log: str, cwd: str, code: str
 ):
@@ -255,6 +265,7 @@ def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_is_refused(
 @pytest.mark.supports(
     "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
 )
+@UNBUILT
 def test_the_adapter_of_the_rules_may_give_no_step(log: str, cwd: str):
     """Given an adapter of the rules that gives no step
     When Lane asks it for the steps of a writer's start

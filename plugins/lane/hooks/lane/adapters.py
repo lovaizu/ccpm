@@ -5,7 +5,10 @@ beside this module, and Lane's route adapter run inside the guard where the plug
 
 from __future__ import annotations
 
-from order import StartsDue
+import os
+
+import routes
+from order import StartsDue, order_run
 from record import Run
 from rules import Rules, Step
 
@@ -29,7 +32,11 @@ def starts_due(plugin_root: str, cwd: str, run: Run, rules: Rules, turn_ended: b
     Changes: nothing of Lane's; the plugin's adapter may read the conversation's folder.
     Refuses: AdapterFailed.
     """
-    raise NotImplementedError("adapters.starts_due")
+    if os.path.isfile(os.path.join(plugin_root, "lane", "adapters", "starts_due.py")):
+        raise NotImplementedError("adapters.starts_due of the plugin's adapter")
+    if "routes" in rules:
+        return routes.starts_due(rules["routes"], order_run(run))
+    raise NotImplementedError("adapters.starts_due of a plugin that gives no order")
 
 
 def given_steps(plugin_root: str, cwd: str, run: Run, role: str, prompt: str) -> list[Step]:

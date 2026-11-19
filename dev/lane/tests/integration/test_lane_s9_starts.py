@@ -26,8 +26,6 @@ from lane_bench import (
     written,
 )
 
-pytestmark = UNBUILT
-
 # A plugin beside `log` that gives no order: its skill holds the main conversation to one step,
 # which writes NOTE.md and passes its check once NOTE.md is there.
 NOTE_SAYS = "NOTE.md holds no note"
@@ -67,6 +65,7 @@ print(json.dumps({"starts": [] if done else [{"role": "log:writer", "count": 1}]
 
 
 @pytest.mark.supports("S9", "Starts due")
+@UNBUILT
 def test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it(b: Bench):
     """Given the person typed /log:up 1.2.0
     When the main conversation ends its turn
@@ -77,6 +76,7 @@ def test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it(b: Ben
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_skill_called_by_the_skill_tool_adds_the_run(b: Bench):
     """Given a conversation in which no run of `log` stands
     When the main conversation calls log:up by the Skill tool with 1.2.0, and ends its turn
@@ -89,6 +89,7 @@ def test_a_skill_called_by_the_skill_tool_adds_the_run(b: Bench):
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_the_start_due_goes_through_and_leaves_none_due(b: Bench):
     """Given the writer due
     When the main conversation starts the writer, and then ends its turn
@@ -122,6 +123,7 @@ def test_a_subagents_start_of_a_subagent_is_stopped(b: Bench):
 
 
 @pytest.mark.supports("S9", "S7", "Starts due")
+@UNBUILT
 def test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it(b: Bench):
     """Given the writer kept each step and reported `written`
     When its end reaches the main conversation
@@ -134,6 +136,7 @@ def test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it(b
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place(b: Bench):
     """Given the writer ended with its result, so the reviewer is due
     When the person types /log:retry, and the main conversation starts the reviewer, and then the
@@ -148,6 +151,7 @@ def test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place(b: Ben
 
 
 @pytest.mark.supports("S9", "Starts due")
+@UNBUILT
 def test_a_run_whose_order_says_it_ends_holds_no_move_after(b: Bench):
     """Given the reviewer due
     When the reviewer reports `good` and ends, and the main conversation writes a file that no
@@ -160,6 +164,7 @@ def test_a_run_whose_order_says_it_ends_holds_no_move_after(b: Bench):
 
 
 @pytest.mark.supports("S9", "Starts due")
+@UNBUILT
 def test_a_run_whose_order_gives_no_start_due_waits_and_still_holds_its_moves(b: Bench):
     """Given `log` whose adapter of the starts due gives none, as it waits for the person's answer
     When the person types /log:up 1.2.0, the main conversation ends its turn, and then writes a
@@ -174,6 +179,7 @@ def test_a_run_whose_order_gives_no_start_due_waits_and_still_holds_its_moves(b:
 
 
 @pytest.mark.supports("S9", "Run")
+@UNBUILT
 def test_the_order_tells_the_starts_of_one_role_apart_by_their_prompts(b: Bench):
     """Given `log` whose adapter of the starts due gives the writer due until a start of it whose
     prompt names docs/changes/ is made
@@ -191,6 +197,7 @@ def test_the_order_tells_the_starts_of_one_role_apart_by_their_prompts(b: Bench)
 
 
 @pytest.mark.supports("S9", "S1")
+@UNBUILT
 def test_a_run_of_a_plugin_with_no_order_holds_the_main_conversation_to_its_skills_steps(
     b: Bench,
 ):
@@ -206,6 +213,7 @@ def test_a_run_of_a_plugin_with_no_order_holds_the_main_conversation_to_its_skil
 
 
 @pytest.mark.supports("S9", "S8")
+@UNBUILT
 def test_the_turns_end_in_a_run_of_a_plugin_with_no_order_is_held_to_its_skills_check(b: Bench):
     """Given `note` beside `log`, which gives no order, and the person typed /note:up
     When the main conversation ends its turn before NOTE.md is there
@@ -219,6 +227,7 @@ def test_the_turns_end_in_a_run_of_a_plugin_with_no_order_is_held_to_its_skills_
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_run_of_a_plugin_with_no_order_ends_at_the_turns_end_that_its_steps_let_through(
     b: Bench,
 ):
@@ -234,6 +243,7 @@ def test_a_run_of_a_plugin_with_no_order_ends_at_the_turns_end_that_its_steps_le
 
 @pytest.mark.supports("S9")
 @pytest.mark.parametrize("record", [AGENT_UNKNOWN_TYPE, AGENT_DENIED_BY_RULE])
+@UNBUILT
 def test_an_agent_call_that_fails_after_its_pre_tool_use_leaves_its_start_due(
     b: Bench, record: str
 ):
@@ -249,6 +259,7 @@ def test_an_agent_call_that_fails_after_its_pre_tool_use_leaves_its_start_due(
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_start_that_another_plugins_hook_denies_is_due_again_at_the_turns_end(b: Bench):
     """Given another plugin whose hook denies each Agent call, and the writer due
     When the main conversation starts the writer, and ends its turn
@@ -262,6 +273,7 @@ def test_a_start_that_another_plugins_hook_denies_is_due_again_at_the_turns_end(
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_two_starts_of_one_role_are_each_held_to_their_own_start(b: Bench):
     """Given the reviewer's `split`, which makes two writers due
     When the main conversation starts both, one reports `written` and ends, and the other ends with
@@ -313,6 +325,7 @@ def test_a_subagent_started_in_the_foreground_lies_outside_the_run(b: Bench):
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_resume_that_the_order_makes_due_goes_through_as_its_start(b: Bench):
     """Given the writer ended, and the reviewer's `more`, which makes the writer due
     When the main conversation resumes the writer by SendMessage, and ends its turn
@@ -327,6 +340,7 @@ def test_a_resume_that_the_order_makes_due_goes_through_as_its_start(b: Bench):
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_resume_that_the_order_doesnt_make_due_goes_through_as_talk(b: Bench):
     """Given the writer ended, so the reviewer is due
     When the main conversation resumes the writer by SendMessage, and ends its turn
@@ -342,6 +356,7 @@ def test_a_resume_that_the_order_doesnt_make_due_goes_through_as_talk(b: Bench):
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass(b: Bench):
     """Given the writer running, and a message queued to it by SendMessage
     When the writer ends with no result, then keeps each step and ends, and then writes a file that
@@ -358,6 +373,7 @@ def test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass(b: 
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_subagent_stopped_by_task_stop_is_due_again(b: Bench):
     """Given the writer running
     When the main conversation stops it by TaskStop, and ends its turn
@@ -369,6 +385,7 @@ def test_a_subagent_stopped_by_task_stop_is_due_again(b: Bench):
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_another_skills_command_typed_while_a_subagent_runs_moves_the_run(b: Bench):
     """Given the writer running
     When the person types /log:tag, the main conversation ends its turn, and the writer writes a
@@ -385,6 +402,7 @@ def test_another_skills_command_typed_while_a_subagent_runs_moves_the_run(b: Ben
 
 
 @pytest.mark.supports("S9", "S1")
+@UNBUILT
 def test_the_main_conversation_holds_to_the_steps_of_the_latest_commands_skill(b: Bench):
     """Given the person typed /log:up 1.2.0, and then /log:tag
     When the main conversation writes .log/up.md, and then .log/tags.md
@@ -398,6 +416,7 @@ def test_the_main_conversation_holds_to_the_steps_of_the_latest_commands_skill(b
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run(b: Bench):
     """Given a run that ended with the reviewer's `good`
     When the person types /log:up 1.3.0, and the main conversation ends its turn
@@ -411,6 +430,7 @@ def test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run(b: Be
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_run_goes_on_in_a_worktree_the_conversation_enters(b: Bench):
     """Given the writer due
     When the main conversation enters a worktree, and ends its turn
@@ -423,6 +443,7 @@ def test_a_run_goes_on_in_a_worktree_the_conversation_enters(b: Bench):
 
 
 @pytest.mark.supports("S9")
+@UNBUILT
 def test_a_subagents_message_to_another_subagent_goes_through_as_talk(b: Bench):
     """Given two writers running after the reviewer's `split`
     When the first sends the second a message by SendMessage, and the main conversation ends its

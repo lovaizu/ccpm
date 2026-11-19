@@ -7,6 +7,12 @@ from __future__ import annotations
 
 from place import Move
 
+from rule_types import writes
+
+# The rule types that judge a call of each tool, by their names in a rule's `type`, in the order
+# the guard asks them.
+_CALLS = {"Write": {"writes": writes.judge_call}, "Edit": {"writes": writes.judge_call}}
+
 
 def judge_call(move: Move) -> str | None:
     """Judges a call of a start by each rule of its step that judges a call.
@@ -17,7 +23,18 @@ def judge_call(move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("rule_types.judge_call")
+    tool = move.event.get("tool_name", "")
+    if tool in ("Read", "Grep", "Glob", "Bash"):
+        raise NotImplementedError(f"rule_types.judge_call of {tool}")
+    judges = _CALLS.get(tool, {})
+    said = (
+        judges[rule["type"]](rule, step, move)
+        for step in move.steps
+        if step["name"] == move.step
+        for rule in step["rules"]
+        if rule["type"] in judges
+    )
+    return next((each for each in said if each is not None), None)
 
 
 def judge_mark(move: Move) -> str | None:

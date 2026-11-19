@@ -12,8 +12,6 @@ import pytest
 from rules import Rules, Step
 from start_rules import asks_adapter, steps
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 # The rules of `log`, naming the scribe with no steps, so that each start of it takes them from the
 # plugin's adapter of the rules.
 RULES: Rules = copy.deepcopy(lane_bench.RULES)

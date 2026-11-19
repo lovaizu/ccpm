@@ -10,8 +10,6 @@ import pytest
 from order import OrderMove, order_run
 from record import Entry, Run
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 COMMAND: OrderMove = {"kind": "command", "command": "log:up"}
 START: Entry = lane_entries.start("u1", prompt="Write the entry.")
 TIE: Entry = lane_entries.tie("u1", "a1")

@@ -13,8 +13,6 @@ import pytest
 from order import OrderMove, OrderRun
 from routes import starts_due
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 ROUTES: Any = lane_bench.RULES["routes"]
 
 

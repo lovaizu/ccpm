@@ -13,8 +13,6 @@ import lane_entries
 import pytest
 from record import Entry, add, runs
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 RUN: Entry = {"kind": "run", "run": "r1", "skill": "log:up", "words": "1.2.0"}
 FOLDER: Entry = {"kind": "folder", "run": "r1", "plugin_root": "/plugins/log"}
 START: Entry = lane_entries.start("toolu_1")

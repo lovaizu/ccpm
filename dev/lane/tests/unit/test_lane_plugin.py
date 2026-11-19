@@ -11,8 +11,6 @@ import pytest
 from lane_events import base_directory
 from plugin import plugin_root
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 
 def transcript_in(tmp: Any) -> str:
     """The path of a transcript in the folder, holding a line of the person's prompt."""

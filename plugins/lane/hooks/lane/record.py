@@ -4,6 +4,9 @@ is a line of its own."""
 
 from __future__ import annotations
 
+import json
+import os
+import tempfile
 from dataclasses import dataclass, field
 from typing import TypedDict
 
@@ -62,7 +65,20 @@ def runs(session_id: str) -> list[Run]:
     Changes: nothing.
     Refuses: OSError, where the record can't be read.
     """
-    raise NotImplementedError("record.runs")
+    try:
+        with open(_path(session_id), encoding="utf-8") as f:
+            entries: list[Entry] = [json.loads(line) for line in f]
+    except FileNotFoundError:
+        return []
+    found: dict[str, Run] = {}
+    for entry in entries:
+        if entry["kind"] == "run":
+            found[entry["run"]] = Run(entry["run"], session_id, entry["skill"], entry["words"])
+        run = found[entry["run"]]
+        if entry["kind"] == "folder":
+            run.plugin_root = entry["plugin_root"]
+        run.entries.append(entry)
+    return list(found.values())
 
 
 def add(session_id: str, entries: list[Entry]) -> None:
@@ -74,4 +90,11 @@ def add(session_id: str, entries: list[Entry]) -> None:
     Changes: the record of the conversation in the system temp folder, made where it's missing.
     Refuses: OSError, where the record can't be written.
     """
-    raise NotImplementedError("record.add")
+    lines = "".join(json.dumps(entry) + "\n" for entry in entries)
+    with open(_path(session_id), "a", encoding="utf-8") as f:
+        f.write(lines)
+
+
+def _path(session_id: str) -> str:
+    """The record of the conversation, in the system temp folder."""
+    return os.path.join(tempfile.gettempdir(), f"lane-{session_id}.jsonl")

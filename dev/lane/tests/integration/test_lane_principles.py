@@ -25,8 +25,6 @@ from lane_bench import (
 )
 from repo_files import write_files
 
-pytestmark = UNBUILT
-
 # A plugin beside `log` that Lane never names either, whose scribe writes only MEMO.md.
 MEMO_RULES = {
     "roles": {
@@ -135,6 +133,7 @@ def test_a_stopped_call_gives_the_step_left_and_what_to_do_instead(b: Bench, bro
 
 
 @pytest.mark.supports("P1.1")
+@UNBUILT
 def test_rules_out_of_form_stop_the_call_saying_what_the_author_mends(b: Bench, broken: None):
     """Given `log` whose lane/rules.json has no roles
     When the person types /log:up 1.2.0, and the main conversation ends its turn
@@ -148,6 +147,7 @@ def test_rules_out_of_form_stop_the_call_saying_what_the_author_mends(b: Bench, 
 
 
 @pytest.mark.supports("P1.2")
+@UNBUILT
 def test_a_result_said_only_in_the_reply_counts_for_nothing(b: Bench, broken: None):
     """Given the writer that kept each step but ran no reporter of its result
     When it ends replying `written`
@@ -160,6 +160,7 @@ def test_a_result_said_only_in_the_reply_counts_for_nothing(b: Bench, broken: No
 
 
 @pytest.mark.supports("P2.1")
+@UNBUILT
 def test_a_step_is_held_only_to_the_types_its_rules_pick(b: Bench, broken: None):
     """Given the writer done, so the reviewer, whose step picks only a rule of results, runs
     When the reviewer writes notes.txt and runs `ls`
@@ -189,6 +190,7 @@ def test_each_plugins_run_is_held_to_the_rules_in_its_own_folder(b: Bench, broke
 
 
 @pytest.mark.supports("P2.3")
+@UNBUILT
 def test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start(
     b: Bench, broken: None
 ):
@@ -206,6 +208,7 @@ def test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each
 
 
 @pytest.mark.supports("P2.4")
+@UNBUILT
 def test_the_starts_due_are_those_that_the_plugins_order_gives(b: Bench, broken: None):
     """Given `log` deciding its order by ORDER, and the repository holding the entry of 1.2.0, so
     that ORDER makes the reviewer due, where the route after the command makes the writer due
@@ -222,6 +225,7 @@ def test_the_starts_due_are_those_that_the_plugins_order_gives(b: Bench, broken:
 
 
 @pytest.mark.supports("P2.5")
+@UNBUILT
 def test_work_outside_a_run_of_a_plugin_with_rules_is_left_alone(b: Bench, broken: None):
     """Given `plain`, a plugin with no lane/rules.json, beside `log`
     When the main conversation writes a file and ends its turn before any skill's call, then the

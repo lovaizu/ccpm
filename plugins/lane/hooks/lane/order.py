@@ -57,4 +57,25 @@ def order_run(run: Run) -> OrderRun:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("order.order_run")
+    moves: list[OrderMove] = [{"kind": "command", "command": run.skill}]
+    # Each start's move, by the tool_use_id of its call, and the call of each subagent's latest
+    # start, so that a drop or a stop takes its start's move out.
+    starts: dict[str, OrderMove] = {}
+    latest: dict[str, str] = {}
+    for entry in run.entries:
+        kind = entry["kind"]
+        if kind == "typed":
+            moves.append({"kind": "command", "command": entry["command"]})
+        elif kind == "start":
+            start: OrderMove = {"kind": "start", "role": entry["role"], "prompt": entry["prompt"]}
+            starts[entry["tool_use_id"]] = start
+            moves.append(start)
+        elif kind == "tie":
+            latest[entry["agent_id"]] = entry["tool_use_id"]
+        elif kind == "result":
+            moves.append({"kind": "result", "role": entry["role"], "result": entry["result"]})
+        elif kind in ("drop", "stopped"):
+            use = entry["tool_use_id"] if kind == "drop" else latest[entry["agent_id"]]
+            gone = starts[use]
+            moves = [move for move in moves if move is not gone]
+    return {"skill": run.skill, "words": run.words, "moves": moves}

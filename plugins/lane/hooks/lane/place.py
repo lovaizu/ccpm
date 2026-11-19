@@ -5,13 +5,14 @@ conversation holds one run of a plugin at a time."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Callable
 
 from order import StartsDue
-from record import Run
+from record import Entry, Run
 from report import Report
-from rules import Step
+from rules import Rules, Step, read_rules
+from start_rules import steps as start_steps
 
 # A hook event as Claude Code sends it on standard input.
 Event = dict[str, Any]
@@ -66,7 +67,17 @@ def skill_call(event: Event, runs: list[Run]) -> SkillCall | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("place.skill_call")
+    name = event.get("hook_event_name")
+    if name == "UserPromptExpansion":
+        skill, words = event["command_name"], event.get("command_args", "")
+    elif name == "PostToolUse" and event.get("tool_name") == "Skill":
+        skill, words = event["tool_input"]["skill"], event["tool_input"].get("args", "")
+    else:
+        return None
+    plugin = skill.partition(":")[0]
+    if any(run.skill.partition(":")[0] == plugin and not _ended(run) for run in runs):
+        return None
+    return SkillCall(event["session_id"], event["transcript_path"], skill, words)
 
 
 def opening(event: Event, runs: list[Run]) -> list[Run]:
@@ -80,7 +91,11 @@ def opening(event: Event, runs: list[Run]) -> list[Run]:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("place.opening")
+    name = event.get("hook_event_name")
+    of_skill = name in ("PreToolUse", "PostToolUse") and event.get("tool_name") == "Skill"
+    if "agent_id" in event or name == "UserPromptExpansion" or of_skill:
+        return []
+    return [run for run in runs if run.plugin_root is None]
 
 
 def place(event: Event, runs: list[Run], due: Due) -> Move | None:
@@ -104,4 +119,97 @@ def place(event: Event, runs: list[Run], due: Due) -> Move | None:
     Changes: nothing.
     Refuses: OutOfForm, where the rules of the plugin's run are out of form at its command.
     """
-    raise NotImplementedError("place.place")
+    agent_id = event.get("agent_id")
+    run = _standing(runs) if agent_id is None else _tied(runs, agent_id)
+    if run is None or run.plugin_root is None:
+        return None
+    rules = read_rules(run.plugin_root)
+    if rules is None:
+        return None
+    name = event.get("hook_event_name")
+    if name == "PreToolUse":
+        return _before(event, run, rules)
+    if name == "PostToolUse":
+        return _after(event, run, rules)
+    if name == "UserPromptSubmit" and "<task-notification>" not in event.get("prompt", ""):
+        return None
+    raise NotImplementedError(f"place.place of {name}")
+
+
+def _ended(run: Run) -> bool:
+    """Whether the run's order said it ends."""
+    return any(entry["kind"] == "ended" for entry in run.entries)
+
+
+def _standing(runs: list[Run]) -> Run | None:
+    """The run that the main conversation's moves belong to: the latest that hasn't ended."""
+    return next((run for run in reversed(runs) if not _ended(run)), None)
+
+
+def _tied(runs: list[Run], agent_id: str) -> Run | None:
+    """The run of the start that the subagent is tied to."""
+    tied = (run for run in runs for entry in run.entries if _ties(entry, agent_id))
+    return next(tied, None)
+
+
+def _ties(entry: Entry, agent_id: str) -> bool:
+    return entry["kind"] == "tie" and entry["agent_id"] == agent_id
+
+
+def _start_of(run: Run, tool_use_id: str) -> Entry | None:
+    """The run's start of the call."""
+    starts = (e for e in run.entries if e["kind"] == "start" and e["tool_use_id"] == tool_use_id)
+    return next(starts, None)
+
+
+def _before(event: Event, run: Run, rules: Rules) -> Move | None:
+    """The move of a PreToolUse: a start by an Agent call, held to the steps of whoever starts it,
+    else a call."""
+    tool = event.get("tool_name")
+    if tool == "Agent":
+        call = _call(event, run, rules)
+        return replace(call, kind="start", step=None, prompt=event["tool_input"].get("prompt", ""))
+    if tool in ("SendMessage", "Skill"):
+        raise NotImplementedError(f"place.place of the PreToolUse of {tool}")
+    return _call(event, run, rules)
+
+
+def _after(event: Event, run: Run, rules: Rules) -> Move | None:
+    """The move of a PostToolUse: a tie by an Agent call, else none of the calls that S1 makes."""
+    tool = event.get("tool_name")
+    if tool == "Agent":
+        start = _start_of(run, event["tool_use_id"])
+        if start is None:
+            return None
+        role = start["role"]
+        steps = start_steps(rules, role, start.get("steps"))
+        agent_id = event["tool_response"]["agentId"]
+        return Move("tie", event, run, role, agent_id, None, steps, None, None)
+    if tool in ("SendMessage", "Skill", "Bash", "Read"):
+        raise NotImplementedError(f"place.place of the PostToolUse of {tool}")
+    return None
+
+
+def _call(event: Event, run: Run, rules: Rules) -> Move:
+    """A call of the main conversation, held to the steps of the run's latest command whose skill
+    the rules give steps of, or of a subagent, held to the steps of the start it's tied to; each
+    at the first of its steps that it hasn't marked done."""
+    agent_id = event.get("agent_id")
+    if agent_id is None:
+        role = run.skill
+        for entry in run.entries:
+            if entry["kind"] == "typed" and start_steps(rules, entry["command"], None):
+                role = entry["command"]
+        steps = start_steps(rules, role, None)
+    else:
+        tie = next(e for e in reversed(run.entries) if _ties(e, agent_id))
+        start = next(e for e in run.entries if e.get("tool_use_id") == tie["tool_use_id"])
+        role = start["role"]
+        steps = start_steps(rules, role, start.get("steps"))
+    done = {
+        entry["step"]
+        for entry in run.entries
+        if entry["kind"] == "mark" and entry.get("agent_id") == agent_id and "item" not in entry
+    }
+    step = next((each["name"] for each in steps if each["name"] not in done), None)
+    return Move("call", event, run, role, agent_id, None, steps, step, None)

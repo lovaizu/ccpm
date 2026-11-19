@@ -5,10 +5,19 @@ from __future__ import annotations
 
 import json
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from typing import Callable, cast
 
+import adapters
+import place
+import record
+import rule_types
+from order import StartsDue
 from place import Event, Move, SkillCall
+from plugin import plugin_root
 from record import Run
+from rules import OutOfForm, Rules, read_rules
+from start_rules import asks_adapter
 
 
 @dataclass
@@ -39,7 +48,18 @@ def answer(event: Event) -> Answer:
     Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
     adapter that failed, the answer says why and who fixes that, and stops the call.
     """
-    raise NotImplementedError("guard.answer")
+    session = event["session_id"]
+    answers = [run_opened(event, run) for run in place.opening(event, record.runs(session))]
+    runs = record.runs(session)
+    call = place.skill_call(event, runs)
+    if call is not None:
+        answers.append(skill_called(call))
+    else:
+        move = place.place(event, runs, lambda run: _due(run, event))
+        if move is not None:
+            answers.append(_ANSWERS[move.kind](move))
+    said = "\n".join(given.said for given in answers if given.said)
+    return Answer(any(given.stop for given in answers), said)
 
 
 def skill_called(call: SkillCall) -> Answer:
@@ -52,7 +72,14 @@ def skill_called(call: SkillCall) -> Answer:
     Changes: the run record, by a new run of the skill and the words, with no folder.
     Refuses: nothing.
     """
-    raise NotImplementedError("guard.skill_called")
+    entry: record.Entry = {
+        "kind": "run",
+        "run": f"r{len(record.runs(call.session_id)) + 1}",
+        "skill": call.skill,
+        "words": call.words,
+    }
+    record.add(call.session_id, [entry])
+    return Answer()
 
 
 def run_opened(event: Event, run: Run) -> Answer:
@@ -67,7 +94,20 @@ def run_opened(event: Event, run: Run) -> Answer:
     Refuses: nothing; a plugin's rules out of form, or an adapter that failed, stops the event's
     call with what's wrong.
     """
-    raise NotImplementedError("guard.run_opened")
+    try:
+        root = plugin_root(event["transcript_path"], run.skill)
+    except FileNotFoundError:
+        root = None
+    if root is None:
+        return Answer()
+    record.add(run.session_id, [{"kind": "folder", "run": run.id, "plugin_root": root}])
+    opened = replace(run, plugin_root=root)
+    try:
+        if read_rules(root) is None:
+            return Answer()
+        return Answer(said=_due_said(_due(opened, event)))
+    except OutOfForm as wrong:
+        return Answer(True, str(wrong))
 
 
 def start_made(move: Move) -> Answer:
@@ -87,7 +127,28 @@ def start_made(move: Move) -> Answer:
     of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
     sentence saying that the plugin's author adds or mends lane/adapters/rules.py for the role.
     """
-    raise NotImplementedError("guard.start_made")
+    if move.event.get("tool_name") != "Agent":
+        raise NotImplementedError("guard.start_made of a resume")
+    role = move.event["tool_input"].get("subagent_type", "")
+    due = _due(move.run, move.event)
+    plugin = move.run.skill.partition(":")[0]
+    if role.partition(":")[0] != plugin and move.agent_id is None:
+        return Answer()
+    if move.agent_id is not None or not any(s["role"] == role for s in due.get("starts", [])):
+        return Answer(True, _due_said(due))
+    entry: record.Entry = {
+        "kind": "start",
+        "run": move.run.id,
+        "role": role,
+        "tool_use_id": move.event["tool_use_id"],
+        "prompt": move.prompt or "",
+    }
+    if asks_adapter(_rules(move.run), role):
+        cwd = move.event["cwd"]
+        given = adapters.given_steps(_root(move.run), cwd, move.run, role, entry["prompt"])
+        entry["steps"] = given
+    record.add(move.run.session_id, [entry])
+    return Answer()
 
 
 def turn_ended(move: Move) -> Answer:
@@ -145,7 +206,16 @@ def fact_added(move: Move) -> Answer:
     Changes: the run record, by the fact.
     Refuses: nothing.
     """
-    raise NotImplementedError("guard.fact_added")
+    if move.kind != "tie":
+        raise NotImplementedError(f"guard.fact_added of a {move.kind}")
+    entry: record.Entry = {
+        "kind": "tie",
+        "run": move.run.id,
+        "tool_use_id": move.event["tool_use_id"],
+        "agent_id": move.agent_id or "",
+    }
+    record.add(move.run.session_id, [entry])
+    return Answer()
 
 
 def call_made(move: Move) -> Answer:
@@ -158,7 +228,8 @@ def call_made(move: Move) -> Answer:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("guard.call_made")
+    said = rule_types.judge_call(move)
+    return Answer() if said is None else Answer(True, said)
 
 
 def report_made(move: Move) -> Answer:
@@ -198,7 +269,65 @@ def written(event: Event, given: Answer) -> str:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("guard.written")
+    if not given.stop and not given.said:
+        return ""
+    name = event["hook_event_name"]
+    if not given.stop:
+        output: dict[str, object] = {
+            "hookSpecificOutput": {"hookEventName": name, "additionalContext": given.said}
+        }
+    elif name == "PreToolUse":
+        output = {
+            "hookSpecificOutput": {
+                "hookEventName": name,
+                "permissionDecision": "deny",
+                "permissionDecisionReason": given.said,
+            }
+        }
+    else:
+        output = {"decision": "block", "reason": given.said}
+    return json.dumps(output)
+
+
+# The interface that answers each kind of move.
+_ANSWERS: dict[str, Callable[[Move], Answer]] = {
+    "call": call_made,
+    "start": start_made,
+    "tie": fact_added,
+    "queue": fact_added,
+    "drop": fact_added,
+    "read": fact_added,
+    "report": report_made,
+    "end": subagent_ended,
+    "turn_end": turn_ended,
+    "typed": command_typed,
+    "result_reached": result_reached,
+}
+
+
+def _root(run: Run) -> str:
+    """The folder of the run's plugin, which a run on which place gives a move has."""
+    return cast(str, run.plugin_root)
+
+
+def _rules(run: Run) -> Rules:
+    """The rules of the run's plugin, which a run on which place gives a move has."""
+    return cast(Rules, read_rules(_root(run)))
+
+
+def _due(run: Run, event: Event) -> StartsDue:
+    """The starts due of the run as it stands, by its plugin's order, while the turn runs."""
+    return adapters.starts_due(_root(run), event["cwd"], run, _rules(run), False)
+
+
+def _due_said(due: StartsDue) -> str:
+    """What the main conversation reads of the starts due: each role due, and how many at once;
+    nothing while the run waits or once it ends."""
+    roles = [
+        s["role"] if s["count"] == 1 else f"{s['role']} {s['count']} times at once"
+        for s in due.get("starts", [])
+    ]
+    return f"Due: {', '.join(roles)}." if roles else ""
 
 
 def main() -> int:

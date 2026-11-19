@@ -21,7 +21,7 @@ from report import Report
 from rule_types import check, checklist, commands, order, reads_none, reads_whole, result, writes
 from rules import Rule, Rules, Step
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
+UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
 
 RULES: Rules = copy.deepcopy(lane_bench.RULES)
 WRITE: Step = RULES["roles"]["log:writer"]["steps"][0]
@@ -143,6 +143,7 @@ def test_an_edit_of_another_file_gives_the_steps_sentence(e: Events, cwd: str):
 
 @pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
 @pytest.mark.parametrize("path", ["secrets/key.txt", "secrets/a/b.txt", ".env"])
+@UNBUILT
 def test_a_read_of_a_file_never_to_read_gives_the_steps_sentence(e: Events, cwd: str, path: str):
     """Given the step `write`, which never reads secrets/ nor .env
     When the writer reads a file in the folder, one deeper in it, or the named file
@@ -156,6 +157,7 @@ def test_a_read_of_a_file_never_to_read_gives_the_steps_sentence(e: Events, cwd:
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
 @pytest.mark.parametrize("path", ["NOTES.md", "secrets-old/key.txt", ".env.example"])
+@UNBUILT
 def test_a_read_of_another_file_holds(e: Events, cwd: str, path: str):
     """Given the step `write`
     When the writer reads another file, one in a folder whose name only begins as the rule's, or
@@ -169,6 +171,7 @@ def test_a_read_of_another_file_holds(e: Events, cwd: str, path: str):
 
 
 @pytest.mark.supports("test_a_command_that_its_step_names_goes_through")
+@UNBUILT
 def test_a_named_command_holds(e: Events):
     """Given the step `write`, which runs `git log`
     When the writer runs `git log`
@@ -178,6 +181,7 @@ def test_a_named_command_holds(e: Events):
 
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
+@UNBUILT
 def test_another_command_gives_the_steps_sentence(e: Events):
     """Given the step `write`
     When the writer runs `git push`
@@ -193,6 +197,7 @@ def test_another_command_gives_the_steps_sentence(e: Events):
 @pytest.mark.parametrize(
     "command", ["git log --oneline -5", "git log | head -5", "git log; head NOTES.md"]
 )
+@UNBUILT
 def test_each_command_opening_with_a_named_commands_words_holds(e: Events, command: str):
     """Given a step whose rule of commands names `git log` and `head`
     When the writer runs a named command with more words after it, a pipeline of named ones, or
@@ -208,6 +213,7 @@ def test_each_command_opening_with_a_named_commands_words_holds(e: Events, comma
     "command",
     ["git log && git push", "git log || git push", "git log; git push", "git log | sh"],
 )
+@UNBUILT
 def test_a_command_chained_after_a_named_one_gives_the_steps_sentence(e: Events, command: str):
     """Given the step `write`, which runs `git log`
     When the writer runs another command after `git log`, split by `&&`, `||`, `;`, or `|`
@@ -221,6 +227,7 @@ def test_a_command_chained_after_a_named_one_gives_the_steps_sentence(e: Events,
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
 @pytest.mark.parametrize("command", ["git", "git logs", "git -C /repo log"])
+@UNBUILT
 def test_a_command_that_doesnt_open_with_a_named_commands_words_gives_the_steps_sentence(
     e: Events, command: str
 ):
@@ -236,6 +243,7 @@ def test_a_command_that_doesnt_open_with_a_named_commands_words_gives_the_steps_
 @pytest.mark.parametrize(
     "command", ["lane-step write", "lane-item write dated", "lane-result written"]
 )
+@UNBUILT
 def test_a_reporter_holds_though_the_rule_doesnt_name_it(e: Events, command: str):
     """Given the step `write`, whose rule names no reporter
     When the writer runs a reporter of Lane's
@@ -245,6 +253,7 @@ def test_a_reporter_holds_though_the_rule_doesnt_name_it(e: Events, command: str
 
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
+@UNBUILT
 def test_a_rule_that_names_no_command_stops_each_but_a_reporter(e: Events):
     """Given a step whose rule of commands names none
     When the writer runs `git log`, and then `lane-step write`
@@ -259,6 +268,7 @@ def test_a_rule_that_names_no_command_stops_each_but_a_reporter(e: Events):
 
 
 @pytest.mark.supports("test_steps_marked_in_their_order_hold_and_the_end_goes_through")
+@UNBUILT
 def test_a_mark_of_the_first_step_holds(e: Events):
     """Given the writer with no step marked
     When it marks the step `write`
@@ -268,6 +278,7 @@ def test_a_mark_of_the_first_step_holds(e: Events):
 
 
 @pytest.mark.supports("test_steps_marked_in_their_order_hold_and_the_end_goes_through")
+@UNBUILT
 def test_a_mark_after_the_step_before_holds(e: Events):
     """Given the writer that marked `write`
     When it marks `report`
@@ -284,6 +295,7 @@ def test_a_mark_after_the_step_before_holds(e: Events):
 
 @pytest.mark.supports("test_a_step_marked_before_the_step_before_it_is_stopped_with_the_step_due")
 @pytest.mark.parametrize("before", [[], [mark("write", OTHER)]])
+@UNBUILT
 def test_a_mark_before_the_step_before_gives_the_step_due(e: Events, before: list[Entry]):
     """Given the writer a1 that marked no step, alone or beside a2 that marked `write`
     When a1 marks `report`
@@ -295,6 +307,7 @@ def test_a_mark_before_the_step_before_gives_the_step_due(e: Events, before: lis
 
 
 @pytest.mark.supports("test_steps_marked_in_their_order_hold_and_the_end_goes_through")
+@UNBUILT
 def test_an_end_with_the_step_marked_holds(e: Events):
     """Given the writer that marked `report`
     When it ends
@@ -304,6 +317,7 @@ def test_an_end_with_the_step_marked_holds(e: Events):
 
 
 @pytest.mark.supports("test_an_end_before_each_step_is_done_is_stopped_with_the_step_left")
+@UNBUILT
 def test_an_end_with_the_step_unmarked_gives_the_steps_sentence(e: Events):
     """Given the writer that marked `write` alone
     When it ends
@@ -330,6 +344,7 @@ def marking_write(e: Events, *entries: Entry) -> Move:
         [read("NOTES.md", 4, 6), read("NOTES.md", 1, 4)],
     ],
 )
+@UNBUILT
 def test_reads_that_cover_each_line_hold(e: Events, reads: list[Entry]):
     """Given the writer's reads of NOTES.md, of its 6 lines whole, in two parts, or in two parts
     that overlap, the later first
@@ -349,6 +364,7 @@ def test_reads_that_cover_each_line_hold(e: Events, reads: list[Entry]):
         ([read("NOTES.md", 2, 6)], "1"),
     ],
 )
+@UNBUILT
 def test_reads_that_leave_a_line_give_the_lines_not_read(
     e: Events, reads: list[Entry], first_unread: str
 ):
@@ -366,6 +382,7 @@ def test_reads_that_leave_a_line_give_the_lines_not_read(
 @pytest.mark.parametrize(
     "reads", [[], [read("NOTES.md", 1, 6, OTHER)], [read("CHANGELOG.md", 1, 6)]]
 )
+@UNBUILT
 def test_no_read_of_the_file_by_the_start_gives_the_steps_sentence(e: Events, reads: list[Entry]):
     """Given no read of NOTES.md, a read of it whole by another writer, or a read of another file
     When the writer a1 marks `write`
@@ -383,6 +400,7 @@ def test_no_read_of_the_file_by_the_start_gives_the_steps_sentence(e: Events, re
     "items, entries",
     [([], []), (["dated", "linked"], [mark("write", item="dated"), mark("write", item="linked")])],
 )
+@UNBUILT
 def test_a_step_with_no_item_or_each_item_marked_holds(
     e: Events, items: list[str], entries: list[Entry]
 ):
@@ -402,6 +420,7 @@ def test_a_step_with_no_item_or_each_item_marked_holds(
         ([mark("write", OTHER, "dated"), mark("report", item="linked")], ["dated", "linked"]),
     ],
 )
+@UNBUILT
 def test_items_not_marked_give_the_steps_sentence_naming_each(
     e: Events, entries: list[Entry], unmarked: list[str]
 ):
@@ -421,6 +440,7 @@ def test_items_not_marked_give_the_steps_sentence_naming_each(
 
 @pytest.mark.supports("test_the_reviewers_more_makes_the_writer_due_again")
 @pytest.mark.parametrize("value", ["good", "more", "split"])
+@UNBUILT
 def test_an_end_with_a_named_result_holds(e: Events, value: str):
     """Given the reviewer that gave a result its rule names
     When it ends
@@ -432,6 +452,7 @@ def test_an_end_with_a_named_result_holds(e: Events, value: str):
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
 @pytest.mark.parametrize("entries", [[], [gave("fine")], [gave("good", OTHER)]])
+@UNBUILT
 def test_an_end_with_no_named_result_gives_the_results_it_may_give(e: Events, entries: list[Entry]):
     """Given the reviewer a1 that gave no result, one its rule doesn't name, or none while a2 gave
     one
@@ -448,6 +469,7 @@ def test_an_end_with_no_named_result_gives_the_results_it_may_give(e: Events, en
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_passes_goes_through")
+@UNBUILT
 def test_an_end_that_the_check_passes_holds(e: Events):
     """Given the conversation's CHANGELOG.md holding the entry of 1.2.0
     When the writer ends
@@ -457,6 +479,7 @@ def test_an_end_that_the_check_passes_holds(e: Events):
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
+@UNBUILT
 def test_an_end_that_the_check_doesnt_pass_gives_the_steps_sentence_and_what_it_said(
     e: Events, cwd: str
 ):
@@ -473,6 +496,7 @@ def test_an_end_that_the_check_doesnt_pass_gives_the_steps_sentence_and_what_it_
 
 
 @pytest.mark.supports("test_the_plugins_check_runs_in_the_worktree_the_conversation_works_in")
+@UNBUILT
 def test_the_check_runs_in_the_events_folder(e: Events, tmp_path: Any):
     """Given an event whose folder holds no CHANGELOG.md, though the case's own folder might
     When the writer ends
@@ -484,6 +508,7 @@ def test_the_check_runs_in_the_events_folder(e: Events, tmp_path: Any):
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
+@UNBUILT
 def test_a_check_that_cant_be_run_is_refused(e: Events, tmp_path: Any):
     """Given an event whose folder isn't there
     When the writer ends
@@ -502,8 +527,8 @@ def test_a_check_that_cant_be_run_is_refused(e: Events, tmp_path: Any):
     "event, named",
     [
         ("write", "docs/changes/"),
-        ("read", ".env"),
-        ("bash", "git log"),
+        pytest.param("read", ".env", marks=UNBUILT),
+        pytest.param("bash", "git log", marks=UNBUILT),
     ],
 )
 def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: str, named: str):
@@ -523,6 +548,7 @@ def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: st
 @pytest.mark.supports(
     "test_a_bash_command_that_reads_a_file_never_to_read_is_stopped_by_its_commands"
 )
+@UNBUILT
 def test_a_bash_command_that_reaches_a_file_never_to_read_is_judged_by_commands(e: Events):
     """Given the writer at its step `write`, which never reads secrets/ and runs `git log`
     When it runs `cat secrets/key.txt`
@@ -551,6 +577,7 @@ def test_a_call_that_breaks_no_rule_or_whose_step_judges_no_call_holds(e: Events
 
 
 @pytest.mark.supports("test_a_mark_is_checked_for_the_step_due_before_the_files_it_reads_whole")
+@UNBUILT
 def test_a_mark_is_judged_by_order_before_its_reads(e: Events):
     """Given the writer that marked no step and read nothing
     When it marks `report`
@@ -564,6 +591,7 @@ def test_a_mark_is_judged_by_order_before_its_reads(e: Events):
 
 
 @pytest.mark.supports("test_a_mark_is_checked_for_the_files_it_reads_whole_before_its_items")
+@UNBUILT
 def test_a_mark_is_judged_by_its_reads_before_its_items(e: Events):
     """Given the writer that read nothing and marked no item
     When it marks `write`
@@ -575,6 +603,7 @@ def test_a_mark_is_judged_by_its_reads_before_its_items(e: Events):
 
 
 @pytest.mark.supports("test_a_step_marked_once_each_item_is_done_holds")
+@UNBUILT
 def test_a_mark_that_breaks_no_rule_holds(e: Events):
     """Given the writer that read NOTES.md whole and marked each item
     When it marks `write`
@@ -584,6 +613,7 @@ def test_a_mark_that_breaks_no_rule_holds(e: Events):
 
 
 @pytest.mark.supports("test_an_end_with_no_result_names_the_result_before_the_check")
+@UNBUILT
 def test_an_end_is_judged_by_its_result_before_its_steps_and_its_check(e: Events, cwd: str):
     """Given a check that leaves a file where it runs, and the writer that marked each step and gave
     no result
@@ -599,6 +629,7 @@ def test_an_end_is_judged_by_its_result_before_its_steps_and_its_check(e: Events
 
 
 @pytest.mark.supports("test_an_end_with_a_step_undone_names_the_step_before_the_check")
+@UNBUILT
 def test_an_end_is_judged_by_its_steps_before_its_check(e: Events, cwd: str):
     """Given a check that leaves a file where it runs, and the writer that gave `written` and
     marked `write` alone
@@ -614,6 +645,7 @@ def test_an_end_is_judged_by_its_steps_before_its_check(e: Events, cwd: str):
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
+@UNBUILT
 def test_an_end_whose_result_and_steps_hold_is_judged_by_its_check(e: Events, cwd: str):
     """Given the writer that gave `written` and marked each step, its CHANGELOG.md holding no
     entry of 1.2.0
@@ -628,6 +660,7 @@ def test_an_end_whose_result_and_steps_hold_is_judged_by_its_check(e: Events, cw
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_passes_goes_through")
+@UNBUILT
 def test_an_end_that_breaks_no_rule_holds(e: Events):
     """Given the writer that gave `written` and marked each step, its CHANGELOG.md holding the
     entry
@@ -653,6 +686,7 @@ def ending_at(step: int) -> Rules:
 @pytest.mark.supports(
     "test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone"
 )
+@UNBUILT
 def test_a_result_that_ends_the_start_holds_its_rule(e: Events):
     """Given a rule of results that names `unclear` among those that end the start
     When the writer that gave `unclear` ends
@@ -663,6 +697,7 @@ def test_a_result_that_ends_the_start_holds_its_rule(e: Events):
 
 
 @pytest.mark.supports("test_an_end_with_a_result_that_the_rule_doesnt_name_is_stopped")
+@UNBUILT
 def test_an_end_with_a_result_of_neither_kind_names_each_result_it_may_give(e: Events):
     """Given a rule of results that names `written`, and `unclear` among those that end the start
     When the writer that gave `fine` ends
@@ -678,6 +713,7 @@ def test_an_end_with_a_result_of_neither_kind_names_each_result_it_may_give(e: E
 @pytest.mark.supports(
     "test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone"
 )
+@UNBUILT
 def test_an_end_with_a_result_that_ends_the_start_at_its_step_holds_with_later_steps_undone(
     e: Events, cwd: str
 ):
@@ -695,6 +731,7 @@ def test_an_end_with_a_result_that_ends_the_start_at_its_step_holds_with_later_s
 @pytest.mark.supports(
     "test_a_result_that_ends_the_start_at_a_later_step_leaves_the_steps_before_it_held"
 )
+@UNBUILT
 def test_an_end_with_a_result_that_ends_the_start_at_a_later_step_holds_the_steps_before_it(
     e: Events,
 ):
@@ -716,6 +753,7 @@ def test_an_end_with_a_result_that_ends_the_start_at_a_later_step_holds_the_step
     "test_the_turns_end_in_a_run_of_a_plugin_with_no_order_is_held_to_its_skills_check"
 )
 @pytest.mark.parametrize("there, stops", [(False, True), (True, False)])
+@UNBUILT
 def test_the_main_conversations_turn_end_is_judged_by_its_skills_check(
     e: Events, cwd: str, there: bool, stops: bool
 ):

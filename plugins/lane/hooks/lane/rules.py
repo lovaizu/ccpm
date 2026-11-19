@@ -3,7 +3,11 @@ holding a plugin's file to that form."""
 
 from __future__ import annotations
 
-from typing import TypedDict
+import json
+import os
+from typing import TypedDict, cast
+
+from json_form import held
 
 
 class Rule(TypedDict, total=False):
@@ -78,4 +82,21 @@ def read_rules(plugin_root: str) -> Rules | None:
     Changes: nothing.
     Refuses: OutOfForm, where the file can't be read as JSON or breaks the form.
     """
-    raise NotImplementedError("rules.read_rules")
+    path = os.path.join(plugin_root, "lane", "rules.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    except FileNotFoundError:
+        return None
+    try:
+        rules = json.loads(text)
+    except ValueError as error:
+        raise OutOfForm(f"Lane: {path} isn't JSON: {error}. {_MEND}") from None
+    left = held(rules, "rules.schema.json")
+    if left is not None:
+        raise OutOfForm(f"Lane: {path}, at {left}. {_MEND}")
+    return cast(Rules, rules)
+
+
+# What the plugin's author does with a file out of Lane's form.
+_MEND = "The plugin's author mends it to the form of Lane's hooks/lane/rules.schema.json."

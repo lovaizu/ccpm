@@ -13,8 +13,6 @@ import pytest
 from repo_files import write_files
 from rules import OutOfForm, read_rules
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 
 def plugin_with(folder: str, rules: Any) -> str:
     """A plugin in the folder whose lane/rules.json holds the rules, as JSON where they aren't

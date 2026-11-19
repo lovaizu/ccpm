@@ -16,7 +16,8 @@ def asks_adapter(rules: Rules, role: str) -> bool:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("start_rules.asks_adapter")
+    named = rules["roles"].get(role)
+    return named is not None and "steps" not in named
 
 
 def steps(rules: Rules, role: str, given: list[Step] | None) -> list[Step]:
@@ -30,4 +31,7 @@ def steps(rules: Rules, role: str, given: list[Step] | None) -> list[Step]:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("start_rules.steps")
+    named = rules["roles"].get(role)
+    if named is None:
+        return []
+    return named.get("steps", given or [])

@@ -8,9 +8,7 @@ from __future__ import annotations
 import os
 
 import pytest
-from lane_bench import ENTRY, UNBUILT, Bench, opened, started
-
-pytestmark = UNBUILT
+from lane_bench import ENTRY, Bench, opened, started
 
 
 @pytest.mark.supports("S1", "rule types")
