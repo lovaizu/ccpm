@@ -142,6 +142,8 @@ No. Lane checks only your skill's run, from its call until its routes start no m
 
 ## Documentation
 
+- [Rules and adapters](docs/rules-and-adapters.md): for you when you write your plugin's rules,
+  what Lane takes in and gives out.
 - [Changelog](CHANGELOG.md): for you when you update Lane, the changes in each version.
 - [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 
