@@ -14,12 +14,23 @@ if ! command -v npm >/dev/null 2>&1; then
     "by \`npm ci\`: https://nodejs.org/en/download" >&2
   exit 1
 fi
+# Removes the copy being checked, if any, where the check fails or stops, and git's entry for it.
+copy=""
+remove_copy() {
+  [ -z "$copy" ] || { git worktree remove --force "$copy" 2>/dev/null; rm -rf "$copy"; }
+  git worktree prune
+}
+trap remove_copy EXIT
+# A shell stopped by a signal, as when a person stops a push or a tool times it out, skips the trap
+# on exit, so each signal removes the copy too, and then stops the shell by itself.
+for stop in INT TERM HUP; do
+  trap "remove_copy; trap - EXIT $stop; kill -s $stop \$\$" $stop
+done
 zero=0000000000000000000000000000000000000000
 while read -r _ local _ _; do
   [ "$local" = "$zero" ] && continue
   # The commits pushed, not what the working tree holds beside them, in a worktree.
   copy=$(mktemp -d)
-  trap 'git worktree remove --force "$copy" 2>/dev/null; rm -rf "$copy"' EXIT
   git worktree add -q --detach "$copy" "$local"
   # git gives a hook the repository it runs for, such as GIT_DIR, which the git repositories the
   # tests make would take as theirs.
@@ -28,6 +39,5 @@ while read -r _ local _ _; do
     && (cd dev/scripts && npm ci --ignore-scripts --no-audit --no-fund --silent) \
     && uv run --no-sync sh dev/scripts/check.sh)
   git worktree remove --force "$copy"
-  # Removed, so the cleanup on exit, which stops the push where it fails, has nothing left to do.
-  trap - EXIT
+  copy=""
 done

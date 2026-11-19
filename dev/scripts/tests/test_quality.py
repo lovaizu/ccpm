@@ -10,19 +10,22 @@ from __future__ import annotations
 
 import os
 import shutil
+import signal
 import tempfile
 import unittest
 
-from helpers import GIT_ENV, TOP, executable, git_in, ran_in
+from helpers import GIT_ENV, TOP, executable, git_in, ran_in, stopped_in
 
 # Each stand-in writes the command it ran, and, for pytest, the profile of the property-based tests.
 LOGGED = '#!/bin/sh\necho "$(basename "$0") $* ${HYPOTHESIS_PROFILE:-}" >> "$LOG"\n'
+# pytest, where SLOW names a file, writes it and waits, so that a test can stop quality.sh.
+PYTEST = LOGGED + '[ -z "${SLOW:-}" ] || { : > "$SLOW"; sleep 60; }\n'
 # cr-filter-git writes the configuration it read, where the branch it compares with lies.
 FILTER_GIT = LOGGED + 'cat "$2" >> "$LOG"\n'
 # cr-rate gives the share of mutants that survived, as RATE sets it.
 RATE = LOGGED + 'echo "${RATE:-0.00}"\n'
 TOOLS = {
-    "pytest": LOGGED,
+    "pytest": PYTEST,
     "cosmic-ray": LOGGED,
     "cr-filter-pragma": LOGGED,
     "cr-filter-operators": LOGGED,
@@ -42,7 +45,10 @@ class QualityTest(unittest.TestCase):
         os.makedirs(bin_)
         for name, text in TOOLS.items():
             executable(os.path.join(bin_, name), text)
-        self.env = dict(os.environ, **GIT_ENV, LOG=self.log)
+        # mktemp makes quality.sh's scratch folder here, where a test sees what stays.
+        self.tmp = os.path.join(self.dir, "tmp")
+        os.makedirs(self.tmp)
+        self.env = dict(os.environ, **GIT_ENV, LOG=self.log, TMPDIR=self.tmp)
         # The repository's trace.py is a copy that goes with the test, so coverage, which counts
         # trace.py by its name, measures no run of it.
         self.env.pop("COVERAGE_PROCESS_START", None)
@@ -160,6 +166,18 @@ class QualityTest(unittest.TestCase):
         result = self.quality()
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("http://127.0.0.1:9/docs: can't be read", result.stdout + result.stderr)
+
+    def test_quality_stopped_by_a_signal_stops_and_leaves_no_scratch_folder(self):
+        started = os.path.join(self.dir, "started")
+        for stop in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+            with self.subTest(signal=stop.name):
+                # When: the signal stops quality.sh while the property-based tests run.
+                env = dict(self.env, SLOW=started)
+                code = stopped_in(self.repo, env, "", started, stop, "sh", "dev/scripts/quality.sh")
+                # Then: it stops by the signal, and its scratch folder doesn't stay.
+                self.assertEqual(code, -stop)
+                self.assertEqual(os.listdir(self.tmp), [])
+                os.remove(started)
 
 
 if __name__ == "__main__":

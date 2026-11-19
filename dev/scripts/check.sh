@@ -8,6 +8,11 @@ set -e
 # What the checks write for themselves, such as complexipy's cache and coverage's data.
 scratch="$(mktemp -d)"
 trap 'rm -r "$scratch"' EXIT
+# A shell stopped by a signal, as when a person stops a push or a tool times it out, skips the trap
+# on exit, so each signal removes the folder too, and then stops the shell by itself.
+for stop in INT TERM HUP; do
+  trap "rm -r \"\$scratch\"; trap - EXIT $stop; kill -s $stop \$\$" $stop
+done
 
 # The guard that the earlier Lane laid in another plugin, plugins/<name>/hooks/lane/, is a copy of
 # Lane's earlier code, which the plugin drops once it depends on Lane, so no check reads it as that

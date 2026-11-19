@@ -1,14 +1,16 @@
 """What the tests of dev/scripts stand on: the top of the repository, a git that reads no setting
-of the machine the tests run on, a PATH with one command left out, and a temporary folder for each
-test."""
+of the machine the tests run on, a PATH with one command left out, a temporary folder for each
+test, and a run stopped by a signal."""
 
 from __future__ import annotations
 
 import json
 import os
 import shutil
+import signal
 import subprocess
 import tempfile
+import time
 import unittest
 from typing import Any
 
@@ -94,3 +96,32 @@ def ran_in(repo: str, env: dict[str, str], *command: str) -> subprocess.Complete
     return subprocess.run(
         list(command), cwd=repo, env=env, capture_output=True, text=True, check=False
     )
+
+
+def stopped_in(
+    repo: str, env: dict[str, str], given: str, started: str, stop: signal.Signals, *command: str
+) -> int:
+    """Runs the command in the repository in a process group of its own, given the text on its
+    standard input, sends the signal to the whole group once the file started exists, as a person
+    who stops it at the terminal or a tool that times it out does, and returns its exit code."""
+    with subprocess.Popen(
+        list(command),
+        cwd=repo,
+        env=env,
+        stdin=subprocess.PIPE,
+        text=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    ) as run:
+        assert run.stdin is not None
+        run.stdin.write(given)
+        run.stdin.close()
+        deadline = time.monotonic() + 30
+        while not os.path.exists(started) and run.poll() is None:
+            if time.monotonic() > deadline:
+                os.killpg(run.pid, signal.SIGKILL)
+                raise AssertionError(f"{started} never appeared")
+            time.sleep(0.05)
+        os.killpg(run.pid, stop)
+        return run.wait(timeout=30)

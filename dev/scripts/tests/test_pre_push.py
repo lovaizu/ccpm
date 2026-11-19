@@ -7,18 +7,21 @@ from __future__ import annotations
 
 import os
 import shutil
+import signal
 import subprocess
 import tempfile
 import unittest
 
-from helpers import GIT_ENV, TOP, executable, git_in, without
+from helpers import GIT_ENV, TOP, executable, git_in, stopped_in, without
 
 ZERO = "0" * 40
 
 # The stand-in for check.sh fails where the commit checked holds a file named bad, and writes
-# where it ran and what it got.
+# where it ran and what it got. Where the commit holds a file named slow, it writes that it started
+# and waits, so that a test can stop it.
 CHECK = """#!/bin/sh
 echo "$PWD $*" >> "$LOG/check"
+[ ! -e slow ] || { : > "$LOG/started"; sleep 60; }
 [ ! -e bad ]
 """
 # The stand-in for uv runs, for `uv run --no-sync`, the command after it, and does nothing else.
@@ -35,9 +38,11 @@ class PrePushTest(unittest.TestCase):
         self.repo = os.path.join(self.dir, "repo")
         self.log = os.path.join(self.dir, "log")
         self.bin = os.path.join(self.dir, "bin")
-        os.makedirs(self.log)
-        os.makedirs(self.bin)
-        self.env = dict(os.environ, **GIT_ENV, LOG=self.log)
+        # mktemp makes the copy of the commits pushed here, where a test sees what stays.
+        self.tmp = os.path.join(self.dir, "tmp")
+        for folder in (self.log, self.bin, self.tmp):
+            os.makedirs(folder)
+        self.env = dict(os.environ, **GIT_ENV, LOG=self.log, TMPDIR=self.tmp)
         self.env["PATH"] = self.bin + os.pathsep + self.env["PATH"]
         for name, text in (("uv", UV), ("npm", NPM)):
             executable(os.path.join(self.bin, name), text)
@@ -140,6 +145,29 @@ class PrePushTest(unittest.TestCase):
                 self.assertNotEqual(done.returncode, 0)
                 self.assertIn(f"{tool} isn't on PATH", done.stderr)
                 self.assertEqual(self.read("check"), [])
+
+    def test_a_push_stopped_by_a_signal_stops_and_leaves_no_copy(self):
+        # Given: a commit whose check runs until it is stopped.
+        local = self.commit("slow", "")
+        given = f"refs/heads/b {local} refs/heads/b {self.main}\n"
+        for stop in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+            with self.subTest(signal=stop.name):
+                os.makedirs(self.log, exist_ok=True)
+                # When: the signal stops the push while the check runs.
+                code = stopped_in(
+                    self.repo,
+                    self.env,
+                    given,
+                    os.path.join(self.log, "started"),
+                    stop,
+                    "sh",
+                    "dev/scripts/pre-push.sh",
+                )
+                # Then: the push stops by the signal, and neither the copy nor its worktree stays.
+                self.assertEqual(code, -stop)
+                self.assertEqual(os.listdir(self.tmp), [])
+                self.assertEqual(len(self.worktrees()), 1)
+                shutil.rmtree(self.log)
 
 
 if __name__ == "__main__":

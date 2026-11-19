@@ -27,6 +27,11 @@ fi
 
 scratch="$(mktemp -d)"
 trap 'rm -r "$scratch"' EXIT
+# A shell stopped by a signal, as when a person stops a push or a tool times it out, skips the trap
+# on exit, so each signal removes the folder too, and then stops the shell by itself.
+for stop in INT TERM HUP; do
+  trap "rm -r \"\$scratch\"; trap - EXIT $stop; kill -s $stop \$\$" $stop
+done
 
 # Whether a line under the paths changed since the base, or the whole is checked.
 changed() {
