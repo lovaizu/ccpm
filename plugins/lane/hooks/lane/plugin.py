@@ -16,7 +16,9 @@ def plugin_root(transcript_path: str, skill: str) -> str | None:
     Takes: the conversation's `transcript_path`, and the skill's name as its call gives it, such as
     `<plugin>:<skill>`.
     Gives: the plugin's folder, from the latest line of the transcript that opens
-    `Base directory for this skill: <the plugin's folder>/skills/<skill>`; None where the
+    `Base directory for this skill: <the plugin's folder>/skills/<skill>` whose folder is the
+    plugin's: the plugin that the folder's .claude-plugin/plugin.json names, or, where the folder
+    holds none, the plugin of the folder's own name, as Claude Code names a plugin; None where the
     transcript holds no such line for the skill.
     Changes: nothing.
     Refuses: OSError, where the transcript can't be read.
@@ -27,9 +29,18 @@ def plugin_root(transcript_path: str, skill: str) -> str | None:
         for line in f:
             for text in _texts(json.loads(line)):
                 folder, _, rest = text[len(_OPENS) :].partition("\n")[0].rpartition("/skills/")
-                if text.startswith(_OPENS) and rest == name and os.path.basename(folder) == plugin:
+                if text.startswith(_OPENS) and rest == name and _named(folder) == plugin:
                     found = folder
     return found
+
+
+def _named(folder: str) -> str:
+    """The name of the plugin in the folder, by its manifest, else by the folder's name."""
+    try:
+        with open(os.path.join(folder, ".claude-plugin", "plugin.json"), encoding="utf-8") as f:
+            return json.load(f)["name"]
+    except FileNotFoundError:
+        return os.path.basename(folder)
 
 
 def _texts(line: object) -> list[str]:

@@ -63,6 +63,16 @@ def test_a_file_that_isnt_json_is_out_of_form_naming_the_file(tmp_path: Any):
 
 
 @pytest.mark.supports("test_rules_out_of_form_stop_the_call_saying_what_the_author_mends")
+def test_rules_of_a_wrong_type_are_out_of_form_naming_what_the_form_takes(tmp_path: Any):
+    """Given a plugin whose lane/rules.json holds a list at its top
+    When Lane reads its rules
+    Then it refuses with OutOfForm naming the file and the object that the form takes there"""
+    said = refused(str(tmp_path), [lane_bench.RULES])
+    assert "lane/rules.json" in said
+    assert "the top: takes object" in said
+
+
+@pytest.mark.supports("test_rules_out_of_form_stop_the_call_saying_what_the_author_mends")
 def test_rules_without_roles_are_out_of_form_naming_them(tmp_path: Any):
     """Given rules that lack their roles
     When Lane reads them

@@ -144,9 +144,7 @@ def start_made(move: Move) -> Answer:
         "prompt": move.prompt or "",
     }
     if asks_adapter(_rules(move.run), role):
-        cwd = move.event["cwd"]
-        given = adapters.given_steps(_root(move.run), cwd, move.run, role, entry["prompt"])
-        entry["steps"] = given
+        raise NotImplementedError("guard.start_made of a start whose steps the adapter gives")
     record.add(move.run.session_id, [entry])
     return Answer()
 

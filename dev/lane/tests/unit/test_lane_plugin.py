@@ -10,6 +10,7 @@ from typing import Any
 import pytest
 from lane_events import base_directory
 from plugin import plugin_root
+from repo_files import write_files
 
 
 def transcript_in(tmp: Any) -> str:
@@ -32,6 +33,21 @@ def test_the_skills_base_directory_gives_its_plugins_folder(tmp_path: Any):
     transcript = transcript_in(tmp_path)
     base_directory(transcript, "/plugins/log", "up")
     assert plugin_root(transcript, "log:up") == "/plugins/log"
+
+
+@pytest.mark.supports(
+    "test_the_starts_due_come_at_the_main_conversations_next_event_after_the_skills_call"
+)
+def test_an_installed_plugins_folder_is_found_by_the_name_its_manifest_gives(tmp_path: Any):
+    """Given a transcript holding the base directory of log:up in an installed plugin's folder,
+    cache/ccpm/log/0.1.0/, whose .claude-plugin/plugin.json names log
+    When Lane looks for the folder of the plugin of log:up
+    Then it's that version's folder"""
+    installed = os.path.join(str(tmp_path), "cache", "ccpm", "log", "0.1.0")
+    write_files(installed, {".claude-plugin/plugin.json": json.dumps({"name": "log"})})
+    transcript = transcript_in(tmp_path)
+    base_directory(transcript, installed, "up")
+    assert plugin_root(transcript, "log:up") == installed
 
 
 @pytest.mark.supports(

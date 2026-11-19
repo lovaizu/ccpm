@@ -116,6 +116,15 @@ def test_a_skill_tool_call_before_it_runs_calls_no_skill(e: Events):
     assert skill_call(e.skill_pre("log:up", "1.2.0"), []) is None
 
 
+@pytest.mark.supports("test_work_outside_a_run_of_a_plugin_with_rules_is_left_alone")
+def test_a_skill_that_no_plugin_holds_calls_no_skill(e: Events):
+    """Given the UserPromptExpansion of the person's own skill /hi, whose name has no plugin's
+    prefix
+    When Lane reads which skill it calls
+    Then it calls none, as Lane checks only a plugin's skill"""
+    assert skill_call(e.typed("hi"), []) is None
+
+
 @pytest.mark.supports("test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it")
 def test_any_other_event_calls_no_skill(e: Events):
     """Given the main conversation's Stop
@@ -143,12 +152,13 @@ def test_a_command_that_a_route_of_the_standing_run_goes_after_calls_no_skill(e:
 
 
 @pytest.mark.supports("test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run")
-@UNBUILT
 def test_a_command_of_the_plugin_whose_run_ended_calls_its_skill(e: Events):
-    """Given a run of log:up in log's folder that ended with the reviewer's `good`
+    """Given a run of log:up in log's folder that ended with the reviewer's `good`, its record
+    holding its `ended` entry
     When the UserPromptExpansion of /log:up 1.3.0 comes
     Then it calls log:up with 1.3.0"""
-    called = skill_call(e.typed("log:up", "1.3.0"), [run(*GOOD)])
+    ended: Entry = {"kind": "ended", "run": "r1"}
+    called = skill_call(e.typed("log:up", "1.3.0"), [run(*GOOD, ended)])
     assert called == SkillCall("session-1", e.transcript, "log:up", "1.3.0")
 
 

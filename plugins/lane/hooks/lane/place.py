@@ -60,8 +60,9 @@ def skill_call(event: Event, runs: list[Run]) -> SkillCall | None:
     Takes: a UserPromptExpansion, or a PostToolUse of Skill, so that a Skill call denied at its
     PreToolUse calls no skill; and the runs of its conversation.
     Gives: the skill by `command_name` or `tool_input.skill`, with `command_args` or `args`, only
-    where no run of the skill's plugin, by the name before its `:`, stands in the conversation:
-    where each such run holds an `ended` entry, or none was added. None for a command, typed or by
+    where the skill's name holds its plugin's prefix, as Lane checks only a plugin's skill, and no
+    run of the skill's plugin, by the name before its `:`, stands in the conversation: where each
+    such run holds an `ended` entry, or none was added. None for a command, typed or by
     the Skill tool, of a plugin whose run stands, with no folder yet or not ended, as that command
     is a `typed` move of the run, which place gives; and for any other event.
     Changes: nothing.
@@ -74,8 +75,10 @@ def skill_call(event: Event, runs: list[Run]) -> SkillCall | None:
         skill, words = event["tool_input"]["skill"], event["tool_input"].get("args", "")
     else:
         return None
-    plugin = skill.partition(":")[0]
-    if any(run.skill.partition(":")[0] == plugin and not _ended(run) for run in runs):
+    plugin, prefixed, _ = skill.partition(":")
+    if not prefixed or any(
+        run.skill.partition(":")[0] == plugin and not _ended(run) for run in runs
+    ):
         return None
     return SkillCall(event["session_id"], event["transcript_path"], skill, words)
 

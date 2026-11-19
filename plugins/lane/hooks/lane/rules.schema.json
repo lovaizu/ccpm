@@ -71,7 +71,7 @@
       "description": "One rule of a step, of one type of rule_types/ with that type's values.",
       "oneOf": [
         {
-          "description": "S1: the files the step writes; a folder lets through each file under it.",
+          "description": "S1: the files the step writes; a path that closes with / names a folder, which lets through each file under it.",
           "type": "object",
           "required": ["type", "paths"],
           "additionalProperties": false,
