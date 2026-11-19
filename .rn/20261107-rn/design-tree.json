@@ -1454,7 +1454,7 @@
             },
             {
               "about": "Where each start's Cut comes from",
-              "decided": "the orchestrator runs scripts/cut.py for each start, which writes a fresh Cut for the role's next start due in the run's folder by cut.write and prints its path, and names that path in the start's prompt; a Cut with no result beside it counts for nothing in the course, as a start that didn't end",
+              "decided": "the orchestrator runs scripts/cut.py for each start, which picks the start due with the fewest Cuts with no result, the first in the course's order on a tie, writes a fresh Cut for it in the run's folder by cut.write, and prints its path, which the start's prompt names; the course counts only Cuts with a result",
               "by": "reasoning"
             },
             {
