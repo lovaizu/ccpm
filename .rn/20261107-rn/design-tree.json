@@ -209,7 +209,7 @@
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/rules-and-adapters.md",
       "kind": "specific",
-      "status": "open",
+      "status": "doing",
       "check": "each rule type and each adapter that Lane's code reads is defined, and each definition matches the code",
       "inputs": [
         "dev/lane/architecture.md",
@@ -985,7 +985,7 @@
         "plugins/rn",
         "dev/rn/tests"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -993,7 +993,7 @@
           "decisions": [
             {
               "about": "The parts filled",
-              "decided": "the bodies that S1's integration cases reach: scripts/tree.py with tree/'s design, inputs, work, status, git, and commit, and schemas/form.py, for each commit of the design tree; lane/adapters/due.py with tree/'s course, for the starts due; and scripts/check.py with check/, for each role's end",
+              "decided": "the bodies that S1's integration cases reach and that aren't built: lane/adapters/starts_due.py, the starts due from the design tree's course and the run's end, and lane/adapters/rules.py, each start's steps from its Cut, each with its unit cases passing",
               "by": "reasoning"
             },
             {
