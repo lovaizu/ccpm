@@ -257,7 +257,7 @@
         "dev/lane/tests",
         "dev/rn/tests"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
