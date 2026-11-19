@@ -318,41 +318,6 @@
               "about": "The design tree's check of a decided",
               "decided": "the design tree schema refuses a decided that names who decided it or holds a date, as its ground goes in the commit message",
               "by": "user"
-            },
-            {
-              "about": "Where a round's best practice and the groups it judges lie",
-              "decided": "a new module of tree.py, course, decides each round's best practice, the kind's for content and then the refactor one for structure, two rounds of each at most since the deliverable's latest sign-off sent back, and the groups a round judges: each in a phase's first round, and in a later one each group that holds a condition whose decisions changed since the round before, or, of the refactor one, a condition of a More kept; cut takes the generator's and each evaluator's due round from it",
-              "by": "maker"
-            },
-            {
-              "about": "Where the work order lies",
-              "decided": "a new module of tree.py, work, decides the work's form beyond the schema: it rewrites an item whose node a change renames, and refuses an item that names no node or comes before a deliverable that its inputs name and that isn't done; turn gives each turn in its order",
-              "by": "maker"
-            },
-            {
-              "about": "Where the check of inputs lies",
-              "decided": "a new module of tree.py, inputs, refuses a deliverable of a best practice's kind where a kind that the best practice names in inputs has neither an input node of that kind nor an input file outside the tree's nodes left, one such file for each kind left, as tree.py can tell the kind of a node alone",
-              "by": "maker"
-            },
-            {
-              "about": "A node with no file",
-              "decided": "turn gives it its turn as any deliverable, and cut gives no start of a generator or an evaluator for it, as the orchestrator settles its decisions",
-              "by": "maker"
-            },
-            {
-              "about": "The generator's Cut in a round",
-              "decided": "it names in best_practice the best practice its round works by, the kind's in a round of content and the refactor one in a round of structure, and names no other, so that record.py holds its record to that one alone",
-              "by": "maker"
-            },
-            {
-              "about": "Where a deliverable's rounds start again",
-              "decided": "a deliverable's sign-off keeps the number of its latest round when it's put up, and course counts only the rounds after the latest such number",
-              "by": "maker"
-            },
-            {
-              "about": "When a round of structure comes",
-              "decided": "a round is of structure once the round before is of structure, or once two rounds of content have run, or once each evaluator of the latest round of content has answered and no decision under the deliverable changed since its cut",
-              "by": "maker"
             }
           ]
         },
@@ -369,13 +334,7 @@
         {
           "id": "N4",
           "good": false,
-          "decisions": [
-            {
-              "about": "The gaps",
-              "decided": "none, as the kind of an input file outside the tree, which tree.py can't tell, is checked by the count of the kinds left, as the decision on the check of inputs says",
-              "by": "maker"
-            }
-          ]
+          "decisions": []
         }
       ]
     },
@@ -461,13 +420,7 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": [
-            {
-              "about": "Which bodies the walking skeleton builds again, as rn's skeleton of the More kept emptied them",
-              "decided": "tree.py write's change, results.read_made, rounds.each, and tree.py round, in the forms that key a More kept by its best practice and condition and give each Answers its best practice, as every case that writes the design tree fails on the first, and the walking skeleton's round on the rest; each case marked CHANGE loses its mark as it passes",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         }
       ]
     },
@@ -486,13 +439,7 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": [
-            {
-              "about": "Which bodies S1 builds of the More kept",
-              "decided": "more.keepable, rounds.keep_more, and rounds.kept_more, each by its contract in the skeleton, so that a More kept is one for each best practice and condition, and refused where the decision it names isn't under its deliverable or didn't change; each case marked MORE loses its mark as it passes",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N2",
@@ -599,23 +546,7 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": [
-            {
-              "about": "The fault that the cases derived again on 2026-11-18 showed",
-              "decided": "a turn that puts work up is held to the pass begun after the end of the turn before, which rn's check marks in the orchestrator's record once it passes a turn, and lacks each step where it records no step 1, as rn's architecture now draws in S3 (the strict xfail at plugins/rn/domain/record/check.py:72 follows it)",
-              "by": "reasoning"
-            },
-            {
-              "about": "The commands a turn is held to",
-              "decided": "a turn after a mark is held to the steps of each command it recorded since that mark and to the orchestrator's part, and the first turn of a run to up's too, as the orchestrator's steps go on from the steps of the command the person typed",
-              "by": "reasoning"
-            },
-            {
-              "about": "The turn mark",
-              "decided": "taken out of rn's check, its record's form, and its cases, as rn's architecture now holds the turn to the latest pass from step 1",
-              "by": "user"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N2",
@@ -721,13 +652,7 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": [
-            {
-              "about": "The fault that the cases derived again on 2026-11-18 showed",
-              "decided": "a role started again at the step it stood at passes rn's check once it takes the steps from that step, with no step 1 in its new record, as its part has it go on from there (strict xfail at plugins/rn/domain/record/order.py:31)",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N2",
@@ -892,13 +817,7 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": [
-            {
-              "about": "The fault that the cases derived again on 2026-11-18 showed",
-              "decided": "rn's check takes a step recorded again after a later step within a pass, and a practice recorded within the steps and again after the last, as each role records a step and a practice at each place that shows it (strict xfail in dev/rn/tests/unit/test_rn_record_lacks.py, at plugins/rn/domain/record/order.py:66 and :75)",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N2",
