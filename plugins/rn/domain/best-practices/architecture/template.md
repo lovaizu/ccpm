@@ -23,8 +23,8 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<idea>`: the one idea by which the product turns what its roles bring into what the README
->   promises, in one sentence.
+> - `<idea>`: the one idea by which the product delivers what the README promises, from the
+>   sentence that opens the product vision's Concept, in one sentence.
 > - `<value>`: what the principle values, in a few words.
 > - `<decision>`: one decision that carries out the principle, in one sentence, with no name that a
 >   later section decides, such as a component, a data, a tool, or a count.

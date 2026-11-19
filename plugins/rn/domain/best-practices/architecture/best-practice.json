@@ -24,15 +24,11 @@
        },
        {
         "at": "decide",
-        "text": "In the README's How it works, take the first way it states, from the product vision's concept, by which the product brings its users to their objectives, such as keeping every decision of a run in one file that each role reads."
-       },
-       {
-        "at": "decide",
-        "text": "Ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into, such as a request typed in a session turned into a deliverable that passed its checks."
+        "text": "Take the sentence that opens the product vision's Concept, the one idea by which the product brings its users to their objectives, such as piling up the vital few that bring a deliverable's people to their aim."
        },
        {
         "at": "make",
-        "text": "Write the answer in one sentence that a developer can hold in mind while building any part, and put it first in Principles, before the principles that follow from it."
+        "text": "Write it in one sentence that a developer can hold in mind while building any part, and put it first in Principles, before the principles that follow from it."
        },
        {
         "at": "make",
@@ -110,19 +106,23 @@
       "items": [
        {
         "at": "decide",
-        "text": "Derive the decisions of Principles from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation."
+        "text": "Take each idea of the product vision's Concept, each key result, each user story that spans parts, and each constraint of the host, of development, or of operation, such as how much one conversation holds, and ask what every part must value for the one idea to keep holding there, such as nothing lost on a stop."
        },
        {
         "at": "decide",
-        "text": "For each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each thing that every part must hold alike is a decision of Principles."
+        "text": "Name each value in the people's words, as a few words that a developer weighs a case by, and write it as a principle, `P<n>`. Where two sources give the same value, keep one."
        },
        {
         "at": "decide",
-        "text": "Group the decisions by what they value, such as the people's aim or nothing lost on a stop, and write each group as a principle, `P<n>`, with what it values in a few words."
+        "text": "Under each value, ask what every part must hold alike for it to come true, such as where the work's state lives. Take each from a doubt of the README's How it works whose answer the value keeps. For a value that comes from a story or a constraint and keeps no doubt's answer, take each from what that story or constraint needs. A part that held it otherwise would break a key result. Each is a decision of the principle."
        },
        {
         "at": "make",
         "text": "Write each decision under its principle as `P<n>.<m>`, one decision in one sentence, without any name that a later section decides, such as a component, a data, a tool, or a count, since Principles comes before the sections that decide them."
+       },
+       {
+        "at": "make",
+        "text": "Check that each doubt of the README's How it works lands in a value, and derive again the value it keeps where it lands in none. Remove each value that holds no decision, as it gives a developer nothing to hold to."
        },
        {
         "at": "make",

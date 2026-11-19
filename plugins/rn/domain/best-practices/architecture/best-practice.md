@@ -43,10 +43,9 @@ Does Principles state first, in one sentence, the one idea by which the product 
 Each view carries out one idea, and a developer who knows the idea builds a part that serves it. The [solution strategy](https://docs.arc42.org/section-4/) of arc42 sums up first the few decisions that shape the whole.
 
 1. *While deciding.* Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end. The trace: `{inputs}` read to its end.
-2. *While deciding.* In the README's How it works, take the first way it states, from the product vision's concept, by which the product brings its users to their objectives, such as keeping every decision of a run in one file that each role reads.
-3. *While deciding.* Ask how the system as a whole makes that way work: what it takes in from the roles, and what it turns that into, such as a request typed in a session turned into a deliverable that passed its checks.
-4. *While making.* Write the answer in one sentence that a developer can hold in mind while building any part, and put it first in Principles, before the principles that follow from it.
-5. *While making.* After writing the rest, read each component's line as a developer who knows only the idea, and check that they can see which piece of the idea it carries out. Change the idea or the component where they can't.
+2. *While deciding.* Take the sentence that opens the product vision's Concept, the one idea by which the product brings its users to their objectives, such as piling up the vital few that bring a deliverable's people to their aim.
+3. *While making.* Write it in one sentence that a developer can hold in mind while building any part, and put it first in Principles, before the principles that follow from it.
+4. *While making.* After writing the rest, read each component's line as a developer who knows only the idea, and check that they can see which piece of the idea it carries out. Change the idea or the component where they can't.
 
 ### N2
 
@@ -78,12 +77,13 @@ Does each principle name what it values, and each of its items one decision, wit
 
 Developers of different parts meet the same kind of decision, and decide it apart unless a decision that every view follows settles it. A principle that names what it values carries a developer to a case that no decision names.
 
-1. *While deciding.* Derive the decisions of Principles from the README's How it works, which answers each doubt of the users from an idea of the product vision's concept, and from the needs of development and operation.
-2. *While deciding.* For each answer and each need, ask what every part must hold alike for it to come true, such as where the work's state lives. A part that held it otherwise would break a key result. Each thing that every part must hold alike is a decision of Principles.
-3. *While deciding.* Group the decisions by what they value, such as the people's aim or nothing lost on a stop, and write each group as a principle, `P<n>`, with what it values in a few words.
+1. *While deciding.* Take each idea of the product vision's Concept, each key result, each user story that spans parts, and each constraint of the host, of development, or of operation, such as how much one conversation holds, and ask what every part must value for the one idea to keep holding there, such as nothing lost on a stop.
+2. *While deciding.* Name each value in the people's words, as a few words that a developer weighs a case by, and write it as a principle, `P<n>`. Where two sources give the same value, keep one.
+3. *While deciding.* Under each value, ask what every part must hold alike for it to come true, such as where the work's state lives. Take each from a doubt of the README's How it works whose answer the value keeps. For a value that comes from a story or a constraint and keeps no doubt's answer, take each from what that story or constraint needs. A part that held it otherwise would break a key result. Each is a decision of the principle.
 4. *While making.* Write each decision under its principle as `P<n>.<m>`, one decision in one sentence, without any name that a later section decides, such as a component, a data, a tool, or a count, since Principles comes before the sections that decide them.
-5. *While making.* Where your cut names an architecture that the product builds on, point to its principles, and write only what this product adds or changes.
-6. *While making.* Take a case that no decision names, and decide it from each principle's value as two developers of different parts would. Where they differ, sharpen the decision that left the case open.
+5. *While making.* Check that each doubt of the README's How it works lands in a value, and derive again the value it keeps where it lands in none. Remove each value that holds no decision, as it gives a developer nothing to hold to.
+6. *While making.* Where your cut names an architecture that the product builds on, point to its principles, and write only what this product adds or changes.
+7. *While making.* Take a case that no decision names, and decide it from each principle's value as two developers of different parts would. Where they differ, sharpen the decision that left the case open.
 
 ### N5
 
