@@ -17,6 +17,70 @@
       "status": "done"
     },
     {
+      "name": "A maker of a deliverable that no field's established kind fits makes one that does for its people what its check says",
+      "path": "plugins/rn/domain/best-practices/specific",
+      "kind": "meta",
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Why a best practice of specific",
+              "decided": "a deliverable of the kind specific is made and judged by a best practice of its own, as every other kind is, so that rn runs it with a generator and evaluators like any deliverable and no part of rn treats the kind apart",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Its conditions",
+              "decided": "whether the deliverable passes its check as its people meet it, whether each of its parts carries out its check or a decision, and whether it says what each input it carries says, each about the whole",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Its template",
+              "decided": "none, as a deliverable of the kind takes the format of what reads it",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
       "path": "plugins/rn/domain/best-practices/prompt",
       "kind": "meta",
@@ -26,7 +90,54 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta",
+        "plugins/rn/domain/best-practices/specific"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A specific deliverable",
+              "decided": "a deliverable of the kind specific takes the form of any deliverable not done, with the necessary conditions of the specific best practice, its check held as the decision about The check under its N1; the form of its own, with check and good, goes",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -1088,6 +1199,11 @@
               "about": "Mends from the unit cases designed again",
               "decided": "course reads a decision with no by, the design tree's form of a point still open, as its two xfail cases ask; course.decisions gives the input nodes' decisions in the order of the deliverable's inputs, as its contract then says; status's contract drops the specific deliverable done that no tree holds; each a test at a time",
               "by": "reasoning"
+            },
+            {
+              "about": "The kind specific in rn's code",
+              "decided": "inputs and status treat a deliverable of the kind specific as one of any kind, by its best practice",
+              "by": "reasoning"
             }
           ]
         },
@@ -1845,6 +1961,14 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/specific"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/design-tree"
+    },
     {
       "do": "make",
       "path": "dev/lane/tests"
