@@ -1,11 +1,15 @@
 # The settings of ccpm's own checks, which lefthook.yml of lovaizu/repofiles extends.
 # Turned on once in a clone by `lefthook install`.
 
-# ccpm holds no Japanese, so the Japanese check is off.
+# ccpm holds no Japanese, so the Japanese check is off. A template's links
+# are slots that a writer fills, so the links check leaves the templates out.
 pre-commit:
   jobs:
     - name: japanese
       skip: true
+    - name: links
+      exclude:
+        - "plugins/rn/domain/best-practices/*/template.md"
 
 # The checks of what a push changes, on the commits pushed, which git gives
 # the hook on its standard input. dev/README.md describes them.
