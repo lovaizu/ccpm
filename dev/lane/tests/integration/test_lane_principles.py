@@ -62,7 +62,11 @@ def folder_unfound(b: Bench) -> None:
 
 def adapter_unasked(b: Bench) -> None:
     """The plugin's order is never asked."""
-    given_again(b, "adapters.py", "def starts_due(plugin_root, cwd, run, rules):\n    return {}\n")
+    given_again(
+        b,
+        "adapters.py",
+        "def starts_due(plugin_root, cwd, run, rules, turn_ended):\n    return {}\n",
+    )
 
 
 def no_skill_call(b: Bench) -> None:

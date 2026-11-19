@@ -31,7 +31,8 @@ def answer(event: Event) -> Answer:
     in its run's plugin's folder; the answers joined, stopping where either stops; an empty answer
     where the event lies outside each run, or its run's plugin gives no rules. Wherever an answer
     gives the starts due, or holds a start to them, they are those that adapters.starts_due gives
-    for the run as it stands once the move is added, none while the run waits.
+    for the run as it stands once the move is added, none while the run waits; turn_ended asks
+    them of a turn's end that it lets through.
     Changes: what each interface it reaches changes; where adapters.starts_due says the run ends,
     the run record, by an `ended` entry of the run.
     Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
@@ -83,12 +84,16 @@ def start_made(move: Move) -> Answer:
 
 
 def turn_ended(move: Move) -> Answer:
-    """S9: the main conversation ends its turn.
+    """S5, S8, and S9: the main conversation ends its turn, held to its skill's steps and to the
+    starts due.
 
     Takes: a `turn_end` move at the main conversation's Stop.
-    Gives: a stop with the starts due, where a start is due; an empty answer where none is.
+    Gives: a stop with the sentence that rule_types.judge_end gives, where the rules give the steps
+    of the move's role; else a stop with the starts due, where a start is due; an empty answer
+    where none is.
     Changes: the run record, by dropping each start still untied but a resume queued to a subagent
-    that still runs.
+    that still runs; and, where the turn's end goes through, by an `ended` entry where
+    adapters.starts_due, asked with the turn ended, says the run ends.
     Refuses: nothing; an adapter of the starts due that failed stops the turn's end with what's
     wrong.
     """

@@ -15,15 +15,17 @@ class AdapterFailed(Exception):
     it gave, so that the plugin's author can mend it."""
 
 
-def starts_due(plugin_root: str, cwd: str, run: Run, rules: Rules) -> StartsDue:
+def starts_due(plugin_root: str, cwd: str, run: Run, rules: Rules, turn_ended: bool) -> StartsDue:
     """The starts due of the run, or its end, from the plugin's order.
 
-    Takes: the plugin's folder, the conversation's folder, the run as its record stands, and the
-    plugin's rules.
+    Takes: the plugin's folder, the conversation's folder, the run as its record stands, the
+    plugin's rules, and whether the main conversation's turn has just ended, its end let through.
     Gives: what the plugin's adapter of the starts due, lane/adapters/starts_due.py, gives for
     order.order_run of the run, in the forms of starts_due.in.schema.json and
     starts_due.out.schema.json, where the plugin gives one; else what routes.starts_due gives for
-    it from the routes of the rules, or from none where the rules give none.
+    it, where the rules give routes; else, for a plugin that gives no order, no start due, so that
+    its run holds the main conversation to its skill's steps alone, and that the run ends where the
+    turn has ended.
     Changes: nothing of Lane's; the plugin's adapter may read the conversation's folder.
     Refuses: AdapterFailed.
     """

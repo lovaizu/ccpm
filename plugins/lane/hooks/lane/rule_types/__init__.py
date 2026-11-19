@@ -34,9 +34,11 @@ def judge_mark(rules: Rules, move: Move, items: list[str]) -> str | None:
 
 
 def judge_end(rules: Rules, move: Move) -> str | None:
-    """Judges a start's end by each rule of its role that judges an end.
+    """Judges a start's end, or the main conversation's turn's end, by each rule of its role that
+    judges an end.
 
-    Takes: the plugin's rules, and an `end` move.
+    Takes: the plugin's rules, and an `end` move of a subagent, or a `turn_end` move of the main
+    conversation.
     Gives: the sentence of the first rule the end breaks, by result, then order for each step,
     then check; None where it breaks none.
     Changes: nothing, though check runs the plugin's check.

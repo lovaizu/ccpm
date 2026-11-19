@@ -49,7 +49,7 @@ def test_a_start_adapter_gives_the_text_of_the_start_due(log: str, cwd: str):
     """Given `log`'s start adapter
     When Lane asks it for the text of the writer due in the run for 1.2.0
     Then it gives the text that the adapter prints"""
-    texts = starts_due(log, cwd, RUN, RULES)
+    texts = starts_due(log, cwd, RUN, RULES, False)
     assert texts == [lane_bench.text("log:writer")]
 
 
@@ -60,7 +60,7 @@ def test_a_start_adapter_takes_the_run_and_the_role_in_the_conversations_folder(
     Then it was given the run's skill and words and the role, as start.in.schema.json says, and
     ran in the conversation's folder"""
     adapter(log, "starts_due.py", ECHO.format(printed=json.dumps({"texts": ["Write it."]})))
-    starts_due(log, cwd, RUN, RULES)
+    starts_due(log, cwd, RUN, RULES, False)
     assert given(cwd) == {
         "input": {"run": {"skill": "log:up", "words": "1.2.0"}, "role": "log:writer", "lane": []},
         "cwd": os.path.realpath(cwd),
@@ -73,7 +73,7 @@ def test_a_plugin_without_a_start_adapter_gives_no_text(log: str, cwd: str):
     When Lane asks for the text of the writer due
     Then there's none"""
     adapter(log, "starts_due.py", None)
-    assert starts_due(log, cwd, RUN, RULES) is None
+    assert starts_due(log, cwd, RUN, RULES, False) is None
 
 
 @pytest.mark.supports("test_a_start_adapter_that_fails_stops_with_the_adapter_and_what_it_said")
@@ -83,7 +83,7 @@ def test_a_start_adapter_that_fails_is_refused_with_its_file_and_what_it_said(lo
     Then it refuses with AdapterFailed naming start.py and what it said"""
     adapter(log, "starts_due.py", "import sys\n\nsys.exit('no version found')\n")
     with pytest.raises(AdapterFailed) as raised:
-        starts_due(log, cwd, RUN, RULES)
+        starts_due(log, cwd, RUN, RULES, False)
     assert "starts_due.py" in str(raised.value)
     assert "no version found" in str(raised.value)
 
@@ -97,7 +97,7 @@ def test_a_start_adapters_output_out_of_its_form_is_refused(log: str, cwd: str, 
     Then it refuses with AdapterFailed naming start.py"""
     adapter(log, "starts_due.py", f"print({printed!r})\n")
     with pytest.raises(AdapterFailed) as raised:
-        starts_due(log, cwd, RUN, RULES)
+        starts_due(log, cwd, RUN, RULES, False)
     assert "starts_due.py" in str(raised.value)
 
 
@@ -164,7 +164,7 @@ def test_a_kept_adapter_gives_the_results_kept_in_their_order(log: str, cwd: str
         {"role": "log:reviewer", "result": "more"},
     ]
     write_files(cwd, {".log/kept/1.2.0.json": json.dumps(kept)})
-    assert starts_due(log, cwd, RUN, RULES) == [kept]
+    assert starts_due(log, cwd, RUN, RULES, False) == [kept]
 
 
 @pytest.mark.supports("test_the_kept_adapter_is_asked_with_the_words_typed_after_the_command")
@@ -173,7 +173,7 @@ def test_a_kept_adapter_takes_the_skill_and_the_words(log: str, cwd: str):
     When Lane asks it for the results of log:up with 1.3.0
     Then it was given the skill and the words, as kept.in.schema.json says"""
     adapter(log, "starts_due.py", ECHO.format(printed=json.dumps({"chains": []})))
-    starts_due(log, cwd, RUN, RULES)
+    starts_due(log, cwd, RUN, RULES, False)
     assert given(cwd)["input"] == {"run": {"skill": "log:up", "words": "1.3.0"}}
 
 
@@ -183,7 +183,7 @@ def test_a_plugin_without_a_kept_adapter_gives_no_results(log: str, cwd: str):
     When Lane asks for the results kept of log:up with 1.2.0
     Then there's none"""
     adapter(log, "starts_due.py", None)
-    assert starts_due(log, cwd, RUN, RULES) is None
+    assert starts_due(log, cwd, RUN, RULES, False) is None
 
 
 @pytest.mark.supports("test_a_kept_adapter_that_fails_stops_with_the_adapter_and_what_it_said")
@@ -200,5 +200,5 @@ def test_a_kept_adapter_that_fails_or_gives_out_of_form_is_refused(log: str, cwd
     Then it refuses with AdapterFailed naming kept.py"""
     adapter(log, "starts_due.py", code)
     with pytest.raises(AdapterFailed) as raised:
-        starts_due(log, cwd, RUN, RULES)
+        starts_due(log, cwd, RUN, RULES, False)
     assert "starts_due.py" in str(raised.value)
