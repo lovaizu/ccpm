@@ -44,7 +44,8 @@
                   },
                   "command": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "description": "The command's skill's name, such as log:retry."
                   }
                 }
               },
@@ -52,7 +53,8 @@
                 "type": "object",
                 "required": [
                   "kind",
-                  "role"
+                  "role",
+                  "prompt"
                 ],
                 "additionalProperties": false,
                 "properties": {
@@ -63,6 +65,10 @@
                     "description": "The role's agent type.",
                     "type": "string",
                     "minLength": 1
+                  },
+                  "prompt": {
+                    "description": "The prompt that the main conversation gave the start.",
+                    "type": "string"
                   }
                 }
               },

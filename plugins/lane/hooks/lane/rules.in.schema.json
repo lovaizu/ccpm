@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "What Lane gives a plugin's adapter of the rules",
+  "description": "A start of a role whose steps or rules the plugin's lane/rules.json leaves to the adapter, with the prompt that the main conversation gave it.",
+  "type": "object",
+  "required": ["run", "role", "prompt"],
+  "additionalProperties": false,
+  "properties": {
+    "run": {
+      "type": "object",
+      "required": ["skill", "words"],
+      "additionalProperties": false,
+      "description": "The run: the skill that started it and the words typed after its command.",
+      "properties": {
+        "skill": { "type": "string", "minLength": 1 },
+        "words": { "type": "string" }
+      }
+    },
+    "role": { "description": "The start's role, by its agent type.", "type": "string", "minLength": 1 },
+    "prompt": { "description": "The prompt that the main conversation gave the start.", "type": "string" }
+  }
+}

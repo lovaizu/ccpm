@@ -24,7 +24,8 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     """Judges an end by the rule.
 
     Takes: the rule, the step it belongs to, and the move: the end of the move's start, with its
-    marks that the run record holds.
+    marks that the run record holds, rule_types asking it only of the steps before the one at
+    which a result that ends the start lets it end.
     Gives: the step's sentence, where the step isn't marked done; None where it is.
     Changes: nothing.
     Refuses: nothing.

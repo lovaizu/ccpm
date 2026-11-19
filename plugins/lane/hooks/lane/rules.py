@@ -13,14 +13,22 @@ class Rule(TypedDict, total=False):
     type: str
     paths: list[str]
     commands: list[str]
+    items: list[str]
     results: list[str]
+    ends: list[str]
     check: str
 
 
-class Step(TypedDict):
-    """One step of a role, by its name, with its rules."""
+class Named(TypedDict):
+    """A step's name."""
 
     name: str
+
+
+class Step(Named, total=False):
+    """One step of a role, by its name, with its rules, which a step of a subagent may leave for
+    the plugin's adapter of the rules to give for each start."""
+
     rules: list[Rule]
 
 

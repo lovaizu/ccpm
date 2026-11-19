@@ -6,6 +6,7 @@ breaks."""
 from __future__ import annotations
 
 import copy
+import dataclasses
 import os
 from typing import Any
 
@@ -85,7 +86,13 @@ def move(
         {"kind": "tie", "run": "r1", "tool_use_id": "u2", "agent_id": "a2"},
     ]
     run = Run("r1", "session-1", "log:up", "1.2.0", "/plugins/log", [*head, *entries])
-    return Move(kind, event, run, agent.type, agent.id, step, report)
+    steps = RULES["roles"][agent.type]["steps"]
+    return Move(kind, event, run, agent.type, agent.id, None, steps, step, report)
+
+
+def held(given: Move, rules: Rules) -> Move:
+    """The move, held to the writer's steps of the rules."""
+    return dataclasses.replace(given, steps=rules["roles"]["log:writer"]["steps"])
 
 
 def marked(step: str) -> Report:
@@ -382,7 +389,7 @@ def test_a_step_with_no_item_or_each_item_marked_holds(
     When the writer marks `write`
     Then the rule finds nothing"""
     marking = marking_write(e, *entries)
-    assert checklist.judge_mark(rule(WRITE, "checklist"), WRITE, marking, items) is None
+    assert checklist.judge_mark({"type": "checklist", "items": items}, WRITE, marking) is None
 
 
 @pytest.mark.supports("test_a_step_marked_before_its_items_names_each_item_not_done")
@@ -402,7 +409,7 @@ def test_items_not_marked_give_the_steps_sentence_naming_each(
     When the writer a1 marks `write`
     Then the rule gives the step's sentence, naming each item not marked, and no other"""
     marking = marking_write(e, *entries)
-    said = checklist.judge_mark(rule(WRITE, "checklist"), WRITE, marking, ["dated", "linked"])
+    said = checklist.judge_mark(rule(WRITE, "checklist"), WRITE, marking)
     assert said is not None
     for item in ("dated", "linked"):
         assert (item in said) == (item in unmarked)
@@ -507,7 +514,7 @@ def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: st
         "read": e.read(os.path.join(cwd, "secrets/key.txt"), WRITER),
         "bash": e.bash("git push", WRITER),
     }[event]
-    said = rule_types.judge_call(RULES, move("call", given))
+    said = rule_types.judge_call(move("call", given))
     assert said is not None
     assert named in said
 
@@ -519,7 +526,7 @@ def test_a_bash_command_that_reaches_a_file_never_to_read_is_judged_by_commands(
     """Given the writer at its step `write`, which never reads secrets/ and runs `git log`
     When it runs `cat secrets/key.txt`
     Then the sentence is the one of commands, as reads_none judges no Bash call"""
-    said = rule_types.judge_call(RULES, move("call", e.bash("cat secrets/key.txt", WRITER)))
+    said = rule_types.judge_call(move("call", e.bash("cat secrets/key.txt", WRITER)))
     assert said is not None
     assert "git log" in said
     assert "secrets/" not in said
@@ -533,15 +540,13 @@ def test_a_call_that_breaks_no_rule_or_whose_step_judges_no_call_holds(e: Events
     Then neither breaks a rule"""
     reviewer = Subagent("a3", "log:reviewer")
     assert (
-        rule_types.judge_call(
-            RULES, move("call", e.write(os.path.join(cwd, "CHANGELOG.md"), WRITER))
-        )
+        rule_types.judge_call(move("call", e.write(os.path.join(cwd, "CHANGELOG.md"), WRITER)))
         is None
     )
     review = move(
         "call", e.write(os.path.join(cwd, "notes.txt"), reviewer), step="review", agent=reviewer
     )
-    assert rule_types.judge_call(RULES, review) is None
+    assert rule_types.judge_call(review) is None
 
 
 @pytest.mark.supports("test_a_mark_is_checked_for_the_step_due_before_the_files_it_reads_whole")
@@ -552,7 +557,7 @@ def test_a_mark_is_judged_by_order_before_its_reads(e: Events):
     marking = move(
         "report", e.bash("lane-step report", WRITER), step="write", report=marked("report")
     )
-    said = rule_types.judge_mark(RULES, marking, [])
+    said = rule_types.judge_mark(marking)
     assert said is not None
     assert "CHANGELOG.md" not in said
 
@@ -562,7 +567,7 @@ def test_a_mark_is_judged_by_its_reads_before_its_items(e: Events):
     """Given the writer that read nothing and marked no item
     When it marks `write`
     Then the sentence is reads_whole's, naming NOTES.md, and no item"""
-    said = rule_types.judge_mark(RULES, marking_write(e), ["dated", "linked"])
+    said = rule_types.judge_mark(marking_write(e))
     assert said is not None
     assert "NOTES.md" in said
     assert "dated" not in said
@@ -574,7 +579,7 @@ def test_a_mark_that_breaks_no_rule_holds(e: Events):
     When it marks `write`
     Then no rule finds anything"""
     entries = (read("NOTES.md", 1, 6), mark("write", item="dated"), mark("write", item="linked"))
-    assert rule_types.judge_mark(RULES, marking_write(e, *entries), ["dated", "linked"]) is None
+    assert rule_types.judge_mark(marking_write(e, *entries)) is None
 
 
 @pytest.mark.supports("test_an_end_with_no_result_names_the_result_before_the_check")
@@ -585,7 +590,7 @@ def test_an_end_is_judged_by_its_result_before_its_steps_and_its_check(e: Events
     Then the sentence names `written`, and the check didn't run"""
     rules = copy.deepcopy(RULES)
     rule(rules["roles"]["log:writer"]["steps"][1], "check")["check"] = "touch ran; exit 1"
-    said = rule_types.judge_end(rules, move("end", e.ended(WRITER)))
+    said = rule_types.judge_end(held(move("end", e.ended(WRITER)), rules))
     assert said is not None
     assert "written" in said
     assert not os.path.exists(os.path.join(cwd, "ran"))
@@ -599,7 +604,8 @@ def test_an_end_is_judged_by_its_steps_before_its_check(e: Events, cwd: str):
     Then the sentence names `report`, and the check didn't run"""
     rules = copy.deepcopy(RULES)
     rule(rules["roles"]["log:writer"]["steps"][1], "check")["check"] = "touch ran; exit 1"
-    said = rule_types.judge_end(rules, move("end", e.ended(WRITER), gave("written"), mark("write")))
+    ended = held(move("end", e.ended(WRITER), gave("written"), mark("write")), rules)
+    said = rule_types.judge_end(ended)
     assert said is not None
     assert "report" in said
     assert not os.path.exists(os.path.join(cwd, "ran"))
@@ -614,7 +620,7 @@ def test_an_end_whose_result_and_steps_hold_is_judged_by_its_check(e: Events, cw
     with open(os.path.join(cwd, "CHANGELOG.md"), "w", encoding="utf-8") as f:
         f.write("# Changelog\n")
     end = move("end", e.ended(WRITER), gave("written"), mark("write"), mark("report"))
-    said = rule_types.judge_end(RULES, end)
+    said = rule_types.judge_end(end)
     assert said is not None
     assert lane_bench.CHECK_SAYS in said
 
@@ -626,4 +632,4 @@ def test_an_end_that_breaks_no_rule_holds(e: Events):
     When it ends
     Then no rule finds anything"""
     end = move("end", e.ended(WRITER), gave("written"), mark("write"), mark("report"))
-    assert rule_types.judge_end(RULES, end) is None
+    assert rule_types.judge_end(end) is None

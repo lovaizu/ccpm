@@ -81,7 +81,7 @@ RULES: Rules = {
                         {"type": "reads_none", "paths": ["secrets/", ".env"]},
                         {"type": "commands", "commands": ["git log"]},
                         {"type": "reads_whole", "paths": ["NOTES.md"]},
-                        {"type": "checklist"},
+                        {"type": "checklist", "items": ["dated", "linked"]},
                     ],
                 },
                 {
@@ -126,16 +126,9 @@ RULES: Rules = {
     ],
 }
 
-# The adapters of `log`, each a Python file of its lane/adapters/, as Lane's adapters.py says: the
-# items of the writer's step `write`. `log` gives routes, so Lane's route adapter gives its starts
-# due.
-CHECKLIST = """\
-import json, sys
-
-given = json.load(sys.stdin)
-print(json.dumps({"items": ["dated", "linked"] if given["step"] == "write" else []}))
-"""
-ADAPTERS = {"checklist.py": CHECKLIST}
+# `log` fixes each step's rules and gives routes, so it gives no adapter: Lane's route adapter gives
+# its starts due.
+ADAPTERS: dict[str, str] = {}
 SKILLS = ("up", "retry", "tag")
 
 

@@ -75,10 +75,14 @@ def start_made(move: Move) -> Answer:
     Takes: a `start` move at the PreToolUse of an Agent or SendMessage call.
     Gives: an empty answer for a start of a role due; for any other start of the plugin's
     subagents, or one by a subagent, a stop with the starts due.
-    Changes: the run record, by the start, untied until the PostToolUse of its call; a resume that
-    the PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
+    Changes: the run record, by the start with its prompt, and with the steps that
+    adapters.given_steps gives from the prompt where start_rules.asks_adapter says the start takes
+    rules from the plugin's adapter of the rules, untied until the PostToolUse of its call; a
+    resume, by its start with the prompt and the steps of the start it resumes; a resume that the
+    PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
     SubagentStop, where subagent_ended ties it, as Lane hooks no SubagentStart.
-    Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
+    Refuses: nothing; an adapter of the starts due or of the rules that failed stops the call with
+    what's wrong.
     """
     raise NotImplementedError("guard.start_made")
 
@@ -159,8 +163,8 @@ def report_made(move: Move) -> Answer:
     step's rules hold.
 
     Takes: a `report` move at the PostToolUse of the reporter's Bash call.
-    Gives: for a step done, the sentence that rule_types.judge_mark gives, with the step's items
-    that the plugin's checklist adapter gives; an empty answer where the report holds.
+    Gives: for a step done, the sentence that rule_types.judge_mark gives; an empty answer where the
+    report holds.
     Changes: the run record, by the mark or the result, where it holds.
     Refuses: nothing.
     """

@@ -11,12 +11,14 @@ from record import Run
 
 class OrderMove(TypedDict, total=False):
     """A move of the run as the plugin's order sees it: its `kind`, one of `command`, `start`, and
-    `result`, and the `command` typed, or the `role` started, or the `role` and the `result` it
+    `result`, and the `command`, by its skill's name, such as `log:retry`, or the `role` started
+    with the `prompt` that the main conversation gave it, or the `role` and the `result` it
     gave."""
 
     kind: str
     command: str
     role: str
+    prompt: str
     result: str
 
 
@@ -49,8 +51,9 @@ def order_run(run: Run) -> OrderRun:
 
     Takes: the run as its record stands.
     Gives: its skill and words, and each command that called or moved it, each start made, and each
-    result, in their order; a start whose Agent call failed, or that ended with no result, such as
-    one stopped by TaskStop, is left out, so that the order gives its role due again.
+    result, in their order, each start with its prompt; a start whose Agent call failed, or that
+    ended with no result, such as one stopped by TaskStop, is left out, so that the order gives its
+    role due again.
     Changes: nothing.
     Refuses: nothing.
     """

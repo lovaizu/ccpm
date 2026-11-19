@@ -19,11 +19,15 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["name", "rules"],
+              "required": ["name"],
               "additionalProperties": false,
               "properties": {
                 "name": { "type": "string", "minLength": 1 },
-                "rules": { "type": "array", "items": { "$ref": "#/$defs/rule" } }
+                "rules": {
+                  "description": "The step's rules; left out of a subagent's step whose rules the plugin's adapter of the rules gives for each start.",
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/rule" }
+                }
               }
             }
           }
@@ -110,20 +114,30 @@
           "properties": { "type": { "const": "order" } }
         },
         {
-          "description": "S6: the step is done only once each item of its checklist, which the plugin's adapter gives, is done.",
+          "description": "S6: the step is done only once each item of its checklist is done.",
           "type": "object",
-          "required": ["type"],
+          "required": ["type", "items"],
           "additionalProperties": false,
-          "properties": { "type": { "const": "checklist" } }
+          "properties": {
+            "type": { "const": "checklist" },
+            "items": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
         },
         {
-          "description": "S7: the results the role may give, by which the run moves on.",
+          "description": "S7: the results the role may give, by which the run moves on, and those that end the start at this step, its later steps not done.",
           "type": "object",
-          "required": ["type", "results"],
+          "required": ["type"],
+          "anyOf": [{ "required": ["results"] }, { "required": ["ends"] }],
           "additionalProperties": false,
           "properties": {
             "type": { "const": "result" },
             "results": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1
+            },
+            "ends": {
+              "description": "The results that end the start at this step.",
               "type": "array",
               "items": { "type": "string", "minLength": 1 },
               "minItems": 1

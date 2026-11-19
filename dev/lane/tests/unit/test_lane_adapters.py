@@ -1,7 +1,7 @@
-"""The unit cases of hooks/lane/adapters.py: starts_due and checklist, one for each class of what a
-plugin's adapter gives: its output in the form of its schema, no adapter, an adapter
-that fails, and output out of its form; with what Lane gives the adapter on its standard input, and
-the folder it runs in."""
+"""The unit cases of hooks/lane/adapters.py: starts_due and given_steps, one for each class of what
+a plugin's adapter gives: its output in the form of its schema, no adapter, an adapter that fails,
+and output out of its form; with what Lane gives the adapter on its standard input, and the folder
+it runs in."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from typing import Any
 
 import lane_bench
 import pytest
-from adapters import AdapterFailed, checklist, starts_due
+from adapters import AdapterFailed, given_steps, starts_due
 from record import Run
 from repo_files import write_files
 
@@ -106,7 +106,7 @@ def test_a_checklist_adapter_gives_the_items_of_the_step(log: str, cwd: str):
     """Given `log`'s checklist adapter
     When Lane asks it for the items of the writer's step `write`
     Then it gives `dated` and `linked`, in order"""
-    assert checklist(log, cwd, RUN, "log:writer", "write") == ["dated", "linked"]
+    assert given_steps(log, cwd, RUN, "log:writer", "") == ["dated", "linked"]
 
 
 @pytest.mark.supports("test_a_step_marked_once_each_item_is_done_holds")
@@ -114,7 +114,7 @@ def test_a_checklist_adapter_may_give_no_item(log: str, cwd: str):
     """Given `log`'s checklist adapter
     When Lane asks it for the items of the writer's step `report`
     Then it gives none"""
-    assert checklist(log, cwd, RUN, "log:writer", "report") == []
+    assert given_steps(log, cwd, RUN, "log:writer", "") == []
 
 
 @pytest.mark.supports("test_a_step_marked_before_its_items_names_each_item_not_done")
@@ -122,8 +122,8 @@ def test_a_checklist_adapter_takes_the_run_the_role_and_the_step(log: str, cwd: 
     """Given a checklist adapter that writes what it's given
     When Lane asks it for the items of the writer's step `write`
     Then it was given the run, the role, and the step, as checklist.in.schema.json says"""
-    adapter(log, "checklist.py", ECHO.format(printed=json.dumps({"items": []})))
-    checklist(log, cwd, RUN, "log:writer", "write")
+    adapter(log, "rules.py", ECHO.format(printed=json.dumps({"items": []})))
+    given_steps(log, cwd, RUN, "log:writer", "")
     assert given(cwd)["input"] == {
         "run": {"skill": "log:up", "words": "1.2.0"},
         "role": "log:writer",
@@ -136,10 +136,10 @@ def test_a_plugin_without_a_checklist_adapter_is_refused(log: str, cwd: str):
     """Given `log` with no checklist adapter
     When Lane asks for the items of the writer's step `write`
     Then it refuses with AdapterFailed naming checklist.py"""
-    adapter(log, "checklist.py", None)
+    adapter(log, "rules.py", None)
     with pytest.raises(AdapterFailed) as raised:
-        checklist(log, cwd, RUN, "log:writer", "write")
-    assert "checklist.py" in str(raised.value)
+        given_steps(log, cwd, RUN, "log:writer", "")
+    assert "rules.py" in str(raised.value)
 
 
 @pytest.mark.supports("test_a_step_marked_before_its_items_names_each_item_not_done")
@@ -149,9 +149,9 @@ def test_a_checklist_adapters_output_out_of_its_form_is_refused(log: str, cwd: s
     object
     When Lane asks it for the items of the writer's step `write`
     Then it refuses with AdapterFailed"""
-    adapter(log, "checklist.py", f"print({printed!r})\n")
+    adapter(log, "rules.py", f"print({printed!r})\n")
     with pytest.raises(AdapterFailed):
-        checklist(log, cwd, RUN, "log:writer", "write")
+        given_steps(log, cwd, RUN, "log:writer", "")
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_the_run_up_from_the_kept_results")

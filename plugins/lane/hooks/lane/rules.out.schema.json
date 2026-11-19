@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "What a plugin's adapter of the rules gives Lane",
+  "description": "The start's steps in their order, each with its rules in the form of rules.schema.json, for each step that the plugin's lane/rules.json leaves to the adapter.",
+  "type": "object",
+  "required": ["steps"],
+  "additionalProperties": false,
+  "properties": {
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "rules"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "rules": { "type": "array", "items": { "$ref": "rules.schema.json#/$defs/rule" } }
+        }
+      }
+    }
+  }
+}

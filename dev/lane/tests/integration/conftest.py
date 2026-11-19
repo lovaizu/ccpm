@@ -28,6 +28,7 @@ LANE_MODULES = (
     "adapters",
     "routes",
     "order",
+    "start_rules",
     "rule_types",
 )
 
