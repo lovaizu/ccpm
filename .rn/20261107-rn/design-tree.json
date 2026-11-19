@@ -178,7 +178,13 @@
         {
           "id": "N8",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Sequences",
+              "decided": "S9 and S10 alone, as each rule of S1 to S8 is a call, a mark, or an end that its rule type judges, which Components states",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N9",

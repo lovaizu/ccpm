@@ -84,57 +84,16 @@ Strategies:
 - Each move placed on its run and start by what Claude Code's events carry, as
   [its states](claude-code-states.md) list. [P2.3]\
   Intent: each move is held to the rules of its own start, and to no other run's.
-
-### Sequences
-
-#### S1 to S8: a move held to its step's rules
-
-```mermaid
-sequenceDiagram
-  participant SA as the plugin's AI
-  participant G as guard
-  participant T as rule types
-  participant A as the plugin's adapters and checks
-  participant R as reporters
-  participant RR as run record
-  SA->>G: a call: a write, a read, or a command [S1]
-  G->>T: checks it by each rule of its step (Rules) [S2]
-  alt it breaks a rule [S4]
-    G-->>SA: stops it, with the step's sentence and what it may do [P1.1]
-  else a read of a file that a rule asks read whole [S3]
-    G->>RR: adds the read (Run) [P1.2]
-  end
-  SA->>R: reports a step or an item done [S5]
-  opt a rule of the step keeps a checklist [S6]
-    G->>A: asks for the step's items [P2.2]
-  end
-  alt the step isn't due, or it lacks a read or an item that its rules ask [S5]
-    G-->>SA: stops it, with what the step lacks [P1.1]
-  else [P1.2]
-    G->>RR: adds the mark (Run) [P1.2]
-  end
-  SA->>R: reports its result [S7]
-  alt a result its role may give [S7]
-    G->>RR: adds the result (Run) [P1.2]
-  else [S7]
-    R-->>SA: refuses it, with the results it may give [P1.1]
-  end
-  SA->>G: ends [S5]
-  alt no result, or a step left unmarked [S7]
-    G-->>SA: stops the end, with the step's sentence [P1.1]
-  else a rule holds the end to the plugin's check [S8]
-    G->>A: runs the check, with the result [S8]
-    A-->>G: whether it passes, and the guard stops the end where it fails [P1.1]
-  end
-```
-
-Strategies:
-
+- Each rule type judging a call, a mark, or an end of its own kind, and the guard stopping each
+  that breaks a rule with the step's sentence. [S2, S3, S4, S6]\
+  Intent: a plugin gets a new kind of check by a new rule type alone.
 - A mark checked for the step due, then for the reads and the items that its rules ask. [S5]\
   Intent: a skipped step, item, or part of a file shows at the step skipped.
 - An end checked for its result first, then its steps, then the plugin's own check. [S8]\
   Intent: a stop names the step left, as the plugin's check runs once the result and each step
   hold.
+
+### Sequences
 
 #### S9: starts held to the plugin's order
 
