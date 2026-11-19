@@ -533,7 +533,7 @@
             },
             {
               "about": "The step judged at an end",
-              "decided": "the first step that the start hasn't marked done, else its last",
+              "decided": "the first step that the start hasn't marked done where its rules hold a result rule, else the last step; a result that a rule names as ending the start counts as one the start may give",
               "by": "maker"
             },
             {
@@ -748,12 +748,23 @@
         "plugins/lane",
         "dev/lane/tests"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "A message to a subagent that still runs",
+              "decided": "talk, as Claude Code queues it and the subagent goes on as the same start, whose later pass keeps its marks and whose next end is judged again; a SendMessage that resumes a subagent that ended is a start only where the order makes its role due",
+              "by": "reasoning"
+            },
+            {
+              "about": "Two writers of one role",
+              "decided": "the second writes a file its step allows that doesn't exist yet, as no record shows a Write to a file that exists",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
