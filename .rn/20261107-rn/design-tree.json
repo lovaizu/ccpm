@@ -150,7 +150,12 @@
             },
             {
               "about": "The bound on each context",
-              "decided": "each AI starts from its Cut and reads what it needs from files, and none carries the run's history, as the user decided on 2026-11-18 on the ACC form: in rn's E2E walkthrough of 2026-11-18 the main conversation reached 180k tokens in 42 minutes, its first of two deliverables in its second round",
+              "decided": "each generator and evaluator starts from its Cut alone and keeps its content in files, handing back a short result; the main conversation is the orchestrator, the simplest form, and the E2E test measures its context, as the user decided on 2026-11-19: in rn's E2E walkthrough of 2026-11-18 the main conversation's 180k tokens came mostly from subagents' briefs and results, about 45k, Lane's messages, about 20k, and files it read, about 15k",
+              "by": "user"
+            },
+            {
+              "about": "Turn and round",
+              "decided": "a turn is the orchestrator's review of the design tree at each event, and a round is one making of a deliverable by a generator and its judging by evaluators",
               "by": "user"
             }
           ]
@@ -217,7 +222,7 @@
             },
             {
               "about": "Each role's expected role",
-              "decided": "the orchestrator, a subagent started anew at each event of the run, one at a time, rebuilds the run from the design tree and the news since its last turn, keeps the tree true, settles each point but the user's, and orders the work; the main conversation decides nothing: it shows the user each message of the orchestrator word for word, keeps each word of theirs word for word, and starts each role that the guard gives due; the generator makes only what brings the deliverable's people closer; the evaluator finds what's good for them and what would make it good",
+              "decided": "the orchestrator, the main conversation, at each turn reviews the design tree by the run's facts and the user's words, settles each point but the user's, asks the user theirs and each sign-off, orders the work, and starts each round due; the generator makes only what brings the deliverable's people closer; the evaluator finds what's good for them and what would make it good",
               "by": "user"
             },
             {
@@ -273,33 +278,13 @@
               "by": "reasoning"
             },
             {
-              "about": "A pick-up among several runs",
-              "decided": "/rn:up alone picks up the one run left, and /rn:up with words that name a run left picks that run up; other words are a request; where none or several are left with no words, /rn:up names them, and the adapters fail outside a run's worktree, so no start is due and the turn ends; a pick-up starts what the run's files show undone, so no adapter replays results that Lane's routes would refuse",
-              "by": "reasoning"
-            },
-            {
-              "about": "When the orchestrator starts",
-              "decided": "at each event: a Said, a sign-off decided, or another role's end that brings News, News being what the run showed since the Cut of the orchestrator's latest turn that ended with a Result; the adapters give no orchestrator start while one runs, where the News is empty or holds only part of a round, or where the folder lies in no run's worktree, as Lane works out the starts due again at each start's call, while a failing adapter would refuse the next /rn:up",
-              "by": "reasoning"
-            },
-            {
-              "about": "A sign-off typed outside a run",
-              "decided": "/rn:ty or /rn:gm decides the sign-off by its own command as it loads, of the one run left whose sign-off waits, naming the runs where several wait; where the sign-off leaves work and no run of Lane's is open in the conversation, its steps call /rn:up with that run's name by the Skill tool, which picks the run up",
-              "by": "reasoning"
-            },
-            {
-              "about": "When a run is left",
-              "decided": "until its pull request handed over is signed off, merged, or closed; Lane's run stays open until /rn:ty signs the pull request off, so the guard holds the pull request's sign-off, and the main conversation then ends it by done, which Lane refuses while a role of the run runs or a start is due; the skill holds no rule on other calls, so a run of Lane's left open, such as after a merge with no /rn:ty, checks only the starts of rn's roles",
-              "by": "reasoning"
-            },
-            {
-              "about": "Which start is due",
-              "decided": "each route of Lane's lists only the starts of the orchestrator, the generator, and the evaluator, but the route after /rn:ty, which also holds the skill's result done, and tree.py alone gives each start due from the run's files, once for each Cut: a start ended with a Result is due again only once the tree changes its inputs, and a round's evaluators come due once its generator ended with done; as Lane holds an idle turn only while a start is due, sets the moves due to the latest route alone, and lets a result replace a pause's moves, only the run's files keep work that runs side by side and the pause",
-              "by": "reasoning"
-            },
-            {
               "about": "A pause",
-              "decided": "/rn:dn stops each role, and tree.py pause commits and pushes the work and marks the run paused, so the adapters give no start and the turn ends; /rn:up lifts the pause by tree.py as it picks the run up, and each start that the pause stopped has no Result, so it comes due again from its kept Cut; tree.py leaves out an edit of the tree that tree.py write didn't check, as the orchestrator's next turn takes the same News again",
+              "decided": "/rn:dn stops each role and commits and pushes the run's folder; /rn:up picks the run up in any conversation, and each role that the pause stopped starts again from its kept Cut",
+              "by": "reasoning"
+            },
+            {
+              "about": "When a turn comes",
+              "decided": "at each event: the request, an answer, a sign-off decided, or a round once each of its evaluators ends",
               "by": "reasoning"
             }
           ]
@@ -345,8 +330,8 @@
           "decisions": [
             {
               "about": "How far the architecture goes",
-              "decided": "it holds only what the README's walkthrough needs, by four principles: the orchestrator, a subagent started at each event, rebuilds the run from the design tree and its News; the run's state lives in files; tree.py alone decides which start is due; Lane holds each role to the words of its steps; the handshake with Lane's runs, routes, and results, and cases off the walkthrough, such as /rn:ty in a new conversation, several runs left, or a merge with no /rn:ty, go to the software design and its integration cases, which run Lane's own code; each mechanism added only for such a case goes, such as the skill's result done, the end-of-run check, and Lane's refusal of a Result while a subagent runs",
-              "by": "reasoning"
+              "decided": "Solution strategy holds the vital few decisions, the vital few as its idea, and each view after it holds only its parts: Components the orchestrator, generator, evaluator, and design tree, with the turn and the round drawn; the data model the design tree, the best practice, and the round; Sequences one turn and round; where Lane applies is a rule of Solution strategy, and the handshake with Lane and cases off the README's image go to the software design and its integration cases, as the user decided on 2026-11-19 that the README is an image of the aim, finished once the E2E test confirms the product",
+              "by": "user"
             }
           ]
         }
@@ -1063,99 +1048,7 @@
       ]
     },
     {
-      "name": "A person's /rn:up, /rn:ty, /rn:gm, and /rn:dn, typed or asked for, show them each point and sign-off word for word and keep each word of theirs, carrying their request to one pull request",
-      "path": "plugins/rn/domain/conversation.md",
-      "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "At each event of the run, the orchestrator rebuilds it from the design tree and its news, keeps the tree true, and asks the person only what's theirs",
+      "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
       "inputs": [
@@ -1167,13 +1060,7 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": [
-            {
-              "about": "Where each turn takes the orchestrator's steps from",
-              "decided": "step 1, which has work at each turn, each step with no work that turn recorded at the place that shows none, as rn's architecture now marks each turn's end in the orchestrator's record",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N2",
@@ -1695,10 +1582,6 @@
     {
       "do": "make",
       "path": "dev/rn/tests/integration/test_rn_rules.py"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/conversation.md"
     },
     {
       "do": "make",
