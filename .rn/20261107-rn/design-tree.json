@@ -299,107 +299,7 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/domain/best-practices/software-design"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the rework keeps",
-              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent",
-              "by": "user"
-            },
-            {
-              "about": "The design tree's check of a decided",
-              "decided": "the design tree schema refuses a decided that names who decided it or holds a date, as its ground goes in the commit message",
-              "by": "user"
-            },
-            {
-              "about": "The design tree's check",
-              "decided": "tree/design.py reads the run's design-tree.json and holds it to its schema and to each check of a condition that code can check: tree/inputs.py holds each kind to a best practice's folder, meta, or specific, and each deliverable's inputs to each kind its best practice takes; tree/work.py holds each item of work after each deliverable that its inputs name and that isn't done; tree/status.py holds a deliverable done only where each good it holds is true",
-              "by": "maker"
-            },
-            {
-              "about": "The commit",
-              "decided": "tree/commit.py lets a change of the run's folder reach git only once design.read holds the design tree, and tree/git.py runs git on the run's worktree, committing the run's folder with the ground word for word as its message",
-              "by": "maker"
-            },
-            {
-              "about": "The Cut and the Round",
-              "decided": "tree/cut.py decides what each role's Cut holds from the design tree; tree/rounds.py decides where each Cut and each result of a Round lies in the run's folder; tree/course.py decides the role due next, the next round's phase, content or refactoring, its limit of two, and the groups a later round judges",
-              "by": "maker"
-            },
-            {
-              "about": "The checks of a result",
-              "decided": "check/generator.py holds the generator's result to its form and its Cut, and its document to its kind's template through template/; check/evaluator.py holds an evaluator's result to its form and to each condition of its group",
-              "by": "maker"
-            },
-            {
-              "about": "The forms",
-              "decided": "schemas/form.py holds a JSON value to one of rn's JSON Schemas, and schemas/ holds the schema of the Cut, the generator's result, and the evaluator's result",
-              "by": "maker"
-            },
-            {
-              "about": "Lane's adapters",
-              "decided": "hooks/adapters/start.py gives the start due its Cut and the Cut's path as a run value, or why no work waits; hooks/adapters/items.py gives a step's practices of the Cut's best practice; hooks/adapters/results.py gives the results that the Rounds keep, in their order",
-              "by": "maker"
-            },
-            {
-              "about": "The commands",
-              "decided": "scripts/tree.py commit, scripts/check.py generator and evaluator, and scripts/template.py each run their module's interface, and fault.py says what stopped each",
-              "by": "maker"
-            },
-            {
-              "about": "What Claude Code and gh carry",
-              "decided": "the run's worktree by EnterWorktree, a stop by TaskStop, the push by git, and the pull request by gh, each in the steps of the orchestrator's prompts, with no code of rn's",
-              "by": "maker"
-            },
-            {
-              "about": "The guard",
-              "decided": "hooks/hooks.json and hooks/lanes.json are laid by /lane:up once the steps are written, so the skeleton holds none",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The interfaces",
-              "decided": "commit.commit for S1's commit and S2's commit before the push; course.due for each start due and the groups a Round judges; cut.write for each start with its Cut; course.left for each finding past the limit; rounds.each and rounds.path for S2's pick-up of each role stopped; generator.faults and evaluator.faults for each end with the Round written; each body raising NotImplementedError with its name, and each handoff's types fitting under pyrefly",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The prompts",
-              "decided": "skills up, dn, ty, and gm, each with its description; ty and gm set disable-model-invocation; agents generator and evaluator, each with background: true; domain/orchestrator.md, generator.md, and evaluator.md, each with its description and the schemas of what it takes and gives, and no steps",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The gaps",
-              "decided": "listed in dev/rn/skeleton-gaps.md",
-              "by": "maker"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
@@ -1434,10 +1334,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn"
-    },
     {
       "do": "make",
       "path": "dev/lane/architecture.md"

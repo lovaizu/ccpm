@@ -167,12 +167,14 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── orchestrator.md            what the main conversation does as the orchestrator
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
-│   ├── schemas/                   the form of each Cut, result, and sign-off
+│   ├── schemas/                   the form of each Cut and result
 │   ├── tree/                      the code that checks the design tree
 │   ├── check/                     the code that checks each role's result
+│   ├── template/                  the code that holds a document to its kind's template
 │   └── best-practices/            rn's own best practice of each kind
 ├── scripts/                       runs each part's code
 └── hooks/                         Lane's rules laid from each role's steps
+    └── adapters/                  what Lane runs for a start's Cut, a step's practices, and the results kept
 
 dev/rn/                            what only rn's developers use
 └── tests/                         the test cases, from unit to E2E
