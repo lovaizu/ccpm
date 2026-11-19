@@ -10,6 +10,21 @@ that Claude Code sends, what the guard places them by, and the records in
 with each version of Claude Code, so the compatibility test of the architecture's Test strategy
 checks them on each new version, and this list changes with the records.
 
+## Where the guard finds the plugin it serves
+
+Found on Claude Code 2.1.328, with two plugins loaded by `--plugin-dir`: one whose hook wrote each
+input it got, and one with a skill `hi`.
+
+- A hook gets only the skill's name, such as `"tool_input":{"skill":"b:hi"}` on the Skill call or
+  `"prompt":"/b:hi"` on UserPromptSubmit, and its own plugin's folder in `CLAUDE_PLUGIN_ROOT`. No
+  field names the folder of the plugin whose skill runs.
+- Once the skill expands, by the Skill tool or by a typed command, the transcript at
+  `transcript_path` holds a user message whose text opens
+  `Base directory for this skill: <the plugin's folder>/skills/hi`. The guard reads the plugin's
+  folder there.
+- Claude Code puts each loaded plugin's `bin/` on the path of the Bash tool, so a plugin's step
+  names a command of Lane's by its name alone.
+
 ## The states that the main use and rn bring about
 
 | State | Events, in order | What the guard places them by | Records |

@@ -2,8 +2,7 @@
 
 ## User stories
 
-- S1: a plugin, such as rn, wants its AI to notice when it writes a file that its step doesn't
-  name.
+- S1: a plugin wants its AI to notice when it writes a file that its step doesn't name.
 - S2: a plugin wants its AI to notice when it reads a file that its step says never to read.
 - S3: a plugin wants its AI to notice when it ends a step without reading whole a file that the
   step asks it to read whole.
@@ -76,7 +75,7 @@ Strategies:
 
 - The plugin's folder found from the base directory of its skill, which Claude Code writes into
   the conversation as the skill starts, as
-  [the research](../../.rn/20261107-rn/research/how-lane-finds-a-plugins-folder.md) found. [P2.1]\
+  [its states](claude-code-states.md#where-the-guard-finds-the-plugin-it-serves) say. [P2.1]\
   Intent: Lane serves a plugin that it never names, as Claude Code gives the folder either way.
 - The reporters as commands that Claude Code puts on the AI's path. [P1.2]\
   Intent: a plugin's step names a reporter without knowing where Lane lies.
