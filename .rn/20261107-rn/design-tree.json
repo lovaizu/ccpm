@@ -62,13 +62,106 @@
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cases that keep a fault out",
+              "decided": "the unit cases keep out each fault that a body could carry, designed before any body: each collection inside what an interface takes, such as a role's steps or a run's starts, has a case of none, one, and several, and a contract that picks one of several has a case where the one picked lies at neither end; each comparison the contract makes has a value that matches beside one that nearly does, such as another plugin's name with the same prefix; an input that sets the part up, such as a rule file, is divided into its classes like any other, never one bench for every case; an event of the same stream that the part must leave alone is a class; and once designed, each condition of the contract is taken with the faults likely in its body, such as one off, another element picked, and or for or, each named with the case that fails on it, a case added where none does; each case's Then names the whole of what the interface gives and changes; a mutant or a property's counterexample that survives is a fault of this design, taken back to it, not mended one by one",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "doing",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Test design inside the code",
+              "decided": "the cases of each module that the maker adds inside a part are designed by the test design best practice's techniques of unit cases, the faults likely in each condition included; before writing a branch or a comparison, the maker names the case that fails where it's wrong, and writes none that no case fails on; a mutant that survives, other than one that changes nothing, is a fault of the design of the cases, reported with the technique it lacked and taken back to whoever designs the cases, not mended by a test",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The developers learn from a test that runs the product whole what the product does, as each run ran as they meant and measured what they meant",
@@ -260,7 +353,50 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Unit cases designed again",
+              "decided": "a subagent designs Lane's unit cases again from the interfaces of Lane's skeleton by the test design best practice as mended, with no sight of Lane's code, and the cases that exist are kept only where the design gives them again",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's AI notices when it writes a file that its step doesn't name",
@@ -314,7 +450,7 @@
             },
             {
               "about": "Lane's surviving mutants",
-              "decided": "a ci-fix subagent mends them on the branch ci-fix/rn-rebuild-f05952f7 by dev/scripts/ci-fix.md, from the Test quality runs 44620788162, 44621860573, 44622864218, 44623923209, and 44624851060; its commits are merged into rn-rebuild once read; each survivor whose cause is a unit case short of the test design best practice's N3 goes back to Lane's test design, and code that no case calls for is removed; Lane's code deliverables are done once no mutant survives",
+              "decided": "the ci-fix subagent's commit on ci-fix/rn-rebuild-f05952f7 is taken, as it removes code that no case calls for; no other survivor is mended one by one, as they show the unit cases short of the test design, which Lane's unit cases designed again meet; Lane's code then follows those cases a test at a time, and Lane's code deliverables are done once no mutant survives",
               "by": "user"
             }
           ]
@@ -984,7 +1120,50 @@
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Unit cases designed again",
+              "decided": "a subagent designs rn's unit cases again from the interfaces of rn's skeleton by the test design best practice as mended, with no sight of rn's code, and the cases that exist are kept only where the design gives them again",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
@@ -1792,6 +1971,22 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/test-design"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/code"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests"
+    },
     {
       "do": "make",
       "path": "dev/lane/tests/integration/test_lane_s1_writes.py"
