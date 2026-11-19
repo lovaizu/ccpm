@@ -1,14 +1,16 @@
 """What Lane's cases share: a plugin `log` that depends on Lane, whose skill `/log:up <version>`
-has a writer write the version's CHANGELOG.md entry and a reviewer judge it, as Lane's README says
-its walkthrough will, with its rules, its adapters, and its skills; and a bench that holds copies of
-Lane and of that plugin, a repository it works in, and the double of Claude Code to play the
-person, the main conversation, and each subagent through.
+has a writer write the version's CHANGELOG.md entry and a reviewer judge it, as Lane's README's
+walkthrough says, with its rules, which fix its order by routes, and its skills; the adapters that a
+case gives `log` in place of its routes or of a role's steps; and a bench that holds copies of Lane
+and of that plugin, a repository it works in, and the double of Claude Code to play the person, the
+main conversation, and each subagent through.
 
 Each helper plays one move as the architecture draws it, through the double, and says nothing of
 how Lane's parts carry it."""
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import shutil
@@ -131,9 +133,48 @@ RULES: Rules = {
 ADAPTERS: dict[str, str] = {}
 SKILLS = ("up", "retry", "tag")
 
+# An adapter of the starts due that `log` gives in place of its routes, which finds where the run
+# stands from the plugin's own file, CHANGELOG.md, and from the run that Lane gives it: the reviewer
+# due where the entry of the words is there and no result after it asks for more, else the writer;
+# none while a start runs; and the run's end after the reviewer's `good`.
+ORDER = """\
+import json, sys
 
-def text(role: str, words: str = WORDS) -> str:
-    """The text that the main conversation gives the role's start."""
+run = json.load(sys.stdin)["run"]
+starts = [m for m in run["moves"] if m["kind"] == "start"]
+results = [m["result"] for m in run["moves"] if m["kind"] == "result"]
+try:
+    with open("CHANGELOG.md", encoding="utf-8") as f:
+        written = "## " + run["words"] in f.read()
+except OSError:
+    written = False
+if results[-1:] == ["good"]:
+    print(json.dumps({"ends": True}))
+elif len(starts) > len(results):
+    print(json.dumps({"starts": []}))
+elif written and results[-1:] != ["more"]:
+    print(json.dumps({"starts": [{"role": "log:reviewer", "count": 1}]}))
+else:
+    print(json.dumps({"starts": [{"role": "log:writer", "count": 1}]}))
+"""
+
+# An adapter of the rules that `log` gives for a role that its rules name with no steps: one step
+# `write`, which writes each Markdown file that the start's prompt names.
+RULES_ADAPTER = """\
+import json, re, sys
+
+prompt = json.load(sys.stdin)["prompt"]
+paths = re.findall(r"[\\w./-]+\\.md", prompt)
+print(json.dumps({"steps": [{"name": "write", "rules": [{"type": "writes", "paths": paths}]}]}))
+"""
+
+# The rules of `log` naming its writer with no steps, for its adapter of the rules to give.
+ADAPTED: Rules = copy.deepcopy(RULES)
+ADAPTED["roles"]["log:writer"] = {}
+
+
+def prompt(role: str, words: str = WORDS) -> str:
+    """The prompt that the main conversation gives the role's start, as log's skill words it."""
     return f"You are {role}. Write the entry of {words}."
 
 
@@ -215,16 +256,27 @@ class Bench:
         else:
             write_files(self.log, {f"lane/adapters/{name}": code})
 
-    def kept(self, words: str, results: list[dict[str, str]], folder: str | None = None) -> None:
-        """Writes a file of results of the version, in the folder or the repository, which no part
-        of `log` or Lane reads."""
-        path = f".log/kept/{words}.json"
-        write_files(folder or self.repo, {path: json.dumps(results)})
-
     def other(self, name: str, rules: Mapping[str, Any] | None) -> str:
         """Writes another plugin of the name beside `log`, with its skill `up` and the rules, and
         gives its folder."""
         return plugin(os.path.join(os.path.dirname(self.log), name), name, ("up",), rules, {})
+
+
+def ending(b: Bench, step: int, result: str) -> None:
+    """Writes the rules of `log` with the writer's step at the index naming the result among those
+    that end the start at that step, which no route goes after."""
+    rules = copy.deepcopy(RULES)
+    rules["roles"]["log:writer"]["steps"][step]["rules"].append(
+        {"type": "result", "ends": [result]}
+    )
+    b.rules(rules)
+
+
+def steps_from_adapter(b: Bench) -> None:
+    """Writes the rules of `log` naming its writer with no steps, so that each start of it takes its
+    steps from RULES_ADAPTER, the plugin's adapter of the rules."""
+    b.rules(ADAPTED)
+    b.adapter("rules.py", RULES_ADAPTER)
 
 
 def bench(tmp: str) -> Bench:
@@ -257,10 +309,12 @@ def opened(b: Bench, words: str = WORDS) -> Conversation:
     return c
 
 
-def started(c: Conversation, role: str = "log:writer", words: str = WORDS) -> Agent:
-    """The main conversation starts the role in the background with the text that `log` gives it,
-    and gives the subagent; the start must go through."""
-    answer, agent = c.start(role, text(role, words), f"Run {role}")
+def started(
+    c: Conversation, role: str = "log:writer", words: str = WORDS, given: str | None = None
+) -> Agent:
+    """The main conversation starts the role in the background with the prompt given, else the one
+    that log's skill words, and gives the subagent; the start must go through."""
+    answer, agent = c.start(role, given or prompt(role, words), f"Run {role}")
     assert agent is not None, answer.said
     return agent
 

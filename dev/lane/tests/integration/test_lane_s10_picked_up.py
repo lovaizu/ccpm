@@ -1,27 +1,36 @@
 """The integration cases of S10, a run picked up: after /compact, the run that the run record holds,
-not ended, giving where it stands; in a new conversation, the run added from the results that the
-plugin's kept adapter gives for the words typed after the command; and each state of Claude Code
-that bears on them, as dev/lane/claude-code-states.md lists it. Each runs `log` and Lane through the
-double of Claude Code."""
+not ended, going on where it stands; in a new conversation, a run added with the words typed after
+the command, whose starts due the plugin's order gives from where the plugin's own files say the run
+stands; and each state of Claude Code that bears on them, as dev/lane/claude-code-states.md lists
+it. Each runs `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
 
 import pytest
 from lane_bench import (
+    ENTRY,
+    ORDER,
     UNREPORTED,
     WORDS,
     Bench,
     opened,
     reached,
     started,
-    text,
     to_review,
     written,
 )
+from repo_files import git, write_files
 
 pytestmark = UNREPORTED
 
-WRITTEN = [{"role": "log:writer", "result": "written"}]
+
+def entry_kept(b: Bench) -> None:
+    """`log` decides its order by ORDER, and the repository keeps the entry of 1.2.0 that an earlier
+    conversation's writer wrote."""
+    b.adapter("starts_due.py", ORDER)
+    write_files(b.repo, {"CHANGELOG.md": ENTRY})
+    git(b.repo, "add", "-A")
+    git(b.repo, "commit", "-q", "-m", "The entry of 1.2.0")
 
 
 @pytest.mark.supports("S10", "Run")
@@ -34,19 +43,19 @@ def test_after_compact_the_run_goes_on_with_its_starts_due(b: Bench):
     assert not c.compact().blocked
     answer = c.stop("Compacted.")
     assert answer.blocked
-    assert text("log:writer") in answer.said
+    assert "log:writer" in answer.said
 
 
 @pytest.mark.supports("S10", "Run")
-def test_the_command_typed_after_compact_gives_where_the_run_picks_up(b: Bench):
+def test_the_command_typed_after_compact_gives_where_the_run_stands(b: Bench):
     """Given the writer ended with `written`, so the reviewer is due, and the person typed /compact
-    When the person types /log:up 1.2.0 again
-    Then the main conversation reads, at the command, the reviewer due with its text"""
+    When the person types /log:up 1.2.0 again, and the main conversation starts the reviewer
+    Then the main conversation reads, at the command, the reviewer due, and the start goes
+    through, as the run goes on where it stands"""
     c = to_review(b)
     c.compact()
-    answer = c.type(f"/log:up {WORDS}")
-    assert text("log:reviewer") in answer.said
-    assert text("log:writer") not in answer.said
+    assert "log:reviewer" in c.type(f"/log:up {WORDS}").said
+    assert started(c, "log:reviewer") is not None
 
 
 @pytest.mark.supports("S10", "Run")
@@ -58,71 +67,54 @@ def test_a_subagent_running_through_compact_stays_on_its_start(b: Bench):
     writer = started(c)
     c.compact()
     written(writer)
-    assert text("log:reviewer") in reached(writer).said
+    assert "log:reviewer" in reached(writer).said
 
 
-@pytest.mark.supports("S10", "Kept results")
-def test_a_new_conversation_picks_the_run_up_from_the_kept_results(b: Bench):
-    """Given `log` keeping the writer's `written` for 1.2.0, and a new conversation
-    When the person types /log:up 1.2.0, and the main conversation ends its turn
-    Then the end is stopped with the reviewer due, not the writer"""
-    b.kept(WORDS, WRITTEN)
-    answer = opened(b).stop("Picked up.")
-    assert answer.blocked
-    assert text("log:reviewer") in answer.said
-    assert text("log:writer") not in answer.said
-
-
-@pytest.mark.supports("S10", "Kept results")
-def test_the_kept_adapter_is_asked_with_the_words_typed_after_the_command(b: Bench):
-    """Given `log` keeping the writer's `written` for 1.2.0 alone, and a new conversation
-    When the person types /log:up 1.3.0, and the main conversation ends its turn
-    Then the end is stopped with the writer due for 1.3.0, as nothing is kept for it"""
-    b.kept(WORDS, WRITTEN)
-    answer = opened(b, "1.3.0").stop("Started.")
-    assert text("log:writer", "1.3.0") in answer.said
-
-
-@pytest.mark.supports("S10", "Kept results")
-def test_a_run_picked_up_by_the_skill_tool_takes_its_arguments_as_the_words(b: Bench):
-    """Given `log` keeping the writer's `written` for 1.2.0, and a new conversation
-    When the main conversation calls log:up by the Skill tool with 1.2.0, and ends its turn
-    Then the end is stopped with the reviewer due"""
-    b.kept(WORDS, WRITTEN)
-    c = b.converse()
-    c.skill("log:up", WORDS)
-    assert text("log:reviewer") in c.stop("Picked up.").said
-
-
-@pytest.mark.supports("S10", "Kept results", "Route")
-def test_kept_results_after_which_the_routes_start_no_more_leave_none_due(b: Bench):
-    """Given `log` keeping the writer's `written` and the reviewer's `good` for 1.2.0
+@pytest.mark.supports("S10", "Starts due")
+def test_a_new_conversation_goes_on_where_the_plugins_own_files_say(b: Bench):
+    """Given `log` deciding its order from CHANGELOG.md, which holds the entry of 1.2.0 that an
+    earlier conversation wrote
     When the person types /log:up 1.2.0 in a new conversation, and the main conversation ends its
     turn
-    Then the end goes through, as the run ended"""
-    b.kept(WORDS, [*WRITTEN, {"role": "log:reviewer", "result": "good"}])
-    assert not opened(b).stop("Nothing left.").blocked
+    Then the end is stopped with the reviewer due"""
+    entry_kept(b)
+    answer = opened(b).stop("Picked up.")
+    assert answer.blocked
+    assert "log:reviewer" in answer.said
 
 
 @pytest.mark.supports("S10")
-def test_a_plugin_without_a_kept_adapter_starts_the_run_from_its_command(b: Bench):
-    """Given `log` with no kept adapter, its kept file holding the writer's `written`
-    When the person types /log:up 1.2.0 in a new conversation, and the main conversation ends its
+def test_the_order_of_a_new_conversation_takes_the_words_typed_after_the_command(b: Bench):
+    """Given `log` deciding its order from CHANGELOG.md, which holds the entry of 1.2.0 alone
+    When the person types /log:up 1.3.0 in a new conversation, and the main conversation ends its
     turn
-    Then the end is stopped with the writer due, as the command's route makes it"""
-    b.adapter("kept.py", None)
-    b.kept(WORDS, WRITTEN)
-    assert text("log:writer") in opened(b).stop("Started.").said
+    Then the end is stopped with the writer due, as nothing is written for 1.3.0"""
+    entry_kept(b)
+    answer = opened(b, "1.3.0").stop("Started.")
+    assert answer.blocked
+    assert "log:writer" in answer.said
 
 
-@pytest.mark.supports("S10", "Kept results")
-def test_a_kept_adapter_that_fails_stops_with_the_adapter_and_what_it_said(b: Bench):
-    """Given `log` whose kept adapter exits 1 saying the kept file is broken
+@pytest.mark.supports("S10")
+def test_a_run_added_by_the_skill_tool_takes_its_arguments_as_the_words(b: Bench):
+    """Given `log` deciding its order from CHANGELOG.md, which holds the entry of 1.2.0
+    When the main conversation calls log:up by the Skill tool with 1.2.0 in a new conversation, and
+    ends its turn
+    Then the end is stopped with the reviewer due"""
+    entry_kept(b)
+    c = b.converse()
+    c.skill("log:up", WORDS)
+    assert "log:reviewer" in c.stop("Picked up.").said
+
+
+@pytest.mark.supports("S10", "route adapter")
+def test_a_new_conversation_of_a_plugin_that_fixes_its_order_starts_from_its_command(b: Bench):
+    """Given `log` fixing its order by routes alone, and the repository keeping the entry of 1.2.0
     When the person types /log:up 1.2.0 in a new conversation, and the main conversation ends its
     turn
-    Then the end is stopped, naming the adapter and what it said, for the plugin's author to mend"""
-    b.adapter("kept.py", "import sys\n\nsys.exit('the kept file is broken')\n")
+    Then the end is stopped with the writer due, as the route after the command makes it and no
+    file of the plugin's is read"""
+    write_files(b.repo, {"CHANGELOG.md": ENTRY})
     answer = opened(b).stop("Started.")
     assert answer.blocked
-    assert "kept.py" in answer.said
-    assert "the kept file is broken" in answer.said
+    assert "log:writer" in answer.said

@@ -1,12 +1,12 @@
 """The integration cases of S7, the run moved by the result its AI gives: an end with no result, or
 one that the role's rule doesn't name, stopped with the results it may give, and each result that a
-reporter gives moving the run by its route. Each runs `log` and Lane through the double of Claude
-Code."""
+reporter gives moving the run by its route; a result said only in the reply is the case of P1.2.
+Each runs `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
 
 import pytest
-from lane_bench import UNREPORTED, Bench, opened, reviewed, started, text, to_review, written
+from lane_bench import UNREPORTED, Bench, reviewed, started, to_review
 
 pytestmark = UNREPORTED
 
@@ -35,23 +35,11 @@ def test_an_end_with_a_result_that_the_rule_doesnt_name_is_stopped(b: Bench):
     assert "good" in answer.said
 
 
-@pytest.mark.supports("S7")
-def test_a_result_in_the_reply_alone_moves_nothing(b: Bench):
-    """Given the writer that kept each step but reported no result
-    When it ends replying `written`
-    Then the end is stopped with the results it may give"""
-    writer = started(opened(b))
-    written(writer, result=None)
-    answer = writer.end("written")[0]
-    assert answer.blocked
-    assert "written" in answer.said
-
-
 @pytest.mark.supports("S7", "Route")
 def test_the_reviewers_more_makes_the_writer_due_again(b: Bench):
     """Given the reviewer due
     When it reports `more` and ends
-    Then the main conversation reads `more` and the writer due with its text"""
+    Then the main conversation reads `more` and the writer due, as the walkthrough shows"""
     answer = reviewed(to_review(b), "more")
     assert "more" in answer.said
-    assert text("log:writer") in answer.said
+    assert "log:writer" in answer.said

@@ -6,11 +6,13 @@ and class of answer."""
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 from typing import Any
 
 import lane_bench
+import lane_entries
 import pytest
 from guard import (
     Answer,
@@ -32,10 +34,19 @@ from place import Move, SkillCall
 from record import Entry, add, runs
 from repo_files import write_files
 from report import read_report, report
+from rules import Step
 
 pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
 
-TEXT = lane_bench.text
+# An adapter of the starts due that gives none, as it waits for the person's answer.
+WAITS = 'import json\n\nprint(json.dumps({"starts": []}))\n'
+# The rules of `log` giving no order: the main conversation's step `lead` alone, checked for
+# .log/up.md.
+UP_SAYS = ".log/up.md is missing"
+NO_ORDER: Any = {"roles": {"log:up": copy.deepcopy(lane_bench.RULES["roles"]["log:up"])}}
+NO_ORDER["roles"]["log:up"]["steps"][0]["rules"].append(
+    {"type": "check", "check": f"test -f .log/up.md || {{ echo '{UP_SAYS}'; exit 1; }}"}
+)
 
 
 class Play:
@@ -135,7 +146,7 @@ def test_the_next_event_with_the_base_directory_gives_the_folder_and_the_starts_
     Then the guard lets it through with the writer due and its text, and the run has its folder"""
     said = g.opened()
     assert not said.stop
-    assert TEXT("log:writer") in said.said
+    assert "log:writer" in said.said
     assert runs("session-1")[0].plugin_root == g.log
 
 
@@ -175,7 +186,7 @@ def test_a_start_of_a_role_not_due_is_stopped_with_the_starts_due(g: Play):
     g.opened()
     said = answer(g.e.start("log:reviewer", "toolu_1"))
     assert said.stop
-    assert TEXT("log:writer") in said.said
+    assert "log:writer" in said.said
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
@@ -200,7 +211,7 @@ def test_a_start_whose_call_fails_is_dropped_and_due_again(g: Play):
     g(g.e.start_failed("log:writer", "toolu_1"))
     said = answer(g.e.stop())
     assert said.stop
-    assert TEXT("log:writer") in said.said
+    assert "log:writer" in said.said
 
 
 @pytest.mark.supports("test_a_start_that_another_plugins_hook_denies_is_due_again_at_the_turns_end")
@@ -211,12 +222,10 @@ def test_a_start_still_untied_at_the_turns_end_is_dropped_and_due_again(g: Play)
     g.opened()
     g(g.e.start("log:writer", "toolu_1"))
     assert answer(g.e.stop()).stop
-    assert TEXT("log:writer") in answer(g.e.stop()).said
+    assert "log:writer" in answer(g.e.stop()).said
 
 
-@pytest.mark.supports(
-    "test_a_result_reaching_the_main_conversation_gives_the_starts_its_route_makes_due"
-)
+@pytest.mark.supports("test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it")
 def test_an_end_that_holds_and_its_notification_give_the_result_and_the_next_starts(g: Play):
     """Given the writer a1 that kept each step
     When it ends, and its task-notification reaches the main conversation
@@ -227,7 +236,7 @@ def test_an_end_that_holds_and_its_notification_give_the_result_and_the_next_sta
     assert not answer(g.e.ended(writer)).stop
     said = answer(g.e.reached(writer, "toolu_1"))
     assert "written" in said.said
-    assert TEXT("log:reviewer") in said.said
+    assert "log:reviewer" in said.said
 
 
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
@@ -237,11 +246,11 @@ def test_a_notification_of_a_subagent_stopped_by_task_stop_gives_its_start_due_a
     Then the guard gives the writer due again with its text, and stops the end"""
     g.opened()
     writer = g.started()
-    assert TEXT("log:writer") in answer(g.e.killed(writer, "toolu_1")).said
+    assert "log:writer" in answer(g.e.killed(writer, "toolu_1")).said
     assert answer(g.e.stop()).stop
 
 
-@pytest.mark.supports("test_a_resume_that_a_route_makes_due_goes_through_as_its_start")
+@pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
 def test_a_resume_that_a_route_makes_due_is_its_start_tied_by_the_resume(g: Play):
     """Given the writer a1 ended, and the reviewer's `more`, which makes the writer due
     When the main conversation resumes a1 by SendMessage, the call says it resumed a1, and the
@@ -256,7 +265,7 @@ def test_a_resume_that_a_route_makes_due_is_its_start_tied_by_the_resume(g: Play
     assert not answer(g.e.stop()).stop
 
 
-@pytest.mark.supports("test_a_resume_that_no_route_makes_due_goes_through_as_talk")
+@pytest.mark.supports("test_a_resume_that_the_order_doesnt_make_due_goes_through_as_talk")
 def test_a_resume_that_no_route_makes_due_goes_through_and_moves_nothing(g: Play):
     """Given the writer a1 ended, so the reviewer is due
     When the main conversation resumes a1 by SendMessage, and ends its turn
@@ -266,7 +275,7 @@ def test_a_resume_that_no_route_makes_due_goes_through_and_moves_nothing(g: Play
     g(g.e.resumed(writer, "toolu_2"))
     said = answer(g.e.stop())
     assert said.stop
-    assert TEXT("log:reviewer") in said.said
+    assert "log:reviewer" in said.said
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
@@ -287,7 +296,7 @@ def test_a_resume_queued_waits_through_the_turns_end_and_ties_at_the_end_of_the_
     assert answer(g.e.write(os.path.join(g.e.cwd, "notes.txt"), writer)).stop
 
 
-@pytest.mark.supports("test_a_typed_command_that_a_route_waits_for_puts_its_starts_in_place")
+@pytest.mark.supports("test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place")
 def test_a_typed_command_puts_its_starts_in_place_of_those_before(g: Play):
     """Given the reviewer due
     When the person's /log:retry expands, and the main conversation ends its turn
@@ -295,11 +304,11 @@ def test_a_typed_command_puts_its_starts_in_place_of_those_before(g: Play):
     g.to_review()
     g(g.e.typed("log:retry"))
     said = answer(g.e.stop())
-    assert TEXT("log:writer") in said.said
-    assert TEXT("log:reviewer") not in said.said
+    assert said.stop
+    assert "log:writer" in said.said
 
 
-@pytest.mark.supports("test_a_run_whose_routes_start_no_more_ends_and_holds_no_move_after")
+@pytest.mark.supports("test_a_run_whose_order_says_it_ends_holds_no_move_after")
 def test_a_run_whose_routes_start_no_more_holds_no_move_after(g: Play):
     """Given the reviewer's `good`, after which the routes start no more
     When the main conversation writes notes.txt, and ends its turn
@@ -321,7 +330,7 @@ def test_the_command_typed_once_its_run_ended_adds_a_new_run(g: Play):
     reviewer = g.started("log:reviewer", "a2")
     g.reported(reviewer, "result", "good")
     g.ended(reviewer, "toolu_2")
-    assert TEXT("log:writer", "1.3.0") in g.opened("1.3.0").said
+    assert "log:writer" in g.opened("1.3.0").said
     assert len(runs("session-1")) == 2
 
 
@@ -337,7 +346,7 @@ def test_another_skills_command_moves_the_run_and_its_subagent_stays_on_its_star
     g(g.e.typed("log:tag"))
     said = answer(g.e.stop())
     assert said.stop
-    assert TEXT("log:tagger") in said.said
+    assert "log:tagger" in said.said
     assert answer(g.e.write(os.path.join(g.e.cwd, "notes.txt"), writer)).stop
     assert len(runs("session-1")) == 1
 
@@ -352,27 +361,84 @@ def test_the_summarys_end_at_compact_lies_outside_and_the_run_goes_on(g: Play):
     assert answer(g.e.stop()).stop
 
 
-@pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_picks_up")
+@pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_stands")
 def test_the_command_typed_while_its_run_stands_gives_where_it_stands(g: Play):
     """Given the reviewer due in the run of log:up for 1.2.0
     When the person's /log:up 1.2.0 expands again
     Then the guard gives the reviewer due at once, and the record holds one run"""
     g.to_review()
-    assert TEXT("log:reviewer") in answer(g.e.typed("log:up", "1.2.0")).said
+    assert "log:reviewer" in answer(g.e.typed("log:up", "1.2.0")).said
     assert len(runs("session-1")) == 1
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_the_run_up_from_the_kept_results")
-def test_a_new_conversation_picks_the_run_up_from_the_kept_results(g: Play):
-    """Given `log` keeping the writer's `written` for 1.2.0, and a conversation with no run
+@pytest.mark.supports("test_a_new_conversation_goes_on_where_the_plugins_own_files_say")
+def test_a_new_conversation_takes_its_starts_due_from_the_plugins_order(g: Play):
+    """Given `log` deciding its order by ORDER, the conversation's CHANGELOG.md holding the entry
+    of 1.2.0, and a conversation with no run
     When the person's /log:up 1.2.0 expands, and the main conversation runs `git status`
-    Then the guard gives the reviewer due, and the record holds the kept result"""
-    kept = [{"role": "log:writer", "result": "written"}]
-    write_files(g.e.cwd, {".log/kept/1.2.0.json": json.dumps(kept)})
-    said = g.opened()
-    assert TEXT("log:reviewer") in said.said
-    assert TEXT("log:writer") not in said.said
-    assert any(entry["kind"] == "result" for entry in runs("session-1")[0].entries)
+    Then the guard gives the reviewer due, as ORDER reads the entry"""
+    write_files(g.log, {"lane/adapters/starts_due.py": lane_bench.ORDER})
+    write_files(g.e.cwd, {"CHANGELOG.md": lane_bench.ENTRY})
+    assert "log:reviewer" in g.opened().said
+
+
+@pytest.mark.supports("test_a_run_whose_order_gives_no_start_due_waits_and_still_holds_its_moves")
+def test_a_turns_end_while_the_order_gives_no_start_due_goes_through_and_the_run_stands(g: Play):
+    """Given `log` whose adapter of the starts due gives none, and the person's /log:up 1.2.0
+    When the main conversation ends its turn, and then writes notes.txt
+    Then the end goes through, the record holds no end of the run, and the write is stopped by the
+    step `lead`"""
+    write_files(g.log, {"lane/adapters/starts_due.py": WAITS})
+    g.opened()
+    assert not answer(g.e.stop()).stop
+    assert not [e for e in runs("session-1")[0].entries if e["kind"] == "ended"]
+    assert answer(g.e.write(os.path.join(g.e.cwd, "notes.txt"))).stop
+
+
+@pytest.mark.supports("test_a_run_whose_order_says_it_ends_holds_no_move_after")
+def test_the_orders_end_of_the_run_is_kept_as_an_ended_entry(g: Play):
+    """Given the reviewer due
+    When the reviewer gives `good`, after which log's routes say the run ends
+    Then the record holds an `ended` entry of the run"""
+    g.to_review()
+    reviewer = g.started("log:reviewer", "a2")
+    g.reported(reviewer, "result", "good")
+    g.ended(reviewer, "toolu_2")
+    assert runs("session-1")[0].entries[-1]["kind"] == "ended"
+
+
+@pytest.mark.supports(
+    "test_the_turns_end_in_a_run_of_a_plugin_with_no_order_is_held_to_its_skills_check"
+)
+def test_a_turns_end_in_a_run_with_no_order_is_held_to_its_skills_check(g: Play):
+    """Given `log` giving no order, its skill's step `lead` checked for .log/up.md
+    When the person types /log:up 1.2.0, and the main conversation ends its turn before
+    .log/up.md is there
+    Then the guard stops the end with the step `lead` and what its check said, and the run
+    stands"""
+    write_files(g.log, {"lane/rules.json": json.dumps(NO_ORDER)})
+    g.opened()
+    said = answer(g.e.stop())
+    assert said.stop
+    assert "lead" in said.said
+    assert UP_SAYS in said.said
+    assert not [e for e in runs("session-1")[0].entries if e["kind"] == "ended"]
+
+
+@pytest.mark.supports(
+    "test_a_run_of_a_plugin_with_no_order_ends_at_the_turns_end_that_its_steps_let_through"
+)
+def test_a_turns_end_that_a_run_with_no_order_lets_through_ends_the_run(g: Play):
+    """Given `log` giving no order, and the person's /log:up 1.2.0
+    When .log/up.md is there, the main conversation ends its turn, and then writes notes.txt
+    Then the end goes through, the record holds an `ended` entry of the run, and the guard answers
+    nothing to the write"""
+    write_files(g.log, {"lane/rules.json": json.dumps(NO_ORDER)})
+    g.opened()
+    write_files(g.e.cwd, {".log/up.md": "x\n"})
+    assert not answer(g.e.stop()).stop
+    assert runs("session-1")[0].entries[-1]["kind"] == "ended"
+    assert answer(g.e.write(os.path.join(g.e.cwd, "notes.txt"))) == Answer()
 
 
 @pytest.mark.supports("test_another_conversation_in_the_repository_is_held_to_no_run_of_the_first")
@@ -410,14 +476,14 @@ def test_a_subagents_message_to_another_subagent_goes_through(g: Play):
 
 @pytest.mark.supports("test_rules_out_of_form_stop_the_call_saying_what_the_author_mends")
 def test_rules_out_of_form_stop_the_next_event_saying_what_to_mend(g: Play):
-    """Given `log` whose lane/rules.json has no routes
+    """Given `log` whose lane/rules.json has no roles
     When the person types /log:up 1.2.0, and the main conversation runs `git status`
-    Then the guard stops the call, naming lane/rules.json and the routes"""
-    write_files(g.log, {"lane/rules.json": json.dumps({"roles": {}})})
+    Then the guard stops the call, naming lane/rules.json and the roles"""
+    write_files(g.log, {"lane/rules.json": json.dumps({"routes": lane_bench.RULES["routes"]})})
     said = g.opened()
     assert said.stop
     assert "lane/rules.json" in said.said
-    assert "routes" in said.said
+    assert "roles" in said.said
 
 
 @pytest.mark.supports("test_work_outside_a_run_of_a_plugin_with_rules_is_left_alone")
@@ -435,11 +501,18 @@ def test_a_plugin_with_no_rules_has_each_event_left_alone(g: Play):
 
 
 def move(kind: str, event: Event, agent: Subagent | None = None, step: str | None = None) -> Move:
-    """The move of the kind, on the one run of the conversation session-1 as its record stands."""
+    """The move of the kind, on the one run of the conversation session-1 as its record stands,
+    with the prompt of an Agent call's start."""
     [run] = runs("session-1")
     role = agent.type if agent else run.skill
-    steps = lane_bench.RULES["roles"][role]["steps"]
-    return Move(kind, event, run, role, agent.id if agent else None, None, steps, step, None)
+    steps = lane_bench.RULES["roles"][role].get("steps", [])
+    given = event.get("tool_input", {}).get("prompt") if kind == "start" else None
+    return Move(kind, event, run, role, agent.id if agent else None, given, steps, step, None)
+
+
+def last_start() -> Entry:
+    """The record's latest `start` entry."""
+    return [e for e in runs("session-1")[0].entries if e["kind"] == "start"][-1]
 
 
 def recorded(log: str, *entries: Entry) -> None:
@@ -452,8 +525,9 @@ def recorded(log: str, *entries: Entry) -> None:
 
 
 WRITER = Subagent("a1", "log:writer")
-START: Entry = {"kind": "start", "run": "r1", "role": "log:writer", "tool_use_id": "toolu_1"}
-TIE: Entry = {"kind": "tie", "run": "r1", "tool_use_id": "toolu_1", "agent_id": "a1"}
+START: Entry = lane_entries.start("toolu_1", prompt="You are log:writer.")
+TIE: Entry = lane_entries.tie("toolu_1", "a1")
+GAVE: Entry = lane_entries.result("a1", "written")
 
 
 @pytest.mark.supports("test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it")
@@ -465,22 +539,15 @@ def test_skill_called_with_no_run_adds_one_with_no_folder(g: Play):
     assert runs("session-1")[0].plugin_root is None
 
 
-@pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_picks_up")
+@pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_stands")
 def test_command_typed_of_the_skill_that_called_the_run_gives_where_it_stands(g: Play, log: str):
     """Given the writer a1's result `written`, so the reviewer is due
     When the person types /log:up again
     Then the answer gives the reviewer due with its text, and not the writer"""
-    gave: Entry = {
-        "kind": "result",
-        "run": "r1",
-        "agent_id": "a1",
-        "role": "log:writer",
-        "result": "written",
-    }
+    gave: Entry = lane_entries.result("a1", "written")
     recorded(log, START, TIE, gave)
     said = command_typed(move("typed", g.e.typed("log:up", "1.2.0")))
-    assert TEXT("log:reviewer") in said.said
-    assert TEXT("log:writer") not in said.said
+    assert "log:reviewer" in said.said
 
 
 @pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
@@ -490,7 +557,7 @@ def test_command_typed_of_another_skill_gives_its_routes_starts(g: Play, log: st
     Then the answer gives the tagger due with its text, and the record holds the command"""
     recorded(log, START, TIE)
     said = command_typed(move("typed", g.e.skill_post("log:tag", "")))
-    assert TEXT("log:tagger") in said.said
+    assert "log:tagger" in said.said
     last = runs("session-1")[0].entries[-1]
     assert (last["kind"], last.get("command")) == ("typed", "log:tag")
 
@@ -505,7 +572,7 @@ def test_run_opened_reads_the_folder_and_gives_the_starts_due(g: Play, log: str)
     add("session-1", [{"kind": "run", "run": "r1", "skill": "log:up", "words": "1.2.0"}])
     base_directory(g.e.transcript, log, "up")
     said = run_opened(g.e.stop(), runs("session-1")[0])
-    assert TEXT("log:writer") in said.said
+    assert "log:writer" in said.said
     assert runs("session-1")[0].plugin_root == log
 
 
@@ -525,17 +592,112 @@ def test_run_opened_before_the_base_directory_gives_nothing(g: Play):
 
 
 @pytest.mark.supports("test_the_start_due_goes_through_and_leaves_none_due")
-@pytest.mark.parametrize("role, stop", [("log:writer", False), ("log:reviewer", True)])
+@pytest.mark.parametrize(
+    "role, stop", [("log:writer", False), ("log:reviewer", True), ("general-purpose", False)]
+)
 def test_start_made_lets_the_start_due_through_and_stops_another(
     g: Play, log: str, role: str, stop: bool
 ):
     """Given the writer due
-    When the main conversation starts the writer, or the reviewer
-    Then the first goes through, and the second is stopped with the writer due"""
+    When the main conversation starts the writer, the reviewer, or general-purpose, which isn't
+    the plugin's
+    Then the writer's and general-purpose's go through, and the reviewer's is stopped with the
+    writer due"""
     recorded(log)
     said = start_made(move("start", g.e.start(role, "toolu_1")))
     assert said.stop == stop
-    assert (TEXT("log:writer") in said.said) == stop
+    assert ("log:writer" in said.said) == stop
+
+
+@pytest.mark.supports("test_the_order_tells_the_starts_of_one_role_apart_by_their_prompts")
+def test_start_made_keeps_the_start_with_its_prompt(g: Play, log: str):
+    """Given the writer due
+    When the main conversation starts the writer with a prompt
+    Then the record holds the start of the writer with that prompt, untied"""
+    recorded(log)
+    start_made(move("start", g.e.start("log:writer", "toolu_1", prompt="Write docs/changes/.")))
+    kept = last_start()
+    assert (kept["role"], kept["prompt"]) == ("log:writer", "Write docs/changes/.")
+    assert not [e for e in runs("session-1")[0].entries if e["kind"] == "tie"]
+
+
+@pytest.mark.supports(
+    "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
+)
+def test_start_made_of_a_role_with_no_steps_keeps_the_steps_its_adapter_gives(g: Play, log: str):
+    """Given `log` naming the writer with no steps, with its adapter of the rules, and the writer
+    due
+    When the main conversation starts the writer to write docs/changes/1.2.0.md
+    Then the start goes through, and the record holds it with the step that the adapter gave"""
+    write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
+    write_files(log, {"lane/adapters/rules.py": lane_bench.RULES_ADAPTER})
+    recorded(log)
+    event = g.e.start("log:writer", "toolu_1", prompt="Write docs/changes/1.2.0.md.")
+    assert not start_made(move("start", event)).stop
+    assert last_start()["steps"] == [
+        {"name": "write", "rules": [{"type": "writes", "paths": ["docs/changes/1.2.0.md"]}]}
+    ]
+
+
+@pytest.mark.supports(
+    "test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_saying_so"
+)
+def test_start_made_of_a_role_with_no_steps_and_no_adapter_is_stopped_naming_it(g: Play, log: str):
+    """Given `log` naming the writer with no steps, with no adapter of the rules, and the writer due
+    When the main conversation starts the writer
+    Then the guard stops it, naming lane/adapters/rules.py and the writer, and keeps no start"""
+    write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
+    recorded(log)
+    said = start_made(move("start", g.e.start("log:writer", "toolu_1")))
+    assert said.stop
+    assert "lane/adapters/rules.py" in said.said
+    assert "log:writer" in said.said
+    assert not [e for e in runs("session-1")[0].entries if e["kind"] == "start"]
+
+
+@pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
+def test_start_made_of_a_resume_keeps_the_prompt_and_steps_of_the_start_it_resumes(
+    g: Play, log: str
+):
+    """Given `log` naming the writer with no steps and giving no adapter of the rules now, the
+    writer a1's start with the steps that the adapter gave, its `written`, and the reviewer's
+    `more`, so that the writer is due
+    When the main conversation resumes a1 by SendMessage
+    Then the resume goes through, and the record holds its start with a1's prompt and steps"""
+    write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
+    given: list[Step] = [
+        {"name": "write", "rules": [{"type": "writes", "paths": ["CHANGELOG.md"]}]}
+    ]
+    reviewer: list[Entry] = [
+        lane_entries.start("toolu_2", "log:reviewer"),
+        lane_entries.tie("toolu_2", "a2"),
+        lane_entries.result("a2", "more", "log:reviewer"),
+    ]
+    recorded(log, {**START, "steps": given}, TIE, GAVE, *reviewer)
+    assert not start_made(move("start", g.e.send(WRITER, "toolu_3"))).stop
+    kept = last_start()
+    assert (kept["tool_use_id"], kept["prompt"], kept["steps"]) == (
+        "toolu_3",
+        START["prompt"],
+        given,
+    )
+
+
+@pytest.mark.supports(
+    "test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said"
+)
+def test_turn_ended_with_an_adapter_of_the_starts_due_that_fails_stops_with_what_it_said(
+    g: Play, log: str
+):
+    """Given `log` whose adapter of the starts due exits 1 saying it found no version
+    When the main conversation ends its turn
+    Then the guard stops the end, naming starts_due.py and what it said"""
+    write_files(log, {"lane/adapters/starts_due.py": "import sys\n\nsys.exit('no version')\n"})
+    recorded(log)
+    said = turn_ended(move("turn_end", g.e.stop()))
+    assert said.stop
+    assert "starts_due.py" in said.said
+    assert "no version" in said.said
 
 
 @pytest.mark.supports("test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it")
@@ -555,44 +717,36 @@ def test_turn_ended_drops_each_start_untied_but_a_resume_queued(g: Play, log: st
     """Given the writer's start untied, and a resume of a1 queued
     When the main conversation ends its turn
     Then the record drops the untied start and keeps the queued one"""
-    resume: Entry = {"kind": "start", "run": "r1", "role": "log:writer", "tool_use_id": "toolu_2"}
+    resume: Entry = lane_entries.start("toolu_2")
     queued: Entry = {"kind": "queue", "run": "r1", "tool_use_id": "toolu_2", "agent_id": "a1"}
-    untied: Entry = {"kind": "start", "run": "r1", "role": "log:writer", "tool_use_id": "toolu_3"}
+    untied: Entry = lane_entries.start("toolu_3")
     recorded(log, START, TIE, resume, queued, untied)
     turn_ended(move("turn_end", g.e.stop()))
     dropped = [e.get("tool_use_id") for e in runs("session-1")[0].entries if e["kind"] == "drop"]
     assert dropped == ["toolu_3"]
 
 
-@pytest.mark.supports("test_a_typed_command_that_a_route_waits_for_puts_its_starts_in_place")
+@pytest.mark.supports("test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place")
 def test_command_typed_gives_its_routes_starts(g: Play, log: str):
     """Given the writer tied to a1
     When the person types /log:retry
     Then the answer gives the writer due, and the record holds the command"""
     recorded(log, START, TIE)
     said = command_typed(move("typed", g.e.typed("log:retry")))
-    assert TEXT("log:writer") in said.said
+    assert "log:writer" in said.said
     assert runs("session-1")[0].entries[-1]["kind"] == "typed"
 
 
-@pytest.mark.supports(
-    "test_a_result_reaching_the_main_conversation_gives_the_starts_its_route_makes_due"
-)
+@pytest.mark.supports("test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it")
 def test_result_reached_gives_the_result_and_its_routes_starts(g: Play, log: str):
     """Given the writer a1's result `written`
     When its end reaches the main conversation
     Then the answer gives `written` and the reviewer due with its text"""
-    gave: Entry = {
-        "kind": "result",
-        "run": "r1",
-        "agent_id": "a1",
-        "role": "log:writer",
-        "result": "written",
-    }
+    gave: Entry = lane_entries.result("a1", "written")
     recorded(log, START, TIE, gave)
     said = result_reached(move("result_reached", g.e.reached(WRITER, "toolu_1"), WRITER))
     assert "written" in said.said
-    assert TEXT("log:reviewer") in said.said
+    assert "log:reviewer" in said.said
 
 
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
@@ -602,7 +756,7 @@ def test_result_reached_of_a_subagent_stopped_gives_its_start_due_again(g: Play,
     Then the answer gives the writer due again, and the record holds a1's start stopped"""
     recorded(log, START, TIE)
     said = result_reached(move("result_reached", g.e.killed(WRITER, "toolu_1"), WRITER))
-    assert TEXT("log:writer") in said.said
+    assert "log:writer" in said.said
     last = runs("session-1")[0].entries[-1]
     assert (last["kind"], last.get("agent_id")) == ("stopped", "a1")
 
@@ -697,15 +851,9 @@ def test_subagent_ended_that_holds_ties_the_resume_queued(g: Play, log: str):
     marks: list[Entry] = [
         {"kind": "mark", "run": "r1", "agent_id": "a1", "step": "write"},
         {"kind": "mark", "run": "r1", "agent_id": "a1", "step": "report"},
-        {
-            "kind": "result",
-            "run": "r1",
-            "agent_id": "a1",
-            "role": "log:writer",
-            "result": "written",
-        },
+        lane_entries.result("a1", "written"),
     ]
-    resume: Entry = {"kind": "start", "run": "r1", "role": "log:writer", "tool_use_id": "toolu_2"}
+    resume: Entry = lane_entries.start("toolu_2")
     queued: Entry = {"kind": "queue", "run": "r1", "tool_use_id": "toolu_2", "agent_id": "a1"}
     recorded(log, START, TIE, *marks, resume, queued)
     assert subagent_ended(move("end", g.e.ended(WRITER), WRITER, None)) == Answer()
@@ -748,9 +896,7 @@ def test_a_stop_at_another_event_is_a_block_with_its_reason(g: Play, event: str)
     assert (out["decision"], out["reason"]) == ("block", "Start log:writer.")
 
 
-@pytest.mark.supports(
-    "test_a_result_reaching_the_main_conversation_gives_the_starts_its_route_makes_due"
-)
+@pytest.mark.supports("test_a_result_reaching_the_main_conversation_gives_the_starts_due_after_it")
 def test_what_the_guard_says_without_a_stop_is_additional_context(g: Play):
     """Given the guard's answer that stops nothing and gives the starts due
     When it's written for the UserPromptSubmit of a task-notification

@@ -149,11 +149,14 @@ class Events:
         use = {"tool_input": {"file_path": path}, "tool_response": response, **agent.fields()}
         return self.made(READ, "the main conversation's `Read long.txt` ran", use)
 
-    def start(self, role: str, use: str, by: Subagent | None = None) -> Event:
-        """The PreToolUse of an Agent call that starts the role in the background."""
+    def start(
+        self, role: str, use: str, by: Subagent | None = None, prompt: str | None = None
+    ) -> Event:
+        """The PreToolUse of an Agent call that starts the role in the background, with the prompt
+        given, else one that names the role."""
         tool_input = {
             "description": f"Run {role}",
-            "prompt": f"You are {role}.",
+            "prompt": prompt or f"You are {role}.",
             "subagent_type": role,
             "run_in_background": True,
         }

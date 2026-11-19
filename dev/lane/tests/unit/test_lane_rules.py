@@ -65,15 +65,66 @@ def test_a_file_that_isnt_json_is_out_of_form_naming_the_file(tmp_path: Any):
 
 
 @pytest.mark.supports("test_rules_out_of_form_stop_the_call_saying_what_the_author_mends")
-@pytest.mark.parametrize("missing", ["roles", "routes"])
-def test_rules_without_a_part_of_the_form_are_out_of_form_naming_it(tmp_path: Any, missing: str):
-    """Given rules that lack their roles or their routes
+def test_rules_without_roles_are_out_of_form_naming_them(tmp_path: Any):
+    """Given rules that lack their roles
     When Lane reads them
-    Then it refuses with OutOfForm naming the file and the part"""
-    rules = {k: v for k, v in lane_bench.RULES.items() if k != missing}
-    said = refused(str(tmp_path), rules)
+    Then it refuses with OutOfForm naming the file and the roles"""
+    said = refused(str(tmp_path), {"routes": lane_bench.RULES["routes"]})
     assert "lane/rules.json" in said
-    assert missing in said
+    assert "roles" in said
+
+
+@pytest.mark.supports(
+    "test_a_run_of_a_plugin_with_no_order_holds_the_main_conversation_to_its_skills_steps"
+)
+def test_rules_without_routes_are_in_the_form(tmp_path: Any):
+    """Given rules with roles and no routes, of a plugin that gives no order or an adapter of it
+    When Lane reads them
+    Then they read as they are"""
+    rules = {"roles": lane_bench.RULES["roles"]}
+    assert read_rules(plugin_with(str(tmp_path), rules)) == rules
+
+
+@pytest.mark.supports(
+    "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
+)
+def test_a_role_named_with_no_steps_is_in_the_form(tmp_path: Any):
+    """Given rules that name the writer with no steps, for the plugin's adapter of the rules to give
+    When Lane reads them
+    Then they read as they are"""
+    rules = lane_bench.ADAPTED
+    assert read_rules(plugin_with(str(tmp_path), rules)) == rules
+
+
+@pytest.mark.supports(
+    "test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone"
+)
+@pytest.mark.parametrize(
+    "rule",
+    [
+        {"type": "result", "ends": ["unclear"]},
+        {"type": "result", "results": ["written"], "ends": ["unclear"]},
+    ],
+)
+def test_a_result_rule_with_results_that_end_the_start_is_in_the_form(tmp_path: Any, rule: Any):
+    """Given rules whose writer's step holds a rule of results naming only those that end the start,
+    or both kinds
+    When Lane reads them
+    Then they read as they are"""
+    rules = writer_rule(rule)
+    assert read_rules(plugin_with(str(tmp_path), rules)) == rules
+
+
+@pytest.mark.supports(
+    "test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone"
+)
+@pytest.mark.parametrize("rule", [{"type": "result"}, {"type": "result", "ends": []}])
+def test_a_result_rule_with_no_result_of_either_kind_is_out_of_form(tmp_path: Any, rule: Any):
+    """Given rules whose writer's step holds a rule of results with neither kind, or no result that
+    ends the start
+    When Lane reads them
+    Then it refuses with OutOfForm"""
+    refused(str(tmp_path), writer_rule(rule))
 
 
 @pytest.mark.supports("test_a_rule_of_a_type_that_lane_lacks_stops_saying_what_to_mend")

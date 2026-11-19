@@ -1,6 +1,6 @@
 """The integration cases of S6, a step's checklist: a reporter's mark of the step done before each
-item that the plugin's checklist adapter gives is done stopped with each item not yet done, and let
-through once each is. Each runs `log` and Lane through the double of Claude Code."""
+item that the step's rule of the checklist names is done stopped with each item not yet done, and
+let through once each is. Each runs `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
 
@@ -46,14 +46,3 @@ def test_a_step_marked_once_each_item_is_done_holds(b: Bench):
     said = writer.bash("lane-step write").said
     assert "dated" not in said
     assert "linked" not in said
-
-
-@pytest.mark.supports("S6")
-def test_a_checklist_rule_with_no_checklist_adapter_says_what_to_mend(b: Bench):
-    """Given `log` with no checklist adapter, and the writer running with NOTES.md read whole
-    When it reports the step `write` done
-    Then it reads that `log` gives no checklist adapter, naming lane/adapters/checklist.py"""
-    b.adapter("checklist.py", None)
-    writer = started(opened(b))
-    writer.read(b.at("NOTES.md"))
-    assert "checklist.py" in writer.bash("lane-step write").said

@@ -1,13 +1,15 @@
 """The unit cases of hooks/lane/record.py: runs, one for each class of a conversation's record, and
 add, one for each class of entries it adds, with the transitions of the record that Lane's list of
 Claude Code's states brings about: a run added at the skill's call, its folder at the next event,
-each later entry after the ones before, and two conversations apart."""
+each later entry after the ones before, a start kept with its prompt and the steps given for it, and
+two conversations apart."""
 
 from __future__ import annotations
 
 import os
 import stat
 
+import lane_entries
 import pytest
 from record import Entry, add, runs
 
@@ -15,8 +17,8 @@ pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies 
 
 RUN: Entry = {"kind": "run", "run": "r1", "skill": "log:up", "words": "1.2.0"}
 FOLDER: Entry = {"kind": "folder", "run": "r1", "plugin_root": "/plugins/log"}
-START: Entry = {"kind": "start", "run": "r1", "role": "log:writer", "tool_use_id": "toolu_1"}
-TIE: Entry = {"kind": "tie", "run": "r1", "tool_use_id": "toolu_1", "agent_id": "a1"}
+START: Entry = lane_entries.start("toolu_1")
+TIE: Entry = lane_entries.tie("toolu_1", "a1")
 
 
 @pytest.mark.supports("test_another_conversation_in_the_repository_is_held_to_no_run_of_the_first")
@@ -63,6 +65,24 @@ def test_entries_added_at_once_and_after_keep_their_order():
     add("session-1", [START, TIE])
     add("session-1", [result])
     assert runs("session-1")[0].entries == [RUN, FOLDER, START, TIE, result]
+
+
+@pytest.mark.supports(
+    "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
+)
+def test_a_start_is_kept_with_its_prompt_and_the_steps_given_for_it():
+    """Given a run with its folder
+    When Lane adds a start with the prompt that the main conversation gave it and the steps that
+    the plugin's adapter of the rules gave
+    Then the run's last entry holds both as they were given"""
+    given: Entry = {
+        **START,
+        "prompt": "Write docs/changes/1.2.0.md.",
+        "steps": [{"name": "write", "rules": [{"type": "writes", "paths": ["docs/"]}]}],
+    }
+    add("session-1", [RUN, FOLDER])
+    add("session-1", [given])
+    assert runs("session-1")[0].entries[-1] == given
 
 
 @pytest.mark.supports("test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run")

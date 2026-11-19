@@ -1,7 +1,7 @@
 """The unit cases of hooks/lane/rule_types/: each rule type's judge, one for each class of the call,
 the mark, or the end it judges, with the edges of a path's folder and of a file's lines; and the
 order in which rule_types/__init__.py asks them, one for each combination of rules that a move
-breaks."""
+breaks, with a result that ends the start at its step, and the main conversation's turn's end."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ import os
 from typing import Any
 
 import lane_bench
+import lane_entries
 import pytest
 import rule_types
 from lane_events import Event, Events, Subagent
@@ -80,10 +81,10 @@ def move(
     and whose record holds the entries after."""
     head: list[Entry] = [
         {"kind": "run", "run": "r1", "skill": "log:up", "words": "1.2.0"},
-        {"kind": "start", "run": "r1", "role": "log:writer", "tool_use_id": "u1"},
-        {"kind": "tie", "run": "r1", "tool_use_id": "u1", "agent_id": "a1"},
-        {"kind": "start", "run": "r1", "role": "log:writer", "tool_use_id": "u2"},
-        {"kind": "tie", "run": "r1", "tool_use_id": "u2", "agent_id": "a2"},
+        lane_entries.start("u1"),
+        lane_entries.tie("u1", "a1"),
+        lane_entries.start("u2"),
+        lane_entries.tie("u2", "a2"),
     ]
     run = Run("r1", "session-1", "log:up", "1.2.0", "/plugins/log", [*head, *entries])
     steps = RULES["roles"][agent.type]["steps"]
@@ -584,13 +585,14 @@ def test_a_mark_that_breaks_no_rule_holds(e: Events):
 
 @pytest.mark.supports("test_an_end_with_no_result_names_the_result_before_the_check")
 def test_an_end_is_judged_by_its_result_before_its_steps_and_its_check(e: Events, cwd: str):
-    """Given a check that leaves a file where it runs, and the writer that gave no result and
-    marked no step
+    """Given a check that leaves a file where it runs, and the writer that marked each step and gave
+    no result
     When it ends
     Then the sentence names `written`, and the check didn't run"""
     rules = copy.deepcopy(RULES)
     rule(rules["roles"]["log:writer"]["steps"][1], "check")["check"] = "touch ran; exit 1"
-    said = rule_types.judge_end(held(move("end", e.ended(WRITER)), rules))
+    ended = move("end", e.ended(WRITER), mark("write"), mark("report"))
+    said = rule_types.judge_end(held(ended, rules))
     assert said is not None
     assert "written" in said
     assert not os.path.exists(os.path.join(cwd, "ran"))
@@ -633,3 +635,106 @@ def test_an_end_that_breaks_no_rule_holds(e: Events):
     Then no rule finds anything"""
     end = move("end", e.ended(WRITER), gave("written"), mark("write"), mark("report"))
     assert rule_types.judge_end(end) is None
+
+
+# A result that ends the start at its step.
+
+
+def ending_at(step: int) -> Rules:
+    """The rules of `log` whose writer's step at the index names `unclear` among the results that
+    end the start."""
+    rules = copy.deepcopy(RULES)
+    rules["roles"]["log:writer"]["steps"][step]["rules"].append(
+        {"type": "result", "ends": ["unclear"]}
+    )
+    return rules
+
+
+@pytest.mark.supports(
+    "test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone"
+)
+def test_a_result_that_ends_the_start_holds_its_rule(e: Events):
+    """Given a rule of results that names `unclear` among those that end the start
+    When the writer that gave `unclear` ends
+    Then the rule finds nothing"""
+    ends: Rule = {"type": "result", "ends": ["unclear"]}
+    step: Step = {"name": "write", "rules": [ends]}
+    assert result.judge_end(ends, step, move("end", e.ended(WRITER), gave("unclear"))) is None
+
+
+@pytest.mark.supports("test_an_end_with_a_result_that_the_rule_doesnt_name_is_stopped")
+def test_an_end_with_a_result_of_neither_kind_names_each_result_it_may_give(e: Events):
+    """Given a rule of results that names `written`, and `unclear` among those that end the start
+    When the writer that gave `fine` ends
+    Then the rule gives the step's sentence, naming `written` and `unclear`"""
+    both: Rule = {"type": "result", "results": ["written"], "ends": ["unclear"]}
+    step: Step = {"name": "report", "rules": [both]}
+    said = result.judge_end(both, step, move("end", e.ended(WRITER), gave("fine")))
+    assert said is not None
+    assert "written" in said
+    assert "unclear" in said
+
+
+@pytest.mark.supports(
+    "test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone"
+)
+def test_an_end_with_a_result_that_ends_the_start_at_its_step_holds_with_later_steps_undone(
+    e: Events, cwd: str
+):
+    """Given the writer's step `write` naming `unclear` among the results that end the start, a
+    check of `report` that leaves a file where it runs, and the writer that marked no step and
+    gave `unclear`
+    When it ends
+    Then no rule finds anything, and the check didn't run, as the start ends at `write`"""
+    rules = ending_at(0)
+    rule(rules["roles"]["log:writer"]["steps"][1], "check")["check"] = "touch ran; exit 1"
+    assert rule_types.judge_end(held(move("end", e.ended(WRITER), gave("unclear")), rules)) is None
+    assert not os.path.exists(os.path.join(cwd, "ran"))
+
+
+@pytest.mark.supports(
+    "test_a_result_that_ends_the_start_at_a_later_step_leaves_the_steps_before_it_held"
+)
+def test_an_end_with_a_result_that_ends_the_start_at_a_later_step_holds_the_steps_before_it(
+    e: Events,
+):
+    """Given the writer's step `report` naming `unclear` among the results that end the start, and
+    the writer that marked no step and gave `unclear`
+    When it ends
+    Then the sentence names `write`, the step before `report` not done"""
+    said = rule_types.judge_end(
+        held(move("end", e.ended(WRITER), gave("unclear"), step="report"), ending_at(1))
+    )
+    assert said is not None
+    assert "write" in said
+
+
+# The main conversation's turn's end.
+
+
+@pytest.mark.supports(
+    "test_the_turns_end_in_a_run_of_a_plugin_with_no_order_is_held_to_its_skills_check"
+)
+@pytest.mark.parametrize("there, stops", [(False, True), (True, False)])
+def test_the_main_conversations_turn_end_is_judged_by_its_skills_check(
+    e: Events, cwd: str, there: bool, stops: bool
+):
+    """Given the skill's step `lead`, whose check passes once .log/up.md is there, with or without
+    it
+    When the main conversation ends its turn
+    Then the sentence names `lead` and what the check said, or there's none"""
+    lead: Step = {
+        "name": "lead",
+        "rules": [{"type": "check", "check": "test -f .log/up.md || { echo 'no up.md'; exit 1; }"}],
+    }
+    if there:
+        os.makedirs(os.path.join(cwd, ".log"))
+        with open(os.path.join(cwd, ".log", "up.md"), "w", encoding="utf-8") as f:
+            f.write("x\n")
+    ended = dataclasses.replace(
+        move("turn_end", e.stop(), step="lead"), role="log:up", agent_id=None, steps=[lead]
+    )
+    said = rule_types.judge_end(ended)
+    assert (said is not None) == stops
+    if stops:
+        assert said is not None and "lead" in said and "no up.md" in said
