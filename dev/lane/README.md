@@ -1,4 +1,4 @@
 # Lane
 
-What Lane must give its users is in [its product vision](product-vision.md).
-[architecture.md](architecture.md) says how Lane gives it, and how to check that it does.
+[architecture.md](architecture.md) says what Lane gives the plugins that depend on it, how it gives
+it, and how to check that it does.

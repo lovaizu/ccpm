@@ -119,17 +119,10 @@
       "status": "done"
     },
     {
-      "name": "Lane's product vision says what Lane is for",
-      "path": "dev/lane/product-vision.md",
-      "kind": "product-vision",
-      "status": "done"
-    },
-    {
-      "name": "Lane's developers build its parts so that together they give what its README promises",
+      "name": "A plugin's author builds on Lane so that its AI notices each step it leaves, by giving Lane its rules and adapters alone",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
       "inputs": [
-        "dev/lane/product-vision.md",
         "plugins/lane/README.md",
         "plugins/rn/domain/best-practices/architecture"
       ],
@@ -142,63 +135,75 @@
         },
         {
           "id": "N2",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "User stories",
+              "decided": "one for each type of rule, its user a plugin such as rn, such as: the user wants its AI to notice when it ends a step without reading a file whole",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N3",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": true,
+          "good": false,
           "decisions": [
             {
-              "about": "Lane's Principles",
-              "decided": "derived again by the reworked practice of N4, from Lane's Concept, key results, stories, and constraints, as the ones carried over from before the rework named mechanisms and later sections' names in place of values",
+              "about": "Principles",
+              "decided": "the AI notices each step it leaves; Lane serves any plugin alike, as Lane defines what it takes in and gives out, and each plugin fits them by its adapters",
               "by": "user"
             }
           ]
         },
         {
           "id": "N5",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N6",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N9",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "How a plugin gets Lane",
+              "decided": "Lane is installed beside the plugin as a plugin it depends on, and its hooks read the rules and the adapters that the plugin holds; no copy of Lane goes into the plugin",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N11",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
@@ -206,62 +211,168 @@
           "good": false,
           "decisions": [
             {
-              "about": "The designs made again from it",
-              "decided": "Lane's test cases derived again from it by the test design best practice once the user signs it off, its integration cases in rn's form, and each gap they find mended in the architecture",
-              "by": "reasoning"
-            },
-            {
               "about": "A gap that rn met",
-              "decided": "a role may write each file under a folder that its rule names, as rn's generator writes a deliverable that is a folder, such as a plugin, while Lane's rule of the paths a role writes now lets through only a path named whole",
+              "decided": "a role may write each file of a set that its rule names, such as a folder, as rn's generator writes a code deliverable with its tests",
               "by": "reasoning"
             }
           ]
         },
         {
           "id": "N14",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": true,
+          "good": false,
           "decisions": [
             {
-              "about": "What the rework changes",
-              "decided": "the form and the content of the reworked architecture best practice, with what Lane's decisions bring its users kept",
+              "about": "The rework",
+              "decided": "as small as a library's: Lane has no product vision and no /lane:up, and its README holds only the least a plugin's author needs",
               "by": "user"
             },
             {
-              "about": "The grain",
-              "decided": "the grain of rn's architecture: the README's walkthrough with no name of the implementation outside Directory structure, each component named by its role; each handling of a single behavior of Claude Code, such as the order of hook events, a queued resume, or a failed start, goes down to Lane's skeleton, dev/lane/claude-code-states.md, and its integration cases",
-              "by": "user"
+              "about": "Key results",
+              "decided": "none of Lane's own, as each rule type's integration case shows by code whether Lane judges a move right",
+              "by": "reasoning"
             }
           ]
         }
       ]
     },
     {
-      "name": "A newcomer decides from Lane's README alone whether Lane fits their plugin, and starts using it",
+      "name": "A plugin's author decides from the README alone whether Lane fits, and makes its plugin depend on it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "plugins/rn/domain/best-practices/readme"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Its scope",
+              "decided": "the least a plugin's author needs: what Lane does, how a plugin depends on it, and where the rules and adapters it takes are defined",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
-      "name": "A builder whose plugin goes beyond the README's walkthrough finds each form of steps, routes, and adapters that Lane takes",
+      "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/steps-routes-adapters.md",
       "kind": "specific",
-      "status": "done"
+      "status": "open",
+      "check": "each rule type and each adapter that Lane's code reads is defined, and each definition matches the code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane"
+      ],
+      "good": false,
+      "decisions": [
+        {
+          "about": "What it defines",
+          "decided": "what Lane takes in, the rule file and each adapter's input, and what it gives out, with no /lane:up",
+          "by": "reasoning"
+        }
+      ]
     },
     {
-      "name": "Lane's developers see, before anyone writes a body, whether Lane's parts fit together as its architecture draws",
+      "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "done"
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where Lane's hooks live",
+              "decided": "in Lane's own hooks, which find the plugin whose skill runs and hold its run by the rules in that plugin's folder",
+              "by": "user"
+            },
+            {
+              "about": "/lane:up",
+              "decided": "removed, with the code that proposes and lays rules",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        }
+      ],
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/rn/domain/best-practices/software-design"
+      ]
     },
     {
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
@@ -274,7 +385,6 @@
       "path": "dev/lane/tests",
       "kind": "test-design",
       "inputs": [
-        "dev/lane/product-vision.md",
         "plugins/lane/README.md",
         "dev/lane/architecture.md",
         "plugins/lane",
@@ -533,12 +643,6 @@
           "decisions": []
         }
       ]
-    },
-    {
-      "name": "A builder's /lane:up, typed or asked of an AI, proposes their plugin's lanes and routes from its steps alone, shows them as they'll read, and lays what the caller approves",
-      "path": "plugins/lane/domain/up.md",
-      "kind": "prompt",
-      "status": "done"
     },
     {
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
@@ -1123,6 +1227,26 @@
   "work": [
     {
       "do": "make",
+      "path": "dev/lane/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/lane/README.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/lane/docs/steps-routes-adapters.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/lane"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests"
+    },
+    {
+      "do": "make",
       "path": "plugins/rn/domain/orchestrator.md"
     },
     {
@@ -1136,14 +1260,6 @@
     {
       "do": "make",
       "path": "dev/rn/tests/e2e"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/architecture.md"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/tests"
     },
     {
       "do": "make",
