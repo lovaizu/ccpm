@@ -94,6 +94,41 @@ def test_a_point_needs_no_decision_carried_out(tmp_path: Any):
     assert generator.faults(os.path.join(top, RUN), CUT, RN, top) == []
 
 
+@pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
+def test_a_point_with_no_text_is_a_fault(tmp_path: Any):
+    """Given the generator's Cut, and its result point with no point's text
+    When generator.faults checks it
+    Then it names the point"""
+    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: {"result": "point"}})
+    faults = generator.faults(os.path.join(top, RUN), CUT, RN, top)
+    assert len(faults) == 1 and "point" in faults[0]
+
+
+@pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
+def test_a_made_result_with_no_deliverable_at_its_path_is_a_fault(tmp_path: Any):
+    """Given the generator's Cut, and its result made with a place for each decision, and no file
+    at the command's path
+    When generator.faults checks it
+    Then it names the command's path"""
+    made = {"result": "made", "carried_out": [at(TAX), at(LINES)]}
+    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: made})
+    faults = generator.faults(os.path.join(top, RUN), CUT, RN, top)
+    assert len(faults) == 1 and COMMAND in faults[0]
+
+
+@pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
+def test_a_point_still_open_in_the_cut_needs_no_place(tmp_path: Any):
+    """Given the generator's Cut with a point still open beside the two decisions, and its result
+    made with a place for the two
+    When generator.faults checks it
+    Then it gives none"""
+    held = generator_cut()
+    held["decisions"].append({**TAX, "about": "The currency", "decided": None})
+    made = {"result": "made", "carried_out": [at(TAX), at(LINES)]}
+    top = run_with(str(tmp_path), {CUT: held, RESULT: made, COMMAND: "x\n"})
+    assert generator.faults(os.path.join(top, RUN), CUT, RN, top) == []
+
+
 @pytest.mark.supports("test_a_generators_result_that_leaves_a_decision_out_is_held_naming_it")
 def test_a_made_result_leaving_a_decision_out_names_it(tmp_path: Any):
     """Given the generator's Cut, and its result made with a place for the lines alone

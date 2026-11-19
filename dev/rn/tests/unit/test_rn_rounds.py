@@ -31,18 +31,30 @@ def decisions(tree: dict[str, Any]) -> list[dict[str, Any]]:
 
 def generator(number: int, practice: str, result: Any, tree: dict[str, Any] | None = None) -> Start:
     """The generator's start of the command's round, by the best practice, with its result."""
-    held = {"role": "generator", "best_practice": practice, "decisions": decisions(tree or plan())}
+    held = {
+        "role": "generator",
+        "deliverable": {"path": COMMAND},
+        "best_practice": practice,
+        "decisions": decisions(tree or plan()),
+    }
     return Start(number, "generator", "", held, result)
 
 
-def evaluators(number: int, more: dict[str, str], groups: Any = CODE_GROUPS) -> list[Start]:
+def evaluators(
+    number: int, more: dict[str, str], groups: Any = CODE_GROUPS, path: str = COMMAND
+) -> list[Start]:
     """One evaluator's start of the round for each group, more on each condition named."""
     return [
         Start(
             number,
             "evaluator",
             group,
-            {"role": "evaluator", "group": group, "conditions": conditions},
+            {
+                "role": "evaluator",
+                "deliverable": {"path": path},
+                "group": group,
+                "conditions": conditions,
+            },
             {
                 "good": [{"condition": c, "lines": ["x:1"]} for c in conditions if c not in more],
                 "more": [{"condition": c, "good_when": more[c]} for c in conditions if c in more],
@@ -96,6 +108,28 @@ def test_a_generators_point_gives_none():
     assert roles(course.due(plan(), [generator(1, "code", point)], [])) == []
 
 
+@pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
+def test_a_generators_point_answered_gives_the_next_round():
+    """Given the command's generator ended with a point, and a decision of the command changed
+    since its Cut, as the user's answer settles it
+    When course.due gives the starts due
+    Then the generator of round 2 by code is due"""
+    point = {"result": "point", "point": "EUR alone?"}
+    assert roles(course.due(changed(), [generator(1, "code", point)], [])) == [
+        ("generator", "", "code", 2)
+    ]
+
+
+@pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
+def test_a_point_first_in_the_work_gives_none():
+    """Given the plan with a point of the command first in the work
+    When course.due gives the starts due
+    Then none is due, as the orchestrator settles it or puts it to the user"""
+    tree = plan()
+    tree["work"].insert(0, {"do": "decide", "path": COMMAND, "condition": "N1", "about": "x"})
+    assert roles(course.due(tree, [], [])) == []
+
+
 @pytest.mark.supports("test_a_deliverable_made_gets_one_evaluator_for_each_group_of_its_conditions")
 def test_a_generator_made_gives_one_evaluator_for_each_group():
     """Given the command's generator of round 1 made
@@ -133,6 +167,53 @@ def test_findings_with_no_decision_changed_give_none():
     assert roles(course.due(plan(), starts, [])) == []
 
 
+@pytest.mark.supports("test_a_finding_taken_into_its_decision_gets_the_next_round_of_content")
+def test_findings_the_orchestrator_holds_good_give_a_round_of_refactoring():
+    """Given round 1 judged with more on N2, and N2 good in the design tree with no decision
+    changed, as the orchestrator found that the people would never meet it
+    When course.due gives the starts due
+    Then the generator of round 2 by refactor-code is due"""
+    tree = plan()
+    tree["deliverables"][0]["necessary_conditions"][1]["good"] = True
+    starts = [generator(1, "code", MADE), *evaluators(1, SHORT)]
+    assert roles(course.due(tree, starts, [])) == [("generator", "", "refactor-code", 2)]
+
+
+@pytest.mark.supports("test_findings_past_two_rounds_of_content_start_no_third")
+def test_a_users_change_past_the_limit_gives_a_round_of_content():
+    """Given two rounds of content short, and then a decision by the user under N2
+    When course.due gives the starts due
+    Then the generator of round 3 by code is due"""
+    tree = changed()
+    tree["deliverables"][0]["necessary_conditions"][1]["decisions"].append(
+        {"about": "The row", "decided": "counted from 1", "by": "user"}
+    )
+    starts = [
+        generator(1, "code", MADE),
+        *evaluators(1, SHORT),
+        generator(2, "code", MADE, changed()),
+        *evaluators(2, SHORT, {"C1": CODE_GROUPS["C1"]}),
+    ]
+    assert roles(course.due(tree, starts, [])) == [("generator", "", "code", 3)]
+
+
+@pytest.mark.supports("test_a_later_round_judges_only_the_groups_whose_decisions_changed")
+def test_a_later_round_after_an_inputs_change_gives_each_group():
+    """Given the guide's round 1 short, and a decision of the command, its input, changed since
+    When course.due gives the starts due after round 2 is made
+    Then an evaluator of each group of readme is due"""
+    tree = plan()
+    tree["work"] = tree["work"][1:]
+    groups = course.groups("readme")
+    held = {"role": "generator", "deliverable": {"path": GUIDE}, "best_practice": "readme"}
+    first = Start(1, "generator", "", {**held, "decisions": course.decisions(tree, GUIDE)}, MADE)
+    later = changed()
+    later["work"] = later["work"][1:]
+    second = Start(2, "generator", "", {**held, "decisions": course.decisions(later, GUIDE)}, MADE)
+    starts = [first, *evaluators(1, {"N1": "x"}, groups, GUIDE), second]
+    assert roles(course.due(later, starts, [])) == [("evaluator", g, "readme", 2) for g in groups]
+
+
 @pytest.mark.supports("test_a_later_round_judges_only_the_groups_whose_decisions_changed")
 def test_a_later_round_of_content_gives_evaluators_of_the_changed_groups_alone():
     """Given round 2's generator made, after a decision under N2 changed
@@ -166,8 +247,13 @@ def test_a_guide_judged_good_gives_a_round_of_refactor_doc():
         "C3": ["N7", "N8"],
         "C4": ["N9", "N10"],
     }
-    held = {"role": "generator", "best_practice": "readme", "decisions": []}
-    starts = [Start(1, "generator", "", held, MADE), *evaluators(1, {}, groups)]
+    held = {
+        "role": "generator",
+        "deliverable": {"path": GUIDE},
+        "best_practice": "readme",
+        "decisions": [],
+    }
+    starts = [Start(1, "generator", "", held, MADE), *evaluators(1, {}, groups, GUIDE)]
     assert roles(course.due(tree, starts, [])) == [("generator", "", "refactor-doc", 2)]
 
 
@@ -211,7 +297,7 @@ def test_two_rounds_of_refactoring_short_give_none():
         generator(2, "refactor-code", MADE),
         *evaluators(2, SHORT, refactoring),
         generator(3, "refactor-code", MADE, changed()),
-        *evaluators(3, SHORT, {"C2": refactoring["C2"]}),
+        *evaluators(3, SHORT, refactoring),
     ]
     assert roles(course.due(changed(), starts, [])) == []
 

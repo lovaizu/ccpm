@@ -54,10 +54,12 @@ def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence
     generator gave its result; or none where no Round is due, such as once the limit leaves each
     finding to the orchestrator, which puts it to the user as a proposal.
     Refuses: nothing."""
-    # The first item of the work, whose inputs work.faults holds done or earlier in the work.
-    path = tree["work"][0]["path"]
+    item = tree["work"][0] if tree["work"] else None
+    if item is None or item["do"] != "make":
+        return []
+    path = item["path"]
     node = next(d for d in tree["deliverables"] if d["path"] == path)
-    mine = [s for s in starts if s.cut.get("deliverable", {}).get("path", path) == path]
+    mine = [s for s in starts if s.cut["deliverable"]["path"] == path]
     if not mine:
         return [Due(path, "generator", "", node["kind"], _last(starts) + 1)]
     made = [s for s in mine if s.role == "generator"]
@@ -67,9 +69,10 @@ def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence
         busy = any(r.role == "generator" and r.deliverable == path for r in running)
         return [] if busy else [Due(path, "generator", "", practice, latest.round)]
     if latest.result["result"] != "made":
-        return []
+        again = _changed(latest.cut["decisions"], decisions(tree, path))
+        return [Due(path, "generator", "", practice, _last(starts) + 1)] if again else []
     judged = [s for s in mine if s.round == latest.round and s.role == "evaluator"]
-    pending = _pending(practice, made, judged, running, path)
+    pending = _pending(node, made, judged, running)
     if pending is not None:
         return [Due(path, "evaluator", g, practice, latest.round) for g in pending]
     return _after(tree, node, made, judged, _last(starts) + 1)
@@ -80,47 +83,77 @@ def _last(starts: Sequence[Start]) -> int:
     return max((s.round for s in starts), default=0)
 
 
+def _made(made: Sequence[Start], practice: str) -> list[Start]:
+    """Each generator's start by the best practice that made the deliverable, a point none."""
+    return [
+        s
+        for s in made
+        if s.cut["best_practice"] == practice and s.result and s.result["result"] == "made"
+    ]
+
+
 def _pending(
-    practice: str, made: Sequence[Start], judged: Sequence[Start], running: Sequence[Due], path: str
+    node: Mapping[str, Any], made: Sequence[Start], judged: Sequence[Start], running: Sequence[Due]
 ) -> list[str] | None:
-    """Each group of the latest Round due beside those that run, or None once each has answered."""
+    """Each group of the latest Round due beside those that run, or None once each has answered.
+    A later Round of the deliverable's own kind judges only the groups of the conditions whose
+    decisions changed, or each group where an input's decision changed."""
     latest = made[-1]
-    earlier = [s for s in made[:-1] if s.cut["best_practice"] == practice]
+    practice = latest.cut["best_practice"]
     wanted = groups(practice)
-    if earlier:
+    earlier = _made(made[:-1], practice)
+    if earlier and practice == node["kind"]:
         changed = _changed(earlier[-1].cut["decisions"], latest.cut["decisions"])
-        wanted = {g: c for g, c in wanted.items() if set(c) & changed}
+        if all(each == node["path"] for each, _ in changed):
+            own = {condition for _, condition in changed}
+            wanted = {g: c for g, c in wanted.items() if set(c) & own}
     answered = {s.group for s in judged if s.result is not None}
     left = [g for g in wanted if g not in answered]
     if not left:
         return None
-    busy = {r.group for r in running if r.role == "evaluator" and r.deliverable == path}
+    busy = {r.group for r in running if r.role == "evaluator" and r.deliverable == node["path"]}
     return [g for g in left if g not in busy]
 
 
-def _changed(before: Sequence[Mapping[str, Any]], after: Sequence[Mapping[str, Any]]) -> set[str]:
-    """The ID of each condition whose decisions differ between two Cuts."""
+def _changed(
+    before: Sequence[Mapping[str, Any]], after: Sequence[Mapping[str, Any]]
+) -> set[tuple[str, str]]:
+    """Each condition, by its node's path and its ID, whose decisions differ between two Cuts."""
+    return {(each[0], each[1]) for each in _held(before) ^ _held(after)}
 
-    def held(decisions: Sequence[Mapping[str, Any]]) -> set[tuple[str, str, str, Any]]:
-        return {(d["path"], d["condition"], d["about"], d["decided"]) for d in decisions}
 
-    return {each[1] for each in held(before) ^ held(after)}
+def _held(decisions: Sequence[Mapping[str, Any]]) -> set[tuple[str, str, str, Any, Any]]:
+    """Each decision by its node's path, its condition, its point, what it holds, and who."""
+    return {(d["path"], d["condition"], d["about"], d["decided"], d["by"]) for d in decisions}
+
+
+def _by_user(before: Sequence[Mapping[str, Any]], after: Sequence[Mapping[str, Any]]) -> bool:
+    """Whether a decision by the user holds since the earlier Cut that it didn't hold then."""
+    return any(each[4] == "user" for each in _held(after) - _held(before))
 
 
 def _after(
     tree: Tree, node: Mapping[str, Any], made: Sequence[Start], judged: Sequence[Start], next_: int
 ) -> list[Due]:
-    """The generator due once each evaluator of the latest Round answered, or none."""
+    """The generator due once each evaluator of the latest Round answered, or none. A condition
+    short counts as good where the design tree holds it good, as the orchestrator found that its
+    people would never meet it."""
     path = node["path"]
     practice = made[-1].cut["best_practice"]
-    short = any(s.result and s.result["more"] for s in judged)
+    good = {c["id"] for c in node.get("necessary_conditions", []) if c["good"]}
+    short = {m["condition"] for s in judged if s.result for m in s.result["more"]}
+    if practice == node["kind"]:
+        short -= good
     if not short:
         if practice != node["kind"]:
             return []
         refactor = "refactor-doc" if path.endswith(".md") else "refactor-code"
         return [Due(path, "generator", "", refactor, next_)]
-    rounds = [s for s in made if s.cut["best_practice"] == practice]
-    if len(rounds) >= _LIMIT or not _changed(rounds[-1].cut["decisions"], decisions(tree, path)):
+    rounds = _made(made, practice)
+    now = decisions(tree, path)
+    if not _changed(rounds[-1].cut["decisions"], now):
+        return []
+    if len(rounds) >= _LIMIT and not _by_user(rounds[-1].cut["decisions"], now):
         return []
     return [Due(path, "generator", "", practice, next_)]
 

@@ -168,8 +168,8 @@ def test_an_evaluator_starts_with_only_what_the_deliverables_people_have(b: Benc
 
 @pytest.mark.supports("P2.2")
 def test_an_evaluators_answer_beside_good_and_more_is_held(b: Bench, broken: None):
-    """Given an evaluator of the group C3 of the command
-    When it ends with N8 good and a fix of its own beside
+    """Given the command's first evaluator due
+    When it ends with no answer and a fix of its own beside
     Then rn's check gives 1, naming the fix, as a trial names only what's good and what would make
     it good"""
     made(b)
