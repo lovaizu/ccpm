@@ -11,7 +11,8 @@ template of the architecture best practice names them:
 - each rule by its `P<n>.<m>` in Principles, under Solution strategy
 - each component by its name in Components' list, above its Strategies, under Solution strategy
 - each data by each `<text class="name">` of `dev/<plugin>/images/data-model.svg`
-- each key result by its `KR<n>.<m>` in `dev/<plugin>/product-vision.md`
+- each key result by its `KR<n>.<m>` in `dev/<plugin>/product-vision.md`, none where the plugin
+  keeps no product vision
 - each case, a function `test...` of a file `test*.py` under `dev/<plugin>/tests/`, at the top or in
   a class, with each name that its `@pytest.mark.supports(...)` gives
 
@@ -279,8 +280,13 @@ def tag_faults(plugin: str) -> list[str]:
 
 
 def key_results(plugin: str) -> set[str]:
-    """The ID of each key result of the plugin's product vision."""
-    text = read(f"dev/{plugin}/product-vision.md")
+    """The ID of each key result of the plugin's product vision, none where the plugin keeps no
+    product vision, as a library that other plugins depend on, such as Lane, serves their key
+    results and has none of its own."""
+    path = f"dev/{plugin}/product-vision.md"
+    if not os.path.exists(path):
+        return set()
+    text = read(path)
     return {each.group(1) for each in map(KEY_RESULT.match, text.split("\n")) if each}
 
 

@@ -1,0 +1,40 @@
+"""The integration cases of S2, the files a step never reads: a Read of a file that the step of its
+start names never to read, or of a file under a folder it names, stopped with the step's sentence,
+and a Read of any other file let through. Each runs `log` and Lane through the double of Claude
+Code. A Grep, a Glob, or a Bash command that reaches such a file waits for its record, as
+dev/lane/tests/gaps.md says."""
+
+from __future__ import annotations
+
+import pytest
+from lane_bench import UNBUILT, Bench, opened, started
+
+pytestmark = UNBUILT
+
+
+@pytest.mark.supports("S2", "rule types")
+def test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step(b: Bench):
+    """Given the writer running at its step `write`, which never reads secrets/
+    When it reads secrets/key.txt
+    Then the read is stopped with the step's sentence, naming the step and the files it never
+    reads"""
+    answer = started(opened(b)).read(b.at("secrets/key.txt"))
+    assert answer.blocked
+    for named in ("write", "secrets/", ".env"):
+        assert named in answer.said
+
+
+@pytest.mark.supports("S2")
+def test_a_read_of_a_file_never_to_read_is_stopped(b: Bench):
+    """Given the writer running at its step `write`, which never reads .env
+    When it reads .env
+    Then the read is stopped"""
+    assert started(opened(b)).read(b.at(".env")).blocked
+
+
+@pytest.mark.supports("S2")
+def test_a_read_of_another_file_goes_through(b: Bench):
+    """Given the writer running at its step `write`
+    When it reads NOTES.md
+    Then the read goes through"""
+    assert not started(opened(b)).read(b.at("NOTES.md")).blocked

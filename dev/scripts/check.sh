@@ -82,6 +82,11 @@ held design pyrefly check $properties --search-path plugins/rn/domain \
 held design pyrefly check --search-path plugins/lane/hooks/lane \
   plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/lanes/*.py plugins/lane/bin/lane-*
 
+# Lane's cases, with the double of Claude Code they run, as a case that calls an interface with a
+# type it doesn't take fails at the call, not at the body it waits for.
+held design pyrefly check --search-path plugins/lane/hooks/lane --search-path dev/tests \
+  --search-path dev/lane/tests dev/lane/tests/*.py dev/lane/tests/*/*.py
+
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
 # - a fault in a best practice's form
@@ -136,10 +141,9 @@ for architecture in dev/*/architecture.md; do
   plugin="${architecture#dev/}"
   plugin="${plugin%/architecture.md}"
   if [ -n "$(find "dev/$plugin/tests/integration" -name 'test_*.py' 2>/dev/null)" ]; then
-    # Off while rn and Lane are rebuilt; the design tree turns it back on after rn's integration
-    # tests.
-    # python3 dev/scripts/trace.py check "$plugin"
-    :
+    # Off for rn while it's rebuilt; the design tree turns it back on after rn's integration tests.
+    # Lane's cases are written anew on its rebuilt architecture, so its trace holds now.
+    [ "$plugin" != lane ] || python3 dev/scripts/trace.py check "$plugin"
   else
     echo "check.sh: the trace of $plugin's cases goes unchecked, as dev/$plugin/tests/ holds"\
       "none yet"

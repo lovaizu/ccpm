@@ -227,9 +227,17 @@ class CommandTest(TraceTest):
         self.write("dev/p/images/data-model.svg", "<svg><text class='name'>Cut</svg>")
         self.fails_with(2, "dev/p/images/data-model.svg")
 
-    def test_a_missing_product_vision_gives_2(self):
+    def test_a_plugin_without_a_product_vision_has_no_key_result_and_gives_0(self):
         os.remove("dev/p/product-vision.md")
-        self.fails_with(2, "dev/p/product-vision.md")
+        self.every_element_named()
+        result = self.trace()
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
+
+    def test_an_e2e_case_of_a_plugin_without_a_product_vision_names_no_key_result(self):
+        os.remove("dev/p/product-vision.md")
+        self.every_element_named()
+        self.write("dev/p/tests/e2e/test_x.py", cases_file(case("test_x", "KR1.1")))
+        self.fails_with(1, "names KR1.1, which is no key result of dev/p/product-vision.md")
 
     def test_a_test_file_that_python_cannot_parse_gives_2(self):
         self.every_element_named()
