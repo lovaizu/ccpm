@@ -266,12 +266,18 @@
         "plugins/lane",
         "dev/lane/tests"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "the bodies that S1's integration cases reach, from the skill's call to the guard's stop of a write that its step doesn't name: the plugin's folder, reading the rules, the run record, the placing of moves, where a start's rules come from, the order by the route adapter, the rule type of the files a step writes, and the guard's answer, each with its unit cases passing",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
