@@ -564,6 +564,26 @@
               "about": "Where the course finds a best practice's groups",
               "decided": "in that best practice's best-practice.json, in rn's own best-practices folder beside the code",
               "by": "maker"
+            },
+            {
+              "about": "The course after a point or a finding",
+              "decided": "a generator's point, or a round short on a condition that the design tree still holds not good, gets the next round once a decision of the deliverable changed since the latest Cut, and no start before; a round whose each condition named short the design tree holds good counts as good; past the limit, only a decision by the user starts a round",
+              "by": "reasoning"
+            },
+            {
+              "about": "The groups a later round judges",
+              "decided": "each group holding a condition of the deliverable whose decision changed since the latest round judged, and every group where a decision of an input changed",
+              "by": "reasoning"
+            },
+            {
+              "about": "A point in the work",
+              "decided": "an item of work that decides a point starts no role, as only the orchestrator settles it or puts it to the user",
+              "by": "reasoning"
+            },
+            {
+              "about": "A generator's result",
+              "decided": "a point holds its text, a deliverable made lies at its path, and each decision of the Cut that holds an answer is carried out, a point still open none",
+              "by": "reasoning"
             }
           ]
         },
