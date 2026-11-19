@@ -7,11 +7,10 @@
   "additionalProperties": false,
   "properties": {
     "roles": {
-      "description": "Each role's steps: a subagent's by its agent type, such as <plugin>:<role>, and the main conversation's in a run of a skill by the skill's name, such as <plugin>:<skill>.",
+      "description": "Each role's steps: a subagent's by its agent type, such as <plugin>:<role>, and the main conversation's in a run of a skill by the skill's name, such as <plugin>:<skill>; a subagent's role named with no steps takes them from the plugin's adapter of the rules for each start.",
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "required": ["steps"],
         "additionalProperties": false,
         "properties": {
           "steps": {
@@ -19,15 +18,11 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["name"],
+              "required": ["name", "rules"],
               "additionalProperties": false,
               "properties": {
                 "name": { "type": "string", "minLength": 1 },
-                "rules": {
-                  "description": "The step's rules; left out of a subagent's step whose rules the plugin's adapter of the rules gives for each start.",
-                  "type": "array",
-                  "items": { "$ref": "#/$defs/rule" }
-                }
+                "rules": { "type": "array", "items": { "$ref": "#/$defs/rule" } }
               }
             }
           }

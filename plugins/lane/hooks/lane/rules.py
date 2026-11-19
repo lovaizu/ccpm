@@ -19,22 +19,17 @@ class Rule(TypedDict, total=False):
     check: str
 
 
-class Named(TypedDict):
-    """A step's name."""
+class Step(TypedDict):
+    """One step of a role, by its name, with its rules."""
 
     name: str
-
-
-class Step(Named, total=False):
-    """One step of a role, by its name, with its rules, which a step of a subagent may leave for
-    the plugin's adapter of the rules to give for each start."""
-
     rules: list[Rule]
 
 
-class Role(TypedDict):
+class Role(TypedDict, total=False):
     """The steps of one role, in their order: a subagent of the plugin, or the main conversation
-    in a run of a skill."""
+    in a run of a skill; a subagent's role with no steps takes them from the plugin's adapter of
+    the rules for each start."""
 
     steps: list[Step]
 

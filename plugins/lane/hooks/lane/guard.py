@@ -81,8 +81,10 @@ def start_made(move: Move) -> Answer:
     resume, by its start with the prompt and the steps of the start it resumes; a resume that the
     PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
     SubagentStop, where subagent_ended ties it, as Lane hooks no SubagentStart.
-    Refuses: nothing; an adapter of the starts due or of the rules that failed stops the call with
-    what's wrong.
+    Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong,
+    and so does, for a start that takes its steps from the plugin's adapter of the rules, an adapter
+    of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
+    sentence saying that the plugin's author adds or mends lane/adapters/rules.py for the role.
     """
     raise NotImplementedError("guard.start_made")
 

@@ -1,6 +1,6 @@
-"""Where a start's steps and rules come from: those that the plugin's lane/rules.json fixes for its
-role, those that the plugin's adapter of the rules gives for the start from its prompt where the
-file leaves them, or both."""
+"""Where a start's steps and rules come from: wholly from the plugin's lane/rules.json, or, for a
+subagent's role that it names with no steps, wholly from the plugin's adapter of the rules for the
+start, from its prompt."""
 
 from __future__ import annotations
 
@@ -8,11 +8,11 @@ from rules import Rules, Step
 
 
 def asks_adapter(rules: Rules, role: str) -> bool:
-    """Whether a start of the role takes rules from the plugin's adapter of the rules.
+    """Whether a start of the role takes its steps from the plugin's adapter of the rules.
 
     Takes: the plugin's rules, and a subagent's role, by its agent type.
-    Gives: True where the rules name no steps of the role, or name a step of it with no rules;
-    False where they fix each step's rules.
+    Gives: True where the rules name the role with no steps; False where they give its steps, or
+    don't name it.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -24,11 +24,9 @@ def steps(rules: Rules, role: str, given: list[Step] | None) -> list[Step]:
 
     Takes: the plugin's rules, the role, a subagent's agent type or the skill's name for the main
     conversation, and the steps that the plugin's adapter of the rules gave for the start, None
-    where it gave none.
-    Gives: the role's steps that the rules fix, in their order, each step that they name with no
-    rules taking the rules that the given steps hold for the step of its name; the given steps
-    whole, where the rules name no steps of the role; none where neither gives any, so that no rule
-    holds the start.
+    where asks_adapter gives False.
+    Gives: the role's steps that the rules give, in their order; the given steps, where the rules
+    name the role with no steps; none where the rules don't name the role.
     Changes: nothing.
     Refuses: nothing.
     """
