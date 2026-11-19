@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520">
-  <title>Lane&#x27;s data</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320">
+  <title>Lane’s data</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
@@ -50,79 +50,25 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" width="960" height="520"/>
-  <rect class="box" x="40" y="60" width="160" height="60" rx="6"/>
-  <text class="name" x="120" y="95">Proposal</text>
-  <rect class="box" x="300" y="60" width="160" height="60" rx="6"/>
-  <text class="name" x="380" y="95">Rule</text>
-  <rect class="box" x="560" y="60" width="160" height="60" rx="6"/>
-  <text class="name" x="640" y="95">Step</text>
-  <rect class="box" x="790" y="60" width="140" height="60" rx="6"/>
-  <text class="name" x="860" y="95">Item</text>
-  <rect class="box" x="40" y="240" width="160" height="60" rx="6"/>
-  <text class="name" x="120" y="275">Route</text>
-  <rect class="box" x="560" y="240" width="160" height="60" rx="6"/>
-  <text class="name" x="640" y="275">Mark</text>
-  <rect class="box" x="300" y="240" width="160" height="60" rx="6"/>
-  <text class="name" x="380" y="275">Read</text>
-  <path class="line" d="M380,420 L380,300"/>
-  <text class="label halo end" x="370" y="365">holds</text>
-  <text class="label small halo start" x="388" y="412">1</text>
-  <text class="label small halo start" x="388" y="318">0..*</text>
-  <rect class="box" x="40" y="420" width="160" height="60" rx="6"/>
-  <text class="name" x="120" y="455">Run</text>
-  <rect class="box" x="300" y="420" width="160" height="60" rx="6"/>
-  <text class="name" x="380" y="455">Start</text>
-  <rect class="box" x="560" y="420" width="160" height="60" rx="6"/>
-  <text class="name" x="640" y="455">Result</text>
-  <rect class="box" x="790" y="420" width="140" height="60" rx="6"/>
-  <text class="name" x="860" y="455">Kept results</text>
-  <path class="line" d="M200,90 L300,90"/>
-  <text class="label halo mid" x="250" y="80">proposes</text>
-  <text class="label small halo start" x="206" y="108">1</text>
-  <text class="label small halo end" x="294" y="108">0..*</text>
-  <path class="line" d="M460,90 L560,90"/>
-  <text class="label halo mid" x="510" y="80">lies on</text>
-  <text class="label small halo start" x="466" y="108">0..*</text>
-  <text class="label small halo end" x="554" y="108">1</text>
-  <path class="line" d="M720,90 L790,90"/>
-  <text class="label halo mid" x="755" y="80">has</text>
-  <text class="label small halo start" x="724" y="108">1</text>
-  <text class="label small halo end" x="786" y="108">0..*</text>
-  <path class="line" d="M120,120 L120,240"/>
-  <text class="label halo start" x="130" y="185">proposes</text>
-  <text class="label small halo end" x="112" y="138">1</text>
-  <text class="label small halo end" x="112" y="232">1..*</text>
-  <path class="line" d="M120,300 L120,420"/>
-  <text class="label halo start" x="130" y="365">follows</text>
-  <text class="label small halo end" x="112" y="318">1..*</text>
-  <text class="label small halo end" x="112" y="412">0..*</text>
-  <path class="line" d="M200,290 L320,420"/>
-  <text class="label halo start" x="268" y="350">makes due</text>
-  <text class="label small halo start" x="210" y="316">1</text>
-  <text class="label small halo end" x="312" y="404">0..*</text>
-  <path class="line" d="M200,450 L300,450"/>
-  <text class="label halo mid" x="250" y="440">holds</text>
-  <text class="label small halo start" x="206" y="468">1</text>
-  <text class="label small halo end" x="294" y="468">1..*</text>
-  <path class="line" d="M460,450 L560,450"/>
-  <text class="label halo mid" x="510" y="440">gives</text>
-  <text class="label small halo start" x="466" y="468">1</text>
-  <text class="label small halo end" x="554" y="468">0..1</text>
-  <path class="line" d="M720,450 L790,450"/>
-  <text class="label halo mid" x="755" y="440">kept in</text>
-  <text class="label small halo start" x="724" y="468">0..*</text>
-  <text class="label small halo end" x="786" y="468">0..1</text>
-  <path class="line" d="M420,420 L600,300"/>
-  <text class="label halo end" x="500" y="350">holds</text>
-  <text class="label small halo start" x="430" y="404">1</text>
-  <text class="label small halo start" x="596" y="320">0..*</text>
-  <path class="line" d="M640,240 L640,120"/>
-  <text class="label halo start" x="650" y="185">marks</text>
-  <text class="label small halo start" x="650" y="232">0..*</text>
-  <text class="label small halo start" x="650" y="138">0..1</text>
-  <path class="line" d="M720,260 L840,120"/>
-  <text class="label halo start" x="790" y="200">marks</text>
-  <text class="label small halo start" x="730" y="240">0..*</text>
-  <text class="label small halo start" x="846" y="140">0..1</text>
+  <rect class="bg" width="640" height="320"/>
+  <rect class="box lane" x="40" y="40" width="200" height="64" rx="8"/>
+  <text class="name" x="140.0" y="70.0">Rules</text>
+  <text class="kind" x="140.0" y="88.0">what a plugin gives Lane</text>
+  <rect class="box lane" x="380" y="40" width="200" height="64" rx="8"/>
+  <text class="name" x="480.0" y="70.0">Route</text>
+  <text class="kind" x="480.0" y="88.0">the moves after a result</text>
+  <rect class="box lane" x="40" y="220" width="200" height="64" rx="8"/>
+  <text class="name" x="140.0" y="250.0">Run</text>
+  <text class="kind" x="140.0" y="268.0">one run of a skill</text>
+  <rect class="box lane" x="380" y="220" width="200" height="64" rx="8"/>
+  <text class="name" x="480.0" y="250.0">Kept results</text>
+  <text class="kind" x="480.0" y="268.0">the plugin’s own</text>
+  <path class="line" marker-end="url(#arrow)" d="M240,72 L378,72"/>
+  <text class="label small" x="290" y="64">hold</text>
+  <path class="line" marker-end="url(#arrow)" d="M140,104 L140,218"/>
+  <text class="label small" x="148" y="165">hold the run to</text>
+  <path class="line" marker-end="url(#arrow)" d="M378,252 L242,252"/>
+  <text class="label small" x="285" y="244">pick up</text>
+  <path class="line" marker-end="url(#arrow)" d="M480,104 L240,230"/>
+  <text class="label small" x="370" y="160">make starts due</text>
 </svg>

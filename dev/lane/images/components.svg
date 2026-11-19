@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600">
-  <title>Lane&#x27;s components</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 340">
+  <title>Lane’s components</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
@@ -50,75 +50,36 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" width="960" height="600"/>
-  <rect class="box" x="20" y="40" width="160" height="70" rx="6"/>
-  <text class="name" x="100" y="80">user</text>
-  <rect class="box" x="240" y="40" width="180" height="70" rx="6"/>
-  <text class="name" x="330" y="72">proposer</text>
-  <text class="kind" x="330" y="92">[prompt]</text>
-  <rect class="box" x="500" y="40" width="180" height="70" rx="6"/>
-  <text class="name" x="590" y="72">layer</text>
-  <text class="kind" x="590" y="92">[script]</text>
-  <rect class="store" x="240" y="200" width="180" height="70" rx="6"/>
-  <text class="name" x="330" y="232">the plugin&#x27;s steps</text>
-  <text class="kind" x="330" y="252">[Steps, Rules, Routes]</text>
-  <rect class="box" x="760" y="200" width="180" height="70" rx="6"/>
-  <text class="name" x="850" y="232">rule types</text>
-  <text class="kind" x="850" y="252">[module]</text>
-  <rect class="ext" x="10" y="360" width="180" height="70" rx="6"/>
-  <text class="name" x="100" y="392">the plugin&#x27;s roles</text>
-  <text class="kind" x="100" y="412">[conversation, subagents]</text>
-  <rect class="box" x="240" y="360" width="180" height="70" rx="6"/>
-  <text class="name" x="330" y="392">guard</text>
-  <text class="kind" x="330" y="412">[hook]</text>
-  <rect class="store" x="500" y="360" width="180" height="70" rx="6"/>
-  <text class="name" x="590" y="392">run record</text>
-  <text class="kind" x="590" y="412">[Run, Start, Mark, Result]</text>
-  <rect class="box" x="240" y="500" width="180" height="70" rx="6"/>
-  <text class="name" x="330" y="532">reporters</text>
-  <text class="kind" x="330" y="552">[script]</text>
-  <rect class="ext" x="760" y="500" width="180" height="70" rx="6"/>
-  <text class="name" x="850" y="532">adapters, checks</text>
-  <text class="kind" x="850" y="552">[the plugin&#x27;s own]</text>
-  <path class="line" d="M180,62 L240,62" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="210" y="30">asks, yes, a change</text>
-  <path class="line" d="M240,90 L180,90" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="210" y="128">the Proposal</text>
-  <path class="line" d="M420,62 L500,62" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="460" y="54">the Proposal</text>
-  <path class="line dashed" d="M500,90 L420,90" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="460" y="128">Steps as they&#x27;ll read</text>
-  <path class="line" d="M330,110 L330,200" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="322" y="160">writes a change</text>
-  <path class="line" d="M560,110 L420,215" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="490" y="185">lays Rules, Routes</text>
-  <path class="line" d="M680,90 L800,200" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="748" y="140">makes each sentence by</text>
-  <path class="line" d="M330,360 L330,270" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="322" y="320">reads Rules, Routes</text>
-  <path class="line" d="M420,370 L760,260" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="560" y="345">checks each move by</text>
-  <path class="line" d="M420,400 L500,400" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="460" y="392">keeps</text>
-  <path class="line" d="M100,110 L100,360" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="108" y="240">types each command</text>
-  <path class="line" d="M190,380 L240,380" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="210" y="350">each move</text>
-  <path class="line" d="M240,412 L190,412" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="210" y="452">starts due, stops</text>
-  <path class="line" d="M100,430 L240,525" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="160" y="500">reports Result, Mark</text>
-  <path class="line" d="M420,550 L620,550 L620,430" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="430" y="568">reads which Results a role may give</text>
-  <path class="line" d="M420,425 L760,515" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="540" y="446">asks for text, Items, results; runs checks</text>
-  <text class="label" x="760" y="300">Legend</text>
-  <rect class="box" x="760" y="312" width="22" height="14" rx="3"/>
-  <text class="label small" x="790" y="324">a component</text>
-  <rect class="store" x="880" y="312" width="22" height="14" rx="3"/>
-  <text class="label small" x="910" y="324">data</text>
-  <rect class="ext" x="760" y="336" width="22" height="14" rx="3"/>
-  <text class="label small" x="790" y="348">the user&#x27;s own</text>
-  <path class="line dashed" d="M760,366 L782,366" marker-end="url(#arrow)"/>
-  <text class="label small" x="790" y="370">a reply</text>
+  <rect class="bg" width="820" height="340"/>
+  <rect class="frame" x="20" y="20" width="440" height="300" rx="10"/>
+  <text class="frame-name" x="36" y="42">Lane</text>
+  <rect class="box lane" x="60" y="70" width="180" height="64" rx="8"/>
+  <text class="name" x="150.0" y="100.0">guard</text>
+  <text class="kind" x="150.0" y="118.0">hook</text>
+  <rect class="box lane" x="60" y="220" width="180" height="64" rx="8"/>
+  <text class="name" x="150.0" y="250.0">rule types</text>
+  <text class="kind" x="150.0" y="268.0">module</text>
+  <rect class="box lane" x="280" y="220" width="160" height="64" rx="8"/>
+  <text class="name" x="360.0" y="250.0">reporters</text>
+  <text class="kind" x="360.0" y="268.0">command</text>
+  <rect class="frame" x="500" y="20" width="300" height="300" rx="10"/>
+  <text class="frame-name" x="516" y="42">a plugin</text>
+  <rect class="ext" x="540" y="70" width="220" height="64" rx="8"/>
+  <text class="name" x="650.0" y="100.0">AI</text>
+  <text class="kind" x="650.0" y="118.0">main conversation, subagents</text>
+  <rect class="ext" x="540" y="220" width="220" height="64" rx="8"/>
+  <text class="name" x="650.0" y="250.0">rules and adapters</text>
+  <text class="kind" x="650.0" y="268.0">its own folder</text>
+  <path class="line" marker-end="url(#arrow)" d="M538,102 L242,102"/>
+  <text class="label small" x="380" y="94">each move</text>
+  <path class="line" marker-end="url(#arrow)" d="M150,134 L150,218"/>
+  <text class="label small" x="158" y="180">checks by</text>
+  <path class="line" marker-end="url(#arrow)" d="M242,90 L538,90"/>
+  <text class="label small" x="300" y="82">stop, with the step’s sentence</text>
+  <path class="line" marker-end="url(#arrow)" d="M600,134 L400,218"/>
+  <text class="label small" x="470" y="175">reports done</text>
+  <path class="line" marker-end="url(#arrow)" d="M300,220 L230,136"/>
+  <text class="label small" x="268" y="190">as facts</text>
+  <path class="line" marker-end="url(#arrow)" d="M240,120 L538,250"/>
+  <text class="label small" x="380" y="200">reads, asks</text>
 </svg>

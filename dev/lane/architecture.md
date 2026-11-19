@@ -2,368 +2,231 @@
 
 ## User stories
 
-- S1: the user wants their roles to notice at once when they leave the steps or order, writing no
-  check.
-- S2: the user wants a run that stopped to go on where it stopped, in the order they designed.
+- S1: a plugin, such as rn, wants its AI to notice when it writes a file that its step doesn't
+  name.
+- S2: a plugin wants its AI to notice when it reads a file that its step says never to read.
+- S3: a plugin wants its AI to notice when it ends a step without reading whole a file that the
+  step asks it to read whole.
+- S4: a plugin wants its AI to notice when it runs a command other than those its step names.
+- S5: a plugin wants its AI to notice when it skips a step, or ends before each step is done in
+  order.
+- S6: a plugin wants its AI to notice when it ends a step before each item of the step's checklist
+  is done.
+- S7: a plugin wants its run to move on only by the result its AI gives, never by what its reply
+  says.
+- S8: a plugin wants its AI to notice when it ends a step that the plugin's own check doesn't pass.
+- S9: a plugin wants its main conversation to start each subagent that its order makes due, and
+  only those, and not to end its turn while one is due.
+- S10: a plugin wants a run that stopped to go on where it stopped, after `/compact` or in a new
+  conversation.
 
 ## Solution strategy
 
 ### Principles
 
-Lane gives a role that leaves its step the step's own sentence, so that the role notices at once.
+Lane gives an AI that leaves a step of its plugin the step's own sentence, so that it notices at
+once.
 
-- P1: the step's own sentence, at once
-  - P1.1: when Lane stops a call, it gives the role the sentence of the step it left and what to do
+- P1: the AI notices each step it leaves
+  - P1.1: when Lane stops a call, it gives the AI the sentence of the step it left and what to do
     instead. Where it can't check a call, it says why and who fixes that.
-- P2: the user's steps as the one source
-  - P2.1: `/lane:up` proposes the rules and routes from the plugin's steps alone, and a change the
-    user asks for goes into the steps, not into a rule.
-  - P2.2: the sentence that a rule adds to a step and the check that holds it come from one rule
-    type, so that the two never say different things.
-  - P2.3: Lane lays into the plugin only the proposal the user approved, and only while the steps
-    still read as they did when shown.
-- P3: facts, never a role's claim
-  - P3.1: a run moves on only by the result a role gives with the result script, never by what its
-    reply says.
-  - P3.2: a step, a checklist item, or a file read counts as done only from the role's own call, the
-    mark script or the Read itself, checked as the role makes it.
-- P4: the order the user set
-  - P4.1: only the main conversation starts the subagents, and only the starts that the user's
-    routes make due.
-  - P4.2: the main conversation's turn ends only where no start is due that goes on without the
-    person's answer.
-- P5: nothing lost on a stop
-  - P5.1: where a run stands is worked out again by one code from what was kept, Lane's record of
-    starts and results or the results the plugin keeps, so that a run goes on after `/compact` or in
-    a new conversation.
-- P6: only the plugin's run
-  - P6.1: Lane checks only a run of the plugin's skill, from its call until its routes end, and
-    leaves other work in the conversation alone.
-- P7: the laid plugin on its own
-  - P7.1: the laid plugin runs with only its own folder and what each machine has, such as
-    `python3`, so that whoever runs it needs neither Lane nor another plugin.
-  - P7.2: `/lane:up` replaces whole what Lane laid in the plugin, and leaves each other file of the
-    plugin as it was.
+  - P1.2: a step, an item, a read, or a result counts only from the AI's own call, never from its
+    reply.
+- P2: any plugin alike
+  - P2.1: Lane names no plugin. A plugin gives Lane its rules, in the form Lane defines, in a file
+    of its own folder.
+  - P2.2: what only the plugin knows, such as a subagent's start text, a step's checklist, or the
+    results it keeps, Lane asks of the plugin's adapters. Lane defines what each adapter takes and
+    gives.
+  - P2.3: Lane checks only a run of a skill of a plugin that gives it rules, from the skill's call
+    until its routes end, and leaves other work alone.
 
 ### Data model
 
 ![Lane's data](images/data-model.svg)
 
-- Step\
-  One numbered item of a role's steps, as the user writes it.
-- Rule\
-  A check of one type on one step, with its values, such as the plugin's check. It gives the
-  sentence that the role gets where it leaves the step.
+- Rules\
+  What a plugin gives Lane: each step's rules, each of one type with its values, and the routes.
 - Route\
-  The moves after a role's result, or after a command that the person types, which make starts and
-  resumes due.
-- Proposal\
-  The rules, the routes, and the plugin's adapters put to the user. It's kept by its ID with the
-  steps as they read when shown.
-- Item\
-  One item of a step's checklist, which only the user's plugin knows.
+  The moves after a role's result, or after a command that the person types, which make starts
+  due.
 - Run\
-  One run of the plugin's skill in a conversation, from its call until its routes start no more.
-  It holds each command typed in it.
-- Start\
-  One start or resume of a role in a run, with the values that its rules hold it to.
-- Read\
-  A role's read of the lines of a file that a rule asks read whole.
-- Mark\
-  A role's report that a step or an item is done.
-- Result\
-  What a role reports at its end, by which the run moves.
+  One run of a plugin's skill in a conversation, from its call until its routes start no more,
+  with each start, read, mark, and result in it.
 - Kept results\
-  The results that the user's plugin keeps, from which a run goes on in a new conversation.
+  The results that a plugin keeps, from which a run goes on in a new conversation.
 
 Strategies:
 
-- A run's record that only grows, holding only what no later move gives again. [P5.1]\
+- A run's record that only grows, holding only what no later move gives again. [S10]\
   Intent: moves checked at the same moment lose nothing of one another's.
 
 ### Components
 
 ![Lane's components](images/components.svg)
 
-- proposer (prompt)\
-  Turns the user's steps into the rules and routes that the user would lay.
-- layer (script)\
-  Lays into the plugin only what the user approved, as they read it.
-- rule types (module)\
-  Make each rule's sentence and its check one, so that what the user reads is what holds.
 - guard (hook)\
-  Holds each move of a run to the user's steps and order.
-- reporters (script)\
-  Carry a role's result and each step or item done to the guard as facts.
+  Holds each move of a run to its plugin's rules and order.
+- rule types (module)\
+  Make each rule's check and the sentence it gives one, so that what the AI reads is what holds.
+- reporters (command)\
+  Carry a step, an item, or a result done to the guard as the AI's own call.
 
 Strategies:
 
-- A proposal from what the steps mean, by a prompt. [P2.1]\
-  Intent: a step that names no subagent still gets its routes.
-- Each skill as one role, its steps lying in several files, such as a command a route waits for.
-  [S1]\
-  Intent: the skill's steps hold across each command of the run, though nothing marks where one
-  ends.
-- A start's text, a step's checklist, and the kept results asked of the plugin's own adapters.
-  [P7.1]\
-  Intent: Lane names no plugin, and each plugin gives what it alone knows.
-- An end held to the plugin's own check where a step ends on one. [S1]\
-  Intent: a role that leaves its steps still meets the check that only the plugin knows.
-- A rule's sentence left out of a step that already says it. [P2.2]\
-  Intent: the role reads each rule once, and keeps its attention on its step.
-- The form of the laid Rules and Routes decided by the guard's code, which the layer writes
-  through. [P7.1]\
-  Intent: a laid plugin runs by its laid copy alone.
+- The plugin's folder found from the base directory of its skill, which Claude Code writes into
+  the conversation as the skill starts, as
+  [the research](../../.rn/20261107-rn/research/how-lane-finds-a-plugins-folder.md) found. [P2.1]\
+  Intent: Lane serves a plugin that it never names, as Claude Code gives the folder either way.
+- The reporters as commands that Claude Code puts on the AI's path. [P1.2]\
+  Intent: a plugin's step names a reporter without knowing where Lane lies.
+- A rule of the paths a role writes that names a folder letting through each file under it. [S1]\
+  Intent: a deliverable of several files, such as code with its tests, is written whole.
 - Each move placed on its run and start by what Claude Code's events carry, as
-  [its states](claude-code-states.md) list. [P6.1]\
+  [its states](claude-code-states.md) list. [P2.3]\
   Intent: each move is held to the rules of its own start, and to no other run's.
 
 ### Sequences
 
-#### S1: a run held to the user's steps and order
+#### S1 to S8: a move held to its step's rules
 
 ```mermaid
 sequenceDiagram
-  actor U as user
-  participant P as proposer
-  participant L as layer
-  participant T as rule types
-  participant ST as steps
-  participant CC as Claude Code
-  participant M as the plugin's main conversation
-  participant SA as the plugin's subagent
+  participant SA as the plugin's AI
   participant G as guard
+  participant T as rule types
   participant A as the plugin's adapters and checks
   participant R as reporters
   participant RR as run record
-  U->>P: asks for the checks of their plugin, first or after a change of the steps or of Lane [S1]
-  P->>L: asks for the rule types (Rule) [P2.2]
-  L->>T: reads each type, its sentence, and the Steps it suits (Rule) [P2.2]
-  P->>L: asks for the Steps, without what Lane laid before (Step) [P2.1]
-  loop until the layer takes the Proposal [P2.3]
-    P->>L: the Rules and Routes that the Steps mean (Proposal) [P2.1]
-    L->>T: checks each Rule, and makes its sentence (Rule) [P2.2]
-    alt the Proposal can't stand [P2.3]
-      L-->>P: what's wrong, which the proposer mends [P1.1]
-    else a file of the plugin can't carry it [P2.3]
-      L-->>P: what's wrong in the file [P1.1]
-      P-->>U: what to fix in their plugin, and stops [P1.1]
-    end
+  SA->>G: a call: a write, a read, or a command [S1]
+  G->>T: checks it by each rule of its step (Rules) [S2]
+  alt it breaks a rule [S4]
+    G-->>SA: stops it, with the step's sentence and what it may do [P1.1]
+  else a read of a file that a rule asks read whole [S3]
+    G->>RR: adds the read (Run) [P1.2]
   end
-  L-->>P: each Step as it'll read, the Routes, and the Proposal's ID (Proposal) [P2.3]
-  P->>U: shows them, and asks for yes or a change [P2.3]
-  alt a change [P2.1]
-    U->>P: the change [P2.1]
-    P->>ST: writes it into its Step, and proposes again (Step) [P2.1]
-  else yes [P2.3]
-    U->>P: yes [P2.3]
-    P->>L: lays the Proposal of the ID (Proposal) [P2.3]
-    alt no such Proposal, or the Steps changed since it was shown [P2.3]
-      L-->>P: refused, with why, and the proposer proposes again [P1.1]
-    else [P2.3]
-      L->>ST: replaces what Lane laid with each Rule's sentence, its check, and the Routes (Rule, Route) [P7.2]
-      L->>ST: copies the guard, the rule types, and the reporters into the plugin [P7.1]
-      L->>CC: checks the plugin [S1]
-      alt the check fails [P7.2]
-        L->>ST: puts back each file it changed [P7.2]
-        L-->>P: what failed [P1.1]
-      else [S1]
-        L-->>P: each file written [S1]
-        P-->>U: what Lane wrote, and to reload the plugin [S1]
-      end
-    end
+  SA->>R: reports a step or an item done [S5]
+  opt a rule of the step keeps a checklist [S6]
+    G->>A: asks for the step's items [P2.2]
   end
-  Note over U,RR: Later, the user runs their plugin.
-  U->>M: the plugin's command [S1]
-  M->>G: calls the skill [P6.1]
-  G->>RR: adds the Run, as S2 draws where one stopped (Run) [P5.1]
-  loop until the Routes start no more [S1]
-    opt the plugin gives a start's text of its own [P7.1]
-      G->>A: asks for the text of each start due, with each Start that runs (Start) [P7.1]
-      alt it gives the text [P7.1]
-        A-->>G: the text, and the values that the start's Rules hold it to (Start) [P7.1]
-      else it gives none, as no work waits for that start [S1]
-        A-->>G: why, which the guard gives in place of that start [S1]
-      else it fails [P1.1]
-        A-->>G: why, which the guard gives with who fixes it [P1.1]
-      end
-    end
-    G-->>M: the starts and resumes due, each with its text (Start) [P4.1]
-    alt the main conversation starts or resumes a subagent [P4.1]
-      M->>G: the start (Start) [P4.1]
-      alt a start due [P4.1]
-        G->>RR: adds the Start (Start) [P5.1]
-      else any other start of the plugin's roles [P4.1]
-        G-->>M: stops it, with the starts due [P1.1]
-      end
-    else the main conversation makes any other call [S1]
-      M->>G: the call [S1]
-      G->>T: checks it by each Rule of the skill, and stops it with the Step's sentence where it breaks one (Rule) [P1.1]
-    else the main conversation ends its turn [S1]
-      M->>G: the end [S1]
-      alt a move is due that doesn't wait for the person [P4.2]
-        G-->>M: stops it, with the moves due [P1.1]
-      else a Rule of the skill holds the end to the plugin's check [S1]
-        G->>A: runs the check, with the skill's Result where it gave one [S1]
-        A-->>G: whether it passes [S1]
-      end
-    else the person types a command that a Route waits for or goes after [S1]
-      U->>M: the command [S1]
-      M->>G: the command, as typed [S1]
-      G->>RR: adds it, so that the Route's starts are due (Run) [S1]
-    end
-    loop each move of the subagent [S1]
-      SA->>G: a move [S1]
-      G->>T: checks it by each Rule of its role (Rule) [S1]
-      alt it breaks a Rule [S1]
-        G-->>SA: stops it, with the Step's sentence and what it may do (Step) [P1.1]
-      else a Read of a file that a Rule asks read whole [P3.2]
-        G->>RR: adds the Read (Read) [P5.1]
-      else a run of the reporter of a Step or an Item done [P3.2]
-        opt a Rule of the Step keeps a checklist [P7.1]
-          G->>A: asks for the Step's Items, with the Start's values (Item) [P7.1]
-        end
-        alt the Step isn't due, or it lacks a Read or an Item that its Rules ask [P3.2]
-          G-->>SA: stops it, with the Rule's sentence and what the Step lacks [P1.1]
-        else [P3.2]
-          SA->>R: reports the Mark (Mark) [P3.2]
-          SA->>G: the report's run, ended well (Mark) [P3.2]
-          G->>RR: adds the Mark (Mark) [P5.1]
-        end
-      end
-    end
-    SA->>R: reports its Result (Result) [P3.1]
-    R->>RR: reads, by the guard's code, which Results the role may give (Run) [P5.1]
-    alt a Result its role may give [P3.1]
-      SA->>G: the report's run, ended well (Result) [P3.1]
-      G->>RR: adds the Result (Result) [P5.1]
-    else [P3.1]
-      R-->>SA: refuses it, with the Results it may give [P1.1]
-    end
-    SA->>G: ends [S1]
-    alt no Result, or a Step left unmarked [P3.1]
-      G-->>SA: stops the end, with the Rule's sentence [P1.1]
-    else a Rule holds the end to the plugin's check [S1]
-      G->>A: runs the check, with the Start's values and the Result filled in [S1]
-      A-->>G: whether it passes, and the guard stops the end with the Rule's sentence where it fails [P1.1]
-    end
-    G-->>M: the Result, and the starts that its Route makes due (Route) [P3.1]
+  alt the step isn't due, or it lacks a read or an item that its rules ask [S5]
+    G-->>SA: stops it, with what the step lacks [P1.1]
+  else [P1.2]
+    G->>RR: adds the mark (Run) [P1.2]
   end
-  M->>R: reports the skill's Result (Result) [P3.1]
-  R->>RR: reads, by the guard's code, which Results the skill may give (Run) [P5.1]
-  alt a Result the skill may give, with each Step marked [P3.1]
-    M->>G: the report's run, ended well (Result) [P3.1]
-    G->>RR: adds it, which ends the Run (Run) [P5.1]
-  else [P3.1]
-    R-->>M: refuses it, with the Results it may give or the Step due [P1.1]
+  SA->>R: reports its result [S7]
+  alt a result its role may give [S7]
+    G->>RR: adds the result (Run) [P1.2]
+  else [S7]
+    R-->>SA: refuses it, with the results it may give [P1.1]
+  end
+  SA->>G: ends [S5]
+  alt no result, or a step left unmarked [S7]
+    G-->>SA: stops the end, with the step's sentence [P1.1]
+  else a rule holds the end to the plugin's check [S8]
+    G->>A: runs the check, with the result [S8]
+    A-->>G: whether it passes, and the guard stops the end where it fails [P1.1]
   end
 ```
 
 Strategies:
 
-- A start judged by the Routes, by its role and by the plugin's text where it gives one. [P4.1]\
-  Intent: the skill notices at once a start it forgot, or one out of order.
-- A typed command that a Route goes after, its starts due in place of those before. [S1]\
-  Intent: the person's pause or approval changes the order.
-- A Mark checked for the Step due, then for the reads and the Items that its Rules ask. [P3.2]\
+- A mark checked for the step due, then for the reads and the items that its rules ask. [S5]\
   Intent: a skipped step, item, or part of a file shows at the step skipped.
-- A role's end checked for its Result first, then its Steps, then the plugin's own check. [P1.1]\
-  Intent: a stop names the step left, as the plugin's check runs once the Result and each Step
+- An end checked for its result first, then its steps, then the plugin's own check. [S8]\
+  Intent: a stop names the step left, as the plugin's check runs once the result and each step
   hold.
 
-#### S2: a run picked up
+#### S9: starts held to the plugin's order
 
 ```mermaid
 sequenceDiagram
-  actor U as user
+  actor U as person
+  participant M as the plugin's main conversation
+  participant G as guard
+  participant A as the plugin's adapters
+  participant RR as run record
+  U->>M: the plugin's command [S9]
+  M->>G: calls the skill [P2.3]
+  G->>RR: adds the run, as S10 draws where one stopped (Run) [S9]
+  loop until the routes start no more [S9]
+    opt the plugin gives a start's text of its own [P2.2]
+      G->>A: asks for the text of each start due [P2.2]
+    end
+    G-->>M: the starts due, each with its text (Run) [S9]
+    alt a start due [S9]
+      M->>G: the start [S9]
+      G->>RR: adds the start (Run) [S9]
+    else any other start of the plugin's subagents [S9]
+      G-->>M: stops it, with the starts due [P1.1]
+    else the main conversation ends its turn while a start is due [S9]
+      G-->>M: stops it, with the starts due [P1.1]
+    else the person types a command that a route waits for [S9]
+      U->>M: the command [S9]
+      G->>RR: adds it, so that its route's starts are due (Route) [S9]
+    end
+    G-->>M: each result, and the starts that its route makes due (Route) [S7]
+  end
+```
+
+Strategies:
+
+- A typed command that a route goes after, its starts due in place of those before. [S9]\
+  Intent: the person's pause or approval changes the order.
+
+#### S10: a run picked up
+
+```mermaid
+sequenceDiagram
+  actor U as person
   participant M as the plugin's main conversation
   participant G as guard
   participant RR as run record
   participant A as the plugin's adapter
-  U->>M: the plugin's command, after the conversation is compacted or in a new one [S2]
-  M->>G: calls the skill, with the words typed after the command [S2]
-  alt the run record holds the Run, not ended [P5.1]
-    G->>RR: reads where the Run stands (Run) [P5.1]
-  else the plugin names an adapter of the results it keeps [P5.1]
-    G->>A: asks for the Kept results, with those words (Kept results) [P5.1]
-    alt results that follow the Routes [S2]
-      G->>RR: adds the Run, with each Result (Run, Result) [P5.1]
-    else none, or results that reach a Route that starts no more [S2]
-      G->>RR: adds a new Run (Run) [P5.1]
-    else results that don't follow the Routes, or it fails [P1.1]
-      G-->>M: stops the command, with why and who fixes it, for the user [P1.1]
-    end
-  else [S2]
-    G->>RR: adds a new Run (Run) [P5.1]
+  U->>M: the plugin's command, after /compact or in a new conversation [S10]
+  M->>G: calls the skill, with the words typed after the command [S10]
+  alt the run record holds the run, not ended [S10]
+    G->>RR: reads where the run stands (Run) [S10]
+  else the plugin gives an adapter of the results it keeps [P2.2]
+    G->>A: asks for the kept results, with those words (Kept results) [P2.2]
+    G->>RR: adds the run, with each result that follows the routes (Run) [S10]
   end
-  G-->>M: where the Run picks up, and the starts due (Start) [S2]
+  G-->>M: where the run picks up, and the starts due [S10]
 ```
-
-Strategies:
-
-- A Run placed by the run record first, then by the plugin's Kept results. [P5.1]\
-  Intent: a run goes on in the same conversation and in a new one.
 
 ### Deployment
 
 ![Lane's deployment](images/deployment.svg)
 
-The user installs Lane by [the README](../../plugins/lane/README.md#installation) and lays it by
-`/lane:up`, and the reloaded plugin runs the guard.
+A plugin names `lane` among the dependencies of its `plugin.json`, so that Claude Code installs
+Lane beside it, and Lane's guard holds each run of the plugin's skills.
 
 Strategies:
 
-- Lane's code copied into the user's plugin. [P7.1]\
-  Intent: whoever runs the plugin needs no Lane, and the guard runs the code that Lane's tests ran.
-- Lane's code on Python 3.9 and its standard library alone. [P7.1]\
-  Intent: the guard, started anew on each move, answers fast on each machine that runs the plugin.
-- The plugin's adapters and checks run in the folder that the conversation works in. [S1]\
+- Lane's code on Python 3.9 and its standard library alone. [P2.1]\
+  Intent: the guard, started anew on each move, answers fast on each machine that runs a plugin.
+- The plugin's adapters and checks run in the folder that the conversation works in. [P2.2]\
   Intent: each reads the run's checkout, in a worktree too.
 
 ### Directory structure
 
 ```text
-plugins/lane/                     what Claude Code installs for the user
-├── skills/up/SKILL.md            /lane:up
-├── domain/up.md                  the proposer
-├── domain/lay/                   the layer's code
-├── scripts/lay.py                runs the layer
-├── hooks/lane/                   Lane's code, copied whole into each plugin
-│   ├── hook.py                   the guard
-│   ├── result.py                 the reporter of a Result
-│   ├── step.py                   the reporter of a Step done
-│   ├── item.py                   the reporter of an Item done
-│   └── domain/                   the guard's code, and lanes/, the rule types
-└── README.md                     for Lane's users
+plugins/lane/                     what Claude Code installs beside each plugin that depends on it
+├── hooks/
+│   ├── hooks.json                the guard's entries
+│   └── lane/                     the guard, and lanes/, the rule types
+├── bin/                          the reporters
+├── docs/rules-and-adapters.md    what Lane takes in and gives out
+└── README.md                     for a plugin's author
 
 dev/lane/                         what only Lane's developers use
 ├── claude-code-states.md         each state of Claude Code that the guard meets, with its records
 └── tests/                        the test cases, from unit to integration
 
-dev/tests/                        what the developers of Lane and rn share for their tests
-├── claude_code.py                the double of Claude Code
-└── recorded/                     the records of Claude Code that the double gives from
-
-<the user's plugin>/              what Lane writes into, beside the user's own
-├── skills/, agents/              the Steps, with the Rules' sentences
-└── hooks/
-    ├── hooks.json                the guard's entries, beside the user's own
-    ├── lanes.json                the Rules, the Routes, and what Lane laid
-    ├── lane/                     the copy of Lane's code
-    └── adapters/                 each adapter, the user's own
-
-<system temporary folder>/        what Lane keeps only for a run
-├── lane/<yyyymmdd>-<plugin>/     each Proposal, by its ID
-└── <plugin>/<yyyymmdd>-<id>/     the run record of one conversation
+<a plugin>/lane/                  what a plugin gives Lane
+├── rules.json                    the rules and the routes
+└── adapters/                     each adapter
 ```
-
-Strategies:
-
-- In the user's plugin, only the sentences in the steps and the files under `hooks/` written by
-  Lane. [P7.2]\
-  Intent: every other part of the plugin stays the user's.
-- The rule types inside `hooks/lane/`, which the layer imports. [P2.2]\
-  Intent: the sentence that the user reads and the check that the guard runs come from one copy.
 
 ## Test strategy
 
@@ -373,14 +236,11 @@ Strategies:
 | Static analysis | Parts | Quality | 0 findings of mismatched types, copied code, or import cycles. |
 | Complexity analysis | Parts | Quality | Per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Unit testing | Parts | Quality | Every case passes. |
-| Unit testing | Parts that hold a prompt | Benchmark | The proposer's Proposal for each case's steps, each case's results over runs added until one more changes no case's count. |
 | Code coverage | Parts | Quality | 100% statement (C0) and branch (C1) coverage. |
-| Property-based testing | Parts | Quality | 0 counterexamples in reading Steps and Proposals, each rule type's check, and the guard's placing of moves. |
+| Property-based testing | Parts | Quality | 0 counterexamples in reading the rules, each rule type's check, and the guard's placing of moves. |
 | Mutation testing | Parts | Quality | 0 surviving mutants. |
 | Integration testing | Architecture | Quality | Every case passes, each handoff giving the data the data model names. |
-| Integration testing | Architecture | Benchmark | KR1.1: the share of the guard's answers that the cases hold right. |
 | Contract testing | Architecture | Quality | On each new Claude Code, each recorded state gives the double's events. |
 | Traceability | Architecture | Quality | Every element tested, every case naming one level up, and each principle's case failing broken. |
 | Configuration testing | Product | Quality | Every case passes on Python 3.9 and on the newest Python. |
-| Conformance and compliance testing | Product | Quality | Claude Code's strict check of each laid plugin passes. |
-| Performance testing | Architecture | Benchmark | KR1.2: each move's time to the guard's answer. |
+| Conformance and compliance testing | Product | Quality | Claude Code's strict check of Lane's plugin passes. |
