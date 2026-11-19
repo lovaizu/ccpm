@@ -133,86 +133,92 @@
         "plugins/lane/README.md",
         "plugins/rn/domain/best-practices/architecture"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N9",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N11",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N13",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The designs made again from it",
+              "decided": "Lane's test cases derived again from it by the test design best practice once the user signs it off, its integration cases in rn's form, and each gap they find mended in the architecture",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N14",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "What the rework changes",
@@ -256,43 +262,260 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md",
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
-      "name": "The user reads what Lane would hold, each step as it'll read and the order, before anything holds their plugin",
-      "path": "dev/lane/tests/integration/test_s1_proposal.py",
+      "name": "A user's plugin, laid by /lane:up, runs held to its steps and its order until the skill's Result",
+      "path": "dev/lane/tests/integration/test_lane_s1_run.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
-      "name": "Lane lays only what the user, a person or an AI, approved, and proposes again on a change they ask for",
-      "path": "dev/lane/tests/integration/test_s2_approval.py",
+      "name": "A run that stopped goes on where it stopped, in the same conversation and in a new one",
+      "path": "dev/lane/tests/integration/test_lane_s2_picked_up.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
-      "name": "After the steps change or Lane updates, the checks follow the steps as they now read",
-      "path": "dev/lane/tests/integration/test_s3_again.py",
+      "name": "Each principle item of Lane's architecture holds where its part keeps it, and its case fails with that part taken out",
+      "path": "dev/lane/tests/integration/test_lane_principles.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests",
+        "dev/lane/tests/integration/test_lane_s1_run.py",
+        "dev/lane/tests/integration/test_lane_s2_picked_up.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
-      "name": "A start off the order the user set gets the moves due, and each start on it goes through",
-      "path": "dev/lane/tests/integration/test_s4_run_order.py",
+      "name": "Each component of Lane's architecture makes each decision it alone holds, and hands each part the data the data model names",
+      "path": "dev/lane/tests/integration/test_lane_components.py",
       "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "A subagent that leaves a step, by a call, a Mark, or an end, gets that step's sentence",
-      "path": "dev/lane/tests/integration/test_s5_subagent_held.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "A run that stopped goes on where it stopped, after /compact or in a new conversation, so Lane still tells the order",
-      "path": "dev/lane/tests/integration/test_s6_picked_up.py",
-      "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A builder's /lane:up, typed or asked of an AI, proposes their plugin's lanes and routes from its steps alone, shows them as they'll read, and lays what the caller approves",
@@ -560,6 +783,10 @@
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md",
+        "dev/lane/tests/integration/test_lane_s1_run.py",
+        "dev/lane/tests/integration/test_lane_s2_picked_up.py",
+        "dev/lane/tests/integration/test_lane_principles.py",
+        "dev/lane/tests/integration/test_lane_components.py",
         "dev/rn/tests/integration/test_rn_s1_deliverable.py",
         "dev/rn/tests/integration/test_rn_s2_pause.py",
         "dev/rn/tests/integration/test_rn_principles.py",
@@ -1062,6 +1289,26 @@
     {
       "do": "make",
       "path": "dev/lane/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s1_run.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s2_picked_up.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_principles.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_components.py"
     },
     {
       "do": "make",
