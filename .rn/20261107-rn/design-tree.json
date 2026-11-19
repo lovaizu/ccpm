@@ -638,6 +638,11 @@
           "good": false,
           "decisions": [
             {
+              "about": "What the rework keeps",
+              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture as approved on 2026-11-19, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent, as the user decided that no old name or step may stay where it no longer means anything; this work runs beside the architecture best practice's and Lane's, as it rests on rn's architecture alone",
+              "by": "user"
+            },
+            {
               "about": "Where a round's best practice and the groups it judges lie",
               "decided": "a new module of tree.py, course, decides each round's best practice, the kind's for content and then the refactor one for structure, two rounds of each at most since the deliverable's latest sign-off sent back, and the groups a round judges: each in a phase's first round, and in a later one each group that holds a condition whose decisions changed since the round before, or, of the refactor one, a condition of a More kept; cut takes the generator's and each evaluator's due round from it",
               "by": "maker"
@@ -713,7 +718,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "What the rework keeps",
+              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture as approved on 2026-11-19, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent, as the user decided that no old name or step may stay where it no longer means anything; this work runs beside the architecture best practice's and Lane's, as it rests on rn's architecture alone",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -1743,11 +1754,11 @@
     },
     {
       "do": "make",
-      "path": "dev/lane/architecture.md"
+      "path": "plugins/rn"
     },
     {
       "do": "make",
-      "path": "plugins/rn"
+      "path": "dev/lane/architecture.md"
     },
     {
       "do": "make",
