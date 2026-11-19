@@ -276,6 +276,36 @@
               "about": "The parts filled",
               "decided": "the bodies that S1's integration cases reach, from the skill's call to the guard's stop of a write that its step doesn't name: the plugin's folder, reading the rules, the run record, the placing of moves, where a start's rules come from, the order by the route adapter, the rule type of the files a step writes, and the guard's answer, each with its unit cases passing",
               "by": "reasoning"
+            },
+            {
+              "about": "Which plugin a skill's folder is",
+              "decided": "the name in the folder's .claude-plugin/plugin.json, or the folder's own name where it holds none, as Claude Code names a plugin, so that an installed plugin under its version's folder is found; a unit case holds the installed shape",
+              "by": "reasoning"
+            },
+            {
+              "about": "A skill that no plugin holds",
+              "decided": "a skill whose name has no plugin's prefix, such as a person's own /hi, adds no run, as Lane checks only a run of a plugin's skill",
+              "by": "reasoning"
+            },
+            {
+              "about": "A folder in a rule of the files a step writes",
+              "decided": "named with a closing /, which lets through each file under it, as a folder not yet made can't be told by the disk",
+              "by": "maker"
+            },
+            {
+              "about": "The main conversation's moves with two runs standing",
+              "decided": "on the latest run not ended",
+              "by": "maker"
+            },
+            {
+              "about": "Coverage",
+              "decided": "Lane's code counts in check.sh's coverage, as the Test strategy asks 100% of it",
+              "by": "reasoning"
+            },
+            {
+              "about": "Cases mended",
+              "decided": "the case of a command whose run ended takes the run as ended by its ended entry, as place.skill_call's contract says; a unit case holds rules.json of a wrong type, such as a list at its top",
+              "by": "reasoning"
             }
           ]
         },
