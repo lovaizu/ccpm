@@ -50,8 +50,7 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "inputs": [],
-      "preconditions": [
+      "inputs": [
         "plugins/rn/domain/best-practices/meta"
       ],
       "status": "open",
@@ -77,7 +76,7 @@
           "decisions": [
             {
               "about": "The template's sections",
-              "decided": "User stories; Solution strategy holding Principles, Data model, Components, Sequences, Deployment, and Directory structure, in that order, each view after the data it names; Test strategy apart, as the user decided on 2026-11-19 from rn's architecture, whose Japanese copy they approved",
+              "decided": "User stories; Solution strategy holding Principles, Data model, Components, Sequences, Deployment, and Directory structure, in that order, each view after the data it names; Test strategy apart",
               "by": "user"
             },
             {
@@ -243,28 +242,28 @@
               "by": "user"
             },
             {
-              "about": "Where a role's record commits",
-              "decided": "only on the run's branch in the work's repository, as the rule The repository holds the work says",
+              "about": "Where a role's work commits",
+              "decided": "only on the run's branch in the work's repository",
               "by": "reasoning"
             },
             {
               "about": "Test strategy's Scenario testing",
-              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed, as the E2E test's KR1.1 decision says",
+              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed",
               "by": "user"
             },
             {
               "about": "How rn's parts are made",
-              "decided": "each part carries out the product vision's Concept or a key result in the simplest way it allows, with no mechanism that only works around another, as the user decided on 2026-11-18 that rn be made as it should be, built from rn's Concept",
+              "decided": "each part carries out the product vision's Concept or a key result in the simplest way it allows, with no mechanism that only works around another",
               "by": "user"
             },
             {
               "about": "The bound on each context",
-              "decided": "each generator and evaluator starts from its Cut alone and keeps its content in files, handing back a short result; the main conversation is the orchestrator, the simplest form, and the E2E test measures its context, as the user decided on 2026-11-19: in rn's E2E walkthrough of 2026-11-18 the main conversation's 180k tokens came mostly from subagents' briefs and results, about 45k, Lane's messages, about 20k, and files it read, about 15k",
+              "decided": "each generator and evaluator starts from its Cut alone and keeps its content in files, handing back a short result; the main conversation is the orchestrator, and the E2E test measures its context",
               "by": "user"
             },
             {
-              "about": "Turn and round",
-              "decided": "a turn is the orchestrator's review of the design tree at each event, and a round is one making of a deliverable by a generator and its judging by evaluators",
+              "about": "The round",
+              "decided": "one making of a deliverable by a generator and its judging by evaluators; the architecture names no turn",
               "by": "user"
             }
           ]
@@ -279,28 +278,28 @@
           "good": false,
           "decisions": [
             {
-              "about": "The order of content and structure",
-              "decided": "a deliverable's rounds make and judge its content by its kind's best practice until each condition is good, and only then does the generator rework its structure by the refactor best practice and an evaluator judge that",
+              "about": "The order of content and refactoring",
+              "decided": "a deliverable's rounds make its content by its kind's best practice until each condition is good, and then the generator refactors it by the refactor best practice and an evaluator judges that",
               "by": "user"
             },
             {
               "about": "What a later round judges",
-              "decided": "a round after the first judges again only the conditions whose decisions changed since the round before",
+              "decided": "only the conditions whose decisions changed since the round before",
               "by": "user"
             },
             {
               "about": "How many rounds",
-              "decided": "two rounds of content and two of structure at most; a more still left after them goes to the user with the deliverable as a proposal to improve it",
+              "decided": "two rounds of content and two of refactoring at most; each finding left goes to the user with the deliverable as a proposal",
               "by": "user"
             },
             {
               "about": "Why evaluators are split by group of conditions",
-              "decided": "each evaluator judges its group of conditions in its own context, side by side, so a round of evaluators takes as long as its slowest group, and only the groups that hold a condition to judge again start",
+              "decided": "each evaluator judges its group of conditions in its own context, side by side, so a round of evaluators takes as long as its slowest group",
               "by": "reasoning"
             },
             {
               "about": "When a round reaches the orchestrator",
-              "decided": "once each evaluator of the round ends: tree.py gives the round's Answers in the orchestrator's News only then, and no orchestrator start for a round in part, as a turn on part of a round decides again once the rest arrive",
+              "decided": "once each evaluator of the round ends",
               "by": "reasoning"
             }
           ]
@@ -316,42 +315,42 @@
           "decisions": [
             {
               "about": "Who orders the work",
-              "decided": "the orchestrator, at each turn, by inputs first and then by what the run's facts show brings the people closest, and the tree-keeper writes it in the design tree's work",
+              "decided": "the orchestrator, by inputs first and then by what the run's facts show brings the people closest",
               "by": "user"
             },
             {
-              "about": "What tree.py holds of the work and the inputs",
-              "decided": "tree.py rewrites an item of work whose node a change renames, and refuses a change where an item names no node or comes before a deliverable that its inputs name and that isn't done, or where a deliverable's inputs leave out a kind that its best practice names in inputs",
+              "about": "What the design tree's check holds",
+              "decided": "each edit is checked, before its commit, on each condition of the design tree best practice that code can check, a decided holding only the decision among them",
               "by": "user"
             },
             {
               "about": "Who decides a sign-off",
-              "decided": "only the user's typed /rn:ty or /rn:gm, whose skill runs tree.py approve or send-back as its own command as it loads, while the guard stops any other call of them; a plugin skill's !`command` runs as the skill loads, in the conversation's folder, with ${CLAUDE_PLUGIN_ROOT} filled in, as a trial on Claude Code 2.1.327 showed",
+              "decided": "only the user's typed /rn:ty or /rn:gm",
               "by": "reasoning"
             },
             {
               "about": "Each role's expected role",
-              "decided": "the orchestrator, the main conversation, at each turn reviews the design tree by the run's facts and the user's words, settles each point but the user's, asks the user theirs and each sign-off, orders the work, and starts each round due; the generator makes only what brings the deliverable's people closer; the evaluator finds what's good for them and what would make it good",
+              "decided": "the orchestrator leads the run to the people's aim; the generator makes a deliverable with which its people reach their aim; the evaluator checks, as the people, whether a deliverable reaches their aim",
               "by": "user"
             },
             {
               "about": "Who writes the design tree",
-              "decided": "the orchestrator edits design-tree.json with the Edit tool, and each more it keeps in the round's file with the Write tool; tree.py write checks the tree as edited against the last commit, by form, work, inputs, and each more kept, marks each turn, and commits it with the ground",
+              "decided": "the orchestrator, each edit checked before its commit",
               "by": "reasoning"
             },
             {
-              "about": "How Lane holds each role",
-              "decided": "each role's steps say what holds it, such as reading a best practice whole, carrying out each of its practices, writing only its deliverable, or leaving the design tree unread for the evaluator, and Lane lays the rule that each step's words call for, as Lane's up does; rn's check judges at each end only what no rule of Lane's can: each result against its Cut, and each deliverable against its template, as the user decided on 2026-11-18 that rn's use of Lane comes from Lane's up",
+              "about": "Where Lane applies",
+              "decided": "to every activity of every role's steps that it can hold",
               "by": "user"
             },
             {
-              "about": "Where a start's Cut lives",
-              "decided": "tree.py keeps each start's Cut in the run's folder as it gives the start, with the start's result once rn's check keeps it at its end, and every later read takes them from there, so nothing rebuilds a round from git's history",
+              "about": "Where a role's Cut lives",
+              "decided": "in the run's folder, kept as the role starts, so that a role stopped starts again from it",
               "by": "reasoning"
             },
             {
               "about": "Who commits a role's work",
-              "decided": "check.py, at each role's end, once it keeps the result, with the result as the message, as no role commits at each step",
+              "decided": "the role's end, with its result as the message",
               "by": "reasoning"
             }
           ]
@@ -377,23 +376,23 @@
           "good": false,
           "decisions": [
             {
-              "about": "A deliverable's turn",
-              "decided": "tree.py gives each item of work to make its turn once the deliverable rests on no open point and on nothing not signed off, and the adapters give the start of the first in the work's order that no start holds",
+              "about": "When a deliverable's round starts",
+              "decided": "once it rests on no open point and on nothing not signed off, in the work's order",
               "by": "reasoning"
             },
             {
               "about": "A node with no file",
-              "decided": "no generator or evaluator starts for it: the orchestrator settles each of its decisions, as S2 draws, sets each condition good once its decisions answer it, and puts it up, as S3 draws, so that work resting on it waits for its sign-off",
+              "decided": "no generator or evaluator starts for it: the orchestrator settles each of its decisions and puts it up for sign-off",
+              "by": "reasoning"
+            },
+            {
+              "about": "When the orchestrator reviews the run",
+              "decided": "at each event: the request, an answer, a sign-off, or a round once each of its evaluators ends",
               "by": "reasoning"
             },
             {
               "about": "A pause",
               "decided": "/rn:dn stops each role and commits and pushes the run's folder; /rn:up picks the run up in any conversation, and each role that the pause stopped starts again from its kept Cut",
-              "by": "reasoning"
-            },
-            {
-              "about": "When a turn comes",
-              "decided": "at each event: the request, an answer, a sign-off decided, or a round once each of its evaluators ends",
               "by": "reasoning"
             }
           ]
@@ -439,7 +438,7 @@
           "decisions": [
             {
               "about": "How far the architecture goes",
-              "decided": "as the reworked architecture best practice says, its Japanese copy approved by the user on 2026-11-19; the handshake with Lane and cases off the README's image go to the software design and its integration cases, as the README is an image of the aim, finished once the E2E test confirms the product",
+              "decided": "only what its Principles need, in the reworked architecture best practice's form; the handshake with Lane and cases off the README's image go to the software design and its integration cases",
               "by": "user"
             }
           ]
@@ -544,7 +543,7 @@
           "decisions": [
             {
               "about": "What the rework changes",
-              "decided": "the form and the content of the reworked architecture best practice, with Lane's decisions kept as they are, as the user asked on 2026-11-19 to review Lane's architecture by it beside rn's",
+              "decided": "the form and the content of the reworked architecture best practice, with Lane's decisions kept as they are",
               "by": "user"
             }
           ]
@@ -639,7 +638,12 @@
           "decisions": [
             {
               "about": "What the rework keeps",
-              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture as approved on 2026-11-19, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent, as the user decided that no old name or step may stay where it no longer means anything; this work runs beside the architecture best practice's and Lane's, as it rests on rn's architecture alone",
+              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent",
+              "by": "user"
+            },
+            {
+              "about": "The design tree's check of a decided",
+              "decided": "the check refuses a decided that holds a date or a ground, such as `as the user decided`, as the ground goes in the commit message",
               "by": "user"
             },
             {
@@ -669,7 +673,7 @@
             },
             {
               "about": "Where a deliverable's rounds start again",
-              "decided": "a deliverable's sign-off keeps the number of its latest round when it's put up, and course counts only the rounds after the latest such number, as a sign-off sent back starts the rounds again from the design",
+              "decided": "a deliverable's sign-off keeps the number of its latest round when it's put up, and course counts only the rounds after the latest such number",
               "by": "maker"
             },
             {
@@ -721,7 +725,7 @@
           "decisions": [
             {
               "about": "What the rework keeps",
-              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture as approved on 2026-11-19, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent, as the user decided that no old name or step may stay where it no longer means anything; this work runs beside the architecture best practice's and Lane's, as it rests on rn's architecture alone",
+              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent",
               "by": "user"
             }
           ]
@@ -737,12 +741,12 @@
           "decisions": [
             {
               "about": "The cases derived again",
-              "decided": "each unit and integration case of rn is derived again by the test design best practice once it takes state transition testing, and each case missing is added, as the user decided on 2026-11-18",
+              "decided": "each unit and integration case of rn is derived again by the test design best practice, state transition testing among its techniques, and each case missing is added",
               "by": "user"
             },
             {
               "about": "The cases judged again",
-              "decided": "rn's cases derived on 2026-11-18 are each judged again by the test design best practice's N3 as it now stands: a case of a transition that no use brings about is taken out, the turn mark's among them",
+              "decided": "each of rn's cases is judged again by the test design best practice's N3: a case of a transition that no use brings about is taken out",
               "by": "user"
             }
           ]
