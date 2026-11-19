@@ -1,6 +1,7 @@
 """The integration cases of S4, the commands a step runs: a Bash call of a command that the step of
-its start doesn't name stopped with the step's sentence, a named command and a reporter of Lane's
-let through, and the main conversation's calls in a run held to its skill's step. Each runs `log`
+its start doesn't name stopped with the step's sentence, and so one chained after a named command;
+a named command, with more words after it too, and a reporter of Lane's let through; and the main
+conversation's calls in a run held to its skill's step. Each runs `log`
 and Lane through the double of Claude Code."""
 
 from __future__ import annotations
@@ -28,6 +29,26 @@ def test_a_command_that_its_step_names_goes_through(b: Bench):
     When it runs `git log`
     Then the call goes through and runs"""
     answer = started(opened(b)).bash("git log")
+    assert not answer.blocked
+    assert answer.exit_code == 0
+
+
+@pytest.mark.supports("S4")
+def test_a_command_chained_after_a_named_one_is_stopped(b: Bench):
+    """Given the writer running at its step `write`, which runs `git log`
+    When it runs `git log && git push`
+    Then the call is stopped with the step's sentence, naming `git log`"""
+    answer = started(opened(b)).bash("git log && git push")
+    assert answer.blocked
+    assert "git log" in answer.said
+
+
+@pytest.mark.supports("S4")
+def test_a_named_command_with_more_words_after_it_goes_through(b: Bench):
+    """Given the writer running at its step `write`
+    When it runs `git log --oneline`
+    Then the call goes through and runs"""
+    answer = started(opened(b)).bash("git log --oneline")
     assert not answer.blocked
     assert answer.exit_code == 0
 

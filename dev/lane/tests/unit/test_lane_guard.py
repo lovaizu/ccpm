@@ -233,11 +233,12 @@ def test_an_end_that_holds_and_its_notification_give_the_result_and_the_next_sta
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
 def test_a_notification_of_a_subagent_stopped_by_task_stop_gives_its_start_due_again(g: Play):
     """Given the writer tied to a1, running
-    When its task-notification says TaskStop stopped it
-    Then the guard gives the writer due again with its text"""
+    When its task-notification says TaskStop stopped it, and the main conversation ends its turn
+    Then the guard gives the writer due again with its text, and stops the end"""
     g.opened()
     writer = g.started()
     assert TEXT("log:writer") in answer(g.e.killed(writer, "toolu_1")).said
+    assert answer(g.e.stop()).stop
 
 
 @pytest.mark.supports("test_a_resume_that_a_route_makes_due_goes_through_as_its_start")
@@ -335,6 +336,7 @@ def test_another_skills_command_adds_its_run_beside_and_the_turn_waits_for_eithe
     g.opened()
     writer = g.started()
     g(g.e.typed("log:tag"))
+    base_directory(g.e.transcript, g.log, "tag")
     said = answer(g.e.stop())
     assert said.stop
     assert TEXT("log:tagger") in said.said
@@ -474,6 +476,20 @@ def test_skill_called_with_its_run_standing_gives_its_starts_due(g: Play, log: s
 
 
 @pytest.mark.supports(
+    "test_another_skills_command_typed_while_a_subagent_runs_starts_its_run_beside"
+)
+def test_skill_called_of_another_skill_adds_its_run_beside_the_one_that_stands(g: Play, log: str):
+    """Given a run of log:up with its folder, whose writer is tied to a1
+    When log:tag is called
+    Then the answer is empty, and the record holds the run of log:up and a run of log:tag with no
+    folder"""
+    recorded(log, START, TIE)
+    assert skill_called(SkillCall("session-1", g.e.transcript, "log:tag", "")) == Answer()
+    first, second = runs("session-1")
+    assert (first.skill, second.skill, second.plugin_root) == ("log:up", "log:tag", None)
+
+
+@pytest.mark.supports(
     "test_the_starts_due_come_at_the_main_conversations_next_event_after_the_skills_call"
 )
 def test_run_opened_reads_the_folder_and_gives_the_starts_due(g: Play, log: str):
@@ -577,10 +593,12 @@ def test_result_reached_gives_the_result_and_its_routes_starts(g: Play, log: str
 def test_result_reached_of_a_subagent_stopped_gives_its_start_due_again(g: Play, log: str):
     """Given the writer tied to a1, with no result
     When its notification says TaskStop stopped it
-    Then the answer gives the writer due again"""
+    Then the answer gives the writer due again, and the record holds a1's start stopped"""
     recorded(log, START, TIE)
     said = result_reached(move("result_reached", g.e.killed(WRITER, "toolu_1"), WRITER))
     assert TEXT("log:writer") in said.said
+    last = runs("session-1")[0].entries[-1]
+    assert (last["kind"], last.get("agent_id")) == ("stopped", "a1")
 
 
 @pytest.mark.supports("test_the_start_due_goes_through_and_leaves_none_due")

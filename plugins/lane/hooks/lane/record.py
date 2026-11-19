@@ -10,9 +10,10 @@ from typing import TypedDict
 
 class Entry(TypedDict, total=False):
     """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `tie`, `queue`,
-    `drop`, `read`, `mark`, `result`, and `typed`, the `run` it belongs to, and the fields of that
-    kind: a `folder` gives the run's plugin's folder, and a `queue` a resume queued to a subagent
-    that still runs, untied until that subagent's SubagentStop."""
+    `drop`, `read`, `mark`, `result`, `stopped`, and `typed`, the `run` it belongs to, and the
+    fields of that kind: a `folder` gives the run's plugin's folder, a `queue` a resume queued to a
+    subagent that still runs, untied until that subagent's SubagentStop, and a `stopped` the
+    `agent_id` of a start that ended with no result, such as one stopped by TaskStop."""
 
     kind: str
     run: str

@@ -1,8 +1,8 @@
 """The unit cases of hooks/lane/place.py: skill_call, one for each event that calls a skill or
-doesn't; opening, one for each event at which the transcript holds the skill's base directory or
-not yet; and place, one for each transition of a run's moves that Lane's list of Claude Code's
-states brings about, each event placed on its run, its start, its role, and its step, or outside
-each run."""
+doesn't, and for a typed command whose skill the rules give steps of or none; opening, one for each
+event at which the transcript holds the skill's base directory or not yet; and place, one for each
+transition of a run's moves that Lane's list of Claude Code's states brings about, each event placed
+on its run, its start, its role, and its step, or outside each run."""
 
 from __future__ import annotations
 
@@ -54,7 +54,7 @@ def test_a_typed_command_calls_its_skill_with_the_words(e: Events):
     """Given the UserPromptExpansion of /log:up 1.2.0
     When Lane reads which skill it calls
     Then it's log:up, with the words 1.2.0, in the event's conversation"""
-    called = skill_call(e.typed("log:up", "1.2.0"))
+    called = skill_call(e.typed("log:up", "1.2.0"), [])
     assert called == SkillCall("session-1", e.transcript, "log:up", "1.2.0")
 
 
@@ -63,7 +63,7 @@ def test_a_skill_tool_call_that_ran_calls_its_skill_with_its_args(e: Events):
     """Given the PostToolUse of the main conversation's Skill call of log:up with 1.2.0
     When Lane reads which skill it calls
     Then it's log:up, with the words 1.2.0"""
-    assert skill_call(e.skill_post("log:up", "1.2.0")) == SkillCall(
+    assert skill_call(e.skill_post("log:up", "1.2.0"), []) == SkillCall(
         "session-1", e.transcript, "log:up", "1.2.0"
     )
 
@@ -73,7 +73,7 @@ def test_a_skill_tool_call_before_it_runs_calls_no_skill(e: Events):
     """Given the PreToolUse of a Skill call, which a hook may still deny
     When Lane reads which skill it calls
     Then it calls none yet"""
-    assert skill_call(e.skill_pre("log:up", "1.2.0")) is None
+    assert skill_call(e.skill_pre("log:up", "1.2.0"), []) is None
 
 
 @pytest.mark.supports("test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it")
@@ -81,7 +81,27 @@ def test_any_other_event_calls_no_skill(e: Events):
     """Given the main conversation's Stop
     When Lane reads which skill it calls
     Then it calls none"""
-    assert skill_call(e.stop()) is None
+    assert skill_call(e.stop(), [run()]) is None
+
+
+@pytest.mark.supports(
+    "test_another_skills_command_typed_while_a_subagent_runs_starts_its_run_beside"
+)
+def test_a_typed_command_whose_skill_has_steps_calls_it_beside_the_run(e: Events, log: str):
+    """Given a run of log:up in log's folder, whose rules give the steps of log:tag
+    When the UserPromptExpansion of /log:tag comes
+    Then it calls log:tag"""
+    called = skill_call(e.typed("log:tag"), [run(folder=log)])
+    assert called == SkillCall("session-1", e.transcript, "log:tag", "")
+
+
+@pytest.mark.supports("test_a_typed_command_that_a_route_waits_for_puts_its_starts_in_place")
+def test_a_typed_command_whose_skill_has_no_steps_calls_no_skill(e: Events, log: str):
+    """Given a run of log:up in log's folder, whose rules route after /log:retry and give no
+    steps of log:retry
+    When the UserPromptExpansion of /log:retry comes
+    Then it calls no skill, as the command is a move of the run"""
+    assert skill_call(e.typed("log:retry"), [run(folder=log)]) is None
 
 
 @pytest.mark.supports(
@@ -258,11 +278,11 @@ def test_the_main_conversations_stop_is_the_end_of_its_turn(e: Events):
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_waits_for_puts_its_starts_in_place")
-def test_a_typed_command_that_a_route_waits_for_is_typed(e: Events):
-    """Given a run of log:up
+def test_a_typed_command_that_a_route_waits_for_is_typed(e: Events, log: str):
+    """Given a run of log:up in log's folder, whose rules give no steps of log:retry
     When the UserPromptExpansion of /log:retry comes
     Then the move is a typed command on that run"""
-    move = place(e.typed("log:retry"), [run()])
+    move = place(e.typed("log:retry"), [run(folder=log)])
     assert (kind(move), move.run.id if move else None) == ("typed", "r1")
 
 

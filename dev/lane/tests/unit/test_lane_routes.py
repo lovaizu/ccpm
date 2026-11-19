@@ -1,8 +1,8 @@
 """The unit cases of hooks/lane/routes.py's due: one for each transition of a run's starts due that
 Lane's list of Claude Code's states brings about, from the entries of the run's record: the
-command's route, a start made, dropped, or tied, each result and its route, a typed command in place
-of what was due, two starts of one role, a result that no route goes after, and the end of the
-routes."""
+command's route, a start made, dropped, tied, or stopped with no result, each result and its route,
+a typed command in place of what was due, two starts of one role, a result that no route goes
+after, and the end of the routes."""
 
 from __future__ import annotations
 
@@ -77,6 +77,17 @@ def test_a_start_dropped_is_due_again():
     Then the writer is due again"""
     dropped: Entry = {"kind": "drop", "run": "r1", "tool_use_id": "u1"}
     assert roles(due(RULES, run(start("log:writer", "u1"), dropped))) == ["log:writer"]
+
+
+@pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
+def test_a_start_stopped_with_no_result_is_due_again():
+    """Given the writer's start, tied to a1, which TaskStop stopped with no result
+    When Lane gives the starts due
+    Then the writer is due again"""
+    stopped: Entry = {"kind": "stopped", "run": "r1", "agent_id": "a1"}
+    assert roles(due(RULES, run(start("log:writer", "u1"), tie("u1", "a1"), stopped))) == [
+        "log:writer"
+    ]
 
 
 @pytest.mark.supports(

@@ -26,10 +26,10 @@ def answer(event: Event) -> Answer:
     Takes: a hook event of hooks/hooks.json: PreToolUse, PostToolUse, PostToolUseFailure, Stop,
     SubagentStop, UserPromptSubmit, or UserPromptExpansion.
     Gives: first, for each run that place.opening gives, the answer of run_opened; then the answer
-    of the interface below that the event's move reaches: skill_called for a skill's call, and for
-    the others the move that place.place gives, held to the rules in its run's plugin's folder; the
-    answers joined, stopping where either stops; an empty answer where the event lies outside each
-    run, or its run's plugin gives no rules.
+    of the interface below that the event's move reaches: skill_called for the skill's call that
+    place.skill_call gives, and for the others the move that place.place gives, held to the rules
+    in its run's plugin's folder; the answers joined, stopping where either stops; an empty answer
+    where the event lies outside each run, or its run's plugin gives no rules.
     Changes: what each interface it reaches changes.
     Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
     adapter that failed, the answer says why and who fixes that, and stops the call.
@@ -40,13 +40,15 @@ def answer(event: Event) -> Answer:
 def skill_called(call: SkillCall) -> Answer:
     """S9 and S10: the main conversation calls the skill, with the words typed after the command.
 
-    Takes: the skill's call.
+    Takes: the skill's call that place.skill_call gives: a command whose skill's steps its plugin's
+    rules give, such as another skill's command typed while a run stands, or one that no rules of
+    a run route after, such as the plugin's first command in the conversation.
     Gives: the starts due, each with its text, of a run of the skill that the run record holds
     with its folder and that its plugin's rules show not ended, where it stands; else an empty
     answer, as the transcript holds the skill's base directory only from the conversation's next
     event, where run_opened gives the starts due.
-    Changes: the run record, by a new run of the skill and the words, with no folder, where it
-    holds no such run.
+    Changes: the run record, by a new run of the skill and the words, with no folder, beside each
+    run that stands, where it holds no such run.
     Refuses: nothing; a plugin's rules out of form, or a start adapter that failed, stops the call
     with what's wrong.
     """
@@ -99,7 +101,9 @@ def turn_ended(move: Move) -> Answer:
 def command_typed(move: Move) -> Answer:
     """S9: the person types a command that a route waits for.
 
-    Takes: a `typed` move at the UserPromptExpansion of the command.
+    Takes: a `typed` move at the UserPromptExpansion of the command, which place gives where the
+    rules of the run's plugin route after the command and give no steps of its skill, as a command
+    whose skill has steps starts that skill's run by skill_called.
     Gives: the starts that its route makes due, in place of those before.
     Changes: the run record, by the command.
     Refuses: nothing.
@@ -114,7 +118,8 @@ def result_reached(move: Move) -> Answer:
     `<task-notification>`.
     Gives: the result, and the starts that its route makes due, each with its text; the start due
     again where the subagent was stopped with no result.
-    Changes: nothing.
+    Changes: the run record, by a `stopped` entry of the subagent's start, where it was stopped
+    with no result, such as by TaskStop; else nothing.
     Refuses: nothing.
     """
     raise NotImplementedError("guard.result_reached")

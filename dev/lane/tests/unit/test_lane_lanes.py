@@ -180,6 +180,49 @@ def test_another_command_gives_the_steps_sentence(e: Events):
     assert "git log" in said
 
 
+@pytest.mark.supports("test_a_command_that_its_step_names_goes_through")
+@pytest.mark.parametrize(
+    "command", ["git log --oneline -5", "git log | head -5", "git log; head NOTES.md"]
+)
+def test_each_command_opening_with_a_named_commands_words_holds(e: Events, command: str):
+    """Given a step whose rule of commands names `git log` and `head`
+    When the writer runs a named command with more words after it, a pipeline of named ones, or
+    named ones one after another
+    Then the rule finds nothing"""
+    named: Rule = {"type": "commands", "commands": ["git log", "head"]}
+    step: Step = {"name": "write", "rules": [named]}
+    assert commands.judge_call(named, step, move("call", e.bash(command, WRITER))) is None
+
+
+@pytest.mark.supports("test_a_command_chained_after_a_named_one_is_stopped")
+@pytest.mark.parametrize(
+    "command",
+    ["git log && git push", "git log || git push", "git log; git push", "git log | sh"],
+)
+def test_a_command_chained_after_a_named_one_gives_the_steps_sentence(e: Events, command: str):
+    """Given the step `write`, which runs `git log`
+    When the writer runs another command after `git log`, split by `&&`, `||`, `;`, or `|`
+    Then the rule gives the step's sentence, naming `git log`"""
+    said = commands.judge_call(
+        rule(WRITE, "commands"), WRITE, move("call", e.bash(command, WRITER))
+    )
+    assert said is not None
+    assert "git log" in said
+
+
+@pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
+@pytest.mark.parametrize("command", ["git", "git logs", "git -C /repo log"])
+def test_a_command_that_doesnt_open_with_a_named_commands_words_gives_the_steps_sentence(
+    e: Events, command: str
+):
+    """Given the step `write`, which runs `git log`
+    When the writer runs fewer words than the named command's, a word that only begins as its
+    last word, or its words with another between them
+    Then the rule gives the step's sentence"""
+    call = move("call", e.bash(command, WRITER))
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) is not None
+
+
 @pytest.mark.supports("test_a_reporter_of_lanes_goes_through_though_no_step_names_it")
 @pytest.mark.parametrize(
     "command", ["lane-step write", "lane-item write dated", "lane-result written"]
@@ -466,6 +509,19 @@ def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: st
     said = lanes.judge_call(RULES, move("call", given))
     assert said is not None
     assert named in said
+
+
+@pytest.mark.supports(
+    "test_a_bash_command_that_reads_a_file_never_to_read_is_stopped_by_its_commands"
+)
+def test_a_bash_command_that_reaches_a_file_never_to_read_is_judged_by_commands(e: Events):
+    """Given the writer at its step `write`, which never reads secrets/ and runs `git log`
+    When it runs `cat secrets/key.txt`
+    Then the sentence is the one of commands, as reads_none judges no Bash call"""
+    said = lanes.judge_call(RULES, move("call", e.bash("cat secrets/key.txt", WRITER)))
+    assert said is not None
+    assert "git log" in said
+    assert "secrets/" not in said
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_names_goes_through")
