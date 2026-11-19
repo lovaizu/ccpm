@@ -30,6 +30,7 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
   - P4.2: what a role makes stays in files, and roles hand each other short results.
 - P5: the shortest path
   - P5.1: a role that leaves its steps is told at once and goes back.
+  - P5.2: deliverables that rest on none still being made are made at the same time.
 - P6: nothing lost on a stop
   - P6.1: the run's state lives in files, so that it goes on from any conversation.
 
@@ -46,7 +47,7 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
   The field's established way to make one kind of deliverable, and its conditions, which making
   and judging both stand on.
 - Round\
-  One making of a deliverable and its judging, from which the next mend is decided.
+  One making or refactoring of a deliverable and its judging, from which the next mend is decided.
 
 Strategies:
 
@@ -74,6 +75,9 @@ Strategies:
   Intent: judge each condition with care while the wait stays short.
 - A later round judging only the conditions whose decisions changed. [P3.3]\
   Intent: spend the judging on conditions whose result can change.
+- Each deliverable's rounds in a lane of Lane's of their own, beside the lanes of the others being
+  made, with a round's making, judging, refactoring, and judging the only order fixed. [P5.2]\
+  Intent: the user waits for the slowest deliverable, not for all of them in turn.
 - Lane applied to every activity of every role's steps that it can hold. [P5.1]\
   Intent: a role that leaves its steps notices at once and goes back.
 
@@ -101,22 +105,23 @@ sequenceDiagram
       O->>U: puts it up [P1.3]
       O->>U: adds each finding left as a proposal [P3.3]
       U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
-    else a deliverable whose inputs are signed off [P1.3]
-      O->>G: starts it, with its Cut (Cut) [P4.1]
-      G->>G: makes the content by its kind's best practice (Best practice) [P3.2]
-      G->>G: refactors it by the refactor best practice once the content is good (Best practice) [P3.2]
-      alt a point it can't settle [P1.2]
-        G-->>O: the point [P1.2]
-      else
-        G-->>O: ends, with the Round written (Round) [P4.2]
-        par one for each group of the best practice's conditions [P2.1]
-          O->>E: starts it, with its Cut (Cut) [P4.1]
-          E->>E: tries it as its people would [P2.1]
-          E->>E: names what's good and what would make it good [P2.2]
-          E-->>O: ends, with the Round written (Round) [P4.2]
+    else each deliverable whose inputs are signed off, resting on none still being made [P5.2]
+      par one lane for each such deliverable [P5.2]
+        O->>G: starts it, with its Cut (Cut) [P4.1]
+        alt a point it can't settle [P1.2]
+          G-->>O: the point [P1.2]
+        else
+          G->>G: makes the content by its kind's best practice, or, once each condition is good, refactors it by the refactor best practice (Best practice) [P3.2]
+          G-->>O: ends, with the Round written (Round) [P4.2]
+          par one for each group of the best practice's conditions [P2.1]
+            O->>E: starts it, with its Cut (Cut) [P4.1]
+            E->>E: tries it as its people would [P2.1]
+            E->>E: names what's good and what would make it good [P2.2]
+            E-->>O: ends, with the Round written (Round) [P4.2]
+          end
+          O->>T: takes each finding that helps the people into the decision it comes from (Design tree) [P1.1]
+          O->>T: keeps each finding past two rounds of content or of refactoring as a proposal (Design tree) [P3.3]
         end
-        O->>T: takes each finding that helps the people into the decision it comes from (Design tree) [P1.1]
-        O->>T: keeps each finding past two rounds of content or of refactoring as a proposal (Design tree) [P3.3]
       end
     end
   end
