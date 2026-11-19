@@ -289,7 +289,7 @@
             },
             {
               "about": "Parallel rounds",
-              "decided": "rn starts the generator of each deliverable whose inputs are done and that rests on no other deliverable in progress, in parallel, each round in its own lane of Lane; the only order rn fixes is a round's: making, judging, refactoring, judging",
+              "decided": "rn starts the generator of each deliverable whose inputs are done and that rests on no other deliverable in progress, in parallel, by its adapter that gives Lane the starts due from the design tree; the only order rn fixes is a round's: making, judging, refactoring, judging",
               "by": "user"
             }
           ]
@@ -455,7 +455,7 @@
           "decisions": [
             {
               "about": "Principles",
-              "decided": "the AI notices each step it leaves; Lane serves any plugin alike, as Lane defines what it takes in and gives out, and each plugin fits them by its adapters",
+              "decided": "the AI notices each step it leaves; Lane defines what it takes in and gives out and holds every check itself, so that a plugin applies it by adapters alone, its order fixed or decided as it runs, and its author picks from the rule types what the AI should notice",
               "by": "user"
             }
           ]
@@ -475,8 +475,8 @@
           "good": true,
           "decisions": [
             {
-              "about": "Lanes",
-              "decided": "a lane is one chain of starts held to the routes' order; each start of a role that a route after a command makes due opens a lane, any number in parallel; a step may start one role several times at once, and the lane moves on once each of them has its result",
+              "about": "The order",
+              "decided": "at each move, Lane asks the plugin's order for the starts due, each role to start now and how many, with the run as it stands; a fixed order is the routes of the plugin's rules, which Lane's route adapter reads",
               "by": "user"
             }
           ]
@@ -489,11 +489,6 @@
               "about": "Sequences",
               "decided": "S9 and S10 alone, as each rule of S1 to S8 is a call, a mark, or an end that its rule type judges, which Components states",
               "by": "reasoning"
-            },
-            {
-              "about": "Telling lanes apart",
-              "decided": "Lane gives each start due a text that names its lane, the main conversation passes it as the Agent call's prompt, and the guard reads the lane there at the PreToolUse, stopping a start whose text names no lane with that start due; once tied, each move goes by the subagent's agent_id",
-              "by": "user"
             }
           ]
         },
@@ -673,23 +668,8 @@
               "by": "maker"
             },
             {
-              "about": "The lanes",
-              "decided": "the run record keeps each start in its lane, each start due carries a text that names its lane, and the guard places a start by the lane its prompt names and each later move by the subagent's agent_id, as Lane's architecture draws",
-              "by": "reasoning"
-            },
-            {
-              "about": "Several starts of one role in a lane",
-              "decided": "a route after a result starts one role alone, as many times at once as the plugin's start adapter gives texts for it; the lane waits until each has its result, the plugin's join adapter then gives one result from theirs, and the lane moves on by the route after that result",
-              "by": "user"
-            },
-            {
-              "about": "Kept results",
-              "decided": "the kept adapter gives each chain's results in its order, and the guard adds a lane for each chain at the pick-up",
-              "by": "reasoning"
-            },
-            {
-              "about": "Chains the plugin opens",
-              "decided": "at each move, the plugin's start adapter may give the first start of each chain to open now, each opening a lane of its own, and is given the text and the result of each start that a lane has made so far",
+              "about": "The order",
+              "decided": "the guard asks the plugin's adapter of the starts due at each move, with the run as it stands, or, where the plugin gives routes, Lane's route adapter in adapters/routes.py; Lane gives no start's text, lays no lane, joins no results, and keeps no results for a pick-up",
               "by": "user"
             }
           ]
@@ -1574,8 +1554,12 @@
             },
             {
               "about": "Lane's adapters",
-              "decided": "hooks/adapters/start.py gives the start due its Cut and the Cut's path as a run value, or why no work waits; hooks/adapters/items.py gives a step's practices of the Cut's best practice; hooks/adapters/results.py gives the results that the Rounds keep, in their order",
+              "decided": "lane/adapters/due.py gives Lane the starts due from the design tree's course, and lane/adapters/items.py gives a step's practices of the Cut's best practice",
               "by": "maker"
+            },
+            {
+              "about": "Where each start's Cut comes from",
+              "decided": null
             },
             {
               "about": "The commands",
@@ -1719,7 +1703,7 @@
           "decisions": [
             {
               "about": "The parts filled",
-              "decided": "the bodies that S1's integration cases reach: scripts/tree.py with tree/'s design, inputs, work, status, git, and commit, and schemas/form.py, for each commit of the design tree; hooks/adapters/start.py with tree/'s course, cut, and rounds, for each start with its Cut; and scripts/check.py with check/, for each role's end",
+              "decided": "the bodies that S1's integration cases reach: scripts/tree.py with tree/'s design, inputs, work, status, git, and commit, and schemas/form.py, for each commit of the design tree; lane/adapters/due.py with tree/'s course, for the starts due; and scripts/check.py with check/, for each role's end",
               "by": "reasoning"
             },
             {
@@ -1796,7 +1780,7 @@
           "decisions": [
             {
               "about": "The inputs from outside",
-              "decided": "the arguments of tree.py, check.py, and start.py and Lane's standard input, each read by its main; the design tree, each Cut, and each result, each held to its schema as it's read; and git's replies, read by tree/git.py",
+              "decided": "the arguments of tree.py, check.py, and due.py and Lane's standard input, each read by its main; the design tree, each Cut, and each result, each held to its schema as it's read; and git's replies, read by tree/git.py",
               "by": "reasoning"
             }
           ]
