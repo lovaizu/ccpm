@@ -236,6 +236,11 @@
           "about": "Which commands start a run",
           "decided": "a command of the plugin starts a run where none of the plugin stands in the conversation, and is a move of the standing run otherwise",
           "by": "maker"
+        },
+        {
+          "about": "Mends of Lane's code that the definition found",
+          "decided": "a Grep or a Glob goes through unchecked until its record exists, never crashing the guard; the rules refuse a folder in a rule of the files to read whole; a sentence offers results as alternatives joined by or, and a rule of no commands says that the step runs none; the rule of commands splits a call at each newline too; the definition follows each mend",
+          "by": "reasoning"
         }
       ]
     },
