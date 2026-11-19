@@ -1,0 +1,21 @@
+# The mutation testing of Lane's code that dev/scripts/quality.sh runs in CI, as N7 of
+# plugins/rn/domain/best-practices/code/best-practice.md says: the guard, its modules, and the rule
+# types. The check fails on each mutant under which every test still passes. A line marked
+# `# pragma: no mutate` holds only changes that can't alter what the code does.
+[cosmic-ray]
+module-path = ["plugins/lane/hooks/lane"]
+timeout = 60.0
+excluded-modules = []
+# The unit tests try each case of each module of Lane's code through its interfaces, in seconds on
+# every core, where the integration cases take far longer for each mutant and add no case of a module.
+test-command = "python -m pytest -x -q -n auto -p no:cacheprovider dev/lane/tests/unit"
+
+[cosmic-ray.distributor]
+name = "local"
+
+# Lane's code writes `|` only in type annotations, which `from __future__ import annotations` never
+# evaluates, so a change to it can't alter what the code does.
+[cosmic-ray.filters.operators-filter]
+exclude-operators = [
+  "core/ReplaceBinaryOperator_BitOr_.*",
+]
