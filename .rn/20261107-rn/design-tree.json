@@ -367,7 +367,7 @@
         },
         {
           "about": "Which commands start a run",
-          "decided": "a skill's command starts its run where rules.json gives that skill's steps; a command whose skill has none is one that a route of the standing run waits for",
+          "decided": "a command of the plugin starts a run where none of the plugin stands in the conversation, and is a move of the standing run otherwise",
           "by": "maker"
         }
       ]
@@ -523,7 +523,7 @@
             },
             {
               "about": "The gaps mended",
-              "decided": "a typed command starts its skill's run where rules.json gives that skill's steps, and is a typed move of the standing run where it gives none; the run record keeps a start ended with no result, so that the start is due again; a Bash call holds to a rule of commands where each command of it, split at |, &&, ||, and ;, opens with the words of a command the rule names",
+              "decided": "a conversation holds one run of a plugin at a time: a command of the plugin typed while its run stands is a move of that run, its route's starts due in place of those before and the main conversation held to the steps of the command's skill where the rules give any, and one typed once the run ended, or where none stands, adds a run; the run record keeps a start ended with no result, so that the start is due again; a Bash call holds to a rule of commands where each command of it, split at |, &&, ||, and ;, opens with the words of a command the rule names",
               "by": "maker"
             }
           ]
