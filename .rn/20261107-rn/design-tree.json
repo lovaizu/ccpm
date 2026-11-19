@@ -755,6 +755,11 @@
               "about": "The gaps mended",
               "decided": "a conversation holds one run of a plugin at a time: a command of the plugin typed while its run stands is a move of that run, given to the plugin's order, with the main conversation held to the steps of the command's skill where the rules give any, and one typed once the run ended, or where none stands, adds a run; a start ended with no result is left out of what the order sees, so that the order gives its role due again; a Bash call holds to a rule of commands where each command of it, split at |, &&, ||, and ;, opens with the words of a command the rule names",
               "by": "maker"
+            },
+            {
+              "about": "The gaps of the order from the plugin",
+              "decided": "a SendMessage that resumes a subagent is a start only where the order makes its role due, and goes through as talk otherwise, as does a subagent's message to another, as Lane's list of Claude Code's states says; that list drops the kept results and names a resume that the order makes due; a route after a result makes its roles due once for each such result; a step whose result rule names only results that end the start tells the AI to mark the step done, and that those results end the start only where it can't go on",
+              "by": "reasoning"
             }
           ]
         }
@@ -1466,6 +1471,11 @@
             {
               "about": "The gaps",
               "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
+              "by": "reasoning"
+            },
+            {
+              "about": "The gaps mended",
+              "decided": "starts_due.py gives no start due once the latest command is rn:dn, until rn:up, as S2 draws the run waiting; it refuses no design tree that isn't JSON, as rounds.folder passes over such a tree; the template's check finds a block left out of a document even where the same item lies in two sections, as its property case's counterexample shows",
               "by": "reasoning"
             }
           ]
