@@ -326,7 +326,23 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "the bodies that S1's integration cases reach: scripts/tree.py with tree/'s design, inputs, work, status, git, and commit, and schemas/form.py, for each commit of the design tree; hooks/adapters/start.py with tree/'s course, cut, and rounds, for each start with its Cut; and scripts/check.py with check/, for each role's end",
+              "by": "reasoning"
+            },
+            {
+              "about": "The modules",
+              "decided": "the skeleton's modules alone, each body filled, as each decision that the cases leave to the code falls within one of them",
+              "by": "maker"
+            },
+            {
+              "about": "Where the course finds a best practice's groups",
+              "decided": "in that best practice's best-practice.json, in rn's own best-practices folder beside the code",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -346,7 +362,13 @@
         {
           "id": "N5",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Cases added",
+              "decided": "none, as no module is added; a case that a body seems to need beyond the unit and S1 cases goes back to rn's architecture as a gap",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N6",
@@ -361,7 +383,13 @@
         {
           "id": "N8",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The inputs from outside",
+              "decided": "the arguments of tree.py, check.py, and start.py and Lane's standard input, each read by its main; the design tree, each Cut, and each result, each held to its schema as it's read; and git's replies, read by tree/git.py",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
