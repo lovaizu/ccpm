@@ -520,12 +520,28 @@
         "plugins/lane",
         "dev/lane/tests"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "the bodies that S5's integration cases reach beyond S1's to S4's: a subagent's end, a result reaching the main conversation, and the rule types of the steps in order, the result, and the plugin's check, which S7's and S8's cases reach too",
+              "by": "reasoning"
+            },
+            {
+              "about": "The step judged at an end",
+              "decided": "the first step that the start hasn't marked done, else its last",
+              "by": "maker"
+            },
+            {
+              "about": "The checks when a result ends a start early",
+              "decided": "only those of the steps before the step where the result ends it, as that step isn't done",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N2",
