@@ -26,6 +26,7 @@ from claude_code import (
     RECORDED,
     RESUME_BEFORE_END,
     RUN,
+    SEARCH,
     SEND_MESSAGE,
     SKILL,
     SKILL_WHILE_SUBAGENT,
@@ -498,6 +499,91 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         self.conversation.env["DENY"] = "Read"
         answer = self.conversation.read(None, os.path.join(self.repo, "CHANGELOG.md"))
         self.assertTrue(answer.blocked)
+        self.assertEqual(self.sent()[-1]["hook_event_name"], "PreToolUse")
+
+    def test_a_subagents_grep_with_a_path_sends_the_events_of_the_record_of_a_search(self):
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        os.makedirs(os.path.join(self.repo, "notes"))
+        self.write("notes/a.txt", "alpha beta\n")
+        self.write("notes/b.md", "beta\n")
+        answer = agent.grep("beta", "notes")
+        self.assertFalse(answer.blocked)
+        searches = payloads(SEARCH)
+        before = "the main conversation runs `Grep beta path notes`, with the tools named"
+        ran = "the main conversation's `Grep beta path notes` ran, with the tools named"
+        who = {"agent_id": agent.id, "agent_type": agent.type}
+        self.assert_sent_as_recorded(
+            [
+                "session started",
+                "the main conversation starts writer in the background",
+                "writer starts",
+                "writer runs in the background",
+                before,
+                ran,
+            ],
+            dict(
+                recorded(),
+                **{before: dict(searches[before], **who), ran: dict(searches[ran], **who)},
+            ),
+        )
+        self.assertEqual(self.sent()[-2]["tool_input"], {"pattern": "beta", "path": "notes"})
+        self.assertEqual(
+            self.sent()[-1]["tool_response"],
+            {
+                "mode": "files_with_matches",
+                "filenames": ["notes/a.txt", "notes/b.md"],
+                "numFiles": 2,
+                "totalFiles": 2,
+            },
+        )
+
+    def test_a_grep_and_a_glob_with_no_path_search_the_conversations_folder_outside_git(self):
+        os.makedirs(os.path.join(self.repo, "notes"))
+        os.makedirs(os.path.join(self.repo, ".git"))
+        self.write("notes/a.txt", "alpha beta\n")
+        self.write(".git/alpha.txt", "alpha\n")
+        self.assertFalse(self.conversation.grep(None, "alpha").blocked)
+        self.assertFalse(self.conversation.glob(None, "**/*.txt").blocked)
+        grep = "the main conversation runs `Grep alpha`, with the tools named"
+        grepped = "the main conversation's `Grep alpha` ran, with the tools named"
+        glob = "the main conversation runs `Glob **/*.txt`, with the tools named"
+        globbed = "the main conversation's `Glob **/*.txt` ran, with the tools named"
+        self.assert_sent_as_recorded(
+            ["session started", grep, grepped, glob, globbed], dict(recorded(), **payloads(SEARCH))
+        )
+        sent = self.sent()
+        self.assertEqual(sent[1]["tool_input"], {"pattern": "alpha"}, "no path where none is given")
+        self.assertEqual(sent[3]["tool_input"], {"pattern": "**/*.txt"})
+        self.assertEqual(sent[2]["tool_response"]["filenames"], ["notes/a.txt"])
+        self.assertEqual(
+            {k: sent[4]["tool_response"][k] for k in ("filenames", "numFiles", "totalMatches")},
+            {"filenames": ["notes/a.txt"], "numFiles": 1, "totalMatches": 1},
+        )
+
+    def test_a_subagents_glob_with_a_path_finds_from_that_folder_and_a_grep_of_a_file_in_it(self):
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        os.makedirs(os.path.join(self.repo, "notes"))
+        self.write("notes/a.txt", "alpha beta\n")
+        self.write("notes/b.md", "beta\n")
+        agent.glob("*.md", "notes")
+        glob = self.sent()[-2:]
+        agent.grep("beta", "notes/a.txt")
+        sent = glob + self.sent()[-2:]
+        self.assertEqual(
+            [(e["tool_name"], e["tool_input"], e["agent_id"]) for e in sent[::2]],
+            [
+                ("Glob", {"pattern": "*.md", "path": "notes"}, agent.id),
+                ("Grep", {"pattern": "beta", "path": "notes/a.txt"}, agent.id),
+            ],
+        )
+        self.assertEqual(sent[1]["tool_response"]["filenames"], ["notes/b.md"])
+        self.assertEqual(sent[3]["tool_response"]["filenames"], ["notes/a.txt"])
+
+    def test_a_glob_a_hook_stops_sends_no_post_tool_use(self):
+        self.conversation.env["DENY"] = "Glob"
+        self.assertTrue(self.conversation.glob(None, "*.md", "notes").blocked)
         self.assertEqual(self.sent()[-1]["hook_event_name"], "PreToolUse")
 
     def test_a_write_of_the_main_conversation_sends_its_own_calls_events_with_writes_fields(self):

@@ -22,6 +22,10 @@ PLUGIN = os.path.join(HERE, "plugin")
 HOME = os.path.expanduser("~")
 TMP = "/tmp/claude-" + str(os.getuid())
 SUMMARY = "<the compaction's summary>"
+DEFAULT = (
+    "claude -p --input-format stream-json --output-format stream-json --verbose --model haiku"
+    " --dangerously-skip-permissions --plugin-dir <plugin>"
+)
 
 
 def slug(path):
@@ -47,13 +51,21 @@ def command(payload):
     if payload["tool_name"] == "Read":
         lines = [f"{key} {given[key]}" for key in ("offset", "limit") if key in given]
         return " ".join(["Read", os.path.basename(given["file_path"]), *lines])
+    if payload["tool_name"] in ("Grep", "Glob"):
+        named = [f"{key} {given[key]}" for key in sorted(given) if key != "pattern"]
+        return " ".join([payload["tool_name"], given["pattern"], *named])
+    if payload["tool_name"] == "ToolSearch":
+        return f"ToolSearch {given['query']}"
     if payload["tool_name"] == "Skill":
         return f"Skill {given['skill']}"
     return given.get("command") or given.get("description")
 
 
 def label(description):
-    """The name of a subagent by the description of its Agent call: sleeper, or sleeper one."""
+    """The name of a subagent by the description of its Agent call: searcher, sleeper, or sleeper
+    one."""
+    if description == "Searcher":
+        return "searcher"
     return description.lower() if description.startswith("Sleeper ") else "sleeper"
 
 
@@ -186,14 +198,28 @@ def recorded(name, label, logged):
     return line
 
 
+def claude(runs):
+    """The command that started claude, or, where the runs' commands differ, each by its run's
+    label. A run folder that keeps no command.txt was made before record.py kept it, by the
+    command that record.py ran then."""
+    commands = {}
+    for run in runs:
+        folder, _, label = run.partition(":")
+        path = os.path.join(folder, "command.txt")
+        commands[label] = DEFAULT
+        if os.path.exists(path):
+            with open(path) as each:
+                commands[label] = each.read().strip()
+    return commands.popitem()[1] if len(set(commands.values())) == 1 else commands
+
+
 def main(out, setup, asked, runs):
     with open(os.path.join(runs[0].split(":")[0], "version.txt")) as each:
         version = each.read().strip()
     lines = [
         {
             "event": setup,
-            "claude": "claude -p --input-format stream-json --output-format stream-json --verbose"
-            " --model haiku --dangerously-skip-permissions --plugin-dir <plugin>",
+            "claude": claude(runs),
             "version": version,
             "entry_writes": "each event's one entry runs python3"
             " ${CLAUDE_PLUGIN_ROOT}/hooks/log.py, which appends the payload it reads on stdin to a"

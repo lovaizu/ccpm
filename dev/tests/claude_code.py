@@ -14,7 +14,8 @@ hooks reference gives it, as recorded/claude-code-hooks-reference.jsonl takes it
 Agent call that fails after its PreToolUse sends the events that
 recorded/claude-code-2.1.327-agent-unknown-type.jsonl and
 recorded/claude-code-2.1.327-agent-denied-by-rule.jsonl show, as `start_failing` says. A Read
-sends the events that recorded/claude-code-2.1.325-read.jsonl shows, whole or in part. A
+sends the events that recorded/claude-code-2.1.325-read.jsonl shows, whole or in part, and a Grep
+or a Glob those that recorded/claude-code-2.1.328-search.jsonl shows. A
 subagent's start of a subagent, and a message queued by SendMessage for a subagent that runs, send
 the events that recorded/claude-code-2.1.322-subagent-of-subagent.jsonl shows, and a start in the
 foreground, or one whose SubagentStart comes after the PostToolUse of its Agent call, those that
@@ -46,6 +47,7 @@ from __future__ import annotations
 import contextlib
 import copy
 import functools
+import glob
 import io
 import json
 import os
@@ -85,6 +87,10 @@ HOOKS_RELOAD = "claude-code-2.1.323-hooks-reload.jsonl"
 # The record of a Read whole and in part, of Claude Code 2.1.325, whose PostToolUse gives the lines
 # it read.
 READ = "claude-code-2.1.325-read.jsonl"
+# The record of a Grep and a Glob, each with a path and with none, of the main conversation and of
+# a subagent, of Claude Code 2.1.328: a run whose main conversation has the default tools, which
+# hold no Grep and no Glob, and one whose --tools names them.
+SEARCH = "claude-code-2.1.328-search.jsonl"
 # The records of a skill's base directory, which the transcript holds from the next event after the
 # skill loads, and of a plugin's command run by its name from the plugin's bin/, of Claude Code
 # 2.1.328: one of a typed command, whose step and a subagent run the command, and one of a Skill
@@ -927,6 +933,107 @@ class Conversation:
         answer.ran += after.ran
         return answer
 
+    def grep(self, agent: Agent | None, pattern: str, path: str | None = None) -> Answer:
+        """The agent, or the main conversation where `agent` is None, calls the Grep tool with the
+        pattern, in the folder or the file at the path, as the conversation's folder where it gives
+        none. The double sends the PreToolUse and, where the hooks let it through, the PostToolUse
+        that recorded/claude-code-2.1.328-search.jsonl shows, whose `tool_input` holds `pattern`,
+        and `path` only where the call gives one, as given, and a subagent's with its `agent_id`
+        and `agent_type`. The PostToolUse's `tool_response` gives, in the mode
+        `files_with_matches`, each file that holds a match of the pattern, outside .git, by its path
+        from the conversation's folder, in the order of the paths, as the record doesn't decide the
+        order."""
+        found = []
+        for each in self.searched(path):
+            with open(os.path.join(self.cwd, each), encoding="utf-8") as f:
+                if re.search(pattern, f.read()):
+                    found.append(each)
+        shown = (
+            line(SEARCH, "the main conversation runs `Grep alpha`, with the tools named"),
+            line(SEARCH, "the main conversation's `Grep alpha` ran, with the tools named"),
+        )
+        if path:
+            shown = (
+                line(
+                    SEARCH,
+                    "the main conversation runs `Grep beta path notes`, with the tools named",
+                ),
+                line(
+                    SEARCH,
+                    "the main conversation's `Grep beta path notes` ran, with the tools named",
+                ),
+            )
+        return self.search(agent, shown, pattern, path, found)
+
+    def glob(self, agent: Agent | None, pattern: str, path: str | None = None) -> Answer:
+        """The agent, or the main conversation where `agent` is None, calls the Glob tool with the
+        pattern, in the folder at the path, as the conversation's folder where it gives none. The
+        double sends the events that recorded/claude-code-2.1.328-search.jsonl shows, as `grep`
+        says, and the PostToolUse's `tool_response` gives each file that the pattern matches from
+        the folder, outside .git, by its path from the conversation's folder, in the order of the
+        paths."""
+        folder = os.path.join(self.cwd, path or "")
+        found = sorted(
+            os.path.relpath(os.path.join(folder, each), self.cwd)
+            for each in glob.glob(pattern, root_dir=folder, recursive=True)
+            if os.path.isfile(os.path.join(folder, each)) and ".git" not in each.split(os.sep)
+        )
+        shown = (
+            line(SEARCH, "the main conversation runs `Glob **/*.txt`, with the tools named"),
+            line(SEARCH, "the main conversation's `Glob **/*.txt` ran, with the tools named"),
+        )
+        if path:
+            shown = (
+                line(
+                    SEARCH,
+                    "the main conversation runs `Glob *.md path notes`, with the tools named",
+                ),
+                line(
+                    SEARCH,
+                    "the main conversation's `Glob *.md path notes` ran, with the tools named",
+                ),
+            )
+        return self.search(agent, shown, pattern, path, found)
+
+    def searched(self, path: str | None) -> list[str]:
+        """Each file at the path, or under the folder at the path or the conversation's folder,
+        outside .git, by its path from the conversation's folder, in the order of the paths."""
+        where = os.path.join(self.cwd, path or "")
+        if os.path.isfile(where):
+            return [os.path.relpath(where, self.cwd)]
+        found = []
+        for folder, folders, names in os.walk(where):
+            if ".git" in folders:
+                folders.remove(".git")
+            found += [os.path.relpath(os.path.join(folder, name), self.cwd) for name in names]
+        return sorted(found)
+
+    def search(
+        self,
+        agent: Agent | None,
+        shown: tuple[dict[str, Any], dict[str, Any]],
+        pattern: str,
+        path: str | None,
+        found: list[str],
+    ) -> Answer:
+        """Sends the PreToolUse of a call of Grep or Glob, with the pattern and the path, and, where
+        the hooks let it through, its PostToolUse, whose `tool_response` gives the files found, as
+        the two lines of recorded/claude-code-2.1.328-search.jsonl in `shown` show."""
+        before, ran = shown
+        tool_input = {"pattern": pattern, **({"path": path} if path else {})}
+        use: dict[str, Any] = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
+        if agent:
+            use.update(agent_id=agent.id, agent_type=agent.type)
+        answer = self.send("PreToolUse", before, use)
+        if answer.blocked:
+            return answer
+        response = dict(ran["payload"]["tool_response"], filenames=found, numFiles=len(found))
+        response.update({k: len(found) for k in ("totalFiles", "totalMatches") if k in response})
+        after = self.send("PostToolUse", ran, {**use, "tool_response": response})
+        answer.said = "\n".join(s for s in (answer.said, after.said) if s)
+        answer.ran += after.ran
+        return answer
+
     def edit(self, path: str, old: str, new: str, agent: Agent | None = None) -> Answer:
         """The main conversation, or the agent, calls the Edit tool to replace the one place of
         `old` in the file at the path with `new`. The double sends the PreToolUse that the record
@@ -1420,6 +1527,16 @@ class Agent:
     def read(self, path: str, offset: int | None = None, limit: int | None = None) -> Answer:
         """The subagent calls the Read tool on the file, whole or in part."""
         return self.conversation.read(self, path, offset, limit)
+
+    def grep(self, pattern: str, path: str | None = None) -> Answer:
+        """The subagent calls the Grep tool with the pattern, in the path or the conversation's
+        folder."""
+        return self.conversation.grep(self, pattern, path)
+
+    def glob(self, pattern: str, path: str | None = None) -> Answer:
+        """The subagent calls the Glob tool with the pattern, in the path or the conversation's
+        folder."""
+        return self.conversation.glob(self, pattern, path)
 
     def start(
         self, subagent_type: str, prompt: str, description: str

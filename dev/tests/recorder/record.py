@@ -7,10 +7,10 @@ It sets up a throwaway git repository in <run-folder>/repo, starts
 --dangerously-skip-permissions --plugin-dir <plugin>` there, types each prompt of the scenario when
 its condition holds, and closes the input once the scenario's end has come and the stream has been
 quiet for QUIET seconds. It leaves hooks.jsonl (each payload, as log.py wrote it), stream.jsonl
-(the stream that claude printed), and version.txt (`claude --version`) in <run-folder>. Each
-scenario is named as the `<what>` of the record of dev/tests/recorded/ that it records again,
-`claude-code-<version>-<what>.jsonl`, so that the compatibility test of Lane's architecture finds
-the scenario of each record.
+(the stream that claude printed), version.txt (`claude --version`), and command.txt (the command
+that started claude) in <run-folder>. Each scenario is named as the `<what>` of the record of
+dev/tests/recorded/ that it records again, `claude-code-<version>-<what>.jsonl`, so that the
+compatibility test of Lane's architecture finds the scenario of each record.
 """
 
 import json
@@ -39,12 +39,12 @@ def results(stream):
     return sum(1 for each in stream if each.get("type") == "result")
 
 
-def stopped(folder, count):
+def stopped(folder, count, agent_type="rec:sleeper"):
     return (
         sum(
             1
             for each in hooks(folder)
-            if each["hook_event_name"] == "SubagentStop" and each.get("agent_type") == "rec:sleeper"
+            if each["hook_event_name"] == "SubagentStop" and each.get("agent_type") == agent_type
         )
         >= count
     )
@@ -69,6 +69,21 @@ SLEEPER_TWO = (
 READ = (
     "Read the file long.txt by the Read tool with no offset and no limit. Then read it again by the"
     " Read tool with offset 10 and limit 5. Then reply with the word read. " + TOLD
+)
+
+SEARCHES = (
+    "Grep with the pattern 'beta' and the path 'notes' and no other parameter. Then Grep with the"
+    " pattern 'alpha' and no other parameter. Then Glob with the pattern '*.md' and the path"
+    " 'notes' and no other parameter. Then Glob with the pattern '**/*.txt' and no other"
+    " parameter."
+)
+
+SEARCH = (
+    "Make these four calls one at a time, in order, each by the Grep or the Glob tool itself, never"
+    " by Bash. " + SEARCHES + " Then start the subagent"
+    " rec:searcher by the Agent tool with run_in_background set to true, the description"
+    " `Searcher`, and the prompt: `" + SEARCHES + " Then reply with the word searched.` Don't wait"
+    " for it. Reply with the word started. " + TOLD
 )
 
 SKILL_TOOL = "Call the skill rec:hi by the Skill tool, and follow it. " + TOLD
@@ -116,10 +131,27 @@ SCENARIOS = {
         [(READ, lambda folder, stream: True)],
         lambda folder, stream: results(stream) >= 1,
     ),
+    "search": (
+        [(SEARCH, lambda folder, stream: True)],
+        lambda folder, stream: stopped(folder, 1, "rec:searcher") and results(stream) >= 2,
+    ),
+    # The same, with the main conversation's tools named, as its default tools hold no Grep and no
+    # Glob. A scenario's third item, where it has one, gives the arguments that claude takes
+    # besides.
+    "search-tools": (
+        [(SEARCH, lambda folder, stream: True)],
+        lambda folder, stream: stopped(folder, 1, "rec:searcher") and results(stream) >= 2,
+        ["--tools", "Agent,Bash,Read,Grep,Glob"],
+    ),
 }
 
 # Each file that a scenario's repository holds beside README.md.
-FILES = {"read": {"long.txt": "".join(f"line {n}\n" for n in range(1, 2501))}}
+SEARCHED = {"notes/a.txt": "alpha beta\n", "notes/b.md": "beta\n"}
+FILES = {
+    "read": {"long.txt": "".join(f"line {n}\n" for n in range(1, 2501))},
+    "search": SEARCHED,
+    "search-tools": SEARCHED,
+}
 
 
 def repository(folder, scenario):
@@ -128,6 +160,7 @@ def repository(folder, scenario):
     with open(os.path.join(repo, "README.md"), "w") as readme:
         readme.write("A throwaway repository.\n")
     for name, text in FILES.get(scenario, {}).items():
+        os.makedirs(os.path.dirname(os.path.join(repo, name)), exist_ok=True)
         with open(os.path.join(repo, name), "w") as each:
             each.write(text)
     for command in (
@@ -149,28 +182,32 @@ def repository(folder, scenario):
 
 
 def main(scenario, folder):
-    prompts, end = SCENARIOS[scenario]
+    prompts, end, *besides = SCENARIOS[scenario]
     os.makedirs(folder)
     repo = repository(folder, scenario)
     version = subprocess.run(["claude", "--version"], capture_output=True, text=True, check=True)
     with open(os.path.join(folder, "version.txt"), "w") as out:
         out.write(version.stdout)
     env = dict(os.environ, REC_LOG=os.path.join(folder, "hooks.jsonl"))
+    args = [
+        "claude",
+        "-p",
+        "--input-format",
+        "stream-json",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--model",
+        "haiku",
+        "--dangerously-skip-permissions",
+        "--plugin-dir",
+        PLUGIN,
+        *(besides[0] if besides else []),
+    ]
+    with open(os.path.join(folder, "command.txt"), "w") as out:
+        out.write(" ".join(args).replace(PLUGIN, "<plugin>"))
     claude = subprocess.Popen(
-        [
-            "claude",
-            "-p",
-            "--input-format",
-            "stream-json",
-            "--output-format",
-            "stream-json",
-            "--verbose",
-            "--model",
-            "haiku",
-            "--dangerously-skip-permissions",
-            "--plugin-dir",
-            PLUGIN,
-        ],
+        args,
         cwd=repo,
         env=env,
         stdin=subprocess.PIPE,
