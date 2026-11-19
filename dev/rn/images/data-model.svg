@@ -52,21 +52,27 @@
   </defs>
   <rect class="bg" width="820" height="400"/>
   <rect class="box" x="60" y="60" width="200" height="60" rx="6"/>
-  <text class="name" x="160.0" y="86.0">Design tree</text>
+  <text class="name" x="160.0" y="95.0">Design tree</text>
   <rect class="box" x="560" y="60" width="200" height="60" rx="6"/>
-  <text class="name" x="660.0" y="86.0">Best practice</text>
-  <rect class="box" x="310" y="300" width="200" height="60" rx="6"/>
-  <text class="name" x="410.0" y="326.0">Round</text>
+  <text class="name" x="660.0" y="95.0">Best practice</text>
+  <rect class="box" x="60" y="300" width="200" height="60" rx="6"/>
+  <text class="name" x="160.0" y="335.0">Cut</text>
+  <rect class="box" x="560" y="300" width="200" height="60" rx="6"/>
+  <text class="name" x="660.0" y="335.0">Round</text>
   <path class="line" d="M260,90 L560,90"/>
-  <path class="line" d="M330,300 L190,120"/>
-  <path class="line" d="M490,300 L630,120"/>
+  <path class="line" d="M160,120 L160,300"/>
+  <path class="line" d="M260,330 L560,330"/>
+  <path class="line" d="M660,300 L660,120"/>
   <text class="label halo mid" x="410" y="80">names each deliverable&#x27;s kind by</text>
   <text class="label small halo start" x="272" y="82">1</text>
   <text class="label small halo end" x="548" y="82">1..*</text>
-  <text class="label halo end" x="220" y="220">makes and judges a deliverable of</text>
-  <text class="label small halo end" x="318" y="290">*</text>
-  <text class="label small halo start" x="200" y="140">1</text>
-  <text class="label halo start" x="600" y="220">judges by</text>
-  <text class="label small halo start" x="502" y="290">*</text>
-  <text class="label small halo end" x="620" y="140">1</text>
+  <text class="label halo start" x="172" y="215">gives each role its part as</text>
+  <text class="label small halo end" x="150" y="140">1</text>
+  <text class="label small halo end" x="150" y="292">*</text>
+  <text class="label halo mid" x="410" y="320">starts</text>
+  <text class="label small halo start" x="272" y="322">1..*</text>
+  <text class="label small halo end" x="548" y="322">1</text>
+  <text class="label halo end" x="648" y="215">judges by</text>
+  <text class="label small halo start" x="670" y="292">*</text>
+  <text class="label small halo start" x="670" y="140">1</text>
 </svg>
