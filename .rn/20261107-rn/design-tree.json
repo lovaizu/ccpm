@@ -565,6 +565,11 @@
               "about": "The pause itself",
               "decided": "left to the orchestrator's steps, as the stop of each role, the commit, and the push run through Claude Code's tools, tree.py, and git, which S1's code already carries",
               "by": "reasoning"
+            },
+            {
+              "about": "The run a conversation goes on with",
+              "decided": "the folder of .rn/ whose design tree has work left, in the folder the conversation works in or in rn's worktree of a run, the one changed last, as Lane runs the adapters at the repository's root until the conversation enters the worktree, and a run merged has no work left",
+              "by": "reasoning"
             }
           ]
         },
@@ -772,6 +777,11 @@
             {
               "about": "What the task is for",
               "decided": "Keeps the work on what brings the people closer: reviews the tree each turn, asking the user only theirs, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
+              "by": "reasoning"
+            },
+            {
+              "about": "What a pause pushes",
+              "decided": "each change of the run's worktree, the deliverables' work so far with the run's folder, as the README's pause says its work so far is pushed",
               "by": "reasoning"
             }
           ]

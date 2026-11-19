@@ -159,6 +159,18 @@ def test_evaluators_running_leave_only_the_groups_none_runs():
     assert [d.group for d in due] == ["C2", "C3"]
 
 
+@pytest.mark.supports("test_a_role_stopped_starts_again_from_its_kept_cut")
+def test_an_evaluator_stopped_is_due_again_beside_the_groups_none_answered():
+    """Given the command made, the evaluator of C1 answered, and the evaluator of C2 stopped with
+    no result, none running
+    When course.due gives the starts due
+    Then the evaluators of C2 and C3 of round 1 are due"""
+    answered, stopped, _ = evaluators(1, {})
+    stopped = Start(1, "evaluator", "C2", stopped.cut, None)
+    due = course.due(plan(), [generator(1, "code", MADE), answered, stopped], [])
+    assert roles(due) == [("evaluator", g, "code", 1) for g in ("C2", "C3")]
+
+
 @pytest.mark.supports("test_a_finding_taken_into_its_decision_gets_the_next_round_of_content")
 def test_findings_with_their_decision_changed_give_the_next_round_of_content():
     """Given round 1 judged with more on N2, and a decision under N2 added since its Cut
@@ -421,18 +433,47 @@ def test_write_keeps_the_cut_already_written_for_the_start(tmp_path: Any):
 
 
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
-def test_folder_gives_the_latest_run_with_a_design_tree_or_none(tmp_path: Any):
-    """Given a worktree with no .rn/, and then one with two runs' folders and a folder with no
-    design tree
+def test_folder_gives_none_where_no_run_has_work_left(tmp_path: Any):
+    """Given a worktree with no .rn/, and then one whose run's work is done, as a run merged, and
+    one whose design tree isn't JSON
     When rounds.folder looks for the run's folder
-    Then it gives None, and then the latest run's folder from the top"""
+    Then it gives None each time"""
     top = str(tmp_path)
     assert rounds.folder(top) is None
+    done = json.dumps({"work": []})
     write_files(
-        top, {".rn/20261101-a/design-tree.json": "{}", ".rn/20261119-b/design-tree.json": "{}"}
+        top, {".rn/20261101-a/design-tree.json": done, ".rn/20261102-b/design-tree.json": "{"}
     )
     os.makedirs(os.path.join(top, ".rn", "best-practices"))
-    assert rounds.folder(top) == ".rn/20261119-b"
+    assert rounds.folder(top) is None
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+def test_folder_gives_the_run_with_work_left_in_the_top_or_in_rns_worktree(tmp_path: Any):
+    """Given the repository's root, with a run done in its .rn/ and a run with work left in rn's
+    worktree of that run
+    When rounds.folder looks for the run's folder from the root, and then from that worktree
+    Then it gives the worktree's run, from the top each time"""
+    top = str(tmp_path)
+    left = json.dumps(plan())
+    tree = ".claude/worktrees/rn-20261119-b/.rn/20261119-b/design-tree.json"
+    write_files(top, {".rn/20261101-a/design-tree.json": json.dumps({"work": []}), tree: left})
+    assert rounds.folder(top) == ".claude/worktrees/rn-20261119-b/.rn/20261119-b"
+    assert rounds.folder(os.path.join(top, ".claude/worktrees/rn-20261119-b")) == ".rn/20261119-b"
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+def test_folder_gives_the_run_whose_design_tree_changed_last(tmp_path: Any):
+    """Given two runs with work left, the one of the earlier name changed last
+    When rounds.folder looks for the run's folder
+    Then it gives that run"""
+    top = str(tmp_path)
+    left = json.dumps(plan())
+    write_files(
+        top, {".rn/20261119-a/design-tree.json": left, ".rn/20261119-b/design-tree.json": left}
+    )
+    os.utime(os.path.join(top, ".rn/20261119-b/design-tree.json"), (1, 1))
+    assert rounds.folder(top) == ".rn/20261119-a"
 
 
 @pytest.mark.supports("test_a_generator_starts_with_only_the_decisions_of_its_deliverable")

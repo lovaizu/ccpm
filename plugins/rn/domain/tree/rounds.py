@@ -13,6 +13,8 @@ from fault import Wrong
 from schemas.form import Json
 
 _CUT = ".cut.json"
+_TREE = "design-tree.json"
+_WORKTREES = os.path.join(".claude", "worktrees")
 
 
 @dataclass(frozen=True)
@@ -50,19 +52,45 @@ def each(run: str) -> Sequence[Start]:
 
 
 def folder(top: str) -> str | None:
-    """The run's folder of a worktree.
+    """The run's folder that a conversation goes on with.
 
-    Takes: the top of the worktree.
-    Gives: the latest folder of `.rn/` that holds a design tree, from the top, as each run works in
-    a worktree of its own; None where none is there.
+    Takes: the folder that the conversation works in: the repository's root, or rn's worktree of a
+    run once the conversation entered it.
+    Gives: from `top`, the folder of `.rn/` in `top` or in rn's worktree of a run,
+    `.claude/worktrees/rn-*/`, whose design tree has work left, the one changed last where several
+    have; None where none has, as a run merged has no work left.
     Refuses: nothing."""
-    rn = os.path.join(top, ".rn")
-    found = sorted(
-        name
-        for name in (os.listdir(rn) if os.path.isdir(rn) else [])
-        if os.path.isfile(os.path.join(rn, name, "design-tree.json"))
-    )
-    return f".rn/{found[-1]}" if found else None
+    found = [
+        (os.path.getmtime(os.path.join(top, run, _TREE)), run)
+        for base in ("", *_worktrees(top))
+        for run in _runs(top, base)
+        if _left(os.path.join(top, run, _TREE))
+    ]
+    return max(found)[1] if found else None
+
+
+def _worktrees(top: str) -> list[str]:
+    """Each of rn's worktrees of a run in `top`, from `top`."""
+    held = os.path.join(top, _WORKTREES)
+    names = sorted(os.listdir(held)) if os.path.isdir(held) else []
+    return [os.path.join(_WORKTREES, n) for n in names if n.startswith("rn-")]
+
+
+def _runs(top: str, base: str) -> list[str]:
+    """Each folder of `.rn/` under `base`, from `top`, that holds a design tree."""
+    rn = os.path.join(top, base, ".rn")
+    names = sorted(os.listdir(rn)) if os.path.isdir(rn) else []
+    held = [os.path.join(base, ".rn", n) for n in names]
+    return [r for r in held if os.path.isfile(os.path.join(top, r, _TREE))]
+
+
+def _left(tree: str) -> bool:
+    """Whether the design tree at `tree` has work left; a file that isn't JSON has none."""
+    with open(tree, encoding="utf-8") as f:
+        try:
+            return bool(json.load(f).get("work"))
+        except ValueError:
+            return False
 
 
 def path(run: str, start: Start) -> str:
