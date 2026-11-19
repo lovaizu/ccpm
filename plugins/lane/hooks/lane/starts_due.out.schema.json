@@ -1,22 +1,32 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "What a plugin's order gives Lane",
-  "description": "Each role to start now, and how many times at once; none where nothing is due now.",
-  "type": "object",
-  "required": ["starts"],
-  "additionalProperties": false,
-  "properties": {
-    "starts": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["role", "count"],
-        "additionalProperties": false,
-        "properties": {
-          "role": { "description": "The role's agent type.", "type": "string", "minLength": 1 },
-          "count": { "type": "integer", "minimum": 1 }
+  "description": "Each role to start now, and how many times at once, none where the run waits; or that the run ends.",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["starts"],
+      "additionalProperties": false,
+      "properties": {
+        "starts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["role", "count"],
+            "additionalProperties": false,
+            "properties": {
+              "role": { "description": "The role's agent type.", "type": "string", "minLength": 1 },
+              "count": { "type": "integer", "minimum": 1 }
+            }
+          }
         }
       }
+    },
+    {
+      "type": "object",
+      "required": ["ends"],
+      "additionalProperties": false,
+      "properties": { "ends": { "const": true } }
     }
-  }
+  ]
 }

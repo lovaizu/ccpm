@@ -1,23 +1,31 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "What Lane gives a plugin's order",
-  "description": "The run as it stands, from which the plugin's adapter of the starts due, or Lane's route adapter, gives each role to start now.",
+  "description": "The run as it stands, from which the plugin's adapter of the starts due gives each role to start now, or that the run ends.",
   "type": "object",
-  "required": ["plugin_root", "run"],
+  "required": [
+    "run"
+  ],
   "additionalProperties": false,
   "properties": {
-    "plugin_root": {
-      "description": "The plugin's folder, which holds its lane/.",
-      "type": "string",
-      "minLength": 1
-    },
     "run": {
       "type": "object",
-      "required": ["skill", "words", "moves"],
+      "required": [
+        "skill",
+        "words",
+        "moves"
+      ],
       "additionalProperties": false,
       "properties": {
-        "skill": { "description": "The skill that called the run.", "type": "string", "minLength": 1 },
-        "words": { "description": "The words typed after its command.", "type": "string" },
+        "skill": {
+          "description": "The skill that called the run.",
+          "type": "string",
+          "minLength": 1
+        },
+        "words": {
+          "description": "The words typed after its command.",
+          "type": "string"
+        },
         "moves": {
           "description": "Each command that called or moved the run, each start made, and each result, in their order; a start whose call failed, or that ended with no result, is left out.",
           "type": "array",
@@ -25,30 +33,60 @@
             "oneOf": [
               {
                 "type": "object",
-                "required": ["kind", "command"],
+                "required": [
+                  "kind",
+                  "command"
+                ],
                 "additionalProperties": false,
                 "properties": {
-                  "kind": { "const": "command" },
-                  "command": { "type": "string", "minLength": 1 }
+                  "kind": {
+                    "const": "command"
+                  },
+                  "command": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 }
               },
               {
                 "type": "object",
-                "required": ["kind", "role"],
+                "required": [
+                  "kind",
+                  "role"
+                ],
                 "additionalProperties": false,
                 "properties": {
-                  "kind": { "const": "start" },
-                  "role": { "description": "The role's agent type.", "type": "string", "minLength": 1 }
+                  "kind": {
+                    "const": "start"
+                  },
+                  "role": {
+                    "description": "The role's agent type.",
+                    "type": "string",
+                    "minLength": 1
+                  }
                 }
               },
               {
                 "type": "object",
-                "required": ["kind", "role", "result"],
+                "required": [
+                  "kind",
+                  "role",
+                  "result"
+                ],
                 "additionalProperties": false,
                 "properties": {
-                  "kind": { "const": "result" },
-                  "role": { "description": "The role's agent type.", "type": "string", "minLength": 1 },
-                  "result": { "type": "string", "minLength": 1 }
+                  "kind": {
+                    "const": "result"
+                  },
+                  "role": {
+                    "description": "The role's agent type.",
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "result": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 }
               }
             ]

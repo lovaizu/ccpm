@@ -14,7 +14,7 @@ class Entry(TypedDict, total=False):
     the fields of that kind: a `folder` gives the run's plugin's folder, a `queue` a resume queued
     to a subagent that still runs, untied until that subagent's SubagentStop, a `stopped` the
     `agent_id` of a start that ended with no result, such as one stopped by TaskStop, and an
-    `ended` the end of the run, once its order gave no start due while no start of it ran."""
+    `ended` the end of the run, once its order said the run ends."""
 
     kind: str
     run: str

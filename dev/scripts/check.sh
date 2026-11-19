@@ -76,17 +76,16 @@ held design pyrefly check $properties --search-path plugins/rn/domain \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
   plugins/rn/hooks/adapters/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
 
-# Lane's guard, its rule types, its reporters, and its route adapter, as a type that doesn't fit
-# across a handoff is a fault that no test may reach, as Lane's architecture says under Test
-# strategy. The reporters have no .py suffix, as the AI runs them by name, so the check names them.
+# Lane's guard, its rule types, and its reporters, as a type that doesn't fit across a handoff is a
+# fault that no test may reach, as Lane's architecture says under Test strategy. The reporters have
+# no .py suffix, as the AI runs them by name, so the check names them.
 held design pyrefly check --search-path plugins/lane/hooks/lane \
-  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/rule_types/*.py plugins/lane/bin/lane-* \
-  plugins/lane/adapters/*.py
+  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/rule_types/*.py plugins/lane/bin/lane-*
 
 # Lane's cases, with the double of Claude Code they run, as a case that calls an interface with a
 # type it doesn't take fails at the call, not at the body it waits for.
-held design pyrefly check --search-path plugins/lane/hooks/lane --search-path plugins/lane/adapters \
-  --search-path dev/tests --search-path dev/lane/tests dev/lane/tests/*.py dev/lane/tests/*/*.py
+held design pyrefly check --search-path plugins/lane/hooks/lane --search-path dev/tests \
+  --search-path dev/lane/tests dev/lane/tests/*.py dev/lane/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:

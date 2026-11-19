@@ -31,9 +31,9 @@ def answer(event: Event) -> Answer:
     in its run's plugin's folder; the answers joined, stopping where either stops; an empty answer
     where the event lies outside each run, or its run's plugin gives no rules. Wherever an answer
     gives the starts due, or holds a start to them, they are those that adapters.starts_due gives
-    for the run as it stands once the move is added.
-    Changes: what each interface it reaches changes; where adapters.starts_due gives no start due
-    while no start of the run runs, the run record, by an `ended` entry of the run.
+    for the run as it stands once the move is added, none while the run waits.
+    Changes: what each interface it reaches changes; where adapters.starts_due says the run ends,
+    the run record, by an `ended` entry of the run.
     Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
     adapter that failed, the answer says why and who fixes that, and stops the call.
     """

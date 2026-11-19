@@ -1,4 +1,4 @@
-"""The unit cases of Lane's route adapter, adapters/routes.py: one for each transition of a run's
+"""The unit cases of Lane's route adapter, hooks/lane/routes.py: one for each transition of a run's
 starts due that Lane's list of Claude Code's states brings about, from the run that the order is
 given: the command's route, a start made, dropped, tied, or stopped with no result, each result and
 its route, a typed command in place of what was due, the command that called the run typed again,
@@ -10,7 +10,7 @@ from typing import Any
 
 import lane_bench
 import pytest
-from adapters import OrderMove, OrderRun, StartDue
+from order import OrderMove, OrderRun, StartDue, StartsDue
 from routes import starts_due
 
 pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
@@ -37,8 +37,12 @@ def result(role: str, agent_id: str, value: str) -> OrderMove:
     return {"kind": "result", "role": role, "result": value}
 
 
-def roles(starts: list[StartDue]) -> list[str]:
-    return [each["role"] for each in starts for _ in range(each["count"])]
+def starts(given: StartsDue) -> list[StartDue]:
+    return given.get("starts", [])
+
+
+def roles(given: StartsDue) -> list[str]:
+    return [each["role"] for each in starts(given) for _ in range(each["count"])]
 
 
 WRITER_DONE = (start("log:writer", "u1"), tie("u1", "a1"), result("log:writer", "a1", "written"))
@@ -49,7 +53,7 @@ def test_a_run_with_only_its_command_has_the_commands_starts_due():
     """Given a run of log:up with no move after its folder
     When Lane gives the starts due
     Then the writer is due, with no text yet"""
-    assert starts_due(ROUTES, run()) == [{"role": "log:writer", "count": 1}]
+    assert starts(starts_due(ROUTES, run())) == [{"role": "log:writer", "count": 1}]
 
 
 @pytest.mark.supports("test_the_start_due_goes_through_and_leaves_none_due")
@@ -57,7 +61,7 @@ def test_a_start_made_of_the_role_due_leaves_none_due():
     """Given the writer due, and a start of the writer, not yet tied
     When Lane gives the starts due
     Then none is due"""
-    assert starts_due(ROUTES, run(start("log:writer", "u1"))) == []
+    assert starts(starts_due(ROUTES, run(start("log:writer", "u1")))) == []
 
 
 @pytest.mark.supports("test_the_start_due_goes_through_and_leaves_none_due")
@@ -65,7 +69,7 @@ def test_a_start_tied_to_its_subagent_leaves_none_due():
     """Given the writer's start, tied to its subagent
     When Lane gives the starts due
     Then none is due"""
-    assert starts_due(ROUTES, run(start("log:writer", "u1"), tie("u1", "a1"))) == []
+    assert starts(starts_due(ROUTES, run(start("log:writer", "u1"), tie("u1", "a1")))) == []
 
 
 @pytest.mark.supports("test_an_agent_call_that_fails_after_its_pre_tool_use_leaves_its_start_due")
@@ -138,7 +142,7 @@ def test_a_result_whose_route_starts_none_leaves_none_due():
     When Lane gives the starts due
     Then none is due, which ends the run"""
     good = (*WRITER_DONE, start("log:reviewer", "u2"), result("log:reviewer", "a2", "good"))
-    assert starts_due(ROUTES, run(*good)) == []
+    assert starts_due(ROUTES, run(*good)) == {"ends": True}
 
 
 @pytest.mark.supports("test_the_reviewers_more_makes_the_writer_due_again")
