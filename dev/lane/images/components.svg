@@ -84,7 +84,7 @@
   <text class="label small" x="380" y="200">reads, asks</text>
   <rect class="box lane" x="60" y="340" width="180" height="64" rx="8"/>
   <text class="name" x="150.0" y="370.0">route adapter</text>
-  <text class="kind" x="150.0" y="388.0">adapter</text>
+  <text class="kind" x="150.0" y="388.0">module</text>
   <path class="line" marker-end="url(#arrow)" d="M60,120 L40,120 L40,372 L58,372"/>
   <text class="label small" x="46" y="330">asks</text>
   <path class="line" marker-end="url(#arrow)" d="M242,372 L538,272"/>

@@ -59,15 +59,20 @@ once.
   with each command, start, read, mark, and result in it.
 - Starts due\
   What the plugin's order gives for a run as it stands: each role to start now, and how many at
-  once.
+  once, or that the run ends.
 
 Strategies:
 
 - The starts due asked of the plugin's order at each move, with the run as it stands. [P2.4]\
   Intent: Lane holds the AI to an order that the plugin fixes or decides as it runs, without
   deciding it.
+- A run's end given by the plugin's order, not by the run having no start due. [S9]\
+  Intent: a run that waits, such as for the person's answer, goes on.
 - A run's record that only grows, holding only what no later move gives again. [S10]\
   Intent: moves checked at the same moment lose nothing of one another's.
+- A run's record kept for its conversation alone, a new conversation going on where the plugin's
+  order says from the plugin's own files. [S10]\
+  Intent: what a run has done past its conversation lies only where the plugin keeps it.
 
 ### Components
 
@@ -79,7 +84,7 @@ Strategies:
   Make each rule's check and the sentence it gives one, so that what the AI reads is what holds.
 - reporters (command)\
   Carry a step, an item, or a result done to the guard as the AI's own call.
-- route adapter (adapter)\
+- route adapter (module)\
   Gives the starts due of a plugin that fixes its order, from its routes.
 
 Strategies:
@@ -88,10 +93,10 @@ Strategies:
   the conversation once the skill's call ends, as
   [its states](claude-code-states.md#where-the-guard-finds-the-plugin-it-serves) say. [P2.2]\
   Intent: Lane serves a plugin that it never names, as Claude Code gives the folder either way.
-- The plugin's own adapter of the starts due where it gives one, and Lane's route adapter where
-  it gives routes. [P2.3]\
-  Intent: a plugin that fixes its order writes no code, and one that decides it as it runs gives
-  only its answer.
+- The plugin's own adapter of the starts due where it gives one, each of the plugin's adapters run
+  on its own, and Lane's route adapter, run inside the guard, where it gives routes. [P2.3]\
+  Intent: a plugin that fixes its order writes no code and waits for no adapter, and one that
+  decides it as it runs gives only its answer.
 - The reporters as commands that Claude Code puts on the AI's path. [P1.2]\
   Intent: a plugin's step names a reporter without knowing where Lane lies.
 - A rule of the paths a role writes that names a folder letting through each file under it. [S1]\
@@ -123,7 +128,7 @@ sequenceDiagram
   U->>M: the plugin's command [S9]
   M->>G: calls the skill [P2.5]
   G->>RR: adds the run, as S10 draws where one stands (Run) [S9]
-  loop until the order gives no start due [S9]
+  loop until the order says the run ends [S9]
     G->>O: asks for the starts due, with the run (Run) [P2.4]
     O-->>G: each role to start now, and how many (Starts due) [P2.4]
     alt a start of a role due [S9]
@@ -179,8 +184,7 @@ Strategies:
 plugins/lane/                     what Claude Code installs beside each plugin that depends on it
 ├── hooks/
 │   ├── hooks.json                the guard's entries
-│   └── lane/                     the guard, and rule_types/
-├── adapters/routes.py            the route adapter
+│   └── lane/                     the guard, the route adapter, and rule_types/
 ├── bin/                          the reporters
 ├── docs/rules-and-adapters.md    what Lane takes in and gives out
 └── README.md                     for a plugin's author
