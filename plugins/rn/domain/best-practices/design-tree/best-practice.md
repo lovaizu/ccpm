@@ -117,7 +117,7 @@ Does each deliverable show its status and which necessary conditions it meets?
 
 Whoever picks up the work goes on from where it stopped, without reading back through what came before.
 
-1. *While making.* Keep each deliverable's status: `open` as you add it, `doing` once its turn has come, which `tree.py write` marks, and `done` once each `good` it holds is true.
+1. *While making.* Keep each deliverable's status: `open` as you add it and whenever no one is making it, `doing` only while someone makes it, several at once only where they run in parallel, and `done` once each `good` it holds is true.
 2. *While making.* Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round <path>`, with `<path>` the deliverable's `path` in the tree. It prints as JSON each round of the deliverable, the latest last, each the generator's making of it and the judging of that by one evaluator for each group of its best practice's conditions, with each evaluator's answers: `good` with each condition good and the lines that meet it, and `more` with each condition not yet good and its `good_when`, what its people get once it's good. It gives 1 where the deliverable has had no round.
 3. *While making.* Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `good` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where a `more` that N5.11 takes in names it, and answer a condition that only a `more` left in the round's records names by the goal's state, as that more brings its people nothing.
 4. *While making.* Set a condition's `good` back to false when a decision that answers it changes.

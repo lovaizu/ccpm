@@ -256,7 +256,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Keep each deliverable's status: `open` as you add it, `doing` once its turn has come, which `tree.py write` marks, and `done` once each `good` it holds is true."
+        "text": "Keep each deliverable's status: `open` as you add it and whenever no one is making it, `doing` only while someone makes it, several at once only where they run in parallel, and `done` once each `good` it holds is true."
        },
        {
         "at": "make",

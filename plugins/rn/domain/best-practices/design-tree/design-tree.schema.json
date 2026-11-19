@@ -173,7 +173,7 @@
      }
     },
     "status": {
-     "description": "Where the deliverable stands. open: no work on it has started. doing: someone is making it.",
+     "description": "Where the deliverable stands. open: no one is making it now. doing: someone is making it now.",
      "enum": [
       "open",
       "doing"
@@ -303,7 +303,7 @@
      }
     },
     "status": {
-     "description": "Where the deliverable stands. open: no work on it has started. doing: someone is making it.",
+     "description": "Where the deliverable stands. open: no one is making it now. doing: someone is making it now.",
      "enum": [
       "open",
       "doing"
