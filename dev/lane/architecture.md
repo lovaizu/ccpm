@@ -68,6 +68,9 @@ Strategies:
   deciding it.
 - A run's end given by the plugin's order, not by the run having no start due. [S9]\
   Intent: a run that waits, such as for the person's answer, goes on.
+- A run of a plugin that gives no order holding the main conversation to its skill's steps alone,
+  and ending at the end of the turn that those steps let through. [P2.5]\
+  Intent: a skill with steps and no subagents takes Lane with its rules alone.
 - A run's record that only grows, holding only what no later move gives again. [S10]\
   Intent: moves checked at the same moment lose nothing of one another's.
 - A run's record kept for its conversation alone, a new conversation going on where the plugin's
