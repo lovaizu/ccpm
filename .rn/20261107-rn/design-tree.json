@@ -1475,7 +1475,7 @@
             },
             {
               "about": "The gaps mended",
-              "decided": "starts_due.py gives no start due once the latest command is rn:dn, until rn:up, as S2 draws the run waiting; it refuses no design tree that isn't JSON, as rounds.folder passes over such a tree; the template's check finds a block left out of a document even where the same item lies in two sections, as its property case's counterexample shows",
+              "decided": "starts_due.py gives no start due once the latest command is rn:dn, until rn:up, as S2 draws the run waiting; it refuses no design tree that isn't JSON, as rounds.folder passes over such a tree; the template's property case leaves out only a block whose absence must show, as each level-2 section may be left out and a section's blocks that fit the section before it read as that section's",
               "by": "reasoning"
             }
           ]
