@@ -669,7 +669,7 @@
             },
             {
               "about": "The order",
-              "decided": "the guard asks the plugin's adapter of the starts due at each move, with the run as it stands, or, where the plugin gives routes, Lane's route adapter in adapters/routes.py; Lane gives no start's text, lays no lane, joins no results, and keeps no results for a pick-up",
+              "decided": "the guard asks the plugin's adapter of the starts due at each move, with the run as it stands, or, where the plugin gives routes, Lane's route adapter, a module of hooks/lane/ run inside the guard; the order gives each role to start now and how many, or that the run ends; the run record is kept for its conversation alone; Lane gives no start's text, lays no lane, joins no results, and keeps no results for a pick-up",
               "by": "user"
             }
           ]
