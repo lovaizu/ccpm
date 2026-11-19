@@ -202,7 +202,7 @@
         "plugins/lane/README.md",
         "plugins/rn/domain/best-practices/architecture"
       ],
-      "status": "doing",
+      "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -336,7 +336,7 @@
       "name": "A plugin's author decides from the README alone whether Lane fits, and makes its plugin depend on it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "doing",
+      "status": "open",
       "inputs": [
         "dev/lane/product-vision.md",
         "plugins/rn/domain/best-practices/readme"
@@ -581,7 +581,7 @@
         "plugins/lane",
         "plugins/rn/domain/best-practices/test-design"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -1340,8 +1340,16 @@
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md",
-        "dev/lane/tests/integration/test_lane_s1_run.py",
-        "dev/lane/tests/integration/test_lane_s2_picked_up.py",
+        "dev/lane/tests/integration/test_lane_s1_writes.py",
+        "dev/lane/tests/integration/test_lane_s2_reads_none.py",
+        "dev/lane/tests/integration/test_lane_s3_reads_whole.py",
+        "dev/lane/tests/integration/test_lane_s4_commands.py",
+        "dev/lane/tests/integration/test_lane_s5_order.py",
+        "dev/lane/tests/integration/test_lane_s6_checklist.py",
+        "dev/lane/tests/integration/test_lane_s7_result.py",
+        "dev/lane/tests/integration/test_lane_s8_check.py",
+        "dev/lane/tests/integration/test_lane_s9_starts.py",
+        "dev/lane/tests/integration/test_lane_s10_picked_up.py",
         "dev/lane/tests/integration/test_lane_principles.py",
         "dev/lane/tests/integration/test_lane_components.py",
         "dev/rn/tests/integration/test_rn_s1_deliverable.py",
@@ -1371,7 +1379,7 @@
         "plugins/rn",
         "plugins/rn/domain/best-practices/prompt"
       ],
-      "status": "doing",
+      "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -1477,7 +1485,7 @@
         "plugins/rn",
         "plugins/rn/domain/best-practices/prompt"
       ],
-      "status": "doing",
+      "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -1593,7 +1601,7 @@
         "plugins/rn",
         "plugins/rn/domain/best-practices/prompt"
       ],
-      "status": "doing",
+      "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -1709,9 +1717,21 @@
         "dev/rn/tests/integration/test_rn_s1_deliverable.py",
         "dev/rn/tests/integration/test_rn_s2_pause.py",
         "dev/rn/tests/integration/test_rn_principles.py",
-        "dev/rn/tests/integration/test_rn_components.py"
+        "dev/rn/tests/integration/test_rn_components.py",
+        "dev/lane/tests/integration/test_lane_s1_writes.py",
+        "dev/lane/tests/integration/test_lane_s2_reads_none.py",
+        "dev/lane/tests/integration/test_lane_s3_reads_whole.py",
+        "dev/lane/tests/integration/test_lane_s4_commands.py",
+        "dev/lane/tests/integration/test_lane_s5_order.py",
+        "dev/lane/tests/integration/test_lane_s6_checklist.py",
+        "dev/lane/tests/integration/test_lane_s7_result.py",
+        "dev/lane/tests/integration/test_lane_s8_check.py",
+        "dev/lane/tests/integration/test_lane_s9_starts.py",
+        "dev/lane/tests/integration/test_lane_s10_picked_up.py",
+        "dev/lane/tests/integration/test_lane_principles.py",
+        "dev/lane/tests/integration/test_lane_components.py"
       ],
-      "status": "doing",
+      "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -1840,7 +1860,7 @@
       "path": "dev/plugin-development-guide.md",
       "kind": "specific",
       "inputs": [],
-      "status": "doing",
+      "status": "open",
       "check": "the plugin guide and dev/plugin-template say what each plugin takes from them, and rn and Lane follow them",
       "good": false,
       "decisions": [
@@ -1901,22 +1921,6 @@
     },
     {
       "do": "make",
-      "path": "plugins/rn/domain/orchestrator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/generator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/evaluator.md"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/e2e"
-    },
-    {
-      "do": "make",
       "path": "dev/lane/tests/integration/test_lane_s1_writes.py"
     },
     {
@@ -1973,7 +1977,31 @@
     },
     {
       "do": "make",
+      "path": "plugins/rn/domain/orchestrator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/generator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/evaluator.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/e2e"
+    },
+    {
+      "do": "make",
       "path": "dev/scripts/check.sh"
+    },
+    {
+      "do": "make",
+      "path": ".claude-plugin/marketplace.json"
+    },
+    {
+      "do": "make",
+      "path": "dev/plugin-development-guide.md"
     }
   ]
 }
