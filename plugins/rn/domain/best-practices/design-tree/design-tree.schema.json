@@ -41,9 +41,6 @@
      },
      {
       "$ref": "#/$defs/open"
-     },
-     {
-      "$ref": "#/$defs/specific"
      }
     ]
    }
@@ -75,11 +72,11 @@
    "type": "string"
   },
   "kind": {
-   "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme, or `specific` for a deliverable of this product alone, which the check that its `check` names judges.",
+   "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme, or `specific` for a deliverable that no field's established kind fits, which the specific best practice holds to its check.",
    "type": "string"
   },
   "done": {
-   "description": "A deliverable that meets every necessary condition of its best practice, or passes its check where it's `specific`. It keeps one line: its name, path, kind, and status, as its file holds what its decisions made.",
+   "description": "A deliverable that meets every necessary condition of its best practice. It keeps one line: its name, path, kind, and status, as its file holds what its decisions made.",
    "type": "object",
    "required": [
     "name",
@@ -268,68 +265,6 @@
     "decided": {
      "description": "null while the point is open.",
      "type": "null"
-    }
-   }
-  },
-  "specific": {
-   "description": "A `specific` deliverable not yet done, with the check that judges it and the decisions that make it.",
-   "type": "object",
-   "required": [
-    "name",
-    "path",
-    "kind",
-    "inputs",
-    "status",
-    "check",
-    "good",
-    "decisions"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "name": {
-     "$ref": "#/$defs/name"
-    },
-    "path": {
-     "$ref": "#/$defs/path"
-    },
-    "kind": {
-     "const": "specific"
-    },
-    "inputs": {
-     "description": "The path of each deliverable or node this one rests on, read or run, covering each kind that its best practice names in inputs. A path may name a file outside the tree that already exists. The list stays empty where the deliverable rests on none.",
-     "type": "array",
-     "items": {
-      "type": "string"
-     }
-    },
-    "status": {
-     "description": "Where the deliverable stands. open: no one is making it now. doing: someone is making it now.",
-     "enum": [
-      "open",
-      "doing"
-     ]
-    },
-    "check": {
-     "description": "The check that judges the deliverable, such as a test that passes or an end-to-end test whose key results the records show.",
-     "type": "string"
-    },
-    "good": {
-     "description": "true once the deliverable passes its check, false until then.",
-     "type": "boolean"
-    },
-    "decisions": {
-     "description": "The decisions that answer the necessary condition, each settled once its inputs exist. The list stays empty until a point of the necessary condition comes up.",
-     "type": "array",
-     "items": {
-      "anyOf": [
-       {
-        "$ref": "#/$defs/settled"
-       },
-       {
-        "$ref": "#/$defs/unsettled"
-       }
-      ]
-     }
     }
    }
   },

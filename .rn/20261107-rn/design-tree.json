@@ -20,65 +20,7 @@
       "name": "A maker of a deliverable that no field's established kind fits makes one that does for its people what its check says",
       "path": "plugins/rn/domain/best-practices/specific",
       "kind": "meta",
-      "inputs": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Why a best practice of specific",
-              "decided": "a deliverable of the kind specific is made and judged by a best practice of its own, as every other kind is, so that rn runs it with a generator and evaluators like any deliverable and no part of rn treats the kind apart",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Its conditions",
-              "decided": "whether the deliverable passes its check as its people meet it, whether each of its parts carries out its check or a decision, and whether it says what each input it carries says, each about the whole",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Its template",
-              "decided": "none, as a deliverable of the kind takes the format of what reads it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
@@ -90,54 +32,7 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "inputs": [
-        "plugins/rn/domain/best-practices/meta",
-        "plugins/rn/domain/best-practices/specific"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A specific deliverable",
-              "decided": "a deliverable of the kind specific takes the form of any deliverable not done, with the necessary conditions of the specific best practice, its check held as the decision about The check under its N1; the form of its own, with check and good, goes",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -320,38 +215,57 @@
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/rules-and-adapters.md",
       "kind": "specific",
-      "status": "doing",
-      "check": "each rule type and each adapter that Lane's code reads is defined, and each definition matches the code",
       "inputs": [
         "dev/lane/architecture.md",
         "plugins/lane"
       ],
-      "good": false,
-      "decisions": [
+      "status": "doing",
+      "necessary_conditions": [
         {
-          "about": "What it defines",
-          "decided": "what Lane takes in, the rule file and each adapter's input, and what it gives out, with no /lane:up",
-          "by": "reasoning"
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The check",
+              "decided": "each rule type and each adapter that Lane's code reads is defined, and each definition matches the code",
+              "by": "reasoning"
+            },
+            {
+              "about": "What it defines",
+              "decided": "what Lane takes in, the rule file and each adapter's input, and what it gives out, with no /lane:up",
+              "by": "reasoning"
+            },
+            {
+              "about": "A role's subagent",
+              "decided": "a plugin's role sets background: true, as Lane can't hold a subagent started in the foreground",
+              "by": "reasoning"
+            },
+            {
+              "about": "The main conversation's steps",
+              "decided": "under the skill's name, beside each subagent's steps under its agent type",
+              "by": "maker"
+            },
+            {
+              "about": "Which commands start a run",
+              "decided": "a command of the plugin starts a run where none of the plugin stands in the conversation, and is a move of the standing run otherwise",
+              "by": "maker"
+            },
+            {
+              "about": "Mends of Lane's code that the definition found",
+              "decided": "a Grep whose search reaches a file that the step never reads, by its path or by the folder it works in where it names none, is stopped with the step's sentence, which asks for a path outside those files, and a Glob goes through, as it reads no file's content; the states of Claude Code record a Grep's and a Glob's events first; the rules refuse a folder in a rule of the files to read whole; a sentence offers results as alternatives joined by or, and a rule of no commands says that the step runs none; the rule of commands splits a call at each newline too; the definition follows each mend; a rule of the files a step writes may name no path, as a step that writes nothing, and its sentence says the step writes nothing",
+              "by": "user"
+            }
+          ]
         },
         {
-          "about": "A role's subagent",
-          "decided": "a plugin's role sets background: true, as Lane can't hold a subagent started in the foreground",
-          "by": "reasoning"
+          "id": "N2",
+          "good": false,
+          "decisions": []
         },
         {
-          "about": "The main conversation's steps",
-          "decided": "under the skill's name, beside each subagent's steps under its agent type",
-          "by": "maker"
-        },
-        {
-          "about": "Which commands start a run",
-          "decided": "a command of the plugin starts a run where none of the plugin stands in the conversation, and is a move of the standing run otherwise",
-          "by": "maker"
-        },
-        {
-          "about": "Mends of Lane's code that the definition found",
-          "decided": "a Grep whose search reaches a file that the step never reads, by its path or by the folder it works in where it names none, is stopped with the step's sentence, which asks for a path outside those files, and a Glob goes through, as it reads no file's content; the states of Claude Code record a Grep's and a Glob's events first; the rules refuse a folder in a rule of the files to read whole; a sentence offers results as alternatives joined by or, and a rule of no commands says that the step runs none; the rule of commands splits a call at each newline too; the definition follows each mend; a rule of the files a step writes may name no path, as a step that writes nothing, and its sentence says the step writes nothing",
-          "by": "user"
+          "id": "N3",
+          "good": false,
+          "decisions": []
         }
       ]
     },
@@ -1411,13 +1325,32 @@
         "dev/rn/tests/integration/test_rn_components.py"
       ],
       "status": "open",
-      "check": "check.sh runs the template check of each product vision, README, and architecture, trace.py tags, and trace.py check of each plugin again, and gives 0",
-      "good": false,
-      "decisions": [
+      "necessary_conditions": [
         {
-          "about": "What is turned back on",
-          "decided": "the template checks, trace.py tags, and trace.py check, which are off while rn and Lane are rebuilt",
-          "by": "user"
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The check",
+              "decided": "check.sh runs the template check of each product vision, README, and architecture, trace.py tags, and trace.py check of each plugin again, and gives 0",
+              "by": "reasoning"
+            },
+            {
+              "about": "What is turned back on",
+              "decided": "the template checks, trace.py tags, and trace.py check, which are off while rn and Lane are rebuilt",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
         }
       ]
     },
@@ -1888,28 +1821,47 @@
         "dev/rn/tests/e2e"
       ],
       "status": "open",
-      "check": "claude plugin validate passes on each plugin's folder, Lane's README walkthrough is what its integration cases show word for word, rn's is its E2E test's recorded run, and one pull request holds both plugins",
-      "good": false,
-      "decisions": [
+      "necessary_conditions": [
         {
-          "about": "Each plugin's folder",
-          "decided": "each plugin's folder holds everything it needs and its own copy of the repository's LICENSE, links any page outside it by its URL on GitHub, and sets homepage and repository in plugin.json; rn uses Lane through dependencies, and Lane uses no other plugin",
-          "by": "user"
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The check",
+              "decided": "claude plugin validate passes on each plugin's folder, Lane's README walkthrough is what its integration cases show word for word, rn's is its E2E test's recorded run, and one pull request holds both plugins",
+              "by": "reasoning"
+            },
+            {
+              "about": "Each plugin's folder",
+              "decided": "each plugin's folder holds everything it needs and its own copy of the repository's LICENSE, links any page outside it by its URL on GitHub, and sets homepage and repository in plugin.json; rn uses Lane through dependencies, and Lane uses no other plugin",
+              "by": "user"
+            },
+            {
+              "about": "The release",
+              "decided": "Lane releases together with rn, in one pull request, once rn is done",
+              "by": "user"
+            },
+            {
+              "about": "The README after the E2E test",
+              "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short",
+              "by": "reasoning"
+            },
+            {
+              "about": "Lane's README at the release",
+              "decided": "made again from the design: its walkthrough from the run that Lane's integration cases show, its install run once ccpm's marketplace lists Lane, and a link to the definition of rules and adapters",
+              "by": "reasoning"
+            }
+          ]
         },
         {
-          "about": "The release",
-          "decided": "Lane releases together with rn, in one pull request, once rn is done",
-          "by": "user"
+          "id": "N2",
+          "good": false,
+          "decisions": []
         },
         {
-          "about": "The README after the E2E test",
-          "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short",
-          "by": "reasoning"
-        },
-        {
-          "about": "Lane's README at the release",
-          "decided": "made again from the design: its walkthrough from the run that Lane's integration cases show, its install run once ccpm's marketplace lists Lane, and a link to the definition of rules and adapters",
-          "by": "reasoning"
+          "id": "N3",
+          "good": false,
+          "decisions": []
         }
       ]
     },
@@ -1919,56 +1871,67 @@
       "kind": "specific",
       "inputs": [],
       "status": "open",
-      "check": "the plugin guide and dev/plugin-template say what each plugin takes from them, and rn and Lane follow them",
-      "good": false,
-      "decisions": [
+      "necessary_conditions": [
         {
-          "about": "Where the steps of a typed command lie",
-          "decided": "each command the person types has its SKILL.md hold the steps of that moment, as Claude Code loads it when typed, and the main conversation's part holds only the steps that every moment shares; where the plugin's work runs over many turns, the main conversation decides nothing and a subagent started at each event decides, so no context carries the run",
-          "by": "user"
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The check",
+              "decided": "the plugin guide and dev/plugin-template say what each plugin takes from them, and rn and Lane follow them",
+              "by": "reasoning"
+            },
+            {
+              "about": "Where the steps of a typed command lie",
+              "decided": "each command the person types has its SKILL.md hold the steps of that moment, as Claude Code loads it when typed, and the main conversation's part holds only the steps that every moment shares; where the plugin's work runs over many turns, the main conversation decides nothing and a subagent started at each event decides, so no context carries the run",
+              "by": "user"
+            },
+            {
+              "about": "Each step and each practice carried out",
+              "decided": "each role's steps say each practice and file it takes, and Lane lays the rule that their words call for, as Lane's up does: a step done in order, a checklist from the plugin's adapter of a step's items, a file read whole or never read, a path written only; the plugin's own check runs at each end only for what no rule of Lane's holds, such as a result against its cut",
+              "by": "user"
+            },
+            {
+              "about": "A prompt's tests",
+              "decided": "a prompt is a part: unit tests run it on the model its users run, several times, and E2E tests try it in real use",
+              "by": "user"
+            },
+            {
+              "about": "An evaluator's words",
+              "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer",
+              "by": "user"
+            },
+            {
+              "about": "Where a plugin writes its files, and the deliverables it makes",
+              "decided": "the guide's rule of where a plugin writes covers the files of the plugin's own run; a deliverable that a run makes for the user lies where the repository's layout or the tool that reads it puts it, such as a best practice rn makes at .rn/best-practices/<kind>/, as the design tree best practice decides a deliverable's path",
+              "by": "reasoning"
+            },
+            {
+              "about": "When the guard runs the record check on the main conversation",
+              "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question",
+              "by": "reasoning"
+            },
+            {
+              "about": "How a prompt's unit tests judge",
+              "decided": "each case runs as many times as Test strategy sets, each run a test of its own, and the developer judges the prompt from the results, with no criterion, as a criterion over runs that vary passes or fails by chance",
+              "by": "user"
+            }
+          ]
         },
         {
-          "about": "Each step and each practice carried out",
-          "decided": "each role's steps say each practice and file it takes, and Lane lays the rule that their words call for, as Lane's up does: a step done in order, a checklist from the plugin's adapter of a step's items, a file read whole or never read, a path written only; the plugin's own check runs at each end only for what no rule of Lane's holds, such as a result against its cut",
-          "by": "user"
+          "id": "N2",
+          "good": false,
+          "decisions": []
         },
         {
-          "about": "A prompt's tests",
-          "decided": "a prompt is a part: unit tests run it on the model its users run, several times, and E2E tests try it in real use",
-          "by": "user"
-        },
-        {
-          "about": "An evaluator's words",
-          "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer",
-          "by": "user"
-        },
-        {
-          "about": "Where a plugin writes its files, and the deliverables it makes",
-          "decided": "the guide's rule of where a plugin writes covers the files of the plugin's own run; a deliverable that a run makes for the user lies where the repository's layout or the tool that reads it puts it, such as a best practice rn makes at .rn/best-practices/<kind>/, as the design tree best practice decides a deliverable's path",
-          "by": "reasoning"
-        },
-        {
-          "about": "When the guard runs the record check on the main conversation",
-          "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question",
-          "by": "reasoning"
-        },
-        {
-          "about": "How a prompt's unit tests judge",
-          "decided": "each case runs as many times as Test strategy sets, each run a test of its own, and the developer judges the prompt from the results, with no criterion, as a criterion over runs that vary passes or fails by chance",
-          "by": "user"
+          "id": "N3",
+          "good": false,
+          "decisions": []
         }
       ]
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/specific"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/design-tree"
-    },
     {
       "do": "make",
       "path": "dev/lane/tests"

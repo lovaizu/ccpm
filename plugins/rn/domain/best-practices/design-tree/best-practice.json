@@ -82,7 +82,7 @@
        },
        {
         "at": "decide",
-        "text": "Where no such guides agree, give the deliverable the kind `specific`, such as a file that keeps a run's state or a file of the product's own specification, and name in `check` the check that judges it, such as the test that passes once the deliverable exists."
+        "text": "Where no such guides agree, give the deliverable the kind `specific`, such as a file that keeps a run's state or a file of the product's own specification, which the specific best practice holds to the check that judges it, such as the test that passes once the deliverable exists."
        }
       ]
      },
@@ -140,7 +140,7 @@
        },
        {
         "at": "decide",
-        "text": "For a `specific` deliverable, write as its decisions each point that its check needs settled, such as which user story an integration test runs and what it shows."
+        "text": "For a `specific` deliverable, write under its N1 the check that judges it as the decision about `The check`, and as its other decisions each point that the check needs settled, such as which user story an integration test runs and what it shows."
        },
        {
         "at": "decide",
@@ -273,10 +273,6 @@
        {
         "at": "make",
         "text": "Where a change touches a deliverable that's `done`, write it whole again as `open`, with each necessary condition of its kind not good and each decision it held, from the tree as it stood before the commit that marked it done, as a deliverable that's done keeps one line, and its next round reworks it from the design."
-       },
-       {
-        "at": "make",
-        "text": "Set a `specific` deliverable's `good` true only once its `check` passes when you run it."
        }
       ]
      }

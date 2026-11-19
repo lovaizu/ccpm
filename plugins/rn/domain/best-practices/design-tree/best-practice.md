@@ -59,7 +59,7 @@ A deliverable of a kind that every product shares has a way of making it that th
 
 1. *While deciding.* Write as each deliverable's kind the folder whose best practice you opened for it at N2.2. Where a deliverable holds parts of several such kinds, its kind is the one whose best practice names the others for those parts.
 2. *While deciding.* Where no folder fits, search the field's guides and handbooks for how to make the deliverable. Where guides written for different products give the same steps, as they do for a changelog, put a deliverable that makes its best practice, of the kind `meta`, at the top level before the first deliverable of that kind.
-3. *While deciding.* Where no such guides agree, give the deliverable the kind `specific`, such as a file that keeps a run's state or a file of the product's own specification, and name in `check` the check that judges it, such as the test that passes once the deliverable exists.
+3. *While deciding.* Where no such guides agree, give the deliverable the kind `specific`, such as a file that keeps a run's state or a file of the product's own specification, which the specific best practice holds to the check that judges it, such as the test that passes once the deliverable exists.
 
 ### N4
 
@@ -82,7 +82,7 @@ The maker builds a deliverable from the decisions that answer its best practice'
 
 1. *While deciding.* For each deliverable of a best practice's kind, open `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/<kind>/best-practice.json`, and write under the deliverable each necessary condition's ID, in that best practice's order, with `good` false.
 2. *While deciding.* For each condition, take each `decide` item of its practice, and write the point it settles as a decision's `about`, in a few words, such as `the roles` from the item of a product vision that names who hires the product. Where an item settles nothing for this deliverable, such as one whose case doesn't hold, write no point for it.
-3. *While deciding.* For a `specific` deliverable, write as its decisions each point that its check needs settled, such as which user story an integration test runs and what it shows.
+3. *While deciding.* For a `specific` deliverable, write under its N1 the check that judges it as the decision about `The check`, and as its other decisions each point that the check needs settled, such as which user story an integration test runs and what it shows.
 4. *While deciding.* Leave a point's `decided` null while a deliverable of the tree that it takes from isn't done, such as a README's people before the product vision is done, and settle it or put it to the user once that deliverable is done, since an answer given before its grounds exist rests on a guess.
 5. *While deciding.* Where a fact would settle a point, search the repository and the public documentation of what the point is about, and settle the point where a source states the fact.
 6. *While deciding.* Where no source states the fact but a trial or a longer search can find it, such as how the host behaves in a case its documentation doesn't state, add a research deliverable: of the kind `specific`, at `{run}/research/<question>.md`, named by what the deliverable that holds the point can decide once it's done, with `each question has an answer that names its source, a page a reader can open or a command with what it printed` as its check.
@@ -122,7 +122,6 @@ Whoever picks up the work goes on from where it stopped, without reading back th
 3. *While making.* Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `good` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where a `more` that N5.11 takes in names it, and answer a condition that only a `more` left in the round's records names by the goal's state, as that more brings its people nothing.
 4. *While making.* Set a condition's `good` back to false when a decision that answers it changes.
 5. *While making.* Where a change touches a deliverable that's `done`, write it whole again as `open`, with each necessary condition of its kind not good and each decision it held, from the tree as it stood before the commit that marked it done, as a deliverable that's done keeps one line, and its next round reworks it from the design.
-6. *While making.* Set a `specific` deliverable's `good` true only once its `check` passes when you run it.
 
 ### N9
 

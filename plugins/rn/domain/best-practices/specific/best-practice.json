@@ -1,0 +1,78 @@
+{
+ "goal": {
+  "what": "The people that a deliverable is made for, where no field's established kind fits it, do with it what they're after, as its check says.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The deliverable does for its people what its check says.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "the whole",
+      "what": "Does the deliverable pass its check, run or read as its people meet it?",
+      "why": "The check is the one statement of what the people get from a deliverable that no established kind describes, written before the deliverable is made, as acceptance test-driven development writes the acceptance test first and Gojko Adzic's [Specification by Example](https://gojko.net/books/specification-by-example/) states it as the key examples its people would check.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "Open the decisions of your cut and each deliverable that its inputs name, and read each to its end.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{inputs}"
+         ]
+        }
+       },
+       {
+        "at": "decide",
+        "text": "Read the check, the decision about `The check`, and name who meets the deliverable and what they do with it, such as a person who installs two plugins from one pull request."
+       },
+       {
+        "at": "decide",
+        "text": "Where the check names no way to show that it passes, such as a command to run or a record to read, end with the point, naming the way you'd take, since only the user says what passes."
+       },
+       {
+        "at": "make",
+        "text": "Make the deliverable in the format that the program or the person who reads it takes, such as the JSON that a tool loads or the Markdown that a person reads."
+       },
+       {
+        "at": "make",
+        "text": "Run or read the check as its people meet the deliverable, such as by running the command that it names in a fresh checkout, and mend the deliverable until it passes."
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The deliverable holds only what its check and its decisions call for, and agrees with what it rests on.",
+    "necessary_conditions": [
+     {
+      "id": "N2",
+      "about": "the whole",
+      "what": "Does each part of the deliverable carry out its check or a decision of the deliverable or of an input?",
+      "why": "A part that carries out neither is one that the people reach their aim without, and that each later change must carry.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each part of the deliverable, such as a section, a key, or a step, name the words of the check or the decision that it carries out, and remove each part that carries out none."
+       }
+      ]
+     },
+     {
+      "id": "N3",
+      "about": "the whole",
+      "what": "Does the deliverable say what each deliverable it rests on says, wherever it carries it?",
+      "why": "A deliverable that says otherwise than what it rests on leaves its people to find which one holds.",
+      "items": [
+       {
+        "at": "make",
+        "text": "For each input whose content the deliverable carries, such as a README whose walkthrough the deliverable repeats, compare the two where they meet, and change the deliverable where they differ, since the input decides."
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "inputs": []
+}
