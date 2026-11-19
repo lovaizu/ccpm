@@ -116,7 +116,100 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "plugins/rn/domain/best-practices/architecture"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Parallel rounds",
+              "decided": "rn starts the generator of each deliverable whose inputs are done and that rests on no other deliverable in progress, in parallel, each round in its own lane of Lane; the only order rn fixes is a round's: making, judging, refactoring, judging",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers know whom Lane serves, and the one way it serves them",
@@ -227,7 +320,7 @@
         },
         {
           "id": "N4",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Principles",
@@ -238,7 +331,7 @@
         },
         {
           "id": "N5",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
@@ -248,17 +341,28 @@
         },
         {
           "id": "N7",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Lanes",
+              "decided": "a lane is one chain of starts held to the routes' order; each start of a role that a route after a command makes due opens a lane, any number in parallel; a step may start one role several times at once, and the lane moves on once each of them has its result",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N8",
-          "good": true,
+          "good": false,
           "decisions": [
             {
               "about": "Sequences",
               "decided": "S9 and S10 alone, as each rule of S1 to S8 is a call, a mark, or an end that its rule type judges, which Components states",
               "by": "reasoning"
+            },
+            {
+              "about": "Telling lanes apart",
+              "decided": "Lane gives each start due a text that names its lane, the main conversation passes it as the Agent call's prompt, and the guard reads the lane there at the PreToolUse, stopping a start whose text names no lane with that start due; once tied, each move goes by the subagent's agent_id",
+              "by": "user"
             }
           ]
         },
@@ -451,7 +555,7 @@
         "plugins/lane",
         "plugins/rn/domain/best-practices/test-design"
       ],
-      "status": "doing",
+      "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -1781,6 +1885,10 @@
     {
       "do": "make",
       "path": "dev/lane/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/architecture.md"
     },
     {
       "do": "make",
