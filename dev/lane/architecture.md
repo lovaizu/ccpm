@@ -113,7 +113,9 @@ Strategies:
   module.
 - A mark checked for the step due, then for the reads and the items that its rules ask. [S5]\
   Intent: a skipped step, item, or part of a file shows at the step skipped.
-- An end checked for its result first, then its steps, then the plugin's own check. [S8]\
+- An end, a subagent's or the main conversation's turn's, checked for its result first where its
+  step asks one, then its steps, then the plugin's own check, and a turn's end then for the starts
+  due. [S5, S8, S9]\
   Intent: a stop names the step left, as the plugin's check runs once the result and each step
   hold.
 
