@@ -216,7 +216,12 @@
           "decisions": [
             {
               "about": "What the rework changes",
-              "decided": "the form and the content of the reworked architecture best practice, with Lane's decisions kept as they are",
+              "decided": "the form and the content of the reworked architecture best practice, with what Lane's decisions bring its users kept",
+              "by": "user"
+            },
+            {
+              "about": "The grain",
+              "decided": "the grain of rn's architecture: the README's walkthrough with no name of the implementation outside Directory structure, each component named by its role; each handling of a single behavior of Claude Code, such as the order of hook events, a queued resume, or a failed start, goes down to Lane's skeleton, dev/lane/claude-code-states.md, and its integration cases",
               "by": "user"
             }
           ]
