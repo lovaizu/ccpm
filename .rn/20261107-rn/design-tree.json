@@ -266,7 +266,7 @@
         "plugins/lane",
         "dev/lane/tests"
       ],
-      "status": "doing",
+      "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -355,12 +355,18 @@
         "plugins/lane",
         "dev/lane/tests"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "the bodies that S2's integration cases reach beyond S1's: the guard's placing and judging of a Read, a Grep, and a Glob, and the rule type of the files never to read, each with its unit cases passing",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
