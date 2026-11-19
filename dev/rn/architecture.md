@@ -148,7 +148,7 @@ sequenceDiagram
   U->>O: /rn:up [S2]
   O->>T: reads the run's folder for where it stopped (Design tree) [P6.1]
   O->>U: where it picks up, and the point or sign-off waiting [S2]
-  O->>G: starts each role stopped again from its kept Cut (Cut) [P6.1]
+  O->>G: starts each role stopped again, with a fresh Cut from the design tree (Cut) [P6.1]
 ```
 
 ### Deployment
