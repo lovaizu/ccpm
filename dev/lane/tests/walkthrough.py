@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from claude_code import Agent, Answer, Conversation
-from repo_files import git, readme_block, write_files
+from repo_files import environment, git, readme_block, write_files
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 LANE = os.path.join(TOP, "plugins", "lane")
@@ -25,7 +25,6 @@ README = os.path.join(LANE, "README.md")
 TEXT = "Carry out your steps"
 RESULT = "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py"
 # What coverage.py reads in a new process to measure it, and where it writes what it measured.
-COVERAGE_SETTINGS = ("COVERAGE_PROCESS_START", "COVERAGE_FILE")
 
 
 def plugin_file(name: str) -> str:
@@ -115,15 +114,7 @@ def bench(tmp: str, files: dict[str, str] | None = None) -> Bench:
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "Add the changelog plugin")
     temp = os.path.join(tmp, "claude")
-    env = {
-        "PATH": os.environ.get("PATH", os.defpath),
-        "HOME": os.path.join(tmp, "home"),
-        "TMPDIR": os.path.join(tmp, "system-temp"),
-    }
-    # Where check.sh measures coverage, a process that a case starts, such as lay.py print with the
-    # Proposal on its standard input, counts toward it as well.
-    env.update({name: os.environ[name] for name in COVERAGE_SETTINGS if name in os.environ})
-    os.makedirs(env["TMPDIR"])
+    env = environment(tmp)
     return Bench(lane, os.path.realpath(repo), os.path.realpath(changelog), temp, env)
 
 

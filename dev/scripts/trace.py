@@ -331,25 +331,44 @@ def cases_in(path: str) -> list[Case]:
     ]
 
 
+def ignored(paths: list[str]) -> set[str]:
+    """Each of the paths that git ignores, such as the records an E2E test keeps, none outside a git
+    repository."""
+    done = subprocess.run(
+        ["git", "check-ignore", "--stdin"],
+        input="\n".join(paths),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return set(done.stdout.splitlines()) if done.returncode in (0, 1) else set()
+
+
 def cases(plugin: str) -> tuple[dict[str, list[Case]], list[str]]:
-    """The cases of each level of the plugin, and each test file that lies in no level's folder."""
+    """The cases of each level of the plugin, and each test file that lies in no level's folder,
+    leaving out each file that git ignores, as no push holds it."""
     top = f"dev/{plugin}/tests"
     found: dict[str, list[Case]] = {level: [] for level in LEVELS}
     stray = []
+    paths = []
     for folder, subfolders, files in os.walk(top):
         subfolders.sort()
-        for name in sorted(files):
-            if not (name.startswith("test") and name.endswith(".py")):
-                continue
-            path = os.path.join(folder, name)
-            level = os.path.relpath(path, top).split(os.sep)[0]
-            if level not in LEVELS:
-                stray.append(
-                    f"{path}: lies in no level's folder; move it to one of {top}/"
-                    f"{', '.join(LEVELS)}"
-                )
-                continue
-            found[level] += cases_in(path)
+        paths += [
+            os.path.join(folder, name)
+            for name in sorted(files)
+            if name.startswith("test") and name.endswith(".py")
+        ]
+    left_out = ignored(paths)
+    for path in paths:
+        level = os.path.relpath(path, top).split(os.sep)[0]
+        if path in left_out:
+            continue
+        if level not in LEVELS:
+            stray.append(
+                f"{path}: lies in no level's folder; move it to one of {top}/{', '.join(LEVELS)}"
+            )
+            continue
+        found[level] += cases_in(path)
     return found, stray
 
 

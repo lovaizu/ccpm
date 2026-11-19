@@ -29,19 +29,9 @@ def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence
 
     Takes: the design tree, each start of the run's Rounds, and each start that runs.
     Gives: the generator of the first deliverable of `work` whose inputs are done, where its
-    latest Round has no result of the generator or its evaluators judged it short within the limit;
-    or one evaluator for each group due once the generator gave its result; or none where no Round
-    is due, such as while a point or a sign-off waits.
+    latest Round has no result of the generator, or its evaluators judged it short within the limit
+    of two Rounds of content and two of refactoring; or one evaluator for each group due once the
+    generator gave its result; or none where no Round is due, such as once the limit leaves each
+    finding to the orchestrator, which puts it to the user as a proposal.
     Refuses: nothing."""
     raise NotImplementedError("course.due")
-
-
-def left(tree: Tree, starts: Sequence[Start], deliverable: str) -> Sequence[str]:
-    """Each finding of the deliverable's latest Round that the limit leaves, to go to the user as a
-    proposal.
-
-    Takes: the design tree, each start of the run's Rounds, and the deliverable's path.
-    Gives: each `more` of its evaluators past two Rounds of content or of refactoring; none within
-    the limit.
-    Refuses: nothing."""
-    raise NotImplementedError("course.left")

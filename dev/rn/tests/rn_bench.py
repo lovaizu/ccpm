@@ -1,0 +1,242 @@
+"""What rn's integration cases share: the README's walkthrough as the cases play it on the double of
+Claude Code. A bench holds copies of rn and Lane, the repository of `invoicer` with a remote to push
+to, and the run's folder with the design tree of the walkthrough's plan once the person signed it
+off, and each helper plays one move as the person, the orchestrator, or a role makes it, through the
+double, or runs an adapter of rn's as Lane runs it."""
+
+from __future__ import annotations
+
+import json
+import os
+import shutil
+import subprocess
+from dataclasses import dataclass
+from typing import Any
+
+from claude_code import Conversation
+from repo_files import environment, git, write_files
+
+TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
+RN = os.path.join(TOP, "plugins", "rn")
+LANE = os.path.join(TOP, "plugins", "lane")
+INVOICER = os.path.join(TOP, "dev", "rn", "tests", "invoicer")
+
+# The run's folder, from the top of the repository, as rn's Directory structure names it.
+RUN = ".rn/20261119-invoices"
+COMMAND = "invoicer/__main__.py"
+GUIDE = "docs/print-invoice.md"
+GOAL = (
+    "The accounting team prints each invoice themselves from the lines they keep in a spreadsheet,"
+    " without asking a developer. Once it holds, a colleague from accounting prints an invoice from"
+    " the guide alone."
+)
+
+
+def conditions(kind: str) -> list[dict[str, Any]]:
+    """Each necessary condition of the kind's best practice, in its order, none good yet."""
+    path = os.path.join(RN, "domain", "best-practices", kind, "best-practice.json")
+    with open(path, encoding="utf-8") as f:
+        practice = json.load(f)
+    return [
+        {"id": n["id"], "good": False, "decisions": []}
+        for c in practice["goal"]["critical_success_factors"]
+        for n in c["necessary_conditions"]
+    ]
+
+
+def plan() -> dict[str, Any]:
+    """The design tree of the walkthrough's plan, once the person signed it off: the command, with
+    the tax rate given each time, before the guide that names it."""
+    command = {
+        "name": "Anyone at a terminal prints an invoice from a file of its lines with one command",
+        "path": COMMAND,
+        "kind": "code",
+        "inputs": ["docs/architecture.md", "docs/software-design.md", "docs/test-design.md"],
+        "status": "open",
+        "necessary_conditions": conditions("code"),
+    }
+    command["necessary_conditions"][0]["decisions"] = [
+        {"about": "The tax rate", "decided": "given with each invoice, as --rate", "by": "user"},
+        {
+            "about": "The lines",
+            "decided": "read as invoicer already reads them, description;price;quantity",
+            "by": "reasoning",
+        },
+    ]
+    guide = {
+        "name": "A colleague from accounting prints an invoice from the guide alone",
+        "path": GUIDE,
+        "kind": "readme",
+        "inputs": ["docs/product-vision.md", COMMAND],
+        "status": "open",
+        "necessary_conditions": conditions("readme"),
+    }
+    return {
+        "goal": {"decided": GOAL, "by": "user"},
+        "deliverables": [command, guide],
+        "work": [{"do": "make", "path": COMMAND}, {"do": "make", "path": GUIDE}],
+    }
+
+
+@dataclass(frozen=True)
+class Bench:
+    """Copies of rn and Lane, the repository of invoicer on the work's branch with its remote, the
+    double's own folder, and the environment of each command."""
+
+    rn: str
+    lane: str
+    repo: str
+    remote: str
+    temp: str
+    env: dict[str, str]
+
+    @property
+    def run(self) -> str:
+        """The run's folder."""
+        return os.path.join(self.repo, RUN)
+
+    def tree(self) -> dict[str, Any]:
+        """The run's design tree as it reads now."""
+        with open(os.path.join(self.run, "design-tree.json"), encoding="utf-8") as f:
+            return json.load(f)
+
+    def write_tree(self, tree: dict[str, Any]) -> None:
+        """Writes the design tree as the orchestrator edits it."""
+        write_files(self.run, {"design-tree.json": json.dumps(tree, indent=2) + "\n"})
+
+    def converse(self) -> Conversation:
+        """A new conversation in the repository, with rn and Lane loaded."""
+        return Conversation(self.repo, [self.rn, self.lane], self.env, self.temp)
+
+    def commit(self, c: Conversation, ground: str) -> Any:
+        """The orchestrator commits the run's folder with the ground, by tree.py."""
+        script = os.path.join(self.rn, "scripts", "tree.py")
+        return c.bash(f"python3 {script} commit {RUN} '{ground}'")
+
+    def check(self, agent: Any, role: str, cut: str) -> Any:
+        """A role runs rn's check of its result beside its Cut, as Lane runs it at its end."""
+        return agent.bash(f"python3 {os.path.join(self.rn, 'scripts', 'check.py')} {role} {cut}")
+
+    def adapter(self, name: str, args: list[str], given: dict[str, Any]) -> tuple[int, Any, str]:
+        """Runs rn's adapter as Lane runs it, in the repository, with what Lane gives on its
+        standard input, and gives its exit code, what it printed, as JSON where it's JSON, and what
+        it said."""
+        done = subprocess.run(
+            ["python3", os.path.join(self.rn, "hooks", "adapters", f"{name}.py"), *args],
+            input=json.dumps(given),
+            capture_output=True,
+            text=True,
+            cwd=self.repo,
+            env=self.env,
+            check=False,
+        )
+        try:
+            printed: Any = json.loads(done.stdout)
+        except json.JSONDecodeError:
+            printed = done.stdout
+        return done.returncode, printed, done.stderr
+
+    def started(self, role: str, running: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+        """The text and the run values that rn's adapter gives the role's start due."""
+        code, printed, said = self.adapter("start", [role], {"running": running or []})
+        assert code == 0, said
+        return printed
+
+    def write_result(self, cut: str, result: dict[str, Any]) -> str:
+        """Writes a role's result beside its Cut, as the role does, and gives its path."""
+        path = os.path.join(self.repo, cut).removesuffix(".cut.json") + ".json"
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(result, f)
+        return path
+
+
+def bench(tmp: str) -> Bench:
+    """Copies of rn and Lane, and invoicer on the work's branch with a remote, holding the run's
+    folder with the walkthrough's plan, committed and pushed."""
+    rn, lane = os.path.join(tmp, "rn"), os.path.join(tmp, "lane")
+    shutil.copytree(RN, rn, ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(LANE, lane, ignore=shutil.ignore_patterns("__pycache__"))
+    remote = os.path.join(tmp, "remote.git")
+    subprocess.run(["git", "init", "-q", "--bare", remote], check=True)
+    repo = os.path.join(tmp, "invoicer")
+    shutil.copytree(INVOICER, repo, ignore=shutil.ignore_patterns("__pycache__"))
+    git(repo, "init", "-q", "-b", "main")
+    git(repo, "config", "user.email", "invoicer@example.com")
+    git(repo, "config", "user.name", "invoicer")
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "-m", "invoicer renders invoices")
+    git(repo, "remote", "add", "origin", remote)
+    git(repo, "push", "-q", "origin", "main")
+    git(repo, "checkout", "-q", "-b", "rn/20261119-invoices")
+    temp = os.path.join(tmp, "claude")
+    env = environment(tmp)
+    b = Bench(rn, lane, os.path.realpath(repo), remote, temp, env)
+    b.write_tree(plan())
+    git(repo, "add", "-A")
+    git(repo, "commit", "-q", "-m", "The plan, signed off")
+    git(repo, "push", "-q", "-u", "origin", "rn/20261119-invoices")
+    return b
+
+
+def head(b: Bench) -> str:
+    """The subject of the latest commit on the work's branch."""
+    return git(b.repo, "log", "-1", "--format=%s").strip()
+
+
+def read_json(b: Bench, path: str) -> Any:
+    """The JSON file at the path in the repository."""
+    with open(os.path.join(b.repo, path), encoding="utf-8") as f:
+        return json.load(f)
+
+
+def made(b: Bench, carried_out: list[dict[str, str]] | None = None) -> str:
+    """The generator due ends with its deliverable made and a place for each decision named, none
+    by default, and gives its Cut's path."""
+    cut = b.started("generator")["values"]["cut"]
+    deliverable = read_json(b, cut)["deliverable"]["path"]
+    write_files(b.repo, {deliverable: "import sys\n"})
+    each = [{**d, "at": f"{deliverable}:1"} for d in carried_out or []]
+    b.write_result(cut, {"result": "made", "carried_out": each})
+    return cut
+
+
+def judged(b: Bench, more: dict[str, str]) -> list[tuple[str, str]]:
+    """One evaluator for each group due ends, answering more on each condition named, with its
+    good_when, and good on each other, and gives each group with its Cut's path."""
+    done: list[tuple[str, str]] = []
+    running: list[dict[str, Any]] = []
+    # Each group of the largest best practice once, and the none after them.
+    for _ in range(7):
+        code, printed, said = b.adapter("start", ["evaluator"], {"running": running})
+        assert code == 0, said
+        if "none" in printed:
+            return done
+        cut = printed["values"]["cut"]
+        conditions = read_json(b, cut)["conditions"]
+        answers = {
+            "good": [{"condition": c, "lines": ["x:1"]} for c in conditions if c not in more],
+            "more": [{"condition": c, "good_when": more[c]} for c in conditions if c in more],
+        }
+        b.write_result(cut, answers)
+        done.append((read_json(b, cut)["group"], cut))
+        running.append({"role": "evaluator", "text": printed["text"], "values": printed["values"]})
+    raise AssertionError(f"rn's adapter gave evaluators past each group: {done}")
+
+
+def decided(b: Bench, condition: int, decision: dict[str, str], ground: str = "") -> None:
+    """The orchestrator adds the decision under the command's condition at the index, and commits
+    it with the ground where one is given."""
+    tree = b.tree()
+    tree["deliverables"][0]["necessary_conditions"][condition]["decisions"].append(decision)
+    b.write_tree(tree)
+    if ground:
+        assert b.commit(b.converse(), ground).exit_code == 0
+
+
+def command_done(b: Bench) -> None:
+    """The orchestrator marks the command done, keeping its one line, and the guide comes next."""
+    tree = b.tree()
+    tree["deliverables"][0] = {k: tree["deliverables"][0][k] for k in ("name", "path", "kind")}
+    tree["deliverables"][0]["status"] = "done"
+    tree["work"] = tree["work"][1:]
+    b.write_tree(tree)

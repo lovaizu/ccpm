@@ -67,11 +67,12 @@ fi
 held design pyrefly check --search-path dev/scripts --search-path dev/scripts/tests \
   --search-path dev/tests dev/scripts/*.py dev/scripts/tests/*.py dev/tests/*.py
 
-# rn's code, its adapters, and its tests, as a type that doesn't fit across a call is a fault no
-# test may reach.
+# rn's code, its adapters, and its tests, with the double of Claude Code and the bench they call, as
+# a type that doesn't fit across a call is a fault no test may reach.
 # plugins/rn/scripts stays off the search path, as its template.py shares its name with the code of
 # plugins/rn/domain it runs.
 held design pyrefly check $properties --search-path plugins/rn/domain \
+  --search-path dev/tests --search-path dev/rn/tests \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
   plugins/rn/hooks/adapters/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
 

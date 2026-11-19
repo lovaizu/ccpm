@@ -298,6 +298,13 @@ class NameTest(TraceTest):
     """Every test names an element or a case one level up that exists, and every unit case names an
     integration case, as each architecture's Integration tests set."""
 
+    def test_a_case_in_a_file_that_git_ignores_is_not_read(self):
+        self.every_element_named()
+        subprocess.run(["git", "init", "-q"], check=True)
+        self.write(".gitignore", "dev/p/tests/e2e/records/\n")
+        self.write("dev/p/tests/e2e/records/run/test_x.py", "def test_bare():\n    pass\n")
+        self.assertEqual(self.trace().returncode, 0, self.trace().stderr)
+
     def test_a_case_without_a_mark_names_nothing(self):
         self.every_element_named()
         self.write("dev/p/tests/integration/test_x.py", "def test_bare():\n    pass\n")
