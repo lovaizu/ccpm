@@ -186,7 +186,7 @@ Strategies:
 plugins/lane/                     what Claude Code installs beside each plugin that depends on it
 ├── hooks/
 │   ├── hooks.json                the guard's entries
-│   └── lane/                     the guard, and lanes/, the rule types
+│   └── lane/                     the guard, and types/, the rule types
 ├── bin/                          the reporters
 ├── docs/rules-and-adapters.md    what Lane takes in and gives out
 └── README.md                     for a plugin's author
