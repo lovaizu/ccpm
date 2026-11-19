@@ -24,6 +24,7 @@ from claude_code import (
     POSTED_FIRST,
     READ,
     RECORDED,
+    RESUME_BEFORE_END,
     RUN,
     SEND_MESSAGE,
     SKILL,
@@ -647,6 +648,22 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         self.assertEqual(sent[9]["background_tasks"][0]["id"], agent.id, "it runs again")
         self.assertIn(f"<tool-use-id>{called['tool_use_id']}</tool-use-id>", sent[-1]["prompt"])
         self.assertIn("<result>two</result>", sent[-1]["prompt"])
+
+    def test_an_end_held_back_reaches_the_main_conversation_after_a_resume_as_recorded(self):
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        called = self.sent()[1]
+        _, held = agent.end("one", reach=False)
+        reached = agent.reach()
+        self.assertIsNone(held, "the end waits for the resume")
+        self.assertFalse(reached.blocked)
+        record = payloads(RESUME_BEFORE_END)[
+            "the end of the pass before the resume reaches the main conversation"
+        ]
+        notified = self.sent()[-1]
+        self.assertEqual(notified["hook_event_name"], record["hook_event_name"])
+        self.assertIn(f"<tool-use-id>{called['tool_use_id']}</tool-use-id>", notified["prompt"])
+        self.assertIn("<result>one</result>", notified["prompt"])
 
     def test_a_send_message_that_a_hook_denies_resumes_no_subagent(self):
         _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")

@@ -1,254 +1,99 @@
 # Lane
 
-Lane is a Claude Code plugin that gives your plugin's roles the step they leave, as they leave it.
+Lane is a Claude Code plugin that your plugin depends on, which gives your plugin's AI the step it
+leaves, as it leaves it.
 
-In development: Lane's rebuild isn't released.
+In development: Lane's rebuild as a plugin that others depend on isn't released.
 
-Lane is for you when you build a Claude Code plugin whose skill and subagents must keep numbered
-steps. With it, you have each of them notice the moment it leaves a step or your order.
+Lane is for you when you build a Claude Code plugin whose skill and subagents must keep the steps
+you give them. With it, your AI notices at once each step it leaves.
 
 ## Non-goals
 
-- Lane doesn't check work you do yourself in the conversation: it checks only a run of your plugin's
-  skill.
+- Lane doesn't check work outside your plugin: it checks only a run of a skill of a plugin that
+  gives it rules.
+- Lane doesn't write your rules: you write them, from your steps, in your plugin's
+  `lane/rules.json`.
 - Lane doesn't guard security: hold what must never happen with branch protection or Claude Code's
   permission rules.
-- Lane doesn't judge how well a step was done: add a review subagent, or end the step on your check.
-- Lane doesn't make a role go back to its step: that rests on your plugin's steps and the model.
+- Lane doesn't judge how well a step was done beyond your own check: add a review subagent for
+  that.
+- Lane doesn't make the AI go back to its step: that rests on your steps and the model.
 
 ## Requirements
 
 - macOS or Linux: `uname` shows it.
-- Claude Code 2.1.322 or later, where you build and run your plugin: `claude --version` shows it.
+- Claude Code 2.1.328 or later, where your plugin runs: `claude --version` shows it.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows it.
-- A plugin that Claude Code takes as valid: `claude plugin validate <folder>` shows
+- A plugin that Claude Code takes as valid: `claude plugin validate <your plugin's folder>` shows
   `✔ Validation passed`.
-- The skill's and each subagent's steps as a numbered list under `## Steps`:
-  `grep -rl '^## Steps' <folder>` shows each file.
-- Each subagent's file setting `background: true`: `grep -L 'background: true' <folder>/agents/*`
-  shows none.
 
 ## Installation
 
-```console
-claude plugin marketplace add lovaizu/ccpm
-claude plugin install lane@ccpm
+Name Lane among the dependencies of your plugin's `.claude-plugin/plugin.json`:
+
+```json
+"dependencies": [{ "name": "lane", "marketplace": "ccpm" }]
 ```
 
-`claude plugin details lane@ccpm` then shows `lane 0.1.0`, with the skill `up` and six hooks.
+Allow the marketplace `ccpm` in your marketplace's `.claude-plugin/marketplace.json`:
+
+```json
+"allowCrossMarketplaceDependenciesOn": ["ccpm"]
+```
+
+Have each user of your plugin add `ccpm` before they install your plugin, as Claude Code installs
+a dependency only from a marketplace they've added:
+
+```console
+claude plugin marketplace add lovaizu/ccpm
+claude plugin install <your plugin>@<your marketplace>
+```
+
+The install then lists `lane` among the dependencies it installed.
 
 ## Walkthrough
 
-At the end, you have a first run of your plugin that Lane held to each step and each start.
-
-Your plugin `changelog`, loaded by `claude --plugin-dir changelog` in the repository of `tally`, has
-these files:
-
-```markdown
-<!-- changelog/skills/write/SKILL.md -->
----
-name: write
-description: Has the CHANGELOG.md entries written and reviewed.
----
-
-## Steps
-
-1. Have the entries written and reviewed.
-```
-
-```markdown
-<!-- changelog/agents/writer.md -->
----
-name: writer
-description: Writes the CHANGELOG.md entries for the commits since its last version.
-background: true
----
-
-## Steps
-
-1. Read `CHANGELOG.md` to learn its last version and its form, and `REVIEW.md`, where it exists, to learn what the entries lack.
-2. Read the commits since then with `git log --oneline`.
-3. Write the new entries into `CHANGELOG.md`.
-4. Reply with the entries you wrote.
-```
-
-```markdown
-<!-- changelog/agents/reviewer.md -->
----
-name: reviewer
-description: Reviews the CHANGELOG.md entries that writer wrote.
-background: true
----
-
-## Steps
-
-1. Read the new entries in `CHANGELOG.md` against the commits they name.
-2. Write into `REVIEW.md` what each wrong entry lacks, or leave it empty when every entry is right.
-3. Give `more` when an entry needs the writer again, and `good` when every entry is right.
-```
-
-You type:
-
-```text
-/lane:up changelog
-```
-
-Lane shows:
-
-```text
-Routes of write, laid on its step 1:
-  first             start writer
-  writer `written`  start reviewer
-  reviewer `more`   start writer
-  reviewer `good`   start no more
-
-1. Have the entries written and reviewed. Start each subagent you are told to start, until you are told to start no more. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py write good`, as a command of its own.
-
-Lanes of writer, each checked only in writer:
-  step 2  run:   Run only `git log --oneline`.  type run_only
-  step 3  write: Write only `CHANGELOG.md`.     type write_only
-  step 4  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`, as a command of its own.
-  commands: writer may run only `git log --oneline` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`
-
-2. Read the commits since then with `git log --oneline`. Run only `git log --oneline`.
-3. Write the new entries into `CHANGELOG.md`. Write only `CHANGELOG.md`.
-4. Reply with the entries you wrote. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py writer written`, as a command of its own.
-
-Lanes of reviewer, each checked only in reviewer:
-  step 2  write: Write only `REVIEW.md`.  type write_only
-  step 3  end:   End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`, as a command of its own.
-
-2. Write into `REVIEW.md` what each wrong entry lacks, or leave it empty when every entry is right. Write only `REVIEW.md`.
-3. Give `more` when an entry needs the writer again, and `good` when every entry is right. End by running `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer more` or `python3 ${CLAUDE_PLUGIN_ROOT}/hooks/lane/result.py reviewer good`, as a command of its own.
-
-ID: 6d9b4389
-Reply yes to lay these into changelog, or say what to change.
-```
-
-You type:
-
-```text
-yes
-```
-
-Lane shows:
-
-```text
-Wrote step 1 of write into skills/write/SKILL.md.
-Wrote steps 2, 3 and 4 of writer into agents/writer.md.
-Wrote steps 2 and 3 of reviewer into agents/reviewer.md.
-Wrote the checks of write, writer and reviewer into hooks/hooks.json.
-Wrote the lanes laid and the routes into hooks/lanes.json.
-Put lane's code in hooks/lane/.
-claude plugin validate passed.
-Type /reload-plugins, and the checks hold from your next prompt.
-```
-
-You type:
-
-```text
-/reload-plugins
-```
-
-You type:
-
-```text
-/changelog:write
-```
-
-Lane shows:
-
-```text
-changelog: Start `changelog:writer` with `Carry out your steps`.
-```
-
-When `writer` runs `git -C /home/you/tally log --oneline`, Lane shows:
-
-```text
-changelog: Run only `git log --oneline`.
-The commands you may run, each word for word: `git log --oneline`, `python3 /home/you/tally/changelog/hooks/lane/result.py writer written`.
-```
-
-When `writer` gives `written`, Lane shows:
-
-```text
-changelog: writer gave `written`. Start `changelog:reviewer` with `Carry out your steps`.
-```
-
-When `reviewer` tries to end without running its result script, Lane shows:
-
-```text
-changelog: End by running `python3 /home/you/tally/changelog/hooks/lane/result.py reviewer more` or `python3 /home/you/tally/changelog/hooks/lane/result.py reviewer good`, as a command of its own.
-Run it as a command of its own: result.py run inside a longer command gives no Result.
-```
-
-When `reviewer` gives `more`, Lane shows:
-
-```text
-changelog: reviewer gave `more`. Start `changelog:writer` with `Carry out your steps`.
-```
-
-When `writer` gives `written` again, and the main conversation stops to ask you, Lane shows:
-
-```text
-Stop hook feedback:
-changelog: Start `changelog:reviewer` with `Carry out your steps`.
-```
-
-When `reviewer` gives `good`, Lane shows:
-
-```text
-changelog: reviewer gave `good`. Start no more subagents.
-```
+The walkthrough comes with Lane's first release: a run of a plugin that writes `CHANGELOG.md`
+entries, its writer stopped as it writes another file, and its reviewer's result moving the run.
 
 ## How it works
 
-Lane gives your plugin's skill and subagents the step's own sentence the moment they leave a step or
-your order.
+Lane gives an AI that leaves a step of your plugin the step's own sentence, so that it notices at
+once.
 
-![How Lane works, from your steps to each move it checks](images/how-it-works.svg)
+![How Lane works, from your plugin's rules to each move it checks](images/how-it-works.svg)
 
-### "A hook that only refuses leaves the subagent to find another way."
+### "A hook that only refuses leaves the AI to find another way."
 
-When Lane stops a call, the subagent gets its own step's sentence, so it sees which step it left.
+When Lane stops a call, the AI gets the sentence of the step it left and what to do instead.
 
-### "A subagent skips a step, an item of its checklist, or part of a file."
+### "The AI says it did the step, but did it?"
 
-Lane stops a step's mark until the subagent has marked its checklist and read its files whole. A mark counts only from the script Lane lays, and a read only from the Read itself.
-
-### "The next move comes from what a subagent wrote."
-
-A result counts only from a run of the result script that Lane lays on the last step. A reply such
-as "No more entries" never passes for `more`.
-
-### "The skill forgets a start, starts the wrong one, or stops while one is due."
-
-Lane gives the main conversation each start your routes make due, and stops any other with the
-starts due. It stops the main conversation's end while a start is due.
+A step, an item of its checklist, a read, or a result counts only from the AI's own call: a Read
+itself, or a run of one of Lane's commands that your step names. A reply never counts.
 
 ### "Each check is code to write and test."
 
-Lane proposes the rules and routes from your steps, shown as your steps read once laid. You approve
-them, and Lane lays each rule's sentence and its check from one type.
+You give each rule a type of Lane's and its values, such as the files a step may write. The type
+makes both the check and the sentence the AI reads.
+
+### "The main conversation starts the wrong subagent, or stops while one is due."
+
+Your routes say which subagent starts after each result. Lane gives the main conversation each
+start due, and stops any other start, and its end while a start is due.
 
 ### "A run that stops starts over."
 
-Lane decides each move from a record of the run's starts and results, so a run goes on after
-`/compact`. In a new conversation, it goes on from the results your plugin keeps, through an adapter.
+Lane keeps a record of the run's starts and results, so the run goes on after `/compact`. In a new
+conversation, it goes on from the results your plugin keeps, through an adapter of yours.
 
 ### "Does it check other work in the same conversation?"
 
-No. Lane checks only your skill's run, from its call until its routes end.
-
-### "Does whoever runs the plugin need Lane?"
-
-No. `/lane:up` puts the checks into your plugin, and after an update of Lane brings them to the new
-version.
+No. Lane checks only your skill's run, from its call until its routes start no more.
 
 ## Documentation
 
-- [Steps, routes, and adapters](docs/steps-routes-adapters.md): for you when your plugin's steps go
-  beyond the walkthrough's, such as a subagent's own text.
 - [Changelog](CHANGELOG.md): for you when you update Lane, the changes in each version.
 - [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 

@@ -9,9 +9,9 @@ set -e
 scratch="$(mktemp -d)"
 trap 'rm -r "$scratch"' EXIT
 
-# The guard that Lane laid in another plugin, plugins/<name>/hooks/lane/, is a copy of Lane's code,
-# which Lane's own checks hold in plugins/lane/hooks/lane/, so no check reads it as that plugin's
-# own: the plugin's developer neither writes nor mends it, and pylint would find it copied.
+# The guard that the earlier Lane laid in another plugin, plugins/<name>/hooks/lane/, is a copy of
+# Lane's earlier code, which the plugin drops once it depends on Lane, so no check reads it as that
+# plugin's own: the plugin's developer neither writes nor mends it, and pylint would find it copied.
 laid_guards=$(for guard in plugins/*/hooks/lane; do
   [ ! -d "$guard" ] || [ "$guard" = plugins/lane/hooks/lane ] || echo "$guard"
 done)
@@ -75,15 +75,6 @@ held design pyrefly check $properties --search-path plugins/rn/domain \
   --search-path dev/tests --search-path dev/rn/tests \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
   plugins/rn/hooks/adapters/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
-
-# Lane's code and its tests, as Lane's Test strategy names pyrefly: the guard's code that Lane lays
-# into a plugin, lay.py's, which imports it, and the cases, which call both through the double of
-# Claude Code.
-held design pyrefly check $properties --search-path plugins/lane/hooks/lane/domain \
-  --search-path plugins/lane/domain --search-path dev/tests --search-path dev/lane/tests \
-  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/domain/*.py \
-  plugins/lane/hooks/lane/domain/*/*.py plugins/lane/domain/*/*.py plugins/lane/scripts/*.py \
-  dev/lane/tests/*.py dev/lane/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:

@@ -72,8 +72,8 @@ addopts = ["-p", "no:cacheprovider"]
 # dev/scripts/trace.py reads, as the plugin guide's Test says.
 markers = ["supports(name): the key result, element, or integration case one level up"]
 
-# How much of the E2E runner, of the trace script, of the double of Claude Code, of Lane's code, and
-# of rn's the tests run, as N7 of plugins/rn/domain/best-practices/code/best-practice.md says: every
+# How much of the E2E runner, of the trace script, of the double of Claude Code, and of rn's code
+# the tests run, as N7 of plugins/rn/domain/best-practices/code/best-practice.md says: every
 # line and branch.
 [tool.coverage.run]
 branch = true
@@ -87,24 +87,14 @@ include = [
   "*/dev/scripts/e2e.py",
   "*/dev/scripts/trace.py",
   "*/dev/tests/claude_code.py",
-  "*/lane/scripts/lay.py",
-  "*/lane/domain/lay/*.py",
-  "*/hooks/lane/*.py",
-  "*/hooks/lane/**/*.py",
   "*/rn/domain/*.py",
   "*/rn/domain/**/*.py",
   "*/rn/scripts/*.py",
   "*/rn/hooks/adapters/*.py",
 ]
 
-# Lane's cases run Lane's code from copies: a bench's copy of plugins/lane/, and the guard's code
-# that lay.py copies into a plugin's hooks/lane/. Each copy counts as its file in plugins/lane/. The
-# guard's code comes first, as a plugin's hooks/lane/ also ends in lane/. rn's cases run a bench's
-# copy of plugins/rn/, which counts as its file there; the guard laid in it is Lane's, which counts
-# as Lane's guard.
+# rn's cases run a bench's copy of plugins/rn/, which counts as its file there.
 [tool.coverage.paths]
-lane_guard = ["plugins/lane/hooks/lane/", "*/hooks/lane/"]
-lane = ["plugins/lane/", "*/lane/"]
 rn = ["plugins/rn/", "*/rn/"]
 
 [tool.coverage.report]

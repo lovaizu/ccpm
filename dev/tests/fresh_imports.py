@@ -8,8 +8,8 @@ import contextlib
 import sys
 from collections.abc import Collection, Generator
 
-# The modules of Lane's guard, by name, as plugins/lane/hooks/lane/domain/ holds them, which Lane
-# copies into each plugin it lays.
+# The modules of Lane's guard, by name, as the guard that the earlier Lane laid in a plugin holds
+# them in its hooks/lane/domain/.
 GUARD = (
     "events",
     "guard",
