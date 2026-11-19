@@ -119,14 +119,46 @@
       "inputs": [
         "dev/rn/product-vision.md",
         "plugins/rn/README.md",
-        "plugins/rn/domain/best-practices/architecture"
+        "plugins/rn/domain/best-practices/architecture",
+        "plugins/rn/domain/best-practices/design-tree"
       ],
       "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The product vision's Concept",
+              "decided": "rn piles up the vital few, what brings a deliverable's people to what they're after, and cuts the trivial many thoroughly, on three ideas: each role starts from the people's purpose and the state in which they have it; at each turn rn reviews the design tree, its content and how the work goes, by the facts of the run; and rn finds what's good and what would make it good, taking in only what brings the people closer",
+              "by": "user"
+            },
+            {
+              "about": "Where a role's work commits",
+              "decided": "only on the run's branch in the work's repository",
+              "by": "reasoning"
+            },
+            {
+              "about": "Test strategy's Scenario testing",
+              "decided": "each deliverable handed over is tried by a stand-in of its people with only what they have, and code checks what it printed",
+              "by": "user"
+            },
+            {
+              "about": "How rn's parts are made",
+              "decided": "each part carries out the product vision's Concept or a key result in the simplest way it allows, with no mechanism that only works around another",
+              "by": "user"
+            },
+            {
+              "about": "The bound on each context",
+              "decided": "each generator and evaluator starts from its Cut alone and keeps its content in files, handing back a short result; the main conversation is the orchestrator, and the E2E test measures its context",
+              "by": "user"
+            },
+            {
+              "about": "The round",
+              "decided": "one making of a deliverable by a generator and its judging by evaluators; the architecture names no turn",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -136,7 +168,33 @@
         {
           "id": "N3",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The order of content and refactoring",
+              "decided": "a deliverable's rounds make its content by its kind's best practice until each condition is good, and then the generator refactors it by the refactor best practice and an evaluator judges that",
+              "by": "user"
+            },
+            {
+              "about": "What a later round judges",
+              "decided": "only the conditions whose decisions changed since the round before",
+              "by": "user"
+            },
+            {
+              "about": "How many rounds",
+              "decided": "two rounds of content and two of refactoring at most; each finding left goes to the user with the deliverable as a proposal",
+              "by": "user"
+            },
+            {
+              "about": "Why evaluators are split by group of conditions",
+              "decided": "each evaluator judges its group of conditions in its own context, side by side, so a round of evaluators takes as long as its slowest group",
+              "by": "reasoning"
+            },
+            {
+              "about": "When a round reaches the orchestrator",
+              "decided": "once each evaluator of the round ends",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N4",
@@ -146,7 +204,48 @@
         {
           "id": "N5",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Who orders the work",
+              "decided": "the orchestrator, by inputs first and then by what the run's facts show brings the people closest",
+              "by": "user"
+            },
+            {
+              "about": "What the design tree's check holds",
+              "decided": "each edit is checked, before its commit, on each condition of the design tree best practice that code can check, a decided holding only the decision among them",
+              "by": "user"
+            },
+            {
+              "about": "Who decides a sign-off",
+              "decided": "only the user's typed /rn:ty or /rn:gm",
+              "by": "reasoning"
+            },
+            {
+              "about": "Each role's expected role",
+              "decided": "the orchestrator leads the run to the people's aim; the generator makes a deliverable with which its people reach their aim; the evaluator checks, as the people, whether a deliverable reaches their aim",
+              "by": "user"
+            },
+            {
+              "about": "Who writes the design tree",
+              "decided": "the orchestrator, each edit checked before its commit",
+              "by": "reasoning"
+            },
+            {
+              "about": "Where Lane applies",
+              "decided": "to every activity of every role's steps that it can hold",
+              "by": "user"
+            },
+            {
+              "about": "Where a role's Cut lives",
+              "decided": "in the run's folder, kept as the role starts, so that a role stopped starts again from it",
+              "by": "reasoning"
+            },
+            {
+              "about": "Who commits a role's work",
+              "decided": "the role's end, with its result as the message",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N6",
@@ -156,12 +255,38 @@
         {
           "id": "N7",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The design tree's parts",
+              "decided": "the goal, the deliverables, and the work order, in the design tree best practice's form",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N8",
           "good": false,
           "decisions": [
+            {
+              "about": "When a deliverable's round starts",
+              "decided": "once it rests on no open point and on nothing not signed off, in the work's order",
+              "by": "reasoning"
+            },
+            {
+              "about": "A node with no file",
+              "decided": "no generator or evaluator starts for it: the orchestrator settles each of its decisions and puts it up for sign-off",
+              "by": "reasoning"
+            },
+            {
+              "about": "When the orchestrator reviews the run",
+              "decided": "at each event: the request, an answer, a sign-off, or a round once each of its evaluators ends",
+              "by": "reasoning"
+            },
+            {
+              "about": "A pause",
+              "decided": "/rn:dn stops each role and commits and pushes the run's folder; /rn:up picks the run up in any conversation, and each role that the pause stopped starts again from its kept Cut",
+              "by": "reasoning"
+            },
             {
               "about": "Parallel rounds",
               "decided": "rn starts the generator of each deliverable whose inputs are done and that rests on no other deliverable in progress, in parallel, each round in its own lane of Lane; the only order rn fixes is a round's: making, judging, refactoring, judging",
@@ -207,7 +332,13 @@
         {
           "id": "N16",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "How far the architecture goes",
+              "decided": "only what its Principles need, in the reworked architecture best practice's form; the handshake with Lane and cases off the README's image go to the software design and its integration cases",
+              "by": "user"
+            }
+          ]
         }
       ]
     },
