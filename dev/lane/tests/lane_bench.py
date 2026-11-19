@@ -52,8 +52,9 @@ CHECK_SAYS = "CHANGELOG.md holds no entry of 1.2.0"
 # The rules of `log`: the main conversation's steps by the skill's name, each subagent's by its
 # agent type, and the routes, which start the writer after the command, the reviewer after the
 # writer's result, the writer again after the reviewer's `more`, two writers after its `split`, and
-# none after its `good`; `/log:retry` starts the writer in place of what was due, and `/log:tag`
-# starts a run of its own skill, whose tagger ends it.
+# none after its `good`; `/log:retry` starts the writer in place of what was due, and `/log:tag`,
+# whose skill holds the main conversation to steps of its own, starts the tagger in place of what
+# was due, whose `tagged` ends the run.
 RULES: Rules = {
     "roles": {
         "log:up": {

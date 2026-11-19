@@ -65,21 +65,19 @@ def test_entries_added_at_once_and_after_keep_their_order():
     assert runs("session-1")[0].entries == [RUN, FOLDER, START, TIE, result]
 
 
-@pytest.mark.supports(
-    "test_another_skills_command_typed_while_a_subagent_runs_starts_its_run_beside"
-)
+@pytest.mark.supports("test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run")
 def test_two_runs_of_one_conversation_each_hold_their_own_entries():
-    """Given a run r1 of log:up with a start
-    When Lane adds a run r2 of log:tag, and a start of it
+    """Given a run r1 of log:up for 1.2.0 with a start
+    When Lane adds a run r2 of log:up for 1.3.0, and a start of it
     Then the conversation has both runs, in order, each with its own entries"""
-    other: Entry = {"kind": "run", "run": "r2", "skill": "log:tag", "words": ""}
-    tagger: Entry = {"kind": "start", "run": "r2", "role": "log:tagger", "tool_use_id": "toolu_2"}
+    other: Entry = {"kind": "run", "run": "r2", "skill": "log:up", "words": "1.3.0"}
+    writer: Entry = {"kind": "start", "run": "r2", "role": "log:writer", "tool_use_id": "toolu_2"}
     add("session-1", [RUN, FOLDER, START])
-    add("session-1", [other, tagger])
+    add("session-1", [other, writer])
     first, second = runs("session-1")
-    assert (first.skill, second.skill) == ("log:up", "log:tag")
+    assert (first.words, second.words) == ("1.2.0", "1.3.0")
     assert first.entries == [RUN, FOLDER, START]
-    assert second.entries == [other, tagger]
+    assert second.entries == [other, writer]
 
 
 @pytest.mark.supports("test_another_conversation_in_the_repository_is_held_to_no_run_of_the_first")

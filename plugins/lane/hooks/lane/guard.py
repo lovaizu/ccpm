@@ -40,17 +40,12 @@ def answer(event: Event) -> Answer:
 def skill_called(call: SkillCall) -> Answer:
     """S9 and S10: the main conversation calls the skill, with the words typed after the command.
 
-    Takes: the skill's call that place.skill_call gives: a command whose skill's steps its plugin's
-    rules give, such as another skill's command typed while a run stands, or one that no rules of
-    a run route after, such as the plugin's first command in the conversation.
-    Gives: the starts due, each with its text, of a run of the skill that the run record holds
-    with its folder and that its plugin's rules show not ended, where it stands; else an empty
-    answer, as the transcript holds the skill's base directory only from the conversation's next
-    event, where run_opened gives the starts due.
-    Changes: the run record, by a new run of the skill and the words, with no folder, beside each
-    run that stands, where it holds no such run.
-    Refuses: nothing; a plugin's rules out of form, or a start adapter that failed, stops the call
-    with what's wrong.
+    Takes: the skill's call that place.skill_call gives, where no run of its plugin stands in the
+    conversation, such as the plugin's first command in it, or one typed once its run ended.
+    Gives: an empty answer, as the transcript holds the skill's base directory only from the
+    conversation's next event, where run_opened gives the starts due.
+    Changes: the run record, by a new run of the skill and the words, with no folder.
+    Refuses: nothing.
     """
     raise NotImplementedError("guard.skill_called")
 
@@ -99,14 +94,15 @@ def turn_ended(move: Move) -> Answer:
 
 
 def command_typed(move: Move) -> Answer:
-    """S9: the person types a command that a route waits for.
+    """S9 and S10: a command of the plugin, typed by the person or called by the Skill tool, moves
+    the run that stands, as a conversation holds one run of a plugin at a time.
 
-    Takes: a `typed` move at the UserPromptExpansion of the command, which place gives where the
-    rules of the run's plugin route after the command and give no steps of its skill, as a command
-    whose skill has steps starts that skill's run by skill_called.
-    Gives: the starts that its route makes due, in place of those before.
+    Takes: a `typed` move at the UserPromptExpansion of the command, or at the PostToolUse of its
+    Skill call, which place gives while the run of the command's plugin stands.
+    Gives: where the run stands: the starts due, each with its text, as routes.due gives them once
+    the command is added.
     Changes: the run record, by the command.
-    Refuses: nothing.
+    Refuses: nothing; a start adapter that failed stops the call with what's wrong.
     """
     raise NotImplementedError("guard.command_typed")
 

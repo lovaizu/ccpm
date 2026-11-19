@@ -1,7 +1,7 @@
 """Which run, start, role, and step each move of a conversation belongs to, and what kind of move it
 is, by what Claude Code's hook events carry, as dev/lane/claude-code-states.md lists: among them,
-whether a typed command calls its skill or is a move of a run that stands, by the rules of that
-run's plugin."""
+whether a command of a plugin calls its skill or is a move of the plugin's run that stands, as a
+conversation holds one run of a plugin at a time."""
 
 from __future__ import annotations
 
@@ -30,7 +30,8 @@ class SkillCall:
 class Move:
     """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `queue`, `drop`,
     `read`, `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role whose steps hold
-    it, the subagent's agent type, or the skill's name of the run for the main conversation; the
+    it, the subagent's agent type, or for the main conversation the skill of the run's latest
+    command whose steps its plugin's rules give, the skill that called the run before any; the
     subagent's `agent_id`, None for the main conversation; the step its start stands at; and the
     report where a reporter made the move."""
 
@@ -48,13 +49,13 @@ def skill_call(event: Event, runs: list[Run]) -> SkillCall | None:
 
     Takes: a UserPromptExpansion, or a PostToolUse of Skill, so that a Skill call denied at its
     PreToolUse calls no skill; and the runs of its conversation.
-    Gives: the skill by `command_name` or `tool_input.skill`, with `command_args` or `args`; at a
-    UserPromptExpansion, only where the plugin's rules in a run's folder give that skill's steps
-    under its name in `roles`, or no run's rules route after the command. None for a typed command
-    that the rules of a run's plugin route after and give no steps of, as that command is a
-    `typed` move of the run, which place gives; and for any other event.
+    Gives: the skill by `command_name` or `tool_input.skill`, with `command_args` or `args`, only
+    where no run of the skill's plugin, by the name before its `:`, stands in the conversation:
+    where each such run ended, as its plugin's rules show, or none was added. None for a command,
+    typed or by the Skill tool, of a plugin whose run stands, with no folder yet or not ended, as
+    that command is a `typed` move of the run, which place gives; and for any other event.
     Changes: nothing.
-    Refuses: OutOfForm, where the rules of a run's plugin are out of form.
+    Refuses: OutOfForm, where the rules of the plugin's run are out of form.
     """
     raise NotImplementedError("place.skill_call")
 
@@ -79,14 +80,14 @@ def place(event: Event, runs: list[Run]) -> Move | None:
     Takes: a hook event, and the runs of its conversation.
     Gives: the move, placed by `session_id`, by a missing `agent_id` for the main conversation, by
     the `agent_id` that the PostToolUse of an Agent call tied to a start, and by the skill that a
-    result names; a typed command that skill_call gives no call of as a `typed` move, on the run
-    whose plugin's rules route after the command; a reporter's Bash call as a `report` move with
-    the report that report.read_report gives of its output; the PostToolUse of a SendMessage as a
-    `tie` where it resumed the subagent, and as a `queue` where it queued the message to a
+    result names; a command, typed or by the Skill tool, that skill_call gives no call of as a
+    `typed` move on the run of its plugin that stands; a reporter's Bash call as a `report` move
+    with the report that report.read_report gives of its output; the PostToolUse of a SendMessage
+    as a `tie` where it resumed the subagent, and as a `queue` where it queued the message to a
     subagent that still runs; that subagent's SubagentStop as the `end` of the pass that ran, on
     the start tied to it before, with the resume queued still untied; None where the event lies
     outside each run, such as an `agent_id` that no start ties.
     Changes: nothing.
-    Refuses: OutOfForm, where the rules of a run's plugin are out of form at a typed command.
+    Refuses: OutOfForm, where the rules of the plugin's run are out of form at its command.
     """
     raise NotImplementedError("place.place")

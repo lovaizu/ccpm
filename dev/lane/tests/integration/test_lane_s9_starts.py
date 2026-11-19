@@ -257,13 +257,13 @@ def test_a_subagent_stopped_by_task_stop_is_due_again(b: Bench):
     assert c.stop("Stopped the writer.").blocked
 
 
-@pytest.mark.supports("S9")
-def test_another_skills_command_typed_while_a_subagent_runs_starts_its_run_beside(b: Bench):
+@pytest.mark.supports("S9", "Route")
+def test_another_skills_command_typed_while_a_subagent_runs_moves_the_run(b: Bench):
     """Given the writer running
     When the person types /log:tag, the main conversation ends its turn, and the writer writes a
     file that its step doesn't name
-    Then the end is stopped with the tagger due, and the write is stopped, as the writer stays on
-    its own run"""
+    Then the end is stopped with the tagger due, as the command moves the run that stands, and the
+    write is stopped, as the writer stays on its own start"""
     c = opened(b)
     writer = started(c)
     c.type("/log:tag")

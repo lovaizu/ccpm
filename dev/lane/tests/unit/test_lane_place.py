@@ -1,5 +1,6 @@
 """The unit cases of hooks/lane/place.py: skill_call, one for each event that calls a skill or
-doesn't, and for a typed command whose skill the rules give steps of or none; opening, one for each
+doesn't, and for a command of a plugin whose run stands, has ended, or was never added; opening, one
+for each
 event at which the transcript holds the skill's base directory or not yet; and place, one for each
 transition of a run's moves that Lane's list of Claude Code's states brings about, each event placed
 on its run, its start, its role, and its step, or outside each run."""
@@ -37,6 +38,15 @@ def run(*entries: Entry, folder: str | None = "/plugins/log", skill: str = "log:
 START: Entry = {"kind": "start", "run": "r1", "role": "log:writer", "tool_use_id": "u1"}
 TIE: Entry = {"kind": "tie", "run": "r1", "tool_use_id": "u1", "agent_id": "a1"}
 TIED = run(START, TIE)
+# The writer's `written` and the reviewer's `good`, after which log's routes start no more.
+GOOD: tuple[Entry, ...] = (
+    START,
+    TIE,
+    {"kind": "result", "run": "r1", "agent_id": "a1", "role": "log:writer", "result": "written"},
+    {"kind": "start", "run": "r1", "role": "log:reviewer", "tool_use_id": "u2"},
+    {"kind": "tie", "run": "r1", "tool_use_id": "u2", "agent_id": "a2"},
+    {"kind": "result", "run": "r1", "agent_id": "a2", "role": "log:reviewer", "result": "good"},
+)
 
 
 def kind(move: Any) -> str | None:
@@ -84,24 +94,31 @@ def test_any_other_event_calls_no_skill(e: Events):
     assert skill_call(e.stop(), [run()]) is None
 
 
-@pytest.mark.supports(
-    "test_another_skills_command_typed_while_a_subagent_runs_starts_its_run_beside"
-)
-def test_a_typed_command_whose_skill_has_steps_calls_it_beside_the_run(e: Events, log: str):
-    """Given a run of log:up in log's folder, whose rules give the steps of log:tag
-    When the UserPromptExpansion of /log:tag comes
-    Then it calls log:tag"""
-    called = skill_call(e.typed("log:tag"), [run(folder=log)])
-    assert called == SkillCall("session-1", e.transcript, "log:tag", "")
+@pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
+@pytest.mark.parametrize("by", ["typed", "skill_post"])
+def test_a_command_of_the_plugin_whose_run_stands_calls_no_skill(e: Events, log: str, by: str):
+    """Given a run of log:up in log's folder, not ended
+    When the UserPromptExpansion of /log:tag, or the PostToolUse of a Skill call of log:tag, comes
+    Then it calls no skill, as the command is a move of the run"""
+    given = e.typed("log:tag") if by == "typed" else e.skill_post("log:tag", "")
+    assert skill_call(given, [run(folder=log)]) is None
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_waits_for_puts_its_starts_in_place")
-def test_a_typed_command_whose_skill_has_no_steps_calls_no_skill(e: Events, log: str):
-    """Given a run of log:up in log's folder, whose rules route after /log:retry and give no
-    steps of log:retry
+def test_a_command_that_a_route_of_the_standing_run_goes_after_calls_no_skill(e: Events, log: str):
+    """Given a run of log:up in log's folder, not ended, whose rules route after /log:retry
     When the UserPromptExpansion of /log:retry comes
     Then it calls no skill, as the command is a move of the run"""
     assert skill_call(e.typed("log:retry"), [run(folder=log)]) is None
+
+
+@pytest.mark.supports("test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run")
+def test_a_command_of_the_plugin_whose_run_ended_calls_its_skill(e: Events, log: str):
+    """Given a run of log:up in log's folder that ended with the reviewer's `good`
+    When the UserPromptExpansion of /log:up 1.3.0 comes
+    Then it calls log:up with 1.3.0"""
+    called = skill_call(e.typed("log:up", "1.3.0"), [run(*GOOD, folder=log)])
+    assert called == SkillCall("session-1", e.transcript, "log:up", "1.3.0")
 
 
 @pytest.mark.supports(
@@ -279,11 +296,35 @@ def test_the_main_conversations_stop_is_the_end_of_its_turn(e: Events):
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_waits_for_puts_its_starts_in_place")
 def test_a_typed_command_that_a_route_waits_for_is_typed(e: Events, log: str):
-    """Given a run of log:up in log's folder, whose rules give no steps of log:retry
+    """Given a run of log:up in log's folder, not ended
     When the UserPromptExpansion of /log:retry comes
     Then the move is a typed command on that run"""
     move = place(e.typed("log:retry"), [run(folder=log)])
     assert (kind(move), move.run.id if move else None) == ("typed", "r1")
+
+
+@pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
+def test_a_skill_tool_call_of_the_plugins_skill_while_its_run_stands_is_typed(e: Events, log: str):
+    """Given a run of log:up in log's folder whose writer is tied to a1
+    When the PostToolUse of the main conversation's Skill call of log:tag comes
+    Then the move is a typed command on that run"""
+    move = place(e.skill_post("log:tag", ""), [run(START, TIE, folder=log)])
+    assert (kind(move), move.run.id if move else None) == ("typed", "r1")
+
+
+@pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
+@pytest.mark.parametrize("command, role", [("log:tag", "log:tag"), ("log:retry", "log:up")])
+def test_the_main_conversations_call_after_a_command_holds_to_its_skills_steps_if_any(
+    e: Events, log: str, command: str, role: str
+):
+    """Given a run of log:up in log's folder, and the command /log:tag, whose skill the rules give
+    steps of, or /log:retry, whose skill they give none of, typed in it
+    When the main conversation writes a file
+    Then the move is a call of the role log:tag, or still log:up, at the step `lead`"""
+    typed: Entry = {"kind": "typed", "run": "r1", "command": command}
+    move = place(e.write("/repo/notes.txt"), [run(typed, folder=log)])
+    assert move is not None
+    assert (move.kind, move.role, move.step) == ("call", role, "lead")
 
 
 @pytest.mark.supports(
@@ -353,14 +394,12 @@ def test_a_call_of_a_subagent_that_no_start_ties_lies_outside(e: Events):
     assert place(e.write("/repo/notes.txt", WRITER), [run(START)]) is None
 
 
-@pytest.mark.supports(
-    "test_another_skills_command_typed_while_a_subagent_runs_starts_its_run_beside"
-)
+@pytest.mark.supports("test_each_plugins_run_is_held_to_the_rules_in_its_own_folder")
 def test_a_subagents_call_is_placed_on_the_run_of_its_start(e: Events):
-    """Given a run r1 of log:up whose writer is tied to a1, and a run r2 of log:tag after it
+    """Given a run r1 of log:up whose writer is tied to a1, and a run r2 of memo:up after it
     When a1 writes a file
     Then the move lies on r1"""
-    tag = Run("r2", "session-1", "log:tag", "", "/plugins/log", [])
-    move = place(e.write("/repo/notes.txt", WRITER), [TIED, tag])
+    memo = Run("r2", "session-1", "memo:up", "", "/plugins/memo", [])
+    move = place(e.write("/repo/notes.txt", WRITER), [TIED, memo])
     assert move is not None
     assert move.run.id == "r1"

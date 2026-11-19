@@ -1,8 +1,8 @@
 """The unit cases of hooks/lane/routes.py's due: one for each transition of a run's starts due that
 Lane's list of Claude Code's states brings about, from the entries of the run's record: the
 command's route, a start made, dropped, tied, or stopped with no result, each result and its route,
-a typed command in place of what was due, two starts of one role, a result that no route goes
-after, and the end of the routes."""
+a typed command in place of what was due, the command that called the run typed again, two starts
+of one role, a result that no route goes after, and the end of the routes."""
 
 from __future__ import annotations
 
@@ -107,6 +107,15 @@ def test_a_typed_command_puts_its_routes_starts_in_place_of_those_before():
     Then the writer is due, and not the reviewer"""
     typed: Entry = {"kind": "typed", "run": "r1", "command": "log:retry"}
     assert roles(due(RULES, run(*WRITER_DONE, typed))) == ["log:writer"]
+
+
+@pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_picks_up")
+def test_the_command_that_called_the_run_given_again_leaves_the_starts_as_they_stand():
+    """Given the reviewer due after the writer's `written`
+    When the person's /log:up is added again, and Lane gives the starts due
+    Then the reviewer is due, and not the writer that the route after /log:up starts"""
+    typed: Entry = {"kind": "typed", "run": "r1", "command": "log:up"}
+    assert roles(due(RULES, run(*WRITER_DONE, typed))) == ["log:reviewer"]
 
 
 @pytest.mark.supports("test_two_starts_of_one_role_are_each_held_to_their_own_start")

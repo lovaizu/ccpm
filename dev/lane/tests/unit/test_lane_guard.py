@@ -325,22 +325,21 @@ def test_the_command_typed_once_its_run_ended_adds_a_new_run(g: Play):
     assert len(runs("session-1")) == 2
 
 
-@pytest.mark.supports(
-    "test_another_skills_command_typed_while_a_subagent_runs_starts_its_run_beside"
-)
-def test_another_skills_command_adds_its_run_beside_and_the_turn_waits_for_either(g: Play):
+@pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
+def test_another_skills_command_moves_the_run_and_its_subagent_stays_on_its_start(g: Play):
     """Given the writer a1 running in the run of log:up
     When the person's /log:tag expands, the main conversation ends its turn, and a1 writes
     notes.txt
-    Then the end is stopped with the tagger due, and the write is stopped by a1's step"""
+    Then the end is stopped with the tagger due, the write is stopped by a1's step, and the record
+    holds the one run"""
     g.opened()
     writer = g.started()
     g(g.e.typed("log:tag"))
-    base_directory(g.e.transcript, g.log, "tag")
     said = answer(g.e.stop())
     assert said.stop
     assert TEXT("log:tagger") in said.said
     assert answer(g.e.write(os.path.join(g.e.cwd, "notes.txt"), writer)).stop
+    assert len(runs("session-1")) == 1
 
 
 @pytest.mark.supports("test_after_compact_the_run_goes_on_with_its_starts_due")
@@ -466,27 +465,33 @@ def test_skill_called_with_no_run_adds_one_with_no_folder(g: Play):
 
 
 @pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_picks_up")
-def test_skill_called_with_its_run_standing_gives_its_starts_due(g: Play, log: str):
-    """Given a run of log:up with its folder, the writer due
-    When log:up is called again
-    Then the answer gives the writer due with its text"""
-    recorded(log)
-    said = skill_called(SkillCall("session-1", g.e.transcript, "log:up", "1.2.0"))
-    assert TEXT("log:writer") in said.said
+def test_command_typed_of_the_skill_that_called_the_run_gives_where_it_stands(g: Play, log: str):
+    """Given the writer a1's result `written`, so the reviewer is due
+    When the person types /log:up again
+    Then the answer gives the reviewer due with its text, and not the writer"""
+    gave: Entry = {
+        "kind": "result",
+        "run": "r1",
+        "agent_id": "a1",
+        "role": "log:writer",
+        "result": "written",
+    }
+    recorded(log, START, TIE, gave)
+    said = command_typed(move("typed", g.e.typed("log:up", "1.2.0")))
+    assert TEXT("log:reviewer") in said.said
+    assert TEXT("log:writer") not in said.said
 
 
-@pytest.mark.supports(
-    "test_another_skills_command_typed_while_a_subagent_runs_starts_its_run_beside"
-)
-def test_skill_called_of_another_skill_adds_its_run_beside_the_one_that_stands(g: Play, log: str):
-    """Given a run of log:up with its folder, whose writer is tied to a1
-    When log:tag is called
-    Then the answer is empty, and the record holds the run of log:up and a run of log:tag with no
-    folder"""
+@pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
+def test_command_typed_of_another_skill_gives_its_routes_starts(g: Play, log: str):
+    """Given the writer tied to a1
+    When the main conversation calls log:tag by the Skill tool
+    Then the answer gives the tagger due with its text, and the record holds the command"""
     recorded(log, START, TIE)
-    assert skill_called(SkillCall("session-1", g.e.transcript, "log:tag", "")) == Answer()
-    first, second = runs("session-1")
-    assert (first.skill, second.skill, second.plugin_root) == ("log:up", "log:tag", None)
+    said = command_typed(move("typed", g.e.skill_post("log:tag", "")))
+    assert TEXT("log:tagger") in said.said
+    last = runs("session-1")[0].entries[-1]
+    assert (last["kind"], last.get("command")) == ("typed", "log:tag")
 
 
 @pytest.mark.supports(

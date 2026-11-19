@@ -23,8 +23,10 @@ def due(rules: Rules, run: Run) -> list[Due]:
     Takes: the plugin's rules, and the run as its record stands.
     Gives: each start that the route of the latest result or typed command makes due and that no
     start of the run has made since; a start that a `stopped` entry ended with no result counts as
-    not made, so its start is due again; a typed command that a route goes after puts its starts in
-    place of those before; none once the routes start no more, which ends the run.
+    not made, so its start is due again; a command of the plugin, typed or by the Skill tool, that
+    a route goes after puts its starts in place of those before, but the command that called the
+    run, given again, which leaves the starts as they stand, as S10 draws; none once the routes
+    start no more, which ends the run.
     Changes: nothing.
     Refuses: nothing.
     """
