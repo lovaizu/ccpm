@@ -65,6 +65,8 @@ def evaluators(
 
 
 MADE = {"result": "made", "carried_out": []}
+# The groups of the refactor-code best practice's conditions.
+REFACTORING = {"C1": ["N1"], "C2": ["N2", "N3", "N4", "N5", "N6"], "C3": ["N7", "N8"]}
 SHORT = {"N2": "The team sees a wrong line named"}
 
 
@@ -90,7 +92,7 @@ def test_no_round_yet_gives_the_first_deliverables_generator_by_its_kind():
     assert roles(course.due(plan(), [], [])) == [("generator", "", "code", 1)]
 
 
-@pytest.mark.supports("test_one_generator_runs_for_each_deliverable")
+@pytest.mark.supports("test_a_generator_running_gets_no_second_start_of_its_deliverable")
 def test_a_generator_running_gives_none():
     """Given the command's generator of round 1 running, with no result
     When course.due gives the starts due
@@ -99,7 +101,7 @@ def test_a_generator_running_gives_none():
     assert roles(course.due(plan(), [generator(1, "code", None)], running)) == []
 
 
-@pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
+@pytest.mark.supports("test_a_generators_point_passes_its_check_and_starts_no_evaluator")
 def test_a_generators_point_gives_none():
     """Given the command's generator ended with a point
     When course.due gives the starts due
@@ -108,7 +110,7 @@ def test_a_generators_point_gives_none():
     assert roles(course.due(plan(), [generator(1, "code", point)], [])) == []
 
 
-@pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
+@pytest.mark.supports("test_a_point_answered_gets_the_generator_again")
 def test_a_generators_point_answered_gives_the_next_round():
     """Given the command's generator ended with a point, and a decision of the command changed
     since its Cut, as the user's answer settles it
@@ -120,7 +122,7 @@ def test_a_generators_point_answered_gives_the_next_round():
     ]
 
 
-@pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
+@pytest.mark.supports("test_the_sign_off_of_the_pull_request_ends_the_run")
 def test_no_work_left_gives_none():
     """Given the plan with each deliverable done and no work left
     When course.due gives the starts due
@@ -130,7 +132,7 @@ def test_no_work_left_gives_none():
     assert roles(course.due(tree, [], [])) == []
 
 
-@pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
+@pytest.mark.supports("test_a_point_first_in_the_work_starts_no_role_while_it_waits")
 def test_a_point_first_in_the_work_gives_none():
     """Given the plan with a point of the command first in the work
     When course.due gives the starts due
@@ -149,7 +151,7 @@ def test_a_generator_made_gives_one_evaluator_for_each_group():
     assert roles(due) == [("evaluator", g, "code", 1) for g in CODE_GROUPS]
 
 
-@pytest.mark.supports("test_a_deliverable_made_gets_one_evaluator_for_each_group_of_its_conditions")
+@pytest.mark.supports("test_a_deliverable_made_gives_lane_its_evaluators_beside_those_that_run")
 def test_evaluators_running_leave_only_the_groups_none_runs():
     """Given the command made, and the evaluator of C1 running
     When course.due gives the starts due
@@ -159,7 +161,7 @@ def test_evaluators_running_leave_only_the_groups_none_runs():
     assert [d.group for d in due] == ["C2", "C3"]
 
 
-@pytest.mark.supports("test_a_role_stopped_starts_again_from_its_kept_cut")
+@pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
 def test_an_evaluator_stopped_is_due_again_beside_the_groups_none_answered():
     """Given the command made, the evaluator of C1 answered, and the evaluator of C2 stopped with
     no result, none running
@@ -189,7 +191,7 @@ def test_findings_with_no_decision_changed_give_none():
     assert roles(course.due(plan(), starts, [])) == []
 
 
-@pytest.mark.supports("test_a_finding_taken_into_its_decision_gets_the_next_round_of_content")
+@pytest.mark.supports("test_a_finding_the_people_would_never_meet_gets_a_round_of_refactoring")
 def test_findings_the_orchestrator_holds_good_give_a_round_of_refactoring():
     """Given round 1 judged with more on N2, and N2 good in the design tree with no decision
     changed, as the orchestrator found that the people would never meet it
@@ -201,7 +203,7 @@ def test_findings_the_orchestrator_holds_good_give_a_round_of_refactoring():
     assert roles(course.due(tree, starts, [])) == [("generator", "", "refactor-code", 2)]
 
 
-@pytest.mark.supports("test_findings_past_two_rounds_of_content_start_no_third")
+@pytest.mark.supports("test_a_users_decision_past_the_limit_gets_a_third_round")
 def test_a_users_change_past_the_limit_gives_a_round_of_content():
     """Given two rounds of content short, and then a decision by the user under N2
     When course.due gives the starts due
@@ -312,7 +314,7 @@ def test_two_rounds_of_refactoring_short_give_none():
     """Given content judged good, and two rounds of refactoring, each judged with more on N2
     When course.due gives the starts due
     Then none is due"""
-    refactoring = {"C1": ["N1"], "C2": ["N2", "N3", "N4", "N5", "N6"], "C3": ["N7", "N8"]}
+    refactoring = REFACTORING
     starts = [
         generator(1, "code", MADE),
         *evaluators(1, {}),
@@ -330,10 +332,75 @@ def test_the_guide_waits_while_the_command_isnt_done():
     When course.due gives the starts due
     Then no start of the guide is due, as its input isn't done"""
     starts = [generator(1, "code", MADE), *evaluators(1, {}), generator(2, "refactor-code", MADE)]
-    starts += evaluators(
-        2, {}, {"C1": ["N1"], "C2": ["N2", "N3", "N4", "N5", "N6"], "C3": ["N7", "N8"]}
-    )
+    starts += evaluators(2, {}, REFACTORING)
     assert all(d.deliverable == COMMAND for d in course.due(plan(), starts, []))
+
+
+@pytest.mark.supports("test_a_generator_stopped_starts_again_with_a_fresh_cut_in_the_next_round")
+def test_a_generator_that_didnt_end_gives_it_again_in_the_next_round():
+    """Given the command's generator of round 1 cut with no result, none running, as a pause
+    stopped it
+    When course.due gives the starts due
+    Then the command's generator of round 2 by code is due, as the start that didn't end counts
+    for nothing but for the next Round's number"""
+    assert roles(course.due(plan(), [generator(1, "code", None)], [])) == [
+        ("generator", "", "code", 2)
+    ]
+
+
+@pytest.mark.supports("test_refactoring_judged_good_leaves_the_deliverable_for_its_sign_off")
+def test_refactoring_judged_good_gives_none():
+    """Given round 1 judged good, and round 2 by refactor-code judged good
+    When course.due gives the starts due
+    Then none is due, as the deliverable waits for the user's sign-off"""
+    starts = [
+        generator(1, "code", MADE),
+        *evaluators(1, {}),
+        generator(2, "refactor-code", MADE),
+        *evaluators(2, {}, REFACTORING),
+    ]
+    assert roles(course.due(plan(), starts, [])) == []
+
+
+@pytest.mark.supports("test_a_finding_taken_into_its_decision_gets_the_next_round_of_content")
+def test_refactoring_short_with_its_decision_changed_gives_the_next_round_of_refactoring():
+    """Given round 2 by refactor-code judged with more on N2, and a decision under N2 added since
+    When course.due gives the starts due
+    Then the generator of round 3 by refactor-code is due"""
+    starts = [
+        generator(1, "code", MADE),
+        *evaluators(1, {}),
+        generator(2, "refactor-code", MADE),
+        *evaluators(2, SHORT, REFACTORING),
+    ]
+    assert roles(course.due(changed(), starts, [])) == [("generator", "", "refactor-code", 3)]
+
+
+@pytest.mark.supports("test_deliverables_that_rest_on_none_being_made_start_at_once")
+def test_deliverables_that_rest_on_none_being_made_give_a_generator_each_in_rounds_of_their_own():
+    """Given the plan in which the guide rests on the product vision alone, and no Round
+    When course.due gives the starts due
+    Then the command's generator of round 1 by code and the guide's of round 2 by readme are due"""
+    tree = plan()
+    tree["deliverables"][1]["inputs"] = ["docs/product-vision.md"]
+    due = [(d.deliverable, d.role, d.best_practice, d.round) for d in course.due(tree, [], [])]
+    assert due == [(COMMAND, "generator", "code", 1), (GUIDE, "generator", "readme", 2)]
+
+
+@pytest.mark.supports("test_deliverables_that_rest_on_none_being_made_start_at_once")
+def test_a_deliverable_beside_one_being_judged_gets_its_generator_in_the_next_round():
+    """Given the plan in which the guide rests on the product vision alone, and the command's
+    round 1 made, the guide's generator running in round 2
+    When course.due gives the starts due
+    Then each evaluator of the command's round 1 is due, and no start of the guide"""
+    tree = plan()
+    tree["deliverables"][1]["inputs"] = ["docs/product-vision.md"]
+    guide = Start(2, "generator", "", {"deliverable": {"path": GUIDE}}, None)
+    running = [Due(GUIDE, "generator", "", "readme", 2)]
+    due = course.due(tree, [generator(1, "code", MADE), guide], running)
+    assert [(d.deliverable, d.role, d.round) for d in due] == [
+        (COMMAND, "evaluator", 1) for _ in CODE_GROUPS
+    ]
 
 
 def run_folder(tmp: str, files: dict[str, Any]) -> str:
@@ -343,7 +410,7 @@ def run_folder(tmp: str, files: dict[str, Any]) -> str:
     return run
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gives_lane_each_role_stopped_again")
 def test_each_gives_none_for_a_run_with_no_round(tmp_path: Any):
     """Given the run's folder with no rounds/
     When rounds.each reads it
@@ -351,7 +418,7 @@ def test_each_gives_none_for_a_run_with_no_round(tmp_path: Any):
     assert rounds.each(run_folder(str(tmp_path), {"design-tree.json": plan()})) == []
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gives_lane_each_role_stopped_again")
 def test_each_gives_each_start_in_the_order_of_its_rounds(tmp_path: Any):
     """Given round 1's generator and evaluator of C1 with their results, and round 2's generator
     with none, and round 10's generator
@@ -379,7 +446,33 @@ def test_each_gives_each_start_in_the_order_of_its_rounds(tmp_path: Any):
     ]
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+@pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
+def test_each_gives_later_starts_of_a_role_and_group_after_the_first_by_their_slot(tmp_path: Any):
+    """Given round 1's evaluator of C1 in slots 1, 2, and 10, and its evaluator of C2, the result
+    beside slot 2 alone
+    When rounds.each reads them
+    Then it gives C1's starts by slot, 1, 2, and 10, each with its result or None, then C2's"""
+    judged = {"good": [], "more": []}
+    run = run_folder(
+        str(tmp_path),
+        {
+            "rounds/1/evaluator-C1.10.cut.json": {"n": 10},
+            "rounds/1/evaluator-C1.2.cut.json": {"n": 2},
+            "rounds/1/evaluator-C1.2.json": judged,
+            "rounds/1/evaluator-C1.cut.json": {"n": 1},
+            "rounds/1/evaluator-C2.cut.json": {"n": 1},
+        },
+    )
+    got = [(s.group, s.slot, s.cut["n"], s.result) for s in rounds.each(run)]
+    assert got == [
+        ("C1", 1, 1, None),
+        ("C1", 2, 2, judged),
+        ("C1", 10, 10, None),
+        ("C2", 1, 1, None),
+    ]
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gives_lane_each_role_stopped_again")
 def test_each_refuses_a_cut_that_isnt_json_naming_it(tmp_path: Any):
     """Given round 1's generator's Cut that isn't JSON
     When rounds.each reads it
@@ -390,17 +483,34 @@ def test_each_refuses_a_cut_that_isnt_json_naming_it(tmp_path: Any):
     assert "rounds/1/generator.cut.json" in str(refused.value)
 
 
-@pytest.mark.supports("test_a_role_stopped_starts_again_from_its_kept_cut")
+@pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
 @pytest.mark.parametrize(
-    ("role", "group", "name"),
-    [("generator", "", "generator.cut.json"), ("evaluator", "C2", "evaluator-C2.cut.json")],
+    ("role", "group", "slot", "name"),
+    [
+        ("generator", "", 1, "generator.cut.json"),
+        ("evaluator", "C2", 1, "evaluator-C2.cut.json"),
+        ("evaluator", "C2", 2, "evaluator-C2.2.cut.json"),
+    ],
+    ids=["generator", "evaluator", "later slot"],
 )
-def test_path_names_the_cut_of_a_start(role: str, group: str, name: str):
-    """Given a start of round 3, the generator's or the evaluator's of C2
+def test_path_names_the_cut_of_a_start(role: str, group: str, slot: int, name: str):
+    """Given a start of round 3, the generator's or the evaluator's of C2, in slot 1 or 2
     When rounds.path names its Cut
-    Then it gives rounds/3/ and the file of its role and group"""
-    start = Start(3, role, group, {}, None)
+    Then it gives rounds/3/ and the file of its role and group, with the slot past the first"""
+    start = Start(3, role, group, {}, None, slot)
     assert rounds.path(RUN, start) == f"{RUN}/rounds/3/{name}"
+
+
+@pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
+@pytest.mark.parametrize(("held", "slot"), [(0, ""), (1, ".2"), (2, ".3")])
+def test_fresh_gives_the_first_slot_that_holds_no_cut(tmp_path: Any, held: int, slot: str):
+    """Given round 1's evaluator of C1 with no Cut, one Cut, or Cuts in slots 1 and 2
+    When rounds.fresh names a new Cut of the start
+    Then it gives slot 1, 2, or 3, the first that holds none"""
+    names = ["evaluator-C1.cut.json", "evaluator-C1.2.cut.json"][:held]
+    run = run_folder(str(tmp_path), {f"rounds/1/{n}": {} for n in names})
+    start = Start(1, "evaluator", "C1", {}, None)
+    assert rounds.fresh(run, start) == f"{run}/rounds/1/evaluator-C1{slot}.cut.json"
 
 
 @pytest.mark.supports("test_each_cut_holds_its_role_deliverable_best_practice_and_goal")
@@ -419,24 +529,26 @@ def test_write_gives_the_generator_its_deliverable_best_practice_goal_and_decisi
     assert written["decisions"] == decisions(plan())
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="a start that didn't end gets a fresh Cut, so the kept Cut the case asks is gone",
-)
-@pytest.mark.supports("test_a_role_stopped_starts_again_from_its_kept_cut")
-def test_write_keeps_the_cut_already_written_for_the_start(tmp_path: Any):
+@pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
+def test_write_beside_a_cut_with_no_result_writes_a_fresh_cut_from_the_tree_as_it_stands(
+    tmp_path: Any,
+):
     """Given the command's generator of round 1 cut, and then a decision changed in the plan
     When cut.write writes the same start's Cut again, as a stopped role starts again
-    Then it gives the same path, and the Cut holds the decisions it was cut with"""
+    Then it gives slot 2 beside the first, holding the decisions as they stand, and leaves the
+    first as it was"""
     run = run_folder(str(tmp_path), {"design-tree.json": plan()})
     due = Due(COMMAND, "generator", "", "code", 1)
     first = cut.write(run, plan(), due)
-    assert cut.write(run, changed(), due) == first
+    again = cut.write(run, changed(), due)
+    assert again == first.removesuffix(".cut.json") + ".2.cut.json"
+    with open(again, encoding="utf-8") as f:
+        assert json.load(f)["decisions"] == decisions(changed())
     with open(first, encoding="utf-8") as f:
         assert json.load(f)["decisions"] == decisions(plan())
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+@pytest.mark.supports("test_a_pick_up_from_the_repositorys_root_finds_the_run_in_rns_worktree")
 def test_folder_gives_none_where_no_run_has_work_left(tmp_path: Any):
     """Given a worktree with no .rn/, and then one whose run's work is done, as a run merged, and
     one whose design tree isn't JSON
@@ -452,7 +564,7 @@ def test_folder_gives_none_where_no_run_has_work_left(tmp_path: Any):
     assert rounds.folder(top) is None
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+@pytest.mark.supports("test_a_pick_up_from_the_repositorys_root_finds_the_run_in_rns_worktree")
 def test_folder_gives_the_run_with_work_left_in_the_top_or_in_rns_worktree(tmp_path: Any):
     """Given the repository's root, with a run done in its .rn/ and a run with work left in rn's
     worktree of that run
@@ -466,7 +578,7 @@ def test_folder_gives_the_run_with_work_left_in_the_top_or_in_rns_worktree(tmp_p
     assert rounds.folder(os.path.join(top, ".claude/worktrees/rn-20261119-b")) == ".rn/20261119-b"
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+@pytest.mark.supports("test_a_pick_up_from_the_repositorys_root_finds_the_run_in_rns_worktree")
 def test_folder_gives_the_run_whose_design_tree_changed_last(tmp_path: Any):
     """Given two runs with work left, the one of the earlier name changed last
     When rounds.folder looks for the run's folder

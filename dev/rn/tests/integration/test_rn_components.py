@@ -7,12 +7,23 @@ from __future__ import annotations
 import os
 
 import pytest
-from rn_bench import COMMAND, GUIDE, RN, Bench, command_done, decided, judged, made, read_json
-
-# Why a case is xfail where its premise is gone.
-GONE_NONE = (
-    "Lane takes the starts due in its own form, so start.py's none, which the case asks, is gone"
+from rn_bench import (
+    COMMAND,
+    GUIDE,
+    RN,
+    Bench,
+    command_done,
+    decided,
+    judged,
+    made,
+    read_json,
+    side_by_side,
+    started,
+    typed,
 )
+
+# Why a case is xfail while its body isn't written.
+NO_STARTS_DUE = "starts_due.main isn't built yet"
 
 
 def judge_all(b: Bench, more: dict[str, str]) -> list[str]:
@@ -31,16 +42,24 @@ def test_the_main_conversation_is_the_orchestrator(b: Bench):
     assert sorted(os.listdir(os.path.join(RN, "agents"))) == ["evaluator.md", "generator.md"]
 
 
-@pytest.mark.xfail(strict=True, reason=GONE_NONE)
+@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("generator")
-def test_one_generator_runs_for_each_deliverable(b: Bench):
-    """Given the command's generator running
-    When Lane asks rn's adapter of the starts due for another generator's start, beside it
-    Then none is due, as the guide's input, the command, isn't done"""
+def test_a_generator_running_gets_no_second_start_of_its_deliverable(b: Bench):
+    """Given the command's generator started, with no result yet
+    When Lane asks rn's adapter of the starts due, with the start among the run's moves
+    Then it gives no start, as the guide's input, the command, isn't done"""
     cut = b.cut("generator")
-    running = [{"kind": "start", "role": "rn:generator", "prompt": f"Your Cut is at {cut}"}]
-    code, printed, _ = b.due(moves=running)
-    assert (code, list(printed)) == (0, ["none"])
+    assert b.starts(moves=[typed("rn:up"), started(cut)]) == {}
+
+
+@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
+@pytest.mark.supports("generator")
+def test_deliverables_that_rest_on_none_being_made_give_lane_a_generator_each(b: Bench):
+    """Given the plan in which the guide rests on the product vision alone, not on the command
+    When Lane asks rn's adapter of the starts due
+    Then it gives two starts of rn:generator, one for each deliverable"""
+    side_by_side(b)
+    assert b.starts(moves=[typed("rn:up")]) == {"rn:generator": 2}
 
 
 @pytest.mark.supports("evaluator")

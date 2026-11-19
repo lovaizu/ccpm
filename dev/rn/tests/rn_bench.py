@@ -7,6 +7,7 @@ orchestrator runs it."""
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import shlex
@@ -25,6 +26,8 @@ INVOICER = os.path.join(TOP, "dev", "rn", "tests", "invoicer")
 
 # The run's folder, from the top of the repository, as rn's Directory structure names it.
 RUN = ".rn/20261119-invoices"
+# The work's branch, named as rn's worktree of the run.
+BRANCH = "rn-20261119-invoices"
 COMMAND = "invoicer/__main__.py"
 GUIDE = "docs/print-invoice.md"
 GOAL = (
@@ -146,6 +149,16 @@ class Bench:
         run = {"skill": "rn:up", "words": words, "moves": moves or []}
         return self.adapter("starts_due", [], {"run": run})
 
+    def starts(
+        self, words: str = "", moves: list[dict[str, Any]] | None = None
+    ) -> dict[str, int] | None:
+        """Each role that rn's adapter of the starts due gives Lane, with its count, for a run of
+        /rn:up with the words and the moves given; None where it gives anything but starts."""
+        code, printed, _ = self.due(words, moves)
+        if code != 0 or not isinstance(printed, dict) or "starts" not in printed:
+            return None
+        return {s["role"]: s["count"] for s in printed["starts"]}
+
     def cutting(self, role: str) -> tuple[int, str, str]:
         """Runs rn's script of a start's Cut as the orchestrator runs it, in the repository, for the
         role, and gives its exit code, the path it printed, and what it said."""
@@ -171,8 +184,7 @@ class Bench:
         conversation, with a prompt that names its Cut; gives the Cut's path and the agent, None
         where the start was stopped."""
         cut = self.cut(role)
-        prompt = f"Carry out your steps, from your Cut at {cut}"
-        return cut, c.start(f"rn:{role}", prompt, does)[1]
+        return cut, c.start(f"rn:{role}", started(cut)["prompt"], does)[1]
 
     def write_result(self, cut: str, result: dict[str, Any]) -> str:
         """Writes a role's result beside its Cut, as the role does, and gives its path."""
@@ -199,14 +211,14 @@ def bench(tmp: str) -> Bench:
     git(repo, "commit", "-q", "-m", "invoicer renders invoices")
     git(repo, "remote", "add", "origin", remote)
     git(repo, "push", "-q", "origin", "main")
-    git(repo, "checkout", "-q", "-b", "rn/20261119-invoices")
+    git(repo, "checkout", "-q", "-b", BRANCH)
     temp = os.path.join(tmp, "claude")
     env = environment(tmp)
     b = Bench(rn, lane, os.path.realpath(repo), remote, temp, env)
     b.write_tree(plan())
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", "The plan, signed off")
-    git(repo, "push", "-q", "-u", "origin", "rn/20261119-invoices")
+    git(repo, "push", "-q", "-u", "origin", BRANCH)
     return b
 
 
@@ -269,6 +281,45 @@ def command_done(b: Bench) -> None:
     tree["deliverables"][0]["status"] = "done"
     tree["work"] = tree["work"][1:]
     b.write_tree(tree)
+
+
+def none_due(b: Bench, role: str) -> bool:
+    """Whether rn's script of a start's Cut finds no start of the role due."""
+    code, path, said = b.cutting(role)
+    return (code, path) == (1, "") and f"no start of the {role} is due" in said
+
+
+def started(cut: str) -> dict[str, str]:
+    """The move of Lane's run that a start makes, with the prompt that names its Cut."""
+    role = "rn:generator" if "/generator" in cut else "rn:evaluator"
+    return {
+        "kind": "start",
+        "role": role,
+        "prompt": f"Carry out your steps, from your Cut at {cut}",
+    }
+
+
+def typed(command: str) -> dict[str, str]:
+    """The move of Lane's run that a command the person types makes, such as rn:ty."""
+    return {"kind": "command", "command": command}
+
+
+def side_by_side(b: Bench) -> None:
+    """The orchestrator's plan in which the guide rests on the product vision alone, not on the
+    command, so that both deliverables can be made at once."""
+    tree = b.tree()
+    tree["deliverables"][1]["inputs"] = ["docs/product-vision.md"]
+    b.write_tree(tree)
+
+
+def command(path: str) -> Any:
+    """The module of the command or adapter at the path under rn's folder, for the unit cases
+    of its main."""
+    spec = importlib.util.spec_from_file_location("rn_command", os.path.join(RN, path))
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def worktree(tmp: str, files: dict[str, Any] | None = None) -> str:

@@ -1,15 +1,13 @@
-"""The unit cases of the checks of a role's result and of each command's and adapter's main:
-check/'s generator.faults and evaluator.faults, scripts/tree.py's, scripts/check.py's, and
-scripts/cut.py's main, and lane/adapters/'s rules.py and starts_due.py main, one for each class
-of what each takes and gives, its refusals among them. Each command lies in a file that shares its
-name with a package of domain/, so each is loaded from its path."""
+"""The unit cases of the checks of a role's result and of each command's main: check/'s
+generator.faults and evaluator.faults, and scripts/tree.py's, scripts/check.py's, and
+scripts/cut.py's main, one for each class of what each takes and gives, its refusals among them.
+Each command lies in a file that shares its name with a package of domain/, so each is loaded from
+its path."""
 
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
-import re
 import subprocess
 import sys
 from typing import Any
@@ -18,19 +16,7 @@ import pytest
 from check import evaluator, generator
 from fault import Wrong
 from repo_files import git, write_files
-from rn_bench import COMMAND, GUIDE, RN, RUN, plan, worktree
-
-# Why a case is xfail where its premise is gone.
-GONE_START = (
-    "Lane gives no start's text or run values, so start.py's, which the case asks, are gone"
-)
-GONE_NONE = (
-    "Lane takes the starts due in its own form, so start.py's none, which the case asks, is gone"
-)
-GONE_RESULTS = (
-    "Lane keeps no results for a pick-up, so results.py's results, which the case asks, are gone"
-)
-NO_CUT = "Lane takes a step's checklist as a rule's items from rules.py, so items.py's are gone"
+from rn_bench import COMMAND, GUIDE, RN, RUN, command, plan, worktree
 
 TAX = {
     "path": COMMAND,
@@ -40,15 +26,6 @@ TAX = {
     "by": "user",
 }
 LINES = {"path": COMMAND, "condition": "N1", "about": "The lines", "decided": "a;b;c", "by": "user"}
-
-
-def command(path: str) -> Any:
-    """The module of the command or adapter at the path under rn's folder."""
-    spec = importlib.util.spec_from_file_location("rn_command", os.path.join(RN, path))
-    assert spec and spec.loader
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 def run_with(tmp: str, files: dict[str, Any]) -> str:
@@ -97,7 +74,7 @@ def test_a_made_result_with_each_decision_carried_out_has_no_fault(tmp_path: Any
     assert generator.faults(os.path.join(top, RUN), CUT, RN, top) == []
 
 
-@pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
+@pytest.mark.supports("test_a_generators_point_passes_its_check_and_starts_no_evaluator")
 def test_a_point_needs_no_decision_carried_out(tmp_path: Any):
     """Given the generator's Cut, and its result point
     When generator.faults checks it
@@ -107,7 +84,7 @@ def test_a_point_needs_no_decision_carried_out(tmp_path: Any):
     assert generator.faults(os.path.join(top, RUN), CUT, RN, top) == []
 
 
-@pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
+@pytest.mark.supports("test_a_generators_point_passes_its_check_and_starts_no_evaluator")
 def test_a_point_with_no_text_is_a_fault(tmp_path: Any):
     """Given the generator's Cut, and its result point with no point's text
     When generator.faults checks it
@@ -341,253 +318,81 @@ def test_check_gives_1_with_each_fault_a_line(tmp_path: Any):
     assert code == 1 and "The tax rate" in said
 
 
-@pytest.mark.xfail(strict=True, reason=GONE_START)
+def cut_main(top: str, role: str) -> tuple[int, str, str]:
+    """cut.py's main for the role, run in the worktree."""
+    return command("scripts/cut.py").main([role], top)
+
+
 @pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
-def test_start_gives_the_text_and_the_cut_of_the_start_due(tmp_path: Any):
-    """Given the plan, and no start running
+def test_cut_gives_the_path_of_a_fresh_cut_of_the_start_due(tmp_path: Any):
+    """Given the plan, and no Round
     When cut.py runs for the generator
-    Then it gives 0 with a text that names the Cut, and as values the Cut, the deliverable, and the
-    result beside the Cut"""
+    Then it gives 0 with the path of round 1's Cut from the worktree's top, and writes the Cut"""
     top = run_with(str(tmp_path), {})
-    code, printed, _ = command("scripts/cut.py").main(["generator"], top)
-    given = json.loads(printed)
-    assert code == 0
-    assert given["values"] == {"cut": CUT, "deliverable": COMMAND, "result": RESULT}
-    assert CUT in given["text"]
+    assert cut_main(top, "generator") == (0, f"{CUT}\n", "")
+    assert os.path.isfile(os.path.join(top, CUT))
 
 
-@pytest.mark.xfail(strict=True, reason=GONE_START)
-@pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
-def test_start_gives_an_evaluator_the_paths_it_never_reads(tmp_path: Any):
-    """Given the command made
+@pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
+@pytest.mark.parametrize(
+    ("waiting", "taken"),
+    [
+        ([], "evaluator-C1.cut.json"),
+        (["C1"], "evaluator-C2.cut.json"),
+        (["C1", "C2"], "evaluator-C3.cut.json"),
+        (["C1", "C2", "C3"], "evaluator-C1.2.cut.json"),
+    ],
+    ids=["none waiting", "C1 waiting", "C1 and C2 waiting", "each waiting"],
+)
+def test_cut_takes_the_start_due_with_the_fewest_cuts_with_no_result(
+    tmp_path: Any, waiting: list[str], taken: str
+):
+    """Given the command made, and a Cut with no result of none, some, or each group of code
     When cut.py runs for an evaluator
-    Then its values give, beside its Cut, deliverable, and result, the design tree and the
-    generator's Cut and result of its Round"""
-    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: {"result": "made"}})
-    code, printed, _ = command("scripts/cut.py").main(["evaluator"], top)
-    values = json.loads(printed)["values"]
-    assert code == 0
-    assert values["result"] == values["cut"].removesuffix(".cut.json") + ".json"
-    assert values["deliverable"] == COMMAND
-    assert (values["tree"], values["generator_cut"], values["generator_result"]) == (
-        f"{RUN}/design-tree.json",
-        CUT,
-        RESULT,
-    )
-
-
-@pytest.mark.xfail(strict=True, reason=GONE_NONE)
-@pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
-def test_start_gives_why_no_work_waits(tmp_path: Any):
-    """Given the generator's point
-    When cut.py runs for an evaluator
-    Then it gives 0 with why no work waits"""
-    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: {"result": "point", "point": "p"}})
-    code, printed, _ = command("scripts/cut.py").main(["evaluator"], top)
-    assert code == 0 and list(json.loads(printed)) == ["none"]
+    Then it takes the first group in the course's order of those with the fewest Cuts with no
+    result, in a slot of its own"""
+    made = {"result": "made", "carried_out": []}
+    cuts = {f"{RUN}/rounds/1/evaluator-{g}.cut.json": {**C1, "group": g} for g in waiting}
+    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: made, **cuts})
+    assert cut_main(top, "evaluator") == (0, f"{RUN}/rounds/1/{taken}\n", "")
 
 
 @pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
 @pytest.mark.parametrize(
-    ("argv", "given", "code"),
+    ("argv", "code", "said"),
     [
-        ([], '{"running": []}', 2),
-        pytest.param(
-            ["generator"],
-            "{",
-            1,
-            marks=pytest.mark.xfail(
-                strict=True, reason="cut.py takes no input from Lane, so the case's input is gone"
-            ),
-        ),
-        (["generator"], '{"running": []}', 1),
-        (["evaluator"], '{"running": []}', 1),
+        ([], 2, "usage"),
+        (["planner"], 2, "usage"),
+        (["generator"], 1, "design-tree.json"),
+        (["generator"], 1, "/rn:up"),
+        (["evaluator"], 1, "no start of the evaluator is due"),
     ],
-    ids=["no role", "input not JSON", "tree out of form", "no run"],
+    ids=["no role", "no such role", "tree out of form", "no run", "none due"],
 )
-def test_start_with_no_role_bad_input_a_tree_out_of_form_or_no_run_gives_its_code(
-    request: Any, tmp_path: Any, argv: list[str], given: str, code: int
+def test_cut_with_no_role_a_tree_out_of_form_no_run_or_none_due_gives_its_code(
+    request: Any, tmp_path: Any, argv: list[str], code: int, said: str
 ):
-    """Given no role, Lane's input that isn't JSON, a design tree out of form, or a worktree with
-    no run's folder
+    """Given no role or one rn doesn't have, a design tree out of form, a worktree with no run's
+    folder, or no start of the role due
     When cut.py runs
-    Then it gives 2 with the usage, or 1 naming the fault"""
+    Then it gives 2 with the usage, or 1 naming the fault, and writes no Cut"""
     top = run_with(str(tmp_path), {})
     if request.node.callspec.id == "tree out of form":
-        write_files(top, {f"{RUN}/design-tree.json": "{}"})
+        write_files(top, {f"{RUN}/design-tree.json": json.dumps({**plan(), "goal": {}})})
     if request.node.callspec.id == "no run":
         os.remove(os.path.join(top, RUN, "design-tree.json"))
-    got, printed, said = command("scripts/cut.py").main(argv, top)
-    assert (got, printed) == (code, "") and said
-
-
-@pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
-def practices_at(at: str) -> list[str]:
-    """Each practice of code that its maker takes while deciding or while making, as N<n>.<m>, read
-    from code's best-practice.md as a person reads it."""
-    path = os.path.join(RN, "domain", "best-practices", "code", "best-practice.md")
-    with open(path, encoding="utf-8") as f:
-        text = f.read()
-    marker = {"decide": "*While deciding.*", "make": "*While making.*"}[at]
-    found, condition = [], ""
-    for line in text.splitlines():
-        if re.match(r"^### N\d+$", line):
-            condition = line[4:]
-        number = re.match(r"^(\d+)\. (.*)", line)
-        if condition and number and number.group(2).startswith(marker):
-            found.append(f"{condition}.{number.group(1)}")
-    return found
-
-
-@pytest.mark.xfail(strict=True, reason=NO_CUT)
-@pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
-@pytest.mark.parametrize(
-    ("role", "step", "cut", "expected"),
-    [
-        ("generator", "2", generator_cut(), practices_at("decide")),
-        ("generator", "3", generator_cut(), practices_at("make")),
-        ("generator", "1", generator_cut(), []),
-        ("evaluator", "3", C1, ["N1", "N2", "N3"]),
-        ("evaluator", "2", C1, []),
-    ],
-    ids=["decides", "makes", "reads", "judges", "tries"],
-)
-def test_items_gives_each_step_only_its_own_checklist(
-    tmp_path: Any, role: str, step: str, cut: dict[str, Any], expected: list[str]
-):
-    """Given the generator's Cut by code, or an evaluator's Cut of C1
-    When rules.py runs for a step with the Cut as its run value
-    Then it gives 0 with the generator's step that decides each decide item of code, its step that
-    makes each make item, an evaluator's step that judges each condition of its Cut, and any other
-    step none"""
-    top = run_with(str(tmp_path), {CUT: cut})
-    given = json.dumps({"values": {"cut": CUT}})
-    code, printed, _ = command("lane/adapters/rules.py").main(given, top, RN)
-    assert (code, json.loads(printed)["items"]) == (0, expected)
-
-
-@pytest.mark.xfail(strict=True, reason=NO_CUT)
-@pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
-@pytest.mark.parametrize(
-    ("argv", "cut", "code"),
-    [
-        (["generator"], generator_cut(), 2),
-        (["generator", "3"], {**generator_cut(), "best_practice": "x"}, 1),
-    ],
-    ids=["no step", "no such best practice"],
-)
-def test_items_with_no_step_or_no_best_practice_gives_its_code(
-    tmp_path: Any, argv: list[str], cut: dict[str, Any], code: int
-):
-    """Given no step, or a Cut whose best practice rn doesn't have
-    When rules.py runs
-    Then it gives 2 with the usage, or 1 naming the best practice"""
-    top = run_with(str(tmp_path), {CUT: cut})
-    given = json.dumps({"values": {"cut": CUT}})
-    got, printed, said = command("lane/adapters/rules.py").main(given, top, RN)
-    assert (got, printed) == (code, "") and said
-
-
-@pytest.mark.xfail(strict=True, reason=NO_CUT)
-@pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
-def test_items_of_input_naming_no_cut_gives_1(tmp_path: Any):
-    """Given Lane's input that names no Cut among the run values
-    When rules.py runs for a step
-    Then it gives 1, saying so"""
-    top = run_with(str(tmp_path), {CUT: generator_cut()})
-    got, printed, said = command("lane/adapters/rules.py").main("{}", top, RN)
-    assert (got, printed) == (1, "") and "cut" in said
-
-
-@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
-def test_results_gives_each_result_in_the_order_of_the_rounds(tmp_path: Any):
-    """Given round 1's generator made and its evaluator of C1 judged, and round 2's generator with
-    no result
-    When starts_due.py runs with no words
-    Then it gives 0 with the generator's made and the evaluator's judged"""
-    files = {
-        CUT: generator_cut(),
-        RESULT: {"result": "made", "carried_out": []},
-        EVALUATOR_CUT: C1,
-        EVALUATOR: {"good": [], "more": []},
-        f"{RUN}/rounds/2/generator.cut.json": generator_cut(),
-    }
-    top = run_with(str(tmp_path), files)
-    code, printed, _ = command("lane/adapters/starts_due.py").main('{"words": ""}', top)
-    assert code == 0
-    assert json.loads(printed) == {
-        "results": [
-            {"role": "generator", "result": "made"},
-            {"role": "evaluator", "result": "judged"},
-        ]
-    }
-
-
-@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
-@pytest.mark.supports("test_up_with_a_new_request_picks_up_no_run")
-def test_results_gives_none_for_words_of_a_new_request(tmp_path: Any):
-    """Given a run with a result
-    When starts_due.py runs with the words of a new request
-    Then it gives 0 with no result"""
-    top = run_with(
-        str(tmp_path), {CUT: generator_cut(), RESULT: {"result": "made", "carried_out": []}}
-    )
-    code, printed, _ = command("lane/adapters/starts_due.py").main('{"words": "a dashboard"}', top)
-    assert (code, json.loads(printed)) == (0, {"results": []})
-
-
-@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
-@pytest.mark.supports("test_up_alone_with_no_run_picks_up_none")
-def test_results_gives_none_where_no_run_is(tmp_path: Any):
-    """Given a folder with no run's folder
-    When starts_due.py runs with no words
-    Then it gives 0 with no result"""
-    code, printed, _ = command("lane/adapters/starts_due.py").main('{"words": ""}', str(tmp_path))
-    assert (code, json.loads(printed)) == (0, {"results": []})
-
-
-@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
-def test_results_of_a_result_not_json_gives_1_naming_it(tmp_path: Any):
-    """Given round 1's generator, its result not JSON
-    When starts_due.py runs with no words
-    Then it gives 1, naming the result's file"""
-    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: "{"})
-    code, printed, said = command("lane/adapters/starts_due.py").main('{"words": ""}', top)
-    assert (code, printed) == (1, "") and "generator.json" in said
-
-
-@pytest.mark.xfail(strict=True, reason=GONE_RESULTS)
-@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
-def test_results_of_input_not_json_gives_1(tmp_path: Any):
-    """Given Lane's input that isn't JSON
-    When starts_due.py runs
-    Then it gives 1, saying so"""
-    code, printed, said = command("lane/adapters/starts_due.py").main("{", str(tmp_path))
-    assert (code, printed) == (1, "") and said
+    got, printed, told = command("scripts/cut.py").main(argv, top)
+    assert (got, printed) == (code, "") and said in told
+    assert not os.path.isdir(os.path.join(top, RUN, "rounds"))
 
 
 @pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
-@pytest.mark.parametrize(
-    "path",
-    [
-        "scripts/check.py",
-        pytest.param(
-            "lane/adapters/rules.py",
-            marks=pytest.mark.xfail(
-                strict=True, reason="Lane runs rules.py with no argument, so its usage is gone"
-            ),
-        ),
-    ],
-)
-def test_a_command_run_with_no_argument_exits_2_with_its_usage(tmp_path: Any, path: str):
+def test_check_run_with_no_argument_exits_2_with_its_usage(tmp_path: Any):
     """Given no argument
-    When check.py, or rules.py, runs as a command, as Lane runs it
+    When check.py runs as a command, as a role runs it
     Then it exits 2, printing nothing and saying its usage"""
     done = subprocess.run(
-        [sys.executable, os.path.join(RN, path)],
-        input="{}",
+        [sys.executable, os.path.join(RN, "scripts", "check.py")],
         capture_output=True,
         text=True,
         cwd=str(tmp_path),
