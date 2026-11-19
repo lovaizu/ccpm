@@ -34,17 +34,16 @@ architecture.** It makes each to its best practice and its template, and keeps o
 - Rationale: rounds of evaluators work only once rn runs them. Run by hand, each round added what
   the evaluators named, until the documents held trivia that no decision of the tree asked for.
 
-**The main conversation makes the test cases, the skeleton, and the code too, and has subagents
-review the code and the test code.** One subagent reviews each part, and one each combination of
-parts that the architecture defines. Each reads the plugin's product vision, README, and
-architecture whole first, then names each place where the code or the test code misses a case, says
-other than the three documents, or holds what none of them traces to. The main conversation takes
-only the vital few by the plugin's purpose. It writes each into the architecture and the design
-tree before the tests and the code.
+**A subagent makes the test cases, the skeleton, and the code, and the main conversation reads all
+it made.** The main conversation first writes the policy into the design tree's decisions, deletes
+the code made before, and briefs the subagent with the best practice of the deliverable's kind and
+the documents agreed, never the deleted code. It then reads each line the subagent made against the
+architecture and the best practice, and takes only the vital few by the plugin's purpose. It writes
+each gap into the architecture and the design tree before the tests and the code.
 
-- Rationale: a rebuild over existing code needs one maker who holds the whole, as makers apart
-  copied what they saw and missed how the parts meet. A review of one unit finds the gaps that a
-  reader of the whole misses, and most of what it names is trivia that the purpose leaves out.
+- Rationale: a maker that sees earlier code copies it, and the main conversation keeps the whole
+  only where it sets each policy and reads each result itself, as a subagent's report is a claim,
+  not a result.
 
 **Before any fix to a part, write the part's purpose and the simplest way that could meet it at
 all, beside how the part meets it now, and make the part that way, removing each mechanism that
