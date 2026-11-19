@@ -563,126 +563,13 @@
       "name": "Each principle item of rn's architecture holds where its part keeps it, and its case fails with that part taken out",
       "path": "dev/rn/tests/integration/test_rn_principles.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests",
-        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
-        "dev/rn/tests/integration/test_rn_s2_pause.py"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The parts filled",
-              "decided": "hooks/adapters/items.py, which gives each practice of the Cut's best practice as N<n>.<m> in its order, as the parts of S1 and S2 already carry each other principle item",
-              "by": "reasoning"
-            },
-            {
-              "about": "The cases that wait",
-              "decided": "the sign-off before work that rests on a plan, and a role told its step where it writes beside its deliverable, as each rests on a guard of Lane's laid on rn's steps",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
       "path": "dev/rn/tests/integration/test_rn_components.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The parts filled",
-              "decided": "none beyond S1's and S2's, as each component's decision and each handoff of the data model already lies in them",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
@@ -1215,6 +1102,22 @@
   "work": [
     {
       "do": "make",
+      "path": "plugins/rn/domain/orchestrator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/generator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/evaluator.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/e2e"
+    },
+    {
+      "do": "make",
       "path": "dev/lane/architecture.md"
     },
     {
@@ -1239,31 +1142,7 @@
     },
     {
       "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_principles.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_components.py"
-    },
-    {
-      "do": "make",
       "path": "dev/scripts/check.sh"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/orchestrator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/generator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/evaluator.md"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/e2e"
     }
   ]
 }
