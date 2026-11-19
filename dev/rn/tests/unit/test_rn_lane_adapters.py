@@ -2,8 +2,10 @@
 the run that Lane gives it and of the run's folder, the commands typed and the starts that run
 among them, and one for each combination of the words and the commands that decides whether the
 run waits, goes on, or ends; and lane/adapters/rules.py's main, one for each role's steps, a Cut in
-a later slot, and each refusal. Each adapter lies in a file that Lane runs as a command, so each is
-loaded from its path."""
+a later slot, the generators of other Rounds an evaluator may read, and each refusal. A start in a
+later slot, a result among the moves, and a Cut named from rn's worktree stand beside the starts
+that run, and each Then names the whole of what an adapter prints. Each adapter lies in a file
+that Lane runs as a command, so each is loaded from its path."""
 
 from __future__ import annotations
 
@@ -198,7 +200,52 @@ def test_starts_due_give_each_role_due_with_its_count(tmp_path: Any):
     tree = plan()
     tree["deliverables"][1]["inputs"] = ["docs/product-vision.md"]
     top = worktree(str(tmp_path), {f"{RUN}/design-tree.json": tree, **made_files()})
-    assert counts(top) == {"rn:evaluator": 3, "rn:generator": 1}
+    starts = [{"role": "rn:evaluator", "count": 3}, {"role": "rn:generator", "count": 1}]
+    assert starts_due(top) == (0, {"starts": starts}, "")
+
+
+@pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
+def test_starts_due_count_a_start_in_a_later_slot_as_the_one_that_runs(tmp_path: Any):
+    """Given the command made, round 1's evaluator of C1 stopped in slot 1 with no result, and
+    its start in slot 2 running, its prompt naming slot 2's Cut
+    When starts_due.py runs
+    Then it gives two starts of rn:evaluator, for C2 and C3"""
+    later = evaluator("C1", ".2")
+    files = {**made_files(), evaluator("C1"): evaluator_cut(), later: evaluator_cut()}
+    top = worktree(str(tmp_path), files)
+    moves = [typed("rn:up"), started(CUT), started(evaluator("C1", ".2"))]
+    assert counts(top, "", moves) == {"rn:evaluator": 2}
+
+
+@pytest.mark.supports("test_a_generator_running_gets_no_second_start_of_its_deliverable")
+def test_starts_due_leave_alone_the_results_among_the_moves(tmp_path: Any):
+    """Given the command made, its evaluator of C1 running, and the run's moves holding the
+    generator's start, its result, and the evaluator's start, in the order Lane keeps them
+    When starts_due.py runs
+    Then it gives two starts of rn:evaluator"""
+    top = worktree(str(tmp_path), {**made_files(), evaluator("C1"): evaluator_cut()})
+    result = {"kind": "result", "role": "rn:generator", "result": "made"}
+    moves = [typed("rn:up"), typed("rn:ty"), started(CUT), result, started(evaluator("C1"))]
+    assert counts(top, "", moves) == {"rn:evaluator": 2}
+
+
+@pytest.mark.supports("test_a_pick_up_from_the_repositorys_root_finds_the_run_in_rns_worktree")
+def test_starts_due_from_the_root_count_a_start_whose_prompt_names_its_cut_from_the_worktree(
+    tmp_path: Any,
+):
+    """Given the repository's root, and rn's worktree of the run holding the plan and the
+    command's generator of round 1 cut with no result, its start's prompt naming the Cut from the
+    worktree's top, as the orchestrator names it
+    When starts_due.py runs at the root
+    Then it gives no start, as the generator runs"""
+    top = str(tmp_path)
+    there = ".claude/worktrees/rn-20261119-invoices"
+    docs = ("architecture", "software-design", "test-design", "product-vision")
+    files = {f"{there}/docs/{name}.md": f"# {name}\n" for name in docs}
+    files[f"{there}/{RUN}/design-tree.json"] = json.dumps(plan())
+    files[f"{there}/{CUT}"] = json.dumps(generator_cut())
+    write_files(top, files)
+    assert counts(top, "", [typed("rn:up"), started(CUT)]) == {}
 
 
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gives_lane_each_role_stopped_again")
@@ -207,16 +254,28 @@ def test_starts_due_give_each_role_due_with_its_count(tmp_path: Any):
     [
         ("{", {}, ""),
         ('{"run": {"skill": "rn:up"}}', {}, ""),
+        ('{"run": {"skill": "rn:up", "words": null, "moves": []}}', {}, ""),
+        ('{"run": {"skill": "rn:up", "words": "", "moves": {}}}', {}, ""),
+        ("[]", {}, ""),
         ("", {RESULT: "{", CUT: generator_cut()}, "generator.json"),
         ("", {f"{RUN}/design-tree.json": {**plan(), "goal": {}}}, "design-tree.json"),
     ],
-    ids=["input not JSON", "input out of form", "a Round not JSON", "a tree out of form"],
+    ids=[
+        "input not JSON",
+        "input with no words or moves",
+        "words that aren't text",
+        "moves that aren't a list",
+        "input that isn't an object",
+        "a Round not JSON",
+        "a tree out of form",
+    ],
 )
 def test_starts_due_refuse_input_or_a_runs_folder_out_of_its_form(
     tmp_path: Any, given: str, files: dict[str, Any], said: str
 ):
-    """Given Lane's input that isn't JSON or leaves its form, or a run's folder with a Round that
-    isn't JSON or a design tree out of its form
+    """Given Lane's input that isn't JSON or leaves its form, with no words or moves, words that
+    aren't text, moves that aren't a list, or no object at its top, or a run's folder with a Round
+    that isn't JSON or a design tree out of its form
     When starts_due.py runs
     Then it gives 1, printing nothing, naming the file where one is at fault"""
     top = worktree(str(tmp_path), files)
@@ -234,13 +293,6 @@ def rules_of(top: str, role: str, cut: str) -> tuple[int, Any, str]:
     return code, json.loads(printed) if printed else printed, said
 
 
-def steps(top: str, role: str, cut: str) -> dict[str, dict[str, dict[str, Any]]]:
-    """Each step that rules.py gives, by its name, with each of its rules by its type."""
-    code, printed, said = rules_of(top, role, cut)
-    assert code == 0, said
-    return {s["name"]: {r["type"]: r for r in s["rules"]} for s in printed["steps"]}
-
-
 def practices(kind: str, at: str) -> list[str]:
     """Each practice of the kind's best practice that its maker takes at `decide` or `make`, as
     N<n>.<m>, the m-th practice of the condition N<n>."""
@@ -256,26 +308,51 @@ def practices(kind: str, at: str) -> list[str]:
     ]
 
 
+def steps_of(*rules: list[dict[str, Any]]) -> dict[str, Any]:
+    """Steps 1 onward, each with order before the rules given, as rules.py prints them."""
+    return {
+        "steps": [
+            {"name": str(n), "rules": [{"type": "order"}, *each]} for n, each in enumerate(rules, 1)
+        ]
+    }
+
+
+def end_of(role: str, cut: str, result: str) -> list[dict[str, Any]]:
+    """The last step's rules of the role's start from the Cut: the writes of the result beside the
+    Cut, rn's check of the role, and the result that ends it."""
+    return [
+        {"type": "writes", "paths": [cut.removesuffix(".cut.json") + ".json"]},
+        {"type": "check", "check": f"python3 {RN}/scripts/check.py {role} {cut}"},
+        {"type": "result", "results": [result]},
+    ]
+
+
+def generator_steps(practice: str, deliverable: str) -> dict[str, Any]:
+    """The steps of round 1's generator, by the best practice, of the deliverable."""
+    return steps_of(
+        [],
+        [
+            {"type": "checklist", "items": practices(practice, "decide")},
+            {"type": "result", "ends": ["point"]},
+        ],
+        [
+            {"type": "checklist", "items": practices(practice, "make")},
+            {"type": "writes", "paths": [deliverable, RESULT]},
+        ],
+        end_of("generator", CUT, "made"),
+    )
+
+
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 def test_rules_give_the_generator_its_steps_from_its_cut(tmp_path: Any):
     """Given the generator's Cut of the command by code
     When rules.py runs for a start of rn:generator whose prompt names the Cut
-    Then it gives steps 1 to 4 in order, each with order: step 2 the checklist of code's decide
-    practices and a result that ends on point, step 3 that of its make practices and the writes of
-    the command and the result, and step 4 the writes of the result, rn's check of the generator,
-    and the result made"""
+    Then it gives 0, saying nothing, with steps 1 to 4 in order, each with order: step 2 the
+    checklist of code's decide practices and a result that ends on point, step 3 that of its make
+    practices and the writes of the command and the result, and step 4 the writes of the result,
+    rn's check of the generator, and the result made, and nothing else"""
     top = worktree(str(tmp_path), {CUT: generator_cut()})
-    given = steps(top, "rn:generator", CUT)
-    assert list(given) == ["1", "2", "3", "4"]
-    assert all("order" in rules for rules in given.values())
-    assert given["2"]["checklist"]["items"] == practices("code", "decide")
-    assert "point" in given["2"]["result"]["ends"]
-    assert given["3"]["checklist"]["items"] == practices("code", "make")
-    assert set(given["3"]["writes"]["paths"]) == {COMMAND, RESULT}
-    assert given["4"]["writes"]["paths"] == [RESULT]
-    assert given["4"]["check"]["check"].startswith("python3 ")
-    assert given["4"]["check"]["check"].endswith(f"scripts/check.py generator {CUT}")
-    assert given["4"]["result"]["results"] == ["made"]
+    assert rules_of(top, "rn:generator", CUT) == (0, generator_steps("code", COMMAND), "")
 
 
 @pytest.mark.supports("test_a_round_of_refactoring_comes_only_after_the_content_is_good")
@@ -284,44 +361,51 @@ def test_rules_give_a_generator_of_refactoring_the_practices_of_the_refactor_bes
 ):
     """Given the generator's Cut of the guide by refactor-doc
     When rules.py runs for its start
-    Then steps 2 and 3 hold the decide and make practices of refactor-doc"""
+    Then it gives the generator's steps whole, steps 2 and 3 holding the decide and make practices
+    of refactor-doc, not of readme, and step 3 the writes of the guide"""
     top = worktree(
         str(tmp_path), {CUT: {**generator_cut(GUIDE, "readme"), "best_practice": "refactor-doc"}}
     )
-    given = steps(top, "rn:generator", CUT)
-    assert given["2"]["checklist"]["items"] == practices("refactor-doc", "decide")
-    assert given["3"]["checklist"]["items"] == practices("refactor-doc", "make")
+    assert rules_of(top, "rn:generator", CUT) == (0, generator_steps("refactor-doc", GUIDE), "")
+
+
+def evaluator_steps(cut: str, unread: list[str], conditions: list[str]) -> dict[str, Any]:
+    """The steps of an evaluator from its Cut, never reading the paths, judging the conditions."""
+    return steps_of(
+        [],
+        [{"type": "reads_none", "paths": unread}],
+        [{"type": "checklist", "items": conditions}],
+        end_of("evaluator", cut, "judged"),
+    )
 
 
 @pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
 def test_rules_give_an_evaluator_its_steps_from_its_cut(tmp_path: Any):
-    """Given an evaluator's Cut of C1 of the command
+    """Given an evaluator's Cut of C2 of the command
     When rules.py runs for a start of rn:evaluator whose prompt names the Cut
-    Then it gives steps 1 to 4 in order, each with order: step 2 never reading the design tree or
-    the generator's Cut and result of the Round, step 3 the checklist of N1 to N3, and step 4 the
-    writes of the result, rn's check of the evaluator, and the result judged"""
-    cut = evaluator("C1")
-    top = worktree(str(tmp_path), {**made_files(), cut: evaluator_cut()})
-    given = steps(top, "rn:evaluator", cut)
-    assert list(given) == ["1", "2", "3", "4"]
-    assert all("order" in rules for rules in given.values())
-    assert set(given["2"]["reads_none"]["paths"]) == {f"{RUN}/design-tree.json", CUT, RESULT}
-    assert given["3"]["checklist"]["items"] == ["N1", "N2", "N3"]
-    assert given["4"]["writes"]["paths"] == [f"{RUN}/rounds/1/evaluator-C1.json"]
-    assert given["4"]["check"]["check"].endswith(f"scripts/check.py evaluator {cut}")
-    assert given["4"]["result"]["results"] == ["judged"]
+    Then it gives 0, saying nothing, with steps 1 to 4 in order, each with order: step 2 never
+    reading the design tree or the generator's Cut and result of the Round, step 3 the checklist
+    of N4 to N7, and step 4 the writes of the result, rn's check of the evaluator, and the result
+    judged, and nothing else"""
+    cut = evaluator("C2")
+    conditions = ["N4", "N5", "N6", "N7"]
+    top = worktree(str(tmp_path), {**made_files(), cut: evaluator_cut("C2", conditions)})
+    unread = [f"{RUN}/design-tree.json", CUT, RESULT]
+    assert rules_of(top, "rn:evaluator", cut) == (0, evaluator_steps(cut, unread, conditions), "")
 
 
 @pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
 def test_rules_of_a_cut_in_a_later_slot_name_the_result_beside_it(tmp_path: Any):
     """Given round 1's evaluator of C1 in slot 2, beside the Cut that a pause left
     When rules.py runs for the start whose prompt names slot 2's Cut
-    Then step 4 writes the result of slot 2 alone"""
+    Then it gives the evaluator's steps, step 4 writing the result of slot 2 alone and checking
+    slot 2's Cut"""
     cut = evaluator("C1", ".2")
     files = {**made_files(), evaluator("C1"): evaluator_cut(), cut: evaluator_cut()}
     top = worktree(str(tmp_path), files)
-    given = steps(top, "rn:evaluator", cut)
-    assert given["4"]["writes"]["paths"] == [f"{RUN}/rounds/1/evaluator-C1.2.json"]
+    unread = [f"{RUN}/design-tree.json", CUT, RESULT]
+    expected = evaluator_steps(cut, unread, ["N1", "N2", "N3"])
+    assert rules_of(top, "rn:evaluator", cut) == (0, expected, "")
 
 
 @pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
@@ -334,9 +418,30 @@ def test_rules_keep_an_evaluator_from_each_generator_of_its_round_in_any_slot(tm
     second = f"{RUN}/rounds/1/generator.2.cut.json"
     files = {CUT: generator_cut(), second: generator_cut(), cut: evaluator_cut()}
     top = worktree(str(tmp_path), {**files, f"{RUN}/rounds/1/generator.2.json": MADE})
-    given = steps(top, "rn:evaluator", cut)
-    unread = {f"{RUN}/design-tree.json", CUT, RESULT, second, f"{RUN}/rounds/1/generator.2.json"}
-    assert set(given["2"]["reads_none"]["paths"]) == unread
+    unread = [
+        f"{RUN}/design-tree.json",
+        CUT,
+        RESULT,
+        second,
+        f"{RUN}/rounds/1/generator.2.json",
+    ]
+    expected = evaluator_steps(cut, unread, ["N1", "N2", "N3"])
+    assert rules_of(top, "rn:evaluator", cut) == (0, expected, "")
+
+
+@pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
+def test_rules_leave_an_evaluator_free_to_read_the_generators_of_other_rounds(tmp_path: Any):
+    """Given round 1's evaluator of C1, with round 1's generator made, and the generators of
+    round 10 and round 2, whose numbers start like round 1's or follow it
+    When rules.py runs for the evaluator's start
+    Then step 2 never reads the design tree nor round 1's generator, and leaves the other rounds'
+    alone"""
+    cut = evaluator("C1")
+    later = {f"{RUN}/rounds/{n}/generator.cut.json": generator_cut() for n in (2, 10)}
+    top = worktree(str(tmp_path), {**made_files(), **later, cut: evaluator_cut()})
+    unread = [f"{RUN}/design-tree.json", CUT, RESULT]
+    expected = evaluator_steps(cut, unread, ["N1", "N2", "N3"])
+    assert rules_of(top, "rn:evaluator", cut) == (0, expected, "")
 
 
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
@@ -350,22 +455,37 @@ def test_rules_keep_an_evaluator_from_each_generator_of_its_round_in_any_slot(tm
             generator_cut(),
             "",
         ),
+        (
+            json.dumps(
+                {
+                    "run": {"skill": "rn:up", "words": ""},
+                    "role": "rn:generator",
+                    "prompt": f"Carry out your steps, from your result at {RESULT}",
+                }
+            ),
+            generator_cut(),
+            RESULT,
+        ),
         ("", {"role": "generator"}, "generator.cut.json"),
         ("", {**generator_cut(), "best_practice": "x"}, "x"),
+        ("", {**generator_cut(), "best_practice": "cod"}, "cod"),
     ],
     ids=[
         "input not JSON",
         "input out of form",
         "a prompt that names no Cut",
+        "a prompt that names a result, not a Cut",
         "a Cut out of form",
         "no best practice of rn's",
+        "a near match of a best practice",
     ],
 )
 def test_rules_refuse_input_a_prompt_or_a_cut_out_of_its_form(
     tmp_path: Any, given: str, cut: dict[str, Any], said: str
 ):
-    """Given Lane's input that isn't JSON or leaves its form, a prompt that names no Cut, a Cut out
-    of its form, or one whose best practice rn doesn't have
+    """Given Lane's input that isn't JSON or leaves its form, a prompt that names no Cut or names
+    the result beside one, a Cut out of its form, or one whose best practice rn doesn't have or
+    nearly has
     When rules.py runs
     Then it gives 1, printing nothing, naming what's at fault"""
     top = worktree(str(tmp_path), {CUT: cut})
@@ -373,7 +493,18 @@ def test_rules_refuse_input_a_prompt_or_a_cut_out_of_its_form(
         code, printed, told = command("lane/adapters/rules.py").main(given, top, RN)
     else:
         code, printed, told = rules_of(top, "rn:generator", CUT)
-    assert (code, printed) == (1, "") and told and said in told
+    assert (code, printed) == (1, "") and told.startswith("rules.py: ") and said in told
+
+
+@pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
+def test_rules_refuse_an_evaluator_whose_rounds_generator_cut_isnt_json(tmp_path: Any):
+    """Given an evaluator's Cut of C1, and round 1's generator's Cut that isn't JSON
+    When rules.py runs for the evaluator's start
+    Then it gives 1, printing nothing, naming the generator's Cut"""
+    cut = evaluator("C1")
+    top = worktree(str(tmp_path), {CUT: "{", cut: evaluator_cut()})
+    code, printed, told = rules_of(top, "rn:evaluator", cut)
+    assert (code, printed) == (1, "") and "rounds/1/generator.cut.json" in told
 
 
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")

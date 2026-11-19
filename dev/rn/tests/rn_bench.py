@@ -83,6 +83,20 @@ def plan() -> dict[str, Any]:
     }
 
 
+def vision(good: bool = True, decisions: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """A node of the accounting team's product vision with no file, done, at
+    docs/team-vision.md, its one condition good or not, with the decisions given, none by
+    default, for the unit cases whose design tree holds a node with no file."""
+    return {
+        "name": "The accounting team's aim",
+        "path": "docs/team-vision.md",
+        "kind": "product-vision",
+        "status": "done",
+        "file": False,
+        "necessary_conditions": [{"id": "N1", "good": good, "decisions": decisions or []}],
+    }
+
+
 @dataclass(frozen=True)
 class Bench:
     """Copies of rn and Lane, the repository of invoicer on the work's branch with its remote, the

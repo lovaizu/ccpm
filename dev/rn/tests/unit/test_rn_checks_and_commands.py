@@ -1,8 +1,9 @@
 """The unit cases of the checks of a role's result and of each command's main: check/'s
 generator.faults and evaluator.faults, and scripts/tree.py's, scripts/check.py's, and
-scripts/cut.py's main, one for each class of what each takes and gives, its refusals among them.
-Each command lies in a file that shares its name with a package of domain/, so each is loaded from
-its path."""
+scripts/cut.py's main, one for each class of what each takes and gives, its refusals among them,
+with several decisions, conditions, faults, and deliverables due among them, a place or a name that
+nearly matches beside each that matches, and each line that a check gives named. Each command lies
+in a file that shares its name with a package of domain/, so each is loaded from its path."""
 
 from __future__ import annotations
 
@@ -130,6 +131,60 @@ def test_a_made_result_leaving_a_decision_out_names_it(tmp_path: Any):
     assert len(faults) == 1 and "The tax rate" in faults[0]
 
 
+@pytest.mark.supports("test_a_generators_result_that_leaves_a_decision_out_is_held_naming_it")
+def test_a_made_result_leaving_each_decision_out_names_each(tmp_path: Any):
+    """Given the generator's Cut with its two decisions, and its result made with no place
+    When generator.faults checks it
+    Then it gives two lines, the first naming the tax rate and the second the lines"""
+    made = {"result": "made", "carried_out": []}
+    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: made, COMMAND: "x\n"})
+    faults = generator.faults(os.path.join(top, RUN), CUT, RN, top)
+    assert len(faults) == 2
+    assert "The tax rate" in faults[0] and "The lines" in faults[1]
+
+
+@pytest.mark.supports("test_a_generators_result_that_leaves_a_decision_out_is_held_naming_it")
+@pytest.mark.parametrize(
+    "place",
+    [{**at(TAX), "condition": "N2"}, {**at(TAX), "path": GUIDE}, {**at(TAX), "about": "The tax"}],
+    ids=["another condition", "another node", "an about that nearly matches"],
+)
+def test_a_place_that_nearly_matches_a_decision_doesnt_carry_it_out(
+    tmp_path: Any, place: dict[str, str]
+):
+    """Given the generator's Cut, and its result made with a place for the lines, and one for
+    the tax rate under another condition, of another node, or by an about that nearly matches
+    When generator.faults checks it
+    Then it gives one line, naming the tax rate"""
+    made = {"result": "made", "carried_out": [at(LINES), place]}
+    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: made, COMMAND: "x\n"})
+    faults = generator.faults(os.path.join(top, RUN), CUT, RN, top)
+    assert len(faults) == 1 and "The tax rate" in faults[0]
+
+
+@pytest.mark.supports("test_a_generators_point_passes_its_check_and_starts_no_evaluator")
+def test_a_point_of_blanks_alone_is_a_fault(tmp_path: Any):
+    """Given the generator's Cut, and its result point whose text is blanks alone
+    When generator.faults checks it
+    Then it gives one line, naming the point"""
+    point = {"result": "point", "point": " \n"}
+    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: point})
+    faults = generator.faults(os.path.join(top, RUN), CUT, RN, top)
+    assert len(faults) == 1 and "point" in faults[0]
+
+
+@pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
+def test_a_deliverable_of_many_files_is_at_its_folder(tmp_path: Any):
+    """Given the generator's Cut of the folder invoicer/, its result made with a place for each
+    decision, and a file in that folder
+    When generator.faults checks it
+    Then it gives none, as a deliverable of many files lies at its folder"""
+    held = {**generator_cut(), "deliverable": {"name": "n", "path": "invoicer", "kind": "code"}}
+    made = {"result": "made", "carried_out": [at(TAX), at(LINES)]}
+    top = run_with(str(tmp_path), {CUT: held, RESULT: made, COMMAND: "x\n"})
+    assert generator.faults(os.path.join(top, RUN), CUT, RN, top) == []
+
+
 @pytest.mark.supports("test_a_role_that_ends_with_no_result_in_its_file_is_held")
 @pytest.mark.parametrize("result", [None, {"result": "done"}, "{"], ids=["none", "form", "json"])
 def test_a_result_missing_out_of_form_or_not_json_is_a_fault(tmp_path: Any, result: Any):
@@ -141,29 +196,65 @@ def test_a_result_missing_out_of_form_or_not_json_is_a_fault(tmp_path: Any, resu
         files[RESULT] = result
     top = run_with(str(tmp_path), files)
     faults = generator.faults(os.path.join(top, RUN), CUT, RN, top)
-    assert faults and all("generator.json" in f for f in faults)
+    assert len(faults) == 1 and "generator.json" in faults[0]
+
+
+# A guide that holds the readme best practice's template: its title, what it is, and who it's for.
+IN_FORM = (
+    "# Invoicer\n\nInvoicer is a command that prints an invoice.\n\nInvoicer is for you when you"
+    " keep lines in a spreadsheet. With it, you print each invoice.\n"
+)
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @pytest.mark.parametrize(
-    ("text", "faults"),
-    [("# Printing an invoice\n\n## FAQ\n", 1), ("", 0)],
-    ids=["off its template", "a kind with no template"],
+    ("path", "kind", "text", "faults"),
+    [
+        (GUIDE, "readme", f"{IN_FORM}\n## FAQ\n", 1),
+        (GUIDE, "readme", IN_FORM, 0),
+        ("docs/notes.md", "specific", "## FAQ\n", 0),
+        ("docs/notes.txt", "readme", "## FAQ\n", 0),
+        (COMMAND, "code", "x\n", 0),
+    ],
+    ids=[
+        "off its template",
+        "in its template",
+        "a Markdown document of a kind with no template",
+        "a kind with a template, at a path that isn't Markdown",
+        "code",
+    ],
 )
 def test_a_document_is_held_to_its_kinds_template_where_one_exists(
-    tmp_path: Any, text: str, faults: int
+    tmp_path: Any, path: str, kind: str, text: str, faults: int
 ):
-    """Given a guide of readme off its template, or the command, of code, which has no Markdown
-    template beside its own, each made
+    """Given a guide of readme off its template or in it, a Markdown document of a kind with no
+    template, a document of readme at a path that isn't Markdown, or the command, of code, each
+    made
     When generator.faults checks it
-    Then it names the guide's line of FAQ, and nothing for the command"""
-    path, kind = (GUIDE, "readme") if text else (COMMAND, "code")
-    made = {"result": "made", "carried_out": [at(TAX), at(LINES)] if kind == "code" else []}
-    files = {CUT: generator_cut(path, kind), RESULT: made, path: text or "x\n"}
+    Then it gives one line for the guide off its template, naming its line of FAQ, and none for
+    each other"""
+    made = {"result": "made", "carried_out": [at(TAX), at(LINES)] if path == COMMAND else []}
+    files = {CUT: generator_cut(path, kind), RESULT: made, path: text}
     top = run_with(str(tmp_path), files)
     found = generator.faults(os.path.join(top, RUN), CUT, RN, top)
     assert len(found) == faults
-    assert not faults or f'{GUIDE}:3: "## FAQ" lies beside the template' in found[0]
+    assert not faults or f'{GUIDE}:7: "## FAQ" lies beside the template' in found[0]
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_document_off_its_template_and_a_decision_left_out_give_both(tmp_path: Any):
+    """Given a guide of readme off its template, and its Cut with a decision of its own that the
+    result names nowhere
+    When generator.faults checks it
+    Then it gives two lines: one naming the decision, and one naming the guide's line of FAQ"""
+    held = generator_cut(GUIDE, "readme")
+    held["decisions"] = [{**TAX, "path": GUIDE, "about": "The steps"}]
+    made = {"result": "made", "carried_out": []}
+    files = {CUT: held, RESULT: made, GUIDE: f"{IN_FORM}\n## FAQ\n"}
+    top = run_with(str(tmp_path), files)
+    found = generator.faults(os.path.join(top, RUN), CUT, RN, top)
+    assert len(found) == 2 and "The steps" in found[0]
+    assert f'{GUIDE}:7: "## FAQ" lies beside the template' in found[1]
 
 
 @pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
@@ -200,16 +291,18 @@ def test_each_condition_of_the_group_answered_once_has_no_fault(tmp_path: Any):
     ("good", "more", "named"),
     [
         (["N1", "N2"], [], "N3"),
+        (["N2", "N3"], [], "N1"),
         (["N1", "N2", "N3"], ["N3"], "N3"),
+        (["N1", "N2", "N2", "N3"], [], "N2"),
         (["N1", "N2", "N3", "N4"], [], "N4"),
     ],
-    ids=["left out", "twice", "outside the group"],
+    ids=["last left out", "first left out", "twice", "twice as good", "outside the group"],
 )
 def test_a_condition_left_out_answered_twice_or_outside_the_group_is_named(
     tmp_path: Any, good: list[str], more: list[str], named: str
 ):
-    """Given the evaluator's Cut of C1, and its result leaving N3 out, answering it twice, or
-    answering N4, which C1 doesn't hold
+    """Given the evaluator's Cut of C1, and its result leaving N3 or N1 out, answering N3 good
+    and more, answering N2 good twice, or answering N4, which C1 doesn't hold
     When evaluator.faults checks it
     Then it names that condition"""
     result = {
@@ -241,17 +334,35 @@ def test_a_result_missing_or_out_of_its_form_is_a_fault(tmp_path: Any, result: A
         files[EVALUATOR] = result
     top = run_with(str(tmp_path), files)
     faults = evaluator.faults(os.path.join(top, RUN), EVALUATOR_CUT, RN)
-    assert faults and all("evaluator-C1.json" in f for f in faults)
+    assert len(faults) == 1 and "evaluator-C1.json" in faults[0]
+
+
+@pytest.mark.supports(
+    "test_an_evaluators_result_that_leaves_a_condition_unanswered_is_held_naming_it"
+)
+def test_a_result_with_several_faults_names_each(tmp_path: Any):
+    """Given the evaluator's Cut of C1, and its result leaving N3 out and answering N4, which C1
+    doesn't hold
+    When evaluator.faults checks it
+    Then it gives two lines, one naming N3 and one naming N4"""
+    result = {
+        "good": [{"condition": c, "lines": ["x:1"]} for c in ("N1", "N2")],
+        "more": [{"condition": "N4", "good_when": "w"}],
+    }
+    top = run_with(str(tmp_path), {EVALUATOR_CUT: C1, EVALUATOR: result})
+    faults = evaluator.faults(os.path.join(top, RUN), EVALUATOR_CUT, RN)
+    assert len(faults) == 2 and "N3" in faults[0] and "N4" in faults[1]
 
 
 @pytest.mark.supports(
     "test_an_evaluators_result_that_answers_each_condition_of_its_group_passes_its_check"
 )
-def test_an_evaluators_cut_missing_is_refused(tmp_path: Any):
-    """Given no Cut of the evaluator
+@pytest.mark.parametrize("cut", [None, {"role": "evaluator"}], ids=["none", "out of form"])
+def test_an_evaluators_cut_missing_or_out_of_form_is_refused(tmp_path: Any, cut: Any):
+    """Given no Cut of the evaluator, or one out of its form
     When evaluator.faults checks a result beside it
     Then it refuses with Wrong, naming evaluator-C1.cut.json"""
-    top = run_with(str(tmp_path), {})
+    top = run_with(str(tmp_path), {EVALUATOR_CUT: cut} if cut else {})
     with pytest.raises(Wrong) as refused:
         evaluator.faults(os.path.join(top, RUN), EVALUATOR_CUT, RN)
     assert "evaluator-C1.cut.json" in str(refused.value)
@@ -274,48 +385,97 @@ def test_tree_commit_gives_0_with_the_hash(tmp_path: Any):
 @pytest.mark.supports("test_an_edit_of_the_design_tree_is_committed_with_its_ground")
 @pytest.mark.parametrize(
     ("argv", "code"),
-    [([], 2), (["commit", RUN], 2), (["push", RUN, "g"], 2), (["commit", RUN, "g"], 1)],
-    ids=["none", "no ground", "no such command", "no change"],
+    [
+        ([], 2),
+        (["commit", RUN], 2),
+        (["commit", RUN, "g", "h"], 2),
+        (["push", RUN, "g"], 2),
+        (["commit", RUN, "g"], 1),
+    ],
+    ids=["none", "no ground", "four arguments", "no such command", "no change"],
 )
 def test_tree_with_other_arguments_or_a_refusal_gives_its_code(
     tmp_path: Any, argv: list[str], code: int
 ):
-    """Given no argument, no ground, a command other than commit, or a commit with no change
+    """Given no argument, no ground, an argument past the ground, a command other than commit, or
+    a commit with no change
     When tree.py runs
-    Then it gives 2 with the usage, or 1 with what the refusal says"""
+    Then it gives 2 with the usage, or 1 with what the refusal says, printing nothing"""
     top = run_with(str(tmp_path), {})
     got, printed, said = command("scripts/tree.py").main(argv, top, RN)
     assert (got, printed) == (code, "")
-    assert said
+    assert said.startswith("usage: tree.py commit" if code == 2 else "tree.py: ")
+
+
+@pytest.mark.supports("test_an_edit_of_the_design_tree_is_committed_with_its_ground")
+def test_tree_outside_a_repository_gives_1_saying_what_is_missing(tmp_path: Any):
+    """Given the plan in a folder that no git repository holds
+    When tree.py commit runs with a ground
+    Then it gives 1, printing nothing, with what Missing says"""
+    top = str(tmp_path)
+    write_files(top, {f"{RUN}/design-tree.json": json.dumps(plan())})
+    for name in ("architecture", "software-design", "test-design", "product-vision"):
+        write_files(top, {f"docs/{name}.md": f"# {name}\n"})
+    got, printed, said = command("scripts/tree.py").main(["commit", RUN, "g"], top, RN)
+    assert (got, printed) == (1, "")
+    assert said.startswith("tree.py: ") and "git repository" in said
 
 
 @pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
 @pytest.mark.parametrize(
     ("argv", "code"),
-    [(["generator", CUT], 0), (["generator", CUT, "x"], 2), (["planner", CUT], 2)],
-    ids=["a result that holds", "three arguments", "no such role"],
+    [
+        (["generator", CUT], 0),
+        (["generator"], 2),
+        (["generator", CUT, "x"], 2),
+        (["planner", CUT], 2),
+    ],
+    ids=["a result that holds", "one argument", "three arguments", "no such role"],
 )
 def test_check_gives_0_for_a_result_that_holds_and_2_with_the_usage(
     tmp_path: Any, argv: list[str], code: int
 ):
     """Given the generator's Cut and its result that holds
-    When check.py runs with the role and the Cut, three arguments, or a role rn doesn't have
-    Then it gives 0, or 2 with the usage"""
+    When check.py runs with the role and the Cut, one argument, three arguments, or a role rn
+    doesn't have
+    Then it gives 0 saying nothing, or 2 with the usage, printing nothing each time"""
     made = {"result": "made", "carried_out": [at(TAX), at(LINES)]}
     top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: made, COMMAND: "x\n"})
-    got, _, said = command("scripts/check.py").main(argv, top, RN)
-    assert got == code and (code == 0) == (said == "")
+    got, printed, said = command("scripts/check.py").main(argv, top, RN)
+    assert (got, printed) == (code, "")
+    assert said == ("" if code == 0 else "usage: check.py generator|evaluator <cut>\n")
 
 
 @pytest.mark.supports("test_a_generators_result_that_leaves_a_decision_out_is_held_naming_it")
 def test_check_gives_1_with_each_fault_a_line(tmp_path: Any):
-    """Given the generator's result with a place for the lines alone
+    """Given the generator's result with no place for either decision
     When check.py runs
-    Then it gives 1 with the fault naming the tax rate"""
-    made = {"result": "made", "carried_out": [at(LINES)]}
+    Then it gives 1, printing nothing, with two lines, the first naming the tax rate and the
+    second the lines"""
+    made = {"result": "made", "carried_out": []}
     top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: made, COMMAND: "x\n"})
-    code, _, said = command("scripts/check.py").main(["generator", CUT], top, RN)
-    assert code == 1 and "The tax rate" in said
+    code, printed, said = command("scripts/check.py").main(["generator", CUT], top, RN)
+    assert (code, printed) == (1, "")
+    told = said.splitlines()
+    assert said.endswith("\n") and len(told) == 2
+    assert "The tax rate" in told[0] and "The lines" in told[1]
+
+
+@pytest.mark.supports(
+    "test_an_evaluators_result_that_answers_each_condition_of_its_group_passes_its_check"
+)
+@pytest.mark.parametrize(
+    ("good", "code"), [(["N1", "N2", "N3"], 0), (["N1", "N2"], 1)], ids=["holds", "N3 left out"]
+)
+def test_check_of_an_evaluator_checks_its_answers(tmp_path: Any, good: list[str], code: int):
+    """Given the evaluator's Cut of C1, and its result answering each condition, or leaving N3 out
+    When check.py runs for the evaluator
+    Then it gives 0 saying nothing, or 1 naming N3, printing nothing each time"""
+    result = {"good": [{"condition": c, "lines": ["x:1"]} for c in good], "more": []}
+    top = run_with(str(tmp_path), {EVALUATOR_CUT: C1, EVALUATOR: result})
+    got, printed, said = command("scripts/check.py").main(["evaluator", EVALUATOR_CUT], top, RN)
+    assert (got, printed) == (code, "")
+    assert (said == "") if code == 0 else (len(said.splitlines()) == 1 and "N3" in said)
 
 
 def cut_main(top: str, role: str) -> tuple[int, str, str]:
@@ -330,7 +490,37 @@ def test_cut_gives_the_path_of_a_fresh_cut_of_the_start_due(tmp_path: Any):
     Then it gives 0 with the path of round 1's Cut from the worktree's top, and writes the Cut"""
     top = run_with(str(tmp_path), {})
     assert cut_main(top, "generator") == (0, f"{CUT}\n", "")
-    assert os.path.isfile(os.path.join(top, CUT))
+    with open(os.path.join(top, CUT), encoding="utf-8") as f:
+        held = json.load(f)
+    assert (held["role"], held["deliverable"]["path"], held["best_practice"]) == (
+        "generator",
+        COMMAND,
+        "code",
+    )
+
+
+@pytest.mark.supports("test_deliverables_that_rest_on_none_being_made_start_at_once")
+@pytest.mark.parametrize(
+    ("waiting", "taken"),
+    [([], "1/generator.cut.json"), ([CUT], "3/generator.cut.json")],
+    ids=["none waiting", "the command's waiting"],
+)
+def test_cut_takes_the_generator_of_the_deliverable_with_the_fewest_cuts_with_no_result(
+    tmp_path: Any, waiting: list[str], taken: str
+):
+    """Given the plan in which the guide rests on the product vision alone, so that a generator of
+    each is due, and no Cut, or the command's Cut of round 1 with no result
+    When cut.py runs for the generator
+    Then it takes the command's of round 1, the first, or the guide's of round 3, whose
+    deliverable holds no Cut with no result, and writes the Cut of that deliverable"""
+    tree = plan()
+    tree["deliverables"][1]["inputs"] = ["docs/product-vision.md"]
+    cuts = {each: generator_cut() for each in waiting}
+    top = run_with(str(tmp_path), {f"{RUN}/design-tree.json": tree, **cuts})
+    assert cut_main(top, "generator") == (0, f"{RUN}/rounds/{taken}\n", "")
+    with open(os.path.join(top, RUN, "rounds", taken), encoding="utf-8") as f:
+        held = json.load(f)
+    assert held["deliverable"]["path"] == (GUIDE if waiting else COMMAND)
 
 
 @pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
