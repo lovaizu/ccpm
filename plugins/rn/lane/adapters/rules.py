@@ -5,13 +5,21 @@ check, and the results that end it."""
 
 from __future__ import annotations
 
+import json
 import os
+import re
+import shlex
 import sys
+from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "domain"))
 
-from fault import end
+from fault import Wrong, end
+from schemas import form
+
+# The path of a Cut of a run's Round, as scripts/cut.py prints it for the start's prompt.
+CUT = re.compile(r"\S*\.rn/[^/\s]+/rounds/\d+/[^/\s]+\.cut\.json")
 
 
 def main(given: str, cwd: str, plugin: str) -> tuple[int, str, str]:
@@ -36,7 +44,112 @@ def main(given: str, cwd: str, plugin: str) -> tuple[int, str, str]:
     run's Round, a Cut out of its form, or one that names no best practice of rn's.
     Changes: nothing.
     Refuses: nothing beyond the exit codes above."""
-    raise NotImplementedError("rules.main")
+    try:
+        cut = _cut(given)
+        held = form.read(
+            os.path.join(cwd, cut),
+            os.path.join(plugin, "domain", "schemas", "cut.schema.json"),
+            cut,
+        )
+        steps = (
+            _generator(held, cut, plugin)
+            if held["role"] == "generator"
+            else _evaluator(held, cut, plugin)
+        )
+    except Wrong as wrong:
+        return 1, "", f"rules.py: {wrong}\n"
+    return 0, json.dumps({"steps": steps}) + "\n", ""
+
+
+def _cut(given: str) -> str:
+    """The path of the Cut that the prompt of Lane's input names; Wrong where the input leaves its
+    form or the prompt names none."""
+    try:
+        value: Any = json.loads(given)
+    except ValueError as error:
+        raise Wrong(f"Lane's input isn't JSON: {error}") from None
+    if not isinstance(value, dict) or not isinstance(value.get("prompt"), str):
+        raise Wrong("Lane's input takes the form of rules.in.schema.json, with the start's prompt")
+    found = CUT.search(value["prompt"])
+    if found is None:
+        raise Wrong(
+            f"the start's prompt names no Cut of a run's Round, such as"
+            f" .rn/<run>/rounds/<n>/generator.cut.json: {value['prompt']!r}"
+        )
+    return found.group()
+
+
+def _practices(held: dict[str, Any], cut: str, plugin: str) -> dict[str, list[str]]:
+    """Each practice of the best practice of the Cut at `cut`, by when its maker takes it, decide
+    or make, as N<n>.<m>, the m-th practice of the condition N<n>, read once for both steps; Wrong
+    where rn has no such best practice."""
+    name = held["best_practice"]
+    practices = os.path.join(plugin, "domain", "best-practices")
+    path = os.path.join(practices, name, "best-practice.json")
+    if not os.path.isfile(path):
+        raise Wrong(
+            f"{cut}: best_practice: rn has no best practice {name}, only a folder of {practices}"
+        )
+    with open(path, encoding="utf-8") as f:
+        factors = json.load(f)["goal"]["critical_success_factors"]
+    taken: dict[str, list[str]] = {"decide": [], "make": []}
+    for condition in (n for c in factors for n in c["necessary_conditions"]):
+        for m, item in enumerate(condition["items"], 1):
+            taken[item["at"]].append(f"{condition['id']}.{m}")
+    return taken
+
+
+def _steps(*rules: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Steps 1 onward of the role's prompt, each with order before its own rules."""
+    return [
+        {"name": str(n), "rules": [{"type": "order"}, *each]} for n, each in enumerate(rules, 1)
+    ]
+
+
+def _end(role: str, cut: str, plugin: str, result: str) -> list[dict[str, Any]]:
+    """The last step's rules: the writes of the result beside the Cut, rn's check of the role, and
+    the result that the role gives."""
+    check = os.path.join(os.path.normpath(plugin), "scripts", "check.py")
+    return [
+        {"type": "writes", "paths": [_result(cut)]},
+        {"type": "check", "check": f"python3 {shlex.quote(check)} {role} {shlex.quote(cut)}"},
+        {"type": "result", "results": [result]},
+    ]
+
+
+def _result(cut: str) -> str:
+    """The path of the result beside the Cut."""
+    return cut.removesuffix(".cut.json") + ".json"
+
+
+def _generator(held: dict[str, Any], cut: str, plugin: str) -> list[dict[str, Any]]:
+    """The generator's steps, from its Cut at `cut`."""
+    taken = _practices(held, cut, plugin)
+    return _steps(
+        [],
+        [
+            {"type": "checklist", "items": taken["decide"]},
+            {"type": "result", "ends": ["point"]},
+        ],
+        [
+            {"type": "checklist", "items": taken["make"]},
+            {"type": "writes", "paths": [held["deliverable"]["path"], _result(cut)]},
+        ],
+        _end("generator", cut, plugin, "made"),
+    )
+
+
+def _evaluator(held: dict[str, Any], cut: str, plugin: str) -> list[dict[str, Any]]:
+    """An evaluator's steps, from its Cut at `cut`."""
+    run = os.path.dirname(os.path.dirname(os.path.dirname(cut)))
+    round_ = os.path.dirname(cut)
+    unread = [f"{run}/design-tree.json", f"{round_}/generator.cut.json", f"{round_}/generator.json"]
+    return _steps(
+        [],
+        [{"type": "reads_none", "paths": unread}],
+        [{"type": "checklist", "items": held["conditions"]}],
+        _end("evaluator", cut, plugin, "judged"),
+    )
 
 
 if __name__ == "__main__":

@@ -12,9 +12,6 @@ import pytest
 from repo_files import git
 from rn_bench import BRANCH, RUN, Bench, judged, made, read_json, typed
 
-# Why a case is xfail while its body isn't written.
-NO_STARTS_DUE = "starts_due.main isn't built yet"
-
 
 def paused(b: Bench, role: str = "generator") -> str:
     """The role's start due started and stopped by /rn:dn's TaskStop, with nothing written beside
@@ -39,7 +36,6 @@ def test_a_pause_pushes_the_run_with_the_cut_of_the_role_it_stopped(b: Bench):
     assert cut.removesuffix(".cut.json") + ".json" not in pushed
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S2")
 def test_a_pause_leaves_lane_no_start_due_so_the_turn_ends(b: Bench):
     """Given the command's generator started after /rn:ty, and then /rn:dn typed, and the
@@ -51,7 +47,6 @@ def test_a_pause_leaves_lane_no_start_due_so_the_turn_ends(b: Bench):
     assert code == 0 and printed in ({"starts": []}, {"ends": True}), said
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S2")
 def test_a_pick_up_in_a_new_conversation_gives_lane_each_role_stopped_again(b: Bench):
     """Given the command made, and its evaluator of C1 paused with no result
@@ -91,7 +86,6 @@ def test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first(b: 
     ]
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S2")
 def test_a_pick_up_from_the_repositorys_root_finds_the_run_in_rns_worktree(b: Bench):
     """Given the run's branch checked out in rn's worktree of the run, and the repository's root
@@ -104,7 +98,6 @@ def test_a_pick_up_from_the_repositorys_root_finds_the_run_in_rns_worktree(b: Be
     assert b.starts(moves=[typed("rn:up")]) == {"rn:generator": 1}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S2")
 def test_up_with_a_new_request_beside_a_run_paused_starts_no_role(b: Bench):
     """Given a run paused
@@ -114,7 +107,6 @@ def test_up_with_a_new_request_beside_a_run_paused_starts_no_role(b: Bench):
     assert b.starts("a dashboard of unpaid invoices", [typed("rn:up")]) == {}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S2")
 def test_up_alone_with_no_run_starts_no_role(b: Bench):
     """Given the repository with no run's folder

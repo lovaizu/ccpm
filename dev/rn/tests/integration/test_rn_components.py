@@ -22,9 +22,6 @@ from rn_bench import (
     typed,
 )
 
-# Why a case is xfail while its body isn't written.
-NO_STARTS_DUE = "starts_due.main isn't built yet"
-
 
 def judge_all(b: Bench, more: dict[str, str]) -> list[str]:
     """Each evaluator due judges, more on each condition named, and gives each group judged."""
@@ -42,7 +39,6 @@ def test_the_main_conversation_is_the_orchestrator(b: Bench):
     assert sorted(os.listdir(os.path.join(RN, "agents"))) == ["evaluator.md", "generator.md"]
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("generator")
 def test_a_generator_running_gets_no_second_start_of_its_deliverable(b: Bench):
     """Given the command's generator started, with no result yet
@@ -52,7 +48,6 @@ def test_a_generator_running_gets_no_second_start_of_its_deliverable(b: Bench):
     assert b.starts(moves=[typed("rn:up"), started(cut)]) == {}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("generator")
 def test_deliverables_that_rest_on_none_being_made_give_lane_a_generator_each(b: Bench):
     """Given the plan in which the guide rests on the product vision alone, not on the command

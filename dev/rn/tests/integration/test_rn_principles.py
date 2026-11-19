@@ -27,9 +27,11 @@ from rn_bench import (
     typed,
 )
 
-# Why a case is xfail while its body isn't written.
-NO_STARTS_DUE = "starts_due.main isn't built yet"
-NO_GUARD = "Lane's guard and rn's rules.main aren't built yet, so no guard holds rn's steps"
+# Why a case is xfail while its gap in dev/rn/tests/gaps.md stands.
+NO_GUARD = (
+    "the generator's step 1, where the case writes, names no writes, so the guard lets each write"
+    " through, as dev/rn/tests/gaps.md says"
+)
 
 
 def given_again(b: Bench, module: str, code: str) -> None:
@@ -181,7 +183,6 @@ def test_a_generators_point_starts_no_other_role(b: Bench, broken: None):
     assert none_due(b, "generator")
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("P1.3")
 def test_work_that_rests_on_a_plan_waits_for_its_sign_off(b: Bench, broken: None):
     """Given /rn:up typed with a request, and the orchestrator putting the plan up for the

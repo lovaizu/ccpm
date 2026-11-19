@@ -4,13 +4,20 @@ and its Rounds as course.due gives them, or the run's end."""
 
 from __future__ import annotations
 
+import json
 import os
 import sys
+from collections.abc import Sequence
+from typing import Any
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "..", "domain"))
 
-from fault import end
+from fault import Wrong, end
+from tree import course, design, rounds
+
+# rn's folder, where the design tree's schema and the best practices lie.
+PLUGIN = os.path.dirname(os.path.dirname(HERE))
 
 
 def main(given: str, cwd: str) -> tuple[int, str, str]:
@@ -39,7 +46,57 @@ def main(given: str, cwd: str) -> tuple[int, str, str]:
     passes over it as one with no work left.
     Changes: nothing.
     Refuses: nothing beyond the exit codes above."""
-    raise NotImplementedError("starts_due.main")
+    try:
+        words, moves = _run(given)
+        return 0, json.dumps(_due(words, moves, cwd)) + "\n", ""
+    except Wrong as wrong:
+        return 1, "", f"starts_due.py: {wrong}\n"
+
+
+def _run(given: str) -> tuple[str, list[dict[str, str]]]:
+    """The words and the moves of the run that Lane gives; Wrong where it leaves its form."""
+    try:
+        value: Any = json.loads(given)
+    except ValueError as error:
+        raise Wrong(f"Lane's input isn't JSON: {error}") from None
+    run = value.get("run") if isinstance(value, dict) else None
+    words = run.get("words") if isinstance(run, dict) else None
+    moves = run.get("moves") if isinstance(run, dict) else None
+    if not isinstance(words, str) or not isinstance(moves, list):
+        raise Wrong(
+            "Lane's input takes the form of starts_due.in.schema.json: run, with words and moves"
+        )
+    return words, moves
+
+
+def _due(words: str, moves: Sequence[dict[str, str]], cwd: str) -> dict[str, Any]:
+    """What the order gives for the run's words and moves, from the run's folder in `cwd`."""
+    commands = [m["command"] for m in moves if m["kind"] == "command"]
+    latest = commands[-1] if commands else ""
+    if latest == "rn:dn" or (words and "rn:ty" not in commands):
+        return {"starts": []}
+    found = rounds.folder(cwd)
+    if found is None:
+        return {"ends": True} if latest == "rn:ty" else {"starts": []}
+    run = os.path.join(cwd, found)
+    starts = rounds.each(run)
+    prompts = [m["prompt"] for m in moves if m["kind"] == "start"]
+    due = course.due(design.read(run, PLUGIN), starts, _running(found, starts, prompts))
+    roles = [f"rn:{d.role}" for d in due]
+    return {"starts": [{"role": r, "count": roles.count(r)} for r in dict.fromkeys(roles)]}
+
+
+def _running(
+    found: str, starts: Sequence[rounds.Start], prompts: Sequence[str]
+) -> list[course.Due]:
+    """Each start with no result whose Cut a prompt names, by its path from the run's `.rn/`, as
+    the orchestrator names it from rn's worktree of the run."""
+    run = os.path.join(".rn", os.path.basename(found))
+    return [
+        course.Due(s.cut["deliverable"]["path"], s.role, s.group, s.cut["best_practice"], s.round)
+        for s in starts
+        if s.result is None and any(rounds.path(run, s) in p for p in prompts)
+    ]
 
 
 if __name__ == "__main__":

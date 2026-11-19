@@ -23,9 +23,6 @@ from rn_bench import (
     typed,
 )
 
-# Why a case is xfail while its body isn't written.
-NO_STARTS_DUE = "starts_due.main isn't built yet"
-
 TAX_RATE = {"path": COMMAND, "condition": "N1", "about": "The tax rate"}
 LINES = {"path": COMMAND, "condition": "N1", "about": "The lines"}
 # A decision under the command's N2, from a finding of its evaluator.
@@ -47,7 +44,6 @@ def judged(b: Bench, more: dict[str, str]) -> list[str]:
     return [cut for _, cut in rn_bench.judged(b, more)]
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S1")
 def test_a_new_request_starts_no_role_while_its_plan_waits_for_sign_off(b: Bench):
     """Given /rn:up typed with the walkthrough's request, and the plan put up
@@ -56,7 +52,6 @@ def test_a_new_request_starts_no_role_while_its_plan_waits_for_sign_off(b: Bench
     assert b.starts(REQUEST, [typed("rn:up")]) == {}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S1")
 def test_a_plan_sent_back_starts_no_role_until_its_sign_off(b: Bench):
     """Given /rn:up typed with the request, and then /rn:gm with what to change
@@ -65,7 +60,6 @@ def test_a_plan_sent_back_starts_no_role_until_its_sign_off(b: Bench):
     assert b.starts(REQUEST, [typed("rn:up"), typed("rn:gm")]) == {}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S1")
 def test_a_plan_signed_off_gives_lane_the_generator_of_its_first_deliverable(b: Bench):
     """Given /rn:up typed with the request, and then /rn:ty
@@ -179,7 +173,6 @@ def test_a_deliverable_made_gets_one_evaluator_for_each_group_of_its_conditions(
     assert groups == CODE_GROUPS
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S1")
 def test_a_deliverable_made_gives_lane_its_evaluators_beside_those_that_run(b: Bench):
     """Given the command made, and the evaluator of C1 started with no result yet
@@ -319,7 +312,6 @@ def test_a_generators_end_with_its_deliverable_off_its_template_is_held(b: Bench
     assert f'{GUIDE}:3: "## FAQ" lies beside the template' in answer.output
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S1")
 def test_the_sign_off_of_the_pull_request_ends_the_run(b: Bench):
     """Given each deliverable done and no work left, and the pull request put up
@@ -332,7 +324,6 @@ def test_the_sign_off_of_the_pull_request_ends_the_run(b: Bench):
     assert (code, printed) == (0, {"ends": True}), said
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S1")
 def test_a_sign_off_with_work_left_doesnt_end_the_run(b: Bench):
     """Given the command made and its round 1 judged good, the guide still in the work

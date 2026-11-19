@@ -17,9 +17,11 @@ import pytest
 from repo_files import write_files
 from rn_bench import COMMAND, GUIDE, RN, RUN, command, plan, started, typed, worktree
 
-# Why a case is xfail while its body isn't written.
-NO_STARTS_DUE = "starts_due.main isn't built yet"
-NO_RULES = "rules.main isn't built yet"
+# Why a case is xfail while its gap in dev/rn/tests/gaps.md stands.
+NO_INPUTS = (
+    "the worktree that the case writes holds none of the plan's inputs, so design.read refuses"
+    " the plan, as dev/rn/tests/gaps.md says"
+)
 
 CUT = f"{RUN}/rounds/1/generator.cut.json"
 RESULT = f"{RUN}/rounds/1/generator.json"
@@ -79,7 +81,6 @@ def counts(top: str, words: str = "", moves: list[dict[str, Any]] | None = None)
     return {s["role"]: s["count"] for s in printed["starts"]}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("test_a_plan_signed_off_gives_lane_the_generator_of_its_first_deliverable")
 @pytest.mark.parametrize(
     ("words", "moves", "due"),
@@ -89,9 +90,7 @@ def counts(top: str, words: str = "", moves: list[dict[str, Any]] | None = None)
         (REQUEST, ["rn:up", "rn:ty"], {"rn:generator": 1}),
         (REQUEST, ["rn:up", "rn:ty", "rn:gm"], {"rn:generator": 1}),
         ("", ["rn:up"], {"rn:generator": 1}),
-        pytest.param(
-            "", ["rn:up", "rn:dn"], {}, marks=pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
-        ),
+        ("", ["rn:up", "rn:dn"], {}),
     ],
     ids=[
         "a request",
@@ -113,7 +112,6 @@ def test_starts_due_wait_for_the_sign_off_of_a_new_runs_plan(
     assert counts(top, words, [typed(m) for m in moves]) == due
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("test_the_sign_off_of_the_pull_request_ends_the_run")
 @pytest.mark.parametrize(
     ("work", "moves", "given"),
@@ -143,7 +141,6 @@ def test_starts_due_end_the_run_on_a_sign_off_with_no_work_left(
     assert counts(top, "", [typed(m) for m in moves]) == given
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("test_up_alone_with_no_run_starts_no_role")
 def test_starts_due_with_no_runs_folder_give_none(tmp_path: Any):
     """Given a folder that holds no run's folder
@@ -152,7 +149,7 @@ def test_starts_due_with_no_runs_folder_give_none(tmp_path: Any):
     assert counts(str(tmp_path)) == {}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
+@pytest.mark.xfail(strict=True, reason=NO_INPUTS)
 @pytest.mark.supports("test_a_pick_up_from_the_repositorys_root_finds_the_run_in_rns_worktree")
 def test_starts_due_from_the_root_read_the_run_in_rns_worktree(tmp_path: Any):
     """Given the repository's root with no run's folder, and rn's worktree of the run holding the
@@ -165,7 +162,6 @@ def test_starts_due_from_the_root_read_the_run_in_rns_worktree(tmp_path: Any):
     assert counts(top) == {"rn:generator": 1}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("test_a_generator_running_gets_no_second_start_of_its_deliverable")
 @pytest.mark.parametrize(
     ("files", "moves", "due"),
@@ -197,7 +193,6 @@ def test_starts_due_leave_out_each_start_that_runs(
     assert counts(top, "", [typed("rn:up"), *moves]) == due
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("test_deliverables_that_rest_on_none_being_made_give_lane_a_generator_each")
 def test_starts_due_give_each_role_due_with_its_count(tmp_path: Any):
     """Given the plan in which the guide rests on the product vision alone, and the command's
@@ -211,7 +206,6 @@ def test_starts_due_give_each_role_due_with_its_count(tmp_path: Any):
     assert counts(top) == {"rn:evaluator": 3, "rn:generator": 1}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gives_lane_each_role_stopped_again")
 @pytest.mark.parametrize(
     ("given", "files", "said"),
@@ -267,7 +261,6 @@ def practices(kind: str, at: str) -> list[str]:
     ]
 
 
-@pytest.mark.xfail(strict=True, reason=NO_RULES)
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 def test_rules_give_the_generator_its_steps_from_its_cut(tmp_path: Any):
     """Given the generator's Cut of the command by code
@@ -290,7 +283,6 @@ def test_rules_give_the_generator_its_steps_from_its_cut(tmp_path: Any):
     assert given["4"]["result"]["results"] == ["made"]
 
 
-@pytest.mark.xfail(strict=True, reason=NO_RULES)
 @pytest.mark.supports("test_a_round_of_refactoring_comes_only_after_the_content_is_good")
 def test_rules_give_a_generator_of_refactoring_the_practices_of_the_refactor_best_practice(
     tmp_path: Any,
@@ -306,7 +298,6 @@ def test_rules_give_a_generator_of_refactoring_the_practices_of_the_refactor_bes
     assert given["3"]["checklist"]["items"] == practices("refactor-doc", "make")
 
 
-@pytest.mark.xfail(strict=True, reason=NO_RULES)
 @pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
 def test_rules_give_an_evaluator_its_steps_from_its_cut(tmp_path: Any):
     """Given an evaluator's Cut of C1 of the command
@@ -326,7 +317,6 @@ def test_rules_give_an_evaluator_its_steps_from_its_cut(tmp_path: Any):
     assert given["4"]["result"]["results"] == ["judged"]
 
 
-@pytest.mark.xfail(strict=True, reason=NO_RULES)
 @pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
 def test_rules_of_a_cut_in_a_later_slot_name_the_result_beside_it(tmp_path: Any):
     """Given round 1's evaluator of C1 in slot 2, beside the Cut that a pause left
@@ -339,7 +329,6 @@ def test_rules_of_a_cut_in_a_later_slot_name_the_result_beside_it(tmp_path: Any)
     assert given["4"]["writes"]["paths"] == [f"{RUN}/rounds/1/evaluator-C1.2.json"]
 
 
-@pytest.mark.xfail(strict=True, reason=NO_RULES)
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 @pytest.mark.parametrize(
     ("given", "cut", "said"),
@@ -380,10 +369,7 @@ def test_rules_refuse_input_a_prompt_or_a_cut_out_of_its_form(
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 @pytest.mark.parametrize(
     "adapter",
-    [
-        pytest.param("rules", marks=pytest.mark.xfail(strict=True, reason=NO_RULES)),
-        pytest.param("starts_due", marks=pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)),
-    ],
+    ["rules", "starts_due"],
 )
 def test_an_adapter_run_as_lane_runs_it_ends_with_what_its_main_gives(tmp_path: Any, adapter: str):
     """Given Lane's input that isn't JSON
