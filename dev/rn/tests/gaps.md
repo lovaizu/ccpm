@@ -11,7 +11,7 @@ case named here stays xfail with its gap as the reason.
   practice takes". Its Given needs the plan's inputs in the worktree, as `rn_bench.worktree` writes
   them, or the starts due need to read the plan by its schema alone.
 - `test_a_role_that_writes_beside_its_deliverable_is_told_its_step`, in
-  `integration/test_rn_principles.py`: the generator writes at its step 1, as no step is marked done,
+  `integration/test_rn_principles.py`: the generator writes at its step 1, as it marks no step done,
   and `lane/adapters/rules.py` gives `writes` only at steps 3 and 4, as its contract says, while
   Lane judges a call by the rules of the step due alone, so the guard lets the write through. The
   case needs the generator at step 3, with steps 1 and 2 marked done, or step 1 needs `writes`. It
