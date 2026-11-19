@@ -49,6 +49,22 @@ def each(run: str) -> Sequence[Start]:
     return starts
 
 
+def folder(top: str) -> str | None:
+    """The run's folder of a worktree.
+
+    Takes: the top of the worktree.
+    Gives: the latest folder of `.rn/` that holds a design tree, from the top, as each run works in
+    a worktree of its own; None where none is there.
+    Refuses: nothing."""
+    rn = os.path.join(top, ".rn")
+    found = sorted(
+        name
+        for name in (os.listdir(rn) if os.path.isdir(rn) else [])
+        if os.path.isfile(os.path.join(rn, name, "design-tree.json"))
+    )
+    return f".rn/{found[-1]}" if found else None
+
+
 def path(run: str, start: Start) -> str:
     """Where the start's Cut lies.
 

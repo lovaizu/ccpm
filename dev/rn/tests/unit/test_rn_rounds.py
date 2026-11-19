@@ -407,6 +407,34 @@ def test_write_gives_the_generator_its_deliverable_best_practice_goal_and_decisi
     assert written["decisions"] == decisions(plan())
 
 
+@pytest.mark.supports("test_a_role_stopped_starts_again_from_its_kept_cut")
+def test_write_keeps_the_cut_already_written_for_the_start(tmp_path: Any):
+    """Given the command's generator of round 1 cut, and then a decision changed in the plan
+    When cut.write writes the same start's Cut again, as a stopped role starts again
+    Then it gives the same path, and the Cut holds the decisions it was cut with"""
+    run = run_folder(str(tmp_path), {"design-tree.json": plan()})
+    due = Due(COMMAND, "generator", "", "code", 1)
+    first = cut.write(run, plan(), due)
+    assert cut.write(run, changed(), due) == first
+    with open(first, encoding="utf-8") as f:
+        assert json.load(f)["decisions"] == decisions(plan())
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+def test_folder_gives_the_latest_run_with_a_design_tree_or_none(tmp_path: Any):
+    """Given a worktree with no .rn/, and then one with two runs' folders and a folder with no
+    design tree
+    When rounds.folder looks for the run's folder
+    Then it gives None, and then the latest run's folder from the top"""
+    top = str(tmp_path)
+    assert rounds.folder(top) is None
+    write_files(
+        top, {".rn/20261101-a/design-tree.json": "{}", ".rn/20261119-b/design-tree.json": "{}"}
+    )
+    os.makedirs(os.path.join(top, ".rn", "best-practices"))
+    assert rounds.folder(top) == ".rn/20261119-b"
+
+
 @pytest.mark.supports("test_a_generator_starts_with_only_the_decisions_of_its_deliverable")
 def test_write_gives_the_generator_the_decisions_of_an_input_node_with_no_file(tmp_path: Any):
     """Given the plan with a node of the product vision with no file, a decision under it, as the

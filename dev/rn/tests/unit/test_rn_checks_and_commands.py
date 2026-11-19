@@ -416,7 +416,6 @@ def test_items_with_no_step_or_no_best_practice_gives_its_code(
     assert (got, printed) == (code, "") and said
 
 
-@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
 def test_results_gives_each_result_in_the_order_of_the_rounds(tmp_path: Any):
     """Given round 1's generator made and its evaluator of C1 judged, and round 2's generator with
@@ -441,7 +440,6 @@ def test_results_gives_each_result_in_the_order_of_the_rounds(tmp_path: Any):
     }
 
 
-@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_up_with_a_new_request_picks_up_no_run")
 def test_results_gives_none_for_words_of_a_new_request(tmp_path: Any):
     """Given a run with a result
@@ -454,7 +452,6 @@ def test_results_gives_none_for_words_of_a_new_request(tmp_path: Any):
     assert (code, json.loads(printed)) == (0, {"results": []})
 
 
-@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_up_alone_with_no_run_picks_up_none")
 def test_results_gives_none_where_no_run_is(tmp_path: Any):
     """Given a folder with no run's folder
@@ -464,7 +461,16 @@ def test_results_gives_none_where_no_run_is(tmp_path: Any):
     assert (code, json.loads(printed)) == (0, {"results": []})
 
 
-@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
+@pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
+def test_results_of_a_result_not_json_gives_1_naming_it(tmp_path: Any):
+    """Given round 1's generator, its result not JSON
+    When results.py runs with no words
+    Then it gives 1, naming the result's file"""
+    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: "{"})
+    code, printed, said = command("hooks/adapters/results.py").main('{"words": ""}', top)
+    assert (code, printed) == (1, "") and "generator.json" in said
+
+
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
 def test_results_of_input_not_json_gives_1(tmp_path: Any):
     """Given Lane's input that isn't JSON

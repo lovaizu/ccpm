@@ -650,7 +650,18 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "hooks/adapters/results.py, which gives the results kept for a pick-up through rounds.each, and tree/rounds.py's folder, the run's folder of a worktree, which it shares with start.py; and cut.write keeping a Cut already there, so that a role stopped starts again from its kept Cut",
+              "by": "reasoning"
+            },
+            {
+              "about": "The pause itself",
+              "decided": "left to the orchestrator's steps, as the stop of each role, the commit, and the push run through Claude Code's tools, tree.py, and git, which S1's code already carries",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -685,7 +696,13 @@
         {
           "id": "N8",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The inputs from outside",
+              "decided": "Lane's standard input of results.py, read by its main, and each result kept, read by rounds.each, each refused with what to fix",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
