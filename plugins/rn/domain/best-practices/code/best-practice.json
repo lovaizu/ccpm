@@ -84,6 +84,10 @@
        },
        {
         "at": "make",
+        "text": "Before you write a branch, a comparison, or a pick of one of several, name the case that fails where it's wrong, such as the case of two starts for a pick of the latest, and write none that no case fails on."
+       },
+       {
+        "at": "make",
         "text": "Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on.",
         "trace": {
          "action": "run",
@@ -140,7 +144,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports: one for the usual input, one for each class of input that its interface treats alike, refusals among them, and one at each end of a class on an ordered scale, as [the test design best practice](../test-design/best-practice.md) divides the inputs of a part into its unit cases. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
+        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports, by the techniques with which [the test design best practice](../test-design/best-practice.md) designs unit cases: each class of input, refusals among them, each end of a class on an ordered scale, none, one, and several of each collection, a value that nearly matches beside the one that matches, and a case that fails on each fault likely in its body. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
        },
        {
         "at": "decide",
@@ -202,7 +206,7 @@
       "id": "N7",
       "about": "Body, Tests",
       "what": "Does breaking any behavior make a test fail?",
-      "why": "The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches.",
+      "why": "The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches. A mutant that survives shows a fault in how the cases or the code were made, which is mended where it was made, since a test added for each mutant comes from the code, and work that counts on a detector to find what the cases missed piles up such tests.",
       "items": [
        {
         "at": "make",
@@ -244,7 +248,7 @@
        },
        {
         "at": "make",
-        "text": "Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Keep the cases as the design made them, since a case added for a mutant comes from the code that exists, not from what the part must do."
+        "text": "Where a mutant that N7.6 lists breaks a case whose Then names what it changes, the test asserts less than its Then: make it assert the whole Then, as N7.1 says. Where no case's Then names it, the design of the cases lacks a case: change no test for it, and end with `asks`, naming for each the technique of the test design best practice that the cases lacked, such as several starts for a pick of the latest, so that whoever designs the cases designs them again."
        }
       ]
      }

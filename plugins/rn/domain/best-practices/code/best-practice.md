@@ -59,8 +59,9 @@ Every behavior that no case asks for is code the maintainer must carry and keep 
 
 1. *While deciding.* For each option, mode, parameter, and branch that you plan for a module, name the unit case that calls for it, and drop it from the plan where none does, such as a `--dry-run` flag that no case runs, or a second file format that no case reads.
 2. *While making.* Write the body one test at a time, once you see the test fail as N5.8 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case.
-3. *While making.* Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on. The trace: `{tests}` run.
-4. *While making.* Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses.
+3. *While making.* Before you write a branch, a comparison, or a pick of one of several, name the case that fails where it's wrong, such as the case of two starts for a pick of the latest, and write none that no case fails on.
+4. *While making.* Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on. The trace: `{tests}` run.
+5. *While making.* Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses.
 
 ### N4
 
@@ -80,7 +81,7 @@ Does each case of the specification, its edges and refusals included, have one t
 
 A maintainer whose test fails knows from its name which case of the specification broke, and so what to mend.
 
-1. *While deciding.* For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports: one for the usual input, one for each class of input that its interface treats alike, refusals among them, and one at each end of a class on an ordered scale, as [the test design best practice](../test-design/best-practice.md) divides the inputs of a part into its unit cases. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`.
+1. *While deciding.* For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports, by the techniques with which [the test design best practice](../test-design/best-practice.md) designs unit cases: each class of input, refusals among them, each end of a class on an ordered scale, none, one, and several of each collection, a value that nearly matches beside the one that matches, and a case that fails on each fault likely in its body. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`.
 2. *While deciding.* Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for.
 3. *While making.* Write one test for each case that N5.1 designs, in the test code beside the part's unit tests, in the form that the note of Tests in the template gives. Where its name needs `and`, split it into two tests.
 4. *While making.* Take each value that a test expects from its case's Then, since a value copied from what the code gives when run passes whatever the code does.
@@ -103,7 +104,7 @@ A test that calls the code as its callers do fails only where a caller would bre
 
 Does breaking any behavior make a test fail?
 
-The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches.
+The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches. A mutant that survives shows a fault in how the cases or the code were made, which is mended where it was made, since a test added for each mutant comes from the code, and work that counts on a detector to find what the cases missed piles up such tests.
 
 1. *While making.* Have each test assert the whole result that its case's Then names, such as the full list that a call gives, not only that the call returned or that the list isn't empty.
 2. *While making.* Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs. The trace: `{coverage}` run.
@@ -113,7 +114,7 @@ The maintainer knows that every behavior still holds only where breaking any of 
 6. *While making.* Where the round takes CI's report on the code's last push, from the mutation testing that Test strategy runs on each push apart from the work, open the log of that run, such as its job's log on the pull request, and list each mutant that it reports as surviving, with its file, its line, and the change it made.
 7. *While making.* For each mutant that N7.6 lists, name the case that the changed code serves. Where none does, remove the code or make it simpler, so that no change of it passes unseen.
 8. *While making.* Where a mutant that N7.6 lists can't change what the code does, such as `<` turned into `<=` where the two values are never equal, mark it beside the code as one that changes nothing, with why.
-9. *While making.* Where a mutant that N7.6 lists breaks a case that the tests already name, make that case's test assert more closely so that the mutant fails it, and report why the design of the cases missed it, so that whoever designs them mends the cause. Keep the cases as the design made them, since a case added for a mutant comes from the code that exists, not from what the part must do.
+9. *While making.* Where a mutant that N7.6 lists breaks a case whose Then names what it changes, the test asserts less than its Then: make it assert the whole Then, as N7.1 says. Where no case's Then names it, the design of the cases lacks a case: change no test for it, and end with `asks`, naming for each the technique of the test design best practice that the cases lacked, such as several starts for a pick of the latest, so that whoever designs the cases designs them again.
 
 ### N8
 

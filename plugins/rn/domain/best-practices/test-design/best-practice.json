@@ -55,8 +55,8 @@
      {
       "id": "N3",
       "about": "Unit cases",
-      "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, and, where its result depends on what came before, for each transition that the product's use can bring about, each naming the integration case it supports?",
-      "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. A part that keeps what came before, such as the steps a run has taken, breaks where its use sends an event in a state that no sequence draws, such as a subagent's end that reaches the main conversation after it resumed that subagent, which a case for each class of one call doesn't reach. The techniques are the four black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, decision table testing, and state transition testing.",
+      "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals, its edges, and the collections inside it included, and, where its result depends on what came before, for each transition that the product's use can bring about, so that each fault likely in its body fails a case, each naming the integration case it supports?",
+      "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. A part that keeps what came before, such as the steps a run has taken, breaks where its use sends an event in a state that no sequence draws, such as a subagent's end that reaches the main conversation after it resumed that subagent, which a case for each class of one call doesn't reach. The techniques are the four black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, decision table testing, and state transition testing. A fault that no case catches shows only later, to a detector such as mutation testing, and a case written then comes from the code, not from what the part must do, so the maker designs cases until no likely fault passes them. James Grenning's ZOMBIES takes each collection through zero, one, and many, and the syllabus's error guessing lists the faults likely in a body, each to design a case for.",
       "items": [
        {
         "at": "make",
@@ -65,6 +65,22 @@
        {
         "at": "make",
         "text": "Where a class ends on an ordered scale, such as a length or a count, write one case at each end and one at the nearest value of the next class."
+       },
+       {
+        "at": "make",
+        "text": "Where what an interface takes holds a collection, such as a role's steps, a run's starts, or a subagent's results, write a case with none, one, and several of it, each that the use can bring about. Where the contract picks one of several, such as the latest or the one whose name matches, write a case of several in which any other pick, such as the first in place of the latest, gives another result."
+       },
+       {
+        "at": "make",
+        "text": "Where the contract compares a value, such as an ID, a name, or a prefix, write a case that holds, beside the value that matches, one that nearly matches, such as another plugin's name with the same prefix, and values on each side of it in order."
+       },
+       {
+        "at": "make",
+        "text": "Divide an input that sets the part up, such as a rule file or a plugin's folder, into its classes like any other input, such as a role of one step, of several, and with its result on a step that isn't its last, and give each case the setup that its class needs, since one setup shared by every case leaves each of its classes but one untested."
+       },
+       {
+        "at": "make",
+        "text": "Take as a class each event of the same stream that the part must leave alone, such as another plugin's event or the notice of a subagent that isn't the run's, as the use sends it beside the events that the part acts on."
        },
        {
         "at": "make",
@@ -77,6 +93,10 @@
        {
         "at": "make",
         "text": "For a part that holds a prompt, write a case where its description says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that its record shows."
+       },
+       {
+        "at": "make",
+        "text": "Once an interface's cases are written, take each condition that its contract states and list the faults likely in a body that meets it: a bound one off, another element of several picked, a comparison turned around, and for or, a field left unread, and a refusal left out. Name for each the case that fails on it, and write a case where none does, with the result that the contract gives, since a fault that no case fails on is found only once the body is built, by a detector, and a case written then comes from the code."
        }
       ]
      }
@@ -95,6 +115,10 @@
        {
         "at": "make",
         "text": "Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and keep the cases in the test code alone, since a list beside the code says each case twice."
+       },
+       {
+        "at": "make",
+        "text": "Write in each case's Then the whole of what the interface gives and each change it makes, as its contract states them, such as the whole entry that a record gains and whether a call is stopped, since a Then that names a part of the result passes a body that gets the rest wrong."
        },
        {
         "at": "make",

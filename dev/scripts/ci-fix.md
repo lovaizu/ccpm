@@ -42,10 +42,11 @@ repository's git and GitHub. Fetching a public page to read it needs no ask.
    - an input that the part needn't take, or one it must take and fails on
    - a check that failed for a cause outside the code and its tests, such as the run's machine
 4. Mend each at its cause, as the code best practice says for what it showed. First ask whether the
-   part needs the code, and remove it or make it simpler where no case of the tests calls for it. Add a
-   test only for a case that the tests already name, and add no case, as a case added to catch a
-   mutant comes from the code that exists, not from what the part must do. For each test you add,
-   name in the report why the design of the test cases missed it. Where a failure needs a new case,
+   part needs the code, and remove it or make it simpler where no case of the tests calls for it.
+   Make a test assert more only where its case's Then already names what the failure changes, and
+   add no case, as a case added to catch a mutant comes from the code that exists, not from what the
+   part must do. For each other failure, name in the report the technique of the test design best
+   practice that the cases lacked. Where a failure needs a new case,
    or its cause lies in the design or a best practice, change none of them: end with the point and
    your recommendation in the report.
 5. Run both checks that the opening names, and judge each by its exit code. Where one fails, go
