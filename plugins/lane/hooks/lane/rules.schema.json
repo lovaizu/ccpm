@@ -58,7 +58,7 @@
             ]
           },
           "start": {
-            "description": "The roles whose starts come due, each by its agent type.",
+            "description": "The roles whose starts come due, each by its agent type; a role named several times starts several times at once.",
             "type": "array",
             "items": { "type": "string", "minLength": 1 }
           }

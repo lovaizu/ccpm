@@ -27,6 +27,7 @@ LANE_MODULES = (
     "plugin",
     "adapters",
     "routes",
+    "lane_text",
     "lanes",
 )
 

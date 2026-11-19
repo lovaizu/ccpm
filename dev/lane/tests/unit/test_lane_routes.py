@@ -51,7 +51,7 @@ def test_a_run_with_only_its_command_has_the_commands_starts_due():
     """Given a run of log:up with no move after its folder
     When Lane gives the starts due
     Then the writer is due, with no text yet"""
-    assert due(RULES, run()) == [Due("log:writer", "")]
+    assert due(RULES, run()) == [Due("log:writer", "1")]
 
 
 @pytest.mark.supports("test_the_start_due_goes_through_and_leaves_none_due")

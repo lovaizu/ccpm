@@ -56,8 +56,9 @@ def run_opened(event: Event, run: Run) -> Answer:
 
     Takes: the event, whose `transcript_path` holds the skill's base directory, and the run with no
     folder.
-    Gives: the starts due of the run, each with its text, after each result that the plugin's kept
-    adapter gives for the run's words, where the plugin gives rules; an empty answer where the
+    Gives: the starts due of each lane of the run, each with the text that lane_text.text gives, its
+    lane named, after each result that the plugin's kept adapter gives for the run's words, where
+    the plugin gives rules; an empty answer where the
     plugin gives none, or the transcript holds no base directory of the skill yet.
     Changes: the run record, by the run's folder and its kept results, in one write, where the
     transcript gives the folder.
@@ -70,10 +71,13 @@ def run_opened(event: Event, run: Run) -> Answer:
 def start_made(move: Move) -> Answer:
     """S9: the main conversation starts a subagent of the plugin, or resumes one by SendMessage.
 
-    Takes: a `start` move at the PreToolUse of an Agent or SendMessage call.
-    Gives: an empty answer for a start due; for any other start of the plugin's subagents, or one
-    by a subagent, a stop with the starts due.
-    Changes: the run record, by the start, untied until the PostToolUse of its call; a resume that
+    Takes: a `start` move at the PreToolUse of an Agent or SendMessage call, in the lane that place
+    gives it.
+    Gives: an empty answer for a start of a role due in the move's lane; for any other start of the
+    plugin's subagents, such as one whose prompt names no lane, or a lane with no start of that role
+    due, or one by a subagent, a stop with the starts due.
+    Changes: the run record, by the start in its lane, untied until the PostToolUse of its call,
+    from which each later move of the subagent goes by its `agent_id`; a resume that
     the PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
     SubagentStop, where subagent_ended ties it, as Lane hooks no SubagentStart.
     Refuses: nothing.
@@ -99,8 +103,8 @@ def command_typed(move: Move) -> Answer:
 
     Takes: a `typed` move at the UserPromptExpansion of the command, or at the PostToolUse of its
     Skill call, which place gives while the run of the command's plugin stands.
-    Gives: where the run stands: the starts due, each with its text, as routes.due gives them once
-    the command is added.
+    Gives: where the run stands: the starts due of each lane, each with the text that
+    lane_text.text gives, as routes.due gives them once the command is added.
     Changes: the run record, by the command.
     Refuses: nothing; a start adapter that failed stops the call with what's wrong.
     """
@@ -112,11 +116,16 @@ def result_reached(move: Move) -> Answer:
 
     Takes: a `result_reached` move at the UserPromptSubmit of the subagent's
     `<task-notification>`.
-    Gives: the result, and the starts that its route makes due, each with its text; the start due
-    again where the subagent was stopped with no result.
+    Gives: the result, and the starts that its route makes due in its lane, each with the text that
+    lane_text.text gives; where routes.joins gives the result's lane, as each start that its route
+    started of one role has its result, the one result that adapters.joined_result gives from
+    theirs, and the starts that the route after it makes due in the lane; nothing due in a lane
+    that still waits for a result of such a start; the start due again where the subagent was
+    stopped with no result.
     Changes: the run record, by a `stopped` entry of the subagent's start, where it was stopped
-    with no result, such as by TaskStop; else nothing.
-    Refuses: nothing.
+    with no result, such as by TaskStop, and by a `joined` entry of the lane's one result, where
+    routes.joins gives the lane; else nothing.
+    Refuses: nothing; a join or start adapter that failed stops the call with what's wrong.
     """
     raise NotImplementedError("guard.result_reached")
 

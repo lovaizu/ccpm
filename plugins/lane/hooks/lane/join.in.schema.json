@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "What Lane gives a plugin's join adapter",
+  "description": "A lane whose route started one role several times, each start with its result, whose one result the adapter gives.",
+  "type": "object",
+  "required": [
+    "run",
+    "role",
+    "results"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "run": {
+      "type": "object",
+      "required": [
+        "skill",
+        "words"
+      ],
+      "additionalProperties": false,
+      "description": "The run: the skill that started it and the words typed after its command.",
+      "properties": {
+        "skill": {
+          "type": "string",
+          "minLength": 1
+        },
+        "words": {
+          "type": "string"
+        }
+      }
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The role that the route started several times, by its agent type."
+    },
+    "results": {
+      "type": "array",
+      "description": "The result of each start, in the order the starts were added.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 2
+    }
+  }
+}

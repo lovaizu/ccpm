@@ -10,10 +10,12 @@ from typing import TypedDict
 
 class Entry(TypedDict, total=False):
     """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `tie`, `queue`,
-    `drop`, `read`, `mark`, `result`, `stopped`, and `typed`, the `run` it belongs to, and the
-    fields of that kind: a `folder` gives the run's plugin's folder, a `queue` a resume queued to a
-    subagent that still runs, untied until that subagent's SubagentStop, and a `stopped` the
-    `agent_id` of a start that ended with no result, such as one stopped by TaskStop."""
+    `drop`, `read`, `mark`, `result`, `stopped`, `joined`, and `typed`, the `run` it belongs to, and
+    the fields of that kind: a `folder` gives the run's plugin's folder, a `start` the `lane` it
+    lies in, a `queue` a resume queued to a subagent that still runs, untied until that subagent's
+    SubagentStop, a `stopped` the `agent_id` of a start that ended with no result, such as one
+    stopped by TaskStop, and a `joined` the one `result` that the plugin's join adapter gave from
+    the results of a `lane` whose route started one `role` several times."""
 
     kind: str
     run: str
@@ -30,6 +32,7 @@ class Entry(TypedDict, total=False):
     item: str
     result: str
     command: str
+    lane: str
 
 
 @dataclass

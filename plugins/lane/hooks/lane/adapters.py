@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import TypedDict
 
 from record import Run
-from routes import Due
+from routes import Due, Join
 
 
 class KeptResult(TypedDict):
@@ -46,6 +46,19 @@ def checklist(plugin_root: str, cwd: str, run: Run, role: str, step: str) -> lis
     no checklist adapter.
     """
     raise NotImplementedError("adapters.checklist")
+
+
+def joined_result(plugin_root: str, cwd: str, run: Run, join: Join) -> str:
+    """The one result of a lane whose route started one role several times, from the results of
+    those starts, by the plugin's join adapter, lane/adapters/join.py.
+
+    Takes: the plugin's folder, the conversation's folder, the run, and the lane that waits, with
+    the role and each start's result.
+    Gives: the one result, in the form of join.out.schema.json, by which the lane moves on.
+    Changes: nothing of Lane's; the adapter may read the conversation's folder.
+    Refuses: AdapterFailed, also where the plugin has no join adapter.
+    """
+    raise NotImplementedError("adapters.joined_result")
 
 
 def kept_results(plugin_root: str, cwd: str, skill: str, words: str) -> list[KeptResult] | None:

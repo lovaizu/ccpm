@@ -39,7 +39,8 @@ class After(TypedDict, total=False):
 
 
 class Route(TypedDict):
-    """The roles whose starts come due after what the route goes after, each by its agent type."""
+    """The roles whose starts come due after what the route goes after, each by its agent type, a
+    role named several times starting several times at once."""
 
     after: After
     start: list[str]

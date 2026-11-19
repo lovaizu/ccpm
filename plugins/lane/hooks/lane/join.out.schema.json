@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "What a plugin's join adapter gives Lane",
+  "description": "The one result by which the lane moves on, as a route after the role's result goes after it.",
+  "type": "object",
+  "required": [
+    "result"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
