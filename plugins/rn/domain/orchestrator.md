@@ -53,11 +53,11 @@ run ends once the person signs off the pull request.
      Output says, and wait for their answer.
    - The plan, or a deliverable whose conditions are all good, not yet signed off: put it up with
      each point left as a proposal, and wait for `/rn:ty`, or `/rn:gm` with what to change.
-   - Each start due that Lane gives: run
-     `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/cut.py <role> <each running Cut of the role>`, with the
-     role `generator` or `evaluator`, and start it as `rn:generator` or `rn:evaluator` in the
-     background, with a prompt that names the path it prints as the role's Cut, since the Cut holds
-     all the role needs. Start each due at once, since each runs beside the others.
+   - Each start due that Lane gives: run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/cut.py <role>`,
+     with the role `generator` or `evaluator`, and start it as `rn:generator` or `rn:evaluator` in
+     the background, with a prompt that names the path it prints as the role's Cut, since the Cut
+     holds all the role needs and Lane holds the role to it. Start each due at once, since each
+     runs beside the others.
    - No work left: push the branch, open the pull request, and put it up with each decision taken
      without asking, from the design tree's decisions whose `by` isn't `user`.
 

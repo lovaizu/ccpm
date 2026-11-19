@@ -1,6 +1,6 @@
 """The unit cases of the checks of a role's result and of each command's and adapter's main:
 check/'s generator.faults and evaluator.faults, scripts/tree.py's, scripts/check.py's, and
-scripts/cut.py's main, and lane/adapters/'s checklist.py and starts_due.py main, one for each class
+scripts/cut.py's main, and lane/adapters/'s rules.py and starts_due.py main, one for each class
 of what each takes and gives, its refusals among them. Each command lies in a file that shares its
 name with a package of domain/, so each is loaded from its path."""
 
@@ -30,7 +30,7 @@ GONE_NONE = (
 GONE_RESULTS = (
     "Lane keeps no results for a pick-up, so results.py's results, which the case asks, are gone"
 )
-NO_CUT = "Lane's input to the checklist adapter names no Cut, so the case's run value cut is gone"
+NO_CUT = "Lane takes a step's checklist as a rule's items from rules.py, so items.py's are gone"
 
 TAX = {
     "path": COMMAND,
@@ -456,13 +456,13 @@ def test_items_gives_each_step_only_its_own_checklist(
     tmp_path: Any, role: str, step: str, cut: dict[str, Any], expected: list[str]
 ):
     """Given the generator's Cut by code, or an evaluator's Cut of C1
-    When checklist.py runs for a step with the Cut as its run value
+    When rules.py runs for a step with the Cut as its run value
     Then it gives 0 with the generator's step that decides each decide item of code, its step that
     makes each make item, an evaluator's step that judges each condition of its Cut, and any other
     step none"""
     top = run_with(str(tmp_path), {CUT: cut})
     given = json.dumps({"values": {"cut": CUT}})
-    code, printed, _ = command("lane/adapters/checklist.py").main(given, top, RN)
+    code, printed, _ = command("lane/adapters/rules.py").main(given, top, RN)
     assert (code, json.loads(printed)["items"]) == (0, expected)
 
 
@@ -480,11 +480,11 @@ def test_items_with_no_step_or_no_best_practice_gives_its_code(
     tmp_path: Any, argv: list[str], cut: dict[str, Any], code: int
 ):
     """Given no step, or a Cut whose best practice rn doesn't have
-    When checklist.py runs
+    When rules.py runs
     Then it gives 2 with the usage, or 1 naming the best practice"""
     top = run_with(str(tmp_path), {CUT: cut})
     given = json.dumps({"values": {"cut": CUT}})
-    got, printed, said = command("lane/adapters/checklist.py").main(given, top, RN)
+    got, printed, said = command("lane/adapters/rules.py").main(given, top, RN)
     assert (got, printed) == (code, "") and said
 
 
@@ -492,10 +492,10 @@ def test_items_with_no_step_or_no_best_practice_gives_its_code(
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 def test_items_of_input_naming_no_cut_gives_1(tmp_path: Any):
     """Given Lane's input that names no Cut among the run values
-    When checklist.py runs for a step
+    When rules.py runs for a step
     Then it gives 1, saying so"""
     top = run_with(str(tmp_path), {CUT: generator_cut()})
-    got, printed, said = command("lane/adapters/checklist.py").main("{}", top, RN)
+    got, printed, said = command("lane/adapters/rules.py").main("{}", top, RN)
     assert (got, printed) == (1, "") and "cut" in said
 
 
@@ -574,14 +574,16 @@ def test_results_of_input_not_json_gives_1(tmp_path: Any):
     [
         "scripts/check.py",
         pytest.param(
-            "lane/adapters/checklist.py",
-            marks=pytest.mark.xfail(strict=True, reason="checklist.main isn't built yet"),
+            "lane/adapters/rules.py",
+            marks=pytest.mark.xfail(
+                strict=True, reason="Lane runs rules.py with no argument, so its usage is gone"
+            ),
         ),
     ],
 )
 def test_a_command_run_with_no_argument_exits_2_with_its_usage(tmp_path: Any, path: str):
     """Given no argument
-    When check.py, or checklist.py, runs as a command, as Lane runs it
+    When check.py, or rules.py, runs as a command, as Lane runs it
     Then it exits 2, printing nothing and saying its usage"""
     done = subprocess.run(
         [sys.executable, os.path.join(RN, path)],

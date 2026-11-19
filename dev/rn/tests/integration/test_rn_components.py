@@ -37,8 +37,8 @@ def test_one_generator_runs_for_each_deliverable(b: Bench):
     """Given the command's generator running
     When Lane asks rn's adapter of the starts due for another generator's start, beside it
     Then none is due, as the guide's input, the command, isn't done"""
-    b.cut("generator")
-    running = [{"kind": "start", "role": "rn:generator"}]
+    cut = b.cut("generator")
+    running = [{"kind": "start", "role": "rn:generator", "prompt": f"Your Cut is at {cut}"}]
     code, printed, _ = b.due(moves=running)
     assert (code, list(printed)) == (0, ["none"])
 

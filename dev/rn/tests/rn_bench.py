@@ -146,13 +146,12 @@ class Bench:
         run = {"skill": "rn:up", "words": words, "moves": moves or []}
         return self.adapter("starts_due", [], {"run": run})
 
-    def cutting(self, role: str, running: list[str] | None = None) -> tuple[int, str, str]:
+    def cutting(self, role: str) -> tuple[int, str, str]:
         """Runs rn's script of a start's Cut as the orchestrator runs it, in the repository, for the
-        role with the Cut of each of its starts that runs, and gives its exit code, the path it
-        printed, and what it said."""
+        role, and gives its exit code, the path it printed, and what it said."""
         script = os.path.join(self.rn, "scripts", "cut.py")
         done = subprocess.run(
-            ["python3", script, role, *(running or [])],
+            ["python3", script, role],
             capture_output=True,
             text=True,
             cwd=self.repo,
@@ -237,10 +236,9 @@ def judged(b: Bench, more: dict[str, str]) -> list[tuple[str, str]]:
     """One evaluator for each group due ends, answering more on each condition named, with its
     good_when, and good on each other, and gives each group with its Cut's path."""
     done: list[tuple[str, str]] = []
-    running: list[str] = []
     # Each group of the largest best practice once, and the none after them.
     for _ in range(7):
-        code, cut, said = b.cutting("evaluator", running)
+        code, cut, said = b.cutting("evaluator")
         if code == 1 and "no start" in said:
             return done
         assert code == 0, said
@@ -251,7 +249,6 @@ def judged(b: Bench, more: dict[str, str]) -> list[tuple[str, str]]:
         }
         b.write_result(cut, answers)
         done.append((read_json(b, cut)["group"], cut))
-        running.append(cut)
     raise AssertionError(f"rn gave evaluators past each group: {done}")
 
 
