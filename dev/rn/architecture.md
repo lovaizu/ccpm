@@ -18,7 +18,11 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
 At each turn, the orchestrator reviews the design tree. In each round, a generator makes a
 deliverable, and evaluators judge it as its people would.
 
-### Toward the people's aim
+![rn's components](images/components.svg)
+
+### Principles
+
+#### Toward the people's aim
 
 At each turn, the orchestrator reviews the design tree by the run's facts, asking the user only
 theirs.
@@ -26,35 +30,35 @@ theirs.
 *Why*: a tree kept as first laid out piles up work that the people never use, raising KR1.1 and
 KR1.2.
 
-### Judged as its people would
+#### Judged as its people would
 
 Each evaluator, given only what the people have, answers each condition with what's good and what
 would make it good.
 
 *Why*: an evaluator with the maker's intent judges for someone else, raising KR1.1.
 
-### Content, then structure, two rounds each
+#### Content, then structure, two rounds each
 
 Rounds make content by the kind's best practice, then structure by the refactor one, two rounds each
 at most.
 
 *Why*: a third round ends as the second did, so a `more` left goes to the user, keeping KR1.2 short.
 
-### Each role from its own cut
+#### Each role from its own cut
 
 Each generator and evaluator starts from its Cut alone, and keeps its content in files, handing back
 a short result.
 
 *Why*: a role that reads others' decisions makes what the user didn't mean, raising KR1.1.
 
-### Held by Lane where a skip costs the people
+#### Held by Lane where a skip costs the people
 
 Lane holds each role to its best practice and the evaluator from the design tree, leaving sign-offs
 to the user.
 
 *Why*: an AI that skipped a step once skips it again, raising KR1.1.
 
-### The work lives in files
+#### The work lives in files
 
 The run's state lives only in its folder, committed at each change, so `/rn:up` goes on in any
 conversation.
@@ -62,9 +66,7 @@ conversation.
 *Why*: work kept only in a conversation that ends makes the user answer or wait again, adding to
 KR1.2.
 
-## Components
-
-![rn's components](images/components.svg)
+### Components
 
 - user\
   Gives the request and each point, sign-off, and lesson that's theirs, pauses the run, and merges.
@@ -91,7 +93,7 @@ Strategies:
 - A later round judging only the conditions whose decisions changed\
   A condition judged again with nothing changed ends as before, adding to KR1.2.
 
-## Data model
+### Data model
 
 ![rn's data](images/data-model.svg)
 
@@ -106,9 +108,9 @@ Strategies:
   One making of a deliverable and its judging: what the generator made, and each evaluator's
   Answers, `good` or `more`.
 
-## Sequences
+### Sequences
 
-### S1: a turn and a round
+#### S1: a turn and a round
 
 ```mermaid
 sequenceDiagram
@@ -147,7 +149,7 @@ Strategies:
   Each role stopped starts again from its kept Cut, so the user loses neither time nor work,
   keeping KR1.2 short.
 
-## Deployment
+### Deployment
 
 ![rn's deployment](images/deployment.svg)
 
@@ -162,7 +164,7 @@ Strategies:
 - A best practice made on a run in `.rn/best-practices/<kind>/`\
   Every later run finds it and takes it over rn's own of its kind, keeping KR1.1 low.
 
-## Directory structure
+### Directory structure
 
 rn's folder holds what Claude Code installs for the user. `dev/rn/` holds what only rn's developers
 use. `.claude/worktrees/` holds rn's worktree of each run. `.rn/` holds what rn writes on the work's
@@ -170,60 +172,21 @@ branch: [the run's folder](../plugin-development-guide.md#where-a-plugin-writes-
 
 ```text
 plugins/rn/
-├── .claude-plugin/
-│   └── plugin.json                rn's manifest, naming Lane in its dependencies
-├── skills/
-│   ├── up/
-│   │   └── SKILL.md               /rn:up, which starts or picks up a run
-│   ├── dn/
-│   │   └── SKILL.md               /rn:dn, which pauses the run
-│   ├── ty/
-│   │   └── SKILL.md               /rn:ty, which approves the sign-off waiting
-│   └── gm/
-│       └── SKILL.md               /rn:gm, which sends the sign-off waiting back
-├── agents/
-│   ├── generator.md               starts the generator
-│   └── evaluator.md               starts the evaluator
+├── skills/                        /rn:up, /rn:dn, /rn:ty, and /rn:gm
+├── agents/                        the generator's and the evaluator's starts
 ├── domain/
 │   ├── orchestrator.md            what the main conversation does as the orchestrator
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
-│   ├── generator-in.schema.json   the form of the generator's Cut
-│   ├── generator-out.schema.json  the form of what the generator gives
-│   ├── evaluator-in.schema.json   the form of the evaluator's Cut
-│   ├── evaluator-out.schema.json  the form of what the evaluator gives, its Answers
-│   ├── tree/                      the code of tree.py, a module for each decision it makes
-│   ├── sign-off.schema.json       the form of a Sign-off, which tree.py decides
-│   ├── start.schema.json          the form of a Start, which tree.py and check.py decide
-│   ├── repository/                the code of repository, a module for each tool it runs
-│   ├── check/                     the code of check.py, a module for each decision it makes
-│   ├── template/                  the code of template.py, which holds a document to its kind's
-│   │                              template, alone or within check.py's check of a deliverable
-│   ├── fault.py                   how tree.py, check.py, throwaway.py, repository, and the
-│   │                              adapters say why they stopped, and how each command ends
-│   ├── throwaway.py               the code of throwaway.py
+│   ├── schemas/                   the form of each Cut, result, Sign-off, and Start
+│   ├── tree/                      the code of tree.py, which checks the design tree
+│   ├── check/                     the code of check.py, which checks each result
 │   └── best-practices/            rn's own best practice of each kind
-├── scripts/
-│   ├── tree.py                    runs the code of tree.py
-│   ├── check.py                   runs the code of check.py
-│   ├── template.py                runs the code of template.py
-│   └── throwaway.py               runs the code of throwaway.py
-├── hooks/
-│   ├── hooks.json                 starts the guard on each call
-│   ├── lanes.json                 the rules and routes that Lane laid from each role's steps
-│   ├── lane/                      the guard: Lane's code, copied in by Lane
-│   └── adapters/                  give the guard each start's text from its Cut, and each
-│                                  step's practices
-└── README.md                      for rn's users
+├── scripts/                       runs each part's code
+└── hooks/                         Lane's rules laid from each role's steps
 
 dev/rn/
-├── product-vision.md              rn's product vision
-├── architecture.md                this document
-├── README.md                      for rn's developers
-└── tests/                         the test cases, in unit/, properties/, prompts/, integration/,
-    │                              and e2e/, with the E2E test files that dev/scripts/e2e.py runs
-    └── gh/                        the double of gh, the records of gh it gives from in recorded/,
-                                   and compatibility.py, which compares a new gh with them
+└── tests/                         the test cases, from unit to E2E
 
 .claude/worktrees/
 └── rn-<yyyymmdd>-<goal>/          rn's worktree of one run, on the work's branch
@@ -231,10 +194,7 @@ dev/rn/
 .rn/
 ├── <yyyymmdd>-<goal>/             one run
 │   ├── design-tree.json           the design tree
-│   ├── said/                      each Said, word for word
-│   ├── sign-offs.json             what waits for /rn:ty, and what the user signed off
-│   ├── starts/                    each Start: the Cut it began with, and its Result
-│   └── rounds/                    each round's Try record, Made, Answers, and More kept
+│   └── rounds/                    each Round
 └── best-practices/                each best practice made on a run
 ```
 
