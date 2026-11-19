@@ -54,8 +54,56 @@ The install then lists `lane` among the dependencies it installed.
 
 ## Walkthrough
 
-The walkthrough comes with Lane's first release: a run of a plugin that writes `CHANGELOG.md`
-entries, its writer stopped as it writes another file, and its reviewer's result moving the run.
+At the end, your plugin's writer has kept to its step, and its reviewer's result has moved the
+run on.
+
+`log`, your plugin, writes a version's `CHANGELOG.md` entry: its skill `/log:up` starts a writer,
+and then a reviewer. Its `lane/rules.json` holds the writer's step and the routes:
+
+```json
+{
+  "roles": {
+    "log:writer": {
+      "steps": [{ "name": "write", "rules": [
+        { "type": "writes", "paths": ["CHANGELOG.md"] },
+        { "type": "result", "results": ["written"] }
+      ] }]
+    },
+    "log:reviewer": {
+      "steps": [{ "name": "review", "rules": [
+        { "type": "result", "results": ["good", "more"] }
+      ] }]
+    }
+  },
+  "routes": [
+    { "after": { "command": "log:up" }, "start": ["log:writer"] },
+    { "after": { "role": "log:writer", "result": "written" }, "start": ["log:reviewer"] },
+    { "after": { "role": "log:reviewer", "result": "more" }, "start": ["log:writer"] }
+  ]
+}
+```
+
+Your plugin's user types:
+
+```text
+/log:up 1.2.0
+```
+
+The writer starts, and writes its notes to a file of its own. Lane stops the write, and the writer
+reads:
+
+```text
+You're at the step `write` of log:writer, which writes only CHANGELOG.md.
+Write the entry there.
+```
+
+The writer writes the entry in `CHANGELOG.md`, runs `lane-result written`, and ends. The reviewer
+starts, as the route after `written` says, runs `lane-result more`, and ends. The main conversation
+then reads:
+
+```text
+log:reviewer gave more. Due: log:writer.
+```
 
 ## How it works
 
