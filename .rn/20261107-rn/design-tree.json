@@ -606,117 +606,7 @@
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Where Lane's hooks live",
-              "decided": "in Lane's own hooks, which find the plugin whose skill runs and hold its run by the rules in that plugin's folder",
-              "by": "user"
-            },
-            {
-              "about": "/lane:up",
-              "decided": "removed, with the code that proposes and lays rules",
-              "by": "user"
-            },
-            {
-              "about": "What the skeleton holds",
-              "decided": "only what Lane's architecture draws, made afresh from it, its README, and its list of Claude Code's states, with no part of Lane's deleted code",
-              "by": "user"
-            },
-            {
-              "about": "The guard",
-              "decided": "hooks/hooks.json enters the guard on each event that the list of Claude Code's states names; hooks/lane/ splits the guard's decisions into a module each: finding the plugin's folder from the conversation, reading and holding a plugin's rules.json to Lane's form, the run record in the system temp folder that only grows, placing each move on its run and start, the starts that the routes make due, and asking a plugin's adapters",
-              "by": "maker"
-            },
-            {
-              "about": "The rule types",
-              "decided": "hooks/lane/rule_types/ holds one module for each rule type of S1 to S8: the files a step writes, the files never to read, the files to read whole, the commands a step runs, the steps in order, a step's checklist, the result, and the plugin's own check; each judges a call, a mark, or an end of its kind and makes the step's sentence",
-              "by": "maker"
-            },
-            {
-              "about": "The reporters",
-              "decided": "bin/ holds a command each for a step done, an item done, and a result, each handing its report to the guard as the AI's own Bash call",
-              "by": "maker"
-            },
-            {
-              "about": "The forms",
-              "decided": "a JSON Schema of rules.json, and of each adapter's input and output, beside the modules that read them",
-              "by": "maker"
-            },
-            {
-              "about": "The report's form",
-              "decided": "one module of hooks/lane/ holds the form of a reporter's report, which the reporters of bin/ print and the guard reads",
-              "by": "maker"
-            },
-            {
-              "about": "The main conversation's steps",
-              "decided": "rules.json keys a subagent's steps by its agent type, and the main conversation's by the skill's name",
-              "by": "maker"
-            },
-            {
-              "about": "The plugin's folder",
-              "decided": "the guard adds the run at the skill's call with no folder, and reads the plugin's folder and rules at the next event of the main conversation, where it first gives the starts due",
-              "by": "maker"
-            },
-            {
-              "about": "A resume queued to a running subagent",
-              "decided": "held back until that subagent's SubagentStop, checked as the end of the pass that ran, and then tied, with no hook on SubagentStart",
-              "by": "maker"
-            },
-            {
-              "about": "The order",
-              "decided": "the guard asks the plugin's adapter of the starts due at each move, with the run as it stands, or, where the plugin gives routes, Lane's route adapter, a module of hooks/lane/ run inside the guard; the order gives each role to start now and how many, or that the run ends; the run record is kept for its conversation alone; Lane gives no start's text, lays no lane, joins no results, and keeps no results for a pick-up",
-              "by": "user"
-            },
-            {
-              "about": "A plugin with no order",
-              "decided": "its run holds the main conversation to its skill's steps alone, and ends at the end of the turn that those steps let through",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The interfaces",
-              "decided": "one for each arrow of S9 and S10 that reaches the guard or that the guard sends to a plugin's adapter, and one for each rule type's judging of a call, a mark, or an end, each typed for Python 3.9 and its standard library, its contract in its docstring, its body raising NotImplementedError with its name; a throwaway file passes each result along S9 and S10 under the type checker of check.sh",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The prompts",
-              "decided": "none, as Lane holds no skill and no subagent",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The gaps",
-              "decided": "listed in dev/lane/skeleton-gaps.md, each naming the element of Lane's architecture it bears on; no sequence for S1 to S8 is a gap, as the user signed the architecture off with S9's and S10's alone",
-              "by": "maker"
-            }
-          ]
-        }
-      ],
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/rn/domain/best-practices/software-design"
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
@@ -2504,10 +2394,6 @@
     {
       "do": "make",
       "path": "dev/rn/architecture.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/lane"
     },
     {
       "do": "make",
