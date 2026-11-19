@@ -357,18 +357,26 @@ def test_start_gives_why_no_work_waits(tmp_path: Any):
 @pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
 @pytest.mark.parametrize(
     ("argv", "given", "code"),
-    [([], '{"running": []}', 2), (["generator"], "{", 1), (["generator"], '{"running": []}', 1)],
-    ids=["no role", "input not JSON", "tree out of form"],
+    [
+        ([], '{"running": []}', 2),
+        (["generator"], "{", 1),
+        (["generator"], '{"running": []}', 1),
+        (["evaluator"], '{"running": []}', 1),
+    ],
+    ids=["no role", "input not JSON", "tree out of form", "no run"],
 )
-def test_start_with_no_role_bad_input_or_a_tree_out_of_form_gives_its_code(
-    tmp_path: Any, argv: list[str], given: str, code: int
+def test_start_with_no_role_bad_input_a_tree_out_of_form_or_no_run_gives_its_code(
+    request: Any, tmp_path: Any, argv: list[str], given: str, code: int
 ):
-    """Given no role, Lane's input that isn't JSON, or a design tree out of form
+    """Given no role, Lane's input that isn't JSON, a design tree out of form, or a worktree with
+    no run's folder
     When start.py runs
     Then it gives 2 with the usage, or 1 naming the fault"""
     top = run_with(str(tmp_path), {})
-    if code == 1 and given != "{":
+    if request.node.callspec.id == "tree out of form":
         write_files(top, {f"{RUN}/design-tree.json": "{}"})
+    if request.node.callspec.id == "no run":
+        os.remove(os.path.join(top, RUN, "design-tree.json"))
     got, printed, said = command("hooks/adapters/start.py").main(argv, given, top)
     assert (got, printed) == (code, "") and said
 

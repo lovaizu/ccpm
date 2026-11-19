@@ -121,6 +121,16 @@ def test_a_generators_point_answered_gives_the_next_round():
 
 
 @pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
+def test_no_work_left_gives_none():
+    """Given the plan with each deliverable done and no work left
+    When course.due gives the starts due
+    Then none is due"""
+    tree = plan()
+    tree["work"] = []
+    assert roles(course.due(tree, [], [])) == []
+
+
+@pytest.mark.supports("test_the_first_deliverable_of_the_work_gets_a_generator_with_its_cut")
 def test_a_point_first_in_the_work_gives_none():
     """Given the plan with a point of the command first in the work
     When course.due gives the starts due

@@ -52,11 +52,14 @@ def main(argv: list[str], given: str, cwd: str) -> tuple[int, str, str]:
 def _run(cwd: str) -> str:
     """The run's folder from the top of the worktree: the latest folder of `.rn/` with a design
     tree, as Lane runs the adapter only in a run's worktree."""
+    top = os.path.join(cwd, ".rn")
     found = sorted(
         name
-        for name in os.listdir(os.path.join(cwd, ".rn"))
-        if os.path.isfile(os.path.join(cwd, ".rn", name, "design-tree.json"))
+        for name in (os.listdir(top) if os.path.isdir(top) else [])
+        if os.path.isfile(os.path.join(top, name, "design-tree.json"))
     )
+    if not found:
+        raise Wrong(f"{cwd} holds no run's design tree in .rn/; start the run with /rn:up")
     return f".rn/{found[-1]}"
 
 
