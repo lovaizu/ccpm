@@ -684,7 +684,7 @@
             },
             {
               "about": "The rules of each start",
-              "decided": "where the plugin's rules.json doesn't fix a step's rules for the role, the plugin's adapter of the rules, lane/adapters/rules.py, gives them for each start from its prompt; the adapter of a step's checklist folds into it, as a checklist is a rule's values",
+              "decided": "a role's steps come wholly from rules.json, or, where rules.json names the role with no steps, wholly from the plugin's adapter of the rules, lane/adapters/rules.py, for each start from its prompt; the main conversation's steps only from rules.json; where that adapter is missing, fails, or gives out of form, Lane stops the start, saying so and that the plugin's author mends it; the adapter of a step's checklist folds into it, as a checklist is a rule's values",
               "by": "user"
             },
             {
