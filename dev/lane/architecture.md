@@ -15,7 +15,8 @@
   says.
 - S8: a plugin wants its AI to notice when it ends a step that the plugin's own check doesn't pass.
 - S9: a plugin wants its main conversation to start each subagent that its order makes due, and
-  only those, and not to end its turn while one is due.
+  only those, with several chains of its order going at once, and not to end its turn while one
+  is due.
 - S10: a plugin wants a run that stopped to go on where it stopped, after `/compact` or in a new
   conversation.
 
@@ -52,11 +53,19 @@ once.
 - Run\
   One run of a plugin's skill in a conversation, from its call until its routes start no more,
   with each start, read, mark, and result in it.
+- Lane\
+  One chain of a run's starts, held to the routes' order, going on beside the run's other chains.
 - Kept results\
   The results that a plugin keeps, from which a run goes on in a new conversation.
 
 Strategies:
 
+- Each start that a route after a command makes due opens a lane of its own, and each start that a
+  route after a result makes due follows in the result's lane. [S9]\
+  Intent: chains of one run go at once, each in its order.
+- A route that starts one role several times at once, its lane moving on once each of them has its
+  result. [S9]\
+  Intent: a step done by several subagents side by side moves on as one.
 - A run's record that only grows, holding only what no later move gives again. [S10]\
   Intent: moves checked at the same moment lose nothing of one another's.
 
@@ -84,6 +93,9 @@ Strategies:
 - Each move placed on its run and start by what Claude Code's events carry, as
   [its states](claude-code-states.md) list. [P2.3]\
   Intent: each move is held to the rules of its own start, and to no other run's.
+- Each start due given a text that names its lane, which the main conversation passes as the
+  start's prompt, and each later move of the subagent placed by the subagent's own ID. [S9]\
+  Intent: starts of one role in different lanes never take each other's place.
 - Each rule type judging a call, a mark, or an end of its own kind, and the guard stopping each
   that breaks a rule with the step's sentence. [S2, S3, S4, S6]\
   Intent: the check and the sentence that the AI reads change together, in the rule type's own
@@ -112,10 +124,10 @@ sequenceDiagram
     opt the plugin gives a start's text of its own [P2.2]
       G->>A: asks for the text of each start due [P2.2]
     end
-    G-->>M: the starts due, each with its text (Run) [S9]
-    alt a start due [S9]
-      M->>G: the start [S9]
-      G->>RR: adds the start (Run) [S9]
+    G-->>M: the starts due of each lane, each with its text that names its lane (Lane) [S9]
+    alt a start whose text names a lane with that start due [S9]
+      M->>G: the start, with its text [S9]
+      G->>RR: adds the start to its lane (Lane) [S9]
     else any other start of the plugin's subagents [S9]
       G-->>M: stops it, with the starts due [P1.1]
     else the main conversation ends its turn while a start is due [S9]
@@ -124,7 +136,7 @@ sequenceDiagram
       U->>M: the command [S9]
       G->>RR: adds it, so that its route's starts are due (Route) [S9]
     end
-    G-->>M: each result, and the starts that its route makes due (Route) [S7]
+    G-->>M: each result, and the starts that its route makes due in its lane (Route) [S7]
   end
 ```
 
