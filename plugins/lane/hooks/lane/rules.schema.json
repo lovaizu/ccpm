@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A plugin's lane/rules.json",
+  "description": "What a plugin gives Lane: each role's steps, each step's rules, each of one type with its values, and the routes.",
+  "type": "object",
+  "required": ["roles", "routes"],
+  "additionalProperties": false,
+  "properties": {
+    "roles": {
+      "description": "Each role's steps, by the role's agent type, such as <plugin>:<role>.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["steps"],
+        "additionalProperties": false,
+        "properties": {
+          "steps": {
+            "description": "The role's steps, in their order.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "rules"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string", "minLength": 1 },
+                "rules": { "type": "array", "items": { "$ref": "#/$defs/rule" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "routes": {
+      "description": "The moves after a role's result, or after a command that the person types, and the roles whose starts they make due.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["after", "start"],
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["command"],
+                "additionalProperties": false,
+                "properties": { "command": { "type": "string", "minLength": 1 } }
+              },
+              {
+                "type": "object",
+                "required": ["role", "result"],
+                "additionalProperties": false,
+                "properties": {
+                  "role": { "type": "string", "minLength": 1 },
+                  "result": { "type": "string", "minLength": 1 }
+                }
+              }
+            ]
+          },
+          "start": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "paths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+    "rule": {
+      "description": "One rule of a step, of one type of lanes/ with that type's values.",
+      "oneOf": [
+        {
+          "description": "S1: the files the step writes; a folder lets through each file under it.",
+          "type": "object",
+          "required": ["type", "paths"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "writes" }, "paths": { "$ref": "#/$defs/paths" } }
+        },
+        {
+          "description": "S2: the files the step never reads.",
+          "type": "object",
+          "required": ["type", "paths"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "reads_none" }, "paths": { "$ref": "#/$defs/paths" } }
+        },
+        {
+          "description": "S3: the files the step reads whole before it's done.",
+          "type": "object",
+          "required": ["type", "paths"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "reads_whole" }, "paths": { "$ref": "#/$defs/paths" } }
+        },
+        {
+          "description": "S4: the commands the step runs.",
+          "type": "object",
+          "required": ["type", "commands"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "commands" },
+            "commands": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        {
+          "description": "S5: the step comes after each step before it is done.",
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "order" } }
+        },
+        {
+          "description": "S6: the step is done only once each item of its checklist, which the plugin's adapter gives, is done.",
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "checklist" } }
+        },
+        {
+          "description": "S7: the results the role may give, by which the run moves on.",
+          "type": "object",
+          "required": ["type", "results"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "result" },
+            "results": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "description": "S8: the plugin's own check, a command run in the conversation's folder, which passes on exit 0.",
+          "type": "object",
+          "required": ["type", "check"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "check" }, "check": { "type": "string", "minLength": 1 } }
+        }
+      ]
+    }
+  }
+}

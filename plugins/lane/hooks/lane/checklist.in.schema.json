@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "What Lane gives a plugin's checklist adapter",
+  "description": "A step whose checklist the adapter gives.",
+  "type": "object",
+  "required": [
+    "run",
+    "role",
+    "step"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "run": {
+      "type": "object",
+      "required": [
+        "skill",
+        "words"
+      ],
+      "additionalProperties": false,
+      "description": "The run: the skill that started it and the words typed after its command.",
+      "properties": {
+        "skill": {
+          "type": "string",
+          "minLength": 1
+        },
+        "words": {
+          "type": "string"
+        }
+      }
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "step": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

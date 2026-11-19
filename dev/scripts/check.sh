@@ -76,6 +76,11 @@ held design pyrefly check $properties --search-path plugins/rn/domain \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
   plugins/rn/hooks/adapters/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
 
+# Lane's guard, its rule types, and its reporters, as a type that doesn't fit across a handoff is a
+# fault that no test may reach, as Lane's architecture says under Test strategy.
+held design pyrefly check --search-path plugins/lane/hooks/lane --search-path plugins/lane/bin \
+  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/lanes/*.py plugins/lane/bin/*.py
+
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
 # - a fault in a best practice's form

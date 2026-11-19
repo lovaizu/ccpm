@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "What a plugin's start adapter gives Lane",
+  "description": "The text that the main conversation gives the start due.",
+  "type": "object",
+  "required": [
+    "text"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
