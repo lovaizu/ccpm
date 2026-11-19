@@ -206,12 +206,12 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "User stories",
@@ -222,12 +222,12 @@
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Principles",
@@ -238,22 +238,22 @@
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Sequences",
@@ -264,12 +264,12 @@
         },
         {
           "id": "N9",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "How a plugin gets Lane",
@@ -280,12 +280,12 @@
         },
         {
           "id": "N11",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -301,17 +301,17 @@
         },
         {
           "id": "N14",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The rework",
@@ -484,6 +484,11 @@
           "about": "What it defines",
           "decided": "what Lane takes in, the rule file and each adapter's input, and what it gives out, with no /lane:up",
           "by": "reasoning"
+        },
+        {
+          "about": "A role's subagent",
+          "decided": "a plugin's role sets background: true, as Lane can't hold a subagent started in the foreground",
+          "by": "reasoning"
         }
       ]
     },
@@ -506,23 +511,66 @@
               "about": "/lane:up",
               "decided": "removed, with the code that proposes and lays rules",
               "by": "user"
+            },
+            {
+              "about": "What the skeleton holds",
+              "decided": "only what Lane's architecture draws, made afresh from it, its README, and its list of Claude Code's states, with no part of Lane's deleted code",
+              "by": "user"
+            },
+            {
+              "about": "The guard",
+              "decided": "hooks/hooks.json enters the guard on each event that the list of Claude Code's states names; hooks/lane/ splits the guard's decisions into a module each: finding the plugin's folder from the conversation, reading and holding a plugin's rules.json to Lane's form, the run record in the system temp folder that only grows, placing each move on its run and start, the starts that the routes make due, and asking a plugin's adapters",
+              "by": "maker"
+            },
+            {
+              "about": "The rule types",
+              "decided": "hooks/lane/lanes/ holds one module for each rule type of S1 to S8: the files a step writes, the files never to read, the files to read whole, the commands a step runs, the steps in order, a step's checklist, the result, and the plugin's own check; each judges a call, a mark, or an end of its kind and makes the step's sentence",
+              "by": "maker"
+            },
+            {
+              "about": "The reporters",
+              "decided": "bin/ holds a command each for a step done, an item done, and a result, each handing its report to the guard as the AI's own Bash call",
+              "by": "maker"
+            },
+            {
+              "about": "The forms",
+              "decided": "a JSON Schema of rules.json, and of each adapter's input and output, beside the modules that read them",
+              "by": "maker"
             }
           ]
         },
         {
           "id": "N2",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The interfaces",
+              "decided": "one for each arrow of S9 and S10 that reaches the guard or that the guard sends to a plugin's adapter, and one for each rule type's judging of a call, a mark, or an end, each typed for Python 3.9 and its standard library, its contract in its docstring, its body raising NotImplementedError with its name; a throwaway file passes each result along S9 and S10 under the type checker of check.sh",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N3",
-          "good": false,
-          "decisions": []
+          "good": true,
+          "decisions": [
+            {
+              "about": "The prompts",
+              "decided": "none, as Lane holds no skill and no subagent",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N4",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "listed in dev/lane/skeleton-gaps.md, each naming the element of Lane's architecture it bears on",
+              "by": "maker"
+            }
+          ]
         }
       ],
       "inputs": [
