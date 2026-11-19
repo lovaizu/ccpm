@@ -92,6 +92,12 @@ with open(os.environ["LOG"], "a") as f:
     f.write(json.dumps(payload) + "\\n")
 with open(os.environ["LOG"] + ".where", "a") as f:
     f.write(json.dumps([os.getcwd(), os.environ["CLAUDE_PROJECT_DIR"]]) + "\\n")
+held = []
+if os.path.exists(payload["transcript_path"]):
+    with open(payload["transcript_path"]) as f:
+        held = [json.loads(t)["message"]["content"][0]["text"] for t in f]
+with open(os.environ["LOG"] + ".holds", "a") as f:
+    f.write(json.dumps(held) + "\\n")
 tool_input = payload.get("tool_input") or {}
 command = (tool_input.get("command") or tool_input.get("new_string") or tool_input.get("message")
     or tool_input.get("prompt") or tool_input.get("args", ""))
@@ -155,6 +161,17 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
     def sent(self):
         with open(self.log, encoding="utf-8") as f:
             return [json.loads(line) for line in f]
+
+    def held(self):
+        """What the transcript held at each event sent, each user message's text."""
+        with open(self.log + ".holds", encoding="utf-8") as f:
+            return [json.loads(line) for line in f]
+
+    def bin_program(self, name, text):
+        """Adds the program to the plugin's bin/."""
+        os.makedirs(os.path.join(self.plugin, "bin"), exist_ok=True)
+        self.write(f"changelog/bin/{name}", text)
+        os.chmod(os.path.join(self.plugin, "bin", name), 0o755)
 
     def assert_sent_as_recorded(self, names, records=None):
         records = records or recorded()
@@ -575,6 +592,43 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         self.assertEqual(called["tool_input"], {"skill": "changelog:write", "args": "the entries"})
         self.assertEqual(ran["tool_response"], {"success": True, "commandName": "changelog:write"})
         self.assertEqual(ran["tool_use_id"], called["tool_use_id"], "one call's two events")
+
+    def test_a_typed_commands_base_directory_is_in_the_transcript_from_the_next_event(self):
+        self.conversation.type("/changelog:write")
+        self.conversation.bash("true")
+        base = f"Base directory for this skill: {self.plugin}/skills/write"
+        self.assertEqual(
+            self.held(),
+            [[], [], [], [base], [base]],
+            "none at SessionStart, UserPromptSubmit, or UserPromptExpansion; then the base"
+            " directory at the PreToolUse and PostToolUse of the next call",
+        )
+
+    def test_a_skill_calls_base_directory_is_in_the_transcript_from_the_next_event(self):
+        self.conversation.skill("changelog:write", "")
+        self.conversation.bash("true")
+        base = f"Base directory for this skill: {self.plugin}/skills/write"
+        self.assertEqual(
+            self.held(),
+            [[], [], [], [base], [base]],
+            "none at SessionStart or the Skill call's PreToolUse and PostToolUse; then the base"
+            " directory at the PreToolUse and PostToolUse of the next call",
+        )
+
+    def test_a_python_command_of_a_plugins_bin_runs_by_its_name(self):
+        self.bin_program(
+            "changelog-say", "#!/usr/bin/env python3\nimport sys\nprint('said', *sys.argv[1:])\n"
+        )
+        answer = self.conversation.bash("changelog-say hi")
+        self.assertEqual((answer.exit_code, answer.output), (0, "said hi\n"))
+
+    def test_a_subagents_shell_command_of_a_plugins_bin_runs_by_its_name(self):
+        self.bin_program("changelog-where", '#!/bin/sh\necho "ran from $0"\n')
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        answer = agent.bash("changelog-where")
+        where = os.path.join(self.plugin, "bin", "changelog-where")
+        self.assertEqual((answer.exit_code, answer.output), (0, f"ran from {where}\n"))
 
     def test_a_skill_call_that_a_hook_denies_is_stopped_with_its_reason(self):
         answer = self.conversation.skill("changelog:write", "deny me")

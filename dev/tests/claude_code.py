@@ -32,10 +32,14 @@ types /reload-plugins, as recorded/claude-code-2.1.323-hooks-reload.jsonl and
 recorded/claude-code-2.1.325-hooks-self-reload.jsonl show. A Bash command finds the double's own
 `claude` first on its PATH, whose `claude plugin validate` gives what Claude Code's plugin
 references say, as recorded/claude-code-plugins-reference.jsonl takes it from there, so that no
-test runs the real `claude`. A test plays the person, the
-main conversation, and each subagent by the calls it makes on the double. Lane's tests and rn's
-tests share it. It takes each result from one line of a record, by `line` or `lines`, as the plugin
-guide's Test says of a double's results."""
+test runs the real `claude`, and then each loaded plugin's bin/, so that a step runs a plugin's
+command by its name, as recorded/claude-code-2.1.328-base-directory.jsonl shows. Once a skill
+loads, the transcript at `transcript_path` holds its base directory from the next event on, as
+that record shows of a typed command, and
+recorded/claude-code-2.1.328-base-directory-skill-tool.jsonl of a Skill call. A test plays the
+person, the main conversation, and each subagent by the calls it makes on the double. Lane's tests
+and rn's tests share it. It takes each result from one line of a record, by `line` or `lines`, as
+the plugin guide's Test says of a double's results."""
 
 from __future__ import annotations
 
@@ -81,6 +85,12 @@ HOOKS_RELOAD = "claude-code-2.1.323-hooks-reload.jsonl"
 # The record of a Read whole and in part, of Claude Code 2.1.325, whose PostToolUse gives the lines
 # it read.
 READ = "claude-code-2.1.325-read.jsonl"
+# The records of a skill's base directory, which the transcript holds from the next event after the
+# skill loads, and of a plugin's command run by its name from the plugin's bin/, of Claude Code
+# 2.1.328: one of a typed command, whose step and a subagent run the command, and one of a Skill
+# call.
+BASE_DIRECTORY = "claude-code-2.1.328-base-directory.jsonl"
+BASE_DIRECTORY_SKILL_TOOL = "claude-code-2.1.328-base-directory-skill-tool.jsonl"
 # What the hooks reference shows of a call that no record of a run holds.
 REFERENCE = "claude-code-hooks-reference.jsonl"
 # The record of a subagent that a subagent starts, and of a message queued for a subagent that runs,
@@ -455,15 +465,35 @@ def found(program: str, env: dict[str, str]) -> bool:
     return shutil.which(program, path=env.get("PATH", os.defpath)) is not None
 
 
+# What makes a shell command more than one program run on its words.
+SHELL = re.compile(r"[|&;<>()$`\\\n*?]")
+
+
 def python_call(command: str) -> list[str] | None:
     """The script and its arguments where a shell command only runs `python3` on a script, which the
     double runs in its own process; None for any other command."""
-    if re.search(r"[|&;<>()$`\\\n*?]", command):
+    if SHELL.search(command):
         return None
     words = shlex.split(command)
     if len(words) >= 2 and words[0] in ("python3", "python") and not words[1].startswith("-"):
         return words[1:]
     return None
+
+
+def program_call(command: str, env: dict[str, str]) -> list[str] | None:
+    """The program and its arguments where a shell command only runs a program, found on the PATH
+    of the environment where it's named alone, whose first line is `#!/usr/bin/env python3`, such
+    as a plugin's command in its bin/, which the double runs in its own process where python3 is on
+    that PATH too; None for any other command."""
+    if SHELL.search(command):
+        return None
+    words = shlex.split(command)
+    program = shutil.which(words[0], path=env.get("PATH", os.defpath)) if words else None
+    if not (program and found("python3", env)):
+        return None
+    with open(program, "rb") as f:
+        first = f.readline().strip()
+    return [program, *words[1:]] if first == b"#!/usr/bin/env python3" else None
 
 
 class Conversation:
@@ -619,7 +649,8 @@ class Conversation:
         is the skill's text as the main conversation reads it. Where such a command fails, the skill
         doesn't load: no model is called, so no Stop comes, the answer's output is empty, and it
         shows what Claude Code shows the person in place of a reply, as
-        recorded/claude-code-2.1.323-skill-command-fails.jsonl shows. /reload-plugins sends no
+        recorded/claude-code-2.1.323-skill-command-fails.jsonl shows. Once the skill loads, the
+        transcript holds its base directory, as `base_directory` says. /reload-plugins sends no
         event, as `reload_plugins` says."""
         if prompt == "/reload-plugins":
             return self.reload_plugins()
@@ -647,6 +678,8 @@ class Conversation:
             text = self.loaded(command[1], command[2])
         except SkillCommandFailed as e:
             return Answer(False, said, ran=ran, shown=str(e))
+        after = line(BASE_DIRECTORY, "the main conversation runs `rec-bin`")
+        self.base_directory(command[1], command[2], after)
         return Answer(False, said, output=text, ran=ran)
 
     def reload_plugins(self) -> Answer:
@@ -764,8 +797,10 @@ class Conversation:
         """The main conversation, or the agent, calls the Bash tool on the command. Where the hooks
         let it through, the double runs it in the conversation's folder with the conversation's
         environment, which holds no `CLAUDE_PROJECT_DIR`, as each Bash command of the record of
-        EnterWorktree shows, and sends PostToolUse, or PostToolUseFailure where it fails, as the
-        record shows."""
+        EnterWorktree shows, and each loaded plugin's bin/ on its PATH, as
+        recorded/claude-code-2.1.328-base-directory.jsonl shows of the main conversation and of a
+        subagent, and sends PostToolUse, or PostToolUseFailure where it fails, as the record
+        shows."""
         who = {"agent_id": agent.id, "agent_type": agent.type} if agent else {}
         if agent:
             record, ran = line(RUN, "writer runs git log"), line(RUN, "git log ran")
@@ -781,11 +816,16 @@ class Conversation:
             return answer
         env = dict(self.env, **bash_environment(self.session_id))
         env.pop("CLAUDE_PROJECT_DIR", None)
-        # The double's own `claude` comes first, so that `claude plugin validate` runs it.
+        # The double's own `claude` comes first, so that `claude plugin validate` runs it, and then
+        # each loaded plugin's bin/, as the record shows a plugin's command run by its name. No
+        # record shows where Claude Code puts bin/ among the folders of the PATH it was given.
         own = claude_program(os.path.join(self.temp, "bin"))
-        env["PATH"] = os.pathsep.join([own, env.get("PATH", os.defpath)])
+        bins = [os.path.join(p.root, "bin") for p in self.plugins]
+        env["PATH"] = os.pathsep.join([own, *bins, env.get("PATH", os.defpath)])
         script = python_call(command)
-        if script and found(shlex.split(command)[0], env):
+        if not (script and found(shlex.split(command)[0], env)):
+            script = program_call(command, env)
+        if script:
             code, out, err = run_python(script[0], script[1:], "", env, self.cwd)
         else:
             done = subprocess.run(
@@ -921,7 +961,8 @@ class Conversation:
         the record holds, with the skill's name. It sends no UserPromptExpansion, as the record
         shows none. Where a loaded plugin holds the skill, each command of its SKILL.md that runs
         as the skill loads runs between the two, as `loaded` says; no record shows whether it runs
-        before or after the PostToolUse. A skill whose SKILL.md holds
+        before or after the PostToolUse. Once the PostToolUse is sent, the transcript holds the
+        skill's base directory, as `base_directory` says. A skill whose SKILL.md holds
         `disable-model-invocation: true` fails before any hook, with the error that
         recorded/claude-code-2.1.323-skill-command.jsonl shows, and runs no command. The answer
         says whether the call was stopped, and what the main conversation reads, and its output is
@@ -949,9 +990,31 @@ class Conversation:
         ran = line(SKILL, "the Skill call of lane:up ran")
         response = dict(ran["payload"]["tool_response"], commandName=skill)
         after = self.send("PostToolUse", ran, {**use, "tool_response": response})
+        if self.has_skill(plugin, name):
+            later = line(BASE_DIRECTORY_SKILL_TOOL, "the main conversation runs `rec-bin`")
+            self.base_directory(plugin, name, later)
         answer.said = "\n".join(x for x in (answer.said, after.said) if x)
         answer.ran += after.ran
         return answer
+
+    def base_directory(self, plugin: str, skill: str, later: dict[str, Any]) -> None:
+        """Adds to the conversation's transcript, at its `transcript_path` then, the user message
+        that opens with the skill's base directory, as the line `later` of the record of
+        BASE_DIRECTORY or BASE_DIRECTORY_SKILL_TOOL, the next event after the skill loads, shows the
+        transcript holding it, with the plugin's folder and the skill in place of the record's. The
+        message takes the form in which the record's hook, log.py of the record's first line, read
+        it. Whether a worktree entered later moves the transcript no record shows, so the message
+        stays at the path it was added to."""
+        owner, _ = self.skill_file(plugin, skill) or (None, "")
+        assert owner, f"no loaded plugin holds the skill {plugin}:{skill}"
+        (shown,) = later["transcript_holds"]
+        text = re.sub(r"<plugin>/skills/[\w-]+$", lambda _: f"{owner.root}/skills/{skill}", shown)
+        content = [{"type": "text", "text": text}]
+        message = {"type": "user", "message": {"role": "user", "content": content}}
+        path = os.path.join(self.transcripts(), f"{self.session_id}.jsonl")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(message) + "\n")
 
     def start(
         self,

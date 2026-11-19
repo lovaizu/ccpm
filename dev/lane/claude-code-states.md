@@ -13,7 +13,9 @@ checks them on each new version, and this list changes with the records.
 ## Where the guard finds the plugin it serves
 
 Found on Claude Code 2.1.328, with two plugins loaded by `--plugin-dir`: one whose hook wrote each
-input it got, and one with a skill `hi`.
+input it got, and one with a skill `hi`. The records `claude-code-2.1.328-base-directory.jsonl`, of
+a typed command, and `claude-code-2.1.328-base-directory-skill-tool.jsonl`, of a Skill call, show
+what the transcript holds at each event as `transcript_holds`.
 
 - A hook gets only the skill's name, such as `"tool_input":{"skill":"b:hi"}` on the Skill call or
   `"prompt":"/b:hi"` on UserPromptSubmit, and its own plugin's folder in `CLAUDE_PLUGIN_ROOT`. No
@@ -26,9 +28,11 @@ input it got, and one with a skill `hi`.
   call: a hook that read the transcript at each event found it at the next PreToolUse and at the
   Stop, but not at UserPromptExpansion of `/b:hi` nor at the PreToolUse or PostToolUse of the
   Skill call. So the guard adds the Run at the skill's call, and reads its plugin's folder and
-  rules at the next event of the main conversation.
-- Claude Code puts each loaded plugin's `bin/` on the path of the Bash tool, so a plugin's step
-  names a command of Lane's by its name alone.
+  rules at the next event of the main conversation. `claude-code-2.1.328-base-directory.jsonl:5-6`
+  and `claude-code-2.1.328-base-directory-skill-tool.jsonl:5-7` show it.
+- Claude Code puts each loaded plugin's `bin/` on the path of the Bash tool, of the main
+  conversation and of a subagent alike, so a plugin's step names a command of Lane's by its name
+  alone. `claude-code-2.1.328-base-directory.jsonl:6-7` and `:14-15` show it.
 
 ## The states that the main use and rn bring about
 

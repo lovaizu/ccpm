@@ -14,7 +14,7 @@ from lane_bench import (
     ENTRY,
     ORDER,
     RULES,
-    UNREPORTED,
+    UNBUILT,
     WORDS,
     Bench,
     opened,
@@ -25,7 +25,7 @@ from lane_bench import (
 )
 from repo_files import write_files
 
-pytestmark = UNREPORTED
+pytestmark = UNBUILT
 
 # A plugin beside `log` that Lane never names either, whose scribe writes only MEMO.md.
 MEMO_RULES = {

@@ -6,8 +6,9 @@ Usage: python3 convert.py <out.jsonl> <setup-event> <what-the-AI-is-asked>
 The first line describes the setup: the command, the hooks.json, and each skill and agent of the
 plugin. Then each hook payload of each run, in the order it came, is one line, named by what
 happened, with each path of the run replaced by <plugin>, <repo>, <transcripts>, <tasks>,
-<scratchpad>, or <home>. Where runs are given a label, each event's name ends with it, so that each
-name stays unique in its file.
+<scratchpad>, or <home>, and, as `transcript_holds`, the first line of each text of the
+transcript that opens `Base directory for this skill:` when the hook ran. Where runs are given a
+label, each event's name ends with it, so that each name stays unique in its file.
 """
 
 import glob
@@ -46,6 +47,8 @@ def command(payload):
     if payload["tool_name"] == "Read":
         lines = [f"{key} {given[key]}" for key in ("offset", "limit") if key in given]
         return " ".join(["Read", os.path.basename(given["file_path"]), *lines])
+    if payload["tool_name"] == "Skill":
+        return f"Skill {given['skill']}"
     return given.get("command") or given.get("description")
 
 
@@ -174,6 +177,15 @@ def plugin_files():
     return found
 
 
+def recorded(name, label, logged):
+    """The line of one event that log.py logged, by its name and the run's label, with what the
+    transcript held where log.py read it."""
+    line = {"event": f"{name}, {label}" if label else name, "payload": logged["payload"]}
+    if "base_directories" in logged:
+        line["transcript_holds"] = logged["base_directories"]
+    return line
+
+
 def main(out, setup, asked, runs):
     with open(os.path.join(runs[0].split(":")[0], "version.txt")) as each:
         version = each.read().strip()
@@ -185,7 +197,7 @@ def main(out, setup, asked, runs):
             "version": version,
             "entry_writes": "each event's one entry runs python3"
             " ${CLAUDE_PLUGIN_ROOT}/hooks/log.py, which appends the payload it reads on stdin to a"
-            " file",
+            " file, with the base directories that the transcript then holds",
             "plugin_files": plugin_files(),
         }
     ]
@@ -193,7 +205,8 @@ def main(out, setup, asked, runs):
         folder, _, label = run.partition(":")
         repo = os.path.join(folder, "repo")
         with open(os.path.join(folder, "hooks.jsonl")) as log:
-            payloads = [json.loads(scrub(text, repo))["payload"] for text in log if text.strip()]
+            logged = [json.loads(scrub(text, repo)) for text in log if text.strip()]
+        payloads = [each["payload"] for each in logged]
         for payload in payloads:
             if payload["hook_event_name"] == "PostCompact":
                 payload["compact_summary"] = SUMMARY
@@ -203,8 +216,7 @@ def main(out, setup, asked, runs):
                 )
             if payload["hook_event_name"] == "SubagentStop" and not payload.get("agent_type"):
                 payload["last_assistant_message"] = SUMMARY
-        for name, payload in zip(names(payloads, asked), payloads):
-            lines.append({"event": f"{name}, {label}" if label else name, "payload": payload})
+        lines += [recorded(name, label, each) for name, each in zip(names(payloads, asked), logged)]
     with open(out, "w") as each:
         each.writelines(json.dumps(line, ensure_ascii=False) + "\n" for line in lines)
 

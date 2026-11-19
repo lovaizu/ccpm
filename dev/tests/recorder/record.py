@@ -71,6 +71,14 @@ READ = (
     " Read tool with offset 10 and limit 5. Then reply with the word read. " + TOLD
 )
 
+SKILL_TOOL = "Call the skill rec:hi by the Skill tool, and follow it. " + TOLD
+
+SLEEPER_BIN = (
+    "Start the subagent rec:sleeper by the Agent tool with run_in_background set to true, the"
+    " description `Run rec-bin`, and the prompt: `Run the Bash command rec-bin. Then reply with the"
+    " word ran.` Don't wait for it. Reply with the word started. " + TOLD
+)
+
 # Each scenario: its prompts, each with the condition on (folder, stream) that it waits for, and
 # the condition of its end.
 SCENARIOS = {
@@ -91,6 +99,18 @@ SCENARIOS = {
             ("/compact", lambda folder, stream: results(stream) >= 1),
         ],
         lambda folder, stream: stopped(folder, 1) and results(stream) >= 3,
+    ),
+    "base-directory": (
+        [
+            ("/rec:hi", lambda folder, stream: True),
+            (SLEEPER_BIN, lambda folder, stream: results(stream) >= 1),
+        ],
+        lambda folder, stream: stopped(folder, 1) and results(stream) >= 3,
+    ),
+    # A conversation of its own, as the Skill tool loads no skill that the conversation loaded.
+    "base-directory-skill-tool": (
+        [(SKILL_TOOL, lambda folder, stream: True)],
+        lambda folder, stream: results(stream) >= 1,
     ),
     "read": (
         [(READ, lambda folder, stream: True)],

@@ -6,9 +6,9 @@ letting it end at that step. Each runs `log` and Lane through the double of Clau
 from __future__ import annotations
 
 import pytest
-from lane_bench import UNREPORTED, Bench, ending, opened, reached, started, written
+from lane_bench import UNBUILT, Bench, ending, opened, reached, started, written
 
-pytestmark = UNREPORTED
+pytestmark = UNBUILT
 
 
 @pytest.mark.supports("S5", "rule types")

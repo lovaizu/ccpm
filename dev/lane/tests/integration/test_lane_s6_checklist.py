@@ -5,9 +5,9 @@ let through once each is. Each runs `log` and Lane through the double of Claude 
 from __future__ import annotations
 
 import pytest
-from lane_bench import UNREPORTED, Bench, items, opened, started
+from lane_bench import UNBUILT, Bench, items, opened, started
 
-pytestmark = UNREPORTED
+pytestmark = UNBUILT
 
 
 @pytest.mark.supports("S6", "rule types")

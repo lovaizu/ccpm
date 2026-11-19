@@ -12,7 +12,7 @@ import pytest
 from lane_bench import (
     ENTRY,
     ORDER,
-    UNREPORTED,
+    UNBUILT,
     WORDS,
     Bench,
     ending,
@@ -27,7 +27,7 @@ from lane_bench import (
 )
 from repo_files import write_files
 
-pytestmark = UNREPORTED
+pytestmark = UNBUILT
 
 
 # guard

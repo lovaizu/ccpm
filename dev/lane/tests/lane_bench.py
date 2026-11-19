@@ -28,19 +28,8 @@ if TYPE_CHECKING:
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 LANE = os.path.join(TOP, "plugins", "lane")
 
-# Why each integration case fails for now: Lane's parts have no bodies, and the double of Claude
-# Code lacks what dev/lane/skeleton-gaps.md names, for a case that reaches the plugin's folder, and
-# for one that runs a reporter by its name too.
-UNBUILT = pytest.mark.xfail(
-    strict=True,
-    reason="Lane's parts have no bodies yet, and the double of Claude Code writes no transcript"
-    " that holds the skill's base directory",
-)
-UNREPORTED = pytest.mark.xfail(
-    strict=True,
-    reason="Lane's parts have no bodies yet, and the double of Claude Code writes no transcript"
-    " that holds the skill's base directory, nor puts each plugin's bin/ on the Bash path",
-)
+# Why each integration case fails for now: Lane's parts have no bodies.
+UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
 
 # The words the person types after the command, the version whose entry the run writes.
 WORDS = "1.2.0"

@@ -10,7 +10,7 @@ import pytest
 from lane_bench import (
     ENTRY,
     ORDER,
-    UNREPORTED,
+    UNBUILT,
     WORDS,
     Bench,
     opened,
@@ -21,7 +21,7 @@ from lane_bench import (
 )
 from repo_files import git, write_files
 
-pytestmark = UNREPORTED
+pytestmark = UNBUILT
 
 
 def entry_kept(b: Bench) -> None:

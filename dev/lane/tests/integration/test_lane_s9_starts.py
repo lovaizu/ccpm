@@ -13,7 +13,7 @@ import os
 import pytest
 from claude_code import AGENT_DENIED_BY_RULE, AGENT_UNKNOWN_TYPE, FOREGROUND, POSTED_FIRST
 from lane_bench import (
-    UNREPORTED,
+    UNBUILT,
     WORDS,
     Bench,
     denier,
@@ -26,7 +26,7 @@ from lane_bench import (
     written,
 )
 
-pytestmark = UNREPORTED
+pytestmark = UNBUILT
 
 # A plugin beside `log` that gives no order: its skill holds the main conversation to one step,
 # which writes NOTE.md and passes its check once NOTE.md is there.

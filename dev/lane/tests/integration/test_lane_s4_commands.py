@@ -7,9 +7,9 @@ and Lane through the double of Claude Code."""
 from __future__ import annotations
 
 import pytest
-from lane_bench import UNREPORTED, Bench, opened, started
+from lane_bench import UNBUILT, Bench, opened, started
 
-pytestmark = UNREPORTED
+pytestmark = UNBUILT
 
 
 @pytest.mark.supports("S4", "rule types")
