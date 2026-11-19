@@ -244,8 +244,9 @@
      "$ref": "#/$defs/about"
     },
     "decided": {
-     "description": "What holds for the point.",
-     "type": "string"
+     "description": "What holds for the point, alone: its ground and its date go in the commit message that makes it.",
+     "type": "string",
+     "pattern": "^(?![\\s\\S]*(\\bas the user (decided|asked|said)\\b|\\b20[0-9]{2}-[0-9]{2}-[0-9]{2}\\b))"
     },
     "by": {
      "$ref": "#/$defs/by"

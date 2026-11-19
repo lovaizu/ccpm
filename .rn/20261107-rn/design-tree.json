@@ -643,7 +643,7 @@
             },
             {
               "about": "The design tree's check of a decided",
-              "decided": "the check refuses a decided that holds a date or a ground, such as `as the user decided`, as the ground goes in the commit message",
+              "decided": "the design tree schema refuses a decided that names who decided it or holds a date, as its ground goes in the commit message",
               "by": "user"
             },
             {
