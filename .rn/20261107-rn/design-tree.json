@@ -249,63 +249,7 @@
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
       "path": "dev/tests/claude_code.py",
       "kind": "code",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "dev/rn/architecture.md",
-        "plugins/lane",
-        "plugins/rn",
-        "dev/lane/tests",
-        "dev/rn/tests"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the double sends that Lane's skeleton lacks",
-              "decided": "the transcript at transcript_path, which holds the skill's base directory from the conversation's next event after the skill's call, and each loaded plugin's bin/ on the path of the Bash tool, each as Lane's list of Claude Code's states says",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
@@ -1769,10 +1713,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "dev/tests/claude_code.py"
-    },
     {
       "do": "make",
       "path": "dev/lane/tests/integration/test_lane_s1_writes.py"
