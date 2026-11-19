@@ -84,7 +84,7 @@ KR1.2.
 Strategies:
 
 - The main conversation as the orchestrator\
-  The talk and the run share one context with no relay, the simplest form, keeping KR1.2 short.
+  The talk and the run share one context, so no part relays between them, keeping KR1.2 short.
 - One generator for each deliverable, and one evaluator for each group of conditions\
   The evaluators judge side by side, each group in its own context, keeping KR1.1 low and KR1.2
   short.
