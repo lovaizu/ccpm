@@ -938,6 +938,33 @@
       ]
     },
     {
+      "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
+      "path": "dev/scripts/check.sh",
+      "kind": "specific",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "dev/rn/tests/integration/test_rn_walking_skeleton.py",
+        "dev/rn/tests/integration/test_rn_s1_request.py",
+        "dev/rn/tests/integration/test_rn_s2_points.py",
+        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+        "dev/rn/tests/integration/test_rn_s4_pause.py",
+        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
+        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
+        "dev/rn/tests/integration/test_rn_components.py",
+        "dev/rn/tests/integration/test_rn_rules.py"
+      ],
+      "status": "open",
+      "check": "check.sh runs the template check of each product vision, README, and architecture, trace.py tags, and trace.py check of each plugin again, and gives 0",
+      "good": false,
+      "decisions": [
+        {
+          "about": "What is turned back on",
+          "decided": "the template checks, trace.py tags, and trace.py check, which are off while rn and Lane are rebuilt",
+          "by": "user"
+        }
+      ]
+    },
+    {
       "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
@@ -1472,6 +1499,10 @@
     {
       "do": "make",
       "path": "dev/rn/tests/integration/test_rn_rules.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/scripts/check.sh"
     },
     {
       "do": "make",
