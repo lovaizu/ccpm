@@ -53,7 +53,10 @@ In each, Lane does what its line says, and never holds a call to the rules of an
 
 ## What the guard answers in each single behavior
 
-The architecture's S1 and S2 draw the guard's answers on the walkthrough's path. In each state
+The architecture's S1 and S2 draw the guard's answers on the walkthrough's path. The guard answers
+the main conversation at the event that the main conversation meets: a start or a call at its
+PreToolUse, a subagent's end at the UserPromptSubmit of its `<task-notification>`, and an end of
+the turn at its Stop. In each state
 below, the guard answers as this list says, and each answer has an integration case that names the
 guard.
 
@@ -71,8 +74,5 @@ guard.
 - A command of another skill of the plugin typed while a subagent runs: the guard starts that
   skill's Run beside the first. Each Run holds to its own Routes, and the main conversation's calls
   to each Run's Rules. The main conversation's Stop stops while a start of either Run is due.
-- A skill of another plugin that a move of the Run names, called by the Skill tool: the guard
-  counts the call as that move and stays out while the other's run lasts, as the plugin guide's
-  rule of a job another plugin does says, and the other plugin's guard holds it meanwhile.
 - The plugin's command typed again once its Run ended: the guard adds a new Run, as the ended Run's
   Routes start no more.

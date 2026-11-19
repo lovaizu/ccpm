@@ -274,7 +274,13 @@
         {
           "id": "N1",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "States with no record",
+              "decided": "a case of a Grep, a Glob, or a Bash command that reaches a path never to read waits for its record, made by dev/tests/recorder/",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N2",
@@ -1144,6 +1150,11 @@
         {
           "about": "The README after the E2E test",
           "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short",
+          "by": "reasoning"
+        },
+        {
+          "about": "What Lane's install shows",
+          "decided": "Lane's README says what claude plugin details shows of Lane, its skill up, as Lane's own folder holds no hooks of its own",
           "by": "reasoning"
         }
       ]

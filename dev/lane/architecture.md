@@ -45,7 +45,8 @@ Lane turns the user's steps into checks once, and judges each move of a run by t
   The moves after a role's result, or after a command that the person types, which make starts and
   resumes due.
 - Proposal\
-  The rules and routes put to the user, kept by its ID with the steps as they read when shown.
+  The rules, the routes, and the plugin's adapters put to the user. It's kept by its ID with the
+  steps as they read when shown.
 - Item\
   One item of a step's checklist, which only the user's plugin knows.
 - Run\
@@ -122,7 +123,7 @@ sequenceDiagram
   participant A as the plugin's adapters and checks
   participant R as reporters
   participant RR as run record
-  U->>P: asks for the checks of their plugin [S1]
+  U->>P: asks for the checks of their plugin, first or after a change of the steps or of Lane [S1]
   P->>L: asks for the rule types (Rule) [P1.2]
   L->>T: reads each type, its sentence, and the Steps it suits (Rule) [P1.2]
   P->>L: asks for the Steps, without what Lane laid before (Step) [P1.1]
@@ -166,7 +167,9 @@ sequenceDiagram
   loop until the Routes start no more [S1]
     opt the plugin gives a start's text of its own [P6.2]
       G->>A: asks for the text of each start due, with each Start that runs (Start) [P6.2]
-      alt it gives none, as no work waits for that start [S1]
+      alt it gives the text [P6.2]
+        A-->>G: the text, and the values that the start's Rules hold it to (Start) [P6.2]
+      else it gives none, as no work waits for that start [S1]
         A-->>G: why, which the guard gives in place of that start [S1]
       else it fails [P4.2]
         A-->>G: why, which the guard gives with who fixes it [P4.2]
@@ -180,12 +183,15 @@ sequenceDiagram
       else any other start of the plugin's roles [P4.1]
         G-->>M: stops it, with the starts due [P4.2]
       end
+    else the main conversation makes any other call [S1]
+      M->>G: the call [S1]
+      G->>T: checks it by each Rule of the skill, and stops it with the Step's sentence where it breaks one (Rule) [P4.2]
     else the main conversation ends its turn [S1]
       M->>G: the end [S1]
-      alt a start is due [P4.1]
-        G-->>M: stops it, with the starts due [P4.2]
+      alt a move is due that doesn't wait for the person [P4.1]
+        G-->>M: stops it, with the moves due [P4.2]
       else a Rule of the skill holds the end to the plugin's check [S1]
-        G->>A: runs the check, with the Result filled in [S1]
+        G->>A: runs the check, with the skill's Result where it gave one [S1]
         A-->>G: whether it passes [S1]
       end
     else the person types a command that a Route waits for or goes after [S1]
@@ -208,14 +214,16 @@ sequenceDiagram
           G-->>SA: stops it, with the Rule's sentence and what the Step lacks [P4.2]
         else [P3.2]
           SA->>R: reports the Mark (Mark) [P3.2]
-          G->>RR: adds the Mark, once the report ran (Mark) [P5.1]
+          SA->>G: the report's run, ended well (Mark) [P3.2]
+          G->>RR: adds the Mark (Mark) [P5.1]
         end
       end
     end
     SA->>R: reports its Result (Result) [P3.1]
     R->>RR: reads, by the guard's code, which Results the role may give (Run) [P5.1]
     alt a Result its role may give [P3.1]
-      G->>RR: adds the Result, once the report ran (Result) [P5.1]
+      SA->>G: the report's run, ended well (Result) [P3.1]
+      G->>RR: adds the Result (Result) [P5.1]
     else [P3.1]
       R-->>SA: refuses it, with the Results it may give [P4.2]
     end
@@ -230,12 +238,17 @@ sequenceDiagram
   end
   M->>R: reports the skill's Result (Result) [P3.1]
   R->>RR: reads, by the guard's code, which Results the skill may give (Run) [P5.1]
-  G->>RR: adds it, which ends the Run (Run) [P5.1]
+  alt a Result the skill may give, with each Step marked [P3.1]
+    M->>G: the report's run, ended well (Result) [P3.1]
+    G->>RR: adds it, which ends the Run (Run) [P5.1]
+  else [P3.1]
+    R-->>M: refuses it, with the Results it may give or the Step due [P4.2]
+  end
 ```
 
 Strategies:
 
-- A start judged by the Routes, and any other start stopped with the starts due. [P4.1]\
+- A start judged by the Routes, by its role and by the plugin's text where it gives one. [P4.1]\
   Intent: the skill notices at once a start it forgot, or one out of order.
 - A typed command that a Route goes after, its starts due in place of those before. [S1]\
   Intent: the person's pause or approval changes the order.
