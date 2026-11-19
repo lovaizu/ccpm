@@ -45,7 +45,7 @@ input it got, and one with a skill `hi`.
 | EnterWorktree | From the PostToolUse of EnterWorktree on, each event's `cwd` and `transcript_path` lie in the worktree, the `session_id` stays, and each hook's `CLAUDE_PROJECT_DIR` stays the root. | The `session_id`, never the `transcript_path`, so the Run goes on in the worktree. | `claude-code-2.1.323-worktree.jsonl:5-12` and `:21-30` |
 | A skill typed by a person | UserPromptSubmit, then UserPromptExpansion with `command_name` and `command_args`. | The `command_name`, which starts a Run that a person called. | `claude-code-2.1.322.jsonl:8-9` |
 | A skill called by the Skill tool | PreToolUse and PostToolUse of Skill with `tool_input.skill` and `args`, and no UserPromptExpansion; a skill that sets `disable-model-invocation: true` is refused before any hook. | `tool_input.skill`, which starts a Run that an AI called, or, where it names another plugin's skill that a move of a Run names, sets that Run aside. | `claude-code-2.1.322-skill.jsonl:3-4`, `claude-code-2.1.323-skill-command.jsonl:16` |
-| A command of another skill typed while a subagent runs | The main conversation's Stop, then UserPromptSubmit and UserPromptExpansion of the other skill's `command_name`, with a new `prompt_id`, while the subagent runs on; its later calls and SubagentStop carry that `prompt_id`. | The `command_name`, which starts that skill's Run beside the first, and each event of the subagent by its `agent_id`, which keeps it on its Start's Run. | `claude-code-2.1.325-skill-command-while-subagent.jsonl:12-21` |
+| A command of another skill typed while a subagent runs | The main conversation's Stop, then UserPromptSubmit and UserPromptExpansion of the other skill's `command_name`, with a new `prompt_id`, while the subagent runs on; its later calls and SubagentStop carry that `prompt_id`. | The `command_name`, a move of the plugin's standing Run, and each event of the subagent by its `agent_id`, which keeps it on its Start's Run. | `claude-code-2.1.325-skill-command-while-subagent.jsonl:12-21` |
 | A reporter run by Bash | PreToolUse and PostToolUse of Bash, with the subagent's `agent_id` where a subagent runs it; the command's environment holds `CLAUDE_CODE_SESSION_ID` and no ID of the subagent. | The `agent_id` of the PostToolUse, by which the guard adds the Result or the Mark for the subagent that ran the reporter. | `claude-code-2.1.322.jsonl:14-16`, and the environment in `claude-code-2.1.322-bash-environment.jsonl:1-2` |
 | A role's Read, Grep, or Glob | PreToolUse, then PostToolUse, each with the role's `agent_id` where a subagent calls it; a Read's `tool_input` names `file_path`, and may name `offset` and `limit`; its PostToolUse's `tool_response.file` gives `startLine`, `numLines`, and `totalLines`, the lines it read, counting the empty line after a last newline, and a Read with no `limit` reads a file of 2500 lines whole; a Grep's and a Glob's name `path` and `pattern`. | The `agent_id`, and the `tool_input`, by which a rule of the files never to read stops the call at its PreToolUse, and the guard adds a Read of a path that a rule of the files to read whole names, with the lines from `startLine` to `startLine` plus `numLines` less one, at its PostToolUse. | A Read whole and in part in `claude-code-2.1.325-read.jsonl:5-8`; Grep and Glob aren't recorded yet |
 
@@ -92,9 +92,10 @@ guard.
   its Steps, and then ties the resume's Start to the subagent.
 - A subagent stopped by TaskStop: the guard ends its Start with no Result, and gives its start due
   again.
-- A command of another skill of the plugin typed while a subagent runs: where the plugin's rules
-  give that skill's steps, the guard starts that skill's Run beside the first; where they give
-  none, the command is one that a Route of the standing Run waits for. Each Run holds to its own Routes, and the main conversation's calls
-  to each Run's Rules. The main conversation's Stop stops while a start of either Run is due.
-- The plugin's command typed again once its Run ended: the guard adds a new Run, as the ended Run's
-  Routes start no more.
+- A command of the plugin typed while its Run stands, by the person or by the Skill tool: the guard
+  takes it as a move of that Run, as a conversation holds one Run of a plugin at a time. A Route
+  that goes after the command makes its starts due in place of those before, the main
+  conversation's calls hold to the steps that the rules give the command's skill where they give
+  any, and the guard answers where the Run stands.
+- A command of the plugin typed once its Run ended, or where none stands: the guard adds a new Run,
+  with the starts of the Route that goes after the command.
