@@ -29,10 +29,6 @@ def judged(b: Bench, more: dict[str, str]) -> list[str]:
     return [cut for _, cut in rn_bench.judged(b, more)]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="the bench quotes the ground in single quotes, which the ground's own apostrophes end",
-)
 @pytest.mark.supports("S1")
 def test_an_edit_of_the_design_tree_is_committed_with_its_ground(b: Bench):
     """Given the plan signed off, and the orchestrator's edit that settles a point of the command

@@ -68,20 +68,16 @@ def test_an_item_of_work_before_an_input_not_done_is_refused(b: Bench):
     assert GUIDE in answer.output and COMMAND in answer.output
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "the design tree's schema refuses a done deliverable that keeps its conditions, naming"
-        " a place and not the deliverable, before status.faults can name it"
-    ),
-)
 @pytest.mark.supports("Design tree")
 def test_a_deliverable_done_with_a_condition_not_good_is_refused(b: Bench):
-    """Given the orchestrator's edit that marks the command done while N1 isn't good
+    """Given the orchestrator's edit that marks the command done while N1 isn't good, as a node
+    with no file, which keeps its conditions once done
     When it runs tree.py commit
     Then it gives 1 naming the command"""
     tree = b.tree()
-    tree["deliverables"][0]["status"] = "done"
+    node = tree["deliverables"][0]
+    node.update(status="done", file=False)
+    node.pop("inputs")
     b.write_tree(tree)
     answer = b.commit(b.converse(), "The command done")
     assert answer.exit_code == 1

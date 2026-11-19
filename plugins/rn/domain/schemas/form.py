@@ -1,11 +1,12 @@
 """Decides how rn holds a JSON value to one of its JSON Schemas: the keywords of draft-07 that rn's
-schemas use, pattern left unread until a case asks for it, and the one place where a value
+schemas use, and the one place where a value
 leaves its form, named by its path from the top, such as `deliverables/0/status`, so that whoever
 wrote the value can mend it."""
 
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -130,6 +131,14 @@ def _properties(value: Json, schema: Mapping[str, Json], root: Any, at: tuple) -
     return next((out for out in found if out is not None), None)
 
 
+def _pattern(value: Json, schema: Mapping[str, Json], _root: Any, at: tuple) -> Any:
+    """Where a string holds no match of the schema's pattern, searched for anywhere in it, as
+    draft-07 searches."""
+    if "pattern" not in schema or re.search(schema["pattern"], value):
+        return None
+    return at, "holds what its form leaves to elsewhere, such as a date or a ground"
+
+
 def _min_items(value: Json, schema: Mapping[str, Json], _root: Any, at: tuple) -> Any:
     """Where an array holds fewer items than minItems."""
     if "minItems" not in schema or len(value) >= schema["minItems"]:
@@ -154,6 +163,7 @@ _KEYWORDS = (
     _required,
     _additional,
     _properties,
+    _pattern,
     _min_items,
     _items,
 )

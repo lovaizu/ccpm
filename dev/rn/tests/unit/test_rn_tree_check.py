@@ -63,12 +63,19 @@ def test_hold_passes_a_value_in_its_form():
         (lambda t: t["work"].append({"do": "make"}), "work/2"),
         (lambda t: t.update(extra=1), "extra"),
         (lambda t: t["goal"].update(decided=1), "goal/decided"),
+        (
+            lambda t: t["deliverables"][0]["necessary_conditions"][0]["decisions"].append(
+                {"about": "The name", "decided": "invoicer, as of 2026-11-19", "by": "user"}
+            ),
+            "deliverables/0/necessary_conditions/0/decisions/2/decided",
+        ),
     ],
-    ids=["required", "anyOf", "array item", "additional", "type"],
+    ids=["required", "anyOf", "array item", "additional", "type", "pattern"],
 )
 def test_hold_refuses_a_value_out_of_its_form_naming_the_place(change: Any, path: str):
     """Given the plan changed out of its form: a field required left out, a deliverable of no form,
-    an item of work without its path, a field the schema doesn't name, or text given a number
+    an item of work without its path, a field the schema doesn't name, text given a number, or a
+    decision that holds its date
     When form.hold holds it to the schema
     Then it refuses with Wrong, naming the file and the place"""
     tree = plan()

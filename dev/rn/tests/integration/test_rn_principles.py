@@ -203,20 +203,15 @@ def test_a_round_of_refactoring_comes_only_after_the_content_is_good(b: Bench, b
         assert json.load(f)["best_practice"] == "code"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "a second round with no decision changed after the first, which the unit case"
-        " test_findings_with_no_decision_changed_give_none leaves to the orchestrator"
-    ),
-)
 @pytest.mark.supports("P3.3")
 def test_findings_past_the_limit_start_no_further_round(b: Bench, broken: None):
-    """Given two rounds of the command's content, each judged with more on N4
+    """Given two rounds of the command's content, each judged with more on N4, and each finding
+    taken into a decision of N4
     When Lane asks rn's adapter for the generator's start
     Then none is due"""
-    for _ in range(2):
+    for steps in ("one function a step", "one module a step"):
         make(b, {"N4": "A colleague reads each step at a glance"})
+        decided(b, 3, {"about": "The steps", "decided": steps, "by": "reasoning"})
     assert none_due(b, "generator")
 
 

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import shlex
 import shutil
 import subprocess
 from dataclasses import dataclass
@@ -111,7 +112,7 @@ class Bench:
     def commit(self, c: Conversation, ground: str) -> Any:
         """The orchestrator commits the run's folder with the ground, by tree.py."""
         script = os.path.join(self.rn, "scripts", "tree.py")
-        return c.bash(f"python3 {script} commit {RUN} '{ground}'")
+        return c.bash(f"python3 {script} commit {RUN} {shlex.quote(ground)}")
 
     def check(self, agent: Any, role: str, cut: str) -> Any:
         """A role runs rn's check of its result beside its Cut, as Lane runs it at its end."""
