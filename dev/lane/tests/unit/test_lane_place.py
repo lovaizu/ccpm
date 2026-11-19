@@ -15,13 +15,21 @@ import lane_bench
 import lane_entries
 import pytest
 from lane_events import Events, Subagent
+from order import StartsDue, order_run
 from place import SkillCall, opening, place, skill_call
 from record import Entry, Run
 from repo_files import write_files
 from report import report
+from routes import starts_due
 from rules import OutOfForm, Step
 
 pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
+
+
+def by_routes(run: Run) -> StartsDue:
+    """The starts due of the run, as Lane's route adapter gives them from `log`'s routes."""
+    return starts_due(lane_bench.RULES.get("routes", []), order_run(run))
+
 
 WRITER = Subagent("a1", "log:writer")
 
@@ -198,7 +206,7 @@ def test_an_event_of_a_conversation_with_no_run_lies_outside(e: Events):
     """Given a conversation with no run
     When the main conversation writes a file
     Then the event lies outside each run"""
-    assert place(e.write("/repo/notes.txt"), []) is None
+    assert place(e.write("/repo/notes.txt"), [], by_routes) is None
 
 
 @pytest.mark.supports("test_the_main_conversations_write_in_a_run_is_held_to_its_skills_step")
@@ -206,7 +214,7 @@ def test_the_main_conversations_call_is_a_call_of_the_skills_role(e: Events):
     """Given a run of log:up
     When the main conversation writes a file
     Then the move is a call on that run, of the role log:up, with no agent, at the step `lead`"""
-    move = place(e.write("/repo/notes.txt"), [run()])
+    move = place(e.write("/repo/notes.txt"), [run()], by_routes)
     assert move is not None
     assert (move.kind, move.run.id, move.role, move.agent_id, move.step) == (
         "call",
@@ -223,7 +231,7 @@ def test_an_agent_call_is_a_start(e: Events, by: Subagent | None):
     """Given a run of log:up whose writer is tied to a1
     When the main conversation, or the writer, starts a writer by the Agent tool
     Then the move is a start, with the agent that made it"""
-    move = place(e.start("log:writer", "u2", by), [tied()])
+    move = place(e.start("log:writer", "u2", by), [tied()], by_routes)
     assert move is not None
     assert (move.kind, move.agent_id) == ("start", by.id if by else None)
 
@@ -233,7 +241,7 @@ def test_the_post_tool_use_of_a_starts_agent_call_ties_it(e: Events):
     """Given a run of log:up with the writer's start of u1, untied
     When the PostToolUse of u1 names the subagent a1
     Then the move is a tie of that start"""
-    assert kind(place(e.started(WRITER, "u1"), [run(START)])) == "tie"
+    assert kind(place(e.started(WRITER, "u1"), [run(START)], by_routes)) == "tie"
 
 
 @pytest.mark.supports("test_an_agent_call_that_fails_after_its_pre_tool_use_leaves_its_start_due")
@@ -241,7 +249,7 @@ def test_the_failure_of_a_starts_agent_call_drops_it(e: Events):
     """Given a run of log:up with the writer's start of u1, untied
     When the PostToolUseFailure of u1 comes
     Then the move is a drop"""
-    assert kind(place(e.start_failed("log:writer", "u1"), [run(START)])) == "drop"
+    assert kind(place(e.start_failed("log:writer", "u1"), [run(START)], by_routes)) == "drop"
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
@@ -249,7 +257,7 @@ def test_a_tied_subagents_call_is_a_call_of_its_role_at_its_first_step(e: Events
     """Given the writer tied to a1, no step marked
     When a1 writes a file
     Then the move is a call of the role log:writer, by a1, at the step `write`"""
-    move = place(e.write("/repo/notes.txt", WRITER), [tied()])
+    move = place(e.write("/repo/notes.txt", WRITER), [tied()], by_routes)
     assert move is not None
     assert (move.kind, move.role, move.agent_id, move.step) == ("call", "log:writer", "a1", "write")
 
@@ -260,7 +268,7 @@ def test_a_subagents_call_after_a_step_marked_is_at_the_next_step(e: Events):
     When a1 runs a command
     Then the move is at the step `report`"""
     marked: Entry = {"kind": "mark", "run": "r1", "agent_id": "a1", "step": "write"}
-    move = place(e.bash("git log", WRITER), [run(START, TIE, marked)])
+    move = place(e.bash("git log", WRITER), [run(START, TIE, marked)], by_routes)
     assert move is not None
     assert move.step == "report"
 
@@ -270,7 +278,7 @@ def test_the_post_tool_use_of_a_subagents_read_is_a_read(e: Events):
     """Given the writer tied to a1
     When the PostToolUse of a1's Read of NOTES.md comes
     Then the move is a read"""
-    assert kind(place(e.read_ran("/repo/NOTES.md", 1, 6, 6, WRITER), [tied()])) == "read"
+    assert kind(place(e.read_ran("/repo/NOTES.md", 1, 6, 6, WRITER), [tied()], by_routes)) == "read"
 
 
 @pytest.mark.supports("test_a_reporters_result_counts_for_the_subagent_that_ran_it")
@@ -281,7 +289,7 @@ def test_a_reporters_bash_call_is_a_report_with_what_it_printed(
     When the PostToolUse of a1's `lane-result written` comes, with the line the reporter printed
     Then the move is a report of the result `written`, by a1"""
     printed = reported(capsys, "result", ["written"])
-    move = place(e.bash_ran("lane-result written", printed, WRITER), [tied()])
+    move = place(e.bash_ran("lane-result written", printed, WRITER), [tied()], by_routes)
     assert move is not None
     assert (move.kind, move.agent_id, move.report) == (
         "report",
@@ -295,7 +303,7 @@ def test_the_post_tool_use_of_another_command_is_no_move(e: Events):
     """Given the writer tied to a1
     When the PostToolUse of a1's `git log` comes
     Then it makes no move"""
-    assert place(e.bash_ran("git log", "bf742e7 first", WRITER), [tied()]) is None
+    assert place(e.bash_ran("git log", "bf742e7 first", WRITER), [tied()], by_routes) is None
 
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
@@ -303,7 +311,7 @@ def test_a_tied_subagents_stop_is_its_end(e: Events):
     """Given the writer tied to a1
     When a1's SubagentStop comes
     Then the move is the end of a1's start"""
-    move = place(e.ended(WRITER), [tied()])
+    move = place(e.ended(WRITER), [tied()], by_routes)
     assert move is not None
     assert (move.kind, move.agent_id, move.role) == ("end", "a1", "log:writer")
 
@@ -313,7 +321,7 @@ def test_the_main_conversations_stop_is_the_end_of_its_turn(e: Events):
     """Given a run of log:up
     When the main conversation's Stop comes
     Then the move is the end of the turn"""
-    assert kind(place(e.stop(), [run()])) == "turn_end"
+    assert kind(place(e.stop(), [run()], by_routes)) == "turn_end"
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place")
@@ -321,7 +329,7 @@ def test_a_typed_command_that_a_route_waits_for_is_typed(e: Events):
     """Given a run of log:up in log's folder, not ended
     When the UserPromptExpansion of /log:retry comes
     Then the move is a typed command on that run"""
-    move = place(e.typed("log:retry"), [run()])
+    move = place(e.typed("log:retry"), [run()], by_routes)
     assert (kind(move), move.run.id if move else None) == ("typed", "r1")
 
 
@@ -330,7 +338,7 @@ def test_a_skill_tool_call_of_the_plugins_skill_while_its_run_stands_is_typed(e:
     """Given a run of log:up in log's folder whose writer is tied to a1
     When the PostToolUse of the main conversation's Skill call of log:tag comes
     Then the move is a typed command on that run"""
-    move = place(e.skill_post("log:tag", ""), [run(START, TIE)])
+    move = place(e.skill_post("log:tag", ""), [run(START, TIE)], by_routes)
     assert (kind(move), move.run.id if move else None) == ("typed", "r1")
 
 
@@ -344,7 +352,7 @@ def test_the_main_conversations_call_after_a_command_holds_to_its_skills_steps_i
     When the main conversation writes a file
     Then the move is a call of the role log:tag, or still log:up, at the step `lead`"""
     typed: Entry = {"kind": "typed", "run": "r1", "command": command}
-    move = place(e.write("/repo/notes.txt"), [run(typed)])
+    move = place(e.write("/repo/notes.txt"), [run(typed)], by_routes)
     assert move is not None
     assert (move.kind, move.role, move.step) == ("call", role, "lead")
 
@@ -357,7 +365,7 @@ def test_a_task_notification_of_a_tied_subagent_is_its_result_reaching(e: Events
     TaskStop
     Then the move is its result reaching, by a1"""
     given = e.killed(WRITER, "u1") if killed else e.reached(WRITER, "u1")
-    move = place(given, [tied()])
+    move = place(given, [tied()], by_routes)
     assert (kind(move), move.agent_id if move else None) == ("result_reached", "a1")
 
 
@@ -366,7 +374,7 @@ def test_a_send_message_from_the_main_conversation_is_a_start(e: Events):
     """Given the writer tied to a1, whose end came
     When the main conversation's PreToolUse of SendMessage to a1 comes
     Then the move is a start"""
-    assert kind(place(e.send(WRITER, "u2"), [tied()])) == "start"
+    assert kind(place(e.send(WRITER, "u2"), [tied()], by_routes)) == "start"
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
@@ -375,7 +383,7 @@ def test_a_send_message_that_resumed_its_subagent_ties_it(e: Events):
     When the PostToolUse of u2 says it resumed a1
     Then the move is a tie"""
     resume: Entry = lane_entries.start("u2")
-    assert kind(place(e.resumed(WRITER, "u2"), [run(START, TIE, resume)])) == "tie"
+    assert kind(place(e.resumed(WRITER, "u2"), [run(START, TIE, resume)], by_routes)) == "tie"
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
@@ -384,7 +392,7 @@ def test_a_send_message_queued_to_a_running_subagent_is_a_queue(e: Events):
     When the PostToolUse of u2 says the message is queued
     Then the move is a queue"""
     resume: Entry = lane_entries.start("u2")
-    assert kind(place(e.queued(WRITER, "u2"), [run(START, TIE, resume)])) == "queue"
+    assert kind(place(e.queued(WRITER, "u2"), [run(START, TIE, resume)], by_routes)) == "queue"
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
@@ -394,7 +402,7 @@ def test_the_stop_of_a_subagent_with_a_resume_queued_ends_the_pass_that_ran(e: E
     Then the move is the end of the start that a1 ran, with u2 still untied"""
     resume: Entry = lane_entries.start("u2")
     queued: Entry = {"kind": "queue", "run": "r1", "tool_use_id": "u2", "agent_id": "a1"}
-    move = place(e.ended(WRITER), [run(START, TIE, resume, queued)])
+    move = place(e.ended(WRITER), [run(START, TIE, resume, queued)], by_routes)
     assert (kind(move), move.agent_id if move else None) == ("end", "a1")
 
 
@@ -403,7 +411,7 @@ def test_the_summarys_end_at_compact_lies_outside(e: Events):
     """Given the writer tied to a1
     When the SubagentStop of /compact's summary comes, with an agent that no start ties
     Then it lies outside each run"""
-    assert place(e.summary_ended("a9"), [tied()]) is None
+    assert place(e.summary_ended("a9"), [tied()], by_routes) is None
 
 
 @pytest.mark.supports("test_a_subagent_started_in_the_foreground_lies_outside_the_run")
@@ -411,7 +419,7 @@ def test_a_call_of_a_subagent_that_no_start_ties_lies_outside(e: Events):
     """Given the writer's start, untied
     When a subagent a1 writes a file
     Then it lies outside each run"""
-    assert place(e.write("/repo/notes.txt", WRITER), [run(START)]) is None
+    assert place(e.write("/repo/notes.txt", WRITER), [run(START)], by_routes) is None
 
 
 @pytest.mark.supports("test_each_plugins_run_is_held_to_the_rules_in_its_own_folder")
@@ -420,7 +428,7 @@ def test_a_subagents_call_is_placed_on_the_run_of_its_start(e: Events):
     When a1 writes a file
     Then the move lies on r1"""
     memo = Run("r2", "session-1", "memo:up", "", "/plugins/memo", [])
-    move = place(e.write("/repo/notes.txt", WRITER), [tied(), memo])
+    move = place(e.write("/repo/notes.txt", WRITER), [tied(), memo], by_routes)
     assert move is not None
     assert move.run.id == "r1"
 
@@ -430,7 +438,7 @@ def test_an_agent_calls_start_carries_its_prompt(e: Events):
     """Given a run of log:up
     When the main conversation starts the writer by the Agent tool with a prompt
     Then the start move carries that prompt"""
-    move = place(e.start("log:writer", "u1", prompt="Write docs/changes/."), [run()])
+    move = place(e.start("log:writer", "u1", prompt="Write docs/changes/."), [run()], by_routes)
     assert (kind(move), move.prompt if move else None) == ("start", "Write docs/changes/.")
 
 
@@ -439,7 +447,7 @@ def test_a_resumes_start_carries_the_prompt_of_the_start_it_resumes(e: Events):
     """Given the writer tied to a1, started with its prompt
     When the main conversation's PreToolUse of SendMessage to a1 comes
     Then the start move carries the prompt of a1's start, not the message"""
-    move = place(e.send(WRITER, "u2"), [tied()])
+    move = place(e.send(WRITER, "u2"), [tied()], by_routes)
     assert (kind(move), move.prompt if move else None) == ("start", PROMPT)
 
 
@@ -453,7 +461,9 @@ def test_a_call_of_a_start_with_steps_given_is_held_to_them(e: Events, log: str)
     Then the move is held to the step `draft`, at that step"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
     given: list[Step] = [{"name": "draft", "rules": [{"type": "writes", "paths": ["docs/"]}]}]
-    move = place(e.write("/repo/notes.txt", WRITER), [run({**START, "steps": given}, TIE)])
+    move = place(
+        e.write("/repo/notes.txt", WRITER), [run({**START, "steps": given}, TIE)], by_routes
+    )
     assert move is not None
     assert (move.steps, move.step) == (given, "draft")
 
@@ -465,4 +475,4 @@ def test_a_command_of_a_run_whose_rules_are_out_of_form_is_refused(e: Events, lo
     Then Lane refuses with OutOfForm"""
     write_files(log, {"lane/rules.json": "{}"})
     with pytest.raises(OutOfForm):
-        place(e.typed("log:retry"), [run()])
+        place(e.typed("log:retry"), [run()], by_routes)

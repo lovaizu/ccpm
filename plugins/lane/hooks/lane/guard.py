@@ -27,7 +27,8 @@ def answer(event: Event) -> Answer:
     SubagentStop, UserPromptSubmit, or UserPromptExpansion.
     Gives: first, for each run that place.opening gives, the answer of run_opened; then the answer
     of the interface below that the event's move reaches: skill_called for the skill's call that
-    place.skill_call gives, and for the others the move that place.place gives, held to the rules
+    place.skill_call gives, and for the others the move that place.place gives, with the starts due
+    that adapters.starts_due gives, held to the rules
     in its run's plugin's folder; the answers joined, stopping where either stops; an empty answer
     where the event lies outside each run, or its run's plugin gives no rules. Wherever an answer
     gives the starts due, or holds a start to them, they are those that adapters.starts_due gives

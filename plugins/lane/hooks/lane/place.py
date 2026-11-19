@@ -6,14 +6,17 @@ conversation holds one run of a plugin at a time."""
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Callable
 
+from order import StartsDue
 from record import Run
 from report import Report
 from rules import Step
 
 # A hook event as Claude Code sends it on standard input.
 Event = dict[str, Any]
+# The starts due of a run, or its end, as the plugin's order gives them.
+Due = Callable[[Run], StartsDue]
 
 
 @dataclass
@@ -80,20 +83,24 @@ def opening(event: Event, runs: list[Run]) -> list[Run]:
     raise NotImplementedError("place.opening")
 
 
-def place(event: Event, runs: list[Run]) -> Move | None:
+def place(event: Event, runs: list[Run], due: Due) -> Move | None:
     """The move that the event makes, on the run whose start it belongs to.
 
-    Takes: a hook event, and the runs of its conversation.
+    Takes: a hook event, the runs of its conversation, and the starts due of a run, as the plugin's
+    order gives them.
     Gives: the move, placed by `session_id`, by a missing `agent_id` for the main conversation, by
     the `agent_id` that the PostToolUse of an Agent call tied to a start, and by the skill that a
-    result names; the PreToolUse of an Agent call as a `start` with its `tool_input.prompt`; a
-    command, typed or by the Skill tool, that skill_call gives no call of as a `typed` move on the
-    run of its plugin that stands; a reporter's Bash call as a `report` move with the report that
-    report.read_report gives of its output; the PostToolUse of a SendMessage as a `tie` where it
-    resumed the subagent, and as a `queue` where it queued the message to a subagent that still
-    runs; that subagent's SubagentStop as the `end` of the pass that ran, on the start tied to it
-    before, with the resume queued still untied; None where the event lies outside each run, such as
-    an `agent_id` that no start ties.
+    result names; the PreToolUse of an Agent call as a `start` with its `tool_input.prompt`; the
+    main conversation's PreToolUse of a SendMessage to a subagent of the run as a `start` where the
+    order makes that subagent's role due, and as no move where it doesn't, so that it goes through
+    as talk, as does a subagent's SendMessage to another subagent; a command, typed or by the Skill
+    tool, that skill_call gives no call of as a `typed` move on the run of its plugin that stands; a
+    reporter's Bash call as a `report` move with the report that report.read_report gives of its
+    output; the PostToolUse of a SendMessage that made a start as a `tie` where it resumed the
+    subagent, and as a `queue` where it queued the message to a subagent that still runs; that
+    subagent's SubagentStop as the `end` of the pass that ran, on the start tied to it before, with
+    the resume queued still untied; None where the event lies outside each run, such as an
+    `agent_id` that no start ties.
     Changes: nothing.
     Refuses: OutOfForm, where the rules of the plugin's run are out of form at its command.
     """
