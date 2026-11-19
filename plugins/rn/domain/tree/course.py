@@ -47,7 +47,8 @@ def groups(best_practice: str) -> Mapping[str, Sequence[str]]:
 def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence[Due]:
     """Each start due, beside those that run.
 
-    Takes: the design tree, each start of the run's Rounds, and each start that runs.
+    Takes: the design tree, each start of the run's Rounds, and each start that runs. A start with
+    no result counts for nothing, as one that didn't end, but for the number of the next Round.
     Gives: for each item of `work` that makes a deliverable with no earlier item that names it or
     one of its inputs, beside each other such item, the generator, where its
     latest Round has no result of the generator, its point's answer changed a decision, or its
@@ -58,16 +59,17 @@ def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence
     which puts it to the user as a proposal. Each new Round takes the next number of the run.
     Refuses: nothing."""
     busy = {(r.role, r.deliverable, r.group) for r in running}
-    return [d for d in _wanted(tree, starts) if (d.role, d.deliverable, d.group) not in busy]
+    ended = [s for s in starts if s.result is not None]
+    wanted = _wanted(tree, ended, _last(starts) + 1)
+    return [d for d in wanted if (d.role, d.deliverable, d.group) not in busy]
 
 
-def _wanted(tree: Tree, starts: Sequence[Start]) -> list[Due]:
+def _wanted(tree: Tree, starts: Sequence[Start], next_: int) -> list[Due]:
     """Each start that the course wants next, before those that run are left out: of each
-    deliverable that can be made now, each new Round numbered after the run's latest and the new
-    ones before it."""
+    deliverable that can be made now, each new Round numbered from `next_`, after the new ones
+    before it."""
     nodes = {d["path"]: d for d in tree["deliverables"]}
     wanted: list[Due] = []
-    next_ = _last(starts) + 1
     for path in _ready(tree, nodes):
         due = _of(tree, nodes[path], starts, next_)
         next_ += any(d.round == next_ for d in due)
@@ -91,7 +93,8 @@ def _ready(tree: Tree, nodes: Mapping[str, Mapping[str, Any]]) -> list[str]:
 
 
 def _of(tree: Tree, node: Mapping[str, Any], starts: Sequence[Start], next_: int) -> list[Due]:
-    """Each start that the course wants next of the deliverable, a new Round numbered `next_`."""
+    """Each start that the course wants next of the deliverable, from the starts that ended, each
+    with its result, a new Round numbered `next_`."""
     path = node["path"]
     mine = [s for s in starts if s.cut["deliverable"]["path"] == path]
     if not mine:
@@ -99,9 +102,8 @@ def _of(tree: Tree, node: Mapping[str, Any], starts: Sequence[Start], next_: int
     made = [s for s in mine if s.role == "generator"]
     latest = made[-1]
     practice = latest.cut["best_practice"]
-    if latest.result is None:
-        return [Due(path, "generator", "", practice, latest.round)]
-    if latest.result["result"] != "made":
+    result: Any = latest.result
+    if result["result"] != "made":
         again = _changed(latest.cut["decisions"], decisions(tree, path))
         return [Due(path, "generator", "", practice, next_)] if again else []
     judged = [s for s in mine if s.round == latest.round and s.role == "evaluator"]

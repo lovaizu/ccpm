@@ -19,14 +19,11 @@ def write(run: str, tree: Tree, due: Due) -> str:
     """Writes the Cut of a start due.
 
     Takes: the run's folder, the design tree, and the start due.
-    Gives: the path of the Cut written, as rounds.path names it, or of the Cut already there for
-    the start, kept as it was, as a role stopped starts again from its kept Cut.
-    Changes: the run's folder, by the Cut, in the form of `schemas/cut.schema.json`, where none is
-    there yet.
+    Gives: the path of the Cut written, in a slot of its own that rounds.fresh names, as a start
+    that didn't end leaves its Cut with no result, which counts for nothing.
+    Changes: the run's folder, by the Cut, in the form of `schemas/cut.schema.json`.
     Refuses: Wrong where the start names a deliverable or a group that the tree doesn't hold."""
-    path = rounds.path(run, rounds.Start(due.round, due.role, due.group, {}, None))
-    if os.path.isfile(path):
-        return path
+    path = rounds.fresh(run, rounds.Start(due.round, due.role, due.group, {}, None))
     node = next((d for d in tree["deliverables"] if d["path"] == due.deliverable), None)
     if node is None:
         raise Wrong(f"no deliverable {due.deliverable} is in the design tree to cut a start of")

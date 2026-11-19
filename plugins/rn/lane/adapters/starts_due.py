@@ -27,9 +27,10 @@ def main(given: str, cwd: str) -> tuple[int, str, str]:
       finds and that folder's Rounds, beside the starts that run: those whose prompt, in the run's
       moves, names a Cut with no result beside it. These are one generator for each deliverable
       that can be made now, beside the others, or one evaluator for each group of conditions that
-      its Round judges. A start of a Round with its Cut and no result that no prompt of the moves
-      names, as one stopped, counts as due, so that a pick-up in a new conversation, whose moves
-      hold no start yet, starts each role stopped again from the run's own files. None where the
+      its Round judges. A Cut with no result that no prompt of the moves names is a start that
+      didn't end, stopped, failed, or lost with its conversation, and counts for nothing, so that
+      a pick-up in a new conversation, whose moves hold no start, gives each start due again for
+      a fresh Cut. None where the
       words ask for a new run and the moves hold no `rn:ty` yet, as the plan waits for the
       person's sign-off, or where no run's folder has work left.
     1 with what Wrong says, such as Lane's input out of its form, or a design tree or a Round that

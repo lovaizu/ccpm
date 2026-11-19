@@ -8,8 +8,8 @@ The person typed /rn:dn to pause the run. As rn's orchestrator, carry out the st
 
 ## Steps
 
-1. Stop each generator and evaluator that runs, since its Round starts again from its Cut on the
-   pick-up.
+1. Stop each generator and evaluator that runs, since its start gets a fresh Cut on the pick-up,
+   and the Cut it leaves with no result counts for nothing.
 2. Commit the run's folder by `tree.py commit`, as step 4 of your part says, and push the run's
    branch, so that a pick-up in any conversation finds all the work so far.
 3. Tell the person where the run stopped, the point or sign-off waiting, and that `/rn:up` with no

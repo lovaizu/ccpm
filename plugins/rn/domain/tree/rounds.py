@@ -1,13 +1,13 @@
 """Decides where each Round lies in the run's folder: `rounds/<n>/` for the n-th Round of the run,
-holding the Cut of each start, `<role>[-<group>].cut.json`, and its result beside it,
-`<role>[-<group>].json`."""
+holding the Cut of each start, `<role>[-<group>][.<slot>].cut.json`, the slot from 2 for each later
+start of the same role and group, and its result beside it, `<role>[-<group>][.<slot>].json`."""
 
 from __future__ import annotations
 
 import json
 import os
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from fault import Wrong
 from schemas.form import Json
@@ -20,21 +20,23 @@ _WORKTREES = os.path.join(".claude", "worktrees")
 @dataclass(frozen=True)
 class Start:
     """One start of a Round: its number, its role, the group an evaluator judges, or "" for the
-    generator, its Cut, and its result, or None while it has none."""
+    generator, its Cut, its result, or None while it has none, and its slot, 1 for the first start
+    of its role and group in the Round."""
 
     round: int
     role: str
     group: str
     cut: Json
     result: Json | None
+    slot: int = 1
 
 
 def each(run: str) -> Sequence[Start]:
     """Each start of the run's Rounds, in the order they were cut: by the Round's number, the
-    generator before the evaluators, and the evaluators by their group.
+    generator before the evaluators, the evaluators by their group, and each by its slot.
 
     Takes: the run's folder.
-    Gives: each start, its result None where its role was stopped or still runs.
+    Gives: each start, its result None where its start didn't end, or still runs.
     Refuses: Wrong, naming the file, where a Cut or a result isn't JSON."""
     folder = os.path.join(run, "rounds")
     if not os.path.isdir(folder):
@@ -42,12 +44,16 @@ def each(run: str) -> Sequence[Start]:
     starts: list[Start] = []
     for number in sorted((n for n in os.listdir(folder) if n.isdigit()), key=int):
         names = [n for n in os.listdir(os.path.join(folder, number)) if n.endswith(_CUT)]
-        for name in sorted(names, key=lambda n: (n != f"generator{_CUT}", n)):
-            role, _, group = name.removesuffix(_CUT).partition("-")
+        held = []
+        for name in names:
+            base, _, slot = name.removesuffix(_CUT).partition(".")
+            role, _, group = base.partition("-")
+            held.append((role != "generator", group, int(slot) if slot else 1, role, name))
+        for _, group, slot, role, name in sorted(held):
             cut = os.path.join("rounds", number, name)
             result = cut.removesuffix(_CUT) + ".json"
             given = _read(run, result) if os.path.isfile(os.path.join(run, result)) else None
-            starts.append(Start(int(number), role, group, _read(run, cut), given))
+            starts.append(Start(int(number), role, group, _read(run, cut), given, slot))
     return starts
 
 
@@ -100,7 +106,20 @@ def path(run: str, start: Start) -> str:
     Gives: the path of its Cut, which its result lies beside.
     Refuses: nothing."""
     name = f"{start.role}-{start.group}" if start.group else start.role
-    return f"{run}/rounds/{start.round}/{name}{_CUT}"
+    slot = f".{start.slot}" if start.slot > 1 else ""
+    return f"{run}/rounds/{start.round}/{name}{slot}{_CUT}"
+
+
+def fresh(run: str, start: Start) -> str:
+    """Where a new Cut of the start goes, beside none already there.
+
+    Takes: the run's folder and a start, its slot left aside.
+    Gives: the path of the first slot of its role and group in its Round that holds no Cut.
+    Refuses: nothing."""
+    slot = 1
+    while os.path.isfile(path(run, replace(start, slot=slot))):
+        slot += 1
+    return path(run, replace(start, slot=slot))
 
 
 def _read(run: str, name: str) -> Json:
