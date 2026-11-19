@@ -370,80 +370,8 @@
       ]
     },
     {
-      "name": "A person's /rn:up with a request gets one deliverable that a generator makes and an evaluator judges, in a pull request of its own",
-      "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py",
-      "kind": "code",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "The user's /rn:up with a request gets the goal put to them, and each deliverable made in rounds until every necessary condition is good",
-      "path": "dev/rn/tests/integration/test_rn_s1_request.py",
-      "kind": "code",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests",
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "rn puts to the person only what's theirs, one point at a time, and goes on from their answer",
-      "path": "dev/rn/tests/integration/test_rn_s2_points.py",
+      "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
+      "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py",
       "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
@@ -495,173 +423,68 @@
       ]
     },
     {
-      "name": "Nothing rests on a plan or a deliverable that the person didn't sign off with /rn:ty",
-      "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py",
+      "name": "The person's /rn:dn stops the run where it stands, and /rn:up in any conversation goes on from there",
+      "path": "dev/rn/tests/integration/test_rn_s2_pause.py",
+      "kind": "code",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Each principle item of rn's architecture holds where its part keeps it, and its case fails with that part taken out",
+      "path": "dev/rn/tests/integration/test_rn_principles.py",
       "kind": "code",
       "inputs": [
         "dev/rn/architecture.md",
         "plugins/rn",
         "dev/rn/tests",
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "The person's /rn:dn stops the run at any moment and keeps the work so far",
-      "path": "dev/rn/tests/integration/test_rn_s4_pause.py",
-      "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "/rn:up alone in a new conversation goes on where the run stopped",
-      "path": "dev/rn/tests/integration/test_rn_s5_pick_up.py",
-      "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "The person gets one pull request, each decision rn took without asking, and the run's lessons, and rn's developers get each lesson signed off in rn's issues",
-      "path": "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
-      "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
+        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
+        "dev/rn/tests/integration/test_rn_s2_pause.py"
       ],
       "status": "open",
       "necessary_conditions": [
@@ -761,79 +584,15 @@
       ]
     },
     {
-      "name": "Each rule of the Solution strategy of rn's architecture holds where the parts keep it, and its test fails where the part that holds it is taken out",
-      "path": "dev/rn/tests/integration/test_rn_rules.py",
-      "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests",
-        "dev/rn/tests/integration/test_rn_s1_request.py",
-        "dev/rn/tests/integration/test_rn_s2_points.py",
-        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
-        "dev/rn/tests/integration/test_rn_s4_pause.py",
-        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
-        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
-    },
-    {
       "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
       "path": "dev/scripts/check.sh",
       "kind": "specific",
       "inputs": [
         "dev/lane/architecture.md",
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py",
-        "dev/rn/tests/integration/test_rn_s1_request.py",
-        "dev/rn/tests/integration/test_rn_s2_points.py",
-        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
-        "dev/rn/tests/integration/test_rn_s4_pause.py",
-        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
-        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
-        "dev/rn/tests/integration/test_rn_components.py",
-        "dev/rn/tests/integration/test_rn_rules.py"
+        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
+        "dev/rn/tests/integration/test_rn_s2_pause.py",
+        "dev/rn/tests/integration/test_rn_principles.py",
+        "dev/rn/tests/integration/test_rn_components.py"
       ],
       "status": "open",
       "check": "check.sh runs the template check of each product vision, README, and architecture, trace.py tags, and trace.py check of each plugin again, and gives 0",
@@ -1148,19 +907,14 @@
         "dev/rn/product-vision.md",
         "dev/rn/architecture.md",
         "dev/rn/tests",
-        "dev/rn/tests/integration/test_rn_walking_skeleton.py",
-        "dev/rn/tests/integration/test_rn_s2_points.py",
-        "dev/rn/tests/integration/test_rn_s3_sign_off.py",
-        "dev/rn/tests/integration/test_rn_s4_pause.py",
-        "dev/rn/tests/integration/test_rn_s5_pick_up.py",
-        "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py",
-        "dev/rn/tests/integration/test_rn_s1_request.py",
-        "dev/rn/tests/integration/test_rn_components.py",
-        "dev/rn/tests/integration/test_rn_rules.py",
         "plugins/rn/domain/orchestrator.md",
         "plugins/rn/domain/generator.md",
         "plugins/rn/domain/evaluator.md",
-        "plugins/rn/domain/best-practices/refactor-code"
+        "plugins/rn/domain/best-practices/refactor-code",
+        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
+        "dev/rn/tests/integration/test_rn_s2_pause.py",
+        "dev/rn/tests/integration/test_rn_principles.py",
+        "dev/rn/tests/integration/test_rn_components.py"
       ],
       "status": "doing",
       "necessary_conditions": [
@@ -1344,39 +1098,19 @@
     },
     {
       "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_walking_skeleton.py"
+      "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py"
     },
     {
       "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s1_request.py"
+      "path": "dev/rn/tests/integration/test_rn_s2_pause.py"
     },
     {
       "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s2_points.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s3_sign_off.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s4_pause.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s5_pick_up.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s6_s7_hand_over.py"
+      "path": "dev/rn/tests/integration/test_rn_principles.py"
     },
     {
       "do": "make",
       "path": "dev/rn/tests/integration/test_rn_components.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_rules.py"
     },
     {
       "do": "make",
