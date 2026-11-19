@@ -93,7 +93,7 @@ Strategies:
   Intent: a role that leaves its steps still meets the check that only the plugin knows.
 - A rule's sentence left out of a step that already says it. [P1.2]\
   Intent: the role reads each rule once, and keeps its attention on its step.
-- Each move placed on its run and start by what Claude Code tells, as
+- Each move placed on its run and start by what Claude Code's events carry, as
   [its states](claude-code-states.md) list. [P6.1]\
   Intent: each move is held to the rules of its own start, and to no other run's.
 
