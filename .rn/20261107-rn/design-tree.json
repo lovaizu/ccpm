@@ -679,7 +679,8 @@
             },
             {
               "about": "Several starts of one role in a lane",
-              "decided": null
+              "decided": "once each has its result, the plugin's adapter gives one result from theirs, and the lane moves on by the route after that result",
+              "by": "reasoning"
             }
           ]
         },
