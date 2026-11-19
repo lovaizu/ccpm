@@ -8,10 +8,11 @@ timeout = 60.0
 excluded-modules = []
 # The unit tests try each case of each module of Lane's code through its interfaces, in seconds on
 # every core, where the integration cases take far longer for each mutant and add no case of a module.
-# Each test process may take 4 GB at most, as a mutant that never ends a loop, such as one of the
-# Markdown reader's, grows a list until the runner starves and GitHub loses it; with the cap it
-# fails on MemoryError, which kills the mutant.
-test-command = "sh -c 'ulimit -v 4194304 && python -m pytest -x -q -n auto -p no:cacheprovider dev/lane/tests/unit'"
+# Each test process may take 2 GB at most, so that the runner's four workers stay within its
+# 16 GB, as a mutant that never ends a loop, such as one of the Markdown reader's, grows a list by
+# 2 GB in seconds until the runner starves and GitHub loses it; with the cap it fails on
+# MemoryError, which kills the mutant.
+test-command = "sh -c 'ulimit -v 2097152 && python -m pytest -x -q -n auto -p no:cacheprovider dev/lane/tests/unit'"
 
 [cosmic-ray.distributor]
 name = "local"
