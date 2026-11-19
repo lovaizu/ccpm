@@ -31,7 +31,8 @@ def report(kind: str, words: list[str]) -> int:
     Refuses: 2, with what the reporter takes on standard error, where the words don't fit its kind.
     """
     fields = _FIELDS[kind]
-    if len(words) != len(fields):
+    # `is not` in place of `!=` changes nothing, as Python keeps one object of each small int.
+    if len(words) != len(fields):  # pragma: no mutate
         print(f"lane-{kind} takes {' '.join(f'<{f}>' for f in fields)}", file=sys.stderr)
         return 2
     print(json.dumps({"kind": kind, **dict(zip(fields, words))}))
@@ -42,19 +43,16 @@ def read_report(output: str) -> Report | None:
     """The report that a reporter's Bash call printed.
 
     Takes: the standard output of a Bash call.
-    Gives: the report, where the output is one line that report printed; None for any other
-    output.
+    Gives: the report, where the output is the JSON of a report, as report prints it; None for any
+    other output.
     Changes: nothing.
     Refuses: nothing.
     """
-    lines = output.splitlines()
     try:
-        given = json.loads(lines[0]) if len(lines) == 1 else None
+        given = json.loads(output)
     except ValueError:
         return None
-    if not isinstance(given, dict):
-        return None
-    fields = _FIELDS.get(given.get("kind", ""))
+    fields = _FIELDS.get(given.get("kind", "")) if isinstance(given, dict) else None
     if fields is None or set(given) != {"kind", *fields}:
         return None
     return cast(Report, given)

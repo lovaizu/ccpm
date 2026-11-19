@@ -28,7 +28,7 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
         text=True,
         check=False,
     )
-    if done.returncode == 0:
+    if not done.returncode:
         return None
     return (
         f"You end the step `{step['name']}` of {move.role}, which its check doesn't pass:\n"

@@ -151,7 +151,7 @@ def command_of(event: Event) -> str | None:
     name = event.get("hook_event_name")
     if name == "UserPromptExpansion":
         skill = event["command_name"]
-    elif name == "PostToolUse" and event.get("tool_name") == "Skill":
+    elif (name, event.get("tool_name")) == ("PostToolUse", "Skill"):
         skill = event["tool_input"]["skill"]
     else:
         return None
@@ -234,7 +234,7 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     if tool != "SendMessage":
         return call
     to = event["tool_input"].get("to", "")
-    resumed = _latest_start(run, to)
+    resumed = latest_start(run, to)
     roles = [each["role"] for each in due(run).get("starts", [])]
     ended = resumed is not None and _ended_start(run, to)
     if call.agent_id is not None or not ended or resumed["role"] not in roles:
@@ -242,8 +242,15 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     return replace(call, kind="start", step=None, prompt=resumed["prompt"])
 
 
-def _latest_start(run: Run, agent_id: str) -> Entry | None:
-    """The start that the subagent was last tied to, None where none was."""
+def latest_start(run: Run, agent_id: str) -> Entry | None:
+    """The start that the subagent was last tied to.
+
+    Takes: the run, and the subagent's `agent_id`.
+    Gives: the run's `start` entry of the call of the subagent's latest tie; None where no start of
+    the run is tied to it.
+    Changes: nothing.
+    Refuses: nothing.
+    """
     ties = [entry for entry in run.entries if _ties(entry, agent_id)]
     return _start_of(run, ties[-1]["tool_use_id"]) if ties else None
 
@@ -257,7 +264,8 @@ def _ended_start(run: Run, agent_id: str) -> bool:
 
 def _after(event: Event, run: Run, rules: Rules) -> Move | None:
     """The move of a PostToolUse: a tie by an Agent call, a read by a Read, a report by a
-    reporter's Bash call, else none."""
+    reporter's Bash call, a tie by any other call that made a start, which only a SendMessage that
+    resumed its subagent does, else none."""
     tool = event.get("tool_name")
     if tool == "Agent":
         start = _start_of(run, event["tool_use_id"])
@@ -269,14 +277,16 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
         return Move("tie", event, run, role, agent_id, None, steps, None, None)
     if tool == "Read":
         return _read(event, run, rules)
-    if tool == "Bash":
+    # A comparison of the name with Bash changes nothing: of the tools past Agent and Read, only
+    # AskUserQuestion sorts before Bash, and its PostToolUse holds no report either way.
+    if tool == "Bash":  # pragma: no mutate
         given = read_report(event["tool_response"].get("stdout", ""))
         return (
             None
             if given is None
             else replace(_call(event, run, rules), kind="report", report=given)
         )
-    if tool == "SendMessage" and _start_of(run, event["tool_use_id"]) is not None:
+    if _start_of(run, event["tool_use_id"]) is not None:
         return replace(_call(event, run, rules), kind="tie", agent_id=event["tool_input"]["to"])
     return None
 

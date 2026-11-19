@@ -83,10 +83,10 @@ def judge_end(move: Move) -> str | None:
     # rules give one, else its last; none where its result ends the start at a step, as a result
     # that a rule names among those that end the start is one it may give.
     gave = result.given(move)
-    ends_at = next((i for i, step in enumerate(steps) if gave in _ends(step)), len(steps))
+    ends_at = next((i for i, step in enumerate(steps) if gave in _ends(step)), None)
     due = [step for step in steps if step["name"] not in done][:1]
     ruled = [step for step in due if any(rule["type"] == "result" for rule in step["rules"])]
-    ending = (ruled or steps[-1:]) if ends_at == len(steps) else []
+    ending = (ruled or steps[-1:]) if ends_at is None else []
     said = (
         judge(rule, step, move)
         for kind, judge, held in (
@@ -102,10 +102,9 @@ def judge_end(move: Move) -> str | None:
 
 
 def _ends(step: Step) -> list[str]:
-    """The results that the step's rules name as ending the start there."""
-    return [
-        end for rule in step["rules"] if rule["type"] == "result" for end in rule.get("ends", [])
-    ]
+    """The results that the step's rules name as ending the start there, which only a result rule
+    names."""
+    return [end for rule in step["rules"] for end in rule.get("ends", [])]
 
 
 # The rule types that judge a mark, by their names in a rule's `type`, in the order the guard asks

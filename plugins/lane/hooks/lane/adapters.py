@@ -84,7 +84,7 @@ def _ask(plugin_root: str, cwd: str, name: str, given: Any) -> Any:
         check=False,
     )
     mend = "The plugin's author mends it."
-    if done.returncode != 0:
+    if done.returncode:
         raise AdapterFailed(f"Lane: {path} failed: {done.stderr.strip()}. {mend}")
     try:
         gave = json.loads(done.stdout)

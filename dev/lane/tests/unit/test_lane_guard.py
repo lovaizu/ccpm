@@ -770,19 +770,29 @@ def test_result_reached_of_a_subagent_stopped_gives_its_start_due_again(g: Play,
 )
 def test_fact_added_adds_its_fact_and_answers_nothing(g: Play, log: str, kind: str):
     """Given the writer's start, untied for a tie or a drop, and tied for a read
-    When the fact's move comes
-    Then the answer is empty, and the record's last entry is of the fact's kind"""
+    When the fact's move comes: a1's tie, the drop of the start's call, or a1's read of the lines 1
+    to 5 of the 6 of NOTES.md
+    Then the answer is empty, and the record's last entry holds the fact"""
     cwd = g.e.cwd
     events = {
-        "tie": (g.e.started(WRITER, "toolu_1"), (START,)),
-        "drop": (g.e.start_failed("log:writer", "toolu_1"), (START,)),
-        "read": (g.e.read_ran(os.path.join(cwd, "NOTES.md"), 1, 6, 6, WRITER), (START, TIE)),
+        "tie": (g.e.started(WRITER, "toolu_1"), (START,), WRITER, None),
+        "drop": (g.e.start_failed("log:writer", "toolu_1"), (START,), None, None),
+        "read": (
+            g.e.read_ran(os.path.join(cwd, "NOTES.md"), 1, 5, 6, WRITER),
+            (START, TIE),
+            WRITER,
+            "write",
+        ),
     }
-    event, entries = events[kind]
+    facts: dict[str, Entry] = {
+        "tie": {"agent_id": "a1", "tool_use_id": "toolu_1"},
+        "drop": {"agent_id": None, "tool_use_id": "toolu_1"},
+        "read": {"agent_id": "a1", "path": "NOTES.md", "first_line": 1, "last_line": 5},
+    }
+    event, entries, agent, step = events[kind]
     recorded(log, *entries)
-    agent = WRITER if kind == "read" else None
-    assert fact_added(move(kind, event, agent, "write" if agent else None)) == Answer()
-    assert runs("session-1")[0].entries[-1]["kind"] == kind
+    assert fact_added(move(kind, event, agent, step)) == Answer()
+    assert runs("session-1")[0].entries[-1] == {"kind": kind, "run": "r1", **facts[kind]}
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
@@ -817,6 +827,7 @@ def test_report_made_of_a_step_whose_rules_break_gives_the_sentence_and_marks_no
     Then the answer gives the step's sentence, and the record holds no mark"""
     recorded(log, START, TIE)
     said = report_made(report_move(g, "step", "write"))
+    assert said.stop
     assert "NOTES.md" in said.said
     assert not [e for e in runs("session-1")[0].entries if e["kind"] == "mark"]
 

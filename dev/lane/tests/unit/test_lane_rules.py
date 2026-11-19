@@ -190,14 +190,22 @@ def test_a_rule_without_its_values_or_with_others_is_out_of_form(tmp_path: Any, 
 
 @pytest.mark.supports("test_a_rule_of_a_type_that_lane_lacks_stops_saying_what_to_mend")
 @pytest.mark.parametrize(
-    "after",
-    [{}, {"role": "log:writer"}, {"command": "log:up", "role": "log:writer", "result": "x"}],
+    "after, place",
+    [
+        ({}, "after: holds none of the forms it may take"),
+        ({"role": "log:writer"}, "after: holds none of the forms it may take"),
+        ({"command": "log:up", "role": "log:writer", "result": "x"}, "after/role"),
+    ],
 )
-def test_a_route_after_neither_a_command_nor_a_result_is_out_of_form(tmp_path: Any, after: Any):
+def test_a_route_after_neither_a_command_nor_a_result_is_out_of_form(
+    tmp_path: Any, after: Any, place: str
+):
     """Given rules with a route after nothing, after a role with no result, or after both a
     command and a result
     When Lane reads them
-    Then it refuses with OutOfForm naming the routes"""
+    Then it refuses with OutOfForm naming the route's place: its `after`, which no form of it
+    goes into, or the place deepest in the first form it goes into"""
     rules = copy.deepcopy(lane_bench.RULES)
     rules["routes"].append({"after": after, "start": []})
-    assert "routes" in refused(str(tmp_path), rules)
+    n = len(lane_bench.RULES["routes"])
+    assert f"routes/{n}/{place}" in refused(str(tmp_path), rules)

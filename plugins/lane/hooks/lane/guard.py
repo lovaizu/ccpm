@@ -3,7 +3,6 @@ hooks/hooks.json enters it on, and the answer in the form that Claude Code reads
 
 from __future__ import annotations
 
-import functools
 import json
 import sys
 from dataclasses import dataclass, replace
@@ -41,7 +40,6 @@ def _checked(answers: _Answers) -> _Answers:
     """The interface, its answer stopping the call with what's wrong and who fixes it where Lane
     can't check it, as a plugin's rules out of form or an adapter that failed."""
 
-    @functools.wraps(answers)
     def checked(*given: object) -> Answer:
         try:
             return answers(*given)
@@ -176,12 +174,9 @@ def start_made(move: Move) -> Answer:
 
 
 def _resumed(move: Move) -> record.Entry:
-    """The start that a SendMessage resumes, the latest tied to the subagent it names; none for an
-    Agent call."""
-    to = move.event["tool_input"].get("to")
-    tied = [e for e in move.run.entries if e["kind"] == "tie" and e["agent_id"] == to]
-    uses = [e for e in move.run.entries if tied and e.get("tool_use_id") == tied[-1]["tool_use_id"]]
-    return uses[0] if uses else {}
+    """The start that a SendMessage resumes, as place.latest_start gives it for the subagent it
+    names; none for an Agent call."""
+    return place.latest_start(move.run, move.event["tool_input"].get("to", "")) or {}
 
 
 @_checked
@@ -218,7 +213,6 @@ def turn_ended(move: Move) -> Answer:
     return Answer()
 
 
-@_checked
 def command_typed(move: Move) -> Answer:
     """S9 and S10: a command of the plugin, typed by the person or called by the Skill tool, moves
     the run that stands, as a conversation holds one run of a plugin at a time.
@@ -227,7 +221,8 @@ def command_typed(move: Move) -> Answer:
     Skill call, which place gives while the run of the command's plugin stands.
     Gives: where the run stands: the starts due once the command is added.
     Changes: the run record, by the command.
-    Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
+    Refuses: AdapterFailed, where an adapter of the starts due fails, which answer gives as a stop
+    of the call with what's wrong.
     """
     command = place.command_of(move.event) or ""
     typed: record.Entry = {"kind": "typed", "run": move.run.id, "command": command}
@@ -236,7 +231,6 @@ def command_typed(move: Move) -> Answer:
     return Answer(said=_due_said(_end_if(run, move.event)))
 
 
-@_checked
 def result_reached(move: Move) -> Answer:
     """S9: a subagent's end reaches the main conversation, with its result.
 
@@ -246,7 +240,8 @@ def result_reached(move: Move) -> Answer:
     gives it, as a start stopped with no result counts as not made.
     Changes: the run record, by a `stopped` entry of the subagent's start, where it was stopped
     with no result, such as by TaskStop; else nothing.
-    Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
+    Refuses: AdapterFailed, where an adapter of the starts due fails, which answer gives as a stop
+    of the call with what's wrong.
     """
     run = move.run
     if "<status>killed</status>" in move.event["prompt"]:
@@ -272,7 +267,9 @@ def fact_added(move: Move) -> Answer:
     Refuses: nothing.
     """
     entry: record.Entry = {"kind": move.kind, "run": move.run.id, "agent_id": move.agent_id}
-    if move.kind != "read":
+    # `is not` in place of `!=` changes nothing, as place gives each kind by a literal of its own,
+    # which Python keeps as one object.
+    if move.kind != "read":  # pragma: no mutate
         entry["tool_use_id"] = move.event["tool_use_id"]
     else:
         lines = move.event["tool_response"]["file"]
@@ -302,13 +299,14 @@ def report_made(move: Move) -> Answer:
     step's rules hold.
 
     Takes: a `report` move at the PostToolUse of the reporter's Bash call.
-    Gives: for a step done, the sentence that rule_types.judge_mark gives; an empty answer where the
-    report holds.
+    Gives: for a step done, a stop with the sentence that rule_types.judge_mark gives; an empty
+    answer where the report holds.
     Changes: the run record, by the mark or the result, where it holds.
     Refuses: nothing.
     """
     given = cast(Report, move.report)
-    if given["kind"] == "step":
+    # `>=` in place of `==` changes nothing, as no kind of report sorts after `step`.
+    if given["kind"] == "step":  # pragma: no mutate
         said = rule_types.judge_mark(move)
         if said is not None:
             return Answer(True, said)

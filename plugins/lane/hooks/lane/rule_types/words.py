@@ -12,4 +12,5 @@ def listed(values: list[str]) -> str:
     Changes: nothing.
     Refuses: nothing.
     """
-    return ", ".join(values[:-1]) + " and " + values[-1] if len(values) > 1 else values[0]
+    *before, last = values
+    return f"{', '.join(before)} and {last}" if before else last
