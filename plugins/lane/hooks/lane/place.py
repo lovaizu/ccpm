@@ -1,7 +1,7 @@
-"""Which run, lane, start, role, and step each move of a conversation belongs to, and what kind of
-move it is, by what Claude Code's hook events carry, as dev/lane/claude-code-states.md lists: among
-them, whether a command of a plugin calls its skill or is a move of the plugin's run that stands, as
-a conversation holds one run of a plugin at a time."""
+"""Which run, start, role, and step each move of a conversation belongs to, and what kind of move it
+is, by what Claude Code's hook events carry, as dev/lane/claude-code-states.md lists: among them,
+whether a command of a plugin calls its skill or is a move of the plugin's run that stands, as a
+conversation holds one run of a plugin at a time."""
 
 from __future__ import annotations
 
@@ -32,18 +32,14 @@ class Move:
     `read`, `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role whose steps hold
     it, the subagent's agent type, or for the main conversation the skill of the run's latest
     command whose steps its plugin's rules give, the skill that called the run before any; the
-    subagent's `agent_id`, None for the main conversation; the lane of its start, for a `start` the
-    lane that its prompt names, None where the move has no start, or a start's prompt names no lane;
-    for a `start` made by an Agent call, its text without the words that name its lane, None for any
-    other move; the step its start stands at; and the report where a reporter made the move."""
+    subagent's `agent_id`, None for the main conversation; the step its start stands at; and the
+    report where a reporter made the move."""
 
     kind: str
     event: Event
     run: Run
     role: str
     agent_id: str | None
-    lane: str | None
-    text: str | None
     step: str | None
     report: Report | None
 
@@ -55,11 +51,11 @@ def skill_call(event: Event, runs: list[Run]) -> SkillCall | None:
     PreToolUse calls no skill; and the runs of its conversation.
     Gives: the skill by `command_name` or `tool_input.skill`, with `command_args` or `args`, only
     where no run of the skill's plugin, by the name before its `:`, stands in the conversation:
-    where each such run ended, as its plugin's rules show, or none was added. None for a command,
-    typed or by the Skill tool, of a plugin whose run stands, with no folder yet or not ended, as
-    that command is a `typed` move of the run, which place gives; and for any other event.
+    where each such run holds an `ended` entry, or none was added. None for a command, typed or by
+    the Skill tool, of a plugin whose run stands, with no folder yet or not ended, as that command
+    is a `typed` move of the run, which place gives; and for any other event.
     Changes: nothing.
-    Refuses: OutOfForm, where the rules of the plugin's run are out of form.
+    Refuses: nothing.
     """
     raise NotImplementedError("place.skill_call")
 
@@ -84,15 +80,13 @@ def place(event: Event, runs: list[Run]) -> Move | None:
     Takes: a hook event, and the runs of its conversation.
     Gives: the move, placed by `session_id`, by a missing `agent_id` for the main conversation, by
     the `agent_id` that the PostToolUse of an Agent call tied to a start, and by the skill that a
-    result names; the PreToolUse of an Agent call as a `start` in the lane, and with the text, that
-    lane_text.read gives of its `tool_input.prompt`, and of a SendMessage as a `start` in the lane
-    of the start tied to the subagent its `to` names; a command, typed or by the Skill tool, that
-    skill_call gives no call of as a `typed` move on the run of its plugin that stands; a reporter's
-    Bash call as a `report` move with the report that report.read_report gives of its output; the
-    PostToolUse of a SendMessage as a `tie` where it resumed the subagent, and as a `queue` where it
-    queued the message to a subagent that still runs; that subagent's SubagentStop as the `end` of
-    the pass that ran, on the start tied to it before, with the resume queued still untied; None
-    where the event lies outside each run, such as an `agent_id` that no start ties.
+    result names; a command, typed or by the Skill tool, that skill_call gives no call of as a
+    `typed` move on the run of its plugin that stands; a reporter's Bash call as a `report` move
+    with the report that report.read_report gives of its output; the PostToolUse of a SendMessage
+    as a `tie` where it resumed the subagent, and as a `queue` where it queued the message to a
+    subagent that still runs; that subagent's SubagentStop as the `end` of the pass that ran, on
+    the start tied to it before, with the resume queued still untied; None where the event lies
+    outside each run, such as an `agent_id` that no start ties.
     Changes: nothing.
     Refuses: OutOfForm, where the rules of the plugin's run are out of form at its command.
     """

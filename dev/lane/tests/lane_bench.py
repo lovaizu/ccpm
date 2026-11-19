@@ -51,10 +51,10 @@ CHECK_SAYS = "CHANGELOG.md holds no entry of 1.2.0"
 
 # The rules of `log`: the main conversation's steps by the skill's name, each subagent's by its
 # agent type, and the routes, which start the writer after the command, the reviewer after the
-# writer's result, the writer again after the reviewer's `more`, the writer after its `split`, which
-# the start adapter starts twice, and none after its `good`; `/log:retry` starts the writer in place
-# of what was due, and `/log:tag`, whose skill holds the main conversation to steps of its own,
-# starts the tagger in place of what was due, whose `tagged` ends the run.
+# writer's result, the writer again after the reviewer's `more`, two writers after its `split`, and
+# none after its `good`; `/log:retry` starts the writer in place of what was due, and `/log:tag`,
+# whose skill holds the main conversation to steps of its own, starts the tagger in place of what
+# was due, whose `tagged` ends the run.
 RULES: Rules = {
     "roles": {
         "log:up": {
@@ -115,7 +115,10 @@ RULES: Rules = {
         {"after": {"command": "log:up"}, "start": ["log:writer"]},
         {"after": {"role": "log:writer", "result": "written"}, "start": ["log:reviewer"]},
         {"after": {"role": "log:reviewer", "result": "more"}, "start": ["log:writer"]},
-        {"after": {"role": "log:reviewer", "result": "split"}, "start": ["log:writer"]},
+        {
+            "after": {"role": "log:reviewer", "result": "split"},
+            "start": ["log:writer", "log:writer"],
+        },
         {"after": {"role": "log:reviewer", "result": "good"}, "start": []},
         {"after": {"command": "log:retry"}, "start": ["log:writer"]},
         {"after": {"command": "log:tag"}, "start": ["log:tagger"]},
@@ -124,41 +127,20 @@ RULES: Rules = {
 }
 
 # The adapters of `log`, each a Python file of its lane/adapters/, as Lane's adapters.py says: the
-# text of each role due, which starts once, or twice after its lane's `split`, and no chain to open;
-# the items of the writer's step `write`; and the results it keeps of a version in
-# .log/kept/<version>.json of the conversation's folder, as one chain.
-START = """\
-import json, sys
-
-given = json.load(sys.stdin)
-if "lanes" in given:
-    print(json.dumps({"open": []}))
-else:
-    text = f"You are {given['role']}. Write the entry of {given['run']['words']}."
-    lane = given["lane"]
-    times = 2 if lane and lane[-1].get("result") == "split" else 1
-    print(json.dumps({"texts": [text] * times}))
-"""
+# items of the writer's step `write`. `log` gives routes, so Lane's route adapter gives its starts
+# due.
 CHECKLIST = """\
 import json, sys
 
 given = json.load(sys.stdin)
 print(json.dumps({"items": ["dated", "linked"] if given["step"] == "write" else []}))
 """
-KEPT = """\
-import json, os, sys
-
-given = json.load(sys.stdin)
-path = os.path.join(".log", "kept", given["run"]["words"] + ".json")
-results = json.load(open(path)) if os.path.exists(path) else []
-print(json.dumps({"chains": [results] if results else []}))
-"""
-ADAPTERS = {"start.py": START, "checklist.py": CHECKLIST, "kept.py": KEPT}
+ADAPTERS = {"checklist.py": CHECKLIST}
 SKILLS = ("up", "retry", "tag")
 
 
 def text(role: str, words: str = WORDS) -> str:
-    """The text that the start adapter of `log` gives the role's start due."""
+    """The text that the main conversation gives the role's start."""
     return f"You are {role}. Write the entry of {words}."
 
 
@@ -241,7 +223,8 @@ class Bench:
             write_files(self.log, {f"lane/adapters/{name}": code})
 
     def kept(self, words: str, results: list[dict[str, str]], folder: str | None = None) -> None:
-        """Writes the results that `log` keeps of the version, in the folder or the repository."""
+        """Writes a file of results of the version, in the folder or the repository, which no part
+        of `log` or Lane reads."""
         path = f".log/kept/{words}.json"
         write_files(folder or self.repo, {path: json.dumps(results)})
 

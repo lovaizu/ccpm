@@ -10,15 +10,11 @@ from typing import TypedDict
 
 class Entry(TypedDict, total=False):
     """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `tie`, `queue`,
-    `drop`, `read`, `mark`, `result`, `stopped`, `joined`, `opened`, and `typed`, the `run` it
-    belongs to, and the fields of that kind: a `folder` gives the run's plugin's folder, a `start`
-    the `lane` it lies in and the `text` it was given, without the words that name its lane, a
-    `result` of the plugin's kept results its `role` and `lane`, as no start gave it, a `queue` a
-    resume queued to a subagent that still runs, untied until that subagent's SubagentStop, a
-    `stopped` the `agent_id` of a start that ended with no result, such as one stopped by TaskStop,
-    a `joined` the one `result` that the plugin's join adapter gave from the results of a `lane`
-    whose route started its `role` several times, and an `opened` the `role` and the `text` of the
-    first start of a chain that the plugin opened, in a `lane` of its own."""
+    `drop`, `read`, `mark`, `result`, `stopped`, `typed`, and `ended`, the `run` it belongs to, and
+    the fields of that kind: a `folder` gives the run's plugin's folder, a `queue` a resume queued
+    to a subagent that still runs, untied until that subagent's SubagentStop, a `stopped` the
+    `agent_id` of a start that ended with no result, such as one stopped by TaskStop, and an
+    `ended` the end of the run, once its order gave no start due while no start of it ran."""
 
     kind: str
     run: str
@@ -35,8 +31,6 @@ class Entry(TypedDict, total=False):
     item: str
     result: str
     command: str
-    lane: str
-    text: str
 
 
 @dataclass

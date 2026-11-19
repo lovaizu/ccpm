@@ -30,12 +30,10 @@ def answer(event: Event) -> Answer:
     place.skill_call gives, and for the others the move that place.place gives, held to the rules
     in its run's plugin's folder; the answers joined, stopping where either stops; an empty answer
     where the event lies outside each run, or its run's plugin gives no rules. Wherever an answer
-    gives the starts due, or a start's place among them, the starts due hold the first start of each
-    chain that adapters.chains_opened gives from the lanes that routes.lanes gives, and the texts of
-    each role due are those that adapters.start_texts gives with its lane's starts from
-    routes.lanes.
-    Changes: what each interface it reaches changes; where adapters.chains_opened opens a chain, the
-    run record, by the entries that routes.opened gives, before the starts due are read.
+    gives the starts due, or holds a start to them, they are those that adapters.starts_due gives
+    for the run as it stands once the move is added.
+    Changes: what each interface it reaches changes; where adapters.starts_due gives no start due
+    while no start of the run runs, the run record, by an `ended` entry of the run.
     Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
     adapter that failed, the answer says why and who fixes that, and stops the call.
     """
@@ -61,13 +59,9 @@ def run_opened(event: Event, run: Run) -> Answer:
 
     Takes: the event, whose `transcript_path` holds the skill's base directory, and the run with no
     folder.
-    Gives: the starts due of each lane of the run, as routes.due gives them with the texts that
-    adapters.start_texts gives, each with the text that lane_text.text gives, its lane named, after
-    the lanes that routes.picked_up gives from each chain of results that the plugin's kept adapter
-    gives for the run's words, where the plugin gives rules; an empty answer where the plugin gives
-    none, or the transcript holds no base directory of the skill yet.
-    Changes: the run record, by the run's folder and the entries of its kept results, in one write,
-    where the transcript gives the folder.
+    Gives: the starts due of the run, where the plugin gives rules; an empty answer where the plugin
+    gives none, or the transcript holds no base directory of the skill yet.
+    Changes: the run record, by the run's folder, where the transcript gives it.
     Refuses: nothing; a plugin's rules out of form, or an adapter that failed, stops the event's
     call with what's wrong.
     """
@@ -77,17 +71,13 @@ def run_opened(event: Event, run: Run) -> Answer:
 def start_made(move: Move) -> Answer:
     """S9: the main conversation starts a subagent of the plugin, or resumes one by SendMessage.
 
-    Takes: a `start` move at the PreToolUse of an Agent or SendMessage call, in the lane that place
-    gives it.
-    Gives: an empty answer for a start of a role due in the move's lane, as routes.due gives the
-    starts due with the texts that adapters.start_texts gives; for any other start of the plugin's
-    subagents, such as one whose prompt names no lane, or a lane with no start of that role due, or
-    one by a subagent, a stop with the starts due.
-    Changes: the run record, by the start in its lane, untied until the PostToolUse of its call,
-    from which each later move of the subagent goes by its `agent_id`; a resume that the
-    PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
+    Takes: a `start` move at the PreToolUse of an Agent or SendMessage call.
+    Gives: an empty answer for a start of a role due; for any other start of the plugin's
+    subagents, or one by a subagent, a stop with the starts due.
+    Changes: the run record, by the start, untied until the PostToolUse of its call; a resume that
+    the PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
     SubagentStop, where subagent_ended ties it, as Lane hooks no SubagentStart.
-    Refuses: nothing; a start adapter that failed stops the call with what's wrong.
+    Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
     """
     raise NotImplementedError("guard.start_made")
 
@@ -96,11 +86,11 @@ def turn_ended(move: Move) -> Answer:
     """S9: the main conversation ends its turn.
 
     Takes: a `turn_end` move at the main conversation's Stop.
-    Gives: a stop with the starts due, where a start is due, as routes.due gives them with the texts
-    that adapters.start_texts gives; an empty answer where none is.
+    Gives: a stop with the starts due, where a start is due; an empty answer where none is.
     Changes: the run record, by dropping each start still untied but a resume queued to a subagent
     that still runs.
-    Refuses: nothing; a start adapter that failed stops the turn's end with what's wrong.
+    Refuses: nothing; an adapter of the starts due that failed stops the turn's end with what's
+    wrong.
     """
     raise NotImplementedError("guard.turn_ended")
 
@@ -111,11 +101,9 @@ def command_typed(move: Move) -> Answer:
 
     Takes: a `typed` move at the UserPromptExpansion of the command, or at the PostToolUse of its
     Skill call, which place gives while the run of the command's plugin stands.
-    Gives: where the run stands: the starts due of each lane, as routes.due gives them with the
-    texts that adapters.start_texts gives once the command is added, each with the text that
-    lane_text.text gives.
+    Gives: where the run stands: the starts due once the command is added.
     Changes: the run record, by the command.
-    Refuses: nothing; a start adapter that failed stops the call with what's wrong.
+    Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
     """
     raise NotImplementedError("guard.command_typed")
 
@@ -125,16 +113,11 @@ def result_reached(move: Move) -> Answer:
 
     Takes: a `result_reached` move at the UserPromptSubmit of the subagent's
     `<task-notification>`.
-    Gives: the result, and the starts that its route makes due in its lane, as routes.due gives them
-    with the texts that adapters.start_texts gives, each with the text that lane_text.text gives;
-    where routes.joins gives the result's lane, as each start that its route started of its role has
-    its result, the one result that adapters.joined_result gives from theirs, and the starts that
-    the route after it makes due in the lane; nothing due in a lane that still waits for a result of
-    such a start; the start due again where the subagent was stopped with no result.
+    Gives: the result, and the starts due after it; the start's role due again, where the order
+    gives it, as a start stopped with no result counts as not made.
     Changes: the run record, by a `stopped` entry of the subagent's start, where it was stopped
-    with no result, such as by TaskStop, and by a `joined` entry of the lane's one result, where
-    routes.joins gives the lane; else nothing.
-    Refuses: nothing; a join or start adapter that failed stops the call with what's wrong.
+    with no result, such as by TaskStop; else nothing.
+    Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
     """
     raise NotImplementedError("guard.result_reached")
 

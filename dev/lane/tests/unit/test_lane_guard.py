@@ -438,7 +438,7 @@ def move(kind: str, event: Event, agent: Subagent | None = None, step: str | Non
     """The move of the kind, on the one run of the conversation session-1 as its record stands."""
     [run] = runs("session-1")
     role = agent.type if agent else run.skill
-    return Move(kind, event, run, role, agent.id if agent else None, None, None, step, None)
+    return Move(kind, event, run, role, agent.id if agent else None, step, None)
 
 
 def recorded(log: str, *entries: Entry) -> None:
@@ -643,9 +643,7 @@ def report_move(g: Play, kind: str, *words: str) -> Move:
     printed = g.capsys.readouterr().out
     [run] = runs("session-1")
     event = g.e.bash_ran(f"lane-{kind}", printed, WRITER)
-    return Move(
-        "report", event, run, WRITER.type, WRITER.id, None, None, "write", read_report(printed)
-    )
+    return Move("report", event, run, WRITER.type, WRITER.id, "write", read_report(printed))
 
 
 @pytest.mark.supports("test_a_step_marked_before_its_items_names_each_item_not_done")

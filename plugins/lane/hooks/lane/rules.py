@@ -40,19 +40,24 @@ class After(TypedDict, total=False):
 
 
 class Route(TypedDict):
-    """The roles whose starts come due after what the route goes after, each by its agent type:
-    after a command, each role opening a lane of its own; after a result, one role alone or
-    none."""
+    """A step of a fixed order: the roles to start after what the route goes after, each by its
+    agent type, a role named several times starting as many times at once."""
 
     after: After
     start: list[str]
 
 
-class Rules(TypedDict):
-    """What a plugin gives Lane: each role's steps, a subagent's by its agent type and the main
-    conversation's by the skill's name, and the routes."""
+class Steps(TypedDict):
+    """Each role's steps, a subagent's by its agent type and the main conversation's by the skill's
+    name."""
 
     roles: dict[str, Role]
+
+
+class Rules(Steps, total=False):
+    """What a plugin gives Lane: each role's steps, and, where the plugin fixes its order, its
+    routes."""
+
     routes: list[Route]
 
 
@@ -68,7 +73,6 @@ def read_rules(plugin_root: str) -> Rules | None:
     Gives: the rules in its lane/rules.json, held to rules.schema.json; None where the plugin has
     no lane/rules.json, as Lane then leaves its runs alone.
     Changes: nothing.
-    Refuses: OutOfForm, where the file can't be read as JSON or breaks the form, such as a route
-    after a result that starts more than one role.
+    Refuses: OutOfForm, where the file can't be read as JSON or breaks the form.
     """
     raise NotImplementedError("rules.read_rules")

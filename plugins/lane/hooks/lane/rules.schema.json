@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "A plugin's lane/rules.json",
-  "description": "What a plugin gives Lane: each role's steps, each step's rules, each of one type with its values, and the routes.",
+  "description": "What a plugin gives Lane: each role's steps, each step's rules, each of one type with its values, and, where the plugin fixes its order, its routes.",
   "type": "object",
-  "required": ["roles", "routes"],
+  "required": ["roles"],
   "additionalProperties": false,
   "properties": {
     "roles": {
@@ -31,36 +31,22 @@
       }
     },
     "routes": {
-      "description": "The moves after a role's result, or after a command that the person types, and the roles whose starts they make due.",
+      "description": "Where the plugin fixes its order: the roles to start after a role's result, or after a command that the person types.",
       "type": "array",
       "items": {
-        "oneOf": [
-          {
-            "description": "A route after a command that the person types, each role it starts opening a lane of its own.",
-            "type": "object",
-            "required": ["after", "start"],
-            "additionalProperties": false,
-            "properties": {
-              "after": {
+        "type": "object",
+        "required": ["after", "start"],
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "oneOf": [
+              {
                 "type": "object",
                 "required": ["command"],
                 "additionalProperties": false,
                 "properties": { "command": { "type": "string", "minLength": 1 } }
               },
-              "start": {
-                "description": "The roles whose starts come due, each by its agent type.",
-                "type": "array",
-                "items": { "type": "string", "minLength": 1 }
-              }
-            }
-          },
-          {
-            "description": "A route after a role's result, which starts one role alone in the result's lane, as many times at once as the plugin's start adapter gives texts for it, or once without one.",
-            "type": "object",
-            "required": ["after", "start"],
-            "additionalProperties": false,
-            "properties": {
-              "after": {
+              {
                 "type": "object",
                 "required": ["role", "result"],
                 "additionalProperties": false,
@@ -68,16 +54,15 @@
                   "role": { "description": "The role's agent type.", "type": "string", "minLength": 1 },
                   "result": { "type": "string", "minLength": 1 }
                 }
-              },
-              "start": {
-                "description": "The role whose starts come due, by its agent type, or none.",
-                "type": "array",
-                "items": { "type": "string", "minLength": 1 },
-                "maxItems": 1
               }
-            }
+            ]
+          },
+          "start": {
+            "description": "The roles to start, each by its agent type; a role named several times starts as many times at once.",
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
           }
-        ]
+        }
       }
     }
   },
