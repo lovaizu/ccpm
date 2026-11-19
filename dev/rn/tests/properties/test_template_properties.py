@@ -71,17 +71,29 @@ def test_a_document_that_fills_each_slot_of_a_template_holds_it(made: tuple[str,
     assert faults(template, "\n\n".join(document) + "\n") == ()
 
 
+def must_show(forms: list[str]) -> list[int]:
+    """The index of each block of the template whose absence from a document must show: each but
+    a section's heading whose blocks each take a form of the blocks of the section before it."""
+    headings = [i for i, form in enumerate(forms) if form.startswith("## ")]
+    shown = [i for i in range(len(forms)) if i not in headings]
+    for before, at, after in zip([0, *headings], headings, [*headings[1:], len(forms)]):
+        if not set(forms[at + 1 : after]) <= set(forms[before + 1 : at]):
+            shown.append(at)
+    return sorted(shown)
+
+
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @given(filled(), st.data())
 def test_a_document_without_a_block_of_its_template_has_a_fault(
     made: tuple[str, list[str]], data: Any
 ):
-    """Given any template whose every block must stand, and a document that fills it but leaves
-    out one block
+    """Given any template of sections, and a document that fills it but leaves out one block whose
+    absence must show: any block but a section's heading whose blocks each take a form of the
+    section before it, as a section may be left out and its blocks then read as that section's
     When the document is checked
     Then it has a fault"""
     template, document = made
-    gone = data.draw(st.integers(0, len(document) - 1))
+    gone = data.draw(st.sampled_from(must_show(template.rstrip("\n").split("\n\n"))))
     left = "\n\n".join(document[:gone] + document[gone + 1 :]) + "\n"
     assert faults(template, left) != (), f"block {gone} left out is found"
 
