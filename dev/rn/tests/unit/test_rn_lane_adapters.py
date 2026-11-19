@@ -20,8 +20,6 @@ from rn_bench import COMMAND, GUIDE, RN, RUN, command, plan, started, typed, wor
 # Why a case is xfail while its body isn't written.
 NO_STARTS_DUE = "starts_due.main isn't built yet"
 NO_RULES = "rules.main isn't built yet"
-# The gap of S2 in gaps.md: starts_due.py gives the stopped starts due again after /rn:dn.
-PAUSE_GAP = "S2: starts_due.py gives each stopped start due again after /rn:dn, as gaps.md says"
 
 CUT = f"{RUN}/rounds/1/generator.cut.json"
 RESULT = f"{RUN}/rounds/1/generator.json"
@@ -92,7 +90,7 @@ def counts(top: str, words: str = "", moves: list[dict[str, Any]] | None = None)
         (REQUEST, ["rn:up", "rn:ty", "rn:gm"], {"rn:generator": 1}),
         ("", ["rn:up"], {"rn:generator": 1}),
         pytest.param(
-            "", ["rn:up", "rn:dn"], {}, marks=pytest.mark.xfail(strict=True, reason=PAUSE_GAP)
+            "", ["rn:up", "rn:dn"], {}, marks=pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
         ),
     ],
     ids=[

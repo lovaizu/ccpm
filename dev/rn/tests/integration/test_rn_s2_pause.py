@@ -14,8 +14,6 @@ from rn_bench import BRANCH, RUN, Bench, judged, made, read_json, typed
 
 # Why a case is xfail while its body isn't written.
 NO_STARTS_DUE = "starts_due.main isn't built yet"
-# The gap of S2 in gaps.md: starts_due.py gives the stopped starts due again after /rn:dn.
-PAUSE_GAP = "S2: starts_due.py gives each stopped start due again after /rn:dn, as gaps.md says"
 
 
 def paused(b: Bench, role: str = "generator") -> str:
@@ -41,7 +39,7 @@ def test_a_pause_pushes_the_run_with_the_cut_of_the_role_it_stopped(b: Bench):
     assert cut.removesuffix(".cut.json") + ".json" not in pushed
 
 
-@pytest.mark.xfail(strict=True, reason=PAUSE_GAP)
+@pytest.mark.xfail(strict=True, reason=NO_STARTS_DUE)
 @pytest.mark.supports("S2")
 def test_a_pause_leaves_lane_no_start_due_so_the_turn_ends(b: Bench):
     """Given the command's generator started after /rn:ty, and then /rn:dn typed, and the

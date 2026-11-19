@@ -30,11 +30,13 @@ def main(given: str, cwd: str) -> tuple[int, str, str]:
       its Round judges. A Cut with no result that no prompt of the moves names is a start that
       didn't end, stopped, failed, or lost with its conversation, and counts for nothing, so that
       a pick-up in a new conversation, whose moves hold no start, gives each start due again for
-      a fresh Cut. None where the
-      words ask for a new run and the moves hold no `rn:ty` yet, as the plan waits for the
-      person's sign-off, or where no run's folder has work left.
-    1 with what Wrong says, such as Lane's input out of its form, or a design tree or a Round that
-    isn't JSON.
+      a fresh Cut. None where the latest command is `rn:dn` with no `rn:up` after it, as the run
+      waits paused, so that Lane lets the orchestrator's turn end; where the words ask for a new
+      run and the moves hold no `rn:ty` yet, as the plan waits for the person's sign-off; or where
+      no run's folder has work left.
+    1 with what Wrong says, such as Lane's input out of its form, a design tree out of its schema,
+    or a Round that isn't JSON. A design tree that isn't JSON never reaches it, as rounds.folder
+    passes over it as one with no work left.
     Changes: nothing.
     Refuses: nothing beyond the exit codes above."""
     raise NotImplementedError("starts_due.main")
