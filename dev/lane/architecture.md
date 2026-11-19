@@ -15,8 +15,8 @@
   says.
 - S8: a plugin wants its AI to notice when it ends a step that the plugin's own check doesn't pass.
 - S9: a plugin wants its main conversation to start each subagent that its order makes due, and
-  only those, with several chains of its order going at once, and not to end its turn while one
-  is due.
+  only those, several at once where its order makes them due together, and not to end its turn
+  while one is due.
 - S10: a plugin wants a run that stopped to go on where it stopped, after `/compact` or in a new
   conversation.
 
@@ -32,48 +32,40 @@ once.
     instead. Where it can't check a call, it says why and who fixes that.
   - P1.2: a step, an item, a read, or a result counts only from the AI's own call, never from its
     reply.
-- P2: any plugin alike
-  - P2.1: Lane names no plugin. A plugin gives Lane its rules, in the form Lane defines, in a file
-    of its own folder.
-  - P2.2: what only the plugin knows, such as a subagent's start text, a step's checklist, or the
-    results it keeps, Lane asks of the plugin's adapters. Lane defines what each adapter takes and
-    gives.
-  - P2.3: Lane checks only a run of a skill of a plugin that gives it rules, from the skill's call
-    until its routes end, and leaves other work alone.
+- P2: one way for any plugin, applied by adapters alone
+  - P2.1: each thing that Lane can make an AI notice is one type of rule, so a plugin's author
+    picks from the types what their AI should notice.
+  - P2.2: Lane defines what it takes in and gives out, and holds every check itself. It names no
+    plugin.
+  - P2.3: a plugin fits its steps and its order to what Lane takes in, whether it fixes them or
+    decides them as it runs: fixed ones in a file of its folder, and the rest by its adapters.
+  - P2.4: which subagent starts when, and how many at once, the plugin's order says, and Lane
+    holds the AI to it.
+  - P2.5: Lane checks only a run of a skill of a plugin that gives it rules, from the skill's call
+    until its order starts no more, and leaves other work alone.
 
 ### Data model
 
 ![Lane's data](images/data-model.svg)
 
 - Rules\
-  What a plugin gives Lane: each step's rules, each of one type with its values, and the routes.
+  What a plugin gives Lane: each step's rules, each of one type with its values, and, where the
+  plugin fixes its order, its routes.
 - Route\
-  The moves after a role's result, or after a command that the person types, which make starts
-  due.
+  A fixed order: the roles to start after a role's result, or after a command that the person
+  types.
 - Run\
-  One run of a plugin's skill in a conversation, from its call until its routes start no more,
-  with each start, read, mark, and result in it.
-- Lane\
-  One chain of a run's starts, held to the routes' order, going on beside the run's other chains.
-- Kept results\
-  The results that a plugin keeps, each chain's in its order, from which a run goes on in a new
-  conversation.
+  One run of a plugin's skill in a conversation, from its call until its order starts no more,
+  with each command, start, read, mark, and result in it.
+- Starts due\
+  What the plugin's order gives for a run as it stands: each role to start now, and how many at
+  once.
 
 Strategies:
 
-- Each start that a route after a command makes due, and each first start of a chain that the
-  plugin's adapter gives at any move, opens a lane of its own, and each start that a route after a
-  result makes due follows in the result's lane. [S9, P2.2]\
-  Intent: chains of one run go at once, each in its order, and each starts when the plugin's own
-  order says.
-- The plugin's adapter given the text and the result of each start that a lane has made so far.
-  [P2.2]\
-  Intent: the plugin finds which of its chains a lane holds, and gives its starts by that.
-- A route after a result that starts one role alone, as many times at once as the plugin's
-  adapter gives texts for it, its lane waiting until each of them has its result, and moving on by
-  one result that the plugin's adapter gives from theirs. [S9, P2.2]\
-  Intent: a step done by several subagents side by side moves on as one, where the plugin alone
-  decides how many start and what comes next.
+- The starts due asked of the plugin's order at each move, with the run as it stands. [P2.4]\
+  Intent: Lane holds the AI to an order that the plugin fixes or decides as it runs, without
+  deciding it.
 - A run's record that only grows, holding only what no later move gives again. [S10]\
   Intent: moves checked at the same moment lose nothing of one another's.
 
@@ -82,30 +74,33 @@ Strategies:
 ![Lane's components](images/components.svg)
 
 - guard (hook)\
-  Holds each move of a run to its plugin's rules and order.
+  Holds each move of a run to its plugin's rules and to the starts due.
 - rule types (module)\
   Make each rule's check and the sentence it gives one, so that what the AI reads is what holds.
 - reporters (command)\
   Carry a step, an item, or a result done to the guard as the AI's own call.
+- route adapter (adapter)\
+  Gives the starts due of a plugin that fixes its order, from its routes.
 
 Strategies:
 
 - The plugin's folder found from the base directory of its skill, which Claude Code writes into
   the conversation once the skill's call ends, as
-  [its states](claude-code-states.md#where-the-guard-finds-the-plugin-it-serves) say. [P2.1]\
+  [its states](claude-code-states.md#where-the-guard-finds-the-plugin-it-serves) say. [P2.2]\
   Intent: Lane serves a plugin that it never names, as Claude Code gives the folder either way.
+- The plugin's own adapter of the starts due where it gives one, and Lane's route adapter where
+  it gives routes. [P2.3]\
+  Intent: a plugin that fixes its order writes no code, and one that decides it as it runs gives
+  only its answer.
 - The reporters as commands that Claude Code puts on the AI's path. [P1.2]\
   Intent: a plugin's step names a reporter without knowing where Lane lies.
 - A rule of the paths a role writes that names a folder letting through each file under it. [S1]\
   Intent: a deliverable of several files, such as code with its tests, is written whole.
 - Each move placed on its run and start by what Claude Code's events carry, as
-  [its states](claude-code-states.md) list. [P2.3]\
+  [its states](claude-code-states.md) list. [P2.5]\
   Intent: each move is held to the rules of its own start, and to no other run's.
-- Each start due given a text that names its lane, which the main conversation passes as the
-  start's prompt, and each later move of the subagent placed by the subagent's own ID. [S9]\
-  Intent: starts of one role in different lanes never take each other's place.
 - Each rule type judging a call, a mark, or an end of its own kind, and the guard stopping each
-  that breaks a rule with the step's sentence. [S2, S3, S4, S6]\
+  that breaks a rule with the step's sentence. [P2.1, S2, S3, S4, S6]\
   Intent: the check and the sentence that the AI reads change together, in the rule type's own
   module.
 - A mark checked for the step due, then for the reads and the items that its rules ask. [S5]\
@@ -123,39 +118,26 @@ sequenceDiagram
   actor U as person
   participant M as the plugin's main conversation
   participant G as guard
-  participant A as the plugin's adapters
+  participant O as the plugin's order
   participant RR as run record
   U->>M: the plugin's command [S9]
-  M->>G: calls the skill [P2.3]
-  G->>RR: adds the run, as S10 draws where one stopped (Run) [S9]
-  loop until the routes start no more [S9]
-    opt the plugin gives an adapter of its starts [P2.2]
-      G->>A: asks for the text of each start due, one for each time its role starts, with its lane's starts so far (Lane) [P2.2]
-      G->>A: asks for the first start of each chain to open now [P2.2]
-    end
-    G-->>M: the starts due of each lane, each with its text that names its lane (Lane) [S9]
-    alt a start whose text names a lane with that start due [S9]
-      M->>G: the start, with its text [S9]
-      G->>RR: adds the start to its lane (Lane) [S9]
+  M->>G: calls the skill [P2.5]
+  G->>RR: adds the run, as S10 draws where one stands (Run) [S9]
+  loop until the order gives no start due [S9]
+    G->>O: asks for the starts due, with the run (Run) [P2.4]
+    O-->>G: each role to start now, and how many (Starts due) [P2.4]
+    alt a start of a role due [S9]
+      M->>G: the start [S9]
+      G->>RR: adds the start (Run) [S9]
     else any other start of the plugin's subagents [S9]
       G-->>M: stops it, with the starts due [P1.1]
     else the main conversation ends its turn while a start is due [S9]
       G-->>M: stops it, with the starts due [P1.1]
-    else the person types a command that a route waits for [S9]
-      U->>M: the command [S9]
-      G->>RR: adds it, so that its route's starts are due (Route) [S9]
+    else a result, or a command that the person types [S7]
+      G->>RR: adds it (Run) [S7]
     end
-    opt each start of one role that a route started at once has its result [S9]
-      G->>A: asks for one result from theirs [P2.2]
-    end
-    G-->>M: each result, and the starts that its route makes due in its lane (Route) [S7]
   end
 ```
-
-Strategies:
-
-- A typed command that a route goes after, its starts due in place of those before. [S9]\
-  Intent: the person's pause or approval changes the order.
 
 #### S10: a run picked up
 
@@ -164,17 +146,17 @@ sequenceDiagram
   actor U as person
   participant M as the plugin's main conversation
   participant G as guard
+  participant O as the plugin's order
   participant RR as run record
-  participant A as the plugin's adapter
   U->>M: the plugin's command, after /compact or in a new conversation [S10]
   M->>G: calls the skill, with the words typed after the command [S10]
   alt the run record holds the run, not ended [S10]
     G->>RR: reads where the run stands (Run) [S10]
-  else the plugin gives an adapter of the results it keeps [P2.2]
-    G->>A: asks for the kept results, with those words (Kept results) [P2.2]
-    G->>RR: adds the run, a lane for each chain with each of its results that follows the routes (Lane) [S10]
+  else
+    G->>RR: adds the run, with those words (Run) [S10]
   end
-  G-->>M: where the run picks up, and the starts due [S10]
+  G->>O: asks for the starts due, with the run (Run) [P2.4]
+  O-->>G: each role to start now, from where the plugin's own files say the run stands (Starts due) [S10]
 ```
 
 ### Deployment
@@ -186,9 +168,9 @@ Lane beside it, and Lane's guard holds each run of the plugin's skills.
 
 Strategies:
 
-- Lane's code on Python 3.9 and its standard library alone. [P2.1]\
+- Lane's code on Python 3.9 and its standard library alone. [P2.2]\
   Intent: the guard, started anew on each move, answers fast on each machine that runs a plugin.
-- The plugin's adapters and checks run in the folder that the conversation works in. [P2.2]\
+- The plugin's adapters and checks run in the folder that the conversation works in. [P2.3]\
   Intent: each reads the run's checkout, in a worktree too.
 
 ### Directory structure
@@ -198,6 +180,7 @@ plugins/lane/                     what Claude Code installs beside each plugin t
 ├── hooks/
 │   ├── hooks.json                the guard's entries
 │   └── lane/                     the guard, and rule_types/
+├── adapters/routes.py            the route adapter
 ├── bin/                          the reporters
 ├── docs/rules-and-adapters.md    what Lane takes in and gives out
 └── README.md                     for a plugin's author
@@ -207,8 +190,8 @@ dev/lane/                         what only Lane's developers use
 └── tests/                        the test cases, from unit to integration
 
 <a plugin>/lane/                  what a plugin gives Lane
-├── rules.json                    the rules and the routes
-└── adapters/                     each adapter
+├── rules.json                    the rules, and the routes of a fixed order
+└── adapters/                     each adapter, such as the starts due of an order decided as it runs
 ```
 
 ## Test strategy
