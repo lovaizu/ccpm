@@ -21,7 +21,7 @@ checks them on each new version, and this list changes with the records.
 | A subagent resumed by SendMessage | After its end: the main conversation's PreToolUse of SendMessage with `to`, its PostToolUse with `resumedAgentId`, SubagentStart of the same `agent_id`, and a later end. To a subagent that runs: the PostToolUse says the message is queued, and the subagent's SubagentStop comes, then SubagentStart of the same `agent_id`, with no `<task-notification>` between. | The subagent's `agent_id`, which keeps its Start; a resume that a Route lists counts as a Start of that subagent at its PreToolUse. | `claude-code-2.1.322-send-message.jsonl:11-16`, and a queued message in `claude-code-2.1.322-subagent-of-subagent.jsonl:5-8` |
 | An Agent call that fails after its PreToolUse | PostToolUseFailure with the call's `tool_use_id`, its `error`, and no `agent_id`, then Stop, with no SubagentStart, where it names no subagent type that exists or a permission rule denies it; Stop alone where another plugin's PreToolUse hook denies it. | The Start of the call's `tool_use_id`, dropped at the PostToolUseFailure, or, untied, at the Stop. | `claude-code-2.1.327-agent-unknown-type.jsonl:5-7`, `claude-code-2.1.327-agent-denied-by-rule.jsonl:5-7`, `claude-code-2.1.327-agent-denied-by-hook.jsonl:5-6` |
 | `/compact` | PreCompact, a SubagentStop of the summary with an `agent_id` that no start named and an empty `agent_type`, SessionStart with `source` `compact`, and PostCompact, each with the same `session_id`; a subagent that runs goes on, with the compaction's `prompt_id`. | The same `session_id`, so the Run goes on; the summary's end lies outside the Run, as no Start ties its `agent_id`. | `claude-code-2.1.322-compact.jsonl:5-8`, and with a subagent running `claude-code-2.1.325-compact-while-subagent.jsonl:10-17` |
-| A Run picked up in a new conversation | SessionEnd, then SessionStart with a new `session_id` and `transcript_path`. | The new `session_id`, which has no Run, so the guard picks the Run up from the kept results, as S7 draws. | `claude-code-2.1.323-worktree.jsonl:14-15` |
+| A Run picked up in a new conversation | SessionEnd, then SessionStart with a new `session_id` and `transcript_path`. | The new `session_id`, which has no Run, so the guard picks the Run up from the kept results, as S2 draws. | `claude-code-2.1.323-worktree.jsonl:14-15` |
 | EnterWorktree | From the PostToolUse of EnterWorktree on, each event's `cwd` and `transcript_path` lie in the worktree, the `session_id` stays, and each hook's `CLAUDE_PROJECT_DIR` stays the root. | The `session_id`, never the `transcript_path`, so the Run goes on in the worktree. | `claude-code-2.1.323-worktree.jsonl:5-12` and `:21-30` |
 | A skill typed by a person | UserPromptSubmit, then UserPromptExpansion with `command_name` and `command_args`. | The `command_name`, which starts a Run that a person called. | `claude-code-2.1.322.jsonl:8-9` |
 | A skill called by the Skill tool | PreToolUse and PostToolUse of Skill with `tool_input.skill` and `args`, and no UserPromptExpansion; a skill that sets `disable-model-invocation: true` is refused before any hook. | `tool_input.skill`, which starts a Run that an AI called, or, where it names another plugin's skill that a move of a Run names, sets that Run aside. | `claude-code-2.1.322-skill.jsonl:3-4`, `claude-code-2.1.323-skill-command.jsonl:16` |
@@ -45,8 +45,34 @@ In each, Lane does what its line says, and never holds a call to the rules of an
   events carry an `agent_id` that no Start ties, and lie outside the Run.
   `claude-code-2.1.323-worktree.jsonl:23-28` shows the events.
 - A subagent stopped by TaskStop: no SubagentStop comes, and its `<task-notification>` says
-  `killed`, so its Start runs no more with no Result, as S5 draws.
+  `killed`, so its Start runs no more with no Result, and the guard gives its start due again.
   `claude-code-2.1.323-task-stop.jsonl:9-15` shows the events.
 - `/clear`, and a conversation resumed by `--resume`: the guard places each event by the
   `session_id` that it carries, so a new one starts no Run until the plugin's skill is called, and
   the same one goes on with its Run.
+
+## What the guard answers in each single behavior
+
+The architecture's S1 and S2 draw the guard's answers on the walkthrough's path. In each state
+below, the guard answers as this list says, and each answer has an integration case that names the
+guard.
+
+- An Agent call that fails after its PreToolUse: the guard drops the call's Start at its
+  PostToolUseFailure, or, where no event came, each Start still untied at the main conversation's
+  Stop, so the start is due again and the Stop stops with the starts due.
+- A resume by SendMessage that a Route makes due: the guard lets it through as a Start of that
+  subagent. A resume that no Route makes due, such as one to answer a question, goes through as
+  talk that moves no Run, and the subagent's Start runs again.
+- A resume queued to a subagent that still runs: the guard holds the resume's Start back until that
+  subagent's SubagentStart. The guard checks the SubagentStop before it as the end of the pass that
+  ran: its Result first, then its Steps.
+- A subagent stopped by TaskStop: the guard ends its Start with no Result, and gives its start due
+  again.
+- A command of another skill of the plugin typed while a subagent runs: the guard starts that
+  skill's Run beside the first. Each Run holds to its own Routes, and the main conversation's calls
+  to each Run's Rules. The main conversation's Stop stops while a start of either Run is due.
+- A skill of another plugin that a move of the Run names, called by the Skill tool: the guard
+  counts the call as that move and stays out while the other's run lasts, as the plugin guide's
+  rule of a job another plugin does says, and the other plugin's guard holds it meanwhile.
+- The plugin's command typed again once its Run ended: the guard adds a new Run, as the ended Run's
+  Routes start no more.

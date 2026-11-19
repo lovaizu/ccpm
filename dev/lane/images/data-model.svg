@@ -63,6 +63,12 @@
   <text class="name" x="120" y="275">Route</text>
   <rect class="box" x="560" y="240" width="160" height="60" rx="6"/>
   <text class="name" x="640" y="275">Mark</text>
+  <rect class="box" x="300" y="240" width="160" height="60" rx="6"/>
+  <text class="name" x="380" y="275">Read</text>
+  <path class="line" d="M380,420 L380,300"/>
+  <text class="label halo end" x="370" y="365">holds</text>
+  <text class="label small halo start" x="388" y="412">1</text>
+  <text class="label small halo start" x="388" y="318">0..*</text>
   <rect class="box" x="40" y="420" width="160" height="60" rx="6"/>
   <text class="name" x="120" y="455">Run</text>
   <rect class="box" x="300" y="420" width="160" height="60" rx="6"/>

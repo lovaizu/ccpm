@@ -78,8 +78,8 @@
   <text class="name" x="330" y="532">reporters</text>
   <text class="kind" x="330" y="552">[script]</text>
   <rect class="ext" x="760" y="500" width="180" height="70" rx="6"/>
-  <text class="name" x="850" y="532">the plugin&#x27;s adapters</text>
-  <text class="kind" x="850" y="552">[Item, Kept results]</text>
+  <text class="name" x="850" y="532">adapters, checks</text>
+  <text class="kind" x="850" y="552">[the plugin&#x27;s own]</text>
   <path class="line" d="M180,62 L240,62" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="210" y="30">asks, yes, a change</text>
   <path class="line" d="M240,90 L180,90" marker-end="url(#arrow)"/>
@@ -99,7 +99,7 @@
   <path class="line" d="M420,370 L760,260" marker-end="url(#arrow)"/>
   <text class="data halo start" x="560" y="345">checks each move by</text>
   <path class="line" d="M420,400 L500,400" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="460" y="450">keeps</text>
+  <text class="data halo mid" x="460" y="392">keeps</text>
   <path class="line" d="M100,110 L100,360" marker-end="url(#arrow)"/>
   <text class="data halo start" x="108" y="240">types each command</text>
   <path class="line" d="M190,380 L240,380" marker-end="url(#arrow)"/>
@@ -108,11 +108,10 @@
   <text class="data halo mid" x="210" y="452">starts due, stops</text>
   <path class="line" d="M100,430 L240,525" marker-end="url(#arrow)"/>
   <text class="data halo end" x="160" y="500">reports Result, Mark</text>
-  <path class="line" d="M330,500 L330,430" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="338" y="470">asks where each Run stands</text>
+  <path class="line" d="M420,550 L620,550 L620,430" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="430" y="568">reads which Results a role may give</text>
   <path class="line" d="M420,425 L760,515" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="470" y="500">asks for a start&#x27;s text,</text>
-  <text class="data halo start" x="470" y="516">Items, Kept results</text>
+  <text class="data halo start" x="540" y="446">asks for text, Items, results; runs checks</text>
   <text class="label" x="760" y="300">Legend</text>
   <rect class="box" x="760" y="312" width="22" height="14" rx="3"/>
   <text class="label small" x="790" y="324">a component</text>

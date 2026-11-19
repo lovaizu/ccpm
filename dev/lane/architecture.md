@@ -39,18 +39,22 @@ Lane turns the user's steps into checks once, and judges each move of a run by t
 - Step\
   One numbered item of a role's steps, as the user writes it.
 - Rule\
-  A check on one step, with the sentence that the role gets where it leaves the step.
+  A check of one type on one step, with its values, such as the plugin's check. It gives the
+  sentence that the role gets where it leaves the step.
 - Route\
-  The move after a role's result, or after a command that the person types, which makes starts
-  due.
+  The moves after a role's result, or after a command that the person types, which make starts and
+  resumes due.
 - Proposal\
-  The rules and routes put to the user, with the steps as they'll read once laid.
+  The rules and routes put to the user, kept by its ID with the steps as they read when shown.
 - Item\
   One item of a step's checklist, which only the user's plugin knows.
 - Run\
   One run of the plugin's skill in a conversation, from its call until its routes start no more.
+  It holds each command typed in it.
 - Start\
-  One start of a role in a run, with the values that its rules hold it to.
+  One start or resume of a role in a run, with the values that its rules hold it to.
+- Read\
+  A role's read of the lines of a file that a rule asks read whole.
 - Mark\
   A role's report that a step or an item is done.
 - Result\
@@ -93,6 +97,9 @@ Strategies:
   Intent: a role that leaves its steps still meets the check that only the plugin knows.
 - A rule's sentence left out of a step that already says it. [P1.2]\
   Intent: the role reads each rule once, and keeps its attention on its step.
+- The form of the laid Rules and Routes decided by the guard's code, which the layer writes
+  through. [P6.2]\
+  Intent: a laid plugin runs by its laid copy alone.
 - Each move placed on its run and start by what Claude Code's events carry, as
   [its states](claude-code-states.md) list. [P6.1]\
   Intent: each move is held to the rules of its own start, and to no other run's.
@@ -108,12 +115,16 @@ sequenceDiagram
   participant L as layer
   participant T as rule types
   participant ST as steps
+  participant CC as Claude Code
   participant M as the plugin's main conversation
   participant SA as the plugin's subagent
   participant G as guard
+  participant A as the plugin's adapters and checks
   participant R as reporters
   participant RR as run record
   U->>P: asks for the checks of their plugin [S1]
+  P->>L: asks for the rule types (Rule) [P1.2]
+  L->>T: reads each type, its sentence, and the Steps it suits (Rule) [P1.2]
   P->>L: asks for the Steps, without what Lane laid before (Step) [P1.1]
   loop until the layer takes the Proposal [P2.1]
     P->>L: the Rules and Routes that the Steps mean (Proposal) [P1.1]
@@ -125,20 +136,21 @@ sequenceDiagram
       P-->>U: what to fix in their plugin, and stops [P4.2]
     end
   end
-  L-->>P: each Step as it'll read, and the Routes (Proposal) [P2.1]
+  L-->>P: each Step as it'll read, the Routes, and the Proposal's ID (Proposal) [P2.1]
   P->>U: shows them, and asks for yes or a change [P2.1]
   alt a change [P1.1]
     U->>P: the change [P1.1]
     P->>ST: writes it into its Step, and proposes again (Step) [P1.1]
   else yes [P2.1]
     U->>P: yes [P2.1]
-    P->>L: lays the Proposal shown (Proposal) [P2.1]
-    alt the Steps changed since it was shown [P2.1]
+    P->>L: lays the Proposal of the ID (Proposal) [P2.1]
+    alt no such Proposal, or the Steps changed since it was shown [P2.1]
       L-->>P: refused, with why, and the proposer proposes again [P4.2]
     else [P2.1]
       L->>ST: replaces what Lane laid with each Rule's sentence, its check, and the Routes (Rule, Route) [P2.2]
       L->>ST: copies the guard, the rule types, and the reporters into the plugin [P6.2]
-      alt Claude Code's check of the plugin fails [P2.2]
+      L->>CC: checks the plugin [S1]
+      alt the check fails [P2.2]
         L->>ST: puts back each file it changed [P2.2]
         L-->>P: what failed [P4.2]
       else [S1]
@@ -150,18 +162,32 @@ sequenceDiagram
   Note over U,RR: Later, the user runs their plugin.
   U->>M: the plugin's command [S1]
   M->>G: calls the skill [P6.1]
-  G->>RR: adds the Run (Run) [P5.1]
+  G->>RR: adds the Run, as S2 draws where one stopped (Run) [P5.1]
   loop until the Routes start no more [S1]
-    G-->>M: the starts due, each with its text (Start) [P4.1]
-    alt the main conversation starts a subagent [P4.1]
+    opt the plugin gives a start's text of its own [P6.2]
+      G->>A: asks for the text of each start due, with each Start that runs (Start) [P6.2]
+      alt it gives none, as no work waits for that start [S1]
+        A-->>G: why, which the guard gives in place of that start [S1]
+      else it fails [P4.2]
+        A-->>G: why, which the guard gives with who fixes it [P4.2]
+      end
+    end
+    G-->>M: the starts and resumes due, each with its text (Start) [P4.1]
+    alt the main conversation starts or resumes a subagent [P4.1]
       M->>G: the start (Start) [P4.1]
       alt a start due [P4.1]
         G->>RR: adds the Start (Start) [P5.1]
-      else any other start [P4.1]
+      else any other start of the plugin's roles [P4.1]
         G-->>M: stops it, with the starts due [P4.2]
       end
-    else the main conversation ends its turn while a start is due [P4.1]
-      G-->>M: stops it, with the starts due [P4.2]
+    else the main conversation ends its turn [S1]
+      M->>G: the end [S1]
+      alt a start is due [P4.1]
+        G-->>M: stops it, with the starts due [P4.2]
+      else a Rule of the skill holds the end to the plugin's check [S1]
+        G->>A: runs the check, with the Result filled in [S1]
+        A-->>G: whether it passes [S1]
+      end
     else the person types a command that a Route waits for or goes after [S1]
       U->>M: the command [S1]
       M->>G: the command, as typed [S1]
@@ -172,32 +198,38 @@ sequenceDiagram
       G->>T: checks it by each Rule of its role (Rule) [S1]
       alt it breaks a Rule [S1]
         G-->>SA: stops it, with the Step's sentence and what it may do (Step) [P4.2]
-      else it marks a Step or an Item done [P3.2]
-        SA->>R: reports the Mark (Mark) [P3.2]
-        R->>G: hands it on (Mark) [P3.2]
-        alt the Step isn't due, or it lacks a read or an Item that its Rules ask [P3.2]
+      else a Read of a file that a Rule asks read whole [P3.2]
+        G->>RR: adds the Read (Read) [P5.1]
+      else a run of the reporter of a Step or an Item done [P3.2]
+        opt a Rule of the Step keeps a checklist [P6.2]
+          G->>A: asks for the Step's Items, with the Start's values (Item) [P6.2]
+        end
+        alt the Step isn't due, or it lacks a Read or an Item that its Rules ask [P3.2]
           G-->>SA: stops it, with the Rule's sentence and what the Step lacks [P4.2]
         else [P3.2]
-          G->>RR: adds the Mark (Mark) [P5.1]
+          SA->>R: reports the Mark (Mark) [P3.2]
+          G->>RR: adds the Mark, once the report ran (Mark) [P5.1]
         end
       end
     end
     SA->>R: reports its Result (Result) [P3.1]
-    R->>G: asks where the Run stands (Run) [P5.1]
+    R->>RR: reads, by the guard's code, which Results the role may give (Run) [P5.1]
     alt a Result its role may give [P3.1]
-      G->>RR: adds the Result (Result) [P5.1]
+      G->>RR: adds the Result, once the report ran (Result) [P5.1]
     else [P3.1]
       R-->>SA: refuses it, with the Results it may give [P4.2]
     end
     SA->>G: ends [S1]
-    alt no Result, a Step left unmarked, or the plugin's own check fails [P3.1]
+    alt no Result, or a Step left unmarked [P3.1]
       G-->>SA: stops the end, with the Rule's sentence [P4.2]
-    else [S1]
-      G-->>M: the Result, and the starts that its Route makes due (Route) [P3.1]
+    else a Rule holds the end to the plugin's check [S1]
+      G->>A: runs the check, with the Start's values and the Result filled in [S1]
+      A-->>G: whether it passes, and the guard stops the end with the Rule's sentence where it fails [P4.2]
     end
+    G-->>M: the Result, and the starts that its Route makes due (Route) [P3.1]
   end
   M->>R: reports the skill's Result (Result) [P3.1]
-  R->>G: asks where the Run stands (Run) [P5.1]
+  R->>RR: reads, by the guard's code, which Results the skill may give (Run) [P5.1]
   G->>RR: adds it, which ends the Run (Run) [P5.1]
 ```
 
@@ -224,9 +256,9 @@ sequenceDiagram
   participant A as the plugin's adapter
   U->>M: the plugin's command, after the conversation is compacted or in a new one [S2]
   M->>G: calls the skill, with the words typed after the command [S2]
-  alt the run record holds the Run [P5.1]
+  alt the run record holds the Run, not ended [P5.1]
     G->>RR: reads where the Run stands (Run) [P5.1]
-  else the plugin keeps its results [P5.1]
+  else the plugin names an adapter of the results it keeps [P5.1]
     G->>A: asks for the Kept results, with those words (Kept results) [P5.1]
     alt results that follow the Routes [S2]
       G->>RR: adds the Run, with each Result (Run, Result) [P5.1]
