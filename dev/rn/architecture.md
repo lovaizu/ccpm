@@ -18,8 +18,6 @@
 
 rn piles up the vital few that bring a deliverable's people to their aim, and cuts the trivial many.
 
-![rn's components](images/components.svg)
-
 #### Toward the people's aim
 
 At each turn, the orchestrator reviews the design tree by the run's facts, asking the user only
@@ -65,6 +63,8 @@ conversation.
 KR1.2.
 
 ### Components
+
+![rn's components](images/components.svg)
 
 - user\
   Gives the request and each point, sign-off, and lesson that's theirs, pauses the run, and merges.
