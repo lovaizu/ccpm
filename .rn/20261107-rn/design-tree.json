@@ -489,6 +489,11 @@
           "about": "A role's subagent",
           "decided": "a plugin's role sets background: true, as Lane can't hold a subagent started in the foreground",
           "by": "reasoning"
+        },
+        {
+          "about": "The main conversation's steps",
+          "decided": "under the skill's name, beside each subagent's steps under its agent type",
+          "by": "maker"
         }
       ]
     },
@@ -536,6 +541,26 @@
               "about": "The forms",
               "decided": "a JSON Schema of rules.json, and of each adapter's input and output, beside the modules that read them",
               "by": "maker"
+            },
+            {
+              "about": "The report's form",
+              "decided": "one module of hooks/lane/ holds the form of a reporter's report, which the reporters of bin/ print and the guard reads",
+              "by": "maker"
+            },
+            {
+              "about": "The main conversation's steps",
+              "decided": "rules.json keys a subagent's steps by its agent type, and the main conversation's by the skill's name",
+              "by": "maker"
+            },
+            {
+              "about": "The plugin's folder",
+              "decided": "the guard adds the run at the skill's call with no folder, and reads the plugin's folder and rules at the next event of the main conversation, where it first gives the starts due",
+              "by": "maker"
+            },
+            {
+              "about": "A resume queued to a running subagent",
+              "decided": "held back until that subagent's SubagentStop, checked as the end of the pass that ran, and then tied, with no hook on SubagentStart",
+              "by": "maker"
             }
           ]
         },
@@ -567,7 +592,7 @@
           "decisions": [
             {
               "about": "The gaps",
-              "decided": "listed in dev/lane/skeleton-gaps.md, each naming the element of Lane's architecture it bears on",
+              "decided": "listed in dev/lane/skeleton-gaps.md, each naming the element of Lane's architecture it bears on; no sequence for S1 to S8 is a gap, as the user signed the architecture off with S9's and S10's alone",
               "by": "maker"
             }
           ]
@@ -582,7 +607,63 @@
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
       "path": "dev/tests/claude_code.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "dev/rn/architecture.md",
+        "plugins/lane",
+        "plugins/rn",
+        "dev/lane/tests",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the double sends that Lane's skeleton lacks",
+              "decided": "the transcript at transcript_path, which holds the skill's base directory from the conversation's next event after the skill's call, and each loaded plugin's bin/ on the path of the Bash tool, each as Lane's list of Claude Code's states says",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
@@ -1453,6 +1534,10 @@
     {
       "do": "make",
       "path": "dev/lane/tests"
+    },
+    {
+      "do": "make",
+      "path": "dev/tests/claude_code.py"
     },
     {
       "do": "make",
