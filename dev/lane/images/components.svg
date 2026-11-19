@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -100 1720 1170">
-  <title>Lane&#x27;s components: the user, up, lay.py, the lane types and the guard of Lane&#x27;s code, which lies in Lane&#x27;s plugin, where lay.py takes it, and in each plugin that lay.py lays it into, the result script, step.py and item.py, by which a role marks a step or an item done, the adapter, the plugin&#x27;s command, Claude Code, which the user and the roles call, with the plugin&#x27;s roles, and the stores of the proposal, the steps, the laid set, the kept results, and the run record</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600">
+  <title>Lane&#x27;s components</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
@@ -49,151 +49,77 @@
     <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
-    <marker id="diamond" viewBox="0 0 16 10" refX="16" refY="5" markerWidth="14" markerHeight="9" orient="auto-start-reverse">
-      <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
-    </marker>
   </defs>
-  <rect class="bg" x="0" y="-100" width="1720" height="1170"/>
-  <rect class="frame" x="305" y="40" width="1060" height="130" rx="6"/>
-  <rect class="frame" x="880" y="66" width="470" height="96" rx="6"/>
-  <rect class="frame" x="300" y="280" width="1180" height="475" rx="6"/>
-  <rect class="frame" x="520" y="450" width="940" height="285" rx="6"/>
-  <polyline class="line" points="382,150 158,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="120,390 120,840" marker-end="url(#arrow)"/>
-  <polyline class="line" points="210,360 315,360" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1650,900 1650,990 70,990 70,900" marker-end="url(#arrow)"/>
-  <polyline class="line" points="525,120 625,120" marker-end="url(#arrow)"/>
-  <polyline class="line" points="770,90 770,0" marker-end="url(#arrow)"/>
-  <polyline class="line" points="815,135 905,135" marker-end="url(#arrow)"/>
-  <polyline class="line" points="800,90 800,62 1240,62 1240,94" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1170,154 1110,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="812,150 812,190 1300,190 1300,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="420,150 420,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="682,150 458,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="758,150 982,330" marker-end="url(#arrow)"/>
-  <polyline class="line" points="706,150 660,250 24,250 24,870 30,870" marker-end="url(#arrow)"/>
-  <polyline class="line" points="210,851 925,560" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1020,510 1020,390" marker-end="url(#arrow)"/>
-  <polyline class="line" points="925,540 815,540" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1020,570 1020,840" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1070,510 1270,390" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1415,360 1500,360" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1640,840 1364,570" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1290,570 1290,590 1095,590 1095,570" marker-end="url(#arrow)"/>
-  <polyline class="line" points="120,900 120,960 1600,960 1600,900" marker-end="url(#arrow)"/>
-  <polyline class="line" points="740,150 740,450" marker-end="url(#arrow)"/>
-  <polyline class="line" points="625,560 505,560" marker-end="url(#arrow)"/>
-  <polyline class="line" points="950,650 950,570" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1060,650 1060,570" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1530,840 1530,760 1120,760 1120,710" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1515,840 1515,775 920,775 920,710" marker-end="url(#arrow)"/>
-  <rect class="box" x="30.0" y="330.0" width="180" height="60" rx="30.0"/>
-  <text class="name" x="120" y="355">user</text>
-  <text class="kind" x="120" y="374">role: a person or an AI</text>
-  <rect class="lane" x="315.0" y="90.0" width="210" height="60" rx="4"/>
-  <text class="name" x="420" y="115">up</text>
-  <text class="kind" x="420" y="134">skill: Markdown, run by Claude</text>
-  <rect class="lane" x="625.0" y="90.0" width="190" height="60" rx="4"/>
-  <text class="name" x="720" y="115">lay.py</text>
-  <text class="kind" x="720" y="134">script: Python 3.9</text>
-  <rect class="store" x="665.0" y="-60.0" width="210" height="60" rx="4"/>
-  <text class="name" x="770" y="-35">proposal</text>
-  <text class="kind" x="770" y="-16">store: JSON, temporary folder</text>
-  <rect class="lane" x="905.0" y="94.0" width="190" height="60" rx="4"/>
-  <text class="name" x="1000" y="119">lane types</text>
-  <text class="kind" x="1000" y="138">modules: Python 3.9</text>
-  <rect class="lane" x="1145.0" y="94.0" width="190" height="60" rx="4"/>
-  <text class="name" x="1240" y="119">guard</text>
-  <text class="kind" x="1240" y="138">hook script: Python 3.9</text>
-  <rect class="store" x="315.0" y="330.0" width="210" height="60" rx="4"/>
-  <text class="name" x="420" y="355">steps</text>
-  <text class="kind" x="420" y="374">store: SKILL.md, agents/*.md</text>
-  <rect class="store" x="915.0" y="330.0" width="210" height="60" rx="4"/>
-  <text class="name" x="1020" y="355">laid set</text>
-  <text class="kind" x="1020" y="374">store: lanes.json, hooks.json</text>
-  <rect class="ext" x="1225.0" y="330.0" width="190" height="60" rx="4"/>
-  <text class="name" x="1320" y="355">adapter</text>
-  <text class="kind" x="1320" y="374">script: the user&#x27;s own</text>
-  <rect class="store" x="1500.0" y="330.0" width="200" height="60" rx="4"/>
-  <text class="name" x="1600" y="355">kept results</text>
-  <text class="kind" x="1600" y="374">store: the plugin&#x27;s records</text>
-  <rect class="lane" x="625.0" y="510.0" width="190" height="60" rx="4"/>
-  <text class="name" x="720" y="535">lane types</text>
-  <text class="kind" x="720" y="554">modules: Python 3.9</text>
-  <rect class="lane" x="925.0" y="510.0" width="190" height="60" rx="4"/>
-  <text class="name" x="1020" y="535">guard</text>
-  <text class="kind" x="1020" y="554">hook script: Python 3.9</text>
-  <rect class="lane" x="1225.0" y="510.0" width="190" height="60" rx="4"/>
-  <text class="name" x="1320" y="535">result.py</text>
-  <text class="kind" x="1320" y="554">script: Python 3.9</text>
-  <rect class="ext" x="315.0" y="510.0" width="190" height="60" rx="4"/>
-  <text class="name" x="410" y="535">the plugin&#x27;s command</text>
-  <text class="kind" x="410" y="554">command: the user&#x27;s own</text>
-  <rect class="lane" x="840.0" y="650.0" width="160" height="60" rx="4"/>
-  <text class="name" x="920" y="675">step.py</text>
-  <text class="kind" x="920" y="694">script: Python 3.9</text>
-  <rect class="lane" x="1040.0" y="650.0" width="160" height="60" rx="4"/>
-  <text class="name" x="1120" y="675">item.py</text>
-  <text class="kind" x="1120" y="694">script: Python 3.9</text>
-  <rect class="ext" x="30.0" y="840.0" width="180" height="60" rx="4"/>
-  <text class="name" x="120" y="865">Claude Code</text>
-  <text class="kind" x="120" y="884">external: 2.1.322 or later</text>
-  <rect class="store" x="900.0" y="840.0" width="240" height="60" rx="4"/>
-  <text class="name" x="1020" y="865">run record</text>
-  <text class="kind" x="1020" y="884">store: JSON Lines, temporary folder</text>
-  <rect class="ext" x="1500.0" y="840.0" width="200" height="60" rx="4"/>
-  <text class="name" x="1600" y="865">the plugin&#x27;s roles</text>
-  <text class="kind" x="1600" y="884">main conversation, subagents</text>
-  <text class="label small halo end" x="250" y="225">shows the proposal, and</text>
-  <text class="label small halo end" x="250" y="240">asks for yes or a change</text>
-  <text class="label small halo start" x="130" y="520">types each command,</text>
-  <text class="label small halo start" x="130" y="535">replies, approves, and</text>
-  <text class="label small halo start" x="130" y="550">types /reload-plugins</text>
-  <text class="label small halo end" x="296" y="352">writes Steps</text>
-  <text class="label small halo mid" x="860" y="984">makes each tool call, start of a subagent, and end</text>
-  <text class="label small start" x="12" y="1022">Each arrow reads from the one that acts to the one it acts on, and a reply goes back along it.</text>
-  <text class="label small start" x="12" y="1040">The guard&#x27;s answer to a hook event, such as a stop or the start due, reaches the role or the user through Claude Code.</text>
-  <text class="label small start" x="12" y="1058">Lane&#x27;s code lies twice: in Lane&#x27;s plugin, where lay.py takes the lane types and the form of lanes.json from it, and in the user&#x27;s plugin, where lay.py copies it.</text>
-  <text class="label small halo mid" x="570" y="82">runs types, steps, print, write</text>
-  <text class="label small halo start" x="780" y="30">keeps the Proposal</text>
-  <text class="label small halo mid" x="848" y="106">takes</text>
-  <text class="label small halo mid" x="848" y="120">each type</text>
-  <text class="label small halo start" x="810" y="55">writes lanes.json through its code</text>
-  <text class="label small halo start" x="1165" y="240">writes lanes.json</text>
-  <text class="label small halo start" x="1165" y="255">for lay.py write</text>
-  <text class="label small halo start" x="860" y="184">checks each program in hooks/adapters/</text>
-  <text class="label small halo start" x="430" y="220">writes a change</text>
-  <text class="label small halo start" x="530" y="300">reads and checks each Step&#x27;s</text>
-  <text class="label small halo start" x="530" y="315">file, writes each Lane&#x27;s</text>
-  <text class="label small halo start" x="530" y="330">sentence or puts it back</text>
-  <text class="label small halo start" x="890" y="215">reads the Laid, replaces</text>
-  <text class="label small halo start" x="890" y="230">Lane&#x27;s hook entries,</text>
-  <text class="label small halo start" x="890" y="245">or puts them back</text>
-  <text class="label small halo start" x="40" y="268">runs claude plugin validate</text>
-  <text class="label small halo mid" x="430" y="778">sends each hook event; gets a stop</text>
-  <text class="label small halo mid" x="430" y="793">with the step&#x27;s sentence, or the start due</text>
-  <text class="label small halo start" x="1030" y="405">reads the Lanes,</text>
-  <text class="label small halo start" x="1030" y="420">Routes, adapters</text>
-  <text class="label small halo mid" x="870" y="516">checks a Call</text>
-  <text class="label small halo mid" x="870" y="531">or an end</text>
-  <text class="label small halo start" x="1030" y="805">adds each fact it keeps,</text>
-  <text class="label small halo start" x="1030" y="820">works out each Run</text>
-  <text class="label small halo start" x="1150" y="472">asks for a start&#x27;s text, a Step&#x27;s Items, or the Kept results</text>
-  <text class="label small halo mid" x="1460" y="350">reads them</text>
-  <text class="label small halo start" x="1500" y="690">runs it to give a Result</text>
-  <text class="label small halo mid" x="1192" y="607">asks where each Run stands</text>
-  <text class="label small halo mid" x="860" y="954">runs the skill, and starts each subagent</text>
-  <text class="label small halo mid" x="565" y="494">runs the command</text>
-  <text class="label small halo end" x="940" y="642">asks where its Marks stand</text>
-  <text class="label small halo start" x="1070" y="640">asks for the Step due and its Items</text>
-  <text class="label small halo mid" x="1330" y="797">runs each to mark a Step or an Item</text>
-  <text class="label small halo mid" x="565" y="508">an ends_checked</text>
-  <text class="label small halo mid" x="565" y="522">Lane names</text>
-  <text class="label small halo start" x="750" y="418">copies Lane&#x27;s code into it,</text>
-  <text class="label small halo start" x="750" y="433">or puts the copy before back</text>
-  <!-- Frame names a line crosses, drawn last so their halo masks the line. -->
-  <text class="frame-name halo" x="319" y="60">Lane&#x27;s plugin</text>
-  <text class="frame-name halo" x="894" y="84">hooks/lane/: Lane&#x27;s code</text>
-  <text class="frame-name halo" x="314" y="300">the user&#x27;s plugin</text>
-  <text class="frame-name halo" x="534" y="470">hooks/lane/: Lane&#x27;s code, laid into the plugin</text>
+  <rect class="bg" width="960" height="600"/>
+  <rect class="box" x="20" y="40" width="160" height="70" rx="6"/>
+  <text class="name" x="100" y="80">user</text>
+  <rect class="box" x="240" y="40" width="180" height="70" rx="6"/>
+  <text class="name" x="330" y="72">proposer</text>
+  <text class="kind" x="330" y="92">[prompt]</text>
+  <rect class="box" x="500" y="40" width="180" height="70" rx="6"/>
+  <text class="name" x="590" y="72">layer</text>
+  <text class="kind" x="590" y="92">[script]</text>
+  <rect class="store" x="240" y="200" width="180" height="70" rx="6"/>
+  <text class="name" x="330" y="232">the plugin&#x27;s steps</text>
+  <text class="kind" x="330" y="252">[Steps, Rules, Routes]</text>
+  <rect class="box" x="760" y="200" width="180" height="70" rx="6"/>
+  <text class="name" x="850" y="232">rule types</text>
+  <text class="kind" x="850" y="252">[module]</text>
+  <rect class="ext" x="10" y="360" width="180" height="70" rx="6"/>
+  <text class="name" x="100" y="392">the plugin&#x27;s roles</text>
+  <text class="kind" x="100" y="412">[conversation, subagents]</text>
+  <rect class="box" x="240" y="360" width="180" height="70" rx="6"/>
+  <text class="name" x="330" y="392">guard</text>
+  <text class="kind" x="330" y="412">[hook]</text>
+  <rect class="store" x="500" y="360" width="180" height="70" rx="6"/>
+  <text class="name" x="590" y="392">run record</text>
+  <text class="kind" x="590" y="412">[Run, Start, Mark, Result]</text>
+  <rect class="box" x="240" y="500" width="180" height="70" rx="6"/>
+  <text class="name" x="330" y="532">reporters</text>
+  <text class="kind" x="330" y="552">[script]</text>
+  <rect class="ext" x="760" y="500" width="180" height="70" rx="6"/>
+  <text class="name" x="850" y="532">the plugin&#x27;s adapters</text>
+  <text class="kind" x="850" y="552">[Item, Kept results]</text>
+  <path class="line" d="M180,62 L240,62" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="210" y="30">asks, yes, a change</text>
+  <path class="line" d="M240,90 L180,90" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="210" y="128">the Proposal</text>
+  <path class="line" d="M420,62 L500,62" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="460" y="54">the Proposal</text>
+  <path class="line dashed" d="M500,90 L420,90" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="460" y="128">Steps as they&#x27;ll read</text>
+  <path class="line" d="M330,110 L330,200" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="322" y="160">writes a change</text>
+  <path class="line" d="M560,110 L420,215" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="490" y="185">lays Rules, Routes</text>
+  <path class="line" d="M680,90 L800,200" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="748" y="140">makes each sentence by</text>
+  <path class="line" d="M330,360 L330,270" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="322" y="320">reads Rules, Routes</text>
+  <path class="line" d="M420,370 L760,260" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="560" y="345">checks each move by</text>
+  <path class="line" d="M420,400 L500,400" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="460" y="450">keeps</text>
+  <path class="line" d="M100,110 L100,360" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="108" y="240">types each command</text>
+  <path class="line" d="M190,380 L240,380" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="210" y="350">each move</text>
+  <path class="line" d="M240,412 L190,412" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="210" y="452">starts due, stops</text>
+  <path class="line" d="M100,430 L240,525" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="160" y="500">reports Result, Mark</text>
+  <path class="line" d="M330,500 L330,430" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="338" y="470">asks where each Run stands</text>
+  <path class="line" d="M420,425 L760,515" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="470" y="500">asks for a start&#x27;s text,</text>
+  <text class="data halo start" x="470" y="516">Items, Kept results</text>
+  <text class="label" x="760" y="300">Legend</text>
+  <rect class="box" x="760" y="312" width="22" height="14" rx="3"/>
+  <text class="label small" x="790" y="324">a component</text>
+  <rect class="store" x="880" y="312" width="22" height="14" rx="3"/>
+  <text class="label small" x="910" y="324">data</text>
+  <rect class="ext" x="760" y="336" width="22" height="14" rx="3"/>
+  <text class="label small" x="790" y="348">the user&#x27;s own</text>
+  <path class="line dashed" d="M760,366 L782,366" marker-end="url(#arrow)"/>
+  <text class="label small" x="790" y="370">a reply</text>
 </svg>

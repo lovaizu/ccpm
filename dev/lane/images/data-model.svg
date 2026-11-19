@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 980">
-  <title>Lane&#x27;s data: the Roles, Steps, Items, and kept results of the user&#x27;s plugin, the lane types, the Proposal, the Lanes, Routes, and Laid of lanes.json, and each Run, worked out from the lines of the run record, with its Starts, Results, and Marks, and the Calls that lie in it, of which the record keeps only a Read that a Lane of reads_whole names, each relation named with how many of each it joins</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520">
+  <title>Lane&#x27;s data</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
     .bg { fill: #ffffff; }
@@ -49,152 +49,74 @@
     <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
-    <marker id="diamond" viewBox="0 0 16 10" refX="16" refY="5" markerWidth="14" markerHeight="9" orient="auto-start-reverse">
-      <path class="head" d="M0,5 L8,0 L16,5 L8,10 z"/>
-    </marker>
   </defs>
-  <rect class="bg" x="0" y="0" width="1260" height="980"/>
-  <rect class="frame" x="20" y="30" width="200" height="120" rx="6"/>
-  <rect class="frame" x="260" y="30" width="920" height="120" rx="6"/>
-  <rect class="frame" x="20" y="280" width="200" height="120" rx="6"/>
-  <rect class="frame" x="260" y="280" width="620" height="120" rx="6"/>
-  <rect class="frame" x="480" y="580" width="700" height="310" rx="6"/>
-  <polyline class="line" points="620,100 440,100" marker-start="url(#diamond)"/>
-  <polyline class="line" points="150,326 150,200 310,200 310,124" marker-end="url(#arrow)"/>
-  <polyline class="line" points="375,326 375,124" marker-end="url(#arrow)"/>
-  <polyline class="line" points="290,336 240,336 240,100 195,100" marker-end="url(#arrow)"/>
-  <polyline class="line" points="540,326 430,124" marker-end="url(#arrow)"/>
-  <polyline class="line" points="195,362 290,362" marker-end="url(#arrow)"/>
-  <polyline class="line" points="190,374 190,440 730,440 730,374" marker-end="url(#arrow)"/>
-  <polyline class="line" points="720,326 720,124" marker-end="url(#arrow)"/>
-  <polyline class="line" points="840,326 840,100 770,100" marker-end="url(#arrow)"/>
-  <polyline class="line" points="850,350 1060,350 1060,620" marker-end="url(#arrow)"/>
-  <polyline class="line" points="640,620 640,124" marker-end="url(#arrow)"/>
-  <polyline class="line" points="780,620 780,560 675,560 675,124" marker-end="url(#arrow)"/>
-  <polyline class="line" points="670,644 760,644" marker-start="url(#diamond)"/>
-  <polyline class="line" points="600,668 600,740 1085,740 1085,668" marker-start="url(#diamond)"/>
-  <polyline class="line" points="820,620 820,374" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1010,644 910,644" marker-end="url(#arrow)"/>
-  <polyline class="line" points="440,644 520,644" marker-end="url(#arrow)"/>
-  <polyline class="line" points="365,620 365,374" marker-end="url(#arrow)"/>
-  <polyline class="line" points="365,668 365,770 835,770 835,668" marker-end="url(#arrow)"/>
-  <polyline class="line" points="1120,124 1120,620" marker-end="url(#arrow)"/>
-  <polyline class="line" points="560,668 560,800" marker-start="url(#diamond)"/>
-  <polyline class="line" points="670,824 870,824 870,668" marker-end="url(#arrow)"/>
-  <polyline class="line" points="580,848 580,872 1235,872 1235,15 414,15 414,76" marker-end="url(#arrow)"/>
-  <polyline class="line" points="650,848 650,860 1195,860 1195,62 940,62 940,76" marker-end="url(#arrow)"/>
-  <polyline class="line" points="880,76 880,58 432,58 432,76" marker-end="url(#arrow)"/>
-  <rect class="box" x="45.0" y="76.0" width="150" height="48" rx="4"/>
-  <text class="name" x="120" y="105">Lane type</text>
-  <rect class="box" x="290.0" y="76.0" width="150" height="48" rx="4"/>
-  <text class="name" x="365" y="105">Step</text>
-  <rect class="box" x="620.0" y="76.0" width="150" height="48" rx="4"/>
-  <text class="name" x="695" y="105">Role</text>
-  <rect class="box" x="1010.0" y="76.0" width="150" height="48" rx="4"/>
-  <text class="name" x="1085" y="105">Kept results</text>
-  <rect class="box" x="855.0" y="76.0" width="140" height="48" rx="4"/>
-  <text class="name" x="925" y="105">Item</text>
-  <rect class="box" x="520.0" y="800.0" width="150" height="48" rx="4"/>
-  <text class="name" x="595" y="829">Mark</text>
-  <rect class="box" x="45.0" y="326.0" width="150" height="48" rx="4"/>
-  <text class="name" x="120" y="355">Proposal</text>
-  <rect class="box" x="290.0" y="326.0" width="150" height="48" rx="4"/>
-  <text class="name" x="365" y="355">Lane</text>
-  <rect class="box" x="480.0" y="326.0" width="150" height="48" rx="4"/>
-  <text class="name" x="555" y="355">Laid</text>
-  <rect class="box" x="700.0" y="326.0" width="150" height="48" rx="4"/>
-  <text class="name" x="775" y="355">Route</text>
-  <rect class="box" x="290.0" y="620.0" width="150" height="48" rx="4"/>
-  <text class="name" x="365" y="649">Call</text>
-  <rect class="box" x="520.0" y="620.0" width="150" height="48" rx="4"/>
-  <text class="name" x="595" y="649">Run</text>
-  <rect class="box" x="760.0" y="620.0" width="150" height="48" rx="4"/>
-  <text class="name" x="835" y="649">Start</text>
-  <rect class="box" x="1010.0" y="620.0" width="150" height="48" rx="4"/>
-  <text class="name" x="1085" y="649">Result</text>
-  <text class="label small halo mid" x="530" y="92">holds</text>
-  <text class="data halo end" x="612" y="92">1</text>
-  <text class="data halo start" x="448" y="92">1..*</text>
-  <text class="label small halo start" x="160" y="192">made from</text>
-  <text class="data halo start" x="158" y="318">0..*</text>
-  <text class="data halo start" x="318" y="140">1..*</text>
-  <text class="label small halo start" x="383" y="260">on</text>
-  <text class="data halo start" x="383" y="318">0..*</text>
-  <text class="data halo start" x="383" y="140">1</text>
-  <text class="label small halo start" x="248" y="170">of</text>
-  <text class="data halo end" x="282" y="330">0..*</text>
-  <text class="data halo start" x="203" y="92">1</text>
-  <text class="label small halo start" x="494" y="228">adds a sentence to</text>
-  <text class="data halo start" x="548" y="318">0..1</text>
-  <text class="data halo start" x="444" y="146">0..*</text>
-  <text class="label small halo mid" x="242" y="384">proposes</text>
-  <text class="data halo start" x="203" y="356">1</text>
-  <text class="data halo end" x="282" y="356">0..*</text>
-  <text class="label small halo mid" x="456" y="434">proposes</text>
-  <text class="data halo start" x="198" y="400">1</text>
-  <text class="data halo end" x="722" y="390">1..*</text>
-  <text class="label small halo start" x="728" y="236">of the skill</text>
-  <text class="data halo start" x="728" y="318">1..*</text>
-  <text class="data halo start" x="728" y="142">1</text>
-  <text class="label small halo start" x="848" y="236">starts</text>
-  <text class="data halo start" x="848" y="318">0..*</text>
-  <text class="data halo start" x="778" y="92">0..*</text>
-  <text class="label small halo mid" x="955" y="342">goes after</text>
-  <text class="data halo start" x="858" y="366">1</text>
-  <text class="data halo end" x="1052" y="612">0..*</text>
-  <text class="label small halo end" x="632" y="296">runs</text>
-  <text class="data halo end" x="632" y="612">0..*</text>
-  <text class="data halo end" x="632" y="142">1</text>
-  <text class="label small halo mid" x="728" y="554">starts</text>
-  <text class="data halo start" x="788" y="612">0..*</text>
-  <text class="data halo start" x="683" y="142">1</text>
-  <text class="label small halo mid" x="715" y="636">holds</text>
-  <text class="data halo start" x="678" y="662">1</text>
-  <text class="data halo end" x="752" y="662">0..*</text>
-  <text class="label small halo mid" x="950" y="734">holds</text>
-  <text class="data halo start" x="608" y="684">1</text>
-  <text class="data halo start" x="1093" y="684">0..*</text>
-  <text class="label small halo start" x="828" y="470">made due by</text>
-  <text class="data halo start" x="828" y="612">0..*</text>
-  <text class="data halo start" x="828" y="390">1</text>
-  <text class="label small halo mid" x="960" y="636">given under</text>
-  <text class="data halo end" x="1002" y="662">0..*</text>
-  <text class="data halo start" x="918" y="662">0..1</text>
-  <text class="label small halo mid" x="480" y="636">lies in</text>
-  <text class="data halo start" x="448" y="662">0..*</text>
-  <text class="data halo end" x="512" y="662">1..*</text>
-  <text class="label small halo end" x="357" y="480">stopped by</text>
-  <text class="data halo end" x="357" y="612">0..*</text>
-  <text class="data halo end" x="357" y="390">0..*</text>
-  <text class="label small halo mid" x="600" y="764">made under</text>
-  <text class="data halo start" x="373" y="684">0..*</text>
-  <text class="data halo start" x="843" y="684">0..1</text>
-  <text class="label small halo start" x="1128" y="380">gives back</text>
-  <text class="data halo start" x="1128" y="140">0..1</text>
-  <text class="data halo start" x="1128" y="612">0..*</text>
-  <text class="label small halo mid" x="650" y="52">of</text>
-  <text class="data halo start" x="888" y="72">0..*</text>
-  <text class="data halo start" x="438" y="72">1</text>
-  <text class="label small halo end" x="552" y="735">holds</text>
-  <text class="data halo start" x="568" y="684">1</text>
-  <text class="data halo start" x="568" y="796">0..*</text>
-  <text class="label small halo mid" x="770" y="818">given under</text>
-  <text class="data halo start" x="676" y="818">0..*</text>
-  <text class="data halo start" x="878" y="684">0..1</text>
-  <text class="label small halo start" x="1243" y="460">of</text>
-  <text class="data halo start" x="586" y="868">0..*</text>
-  <text class="data halo end" x="410" y="72">1</text>
-  <text class="label small halo end" x="1187" y="460">marks</text>
-  <text class="data halo end" x="644" y="858">0..*</text>
-  <text class="data halo start" x="948" y="72">0..1</text>
-  <text class="label small start" x="20" y="908">The proposal and the run record lie in the system&#x27;s temporary folder.</text>
-  <text class="label small start" x="20" y="926">An arrow reads from one data, by its name, to the other: a Lane on a Step.</text>
-  <text class="label small start" x="20" y="944">A filled diamond marks the whole that holds the other&#x27;s parts. The number at each end says how many of that data the relation joins to one of the other.</text>
-  <text class="label small start" x="20" y="962">A Call lies in no frame, as the guard checks it as it comes, and the run record keeps only a Read of a path that a Lane of reads_whole names.</text>
-  <!-- Frame names a line crosses, drawn last so their halo masks the line. -->
-  <text class="frame-name halo" x="34" y="50">lane types</text>
-  <text class="frame-name halo" x="274" y="50">the user&#x27;s plugin</text>
-  <text class="frame-name halo" x="34" y="300">the proposal</text>
-  <text class="frame-name halo" x="274" y="300">lanes.json</text>
-  <text class="frame-name halo" x="494" y="600">the run record</text>
+  <rect class="bg" width="960" height="520"/>
+  <rect class="box" x="40" y="60" width="160" height="60" rx="6"/>
+  <text class="name" x="120" y="95">Proposal</text>
+  <rect class="box" x="300" y="60" width="160" height="60" rx="6"/>
+  <text class="name" x="380" y="95">Rule</text>
+  <rect class="box" x="560" y="60" width="160" height="60" rx="6"/>
+  <text class="name" x="640" y="95">Step</text>
+  <rect class="box" x="790" y="60" width="140" height="60" rx="6"/>
+  <text class="name" x="860" y="95">Item</text>
+  <rect class="box" x="40" y="240" width="160" height="60" rx="6"/>
+  <text class="name" x="120" y="275">Route</text>
+  <rect class="box" x="560" y="240" width="160" height="60" rx="6"/>
+  <text class="name" x="640" y="275">Mark</text>
+  <rect class="box" x="40" y="420" width="160" height="60" rx="6"/>
+  <text class="name" x="120" y="455">Run</text>
+  <rect class="box" x="300" y="420" width="160" height="60" rx="6"/>
+  <text class="name" x="380" y="455">Start</text>
+  <rect class="box" x="560" y="420" width="160" height="60" rx="6"/>
+  <text class="name" x="640" y="455">Result</text>
+  <rect class="box" x="790" y="420" width="140" height="60" rx="6"/>
+  <text class="name" x="860" y="455">Kept results</text>
+  <path class="line" d="M200,90 L300,90"/>
+  <text class="label halo mid" x="250" y="80">proposes</text>
+  <text class="label small halo start" x="206" y="108">1</text>
+  <text class="label small halo end" x="294" y="108">0..*</text>
+  <path class="line" d="M460,90 L560,90"/>
+  <text class="label halo mid" x="510" y="80">lies on</text>
+  <text class="label small halo start" x="466" y="108">0..*</text>
+  <text class="label small halo end" x="554" y="108">1</text>
+  <path class="line" d="M720,90 L790,90"/>
+  <text class="label halo mid" x="755" y="80">has</text>
+  <text class="label small halo start" x="724" y="108">1</text>
+  <text class="label small halo end" x="786" y="108">0..*</text>
+  <path class="line" d="M120,120 L120,240"/>
+  <text class="label halo start" x="130" y="185">proposes</text>
+  <text class="label small halo end" x="112" y="138">1</text>
+  <text class="label small halo end" x="112" y="232">1..*</text>
+  <path class="line" d="M120,300 L120,420"/>
+  <text class="label halo start" x="130" y="365">follows</text>
+  <text class="label small halo end" x="112" y="318">1..*</text>
+  <text class="label small halo end" x="112" y="412">0..*</text>
+  <path class="line" d="M200,290 L320,420"/>
+  <text class="label halo start" x="268" y="350">makes due</text>
+  <text class="label small halo start" x="210" y="316">1</text>
+  <text class="label small halo end" x="312" y="404">0..*</text>
+  <path class="line" d="M200,450 L300,450"/>
+  <text class="label halo mid" x="250" y="440">holds</text>
+  <text class="label small halo start" x="206" y="468">1</text>
+  <text class="label small halo end" x="294" y="468">1..*</text>
+  <path class="line" d="M460,450 L560,450"/>
+  <text class="label halo mid" x="510" y="440">gives</text>
+  <text class="label small halo start" x="466" y="468">1</text>
+  <text class="label small halo end" x="554" y="468">0..1</text>
+  <path class="line" d="M720,450 L790,450"/>
+  <text class="label halo mid" x="755" y="440">kept in</text>
+  <text class="label small halo start" x="724" y="468">0..*</text>
+  <text class="label small halo end" x="786" y="468">0..1</text>
+  <path class="line" d="M420,420 L600,300"/>
+  <text class="label halo end" x="500" y="350">holds</text>
+  <text class="label small halo start" x="430" y="404">1</text>
+  <text class="label small halo start" x="596" y="320">0..*</text>
+  <path class="line" d="M640,240 L640,120"/>
+  <text class="label halo start" x="650" y="185">marks</text>
+  <text class="label small halo start" x="650" y="232">0..*</text>
+  <text class="label small halo start" x="650" y="138">0..1</text>
+  <path class="line" d="M720,260 L840,120"/>
+  <text class="label halo start" x="790" y="200">marks</text>
+  <text class="label small halo start" x="730" y="240">0..*</text>
+  <text class="label small halo start" x="846" y="140">0..1</text>
 </svg>
