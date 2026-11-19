@@ -681,7 +681,7 @@
         "plugins/lane",
         "plugins/rn/domain/best-practices/test-design"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -721,7 +721,7 @@
           "decisions": [
             {
               "about": "Where the unit cases lie",
-              "decided": "dev/lane/tests/unit/, with a case for each transition of the guard, the placing of moves, the run record, and the routes that Lane's list of Claude Code's states brings about",
+              "decided": "dev/lane/tests/unit/, with a case for each transition of the guard, the placing of moves, the run record, the route adapter, and where a start's rules come from, that Lane's list of Claude Code's states brings about",
               "by": "maker"
             }
           ]
@@ -753,7 +753,7 @@
             },
             {
               "about": "The gaps mended",
-              "decided": "a conversation holds one run of a plugin at a time: a command of the plugin typed while its run stands is a move of that run, its route's starts due in place of those before and the main conversation held to the steps of the command's skill where the rules give any, and one typed once the run ended, or where none stands, adds a run; the run record keeps a start ended with no result, so that the start is due again; a Bash call holds to a rule of commands where each command of it, split at |, &&, ||, and ;, opens with the words of a command the rule names",
+              "decided": "a conversation holds one run of a plugin at a time: a command of the plugin typed while its run stands is a move of that run, given to the plugin's order, with the main conversation held to the steps of the command's skill where the rules give any, and one typed once the run ended, or where none stands, adds a run; a start ended with no result is left out of what the order sees, so that the order gives its role due again; a Bash call holds to a rule of commands where each command of it, split at |, &&, ||, and ;, opens with the words of a command the rule names",
               "by": "maker"
             }
           ]
@@ -1415,7 +1415,7 @@
         "plugins/rn",
         "plugins/rn/domain/best-practices/test-design"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
