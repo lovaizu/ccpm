@@ -639,7 +639,7 @@
             },
             {
               "about": "The rule types",
-              "decided": "hooks/lane/lanes/ holds one module for each rule type of S1 to S8: the files a step writes, the files never to read, the files to read whole, the commands a step runs, the steps in order, a step's checklist, the result, and the plugin's own check; each judges a call, a mark, or an end of its kind and makes the step's sentence",
+              "decided": "hooks/lane/types/ holds one module for each rule type of S1 to S8: the files a step writes, the files never to read, the files to read whole, the commands a step runs, the steps in order, a step's checklist, the result, and the plugin's own check; each judges a call, a mark, or an end of its kind and makes the step's sentence",
               "by": "maker"
             },
             {
