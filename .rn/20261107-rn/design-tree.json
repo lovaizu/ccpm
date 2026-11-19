@@ -152,7 +152,7 @@
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Lane's Principles",
