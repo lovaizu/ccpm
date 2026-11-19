@@ -1,5 +1,7 @@
 """The unit cases of hooks/lane/plugin.py's plugin_root: one for each class of a conversation's
-transcript, as Claude Code writes the skill's base directory into it once the skill's call ends."""
+transcript, as Claude Code writes the skill's base directory into it once the skill's call ends:
+with none, one, and several such lines, the latest of the skill's own picked; a skill, a folder, or
+a manifest that nearly matches the plugin's; and the lines of other forms that Lane leaves alone."""
 
 from __future__ import annotations
 
@@ -92,3 +94,97 @@ def test_a_transcript_that_cant_be_read_is_refused(tmp_path: Any):
     Then it refuses with OSError"""
     with pytest.raises(OSError):
         plugin_root(os.path.join(str(tmp_path), "none.jsonl"), "log:up")
+
+
+def line(transcript: str, given: object) -> None:
+    """Adds the line to the transcript."""
+    with open(transcript, "a", encoding="utf-8") as f:
+        f.write(json.dumps(given) + "\n")
+
+
+@pytest.mark.supports(
+    "test_the_starts_due_come_at_the_main_conversations_next_event_after_the_skills_call"
+)
+def test_a_base_directory_written_as_a_messages_text_gives_the_folder(tmp_path: Any):
+    """Given a transcript whose user message gives the base directory of log:up in /plugins/log as
+    its content's text, not as a list of parts
+    When Lane looks for the folder of the plugin of log:up
+    Then it's /plugins/log"""
+    transcript = transcript_in(tmp_path)
+    text = "Base directory for this skill: /plugins/log/skills/up\n\nStart each subagent."
+    line(transcript, {"type": "user", "message": {"role": "user", "content": text}})
+    assert plugin_root(transcript, "log:up") == "/plugins/log"
+
+
+@pytest.mark.supports("test_each_plugins_run_is_held_to_the_rules_in_its_own_folder")
+@pytest.mark.parametrize(
+    "folder", ["/plugins/logger", "/plugins/lo", "/plugins/log-0.1.0", "/plugins/log/old"]
+)
+def test_a_folder_whose_name_nearly_matches_the_plugins_gives_no_folder(tmp_path: Any, folder: str):
+    """Given a transcript holding the base directory of the skill up in a folder with no manifest,
+    whose name nearly matches log
+    When Lane looks for the folder of the plugin of log:up
+    Then there's none, as Claude Code names that folder's plugin by the folder's own name"""
+    transcript = transcript_in(tmp_path)
+    base_directory(transcript, folder, "up")
+    assert plugin_root(transcript, "log:up") is None
+
+
+@pytest.mark.supports("test_each_plugins_run_is_held_to_the_rules_in_its_own_folder")
+def test_a_folder_whose_manifest_names_another_plugin_gives_no_folder(tmp_path: Any):
+    """Given a transcript holding the base directory of the skill up in a folder named log, whose
+    .claude-plugin/plugin.json names memo
+    When Lane looks for the folder of the plugin of log:up
+    Then there's none, as the manifest names the plugin before the folder does"""
+    folder = os.path.join(str(tmp_path), "plugins", "log")
+    write_files(folder, {".claude-plugin/plugin.json": json.dumps({"name": "memo"})})
+    transcript = transcript_in(tmp_path)
+    base_directory(transcript, folder, "up")
+    assert plugin_root(transcript, "log:up") is None
+
+
+@pytest.mark.supports("test_each_plugins_run_is_held_to_the_rules_in_its_own_folder")
+def test_the_latest_base_directory_of_the_skill_itself_gives_the_folder(tmp_path: Any):
+    """Given a transcript holding the base directory of log:up in /plugins/log, and after it that
+    of memo:up in /plugins/memo
+    When Lane looks for the folder of the plugin of log:up
+    Then it's /plugins/log, the latest of log:up's, and not the latest line's"""
+    transcript = transcript_in(tmp_path)
+    base_directory(transcript, "/plugins/log", "up")
+    base_directory(transcript, "/plugins/memo", "up")
+    assert plugin_root(transcript, "log:up") == "/plugins/log"
+
+
+# A base directory named only after other words.
+LATER = "See: Base directory for this skill: /old/log/skills/up"
+
+
+@pytest.mark.supports(
+    "test_the_starts_due_come_at_the_main_conversations_next_event_after_the_skills_call"
+)
+@pytest.mark.parametrize(
+    "given",
+    [
+        {"type": "user", "message": {"role": "user", "content": LATER}},
+        {"type": "user", "message": {"role": "user", "content": [{"type": "tool_result"}]}},
+        {"type": "user", "message": {"role": "user", "content": [{"type": "text", "text": "Hi"}]}},
+        {"type": "user", "message": {"role": "user", "content": ["Hi", 7]}},
+        {"type": "system", "content": "Base directory for this skill: /old/log/skills/up"},
+        {"type": "user", "message": "Base directory for this skill: /old/log/skills/up"},
+        {"type": "user", "message": {"role": "user", "content": 7}},
+        ["Base directory for this skill: /old/log/skills/up"],
+    ],
+)
+def test_a_line_of_another_form_after_the_base_directory_leaves_the_folder(
+    tmp_path: Any, given: object
+):
+    """Given a transcript holding the base directory of log:up in /plugins/log, and after it a line
+    that names a base directory only after other words, a part with no text, other text, parts
+    that aren't objects, a line with no message, a message that is text, content of another type,
+    or a line that isn't an object
+    When Lane looks for the folder of the plugin of log:up
+    Then it's /plugins/log"""
+    transcript = transcript_in(tmp_path)
+    base_directory(transcript, "/plugins/log", "up")
+    line(transcript, given)
+    assert plugin_root(transcript, "log:up") == "/plugins/log"

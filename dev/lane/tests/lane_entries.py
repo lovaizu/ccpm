@@ -23,3 +23,16 @@ def tie(use: str, agent_id: str) -> Entry:
 def result(agent_id: str, value: str, role: str = "log:writer") -> Entry:
     """The result that the subagent of the role gave."""
     return {"kind": "result", "run": "r1", "agent_id": agent_id, "role": role, "result": value}
+
+
+def read(agent_id: str | None, path: str, first: int, last: int) -> Entry:
+    """The subagent's read of the file at the path, from its line `first` to its line `last`, or the
+    main conversation's for None."""
+    return {
+        "kind": "read",
+        "run": "r1",
+        "agent_id": agent_id,
+        "path": path,
+        "first_line": first,
+        "last_line": last,
+    }

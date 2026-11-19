@@ -2,7 +2,9 @@
 plugin's own adapter, the route adapter, and none, and for each class of what the plugin's adapter
 gives: the starts due, the run's end, a failure, and output out of its form; and given_steps, one
 for each class of what the adapter of the rules gives, no adapter among them; with what Lane gives
-an adapter on its standard input, and the folder it runs in."""
+an adapter on its standard input, and the folder it runs in; with each exit other than 0, output
+on standard error beside a good answer, the turn ended or not beside each order, and each refusal
+naming the adapter's path, what went wrong, and who mends it."""
 
 from __future__ import annotations
 
@@ -58,10 +60,17 @@ def given(cwd: str) -> dict[str, object]:
 
 
 def refused(call: Any) -> str:
-    """What AdapterFailed says of the call."""
+    """What AdapterFailed says of the call, which closes with who mends the adapter."""
     with pytest.raises(AdapterFailed) as raised:
         call()
-    return str(raised.value)
+    said = str(raised.value)
+    assert "The plugin's author" in said
+    return said
+
+
+def path(log: str, name: str) -> str:
+    """The path of log's adapter of the name."""
+    return os.path.join(log, "lane", "adapters", name)
 
 
 # starts_due
@@ -149,7 +158,7 @@ def test_an_adapter_of_the_starts_due_that_fails_is_refused_with_its_file_and_wh
     Then it refuses with AdapterFailed naming starts_due.py and what it said"""
     adapter(log, "starts_due.py", "import sys\n\nsys.exit('no version found')\n")
     said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
-    assert "starts_due.py" in said
+    assert path(log, "starts_due.py") in said
     assert "no version found" in said
 
 
@@ -172,7 +181,8 @@ def test_starts_due_out_of_their_form_are_refused_naming_the_adapter(log: str, c
     When Lane asks it for the starts due
     Then it refuses with AdapterFailed naming starts_due.py"""
     adapter(log, "starts_due.py", code)
-    assert "starts_due.py" in refused(lambda: starts_due(log, cwd, run(log), RULES, False))
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
+    assert path(log, "starts_due.py") in said
 
 
 # given_steps
@@ -224,6 +234,7 @@ def test_a_plugin_without_an_adapter_of_the_rules_is_refused_naming_it_and_the_r
     said = refused(lambda: given_steps(log, cwd, run(log), "log:writer", "Write it."))
     assert "lane/adapters/rules.py" in said
     assert "log:writer" in said
+    assert log in said
 
 
 @pytest.mark.supports(
@@ -247,7 +258,8 @@ def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_is_refused(
     When Lane asks it for the steps of a writer's start
     Then it refuses with AdapterFailed naming rules.py"""
     adapter(log, "rules.py", code)
-    assert "rules.py" in refused(lambda: given_steps(log, cwd, run(log), "log:writer", "Write."))
+    said = refused(lambda: given_steps(log, cwd, run(log), "log:writer", "Write."))
+    assert path(log, "rules.py") in said
 
 
 @pytest.mark.supports(
@@ -259,3 +271,107 @@ def test_the_adapter_of_the_rules_may_give_no_step(log: str, cwd: str):
     Then there's none"""
     printing(log, "rules.py", {"steps": []})
     assert given_steps(log, cwd, run(log), "log:writer", "Write it.") == []
+
+
+@pytest.mark.supports(
+    "test_the_plugins_own_adapter_of_the_starts_due_answers_in_place_of_its_routes"
+)
+@pytest.mark.parametrize("rules", [RULES, NO_ORDER])
+def test_the_plugins_adapter_answers_though_the_turn_ended_beside_routes_or_none(
+    log: str, cwd: str, rules: Any
+):
+    """Given `log`'s adapter of the starts due, which gives none, beside rules with routes or none
+    When Lane asks for the starts due of the run with the turn ended
+    Then none is due, and the run doesn't end, as the adapter alone says when it ends"""
+    printing(log, "starts_due.py", {"starts": []})
+    assert starts_due(log, cwd, run(log), rules, True) == {"starts": []}
+
+
+@pytest.mark.supports("test_the_run_waits_while_the_start_its_route_made_due_runs")
+def test_a_plugin_with_routes_gives_the_route_adapters_wait_though_the_turn_ended(
+    log: str, cwd: str
+):
+    """Given `log` with its routes and no adapter of the starts due, and the writer started and
+    running
+    When Lane asks for the starts due with the turn ended
+    Then none is due, and the run doesn't end, as the routes alone say when it ends"""
+    start: Entry = lane_entries.start("u1")
+    assert starts_due(log, cwd, run(log, start), RULES, True) == {"starts": []}
+
+
+@pytest.mark.supports(
+    "test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said"
+)
+@pytest.mark.parametrize(
+    "code",
+    [
+        "import sys\n\nsys.stderr.write('no version found')\nsys.exit(2)\n",
+        (
+            "import sys\n\nprint('{\"starts\": []}')\nsys.stderr.write('no version found')\n"
+            "sys.exit(1)\n"
+        ),
+    ],
+)
+def test_an_adapter_that_exits_other_than_0_is_refused_though_it_printed_its_answer(
+    log: str, cwd: str, code: str
+):
+    """Given an adapter of the starts due that exits 2, or prints an answer in its form and exits
+    1, saying it found no version
+    When Lane asks it for the starts due
+    Then it refuses with AdapterFailed naming its path and what it said"""
+    adapter(log, "starts_due.py", code)
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
+    assert path(log, "starts_due.py") in said
+    assert "no version found" in said
+
+
+@pytest.mark.supports("test_the_starts_due_are_those_that_the_plugins_order_gives")
+def test_an_adapter_that_says_more_on_standard_error_and_exits_0_answers(log: str, cwd: str):
+    """Given an adapter of the starts due that prints the reviewer due, says more on standard
+    error, and exits 0
+    When Lane asks it for the starts due
+    Then the reviewer is due"""
+    code = (
+        "import sys\n\nsys.stderr.write('read CHANGELOG.md')\n"
+        'print(\'{"starts": [{"role": "log:reviewer", "count": 1}]}\')\n'
+    )
+    adapter(log, "starts_due.py", code)
+    gave = starts_due(log, cwd, run(log), RULES, False)
+    assert gave == {"starts": [{"role": "log:reviewer", "count": 1}]}
+
+
+@pytest.mark.supports("test_starts_due_out_of_their_form_stop_naming_the_adapter")
+def test_an_adapter_that_prints_no_json_is_refused_with_what_it_printed(log: str, cwd: str):
+    """Given an adapter of the starts due that prints `the writer`, which isn't JSON
+    When Lane asks it for the starts due
+    Then it refuses with AdapterFailed naming its path and what it printed"""
+    adapter(log, "starts_due.py", "print('the writer')\n")
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
+    assert path(log, "starts_due.py") in said
+    assert "the writer" in said
+
+
+@pytest.mark.supports("test_starts_due_out_of_their_form_stop_naming_the_adapter")
+def test_starts_due_out_of_their_form_are_refused_naming_the_place(log: str, cwd: str):
+    """Given an adapter of the starts due that prints a start with a count of 0
+    When Lane asks it for the starts due
+    Then it refuses with AdapterFailed naming the place of the count"""
+    printing(log, "starts_due.py", {"starts": [{"role": "log:writer", "count": 0}]})
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
+    assert "starts/0/count" in said
+
+
+@pytest.mark.supports(
+    "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
+)
+def test_the_adapter_of_the_rules_may_give_several_steps_in_their_order(log: str, cwd: str):
+    """Given an adapter of the rules that gives the steps `draft`, `write`, and `report`
+    When Lane asks it for the steps of a writer's start
+    Then they are those three, in their order, each with its rules"""
+    given = [
+        {"name": "draft", "rules": []},
+        {"name": "write", "rules": [{"type": "writes", "paths": ["CHANGELOG.md"]}]},
+        {"name": "report", "rules": [{"type": "result", "results": ["written"]}]},
+    ]
+    printing(log, "rules.py", {"steps": given})
+    assert given_steps(log, cwd, run(log), "log:writer", "Write it.") == given

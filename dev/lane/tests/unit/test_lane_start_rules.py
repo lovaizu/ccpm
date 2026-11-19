@@ -1,6 +1,8 @@
 """The unit cases of hooks/lane/start_rules.py: asks_adapter and steps, one for each class of what
 the plugin's rules give a role: its steps, a name with no steps, or nothing, for a subagent's role
-and for the main conversation's skill."""
+and for the main conversation's skill; with a role named with an empty list of steps, a role whose
+name nearly matches one that the rules name, and steps given beside rules that fix the role's own
+or don't name it."""
 
 from __future__ import annotations
 
@@ -16,6 +18,7 @@ from start_rules import asks_adapter, steps
 # plugin's adapter of the rules.
 RULES: Rules = copy.deepcopy(lane_bench.RULES)
 RULES["roles"]["log:scribe"] = {}
+RULES["roles"]["log:idle"] = {"steps": []}
 GIVEN: list[Step] = [{"name": "jot", "rules": [{"type": "writes", "paths": ["NOTE.md"]}]}]
 WRITER: Any = lane_bench.RULES["roles"]["log:writer"]["steps"]
 
@@ -80,3 +83,49 @@ def test_a_skill_that_the_rules_give_no_steps_has_none():
     When Lane gives the steps of the main conversation in it
     Then there's none"""
     assert steps(RULES, "log:retry", None) == []
+
+
+@pytest.mark.supports(
+    "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
+)
+@pytest.mark.parametrize("role", ["log:idle", "log:scrib", "log:scribe2"])
+def test_a_role_named_with_an_empty_list_or_named_nearly_asks_no_adapter(role: str):
+    """Given rules that name log:idle with an empty list of steps, and the scribe with none
+    When Lane decides whether a start of log:idle, or of a role whose name nearly matches the
+    scribe's, asks the adapter of the rules
+    Then none does"""
+    assert not asks_adapter(RULES, role)
+
+
+@pytest.mark.supports(
+    "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
+)
+@pytest.mark.parametrize("role, held", [("log:writer", WRITER), ("log:idle", [])])
+def test_a_role_whose_steps_the_rules_give_is_held_to_them_beside_steps_given(
+    role: str, held: list[Step]
+):
+    """Given rules that give the writer's steps, and log:idle's empty list, and steps given for a
+    start
+    When Lane gives the steps of a start of either
+    Then they are those that the rules give, and not those given"""
+    assert steps(RULES, role, GIVEN) == held
+
+
+@pytest.mark.supports("test_a_start_of_a_subagent_that_isnt_the_plugins_lies_outside_the_run")
+def test_a_role_that_the_rules_dont_name_has_no_steps_beside_steps_given():
+    """Given rules that name no general-purpose, and steps given for its start
+    When Lane gives the steps of the start
+    Then there's none"""
+    assert steps(RULES, "general-purpose", GIVEN) == []
+
+
+@pytest.mark.supports(
+    "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
+)
+@pytest.mark.parametrize("given", [None, []])
+def test_a_role_named_with_no_steps_and_none_given_has_none(given: list[Step] | None):
+    """Given rules that name the scribe with no steps, and no steps given for its start, or an
+    empty list
+    When Lane gives the steps of the start
+    Then there's none"""
+    assert steps(RULES, "log:scribe", given) == []

@@ -2,16 +2,18 @@
 add, one for each class of entries it adds, with the transitions of the record that Lane's list of
 Claude Code's states brings about: a run added at the skill's call, its folder at the next event,
 each later entry after the ones before, a start kept with its prompt and the steps given for it, and
-two conversations apart."""
+two conversations apart; with none, one, and several runs, an entry placed on its own run though a
+later run was added, and none, one, and several entries added at once."""
 
 from __future__ import annotations
 
+import json
 import os
 import stat
 
 import lane_entries
 import pytest
-from record import Entry, add, runs
+from record import Entry, Run, add, runs
 
 RUN: Entry = {"kind": "run", "run": "r1", "skill": "log:up", "words": "1.2.0"}
 FOLDER: Entry = {"kind": "folder", "run": "r1", "plugin_root": "/plugins/log"}
@@ -35,10 +37,7 @@ def test_a_run_added_at_the_skills_call_has_no_folder():
     When Lane adds a run of log:up with the words 1.2.0
     Then the record holds that run, with no folder and its one entry"""
     add("session-1", [RUN])
-    [run] = runs("session-1")
-    assert (run.id, run.session_id, run.skill, run.words) == ("r1", "session-1", "log:up", "1.2.0")
-    assert run.plugin_root is None
-    assert run.entries == [RUN]
+    assert runs("session-1") == [Run("r1", "session-1", "log:up", "1.2.0", None, [RUN])]
 
 
 @pytest.mark.supports(
@@ -50,7 +49,9 @@ def test_a_folder_added_after_the_run_gives_the_run_its_folder():
     Then the run has that folder"""
     add("session-1", [RUN])
     add("session-1", [FOLDER])
-    assert runs("session-1")[0].plugin_root == "/plugins/log"
+    assert runs("session-1") == [
+        Run("r1", "session-1", "log:up", "1.2.0", "/plugins/log", [RUN, FOLDER])
+    ]
 
 
 @pytest.mark.supports("test_the_results_of_two_subagents_are_both_kept")
@@ -113,7 +114,9 @@ def test_the_record_lies_in_the_systems_temporary_folder(temp: str):
     When Lane adds a run
     Then the record lies in that folder, and nowhere else"""
     add("session-1", [RUN])
-    assert os.listdir(temp)
+    [made] = os.listdir(temp)
+    with open(os.path.join(temp, made), encoding="utf-8") as f:
+        assert [json.loads(line) for line in f] == [RUN]
 
 
 @pytest.mark.supports("test_after_compact_the_run_goes_on_with_its_starts_due")
@@ -127,3 +130,42 @@ def test_a_record_that_cant_be_written_is_refused(temp: str):
             add("session-1", [RUN])
     finally:
         os.chmod(temp, stat.S_IRWXU)
+
+
+@pytest.mark.supports("test_the_plugins_command_typed_again_once_its_run_ended_adds_a_new_run")
+def test_an_entry_added_after_a_later_run_lies_on_its_own_run():
+    """Given a run r1 of log:up, and a run r2 of memo:up added after it
+    When Lane adds r1's folder and a start of r1, then r2's folder
+    Then r1 holds its folder and its start, and r2 its own folder alone"""
+    memo: Entry = {"kind": "run", "run": "r2", "skill": "memo:up", "words": ""}
+    memo_folder: Entry = {"kind": "folder", "run": "r2", "plugin_root": "/plugins/memo"}
+    add("session-1", [RUN, memo])
+    add("session-1", [FOLDER, START])
+    add("session-1", [memo_folder])
+    assert runs("session-1") == [
+        Run("r1", "session-1", "log:up", "1.2.0", "/plugins/log", [RUN, FOLDER, START]),
+        Run("r2", "session-1", "memo:up", "", "/plugins/memo", [memo, memo_folder]),
+    ]
+
+
+@pytest.mark.supports("test_the_results_of_two_subagents_are_both_kept")
+def test_no_entry_added_leaves_the_record_as_it_stands():
+    """Given a run with its folder
+    When Lane adds no entry
+    Then the run's entries are those before"""
+    add("session-1", [RUN, FOLDER])
+    add("session-1", [])
+    assert runs("session-1")[0].entries == [RUN, FOLDER]
+
+
+@pytest.mark.supports("test_after_compact_the_run_goes_on_with_its_starts_due")
+def test_a_record_that_cant_be_read_is_refused(temp: str):
+    """Given a conversation whose record is a folder, which can't be read as a file
+    When Lane reads its runs
+    Then it refuses with OSError"""
+    add("session-1", [RUN])
+    [made] = os.listdir(temp)
+    os.remove(os.path.join(temp, made))
+    os.makedirs(os.path.join(temp, made))
+    with pytest.raises(OSError):
+        runs("session-1")

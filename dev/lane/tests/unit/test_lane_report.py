@@ -1,5 +1,7 @@
 """The unit cases of hooks/lane/report.py: report, one for each kind of reporter and each count of
-words that fits or doesn't fit it, and read_report, one for each class of a Bash call's output."""
+words that fits or doesn't fit it, and read_report, one for each class of a Bash call's output: a
+report of each kind, JSON that nearly matches one, with a field more, less, or of another type, JSON
+that isn't an object, and text that isn't JSON."""
 
 from __future__ import annotations
 
@@ -48,36 +50,54 @@ def test_a_result_prints_its_report(capsys: pytest.CaptureFixture[str]):
     "test_a_reporter_given_words_that_dont_fit_its_kind_exits_2_with_what_it_takes"
 )
 @pytest.mark.parametrize(
-    "kind, words",
+    "kind, words, takes",
     [
-        ("step", []),
-        ("step", ["write", "report"]),
-        ("item", ["write"]),
-        ("item", ["write", "dated", "linked"]),
-        ("result", []),
-        ("result", ["good", "more"]),
+        ("step", [], "lane-step takes <step>"),
+        ("step", ["write", "report"], "lane-step takes <step>"),
+        ("item", ["write"], "lane-item takes <step> <item>"),
+        ("item", ["write", "dated", "linked"], "lane-item takes <step> <item>"),
+        ("result", [], "lane-result takes <result>"),
+        ("result", ["good", "more"], "lane-result takes <result>"),
     ],
 )
 def test_words_that_dont_fit_the_kind_give_2_with_what_it_takes(
-    capsys: pytest.CaptureFixture[str], kind: str, words: list[str]
+    capsys: pytest.CaptureFixture[str], kind: str, words: list[str], takes: str
 ):
     """Given a reporter of the kind
     When it's given one word fewer or more than its kind takes
-    Then it gives 2, prints nothing on standard output, and says on standard error what it takes"""
+    Then it gives 2, prints nothing on standard output, and says on standard error what it takes,
+    as Lane's rules-and-adapters.md words it"""
     code = report(kind, words)
     out, err = capsys.readouterr()
     assert code == 2
     assert out == ""
-    assert f"lane-{kind}" in err
+    assert err == f"{takes}\n"
 
 
 @pytest.mark.supports("test_a_reporters_result_counts_for_the_subagent_that_ran_it")
 @pytest.mark.parametrize(
     "output",
-    ["", "bf742e7 first\n", '{"kind": "step"}\n', '{"kind": "size", "step": "write"}\n'],
+    [
+        "",
+        "bf742e7 first\n",
+        '{"kind": "step"}\n',
+        '{"kind": "size", "step": "write"}\n',
+        '{"step": "write"}\n',
+        '{"kind": "step", "step": "write", "item": "dated"}\n',
+        '{"kind": "item", "step": "write"}\n',
+        '{"kind": "result", "step": "write"}\n',
+        '{"kind": "Step", "step": "write"}\n',
+        '{"kind": null, "step": "write"}\n',
+        '["step", "write"]\n',
+        '"step"\n',
+        "7\n",
+        "null\n",
+    ],
 )
 def test_output_that_no_reporter_printed_reads_as_no_report(output: str):
-    """Given the output of a Bash call that ran no reporter, or JSON not of a report
+    """Given the output of a Bash call that ran no reporter: none, text, a step with no name, a kind
+    that Lane lacks, no kind, a field more than the kind's, the fields of another kind, a kind that
+    nearly matches, a kind that isn't text, or JSON that isn't an object
     When the guard reads it
     Then it reads no report"""
     assert read_report(output) is None
@@ -91,3 +111,34 @@ def test_a_report_beside_other_output_reads_as_no_report(capsys: pytest.CaptureF
     report("result", ["written"])
     out = capsys.readouterr().out
     assert read_report("done\n" + out) is None
+
+
+@pytest.mark.supports("test_a_reporters_result_counts_for_the_subagent_that_ran_it")
+@pytest.mark.parametrize(
+    "output",
+    ['{"kind": ["step"], "step": "write"}\n', '{"kind": {"of": "step"}, "step": "write"}\n'],
+)
+@pytest.mark.xfail(
+    strict=True,
+    reason="read_report gives None for JSON whose kind is a list or an object, not a TypeError",
+)
+def test_output_whose_kind_is_a_list_or_an_object_reads_as_no_report(output: str):
+    """Given the output of a Bash call that printed JSON whose kind is a list or an object
+    When the guard reads it
+    Then it reads no report"""
+    assert read_report(output) is None
+
+
+@pytest.mark.supports("test_a_reporters_result_counts_for_the_subagent_that_ran_it")
+@pytest.mark.parametrize(
+    "output", ['{"kind": "step", "step": 1}\n', '{"kind": "item", "step": "write", "item": null}\n']
+)
+@pytest.mark.xfail(
+    strict=True,
+    reason="read_report gives None for JSON whose fields aren't text, as report prints only text",
+)
+def test_output_whose_fields_arent_text_reads_as_no_report(output: str):
+    """Given the output of a Bash call that printed a report's fields with a value that isn't text
+    When the guard reads it
+    Then it reads no report, as no reporter prints it"""
+    assert read_report(output) is None
