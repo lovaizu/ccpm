@@ -1454,7 +1454,8 @@
             },
             {
               "about": "Where each start's Cut comes from",
-              "decided": null
+              "decided": "the orchestrator runs scripts/cut.py for each start, which writes the start's Cut in the run's folder by cut.write and prints its path, and names that path in the start's prompt",
+              "by": "reasoning"
             },
             {
               "about": "The commands",
@@ -1468,12 +1469,12 @@
             },
             {
               "about": "The guard",
-              "decided": "hooks/hooks.json and hooks/lanes.json are laid by /lane:up once the steps are written, so the skeleton holds none",
+              "decided": "rn gives Lane lane/rules.json with each role's steps and no routes, as its order comes from lane/adapters/due.py, and holds no hooks of its own",
               "by": "maker"
             },
             {
-              "about": "The lanes",
-              "decided": "each deliverable's rounds run in a lane of Lane's of their own, by the rules and routes that rn gives Lane, as rn's architecture draws",
+              "about": "rn's order",
+              "decided": "lane/adapters/due.py gives Lane the starts due from the design tree's course, each deliverable's rounds beside the others being made, and that the run ends once the user signs off the pull request",
               "by": "reasoning"
             }
           ]
