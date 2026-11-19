@@ -639,7 +639,7 @@
             },
             {
               "about": "The rule types",
-              "decided": "hooks/lane/types/ holds one module for each rule type of S1 to S8: the files a step writes, the files never to read, the files to read whole, the commands a step runs, the steps in order, a step's checklist, the result, and the plugin's own check; each judges a call, a mark, or an end of its kind and makes the step's sentence",
+              "decided": "hooks/lane/rule_types/ holds one module for each rule type of S1 to S8: the files a step writes, the files never to read, the files to read whole, the commands a step runs, the steps in order, a step's checklist, the result, and the plugin's own check; each judges a call, a mark, or an end of its kind and makes the step's sentence",
               "by": "maker"
             },
             {
@@ -679,8 +679,13 @@
             },
             {
               "about": "Several starts of one role in a lane",
-              "decided": "the lane waits until each has its result, the plugin's adapter then gives one result from theirs, and the lane moves on by the route after that result",
+              "decided": "a route after a result starts one role alone, as many times at once as the plugin's start adapter gives texts for it; the lane waits until each has its result, the plugin's join adapter then gives one result from theirs, and the lane moves on by the route after that result",
               "by": "user"
+            },
+            {
+              "about": "Kept results",
+              "decided": "the kept adapter gives each chain's results in its order, and the guard adds a lane for each chain at the pick-up",
+              "by": "reasoning"
             }
           ]
         },
