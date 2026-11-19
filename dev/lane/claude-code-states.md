@@ -92,8 +92,9 @@ guard.
   its Steps, and then ties the resume's Start to the subagent.
 - A subagent stopped by TaskStop: the guard ends its Start with no Result, and gives its start due
   again.
-- A command of another skill of the plugin typed while a subagent runs: the guard starts that
-  skill's Run beside the first. Each Run holds to its own Routes, and the main conversation's calls
+- A command of another skill of the plugin typed while a subagent runs: where the plugin's rules
+  give that skill's steps, the guard starts that skill's Run beside the first; where they give
+  none, the command is one that a Route of the standing Run waits for. Each Run holds to its own Routes, and the main conversation's calls
   to each Run's Rules. The main conversation's Stop stops while a start of either Run is due.
 - The plugin's command typed again once its Run ended: the guard adds a new Run, as the ended Run's
   Routes start no more.
