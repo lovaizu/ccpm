@@ -56,17 +56,19 @@ once.
 - Lane\
   One chain of a run's starts, held to the routes' order, going on beside the run's other chains.
 - Kept results\
-  The results that a plugin keeps, from which a run goes on in a new conversation.
+  The results that a plugin keeps, each chain's in its order, from which a run goes on in a new
+  conversation.
 
 Strategies:
 
 - Each start that a route after a command makes due opens a lane of its own, and each start that a
   route after a result makes due follows in the result's lane. [S9]\
   Intent: chains of one run go at once, each in its order.
-- A route that starts one role several times at once, its lane waiting until each of them has its
-  result, and moving on by one result that the plugin's adapter gives from theirs. [S9, P2.2]\
+- A route after a result that starts one role alone, as many times at once as the plugin's
+  adapter gives texts for it, its lane waiting until each of them has its result, and moving on by
+  one result that the plugin's adapter gives from theirs. [S9, P2.2]\
   Intent: a step done by several subagents side by side moves on as one, where the plugin alone
-  decides what comes next.
+  decides how many start and what comes next.
 - A run's record that only grows, holding only what no later move gives again. [S10]\
   Intent: moves checked at the same moment lose nothing of one another's.
 
@@ -123,7 +125,7 @@ sequenceDiagram
   G->>RR: adds the run, as S10 draws where one stopped (Run) [S9]
   loop until the routes start no more [S9]
     opt the plugin gives a start's text of its own [P2.2]
-      G->>A: asks for the text of each start due [P2.2]
+      G->>A: asks for the text of each start due, one for each time its role starts [P2.2]
     end
     G-->>M: the starts due of each lane, each with its text that names its lane (Lane) [S9]
     alt a start whose text names a lane with that start due [S9]
@@ -136,6 +138,9 @@ sequenceDiagram
     else the person types a command that a route waits for [S9]
       U->>M: the command [S9]
       G->>RR: adds it, so that its route's starts are due (Route) [S9]
+    end
+    opt each start of one role that a route started at once has its result [S9]
+      G->>A: asks for one result from theirs [P2.2]
     end
     G-->>M: each result, and the starts that its route makes due in its lane (Route) [S7]
   end
@@ -161,7 +166,7 @@ sequenceDiagram
     G->>RR: reads where the run stands (Run) [S10]
   else the plugin gives an adapter of the results it keeps [P2.2]
     G->>A: asks for the kept results, with those words (Kept results) [P2.2]
-    G->>RR: adds the run, with each result that follows the routes (Run) [S10]
+    G->>RR: adds the run, a lane for each chain with each of its results that follows the routes (Lane) [S10]
   end
   G-->>M: where the run picks up, and the starts due [S10]
 ```
@@ -186,7 +191,7 @@ Strategies:
 plugins/lane/                     what Claude Code installs beside each plugin that depends on it
 ├── hooks/
 │   ├── hooks.json                the guard's entries
-│   └── lane/                     the guard, and types/, the rule types
+│   └── lane/                     the guard, and rule_types/
 ├── bin/                          the reporters
 ├── docs/rules-and-adapters.md    what Lane takes in and gives out
 └── README.md                     for a plugin's author
