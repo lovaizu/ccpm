@@ -14,7 +14,6 @@ from lane_bench import (
     ENTRY,
     ORDER,
     RULES,
-    UNBUILT,
     WORDS,
     Bench,
     opened,
@@ -133,7 +132,6 @@ def test_a_stopped_call_gives_the_step_left_and_what_to_do_instead(b: Bench, bro
 
 
 @pytest.mark.supports("P1.1")
-@UNBUILT
 def test_rules_out_of_form_stop_the_call_saying_what_the_author_mends(b: Bench, broken: None):
     """Given `log` whose lane/rules.json has no roles
     When the person types /log:up 1.2.0, and the main conversation ends its turn
@@ -188,7 +186,6 @@ def test_each_plugins_run_is_held_to_the_rules_in_its_own_folder(b: Bench, broke
 
 
 @pytest.mark.supports("P2.3")
-@UNBUILT
 def test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start(
     b: Bench, broken: None
 ):
@@ -206,7 +203,6 @@ def test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each
 
 
 @pytest.mark.supports("P2.4")
-@UNBUILT
 def test_the_starts_due_are_those_that_the_plugins_order_gives(b: Bench, broken: None):
     """Given `log` deciding its order by ORDER, and the repository holding the entry of 1.2.0, so
     that ORDER makes the reviewer due, where the route after the command makes the writer due
@@ -223,7 +219,6 @@ def test_the_starts_due_are_those_that_the_plugins_order_gives(b: Bench, broken:
 
 
 @pytest.mark.supports("P2.5")
-@UNBUILT
 def test_work_outside_a_run_of_a_plugin_with_rules_is_left_alone(b: Bench, broken: None):
     """Given `plain`, a plugin with no lane/rules.json, beside `log`
     When the main conversation writes a file and ends its turn before any skill's call, then the

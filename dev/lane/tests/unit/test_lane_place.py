@@ -256,7 +256,6 @@ def test_the_post_tool_use_of_a_starts_agent_call_ties_it(e: Events):
 
 
 @pytest.mark.supports("test_an_agent_call_that_fails_after_its_pre_tool_use_leaves_its_start_due")
-@UNBUILT
 def test_the_failure_of_a_starts_agent_call_drops_it(e: Events):
     """Given a run of log:up with the writer's start of u1, untied
     When the PostToolUseFailure of u1 comes
@@ -330,7 +329,6 @@ def test_a_tied_subagents_stop_is_its_end(e: Events):
 
 
 @pytest.mark.supports("test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it")
-@UNBUILT
 def test_the_main_conversations_stop_is_the_end_of_its_turn(e: Events):
     """Given a run of log:up
     When the main conversation's Stop comes
@@ -339,7 +337,6 @@ def test_the_main_conversations_stop_is_the_end_of_its_turn(e: Events):
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place")
-@UNBUILT
 def test_a_typed_command_that_a_route_waits_for_is_typed(e: Events):
     """Given a run of log:up in log's folder, not ended
     When the UserPromptExpansion of /log:retry comes
@@ -349,7 +346,6 @@ def test_a_typed_command_that_a_route_waits_for_is_typed(e: Events):
 
 
 @pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
-@UNBUILT
 def test_a_skill_tool_call_of_the_plugins_skill_while_its_run_stands_is_typed(e: Events):
     """Given a run of log:up in log's folder whose writer is tied to a1
     When the PostToolUse of the main conversation's Skill call of log:tag comes
@@ -395,7 +391,6 @@ def test_a_send_message_from_the_main_conversation_is_a_start(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@UNBUILT
 def test_a_send_message_that_resumed_its_subagent_ties_it(e: Events):
     """Given the writer tied to a1, and a start by SendMessage u2 to it
     When the PostToolUse of u2 says it resumed a1
@@ -405,7 +400,6 @@ def test_a_send_message_that_resumed_its_subagent_ties_it(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-@UNBUILT
 def test_a_send_message_queued_to_a_running_subagent_is_a_queue(e: Events):
     """Given the writer tied to a1, running, and a start by SendMessage u2 to it
     When the PostToolUse of u2 says the message is queued

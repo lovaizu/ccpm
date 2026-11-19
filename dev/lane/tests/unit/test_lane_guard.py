@@ -168,7 +168,6 @@ def test_an_event_before_the_base_directory_or_of_a_subagent_opens_nothing(
 
 
 @pytest.mark.supports("test_the_start_due_goes_through_and_leaves_none_due")
-@UNBUILT
 def test_the_start_due_goes_through_and_its_tie_leaves_none_due(g: Play):
     """Given the writer due
     When the main conversation starts it, its Agent call names a1, and it ends its turn
@@ -203,7 +202,6 @@ def test_a_tied_subagents_call_is_held_to_its_step(g: Play):
 
 
 @pytest.mark.supports("test_an_agent_call_that_fails_after_its_pre_tool_use_leaves_its_start_due")
-@UNBUILT
 def test_a_start_whose_call_fails_is_dropped_and_due_again(g: Play):
     """Given the writer's start, untied
     When its Agent call fails, and the main conversation ends its turn
@@ -217,7 +215,6 @@ def test_a_start_whose_call_fails_is_dropped_and_due_again(g: Play):
 
 
 @pytest.mark.supports("test_a_start_that_another_plugins_hook_denies_is_due_again_at_the_turns_end")
-@UNBUILT
 def test_a_start_still_untied_at_the_turns_end_is_dropped_and_due_again(g: Play):
     """Given the writer's start, which no event after its PreToolUse followed
     When the main conversation ends its turn, and then again
@@ -243,7 +240,6 @@ def test_an_end_that_holds_and_its_notification_give_the_result_and_the_next_sta
 
 
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
-@UNBUILT
 def test_a_notification_of_a_subagent_stopped_by_task_stop_gives_its_start_due_again(g: Play):
     """Given the writer tied to a1, running
     When its task-notification says TaskStop stopped it, and the main conversation ends its turn
@@ -255,7 +251,6 @@ def test_a_notification_of_a_subagent_stopped_by_task_stop_gives_its_start_due_a
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@UNBUILT
 def test_a_resume_that_a_route_makes_due_is_its_start_tied_by_the_resume(g: Play):
     """Given the writer a1 ended, and the reviewer's `more`, which makes the writer due
     When the main conversation resumes a1 by SendMessage, the call says it resumed a1, and the
@@ -271,7 +266,6 @@ def test_a_resume_that_a_route_makes_due_is_its_start_tied_by_the_resume(g: Play
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_doesnt_make_due_goes_through_as_talk")
-@UNBUILT
 def test_a_resume_that_no_route_makes_due_goes_through_and_moves_nothing(g: Play):
     """Given the writer a1 ended, so the reviewer is due
     When the main conversation resumes a1 by SendMessage, and ends its turn
@@ -304,7 +298,6 @@ def test_a_resume_queued_waits_through_the_turns_end_and_ties_at_the_end_of_the_
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place")
-@UNBUILT
 def test_a_typed_command_puts_its_starts_in_place_of_those_before(g: Play):
     """Given the reviewer due
     When the person's /log:retry expands, and the main conversation ends its turn
@@ -343,7 +336,6 @@ def test_the_command_typed_once_its_run_ended_adds_a_new_run(g: Play):
 
 
 @pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
-@UNBUILT
 def test_another_skills_command_moves_the_run_and_its_subagent_stays_on_its_start(g: Play):
     """Given the writer a1 running in the run of log:up
     When the person's /log:tag expands, the main conversation ends its turn, and a1 writes
@@ -361,7 +353,6 @@ def test_another_skills_command_moves_the_run_and_its_subagent_stays_on_its_star
 
 
 @pytest.mark.supports("test_after_compact_the_run_goes_on_with_its_starts_due")
-@UNBUILT
 def test_the_summarys_end_at_compact_lies_outside_and_the_run_goes_on(g: Play):
     """Given the writer due
     When /compact's summary ends, and the main conversation ends its turn
@@ -372,7 +363,6 @@ def test_the_summarys_end_at_compact_lies_outside_and_the_run_goes_on(g: Play):
 
 
 @pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_stands")
-@UNBUILT
 def test_the_command_typed_while_its_run_stands_gives_where_it_stands(g: Play):
     """Given the reviewer due in the run of log:up for 1.2.0
     When the person's /log:up 1.2.0 expands again
@@ -383,7 +373,6 @@ def test_the_command_typed_while_its_run_stands_gives_where_it_stands(g: Play):
 
 
 @pytest.mark.supports("test_a_new_conversation_goes_on_where_the_plugins_own_files_say")
-@UNBUILT
 def test_a_new_conversation_takes_its_starts_due_from_the_plugins_order(g: Play):
     """Given `log` deciding its order by ORDER, the conversation's CHANGELOG.md holding the entry
     of 1.2.0, and a conversation with no run
@@ -395,7 +384,6 @@ def test_a_new_conversation_takes_its_starts_due_from_the_plugins_order(g: Play)
 
 
 @pytest.mark.supports("test_a_run_whose_order_gives_no_start_due_waits_and_still_holds_its_moves")
-@UNBUILT
 def test_a_turns_end_while_the_order_gives_no_start_due_goes_through_and_the_run_stands(g: Play):
     """Given `log` whose adapter of the starts due gives none, and the person's /log:up 1.2.0
     When the main conversation ends its turn, and then writes notes.txt
@@ -423,7 +411,6 @@ def test_the_orders_end_of_the_run_is_kept_as_an_ended_entry(g: Play):
 @pytest.mark.supports(
     "test_the_turns_end_in_a_run_of_a_plugin_with_no_order_is_held_to_its_skills_check"
 )
-@UNBUILT
 def test_a_turns_end_in_a_run_with_no_order_is_held_to_its_skills_check(g: Play):
     """Given `log` giving no order, its skill's step `lead` checked for .log/up.md
     When the person types /log:up 1.2.0, and the main conversation ends its turn before
@@ -442,7 +429,6 @@ def test_a_turns_end_in_a_run_with_no_order_is_held_to_its_skills_check(g: Play)
 @pytest.mark.supports(
     "test_a_run_of_a_plugin_with_no_order_ends_at_the_turns_end_that_its_steps_let_through"
 )
-@UNBUILT
 def test_a_turns_end_that_a_run_with_no_order_lets_through_ends_the_run(g: Play):
     """Given `log` giving no order, and the person's /log:up 1.2.0
     When .log/up.md is there, the main conversation ends its turn, and then writes notes.txt
@@ -480,7 +466,6 @@ def test_a_subagents_start_is_stopped(g: Play):
 
 
 @pytest.mark.supports("test_a_subagents_message_to_another_subagent_goes_through_as_talk")
-@UNBUILT
 def test_a_subagents_message_to_another_subagent_goes_through(g: Play):
     """Given the writer a1 running
     When a1 sends a2 a message by SendMessage
@@ -491,7 +476,6 @@ def test_a_subagents_message_to_another_subagent_goes_through(g: Play):
 
 
 @pytest.mark.supports("test_rules_out_of_form_stop_the_call_saying_what_the_author_mends")
-@UNBUILT
 def test_rules_out_of_form_stop_the_next_event_saying_what_to_mend(g: Play):
     """Given `log` whose lane/rules.json has no roles
     When the person types /log:up 1.2.0, and the main conversation runs `git status`
@@ -557,7 +541,6 @@ def test_skill_called_with_no_run_adds_one_with_no_folder(g: Play):
 
 
 @pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_stands")
-@UNBUILT
 def test_command_typed_of_the_skill_that_called_the_run_gives_where_it_stands(g: Play, log: str):
     """Given the writer a1's result `written`, so the reviewer is due
     When the person types /log:up again
@@ -569,7 +552,6 @@ def test_command_typed_of_the_skill_that_called_the_run_gives_where_it_stands(g:
 
 
 @pytest.mark.supports("test_another_skills_command_typed_while_a_subagent_runs_moves_the_run")
-@UNBUILT
 def test_command_typed_of_another_skill_gives_its_routes_starts(g: Play, log: str):
     """Given the writer tied to a1
     When the main conversation calls log:tag by the Skill tool
@@ -643,7 +625,6 @@ def test_start_made_keeps_the_start_with_its_prompt(g: Play, log: str):
 @pytest.mark.supports(
     "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
 )
-@UNBUILT
 def test_start_made_of_a_role_with_no_steps_keeps_the_steps_its_adapter_gives(g: Play, log: str):
     """Given `log` naming the writer with no steps, with its adapter of the rules, and the writer
     due
@@ -662,7 +643,6 @@ def test_start_made_of_a_role_with_no_steps_keeps_the_steps_its_adapter_gives(g:
 @pytest.mark.supports(
     "test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_saying_so"
 )
-@UNBUILT
 def test_start_made_of_a_role_with_no_steps_and_no_adapter_is_stopped_naming_it(g: Play, log: str):
     """Given `log` naming the writer with no steps, with no adapter of the rules, and the writer due
     When the main conversation starts the writer
@@ -677,7 +657,6 @@ def test_start_made_of_a_role_with_no_steps_and_no_adapter_is_stopped_naming_it(
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@UNBUILT
 def test_start_made_of_a_resume_keeps_the_prompt_and_steps_of_the_start_it_resumes(
     g: Play, log: str
 ):
@@ -708,7 +687,6 @@ def test_start_made_of_a_resume_keeps_the_prompt_and_steps_of_the_start_it_resum
 @pytest.mark.supports(
     "test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said"
 )
-@UNBUILT
 def test_turn_ended_with_an_adapter_of_the_starts_due_that_fails_stops_with_what_it_said(
     g: Play, log: str
 ):
@@ -725,7 +703,6 @@ def test_turn_ended_with_an_adapter_of_the_starts_due_that_fails_stops_with_what
 
 @pytest.mark.supports("test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it")
 @pytest.mark.parametrize("entries, stop", [((), True), ((START, TIE), False)])
-@UNBUILT
 def test_turn_ended_stops_only_while_a_start_is_due(
     g: Play, log: str, entries: tuple[Entry, ...], stop: bool
 ):
@@ -737,7 +714,6 @@ def test_turn_ended_stops_only_while_a_start_is_due(
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-@UNBUILT
 def test_turn_ended_drops_each_start_untied_but_a_resume_queued(g: Play, log: str):
     """Given the writer's start untied, and a resume of a1 queued
     When the main conversation ends its turn
@@ -752,7 +728,6 @@ def test_turn_ended_drops_each_start_untied_but_a_resume_queued(g: Play, log: st
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place")
-@UNBUILT
 def test_command_typed_gives_its_routes_starts(g: Play, log: str):
     """Given the writer tied to a1
     When the person types /log:retry
@@ -776,7 +751,6 @@ def test_result_reached_gives_the_result_and_its_routes_starts(g: Play, log: str
 
 
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
-@UNBUILT
 def test_result_reached_of_a_subagent_stopped_gives_its_start_due_again(g: Play, log: str):
     """Given the writer tied to a1, with no result
     When its notification says TaskStop stopped it
@@ -793,8 +767,8 @@ def test_result_reached_of_a_subagent_stopped_gives_its_start_due_again(g: Play,
     "kind",
     [
         "tie",
-        pytest.param("queue", marks=UNBUILT),
-        pytest.param("drop", marks=UNBUILT),
+        "queue",
+        "drop",
         "read",
     ],
 )
@@ -867,7 +841,6 @@ def test_report_made_of_an_item_or_a_result_adds_it(
 
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
-@UNBUILT
 def test_subagent_ended_with_no_result_is_stopped(g: Play, log: str):
     """Given the writer tied to a1, with no result
     When it ends
@@ -879,7 +852,6 @@ def test_subagent_ended_with_no_result_is_stopped(g: Play, log: str):
 
 
 @pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-@UNBUILT
 def test_subagent_ended_that_holds_ties_the_resume_queued(g: Play, log: str):
     """Given the writer tied to a1, which kept each step and gave `written`, and a resume queued to
     it

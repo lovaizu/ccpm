@@ -5,9 +5,14 @@ beside this module, and Lane's route adapter run inside the guard where the plug
 
 from __future__ import annotations
 
+import json
 import os
+import subprocess
+import sys
+from typing import Any, cast
 
 import routes
+from json_form import held
 from order import StartsDue, order_run
 from record import Run
 from rules import Rules, Step
@@ -32,11 +37,12 @@ def starts_due(plugin_root: str, cwd: str, run: Run, rules: Rules, turn_ended: b
     Changes: nothing of Lane's; the plugin's adapter may read the conversation's folder.
     Refuses: AdapterFailed.
     """
-    if os.path.isfile(os.path.join(plugin_root, "lane", "adapters", "starts_due.py")):
-        raise NotImplementedError("adapters.starts_due of the plugin's adapter")
+    if os.path.isfile(_adapter(plugin_root, "starts_due.py")):
+        given = {"run": order_run(run)}
+        return cast(StartsDue, _ask(plugin_root, cwd, "starts_due", given))
     if "routes" in rules:
         return routes.starts_due(rules["routes"], order_run(run))
-    raise NotImplementedError("adapters.starts_due of a plugin that gives no order")
+    return {"ends": True} if turn_ended else {"starts": []}
 
 
 def given_steps(plugin_root: str, cwd: str, run: Run, role: str, prompt: str) -> list[Step]:
@@ -51,4 +57,40 @@ def given_steps(plugin_root: str, cwd: str, run: Run, role: str, prompt: str) ->
     Refuses: AdapterFailed, also where the plugin has no adapter of the rules, naming
     lane/adapters/rules.py and the role, for the plugin's author to add it.
     """
-    raise NotImplementedError("adapters.given_steps")
+    if not os.path.isfile(_adapter(plugin_root, "rules.py")):
+        raise AdapterFailed(
+            f"Lane: {role} takes its steps from the plugin's adapter of the rules, which the"
+            f" plugin doesn't give. The plugin's author adds lane/adapters/rules.py in"
+            f" {plugin_root}, or the role's steps to lane/rules.json."
+        )
+    given = {"run": {"skill": run.skill, "words": run.words}, "role": role, "prompt": prompt}
+    return _ask(plugin_root, cwd, "rules", given)["steps"]
+
+
+def _adapter(plugin_root: str, name: str) -> str:
+    """The path of the plugin's adapter of the name."""
+    return os.path.join(plugin_root, "lane", "adapters", name)
+
+
+def _ask(plugin_root: str, cwd: str, name: str, given: Any) -> Any:
+    """What the plugin's adapter of the name gives for the input, held to its schema."""
+    path = _adapter(plugin_root, f"{name}.py")
+    done = subprocess.run(
+        [sys.executable, path],
+        input=json.dumps(given),
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    mend = "The plugin's author mends it."
+    if done.returncode != 0:
+        raise AdapterFailed(f"Lane: {path} failed: {done.stderr.strip()}. {mend}")
+    try:
+        gave = json.loads(done.stdout)
+    except ValueError:
+        raise AdapterFailed(f"Lane: {path} gave no JSON: {done.stdout.strip()}. {mend}") from None
+    left = held(gave, f"{name}.out.schema.json")
+    if left is not None:
+        raise AdapterFailed(f"Lane: {path} gave out of its form, at {left}. {mend}")
+    return gave

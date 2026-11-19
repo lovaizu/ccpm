@@ -79,10 +79,14 @@ def judge_end(move: Move) -> str | None:
     """
     steps = move.steps
     done = marked(move.run, move.agent_id)
-    # The step at which the start ends: the first it hasn't marked done, else its last.
-    ending = [step for step in steps if step["name"] not in done][:1] or steps[-1:]
+    # The step whose result rule judges the end: the first the start hasn't marked done, where its
+    # rules give one, else its last; none where its result ends the start at a step, as a result
+    # that a rule names among those that end the start is one it may give.
     gave = result.given(move)
     ends_at = next((i for i, step in enumerate(steps) if gave in _ends(step)), len(steps))
+    due = [step for step in steps if step["name"] not in done][:1]
+    ruled = [step for step in due if any(rule["type"] == "result" for rule in step["rules"])]
+    ending = (ruled or steps[-1:]) if ends_at == len(steps) else []
     said = (
         judge(rule, step, move)
         for kind, judge, held in (

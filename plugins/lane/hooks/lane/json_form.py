@@ -36,13 +36,18 @@ def held(value: Any, schema: str) -> str | None:
     Refuses: nothing; Lane's own schema that can't be read is Lane's fault, and stops with its
     trace.
     """
-    with open(os.path.join(HERE, schema), encoding="utf-8") as f:
-        root = json.load(f)
+    root = _schema(schema)
     left = _left(value, root, root, ())
     if left is None:
         return None
     at, what = left
     return f"{'/'.join(map(str, at)) or 'the top'}: {what}"
+
+
+def _schema(name: str) -> dict[str, Any]:
+    """The schema of the name beside this module."""
+    with open(os.path.join(HERE, name), encoding="utf-8") as f:
+        return json.load(f)
 
 
 def _shown(value: Any) -> str:
@@ -54,8 +59,11 @@ def _shown(value: Any) -> str:
 def _left(value: Any, schema: dict[str, Any], root: dict[str, Any], at: _At) -> _Left:
     """The first place where the value leaves the schema, or None."""
     if "$ref" in schema:
+        # A reference names a place in its own schema, or in another beside it by its file.
+        name, _, pointer = schema["$ref"].partition("#/")
+        root = _schema(name) if name else root
         referred = root
-        for key in schema["$ref"].partition("#/")[2].split("/"):
+        for key in pointer.split("/"):
             referred = referred[key]
         return _left(value, referred, root, at)
     for check in _CHECKS:
@@ -81,11 +89,15 @@ def _const(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Left:
 
 
 def _one_of(value: Any, schema: dict[str, Any], root: dict[str, Any], at: _At) -> _Left:
-    """Where the value holds none of the forms of oneOf or anyOf; each schema of Lane's gives
-    forms that no value holds two of, so the two keywords take the same check."""
+    """Where the value holds none of the forms of oneOf or anyOf: the place of the form it went
+    deepest in, the first of those, or the value's own where it went into none; each schema of
+    Lane's gives forms that no value holds two of, so the two keywords take the same check."""
     for keyword in ("oneOf", "anyOf"):
-        forms = schema.get(keyword, [])
-        if forms and all(_left(value, form, root, at) is not None for form in forms):
+        found = [_left(value, form, root, at) for form in schema.get(keyword, [])]
+        if found and None not in found:
+            deepest = max(found, key=lambda left: len(left[0]) if left else 0)
+            if deepest and len(deepest[0]) > len(at):
+                return deepest
             return at, f"holds none of the forms it may take: {_shown(value)}"
     return None
 
@@ -116,14 +128,22 @@ def _fields(value: Any, schema: dict[str, Any], root: dict[str, Any], at: _At) -
 
 def _min_length(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Left:
     """Where a string is shorter than minLength."""
-    least = schema.get("minLength", 0)
-    return None if len(value) >= least else (at, f"takes {least} characters at least")
+    least = schema.get("minLength")
+    return (
+        None if least is None or len(value) >= least else (at, f"takes {least} characters at least")
+    )
+
+
+def _minimum(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Left:
+    """Where an integer is less than minimum."""
+    least = schema.get("minimum")
+    return None if least is None or value >= least else (at, f"takes {least} at least, not {value}")
 
 
 def _min_items(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Left:
     """Where an array holds fewer items than minItems."""
-    least = schema.get("minItems", 0)
-    return None if len(value) >= least else (at, f"takes {least} items at least")
+    least = schema.get("minItems")
+    return None if least is None or len(value) >= least else (at, f"takes {least} items at least")
 
 
 def _items(value: Any, schema: dict[str, Any], root: dict[str, Any], at: _At) -> _Left:
@@ -146,6 +166,7 @@ _CHECKS: tuple[Callable[[Any, dict[str, Any], dict[str, Any], _At], _Left], ...]
     _required,
     _fields,
     _min_length,
+    _minimum,
     _min_items,
     _items,
 )

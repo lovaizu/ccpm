@@ -3,15 +3,17 @@ hooks/hooks.json enters it on, and the answer in the form that Claude Code reads
 
 from __future__ import annotations
 
+import functools
 import json
 import sys
 from dataclasses import dataclass, replace
-from typing import Callable, cast
+from typing import Callable, TypeVar, cast
 
 import adapters
 import place
 import record
 import rule_types
+from adapters import AdapterFailed
 from named_files import of_call
 from order import StartsDue
 from place import Event, Move, SkillCall
@@ -30,6 +32,23 @@ class Answer:
 
     stop: bool = False
     said: str = ""
+
+
+_Answers = TypeVar("_Answers", bound=Callable[..., Answer])
+
+
+def _checked(answers: _Answers) -> _Answers:
+    """The interface, its answer stopping the call with what's wrong and who fixes it where Lane
+    can't check it, as a plugin's rules out of form or an adapter that failed."""
+
+    @functools.wraps(answers)
+    def checked(*given: object) -> Answer:
+        try:
+            return answers(*given)
+        except (OutOfForm, AdapterFailed) as wrong:
+            return Answer(True, str(wrong))
+
+    return cast(_Answers, checked)
 
 
 def answer(event: Event) -> Answer:
@@ -58,11 +77,18 @@ def answer(event: Event) -> Answer:
     if call is not None:
         answers.append(skill_called(call))
     else:
-        move = place.place(event, runs, lambda run: _due(run, event))
-        if move is not None:
-            answers.append(_ANSWERS[move.kind](move))
+        answers.append(_placed(event))
     said = "\n".join(given.said for given in answers if given.said)
     return Answer(any(given.stop for given in answers), said)
+
+
+@_checked
+def _placed(event: Event) -> Answer:
+    """The answer of the interface that the event's move reaches, an empty one where it makes
+    none."""
+    runs = record.runs(event["session_id"])
+    move = place.place(event, runs, lambda run: _due(run, event))
+    return Answer() if move is None else _ANSWERS[move.kind](move)
 
 
 def skill_called(call: SkillCall) -> Answer:
@@ -85,6 +111,7 @@ def skill_called(call: SkillCall) -> Answer:
     return Answer()
 
 
+@_checked
 def run_opened(event: Event, run: Run) -> Answer:
     """S9 and S10: the main conversation's next event after the skill's call, where the guard first
     reads the plugin's folder and rules.
@@ -105,14 +132,10 @@ def run_opened(event: Event, run: Run) -> Answer:
         return Answer()
     record.add(run.session_id, [{"kind": "folder", "run": run.id, "plugin_root": root}])
     opened = replace(run, plugin_root=root)
-    try:
-        if read_rules(root) is None:
-            return Answer()
-        return Answer(said=_due_said(_due(opened, event)))
-    except OutOfForm as wrong:
-        return Answer(True, str(wrong))
+    return Answer() if read_rules(root) is None else Answer(said=_due_said(_due(opened, event)))
 
 
+@_checked
 def start_made(move: Move) -> Answer:
     """S9: the main conversation starts a subagent of the plugin, or resumes one by SendMessage.
 
@@ -130,9 +153,8 @@ def start_made(move: Move) -> Answer:
     of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
     sentence saying that the plugin's author adds or mends lane/adapters/rules.py for the role.
     """
-    if move.event.get("tool_name") != "Agent":
-        raise NotImplementedError("guard.start_made of a resume")
-    role = move.event["tool_input"].get("subagent_type", "")
+    resumed = _resumed(move)
+    role = move.event["tool_input"].get("subagent_type", resumed.get("role", ""))
     due = _due(move.run, move.event)
     plugin = move.run.skill.partition(":")[0]
     if role.partition(":")[0] != plugin and move.agent_id is None:
@@ -144,14 +166,27 @@ def start_made(move: Move) -> Answer:
         "run": move.run.id,
         "role": role,
         "tool_use_id": move.event["tool_use_id"],
-        "prompt": move.prompt or "",
+        "prompt": resumed.get("prompt", move.prompt or ""),
     }
-    if asks_adapter(_rules(move.run), role):
-        raise NotImplementedError("guard.start_made of a start whose steps the adapter gives")
+    if "steps" in resumed:
+        entry["steps"] = resumed["steps"]
+    elif not resumed and asks_adapter(_rules(move.run), role):
+        cwd = move.event["cwd"]
+        entry["steps"] = adapters.given_steps(_root(move.run), cwd, move.run, role, entry["prompt"])
     record.add(move.run.session_id, [entry])
     return Answer()
 
 
+def _resumed(move: Move) -> record.Entry:
+    """The start that a SendMessage resumes, the latest tied to the subagent it names; none for an
+    Agent call."""
+    to = move.event["tool_input"].get("to")
+    tied = [e for e in move.run.entries if e["kind"] == "tie" and e["agent_id"] == to]
+    uses = [e for e in move.run.entries if tied and e.get("tool_use_id") == tied[-1]["tool_use_id"]]
+    return uses[0] if uses else {}
+
+
+@_checked
 def turn_ended(move: Move) -> Answer:
     """S5, S8, and S9: the main conversation ends its turn, held to its skill's steps and to the
     starts due.
@@ -166,9 +201,26 @@ def turn_ended(move: Move) -> Answer:
     Refuses: nothing; an adapter of the starts due that failed stops the turn's end with what's
     wrong.
     """
-    raise NotImplementedError("guard.turn_ended")
+    entries = move.run.entries
+    settled = {e.get("tool_use_id") for e in entries if e["kind"] in ("tie", "queue", "drop")}
+    untied = [e for e in entries if e["kind"] == "start" and e["tool_use_id"] not in settled]
+    drops: list[record.Entry] = [
+        {"kind": "drop", "run": move.run.id, "tool_use_id": e["tool_use_id"]} for e in untied
+    ]
+    if drops:
+        record.add(move.run.session_id, drops)
+    run = replace(move.run, entries=[*entries, *drops])
+    said = rule_types.judge_end(replace(move, run=run))
+    if said is not None:
+        return Answer(True, said)
+    due = _due(run, move.event)
+    if due.get("starts"):
+        return Answer(True, _due_said(due))
+    _end_if(run, move.event, turn_ended=True)
+    return Answer()
 
 
+@_checked
 def command_typed(move: Move) -> Answer:
     """S9 and S10: a command of the plugin, typed by the person or called by the Skill tool, moves
     the run that stands, as a conversation holds one run of a plugin at a time.
@@ -179,9 +231,14 @@ def command_typed(move: Move) -> Answer:
     Changes: the run record, by the command.
     Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
     """
-    raise NotImplementedError("guard.command_typed")
+    command = place.command_of(move.event) or ""
+    typed: record.Entry = {"kind": "typed", "run": move.run.id, "command": command}
+    record.add(move.run.session_id, [typed])
+    run = replace(move.run, entries=[*move.run.entries, typed])
+    return Answer(said=_due_said(_end_if(run, move.event)))
 
 
+@_checked
 def result_reached(move: Move) -> Answer:
     """S9: a subagent's end reaches the main conversation, with its result.
 
@@ -193,13 +250,16 @@ def result_reached(move: Move) -> Answer:
     with no result, such as by TaskStop; else nothing.
     Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong.
     """
+    run = move.run
     if "<status>killed</status>" in move.event["prompt"]:
-        raise NotImplementedError("guard.result_reached of a start stopped with no result")
-    gave = given(move)
-    due = _due(move.run, move.event)
-    if due.get("ends"):
-        record.add(move.run.session_id, [{"kind": "ended", "run": move.run.id}])
-    told = f"{move.role} gave {gave}." if gave else ""
+        stopped: record.Entry = {"kind": "stopped", "run": run.id, "agent_id": move.agent_id}
+        record.add(run.session_id, [stopped])
+        run = replace(run, entries=[*run.entries, stopped])
+        told = f"{move.role} stopped with no result."
+    else:
+        gave = given(move)
+        told = f"{move.role} gave {gave}." if gave else ""
+    due = _end_if(run, move.event)
     return Answer(said=" ".join(each for each in (told, _due_said(due)) if each))
 
 
@@ -214,10 +274,8 @@ def fact_added(move: Move) -> Answer:
     Changes: the run record, by the fact.
     Refuses: nothing.
     """
-    if move.kind not in ("tie", "read"):
-        raise NotImplementedError(f"guard.fact_added of a {move.kind}")
     entry: record.Entry = {"kind": move.kind, "run": move.run.id, "agent_id": move.agent_id}
-    if move.kind == "tie":
+    if move.kind != "read":
         entry["tool_use_id"] = move.event["tool_use_id"]
     else:
         lines = move.event["tool_response"]["file"]
@@ -275,7 +333,22 @@ def subagent_ended(move: Move) -> Answer:
     Refuses: nothing.
     """
     said = rule_types.judge_end(move)
-    return Answer() if said is None else Answer(True, said)
+    if said is not None:
+        return Answer(True, said)
+    entries = move.run.entries
+    tied = {e["tool_use_id"] for e in entries if e["kind"] == "tie"}
+    queued = [
+        e["tool_use_id"]
+        for e in entries
+        if e["kind"] == "queue" and e["agent_id"] == move.agent_id and e["tool_use_id"] not in tied
+    ]
+    ties: list[record.Entry] = [
+        {"kind": "tie", "run": move.run.id, "tool_use_id": use, "agent_id": move.agent_id}
+        for use in queued
+    ]
+    if ties:
+        record.add(move.run.session_id, ties)
+    return Answer()
 
 
 def written(event: Event, given: Answer) -> str:
@@ -337,6 +410,15 @@ def _rules(run: Run) -> Rules:
 def _due(run: Run, event: Event) -> StartsDue:
     """The starts due of the run as it stands, by its plugin's order, while the turn runs."""
     return adapters.starts_due(_root(run), event["cwd"], run, _rules(run), False)
+
+
+def _end_if(run: Run, event: Event, turn_ended: bool = False) -> StartsDue:
+    """The starts due of the run as it stands, by its plugin's order, its record given an `ended`
+    entry where the order says the run ends."""
+    due = adapters.starts_due(_root(run), event["cwd"], run, _rules(run), turn_ended)
+    if due.get("ends"):
+        record.add(run.session_id, [{"kind": "ended", "run": run.id}])
+    return due
 
 
 def _due_said(due: StartsDue) -> str:
