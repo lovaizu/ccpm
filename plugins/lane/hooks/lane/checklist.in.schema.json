@@ -29,6 +29,7 @@
       }
     },
     "role": {
+      "description": "The role whose step it is: a subagent's agent type, or the skill's name for the main conversation.",
       "type": "string",
       "minLength": 1
     },

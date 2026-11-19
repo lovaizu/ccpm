@@ -4,22 +4,13 @@ is, by what Claude Code's hook events carry, as dev/lane/claude-code-states.md l
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, TypedDict
+from typing import Any
 
 from record import Run
+from report import Report
 
 # A hook event as Claude Code sends it on standard input.
 Event = dict[str, Any]
-
-
-class Report(TypedDict, total=False):
-    """What a reporter of bin/ prints for the guard: its `kind`, one of `step`, `item`, and
-    `result`, and the step, the item, or the result it reports done."""
-
-    kind: str
-    step: str
-    item: str
-    result: str
 
 
 @dataclass
@@ -35,15 +26,16 @@ class SkillCall:
 
 @dataclass
 class Move:
-    """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `drop`, `read`,
-    `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role, None for the main
-    conversation; the subagent's `agent_id`; the step its start stands at; and the report where a
-    reporter made the move."""
+    """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `queue`, `drop`,
+    `read`, `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role whose steps hold
+    it, the subagent's agent type, or the skill's name of the run for the main conversation; the
+    subagent's `agent_id`, None for the main conversation; the step its start stands at; and the
+    report where a reporter made the move."""
 
     kind: str
     event: Event
     run: Run
-    role: str | None
+    role: str
     agent_id: str | None
     step: str | None
     report: Report | None
@@ -52,7 +44,8 @@ class Move:
 def skill_call(event: Event) -> SkillCall | None:
     """The skill that the event calls.
 
-    Takes: a UserPromptExpansion, or a PreToolUse or PostToolUse of Skill.
+    Takes: a UserPromptExpansion, or a PostToolUse of Skill, so that a Skill call denied at its
+    PreToolUse calls no skill.
     Gives: the skill by `command_name` or `tool_input.skill`, with `command_args` or `args`; None
     for any other event.
     Changes: nothing.
@@ -61,15 +54,32 @@ def skill_call(event: Event) -> SkillCall | None:
     raise NotImplementedError("place.skill_call")
 
 
+def opening(event: Event, runs: list[Run]) -> list[Run]:
+    """The runs whose plugin's folder the event first lets the guard read from the transcript.
+
+    Takes: a hook event, and the runs of its conversation.
+    Gives: each run with no folder yet, at an event of the main conversation after the skill's
+    call, as the transcript holds the skill's base directory only from then: any event with no
+    `agent_id` but the UserPromptExpansion of the call and the PreToolUse and PostToolUse of its
+    Skill call; none at a subagent's event.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    raise NotImplementedError("place.opening")
+
+
 def place(event: Event, runs: list[Run]) -> Move | None:
     """The move that the event makes, on the run whose start it belongs to.
 
     Takes: a hook event, and the runs of its conversation.
     Gives: the move, placed by `session_id`, by a missing `agent_id` for the main conversation, by
     the `agent_id` that the PostToolUse of an Agent call tied to a start, and by the skill that a
-    typed command or a result names; a reporter's Bash call as a `report` move with the report its
-    output gives; None where the event lies outside each run, such as an `agent_id` that no start
-    ties.
+    typed command or a result names; a reporter's Bash call as a `report` move with the report that
+    report.read_report gives of its output; the PostToolUse of a SendMessage as a `tie` where it
+    resumed the subagent, and as a `queue` where it queued the message to a subagent that still
+    runs; that subagent's SubagentStop as the `end` of the pass that ran, on the start tied to it
+    before, with the resume queued still untied; None where the event lies outside each run, such
+    as an `agent_id` that no start ties.
     Changes: nothing.
     Refuses: nothing.
     """

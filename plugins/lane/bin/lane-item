@@ -4,9 +4,12 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+# The form of a report lies in hooks/lane/, found from this command's real path, wherever Lane lies.
+sys.path.insert(
+    0, os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "hooks", "lane")
+)
 
-from report import report  # noqa: E402 - found beside this command, wherever Lane lies.
+from report import report  # noqa: E402 - found only once the path above holds hooks/lane/.
 
 if __name__ == "__main__":
     sys.exit(report("item", sys.argv[1:]))

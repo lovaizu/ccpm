@@ -24,7 +24,8 @@ class Step(TypedDict):
 
 
 class Role(TypedDict):
-    """The steps of one role, in their order."""
+    """The steps of one role, in their order: a subagent of the plugin, or the main conversation
+    in a run of a skill."""
 
     steps: list[Step]
 
@@ -38,14 +39,15 @@ class After(TypedDict, total=False):
 
 
 class Route(TypedDict):
-    """The roles whose starts come due after what the route goes after."""
+    """The roles whose starts come due after what the route goes after, each by its agent type."""
 
     after: After
     start: list[str]
 
 
 class Rules(TypedDict):
-    """What a plugin gives Lane: each role's steps by its agent type, and the routes."""
+    """What a plugin gives Lane: each role's steps, a subagent's by its agent type and the main
+    conversation's by the skill's name, and the routes."""
 
     roles: dict[str, Role]
     routes: list[Route]

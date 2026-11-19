@@ -8,6 +8,7 @@ import sys
 from dataclasses import dataclass
 
 from place import Event, Move, SkillCall
+from record import Run
 
 
 @dataclass
@@ -24,10 +25,12 @@ def answer(event: Event) -> Answer:
 
     Takes: a hook event of hooks/hooks.json: PreToolUse, PostToolUse, PostToolUseFailure, Stop,
     SubagentStop, UserPromptSubmit, or UserPromptExpansion.
-    Gives: the answer of the interface below that the event's move reaches: skill_called for a
-    skill's call, and for the others the move that place.place gives; an empty answer where the
-    event lies outside each run.
-    Changes: what the interface it reaches changes.
+    Gives: first, for each run that place.opening gives, the answer of run_opened; then the answer
+    of the interface below that the event's move reaches: skill_called for a skill's call, and for
+    the others the move that place.place gives, held to the rules in its run's plugin's folder; the
+    answers joined, stopping where either stops; an empty answer where the event lies outside each
+    run, or its run's plugin gives no rules.
+    Changes: what each interface it reaches changes.
     Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
     adapter that failed, the answer says why and who fixes that, and stops the call.
     """
@@ -38,14 +41,33 @@ def skill_called(call: SkillCall) -> Answer:
     """S9 and S10: the main conversation calls the skill, with the words typed after the command.
 
     Takes: the skill's call.
-    Gives: the starts due, each with its text, where the plugin gives rules: of the run that the
-    run record holds not ended, where it stands; else of a new run, with each result that the
-    plugin's kept adapter gives for the words; an empty answer where the plugin gives no rules.
-    Changes: the run record, by a new run and its kept results.
-    Refuses: nothing; a plugin's rules out of form, or a kept adapter that failed, stops the call
+    Gives: the starts due, each with its text, of a run of the skill that the run record holds
+    with its folder and that its plugin's rules show not ended, where it stands; else an empty
+    answer, as the transcript holds the skill's base directory only from the conversation's next
+    event, where run_opened gives the starts due.
+    Changes: the run record, by a new run of the skill and the words, with no folder, where it
+    holds no such run.
+    Refuses: nothing; a plugin's rules out of form, or a start adapter that failed, stops the call
     with what's wrong.
     """
     raise NotImplementedError("guard.skill_called")
+
+
+def run_opened(event: Event, run: Run) -> Answer:
+    """S9 and S10: the main conversation's next event after the skill's call, where the guard first
+    reads the plugin's folder and rules.
+
+    Takes: the event, whose `transcript_path` holds the skill's base directory, and the run with no
+    folder.
+    Gives: the starts due of the run, each with its text, after each result that the plugin's kept
+    adapter gives for the run's words, where the plugin gives rules; an empty answer where the
+    plugin gives none, or the transcript holds no base directory of the skill yet.
+    Changes: the run record, by the run's folder and its kept results, in one write, where the
+    transcript gives the folder.
+    Refuses: nothing; a plugin's rules out of form, or an adapter that failed, stops the event's
+    call with what's wrong.
+    """
+    raise NotImplementedError("guard.run_opened")
 
 
 def start_made(move: Move) -> Answer:
@@ -54,7 +76,9 @@ def start_made(move: Move) -> Answer:
     Takes: a `start` move at the PreToolUse of an Agent or SendMessage call.
     Gives: an empty answer for a start due; for any other start of the plugin's subagents, or one
     by a subagent, a stop with the starts due.
-    Changes: the run record, by the start, untied until its PostToolUse.
+    Changes: the run record, by the start, untied until the PostToolUse of its call; a resume that
+    the PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
+    SubagentStop, where subagent_ended ties it, as Lane hooks no SubagentStart.
     Refuses: nothing.
     """
     raise NotImplementedError("guard.start_made")
@@ -65,7 +89,8 @@ def turn_ended(move: Move) -> Answer:
 
     Takes: a `turn_end` move at the main conversation's Stop.
     Gives: a stop with the starts due, where a start is due; an empty answer where none is.
-    Changes: the run record, by dropping each start still untied.
+    Changes: the run record, by dropping each start still untied but a resume queued to a subagent
+    that still runs.
     Refuses: nothing.
     """
     raise NotImplementedError("guard.turn_ended")
@@ -97,10 +122,11 @@ def result_reached(move: Move) -> Answer:
 
 def fact_added(move: Move) -> Answer:
     """A move that only adds a fact to the run: a start tied at the PostToolUse of its Agent call,
-    a start dropped at its PostToolUseFailure, or a Read of a file that a rule of the files to read
-    whole names, at its PostToolUse.
+    or of a SendMessage that resumed its subagent; a resume queued at the PostToolUse of a
+    SendMessage to a subagent that still runs; a start dropped at its PostToolUseFailure; or a Read
+    of a file that a rule of the files to read whole names, at its PostToolUse.
 
-    Takes: a `tie`, `drop`, or `read` move.
+    Takes: a `tie`, `queue`, `drop`, or `read` move.
     Gives: an empty answer.
     Changes: the run record, by the fact.
     Refuses: nothing.
@@ -109,7 +135,8 @@ def fact_added(move: Move) -> Answer:
 
 
 def call_made(move: Move) -> Answer:
-    """S1, S2, and S4: a start calls a tool, held to the rules of its step.
+    """S1, S2, and S4: a start, or the main conversation in a run, calls a tool, held to the rules
+    of its step.
 
     Takes: a `call` move at its PreToolUse.
     Gives: a stop with the sentence that lanes.judge_call gives; an empty answer where it gives
@@ -136,10 +163,12 @@ def report_made(move: Move) -> Answer:
 def subagent_ended(move: Move) -> Answer:
     """S7 and S8: a start ends, held to its result, its steps, and the plugin's own check.
 
-    Takes: an `end` move at the subagent's SubagentStop.
+    Takes: an `end` move at the subagent's SubagentStop, the end of the pass that ran where a resume
+    is queued to the subagent.
     Gives: a stop with the sentence that lanes.judge_end gives; an empty answer where it gives
     none.
-    Changes: nothing.
+    Changes: where the end holds and a resume is queued to the subagent, the run record, by tying
+    that resume's start to the subagent; else nothing.
     Refuses: nothing.
     """
     raise NotImplementedError("guard.subagent_ended")

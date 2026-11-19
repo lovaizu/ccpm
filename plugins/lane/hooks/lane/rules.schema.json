@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "properties": {
     "roles": {
-      "description": "Each role's steps, by the role's agent type, such as <plugin>:<role>.",
+      "description": "Each role's steps: a subagent's by its agent type, such as <plugin>:<role>, and the main conversation's in a run of a skill by the skill's name, such as <plugin>:<skill>.",
       "type": "object",
       "additionalProperties": {
         "type": "object",
@@ -51,13 +51,17 @@
                 "required": ["role", "result"],
                 "additionalProperties": false,
                 "properties": {
-                  "role": { "type": "string", "minLength": 1 },
+                  "role": { "description": "The role's agent type.", "type": "string", "minLength": 1 },
                   "result": { "type": "string", "minLength": 1 }
                 }
               }
             ]
           },
-          "start": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          "start": {
+            "description": "The roles whose starts come due, each by its agent type.",
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
         }
       }
     }
