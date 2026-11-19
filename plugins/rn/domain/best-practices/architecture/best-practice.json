@@ -118,7 +118,7 @@
        },
        {
         "at": "make",
-        "text": "Write each decision under its principle as `P<n>.<m>`, one decision in one sentence, without any name that a later section decides, such as a component, a data, a tool, or a count, since Principles comes before the sections that decide them."
+        "text": "Write each decision under its principle as `P<n>.<m>`, one decision in one sentence that says what happens by it, in the words of the README, without any name that a later section decides, such as a component, a data, a tool, or a count, since Principles comes before the sections that decide them. Read each as a developer who has read only the README, and rewrite each they can't follow, such as one that names what the product keeps without saying what."
        },
        {
         "at": "make",

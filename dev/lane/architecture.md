@@ -13,27 +13,37 @@
 Lane gives a role that leaves its step the step's own sentence, so that the role notices at once.
 
 - P1: the step's own sentence, at once
-  - P1.1: each stop gives the step's sentence and what to do, or why it can't check and who fixes
-    it.
+  - P1.1: when Lane stops a call, it gives the role the sentence of the step it left and what to do
+    instead. Where it can't check a call, it says why and who fixes that.
 - P2: the user's steps as the one source
-  - P2.1: a proposal comes from the steps alone, and each change asked goes into the steps.
-  - P2.2: each rule's sentence, its check, and the steps it suits come from one definition.
-  - P2.3: only a proposal shown is laid, while the steps read as shown.
-- P3: facts at the move, never a role's claim
-  - P3.1: a run moves only on a result that its role reported, never on its reply.
-  - P3.2: a step, an item, or a read counts as done only from the role's own act, checked as it
-    acts.
+  - P2.1: `/lane:up` proposes the rules and routes from the plugin's steps alone, and a change the
+    user asks for goes into the steps, not into a rule.
+  - P2.2: the sentence that a rule adds to a step and the check that holds it come from one rule
+    type, so that the two never say different things.
+  - P2.3: Lane lays into the plugin only the proposal the user approved, and only while the steps
+    still read as they did when shown.
+- P3: facts, never a role's claim
+  - P3.1: a run moves on only by the result a role gives with the result script, never by what its
+    reply says.
+  - P3.2: a step, a checklist item, or a file read counts as done only from the role's own call, the
+    mark script or the Read itself, checked as the role makes it.
 - P4: the order the user set
-  - P4.1: only the main conversation starts the roles, each as a start due.
-  - P4.2: the main conversation's turn ends only where no move due goes on without the person.
+  - P4.1: only the main conversation starts the subagents, and only the starts that the user's
+    routes make due.
+  - P4.2: the main conversation's turn ends only where no start is due that goes on without the
+    person's answer.
 - P5: nothing lost on a stop
-  - P5.1: each run's state comes from what was kept, worked out by one code alone.
+  - P5.1: where a run stands is worked out again by one code from what was kept, Lane's record of
+    starts and results or the results the plugin keeps, so that a run goes on after `/compact` or in
+    a new conversation.
 - P6: only the plugin's run
-  - P6.1: moves are checked only within a run of the plugin's skill.
+  - P6.1: Lane checks only a run of the plugin's skill, from its call until its routes end, and
+    leaves other work in the conversation alone.
 - P7: the laid plugin on its own
-  - P7.1: the laid plugin needs only its own folder and what each machine running it has, naming
-    no plugin.
-  - P7.2: what Lane laid is replaced whole, and every other part of the plugin stays as it stands.
+  - P7.1: the laid plugin runs with only its own folder and what each machine has, such as
+    `python3`, so that whoever runs it needs neither Lane nor another plugin.
+  - P7.2: `/lane:up` replaces whole what Lane laid in the plugin, and leaves each other file of the
+    plugin as it was.
 
 ### Data model
 
