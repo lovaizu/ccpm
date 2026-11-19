@@ -63,9 +63,10 @@ Strategies:
 - Each start that a route after a command makes due opens a lane of its own, and each start that a
   route after a result makes due follows in the result's lane. [S9]\
   Intent: chains of one run go at once, each in its order.
-- A route that starts one role several times at once, its lane moving on once each of them has its
-  result. [S9]\
-  Intent: a step done by several subagents side by side moves on as one.
+- A route that starts one role several times at once, its lane waiting until each of them has its
+  result, and moving on by one result that the plugin's adapter gives from theirs. [S9, P2.2]\
+  Intent: a step done by several subagents side by side moves on as one, where the plugin alone
+  decides what comes next.
 - A run's record that only grows, holding only what no later move gives again. [S10]\
   Intent: moves checked at the same moment lose nothing of one another's.
 
