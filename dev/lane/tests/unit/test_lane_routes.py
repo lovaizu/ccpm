@@ -10,6 +10,7 @@ from typing import Any
 
 import lane_bench
 import pytest
+from adapters import LaneStart
 from record import Entry, Run
 from routes import Due, due
 
@@ -39,9 +40,15 @@ def result(role: str, agent_id: str, value: str) -> Entry:
     return {"kind": "result", "run": "r1", "role": role, "agent_id": agent_id, "result": value}
 
 
-def once(role: str) -> list[str]:
+def once(role: str, lane: list[LaneStart]) -> list[str]:
     """The texts of a role due where the plugin has no start adapter, so that it starts once."""
     return [""]
+
+
+def split_in_two(role: str, lane: list[LaneStart]) -> list[str]:
+    """The texts of a role due where the plugin starts it twice after the lane's `split`, as
+    `log`'s start adapter does."""
+    return ["", ""] if lane and lane[-1].get("result") == "split" else [""]
 
 
 def roles(starts: list[Due]) -> list[str]:
@@ -134,8 +141,9 @@ def test_two_starts_of_one_role_are_due_until_each_is_made():
         tie("u2", "a2"),
         result("log:reviewer", "a2", "split"),
     )
-    assert roles(due(RULES, run(*split), once)) == ["log:writer", "log:writer"]
-    assert roles(due(RULES, run(*split, start("log:writer", "u3")), once)) == ["log:writer"]
+    assert roles(due(RULES, run(*split), split_in_two)) == ["log:writer", "log:writer"]
+    after = run(*split, start("log:writer", "u3"))
+    assert roles(due(RULES, after, split_in_two)) == ["log:writer"]
 
 
 @pytest.mark.supports("test_a_run_whose_routes_start_no_more_ends_and_holds_no_move_after")

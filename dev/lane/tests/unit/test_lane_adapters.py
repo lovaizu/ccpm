@@ -47,7 +47,7 @@ def test_a_start_adapter_gives_the_text_of_the_start_due(log: str, cwd: str):
     """Given `log`'s start adapter
     When Lane asks it for the text of the writer due in the run for 1.2.0
     Then it gives the text that the adapter prints"""
-    texts = start_texts(log, cwd, RUN, "log:writer")
+    texts = start_texts(log, cwd, RUN, "log:writer", [])
     assert texts == [lane_bench.text("log:writer")]
 
 
@@ -58,9 +58,9 @@ def test_a_start_adapter_takes_the_run_and_the_role_in_the_conversations_folder(
     Then it was given the run's skill and words and the role, as start.in.schema.json says, and
     ran in the conversation's folder"""
     adapter(log, "start.py", ECHO.format(printed=json.dumps({"texts": ["Write it."]})))
-    start_texts(log, cwd, RUN, "log:writer")
+    start_texts(log, cwd, RUN, "log:writer", [])
     assert given(cwd) == {
-        "input": {"run": {"skill": "log:up", "words": "1.2.0"}, "role": "log:writer"},
+        "input": {"run": {"skill": "log:up", "words": "1.2.0"}, "role": "log:writer", "lane": []},
         "cwd": os.path.realpath(cwd),
     }
 
@@ -71,7 +71,7 @@ def test_a_plugin_without_a_start_adapter_gives_no_text(log: str, cwd: str):
     When Lane asks for the text of the writer due
     Then there's none"""
     adapter(log, "start.py", None)
-    assert start_texts(log, cwd, RUN, "log:writer") is None
+    assert start_texts(log, cwd, RUN, "log:writer", []) is None
 
 
 @pytest.mark.supports("test_a_start_adapter_that_fails_stops_with_the_adapter_and_what_it_said")
@@ -81,7 +81,7 @@ def test_a_start_adapter_that_fails_is_refused_with_its_file_and_what_it_said(lo
     Then it refuses with AdapterFailed naming start.py and what it said"""
     adapter(log, "start.py", "import sys\n\nsys.exit('no version found')\n")
     with pytest.raises(AdapterFailed) as raised:
-        start_texts(log, cwd, RUN, "log:writer")
+        start_texts(log, cwd, RUN, "log:writer", [])
     assert "start.py" in str(raised.value)
     assert "no version found" in str(raised.value)
 
@@ -95,7 +95,7 @@ def test_a_start_adapters_output_out_of_its_form_is_refused(log: str, cwd: str, 
     Then it refuses with AdapterFailed naming start.py"""
     adapter(log, "start.py", f"print({printed!r})\n")
     with pytest.raises(AdapterFailed) as raised:
-        start_texts(log, cwd, RUN, "log:writer")
+        start_texts(log, cwd, RUN, "log:writer", [])
     assert "start.py" in str(raised.value)
 
 

@@ -1,20 +1,38 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "What a plugin's start adapter gives Lane",
-  "description": "The text of each start of the role due, as many as the role starts at once, which the main conversation gives each start.",
-  "type": "object",
-  "required": [
-    "texts"
-  ],
-  "additionalProperties": false,
-  "properties": {
-    "texts": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
-      "minItems": 1
+  "description": "For a role due in a lane, the text of each of its starts, as many as the role starts at once; for the lanes of the run, the first start of each chain to open now, each in a lane of its own.",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["texts"],
+      "additionalProperties": false,
+      "properties": {
+        "texts": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["open"],
+      "additionalProperties": false,
+      "properties": {
+        "open": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["role", "text"],
+            "additionalProperties": false,
+            "properties": {
+              "role": { "type": "string", "minLength": 1, "description": "The role, by its agent type." },
+              "text": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
     }
-  }
+  ]
 }

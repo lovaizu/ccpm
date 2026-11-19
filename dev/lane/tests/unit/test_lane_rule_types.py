@@ -85,7 +85,7 @@ def move(
         {"kind": "tie", "run": "r1", "tool_use_id": "u2", "agent_id": "a2"},
     ]
     run = Run("r1", "session-1", "log:up", "1.2.0", "/plugins/log", [*head, *entries])
-    return Move(kind, event, run, agent.type, agent.id, None, step, report)
+    return Move(kind, event, run, agent.type, agent.id, None, None, step, report)
 
 
 def marked(step: str) -> Report:

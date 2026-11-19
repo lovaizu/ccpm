@@ -29,8 +29,13 @@ def answer(event: Event) -> Answer:
     of the interface below that the event's move reaches: skill_called for the skill's call that
     place.skill_call gives, and for the others the move that place.place gives, held to the rules
     in its run's plugin's folder; the answers joined, stopping where either stops; an empty answer
-    where the event lies outside each run, or its run's plugin gives no rules.
-    Changes: what each interface it reaches changes.
+    where the event lies outside each run, or its run's plugin gives no rules. Wherever an answer
+    gives the starts due, or a start's place among them, the starts due hold the first start of each
+    chain that adapters.chains_opened gives from the lanes that routes.lanes gives, and the texts of
+    each role due are those that adapters.start_texts gives with its lane's starts from
+    routes.lanes.
+    Changes: what each interface it reaches changes; where adapters.chains_opened opens a chain, the
+    run record, by the entries that routes.opened gives, before the starts due are read.
     Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
     adapter that failed, the answer says why and who fixes that, and stops the call.
     """

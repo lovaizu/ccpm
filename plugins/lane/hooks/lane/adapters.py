@@ -17,23 +17,58 @@ class KeptResult(TypedDict):
     result: str
 
 
+class LaneStart(TypedDict, total=False):
+    """A start that a lane has made so far, or the first start of a chain that the plugin opened,
+    not yet made: its `text`, and its `result` where it has one."""
+
+    text: str
+    result: str
+
+
+class Opening(TypedDict):
+    """The first start of a chain that the plugin opens now: the role, by its agent type, and its
+    text."""
+
+    role: str
+    text: str
+
+
 class AdapterFailed(Exception):
     """An adapter that failed or gave output out of its form, said with the adapter's file and what
     it gave, so that the plugin's author can mend it."""
 
 
-def start_texts(plugin_root: str, cwd: str, run: Run, role: str) -> list[str] | None:
-    """The texts of a role due, one for each time it starts at once, from the plugin's start
-    adapter, lane/adapters/start.py.
+def start_texts(
+    plugin_root: str, cwd: str, run: Run, role: str, lane: list[LaneStart]
+) -> list[str] | None:
+    """The texts of a role due in a lane, one for each time it starts at once, from the plugin's
+    start adapter, lane/adapters/start.py.
 
-    Takes: the plugin's folder, the conversation's folder, the run, and the role due, by its agent
-    type.
+    Takes: the plugin's folder, the conversation's folder, the run, the role due, by its agent
+    type, and each start that its lane has made so far, in their order, by which the plugin finds
+    which of its chains the lane holds.
     Gives: each text, in the form of start.out.schema.json, so that the role starts as many times
     as the texts given; None where the plugin has no start adapter, so that the role starts once.
     Changes: nothing of Lane's; the adapter may read the conversation's folder.
     Refuses: AdapterFailed.
     """
     raise NotImplementedError("adapters.start_texts")
+
+
+def chains_opened(
+    plugin_root: str, cwd: str, run: Run, lanes: list[list[LaneStart]]
+) -> list[Opening]:
+    """The first start of each chain that the plugin opens now, from its start adapter,
+    lane/adapters/start.py.
+
+    Takes: the plugin's folder, the conversation's folder, the run, and each lane of the run with
+    its starts so far, in their order, by which the plugin finds which of its chains stand open.
+    Gives: each first start, in the form of start.out.schema.json; none where the plugin opens no
+    chain now, or has no start adapter.
+    Changes: nothing of Lane's; the adapter may read the conversation's folder.
+    Refuses: AdapterFailed.
+    """
+    raise NotImplementedError("adapters.chains_opened")
 
 
 def checklist(plugin_root: str, cwd: str, run: Run, role: str, step: str) -> list[str]:

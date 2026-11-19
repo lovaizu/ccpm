@@ -4,7 +4,18 @@ again in the prompt of a start made."""
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from routes import Due
+
+
+@dataclass
+class Named:
+    """What a start's prompt gives: the name of its lane, and the start's text without the words
+    that name it."""
+
+    lane: str
+    text: str
 
 
 def text(start: Due) -> str:
@@ -19,13 +30,13 @@ def text(start: Due) -> str:
     raise NotImplementedError("lane_text.text")
 
 
-def lane(prompt: str) -> str | None:
-    """The lane that a start's prompt names.
+def read(prompt: str) -> Named | None:
+    """The lane that a start's prompt names, and the start's text.
 
     Takes: the `tool_input.prompt` of an Agent call at its PreToolUse.
-    Gives: the name of the lane that the words text wrote name; None where the prompt holds no such
-    words.
+    Gives: the name of the lane that the words text wrote name, and the prompt without them; None
+    where the prompt holds no such words.
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("lane_text.lane")
+    raise NotImplementedError("lane_text.read")
