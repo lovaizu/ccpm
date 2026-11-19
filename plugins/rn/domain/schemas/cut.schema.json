@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cut",
+  "description": "A role's part of the design tree, at .rn/<run>/rounds/<n>/<role>[-<group>].cut.json, so that the role starts with only the decisions its work needs.",
+  "type": "object",
+  "required": ["role", "deliverable", "best_practice", "goal"],
+  "additionalProperties": false,
+  "properties": {
+    "role": {
+      "description": "The role that the Cut starts.",
+      "enum": ["generator", "evaluator"]
+    },
+    "deliverable": {
+      "description": "The deliverable's name, path, and kind, as the design tree holds them.",
+      "type": "object",
+      "required": ["name", "path", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string"},
+        "path": {"type": "string"},
+        "kind": {"type": "string"}
+      }
+    },
+    "best_practice": {
+      "description": "The folder of the best practice the Round works by: the kind's in a Round of content, refactor-doc or refactor-code in a Round of refactoring.",
+      "type": "string"
+    },
+    "goal": {
+      "description": "The goal of the design tree, with the state its people are in once it holds.",
+      "type": "string"
+    },
+    "decisions": {
+      "description": "For the generator: each decision of the deliverable's node and of each input node with no file, by its node's path and condition.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "condition", "about", "decided"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {"type": "string"},
+          "condition": {"type": "string"},
+          "about": {"type": "string"},
+          "decided": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "group": {
+      "description": "For an evaluator: the ID of the group of the best practice's conditions that it judges, such as C1.",
+      "type": "string"
+    },
+    "conditions": {
+      "description": "For an evaluator: the ID of each condition of its group that the Round judges.",
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

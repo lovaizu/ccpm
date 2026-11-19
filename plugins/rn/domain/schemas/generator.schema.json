@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "generator's result",
+  "description": "What the generator hands back, beside its Cut at .rn/<run>/rounds/<n>/generator.json: the deliverable made, or a point it can't settle.",
+  "type": "object",
+  "required": ["result"],
+  "additionalProperties": false,
+  "properties": {
+    "result": {
+      "description": "made: the deliverable is made from the Cut. point: a point that only the user or the orchestrator can settle stops it.",
+      "enum": ["made", "point"]
+    },
+    "carried_out": {
+      "description": "Where each decision of the Cut is carried out, as path:line, by the decision's path, condition, and about.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "condition", "about", "at"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {"type": "string"},
+          "condition": {"type": "string"},
+          "about": {"type": "string"},
+          "at": {"type": "string"}
+        }
+      }
+    },
+    "settled": {
+      "description": "Each point the generator settled itself, with where it lies, as path:line.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["about", "decided", "at"],
+        "additionalProperties": false,
+        "properties": {
+          "about": {"type": "string"},
+          "decided": {"type": "string"},
+          "at": {"type": "string"}
+        }
+      }
+    },
+    "point": {
+      "description": "Where the result is point: the point, with the generator's recommendation and its ground.",
+      "type": "string"
+    }
+  }
+}

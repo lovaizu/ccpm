@@ -326,7 +326,7 @@
             },
             {
               "about": "The commit",
-              "decided": "tree/git.py runs git on the run's worktree, so that a commit of the run's folder carries the ground as its message once the design tree's check passes",
+              "decided": "tree/commit.py lets a change of the run's folder reach git only once design.read holds the design tree, and tree/git.py runs git on the run's worktree, committing the run's folder with the ground word for word as its message",
               "by": "maker"
             },
             {
@@ -372,7 +372,7 @@
           "decisions": [
             {
               "about": "The interfaces",
-              "decided": "tree.commit for S1's commit and S2's commit before the push; cut.write for each start with its Cut; course.due for the start due and the groups a round judges; course.left for each finding kept past the limit; rounds.results for S2's pick-up; check.generator.held and check.evaluator.held for each end with the Round written; each body raising NotImplementedError with its name",
+              "decided": "commit.commit for S1's commit and S2's commit before the push; course.due for each start due and the groups a Round judges; cut.write for each start with its Cut; course.left for each finding past the limit; rounds.each and rounds.path for S2's pick-up of each role stopped; generator.faults and evaluator.faults for each end with the Round written; each body raising NotImplementedError with its name, and each handoff's types fitting under pyrefly",
               "by": "maker"
             }
           ]

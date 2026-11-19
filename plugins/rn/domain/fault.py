@@ -1,7 +1,6 @@
-"""Decides how each of rn's commands, tree.py, record.py, template.py, throwaway.py, and the
-adapters, says what stopped it, as repository raises it to tree.py too: a fault of the input that
-whoever ran it can mend, a thing outside the work that's missing, or a check that couldn't run; and
-how each ends, with what it prints and the exit code it gives."""
+"""Decides how each of rn's commands, and each adapter that Lane runs, says what stopped it: a fault
+of the input that whoever ran it can mend, a thing outside the work that's missing, or a check that
+couldn't run; and how each ends, with what it prints and the exit code it gives."""
 
 from __future__ import annotations
 
@@ -16,8 +15,8 @@ class Wrong(Exception):
 
 
 class Missing(Exception):
-    """Something outside the work that a command needs and doesn't find, such as a login of gh or a
-    remote to push to, said so that the user can clear it. The command gives 1."""
+    """Something outside the work that a command needs and doesn't find, such as a git repository
+    or a remote to push to, said so that the user can clear it. The command gives 1."""
 
 
 class CantRun(Exception):

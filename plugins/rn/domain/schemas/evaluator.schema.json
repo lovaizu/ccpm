@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "evaluator's result",
+  "description": "What an evaluator hands back, beside its Cut at .rn/<run>/rounds/<n>/evaluator-<group>.json: each condition of its group answered as the deliverable's people meet it.",
+  "type": "object",
+  "required": ["good", "more"],
+  "additionalProperties": false,
+  "properties": {
+    "good": {
+      "description": "Each condition the deliverable meets for its people, with the lines that meet it, as path:line.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["condition", "lines"],
+        "additionalProperties": false,
+        "properties": {
+          "condition": {"type": "string"},
+          "lines": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+        }
+      }
+    },
+    "more": {
+      "description": "Each condition not yet good, with good_when: what its people get once it's good, never how to make it.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["condition", "good_when"],
+        "additionalProperties": false,
+        "properties": {
+          "condition": {"type": "string"},
+          "good_when": {"type": "string"}
+        }
+      }
+    }
+  }
+}
