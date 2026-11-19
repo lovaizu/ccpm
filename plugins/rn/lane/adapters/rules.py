@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.join(HERE, "..", "..", "domain"))
 
 from fault import Wrong, end
 from schemas import form
+from tree import rounds
 
 # The path of a Cut of a run's Round, as scripts/cut.py prints it for the start's prompt.
 CUT = re.compile(r"\S*\.rn/[^/\s]+/rounds/\d+/[^/\s]+\.cut\.json")
@@ -36,12 +37,13 @@ def main(given: str, cwd: str, plugin: str) -> tuple[int, str, str]:
       that `ends` on `point`; at step 3, a `checklist` of each that its maker takes while making,
       and `writes` of the deliverable's path and the result; at step 4, `writes` of the result, the
       `check` `python3 <rn>/scripts/check.py generator <Cut>`, and a `result` of `made`;
-    - for `rn:evaluator`: at step 2, `reads_none` of the run's design-tree.json and the
-      generator's Cut and result of the Round; at step 3, a `checklist` of the ID of each condition
-      of its Cut; at step 4, `writes` of the result, the `check`
-      `python3 <rn>/scripts/check.py evaluator <Cut>`, and a `result` of `judged`.
+    - for `rn:evaluator`: at step 2, `reads_none` of the run's design-tree.json and of each
+      generator's Cut of the Round, in any slot, with the result beside it; at step 3, a
+      `checklist` of the ID of each condition of its Cut; at step 4, `writes` of the result, the
+      `check` `python3 <rn>/scripts/check.py evaluator <Cut>`, and a `result` of `judged`.
     1 with what Wrong says, such as Lane's input out of its form, a prompt that names no Cut of a
-    run's Round, a Cut out of its form, or one that names no best practice of rn's.
+    run's Round, a Cut out of its form, a Cut or a result of its Round that isn't JSON, or a Cut
+    that names no best practice of rn's.
     Changes: nothing.
     Refuses: nothing beyond the exit codes above."""
     try:
@@ -54,7 +56,7 @@ def main(given: str, cwd: str, plugin: str) -> tuple[int, str, str]:
         steps = (
             _generator(held, cut, plugin)
             if held["role"] == "generator"
-            else _evaluator(held, cut, plugin)
+            else _evaluator(held, cut, cwd, plugin)
         )
     except Wrong as wrong:
         return 1, "", f"rules.py: {wrong}\n"
@@ -139,11 +141,13 @@ def _generator(held: dict[str, Any], cut: str, plugin: str) -> list[dict[str, An
     )
 
 
-def _evaluator(held: dict[str, Any], cut: str, plugin: str) -> list[dict[str, Any]]:
-    """An evaluator's steps, from its Cut at `cut`."""
+def _evaluator(held: dict[str, Any], cut: str, cwd: str, plugin: str) -> list[dict[str, Any]]:
+    """An evaluator's steps, from its Cut at `cut` in the worktree `cwd`."""
     run = os.path.dirname(os.path.dirname(os.path.dirname(cut)))
-    round_ = os.path.dirname(cut)
-    unread = [f"{run}/design-tree.json", f"{round_}/generator.cut.json", f"{round_}/generator.json"]
+    round_ = os.path.dirname(cut) + "/"
+    made = [rounds.path(run, s) for s in rounds.each(os.path.join(cwd, run))]
+    makers = [m for m in made if m.startswith(round_ + "generator")]
+    unread = [f"{run}/design-tree.json", *(p for m in makers for p in (m, _result(m)))]
     return _steps(
         [],
         [{"type": "reads_none", "paths": unread}],

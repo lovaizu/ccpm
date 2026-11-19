@@ -17,12 +17,6 @@ import pytest
 from repo_files import write_files
 from rn_bench import COMMAND, GUIDE, RN, RUN, command, plan, started, typed, worktree
 
-# Why a case is xfail while its gap in dev/rn/tests/gaps.md stands.
-NO_INPUTS = (
-    "the worktree that the case writes holds none of the plan's inputs, so design.read refuses"
-    " the plan, as dev/rn/tests/gaps.md says"
-)
-
 CUT = f"{RUN}/rounds/1/generator.cut.json"
 RESULT = f"{RUN}/rounds/1/generator.json"
 MADE = {"result": "made", "carried_out": []}
@@ -149,7 +143,6 @@ def test_starts_due_with_no_runs_folder_give_none(tmp_path: Any):
     assert counts(str(tmp_path)) == {}
 
 
-@pytest.mark.xfail(strict=True, reason=NO_INPUTS)
 @pytest.mark.supports("test_a_pick_up_from_the_repositorys_root_finds_the_run_in_rns_worktree")
 def test_starts_due_from_the_root_read_the_run_in_rns_worktree(tmp_path: Any):
     """Given the repository's root with no run's folder, and rn's worktree of the run holding the
@@ -157,8 +150,10 @@ def test_starts_due_from_the_root_read_the_run_in_rns_worktree(tmp_path: Any):
     When starts_due.py runs at the root
     Then it gives the command's generator"""
     top = str(tmp_path)
-    tree = json.dumps(plan())
-    write_files(top, {f".claude/worktrees/rn-20261119-invoices/{RUN}/design-tree.json": tree})
+    run = ".claude/worktrees/rn-20261119-invoices"
+    docs = ("architecture", "software-design", "test-design", "product-vision")
+    inputs = {f"{run}/docs/{name}.md": f"# {name}\n" for name in docs}
+    write_files(top, {f"{run}/{RUN}/design-tree.json": json.dumps(plan()), **inputs})
     assert counts(top) == {"rn:generator": 1}
 
 
@@ -327,6 +322,21 @@ def test_rules_of_a_cut_in_a_later_slot_name_the_result_beside_it(tmp_path: Any)
     top = worktree(str(tmp_path), files)
     given = steps(top, "rn:evaluator", cut)
     assert given["4"]["writes"]["paths"] == [f"{RUN}/rounds/1/evaluator-C1.2.json"]
+
+
+@pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
+def test_rules_keep_an_evaluator_from_each_generator_of_its_round_in_any_slot(tmp_path: Any):
+    """Given round 1's generator made in slot 2, beside the Cut of slot 1 that a pause left, and
+    an evaluator's Cut of C1
+    When rules.py runs for the evaluator's start
+    Then step 2 never reads the design tree, nor either generator's Cut or result"""
+    cut = evaluator("C1")
+    second = f"{RUN}/rounds/1/generator.2.cut.json"
+    files = {CUT: generator_cut(), second: generator_cut(), cut: evaluator_cut()}
+    top = worktree(str(tmp_path), {**files, f"{RUN}/rounds/1/generator.2.json": MADE})
+    given = steps(top, "rn:evaluator", cut)
+    unread = {f"{RUN}/design-tree.json", CUT, RESULT, second, f"{RUN}/rounds/1/generator.2.json"}
+    assert set(given["2"]["reads_none"]["paths"]) == unread
 
 
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
