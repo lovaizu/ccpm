@@ -829,6 +829,11 @@
               "about": "What the task is for",
               "decided": "Makes the deliverable from its cut with only what brings its people closer, handing back each point it can't settle, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
               "by": "reasoning"
+            },
+            {
+              "about": "The checklist of each step",
+              "decided": "each step that keeps a checklist gets from rn's adapter of a step's items only the practices of that step, its decide items in the step that decides and its make items in the step that makes, so items.py reads the step it's given",
+              "by": "reasoning"
             }
           ]
         },
@@ -926,6 +931,11 @@
             {
               "about": "What the task is for",
               "decided": "Finds, as the deliverable's people, what's good for them and what would make it good, condition by condition, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
+              "by": "reasoning"
+            },
+            {
+              "about": "The checklist of its group",
+              "decided": "an evaluator's step that keeps a checklist gets only the conditions of its Cut's group, so items.py reads the Cut's group",
               "by": "reasoning"
             }
           ]
