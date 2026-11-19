@@ -41,23 +41,24 @@ input it got, and one with a skill `hi`.
 | A skill typed by a person | UserPromptSubmit, then UserPromptExpansion with `command_name` and `command_args`. | The `command_name`, which starts a Run that a person called. | `claude-code-2.1.322.jsonl:8-9` |
 | A skill called by the Skill tool | PreToolUse and PostToolUse of Skill with `tool_input.skill` and `args`, and no UserPromptExpansion; a skill that sets `disable-model-invocation: true` is refused before any hook. | `tool_input.skill`, which starts a Run that an AI called, or, where it names another plugin's skill that a move of a Run names, sets that Run aside. | `claude-code-2.1.322-skill.jsonl:3-4`, `claude-code-2.1.323-skill-command.jsonl:16` |
 | A command of another skill typed while a subagent runs | The main conversation's Stop, then UserPromptSubmit and UserPromptExpansion of the other skill's `command_name`, with a new `prompt_id`, while the subagent runs on; its later calls and SubagentStop carry that `prompt_id`. | The `command_name`, which starts that skill's Run beside the first, and each event of the subagent by its `agent_id`, which keeps it on its Start's Run. | `claude-code-2.1.325-skill-command-while-subagent.jsonl:12-21` |
-| The result script, `step.py`, or `item.py` run by Bash | PreToolUse and PostToolUse of Bash, with the subagent's `agent_id` where a subagent runs it; the command's environment holds `CLAUDE_CODE_SESSION_ID` and no ID of the subagent. | The `agent_id` of the PostToolUse, by which the guard adds the Result or the Mark for the subagent that ran the script. | `claude-code-2.1.322.jsonl:14-16`, and the environment in `claude-code-2.1.322-bash-environment.jsonl:1-2` |
-| A role's Read, Grep, or Glob | PreToolUse, then PostToolUse, each with the role's `agent_id` where a subagent calls it; a Read's `tool_input` names `file_path`, and may name `offset` and `limit`; its PostToolUse's `tool_response.file` gives `startLine`, `numLines`, and `totalLines`, the lines it read, counting the empty line after a last newline, and a Read with no `limit` reads a file of 2500 lines whole; a Grep's and a Glob's name `path` and `pattern`. | The `agent_id`, and the `tool_input`, by which a Lane of reads_none stops the call at its PreToolUse, and the guard adds a Read of a path that a Lane of reads_whole names, with the lines from `startLine` to `startLine` plus `numLines` less one, at its PostToolUse. | A Read whole and in part in `claude-code-2.1.325-read.jsonl:5-8`; Grep and Glob aren't recorded yet |
+| A reporter run by Bash | PreToolUse and PostToolUse of Bash, with the subagent's `agent_id` where a subagent runs it; the command's environment holds `CLAUDE_CODE_SESSION_ID` and no ID of the subagent. | The `agent_id` of the PostToolUse, by which the guard adds the Result or the Mark for the subagent that ran the reporter. | `claude-code-2.1.322.jsonl:14-16`, and the environment in `claude-code-2.1.322-bash-environment.jsonl:1-2` |
+| A role's Read, Grep, or Glob | PreToolUse, then PostToolUse, each with the role's `agent_id` where a subagent calls it; a Read's `tool_input` names `file_path`, and may name `offset` and `limit`; its PostToolUse's `tool_response.file` gives `startLine`, `numLines`, and `totalLines`, the lines it read, counting the empty line after a last newline, and a Read with no `limit` reads a file of 2500 lines whole; a Grep's and a Glob's name `path` and `pattern`. | The `agent_id`, and the `tool_input`, by which a rule of the files never to read stops the call at its PreToolUse, and the guard adds a Read of a path that a rule of the files to read whole names, with the lines from `startLine` to `startLine` plus `numLines` less one, at its PostToolUse. | A Read whole and in part in `claude-code-2.1.325-read.jsonl:5-8`; Grep and Glob aren't recorded yet |
 
 ## Rare states
 
 In each, Lane does what its line says, and never holds a call to the rules of another Run.
 
-- Two conversations in one repository: each `session_id` has its own Run, and neither Run's lanes
+- Two conversations in one repository: each `session_id` has its own Run, and neither Run's rules
   hold the other conversation's calls.
 - A subagent started by a subagent: the guard stops the start, as only the main conversation starts
   the roles. `claude-code-2.1.322-subagent-of-subagent.jsonl:2-4` shows the events.
 - A subagent's SendMessage to another subagent: the guard lets it through as talk that moves no Run,
   and the subagent it reaches stays on its own Start.
 - A subagent in the foreground: the PostToolUse of its Agent call, which names it, comes only
-  after its calls and its SubagentStop, so no Start ties it while it works. No role's subagent runs
-  there, as `lay.py print` refuses a role whose file doesn't set `background: true`; any other's
-  events carry an `agent_id` that no Start ties, and lie outside the Run.
+  after its calls and its SubagentStop, so no Start ties it while it works. A plugin's role sets
+  `background: true`, as the definition of rules and adapters says, since Lane can't hold a role
+  started there; any other subagent's events carry an `agent_id` that no Start ties, and lie
+  outside the Run.
   `claude-code-2.1.323-worktree.jsonl:23-28` shows the events.
 - A subagent stopped by TaskStop: no SubagentStop comes, and its `<task-notification>` says
   `killed`, so its Start runs no more with no Result, and the guard gives its start due again.
