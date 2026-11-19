@@ -75,8 +75,9 @@ Strategies:
   Intent: judge each condition with care while the wait stays short.
 - A later round judging only the conditions whose decisions changed. [P3.3]\
   Intent: spend the judging on conditions whose result can change.
-- Each deliverable's rounds in a lane of Lane's of their own, beside the lanes of the others being
-  made, with a round's making, judging, refactoring, and judging the only order fixed. [P5.2]\
+- rn's order given to Lane as the starts due, from the design tree: each deliverable's rounds
+  beside those of the others being made, with a round's making, judging, refactoring, and judging
+  the only order fixed. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
 - Lane applied to every activity of every role's steps that it can hold. [P5.1]\
   Intent: a role that leaves its steps notices at once and goes back.
@@ -106,7 +107,7 @@ sequenceDiagram
       O->>U: adds each finding left as a proposal [P3.3]
       U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
     else each deliverable whose inputs are signed off, resting on none still being made [P5.2]
-      par one lane for each such deliverable [P5.2]
+      par one for each such deliverable [P5.2]
         O->>G: starts it, with its Cut (Cut) [P4.1]
         alt a point it can't settle [P1.2]
           G-->>O: the point [P1.2]
@@ -178,8 +179,9 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── template/                  the code that holds a document to its kind's template
 │   └── best-practices/            rn's own best practice of each kind
 ├── scripts/                       runs each part's code
-└── hooks/                         Lane's rules laid from each role's steps
-    └── adapters/                  what Lane runs for a start's Cut, a step's practices, and the results kept
+└── lane/                          what rn gives Lane
+    ├── rules.json                 the rules of each role's steps
+    └── adapters/                  the starts due from the design tree, and a step's practices
 
 dev/rn/                            what only rn's developers use
 └── tests/                         the test cases, from unit to E2E
