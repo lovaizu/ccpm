@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, cast
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -95,8 +95,9 @@ def _one_of(value: Any, schema: dict[str, Any], root: dict[str, Any], at: _At) -
     for keyword in ("oneOf", "anyOf"):
         found = [_left(value, form, root, at) for form in schema.get(keyword, [])]
         if found and None not in found:
-            deepest = max(found, key=lambda left: len(left[0]) if left else 0)
-            if deepest and len(deepest[0]) > len(at):
+            deepest = max(cast("list[tuple[_At, str]]", found), key=lambda left: len(left[0]))
+            # A form's place lies at the value's or below it, by the keys past the value's.
+            if deepest[0][len(at) :]:
                 return deepest
             return at, f"holds none of the forms it may take: {_shown(value)}"
     return None

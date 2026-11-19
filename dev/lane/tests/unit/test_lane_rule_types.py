@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import dataclasses
+import json
 import os
 from typing import Any
 
@@ -21,7 +22,9 @@ from report import Report
 from rule_types import check, checklist, commands, order, reads_none, reads_whole, result, writes
 from rules import Rule, Rules, Step
 
-RULES: Rules = copy.deepcopy(lane_bench.RULES)
+# log's rules as Lane reads them from rules.json, so that no string of them is the one object that a
+# literal of Lane's code is.
+RULES: Rules = json.loads(json.dumps(lane_bench.RULES))
 WRITE: Step = RULES["roles"]["log:writer"]["steps"][0]
 REPORT: Step = RULES["roles"]["log:writer"]["steps"][1]
 REVIEW: Step = RULES["roles"]["log:reviewer"]["steps"][0]
@@ -467,7 +470,7 @@ def test_an_end_that_the_check_doesnt_pass_gives_the_steps_sentence_and_what_it_
     said = check.judge_end(rule(REPORT, "check"), REPORT, end)
     assert said is not None
     assert "report" in said
-    assert lane_bench.CHECK_SAYS in said
+    assert said.endswith(f":\n{lane_bench.CHECK_SAYS}"), "what the check said ends the sentence"
 
 
 @pytest.mark.supports("test_the_plugins_check_runs_in_the_worktree_the_conversation_works_in")

@@ -40,7 +40,7 @@ def _first_unread(move: Move, path: str) -> int | None:
     """The first line of the file that no Read of the move's start read, None where each is; a file
     counting the empty line after its last newline, as Read counts it."""
     with open(os.path.join(move.event["cwd"], path), encoding="utf-8") as f:
-        total = len(f.read().split("\n"))
+        lines = f.read().split("\n")
     read = {
         line
         for entry in move.run.entries
@@ -48,4 +48,4 @@ def _first_unread(move: Move, path: str) -> int | None:
         if entry["path"] == path
         for line in range(entry["first_line"], entry["last_line"] + 1)
     }
-    return next((line for line in range(1, total + 1) if line not in read), None)
+    return next((line for line, _ in enumerate(lines, 1) if line not in read), None)
