@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "What Lane gives a plugin's start adapter",
-  "description": "A start due, whose text the adapter gives.",
+  "description": "A role due in a lane, whose start texts the adapter gives, one for each time the role starts.",
   "type": "object",
   "required": [
     "run",

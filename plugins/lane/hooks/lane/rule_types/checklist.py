@@ -17,4 +17,4 @@ def judge_mark(rule: Rule, step: Step, move: Move, items: list[str]) -> str | No
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("lanes.checklist.judge_mark")
+    raise NotImplementedError("rule_types.checklist.judge_mark")

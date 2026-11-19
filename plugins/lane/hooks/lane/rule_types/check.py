@@ -17,4 +17,4 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing of Lane's; the check may read the conversation's folder.
     Refuses: OSError, where the check can't be run.
     """
-    raise NotImplementedError("lanes.check.judge_end")
+    raise NotImplementedError("rule_types.check.judge_end")

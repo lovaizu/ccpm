@@ -34,19 +34,33 @@
       "description": "The moves after a role's result, or after a command that the person types, and the roles whose starts they make due.",
       "type": "array",
       "items": {
-        "type": "object",
-        "required": ["after", "start"],
-        "additionalProperties": false,
-        "properties": {
-          "after": {
-            "oneOf": [
-              {
+        "oneOf": [
+          {
+            "description": "A route after a command that the person types, each role it starts opening a lane of its own.",
+            "type": "object",
+            "required": ["after", "start"],
+            "additionalProperties": false,
+            "properties": {
+              "after": {
                 "type": "object",
                 "required": ["command"],
                 "additionalProperties": false,
                 "properties": { "command": { "type": "string", "minLength": 1 } }
               },
-              {
+              "start": {
+                "description": "The roles whose starts come due, each by its agent type.",
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          {
+            "description": "A route after a role's result, which starts one role alone in the result's lane, as many times at once as the plugin's start adapter gives texts for it, or once without one.",
+            "type": "object",
+            "required": ["after", "start"],
+            "additionalProperties": false,
+            "properties": {
+              "after": {
                 "type": "object",
                 "required": ["role", "result"],
                 "additionalProperties": false,
@@ -54,22 +68,23 @@
                   "role": { "description": "The role's agent type.", "type": "string", "minLength": 1 },
                   "result": { "type": "string", "minLength": 1 }
                 }
+              },
+              "start": {
+                "description": "The role whose starts come due, by its agent type, or none.",
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 },
+                "maxItems": 1
               }
-            ]
-          },
-          "start": {
-            "description": "The roles whose starts come due, each by its agent type; a role named several times starts several times at once.",
-            "type": "array",
-            "items": { "type": "string", "minLength": 1 }
+            }
           }
-        }
+        ]
       }
     }
   },
   "$defs": {
     "paths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
     "rule": {
-      "description": "One rule of a step, of one type of lanes/ with that type's values.",
+      "description": "One rule of a step, of one type of rule_types/ with that type's values.",
       "oneOf": [
         {
           "description": "S1: the files the step writes; a folder lets through each file under it.",

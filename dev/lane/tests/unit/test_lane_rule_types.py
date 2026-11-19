@@ -1,6 +1,7 @@
-"""The unit cases of hooks/lane/lanes/: each rule type's judge, one for each class of the call, the
-mark, or the end it judges, with the edges of a path's folder and of a file's lines; and the order
-in which lanes/__init__.py asks them, one for each combination of rules that a move breaks."""
+"""The unit cases of hooks/lane/rule_types/: each rule type's judge, one for each class of the call,
+the mark, or the end it judges, with the edges of a path's folder and of a file's lines; and the
+order in which rule_types/__init__.py asks them, one for each combination of rules that a move
+breaks."""
 
 from __future__ import annotations
 
@@ -9,13 +10,13 @@ import os
 from typing import Any
 
 import lane_bench
-import lanes
 import pytest
+import rule_types
 from lane_events import Event, Events, Subagent
-from lanes import check, checklist, commands, order, reads_none, reads_whole, result, writes
 from place import Move
 from record import Entry, Run
 from report import Report
+from rule_types import check, checklist, commands, order, reads_none, reads_whole, result, writes
 from rules import Rule, Rules, Step
 
 pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
@@ -506,7 +507,7 @@ def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: st
         "read": e.read(os.path.join(cwd, "secrets/key.txt"), WRITER),
         "bash": e.bash("git push", WRITER),
     }[event]
-    said = lanes.judge_call(RULES, move("call", given))
+    said = rule_types.judge_call(RULES, move("call", given))
     assert said is not None
     assert named in said
 
@@ -518,7 +519,7 @@ def test_a_bash_command_that_reaches_a_file_never_to_read_is_judged_by_commands(
     """Given the writer at its step `write`, which never reads secrets/ and runs `git log`
     When it runs `cat secrets/key.txt`
     Then the sentence is the one of commands, as reads_none judges no Bash call"""
-    said = lanes.judge_call(RULES, move("call", e.bash("cat secrets/key.txt", WRITER)))
+    said = rule_types.judge_call(RULES, move("call", e.bash("cat secrets/key.txt", WRITER)))
     assert said is not None
     assert "git log" in said
     assert "secrets/" not in said
@@ -532,13 +533,15 @@ def test_a_call_that_breaks_no_rule_or_whose_step_judges_no_call_holds(e: Events
     Then neither breaks a rule"""
     reviewer = Subagent("a3", "log:reviewer")
     assert (
-        lanes.judge_call(RULES, move("call", e.write(os.path.join(cwd, "CHANGELOG.md"), WRITER)))
+        rule_types.judge_call(
+            RULES, move("call", e.write(os.path.join(cwd, "CHANGELOG.md"), WRITER))
+        )
         is None
     )
     review = move(
         "call", e.write(os.path.join(cwd, "notes.txt"), reviewer), step="review", agent=reviewer
     )
-    assert lanes.judge_call(RULES, review) is None
+    assert rule_types.judge_call(RULES, review) is None
 
 
 @pytest.mark.supports("test_a_mark_is_checked_for_the_step_due_before_the_files_it_reads_whole")
@@ -549,7 +552,7 @@ def test_a_mark_is_judged_by_order_before_its_reads(e: Events):
     marking = move(
         "report", e.bash("lane-step report", WRITER), step="write", report=marked("report")
     )
-    said = lanes.judge_mark(RULES, marking, [])
+    said = rule_types.judge_mark(RULES, marking, [])
     assert said is not None
     assert "CHANGELOG.md" not in said
 
@@ -559,7 +562,7 @@ def test_a_mark_is_judged_by_its_reads_before_its_items(e: Events):
     """Given the writer that read nothing and marked no item
     When it marks `write`
     Then the sentence is reads_whole's, naming NOTES.md, and no item"""
-    said = lanes.judge_mark(RULES, marking_write(e), ["dated", "linked"])
+    said = rule_types.judge_mark(RULES, marking_write(e), ["dated", "linked"])
     assert said is not None
     assert "NOTES.md" in said
     assert "dated" not in said
@@ -571,7 +574,7 @@ def test_a_mark_that_breaks_no_rule_holds(e: Events):
     When it marks `write`
     Then no rule finds anything"""
     entries = (read("NOTES.md", 1, 6), mark("write", item="dated"), mark("write", item="linked"))
-    assert lanes.judge_mark(RULES, marking_write(e, *entries), ["dated", "linked"]) is None
+    assert rule_types.judge_mark(RULES, marking_write(e, *entries), ["dated", "linked"]) is None
 
 
 @pytest.mark.supports("test_an_end_with_no_result_names_the_result_before_the_check")
@@ -582,7 +585,7 @@ def test_an_end_is_judged_by_its_result_before_its_steps_and_its_check(e: Events
     Then the sentence names `written`, and the check didn't run"""
     rules = copy.deepcopy(RULES)
     rule(rules["roles"]["log:writer"]["steps"][1], "check")["check"] = "touch ran; exit 1"
-    said = lanes.judge_end(rules, move("end", e.ended(WRITER)))
+    said = rule_types.judge_end(rules, move("end", e.ended(WRITER)))
     assert said is not None
     assert "written" in said
     assert not os.path.exists(os.path.join(cwd, "ran"))
@@ -596,7 +599,7 @@ def test_an_end_is_judged_by_its_steps_before_its_check(e: Events, cwd: str):
     Then the sentence names `report`, and the check didn't run"""
     rules = copy.deepcopy(RULES)
     rule(rules["roles"]["log:writer"]["steps"][1], "check")["check"] = "touch ran; exit 1"
-    said = lanes.judge_end(rules, move("end", e.ended(WRITER), gave("written"), mark("write")))
+    said = rule_types.judge_end(rules, move("end", e.ended(WRITER), gave("written"), mark("write")))
     assert said is not None
     assert "report" in said
     assert not os.path.exists(os.path.join(cwd, "ran"))
@@ -611,7 +614,7 @@ def test_an_end_whose_result_and_steps_hold_is_judged_by_its_check(e: Events, cw
     with open(os.path.join(cwd, "CHANGELOG.md"), "w", encoding="utf-8") as f:
         f.write("# Changelog\n")
     end = move("end", e.ended(WRITER), gave("written"), mark("write"), mark("report"))
-    said = lanes.judge_end(RULES, end)
+    said = rule_types.judge_end(RULES, end)
     assert said is not None
     assert lane_bench.CHECK_SAYS in said
 
@@ -623,4 +626,4 @@ def test_an_end_that_breaks_no_rule_holds(e: Events):
     When it ends
     Then no rule finds anything"""
     end = move("end", e.ended(WRITER), gave("written"), mark("write"), mark("report"))
-    assert lanes.judge_end(RULES, end) is None
+    assert rule_types.judge_end(RULES, end) is None

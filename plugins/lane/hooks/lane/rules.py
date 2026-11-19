@@ -7,7 +7,8 @@ from typing import TypedDict
 
 
 class Rule(TypedDict, total=False):
-    """One rule of a step: its `type`, the name of a module of lanes/, and that type's values."""
+    """One rule of a step: its `type`, the name of a module of rule_types/, and that type's
+    values."""
 
     type: str
     paths: list[str]
@@ -39,8 +40,9 @@ class After(TypedDict, total=False):
 
 
 class Route(TypedDict):
-    """The roles whose starts come due after what the route goes after, each by its agent type, a
-    role named several times starting several times at once."""
+    """The roles whose starts come due after what the route goes after, each by its agent type:
+    after a command, each role opening a lane of its own; after a result, one role alone or
+    none."""
 
     after: After
     start: list[str]
@@ -66,6 +68,7 @@ def read_rules(plugin_root: str) -> Rules | None:
     Gives: the rules in its lane/rules.json, held to rules.schema.json; None where the plugin has
     no lane/rules.json, as Lane then leaves its runs alone.
     Changes: nothing.
-    Refuses: OutOfForm, where the file can't be read as JSON or breaks the form.
+    Refuses: OutOfForm, where the file can't be read as JSON or breaks the form, such as a route
+    after a result that starts more than one role.
     """
     raise NotImplementedError("rules.read_rules")

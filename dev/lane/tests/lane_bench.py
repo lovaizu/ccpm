@@ -127,13 +127,14 @@ RULES: Rules = {
 }
 
 # The adapters of `log`, each a Python file of its lane/adapters/, as Lane's adapters.py says: the
-# text of a start due, the items of the writer's step `write`, and the results it keeps of a version
-# in .log/kept/<version>.json of the conversation's folder.
+# text of each role due, which starts once, the items of the writer's step `write`, and the results
+# it keeps of a version in .log/kept/<version>.json of the conversation's folder, as one chain.
 START = """\
 import json, sys
 
 given = json.load(sys.stdin)
-print(json.dumps({"text": f"You are {given['role']}. Write the entry of {given['run']['words']}."}))
+words = given["run"]["words"]
+print(json.dumps({"texts": [f"You are {given['role']}. Write the entry of {words}."]}))
 """
 CHECKLIST = """\
 import json, sys
@@ -147,7 +148,7 @@ import json, os, sys
 given = json.load(sys.stdin)
 path = os.path.join(".log", "kept", given["run"]["words"] + ".json")
 results = json.load(open(path)) if os.path.exists(path) else []
-print(json.dumps({"results": results}))
+print(json.dumps({"chains": [results] if results else []}))
 """
 ADAPTERS = {"start.py": START, "checklist.py": CHECKLIST, "kept.py": KEPT}
 SKILLS = ("up", "retry", "tag")

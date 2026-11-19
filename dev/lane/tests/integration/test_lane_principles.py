@@ -36,7 +36,7 @@ def sentence_left_out(b: Bench) -> None:
     """The rule type of the files a step writes stops a call with no sentence of the step."""
     given_again(
         b,
-        "lanes/writes.py",
+        "rule_types/writes.py",
         "def judge_call(rule, step, move):\n"
         "    path = move.event['tool_input']['file_path']\n"
         "    names = [os.path.join(move.event['cwd'], p) for p in rule['paths']]\n"
@@ -52,7 +52,7 @@ def rules_unread(b: Bench) -> None:
 
 def reply_counts(b: Bench) -> None:
     """The rule type of a role's results takes any end, its reply among them."""
-    given_again(b, "lanes/result.py", "def judge_end(rule, step, move):\n    return None\n")
+    given_again(b, "rule_types/result.py", "def judge_end(rule, step, move):\n    return None\n")
 
 
 def folder_unfound(b: Bench) -> None:
@@ -63,7 +63,7 @@ def folder_unfound(b: Bench) -> None:
 def adapter_unasked(b: Bench) -> None:
     """The start adapter of a plugin is never asked."""
     given_again(
-        b, "adapters.py", "def start_text(plugin_root, cwd, run, start):\n    return None\n"
+        b, "adapters.py", "def start_texts(plugin_root, cwd, run, start):\n    return None\n"
     )
 
 

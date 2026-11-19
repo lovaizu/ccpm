@@ -80,7 +80,7 @@ held design pyrefly check $properties --search-path plugins/rn/domain \
 # fault that no test may reach, as Lane's architecture says under Test strategy. The reporters have
 # no .py suffix, as the AI runs them by name, so the check names them.
 held design pyrefly check --search-path plugins/lane/hooks/lane \
-  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/lanes/*.py plugins/lane/bin/lane-*
+  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/rule_types/*.py plugins/lane/bin/lane-*
 
 # Lane's cases, with the double of Claude Code they run, as a case that calls an interface with a
 # type it doesn't take fails at the call, not at the body it waits for.

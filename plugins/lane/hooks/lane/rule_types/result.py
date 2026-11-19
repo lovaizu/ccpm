@@ -17,4 +17,4 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("lanes.result.judge_end")
+    raise NotImplementedError("rule_types.result.judge_end")

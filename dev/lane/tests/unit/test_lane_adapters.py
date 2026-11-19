@@ -1,4 +1,4 @@
-"""The unit cases of hooks/lane/adapters.py: start_text, checklist, and kept_results, one for each
+"""The unit cases of hooks/lane/adapters.py: start_texts, checklist, and kept_results, one for each
 class of what a plugin's adapter gives: its output in the form of its schema, no adapter, an adapter
 that fails, and output out of its form; with what Lane gives the adapter on its standard input, and
 the folder it runs in."""
@@ -10,10 +10,9 @@ import os
 
 import lane_bench
 import pytest
-from adapters import AdapterFailed, checklist, kept_results, start_text
+from adapters import AdapterFailed, checklist, kept_results, start_texts
 from record import Run
 from repo_files import write_files
-from routes import Due
 
 pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
 
@@ -48,8 +47,8 @@ def test_a_start_adapter_gives_the_text_of_the_start_due(log: str, cwd: str):
     """Given `log`'s start adapter
     When Lane asks it for the text of the writer due in the run for 1.2.0
     Then it gives the text that the adapter prints"""
-    text = start_text(log, cwd, RUN, Due("log:writer", "1"))
-    assert text == lane_bench.text("log:writer")
+    texts = start_texts(log, cwd, RUN, "log:writer")
+    assert texts == [lane_bench.text("log:writer")]
 
 
 @pytest.mark.supports("test_what_only_the_plugin_knows_comes_from_its_adapter")
@@ -58,8 +57,8 @@ def test_a_start_adapter_takes_the_run_and_the_role_in_the_conversations_folder(
     When Lane asks it for the text of the writer due
     Then it was given the run's skill and words and the role, as start.in.schema.json says, and
     ran in the conversation's folder"""
-    adapter(log, "start.py", ECHO.format(printed=json.dumps({"text": "Write it."})))
-    start_text(log, cwd, RUN, Due("log:writer", "1"))
+    adapter(log, "start.py", ECHO.format(printed=json.dumps({"texts": ["Write it."]})))
+    start_texts(log, cwd, RUN, "log:writer")
     assert given(cwd) == {
         "input": {"run": {"skill": "log:up", "words": "1.2.0"}, "role": "log:writer"},
         "cwd": os.path.realpath(cwd),
@@ -72,7 +71,7 @@ def test_a_plugin_without_a_start_adapter_gives_no_text(log: str, cwd: str):
     When Lane asks for the text of the writer due
     Then there's none"""
     adapter(log, "start.py", None)
-    assert start_text(log, cwd, RUN, Due("log:writer", "1")) is None
+    assert start_texts(log, cwd, RUN, "log:writer") is None
 
 
 @pytest.mark.supports("test_a_start_adapter_that_fails_stops_with_the_adapter_and_what_it_said")
@@ -82,13 +81,13 @@ def test_a_start_adapter_that_fails_is_refused_with_its_file_and_what_it_said(lo
     Then it refuses with AdapterFailed naming start.py and what it said"""
     adapter(log, "start.py", "import sys\n\nsys.exit('no version found')\n")
     with pytest.raises(AdapterFailed) as raised:
-        start_text(log, cwd, RUN, Due("log:writer", "1"))
+        start_texts(log, cwd, RUN, "log:writer")
     assert "start.py" in str(raised.value)
     assert "no version found" in str(raised.value)
 
 
 @pytest.mark.supports("test_a_start_adapters_output_out_of_its_form_stops_naming_the_adapter")
-@pytest.mark.parametrize("printed", ["Write it.", '{"words": "Write it."}', '{"text": ""}'])
+@pytest.mark.parametrize("printed", ["Write it.", '{"words": "Write it."}', '{"texts": [""]}'])
 def test_a_start_adapters_output_out_of_its_form_is_refused(log: str, cwd: str, printed: str):
     """Given a start adapter that prints text that isn't JSON, an object with no `text`, or an
     empty `text`
@@ -96,7 +95,7 @@ def test_a_start_adapters_output_out_of_its_form_is_refused(log: str, cwd: str, 
     Then it refuses with AdapterFailed naming start.py"""
     adapter(log, "start.py", f"print({printed!r})\n")
     with pytest.raises(AdapterFailed) as raised:
-        start_text(log, cwd, RUN, Due("log:writer", "1"))
+        start_texts(log, cwd, RUN, "log:writer")
     assert "start.py" in str(raised.value)
 
 
@@ -163,7 +162,7 @@ def test_a_kept_adapter_gives_the_results_kept_in_their_order(log: str, cwd: str
         {"role": "log:reviewer", "result": "more"},
     ]
     write_files(cwd, {".log/kept/1.2.0.json": json.dumps(kept)})
-    assert kept_results(log, cwd, "log:up", "1.2.0") == kept
+    assert kept_results(log, cwd, "log:up", "1.2.0") == [kept]
 
 
 @pytest.mark.supports("test_the_kept_adapter_is_asked_with_the_words_typed_after_the_command")
@@ -171,7 +170,7 @@ def test_a_kept_adapter_takes_the_skill_and_the_words(log: str, cwd: str):
     """Given a kept adapter that writes what it's given
     When Lane asks it for the results of log:up with 1.3.0
     Then it was given the skill and the words, as kept.in.schema.json says"""
-    adapter(log, "kept.py", ECHO.format(printed=json.dumps({"results": []})))
+    adapter(log, "kept.py", ECHO.format(printed=json.dumps({"chains": []})))
     kept_results(log, cwd, "log:up", "1.3.0")
     assert given(cwd)["input"] == {"run": {"skill": "log:up", "words": "1.3.0"}}
 
@@ -190,7 +189,7 @@ def test_a_plugin_without_a_kept_adapter_gives_no_results(log: str, cwd: str):
     "code",
     [
         "import sys\n\nsys.exit('the kept file is broken')\n",
-        'print(\'{"results": [{"role": "log:writer"}]}\')\n',
+        'print(\'{"chains": [[{"role": "log:writer"}]]}\')\n',
     ],
 )
 def test_a_kept_adapter_that_fails_or_gives_out_of_form_is_refused(log: str, cwd: str, code: str):

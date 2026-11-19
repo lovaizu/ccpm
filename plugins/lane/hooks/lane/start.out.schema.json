@@ -1,16 +1,20 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "What a plugin's start adapter gives Lane",
-  "description": "The text that the main conversation gives the start due.",
+  "description": "The text of each start of the role due, as many as the role starts at once, which the main conversation gives each start.",
   "type": "object",
   "required": [
-    "text"
+    "texts"
   ],
   "additionalProperties": false,
   "properties": {
-    "text": {
-      "type": "string",
-      "minLength": 1
+    "texts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
     }
   }
 }

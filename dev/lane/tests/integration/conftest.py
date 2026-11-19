@@ -28,7 +28,7 @@ LANE_MODULES = (
     "adapters",
     "routes",
     "lane_text",
-    "lanes",
+    "rule_types",
 )
 
 

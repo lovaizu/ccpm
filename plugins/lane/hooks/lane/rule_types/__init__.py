@@ -17,7 +17,7 @@ def judge_call(rules: Rules, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("lanes.judge_call")
+    raise NotImplementedError("rule_types.judge_call")
 
 
 def judge_mark(rules: Rules, move: Move, items: list[str]) -> str | None:
@@ -30,7 +30,7 @@ def judge_mark(rules: Rules, move: Move, items: list[str]) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("lanes.judge_mark")
+    raise NotImplementedError("rule_types.judge_mark")
 
 
 def judge_end(rules: Rules, move: Move) -> str | None:
@@ -42,4 +42,4 @@ def judge_end(rules: Rules, move: Move) -> str | None:
     Changes: nothing, though check runs the plugin's check.
     Refuses: OSError, where the plugin's check can't be run.
     """
-    raise NotImplementedError("lanes.judge_end")
+    raise NotImplementedError("rule_types.judge_end")

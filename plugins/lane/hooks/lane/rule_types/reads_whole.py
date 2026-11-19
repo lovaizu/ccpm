@@ -17,4 +17,4 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("lanes.reads_whole.judge_mark")
+    raise NotImplementedError("rule_types.reads_whole.judge_mark")

@@ -17,7 +17,7 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("lanes.order.judge_mark")
+    raise NotImplementedError("rule_types.order.judge_mark")
 
 
 def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
@@ -29,4 +29,4 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("lanes.order.judge_end")
+    raise NotImplementedError("rule_types.order.judge_end")

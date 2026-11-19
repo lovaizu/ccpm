@@ -56,12 +56,13 @@ def run_opened(event: Event, run: Run) -> Answer:
 
     Takes: the event, whose `transcript_path` holds the skill's base directory, and the run with no
     folder.
-    Gives: the starts due of each lane of the run, each with the text that lane_text.text gives, its
-    lane named, after each result that the plugin's kept adapter gives for the run's words, where
-    the plugin gives rules; an empty answer where the
-    plugin gives none, or the transcript holds no base directory of the skill yet.
-    Changes: the run record, by the run's folder and its kept results, in one write, where the
-    transcript gives the folder.
+    Gives: the starts due of each lane of the run, as routes.due gives them with the texts that
+    adapters.start_texts gives, each with the text that lane_text.text gives, its lane named, after
+    the lanes that routes.picked_up gives from each chain of results that the plugin's kept adapter
+    gives for the run's words, where the plugin gives rules; an empty answer where the plugin gives
+    none, or the transcript holds no base directory of the skill yet.
+    Changes: the run record, by the run's folder and the entries of its kept results, in one write,
+    where the transcript gives the folder.
     Refuses: nothing; a plugin's rules out of form, or an adapter that failed, stops the event's
     call with what's wrong.
     """
@@ -73,14 +74,15 @@ def start_made(move: Move) -> Answer:
 
     Takes: a `start` move at the PreToolUse of an Agent or SendMessage call, in the lane that place
     gives it.
-    Gives: an empty answer for a start of a role due in the move's lane; for any other start of the
-    plugin's subagents, such as one whose prompt names no lane, or a lane with no start of that role
-    due, or one by a subagent, a stop with the starts due.
+    Gives: an empty answer for a start of a role due in the move's lane, as routes.due gives the
+    starts due with the texts that adapters.start_texts gives; for any other start of the plugin's
+    subagents, such as one whose prompt names no lane, or a lane with no start of that role due, or
+    one by a subagent, a stop with the starts due.
     Changes: the run record, by the start in its lane, untied until the PostToolUse of its call,
-    from which each later move of the subagent goes by its `agent_id`; a resume that
-    the PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
+    from which each later move of the subagent goes by its `agent_id`; a resume that the
+    PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
     SubagentStop, where subagent_ended ties it, as Lane hooks no SubagentStart.
-    Refuses: nothing.
+    Refuses: nothing; a start adapter that failed stops the call with what's wrong.
     """
     raise NotImplementedError("guard.start_made")
 
@@ -89,10 +91,11 @@ def turn_ended(move: Move) -> Answer:
     """S9: the main conversation ends its turn.
 
     Takes: a `turn_end` move at the main conversation's Stop.
-    Gives: a stop with the starts due, where a start is due; an empty answer where none is.
+    Gives: a stop with the starts due, where a start is due, as routes.due gives them with the texts
+    that adapters.start_texts gives; an empty answer where none is.
     Changes: the run record, by dropping each start still untied but a resume queued to a subagent
     that still runs.
-    Refuses: nothing.
+    Refuses: nothing; a start adapter that failed stops the turn's end with what's wrong.
     """
     raise NotImplementedError("guard.turn_ended")
 
@@ -103,8 +106,9 @@ def command_typed(move: Move) -> Answer:
 
     Takes: a `typed` move at the UserPromptExpansion of the command, or at the PostToolUse of its
     Skill call, which place gives while the run of the command's plugin stands.
-    Gives: where the run stands: the starts due of each lane, each with the text that
-    lane_text.text gives, as routes.due gives them once the command is added.
+    Gives: where the run stands: the starts due of each lane, as routes.due gives them with the
+    texts that adapters.start_texts gives once the command is added, each with the text that
+    lane_text.text gives.
     Changes: the run record, by the command.
     Refuses: nothing; a start adapter that failed stops the call with what's wrong.
     """
@@ -116,12 +120,12 @@ def result_reached(move: Move) -> Answer:
 
     Takes: a `result_reached` move at the UserPromptSubmit of the subagent's
     `<task-notification>`.
-    Gives: the result, and the starts that its route makes due in its lane, each with the text that
-    lane_text.text gives; where routes.joins gives the result's lane, as each start that its route
-    started of one role has its result, the one result that adapters.joined_result gives from
-    theirs, and the starts that the route after it makes due in the lane; nothing due in a lane
-    that still waits for a result of such a start; the start due again where the subagent was
-    stopped with no result.
+    Gives: the result, and the starts that its route makes due in its lane, as routes.due gives them
+    with the texts that adapters.start_texts gives, each with the text that lane_text.text gives;
+    where routes.joins gives the result's lane, as each start that its route started of its role has
+    its result, the one result that adapters.joined_result gives from theirs, and the starts that
+    the route after it makes due in the lane; nothing due in a lane that still waits for a result of
+    such a start; the start due again where the subagent was stopped with no result.
     Changes: the run record, by a `stopped` entry of the subagent's start, where it was stopped
     with no result, such as by TaskStop, and by a `joined` entry of the lane's one result, where
     routes.joins gives the lane; else nothing.
@@ -149,7 +153,7 @@ def call_made(move: Move) -> Answer:
     of its step.
 
     Takes: a `call` move at its PreToolUse.
-    Gives: a stop with the sentence that lanes.judge_call gives; an empty answer where it gives
+    Gives: a stop with the sentence that rule_types.judge_call gives; an empty answer where it gives
     none.
     Changes: nothing.
     Refuses: nothing.
@@ -162,8 +166,8 @@ def report_made(move: Move) -> Answer:
     step's rules hold.
 
     Takes: a `report` move at the PostToolUse of the reporter's Bash call.
-    Gives: for a step done, the sentence that lanes.judge_mark gives, with the step's items that
-    the plugin's checklist adapter gives; an empty answer where the report holds.
+    Gives: for a step done, the sentence that rule_types.judge_mark gives, with the step's items
+    that the plugin's checklist adapter gives; an empty answer where the report holds.
     Changes: the run record, by the mark or the result, where it holds.
     Refuses: nothing.
     """
@@ -175,7 +179,7 @@ def subagent_ended(move: Move) -> Answer:
 
     Takes: an `end` move at the subagent's SubagentStop, the end of the pass that ran where a resume
     is queued to the subagent.
-    Gives: a stop with the sentence that lanes.judge_end gives; an empty answer where it gives
+    Gives: a stop with the sentence that rule_types.judge_end gives; an empty answer where it gives
     none.
     Changes: where the end holds and a resume is queued to the subagent, the run record, by tying
     that resume's start to the subagent; else nothing.

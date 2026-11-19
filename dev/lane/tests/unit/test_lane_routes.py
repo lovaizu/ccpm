@@ -39,6 +39,11 @@ def result(role: str, agent_id: str, value: str) -> Entry:
     return {"kind": "result", "run": "r1", "role": role, "agent_id": agent_id, "result": value}
 
 
+def once(role: str) -> list[str]:
+    """The texts of a role due where the plugin has no start adapter, so that it starts once."""
+    return [""]
+
+
 def roles(starts: list[Due]) -> list[str]:
     return [each.role for each in starts]
 
@@ -51,7 +56,7 @@ def test_a_run_with_only_its_command_has_the_commands_starts_due():
     """Given a run of log:up with no move after its folder
     When Lane gives the starts due
     Then the writer is due, with no text yet"""
-    assert due(RULES, run()) == [Due("log:writer", "1")]
+    assert due(RULES, run(), once) == [Due("log:writer", "1")]
 
 
 @pytest.mark.supports("test_the_start_due_goes_through_and_leaves_none_due")
@@ -59,7 +64,7 @@ def test_a_start_made_of_the_role_due_leaves_none_due():
     """Given the writer due, and a start of the writer, not yet tied
     When Lane gives the starts due
     Then none is due"""
-    assert due(RULES, run(start("log:writer", "u1"))) == []
+    assert due(RULES, run(start("log:writer", "u1")), once) == []
 
 
 @pytest.mark.supports("test_the_start_due_goes_through_and_leaves_none_due")
@@ -67,7 +72,7 @@ def test_a_start_tied_to_its_subagent_leaves_none_due():
     """Given the writer's start, tied to its subagent
     When Lane gives the starts due
     Then none is due"""
-    assert due(RULES, run(start("log:writer", "u1"), tie("u1", "a1"))) == []
+    assert due(RULES, run(start("log:writer", "u1"), tie("u1", "a1")), once) == []
 
 
 @pytest.mark.supports("test_an_agent_call_that_fails_after_its_pre_tool_use_leaves_its_start_due")
@@ -76,7 +81,7 @@ def test_a_start_dropped_is_due_again():
     When Lane gives the starts due
     Then the writer is due again"""
     dropped: Entry = {"kind": "drop", "run": "r1", "tool_use_id": "u1"}
-    assert roles(due(RULES, run(start("log:writer", "u1"), dropped))) == ["log:writer"]
+    assert roles(due(RULES, run(start("log:writer", "u1"), dropped), once)) == ["log:writer"]
 
 
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
@@ -85,7 +90,7 @@ def test_a_start_stopped_with_no_result_is_due_again():
     When Lane gives the starts due
     Then the writer is due again"""
     stopped: Entry = {"kind": "stopped", "run": "r1", "agent_id": "a1"}
-    assert roles(due(RULES, run(start("log:writer", "u1"), tie("u1", "a1"), stopped))) == [
+    assert roles(due(RULES, run(start("log:writer", "u1"), tie("u1", "a1"), stopped), once)) == [
         "log:writer"
     ]
 
@@ -97,7 +102,7 @@ def test_a_result_makes_the_starts_of_its_route_due():
     """Given the writer's result `written`
     When Lane gives the starts due
     Then the reviewer is due"""
-    assert roles(due(RULES, run(*WRITER_DONE))) == ["log:reviewer"]
+    assert roles(due(RULES, run(*WRITER_DONE), once)) == ["log:reviewer"]
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_waits_for_puts_its_starts_in_place")
@@ -106,7 +111,7 @@ def test_a_typed_command_puts_its_routes_starts_in_place_of_those_before():
     When the person's /log:retry is added, and Lane gives the starts due
     Then the writer is due, and not the reviewer"""
     typed: Entry = {"kind": "typed", "run": "r1", "command": "log:retry"}
-    assert roles(due(RULES, run(*WRITER_DONE, typed))) == ["log:writer"]
+    assert roles(due(RULES, run(*WRITER_DONE, typed), once)) == ["log:writer"]
 
 
 @pytest.mark.supports("test_the_command_typed_after_compact_gives_where_the_run_picks_up")
@@ -115,7 +120,7 @@ def test_the_command_that_called_the_run_given_again_leaves_the_starts_as_they_s
     When the person's /log:up is added again, and Lane gives the starts due
     Then the reviewer is due, and not the writer that the route after /log:up starts"""
     typed: Entry = {"kind": "typed", "run": "r1", "command": "log:up"}
-    assert roles(due(RULES, run(*WRITER_DONE, typed))) == ["log:reviewer"]
+    assert roles(due(RULES, run(*WRITER_DONE, typed), once)) == ["log:reviewer"]
 
 
 @pytest.mark.supports("test_two_starts_of_one_role_are_each_held_to_their_own_start")
@@ -129,8 +134,8 @@ def test_two_starts_of_one_role_are_due_until_each_is_made():
         tie("u2", "a2"),
         result("log:reviewer", "a2", "split"),
     )
-    assert roles(due(RULES, run(*split))) == ["log:writer", "log:writer"]
-    assert roles(due(RULES, run(*split, start("log:writer", "u3")))) == ["log:writer"]
+    assert roles(due(RULES, run(*split), once)) == ["log:writer", "log:writer"]
+    assert roles(due(RULES, run(*split, start("log:writer", "u3")), once)) == ["log:writer"]
 
 
 @pytest.mark.supports("test_a_run_whose_routes_start_no_more_ends_and_holds_no_move_after")
@@ -139,7 +144,7 @@ def test_a_result_whose_route_starts_none_leaves_none_due():
     When Lane gives the starts due
     Then none is due, which ends the run"""
     good = (*WRITER_DONE, start("log:reviewer", "u2"), result("log:reviewer", "a2", "good"))
-    assert due(RULES, run(*good)) == []
+    assert due(RULES, run(*good), once) == []
 
 
 @pytest.mark.supports("test_the_reviewers_more_makes_the_writer_due_again")
@@ -148,7 +153,7 @@ def test_the_latest_result_decides_the_starts_due():
     When Lane gives the starts due
     Then the writer is due, by the route of the latest result"""
     more = (*WRITER_DONE, start("log:reviewer", "u2"), result("log:reviewer", "a2", "more"))
-    assert roles(due(RULES, run(*more))) == ["log:writer"]
+    assert roles(due(RULES, run(*more), once)) == ["log:writer"]
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_the_run_up_from_the_kept_results")
@@ -157,4 +162,4 @@ def test_kept_results_with_no_start_make_the_starts_of_the_latest_due():
     When Lane gives the starts due
     Then the reviewer is due"""
     kept: Entry = {"kind": "result", "run": "r1", "role": "log:writer", "result": "written"}
-    assert roles(due(RULES, run(kept))) == ["log:reviewer"]
+    assert roles(due(RULES, run(kept), once)) == ["log:reviewer"]
