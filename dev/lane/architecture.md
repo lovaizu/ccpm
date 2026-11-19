@@ -61,9 +61,14 @@ once.
 
 Strategies:
 
-- Each start that a route after a command makes due opens a lane of its own, and each start that a
-  route after a result makes due follows in the result's lane. [S9]\
-  Intent: chains of one run go at once, each in its order.
+- Each start that a route after a command makes due, and each first start of a chain that the
+  plugin's adapter gives at any move, opens a lane of its own, and each start that a route after a
+  result makes due follows in the result's lane. [S9, P2.2]\
+  Intent: chains of one run go at once, each in its order, and each starts when the plugin's own
+  order says.
+- The plugin's adapter given the text and the result of each start that a lane has made so far.
+  [P2.2]\
+  Intent: the plugin finds which of its chains a lane holds, and gives its starts by that.
 - A route after a result that starts one role alone, as many times at once as the plugin's
   adapter gives texts for it, its lane waiting until each of them has its result, and moving on by
   one result that the plugin's adapter gives from theirs. [S9, P2.2]\
@@ -124,8 +129,9 @@ sequenceDiagram
   M->>G: calls the skill [P2.3]
   G->>RR: adds the run, as S10 draws where one stopped (Run) [S9]
   loop until the routes start no more [S9]
-    opt the plugin gives a start's text of its own [P2.2]
-      G->>A: asks for the text of each start due, one for each time its role starts [P2.2]
+    opt the plugin gives an adapter of its starts [P2.2]
+      G->>A: asks for the text of each start due, one for each time its role starts, with its lane's starts so far (Lane) [P2.2]
+      G->>A: asks for the first start of each chain to open now [P2.2]
     end
     G-->>M: the starts due of each lane, each with its text that names its lane (Lane) [S9]
     alt a start whose text names a lane with that start due [S9]
