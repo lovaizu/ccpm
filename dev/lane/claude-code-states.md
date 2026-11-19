@@ -93,8 +93,9 @@ guard.
 - A subagent stopped by TaskStop: the guard ends its Start with no Result, and gives its start due
   again.
 - A command of the plugin typed while its Run stands, by the person or by the Skill tool: the guard
-  takes it as a move of that Run, as a conversation holds one Run of a plugin at a time. A Route
-  that goes after the command makes its starts due in place of those before, the main
+  takes it as a move of that Run, as a conversation holds one Run of a plugin at a time. The command
+  that called the Run, given again, leaves the starts due as they stand, as S10 picks the Run up;
+  another command that a Route goes after makes its starts due in place of those before; the main
   conversation's calls hold to the steps that the rules give the command's skill where they give
   any, and the guard answers where the Run stands.
 - A command of the plugin typed once its Run ended, or where none stands: the guard adds a new Run,
