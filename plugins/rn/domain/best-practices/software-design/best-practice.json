@@ -67,6 +67,10 @@
        {
         "at": "make",
         "text": "Follow each sequence from arrow to arrow, and check that what each interface gives is what the interface of the next arrow takes, such as by a throwaway file that passes each call's result to the next call, run through the type checker that Test strategy names, since the checker sees a handoff only where code passes a value on. A type that doesn't fit is a gap that N4 lists."
+       },
+       {
+        "at": "make",
+        "text": "For each decision that the module at an arrow's head makes, name where each value it decides on comes from: what the interface gives it, or its own module. Where it would find again what the module at the arrow's tail already found, such as the start that a resume resumes, have the interface give it, since a thing found twice is one decision in two modules, which the type checker passes."
        }
       ]
      },

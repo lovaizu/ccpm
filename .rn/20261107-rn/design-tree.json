@@ -816,6 +816,11 @@
               "about": "Two writers of one role",
               "decided": "the second writes a file its step allows that doesn't exist yet, as no record shows a Write to a file that exists",
               "by": "reasoning"
+            },
+            {
+              "about": "What a resume's move carries",
+              "decided": "place gives a resume's start move the role, the prompt, and the steps of the start it resumes, so that the guard finds none of them again; Lane's unit cases are designed to it before the code follows",
+              "by": "reasoning"
             }
           ]
         },
