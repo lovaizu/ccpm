@@ -344,7 +344,7 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Its scope",
@@ -370,7 +370,7 @@
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Non-goals",
@@ -381,7 +381,7 @@
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Status",
@@ -392,7 +392,7 @@
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "License",
@@ -403,7 +403,7 @@
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -412,14 +412,14 @@
           "decisions": [
             {
               "about": "The run",
-              "decided": "a plugin that writes CHANGELOG.md entries, its writer stopped as it writes another file and its reviewer's result moving the run, taken from a real run once Lane's code runs",
+              "decided": "a plugin that writes CHANGELOG.md entries, its writer stopped as it writes another file and its reviewer's result moving the run, as Lane's integration cases show it word for word",
               "by": "maker"
             }
           ]
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The one way",
@@ -430,7 +430,7 @@
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Problems and doubts",
@@ -457,7 +457,7 @@
         },
         {
           "id": "N10",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Links",
@@ -588,7 +588,7 @@
       ]
     },
     {
-      "name": "A user's plugin, laid by /lane:up, runs held to its steps and its order until the skill's Result",
+      "name": "A plugin's run is held to its steps and its order until the skill's result",
       "path": "dev/lane/tests/integration/test_lane_s1_run.py",
       "kind": "code",
       "inputs": [
@@ -1334,11 +1334,6 @@
         {
           "about": "The README after the E2E test",
           "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short",
-          "by": "reasoning"
-        },
-        {
-          "about": "What Lane's install shows",
-          "decided": "Lane's README says what claude plugin details shows of Lane, its skill up, as Lane's own folder holds no hooks of its own",
           "by": "reasoning"
         }
       ]
