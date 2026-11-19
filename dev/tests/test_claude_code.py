@@ -1556,7 +1556,7 @@ class RunPythonTest(unittest.TestCase):
 
     def test_a_script_of_another_folder_gets_the_module_of_its_own_folder(self):
         folders = [tempfile.mkdtemp(prefix="run-python-") for _ in range(2)]
-        for folder, name in zip(folders, ("first", "second"), strict=True):
+        for folder, name in zip(folders, ("first", "second")):
             self.addCleanup(shutil.rmtree, folder)
             with open(os.path.join(folder, "named_double.py"), "w", encoding="utf-8") as f:
                 f.write(f"NAME = {name!r}\n")
