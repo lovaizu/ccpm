@@ -4,8 +4,11 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
-from tree.design import Tree
+if TYPE_CHECKING:
+    # design.read runs this check, so the check takes only the type from it.
+    from tree.design import Tree
 
 
 def faults(tree: Tree) -> Sequence[str]:
@@ -15,4 +18,8 @@ def faults(tree: Tree) -> Sequence[str]:
     Gives: one line for each deliverable whose status is done while a `good` it holds is false;
     none where each holds.
     Refuses: nothing, as each fault is a line of what it gives."""
-    raise NotImplementedError("status.faults")
+    return [
+        f"{d['path']} says it's done while a condition it holds isn't good"
+        for d in tree["deliverables"]
+        if d["status"] == "done" and not all(c["good"] for c in d.get("necessary_conditions", []))
+    ]

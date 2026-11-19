@@ -12,8 +12,6 @@ import pytest
 from repo_files import git
 from rn_bench import RUN, Bench, judged, made
 
-pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
-
 
 def paused(b: Bench) -> str:
     """The command's generator started and stopped by /rn:dn's TaskStop, with nothing written
@@ -39,6 +37,7 @@ def test_a_pause_pushes_the_run_with_the_kept_cut_of_the_role_it_stopped(b: Benc
     assert cut.removesuffix(".cut.json") + ".json" not in pushed
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("S2")
 def test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order(b: Bench):
     """Given round 1 of the command made and judged good, and round 2's generator paused
@@ -70,6 +69,7 @@ def test_a_role_stopped_starts_again_from_its_kept_cut(b: Bench):
     assert not os.path.exists(os.path.join(b.run, "rounds", "2"))
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("S2")
 def test_up_with_a_new_request_picks_up_no_run(b: Bench):
     """Given a run paused
@@ -80,6 +80,7 @@ def test_up_with_a_new_request_picks_up_no_run(b: Bench):
     assert (code, printed) == (0, {"results": []}), said
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("S2")
 def test_up_alone_with_no_run_picks_up_none(b: Bench):
     """Given the repository with no run's folder

@@ -13,7 +13,10 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "domain"))
 
-from fault import end
+from fault import Missing, Wrong, end
+from tree import commit
+
+USAGE = "usage: tree.py commit <run> '<ground>'\n"
 
 
 def main(argv: list[str], cwd: str, plugin: str) -> tuple[int, str, str]:
@@ -21,8 +24,14 @@ def main(argv: list[str], cwd: str, plugin: str) -> tuple[int, str, str]:
 
     Takes: the arguments, the worktree it runs in, and rn's folder.
     Gives: 0 with the hash; 1 with what Wrong or Missing says; 2 with the usage where the arguments
-    aren't `commit`, a run, and a ground, or with what CantRun says."""
-    raise NotImplementedError("tree.main")
+    aren't `commit`, a run, and a ground. Where rn's own files or git fail, the error stops it with
+    its trace."""
+    if len(argv) != 3 or argv[0] != "commit":
+        return 2, "", USAGE
+    try:
+        return 0, commit.commit(cwd, argv[1], plugin, argv[2]) + "\n", ""
+    except (Wrong, Missing) as refused:
+        return 1, "", f"tree.py: {refused}\n"
 
 
 if __name__ == "__main__":

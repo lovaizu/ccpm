@@ -10,8 +10,6 @@ import rn_bench
 from repo_files import write_files
 from rn_bench import COMMAND, GUIDE, RUN, Bench, command_done, decided, head, read_json
 
-pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
-
 TAX_RATE = {"path": COMMAND, "condition": "N1", "about": "The tax rate"}
 LINES = {"path": COMMAND, "condition": "N1", "about": "The lines"}
 # A decision under the command's N2, from a finding of its evaluator.
@@ -31,6 +29,10 @@ def judged(b: Bench, more: dict[str, str]) -> list[str]:
     return [cut for _, cut in rn_bench.judged(b, more)]
 
 
+@pytest.mark.xfail(
+    strict=True,
+    reason="the bench quotes the ground in single quotes, which the ground's own apostrophes end",
+)
 @pytest.mark.supports("S1")
 def test_an_edit_of_the_design_tree_is_committed_with_its_ground(b: Bench):
     """Given the plan signed off, and the orchestrator's edit that settles a point of the command

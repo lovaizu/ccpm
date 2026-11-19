@@ -16,8 +16,6 @@ from schemas import form
 from tree import commit, design, inputs, status, work
 from tree import git as tree_git
 
-pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
-
 SCHEMA = os.path.join(RN, "domain", "best-practices", "design-tree", "design-tree.schema.json")
 PRACTICES = os.path.join(RN, "domain", "best-practices")
 

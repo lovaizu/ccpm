@@ -14,8 +14,6 @@ from collections.abc import Callable
 import pytest
 from rn_bench import COMMAND, GUIDE, RUN, Bench, decided, head, judged, made
 
-pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies, and no guard")
-
 
 def given_again(b: Bench, module: str, code: str) -> None:
     """Gives an interface of the bench's module again, at the end of its file."""
@@ -140,6 +138,7 @@ def test_a_generators_point_starts_no_other_role(b: Bench, broken: None):
     assert none_due(b, "generator")
 
 
+@pytest.mark.xfail(strict=True, reason="no guard of Lane's is laid on rn's steps yet")
 @pytest.mark.supports("P1.3")
 def test_work_that_rests_on_a_plan_waits_for_its_sign_off(b: Bench, broken: None):
     """Given /rn:up typed, and the orchestrator putting the plan up for the person's sign-off
@@ -204,6 +203,13 @@ def test_a_round_of_refactoring_comes_only_after_the_content_is_good(b: Bench, b
         assert json.load(f)["best_practice"] == "code"
 
 
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "a second round with no decision changed after the first, which the unit case"
+        " test_findings_with_no_decision_changed_give_none leaves to the orchestrator"
+    ),
+)
 @pytest.mark.supports("P3.3")
 def test_findings_past_the_limit_start_no_further_round(b: Bench, broken: None):
     """Given two rounds of the command's content, each judged with more on N4
@@ -242,6 +248,7 @@ def test_a_role_that_ends_with_no_result_in_its_file_is_held(b: Bench, broken: N
     assert b.check(agent, "generator", cut).exit_code == 1
 
 
+@pytest.mark.xfail(strict=True, reason="no guard of Lane's is laid on rn's steps yet")
 @pytest.mark.supports("P5.1")
 def test_a_role_that_writes_beside_its_deliverable_is_told_its_step(b: Bench, broken: None):
     """Given the command's generator started with its Cut

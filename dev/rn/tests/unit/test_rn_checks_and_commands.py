@@ -19,8 +19,6 @@ from fault import Wrong
 from repo_files import git, write_files
 from rn_bench import COMMAND, GUIDE, RN, RUN, plan, worktree
 
-pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
-
 TAX = {
     "path": COMMAND,
     "condition": "N1",
@@ -340,6 +338,7 @@ def test_start_with_no_role_bad_input_or_a_tree_out_of_form_gives_its_code(
     assert (got, printed) == (code, "") and said
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 def test_items_gives_each_practice_of_the_cuts_best_practice_in_order(tmp_path: Any):
     """Given the generator's Cut by code
@@ -352,6 +351,7 @@ def test_items_gives_each_practice_of_the_cuts_best_practice_in_order(tmp_path: 
     assert code == 0 and items[0] == "N1.1" and len(items) == len(set(items))
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
 @pytest.mark.parametrize(
     ("argv", "cut", "code"),
@@ -373,6 +373,7 @@ def test_items_with_no_step_or_no_best_practice_gives_its_code(
     assert (got, printed) == (code, "") and said
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
 def test_results_gives_each_result_in_the_order_of_the_rounds(tmp_path: Any):
     """Given round 1's generator made and its evaluator of C1 judged, and round 2's generator with
@@ -397,6 +398,7 @@ def test_results_gives_each_result_in_the_order_of_the_rounds(tmp_path: Any):
     }
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_up_with_a_new_request_picks_up_no_run")
 def test_results_gives_none_for_words_of_a_new_request(tmp_path: Any):
     """Given a run with a result
@@ -409,6 +411,7 @@ def test_results_gives_none_for_words_of_a_new_request(tmp_path: Any):
     assert (code, json.loads(printed)) == (0, {"results": []})
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_up_alone_with_no_run_picks_up_none")
 def test_results_gives_none_where_no_run_is(tmp_path: Any):
     """Given a folder with no run's folder
@@ -418,6 +421,7 @@ def test_results_gives_none_where_no_run_is(tmp_path: Any):
     assert (code, json.loads(printed)) == (0, {"results": []})
 
 
+@pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
 @pytest.mark.supports("test_a_pick_up_in_a_new_conversation_gets_the_results_kept_in_their_order")
 def test_results_of_input_not_json_gives_1(tmp_path: Any):
     """Given Lane's input that isn't JSON
@@ -428,7 +432,16 @@ def test_results_of_input_not_json_gives_1(tmp_path: Any):
 
 
 @pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
-@pytest.mark.parametrize("path", ["scripts/check.py", "hooks/adapters/items.py"])
+@pytest.mark.parametrize(
+    "path",
+    [
+        "scripts/check.py",
+        pytest.param(
+            "hooks/adapters/items.py",
+            marks=pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies"),
+        ),
+    ],
+)
 def test_a_command_run_with_no_argument_exits_2_with_its_usage(tmp_path: Any, path: str):
     """Given no argument
     When check.py, or items.py, runs as a command, as Lane runs it

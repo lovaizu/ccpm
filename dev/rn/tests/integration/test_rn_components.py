@@ -9,8 +9,6 @@ import os
 import pytest
 from rn_bench import COMMAND, GUIDE, RN, Bench, command_done, decided, judged, made, read_json
 
-EMPTY = pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
-
 
 def judge_all(b: Bench, more: dict[str, str]) -> list[str]:
     """Each evaluator due judges, more on each condition named, and gives each group judged."""
@@ -28,7 +26,6 @@ def test_the_main_conversation_is_the_orchestrator(b: Bench):
     assert sorted(os.listdir(os.path.join(RN, "agents"))) == ["evaluator.md", "generator.md"]
 
 
-@EMPTY
 @pytest.mark.supports("generator")
 def test_one_generator_runs_for_each_deliverable(b: Bench):
     """Given the command's generator running
@@ -40,7 +37,6 @@ def test_one_generator_runs_for_each_deliverable(b: Bench):
     assert (code, list(printed)) == (0, ["none"])
 
 
-@EMPTY
 @pytest.mark.supports("evaluator")
 def test_a_later_round_judges_only_the_groups_whose_decisions_changed(b: Bench):
     """Given round 1 of the command judged with more on N2, and a decision under N2 changed
@@ -58,7 +54,6 @@ def test_a_later_round_judges_only_the_groups_whose_decisions_changed(b: Bench):
     assert judge_all(b, {}) == ["C1"]
 
 
-@EMPTY
 @pytest.mark.supports("Design tree")
 def test_an_item_of_work_before_an_input_not_done_is_refused(b: Bench):
     """Given the orchestrator's edit that puts the guide first in the work, before the command it
@@ -73,7 +68,13 @@ def test_an_item_of_work_before_an_input_not_done_is_refused(b: Bench):
     assert GUIDE in answer.output and COMMAND in answer.output
 
 
-@EMPTY
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "the design tree's schema refuses a done deliverable that keeps its conditions, naming"
+        " a place and not the deliverable, before status.faults can name it"
+    ),
+)
 @pytest.mark.supports("Design tree")
 def test_a_deliverable_done_with_a_condition_not_good_is_refused(b: Bench):
     """Given the orchestrator's edit that marks the command done while N1 isn't good
@@ -87,7 +88,6 @@ def test_a_deliverable_done_with_a_condition_not_good_is_refused(b: Bench):
     assert COMMAND in answer.output
 
 
-@EMPTY
 @pytest.mark.supports("Design tree")
 def test_a_deliverable_whose_inputs_leave_out_a_kind_its_best_practice_takes_is_refused(b: Bench):
     """Given the orchestrator's edit that takes docs/test-design.md out of the command's inputs
@@ -101,7 +101,6 @@ def test_a_deliverable_whose_inputs_leave_out_a_kind_its_best_practice_takes_is_
     assert COMMAND in answer.output and "test-design" in answer.output
 
 
-@EMPTY
 @pytest.mark.supports("Cut")
 def test_each_cut_holds_its_role_deliverable_best_practice_and_goal(b: Bench):
     """Given the command made
@@ -120,7 +119,6 @@ def test_each_cut_holds_its_role_deliverable_best_practice_and_goal(b: Bench):
         assert (written["best_practice"], written["goal"]) == ("code", b.tree()["goal"]["decided"])
 
 
-@EMPTY
 @pytest.mark.supports("Best practice")
 def test_the_guides_rounds_work_by_the_readme_best_practice_and_its_groups(b: Bench):
     """Given the command done, and the guide next in the work
@@ -132,7 +130,6 @@ def test_the_guides_rounds_work_by_the_readme_best_practice_and_its_groups(b: Be
     assert judge_all(b, {}) == ["C1", "C2", "C3", "C4"]
 
 
-@EMPTY
 @pytest.mark.supports("Round")
 def test_each_rounds_results_lie_beside_their_cuts(b: Bench):
     """Given round 1 of the command made and judged

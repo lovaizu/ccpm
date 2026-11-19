@@ -5,11 +5,19 @@ changed."""
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+import json
+import os
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from typing import Any
 
 from tree.design import Tree
 from tree.rounds import Start
+
+# rn's own best practices, beside its code.
+_PRACTICES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "best-practices")
+# The most Rounds of content, and of refactoring, before each finding left goes to the user.
+_LIMIT = 2
 
 
 @dataclass(frozen=True)
@@ -24,6 +32,18 @@ class Due:
     round: int
 
 
+def groups(best_practice: str) -> Mapping[str, Sequence[str]]:
+    """Each group of the best practice's necessary conditions, by its ID, with the ID of each
+    condition it bundles, in the best practice's order.
+
+    Takes: the folder name of one of rn's best practices, such as code.
+    Gives: the groups, such as {"C1": ["N1", "N2"]}.
+    Refuses: OSError where rn has no such best practice, as the Cut that names it is at fault."""
+    with open(os.path.join(_PRACTICES, best_practice, "best-practice.json"), encoding="utf-8") as f:
+        factors = json.load(f)["goal"]["critical_success_factors"]
+    return {c["id"]: [n["id"] for n in c["necessary_conditions"]] for c in factors}
+
+
 def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence[Due]:
     """Each start due, beside those that run.
 
@@ -34,4 +54,89 @@ def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence
     generator gave its result; or none where no Round is due, such as once the limit leaves each
     finding to the orchestrator, which puts it to the user as a proposal.
     Refuses: nothing."""
-    raise NotImplementedError("course.due")
+    # The first item of the work, whose inputs work.faults holds done or earlier in the work.
+    path = tree["work"][0]["path"]
+    node = next(d for d in tree["deliverables"] if d["path"] == path)
+    mine = [s for s in starts if s.cut.get("deliverable", {}).get("path", path) == path]
+    if not mine:
+        return [Due(path, "generator", "", node["kind"], _last(starts) + 1)]
+    made = [s for s in mine if s.role == "generator"]
+    latest = made[-1]
+    practice = latest.cut["best_practice"]
+    if latest.result is None:
+        busy = any(r.role == "generator" and r.deliverable == path for r in running)
+        return [] if busy else [Due(path, "generator", "", practice, latest.round)]
+    if latest.result["result"] != "made":
+        return []
+    judged = [s for s in mine if s.round == latest.round and s.role == "evaluator"]
+    pending = _pending(practice, made, judged, running, path)
+    if pending is not None:
+        return [Due(path, "evaluator", g, practice, latest.round) for g in pending]
+    return _after(tree, node, made, judged, _last(starts) + 1)
+
+
+def _last(starts: Sequence[Start]) -> int:
+    """The number of the run's latest Round, or 0 before the first."""
+    return max((s.round for s in starts), default=0)
+
+
+def _pending(
+    practice: str, made: Sequence[Start], judged: Sequence[Start], running: Sequence[Due], path: str
+) -> list[str] | None:
+    """Each group of the latest Round due beside those that run, or None once each has answered."""
+    latest = made[-1]
+    earlier = [s for s in made[:-1] if s.cut["best_practice"] == practice]
+    wanted = groups(practice)
+    if earlier:
+        changed = _changed(earlier[-1].cut["decisions"], latest.cut["decisions"])
+        wanted = {g: c for g, c in wanted.items() if set(c) & changed}
+    answered = {s.group for s in judged if s.result is not None}
+    left = [g for g in wanted if g not in answered]
+    if not left:
+        return None
+    busy = {r.group for r in running if r.role == "evaluator" and r.deliverable == path}
+    return [g for g in left if g not in busy]
+
+
+def _changed(before: Sequence[Mapping[str, Any]], after: Sequence[Mapping[str, Any]]) -> set[str]:
+    """The ID of each condition whose decisions differ between two Cuts."""
+
+    def held(decisions: Sequence[Mapping[str, Any]]) -> set[tuple[str, str, str, Any]]:
+        return {(d["path"], d["condition"], d["about"], d["decided"]) for d in decisions}
+
+    return {each[1] for each in held(before) ^ held(after)}
+
+
+def _after(
+    tree: Tree, node: Mapping[str, Any], made: Sequence[Start], judged: Sequence[Start], next_: int
+) -> list[Due]:
+    """The generator due once each evaluator of the latest Round answered, or none."""
+    path = node["path"]
+    practice = made[-1].cut["best_practice"]
+    short = any(s.result and s.result["more"] for s in judged)
+    if not short:
+        if practice != node["kind"]:
+            return []
+        refactor = "refactor-doc" if path.endswith(".md") else "refactor-code"
+        return [Due(path, "generator", "", refactor, next_)]
+    rounds = [s for s in made if s.cut["best_practice"] == practice]
+    if len(rounds) >= _LIMIT or not _changed(rounds[-1].cut["decisions"], decisions(tree, path)):
+        return []
+    return [Due(path, "generator", "", practice, next_)]
+
+
+def decisions(tree: Tree, path: str) -> list[dict[str, Any]]:
+    """Each decision that the generator of a deliverable works from.
+
+    Takes: the design tree, and the deliverable's path.
+    Gives: each decision of its node, then of each input node that keeps its conditions, as a node
+    with no file does, each by its node's path and its condition, in the tree's order.
+    Refuses: nothing."""
+    nodes = {d["path"]: d for d in tree["deliverables"]}
+    held = [path, *(i for i in nodes[path].get("inputs", []) if i in nodes)]
+    return [
+        {"path": each, "condition": c["id"], **d}
+        for each in held
+        for c in nodes[each].get("necessary_conditions", [])
+        for d in c["decisions"]
+    ]

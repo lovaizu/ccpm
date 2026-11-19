@@ -30,7 +30,7 @@
       "type": "string"
     },
     "decisions": {
-      "description": "For the generator: each decision of the deliverable's node and of each input node with no file, by its node's path and condition.",
+      "description": "For the generator: each decision of the deliverable's node and of each input node with no file, by its node's path and condition, with who settled it where it's settled.",
       "type": "array",
       "items": {
         "type": "object",
@@ -40,7 +40,8 @@
           "path": {"type": "string"},
           "condition": {"type": "string"},
           "about": {"type": "string"},
-          "decided": {"type": ["string", "null"]}
+          "decided": {"type": ["string", "null"]},
+          "by": {"enum": ["user", "maker", "reasoning", "research"]}
         }
       }
     },

@@ -4,10 +4,15 @@ holding the Cut of each start, `<role>[-<group>].cut.json`, and its result besid
 
 from __future__ import annotations
 
+import json
+import os
 from collections.abc import Sequence
 from dataclasses import dataclass
 
+from fault import Wrong
 from schemas.form import Json
+
+_CUT = ".cut.json"
 
 
 @dataclass(frozen=True)
@@ -23,12 +28,25 @@ class Start:
 
 
 def each(run: str) -> Sequence[Start]:
-    """Each start of the run's Rounds, in the order they were cut.
+    """Each start of the run's Rounds, in the order they were cut: by the Round's number, the
+    generator before the evaluators, and the evaluators by their group.
 
     Takes: the run's folder.
     Gives: each start, its result None where its role was stopped or still runs.
     Refuses: Wrong, naming the file, where a Cut or a result isn't JSON."""
-    raise NotImplementedError("rounds.each")
+    folder = os.path.join(run, "rounds")
+    if not os.path.isdir(folder):
+        return []
+    starts: list[Start] = []
+    for number in sorted((n for n in os.listdir(folder) if n.isdigit()), key=int):
+        names = [n for n in os.listdir(os.path.join(folder, number)) if n.endswith(_CUT)]
+        for name in sorted(names, key=lambda n: (n != f"generator{_CUT}", n)):
+            role, _, group = name.removesuffix(_CUT).partition("-")
+            cut = os.path.join("rounds", number, name)
+            result = cut.removesuffix(_CUT) + ".json"
+            given = _read(run, result) if os.path.isfile(os.path.join(run, result)) else None
+            starts.append(Start(int(number), role, group, _read(run, cut), given))
+    return starts
 
 
 def path(run: str, start: Start) -> str:
@@ -37,4 +55,14 @@ def path(run: str, start: Start) -> str:
     Takes: the run's folder and a start.
     Gives: the path of its Cut, which its result lies beside.
     Refuses: nothing."""
-    raise NotImplementedError("rounds.path")
+    name = f"{start.role}-{start.group}" if start.group else start.role
+    return f"{run}/rounds/{start.round}/{name}{_CUT}"
+
+
+def _read(run: str, name: str) -> Json:
+    """The JSON of the file `name` in the run's folder; Wrong, naming it, where it isn't JSON."""
+    with open(os.path.join(run, name), encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except ValueError as error:
+            raise Wrong(f"{name}: isn't JSON: {error}") from None

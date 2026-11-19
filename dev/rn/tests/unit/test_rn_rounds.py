@@ -17,8 +17,6 @@ from tree import course, cut, rounds
 from tree.course import Due
 from tree.rounds import Start
 
-pytestmark = pytest.mark.xfail(strict=True, reason="rn's parts have empty bodies")
-
 CODE_GROUPS = {"C1": ["N1", "N2", "N3"], "C2": ["N4", "N5", "N6", "N7"], "C3": ["N8"]}
 
 
