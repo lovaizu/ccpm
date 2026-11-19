@@ -300,6 +300,10 @@ class Sections(unittest.TestCase):
     def test_the_opening_and_each_second_level_heading(self):
         self.assertEqual(practices.sections(TEMPLATE), SECTIONS)
 
+    def test_a_third_level_heading_is_a_section_but_a_slot_or_a_fourth_level_is_not(self):
+        text = "# <P>\n## Strategy\n### Principles\n### `<p>`\n#### Views\n## Tests\n"
+        self.assertEqual(practices.sections(text), ["Strategy", "Principles", "Tests"])
+
     def test_an_opening_on_the_line_right_under_the_title(self):
         self.assertEqual(practices.sections("# <P>\n<P> is.\n## Roles\n"), ["the opening", "Roles"])
 

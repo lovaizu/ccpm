@@ -17,54 +17,80 @@ import threading
 from helpers import TOP, FolderTest
 
 SCRIPT = os.path.join(TOP, "dev", "scripts", "trace.py")
-USAGE = "usage: trace.py check <plugin> | doubles | sources"
+USAGE = "usage: trace.py check <plugin> | tags <plugin> | doubles | sources"
 
 ARCHITECTURE = """\
 # `p` architecture
 
 ## User stories
 
-- S1: the user wants to type `/p:up`, so that they get the work.
-- S2: the user wants to stop, so that they lose nothing.
+- S1: the user wants the work.
+- S2: the user wants to stop and lose nothing.
 
 ## Solution strategy
 
+### Principles
+
 `p` keeps every decision in one file that each part reads.
 
-### The repository holds the work
+- P1: nothing lost
+  - P1.1: the run's state lives in files.
 
-Every part keeps the state in the run's folder.
-
-*Why*: work kept in a conversation is lost.
-
-## Components
-
-![p's components](images/components.svg)
-
-- user\\
-  Gives the goal.
-- tree.py\\
-  Keeps the tree's form.
-
-Strategies:
-
-- One generator\\
-  It's quicker, which serves KR1.2.
-
-## Data model
+### Data model
 
 ![p's data](images/data-model.svg)
 
 - Cut\\
   The part of the tree that a role starts with.
 
-## Sequences
+Strategies:
 
-### S1: a request
+- Each edit checked before its commit, on each
+  condition code can check. [P1.1]\\
+  Intent: the work rests on a tree in form.
+
+### Components
+
+![p's components](images/components.svg)
+
+- user (person)\\
+  Gives the goal.
+- tree.py (script)\\
+  Keeps the tree's form.
+
+Strategies:
+
+- One generator. [S1]\\
+  Intent: a quick round.
+
+### Sequences
+
+#### S1: a request
+
+```mermaid
+sequenceDiagram
+  U->>T: asks (Cut) [S1]
+  T-->>U: ends [S1, P1.1]
+```
+
+#### S2: a stop
+
+```mermaid
+sequenceDiagram
+  alt a stop [S2]
+    U-)T: stops [S2]
+  end
+```
+
+```text
+A->>B: not a sequence
+```
 
 ## Test strategy
 
-- Tries: each story.
+| Check | Test target | Kind | Exit criteria or measure |
+|---|---|---|---|
+| Lint | Parts | Quality | 0 findings. |
 """
 
 DATA_MODEL = """\
@@ -86,11 +112,8 @@ PRODUCT_VISION = """\
   - KR1.2: the time from the request to the deliverable. Shorter is better.
 """
 
-# A combination that one hook event meets, as the Strategies of a sequence name it.
-COMBINATION = "Strategies:\n\n- A call judged by two lanes\\\n  Each holds, serving KR1.1.\n\n"
-
 # Every element of ARCHITECTURE and DATA_MODEL, as an integration case names it.
-ELEMENTS = ["S1", "S2", "user", "tree.py", "Cut", "Lack's kept", "The repository holds the work"]
+ELEMENTS = ["S1", "S2", "user", "tree.py", "Cut", "Lack's kept", "P1.1"]
 
 
 def case(name: str, *supports: str) -> str:
@@ -122,7 +145,7 @@ import pytest
 def broken():
     return os.environ.get("TRACE_BROKEN") == "1"
 """
-RULE = "The repository holds the work"
+RULE = "P1.1"
 
 
 class TraceTest(FolderTest):
@@ -170,6 +193,8 @@ class CommandTest(TraceTest):
             ("fix", "p"),
             ("check",),
             ("check", "p", "q"),
+            ("tags",),
+            ("tags", "p", "q"),
             ("doubles", "p"),
             ("sources", "p"),
         ):
@@ -187,7 +212,10 @@ class CommandTest(TraceTest):
         self.fails_with(2, "dev/p/architecture.md", "## Solution strategy")
 
     def test_components_that_list_no_component_gives_2(self):
-        listed = "- user\\\n  Gives the goal.\n- tree.py\\\n  Keeps the tree's form.\n\n"
+        listed = (
+            "- user (person)\\\n  Gives the goal.\n"
+            "- tree.py (script)\\\n  Keeps the tree's form.\n\n"
+        )
         self.write("dev/p/architecture.md", ARCHITECTURE.replace(listed, ""))
         self.fails_with(2, "dev/p/architecture.md", "Components lists no component")
 
@@ -210,7 +238,7 @@ class CommandTest(TraceTest):
 
 
 class ElementTest(TraceTest):
-    """Every story, rule, component, and kind of data of the architecture has an integration
+    """Every story, rule, component, and data of the architecture has an integration
     test that names it, as each architecture's Integration tests set."""
 
     def test_without_any_case_every_element_is_reported(self):
@@ -224,49 +252,33 @@ class ElementTest(TraceTest):
 
     def test_a_rule_that_no_case_names_is_reported(self):
         self.every_element_named()
-        added = ARCHITECTURE.replace("## Components", "### One source\n\nA rule.\n\n## Components")
+        added = ARCHITECTURE.replace("  - P1.1:", "  - P1.2: one source.\n  - P1.1:")
         self.write("dev/p/architecture.md", added)
-        self.fails_with(1, "rule One source has no integration test")
+        self.fails_with(1, "dev/p/architecture.md:15: rule P1.2 has no integration test")
 
     def test_a_component_that_no_case_names_is_reported(self):
         self.every_element_named()
-        added = ARCHITECTURE.replace("- tree.py\\", "- guard\\\n  Holds each call.\n- tree.py\\")
+        added = ARCHITECTURE.replace(
+            "- tree.py (script)\\", "- guard (hook)\\\n  Holds each call.\n- tree.py (script)\\"
+        )
         self.write("dev/p/architecture.md", added)
         self.fails_with(1, "component guard has no integration test")
 
     def test_components_without_strategies_are_each_read(self):
         self.every_element_named()
-        strategies = "Strategies:\n\n- One generator\\\n  It's quicker, which serves KR1.2.\n\n"
+        strategies = "Strategies:\n\n- One generator. [S1]\\\n  Intent: a quick round.\n\n"
         bare = ARCHITECTURE.replace(strategies, "")
-        last = bare.replace("## Data model", "- guard\\\n  Holds each call.\n\n## Data model")
+        last = bare.replace(
+            "### Sequences", "- guard (hook)\\\n  Holds each call.\n\n### Sequences"
+        )
         self.write("dev/p/architecture.md", last)
         self.fails_with(1, "component guard has no integration test")
-
-    def test_a_combination_that_no_case_names_is_reported_at_its_line(self):
-        self.every_element_named()
-        added = ARCHITECTURE.replace("## Test strategy", f"{COMBINATION}## Test strategy")
-        self.write("dev/p/architecture.md", added)
-        line = added.split("\n").index("- A call judged by two lanes\\") + 1
-        self.fails_with(
-            1, f"dev/p/architecture.md:{line}: combination A call judged by two lanes has no"
-        )
-
-    def test_a_combination_that_a_case_names_passes(self):
-        self.every_element_named()
-        added = ARCHITECTURE.replace("## Test strategy", f"{COMBINATION}## Test strategy")
-        self.write("dev/p/architecture.md", added)
-        self.write(
-            "dev/p/tests/integration/test_combination.py",
-            cases_file(case("test_two", "A call judged by two lanes")),
-        )
-        result = self.trace()
-        self.assertEqual((result.returncode, result.stderr), (0, ""))
 
     def test_a_kind_of_data_that_no_case_names_is_reported(self):
         self.every_element_named()
         added = DATA_MODEL.replace("</svg>", '<text class="name">Place</text></svg>')
         self.write("dev/p/images/data-model.svg", added)
-        self.fails_with(1, "dev/p/images/data-model.svg: kind of data Place has no integration")
+        self.fails_with(1, "dev/p/images/data-model.svg: data Place has no integration")
 
     def test_a_frame_label_or_choice_is_no_element(self):
         self.every_element_named()
@@ -429,6 +441,98 @@ class BrokenTest(TraceTest):
         result = subprocess.run(command, capture_output=True, text=True, env=env, check=False)
         self.assertEqual(result.returncode, 2, result.stderr)
         self.assertIn("test_all.py::test_rule: pytest couldn't run it, exit 1", result.stderr)
+
+
+class TagTest(TraceTest):
+    """Each strategy and each arrow of a sequence tags a story or a rule that exists, and each
+    story and rule is tagged, as the architecture best practice's template asks, before any case is
+    written."""
+
+    def tags(self, code: int, *words: str) -> str:
+        """Runs `trace.py tags p`, and checks that it exits with the code and says each word."""
+        result = self.trace("tags", "p")
+        self.assertEqual(result.returncode, code, result.stderr)
+        for word in words:
+            self.assertIn(word, result.stderr)
+        return result.stderr
+
+    def test_every_tag_found_and_every_id_tagged_gives_0(self):
+        result = self.trace("tags", "p")
+        self.assertEqual((result.returncode, result.stderr), (0, ""))
+
+    def test_a_strategy_without_a_tag_is_reported_at_its_line(self):
+        self.write("dev/p/architecture.md", ARCHITECTURE.replace("One generator. [S1]", "One."))
+        line = ARCHITECTURE.split("\n").index("- One generator. [S1]\\") + 1
+        self.tags(1, f"dev/p/architecture.md:{line}: the strategy tags no story or rule")
+
+    def test_a_strategy_whose_tag_is_on_its_second_line_is_read(self):
+        untagged = ARCHITECTURE.replace("can check. [P1.1]", "can check.")
+        self.write("dev/p/architecture.md", untagged)
+        line = ARCHITECTURE.split("\n").index("- Each edit checked before its commit, on each") + 1
+        self.tags(1, f"dev/p/architecture.md:{line}: the strategy tags no story or rule")
+
+    def test_an_arrow_without_a_tag_is_reported_at_its_line(self):
+        self.write("dev/p/architecture.md", ARCHITECTURE.replace("stops [S2]", "stops"))
+        line = ARCHITECTURE.split("\n").index("    U-)T: stops [S2]") + 1
+        self.tags(1, f"dev/p/architecture.md:{line}: the arrow tags no story or rule")
+
+    def test_a_tag_that_names_nothing_is_reported(self):
+        self.write("dev/p/architecture.md", ARCHITECTURE.replace("[S1, P1.1]", "[S1, P9.1]"))
+        self.tags(1, "the arrow tags P9.1, which is no story or rule")
+
+    def test_a_story_or_rule_that_nothing_tags_is_reported(self):
+        added = ARCHITECTURE.replace("- S2:", "- S3: more.\n- S2:")
+        added = added.replace("  - P1.1:", "  - P1.2: one source.\n  - P1.1:")
+        self.write("dev/p/architecture.md", added)
+        self.tags(1, "story S3 is tagged by no", "rule P1.2 is tagged by no")
+
+    def test_a_tag_in_principles_counts_for_nothing(self):
+        moved = ARCHITECTURE.replace("[S2]", "").replace("- P1: nothing lost", "- P1: [S2]")
+        self.write("dev/p/architecture.md", moved)
+        self.tags(1, "story S2 is tagged by no", "the arrow tags no story or rule")
+
+    def test_a_branch_condition_without_a_tag_is_reported_and_a_bare_else_is_not(self):
+        bare = ARCHITECTURE.replace("  alt a stop [S2]", "  alt a stop")
+        self.write("dev/p/architecture.md", bare.replace("  end\n", "  else\n  end\n", 1))
+        line = ARCHITECTURE.split("\n").index("  alt a stop [S2]") + 1
+        stderr = self.tags(1, f"architecture.md:{line}: the branch condition tags no story")
+        self.assertEqual(stderr.count("tags no story"), 1, stderr)
+
+    def test_a_rule_tagged_only_on_a_branch_condition_is_tagged(self):
+        moved = ARCHITECTURE.replace("[S1, P1.1]", "[S1]").replace("can check. [P1.1]", "[S1]")
+        self.write("dev/p/architecture.md", moved.replace("alt a stop [S2]", "alt a stop [P1.1]"))
+        self.tags(0)
+
+    def test_a_strategy_that_ends_with_no_backslash_is_reported(self):
+        for after in ("\n\n### Sequences", "\n- Another. [S1]\\\n  Intent: more.\n\n### Sequences"):
+            cut = ARCHITECTURE.replace("One generator. [S1]\\\n", "One generator.\n")
+            cut = cut.replace("\n\n### Sequences", after, 1)
+            self.write("dev/p/architecture.md", cut)
+            with self.subTest(after=after):
+                self.tags(1, "the strategy that ends with no backslash tags no story or rule")
+
+    def test_a_last_strategy_that_ends_with_no_backslash_is_reported(self):
+        self.write("dev/p/architecture.md", ARCHITECTURE.split("\n## Test strategy")[0][:-1])
+        self.tags(0)
+        cut = ARCHITECTURE.split("\n## Test strategy")[0]
+        self.write("dev/p/architecture.md", f"{cut}### Directory structure\n\nStrategies:\n\n- A")
+        self.tags(1, "the strategy that ends with no backslash")
+
+    def test_a_heading_inside_a_code_block_ends_no_section(self):
+        fence = "```sh\n# start\n## more\n```\n\nStrategies:\n\n- Start. [P9.9]\\\n  Intent: x.\n\n"
+        self.write(
+            "dev/p/architecture.md",
+            ARCHITECTURE.replace("## Test strategy", fence + "## Test strategy"),
+        )
+        self.tags(1, "the strategy tags P9.9, which is no story or rule")
+
+    def test_an_arrow_outside_a_mermaid_block_is_no_arrow(self):
+        stderr = self.trace("tags", "p").stderr
+        self.assertNotIn("not a sequence", stderr)
+
+    def test_an_architecture_without_principles_gives_2(self):
+        self.write("dev/p/architecture.md", ARCHITECTURE.replace("### Principles", "### Ideas"))
+        self.tags(2, "dev/p/architecture.md: has no ### Principles")
 
 
 # A double of the test's own, which takes each line by `line` or `lines`, its record by a name the

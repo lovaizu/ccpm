@@ -5,7 +5,7 @@
 - The developers see, before anyone builds a part, whether the parts joined as the architecture draws give each key result, and the architecture's maker mends each place where they can't.
   - **C1** Each level that Test strategy names has the cases that check what its target promises.
     - **N1** Does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result? (E2E cases)
-    - **N2** Does each element of the architecture, each path through each sequence, each rule of Solution strategy, each decision of a component, and each handoff with its data, have an integration case that names it? (Integration cases)
+    - **N2** Does each element of the architecture, each path through each sequence, each principle item of Principles, each decision of a component, and each handoff with its data, have an integration case that names it? (Integration cases)
     - **N3** Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals and edges included, and, where its result depends on what came before, for each transition that the product's use can bring about, each naming the integration case it supports? (Unit cases)
   - **C2** Each case checks the parts through their interfaces, and fails until the parts are built.
     - **N4** Is each case a test in the test code, with its Given, When, and Then stated, that calls the skeleton only through its interfaces and fails on the empty bodies? (E2E cases, Integration cases, Unit cases)
@@ -33,17 +33,17 @@ Does each key result have an E2E case that runs an objective's main use at the s
 
 The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result.
 
-1. *While deciding.* Open the product vision, the README, the architecture, and the skeleton, and read the sections that `inputs` takes from each: the key results, the walkthrough, each rule, decision, and handoff of the architecture, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open the product vision, the README, the architecture, and the skeleton, and read the sections that `inputs` takes from each: the key results, the walkthrough, each principle item, decision, and handoff of the architecture, Test strategy with its checks and levels, and each interface that the skeleton offers, such as the one through which a test puts a double of the host in its place. The trace: `{inputs}` read to its end.
 2. *While making.* For each key result, write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`.
 
 ### N2
 
-Does each element of the architecture, each path through each sequence, each rule of Solution strategy, each decision of a component, and each handoff with its data, have an integration case that names it?
+Does each element of the architecture, each path through each sequence, each principle item of Principles, each decision of a component, and each handoff with its data, have an integration case that names it?
 
 An element that no case reaches is one whose parts no one has seen fit together, and a case written through the skeleton before any body shows a gap between the parts while it's still cheap to mend. Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/), finds each part's roles by first writing the tests one level up.
 
 1. *While making.* For each story's sequence, write a case for each path through it: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path.
-2. *While making.* For each rule of Solution strategy, write a case where the parts keep it, which can be run again with the part that holds the rule taken out, to see it fail, such as by the script that checks the trace.
+2. *While making.* For each principle item of Principles, write a case where the parts keep it, which can be run again with the part that holds it taken out, to see it fail, such as by the script that checks the trace.
 3. *While making.* For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Data model names it, until each kind of data lies on some case.
 4. *While making.* Once the cases are written, go through each sequence arrow by arrow and branch by branch, name the case that runs each, and write a case for each arrow or branch that none runs, since the script that checks the trace finds only an element that no case names, not a branch left out.
 

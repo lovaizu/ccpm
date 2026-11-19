@@ -55,35 +55,34 @@
   <text class="frame-name start" x="34" y="42" text-anchor="start">&lt;environment&gt;</text>
   <text class="kind start" x="260" y="42" text-anchor="start">[&lt;technology&gt;]</text>
   <rect class="unit" x="60" y="80" width="330" height="110" rx="6"/>
-  <text class="name mid" x="225.0" y="115" text-anchor="middle">&lt;deployment unit&gt;</text>
+  <text class="name mid" x="225.0" y="115" text-anchor="middle">&lt;what runs or keeps&gt;</text>
   <text class="kind mid" x="225.0" y="135" text-anchor="middle">[&lt;technology&gt;]</text>
   <text class="label small mid" x="225.0" y="151" text-anchor="middle">&lt;component&gt;, &lt;component&gt;</text>
   <text class="data mid" x="225.0" y="167" text-anchor="middle">&lt;data&gt;</text>
   <rect class="unit" x="490" y="80" width="330" height="110" rx="6"/>
-  <text class="name mid" x="655.0" y="115" text-anchor="middle">&lt;deployment unit&gt;</text>
+  <text class="name mid" x="655.0" y="115" text-anchor="middle">&lt;what runs or keeps&gt;</text>
   <text class="kind mid" x="655.0" y="135" text-anchor="middle">[&lt;technology&gt;]</text>
   <text class="label small mid" x="655.0" y="151" text-anchor="middle">&lt;component&gt;, &lt;component&gt;</text>
   <text class="data mid" x="655.0" y="167" text-anchor="middle">&lt;data&gt;</text>
   <rect class="unit" x="60" y="280" width="330" height="110" rx="6"/>
-  <text class="name mid" x="225.0" y="315" text-anchor="middle">&lt;deployment unit&gt;</text>
+  <text class="name mid" x="225.0" y="315" text-anchor="middle">&lt;what runs or keeps&gt;</text>
   <text class="kind mid" x="225.0" y="335" text-anchor="middle">[&lt;technology&gt;]</text>
   <text class="label small mid" x="225.0" y="351" text-anchor="middle">&lt;component&gt;, &lt;component&gt;</text>
   <text class="data mid" x="225.0" y="367" text-anchor="middle">&lt;data&gt;</text>
   <rect class="ext" x="1000" y="80" width="230" height="70" rx="6"/>
-  <text class="name mid" x="1115.0" y="111" text-anchor="middle">&lt;outside&gt;</text>
-  <text class="kind mid" x="1115.0" y="131" text-anchor="middle">[&lt;protocol or tool&gt;]</text>
+  <text class="name mid" x="1115.0" y="121" text-anchor="middle">&lt;service&gt;</text>
   <path class="line" d="M390,135 L486,135" marker-end="url(#arrow)"/>
   <text class="label small halo mid" x="438" y="125" text-anchor="middle">&lt;does what&gt;</text>
   <path class="line" d="M225,190 L225,276" marker-end="url(#arrow)"/>
-  <text class="label small start" x="235" y="238" text-anchor="start">&lt;does what&gt; [&lt;tool&gt;]</text>
+  <text class="label small start" x="235" y="238" text-anchor="start">&lt;does what&gt;</text>
   <path class="line" d="M820,115 L996,115" marker-end="url(#arrow)"/>
   <text class="label small halo mid" x="930" y="105" text-anchor="middle">&lt;what is used&gt;</text>
   <text class="frame-name start" x="40" y="470" text-anchor="start">Legend</text>
   <rect class="frame" x="110" y="455" width="36" height="22" rx="4"/>
   <text class="label small start" x="154" y="470" text-anchor="start">environment [technology]</text>
   <rect class="unit" x="340" y="455" width="36" height="22" rx="4"/>
-  <text class="label small start" x="384" y="470" text-anchor="start">deployment unit [technology]: the components that run in it</text>
+  <text class="label small start" x="384" y="470" text-anchor="start">what runs, or a store [technology]: its components</text>
   <text class="data start" x="780" y="470" text-anchor="start">data kept</text>
   <rect class="ext" x="860" y="455" width="36" height="22" rx="4"/>
-  <text class="label small start" x="904" y="470" text-anchor="start">outside the product, an arrow: what it uses</text>
+  <text class="label small start" x="904" y="470" text-anchor="start">a service outside the product, an arrow: what it uses</text>
 </svg>

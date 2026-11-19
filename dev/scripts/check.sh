@@ -107,6 +107,14 @@ for architecture in dev/*/architecture.md; do
   python3 plugins/rn/scripts/template.py architecture "$architecture"
 done
 
+# Each decision of an architecture's views tags the story or rule it carries out, and each story
+# and rule is carried out somewhere, as the architecture best practice's template says, so a
+# decision that serves nothing, or a rule that nothing carries out, shows before any case is written.
+for architecture in dev/*/architecture.md; do
+  plugin="${architecture#dev/}"
+  python3 dev/scripts/trace.py tags "${plugin%/architecture.md}"
+done
+
 # Every figure carries the one style of dev/images/figures.css and sets no font or color of its own,
 # so the figures look alike and one place changes a look, as .claude/rules/figures.md says.
 python3 dev/scripts/figures.py check

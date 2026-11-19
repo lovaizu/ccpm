@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision, the README, the architecture, and the skeleton, and read the sections that `inputs` takes from each: the key results, the walkthrough, each rule, decision, and handoff of the architecture, Test strategy with its levels and tools, each interface that the skeleton offers, and each double and tool that Test strategy names for the tests to run the parts and the product with, such as a double of the host.",
+        "text": "Open the product vision, the README, the architecture, and the skeleton, and read the sections that `inputs` takes from each: the key results, the walkthrough, each principle item, decision, and handoff of the architecture, Test strategy with its checks and levels, and each interface that the skeleton offers, such as the one through which a test puts a double of the host in its place.",
         "trace": {
          "action": "read",
          "takes": [
@@ -31,7 +31,7 @@
      {
       "id": "N2",
       "about": "Integration cases",
-      "what": "Does each element of the architecture, each path through each sequence, each rule of Solution strategy, each decision of a component, and each handoff with its data, have an integration case that names it?",
+      "what": "Does each element of the architecture, each path through each sequence, each principle item of Principles, each decision of a component, and each handoff with its data, have an integration case that names it?",
       "why": "An element that no case reaches is one whose parts no one has seen fit together, and a case written through the skeleton before any body shows a gap between the parts while it's still cheap to mend. Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/), finds each part's roles by first writing the tests one level up.",
       "items": [
        {
@@ -40,7 +40,7 @@
        },
        {
         "at": "make",
-        "text": "For each rule of Solution strategy, write a case where the parts keep it, which can be run again with the part that holds the rule taken out, to see it fail, such as by the script that checks the trace."
+        "text": "For each principle item of Principles, write a case where the parts keep it, which can be run again with the part that holds it taken out, to see it fail, such as by the script that checks the trace."
        },
        {
         "at": "make",

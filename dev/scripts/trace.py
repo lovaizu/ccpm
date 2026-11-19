@@ -8,11 +8,9 @@ It reads what dev/plugin-development-guide.md's Test says a plugin keeps, and th
 template of the architecture best practice names them:
 
 - each story by its `S<n>` in User stories of `dev/<plugin>/architecture.md`
-- each rule by its heading under Solution strategy
-- each role and component by its name in Components' list, above its Strategies
-- each combination of parts that one hook event meets by its name in the Strategies of a sequence
-- each kind of data by each `<text class="name">` of `dev/<plugin>/images/data-model.svg`, the one
-  place that names every kind, as Data model's text names only the kinds a reader could confuse
+- each rule by its `P<n>.<m>` in Principles, under Solution strategy
+- each component by its name in Components' list, above its Strategies, under Solution strategy
+- each data by each `<text class="name">` of `dev/<plugin>/images/data-model.svg`
 - each key result by its `KR<n>.<m>` in `dev/<plugin>/product-vision.md`
 - each case, a function `test...` of a file `test*.py` under `dev/<plugin>/tests/`, at the top or in
   a class, with each name that its `@pytest.mark.supports(...)` gives
@@ -29,6 +27,12 @@ without one of those sections, as a check that can't read its input passes nothi
 that every name leads somewhere and that each case of a rule can fail, not that the cases are
 enough, which the reading that N6 of
 plugins/rn/domain/best-practices/test-design/best-practice.md asks for judges.
+
+`tags` reads only the architecture, as its writer tags each decision of Solution strategy's views
+with the story or rule it carries out: each strategy and each arrow of a sequence tags a story or a
+rule that exists, as does each branch condition, and each story and each rule is tagged at least
+once. It exits as `check` does,
+and needs no case, so that an architecture is checked before its cases are written.
 
 `doubles` reads each folder `recorded/` under dev/tests/ and each plugin's tests, as the guide's
 Each result of a double from a record says: each line of each record names its event once, and,
@@ -53,7 +57,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from typing import NamedTuple
 
-USAGE = "usage: trace.py check <plugin> | doubles | sources"
+USAGE = "usage: trace.py check <plugin> | tags <plugin> | doubles | sources"
 # The folder of each level's cases, and the level whose names they support.
 LEVELS = {
     "unit": "integration",
@@ -63,7 +67,16 @@ LEVELS = {
     "e2e": "key result",
 }
 STORY = re.compile(r"- (S\d+):")
-COMPONENT = re.compile(r"- (.+)\\$")
+RULE = re.compile(r"\s+- (P\d+\.\d+):")
+COMPONENT = re.compile(r"- (.+?) \([^()]+\)\\$")
+# A tag at the end of a strategy's first sentence or of a sequence's arrow, such as `[P1.1]` or
+# `[S1, P2.1]`.
+TAG = re.compile(r"\[([^\[\]]+)\]\s*$")
+# An arrow of a Mermaid sequence diagram, such as `A->>B: does`, `A-->>B: ends`, or `A-)B: calls`.
+ARROW = re.compile(r"\s*[^\s:]+?\s*--?(?:>>|>|x|\))[+-]?\s*[^\s:]+\s*:(.*)")
+# A branch condition of a Mermaid sequence diagram, such as `alt a point only the user can settle`.
+# A bare `else` or `end` states no condition.
+BRANCH = re.compile(r"\s*(?:loop|alt|else|opt|par|and|critical|break)\s+(\S.*)")
 KEY_RESULT = re.compile(r"\s*- (KR\d+\.\d+):")
 # The name of a record of a run of the real thing, `<thing>-<version>[-<what>].jsonl`, which names
 # that run as the source of each of its lines.
@@ -94,15 +107,35 @@ class Case(NamedTuple):
     broken: bool
 
 
-def section(lines: list[str], heading: str, path: str) -> list[tuple[int, str]]:
-    """Each line under the `## ` heading up to the next, with its line number."""
+def section(lines: list[tuple[int, str]], heading: str, path: str) -> list[tuple[int, str]]:
+    """Each line under the heading, such as `## User stories`, up to the next heading of its level
+    or above, with its line number."""
     try:
-        start = lines.index(heading)
+        start = [line for _, line in lines].index(heading)
     except ValueError:
         raise Unreadable(f"{path}: has no {heading}, where the template puts it") from None
+    level = len(heading.split(" ")[0])
     rest = lines[start + 1 :]
-    end = next((n for n, line in enumerate(rest) if line.startswith("## ")), len(rest))
-    return list(enumerate(rest[:end], start + 2))
+    fenced = False
+    for n, (_, line) in enumerate(rest):
+        fenced = fenced != line.startswith("```")
+        if not fenced and re.match(rf"#{{1,{level}}} ", line):
+            return rest[:n]
+    return rest
+
+
+def views(strategy: list[tuple[int, str]]) -> list[tuple[int, str]]:
+    """Each line of Solution strategy's views, each section under it but Principles, its heading
+    among them."""
+    found = []
+    inside = fenced = False
+    for number, line in strategy:
+        fenced = fenced != line.startswith("```")
+        if not fenced and line.startswith("### "):
+            inside = line != "### Principles"
+        if inside:
+            found.append((number, line))
+    return found
 
 
 def components(lines: list[tuple[int, str]], path: str) -> list[tuple[int, str]]:
@@ -119,21 +152,6 @@ def components(lines: list[tuple[int, str]], path: str) -> list[tuple[int, str]]
     return found
 
 
-def combinations(lines: list[tuple[int, str]]) -> list[tuple[int, str]]:
-    """Each name in the Strategies of each sequence, a combination of parts that one hook event
-    meets, with its line number."""
-    found = []
-    listed = False
-    for number, line in lines:
-        if line.startswith("### "):
-            listed = False
-        elif line == "Strategies:":
-            listed = True
-        elif listed and (named := COMPONENT.match(line)):
-            found.append((number, named.group(1)))
-    return found
-
-
 def read(path: str) -> str:
     """The text of the file, which must be there."""
     try:
@@ -143,22 +161,34 @@ def read(path: str) -> str:
         raise Unreadable(f"{path}: can't be read: {error.strerror}") from None
 
 
-def elements(plugin: str) -> list[tuple[str, str, str]]:
-    """Each element of the plugin's architecture, as its place, its kind, and its name."""
+def architecture(plugin: str) -> tuple[str, list[tuple[int, str]]]:
+    """The path of the plugin's architecture, and each of its lines with its number."""
     path = f"dev/{plugin}/architecture.md"
-    lines = read(path).split("\n")
+    return path, list(enumerate(read(path).split("\n"), 1))
+
+
+def ids(path: str, lines: list[tuple[int, str]]) -> list[tuple[int, str, str]]:
+    """Each story and each rule of the architecture, as its line, its kind, and its ID."""
     found = []
     for number, line in section(lines, "## User stories", path):
         story = STORY.match(line)
         if story:
-            found.append((f"{path}:{number}", "story", story.group(1)))
-    for number, line in section(lines, "## Solution strategy", path):
-        if line.startswith("### "):
-            found.append((f"{path}:{number}", "rule", line[4:].strip()))
-    for number, name in components(section(lines, "## Components", path), path):
+            found.append((number, "story", story.group(1)))
+    strategy = section(lines, "## Solution strategy", path)
+    for number, line in section(strategy, "### Principles", path):
+        rule = RULE.match(line)
+        if rule:
+            found.append((number, "rule", rule.group(1)))
+    return found
+
+
+def elements(plugin: str) -> list[tuple[str, str, str]]:
+    """Each element of the plugin's architecture, as its place, its kind, and its name."""
+    path, lines = architecture(plugin)
+    found = [(f"{path}:{number}", kind, name) for number, kind, name in ids(path, lines)]
+    strategy = section(lines, "## Solution strategy", path)
+    for number, name in components(section(strategy, "### Components", path), path):
         found.append((f"{path}:{number}", "component", name))
-    for number, name in combinations(section(lines, "## Sequences", path)):
-        found.append((f"{path}:{number}", "combination", name))
     figure = f"dev/{plugin}/images/data-model.svg"
     try:
         root = ET.fromstring(read(figure))
@@ -166,7 +196,85 @@ def elements(plugin: str) -> list[tuple[str, str, str]]:
         raise Unreadable(f"{figure}: isn't XML: {error}") from None
     for text in root.iter():
         if text.tag.endswith("text") and "name" in text.get("class", "").split():
-            found.append((figure, "kind of data", "".join(text.itertext()).strip()))
+            found.append((figure, "data", "".join(text.itertext()).strip()))
+    return found
+
+
+def tagged(lines: list[tuple[int, str]]) -> list[tuple[int, str, list[str] | None]]:
+    """Each strategy and each arrow of a sequence among the lines of the views, in the order of
+    their lines, as its line, what it is, and each ID it tags, None where it tags none."""
+    return sorted(arrows(lines) + strategies(lines))
+
+
+def arrows(lines: list[tuple[int, str]]) -> list[tuple[int, str, list[str] | None]]:
+    """Each arrow and each branch condition of a Mermaid block among the lines, with each ID it
+    tags."""
+    found: list[tuple[int, str, list[str] | None]] = []
+    fenced = False
+    for number, line in lines:
+        if line.startswith("```"):
+            fenced = not fenced and line == "```mermaid"
+        elif fenced and (arrow := ARROW.fullmatch(line)):
+            found.append((number, "arrow", tags_of(arrow.group(1))))
+        elif fenced and (branch := BRANCH.fullmatch(line)):
+            found.append((number, "branch condition", tags_of(branch.group(1))))
+    return found
+
+
+def strategies(lines: list[tuple[int, str]]) -> list[tuple[int, str, list[str] | None]]:
+    """Each item of a list of Strategies among the lines, with each ID that its first sentence,
+    up to the backslash that ends it, tags, or as a strategy that ends with no backslash where a
+    line that isn't indented comes first."""
+    found: list[tuple[int, str, list[str] | None]] = []
+    listed = False
+    item: tuple[int, str] | None = None
+    # A heading after the last line ends an item still open there.
+    for number, line in [*lines, (0, "### ")]:
+        if item and not line.startswith("  "):
+            found.append((item[0], "strategy that ends with no backslash", None))
+            item = None
+        elif item:
+            item = (item[0], f"{item[1]} {line.strip()}")
+        if line.startswith(("### ", "#### ")):
+            listed = False
+        listed = listed or line == "Strategies:"
+        if listed and line.startswith("- "):
+            item = (number, line[2:])
+        if item and item[1].endswith("\\"):
+            found.append((item[0], "strategy", tags_of(item[1][:-1])))
+            item = None
+    return found
+
+
+def tags_of(text: str) -> list[str] | None:
+    """Each ID that the tag at the end of the text names, None where it ends with no tag."""
+    tag = TAG.search(text)
+    return [each.strip() for each in tag.group(1).split(",")] if tag else None
+
+
+def tag_faults(plugin: str) -> list[str]:
+    """Each strategy, arrow, and branch condition that tags no story or rule, or one that isn't
+    there, and each story and each rule that nothing tags."""
+    path, lines = architecture(plugin)
+    known = ids(path, lines)
+    names = {name for _, _, name in known}
+    found = []
+    used = set()
+    for number, what, tags in tagged(views(section(lines, "## Solution strategy", path))):
+        if tags is None:
+            found.append(f"{path}:{number}: the {what} tags no story or rule; end it with one")
+            continue
+        used.update(tags)
+        found += [
+            f"{path}:{number}: the {what} tags {tag}, which is no story or rule"
+            for tag in tags
+            if tag not in names
+        ]
+    found += [
+        f"{path}:{number}: {kind} {name} is tagged by no strategy, arrow, or branch condition"
+        for number, kind, name in known
+        if name not in used
+    ]
     return found
 
 
@@ -309,7 +417,7 @@ def name_faults(plugin: str, level_cases: dict[str, list[Case]], named: set[str]
     }
     what = {
         "integration": f"integration case of dev/{plugin}/tests/integration/",
-        "element": f"story, rule, component, or kind of data of dev/{plugin}/architecture.md",
+        "element": f"story, rule, component, or data of dev/{plugin}/architecture.md",
         "key result": f"key result of dev/{plugin}/product-vision.md",
     }
     return [
@@ -511,8 +619,9 @@ def sources() -> list[str]:
 
 def main(argv: list[str]) -> int:
     commands = {"doubles": doubles, "sources": sources}
-    if argv[:1] == ["check"] and len(argv) == 2:
-        run = functools.partial(faults, argv[1])
+    by_plugin = {"check": faults, "tags": tag_faults}
+    if argv[:1] and argv[0] in by_plugin and len(argv) == 2:
+        run = functools.partial(by_plugin[argv[0]], argv[1])
     elif len(argv) == 1 and argv[0] in commands:
         run = commands[argv[0]]
     else:

@@ -43,15 +43,15 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
 - Cut\
   A role's part of the design tree, so that each role starts with only the decisions its work needs.
 - Best practice\
-  The field's established way of making one kind of deliverable and its conditions, so that making
-  and judging stand on the same conditions.
+  The field's established way to make one kind of deliverable, and its conditions, which making
+  and judging both stand on.
 - Round\
   One making of a deliverable and its judging, from which the next mend is decided.
 
 Strategies:
 
-- Each edit of the design tree checked by a script, on each condition of its best practice that
-  code can check, before its commit. [P1.1]\
+- Each design tree edit checked before its commit, on each condition of its best practice that
+  code can check. [P1.1]\
   Intent: the work always rests on a design tree in form.
 
 ### Components
@@ -89,27 +89,27 @@ sequenceDiagram
   participant G as generator
   participant E as evaluator
   U->>O: /rn:up with what they want [S1]
-  loop each event: a request, an answer, a sign-off, or a round ended
+  loop each event: a request, an answer, a sign-off, or a round ended [P1.1]
     O->>T: reviews it by the run's facts and the user's words (Design tree) [P1.1]
     O->>T: commits the change [P6.1]
-    alt a point the orchestrator can settle
+    alt a point the orchestrator can settle [P1.2]
       O->>T: settles it, with its ground (Design tree) [P1.2]
-    else a point only the user can settle
+    else a point only the user can settle [P1.2]
       O->>U: one point, with a recommendation [P1.2]
-      U->>O: answers
-    else a plan or a deliverable waiting for sign-off
+      U->>O: answers [P1.2]
+    else a plan or a deliverable waiting for sign-off [P1.3]
       O->>U: puts it up [P1.3]
       O->>U: adds each finding left as a proposal [P3.3]
-      U->>O: /rn:ty, or /rn:gm with what to change
+      U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
     else a deliverable whose inputs are signed off [P1.3]
       O->>G: starts it, with its Cut (Cut) [P4.1]
       G->>G: makes the content by its kind's best practice (Best practice) [P3.2]
       G->>G: refactors it by the refactor best practice once the content is good (Best practice) [P3.2]
-      alt a point it can't settle
+      alt a point it can't settle [P1.2]
         G-->>O: the point [P1.2]
       else
         G-->>O: ends, with the Round written (Round) [P4.2]
-        par one for each group of the best practice's conditions
+        par one for each group of the best practice's conditions [P2.1]
           O->>E: starts it, with its Cut (Cut) [P4.1]
           E->>E: tries it as its people would [P2.1]
           E->>E: names what's good and what would make it good [P2.2]
@@ -120,8 +120,8 @@ sequenceDiagram
       end
     end
   end
-  O->>U: the pull request, with each decision taken without asking
-  U->>O: /rn:ty, and merges
+  O->>U: the pull request, with each decision taken without asking [S1]
+  U->>O: /rn:ty, and merges [P1.3]
 ```
 
 #### S2: a pause and a pick-up
@@ -134,14 +134,14 @@ sequenceDiagram
   participant G as generator
   participant E as evaluator
   U->>O: /rn:dn [S2]
-  O->>G: stops it
-  O->>E: stops it
+  O->>G: stops it [S2]
+  O->>E: stops it [S2]
   O->>T: commits and pushes the run's folder (Design tree) [P6.1]
-  O->>U: where it stopped, and the point or sign-off waiting
+  O->>U: where it stopped, and the point or sign-off waiting [S2]
   Note over U,O: Later, in any conversation
-  U->>O: /rn:up
+  U->>O: /rn:up [S2]
   O->>T: reads the run's folder for where it stopped (Design tree) [P6.1]
-  O->>U: where it picks up, and the point or sign-off waiting
+  O->>U: where it picks up, and the point or sign-off waiting [S2]
   O->>G: starts each role stopped again from its kept Cut (Cut) [P6.1]
 ```
 

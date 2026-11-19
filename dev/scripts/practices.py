@@ -34,7 +34,10 @@ USAGE = "usage: python3 dev/scripts/practices.py form|markdown <best practice js
 WHOLE = "the whole"
 # The section of a template before its first heading under the title.
 OPENING = "the opening"
-SECTION = re.compile(r"^## (.+)$", re.MULTILINE)
+# A section of a Markdown template: a heading of the second level, or of the third, such as a view
+# that Solution strategy of the architecture's template nests. A heading whose words hold a slot,
+# such as `### <problem>`, stands once for each thing the slot names, and is no section.
+SECTION = re.compile(r"^(?:##|###(?=[^<\n]*$)) (.+)$", re.MULTILINE)
 # A note of a template. In Markdown, it's a GitHub note whose first line opens with the marker,
 # and the quote lines under it. In JSON, it's a key named by the marker. A note of the work's own,
 # or the marker named in a sentence, opens otherwise, so neither reads as the other.
@@ -83,7 +86,8 @@ def by_id(found: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def sections(template: str) -> list[str]:
     """The sections of a template a question may be about: the opening, where text stands between
-    the title and the first heading under it, then each heading under the title, in order."""
+    the title and the first heading under it, then each heading of the second level, and of the
+    third that holds no slot, in order."""
     first = SECTION.search(template)
     before = NOTE.sub("", template[: first.start() if first else len(template)])
     said = [line for line in before.splitlines()[1:] if line.strip()]

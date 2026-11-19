@@ -446,7 +446,7 @@ every plugin adds to them.
 Each test case is a pytest test. Its docstring states its Given, When, and Then, a line each, and
 `@pytest.mark.supports("<name>")` names what it supports one level up: a key result, such as
 `KR1.1`, for an E2E case, an element of the architecture by its name, such as `S1` or a principle's
-heading, for an integration case, and an integration case by its test's name for a unit case. A
+`P1.1`, for an integration case, and an integration case by its test's name for a unit case. A
 plugin's cases lie in `dev/<plugin>/tests/`: the unit tests of its code in `unit/`, its
 property-based tests in `properties/`, the unit tests of its prompts in `prompts/`, the integration
 tests in `integration/`, and the E2E tests in `e2e/`, with the E2E test files that

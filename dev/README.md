@@ -22,6 +22,7 @@ CI runs these checks on every push:
 - the style of every figure
 - Mermaid's parse of every diagram in the Markdown files
 - Claude Code's check of every manifest
+- the tag of each decision of each architecture's views, by `dev/scripts/trace.py`
 - the trace of each plugin's test cases to its architecture, by `dev/scripts/trace.py`, once
   `dev/<plugin>/tests/` holds them, and the plugin's unit and integration tests
 - the records that each double of the plugins' tests takes its results from, and each line it
