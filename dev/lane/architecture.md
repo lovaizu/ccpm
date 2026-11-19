@@ -49,14 +49,14 @@ once.
 ![Lane's data](images/data-model.svg)
 
 - Rules\
-  What a plugin gives Lane: each step's rules, each of one type with its values, and, where the
-  plugin fixes its order, its routes.
+  What a plugin gives Lane: each step's rules, each of one type with its values, fixed for a role
+  or given for each start, and, where the plugin fixes its order, its routes.
 - Route\
   A fixed order: the roles to start after a role's result, or after a command that the person
   types.
 - Run\
   One run of a plugin's skill in a conversation, from its call until its order starts no more,
-  with each command, start, read, mark, and result in it.
+  with each command, start with its prompt, read, mark, and result in it.
 - Starts due\
   What the plugin's order gives for a run as it stands: each role to start now, and how many at
   once, or that the run ends.
@@ -66,6 +66,13 @@ Strategies:
 - The starts due asked of the plugin's order at each move, with the run as it stands. [P2.4]\
   Intent: Lane holds the AI to an order that the plugin fixes or decides as it runs, without
   deciding it.
+- Each start kept with the prompt that the main conversation gave it, which the plugin's adapters
+  are given with the start. [P2.3]\
+  Intent: the plugin tells its starts of one role apart by what it wrote for each.
+- A step's rules given for each start by the plugin's adapter of the rules, from the start's
+  prompt, where the plugin's file doesn't fix them for the role. [P2.3]\
+  Intent: a role that makes another deliverable at each start, such as rn's generator, is held to
+  that deliverable's paths, items, and check.
 - A run's end given by the plugin's order, not by the run having no start due. [S9]\
   Intent: a run that waits, such as for the person's answer, goes on.
 - A run of a plugin that gives no order holding the main conversation to its skill's steps alone,
@@ -111,6 +118,10 @@ Strategies:
   that breaks a rule with the step's sentence. [P2.1, S2, S3, S4, S6]\
   Intent: the check and the sentence that the AI reads change together, in the rule type's own
   module.
+- A result that a step's rules name as ending the start, letting the start end at that step.
+  [S5, S7]\
+  Intent: a role that can't go on, such as on a point only the person can settle, ends with its
+  result.
 - A mark checked for the step due, then for the reads and the items that its rules ask. [S5]\
   Intent: a skipped step, item, or part of a file shows at the step skipped.
 - An end, a subagent's or the main conversation's turn's, checked for its result first where its
@@ -129,6 +140,7 @@ sequenceDiagram
   participant M as the plugin's main conversation
   participant G as guard
   participant O as the plugin's order
+  participant A as the plugin's adapter of the rules
   participant RR as run record
   U->>M: the plugin's command [S9]
   M->>G: calls the skill [P2.5]
@@ -137,8 +149,11 @@ sequenceDiagram
     G->>O: asks for the starts due, with the run (Run) [P2.4]
     O-->>G: each role to start now, and how many (Starts due) [P2.4]
     alt a start of a role due [S9]
-      M->>G: the start [S9]
-      G->>RR: adds the start (Run) [S9]
+      M->>G: the start, with its prompt [S9]
+      G->>RR: adds the start with its prompt (Run) [S9]
+      opt the plugin gives an adapter of the rules [P2.3]
+        G->>A: asks for the start's rules, with its prompt (Rules) [P2.3]
+      end
     else any other start of the plugin's subagents [S9]
       G-->>M: stops it, with the starts due [P1.1]
     else the main conversation ends its turn while a start is due [S9]
@@ -200,7 +215,8 @@ dev/lane/                         what only Lane's developers use
 
 <a plugin>/lane/                  what a plugin gives Lane
 ├── rules.json                    the rules, and the routes of a fixed order
-└── adapters/                     each adapter, such as the starts due of an order decided as it runs
+└── adapters/                     each adapter: the starts due of an order decided as it runs, and
+                                  the rules of each start
 ```
 
 ## Test strategy
