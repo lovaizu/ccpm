@@ -539,102 +539,7 @@
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
       "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The parts filled",
-              "decided": "the bodies that S1's integration cases reach: scripts/tree.py with tree/'s design, inputs, work, status, git, and commit, and schemas/form.py, for each commit of the design tree; hooks/adapters/start.py with tree/'s course, cut, and rounds, for each start with its Cut; and scripts/check.py with check/, for each role's end",
-              "by": "reasoning"
-            },
-            {
-              "about": "The modules",
-              "decided": "the skeleton's modules alone, each body filled, as each decision that the cases leave to the code falls within one of them",
-              "by": "maker"
-            },
-            {
-              "about": "Where the course finds a best practice's groups",
-              "decided": "in that best practice's best-practice.json, in rn's own best-practices folder beside the code",
-              "by": "maker"
-            },
-            {
-              "about": "The course after a point or a finding",
-              "decided": "a generator's point, or a round short on a condition that the design tree still holds not good, gets the next round once a decision of the deliverable changed since the latest Cut, and no start before; a round whose each condition named short the design tree holds good counts as good; past the limit, only a decision by the user starts a round",
-              "by": "reasoning"
-            },
-            {
-              "about": "The groups a later round judges",
-              "decided": "each group holding a condition of the deliverable whose decision changed since the latest round judged, and every group where a decision of an input changed",
-              "by": "reasoning"
-            },
-            {
-              "about": "A point in the work",
-              "decided": "an item of work that decides a point starts no role, as only the orchestrator settles it or puts it to the user",
-              "by": "reasoning"
-            },
-            {
-              "about": "A generator's result",
-              "decided": "a point holds its text, a deliverable made lies at its path, and each decision of the Cut that holds an answer is carried out, a point still open none",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": [
-            {
-              "about": "Cases added",
-              "decided": "none, as no module is added; a case that a body seems to need beyond the unit and S1 cases goes back to rn's architecture as a gap",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": [
-            {
-              "about": "The inputs from outside",
-              "decided": "the arguments of tree.py, check.py, and start.py and Lane's standard input, each read by its main; the design tree, each Cut, and each result, each held to its schema as it's read; and git's replies, read by tree/git.py",
-              "by": "reasoning"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The person's /rn:dn stops the run where it stands, and /rn:up in any conversation goes on from there",
@@ -1346,10 +1251,6 @@
     {
       "do": "make",
       "path": "dev/lane/tests/integration/test_lane_components.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py"
     },
     {
       "do": "make",
