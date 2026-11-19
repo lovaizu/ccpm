@@ -580,11 +580,11 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
-              "about": "States with no record",
-              "decided": "a case of a Grep, a Glob, or a Bash command that reaches a path never to read waits for its record, made by dev/tests/recorder/",
+              "about": "E2E cases",
+              "decided": "none, as Lane has no key result of its own and its Test strategy names no E2E check",
               "by": "reasoning"
             }
           ]
@@ -592,12 +592,34 @@
         {
           "id": "N2",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where the integration cases lie",
+              "decided": "dev/lane/tests/integration/, one file for each user story, test_lane_s<n>_<what>.py, with test_lane_principles.py and test_lane_components.py, each case run through the double of Claude Code in dev/tests/claude_code.py",
+              "by": "maker"
+            },
+            {
+              "about": "States with no record",
+              "decided": "a case of a Grep, a Glob, or a Bash command that reaches a path never to read waits for its record, made by dev/tests/recorder/",
+              "by": "reasoning"
+            },
+            {
+              "about": "What the double lacks",
+              "decided": "a case that needs the transcript's base directory or a reporter run by name is written as the architecture draws it, and fails until the double gives them",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N3",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Where the unit cases lie",
+              "decided": "dev/lane/tests/unit/, with a case for each transition of the guard, the placing of moves, the run record, and the routes that Lane's list of Claude Code's states brings about",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N4",
@@ -607,18 +629,30 @@
         {
           "id": "N5",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The trace",
+              "decided": "dev/scripts/trace.py check lane, taking no key result where a plugin keeps no product vision, as Lane keeps none, and check.sh turns its trace on for Lane",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N6",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "listed in dev/lane/tests/gaps.md",
+              "by": "maker"
+            }
+          ]
         }
       ]
     },
     {
-      "name": "A plugin's run is held to its steps and its order until the skill's result",
-      "path": "dev/lane/tests/integration/test_lane_s1_run.py",
+      "name": "A plugin's AI notices when it writes a file that its step doesn't name",
+      "path": "dev/lane/tests/integration/test_lane_s1_writes.py",
       "kind": "code",
       "inputs": [
         "dev/lane/architecture.md",
@@ -670,8 +704,432 @@
       ]
     },
     {
-      "name": "A run that stopped goes on where it stopped, in the same conversation and in a new one",
-      "path": "dev/lane/tests/integration/test_lane_s2_picked_up.py",
+      "name": "A plugin's AI notices when it reads a file that its step says never to read",
+      "path": "dev/lane/tests/integration/test_lane_s2_reads_none.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's AI notices when it ends a step without reading whole a file that the step asks it to read whole",
+      "path": "dev/lane/tests/integration/test_lane_s3_reads_whole.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's AI notices when it runs a command other than those its step names",
+      "path": "dev/lane/tests/integration/test_lane_s4_commands.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's AI notices when it skips a step, or ends before each step is done in order",
+      "path": "dev/lane/tests/integration/test_lane_s5_order.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's AI notices when it ends a step before each item of the step's checklist is done",
+      "path": "dev/lane/tests/integration/test_lane_s6_checklist.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's run moves on only by the result its AI gives, never by what its reply says",
+      "path": "dev/lane/tests/integration/test_lane_s7_result.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's AI notices when it ends a step that the plugin's own check doesn't pass",
+      "path": "dev/lane/tests/integration/test_lane_s8_check.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's main conversation starts each subagent that its order makes due, and only those, and doesn't end its turn while one is due",
+      "path": "dev/lane/tests/integration/test_lane_s9_starts.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's run that stopped goes on where it stopped, after /compact or in a new conversation",
+      "path": "dev/lane/tests/integration/test_lane_s10_picked_up.py",
       "kind": "code",
       "inputs": [
         "dev/lane/architecture.md",
@@ -1449,11 +1907,43 @@
     },
     {
       "do": "make",
-      "path": "dev/lane/tests/integration/test_lane_s1_run.py"
+      "path": "dev/lane/tests/integration/test_lane_s1_writes.py"
     },
     {
       "do": "make",
-      "path": "dev/lane/tests/integration/test_lane_s2_picked_up.py"
+      "path": "dev/lane/tests/integration/test_lane_s2_reads_none.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s3_reads_whole.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s4_commands.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s5_order.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s6_checklist.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s7_result.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s8_check.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s9_starts.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s10_picked_up.py"
     },
     {
       "do": "make",
