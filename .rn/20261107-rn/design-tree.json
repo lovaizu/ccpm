@@ -494,6 +494,11 @@
           "about": "The main conversation's steps",
           "decided": "under the skill's name, beside each subagent's steps under its agent type",
           "by": "maker"
+        },
+        {
+          "about": "Which commands start a run",
+          "decided": "a skill's command starts its run where rules.json gives that skill's steps; a command whose skill has none is one that a route of the standing run waits for",
+          "by": "maker"
         }
       ]
     },
@@ -600,7 +605,7 @@
             },
             {
               "about": "States with no record",
-              "decided": "a case of a Grep, a Glob, or a Bash command that reaches a path never to read waits for its record, made by dev/tests/recorder/",
+              "decided": "a case of a Grep or a Glob that reaches a path never to read waits for its record, made by dev/tests/recorder/; a Bash command that reaches such a path is held by the rule of the commands a step runs, as the rule of the files never to read judges Read, Grep, and Glob alone",
               "by": "reasoning"
             },
             {
@@ -644,6 +649,11 @@
             {
               "about": "The gaps",
               "decided": "listed in dev/lane/tests/gaps.md",
+              "by": "maker"
+            },
+            {
+              "about": "The gaps mended",
+              "decided": "a typed command starts its skill's run where rules.json gives that skill's steps, and is a typed move of the standing run where it gives none; the run record keeps a start ended with no result, so that the start is due again; a Bash call holds to a rule of commands where each command of it, split at |, &&, ||, and ;, opens with the words of a command the rule names",
               "by": "maker"
             }
           ]
