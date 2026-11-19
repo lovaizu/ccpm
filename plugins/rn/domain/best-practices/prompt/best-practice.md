@@ -35,7 +35,7 @@
 - [architecture](../architecture/best-practice.md), taking `User stories`, `Components`, `Data model`, `Sequences`, `Directory structure`, `Test strategy`
 - [readme](../readme/best-practice.md), taking `Walkthrough`, `How it works`
 - [test-design](../test-design/best-practice.md), taking `Unit cases`
-- [code](../code/best-practice.md), taking `Interface`
+- [software-design](../software-design/best-practice.md), taking `Interface`
 
 ## Practices
 

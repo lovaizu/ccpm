@@ -441,7 +441,7 @@
    ]
   },
   {
-   "kind": "code",
+   "kind": "software-design",
    "takes": [
     "Interface"
    ]
