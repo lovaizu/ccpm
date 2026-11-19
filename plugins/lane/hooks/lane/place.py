@@ -35,7 +35,7 @@ class SkillCall:
 
 @dataclass
 class Move:
-    """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `queue`, `drop`,
+    """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `drop`,
     `read`, `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role whose steps hold
     it, the subagent's agent type, or for the main conversation the skill of the run's latest
     command whose steps its plugin's rules give, the skill that called the run before any; the
@@ -112,11 +112,9 @@ def place(event: Event, runs: list[Run], due: Due) -> Move | None:
     as talk, as does a subagent's SendMessage to another subagent; a command, typed or by the Skill
     tool, that skill_call gives no call of as a `typed` move on the run of its plugin that stands; a
     reporter's Bash call as a `report` move with the report that report.read_report gives of its
-    output; the PostToolUse of a SendMessage that made a start as a `tie` where it resumed the
-    subagent, and as a `queue` where it queued the message to a subagent that still runs; that
-    subagent's SubagentStop as the `end` of the pass that ran, on the start tied to it before, with
-    the resume queued still untied; None where the event lies outside each run, such as an
-    `agent_id` that no start ties.
+    output; the PostToolUse of a SendMessage that made a start as a `tie`; a subagent's
+    SubagentStop as the `end` of its start, a pass after a message queued to it ending the same
+    start; None where the event lies outside each run, such as an `agent_id` that no start ties.
     Changes: nothing.
     Refuses: OutOfForm, where the rules of the plugin's run are out of form at its command.
     """
@@ -225,18 +223,21 @@ def _start_of(run: Run, tool_use_id: str) -> Entry | None:
 
 def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     """The move of a PreToolUse: a start by an Agent call, held to the steps of whoever starts it;
-    a start by the main conversation's SendMessage to a subagent of the run whose role the order
-    makes due, with the prompt of the start it resumes, and no move for any other SendMessage, as
-    talk; else a call."""
+    a start by the main conversation's SendMessage to a subagent of the run that has ended and
+    whose role the order makes due, with the prompt of the start it resumes, and no move for any
+    other SendMessage, as talk, such as one that Claude Code queues to a subagent that still runs;
+    else a call."""
     tool = event.get("tool_name")
     call = _call(event, run, rules)
     if tool == "Agent":
         return replace(call, kind="start", step=None, prompt=event["tool_input"].get("prompt", ""))
     if tool != "SendMessage":
         return call
-    resumed = _latest_start(run, event["tool_input"].get("to", ""))
+    to = event["tool_input"].get("to", "")
+    resumed = _latest_start(run, to)
     roles = [each["role"] for each in due(run).get("starts", [])]
-    if call.agent_id is not None or resumed is None or resumed["role"] not in roles:
+    ended = resumed is not None and _ended_start(run, to)
+    if call.agent_id is not None or not ended or resumed["role"] not in roles:
         return None
     return replace(call, kind="start", step=None, prompt=resumed["prompt"])
 
@@ -245,6 +246,13 @@ def _latest_start(run: Run, agent_id: str) -> Entry | None:
     """The start that the subagent was last tied to, None where none was."""
     ties = [entry for entry in run.entries if _ties(entry, agent_id)]
     return _start_of(run, ties[-1]["tool_use_id"]) if ties else None
+
+
+def _ended_start(run: Run, agent_id: str) -> bool:
+    """Whether the subagent's latest start has ended, by a result or a stop after its tie."""
+    ties = [i for i, entry in enumerate(run.entries) if _ties(entry, agent_id)]
+    after = run.entries[ties[-1] :]
+    return any(e["kind"] in ("result", "stopped") and e.get("agent_id") == agent_id for e in after)
 
 
 def _after(event: Event, run: Run, rules: Rules) -> Move | None:
@@ -269,8 +277,7 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
             else replace(_call(event, run, rules), kind="report", report=given)
         )
     if tool == "SendMessage" and _start_of(run, event["tool_use_id"]) is not None:
-        kind = "tie" if "resumedAgentId" in event["tool_response"] else "queue"
-        return replace(_call(event, run, rules), kind=kind, agent_id=event["tool_input"]["to"])
+        return replace(_call(event, run, rules), kind="tie", agent_id=event["tool_input"]["to"])
     return None
 
 

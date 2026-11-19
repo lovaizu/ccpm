@@ -23,8 +23,6 @@ from report import report
 from routes import starts_due
 from rules import OutOfForm, Step
 
-UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 
 def by_routes(run: Run) -> StartsDue:
     """The starts due of the run, as Lane's route adapter gives them from `log`'s routes."""
@@ -381,13 +379,42 @@ def test_a_task_notification_of_a_tied_subagent_is_its_result_reaching(e: Events
     assert (kind(move), move.agent_id if move else None) == ("result_reached", "a1")
 
 
+# The writer a1's `written`, and the reviewer's `more`, after which the writer is due again.
+MORE: tuple[Entry, ...] = (
+    START,
+    TIE,
+    lane_entries.result("a1", "written"),
+    lane_entries.start("u2", "log:reviewer"),
+    lane_entries.tie("u2", "a2"),
+    lane_entries.result("a2", "more", "log:reviewer"),
+)
+
+
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@UNBUILT
 def test_a_send_message_from_the_main_conversation_is_a_start(e: Events):
-    """Given the writer tied to a1, whose end came
+    """Given the writer a1, whose end came with `written`, and the reviewer's `more`, so that the
+    writer is due
     When the main conversation's PreToolUse of SendMessage to a1 comes
     Then the move is a start"""
-    assert kind(place(e.send(WRITER, "u2"), [tied()], by_routes)) == "start"
+    assert kind(place(e.send(WRITER, "u3"), [run(*MORE)], by_routes)) == "start"
+
+
+@pytest.mark.supports(
+    "test_a_message_queued_to_a_running_subagent_goes_through_and_its_later_pass_is_its_same_start"
+)
+def test_a_send_message_to_a_running_subagent_whose_role_is_due_is_talk(e: Events):
+    """Given the reviewer's `split`, which makes two writers due, and the writer a3 running as the
+    first of them, so that one writer is still due
+    When the main conversation's PreToolUse of SendMessage to a3 comes
+    Then it makes no move, as Claude Code queues the message to the start that runs"""
+    running = (
+        *MORE[:5],
+        lane_entries.result("a2", "split", "log:reviewer"),
+        lane_entries.start("u3"),
+        lane_entries.tie("u3", "a3"),
+    )
+    third = Subagent("a3", "log:writer")
+    assert place(e.send(third, "u4"), [run(*running)], by_routes) is None
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
@@ -399,24 +426,29 @@ def test_a_send_message_that_resumed_its_subagent_ties_it(e: Events):
     assert kind(place(e.resumed(WRITER, "u2"), [run(START, TIE, resume)], by_routes)) == "tie"
 
 
-@pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-def test_a_send_message_queued_to_a_running_subagent_is_a_queue(e: Events):
-    """Given the writer tied to a1, running, and a start by SendMessage u2 to it
+@pytest.mark.supports(
+    "test_a_message_queued_to_a_running_subagent_goes_through_and_its_later_pass_is_its_same_start"
+)
+def test_the_post_tool_use_of_a_send_message_queued_to_a_running_subagent_is_no_move(e: Events):
+    """Given the writer tied to a1, running, to which the main conversation's SendMessage u2 went
+    through as talk
     When the PostToolUse of u2 says the message is queued
-    Then the move is a queue"""
-    resume: Entry = lane_entries.start("u2")
-    assert kind(place(e.queued(WRITER, "u2"), [run(START, TIE, resume)], by_routes)) == "queue"
+    Then it makes no move"""
+    assert place(e.queued(WRITER, "u2"), [tied()], by_routes) is None
 
 
-@pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-def test_the_stop_of_a_subagent_with_a_resume_queued_ends_the_pass_that_ran(e: Events):
-    """Given the writer tied to a1 by u1, and a resume u2 queued to it
-    When a1's SubagentStop comes
-    Then the move is the end of the start that a1 ran, with u2 still untied"""
-    resume: Entry = lane_entries.start("u2")
-    queued: Entry = {"kind": "queue", "run": "r1", "tool_use_id": "u2", "agent_id": "a1"}
-    move = place(e.ended(WRITER), [run(START, TIE, resume, queued)], by_routes)
-    assert (kind(move), move.agent_id if move else None) == ("end", "a1")
+@pytest.mark.supports(
+    "test_a_message_queued_to_a_running_subagent_goes_through_and_its_later_pass_is_its_same_start"
+)
+def test_the_stop_of_a_later_pass_after_a_queued_message_ends_the_same_start(e: Events):
+    """Given the writer tied to a1 by u1, which marked `write` before a message queued to it
+    started it again
+    When a1's SubagentStop of the later pass comes
+    Then the move is the end of the start of u1, at the step `report`, its marks as they stand"""
+    marked: Entry = {"kind": "mark", "run": "r1", "agent_id": "a1", "step": "write"}
+    move = place(e.ended(WRITER), [run(START, TIE, marked)], by_routes)
+    assert move is not None
+    assert (move.kind, move.agent_id, move.step) == ("end", "a1", "report")
 
 
 @pytest.mark.supports("test_after_compact_the_run_goes_on_with_its_starts_due")
@@ -456,12 +488,11 @@ def test_an_agent_calls_start_carries_its_prompt(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@UNBUILT
 def test_a_resumes_start_carries_the_prompt_of_the_start_it_resumes(e: Events):
-    """Given the writer tied to a1, started with its prompt
+    """Given the writer a1, started with its prompt, whose end came, and the reviewer's `more`
     When the main conversation's PreToolUse of SendMessage to a1 comes
     Then the start move carries the prompt of a1's start, not the message"""
-    move = place(e.send(WRITER, "u2"), [tied()], by_routes)
+    move = place(e.send(WRITER, "u3"), [run(*MORE)], by_routes)
     assert (kind(move), move.prompt if move else None) == ("start", PROMPT)
 
 

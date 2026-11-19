@@ -14,15 +14,14 @@ from rules import Step
 
 
 class Entry(TypedDict, total=False):
-    """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `tie`, `queue`,
-    `drop`, `read`, `mark`, `result`, `stopped`, `typed`, and `ended`, the `run` it belongs to, the
-    `agent_id` of the subagent whose move it is, None for the main conversation's, and the fields
-    of that kind: a `folder` gives the run's plugin's folder, a `start` the `prompt` that
-    the main conversation gave it, the prompt of the start it resumes for a resume, and the `steps`
-    that the plugin's adapter of the rules gave for it, where it gave any, a `queue` a resume queued
-    to a subagent that still runs, untied until that subagent's SubagentStop, a `stopped` the
-    `agent_id` of a start that ended with no result, such as one stopped by TaskStop, and an
-    `ended` the end of the run, once its order said the run ends."""
+    """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `tie`, `drop`,
+    `read`, `mark`, `result`, `stopped`, `typed`, and `ended`, the `run` it belongs to, the
+    `agent_id` of the subagent whose move it is, None for the main conversation's, and the fields of
+    that kind: a `folder` gives the run's plugin's folder, a `start` the `prompt` that the main
+    conversation gave it, the prompt of the start it resumes for a resume, and the `steps` that the
+    plugin's adapter of the rules gave for it, where it gave any, a `stopped` the `agent_id` of a
+    start that ended with no result, such as one stopped by TaskStop, and an `ended` the end of the
+    run, once its order said the run ends."""
 
     kind: str
     run: str

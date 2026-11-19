@@ -145,9 +145,7 @@ def start_made(move: Move) -> Answer:
     Changes: the run record, by the start with its prompt, and with the steps that
     adapters.given_steps gives from the prompt where start_rules.asks_adapter says the start takes
     rules from the plugin's adapter of the rules, untied until the PostToolUse of its call; a
-    resume, by its start with the prompt and the steps of the start it resumes; a resume that the
-    PostToolUse finds queued to a subagent that still runs stays untied until that subagent's
-    SubagentStop, where subagent_ended ties it, as Lane hooks no SubagentStart.
+    resume, by its start with the prompt and the steps of the start it resumes.
     Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong,
     and so does, for a start that takes its steps from the plugin's adapter of the rules, an adapter
     of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
@@ -195,14 +193,14 @@ def turn_ended(move: Move) -> Answer:
     Gives: a stop with the sentence that rule_types.judge_end gives, where the rules give the steps
     of the move's role; else a stop with the starts due, where a start is due; an empty answer
     where none is.
-    Changes: the run record, by dropping each start still untied but a resume queued to a subagent
-    that still runs; and, where the turn's end goes through, by an `ended` entry where
-    adapters.starts_due, asked with the turn ended, says the run ends.
+    Changes: the run record, by dropping each start still untied; and, where the turn's end goes
+    through, by an `ended` entry where adapters.starts_due, asked with the turn ended, says the run
+    ends.
     Refuses: nothing; an adapter of the starts due that failed stops the turn's end with what's
     wrong.
     """
     entries = move.run.entries
-    settled = {e.get("tool_use_id") for e in entries if e["kind"] in ("tie", "queue", "drop")}
+    settled = {e.get("tool_use_id") for e in entries if e["kind"] in ("tie", "drop")}
     untied = [e for e in entries if e["kind"] == "start" and e["tool_use_id"] not in settled]
     drops: list[record.Entry] = [
         {"kind": "drop", "run": move.run.id, "tool_use_id": e["tool_use_id"]} for e in untied
@@ -265,11 +263,10 @@ def result_reached(move: Move) -> Answer:
 
 def fact_added(move: Move) -> Answer:
     """A move that only adds a fact to the run: a start tied at the PostToolUse of its Agent call,
-    or of a SendMessage that resumed its subagent; a resume queued at the PostToolUse of a
-    SendMessage to a subagent that still runs; a start dropped at its PostToolUseFailure; or a Read
-    of a file that a rule of the files to read whole names, at its PostToolUse.
+    or of a SendMessage that resumed its subagent; a start dropped at its PostToolUseFailure; or a
+    Read of a file that a rule of the files to read whole names, at its PostToolUse.
 
-    Takes: a `tie`, `queue`, `drop`, or `read` move.
+    Takes: a `tie`, `drop`, or `read` move.
     Gives: an empty answer.
     Changes: the run record, by the fact.
     Refuses: nothing.
@@ -324,31 +321,15 @@ def report_made(move: Move) -> Answer:
 def subagent_ended(move: Move) -> Answer:
     """S7 and S8: a start ends, held to its result, its steps, and the plugin's own check.
 
-    Takes: an `end` move at the subagent's SubagentStop, the end of the pass that ran where a resume
-    is queued to the subagent.
+    Takes: an `end` move at the subagent's SubagentStop, a pass after a message queued to it ending
+    the same start.
     Gives: a stop with the sentence that rule_types.judge_end gives; an empty answer where it gives
     none.
-    Changes: where the end holds and a resume is queued to the subagent, the run record, by tying
-    that resume's start to the subagent; else nothing.
+    Changes: nothing.
     Refuses: nothing.
     """
     said = rule_types.judge_end(move)
-    if said is not None:
-        return Answer(True, said)
-    entries = move.run.entries
-    tied = {e["tool_use_id"] for e in entries if e["kind"] == "tie"}
-    queued = [
-        e["tool_use_id"]
-        for e in entries
-        if e["kind"] == "queue" and e["agent_id"] == move.agent_id and e["tool_use_id"] not in tied
-    ]
-    ties: list[record.Entry] = [
-        {"kind": "tie", "run": move.run.id, "tool_use_id": use, "agent_id": move.agent_id}
-        for use in queued
-    ]
-    if ties:
-        record.add(move.run.session_id, ties)
-    return Answer()
+    return Answer() if said is None else Answer(True, said)
 
 
 def written(event: Event, given: Answer) -> str:
@@ -386,7 +367,6 @@ _ANSWERS: dict[str, Callable[[Move], Answer]] = {
     "call": call_made,
     "start": start_made,
     "tie": fact_added,
-    "queue": fact_added,
     "drop": fact_added,
     "read": fact_added,
     "report": report_made,

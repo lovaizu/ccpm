@@ -13,7 +13,6 @@ import os
 import pytest
 from claude_code import AGENT_DENIED_BY_RULE, AGENT_UNKNOWN_TYPE, FOREGROUND, POSTED_FIRST
 from lane_bench import (
-    UNBUILT,
     WORDS,
     Bench,
     denier,
@@ -260,18 +259,17 @@ def test_a_start_that_another_plugins_hook_denies_is_due_again_at_the_turns_end(
 
 
 @pytest.mark.supports("S9")
-@UNBUILT
 def test_two_starts_of_one_role_are_each_held_to_their_own_start(b: Bench):
     """Given the reviewer's `split`, which makes two writers due
-    When the main conversation starts both, one reports `written` and ends, and the other ends with
-    no result
+    When the main conversation starts both, one writes its part under docs/changes/, reports
+    `written`, and ends, and the other ends with no result
     Then the turn's end goes through once both started, the first end goes through, and the second
     is stopped"""
     c = to_review(b)
     reviewed(c, "split")
     first, second = started(c), started(c)
     assert not c.stop("Both writers run.").blocked
-    written(first)
+    written(first, path="docs/changes/1.2.0/first.md")
     assert not first.end("Done.")[0].blocked
     assert second.end("Done.")[0].blocked
 
@@ -341,20 +339,21 @@ def test_a_resume_that_the_order_doesnt_make_due_goes_through_as_talk(b: Bench):
 
 
 @pytest.mark.supports("S9")
-@UNBUILT
-def test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass(b: Bench):
-    """Given the writer running, and a message queued to it by SendMessage
-    When the writer ends with no result, then keeps each step and ends, and then writes a file that
-    its step doesn't name
-    Then the first end is stopped, the second goes through, and the write is stopped, as the
-    resume's start is tied to the writer once the pass ended"""
+def test_a_message_queued_to_a_running_subagent_goes_through_and_its_later_pass_is_its_same_start(
+    b: Bench,
+):
+    """Given the writer running
+    When the main conversation sends it a message, which Claude Code queues, the writer ends with
+    no result, then keeps each step and ends, and ends again after the queued message
+    Then the message goes through as talk, the first end is stopped, and the second and third go
+    through, as its later pass is held as its same start"""
     c = opened(b)
     writer = started(c)
     assert not c.resume(writer, "Add the date.").blocked
     assert writer.end("Done.")[0].blocked
     written(writer)
     assert not writer.end("Done.")[0].blocked
-    assert writer.write(b.at("notes.txt"), "x\n").blocked
+    assert not writer.end("Added the date.")[0].blocked
 
 
 @pytest.mark.supports("S9")

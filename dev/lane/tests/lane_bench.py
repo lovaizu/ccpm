@@ -18,7 +18,6 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-import pytest
 from claude_code import Agent, Answer, Conversation
 from repo_files import environment, git, write_files
 
@@ -27,9 +26,6 @@ if TYPE_CHECKING:
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 LANE = os.path.join(TOP, "plugins", "lane")
-
-# Why each integration case fails for now: Lane's parts have no bodies.
-UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
 
 # The words the person types after the command, the version whose entry the run writes.
 WORDS = "1.2.0"
@@ -315,13 +311,18 @@ def items(agent: Agent) -> None:
 
 
 def written(
-    agent: Agent, result: str | None = "written", entry: str = ENTRY, report: bool = True
+    agent: Agent,
+    result: str | None = "written",
+    entry: str = ENTRY,
+    report: bool = True,
+    path: str = "CHANGELOG.md",
 ) -> None:
-    """The writer keeps each step: it writes the entry, reads its notes whole, reports each item and
-    the step `write` done, reads the entry whole, reports the result where one is given, and
+    """The writer keeps each step: it writes the entry at the path, CHANGELOG.md unless given, such
+    as a part of the entry under docs/changes/, reads its notes whole, reports each item and
+    the step `write` done, reads CHANGELOG.md whole, reports the result where one is given, and
     reports the step `report` done where `report` says so."""
     c = agent.conversation
-    agent.write(os.path.join(c.cwd, "CHANGELOG.md"), entry)
+    agent.write(os.path.join(c.cwd, path), entry)
     agent.read(os.path.join(c.cwd, "NOTES.md"))
     items(agent)
     agent.bash("lane-step write")

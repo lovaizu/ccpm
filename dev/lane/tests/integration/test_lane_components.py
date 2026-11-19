@@ -12,7 +12,6 @@ import pytest
 from lane_bench import (
     ENTRY,
     ORDER,
-    UNBUILT,
     WORDS,
     Bench,
     ending,
@@ -264,15 +263,15 @@ def test_a_rule_of_a_type_that_lane_lacks_stops_saying_what_to_mend(b: Bench):
 
 
 @pytest.mark.supports("Run")
-@UNBUILT
 def test_the_results_of_two_subagents_are_both_kept(b: Bench):
     """Given two writers running after the reviewer's `split`
-    When each keeps each step and reports `written`, and then each ends
+    When each keeps each step, writing its part under docs/changes/, and reports `written`, and
+    then each ends
     Then both ends go through, as the run's record loses neither result"""
     c = to_review(b)
     reviewed(c, "split")
     first, second = started(c), started(c)
-    written(first)
-    written(second)
+    written(first, path="docs/changes/1.2.0/first.md")
+    written(second, path="docs/changes/1.2.0/second.md")
     assert not first.end("Done.")[0].blocked
     assert not second.end("Done.")[0].blocked

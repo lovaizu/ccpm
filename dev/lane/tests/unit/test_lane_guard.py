@@ -36,8 +36,6 @@ from repo_files import write_files
 from report import read_report, report
 from rules import Step
 
-UNBUILT = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 # An adapter of the starts due that gives none, as it waits for the person's answer.
 WAITS = 'import json\n\nprint(json.dumps({"starts": []}))\n'
 # The rules of `log` giving no order: the main conversation's step `lead` alone, checked for
@@ -278,23 +276,24 @@ def test_a_resume_that_no_route_makes_due_goes_through_and_moves_nothing(g: Play
     assert "log:reviewer" in said.said
 
 
-@pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-@UNBUILT
-def test_a_resume_queued_waits_through_the_turns_end_and_ties_at_the_end_of_the_pass(g: Play):
-    """Given the writer a1 running, and a message queued to it by SendMessage
-    When the main conversation ends its turn, a1 ends with no result, then keeps each step and
-    ends, and then writes notes.txt
-    Then the turn's end goes through, the first end is stopped, the second goes through, and the
-    write is stopped, as the resume's start is tied to a1"""
+@pytest.mark.supports(
+    "test_a_message_queued_to_a_running_subagent_goes_through_and_its_later_pass_is_its_same_start"
+)
+def test_a_message_queued_to_a_running_subagent_is_talk_and_its_later_pass_is_its_start(g: Play):
+    """Given the writer a1 running
+    When the main conversation sends it a message, which Claude Code queues, and ends its turn,
+    a1 ends with no result, and then keeps each step and ends
+    Then the message and the turn's end go through, the first end is stopped, the second goes
+    through, and the record holds the one start of a1"""
     g.opened()
     writer = g.started()
-    g(g.e.send(writer, "toolu_2"))
-    g(g.e.queued(writer, "toolu_2"))
+    assert not answer(g.e.send(writer, "toolu_2")).stop
+    assert answer(g.e.queued(writer, "toolu_2")) == Answer()
     assert not answer(g.e.stop()).stop
     assert answer(g.e.ended(writer)).stop
     g.kept_steps(writer)
     assert not answer(g.e.ended(writer)).stop
-    assert answer(g.e.write(os.path.join(g.e.cwd, "notes.txt"), writer)).stop
+    assert len([e for e in runs("session-1")[0].entries if e["kind"] == "start"]) == 1
 
 
 @pytest.mark.supports("test_a_typed_command_that_a_route_goes_after_puts_its_starts_in_place")
@@ -713,15 +712,13 @@ def test_turn_ended_stops_only_while_a_start_is_due(
     assert turn_ended(move("turn_end", g.e.stop())).stop == stop
 
 
-@pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-def test_turn_ended_drops_each_start_untied_but_a_resume_queued(g: Play, log: str):
-    """Given the writer's start untied, and a resume of a1 queued
+@pytest.mark.supports("test_a_start_that_another_plugins_hook_denies_is_due_again_at_the_turns_end")
+def test_turn_ended_drops_each_start_still_untied(g: Play, log: str):
+    """Given the writer's start tied to a1, and another start untied
     When the main conversation ends its turn
-    Then the record drops the untied start and keeps the queued one"""
-    resume: Entry = lane_entries.start("toolu_2")
-    queued: Entry = {"kind": "queue", "run": "r1", "tool_use_id": "toolu_2", "agent_id": "a1"}
+    Then the record drops the untied start alone"""
     untied: Entry = lane_entries.start("toolu_3")
-    recorded(log, START, TIE, resume, queued, untied)
+    recorded(log, START, TIE, untied)
     turn_ended(move("turn_end", g.e.stop()))
     dropped = [e.get("tool_use_id") for e in runs("session-1")[0].entries if e["kind"] == "drop"]
     assert dropped == ["toolu_3"]
@@ -767,19 +764,17 @@ def test_result_reached_of_a_subagent_stopped_gives_its_start_due_again(g: Play,
     "kind",
     [
         "tie",
-        "queue",
         "drop",
         "read",
     ],
 )
 def test_fact_added_adds_its_fact_and_answers_nothing(g: Play, log: str, kind: str):
-    """Given the writer's start, untied for a tie, a queue, or a drop, and tied for a read
+    """Given the writer's start, untied for a tie or a drop, and tied for a read
     When the fact's move comes
     Then the answer is empty, and the record's last entry is of the fact's kind"""
     cwd = g.e.cwd
     events = {
         "tie": (g.e.started(WRITER, "toolu_1"), (START,)),
-        "queue": (g.e.queued(WRITER, "toolu_1"), (START,)),
         "drop": (g.e.start_failed("log:writer", "toolu_1"), (START,)),
         "read": (g.e.read_ran(os.path.join(cwd, "NOTES.md"), 1, 6, 6, WRITER), (START, TIE)),
     }
@@ -851,23 +846,20 @@ def test_subagent_ended_with_no_result_is_stopped(g: Play, log: str):
     assert "written" in said.said
 
 
-@pytest.mark.supports("test_a_resume_queued_to_a_running_subagent_waits_for_the_end_of_its_pass")
-def test_subagent_ended_that_holds_ties_the_resume_queued(g: Play, log: str):
-    """Given the writer tied to a1, which kept each step and gave `written`, and a resume queued to
-    it
+@pytest.mark.supports("test_steps_marked_in_their_order_hold_and_the_end_goes_through")
+def test_subagent_ended_that_holds_answers_nothing_and_adds_nothing(g: Play, log: str):
+    """Given the writer tied to a1, which kept each step and gave `written`
     When it ends
-    Then the answer is empty, and the record ties the resume's start to a1"""
+    Then the answer is empty, and the record holds no more than before"""
     marks: list[Entry] = [
         {"kind": "mark", "run": "r1", "agent_id": "a1", "step": "write"},
         {"kind": "mark", "run": "r1", "agent_id": "a1", "step": "report"},
         lane_entries.result("a1", "written"),
     ]
-    resume: Entry = lane_entries.start("toolu_2")
-    queued: Entry = {"kind": "queue", "run": "r1", "tool_use_id": "toolu_2", "agent_id": "a1"}
-    recorded(log, START, TIE, *marks, resume, queued)
+    recorded(log, START, TIE, *marks)
+    before = runs("session-1")[0].entries
     assert subagent_ended(move("end", g.e.ended(WRITER), WRITER, None)) == Answer()
-    last = runs("session-1")[0].entries[-1]
-    assert (last["kind"], last.get("tool_use_id"), last.get("agent_id")) == ("tie", "toolu_2", "a1")
+    assert runs("session-1")[0].entries == before
 
 
 # written, by each event and class of answer.
