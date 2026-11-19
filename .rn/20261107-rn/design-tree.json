@@ -246,6 +246,11 @@
               "about": "Key results",
               "decided": "none of Lane's own, as each rule type's integration case shows by code whether Lane judges a move right",
               "by": "reasoning"
+            },
+            {
+              "about": "Sign-off",
+              "decided": "signed off by the user, with S9's and S10's sequences alone; N13 waits for the test design made again from it",
+              "by": "user"
             }
           ]
         }
