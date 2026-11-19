@@ -104,6 +104,11 @@
               "about": "The coverage check",
               "decided": "trace.py checks that each user story and each principle item is tagged at least once in Solution strategy's views, and that each arrow and each strategy tags one; template.py holds the new form",
               "by": "user"
+            },
+            {
+              "about": "How the rework is checked",
+              "decided": "rn's architecture, already in the approved form, passes template.py and trace.py by the reworked template and checks, and is marked done with the best practice, as no rework of it is left",
+              "by": "user"
             }
           ]
         },
@@ -1735,10 +1740,6 @@
     {
       "do": "make",
       "path": "plugins/rn/domain/best-practices/architecture"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/architecture.md"
     },
     {
       "do": "make",
