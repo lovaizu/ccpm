@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from place import Move
 
-from rule_types import commands, reads_none, writes
+from rule_types import checklist, commands, order, reads_none, reads_whole, writes
 
 # The rule types that judge a call of each tool, by their names in a rule's `type`, in the order
 # the guard asks them.
@@ -51,7 +51,16 @@ def judge_mark(move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("rule_types.judge_mark")
+    marked = move.report["step"] if move.report else None
+    said = (
+        judge(rule, step, move)
+        for kind, judge in _MARKS.items()
+        for step in move.steps
+        if step["name"] == marked
+        for rule in step["rules"]
+        if rule["type"] == kind
+    )
+    return next((each for each in said if each is not None), None)
 
 
 def judge_end(move: Move) -> str | None:
@@ -68,3 +77,12 @@ def judge_end(move: Move) -> str | None:
     Refuses: OSError, where the plugin's check can't be run.
     """
     raise NotImplementedError("rule_types.judge_end")
+
+
+# The rule types that judge a mark, by their names in a rule's `type`, in the order the guard asks
+# them.
+_MARKS = {
+    "order": order.judge_mark,
+    "reads_whole": reads_whole.judge_mark,
+    "checklist": checklist.judge_mark,
+}

@@ -6,8 +6,6 @@ from __future__ import annotations
 import pytest
 from report import read_report, report
 
-pytestmark = pytest.mark.xfail(strict=True, reason="Lane's parts have no bodies yet")
-
 
 def printed(capsys: pytest.CaptureFixture[str], kind: str, words: list[str]) -> tuple[int, str]:
     """What report gives for the kind and the words, and the line it prints."""

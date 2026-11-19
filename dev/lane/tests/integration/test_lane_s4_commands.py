@@ -7,7 +7,7 @@ and Lane through the double of Claude Code."""
 from __future__ import annotations
 
 import pytest
-from lane_bench import UNBUILT, Bench, opened, started
+from lane_bench import Bench, opened, started
 
 
 @pytest.mark.supports("S4", "rule types")
@@ -22,7 +22,6 @@ def test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step(b: Bench):
 
 
 @pytest.mark.supports("S4")
-@UNBUILT
 def test_a_command_that_its_step_names_goes_through(b: Bench):
     """Given the writer running at its step `write`
     When it runs `git log`
@@ -43,7 +42,6 @@ def test_a_command_chained_after_a_named_one_is_stopped(b: Bench):
 
 
 @pytest.mark.supports("S4")
-@UNBUILT
 def test_a_named_command_with_more_words_after_it_goes_through(b: Bench):
     """Given the writer running at its step `write`
     When it runs `git log --oneline`
@@ -54,7 +52,6 @@ def test_a_named_command_with_more_words_after_it_goes_through(b: Bench):
 
 
 @pytest.mark.supports("S4", "reporters")
-@UNBUILT
 def test_a_reporter_of_lanes_goes_through_though_no_step_names_it(b: Bench):
     """Given the writer running at its step `write`, which names no reporter
     When it runs `lane-item write dated`
@@ -65,7 +62,6 @@ def test_a_reporter_of_lanes_goes_through_though_no_step_names_it(b: Bench):
 
 
 @pytest.mark.supports("S4")
-@UNBUILT
 def test_the_main_conversations_command_in_a_run_is_held_to_its_skills_step(b: Bench):
     """Given the person typed /log:up 1.2.0
     When the main conversation runs `ls`, and then `git status`

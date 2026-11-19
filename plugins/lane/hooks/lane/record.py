@@ -15,8 +15,9 @@ from rules import Step
 
 class Entry(TypedDict, total=False):
     """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `tie`, `queue`,
-    `drop`, `read`, `mark`, `result`, `stopped`, `typed`, and `ended`, the `run` it belongs to, and
-    the fields of that kind: a `folder` gives the run's plugin's folder, a `start` the `prompt` that
+    `drop`, `read`, `mark`, `result`, `stopped`, `typed`, and `ended`, the `run` it belongs to, the
+    `agent_id` of the subagent whose move it is, None for the main conversation's, and the fields
+    of that kind: a `folder` gives the run's plugin's folder, a `start` the `prompt` that
     the main conversation gave it, the prompt of the start it resumes for a resume, and the `steps`
     that the plugin's adapter of the rules gave for it, where it gave any, a `queue` a resume queued
     to a subagent that still runs, untied until that subagent's SubagentStop, a `stopped` the
@@ -30,7 +31,7 @@ class Entry(TypedDict, total=False):
     words: str
     role: str
     tool_use_id: str
-    agent_id: str
+    agent_id: str | None
     path: str
     first_line: int
     last_line: int

@@ -11,7 +11,7 @@ from typing import Any, Callable
 from named_files import named, of_call
 from order import StartsDue
 from record import Entry, Run
-from report import Report
+from report import Report, read_report
 from rules import Rules, Step, read_rules
 from start_rules import steps as start_steps
 
@@ -140,6 +140,22 @@ def place(event: Event, runs: list[Run], due: Due) -> Move | None:
     raise NotImplementedError(f"place.place of {name}")
 
 
+def marked(run: Run, agent_id: str | None) -> set[str]:
+    """The steps that a start marked done.
+
+    Takes: the run, and the subagent's `agent_id`, None for the main conversation.
+    Gives: the name of each step that the run record holds a reporter's mark of, by the subagent
+    or the main conversation, the marks of items left out.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    return {
+        entry["step"]
+        for entry in run.entries
+        if entry["kind"] == "mark" and entry.get("agent_id") == agent_id and "item" not in entry
+    }
+
+
 def _ended(run: Run) -> bool:
     """Whether the run's order said it ends."""
     return any(entry["kind"] == "ended" for entry in run.entries)
@@ -179,8 +195,8 @@ def _before(event: Event, run: Run, rules: Rules) -> Move | None:
 
 
 def _after(event: Event, run: Run, rules: Rules) -> Move | None:
-    """The move of a PostToolUse: a tie by an Agent call, a read by a Read, else none of the calls
-    that S1 and S2 make."""
+    """The move of a PostToolUse: a tie by an Agent call, a read by a Read, a report by a
+    reporter's Bash call, else none."""
     tool = event.get("tool_name")
     if tool == "Agent":
         start = _start_of(run, event["tool_use_id"])
@@ -192,7 +208,14 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
         return Move("tie", event, run, role, agent_id, None, steps, None, None)
     if tool == "Read":
         return _read(event, run, rules)
-    if tool in ("SendMessage", "Skill", "Bash"):
+    if tool == "Bash":
+        given = read_report(event["tool_response"].get("stdout", ""))
+        return (
+            None
+            if given is None
+            else replace(_call(event, run, rules), kind="report", report=given)
+        )
+    if tool in ("SendMessage", "Skill"):
         raise NotImplementedError(f"place.place of the PostToolUse of {tool}")
     return None
 
@@ -227,10 +250,6 @@ def _call(event: Event, run: Run, rules: Rules) -> Move:
         start = next(e for e in run.entries if e.get("tool_use_id") == tie["tool_use_id"])
         role = start["role"]
         steps = start_steps(rules, role, start.get("steps"))
-    done = {
-        entry["step"]
-        for entry in run.entries
-        if entry["kind"] == "mark" and entry.get("agent_id") == agent_id and "item" not in entry
-    }
+    done = marked(run, agent_id)
     step = next((each["name"] for each in steps if each["name"] not in done), None)
     return Move("call", event, run, role, agent_id, None, steps, step, None)

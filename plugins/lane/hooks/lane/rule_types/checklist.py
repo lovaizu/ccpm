@@ -6,6 +6,8 @@ from __future__ import annotations
 from place import Move
 from rules import Rule, Step
 
+from rule_types.words import listed
+
 
 def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     """Judges a mark by the rule.
@@ -16,4 +18,17 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("rule_types.checklist.judge_mark")
+    done = {
+        entry.get("item")
+        for entry in move.run.entries
+        if entry["kind"] == "mark" and entry.get("agent_id") == move.agent_id
+        if entry["step"] == step["name"]
+    }
+    left = [item for item in rule["items"] if item not in done]
+    if not left:
+        return None
+    return (
+        f"You're at the step `{step['name']}` of {move.role}, whose checklist isn't done:"
+        f" {listed(left)}.\n"
+        f"Do each and mark it done with lane-item {step['name']} <item> first."
+    )

@@ -6,9 +6,7 @@ sentence and the lines not read, and let through once Reads of the start cover e
 from __future__ import annotations
 
 import pytest
-from lane_bench import UNBUILT, Bench, items, opened, started
-
-pytestmark = UNBUILT
+from lane_bench import Bench, items, opened, started
 
 
 @pytest.mark.supports("S3", "rule types")

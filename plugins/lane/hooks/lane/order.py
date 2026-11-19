@@ -61,7 +61,7 @@ def order_run(run: Run) -> OrderRun:
     # Each start's move, by the tool_use_id of its call, and the call of each subagent's latest
     # start, so that a drop or a stop takes its start's move out.
     starts: dict[str, OrderMove] = {}
-    latest: dict[str, str] = {}
+    latest: dict[str | None, str] = {}
     for entry in run.entries:
         kind = entry["kind"]
         if kind == "typed":

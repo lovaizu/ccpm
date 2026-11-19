@@ -8,8 +8,6 @@ from __future__ import annotations
 import pytest
 from lane_bench import UNBUILT, Bench, ending, opened, reached, started, written
 
-pytestmark = UNBUILT
-
 
 @pytest.mark.supports("S5", "rule types")
 def test_a_step_marked_before_the_step_before_it_is_stopped_with_the_step_due(b: Bench):
@@ -22,6 +20,7 @@ def test_a_step_marked_before_the_step_before_it_is_stopped_with_the_step_due(b:
 
 
 @pytest.mark.supports("S5")
+@UNBUILT
 def test_steps_marked_in_their_order_hold_and_the_end_goes_through(b: Bench):
     """Given the writer running
     When it keeps each step in its order and ends
@@ -32,6 +31,7 @@ def test_steps_marked_in_their_order_hold_and_the_end_goes_through(b: Bench):
 
 
 @pytest.mark.supports("S5")
+@UNBUILT
 def test_an_end_before_each_step_is_done_is_stopped_with_the_step_left(b: Bench):
     """Given the writer that kept its step `write` and reported `written`, its step `report` not
     done
@@ -45,6 +45,7 @@ def test_an_end_before_each_step_is_done_is_stopped_with_the_step_left(b: Bench)
 
 
 @pytest.mark.supports("S5", "S7")
+@UNBUILT
 def test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_undone(b: Bench):
     """Given `log` whose writer's step `write` names `unclear` among the results that end the start,
     and the writer running at that step
@@ -58,6 +59,7 @@ def test_a_result_that_ends_the_start_at_its_step_lets_it_end_with_later_steps_u
 
 
 @pytest.mark.supports("S5")
+@UNBUILT
 def test_a_result_that_ends_the_start_at_a_later_step_leaves_the_steps_before_it_held(b: Bench):
     """Given `log` whose writer's step `report` names `unclear` among the results that end the
     start, and the writer running at its step `write`

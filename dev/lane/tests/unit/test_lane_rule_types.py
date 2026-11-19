@@ -259,7 +259,6 @@ def test_a_rule_that_names_no_command_stops_each_but_a_reporter(e: Events):
 
 
 @pytest.mark.supports("test_steps_marked_in_their_order_hold_and_the_end_goes_through")
-@UNBUILT
 def test_a_mark_of_the_first_step_holds(e: Events):
     """Given the writer with no step marked
     When it marks the step `write`
@@ -269,7 +268,6 @@ def test_a_mark_of_the_first_step_holds(e: Events):
 
 
 @pytest.mark.supports("test_steps_marked_in_their_order_hold_and_the_end_goes_through")
-@UNBUILT
 def test_a_mark_after_the_step_before_holds(e: Events):
     """Given the writer that marked `write`
     When it marks `report`
@@ -286,7 +284,6 @@ def test_a_mark_after_the_step_before_holds(e: Events):
 
 @pytest.mark.supports("test_a_step_marked_before_the_step_before_it_is_stopped_with_the_step_due")
 @pytest.mark.parametrize("before", [[], [mark("write", OTHER)]])
-@UNBUILT
 def test_a_mark_before_the_step_before_gives_the_step_due(e: Events, before: list[Entry]):
     """Given the writer a1 that marked no step, alone or beside a2 that marked `write`
     When a1 marks `report`
@@ -298,7 +295,6 @@ def test_a_mark_before_the_step_before_gives_the_step_due(e: Events, before: lis
 
 
 @pytest.mark.supports("test_steps_marked_in_their_order_hold_and_the_end_goes_through")
-@UNBUILT
 def test_an_end_with_the_step_marked_holds(e: Events):
     """Given the writer that marked `report`
     When it ends
@@ -308,7 +304,6 @@ def test_an_end_with_the_step_marked_holds(e: Events):
 
 
 @pytest.mark.supports("test_an_end_before_each_step_is_done_is_stopped_with_the_step_left")
-@UNBUILT
 def test_an_end_with_the_step_unmarked_gives_the_steps_sentence(e: Events):
     """Given the writer that marked `write` alone
     When it ends
@@ -335,7 +330,6 @@ def marking_write(e: Events, *entries: Entry) -> Move:
         [read("NOTES.md", 4, 6), read("NOTES.md", 1, 4)],
     ],
 )
-@UNBUILT
 def test_reads_that_cover_each_line_hold(e: Events, reads: list[Entry]):
     """Given the writer's reads of NOTES.md, of its 6 lines whole, in two parts, or in two parts
     that overlap, the later first
@@ -355,7 +349,6 @@ def test_reads_that_cover_each_line_hold(e: Events, reads: list[Entry]):
         ([read("NOTES.md", 2, 6)], "1"),
     ],
 )
-@UNBUILT
 def test_reads_that_leave_a_line_give_the_lines_not_read(
     e: Events, reads: list[Entry], first_unread: str
 ):
@@ -373,7 +366,6 @@ def test_reads_that_leave_a_line_give_the_lines_not_read(
 @pytest.mark.parametrize(
     "reads", [[], [read("NOTES.md", 1, 6, OTHER)], [read("CHANGELOG.md", 1, 6)]]
 )
-@UNBUILT
 def test_no_read_of_the_file_by_the_start_gives_the_steps_sentence(e: Events, reads: list[Entry]):
     """Given no read of NOTES.md, a read of it whole by another writer, or a read of another file
     When the writer a1 marks `write`
@@ -391,7 +383,6 @@ def test_no_read_of_the_file_by_the_start_gives_the_steps_sentence(e: Events, re
     "items, entries",
     [([], []), (["dated", "linked"], [mark("write", item="dated"), mark("write", item="linked")])],
 )
-@UNBUILT
 def test_a_step_with_no_item_or_each_item_marked_holds(
     e: Events, items: list[str], entries: list[Entry]
 ):
@@ -411,7 +402,6 @@ def test_a_step_with_no_item_or_each_item_marked_holds(
         ([mark("write", OTHER, "dated"), mark("report", item="linked")], ["dated", "linked"]),
     ],
 )
-@UNBUILT
 def test_items_not_marked_give_the_steps_sentence_naming_each(
     e: Events, entries: list[Entry], unmarked: list[str]
 ):
@@ -568,7 +558,6 @@ def test_a_call_that_breaks_no_rule_or_whose_step_judges_no_call_holds(e: Events
 
 
 @pytest.mark.supports("test_a_mark_is_checked_for_the_step_due_before_the_files_it_reads_whole")
-@UNBUILT
 def test_a_mark_is_judged_by_order_before_its_reads(e: Events):
     """Given the writer that marked no step and read nothing
     When it marks `report`
@@ -582,7 +571,6 @@ def test_a_mark_is_judged_by_order_before_its_reads(e: Events):
 
 
 @pytest.mark.supports("test_a_mark_is_checked_for_the_files_it_reads_whole_before_its_items")
-@UNBUILT
 def test_a_mark_is_judged_by_its_reads_before_its_items(e: Events):
     """Given the writer that read nothing and marked no item
     When it marks `write`
@@ -594,7 +582,6 @@ def test_a_mark_is_judged_by_its_reads_before_its_items(e: Events):
 
 
 @pytest.mark.supports("test_a_step_marked_once_each_item_is_done_holds")
-@UNBUILT
 def test_a_mark_that_breaks_no_rule_holds(e: Events):
     """Given the writer that read NOTES.md whole and marked each item
     When it marks `write`

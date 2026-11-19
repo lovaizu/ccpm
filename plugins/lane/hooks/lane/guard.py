@@ -17,6 +17,7 @@ from order import StartsDue
 from place import Event, Move, SkillCall
 from plugin import plugin_root
 from record import Run
+from report import Report
 from rules import OutOfForm, Rules, read_rules
 from start_rules import asks_adapter
 
@@ -207,7 +208,7 @@ def fact_added(move: Move) -> Answer:
     """
     if move.kind not in ("tie", "read"):
         raise NotImplementedError(f"guard.fact_added of a {move.kind}")
-    entry: record.Entry = {"kind": move.kind, "run": move.run.id, "agent_id": move.agent_id or ""}
+    entry: record.Entry = {"kind": move.kind, "run": move.run.id, "agent_id": move.agent_id}
     if move.kind == "tie":
         entry["tool_use_id"] = move.event["tool_use_id"]
     else:
@@ -243,7 +244,15 @@ def report_made(move: Move) -> Answer:
     Changes: the run record, by the mark or the result, where it holds.
     Refuses: nothing.
     """
-    raise NotImplementedError("guard.report_made")
+    given = cast(Report, move.report)
+    if given["kind"] == "step":
+        said = rule_types.judge_mark(move)
+        if said is not None:
+            return Answer(True, said)
+    entry: record.Entry = {**given, "run": move.run.id, "role": move.role}
+    entry.update(kind="result" if given["kind"] == "result" else "mark", agent_id=move.agent_id)
+    record.add(move.run.session_id, [entry])
+    return Answer()
 
 
 def subagent_ended(move: Move) -> Answer:

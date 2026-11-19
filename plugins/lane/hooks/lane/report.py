@@ -3,7 +3,12 @@ the report that the guard reads back from that line."""
 
 from __future__ import annotations
 
-from typing import TypedDict
+import json
+import sys
+from typing import TypedDict, cast
+
+# The words that each kind of reporter takes, by the fields of its report.
+_FIELDS = {"step": ("step",), "item": ("step", "item"), "result": ("result",)}
 
 
 class Report(TypedDict, total=False):
@@ -25,7 +30,12 @@ def report(kind: str, words: list[str]) -> int:
     Changes: nothing; the guard adds the report to the run at the Bash call's PostToolUse.
     Refuses: 2, with what the reporter takes on standard error, where the words don't fit its kind.
     """
-    raise NotImplementedError("report.report")
+    fields = _FIELDS[kind]
+    if len(words) != len(fields):
+        print(f"lane-{kind} takes {' '.join(f'<{f}>' for f in fields)}", file=sys.stderr)
+        return 2
+    print(json.dumps({"kind": kind, **dict(zip(fields, words))}))
+    return 0
 
 
 def read_report(output: str) -> Report | None:
@@ -37,4 +47,14 @@ def read_report(output: str) -> Report | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("report.read_report")
+    lines = output.splitlines()
+    try:
+        given = json.loads(lines[0]) if len(lines) == 1 else None
+    except ValueError:
+        return None
+    if not isinstance(given, dict):
+        return None
+    fields = _FIELDS.get(given.get("kind", ""))
+    if fields is None or set(given) != {"kind", *fields}:
+        return None
+    return cast(Report, given)

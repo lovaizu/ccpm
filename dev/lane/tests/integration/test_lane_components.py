@@ -27,9 +27,6 @@ from lane_bench import (
 )
 from repo_files import write_files
 
-pytestmark = UNBUILT
-
-
 # guard
 
 
@@ -46,6 +43,7 @@ def test_the_starts_due_come_at_the_main_conversations_next_event_after_the_skil
 
 
 @pytest.mark.supports("guard", "route adapter")
+@UNBUILT
 def test_the_plugins_own_adapter_of_the_starts_due_answers_in_place_of_its_routes(b: Bench):
     """Given `log` with its routes and ORDER, its adapter of the starts due, and the repository
     holding the entry of 1.2.0
@@ -62,6 +60,7 @@ def test_the_plugins_own_adapter_of_the_starts_due_answers_in_place_of_its_route
 
 
 @pytest.mark.supports("guard")
+@UNBUILT
 def test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said(
     b: Bench,
 ):
@@ -76,6 +75,7 @@ def test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what
 
 
 @pytest.mark.supports("guard", "Starts due")
+@UNBUILT
 def test_starts_due_out_of_their_form_stop_naming_the_adapter(b: Bench):
     """Given `log` whose adapter of the starts due gives a start with no count
     When the person types /log:up 1.2.0, and the main conversation ends its turn
@@ -88,6 +88,7 @@ def test_starts_due_out_of_their_form_stop_naming_the_adapter(b: Bench):
 
 
 @pytest.mark.supports("guard")
+@UNBUILT
 def test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_saying_so(
     b: Bench,
 ):
@@ -111,6 +112,7 @@ def test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_
         ('print(\'{"steps": [{"name": "write"}]}\')\n', "rules"),
     ],
 )
+@UNBUILT
 def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_stops_the_start(
     b: Bench, code: str, said: str
 ):
@@ -127,6 +129,7 @@ def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_stops_the_s
 
 
 @pytest.mark.supports("guard", "S8")
+@UNBUILT
 def test_the_plugins_check_runs_in_the_worktree_the_conversation_works_in(b: Bench):
     """Given the person typed /log:up 1.2.0 and the main conversation entered a worktree
     When the writer keeps each step there, writing the worktree's CHANGELOG.md, and ends
@@ -140,6 +143,7 @@ def test_the_plugins_check_runs_in_the_worktree_the_conversation_works_in(b: Ben
 
 
 @pytest.mark.supports("guard", "S10")
+@UNBUILT
 def test_the_plugins_adapter_runs_in_the_worktree_the_conversation_works_in(b: Bench):
     """Given `log` deciding its order by ORDER, and a conversation in a worktree whose CHANGELOG.md
     holds the entry of 1.2.0, which the repository's top doesn't
@@ -180,6 +184,7 @@ def test_a_mark_is_checked_for_the_files_it_reads_whole_before_its_items(b: Benc
 
 
 @pytest.mark.supports("reporters")
+@UNBUILT
 def test_a_reporter_given_words_that_dont_fit_its_kind_exits_2_with_what_it_takes(b: Bench):
     """Given the writer running
     When it runs `lane-item write`, with no item
@@ -190,6 +195,7 @@ def test_a_reporter_given_words_that_dont_fit_its_kind_exits_2_with_what_it_take
 
 
 @pytest.mark.supports("reporters", "Run")
+@UNBUILT
 def test_a_reporters_result_counts_for_the_subagent_that_ran_it(b: Bench):
     """Given two writers running after the reviewer's `split`
     When the second reports `written`, and the first ends
@@ -205,6 +211,7 @@ def test_a_reporters_result_counts_for_the_subagent_that_ran_it(b: Bench):
 
 
 @pytest.mark.supports("route adapter", "Route", "Starts due")
+@UNBUILT
 def test_a_role_named_twice_in_a_route_is_due_twice_at_once(b: Bench):
     """Given the reviewer's `split`, whose route names the writer twice
     When the main conversation starts one writer and ends its turn, then starts another and ends
@@ -221,6 +228,7 @@ def test_a_role_named_twice_in_a_route_is_due_twice_at_once(b: Bench):
 
 
 @pytest.mark.supports("route adapter", "Route")
+@UNBUILT
 def test_the_run_waits_while_the_start_its_route_made_due_runs(b: Bench):
     """Given the writer running, the one start that the route after the command makes due
     When the main conversation ends its turn, and then writes a file that its skill's step doesn't
@@ -234,6 +242,7 @@ def test_the_run_waits_while_the_start_its_route_made_due_runs(b: Bench):
 
 
 @pytest.mark.supports("route adapter", "Route")
+@UNBUILT
 def test_a_result_that_no_route_goes_after_ends_the_run_once_no_start_runs(b: Bench):
     """Given `log` whose writer's step `write` names `unclear` among the results that end the
     start, which no route goes after, and the writer running
@@ -251,6 +260,7 @@ def test_a_result_that_no_route_goes_after_ends_the_run_once_no_start_runs(b: Be
 
 
 @pytest.mark.supports("Rules")
+@UNBUILT
 def test_a_rule_of_a_type_that_lane_lacks_stops_saying_what_to_mend(b: Bench):
     """Given `log` whose writer's step holds a rule of the type `size`
     When the person types /log:up 1.2.0, and the main conversation ends its turn
@@ -267,6 +277,7 @@ def test_a_rule_of_a_type_that_lane_lacks_stops_saying_what_to_mend(b: Bench):
 
 
 @pytest.mark.supports("Run")
+@UNBUILT
 def test_the_results_of_two_subagents_are_both_kept(b: Bench):
     """Given two writers running after the reviewer's `split`
     When each keeps each step and reports `written`, and then each ends

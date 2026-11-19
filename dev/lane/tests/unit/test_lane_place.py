@@ -295,7 +295,6 @@ def test_the_post_tool_use_of_a_subagents_read_is_a_read(e: Events):
 
 
 @pytest.mark.supports("test_a_reporters_result_counts_for_the_subagent_that_ran_it")
-@UNBUILT
 def test_a_reporters_bash_call_is_a_report_with_what_it_printed(
     e: Events, capsys: pytest.CaptureFixture[str]
 ):
@@ -313,7 +312,6 @@ def test_a_reporters_bash_call_is_a_report_with_what_it_printed(
 
 
 @pytest.mark.supports("test_a_command_that_its_step_names_goes_through")
-@UNBUILT
 def test_the_post_tool_use_of_another_command_is_no_move(e: Events):
     """Given the writer tied to a1
     When the PostToolUse of a1's `git log` comes

@@ -845,7 +845,6 @@ def report_move(g: Play, kind: str, *words: str) -> Move:
 
 
 @pytest.mark.supports("test_a_step_marked_before_its_items_names_each_item_not_done")
-@UNBUILT
 def test_report_made_of_a_step_whose_rules_break_gives_the_sentence_and_marks_nothing(
     g: Play, log: str
 ):
@@ -860,7 +859,6 @@ def test_report_made_of_a_step_whose_rules_break_gives_the_sentence_and_marks_no
 
 @pytest.mark.supports("test_a_step_marked_once_each_item_is_done_holds")
 @pytest.mark.parametrize("kind, words", [("item", ("write", "dated")), ("result", ("written",))])
-@UNBUILT
 def test_report_made_of_an_item_or_a_result_adds_it(
     g: Play, log: str, kind: str, words: tuple[str, ...]
 ):

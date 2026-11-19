@@ -3,7 +3,7 @@ each step is done."""
 
 from __future__ import annotations
 
-from place import Move
+from place import Move, marked
 from rules import Rule, Step
 
 
@@ -17,7 +17,15 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("rule_types.order.judge_mark")
+    done = marked(move.run, move.agent_id)
+    before = [each["name"] for each in move.steps[: move.steps.index(step)]]
+    due = next((name for name in before if name not in done), None)
+    if due is None:
+        return None
+    return (
+        f"You're at the step `{due}` of {move.role}, which comes before `{step['name']}`.\n"
+        f"Do `{due}` and mark it done with lane-step {due} first."
+    )
 
 
 def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
@@ -30,4 +38,9 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("rule_types.order.judge_end")
+    if step["name"] in marked(move.run, move.agent_id):
+        return None
+    return (
+        f"You end before the step `{step['name']}` of {move.role} is done.\n"
+        f"Do it and mark it done with lane-step {step['name']}."
+    )
