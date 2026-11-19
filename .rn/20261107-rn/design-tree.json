@@ -126,7 +126,7 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The product vision's Concept",
@@ -162,12 +162,12 @@
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The order of content and refactoring",
@@ -198,12 +198,12 @@
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Who orders the work",
@@ -249,12 +249,12 @@
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The design tree's parts",
@@ -265,11 +265,11 @@
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "When a deliverable's round starts",
-              "decided": "once it rests on no open point and on nothing not signed off, in the work's order",
+              "decided": "once it rests on no open point and on nothing not signed off",
               "by": "reasoning"
             },
             {
@@ -296,22 +296,22 @@
         },
         {
           "id": "N9",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N10",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N11",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N12",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
@@ -321,17 +321,17 @@
         },
         {
           "id": "N14",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N15",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N16",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "How far the architecture goes",
@@ -1516,19 +1516,281 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/domain/best-practices/software-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the rework keeps",
+              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent",
+              "by": "user"
+            },
+            {
+              "about": "The design tree's check of a decided",
+              "decided": "the design tree schema refuses a decided that names who decided it or holds a date, as its ground goes in the commit message",
+              "by": "user"
+            },
+            {
+              "about": "The design tree's check",
+              "decided": "tree/design.py reads the run's design-tree.json and holds it to its schema and to each check of a condition that code can check: tree/inputs.py holds each kind to a best practice's folder, meta, or specific, and each deliverable's inputs to each kind its best practice takes; tree/work.py holds each item of work after each deliverable that its inputs name and that isn't done; tree/status.py holds a deliverable done only where each good it holds is true",
+              "by": "maker"
+            },
+            {
+              "about": "The commit",
+              "decided": "tree/commit.py lets a change of the run's folder reach git only once design.read holds the design tree, and tree/git.py runs git on the run's worktree, committing the run's folder with the ground word for word as its message",
+              "by": "maker"
+            },
+            {
+              "about": "The Cut and the Round",
+              "decided": "tree/cut.py decides what each role's Cut holds from the design tree; tree/rounds.py decides where each Cut and each result of a Round lies in the run's folder; tree/course.py decides the role due next, the next round's phase, content or refactoring, its limit of two, and the groups a later round judges",
+              "by": "maker"
+            },
+            {
+              "about": "The checks of a result",
+              "decided": "check/generator.py holds the generator's result to its form and its Cut, and its document to its kind's template through template/; check/evaluator.py holds an evaluator's result to its form and to each condition of its group",
+              "by": "maker"
+            },
+            {
+              "about": "The forms",
+              "decided": "schemas/form.py holds a JSON value to one of rn's JSON Schemas, and schemas/ holds the schema of the Cut, the generator's result, and the evaluator's result",
+              "by": "maker"
+            },
+            {
+              "about": "Lane's adapters",
+              "decided": "hooks/adapters/start.py gives the start due its Cut and the Cut's path as a run value, or why no work waits; hooks/adapters/items.py gives a step's practices of the Cut's best practice; hooks/adapters/results.py gives the results that the Rounds keep, in their order",
+              "by": "maker"
+            },
+            {
+              "about": "The commands",
+              "decided": "scripts/tree.py commit, scripts/check.py generator and evaluator, and scripts/template.py each run their module's interface, and fault.py says what stopped each",
+              "by": "maker"
+            },
+            {
+              "about": "What Claude Code and gh carry",
+              "decided": "the run's worktree by EnterWorktree, a stop by TaskStop, the push by git, and the pull request by gh, each in the steps of the orchestrator's prompts, with no code of rn's",
+              "by": "maker"
+            },
+            {
+              "about": "The guard",
+              "decided": "hooks/hooks.json and hooks/lanes.json are laid by /lane:up once the steps are written, so the skeleton holds none",
+              "by": "maker"
+            },
+            {
+              "about": "The lanes",
+              "decided": "each deliverable's rounds run in a lane of Lane's of their own, by the rules and routes that rn gives Lane, as rn's architecture draws",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The interfaces",
+              "decided": "commit.commit for S1's commit and S2's commit before the push; course.due for each start due and the groups a Round judges; cut.write for each start with its Cut; course.left for each finding past the limit; rounds.each and rounds.path for S2's pick-up of each role stopped; generator.faults and evaluator.faults for each end with the Round written; each body raising NotImplementedError with its name, and each handoff's types fitting under pyrefly",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The prompts",
+              "decided": "skills up, dn, ty, and gm, each with its description; ty and gm set disable-model-invocation; agents generator and evaluator, each with background: true; domain/orchestrator.md, generator.md, and evaluator.md, each with its description and the schemas of what it takes and gives, and no steps",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "listed in dev/rn/skeleton-gaps.md",
+              "by": "maker"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the rework keeps",
+              "decided": "nothing only because it exists: each name, role, process, schema, and prompt of the existing design, tests, and code is renamed, rewritten, or removed to fit rn's architecture, such as the tree-keeper, the guard's and the adapters' own mechanisms, and the orchestrator as a subagent",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cases derived again",
+              "decided": "each unit and integration case of rn is derived again by the test design best practice, state transition testing among its techniques, and each case missing is added",
+              "by": "user"
+            },
+            {
+              "about": "The cases judged again",
+              "decided": "each of rn's cases is judged again by the test design best practice's N3: a case of a transition that no use brings about is taken out",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The gaps",
+              "decided": "each gap that the cases derived again found lies in the gaps file and goes to the architecture's N13; the cases follow the architecture once it mends them, as N6.3 says",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
       "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "the bodies that S1's integration cases reach: scripts/tree.py with tree/'s design, inputs, work, status, git, and commit, and schemas/form.py, for each commit of the design tree; hooks/adapters/start.py with tree/'s course, cut, and rounds, for each start with its Cut; and scripts/check.py with check/, for each role's end",
+              "by": "reasoning"
+            },
+            {
+              "about": "The modules",
+              "decided": "the skeleton's modules alone, each body filled, as each decision that the cases leave to the code falls within one of them",
+              "by": "maker"
+            },
+            {
+              "about": "Where the course finds a best practice's groups",
+              "decided": "in that best practice's best-practice.json, in rn's own best-practices folder beside the code",
+              "by": "maker"
+            },
+            {
+              "about": "The course after a point or a finding",
+              "decided": "a generator's point, or a round short on a condition that the design tree still holds not good, gets the next round once a decision of the deliverable changed since the latest Cut, and no start before; a round whose each condition named short the design tree holds good counts as good; past the limit, only a decision by the user starts a round",
+              "by": "reasoning"
+            },
+            {
+              "about": "The groups a later round judges",
+              "decided": "each group holding a condition of the deliverable whose decision changed since the latest round judged, and every group where a decision of an input changed",
+              "by": "reasoning"
+            },
+            {
+              "about": "A point in the work",
+              "decided": "an item of work that decides a point starts no role, as only the orchestrator settles it or puts it to the user",
+              "by": "reasoning"
+            },
+            {
+              "about": "A generator's result",
+              "decided": "a point holds its text, a deliverable made lies at its path, and each decision of the Cut that holds an answer is carried out, a point still open none",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Cases added",
+              "decided": "none, as no module is added; a case that a body seems to need beyond the unit and S1 cases goes back to rn's architecture as a gap",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The inputs from outside",
+              "decided": "the arguments of tree.py, check.py, and start.py and Lane's standard input, each read by its main; the design tree, each Cut, and each result, each held to its schema as it's read; and git's replies, read by tree/git.py",
+              "by": "reasoning"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "The person's /rn:dn stops the run where it stands, and /rn:up in any conversation goes on from there",
@@ -1540,13 +1802,126 @@
       "name": "Each principle item of rn's architecture holds where its part keeps it, and its case fails with that part taken out",
       "path": "dev/rn/tests/integration/test_rn_principles.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests",
+        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
+        "dev/rn/tests/integration/test_rn_s2_pause.py"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "hooks/adapters/items.py, which gives each practice of the Cut's best practice as N<n>.<m> in its order, as the parts of S1 and S2 already carry each other principle item",
+              "by": "reasoning"
+            },
+            {
+              "about": "The cases that wait",
+              "decided": "the sign-off before work that rests on a plan, and a role told its step where it writes beside its deliverable, as each rests on a guard of Lane's laid on rn's steps",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
       "path": "dev/rn/tests/integration/test_rn_components.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The parts filled",
+              "decided": "none beyond S1's and S2's, as each component's decision and each handoff of the data model already lies in them",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
@@ -2136,6 +2511,14 @@
     },
     {
       "do": "make",
+      "path": "plugins/rn"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests"
+    },
+    {
+      "do": "make",
       "path": "dev/lane/tests"
     },
     {
@@ -2193,6 +2576,18 @@
     {
       "do": "make",
       "path": "plugins/lane/docs/rules-and-adapters.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_principles.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_components.py"
     },
     {
       "do": "make",
