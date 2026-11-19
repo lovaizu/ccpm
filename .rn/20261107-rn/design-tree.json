@@ -119,10 +119,86 @@
       "status": "done"
     },
     {
+      "name": "Lane's developers know whom Lane serves, and the one way it serves them",
+      "path": "dev/lane/product-vision.md",
+      "kind": "product-vision",
+      "status": "done",
+      "file": false,
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": [
+            {
+              "about": "Roles",
+              "decided": "a plugin's author, who builds a Claude Code plugin whose skill and subagents must keep the steps it gives them",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": [
+            {
+              "about": "Objective",
+              "decided": "the plugin's author has its AI notice each step it leaves, by giving Lane its rules and adapters alone",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": [
+            {
+              "about": "What it holds",
+              "decided": "only what the plugin's author does and gets, as Lane's architecture holds how Lane works",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": [
+            {
+              "about": "Key results",
+              "decided": "none of Lane's own, as each rule type's integration case shows by code whether Lane judges a move right",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": [
+            {
+              "about": "Distinct objectives",
+              "decided": "one objective",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": [
+            {
+              "about": "Concept",
+              "decided": "Lane gives an AI that leaves a step of its plugin the step's own sentence, so that it notices at once; a step, an item, a read, or a result counts only from the AI's own call; any plugin is served alike, by the rules and adapters that Lane defines",
+              "by": "user"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "A plugin's author builds on Lane so that its AI notices each step it leaves, by giving Lane its rules and adapters alone",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
       "inputs": [
+        "dev/lane/product-vision.md",
         "plugins/lane/README.md",
         "plugins/rn/domain/best-practices/architecture"
       ],
@@ -260,8 +336,9 @@
       "name": "A plugin's author decides from the README alone whether Lane fits, and makes its plugin depend on it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "open",
+      "status": "doing",
       "inputs": [
+        "dev/lane/product-vision.md",
         "plugins/rn/domain/best-practices/readme"
       ],
       "necessary_conditions": [
@@ -273,23 +350,56 @@
               "about": "Its scope",
               "decided": "the least a plugin's author needs: what Lane does, how a plugin depends on it, and where the rules and adapters it takes are defined",
               "by": "user"
+            },
+            {
+              "about": "Who it's for",
+              "decided": "you build a Claude Code plugin whose skill and subagents must keep the steps it gives them",
+              "by": "reasoning"
+            },
+            {
+              "about": "What it gives",
+              "decided": "the step's own sentence, the moment the AI leaves a step, as the architecture's idea says",
+              "by": "reasoning"
+            },
+            {
+              "about": "Its kind",
+              "decided": "a Claude Code plugin that your plugin depends on",
+              "by": "reasoning"
             }
           ]
         },
         {
           "id": "N2",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Non-goals",
+              "decided": "it checks only a run of a skill of a plugin that gives it rules; it guards no security; it judges no step's quality beyond the plugin's own check; it doesn't make the AI go back; it derives no rules from the plugin's steps, as the plugin writes them",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N3",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Status",
+              "decided": "in development: the rebuild isn't released, as Lane is 0.1.0 with no release tag",
+              "by": "research"
+            }
+          ]
         },
         {
           "id": "N4",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "License",
+              "decided": "MIT, in plugins/lane/LICENSE",
+              "by": "research"
+            }
+          ]
         },
         {
           "id": "N5",
@@ -299,33 +409,68 @@
         {
           "id": "N6",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The run",
+              "decided": "a plugin that writes CHANGELOG.md entries, its writer stopped as it writes another file and its reviewer's result moving the run, taken from a real run once Lane's code runs",
+              "by": "maker"
+            }
+          ]
         },
         {
           "id": "N7",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "The one way",
+              "decided": "Lane gives an AI that leaves a step of its plugin the step's own sentence, so that it notices at once",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N8",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Problems and doubts",
+              "decided": "a refusal sends the AI another way; a reply passes for a step or a result; each check is code to write; the main conversation starts the wrong subagent or ends while one is due; a stopped run starts over; it checks other work too",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N9",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Requirements",
+              "decided": "macOS or Linux; Claude Code 2.1.328 or later; Python 3.9 or later as python3; your plugin's users add the marketplace ccpm, as Claude Code installs a dependency only from a marketplace added",
+              "by": "research"
+            },
+            {
+              "about": "Installation",
+              "decided": "your plugin's plugin.json names {\"name\": \"lane\", \"marketplace\": \"ccpm\"} among its dependencies, and your marketplace.json allows ccpm in allowCrossMarketplaceDependenciesOn; Claude Code then installs Lane with your plugin and prints it among the dependencies installed",
+              "by": "research"
+            }
+          ]
         },
         {
           "id": "N10",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "Links",
+              "decided": "the definition of rules and adapters, the changelog, and the issues of lovaizu/ccpm",
+              "by": "reasoning"
+            }
+          ]
         }
       ]
     },
     {
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
-      "path": "plugins/lane/docs/steps-routes-adapters.md",
+      "path": "plugins/lane/docs/rules-and-adapters.md",
       "kind": "specific",
       "status": "open",
       "check": "each rule type and each adapter that Lane's code reads is defined, and each definition matches the code",
@@ -396,6 +541,7 @@
       "path": "dev/lane/tests",
       "kind": "test-design",
       "inputs": [
+        "dev/lane/product-vision.md",
         "plugins/lane/README.md",
         "dev/lane/architecture.md",
         "plugins/lane",
@@ -723,6 +869,9 @@
       "kind": "prompt",
       "inputs": [
         "dev/rn/architecture.md",
+        "plugins/rn/README.md",
+        "dev/rn/tests",
+        "plugins/rn",
         "plugins/rn/domain/best-practices/prompt"
       ],
       "status": "doing",
@@ -826,6 +975,9 @@
       "kind": "prompt",
       "inputs": [
         "dev/rn/architecture.md",
+        "plugins/rn/README.md",
+        "dev/rn/tests",
+        "plugins/rn",
         "plugins/rn/domain/best-practices/prompt"
       ],
       "status": "doing",
@@ -939,6 +1091,9 @@
       "kind": "prompt",
       "inputs": [
         "dev/rn/architecture.md",
+        "plugins/rn/README.md",
+        "dev/rn/tests",
+        "plugins/rn",
         "plugins/rn/domain/best-practices/prompt"
       ],
       "status": "doing",
@@ -1238,19 +1393,19 @@
   "work": [
     {
       "do": "make",
-      "path": "dev/lane/architecture.md"
-    },
-    {
-      "do": "make",
       "path": "plugins/lane/README.md"
     },
     {
       "do": "make",
-      "path": "plugins/lane/docs/steps-routes-adapters.md"
+      "path": "dev/lane/architecture.md"
     },
     {
       "do": "make",
       "path": "plugins/lane"
+    },
+    {
+      "do": "make",
+      "path": "plugins/lane/docs/rules-and-adapters.md"
     },
     {
       "do": "make",
@@ -1287,6 +1442,10 @@
     {
       "do": "make",
       "path": "dev/lane/tests/integration/test_lane_components.py"
+    },
+    {
+      "do": "make",
+      "path": "plugins/lane/README.md"
     },
     {
       "do": "make",
