@@ -1406,7 +1406,7 @@
         "dev/rn/architecture.md",
         "plugins/rn/domain/best-practices/software-design"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
