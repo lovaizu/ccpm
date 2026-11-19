@@ -50,7 +50,115 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The template's sections",
+              "decided": "User stories; Solution strategy holding Principles, Data model, Components, Sequences, Deployment, and Directory structure, in that order, each view after the data it names; Test strategy apart",
+              "by": "user"
+            },
+            {
+              "about": "Principles' form",
+              "decided": "the one idea in one sentence, then each principle as P<n> with what it values, and under it each decision as P<n>.<m>, one decision each, written without any name that a later section decides, such as a component, a data, a tool, or a count",
+              "by": "user"
+            },
+            {
+              "about": "Strategies' form",
+              "decided": "each view's Strategies list each decision as one sentence tagged with the story or principle item it carries out, such as [P1.1], then Intent: its purpose alone, with no means and no key result's ID; a decision that the implementation spells out item by item is stated as its policy, such as Lane applied to every activity of every role's steps that it can hold",
+              "by": "user"
+            },
+            {
+              "about": "Sequences' form",
+              "decided": "one sequence for each user story, one action on each arrow, each arrow and branch condition tagged with the story or principle item it carries out, data in parentheses and tags in brackets",
+              "by": "user"
+            },
+            {
+              "about": "Test strategy's form",
+              "decided": "the table alone, its last column holding the exit criterion or the measure with no tool and no means; how a case is written stays in the test design best practice",
+              "by": "user"
+            },
+            {
+              "about": "The coverage check",
+              "decided": "trace.py checks that each user story and each principle item is tagged at least once in Solution strategy's views, and that each arrow and each strategy tags one; template.py holds the new form",
+              "by": "user"
+            },
+            {
+              "about": "How Principles are derived",
+              "decided": "top down, as rn's were: the idea from the Concept's sentence; each value from what keeps the idea holding in every part, taken from each idea of the Concept, each key result, each user story that spans parts, and each constraint of the host, of development, or of operation, named in the people's words; under each value, each decision that every part holds alike, from the doubts of the README's How it works that it answers, with no name a later section decides; then each doubt lands in a value, and a value with no decision goes",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "User stories' grain",
+              "decided": "each story brings its role a value on its own, such as the deliverable they're after or a pause and a pick-up; a means to it, such as answering points or signing off, goes to Principles and Sequences",
+              "by": "user"
+            },
+            {
+              "about": "Components' content",
+              "decided": "a figure of the roles and how they act on one another and on the data, with no implementation's name; each component listed with its type, such as prompt or script, and its expected role, what it answers for, not its tasks",
+              "by": "user"
+            },
+            {
+              "about": "Data model's content",
+              "decided": "each data described by what it's for, with no role's name, so that Components after it names only what came before",
+              "by": "user"
+            },
+            {
+              "about": "Deployment's content",
+              "decided": "each environment, what runs in it, each store of data, and each service outside the product, with no process or other unit of the implementation",
+              "by": "user"
+            },
+            {
+              "about": "Directory structure's content",
+              "decided": "folders, with the vital few files only, each top folder's purpose written beside it in the tree",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What stays out",
+              "decided": "a name of the implementation outside Directory structure, a means in an intent, a key result's ID in an intent, a negative where the positive says it, a list that the implementation already decides, a term that no decision needs, such as the turn, and a sentence that another section or best practice holds",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before writing any body, whether the architecture can be built as parts that fit together, from a skeleton of each part, and each gap where it can't",
@@ -137,7 +245,7 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": true,
+          "good": false,
           "decisions": []
         },
         {
@@ -152,8 +260,14 @@
         },
         {
           "id": "N4",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Lane's Principles",
+              "decided": "derived again by the reworked practice of N4, from Lane's Concept, key results, stories, and constraints, as the ones carried over from before the rework named mechanisms and later sections' names in place of values",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N5",
@@ -1207,6 +1321,10 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/architecture"
+    },
     {
       "do": "make",
       "path": "dev/lane/architecture.md"
