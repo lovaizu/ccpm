@@ -611,7 +611,7 @@
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
