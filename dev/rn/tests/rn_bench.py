@@ -240,3 +240,21 @@ def command_done(b: Bench) -> None:
     tree["deliverables"][0]["status"] = "done"
     tree["work"] = tree["work"][1:]
     b.write_tree(tree)
+
+
+def worktree(tmp: str, files: dict[str, Any] | None = None) -> str:
+    """A git repository of invoicer's documents, the inputs of the plan's deliverables, with the
+    run's folder holding the plan and each file given by its path, as JSON where it isn't text, all
+    committed, for the unit cases; gives its top."""
+    top = os.path.join(tmp, "invoicer")
+    os.makedirs(top)
+    git(top, "init", "-q", "-b", "main")
+    git(top, "config", "user.email", "invoicer@example.com")
+    git(top, "config", "user.name", "invoicer")
+    docs = ("architecture", "software-design", "test-design", "product-vision")
+    write_files(top, {f"docs/{name}.md": f"# {name}\n" for name in docs})
+    given = {f"{RUN}/design-tree.json": plan(), **(files or {})}
+    write_files(top, {p: v if isinstance(v, str) else json.dumps(v) for p, v in given.items()})
+    git(top, "add", "-A")
+    git(top, "commit", "-q", "-m", "The plan")
+    return top

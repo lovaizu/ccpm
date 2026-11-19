@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Lane's adapter of a step's items: `items.py <role> <step>`, with the role's run values on its
-standard input. It prints the ID of each practice of the best practice that the role's Cut names,
-which the step carries out, or none for a step that carries out no practice."""
+standard input. It prints the ID of each practice of the best practice that the role's Cut names, in
+the best practice's order, as Lane asks only of a step that carries out a best practice's
+practices."""
 
 from __future__ import annotations
 

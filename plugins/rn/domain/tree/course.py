@@ -1,7 +1,7 @@
 """Decides the course of a deliverable's Rounds: which start is due, whether a Round makes the
 content by the kind's best practice or refactors it by the refactor best practice, the limit of two
-Rounds of each since the deliverable's latest sign-off sent it back, and the groups a later Round
-judges, those holding a condition whose decisions changed."""
+Rounds of each, and the groups a later Round judges, those holding a condition whose decisions
+changed."""
 
 from __future__ import annotations
 
