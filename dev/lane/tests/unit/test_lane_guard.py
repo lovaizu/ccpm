@@ -140,7 +140,6 @@ def test_a_skills_call_adds_a_run_with_no_folder_and_answers_nothing(g: Play):
 @pytest.mark.supports(
     "test_the_starts_due_come_at_the_main_conversations_next_event_after_the_skills_call"
 )
-@UNBUILT
 def test_the_next_event_with_the_base_directory_gives_the_folder_and_the_starts_due(g: Play):
     """Given a run of log:up with no folder, and the transcript holding its base directory
     When the main conversation runs `git status`
@@ -181,7 +180,6 @@ def test_the_start_due_goes_through_and_its_tie_leaves_none_due(g: Play):
 
 
 @pytest.mark.supports("test_another_start_of_the_plugins_subagents_is_stopped_with_the_starts_due")
-@UNBUILT
 def test_a_start_of_a_role_not_due_is_stopped_with_the_starts_due(g: Play):
     """Given the writer due
     When the main conversation starts the reviewer
@@ -193,7 +191,6 @@ def test_a_start_of_a_role_not_due_is_stopped_with_the_starts_due(g: Play):
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
-@UNBUILT
 def test_a_tied_subagents_call_is_held_to_its_step(g: Play):
     """Given the writer tied to a1
     When a1 writes notes.txt
@@ -464,7 +461,6 @@ def test_a_turns_end_that_a_run_with_no_order_lets_through_ends_the_run(g: Play)
 
 
 @pytest.mark.supports("test_another_conversation_in_the_repository_is_held_to_no_run_of_the_first")
-@UNBUILT
 def test_another_conversations_events_lie_outside_the_first_ones_run(
     cwd: str, log: str, capsys: pytest.CaptureFixture[str], g: Play
 ):
@@ -478,7 +474,6 @@ def test_another_conversations_events_lie_outside_the_first_ones_run(
 
 
 @pytest.mark.supports("test_a_subagents_start_of_a_subagent_is_stopped")
-@UNBUILT
 def test_a_subagents_start_is_stopped(g: Play):
     """Given the writer a1 running
     When a1 starts a writer by the Agent tool
@@ -805,7 +800,7 @@ def test_result_reached_of_a_subagent_stopped_gives_its_start_due_again(g: Play,
         "tie",
         pytest.param("queue", marks=UNBUILT),
         pytest.param("drop", marks=UNBUILT),
-        pytest.param("read", marks=UNBUILT),
+        "read",
     ],
 )
 def test_fact_added_adds_its_fact_and_answers_nothing(g: Play, log: str, kind: str):

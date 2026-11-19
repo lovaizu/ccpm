@@ -7,11 +7,16 @@ from __future__ import annotations
 
 from place import Move
 
-from rule_types import writes
+from rule_types import commands, reads_none, writes
 
 # The rule types that judge a call of each tool, by their names in a rule's `type`, in the order
 # the guard asks them.
-_CALLS = {"Write": {"writes": writes.judge_call}, "Edit": {"writes": writes.judge_call}}
+_CALLS = {
+    "Write": {"writes": writes.judge_call},
+    "Edit": {"writes": writes.judge_call},
+    "Read": {"reads_none": reads_none.judge_call},
+    "Bash": {"commands": commands.judge_call},
+}
 
 
 def judge_call(move: Move) -> str | None:
@@ -24,7 +29,7 @@ def judge_call(move: Move) -> str | None:
     Refuses: nothing.
     """
     tool = move.event.get("tool_name", "")
-    if tool in ("Read", "Grep", "Glob", "Bash"):
+    if tool in ("Grep", "Glob"):
         raise NotImplementedError(f"rule_types.judge_call of {tool}")
     judges = _CALLS.get(tool, {})
     said = (

@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from named_files import named, of_call
 from place import Move
 from rules import Rule, Step
+
+from rule_types.words import listed
 
 
 def judge_call(rule: Rule, step: Step, move: Move) -> str | None:
@@ -17,4 +20,11 @@ def judge_call(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("rule_types.reads_none.judge_call")
+    read = of_call(move.event)
+    if not named(rule["paths"], read):
+        return None
+    return (
+        f"You're at the step `{step['name']}` of {move.role}, which never reads"
+        f" {listed(rule['paths'])}.\n"
+        f"Leave {read} unread."
+    )

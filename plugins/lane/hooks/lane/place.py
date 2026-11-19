@@ -8,6 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any, Callable
 
+from named_files import named, of_call
 from order import StartsDue
 from record import Entry, Run
 from report import Report
@@ -178,7 +179,8 @@ def _before(event: Event, run: Run, rules: Rules) -> Move | None:
 
 
 def _after(event: Event, run: Run, rules: Rules) -> Move | None:
-    """The move of a PostToolUse: a tie by an Agent call, else none of the calls that S1 makes."""
+    """The move of a PostToolUse: a tie by an Agent call, a read by a Read, else none of the calls
+    that S1 and S2 make."""
     tool = event.get("tool_name")
     if tool == "Agent":
         start = _start_of(run, event["tool_use_id"])
@@ -188,9 +190,25 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
         steps = start_steps(rules, role, start.get("steps"))
         agent_id = event["tool_response"]["agentId"]
         return Move("tie", event, run, role, agent_id, None, steps, None, None)
-    if tool in ("SendMessage", "Skill", "Bash", "Read"):
+    if tool == "Read":
+        return _read(event, run, rules)
+    if tool in ("SendMessage", "Skill", "Bash"):
         raise NotImplementedError(f"place.place of the PostToolUse of {tool}")
     return None
+
+
+def _read(event: Event, run: Run, rules: Rules) -> Move | None:
+    """The PostToolUse of a Read as a `read` where a rule of the files to read whole, of any step
+    of whoever reads, names the file, as a part read ahead of its step counts there; else none."""
+    call = _call(event, run, rules)
+    whole = [
+        path
+        for step in call.steps
+        for rule in step["rules"]
+        if rule["type"] == "reads_whole"
+        for path in rule["paths"]
+    ]
+    return replace(call, kind="read") if named(whole, of_call(event)) else None
 
 
 def _call(event: Event, run: Run, rules: Rules) -> Move:

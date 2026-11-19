@@ -12,6 +12,7 @@ import adapters
 import place
 import record
 import rule_types
+from named_files import of_call
 from order import StartsDue
 from place import Event, Move, SkillCall
 from plugin import plugin_root
@@ -204,14 +205,16 @@ def fact_added(move: Move) -> Answer:
     Changes: the run record, by the fact.
     Refuses: nothing.
     """
-    if move.kind != "tie":
+    if move.kind not in ("tie", "read"):
         raise NotImplementedError(f"guard.fact_added of a {move.kind}")
-    entry: record.Entry = {
-        "kind": "tie",
-        "run": move.run.id,
-        "tool_use_id": move.event["tool_use_id"],
-        "agent_id": move.agent_id or "",
-    }
+    entry: record.Entry = {"kind": move.kind, "run": move.run.id, "agent_id": move.agent_id or ""}
+    if move.kind == "tie":
+        entry["tool_use_id"] = move.event["tool_use_id"]
+    else:
+        lines = move.event["tool_response"]["file"]
+        entry["path"] = of_call(move.event)
+        entry["first_line"] = lines["startLine"]
+        entry["last_line"] = lines["startLine"] + lines["numLines"] - 1
     record.add(move.run.session_id, [entry])
     return Answer()
 

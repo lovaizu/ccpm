@@ -286,12 +286,12 @@ def test_a_subagents_call_after_a_step_marked_is_at_the_next_step(e: Events):
 
 
 @pytest.mark.supports("test_a_read_whole_holds_the_mark")
-@UNBUILT
 def test_the_post_tool_use_of_a_subagents_read_is_a_read(e: Events):
     """Given the writer tied to a1
     When the PostToolUse of a1's Read of NOTES.md comes
     Then the move is a read"""
-    assert kind(place(e.read_ran("/repo/NOTES.md", 1, 6, 6, WRITER), [tied()], by_routes)) == "read"
+    notes = os.path.join(e.cwd, "NOTES.md")
+    assert kind(place(e.read_ran(notes, 1, 6, 6, WRITER), [tied()], by_routes)) == "read"
 
 
 @pytest.mark.supports("test_a_reporters_result_counts_for_the_subagent_that_ran_it")

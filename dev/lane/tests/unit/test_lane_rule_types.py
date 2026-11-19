@@ -143,7 +143,6 @@ def test_an_edit_of_another_file_gives_the_steps_sentence(e: Events, cwd: str):
 
 @pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
 @pytest.mark.parametrize("path", ["secrets/key.txt", "secrets/a/b.txt", ".env"])
-@UNBUILT
 def test_a_read_of_a_file_never_to_read_gives_the_steps_sentence(e: Events, cwd: str, path: str):
     """Given the step `write`, which never reads secrets/ nor .env
     When the writer reads a file in the folder, one deeper in it, or the named file
@@ -157,7 +156,6 @@ def test_a_read_of_a_file_never_to_read_gives_the_steps_sentence(e: Events, cwd:
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
 @pytest.mark.parametrize("path", ["NOTES.md", "secrets-old/key.txt", ".env.example"])
-@UNBUILT
 def test_a_read_of_another_file_holds(e: Events, cwd: str, path: str):
     """Given the step `write`
     When the writer reads another file, one in a folder whose name only begins as the rule's, or
@@ -171,7 +169,6 @@ def test_a_read_of_another_file_holds(e: Events, cwd: str, path: str):
 
 
 @pytest.mark.supports("test_a_command_that_its_step_names_goes_through")
-@UNBUILT
 def test_a_named_command_holds(e: Events):
     """Given the step `write`, which runs `git log`
     When the writer runs `git log`
@@ -181,7 +178,6 @@ def test_a_named_command_holds(e: Events):
 
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
-@UNBUILT
 def test_another_command_gives_the_steps_sentence(e: Events):
     """Given the step `write`
     When the writer runs `git push`
@@ -197,7 +193,6 @@ def test_another_command_gives_the_steps_sentence(e: Events):
 @pytest.mark.parametrize(
     "command", ["git log --oneline -5", "git log | head -5", "git log; head NOTES.md"]
 )
-@UNBUILT
 def test_each_command_opening_with_a_named_commands_words_holds(e: Events, command: str):
     """Given a step whose rule of commands names `git log` and `head`
     When the writer runs a named command with more words after it, a pipeline of named ones, or
@@ -213,7 +208,6 @@ def test_each_command_opening_with_a_named_commands_words_holds(e: Events, comma
     "command",
     ["git log && git push", "git log || git push", "git log; git push", "git log | sh"],
 )
-@UNBUILT
 def test_a_command_chained_after_a_named_one_gives_the_steps_sentence(e: Events, command: str):
     """Given the step `write`, which runs `git log`
     When the writer runs another command after `git log`, split by `&&`, `||`, `;`, or `|`
@@ -227,7 +221,6 @@ def test_a_command_chained_after_a_named_one_gives_the_steps_sentence(e: Events,
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
 @pytest.mark.parametrize("command", ["git", "git logs", "git -C /repo log"])
-@UNBUILT
 def test_a_command_that_doesnt_open_with_a_named_commands_words_gives_the_steps_sentence(
     e: Events, command: str
 ):
@@ -243,7 +236,6 @@ def test_a_command_that_doesnt_open_with_a_named_commands_words_gives_the_steps_
 @pytest.mark.parametrize(
     "command", ["lane-step write", "lane-item write dated", "lane-result written"]
 )
-@UNBUILT
 def test_a_reporter_holds_though_the_rule_doesnt_name_it(e: Events, command: str):
     """Given the step `write`, whose rule names no reporter
     When the writer runs a reporter of Lane's
@@ -253,7 +245,6 @@ def test_a_reporter_holds_though_the_rule_doesnt_name_it(e: Events, command: str
 
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
-@UNBUILT
 def test_a_rule_that_names_no_command_stops_each_but_a_reporter(e: Events):
     """Given a step whose rule of commands names none
     When the writer runs `git log`, and then `lane-step write`
@@ -527,8 +518,8 @@ def test_a_check_that_cant_be_run_is_refused(e: Events, tmp_path: Any):
     "event, named",
     [
         ("write", "docs/changes/"),
-        pytest.param("read", ".env", marks=UNBUILT),
-        pytest.param("bash", "git log", marks=UNBUILT),
+        ("read", ".env"),
+        ("bash", "git log"),
     ],
 )
 def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: str, named: str):

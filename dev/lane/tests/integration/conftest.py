@@ -25,6 +25,7 @@ LANE_MODULES = (
     "report",
     "rules",
     "json_form",
+    "named_files",
     "plugin",
     "adapters",
     "routes",

@@ -7,9 +7,7 @@ Glob that reaches such a file waits for its record, as dev/lane/tests/gaps.md sa
 from __future__ import annotations
 
 import pytest
-from lane_bench import UNBUILT, Bench, opened, started
-
-pytestmark = UNBUILT
+from lane_bench import Bench, opened, started
 
 
 @pytest.mark.supports("S2", "rule types")
