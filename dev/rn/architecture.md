@@ -14,11 +14,11 @@
 
 ## Solution strategy
 
+### Principles
+
 rn piles up the vital few that bring a deliverable's people to their aim, and cuts the trivial many.
 
 ![rn's components](images/components.svg)
-
-### Principles
 
 #### Toward the people's aim
 
