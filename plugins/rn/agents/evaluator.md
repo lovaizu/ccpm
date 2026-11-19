@@ -5,4 +5,4 @@ tools: Read, Grep, Glob, Write, Bash
 background: true
 ---
 
-rn's folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/evaluator.md`, given to you as you start. Carry it out with what you're given.
+rn's folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/evaluator.md`: read it whole first, and carry out its steps.

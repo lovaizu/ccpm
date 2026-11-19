@@ -209,6 +209,11 @@
               "about": "The designs made again from it",
               "decided": "Lane's test cases derived again from it by the test design best practice once the user signs it off, its integration cases in rn's form, and each gap they find mended in the architecture",
               "by": "reasoning"
+            },
+            {
+              "about": "A gap that rn met",
+              "decided": "a role may write each file under a folder that its rule names, as rn's generator writes a deliverable that is a folder, such as a plugin, while Lane's rule of the paths a role writes now lets through only a path named whole",
+              "by": "reasoning"
             }
           ]
         },
@@ -605,7 +610,7 @@
         "dev/rn/architecture.md",
         "plugins/rn/domain/best-practices/prompt"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -708,7 +713,7 @@
         "dev/rn/architecture.md",
         "plugins/rn/domain/best-practices/prompt"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -779,7 +784,13 @@
         {
           "id": "N12",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "What Lane holds",
+              "decided": "the generator writes only its deliverable and its result, by a step's sentence that Lane holds with the paths that rn's adapter of a start gives as its values",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N13",
@@ -811,7 +822,7 @@
         "dev/rn/architecture.md",
         "plugins/rn/domain/best-practices/prompt"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -882,7 +893,13 @@
         {
           "id": "N12",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "What Lane holds",
+              "decided": "an evaluator never reads the design tree, nor its Round's generator's Cut and result, and writes only its result, by its steps' sentences that Lane holds with the paths that rn's adapter of a start gives as its values",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N13",

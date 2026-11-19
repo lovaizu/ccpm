@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Lane's adapter of a start's text: `start.py <role>`, with the starts that run on its standard
 input, as Lane's guide to adapters gives them. It prints the text of the start due, which points the
-role to its Cut, with the Cut's path as the run value `cut`, or why no work waits for the role."""
+role to its Cut, with each path its steps name as a run value, or why no work waits for the role."""
 
 from __future__ import annotations
 
@@ -25,8 +25,8 @@ def main(argv: list[str], given: str, cwd: str) -> tuple[int, str, str]:
 
     Takes: the role as the one argument, what Lane gives on standard input, and the folder of the
     run's worktree.
-    Gives: 0 with `{"text": ..., "values": {"cut": ...}}`, or with `{"none": ...}` where no start
-    of the role is due; 1 with what Wrong says; 2 with the usage.
+    Gives: 0 with `{"text": ..., "values": {...}}`, the values as _values gives them, or with
+    `{"none": ...}` where no start of the role is due; 1 with what Wrong says; 2 with the usage.
     Changes: the run's folder, by the Cut written."""
     if len(argv) != 1:
         return 2, "", USAGE
@@ -46,7 +46,25 @@ def main(argv: list[str], given: str, cwd: str) -> tuple[int, str, str]:
         return 0, json.dumps({"none": f"no work waits for the {argv[0]}"}), ""
     cut_path = os.path.relpath(cut.write(os.path.join(cwd, run), tree, mine[0]), cwd)
     text = f"Carry out your steps, from your Cut at {cut_path}."
-    return 0, json.dumps({"text": text, "values": {"cut": cut_path}}), ""
+    return 0, json.dumps({"text": text, "values": _values(run, cut_path, mine[0])}), ""
+
+
+def _values(run: str, cut_path: str, due: course.Due) -> dict[str, str]:
+    """The run values of the start, each path that its steps name: its Cut, its deliverable, and its
+    result beside its Cut; for an evaluator also the design tree and the generator's Cut and result
+    of its Round, which its steps never read, as it tries the deliverable with only what its people
+    have."""
+    values = {
+        "cut": cut_path,
+        "deliverable": due.deliverable,
+        "result": cut_path.removesuffix(".cut.json") + ".json",
+    }
+    if due.role == "evaluator":
+        folder = os.path.dirname(cut_path)
+        values["tree"] = os.path.join(run, "design-tree.json")
+        values["generator_cut"] = os.path.join(folder, "generator.cut.json")
+        values["generator_result"] = os.path.join(folder, "generator.json")
+    return values
 
 
 def _run(cwd: str) -> str:

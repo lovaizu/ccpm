@@ -9,6 +9,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 from typing import Any
@@ -332,14 +333,37 @@ def test_check_gives_1_with_each_fault_a_line(tmp_path: Any):
 def test_start_gives_the_text_and_the_cut_of_the_start_due(tmp_path: Any):
     """Given the plan, and no start running
     When start.py runs for the generator
-    Then it gives 0 with a text that names the Cut, and the Cut's path as the value cut"""
+    Then it gives 0 with a text that names the Cut, and as values the Cut, the deliverable, and the
+    result beside the Cut"""
     top = run_with(str(tmp_path), {})
     code, printed, _ = command("hooks/adapters/start.py").main(
         ["generator"], '{"running": []}', top
     )
     given = json.loads(printed)
-    assert code == 0 and given["values"] == {"cut": CUT}
+    assert code == 0
+    assert given["values"] == {"cut": CUT, "deliverable": COMMAND, "result": RESULT}
     assert CUT in given["text"]
+
+
+@pytest.mark.supports("test_an_evaluator_starts_with_only_what_the_deliverables_people_have")
+def test_start_gives_an_evaluator_the_paths_it_never_reads(tmp_path: Any):
+    """Given the command made
+    When start.py runs for an evaluator
+    Then its values give, beside its Cut, deliverable, and result, the design tree and the
+    generator's Cut and result of its Round"""
+    top = run_with(str(tmp_path), {CUT: generator_cut(), RESULT: {"result": "made"}})
+    code, printed, _ = command("hooks/adapters/start.py").main(
+        ["evaluator"], '{"running": []}', top
+    )
+    values = json.loads(printed)["values"]
+    assert code == 0
+    assert values["result"] == values["cut"].removesuffix(".cut.json") + ".json"
+    assert values["deliverable"] == COMMAND
+    assert (values["tree"], values["generator_cut"], values["generator_result"]) == (
+        f"{RUN}/design-tree.json",
+        CUT,
+        RESULT,
+    )
 
 
 @pytest.mark.supports("test_a_generators_point_starts_no_evaluator")
@@ -382,15 +406,47 @@ def test_start_with_no_role_bad_input_a_tree_out_of_form_or_no_run_gives_its_cod
 
 
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
-def test_items_gives_each_practice_of_the_cuts_best_practice_in_order(tmp_path: Any):
-    """Given the generator's Cut by code
-    When items.py runs for its step with the Cut as its run value
-    Then it gives 0 with each practice of code, N1.1 first"""
-    top = run_with(str(tmp_path), {CUT: generator_cut()})
+def practices_at(at: str) -> list[str]:
+    """Each practice of code that its maker takes while deciding or while making, as N<n>.<m>, read
+    from code's best-practice.md as a person reads it."""
+    path = os.path.join(RN, "domain", "best-practices", "code", "best-practice.md")
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    marker = {"decide": "*While deciding.*", "make": "*While making.*"}[at]
+    found, condition = [], ""
+    for line in text.splitlines():
+        if re.match(r"^### N\d+$", line):
+            condition = line[4:]
+        number = re.match(r"^(\d+)\. (.*)", line)
+        if condition and number and number.group(2).startswith(marker):
+            found.append(f"{condition}.{number.group(1)}")
+    return found
+
+
+@pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
+@pytest.mark.parametrize(
+    ("role", "step", "cut", "expected"),
+    [
+        ("generator", "2", generator_cut(), practices_at("decide")),
+        ("generator", "3", generator_cut(), practices_at("make")),
+        ("generator", "1", generator_cut(), []),
+        ("evaluator", "3", C1, ["N1", "N2", "N3"]),
+        ("evaluator", "2", C1, []),
+    ],
+    ids=["decides", "makes", "reads", "judges", "tries"],
+)
+def test_items_gives_each_step_only_its_own_checklist(
+    tmp_path: Any, role: str, step: str, cut: dict[str, Any], expected: list[str]
+):
+    """Given the generator's Cut by code, or an evaluator's Cut of C1
+    When items.py runs for a step with the Cut as its run value
+    Then it gives 0 with the generator's step that decides each decide item of code, its step that
+    makes each make item, an evaluator's step that judges each condition of its Cut, and any other
+    step none"""
+    top = run_with(str(tmp_path), {CUT: cut})
     given = json.dumps({"values": {"cut": CUT}})
-    code, printed, _ = command("hooks/adapters/items.py").main(["generator", "3"], given, top, RN)
-    items = json.loads(printed)["items"]
-    assert code == 0 and items[0] == "N1.1" and len(items) == len(set(items))
+    code, printed, _ = command("hooks/adapters/items.py").main([role, step], given, top, RN)
+    assert (code, json.loads(printed)["items"]) == (0, expected)
 
 
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
