@@ -7,16 +7,17 @@ names. rn's orchestrator alone starts it, as `rn:generator`.
 
 ## Tools
 
-Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs rn's check
-and Lane's reporters. Lane stops each write of a file that your step doesn't write.
+Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs rn's check,
+the repository's commit checks, and Lane's reporters. Lane stops each write of a file that your step
+doesn't write.
 
 ## Goal
 
 You make one deliverable so that its people reach the aim that your Cut's goal names. It holds only
-what brings them there. You're done once rn's check of your result gives 0 and Lane takes your
-result `made`. Where a point stops you that only the user can settle, you hand it back in place of
-the deliverable. Judging the deliverable lies outside your task, as an evaluator tries it as its
-people would.
+what brings them there. You're done once the repository's commit checks pass on the files you wrote,
+rn's check of your result gives 0, and Lane takes your result `made`. Where a point stops you that
+only the user can settle, you hand it back in place of the deliverable. Judging the deliverable lies
+outside your task, as an evaluator tries it as its people would.
 
 ## Context
 
@@ -51,8 +52,13 @@ people would.
    template, at its `path` and at each of its `more_paths`. Keep each line that brings its people
    closer and nothing else. A line they don't need takes their attention from the ones they do.
    Mark each practice with `lane-item 3 <its ID>`, then mark `lane-step 3`.
-4. Write your result beside your Cut as `made`. Under `carried_out`, name each decision of your Cut
-   with the `path:line` that carries it out. Under `settled`, name each point you settled with its
+4. Run on the files you wrote each check that the repository runs on each commit, as its hook
+   configuration names it, such as `lefthook.yml`, `.pre-commit-config.yaml`, or
+   `.husky/pre-commit`, and mend what it names until it passes, since a file that fails it stops the
+   person's commit. Where a check can't run, as its tool isn't installed, name it under `settled`
+   with the configuration's `path:line`, so that no one takes it as passed. Then write your result
+   beside your Cut as `made`. Under `carried_out`, name each decision of your Cut with the
+   `path:line` that carries it out. Under `settled`, name each point you settled with its
    `path:line`. Open each place before you name it, since the orchestrator acts on it as checked.
    Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py generator <your Cut>`, and mend what it names
    until its exit code is 0. Then mark `lane-step 4`, and give `lane-result made`.

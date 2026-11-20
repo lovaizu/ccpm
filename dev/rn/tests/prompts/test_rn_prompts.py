@@ -9,12 +9,13 @@ from __future__ import annotations
 import glob
 import json
 import os
+import subprocess
 from typing import Any
 
 import opus
 import pytest
 import rn_bench
-from repo_files import git
+from repo_files import git, write_files
 from rn_bench import COMMAND, RUN, Bench
 
 pytestmark = [
@@ -29,6 +30,26 @@ TESTS = "tests/"
 FIELDS = {"step": ["step"], "item": ["step", "item"], "result": ["result"]}
 # The runs of each case, as rn's Test strategy sets.
 RUNS = 3
+# A commit check of invoicer's that its existing files predate: lefthook runs on each Python file
+# committed a script that wants the file's first line to name its license.
+HOOKED = {
+    "lefthook.yml": (
+        "pre-commit:\n"
+        "  commands:\n"
+        "    header:\n"
+        '      glob: "*.py"\n'
+        "      run: python3 scripts/header.py {staged_files}\n"
+    ),
+    "scripts/header.py": (
+        "import sys\n"
+        "\n"
+        'HEADER = "# SPDX-License-Identifier: MIT"\n'
+        "bad = [p for p in sys.argv[1:] if open(p).readline().rstrip() != HEADER]\n"
+        "for p in bad:\n"
+        '    print(f"{p}:1: the first line must be {HEADER}")\n'
+        "sys.exit(1 if bad else 0)\n"
+    ),
+}
 
 
 def run(b: Bench, tmp: str, prompt: str) -> str:
@@ -180,6 +201,35 @@ def test_the_generator_makes_the_command_from_its_cut(tmp_path: Any, each: int):
         items = [w[2] for w in calls if w[0] == "lane-item" and w[1:2] == [step]]
         assert sorted(set(items)) == sorted(rn_bench.practices("code", at)), step
     assert calls[-1] == ["lane-result", "made"]
+
+
+@pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
+@pytest.mark.parametrize("each", range(RUNS))
+def test_the_generators_files_pass_the_repositorys_commit_check(tmp_path: Any, each: int):
+    """Given the command's generator's Cut of round 1, the command with its tests in tests/, and
+    invoicer holding a commit check by lefthook that its existing files predate
+    When the generator runs alone with it
+    Then it gives its result made, and the check passes on each Python file that it wrote"""
+    b = rn_bench.bench(str(tmp_path))
+    write_files(b.repo, HOOKED)
+    git(b.repo, "add", "-A")
+    git(b.repo, "commit", "-q", "-m", "Each new Python file names its license")
+    tree = b.tree()
+    tree["deliverables"][0]["more_paths"] = [TESTS]
+    b.write_tree(tree)
+    cut = b.cut("generator")
+    run(b, str(tmp_path), started("generator", cut))
+    assert result(b, cut)["result"] == "made", each
+    python = [f for f in changed_beside(b, (RUN + "/",)) if f.endswith(".py")]
+    assert COMMAND in python
+    check = subprocess.run(
+        ["python3", "scripts/header.py", *python],
+        cwd=b.repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert check.returncode == 0, check.stdout
 
 
 @pytest.mark.supports(
