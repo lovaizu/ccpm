@@ -314,7 +314,8 @@ At an end where the start gave a result that a step's `ends` names, Lane judges 
 `check` only for the steps before that step. Otherwise, it judges them for each step.
 
 The main conversation's turn's end is then held to the starts due: Lane stops it while a start is
-due.
+due. A turn that ends on a result that its step's `ends` names goes through, as that result says
+the AI can't go on, which no start mends.
 
 ## Adapters
 
