@@ -32,7 +32,53 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The people's starting state",
+              "decided": "the goal names, beside the state its people are in once it holds, their starting state: what they have and know before they use the deliverable, such as an accountant with Calc and a terminal and no invoicer, as each maker and each trial starts the people from it",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -56,7 +102,53 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Behavior of existing code",
+              "decided": "for each behavior of existing code that the people meet, such as how an invoice shows its amounts, the maker asks whether it serves them in the goal's state, and makes each that doesn't a decision to change, as a design that keeps existing behavior unasked fixes its faults as the specification",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before writing any body, whether the architecture can be built as parts that fit together, from a skeleton of each part, and each gap where it can't",
@@ -68,7 +160,53 @@
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A Then the contract leaves open",
+              "decided": "where an interface's contract leaves open part of what the people see, such as how an amount shows, the maker lists it as a gap for the architecture, and never fills the Then from the code",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -365,7 +503,118 @@
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
       "path": "plugins/rn/domain/evaluator.md",
       "kind": "prompt",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/README.md",
+        "dev/rn/tests",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/prompt"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the task is for",
+              "decided": "Finds, as the deliverable's people, what's good for them and what would make it good, condition by condition, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
+              "by": "reasoning"
+            },
+            {
+              "about": "The checklist of its group",
+              "decided": "an evaluator's step that keeps a checklist gets only the conditions of its Cut's group, as lane/adapters/rules.py gives them",
+              "by": "reasoning"
+            },
+            {
+              "about": "What the people have in a trial",
+              "decided": "the evaluator tries the deliverable from the people's starting state that the goal names, with only what it names and the deliverable as its people get it, in a folder that mktemp gives, never from a copy of the run's worktree, which holds what the people don't have",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What Lane holds",
+              "decided": "an evaluator never reads the design tree, nor its Round's generator's Cut and result, and writes only its result, by its steps' sentences that Lane holds with the paths that rn's adapter of a start gives as its values",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
@@ -404,8 +653,8 @@
           "decisions": [
             {
               "about": "The E2E test's request",
-              "decided": "the README's walkthrough, a command and its guide with which the accounting team prints an invoice from its lines, in invoicer, a library the size of invoicer in lovaizu/playground, so that the E2E test runs what the README shows its readers",
-              "by": "reasoning"
+              "decided": "the README's walkthrough, a command and its guide with which the accounting team prints an invoice from its lines, made new in lovaizu/playground with nothing of it there before, so that the test sets up no commit of its own",
+              "by": "user"
             },
             {
               "about": "A comparison with Claude Code alone",
@@ -419,7 +668,7 @@
             },
             {
               "about": "KR1.1 from one run",
-              "decided": "each deliverable done in the design tree on the work's branch is tried by a stand-in of its people, given a checkout of the branch, the walkthrough's lines.csv and rate, and only what those people have: a document's people its text, and a command's people a terminal and what the command shows of itself; it counts as usable where code finds, in what the stand-in's terminal printed, the invoice that invoicer's own render gives for those lines and that rate; a deliverable whose people aren't after printing an invoice is listed apart, unjudged",
+              "decided": "each deliverable done in the design tree on the work's branch is tried by a stand-in of its people from their starting state alone: a colleague from accounting with Calc's lines, a terminal, and the guide's text, no invoicer set up; it counts as usable where code finds, in what the stand-in's terminal printed, the invoice whose amounts the lines and the rate give, each to the cent; a deliverable whose people aren't after printing an invoice is listed apart, unjudged",
               "by": "reasoning"
             },
             {
@@ -625,6 +874,22 @@
       "path": "dev/plugin-development-guide.md",
       "condition": "N1",
       "about": "The main conversation over many turns"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/design-tree"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/architecture"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/test-design"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/evaluator.md"
     },
     {
       "do": "make",
