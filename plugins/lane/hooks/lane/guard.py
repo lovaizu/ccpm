@@ -152,7 +152,8 @@ def start_made(move: Move) -> Answer:
     of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
     sentence saying that the plugin's author adds or mends lane/adapters/rules.py for the role.
     """
-    resume = move.event["tool_name"] == "SendMessage"
+    # `>=` in place of `==` changes nothing, as a start move is an Agent or a SendMessage.
+    resume = move.event["tool_name"] == "SendMessage"  # pragma: no mutate
     role = move.role if resume else move.event["tool_input"].get("subagent_type", "")
     due = _due(move.run, move.event)
     plugin = move.run.skill.partition(":")[0]

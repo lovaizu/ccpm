@@ -273,8 +273,11 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
     tool = event.get("tool_name")
     start = _start_of(run, event["tool_use_id"])
     if start is not None:
+        # `<=` in place of `==` changes nothing, as only an Agent or a SendMessage made a start.
         agent_id = (
-            event["tool_response"]["agentId"] if tool == "Agent" else event["tool_input"]["to"]
+            event["tool_response"]["agentId"]
+            if tool == "Agent"  # pragma: no mutate
+            else event["tool_input"]["to"]
         )
         role = start["role"]
         steps = start_steps(rules, role, start.get("steps"))

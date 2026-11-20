@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+from dataclasses import replace
 from typing import Any
 
 import pytest
@@ -31,6 +32,7 @@ README_GROUPS = {
 }
 REFACTORING = {"C1": ["N1"], "C2": ["N2", "N3", "N4", "N5", "N6"], "C3": ["N7", "N8"]}
 LIGHT_GROUPS = {"C1": ["N1", "N2", "N3", "N4"]}
+DESIGN_GROUPS = {"C1": ["N1"], "C2": ["N2", "N3"], "C3": ["N4"]}
 GOAL = plan()["goal"]["decided"]
 
 
@@ -54,13 +56,16 @@ def generator(number: int, practice: str, result: Any, tree: dict[str, Any] | No
     return Start(number, "generator", "", held, result)
 
 
-def guide_generator(number: int, practice: str, result: Any, tree: dict[str, Any]) -> Start:
-    """The guide's generator's start of the round, by the best practice, with its result."""
+def generator_of(
+    number: int, practice: str, result: Any, tree: dict[str, Any], path: str = GUIDE
+) -> Start:
+    """The generator's start of the round of the deliverable at the path, the guide unless another
+    is given, by the best practice, with its result."""
     held = {
         "role": "generator",
-        "deliverable": {"path": GUIDE},
+        "deliverable": {"path": path},
         "best_practice": practice,
-        "decisions": course.decisions(tree, GUIDE),
+        "decisions": course.decisions(tree, path),
     }
     return Start(number, "generator", "", held, result)
 
@@ -135,6 +140,18 @@ def light(done: bool = False) -> dict[str, Any]:
     return tree
 
 
+def designed() -> dict[str, Any]:
+    """The plan with the command's package, invoicer, of the kind software-design in its place,
+    with that kind's conditions, as the guide's input."""
+    tree = plan()
+    tree["deliverables"][0].update(
+        path="invoicer", kind="software-design", necessary_conditions=conditions("software-design")
+    )
+    tree["deliverables"][1]["inputs"] = ["docs/product-vision.md", "invoicer"]
+    tree["work"][0]["path"] = "invoicer"
+    return tree
+
+
 def side_by_side() -> dict[str, Any]:
     """The plan in which the guide rests on the product vision alone, so that both deliverables
     can be made at once."""
@@ -144,8 +161,15 @@ def side_by_side() -> dict[str, Any]:
 
 
 def due(tree: dict[str, Any], starts: list[Start], running: list[Due] | None = None) -> list[Due]:
-    """Each start that course.due gives, as a list."""
-    return list(course.due(tree, starts, running or []))
+    """Each start that course.due gives, as a list, of the design tree and of each start's Cut and
+    result read back from their JSON, as course reads them from their files in use."""
+    read = [replace(s, cut=from_json(s.cut), result=from_json(s.result)) for s in starts]
+    return list(course.due(from_json(tree), read, running or []))
+
+
+def from_json(value: Any) -> Any:
+    """The value as its JSON reads back, each string a new object."""
+    return json.loads(json.dumps(value))
 
 
 @pytest.mark.supports("test_a_deliverable_made_gets_one_evaluator_for_each_group_of_its_conditions")
@@ -315,7 +339,7 @@ def test_an_evaluator_of_another_deliverable_running_leaves_the_same_group_due()
     Then each evaluator of the command's round 1 is due, its C1 among them, and each of the
     guide's round 2 but C1"""
     tree = side_by_side()
-    starts = [generator(1, "code", MADE), guide_generator(2, "readme", MADE, tree)]
+    starts = [generator(1, "code", MADE), generator_of(2, "readme", MADE, tree)]
     running = [Due(GUIDE, "evaluator", "C1", "readme", 2)]
     assert due(tree, starts, running) == [
         *evs(1),
@@ -330,7 +354,7 @@ def test_a_generator_of_another_deliverable_running_leaves_this_ones_generator_d
     When course.due gives the starts due
     Then the command's generator of round 2 is due, and no second start of the guide"""
     tree = side_by_side()
-    starts = [guide_generator(1, "readme", None, tree)]
+    starts = [generator_of(1, "readme", None, tree)]
     assert due(tree, starts, [gen(1, "readme", GUIDE)]) == [gen(2)]
 
 
@@ -466,10 +490,10 @@ def test_a_later_round_after_an_inputs_change_gives_each_group():
     Then an evaluator of each group of readme is due"""
     tree = plan()
     tree["work"] = tree["work"][1:]
-    first = guide_generator(1, "readme", MADE, tree)
+    first = generator_of(1, "readme", MADE, tree)
     later = changed()
     later["work"] = later["work"][1:]
-    second = guide_generator(2, "readme", MADE, later)
+    second = generator_of(2, "readme", MADE, later)
     starts = [first, *evaluators(1, {"N1": "x"}, README_GROUPS, GUIDE, "readme"), second]
     assert due(later, starts) == evs(2, README_GROUPS, "readme", GUIDE)
 
@@ -515,7 +539,7 @@ def test_a_guide_judged_good_gives_a_round_of_refactor_doc():
     tree["deliverables"][0] = {"name": "c", "path": COMMAND, "kind": "code", "status": "done"}
     tree["work"] = tree["work"][1:]
     starts = [
-        guide_generator(1, "readme", MADE, tree),
+        generator_of(1, "readme", MADE, tree),
         *evaluators(1, {}, README_GROUPS, GUIDE, "readme"),
     ]
     assert due(tree, starts) == [gen(2, "refactor-doc", GUIDE)]
@@ -616,6 +640,22 @@ def test_refactoring_judged_good_gives_none():
     assert due(plan(), starts) == []
 
 
+@pytest.mark.supports("test_refactoring_judged_good_leaves_the_deliverable_for_its_sign_off")
+def test_refactoring_of_a_kind_after_refactor_code_judged_good_gives_none():
+    """Given the plan with the command's package of the kind software-design, which comes after
+    refactor-code in order, its round 1 judged good, and round 2 by refactor-code judged good
+    When course.due gives the starts due
+    Then none is due, as the deliverable waits for the user's sign-off"""
+    tree = designed()
+    starts = [
+        generator_of(1, "software-design", MADE, tree, "invoicer"),
+        *evaluators(1, {}, DESIGN_GROUPS, "invoicer", "software-design"),
+        generator_of(2, "refactor-code", MADE, tree, "invoicer"),
+        *evaluators(2, {}, REFACTORING, "invoicer", "refactor-code"),
+    ]
+    assert due(tree, starts) == []
+
+
 @pytest.mark.supports("test_a_finding_taken_into_its_decision_gets_the_next_round_of_content")
 def test_refactoring_short_with_its_decision_changed_gives_the_next_round_of_refactoring():
     """Given round 2 by refactor-code judged with more on N2, and a decision under N2 added since
@@ -687,7 +727,7 @@ def test_a_deliverable_beside_one_being_judged_gets_its_generator_in_the_next_ro
     When course.due gives the starts due
     Then each evaluator of the command's round 1 is due, and no start of the guide"""
     tree = side_by_side()
-    guide = guide_generator(2, "readme", None, tree)
+    guide = generator_of(2, "readme", None, tree)
     running = [gen(2, "readme", GUIDE)]
     assert due(tree, [generator(1, "code", MADE), guide], running) == evs(1)
 
@@ -714,7 +754,7 @@ def test_each_deliverables_course_reads_its_own_latest_round():
     tree = side_by_side()
     starts = [
         generator(1, "code", MADE),
-        guide_generator(2, "readme", MADE, tree),
+        generator_of(2, "readme", MADE, tree),
         *evaluators(1, {}),
     ]
     assert due(tree, starts) == [gen(3, "refactor-code"), *evs(2, README_GROUPS, "readme", GUIDE)]
