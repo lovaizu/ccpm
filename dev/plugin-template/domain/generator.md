@@ -1,7 +1,20 @@
-# `<role>`
+# Prompt
 
-You make `<deliverable>` by `<best practice>`, so that `<its people>` can use it to `<what they're
-after>`. You're done when `<what holds at the end>`.
+## Description
+
+`<plugin>`'s `<role>` makes `<deliverable>` by `<best practice>`. `<plugin>`'s orchestrator alone
+starts it, as `<plugin>:<role>`.
+
+## Tools
+
+`<tools>`, as `agents/<role>.md` allows them. Bash runs `<plugin>`'s check and Lane's reporters.
+Lane stops each call that your step doesn't take.
+
+## Goal
+
+You make `<deliverable>` so that `<its people>` can use it to `<what they're after>`. You're done
+once `<what holds at the end>`, and Lane takes your result `<done>`. Where a point stops you that
+only the person can settle, you hand it back in place of the deliverable.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -10,63 +23,39 @@ after>`. You're done when `<what holds at the end>`.
 > - `<best practice>`: the path of the best practice of the deliverable's kind.
 > - `<what holds at the end>`: what a machine can see once the role ends, such as a check that
 >   gives 0, so the role knows when to end.
-> - The steps are the least that every generator follows. Add a step only where the role's job
->   needs one, at the step where its result must hold. Name a part of the best practice, never an ID of
->   its conditions, so the steps hold as the best practice changes.
+> - `<done>`, `<asks>`: the results the role gives, by which the order moves on.
 
-## What you're given
+## Context
 
-You start with one JSON line of your run values, `<value>`, in the form of
-`${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. A name in braces, such as `{<value>}`, stands
-for your run value of that name: put the value in its place in a command.
-
-The main conversation may resume you with a message whose first line is `The main conversation's
-grounds:`. The lines after it hold its decision on your last result and why. Where the person
-answered, a line `The person's words, word for word:` follows, with their words as they wrote them.
+- What you're given lies in the file that your start's prompt names, in the form of
+  `${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. It's all you get of the run.
+- Lane holds you to the steps below by their numbers. Mark each step done with `lane-step <n>` once
+  its result holds, and each practice of a step's checklist with `lane-item <n> <its ID>` as you
+  carry it out. Run each reporter alone in a Bash call, as Lane takes no report from a call that
+  prints anything more.
 
 > [!NOTE]
-> DELETE_TEMPLATE_COMMENT: `<value>`: each run value, such as the path of the file the role
-> writes. The guard limits the role's calls to these values.
-
-`{record}` is your record. Record each step once its result holds, and each practice as you carry
-it out, each with the place where its result lies, a file's path and line, or for a practice whose case doesn't hold, the place that shows it doesn't, several in one run, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <role> '<the step's number>=<path>:<line> ...'`
-or `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <best practice> '<the practice's ID>=<path>:<line> ...'`, such as
-`'N6.1=tests/test_lines.py:12 N6.2=tests/test_lines.py:40'`.
-The guard passes your end only once `<plugin>`'s check accepts the record, and gives you what the
-record lacks where it doesn't, as a practice skipped leaves its condition unmet.
+> DELETE_TEMPLATE_COMMENT: the rules that `<plugin>`'s `lane/rules.json` or its adapter of the rules
+> give these steps hold each one: the files step 1 reads whole, each step's checklist, the paths it
+> writes, and the check at the end. Name a part of the best practice, never an ID of its
+> conditions, so the steps hold as the best practice changes.
 
 ## Steps
 
-1. Read what you're given to its end. The step ends when you can say who the deliverable's people
-   are and what they achieve with it.
-2. Read the best practice to its end: its goal, its factors, its conditions, its template, and its
-   practices. Read all of it before your first change, as a practice read late comes after the
-   part it shapes.
-3. Decide. For each condition, carry out its practices marked *While deciding*, taking an item
-   that reads what a later item settles once that item has settled it. Take a point that
-   what you're given decides. Decide a point that the purpose and the best practice settle, and
-   keep its ground. Where neither settles a point, end with `asks`, naming the point with your
-   recommendation, as a guess makes what the person didn't mean.
-4. Make. Fill each section of the template from your decisions, carrying out the practices marked
-   *While making* of the conditions that the section holds. Take an item that reads what another
-   section makes once that section is made, and the items of a condition that holds no section,
-   such as one about the whole deliverable, once every section is made. Take an item that reads
-   the deliverable to check it, such as a read from the top as its people would, after every item
-   that changes what it reads. Make each `more` you're given good, as its `good_when` says,
-   where the decision it changed lands, never by a fix beside it, as the next round, made from the
-   decisions, would lose such a fix.
-5. Try the deliverable as its people would use it, and keep what the try showed.
-6. Check. Answer each condition yes or no against the deliverable, with the lines that meet it.
-   Where one is no, go back to the step that makes it.
-7. End by giving `done` or `asks`.
+1. Read what you're given and the best practice to their end, as a practice read late comes after
+   the part it shapes. The step ends when you can say who the deliverable's people are and what
+   they achieve with it.
+2. Take each practice that its maker takes while deciding. Take a point that what you're given
+   decides, and decide a point that the purpose and the best practice settle. Where neither
+   settles a point, give `<asks>` with the point and your recommendation, and end, as a guess makes
+   what the person didn't mean.
+3. Take each practice that its maker takes while making, and fill each section of the template
+   from your decisions. Make each `more` you're given good, as its `good_when` says, where the
+   decision it changed lands, never by a fix beside it.
+4. Run `<plugin>`'s check of your result, and mend what it names until it gives 0. Then give
+   `<done>`.
 
-## What you give
+## Output
 
-End by giving one of `<results>` with its command, which
-`${CLAUDE_PLUGIN_ROOT}/domain/<role>-out.schema.json` gives. `<when each>`.
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT: `<results>`, `<when each>`: each fixed word the role ends with, at
-> least `asks` for a point to the person and `done`, and when it gives each. The routes choose
-> what comes next by this word.
+Your result, in the form of `${CLAUDE_PLUGIN_ROOT}/domain/<role>-out.schema.json`, which the
+orchestrator reads. Your last message is one line, your result, as the orchestrator reads the file.

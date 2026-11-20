@@ -572,7 +572,7 @@
             },
             {
               "about": "Each step and each practice carried out",
-              "decided": "each role's steps say each practice and file it takes, and Lane lays the rule that their words call for, as Lane's up does: a step done in order, a checklist from the plugin's adapter of a step's items, a file read whole or never read, a path written only; the plugin's own check runs at each end only for what no rule of Lane's holds, such as a result against its cut",
+              "decided": "each role's steps say each practice and file it takes, and Lane lays the rule that their words call for: a step done in order, a checklist from the plugin's adapter of a step's items, a file read whole or never read, a path written only; the plugin's own check runs at each end only for what no rule of Lane's holds, such as a result against its cut",
               "by": "user"
             },
             {
@@ -591,14 +591,14 @@
               "by": "reasoning"
             },
             {
-              "about": "When the guard runs the record check on the main conversation",
-              "decided": "the guard runs the plugin's own record check at a role's end and at each end of the main conversation's turn in a run, and the check passes a turn that puts no work up for the caller, such as one that asks a question",
-              "by": "reasoning"
-            },
-            {
               "about": "How a prompt's unit tests judge",
               "decided": "each case runs as many times as Test strategy sets, each run a test of its own, and the developer judges the prompt from the results, with no criterion, as a criterion over runs that vary passes or fails by chance",
               "by": "user"
+            },
+            {
+              "about": "What rn and Lane mend to follow it",
+              "decided": "rn's adapter of the rules gives each role's first step reads_whole of its part, its Cut, and the best practice it reads whole; rn's /rn:up holds the steps of its moment, the start and the pick-up of a run, in its SKILL.md; Lane's hooks block where Lane's script fails, by onFailure block on each entry; each once the E2E run that reads plugins/ ends",
+              "by": "reasoning"
             }
           ]
         },

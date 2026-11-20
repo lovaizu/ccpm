@@ -52,7 +52,7 @@
   </defs>
 
   <!-- the plugin's roles -->
-  <rect class="frame" x="240" y="170" width="700" height="472" rx="10"/>
+  <rect class="frame" x="240" y="170" width="700" height="350" rx="10"/>
   <text class="frame-name" x="254" y="190">plugin</text>
 
   <!-- roles: a pill is an AI, a square is code, a rounded box a person or an AI -->
@@ -65,8 +65,8 @@
   <text class="kind" x="480" y="243">&lt;main conversation&gt;</text>
 
   <rect class="box" x="700" y="190" width="220" height="76" rx="0"/>
-  <text class="name" x="810" y="223">routes</text>
-  <text class="kind" x="810" y="243">&lt;hooks/lanes.json, Lane&gt;</text>
+  <text class="name" x="810" y="223">rules</text>
+  <text class="kind" x="810" y="243">&lt;lane/, read by Lane&gt;</text>
 
   <rect class="box" x="260" y="390" width="220" height="76" rx="30"/>
   <text class="name" x="370" y="423">generator</text>
@@ -77,8 +77,8 @@
   <text class="kind" x="710" y="443">&lt;subagent&gt;</text>
 
   <rect class="box" x="430" y="550" width="220" height="70" rx="0"/>
-  <text class="name" x="540" y="576">guard</text>
-  <text class="kind" x="540" y="596">&lt;hooks, Lane&gt;</text>
+  <text class="name" x="540" y="576">Lane</text>
+  <text class="kind" x="540" y="596">&lt;plugin it depends on&gt;</text>
 
   <!-- caller and orchestrator -->
   <path class="line" d="M465,96 V190" marker-end="url(#arrow)"/>
@@ -87,11 +87,9 @@
   <path class="line" d="M495,190 V96" marker-end="url(#arrow)"/>
   <text class="label" x="505" y="128">question, work</text>
 
-  <!-- orchestrator and routes -->
-  <path class="line" d="M590,214 H700" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="645" y="206">result</text>
-  <path class="line" d="M700,246 H590" marker-end="url(#arrow)"/>
-  <text class="label" text-anchor="middle" x="645" y="264">next start</text>
+  <!-- the rules that Lane reads -->
+  <path class="line" d="M900,266 V585 H650" marker-end="url(#arrow)"/>
+  <text class="label" text-anchor="end" x="890" y="575">steps, order</text>
 
   <!-- orchestrator and the roles it starts -->
   <path class="line" d="M420,266 L360,390" marker-end="url(#arrow)"/>
@@ -104,13 +102,13 @@
   <text class="label" x="610" y="320">prompt,</text>
   <text class="label" x="610" y="337">more</text>
 
-  <!-- guard and the roles -->
+  <!-- Lane and the roles -->
   <path class="line dashed" d="M480,550 L410,466" marker-end="url(#arrow)"/>
   <path class="line dashed" d="M600,550 L670,466" marker-end="url(#arrow)"/>
   <text class="label" x="400" y="520">step</text>
   <text class="label" x="650" y="520">step</text>
   <path class="line dashed" d="M540,550 L490,266" marker-end="url(#arrow)"/>
-  <text class="label" x="522" y="370">course</text>
+  <text class="label" x="522" y="370">starts due</text>
 
   <!-- legend -->
   <rect class="box" x="20" y="520" width="40" height="22" rx="11"/>

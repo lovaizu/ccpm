@@ -14,23 +14,13 @@ for stop in INT TERM HUP; do
   trap "rm -r \"\$scratch\"; trap - EXIT $stop; kill -s $stop \$\$" $stop
 done
 
-# The guard that the earlier Lane laid in another plugin, plugins/<name>/hooks/lane/, is a copy of
-# Lane's earlier code, which the plugin drops once it depends on Lane, so no check reads it as that
-# plugin's own: the plugin's developer neither writes nor mends it, and pylint would find it copied.
-laid_guards=$(for guard in plugins/*/hooks/lane; do
-  [ ! -d "$guard" ] || [ "$guard" = plugins/lane/hooks/lane ] || echo "$guard"
-done)
-not_laid=""
-[ -z "$laid_guards" ] || not_laid="--extend-exclude=$(printf '%s\n' "$laid_guards" | paste -s -d, -)"
-
-held design ruff check ${not_laid:+"$not_laid"} .
-ruff format --check ${not_laid:+"$not_laid"} .
+held design ruff check .
+ruff format --check .
 
 # The repository's own Python, which the checks below read whole. A link is the file it points to,
-# so the list leaves it out, and so is each laid guard.
+# so the list leaves it out.
 own_python=$(git ls-files '*.py' | while read -r file; do
-  [ -L "$file" ] || printf '%s\n' "$laid_guards" | grep -qx "${file%/hooks/lane/*}/hooks/lane" \
-    || echo "$file"
+  [ -L "$file" ] || echo "$file"
 done)
 
 # A fix to code copied between files lands in one and leaves the other wrong, so the repository keeps

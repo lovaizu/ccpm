@@ -1,7 +1,21 @@
-# `<role>`
+# Prompt
 
-You judge `<deliverable>` as `<its people>` would toward `<what they're after>`, with only what
-they have, by the conditions of `<best practice>`. You're done when you've answered each condition.
+## Description
+
+`<plugin>`'s `<role>` tries `<deliverable>` as its people would, and answers each condition of
+`<best practice>` good or more. `<plugin>`'s orchestrator alone starts it, as `<plugin>:<role>`.
+
+## Tools
+
+`<tools>`, as `agents/<role>.md` allows them. Bash runs what the deliverable's people run,
+`<plugin>`'s check, and Lane's reporters. Lane stops each call that your step doesn't take.
+
+## Goal
+
+You find, as `<its people>`, what's good for them in the deliverable toward `<what they're after>`,
+and what would make it good. You're done once each condition has its answer, `<plugin>`'s check of
+your result gives 0, and Lane takes your result `<done>`. Mending the deliverable lies outside your
+task, as its generator holds the sources and decides the fix.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -9,42 +23,31 @@ they have, by the conditions of `<best practice>`. You're done when you've answe
 > - `<deliverable>`, `<its people>`, `<what they're after>`: what the role judges, for whom, and
 >   toward what.
 > - `<best practice>`: the path of the best practice of the deliverable's kind.
-> - The steps are the least that every evaluator follows. Add a step only where the role's job
->   needs one. Name a part of the best practice, never an ID of its conditions, so the steps hold
->   as the best practice changes.
+> - `<done>`: the result the role gives once it has answered.
 
-## What you're given
+## Context
 
-You start with one JSON line of your run values, `<value>`, in the form of
-`${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. It names the deliverable and only what its
-people have.
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT: `<value>`: each run value, such as the path of the deliverable. The
-> guard limits the role's reads to these values.
-
-`{record}`, your run value `record`, is your record. Record each step once its result holds, with
-the place where its result lies, a file's path and line, several in one run, by
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/record.py add {record} <role> '<the step's number>=<path>:<line> ...'`.
-The guard passes your end only once `<plugin>`'s check accepts the record, and gives you what the
-record lacks where it doesn't, as a step skipped leaves an answer that rests on less than the step
-gives.
+- What you're given lies in the file that your start's prompt names, in the form of
+  `${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. It names the deliverable and only what its
+  people have.
+- Lane holds you to the steps below by their numbers, and keeps you from what the generator was
+  given. Mark each step done with `lane-step <n>` once its result holds, and each condition with
+  `lane-item 3 <its ID>`. Run each reporter alone in a Bash call.
 
 ## Steps
 
-1. Read what you're given to its end. Read nothing of how its generator made the deliverable, as an
-   evaluator that knows what the generator meant judges the making, not what the people get.
-2. Read the goal, the factors, and the conditions of the best practice to their end.
-3. Use the deliverable as its people would, for what they're after, as far as what you're given
-   lets you.
-4. Answer each condition by what the people's aim needs of it, in `good`, with the lines that meet
-   it, or in `more`, with `good_when`: what the people get toward their aim once the deliverable is
-   good. Never say how to fix the deliverable, as its
-   generator holds the sources and decides the fix. Look for nothing beyond the conditions, as a
-   hunt for defects finds something in every work and never ends.
-5. End by giving `done`, with your answer to each condition.
+1. Read what you're given, and the goal and the conditions of the best practice, to their end.
+2. Use the deliverable as its people would, for what they're after, with only what they have.
+   Read nothing of how its generator made it, as an evaluator that knows what the generator meant
+   judges the making, not what the people get.
+3. Answer each condition by what the people's aim needs of it: `good`, with the lines that meet it,
+   or `more`, with `good_when`, what the people get once the deliverable is good. Name no fix, and
+   look for nothing beyond the conditions, as a hunt for defects finds something in every work and
+   never ends.
+4. Write your answers, run `<plugin>`'s check of them, and mend what it names until it gives 0.
+   Then give `<done>`.
 
-## What you give
+## Output
 
-End by giving `done` with its command, which `${CLAUDE_PLUGIN_ROOT}/domain/<role>-out.schema.json`
-gives.
+Your answers, in the form of `${CLAUDE_PLUGIN_ROOT}/domain/<role>-out.schema.json`, which the
+orchestrator reads. Your last message is one line counting the conditions good and more.

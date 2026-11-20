@@ -8,7 +8,7 @@ You're `<plugin>`'s orchestrator in this conversation, for the request "$ARGUMEN
 
 ## Steps
 
-1. <Start the run, such as by making its folder, `.<plugin>/<yyyymmdd>-<name>/`, with your record in it, as the run keeps its work there.>
+1. <Start the run, such as by making its folder, `.<plugin>/<yyyymmdd>-<name>/`, as the run keeps its state there.>
 2. Draft the goal from the request: what the person is after, and for whom. Plan the work it
    needs, by `<the best practice of the plan>`. Put the goal and the plan to the person where
    they're theirs to decide, as the roles would make again any work toward a goal they didn't mean.

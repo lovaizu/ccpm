@@ -11,8 +11,8 @@ $ARGUMENTS
 
 ## Steps
 
-1. <Each step that this moment alone takes, such as recording the approval by a command of the plugin's own.>
-2. Go on by your part's step <n>, <such as starting the role that the guard gives next>.
+1. <Each step that this moment alone takes, such as keeping the approval in the run's folder.>
+2. Go on by your part's step <n>, <such as starting each role that Lane gives as due>.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
