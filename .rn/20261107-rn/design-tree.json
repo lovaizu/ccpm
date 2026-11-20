@@ -26,51 +26,7 @@
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
       "path": "plugins/rn/domain/best-practices/prompt",
       "kind": "meta",
-      "inputs": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Parts of the steps",
-              "decided": "the template's Steps may hold a section for each part of the steps that only some runs take, such as one event's, left out where every run takes the same steps",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
@@ -259,34 +215,7 @@
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/rules-and-adapters.md",
       "kind": "light",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "An end on a result that ends",
-              "decided": "the main conversation's turn that ends on a result its step's ends names isn't held to the starts due, as that result says the AI can't go on, which no start mends",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
@@ -364,60 +293,7 @@
       "name": "A plugin's main conversation starts each subagent that its order makes due, and only those, and doesn't end its turn while one is due",
       "path": "dev/lane/tests/integration/test_lane_s9_starts.py",
       "kind": "code",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "An end on a result that ends",
-              "decided": "the main conversation's turn that ends on a result its step's ends names goes through with a start due",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A plugin's run that stopped goes on where it stopped, after /compact or in a new conversation",
@@ -441,122 +317,13 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/lane/docs/rules-and-adapters.md",
-        "plugins/rn/domain/best-practices/software-design"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A turn with no run",
-              "decided": "a turn other than a new request in a repository with no run to go on with takes the step find alone, so that the orchestrator tells the user and the turn ends",
-              "by": "reasoning"
-            },
-            {
-              "about": "A blocker",
-              "decided": "each step of the orchestrator's turn but move ends on blocked, so that a script's refusal that only the user can mend, such as a repository with no origin, ends the turn with the blocker",
-              "by": "reasoning"
-            },
-            {
-              "about": "Commands at each step",
-              "decided": "each step that runs none of the people's commands holds its commands: the orchestrator's review none and touched tree.py touched alone, the generator's read and decide none, and the evaluator's read none; the generator's make and try and the evaluator's try run the people's own commands, so the prompt alone holds their writes",
-              "by": "reasoning"
-            },
-            {
-              "about": "A template part left out",
-              "decided": "the template check lets a document leave out a heading below the top whose note says Leave out",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md",
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/test-design"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A pick-up with no run",
-              "decided": "the turn ends with rn's word that it has no run to pick up, no move stopped and no worktree made",
-              "by": "reasoning"
-            },
-            {
-              "about": "A blocker",
-              "decided": "a new request in a repository with no origin ends the turn with repository.py new's refusal",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The prompts bench",
-              "decided": "each prompt case runs as the people's repository stands, with origin, rn and Lane loaded, the evaluator's trial where repository.py trial makes it, the generator's node holding the walkthrough's command as a decision, the fixture's tax rounded as invoicer rounds it, and no xfail",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
@@ -965,26 +732,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/lane/docs/rules-and-adapters.md"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/tests/integration/test_lane_s9_starts.py"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/prompt"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests"
-    },
     {
       "do": "make",
       "path": "plugins/rn/domain/orchestrator.md"
