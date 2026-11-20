@@ -17,8 +17,8 @@
       "status": "done"
     },
     {
-      "name": "A maker of a deliverable that no field's established kind fits makes one that does for its people what its check says",
-      "path": "plugins/rn/domain/best-practices/specific",
+      "name": "A deliverable that no best practice is worth making for, or that the user wants at once, reaches its people soon, doing what a concrete check says",
+      "path": "plugins/rn/domain/best-practices/light",
       "kind": "meta",
       "status": "done"
     },
@@ -214,7 +214,7 @@
     {
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/rules-and-adapters.md",
-      "kind": "specific",
+      "kind": "light",
       "inputs": [
         "dev/lane/architecture.md",
         "plugins/lane"
@@ -264,6 +264,11 @@
         },
         {
           "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
           "good": false,
           "decisions": []
         }
@@ -1082,8 +1087,8 @@
               "by": "reasoning"
             },
             {
-              "about": "The kind specific in rn's code",
-              "decided": "inputs and status treat a deliverable of the kind specific as one of any kind, by its best practice",
+              "about": "The kind light in rn's code",
+              "decided": "inputs and status treat a deliverable of the kind light as one of any kind, by its best practice; course starts no round of refactoring after one, and rn's architecture says so at P3.2",
               "by": "reasoning"
             }
           ]
@@ -1271,7 +1276,7 @@
     {
       "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
       "path": "dev/scripts/check.sh",
-      "kind": "specific",
+      "kind": "light",
       "inputs": [
         "dev/lane/architecture.md",
         "dev/lane/tests/integration/test_lane_s1_writes.py",
@@ -1316,6 +1321,11 @@
         },
         {
           "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
           "good": false,
           "decisions": []
         }
@@ -1781,7 +1791,7 @@
     {
       "name": "Users install Lane and rn together from one pull request, each plugin's folder holding all it needs and its README's walkthrough taken from what its tests show",
       "path": ".claude-plugin/marketplace.json",
-      "kind": "specific",
+      "kind": "light",
       "inputs": [
         "plugins/lane/README.md",
         "plugins/rn/README.md",
@@ -1829,13 +1839,18 @@
           "id": "N3",
           "good": false,
           "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
         }
       ]
     },
     {
       "name": "ccpm's guide to building a Claude Code plugin says what each plugin takes from it, as its architecture names",
       "path": "dev/plugin-development-guide.md",
-      "kind": "specific",
+      "kind": "light",
       "inputs": [],
       "status": "open",
       "necessary_conditions": [
@@ -1892,6 +1907,11 @@
         },
         {
           "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
           "good": false,
           "decisions": []
         }

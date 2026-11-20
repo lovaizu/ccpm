@@ -1,5 +1,5 @@
 """Decides which kinds a deliverable may have and which inputs it must name: a kind is a folder of
-rn's best practices, `specific` among them, or `meta`, and a deliverable of a best practice's kind
+rn's best practices, `light` among them, or `meta`, and a deliverable of a best practice's kind
 names an input of each kind that its best practice takes."""
 
 from __future__ import annotations

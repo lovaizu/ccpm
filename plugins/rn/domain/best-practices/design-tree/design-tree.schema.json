@@ -72,7 +72,7 @@
    "type": "string"
   },
   "kind": {
-   "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme, or `specific` for a deliverable that no field's established kind fits, which the specific best practice holds to its check.",
+   "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme, or `light` for a deliverable made by its check alone, where a best practice of its own would cost more than it gives, or the user wants it at once.",
    "type": "string"
   },
   "done": {

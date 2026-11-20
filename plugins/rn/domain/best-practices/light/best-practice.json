@@ -1,16 +1,16 @@
 {
  "goal": {
-  "what": "The people that a deliverable is made for, where no field's established kind fits it, do with it what they're after, as its check says.",
+  "what": "The people that a deliverable is made for get it soon, doing what a concrete check says, where a best practice of its own would cost more than it gives them, or the user wants it at once.",
   "critical_success_factors": [
    {
     "id": "C1",
-    "what": "The deliverable does for its people what its check says.",
+    "what": "The deliverable does for its people what a concrete check says, and holds nothing more.",
     "necessary_conditions": [
      {
       "id": "N1",
       "about": "the whole",
-      "what": "Does the deliverable pass its check, run or read as its people meet it?",
-      "why": "The check is the one statement of what the people get from a deliverable that no established kind describes, written before the deliverable is made, as acceptance test-driven development writes the acceptance test first and Gojko Adzic's [Specification by Example](https://gojko.net/books/specification-by-example/) states it as the key examples its people would check.",
+      "what": "Does the check name a command to run or a record to read that shows the deliverable done?",
+      "why": "A light deliverable is as good as its check alone, as no best practice holds it, so a check that names no way to show it done, such as `it works`, holds it to nothing. Acceptance test-driven development writes the acceptance test before the work, and Gojko Adzic's [Specification by Example](https://gojko.net/books/specification-by-example/) states it as the key examples its people would check.",
       "items": [
        {
         "at": "decide",
@@ -28,26 +28,28 @@
        },
        {
         "at": "decide",
-        "text": "Where the check names no way to show that it passes, such as a command to run or a record to read, end with the point, naming the way you'd take, since only the user says what passes."
-       },
+        "text": "Name the command to run or the record to read that shows the check met, such as `claude plugin validate` on each plugin's folder. Where the check names none and its people's use gives none, end with the point, naming the one you'd take, since only the user says what shows it done."
+       }
+      ]
+     },
+     {
+      "id": "N2",
+      "about": "the whole",
+      "what": "Does the deliverable pass its check, run or read as its people meet it?",
+      "why": "The people get what they're after only where the deliverable passes the check as they'd meet it, not as its maker sees it.",
+      "items": [
        {
         "at": "make",
         "text": "Make the deliverable in the format that the program or the person who reads it takes, such as the JSON that a tool loads or the Markdown that a person reads."
        },
        {
         "at": "make",
-        "text": "Run or read the check as its people meet the deliverable, such as by running the command that it names in a fresh checkout, and mend the deliverable until it passes."
+        "text": "Run the command or read the record that N1 names, as its people meet the deliverable, such as in a fresh checkout, and mend the deliverable until it passes."
        }
       ]
-     }
-    ]
-   },
-   {
-    "id": "C2",
-    "what": "The deliverable holds only what its check and its decisions call for, and agrees with what it rests on.",
-    "necessary_conditions": [
+     },
      {
-      "id": "N2",
+      "id": "N3",
       "about": "the whole",
       "what": "Does each part of the deliverable carry out its check or a decision of the deliverable or of an input?",
       "why": "A part that carries out neither is one that the people reach their aim without, and that each later change must carry.",
@@ -59,7 +61,7 @@
       ]
      },
      {
-      "id": "N3",
+      "id": "N4",
       "about": "the whole",
       "what": "Does the deliverable say what each deliverable it rests on says, wherever it carries it?",
       "why": "A deliverable that says otherwise than what it rests on leaves its people to find which one holds.",

@@ -23,7 +23,8 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
 - P3: made the field's established way
   - P3.1: running, making, and judging are separate roles.
   - P3.2: a deliverable's content is made the field's established way, then refactored to read
-    and change easily.
+    and change easily, or, where the user wants it at once or no way is worth its cost, made
+    lightly by its check alone, with no refactoring.
   - P3.3: remaking has a limit, and each finding left goes to the user as a proposal.
 - P4: each role on its own work
   - P4.1: each role starts with only what its work needs.

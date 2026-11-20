@@ -212,7 +212,7 @@ IN_FORM = (
     [
         (GUIDE, "readme", f"{IN_FORM}\n## FAQ\n", 1),
         (GUIDE, "readme", IN_FORM, 0),
-        ("docs/notes.md", "specific", "## FAQ\n", 0),
+        ("docs/notes.md", "light", "## FAQ\n", 0),
         ("docs/notes.txt", "readme", "## FAQ\n", 0),
         (COMMAND, "code", "x\n", 0),
     ],

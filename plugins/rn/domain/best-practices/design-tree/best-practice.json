@@ -69,7 +69,7 @@
      {
       "id": "N3",
       "about": "deliverables",
-      "what": "Does each deliverable name its kind: the best practice of the field's established way of making it, or `specific` where the deliverable is this product's alone?",
+      "what": "Does each deliverable name its kind: the best practice of the field's established way of making it, or `light` where it's made by its check alone?",
       "why": "A deliverable of a kind that every product shares has a way of making it that the field has settled, and its best practice brings that way to the maker. A deliverable of this product alone has no such way, and a best practice made for it would only restate the product's own decisions, so a check judges it instead.",
       "items": [
        {
@@ -82,7 +82,7 @@
        },
        {
         "at": "decide",
-        "text": "Where no such guides agree, give the deliverable the kind `specific`, such as a file that keeps a run's state or a file of the product's own specification, which the specific best practice holds to the check that judges it, such as the test that passes once the deliverable exists."
+        "text": "Give the deliverable the kind `light` only where the user wants it at once, or where no best practice is worth its cost: no such guides agree, or a best practice would hold it to more than its people need, such as a file that keeps a run's state, a manifest, or the product's own guide or specification. The light best practice holds it to the check that judges it, such as the test that passes once the deliverable exists, so write a check that a command run or a record read shows met, since a light deliverable is only as good as its check."
        }
       ]
      },
@@ -98,7 +98,7 @@
        },
        {
         "at": "decide",
-        "text": "For a `specific` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and of each deliverable it runs, such as the parts that the test calls."
+        "text": "For a `light` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and of each deliverable it runs, such as the parts that the test calls."
        },
        {
         "at": "decide",
@@ -140,7 +140,7 @@
        },
        {
         "at": "decide",
-        "text": "For a `specific` deliverable, write under its N1 the check that judges it as the decision about `The check`, and as its other decisions each point that the check needs settled, such as which user story an integration test runs and what it shows."
+        "text": "For a `light` deliverable, write under its N1 the check that judges it as the decision about `The check`, and as its other decisions each point that the check needs settled, such as which user story an integration test runs and what it shows."
        },
        {
         "at": "decide",
@@ -152,7 +152,7 @@
        },
        {
         "at": "decide",
-        "text": "Where no source states the fact but a trial or a longer search can find it, such as how the host behaves in a case its documentation doesn't state, add a research deliverable: of the kind `specific`, at `{run}/research/<question>.md`, named by what the deliverable that holds the point can decide once it's done, with `each question has an answer that names its source, a page a reader can open or a command with what it printed` as its check."
+        "text": "Where no source states the fact but a trial or a longer search can find it, such as how the host behaves in a case its documentation doesn't state, add a research deliverable: of the kind `light`, at `{run}/research/<question>.md`, named by what the deliverable that holds the point can decide once it's done, with `each question has an answer that names its source, a page a reader can open or a command with what it printed` as its check."
        },
        {
         "at": "decide",

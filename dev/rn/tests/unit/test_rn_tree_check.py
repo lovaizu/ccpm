@@ -256,15 +256,15 @@ def test_a_kind_that_names_no_best_practice_is_a_fault(tmp_path: Any):
 @pytest.mark.supports(
     "test_a_deliverable_whose_inputs_leave_out_a_kind_its_best_practice_takes_is_refused"
 )
-@pytest.mark.parametrize("kind", ["specific", "meta"])
-def test_a_specific_or_meta_kind_takes_no_input(tmp_path: Any, kind: str):
-    """Given the plan with the command of the kind specific or meta, with that kind's conditions,
-    the check of a specific one decided under N1, and no input
+@pytest.mark.parametrize("kind", ["light", "meta"])
+def test_a_light_or_meta_kind_takes_no_input(tmp_path: Any, kind: str):
+    """Given the plan with the command of the kind light or meta, with that kind's conditions,
+    the check of a light one decided under N1, and no input
     When inputs.faults checks it
     Then it gives none"""
     tree = plan()
     tree["deliverables"][0].update(kind=kind, inputs=[], necessary_conditions=conditions(kind))
-    if kind == "specific":
+    if kind == "light":
         check = {"about": "The check", "decided": "python3 -m invoicer runs", "by": "user"}
         tree["deliverables"][0]["necessary_conditions"][0]["decisions"] = [check]
     assert inputs.faults(tree, PRACTICES, repo(str(tmp_path))) == []
