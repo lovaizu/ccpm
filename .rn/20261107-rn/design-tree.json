@@ -597,8 +597,9 @@
               "by": "reasoning"
             },
             {
-              "about": "The tests of a code deliverable",
-              "decided": null
+              "about": "A deliverable's files",
+              "decided": "a deliverable lies at its path and, where it's made of files in more than one place, such as code and its tests, at each path of its optional more_paths too; the design tree's form, its best practice's N7.2, and each Cut carry more_paths, and rn's adapter of the rules lets the generator's making step write each of them beside its path and its result",
+              "by": "reasoning"
             }
           ]
         },
