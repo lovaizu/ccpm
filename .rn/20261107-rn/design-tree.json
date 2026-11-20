@@ -32,53 +32,7 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "inputs": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The people's starting state",
-              "decided": "the goal names, beside the state its people are in once it holds, their starting state: what they have and know before they use the deliverable, such as an accountant with Calc and a terminal and no invoicer, as each maker and each trial starts the people from it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -102,53 +56,7 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "inputs": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Behavior of existing code",
-              "decided": "for each behavior of existing code that the people meet, such as how an invoice shows its amounts, the maker asks whether it serves them in the goal's state, and makes each that doesn't a decision to change, as a design that keeps existing behavior unasked fixes its faults as the specification",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A developer sees, before writing any body, whether the architecture can be built as parts that fit together, from a skeleton of each part, and each gap where it can't",
@@ -160,53 +68,7 @@
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "inputs": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A Then the contract leaves open",
-              "decided": "where an interface's contract leaves open part of what the people see, such as how an amount shows, the maker lists it as a gap for the architecture, and never fills the Then from the code",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -510,7 +372,7 @@
         "plugins/rn",
         "plugins/rn/domain/best-practices/prompt"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -874,18 +736,6 @@
       "path": "dev/plugin-development-guide.md",
       "condition": "N1",
       "about": "The main conversation over many turns"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/design-tree"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/architecture"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/test-design"
     },
     {
       "do": "make",
