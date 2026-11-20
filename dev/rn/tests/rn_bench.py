@@ -352,6 +352,41 @@ def command(path: str) -> Any:
     return module
 
 
+def generator_cut() -> dict[str, Any]:
+    """The generator's Cut of the command by code, with no decision, for the property-based
+    tests."""
+    deliverable = {"name": "n", "path": COMMAND, "kind": "code"}
+    return {
+        "role": "generator",
+        "deliverable": deliverable,
+        "best_practice": "code",
+        "goal": "g",
+        "decisions": [],
+    }
+
+
+def evaluator_cut(group: str, conditions: list[str]) -> dict[str, Any]:
+    """An evaluator's Cut of the command's group, judging the conditions, for the property-based
+    tests."""
+    held = {**generator_cut(), "role": "evaluator", "group": group, "conditions": conditions}
+    held.pop("decisions")
+    return held
+
+
+def run_worktree(tmp: str, files: dict[str, Any] | None = None) -> tuple[str, str]:
+    """A repository's root with rn's worktree of the run, `.claude/worktrees/<branch>/`, holding
+    invoicer's documents, the run's folder with the plan, and each file given by its path, as JSON
+    where it isn't text, with no git, for the property-based tests, which write one for each input;
+    gives the root and the worktree's top."""
+    root = os.path.join(tmp, "clone")
+    top = os.path.join(root, ".claude", "worktrees", BRANCH)
+    docs = ("architecture", "software-design", "test-design", "product-vision")
+    write_files(top, {f"docs/{name}.md": f"# {name}\n" for name in docs})
+    given = {f"{RUN}/design-tree.json": plan(), **(files or {})}
+    write_files(top, {p: v if isinstance(v, str) else json.dumps(v) for p, v in given.items()})
+    return root, top
+
+
 def worktree(tmp: str, files: dict[str, Any] | None = None) -> str:
     """A git repository of invoicer's documents, the inputs of the plan's deliverables, with the
     run's folder holding the plan and each file given by its path, as JSON where it isn't text, all

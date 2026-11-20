@@ -1,12 +1,12 @@
 """The unit cases of what rn gives Lane: lane/adapters/starts_due.py's main, one for each class of
-the run that Lane gives it and of the run's folder, the commands typed and the starts that run
-among them, and one for each combination of the words and the commands that decides whether the
-run waits, goes on, or ends; and lane/adapters/rules.py's main, one for each role's steps, a
-deliverable with more_paths, a Cut in a later slot, the generators of other Rounds an evaluator may
-read, and each refusal. A start in a later slot, a result among the moves, and a Cut named from
-rn's worktree stand beside the starts that run, and each Then names the whole of what an adapter
-prints. Each adapter lies in a file that Lane runs as a command, so each is loaded from its
-path."""
+the run that Lane gives it and of the run's folder, the commands typed and the starts that run among
+them, and one for each combination of the words and the commands that decides whether the run waits,
+goes on, or ends; and lane/adapters/rules.py's main, one for each role's steps, a deliverable with
+more_paths, a Cut in a later slot, a Cut named whole beside one named from the top, the generators
+of other Rounds an evaluator may read, and each refusal. A start in a later slot, a result among the
+moves, and a Cut named from rn's worktree stand beside the starts that run, and each Then names the
+whole of what an adapter prints. Each adapter lies in a file that Lane runs as a command, so each is
+loaded from its path."""
 
 from __future__ import annotations
 
@@ -411,6 +411,27 @@ def test_rules_give_an_evaluator_its_steps_from_its_cut(tmp_path: Any):
     top = worktree(str(tmp_path), {**made_files(), cut: evaluator_cut("C2", conditions)})
     unread = [f"{RUN}/design-tree.json", CUT, RESULT]
     assert rules_of(top, "rn:evaluator", cut) == (0, evaluator_steps(cut, unread, conditions), "")
+
+
+@pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
+@pytest.mark.xfail(strict=True, reason="rules.py takes the Cut named whole into its rules")
+@pytest.mark.parametrize("role", ["rn:generator", "rn:evaluator"])
+def test_rules_take_a_cut_named_whole_as_one_named_from_the_top(tmp_path: Any, role: str):
+    """Given rn's worktree of the run under the repository's `.claude/worktrees/`, holding the
+    generator's Cut of the command made and an evaluator's Cut of C2, and a start's prompt that
+    names its Cut whole, as the orchestrator, an AI, wrote it in the E2E run
+    When rules.py runs for the start of the generator or the evaluator
+    Then it gives 0, saying nothing, with the same steps whole as for the Cut named from the top,
+    every path in them from the worktree's top"""
+    cut = CUT if role == "rn:generator" else evaluator("C2")
+    conditions = ["N4", "N5", "N6", "N7"]
+    files = {**made_files(), evaluator("C2"): evaluator_cut("C2", conditions)}
+    top = worktree(os.path.join(str(tmp_path), "clone", ".claude", "worktrees"), files)
+    if role == "rn:generator":
+        expected = generator_steps("code", COMMAND)
+    else:
+        expected = evaluator_steps(cut, [f"{RUN}/design-tree.json", CUT, RESULT], conditions)
+    assert rules_of(top, role, os.path.join(top, cut)) == (0, expected, "")
 
 
 @pytest.mark.supports("test_an_evaluator_stopped_starts_again_with_a_fresh_cut_beside_its_first")
