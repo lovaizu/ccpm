@@ -12,9 +12,9 @@ import opus
 import pytest
 import rn_files
 from rn_files import WORDS
-from rn_prompts import NOT_BUILT, RUNS, Room, typed
+from rn_prompts import RUNS, Room, typed
 
-pytestmark = [opus.NEEDS_LOGIN, pytest.mark.xfail(strict=True, reason=NOT_BUILT)]
+pytestmark = [opus.NEEDS_LOGIN]
 
 
 def name() -> str:

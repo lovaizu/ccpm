@@ -1138,6 +1138,52 @@ def test_a_note_holds_only_in_its_own_section():
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_section_below_the_top_whose_note_says_to_leave_it_out_may_be_left_out():
+    """Given a template whose section of level 3 is `<part>`, with a note of `<part>` that says to
+    leave out each part where none, and a document without it
+    When the document is checked
+    Then it has no fault"""
+    template = lines(
+        "# T",
+        "",
+        "## Steps",
+        "",
+        "`<steps>`.",
+        "",
+        "### `<part>`",
+        "",
+        "`<part_steps>`.",
+        "",
+        note("`<part>`, `<part_steps>`: each part. Leave out each part where none."),
+    )
+    assert faults(template, lines("# T", "", "## Steps", "", "Go.")) == ()
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_section_below_the_top_whose_note_says_nothing_of_leaving_it_out_stands():
+    """Given a template whose section of level 3 is `<part>`, with a note of `<part>` that says
+    nothing of leaving it out, and a document without it
+    When the document is checked
+    Then the one fault names `<part>` as lacking"""
+    template = lines(
+        "# T",
+        "",
+        "## Steps",
+        "",
+        "`<steps>`.",
+        "",
+        "### `<part>`",
+        "",
+        "`<part_steps>`.",
+        "",
+        note("`<part>`, `<part_steps>`: each part."),
+    )
+    assert faults(template, lines("# T", "", "## Steps", "", "Go.")) == (
+        Fault(5, 'lacks the template\'s "### `<part>`" at its line 7'),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_heading_of_level_2_with_a_slot_may_repeat():
     """Given a template whose section of level 2 is `<problem>`, and a document with two such
     sections

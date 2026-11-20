@@ -34,6 +34,7 @@ from rn_bench import (
     signed_plan,
     started,
     to_plan_signoff,
+    touched_items,
     trial_made,
 )
 from rn_files import COMMAND
@@ -193,6 +194,9 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_the_orchestrator_writing_a_deliverable_is_stopped": lambda b: steps_without(
         b, "r['type'] != 'writes'"
     ),
+    "test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped": lambda b: steps_without(
+        b, "r['type'] != 'commands'"
+    ),
     "test_the_generators_make_is_held_to_its_best_practices_make_items": items_left_out,
     "test_a_deliverable_short_after_two_content_rounds_gets_no_third": no_limit,
     "test_the_evaluator_reading_the_design_tree_is_stopped": lambda b: steps_without(
@@ -235,7 +239,7 @@ def test_an_orchestrators_turn_ended_before_its_review_is_stopped(b: Bench, brok
 @pytest.mark.supports("P1.1", "Design tree")
 def test_a_tree_change_out_of_form_is_refused_at_its_commit(b: Bench, broken: None):
     """Given a run whose goal the orchestrator put, and a change of its design tree that gives the
-    command a kind of no best practice
+    command a kind of no best practice, its review and touched done
     When the orchestrator commits it by tree.py commit
     Then it gives 1 naming /deliverables/1/kind, and the work's branch holds no new commit"""
     c = requested(b)
@@ -244,6 +248,9 @@ def test_a_tree_change_out_of_form_is_refused_at_its_commit(b: Bench, broken: No
     design_tree["deliverables"][1]["kind"] = "no-such-kind"
     answer = c.write(None, b.tree_path, json.dumps(design_tree, indent=1) + "\n")
     assert not answer.blocked, answer.said
+    marked(c, "review")
+    touched_items(b, c)
+    marked(c, "touched")
     branch = f"rn-{b.name()}"
     before = git(b.repo, "rev-parse", branch).strip()
     refused = c.bash(b.script("tree", "commit", b.run, "The plan."))
@@ -256,8 +263,9 @@ def test_a_tree_change_out_of_form_is_refused_at_its_commit(b: Bench, broken: No
 def test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut(b: Bench, broken: None):
     """Given a run whose command's generator ended with a point, kept by the orchestrator as an
     open decision of N1
-    When the orchestrator writes the generator's Cut
-    Then tree.py cut gives 1 saying the command waits on the user"""
+    When the orchestrator writes the generator's Cut, then puts the point to the user
+    Then tree.py cut gives 1 saying the command waits on the user, and the turn ends, Lane stopping
+    no move"""
     c, generator = signed_plan(b)
     pointed(b, c, generator, "Should a line's quantity default to 1?")
     point = rn_files.decision("a line's quantity", None)
@@ -265,6 +273,7 @@ def test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut(b: Bench, broke
     refused = c.bash(b.script("tree", "cut", b.run, "generator", COMMAND))
     assert refused.exit_code == 1
     assert "user" in refused.output
+    ended(c, "A question that's yours:\n  Should a line's quantity default to 1?")
 
 
 @pytest.mark.supports("P1.3", "orchestrator")
@@ -351,6 +360,22 @@ def test_the_orchestrator_writing_a_deliverable_is_stopped(b: Bench, broken: Non
     assert "`review`" in answer.said
 
 
+@pytest.mark.supports("P3.1", "orchestrator")
+def test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped(b: Bench, broken: None):
+    """Given a run whose plan the user signed off, its sign-off recorded
+    When the orchestrator writes the run's design tree by a Bash command in its review
+    Then Lane stops the call, as the step `review` runs no command, and the tree is as it was"""
+    c = to_plan_signoff(b)
+    c.type("/rn:ty")
+    ran(c, b.script("tree", "signoff", b.run))
+    marked(c, "record")
+    before = b.tree()
+    answer = c.bash(f"printf '%s\\n' '{{}}' > {b.tree_path}")
+    assert answer.blocked
+    assert "You're at the step `review` of rn:ty, which runs no command." in answer.said
+    assert b.tree() == before
+
+
 @pytest.mark.supports("P3.2", "generator", "Best practice")
 def test_the_generators_make_is_held_to_its_best_practices_make_items(b: Bench, broken: None):
     """Given a run whose command's generator read its inputs and decided, each decide item done
@@ -369,12 +394,18 @@ def test_the_generators_make_is_held_to_its_best_practices_make_items(b: Bench, 
 
 @pytest.mark.supports("P3.3", "Round")
 def test_a_deliverable_short_after_two_content_rounds_gets_no_third(b: Bench, broken: None):
-    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2
-    When the orchestrator writes the generator's Cut
-    Then tree.py cut gives 1 saying the command waits on the orchestrator"""
-    _, refused = short_twice(b)
+    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2,
+    its second evaluator's end reaching the main conversation
+    When the orchestrator holds N2 and N3 good, keeps the shared steps, and writes the generator's
+    Cut at the step `move`
+    Then tree.py cut gives 1 saying the command waits on the orchestrator, and the turn ends, Lane
+    stopping no move"""
+    c = short_twice(b)
+    shared_steps(b, c, held(b, COMMAND, ["N2", "N3"]), "The Round's findings.")
+    refused = c.bash(b.script("tree", "cut", b.run, "generator", COMMAND))
     assert refused.exit_code == 1
     assert "orchestrator" in refused.output
+    ended(c, "Its Rounds are spent.")
 
 
 # P4: each role on its own work.

@@ -257,9 +257,11 @@ def _repeats(block: Block) -> bool:
 
 
 def _left_out(block: Block, notes: list[_Note], optional: frozenset[str]) -> bool:
-    """Whether the template lets the document leave the block out."""
-    if block.kind == HEADING:
-        return block.text in optional
+    """Whether the template lets the document leave the block out: a section of level 2 always, a
+    section below it where a note item of its slots says to leave it out, as for any other block,
+    and the title never."""
+    if block.kind == HEADING and (block.level == 1 or block.text in optional):
+        return block.level > 1
     return any(
         _LEAVE.search(note.words)
         and not _LEAVE_WORD.search(note.words)

@@ -4,8 +4,9 @@ three times, each run a test of its own, as rn's Test strategy sets the benchmar
 holds a prompt. A case's Then decides by code each point of the result that the run's files show.
 
 The orchestrator runs as the main conversation with rn and Lane loaded, from the command the user
-types. The generator and the evaluator each run as the session's agent, `--agent`, with rn alone
-loaded, given the path of its Cut as the prompt, as the orchestrator starts it."""
+types. The generator and the evaluator each run as the session's agent, `--agent`, with rn and
+Lane loaded, as rn's manifest depends on Lane, given the path of its Cut as the prompt, as the
+orchestrator starts it."""
 
 from __future__ import annotations
 
@@ -25,9 +26,6 @@ LANE = os.path.join(rn_files.TOP, "plugins", "lane")
 RUNS = [1, 2, 3]
 # How long one run of a role may take, in seconds.
 TIMEOUT = 1800
-# Why each case fails now: the prompts' Goal and Steps are empty, and the scripts they run raise
-# NotImplementedError.
-NOT_BUILT = "rn's prompts hold no Goal or Steps yet, and the scripts they run have empty bodies"
 
 
 @dataclass(frozen=True)
@@ -53,13 +51,15 @@ class Room:
 
 
 def room_in(tmp: str) -> Room:
-    """A copy of invoicer committed on main in the folder, with copies of rn and Lane beside it,
-    and a configuration folder of its own."""
+    """A copy of invoicer committed on main in the folder, with a remote `origin` holding `main`,
+    as `repository.py new` starts a run from origin's default branch, copies of rn and Lane beside
+    it, and a configuration folder of its own."""
     rn = os.path.join(tmp, "plugins", "rn")
     lane = os.path.join(tmp, "plugins", "lane")
     shutil.copytree(rn_files.RN, rn, ignore=shutil.ignore_patterns("__pycache__"))
     shutil.copytree(LANE, lane, ignore=shutil.ignore_patterns("__pycache__"))
     repo = rn_files.repository(os.path.join(tmp, "invoicer"))
+    rn_files.with_origin(repo, os.path.join(tmp, "origin.git"))
     env = environment(tmp)
     # The case's time zone, so that rn takes the day that the case takes.
     env.update({name: os.environ[name] for name in ("TZ",) if name in os.environ})
@@ -78,8 +78,8 @@ def typed(room: Room, prompt: str, more: bool = False) -> str:
 
 def as_role(room: Room, role: str, cut_path: str) -> str:
     """What Claude Code printed once the role ran alone as the session's agent, given the path of
-    its Cut from the repository's top as its prompt, with rn loaded."""
-    flags = ["--plugin-dir", room.rn, "--agent", f"rn:{role}"]
+    its Cut from the repository's top as its prompt, with rn and Lane loaded."""
+    flags = ["--plugin-dir", room.rn, "--plugin-dir", room.lane, "--agent", f"rn:{role}"]
     return opus.prompted(cut_path, room.repo, room.env, flags, TIMEOUT)
 
 
@@ -126,11 +126,20 @@ def generator_cut(
     return os.path.relpath(path, room.repo)
 
 
-def evaluator_cut(room: Room, name: str, node: Mapping[str, Any], trial: str) -> str:
+def trial_of(room: Room, name: str, round_folder: str) -> str:
+    """The folder of the people's starting state that `repository.py trial` makes for the Round of
+    the run, as repository.trial.folder names it, in the room's own system temporary folder, which
+    the run's commands take."""
+    within = os.path.relpath(round_folder, os.path.join(room.folder(name), "rounds"))
+    return os.path.join(room.env["TMPDIR"], f"rn-trial-{name}-{within.replace(os.sep, '-')}") + "/"
+
+
+def evaluator_cut(room: Room, name: str, node: Mapping[str, Any]) -> str:
     """Writes the evaluator's Cut of Round content-1 of the deliverable, in the form of
-    evaluator-cut.schema.json, with the people's folder given, and gives its path from the
-    repository's top."""
+    evaluator-cut.schema.json, with the people's folder that `repository.py trial` makes, and
+    gives its path from the repository's top."""
     folder = rn_files.round_of(room.folder(name), node["path"], "content", 1)
+    trial = trial_of(room, name, folder)
     given = {
         "goal": rn_files.GOAL,
         "deliverable": {"name": node["name"], "path": node["path"]},

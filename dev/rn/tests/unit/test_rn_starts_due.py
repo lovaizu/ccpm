@@ -3,9 +3,9 @@ combination that its contract lists, the latest command `rn:dn` or another, each
 no worktree, the plan open, a deliverable with no item `make` or with an input not done, the roles
 that a deliverable's Rounds wait on, a Round that a pause stopped before a role's result, a
 deliverable past its Rounds whose findings wait as proposals for its sign-off, an open decision,
-a start with no result yet among the moves, another plugin's start, none, one, and two
-deliverables due at once, and the run named by the latest start's prompt among several; each
-refusal; and `main`, for each exit it gives.
+a start with no result yet among the moves, the orchestrator's result blocked, another plugin's
+start, none, one, and two deliverables due at once, and the run named by the latest start's prompt
+among several; each refusal; and `main`, for each exit it gives.
 
 Each input is in the form of Lane's starts_due.in.schema.json, read from the JSON of its text, and
 the run's files in the forms that the architecture's Directory structure names. The starts are
@@ -22,7 +22,7 @@ import pytest
 import rn_files
 from fault import Wrong
 from rn_adapters import adapter
-from rn_files import COMMAND, GUIDE
+from rn_files import COMMAND, GUIDE, WORDS
 
 ADAPTER = adapter("starts_due")
 NAME = "20261120-invoices"
@@ -470,6 +470,28 @@ def test_another_plugins_start_naming_the_cut_counts_for_nothing(cwd: str, role:
     prompt = cut_prompt(cwd, folder, COMMAND)
     out = ADAPTER.due(run(command("rn:ty"), start(role, prompt)), cwd)
     assert starts(out) == due(("rn:generator", 1))
+
+
+@pytest.mark.supports("test_a_new_request_with_no_origin_ends_its_turn_on_blocked")
+def test_a_new_request_whose_turn_gave_blocked_with_no_worktree_starts_none(cwd: str):
+    """Given a repository with no run, and the moves /rn:up with words, then the orchestrator's
+    result blocked
+    When the adapter gives the starts due
+    Then none is due, so that Lane lets the turn end"""
+    out = ADAPTER.due(run(command("rn:up"), result("rn:up", "blocked"), words=WORDS), cwd)
+    assert out == {"starts": []}
+
+
+@pytest.mark.supports("test_a_new_request_with_no_origin_ends_its_turn_on_blocked")
+def test_an_orchestrators_blocked_ends_no_start_of_a_role(cwd: str):
+    """Given a run whose command's generator started with no result yet, and the orchestrator's
+    result blocked after it
+    When the adapter gives the starts due
+    Then none is due, as the generator's start still runs, and blocked is no result of it"""
+    folder = a_run(cwd, walkthrough())
+    prompt = cut_prompt(cwd, folder, COMMAND)
+    moves = run(command("rn:ty"), start("rn:generator", prompt), result("rn:ty", "blocked"))
+    assert ADAPTER.due(moves, cwd) == {"starts": []}
 
 
 # The run among several.

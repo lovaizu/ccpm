@@ -5,32 +5,30 @@ developer on the model, as rn's Test strategy says; check.sh never runs them."""
 
 from __future__ import annotations
 
-import os
-import tempfile
-from urllib.parse import quote
-
 import opus
 import pytest
 import rn_files
 from repo_files import write_files
 from rn_files import COMMAND
-from rn_prompts import NOT_BUILT, RUNS, Room, as_role, evaluator_cut, result_of, run_of
+from rn_prompts import RUNS, Room, as_role, evaluator_cut, result_of, run_of
 
-pytestmark = [opus.NEEDS_LOGIN, pytest.mark.xfail(strict=True, reason=NOT_BUILT)]
+pytestmark = [opus.NEEDS_LOGIN]
 
 NAME = "20261120-a-command-with-which-the"
 WORKS = (
     "import sys\n"
     "from decimal import Decimal\n\n"
-    "from invoicer.lines import parse_lines\n\n"
+    "from invoicer.lines import parse_lines\n"
+    "from invoicer.tax import tax_of\n\n"
     "lines = parse_lines(open(sys.argv[1], encoding='utf-8').read())\n"
     "rate = Decimal(sys.argv[sys.argv.index('--rate') + 1])\n"
     "subtotal = sum(each.amount() for each in lines)\n"
+    "tax = tax_of(subtotal, rate)\n"
     "for each in lines:\n"
     "    print(f'{each.description:<30}{each.amount():>10.2f} EUR')\n"
     "print(f'{\"Subtotal\":<30}{subtotal:>10.2f} EUR')\n"
-    "print(f'{\"Tax\":<30}{subtotal * rate:>10.2f} EUR')\n"
-    "print(f'{\"Total\":<30}{subtotal * (1 + rate):>10.2f} EUR')\n"
+    "print(f'{\"Tax\":<30}{tax:>10.2f} EUR')\n"
+    "print(f'{\"Total\":<30}{subtotal + tax:>10.2f} EUR')\n"
 )
 BROKEN = "import sys\n\nprint('Usage: invoicer <lines>')\nsys.exit(2)\n"
 
@@ -41,10 +39,7 @@ def judging(room: Room, command: str) -> tuple[str, list[str]]:
     node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"])
     run_of(room, NAME, node)
     write_files(room.worktree(NAME), {COMMAND: command})
-    trial = os.path.join(
-        tempfile.gettempdir(), f"rn-trial-{NAME}-{quote(COMMAND, safe='')}-content-1"
-    )
-    return evaluator_cut(room, NAME, node, trial), rn_files.conditions("light")
+    return evaluator_cut(room, NAME, node), rn_files.conditions("light")
 
 
 @pytest.mark.supports(

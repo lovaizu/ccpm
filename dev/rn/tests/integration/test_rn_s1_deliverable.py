@@ -16,6 +16,7 @@ from rn_bench import (
     command_signed,
     confirmed,
     cut,
+    ended,
     evaluated,
     evaluator_started,
     generated,
@@ -66,6 +67,26 @@ def test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_
     assert git(b.repo, "branch", "--show-current").strip() == "main"
     assert git(b.repo, "rev-parse", "main").strip() == head
     assert git(b.repo, "status", "--porcelain").strip() == ""
+
+
+@pytest.mark.supports("S1")
+def test_a_new_request_with_no_origin_ends_its_turn_on_blocked(b: Bench):
+    """Given invoicer's repository with no remote origin
+    When the user types /rn:up with the walkthrough's words, the orchestrator runs repository.py
+    new, gives blocked by lane-result, and ends its turn with the refusal
+    Then repository.py new gives 1 saying that origin's HEAD names no default branch, the turn
+    ends, Lane stopping no move, and the repository has no worktree of rn"""
+    git(b.repo, "remote", "remove", "origin")
+    c = b.converse()
+    c.type(f"/rn:up {rn_files.WORDS}")
+    refused = c.bash(b.script("repository", "new", rn_files.WORDS, GOAL))
+    assert not refused.blocked, refused.said
+    assert refused.exit_code == 1
+    assert "origin's HEAD names no default branch" in refused.output
+    given = c.bash("lane-result blocked")
+    assert not given.blocked, given.said
+    ended(c, refused.output)
+    assert not os.path.exists(b.at(".claude/worktrees"))
 
 
 @pytest.mark.supports("S1")
@@ -177,7 +198,9 @@ def test_a_signoff_of_the_plan_makes_it_done_and_starts_the_generator_of_each_de
 def test_a_send_back_of_the_plan_leaves_it_open_and_starts_no_role(b: Bench):
     """Given a run whose plan is put up
     When the user types /rn:gm with what to change, and the orchestrator keeps the shared steps
-    Then the plan stays open, and a start of rn:generator is stopped as not due"""
+    and ends its turn
+    Then the plan stays open, a start of rn:generator is stopped as not due, and the turn ends,
+    Lane stopping no move but the start"""
     c = to_plan_signoff(b)
     c.type("/rn:gm the guide is for the accounting team alone")
     shared_steps(b, c, ground="The user sends the plan back.")
@@ -185,6 +208,7 @@ def test_a_send_back_of_the_plan_leaves_it_open_and_starts_no_role(b: Bench):
     answer, agent = c.start("rn:generator", "Make the command.", "Run rn:generator")
     assert agent is None
     assert "No start of rn's subagents is due now." in answer.said
+    ended(c, "The plan, for your sign-off:\n  1. ...")
 
 
 @pytest.mark.supports("S1", "Round", "Cut")
@@ -193,8 +217,8 @@ def test_a_generators_point_reaches_the_user_and_their_answer_resumes_it(b: Benc
     When it ends with a point, the orchestrator keeps the point as an open decision of N1, the user
     answers, and the orchestrator writes the answer as its decision by user and writes the Cut
     Then the generator's end reads `rn:generator gave point.`, the Cut is the same Round's,
-    content-1, holding the answer by user in the deliverable's N1, and SendMessage resumes the
-    generator"""
+    content-1, holding the answer by user in the deliverable's N1, SendMessage resumes the
+    generator, and each turn ends, Lane stopping no move"""
     c, generator = signed_plan(b)
     notified = pointed(b, c, generator, "Should a line's quantity default to 1?")
     assert "rn:generator gave point." in notified.said
@@ -205,7 +229,7 @@ def test_a_generators_point_reaches_the_user_and_their_answer_resumes_it(b: Benc
         held(b, COMMAND, [], {"N1": [rn_files.decision(about, None)]}),
         "The generator's point.",
     )
-    c.stop("A question that's yours:\n  Should a line's quantity default to 1?")
+    ended(c, "A question that's yours:\n  Should a line's quantity default to 1?")
     c.type("yes, 1")
     answer = rn_files.decision(about, "yes, 1", "user")
     tree = b.tree()
@@ -219,6 +243,7 @@ def test_a_generators_point_reaches_the_user_and_their_answer_resumes_it(b: Benc
     assert answer in given["deliverable"]["necessary_conditions"][0]["decisions"]
     resumed = c.resume(generator, "yes, 1")
     assert not resumed.blocked, resumed.said
+    ended(c, f'Making "{rn_files.COMMAND_NAME}".')
 
 
 @pytest.mark.supports("S1", "Round", "Cut")
@@ -279,19 +304,23 @@ def test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_conditi
 
 @pytest.mark.supports("S1", "Design tree", "Round")
 def test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal(b: Bench):
-    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2
-    When the orchestrator writes the generator's Cut, then keeps the finding as an open decision of
-    N1, puts the command up, and the user signs it off
-    Then tree.py cut gives 1 naming the orchestrator, the put-up prints the pull request's changes,
-    and the command is done once signed off"""
-    c, refused = short_twice(b)
-    assert refused.exit_code == 1
-    assert "orchestrator" in refused.output
+    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2,
+    its second evaluator's end reaching the main conversation
+    When the orchestrator keeps the finding as an open decision of N1, puts the command up, and
+    the user signs it off
+    Then the put-up prints the pull request's changes, the turn ends, Lane stopping no move, and
+    the command is done once signed off"""
+    c = short_twice(b)
     proposal = rn_files.decision("a comma in a line", None)
-    shared_steps(b, c, held(b, COMMAND, ["N2", "N3"], {"N1": [proposal]}), "Left past its Rounds.")
-    url = ran(c, b.script("repository", "put-up", b.run, COMMAND)).strip()
+    url = shared_steps(
+        b,
+        c,
+        held(b, COMMAND, ["N2", "N3"], {"N1": [proposal]}),
+        "Left past its Rounds.",
+        [b.script("repository", "put-up", b.run, COMMAND)],
+    )[0].strip()
     assert url == "http://github.com/owner/repo/pull/1/files"
-    c.stop("Proposals left past its Rounds:\n  - a comma in a line")
+    ended(c, "Proposals left past its Rounds:\n  - a comma in a line")
     signed(b, c)
     assert rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light") in b.tree()["deliverables"]
 

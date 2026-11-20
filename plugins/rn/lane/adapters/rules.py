@@ -28,6 +28,9 @@ from repository.worktree import paused
 _ORCHESTRATOR = ("rn:up", "rn:dn", "rn:ty", "rn:gm")
 _SCHEMAS = os.path.join(HERE, "..", "..", "domain", "schemas")
 Rule = dict[str, Any]
+# The rule of each step of the orchestrator's turn but its last: the turn ends there on a refusal
+# that only the user can mend.
+_BLOCKED: Rule = {"type": "result", "ends": ["blocked"]}
 
 # A start as Lane gives it, in the form of Lane's rules.in.schema.json, and its steps that rn
 # gives back, in the form of its rules.out.schema.json.
@@ -54,29 +57,39 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
       `pause`, running only `repository.py pause`, and no step that every event shares; for a
       send-back, `/rn:gm`, an answer, any other prompt of the person, and a role's end, a
       subagent's end as Claude Code gives it, none;
-    - the steps that every other event shares: `review`, writing only the run's design tree;
-      `touched`, writing only the run's design tree, with the checklist whose command is
-      `tree.py touched <run>`; `commit`, running only `tree.py commit`; and `move`, running only
-      `repository.py put-up` and `tree.py cut`, writing nothing.
+    - the steps that every other event shares: `review`, writing only the run's design tree and
+      running no command; `touched`, writing only the run's design tree and running only
+      `tree.py touched`, with the checklist whose command is `tree.py touched <run>`; `commit`,
+      running only `tree.py commit`; and `move`, running only `repository.py put-up` and
+      `tree.py cut`, writing nothing.
+    Each step of the turn but its last ends on `blocked`, so that a refusal that only the user can
+    mend, such as that of `repository.py new` in a repository whose origin names no default
+    branch, ends the turn. The last step keeps no such rule, as Lane judges the last step's result
+    rule at each end with every step done, and would stop each end with no result. A turn other
+    than a new request, in a repository with no run to pick up, takes the step `find` alone,
+    running only `repository.py find`, so that the orchestrator tells the user that rn has no run
+    to pick up, and the turn ends.
     For `rn:generator`, whose prompt is the path of its Cut from `cwd`, the steps `read`, `decide`,
     `make`, `try`, and `check`, each held in order: `read` reading whole the Cut, the best
     practice's `best-practice.md`, which every best practice's folder holds, so that a folder
-    without one holds the step until it's there, and each input that is a file, writing nothing;
-    `decide` with the best practice's `decide` items as its checklist, writing only the Round's
-    folder, where its `generator.json` gives a point, and ending on `point`; `make`
-    with its `make` items as its checklist, writing only the deliverable's paths; `try` writing only
-    the Round's folder; and `check` running only `repository.py checks`, with the check `check.py
-    generator <cut>`, and the results `made` or, ending, `point`.
+    without one holds the step until it's there, and each input that is a file, writing nothing and
+    running no command; `decide` with the best practice's `decide` items as its checklist, writing
+    only the Round's folder, where its `generator.json` gives a point, running no command, and
+    ending on `point`; `make` with its `make` items as its checklist, writing only the
+    deliverable's paths; `try` writing only the Round's folder; and `check` running only
+    `repository.py checks`, with the check `check.py generator <cut>`, and the results `made` or,
+    ending, `point`.
     For `rn:evaluator`, whose prompt is the path of its Cut from `cwd`, the steps `read`, `start`,
     `try`, and `judge`, each held in order and never reading the design tree, the generator's Cut
-    and result, or another Round: `read` reading whole the Cut, writing nothing; `start` running
-    only `repository.py trial`, writing nothing; `try` writing only the folder of the people's
-    starting state, as `repository.trial.folder` names it; and `judge` with each condition's ID as
-    its checklist, writing only the Round's folder, with the check `check.py evaluator <cut>` and
-    the result `judged`.
+    and result, or another Round: `read` reading whole the Cut, writing nothing and running no
+    command; `start` running only `repository.py trial`, writing nothing; `try` writing only the
+    folder of the people's starting state, as `repository.trial.folder` names it; and `judge` with
+    each condition's ID as its checklist, writing only the Round's folder, with the check
+    `check.py evaluator <cut>` and the result `judged`. The generator's `make` and `try`, and the
+    evaluator's `try`, run any command, as the people's own commands run there.
     Changes: nothing.
-    Refuses: Wrong where the role is none of rn's, a role's prompt names no Cut in its form, or a
-    turn other than a new request finds no run, naming what's wrong.
+    Refuses: Wrong where the role is none of rn's, or a role's prompt names no Cut in its form,
+    naming what's wrong.
     """
     role, prompt = given["role"], given["prompt"]
     if role in _ORCHESTRATOR:
@@ -96,43 +109,42 @@ def _turn(run: Given, prompt: str, cwd: str, plugin_root: str) -> list[Steps]:
     turn's by its command and words."""
     said = prompt.strip() or f"/{run['skill']} {run['words']}".strip()
     command, _, words = said.partition(" ")
+    find = _commands(plugin_root, ("repository", "find"))
     if command == "/rn:up" and words.strip():
         place = RunPlace(cwd, named(date.today(), words))
-        own = [_step("start", _commands(plugin_root, ("repository", "new")))]
+        own = [_step("start", _commands(plugin_root, ("repository", "new")), _BLOCKED)]
     else:
-        place = _paused(cwd)
+        found = paused(cwd)
+        if not found:
+            return [_step("find", find)]
+        place = found[0]
         own = {
-            "/rn:up": [_step("find", _commands(plugin_root, ("repository", "find")))],
-            "/rn:ty": [_step("record", _commands(plugin_root, ("tree", "signoff")))],
+            "/rn:up": [_step("find", find, _BLOCKED)],
+            "/rn:ty": [_step("record", _commands(plugin_root, ("tree", "signoff")), _BLOCKED)],
         }.get(command, [])
     if command == "/rn:dn":
         return [
-            _step("stop", _writes(cwd, [])),
+            _step("stop", _writes(cwd, []), _BLOCKED),
             _step("pause", _commands(plugin_root, ("repository", "pause"))),
         ]
     touched = f"python3 {plugin_root}/scripts/tree.py touched {_rel(place.folder, cwd)}"
     return [
         *own,
-        _step("review", _writes(cwd, [place.tree])),
-        _step("touched", _writes(cwd, [place.tree]), {"type": "checklist", "command": touched}),
-        _step("commit", _commands(plugin_root, ("tree", "commit"))),
+        _step("review", _writes(cwd, [place.tree]), _commands(plugin_root), _BLOCKED),
+        _step(
+            "touched",
+            _writes(cwd, [place.tree]),
+            _commands(plugin_root, ("tree", "touched")),
+            {"type": "checklist", "command": touched},
+            _BLOCKED,
+        ),
+        _step("commit", _commands(plugin_root, ("tree", "commit")), _BLOCKED),
         _step(
             "move",
             _writes(cwd, []),
             _commands(plugin_root, ("repository", "put-up"), ("tree", "cut")),
         ),
     ]
-
-
-def _paused(cwd: str) -> RunPlace:
-    """The run to go on with, the first that can be picked up."""
-    found = paused(cwd)
-    if not found:
-        raise Wrong(
-            "no run of rn lies in this repository to go on with; start one with /rn:up and"
-            " what you want"
-        )
-    return found[0]
 
 
 def _cut(prompt: str, cwd: str, role: str) -> Given:
@@ -164,11 +176,17 @@ def _generator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
     paths = [os.path.join(worktree, each) for each in [node["path"], *node.get("more_paths", [])]]
     round_ = os.path.join(cwd, cut["round"]) + "/"
     return [
-        _step("read", {"type": "reads_whole", "paths": _rels(whole, cwd)}, _writes(cwd, [])),
+        _step(
+            "read",
+            {"type": "reads_whole", "paths": _rels(whole, cwd)},
+            _writes(cwd, []),
+            _commands(plugin_root),
+        ),
         _step(
             "decide",
             {"type": "checklist", "items": practice.items(held, "decide")},
             _writes(cwd, [round_]),
+            _commands(plugin_root),
             {"type": "result", "ends": ["point"]},
         ),
         _step(
@@ -223,6 +241,7 @@ def _evaluator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
             never,
             {"type": "reads_whole", "paths": _rels([os.path.join(cwd, prompt)], cwd)},
             _writes(cwd, []),
+            _commands(plugin_root),
         ),
         _step("start", never, _commands(plugin_root, ("repository", "trial")), _writes(cwd, [])),
         _step("try", never, _writes(cwd, [cut["trial"].rstrip("/") + "/"])),
@@ -246,7 +265,8 @@ def _step(name: str, *rules: Rule) -> Steps:
 
 
 def _commands(plugin_root: str, *named_: tuple[str, str]) -> Rule:
-    """The rule of the commands of rn's scripts, each by its script and subcommand."""
+    """The rule of the commands of rn's scripts, each by its script and subcommand; with none
+    given, the rule lets only Lane's reporters through."""
     return {
         "type": "commands",
         "commands": [f"python3 {plugin_root}/scripts/{name}.py {sub}" for name, sub in named_],

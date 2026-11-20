@@ -571,14 +571,14 @@ def trial_made(b: Bench) -> tuple[Conversation, Agent, dict[str, Any], str]:
     return c, evaluator, given, trial
 
 
-def short_twice(b: Bench) -> tuple[Conversation, Answer]:
+def short_twice(b: Bench) -> Conversation:
     """A conversation whose command's N1 the evaluator found short in Rounds content-1 and
-    content-2, the orchestrator holding N2 and N3 good; gives what tree.py cut gave for a third
-    Round of its generator."""
+    content-2, the orchestrator holding N2 and N3 good, whose second evaluator's end reached the
+    main conversation."""
     more = {"N1": "The accountant prints an invoice with a comma in a line."}
     c, _ = judged_command(b, more)
     _, generator = next_round(b, c, rn_files.COMMAND, ["N2", "N3"])
     generated(b, c, generator)
     _, evaluator = next_round(b, c, rn_files.COMMAND, ["N2", "N3"], "evaluator")
     evaluated(b, c, evaluator, more)
-    return c, c.bash(b.script("tree", "cut", b.run, "generator", rn_files.COMMAND))
+    return c

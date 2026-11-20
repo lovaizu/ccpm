@@ -146,8 +146,8 @@ def test_a_pick_up_with_a_point_waiting_keeps_it_open_and_starts_no_role(b: Benc
     """Given a run paused while the generator's point waits on the user, kept as an open
     decision of the command's N1
     When the user picks it up in a new conversation
-    Then the design tree still holds the point open, and a start of rn:generator is stopped as
-    not due"""
+    Then the design tree still holds the point open, a start of rn:generator is stopped as not
+    due, and the turn ends, Lane stopping no move but the start"""
     c, generator = signed_plan(b)
     pointed(b, c, generator, "Should a line's quantity default to 1?")
     point = rn_files.decision("a line's quantity", None)
@@ -160,21 +160,21 @@ def test_a_pick_up_with_a_point_waiting_keeps_it_open_and_starts_no_role(b: Benc
     answer, agent = later.start("rn:generator", "Make the command.", "Run rn:generator")
     assert agent is None
     assert "No start of rn's subagents is due now." in answer.said
+    ended(later, "A question that's yours:\n  Should a line's quantity default to 1?")
 
 
 @pytest.mark.supports("S2")
 def test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up(b: Bench):
     """Given invoicer's repository with no run of rn
-    When the user types /rn:up alone
-    Then Lane stops the turn's first move with rules.py's refusal, `rules.py: <what's wrong>`, of
-    a pick-up that finds no run, with no traceback,
-    and the repository has no worktree of rn"""
+    When the user types /rn:up alone, and the orchestrator runs repository.py find, which prints
+    nothing, marks `find` done, and tells the user that rn has no run to pick up
+    Then the turn ends, Lane stopping no move, and the repository has no worktree of rn"""
     c = b.converse()
-    answer = c.type("/rn:up")
-    moved = c.bash(b.script("repository", "find"))
-    said = answer.said + moved.said
-    assert "rules.py: " in said
-    assert "Traceback" not in said
+    typed = c.type("/rn:up")
+    assert not typed.blocked, typed.said
+    assert ran(c, b.script("repository", "find")) == ""
+    marked(c, "find")
+    ended(c, "rn has no run to pick up here. Type /rn:up with what you want.")
     assert not os.path.exists(b.at(".claude/worktrees"))
 
 
@@ -182,8 +182,9 @@ def test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up(b: Bench):
 def test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was(b: Bench):
     """Given a run paused while its command's generator ran
     When the user types /rn:up with the same words in a new conversation
-    Then repository.py new refuses the run's name as taken, and the worktree's design tree is as
-    the pause left it"""
+    Then repository.py new refuses the run's name as taken, the turn ends on blocked with the
+    paused run's generator due, Lane stopping no move, and the worktree's design tree is as the
+    pause left it"""
     c, generator = mid_command(b)
     paused(b, c, [generator])
     before = b.tree()
@@ -192,4 +193,7 @@ def test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was(b: Bench)
     refused = later.bash(b.script("repository", "new", WORDS, rn_files.GOAL))
     assert refused.exit_code == 1
     assert b.name() in refused.output
+    given = later.bash("lane-result blocked")
+    assert not given.blocked, given.said
+    ended(later, refused.output)
     assert b.tree() == before

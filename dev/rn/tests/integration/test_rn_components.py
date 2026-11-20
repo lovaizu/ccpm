@@ -20,6 +20,7 @@ from rn_bench import (
     command_signed,
     confirmed,
     cut_of,
+    ended,
     evaluator_started,
     from_cwd,
     listed,
@@ -344,8 +345,8 @@ def test_a_deliverable_waits_while_one_it_rests_on_is_being_made(b: Bench):
 def test_a_put_up_without_a_login_of_gh_is_refused_before_any_push(b: Bench):
     """Given a run whose plan has each condition good, and gh with no login
     When the orchestrator puts the plan up by repository.py put-up
-    Then it gives 1 with what gh auth status said, gh was asked nothing after it, and the remote
-    holds no branch of the run"""
+    Then it gives 1 with what gh auth status said, gh was asked nothing after it, the remote
+    holds no branch of the run, and the turn ends with the refusal, Lane stopping no move"""
     c = requested(b)
     confirmed(b, c)
     c.type(rn_files.TAX_ANSWER)
@@ -356,3 +357,4 @@ def test_a_put_up_without_a_login_of_gh_is_refused_before_any_push(b: Bench):
     assert "You are not logged into any GitHub hosts." in refused.output
     assert [each[:3] for each in b.asked_gh()] == [["gh", "auth", "status"]]
     assert f"rn-{b.name()}" not in git(b.origin, "branch", "--list").split()
+    ended(c, refused.output)

@@ -14,19 +14,30 @@ import pytest
 import rn_files
 from repo_files import write_files
 from rn_files import COMMAND
-from rn_prompts import NOT_BUILT, RUNS, Room, as_role, generator_cut, result_of, run_of
+from rn_prompts import RUNS, Room, as_role, generator_cut, result_of, run_of
 
-pytestmark = [opus.NEEDS_LOGIN, pytest.mark.xfail(strict=True, reason=NOT_BUILT)]
+pytestmark = [opus.NEEDS_LOGIN]
 
 NAME = "20261120-a-command-with-which-the"
 TAX = rn_files.decision(rn_files.TAX_ABOUT, rn_files.TAX_ANSWER, "user")
 LINES = "Hosting;40.00;1\nSupport hours;120.00;1\n"
+# The command its people run, as the README's walkthrough shows it, which the case runs too.
+RUN = ["python3", "-m", "invoicer", "lines.csv", "--rate", "0.19"]
+# The check of the command, as N1.2 of the light best practice reads it: the decision about
+# `The check`, which names the command of the README's walkthrough and the rate's form.
+CHECK = rn_files.decision(
+    "The check",
+    f"The accountant saves the invoice's lines as lines.csv, runs `{' '.join(RUN)}` at the"
+    " worktree's top, and reads the invoice it prints. The rate is a fraction, 0.19 for 19 %.",
+    "reasoning",
+)
 
 
 def command_node(decisions: list) -> dict:
-    """The command's node, of the kind light, with the decisions of its N1."""
+    """The command's node, of the kind light, with the decision about its check and the decisions
+    given, each of its N1."""
     node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"])
-    return rn_files.decided(node, {"N1": decisions})
+    return rn_files.decided(node, {"N1": [CHECK, *decisions]})
 
 
 def started_on(room: Room, node: dict, findings: object = None) -> str:
@@ -41,7 +52,7 @@ def prints(room: Room, lines: str) -> subprocess.CompletedProcess[str]:
     worktree = room.worktree(NAME)
     write_files(worktree, {"lines.csv": lines})
     return subprocess.run(
-        ["python3", "-m", "invoicer", "lines.csv", "--rate", "0.19"],
+        RUN,
         cwd=worktree,
         capture_output=True,
         text=True,
