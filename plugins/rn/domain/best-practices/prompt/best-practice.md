@@ -24,7 +24,7 @@
     - **N14** Can the person decide from the first lines of each message that the AI writes to them? (Output)
     - **N15** Does each claim that the AI reports rest on a check it ran on the real thing, with what it didn't check stated? (Output)
   - **C6** The writer knows from tests how the prompt does over several runs and in real use.
-    - **N16** Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do the end-to-end (E2E) tests of the product it's part of confirm it on real requests? (the whole)
+    - **N16** Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do its people try the product it's part of on their own requests once its integration tests pass? (the whole)
 
 ## Template
 
@@ -202,11 +202,11 @@ The caller can't tell a claim that the AI checked from one it guessed, and acts 
 
 ### N16
 
-Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do the end-to-end (E2E) tests of the product it's part of confirm it on real requests?
+Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do its people try the product it's part of on their own requests once its integration tests pass?
 
 The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. The results vary from run to run, so a criterion would pass or fail by chance, and the writer judges from the results of several runs, as the architecture's [test strategy guide](../architecture/test-strategy-guide.md) says of a test that runs a prompt.
 
 1. *While making.* Build and run the prompt's unit tests by [the test-implementation best practice](../test-implementation/best-practice.md), on the model its users run, from one run of each case up to as many runs as Test strategy sets, in the folders that the architecture's Test strategy names for its test cases.
 2. *While making.* Open the record of each run, and see from what the AI did, not from its last message, which runs reached the result.
 3. *While making.* Where a run didn't reach the result, find the cause in its record, as the test-implementation best practice says, and change the prompt only for a cause in the prompt. Run the cases again, and judge from their results whether the change helps.
-4. *While making.* Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up.
+4. *While making.* Once the product's integration tests pass, have its people try it on their own requests, and take each place where it fails them back to its cause, in the prompt or another part, since a unit test meets only the cases that its writer set up, and a run in which an AI plays the people is no ground for a decision.

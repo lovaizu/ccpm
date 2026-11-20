@@ -389,7 +389,7 @@
      {
       "id": "N16",
       "about": "the whole",
-      "what": "Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do the end-to-end (E2E) tests of the product it's part of confirm it on real requests?",
+      "what": "Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and do its people try the product it's part of on their own requests once its integration tests pass?",
       "why": "The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. The results vary from run to run, so a criterion would pass or fail by chance, and the writer judges from the results of several runs, as the architecture's [test strategy guide](../architecture/test-strategy-guide.md) says of a test that runs a prompt.",
       "items": [
        {
@@ -406,7 +406,7 @@
        },
        {
         "at": "make",
-        "text": "Confirm by the E2E tests that the prompt, among the other parts, reaches the result on requests as big as real ones, since a unit test meets only the cases that its writer set up."
+        "text": "Once the product's integration tests pass, have its people try it on their own requests, and take each place where it fails them back to its cause, in the prompt or another part, since a unit test meets only the cases that its writer set up, and a run in which an AI plays the people is no ground for a decision."
        }
       ]
      }
