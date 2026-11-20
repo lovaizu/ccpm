@@ -269,121 +269,13 @@
       "name": "A plugin's AI notices when it ends a step before each item of the step's checklist is done",
       "path": "dev/lane/tests/integration/test_lane_s6_checklist.py",
       "kind": "code",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests",
-        "plugins/rn/domain/best-practices/code"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The change",
-              "decided": "the code that the cases of a checklist whose items a command gives ask",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A plugin's main conversation takes, at each turn, the steps that its adapter gives for that turn's event",
       "path": "dev/lane/tests/integration/test_lane_s11_turns.py",
       "kind": "code",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests",
-        "plugins/rn/domain/best-practices/code"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The change",
-              "decided": "the code that S11's cases ask",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A plugin's run moves on only by the result its AI gives, never by what its reply says",
@@ -1223,14 +1115,6 @@
     {
       "do": "make",
       "path": "dev/rn/tests"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/tests/integration/test_lane_s6_checklist.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/tests/integration/test_lane_s11_turns.py"
     },
     {
       "do": "make",
