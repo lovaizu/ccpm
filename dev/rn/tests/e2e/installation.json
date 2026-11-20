@@ -1,6 +1,5 @@
 {
   "repository": "https://github.com/lovaizu/playground",
-  "commits": "dev/rn/tests/e2e/commits.json",
   "plugin_dirs": [],
   "install": [
     "claude plugin marketplace add {top}",

@@ -196,6 +196,10 @@ class E2ERunnerTest(E2EBase):
         self.write_json("dev/e2e/commits.json", [{"files": {}}])
         self.refuses("dev/e2e/commits.json")
 
+    def test_commits_that_arent_a_path_are_refused(self):
+        self.fields["commits"] = COMMITS
+        self.refuses("`commits`")
+
     def test_a_repository_that_cant_be_cloned_is_refused(self):
         self.fields["repository"] = os.path.join(self.base, "none.git")
         self.refuses("none.git")
@@ -216,6 +220,14 @@ class E2ERunnerTest(E2EBase):
         self.run_test()
         (turn,) = self.calls(stand_in=False)
         self.assertEqual(turn["log"], ["Add the plugin", "Add tally", "Initial commit"])
+
+    def test_a_test_without_commits_runs_in_the_clone_as_the_repository_holds_it(self):
+        del self.fields["commits"]
+        self.plan([{"done": False, "prompt": "/lane:up p"}, {"done": True}], [{}])
+        code, _, err = self.run_test()
+        self.assertEqual(code, 0, err)
+        (turn,) = self.calls(stand_in=False)
+        self.assertEqual(turn["log"], ["Initial commit"])
 
     def test_a_file_of_a_commit_can_be_copied_from_the_repository(self):
         self.plan([{"done": False, "prompt": "go"}, {"done": True}], [{"show": ["p/plugin.json"]}])

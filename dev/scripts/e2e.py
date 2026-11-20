@@ -14,9 +14,9 @@ run `e2e.py hook <file>`, which adds each event to the file.
 An E2E test file is one JSON object:
 - `intent`: what the person means to do, which only the stand-in reads.
 - `repository`: the URL of the repository that the test clones, such as lovaizu/playground's.
-- `commits`: the path, from the top, of a JSON list of the commits that the test makes in the
-  clone, each `{"message": <text>, "files": {<path in the clone>: <text>}}`, where a file's text
-  may be `{"from": <path of a file from the top>}`.
+- `commits`: optional, the path, from the top, of a JSON list of the commits that the test makes
+  in the clone, each `{"message": <text>, "files": {<path in the clone>: <text>}}`, where a file's
+  text may be `{"from": <path of a file from the top>}`.
 - `plugin_dirs`: each folder that Claude Code loads by `--plugin-dir`, where `{top}` stands for the
   top of the repository and `{clone}` for the clone.
 - `install`: optional, each shell command that installs the plugins under test before the first
@@ -264,7 +264,6 @@ def _test(given: Any, path: str) -> E2ETest:
     fields = {
         "intent": str,
         "repository": str,
-        "commits": str,
         "plugin_dirs": list,
         "turns": int,
         "records": str,
@@ -275,13 +274,15 @@ def _test(given: Any, path: str) -> E2ETest:
             raise Refused(f"{path} needs `{key}` as {kind.__name__}")
     if not all(isinstance(each, str) for each in given["plugin_dirs"]):
         raise Refused(f"{path} needs `plugin_dirs` as a list of text")
+    if not isinstance(given.get("commits", ""), str):
+        raise Refused(f"{path} needs `commits` as str")
     install = given.get("install", [])
     if not (isinstance(install, list) and all(isinstance(each, str) for each in install)):
         raise Refused(f"{path} needs `install` as a list of text")
     if given["turns"] < 1:
         raise Refused(f"{path} needs `turns` as 1 or more")
     name = os.path.basename(path).rsplit(".json", 1)[0]
-    commits = _commits(given["commits"])
+    commits = _commits(given["commits"]) if "commits" in given else []
     return E2ETest(
         name,
         given["intent"],
