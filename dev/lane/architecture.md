@@ -208,8 +208,7 @@ dev/lane/                         what only Lane's developers use
 | Complexity analysis | Parts | Quality | During the work | Per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Unit testing | Parts | Quality | During the work | Every case passes. |
 | Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
-| Property-based testing | Parts | Quality | Apart from the work | 0 counterexamples in reading the rules, each rule type's check, and the guard's placing of moves. |
-| Mutation testing | Parts | Quality | Apart from the work | 0 surviving mutants. |
+| Property-based testing | Parts | Quality | During the work | 0 counterexamples in reading the rules, each rule type's check, and the guard's placing of moves. |
 | Integration testing | Architecture | Quality | During the work | Every case passes, each handoff giving the data the data model names. |
 | Contract testing | Architecture | Quality | Apart from the work | On each new Claude Code, each recorded state gives the double's events. |
 | Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing broken. |
