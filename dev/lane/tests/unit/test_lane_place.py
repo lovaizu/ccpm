@@ -531,26 +531,15 @@ def test_a_subagents_call_is_at_the_first_step_it_hasnt_marked(
     assert place(given, [on], by_routes) == writer_move("call", given, on, step=step)
 
 
-def searched(e: Events, tool: str, path: str | None) -> Event:
-    """The PreToolUse of the writer a1's Grep or Glob, with the `pattern` and the `path`, where one
-    is given, of the tool's input as Claude Code's tools reference gives them; made from a Read's
-    recorded event until a record of a Grep and a Glob exists."""
-    event = e.read(os.path.join(e.cwd, "NOTES.md"), WRITER)
-    event["tool_name"] = tool
-    event["tool_input"] = {"pattern": "key"}
-    if path is not None:
-        event["tool_input"]["path"] = path
-    return event
-
-
 @pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
 @pytest.mark.parametrize("tool", ["Grep", "Glob"])
 @pytest.mark.parametrize("path", ["secrets", "secrets-old", None])
 def test_a_subagents_grep_or_glob_is_a_call_at_its_step(e: Events, tool: str, path: str | None):
     """Given the writer tied to a1, at its step `write`
-    When a1 greps or globs in secrets/, in secrets-old/, or with no path
+    When a1 greps or globs in secrets/, in secrets-old/, or with no path, each path relative as
+    Claude Code gives it
     Then the move is a call by a1 at the step `write`, for its rules to judge"""
-    given = searched(e, tool, None if path is None else os.path.join(e.cwd, path))
+    given = e.search(tool, path, WRITER)
     on = tied()
     assert place(given, [on], by_routes) == writer_move("call", given, on)
 
@@ -561,8 +550,7 @@ def test_the_post_tool_use_of_a_grep_or_a_glob_is_no_move(e: Events, tool: str):
     """Given the writer tied to a1
     When the PostToolUse of a1's Grep or Glob comes
     Then it makes no move, as only a Read's lines count toward a file read whole"""
-    given = searched(e, tool, os.path.join(e.cwd, "NOTES.md"))
-    given.update(hook_event_name="PostToolUse", tool_response={"filenames": ["NOTES.md"]})
+    given = e.search_ran(tool, None, ["NOTES.md"], WRITER)
     assert place(given, [tied()], by_routes) is None
 
 

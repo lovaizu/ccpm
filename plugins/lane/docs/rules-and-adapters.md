@@ -90,8 +90,9 @@ names a folder and each file under it.
 
 ### `writes`
 
-The files the step writes. Lane judges each Write and Edit at the step, and stops one whose file
-the rule doesn't name.
+The files the step writes. Lane judges each Write, Edit, and NotebookEdit at the step, by the file
+that its `file_path`, or a NotebookEdit's `notebook_path`, names, and stops one whose file the rule
+doesn't name.
 
 ```json
 { "type": "writes", "paths": ["CHANGELOG.md", "docs/changes/"] }
@@ -102,24 +103,49 @@ You're at the step `write` of log:writer, which writes only CHANGELOG.md and doc
 Write there instead of notes.md.
 ```
 
+A rule that names no path holds a step that writes nothing:
+
+```json
+{ "type": "writes", "paths": [] }
+```
+
+```text
+You're at the step `write` of log:writer, which writes nothing.
+Leave notes.md unwritten.
+```
+
 ### `reads_none`
 
-The files the step never reads. Lane judges each Read at the step, and stops one whose file the
-rule names. The [`commands`](#commands) rule holds a Bash command that reads such a file. Lane
-doesn't yet check a Grep or a Glob.
+The files the step never reads. Lane judges each Read and Grep at the step. It stops a Read whose
+file the rule names. It stops a Grep whose search reaches such a file: where its `path`, taken from
+the folder that the conversation works in, or that folder where the Grep names no `path`, is a path
+of the rule, lies under a folder of the rule, or is a folder that holds a path of the rule. A Glob
+goes through, as it reads no file's content. The [`commands`](#commands) rule holds a Bash command
+that reads such a file.
 
 ```json
 { "type": "reads_none", "paths": ["docs/old/"] }
 ```
+
+At a Read of `docs/old/1.1.0.md`:
 
 ```text
 You're at the step `write` of log:writer, which never reads docs/old/.
 Leave docs/old/1.1.0.md unread.
 ```
 
+At a Grep in `docs`, a folder that holds `docs/old/`, the sentence names the path searched from the
+folder that the conversation works in, and that folder itself as `.`:
+
+```text
+You're at the step `write` of log:writer, which never reads docs/old/.
+Give Grep a path outside those files instead of docs.
+```
+
 ### `reads_whole`
 
-The files the step reads whole before it's done. Each path names a file. Lane counts each line
+The files the step reads whole before it's done. Each path names a file, and Lane holds a rule
+whose path ends with `/` out of form, as a folder has no lines to read. Lane counts each line
 that a Read of the same start reads, including a Read made at an earlier step. It stops a
 `lane-step` mark of the step while a line is unread.
 
@@ -134,10 +160,10 @@ Read docs/style.md from its line 3 before you mark it done.
 
 ### `commands`
 
-The commands the step runs. Lane splits each Bash command at `|`, `&&`, `||`, and `;`, and stops
-the call where a part begins with the words of no named command. `git log` lets through
-`git log --oneline`. Lane's reporters always go through. An empty list lets no other command
-through. A step with no `commands` rule runs any command.
+The commands the step runs. Lane splits each Bash command at `|`, `&&`, `||`, `;`, and each
+newline, and stops the call where a part begins with the words of no named command. `git log` lets
+through `git log --oneline`. Lane's reporters always go through. A step with no `commands` rule runs
+any command.
 
 ```json
 { "type": "commands", "commands": ["git log"] }
@@ -146,6 +172,17 @@ through. A step with no `commands` rule runs any command.
 ```text
 You're at the step `write` of log:writer, which runs only git log.
 Run only those here, and the rest at a step that names them.
+```
+
+An empty list lets no command but Lane's reporters through:
+
+```json
+{ "type": "commands", "commands": [] }
+```
+
+```text
+You're at the step `write` of log:writer, which runs no command.
+Run it at a step that names it.
 ```
 
 ### `order`
@@ -201,11 +238,12 @@ both.
 ```
 
 At the start's end, Lane judges the result rule of the first step not marked done, where that
-step has one, or else of the last step. It stops an end with no result that the rule names:
+step has one, or else of the last step. It stops an end with no result that the rule names, offering
+each result it may give, the last two joined by `or`:
 
 ```text
 You end the step `write` of log:writer with no result it may give.
-Give written and blocked with lane-result first.
+Give written or blocked with lane-result first.
 ```
 
 For a rule that names only `ends`:
@@ -236,8 +274,8 @@ CHANGELOG.md: no entry for 1.2.0
 
 | Move | Rule types, in the order Lane asks them |
 |---|---|
-| A Write or Edit | `writes` |
-| A Read | `reads_none` |
+| A Write, Edit, or NotebookEdit | `writes` |
+| A Read or Grep | `reads_none` |
 | A Bash call | `commands` |
 | A `lane-step` mark | `order`, `reads_whole`, `checklist` |
 | A subagent's end, or the main conversation's turn's end | `result`, then `order`, then `check` |
@@ -372,7 +410,15 @@ lane-item takes <step> <item>
 | A call, a mark, or an end breaks a rule | The step's sentence, from [Rule types](#rule-types), as the reason Lane stops it. |
 | The run's first event after the skill's call, and each further command | The starts due, such as `Due: log:writer.` or `Due: log:writer 2 times at once.` |
 | A subagent's end reaches the main conversation | Its result and the starts due, such as `log:reviewer gave more. Due: log:writer.` A subagent stopped by TaskStop gives `log:writer stopped with no result.`, and its role is due again. |
-| The main conversation starts a role not due, or ends its turn while a start is due | The starts due, as the reason Lane stops it. |
+| The main conversation starts a role not due, or ends its turn while a start is due | The starts due, as the reason Lane stops it, or, for a start while none is due, the sentence below. |
 | `lane/rules.json` breaks its form, or an adapter fails | What's wrong, the file, and who mends it, as the reason Lane stops the call. |
 
-Lane stops any start that a subagent makes. It leaves alone a start of another plugin's subagent.
+Lane stops any start that a subagent makes, in the same words. It leaves alone a start of another
+plugin's subagent.
+
+A start of your plugin's subagents while no start is due:
+
+```text
+No start of log's subagents is due now.
+Go on without it, and start one once Lane says it's due.
+```

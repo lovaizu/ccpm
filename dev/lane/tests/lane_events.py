@@ -17,6 +17,7 @@ from claude_code import (
     READ,
     REFERENCE,
     RUN,
+    SEARCH,
     SEND_MESSAGE,
     SKILL,
     SUBAGENT_OF_SUBAGENT,
@@ -139,6 +140,41 @@ class Events:
         """The PreToolUse of a Read of the file at the path."""
         use = {"tool_input": {"file_path": path}, **self.by(agent)}
         return self.made(READ, "the main conversation runs `Read long.txt`", use)
+
+    def notebook(self, path: str, agent: Subagent | None = None) -> Event:
+        """The PreToolUse of a NotebookEdit of the notebook at the path, its `tool_input` naming
+        `notebook_path` and `new_source` as Claude Code's tools reference gives them, as no record
+        shows a NotebookEdit."""
+        tool_input = {"notebook_path": path, "new_source": "x"}
+        use = {"tool_name": "NotebookEdit", "tool_input": tool_input, **self.by(agent)}
+        if agent:
+            return self.made(RUN, "writer writes CHANGELOG.md", use)
+        return self.made(RUN, "the main conversation runs lay.py print", use)
+
+    def search(self, tool: str, path: str | None, agent: Subagent | None = None) -> Event:
+        """The PreToolUse of a Grep or a Glob, its `tool_input` naming `pattern`, and `path` only
+        where the call gives one, as the call gives it, a relative path unresolved."""
+        words = "Grep beta path notes" if tool == "Grep" else "Glob *.md path notes"
+        if agent:
+            event = f"searcher runs `{words}`, in the default tools"
+        else:
+            event = f"the main conversation runs `{words}`, with the tools named"
+        tool_input = {"pattern": "beta" if tool == "Grep" else "*.md"}
+        if path is not None:
+            tool_input["path"] = path
+        use = {"tool_input": tool_input, **self.by(agent)}
+        return self.made(SEARCH, event, use, main=not agent)
+
+    def search_ran(self, tool: str, path: str | None, found: list[str], agent: Subagent) -> Event:
+        """The PostToolUse of the agent's Grep or Glob, which found the files, by their paths from
+        `cwd`."""
+        words = "Grep beta path notes" if tool == "Grep" else "Glob *.md path notes"
+        event = f"searcher's `{words}` ran, in the default tools"
+        ran = line(SEARCH, event)["payload"]
+        ran["tool_response"].update(filenames=found, numFiles=len(found))
+        tool_input = self.search(tool, path, agent)["tool_input"]
+        use = {"tool_input": tool_input, "tool_response": ran["tool_response"], **agent.fields()}
+        return self.made(SEARCH, event, use)
 
     def read_ran(self, path: str, first: int, count: int, total: int, agent: Subagent) -> Event:
         """The PostToolUse of the agent's Read of the file at the path, which read `count` lines

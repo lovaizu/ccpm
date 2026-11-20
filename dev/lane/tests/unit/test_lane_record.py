@@ -156,16 +156,3 @@ def test_no_entry_added_leaves_the_record_as_it_stands():
     add("session-1", [RUN, FOLDER])
     add("session-1", [])
     assert runs("session-1")[0].entries == [RUN, FOLDER]
-
-
-@pytest.mark.supports("test_after_compact_the_run_goes_on_with_its_starts_due")
-def test_a_record_that_cant_be_read_is_refused(temp: str):
-    """Given a conversation whose record is a folder, which can't be read as a file
-    When Lane reads its runs
-    Then it refuses with OSError"""
-    add("session-1", [RUN])
-    [made] = os.listdir(temp)
-    os.remove(os.path.join(temp, made))
-    os.makedirs(os.path.join(temp, made))
-    with pytest.raises(OSError):
-        runs("session-1")

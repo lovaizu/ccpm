@@ -158,13 +158,53 @@ def test_a_rule_of_a_type_that_lane_lacks_is_out_of_form_naming_its_place(tmp_pa
 
 
 @pytest.mark.supports("test_a_rule_of_a_type_that_lane_lacks_stops_saying_what_to_mend")
-@pytest.mark.parametrize("kind", ["writes", "reads_none", "reads_whole", "result"])
+@pytest.mark.parametrize("kind", ["reads_none", "reads_whole", "result"])
 def test_a_rule_with_an_empty_list_is_out_of_form(tmp_path: Any, kind: str):
-    """Given rules whose writer's step holds a rule of the type with no path or no result
+    """Given rules whose writer's step holds a rule of the files never to read or to read whole
+    with no path, or a rule of results with no result
     When Lane reads them
     Then it refuses with OutOfForm, as the form takes one at least"""
     values = "results" if kind == "result" else "paths"
     refused(str(tmp_path), writer_rule({"type": kind, values: []}))
+
+
+@pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
+@pytest.mark.xfail(
+    strict=True,
+    reason="rules.schema.json takes a rule of the files a step writes with no path, as a step that"
+    " writes nothing",
+)
+def test_a_rule_of_the_files_written_with_no_path_is_in_the_form(tmp_path: Any):
+    """Given rules whose writer's step writes nothing, by a rule of the files it writes with an
+    empty list
+    When Lane reads them
+    Then they read as they are"""
+    held(str(tmp_path), writer_rule({"type": "writes", "paths": []}))
+
+
+@pytest.mark.supports("test_a_step_marked_done_with_a_file_unread_is_stopped_with_the_file")
+@pytest.mark.parametrize("paths", [["docs/"], ["NOTES.md", "docs/changes/"]])
+@pytest.mark.xfail(
+    strict=True,
+    reason="rules.schema.json refuses a path that ends with / in a rule of the files to read whole,"
+    " as a folder has no lines to read",
+)
+def test_a_folder_in_a_rule_of_the_files_to_read_whole_is_out_of_form(
+    tmp_path: Any, paths: list[str]
+):
+    """Given rules whose writer's step reads whole the folder docs/, or NOTES.md and the folder
+    docs/changes/
+    When Lane reads them
+    Then it refuses with OutOfForm"""
+    refused(str(tmp_path), writer_rule({"type": "reads_whole", "paths": paths}))
+
+
+@pytest.mark.supports("test_a_step_marked_done_with_a_file_unread_is_stopped_with_the_file")
+def test_a_file_in_a_folder_in_a_rule_of_the_files_to_read_whole_is_in_the_form(tmp_path: Any):
+    """Given rules whose writer's step reads whole docs/style.md, a file in a folder
+    When Lane reads them
+    Then they read as they are"""
+    held(str(tmp_path), writer_rule({"type": "reads_whole", "paths": ["docs/style.md"]}))
 
 
 @pytest.mark.supports("test_a_rule_of_a_type_that_lane_lacks_stops_saying_what_to_mend")

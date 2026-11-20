@@ -1,13 +1,14 @@
 """The unit cases of hooks/lane/rule_types/: each rule type's judge, one for each class of the call,
-the mark, or the end it judges, with the edges of a path's folder and of a file's lines, the values
-of a rule at one and several, a value that nearly matches a named one, and the marks, reads, and
-results of another start or of the main conversation, which a judge leaves alone, and a Grep whose
-search reaches a file never to read or doesn't, beside a Glob, which goes through; the sentence
-that lists a rule's values; and the order in which rule_types/__init__.py asks them, one for each
-combination of rules that a move breaks, with roles of no step, of one, and of three, a result rule
-on a step that isn't the last, a result that ends the start at its first, a middle, or its last
-step, and the main conversation's turn's end. Each Then gives the whole sentence, as Lane's
-rules-and-adapters.md words it."""
+the mark, or the end it judges, with the edges of a path's folder and of a file's lines, the
+values of a rule at none, one, and several, a value that nearly matches a named one, and the
+marks, reads, and results of another start or of the main conversation, which a judge leaves
+alone, a NotebookEdit judged as a write, and a Grep whose search reaches a file never to read or
+doesn't, its path given relative as Claude Code gives it or from the root, beside a Glob, which
+goes through; the sentence that lists a rule's values; and the order in which
+rule_types/__init__.py asks them, one for each combination of rules that a move breaks, with
+roles of no step, of one, and of three, a result rule on a step that isn't the last, a result
+that ends the start at its first, a middle, or its last step, and the main conversation's turn's
+end. Each Then gives the whole sentence, as Lane's rules-and-adapters.md words it."""
 
 from __future__ import annotations
 
@@ -22,19 +23,6 @@ import lane_entries
 import pytest
 import rule_types
 from lane_events import Event, Events, Subagent
-from lane_sentences import (
-    at,
-    check_fails,
-    checklist_of,
-    comes_before,
-    ends_before,
-    never_reads,
-    no_result,
-    reads_whole_of,
-    runs_only,
-    work_undone,
-    writes_only,
-)
 from place import Move
 from record import Entry, Run
 from repo_files import write_files
@@ -128,6 +116,47 @@ def marked(step: str) -> Report:
     return {"kind": "step", "step": step}
 
 
+# The sentences that many cases expect, as Lane's rules-and-adapters.md words them: the first line
+# of the step `write` of log:writer that writes CHANGELOG.md and docs/changes/, and that never reads
+# secrets/ and .env; the step's sentence of a command it doesn't run; and of the steps `write` and
+# `report` that come before another step, end undone, or end with no result.
+WRITES = (
+    "You're at the step `write` of log:writer, which writes only CHANGELOG.md and docs/changes/.\n"
+)
+NEVER_READS = "You're at the step `write` of log:writer, which never reads secrets/ and .env.\n"
+RUNS_GIT_LOG = (
+    "You're at the step `write` of log:writer, which runs only git log.\n"
+    "Run only those here, and the rest at a step that names them."
+)
+WRITE_BEFORE_REPORT = (
+    "You're at the step `write` of log:writer, which comes before `report`.\n"
+    "Do `write` and mark it done with lane-step write first."
+)
+REPORT_UNDONE = (
+    "You end before the step `report` of log:writer is done.\n"
+    "Do it and mark it done with lane-step report."
+)
+NOTES_UNREAD = (
+    "You're at the step `write` of log:writer, which reads whole NOTES.md.\n"
+    "Read NOTES.md from its line 1 before you mark it done."
+)
+NO_WRITTEN = (
+    "You end the step `report` of log:writer with no result it may give.\n"
+    "Give written with lane-result first."
+)
+REVIEW_NO_RESULT = (
+    "You end the step `review` of log:reviewer with no result it may give.\n"
+    "Give good, more or split with lane-result first."
+)
+# Why a case of a sentence that offers several results waits.
+OR = "result.judge_end offers the results as alternatives, the last two joined by `or`, not `and`"
+
+# The first line of the sentence of the writer's step `report` whose check doesn't pass, and of the
+# first of three steps, `draft`, whose check says `draft fails`.
+REPORT_FAILS = "You end the step `report` of log:writer, which its check doesn't pass:\n"
+DRAFT_FAILS = "You end the step `draft` of log:writer, which its check doesn't pass:\ndraft fails"
+
+
 # words
 
 
@@ -181,7 +210,7 @@ def test_a_write_of_another_file_gives_the_steps_sentence(e: Events, cwd: str, p
     Then the rule gives the step's sentence, naming the step, the files it writes, and the file"""
     call = move("call", e.write(os.path.normpath(os.path.join(cwd, path)), WRITER))
     said = writes.judge_call(rule(WRITE, "writes"), WRITE, call)
-    assert said == writes_only("write", ["CHANGELOG.md", "docs/changes/"], path)
+    assert said == f"{WRITES}Write there instead of {path}."
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
@@ -192,7 +221,10 @@ def test_a_path_that_doesnt_close_with_a_slash_names_no_file_under_it(e: Events,
     docs: Rule = {"type": "writes", "paths": ["docs"]}
     step: Step = {"name": "write", "rules": [docs]}
     call = move("call", e.write(os.path.join(cwd, "docs", "a.md"), WRITER))
-    assert writes.judge_call(docs, step, call) == writes_only("write", ["docs"], "docs/a.md")
+    assert writes.judge_call(docs, step, call) == (
+        "You're at the step `write` of log:writer, which writes only docs.\n"
+        "Write there instead of docs/a.md."
+    )
 
 
 @pytest.mark.supports("test_an_edit_of_a_file_that_its_step_doesnt_name_is_stopped")
@@ -202,7 +234,7 @@ def test_an_edit_of_another_file_gives_the_steps_sentence(e: Events, cwd: str):
     Then the rule gives the step's sentence, naming README.md"""
     call = move("call", e.write(os.path.join(cwd, "README.md"), WRITER, tool="Edit"))
     said = writes.judge_call(rule(WRITE, "writes"), WRITE, call)
-    assert said == writes_only("write", ["CHANGELOG.md", "docs/changes/"], "README.md")
+    assert said == f"{WRITES}Write there instead of README.md."
 
 
 @pytest.mark.supports("test_the_main_conversations_write_in_a_run_is_held_to_its_skills_step")
@@ -214,7 +246,10 @@ def test_the_sentence_names_the_role_that_the_move_holds(e: Events, cwd: str):
     lead: Step = RULES["roles"]["log:up"]["steps"][0]
     call = main(move("call", e.write(os.path.join(cwd, "notes.txt")), step="lead"), [lead])
     said = writes.judge_call(rule(lead, "writes"), lead, call)
-    assert said == writes_only("lead", [".log/up.md"], "notes.txt", "log:up")
+    assert said == (
+        "You're at the step `lead` of log:up, which writes only .log/up.md.\n"
+        "Write there instead of notes.txt."
+    )
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
@@ -228,7 +263,49 @@ def test_a_write_through_a_link_is_judged_by_the_file_it_reaches(e: Events, cwd:
     os.symlink(os.path.join(cwd, "notes.txt"), os.path.join(cwd, "CHANGELOG.md"))
     call = move("call", e.write(os.path.join(cwd, "CHANGELOG.md"), WRITER))
     said = writes.judge_call(rule(WRITE, "writes"), WRITE, call)
-    assert said == writes_only("write", ["CHANGELOG.md", "docs/changes/"], "notes.txt")
+    assert said == f"{WRITES}Write there instead of notes.txt."
+
+
+@pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
+@pytest.mark.parametrize(
+    "path, said",
+    [
+        ("notes.ipynb", f"{WRITES}Write there instead of notes.ipynb."),
+        ("docs/changes/1.2.0.ipynb", None),
+    ],
+)
+@pytest.mark.xfail(
+    strict=True,
+    reason="writes.judge_call judges a NotebookEdit by its `notebook_path`, as a Write by its"
+    " `file_path`",
+)
+def test_a_notebook_edit_is_judged_by_its_notebook_path(
+    e: Events, cwd: str, path: str, said: str | None
+):
+    """Given the step `write`, which writes CHANGELOG.md and docs/changes/
+    When the writer edits the notebook notes.ipynb, or docs/changes/1.2.0.ipynb, by NotebookEdit
+    Then the rule gives the step's sentence, naming notes.ipynb, or finds nothing"""
+    call = move("call", e.notebook(os.path.join(cwd, path), WRITER))
+    assert writes.judge_call(rule(WRITE, "writes"), WRITE, call) == said
+
+
+@pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
+@pytest.mark.xfail(
+    strict=True,
+    reason="writes.judge_call gives a rule that names no path the sentence of a step that writes"
+    " nothing, not a ValueError",
+)
+def test_a_write_at_a_step_that_writes_nothing_gives_its_sentence(e: Events, cwd: str):
+    """Given a step whose rule of the files it writes names no path
+    When the writer writes notes.txt
+    Then the rule gives the step's sentence, saying it writes nothing"""
+    nothing: Rule = {"type": "writes", "paths": []}
+    step: Step = {"name": "write", "rules": [nothing]}
+    call = move("call", e.write(os.path.join(cwd, "notes.txt"), WRITER))
+    assert writes.judge_call(nothing, step, call) == (
+        "You're at the step `write` of log:writer, which writes nothing.\n"
+        "Leave notes.txt unwritten."
+    )
 
 
 # reads_none
@@ -243,7 +320,7 @@ def test_a_read_of_a_file_never_to_read_gives_the_steps_sentence(e: Events, cwd:
     file"""
     call = move("call", e.read(os.path.join(cwd, path), WRITER))
     said = reads_none.judge_call(rule(WRITE, "reads_none"), WRITE, call)
-    assert said == never_reads("write", ["secrets/", ".env"], path)
+    assert said == f"{NEVER_READS}Leave {path} unread."
 
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
@@ -260,65 +337,66 @@ def test_a_read_of_another_file_holds(e: Events, cwd: str, path: str):
     assert reads_none.judge_call(rule(WRITE, "reads_none"), WRITE, call) is None
 
 
-def searched(e: Events, tool: str, path: str | None, agent: Subagent = WRITER) -> Event:
-    """The PreToolUse of the agent's Grep or Glob, with the `pattern` and the `path`, where one is
-    given, of the tool's input as Claude Code's tools reference gives them; made from a Read's
-    recorded event until a record of a Grep and a Glob exists."""
-    event = e.read(os.path.join(e.cwd, "NOTES.md"), agent)
-    event["tool_name"] = tool
-    event["tool_input"] = {"pattern": "key" if tool == "Grep" else "**/*.txt"}
-    if path is not None:
-        event["tool_input"]["path"] = path
-    return event
-
-
-# Where a search reaches a file never to read, from the conversation's folder: in a folder never
-# read, at the folder, at a file never read, at a folder that holds them, and with no path, at the
-# conversation's folder, which holds them.
-REACHES = ["secrets/a", "secrets", ".env", ".", None]
+# Where a Grep reaches a file never to read, as the call gives its path, from the conversation's
+# folder: in a folder never read, at the folder, at a file never read, at the folder that holds
+# them, at the folder above it, which holds that folder, and with no path, at the conversation's
+# folder; each with the path from the conversation's folder that the sentence names.
+REACHES = [
+    ("secrets/a", "secrets/a"),
+    ("secrets", "secrets"),
+    (".env", ".env"),
+    (".", "."),
+    ("..", ".."),
+    (None, "."),
+]
 # Where a search reaches none: a folder beside one never read, whose name begins as its, and a
 # folder that holds none.
 BESIDE = ["secrets-old", "docs"]
-# What the step's sentence of a search opens with.
-NEVER_READS = f"{at('write')}, which never reads secrets/ and .env.\n"
-
-
-def search_path(cwd: str, path: str | None) -> str | None:
-    return None if path is None else os.path.normpath(os.path.join(cwd, path))
+# Why a case of a Grep waits.
+GREP = (
+    "reads_none.judge_call judges a Grep by its `path`, taken from the event's `cwd`, or by `cwd`"
+    " where it names none, and gives the step's sentence asking for a path outside the files never"
+    " read"
+)
 
 
 @pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
-@pytest.mark.parametrize("path", REACHES)
-@pytest.mark.xfail(
-    strict=True,
-    reason="reads_none.judge_call judges a Grep by its `path`, or by the event's `cwd` where it"
-    " names none, and gives the step's sentence asking for a path outside the files never read",
-)
+@pytest.mark.parametrize("path, named", REACHES)
+@pytest.mark.xfail(strict=True, reason=GREP)
 def test_a_grep_whose_search_reaches_a_file_never_to_read_gives_the_steps_sentence(
-    e: Events, cwd: str, path: str | None
+    e: Events, path: str | None, named: str
 ):
     """Given the step `write`, which never reads secrets/ nor .env
     When the writer greps in a folder under secrets/, in secrets/ itself, in .env, in the
-    conversation's folder, which holds them, or with no path, in that folder
+    conversation's folder, in the folder above it, or with no path, each path relative and
+    unresolved as Claude Code gives it
     Then the rule gives the step's sentence, naming the step and the files it never reads, and
-    asking for a path outside them"""
-    call = move("call", searched(e, "Grep", search_path(cwd, path)))
+    asking for a path outside them instead of the one searched"""
+    call = move("call", e.search("Grep", path, WRITER))
     said = reads_none.judge_call(rule(WRITE, "reads_none"), WRITE, call)
-    assert said is not None
-    assert said.startswith(NEVER_READS)
+    assert said == f"{NEVER_READS}Give Grep a path outside those files instead of {named}."
+
+
+@pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
+@pytest.mark.xfail(strict=True, reason=GREP)
+def test_a_grep_with_a_path_from_the_root_is_judged_by_the_file_it_reaches(e: Events, cwd: str):
+    """Given the step `write`, which never reads secrets/ nor .env
+    When the writer greps in secrets/, its path given from the root
+    Then the rule gives the step's sentence, naming secrets as the conversation's folder sees it"""
+    call = move("call", e.search("Grep", os.path.join(cwd, "secrets"), WRITER))
+    said = reads_none.judge_call(rule(WRITE, "reads_none"), WRITE, call)
+    assert said == f"{NEVER_READS}Give Grep a path outside those files instead of secrets."
 
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
-@pytest.mark.parametrize("path", BESIDE)
-@pytest.mark.xfail(
-    strict=True,
-    reason="reads_none.judge_call judges a Grep by its `path`, which names no `file_path`",
-)
-def test_a_grep_whose_search_reaches_no_file_never_to_read_holds(e: Events, cwd: str, path: str):
+@pytest.mark.parametrize("path", [*BESIDE, os.path.join("..", "secrets")])
+@pytest.mark.xfail(strict=True, reason=GREP)
+def test_a_grep_whose_search_reaches_no_file_never_to_read_holds(e: Events, path: str):
     """Given the step `write`, which never reads secrets/ nor .env
-    When the writer greps in secrets-old/, whose name begins as secrets/, or in docs/
+    When the writer greps in secrets-old/, whose name begins as secrets/, in docs/, or in a
+    folder secrets/ beside the conversation's folder
     Then the rule finds nothing"""
-    call = move("call", searched(e, "Grep", search_path(cwd, path)))
+    call = move("call", e.search("Grep", path, WRITER))
     assert reads_none.judge_call(rule(WRITE, "reads_none"), WRITE, call) is None
 
 
@@ -341,7 +419,7 @@ def test_another_command_gives_the_steps_sentence(e: Events):
     Then the rule gives the step's sentence, naming the step and `git log`"""
     call = move("call", e.bash("git push", WRITER))
     said = commands.judge_call(rule(WRITE, "commands"), WRITE, call)
-    assert said == runs_only("write", ["git log"])
+    assert said == RUNS_GIT_LOG
 
 
 @pytest.mark.supports("test_a_named_command_with_more_words_after_it_goes_through")
@@ -354,14 +432,15 @@ def test_another_command_gives_the_steps_sentence(e: Events):
         "git log; head NOTES.md",
         "git log && head NOTES.md",
         "git log || head NOTES.md",
+        "git log\nhead NOTES.md",
         "  git log  ",
     ],
 )
 def test_each_command_opening_with_a_named_commands_words_holds(e: Events, command: str):
     """Given a step whose rule of commands names `git log` and `head`
     When the writer runs a named command with more words after it, the second named command, a
-    pipeline of named ones, named ones split by `;`, `&&`, or `||`, or a named one with spaces
-    around it
+    pipeline of named ones, named ones split by `;`, `&&`, `||`, or a newline, or a named one with
+    spaces around it
     Then the rule finds nothing"""
     named: Rule = {"type": "commands", "commands": ["git log", "head"]}
     step: Step = {"name": "write", "rules": [named]}
@@ -388,7 +467,29 @@ def test_a_command_chained_beside_a_named_one_gives_the_steps_sentence(e: Events
     said = commands.judge_call(
         rule(WRITE, "commands"), WRITE, move("call", e.bash(command, WRITER))
     )
-    assert said == runs_only("write", ["git log"])
+    assert said == RUNS_GIT_LOG
+
+
+@pytest.mark.supports("test_a_command_chained_after_a_named_one_is_stopped")
+@pytest.mark.parametrize(
+    "command",
+    [
+        pytest.param(
+            "git log\ngit push",
+            marks=pytest.mark.xfail(
+                strict=True,
+                reason="commands.judge_call splits a call at each newline too, as at `;`",
+            ),
+        ),
+        "git push\ngit log",
+    ],
+)
+def test_a_command_on_a_line_beside_a_named_one_gives_the_steps_sentence(e: Events, command: str):
+    """Given the step `write`, which runs `git log`
+    When the writer runs `git push` on the line after `git log`, or on the line before it
+    Then the rule gives the step's sentence, naming `git log`"""
+    call = move("call", e.bash(command, WRITER))
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == RUNS_GIT_LOG
 
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
@@ -401,9 +502,7 @@ def test_a_command_that_doesnt_open_with_a_named_commands_words_gives_the_steps_
     last word, its words with another between them, or its words after another
     Then the rule gives the step's sentence"""
     call = move("call", e.bash(command, WRITER))
-    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == runs_only(
-        "write", ["git log"]
-    )
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == RUNS_GIT_LOG
 
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
@@ -414,7 +513,10 @@ def test_the_sentence_of_several_commands_names_each(e: Events):
     named: Rule = {"type": "commands", "commands": ["git log", "head", "wc -l"]}
     step: Step = {"name": "write", "rules": [named]}
     said = commands.judge_call(named, step, move("call", e.bash("git push", WRITER)))
-    assert said == runs_only("write", ["git log", "head", "wc -l"])
+    assert said == (
+        "You're at the step `write` of log:writer, which runs only git log, head and wc -l.\n"
+        "Run only those here, and the rest at a step that names them."
+    )
 
 
 @pytest.mark.supports("test_a_reporter_of_lanes_goes_through_though_no_step_names_it")
@@ -443,12 +545,15 @@ def test_a_command_that_nearly_matches_a_reporter_gives_the_steps_sentence(e: Ev
     or a reporter's word after another
     Then the rule gives the step's sentence"""
     call = move("call", e.bash(command, WRITER))
-    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == runs_only(
-        "write", ["git log"]
-    )
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == RUNS_GIT_LOG
 
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
+@pytest.mark.xfail(
+    strict=True,
+    reason="commands.judge_call says that a step whose rule names no command runs none, and to run"
+    " it at a step that names it",
+)
 def test_a_rule_that_names_no_command_stops_each_but_a_reporter(e: Events):
     """Given a step whose rule of commands names none
     When the writer runs `git log`, and then `lane-step write`
@@ -457,7 +562,10 @@ def test_a_rule_that_names_no_command_stops_each_but_a_reporter(e: Events):
     none: Rule = {"type": "commands", "commands": []}
     step: Step = {"name": "write", "rules": [none]}
     said = commands.judge_call(none, step, move("call", e.bash("git log", WRITER)))
-    assert said == runs_only("write", [])
+    assert said == (
+        "You're at the step `write` of log:writer, which runs no command.\n"
+        "Run it at a step that names it."
+    )
     assert commands.judge_call(none, step, move("call", e.bash("lane-step write", WRITER))) is None
 
 
@@ -500,7 +608,7 @@ def test_a_mark_before_the_step_before_gives_the_step_due(e: Events, before: lis
     Then the rule gives the sentence of `write` due before `report`"""
     marking = move("report", e.bash("lane-step report", WRITER), *before, report=marked("report"))
     said = order.judge_mark(rule(REPORT, "order"), REPORT, marking)
-    assert said == comes_before("write", "report")
+    assert said == WRITE_BEFORE_REPORT
 
 
 # A role of three steps, each held in order, its first with a result rule and its last ending.
@@ -538,7 +646,11 @@ def test_a_mark_of_the_third_step_gives_the_first_step_before_it_not_done(
         THREE,
     )
     said = order.judge_mark(rule(THREE[2], "order"), THREE[2], marking)
-    assert said == (comes_before(due, "report") if due else None)
+    expected = (
+        f"You're at the step `{due}` of log:writer, which comes before `report`.\n"
+        f"Do `{due}` and mark it done with lane-step {due} first."
+    )
+    assert said == (expected if due else None)
 
 
 @pytest.mark.supports("test_steps_marked_in_their_order_hold_and_the_end_goes_through")
@@ -561,7 +673,7 @@ def test_an_end_with_the_step_unmarked_gives_the_steps_sentence(e: Events, entri
     When it ends
     Then the rule of `report` gives its sentence"""
     end = move("end", e.ended(WRITER), *entries)
-    assert order.judge_end(rule(REPORT, "order"), REPORT, end) == ends_before("report")
+    assert order.judge_end(rule(REPORT, "order"), REPORT, end) == REPORT_UNDONE
 
 
 # reads_whole
@@ -611,7 +723,10 @@ def test_reads_that_leave_a_line_give_the_first_line_not_read(
     When it marks `write`
     Then the rule gives the step's sentence, naming NOTES.md from the first line not read"""
     said = reads_whole.judge_mark(rule(WRITE, "reads_whole"), WRITE, marking_write(e, *reads))
-    assert said == reads_whole_of("write", ["NOTES.md"], [f"NOTES.md from its line {first_unread}"])
+    assert said == (
+        "You're at the step `write` of log:writer, which reads whole NOTES.md.\n"
+        f"Read NOTES.md from its line {first_unread} before you mark it done."
+    )
 
 
 @pytest.mark.supports("test_a_step_marked_done_with_a_file_unread_is_stopped_with_the_file")
@@ -631,7 +746,7 @@ def test_no_read_of_the_file_by_the_start_gives_the_steps_sentence(e: Events, re
     When the writer a1 marks `write`
     Then the rule gives the step's sentence, naming NOTES.md from its line 1"""
     said = reads_whole.judge_mark(rule(WRITE, "reads_whole"), WRITE, marking_write(e, *reads))
-    assert said == reads_whole_of("write", ["NOTES.md"], ["NOTES.md from its line 1"])
+    assert said == NOTES_UNREAD
 
 
 # A rule of two files to read whole.
@@ -642,17 +757,14 @@ BOTH: Rule = {"type": "reads_whole", "paths": ["NOTES.md", "CHANGELOG.md"]}
 @pytest.mark.parametrize(
     "reads, unread",
     [
-        ([], ["NOTES.md from its line 1", "CHANGELOG.md from its line 1"]),
-        ([read("NOTES.md", 1, 6)], ["CHANGELOG.md from its line 1"]),
-        (
-            [read("CHANGELOG.md", 1, 4)],
-            ["NOTES.md from its line 1", "CHANGELOG.md from its line 5"],
-        ),
+        ([], "NOTES.md from its line 1 and CHANGELOG.md from its line 1"),
+        ([read("NOTES.md", 1, 6)], "CHANGELOG.md from its line 1"),
+        ([read("CHANGELOG.md", 1, 4)], "NOTES.md from its line 1 and CHANGELOG.md from its line 5"),
         ([read("NOTES.md", 1, 6), read("CHANGELOG.md", 1, 6)], None),
     ],
 )
 def test_a_rule_of_two_files_names_each_not_read_whole(
-    e: Events, reads: list[Entry], unread: list[str] | None
+    e: Events, reads: list[Entry], unread: str | None
 ):
     """Given a step whose rule reads whole NOTES.md and CHANGELOG.md, each of 6 lines, and the
     writer's reads of neither, of NOTES.md whole, of CHANGELOG.md in part, or of both whole
@@ -661,7 +773,11 @@ def test_a_rule_of_two_files_names_each_not_read_whole(
     first line not read, or nothing"""
     step: Step = {"name": "write", "rules": [BOTH]}
     said = reads_whole.judge_mark(BOTH, step, marking_write(e, *reads))
-    assert said == (reads_whole_of("write", BOTH["paths"], unread) if unread else None)
+    expected = (
+        "You're at the step `write` of log:writer, which reads whole NOTES.md and CHANGELOG.md.\n"
+        f"Read {unread} before you mark it done."
+    )
+    assert said == (expected if unread else None)
 
 
 @pytest.mark.supports("test_a_step_marked_done_after_a_read_in_part_names_the_lines_not_read")
@@ -677,7 +793,10 @@ def test_a_file_with_no_last_newline_counts_its_last_line_alone(
     two: Rule = {"type": "reads_whole", "paths": ["TWO.md"]}
     step: Step = {"name": "write", "rules": [two]}
     said = reads_whole.judge_mark(two, step, marking_write(e, read("TWO.md", 1, last)))
-    expected = reads_whole_of("write", ["TWO.md"], [f"TWO.md from its line {first_unread}"])
+    expected = (
+        "You're at the step `write` of log:writer, which reads whole TWO.md.\n"
+        f"Read TWO.md from its line {first_unread} before you mark it done."
+    )
     assert said == (expected if first_unread else None)
 
 
@@ -708,16 +827,16 @@ def test_a_step_with_no_item_or_each_item_marked_holds(
 @pytest.mark.parametrize(
     "entries, unmarked",
     [
-        ([], ["dated", "linked"]),
-        ([mark("write", item="dated")], ["linked"]),
-        ([mark("write", item="linked")], ["dated"]),
-        ([mark("write", OTHER, "dated"), mark("report", item="linked")], ["dated", "linked"]),
-        ([mark("write", None, "dated"), mark("write", item="date")], ["dated", "linked"]),
-        ([mark("write")], ["dated", "linked"]),
+        ([], "dated and linked"),
+        ([mark("write", item="dated")], "linked"),
+        ([mark("write", item="linked")], "dated"),
+        ([mark("write", OTHER, "dated"), mark("report", item="linked")], "dated and linked"),
+        ([mark("write", None, "dated"), mark("write", item="date")], "dated and linked"),
+        ([mark("write")], "dated and linked"),
     ],
 )
 def test_items_not_marked_give_the_steps_sentence_naming_each(
-    e: Events, entries: list[Entry], unmarked: list[str]
+    e: Events, entries: list[Entry], unmarked: str
 ):
     """Given no item marked, `dated` alone, `linked` alone, `dated` by another writer and `linked`
     of another step, `dated` by the main conversation and `date`, which nearly matches it, or a
@@ -727,7 +846,10 @@ def test_items_not_marked_give_the_steps_sentence_naming_each(
     other"""
     marking = marking_write(e, *entries)
     said = checklist.judge_mark(rule(WRITE, "checklist"), WRITE, marking)
-    assert said == checklist_of("write", unmarked)
+    assert said == (
+        f"You're at the step `write` of log:writer, whose checklist isn't done: {unmarked}.\n"
+        "Do each and mark it done with lane-item write <item> first."
+    )
 
 
 @pytest.mark.supports("test_a_step_marked_once_each_item_is_done_holds")
@@ -796,14 +918,16 @@ def test_an_end_with_a_named_result_holds(e: Events, value: str):
         [gave("good", REVIEWER), gave("fine", REVIEWER)],
     ],
 )
+@pytest.mark.xfail(strict=True, reason=OR)
 def test_an_end_with_no_named_result_gives_the_results_it_may_give(e: Events, entries: list[Entry]):
     """Given the reviewer a3 that gave no result, one its rule doesn't name, one that nearly
     matches a named one, none while a2 gave one, or a named one and then another
     When it ends
-    Then the rule gives the step's sentence, naming each result it may give"""
+    Then the rule gives the step's sentence, offering each result it may give, the last two joined
+    by `or`"""
     end = move("end", e.ended(REVIEWER), *entries, step="review", agent=REVIEWER)
     said = result.judge_end(rule(REVIEW, "result"), REVIEW, end)
-    assert said == no_result("review", ["good", "more", "split"], "log:reviewer")
+    assert said == REVIEW_NO_RESULT
 
 
 @pytest.mark.supports(
@@ -839,18 +963,46 @@ def test_an_end_at_a_step_whose_rule_names_only_results_that_end_the_start_says_
     ends: Rule = {"type": "result", "ends": ["unclear"]}
     step: Step = {"name": "write", "rules": [ends]}
     said = result.judge_end(ends, step, move("end", e.ended(WRITER), *entries))
-    assert said == work_undone("write", ["unclear"])
+    assert said == (
+        "You're at the step `write` of log:writer, whose work isn't done.\n"
+        "Do it and mark it done with lane-step write; give unclear with lane-result only where"
+        " you can't go on."
+    )
+
+
+@pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
+@pytest.mark.xfail(strict=True, reason=OR)
+def test_an_end_at_a_step_whose_rule_names_two_results_that_end_the_start_offers_either(
+    e: Events,
+):
+    """Given a rule of results that names only `unclear` and `blocked`, among those that end the
+    start
+    When the writer that gave no result ends at its step
+    Then the rule gives the step's sentence, offering `unclear` or `blocked` only where it can't go
+    on"""
+    ends: Rule = {"type": "result", "ends": ["unclear", "blocked"]}
+    step: Step = {"name": "write", "rules": [ends]}
+    said = result.judge_end(ends, step, move("end", e.ended(WRITER)))
+    assert said == (
+        "You're at the step `write` of log:writer, whose work isn't done.\n"
+        "Do it and mark it done with lane-step write; give unclear or blocked with lane-result"
+        " only where you can't go on."
+    )
 
 
 @pytest.mark.supports("test_an_end_with_a_result_that_the_rule_doesnt_name_is_stopped")
+@pytest.mark.xfail(strict=True, reason=OR)
 def test_an_end_with_a_result_of_neither_kind_names_each_result_it_may_give(e: Events):
     """Given a rule of results that names `written`, and `unclear` among those that end the start
     When the writer that gave `fine` ends
-    Then the rule gives the step's sentence, naming `written` and then `unclear`"""
+    Then the rule gives the step's sentence, offering `written` or `unclear`"""
     both: Rule = {"type": "result", "results": ["written"], "ends": ["unclear"]}
     step: Step = {"name": "report", "rules": [both]}
     said = result.judge_end(both, step, move("end", e.ended(WRITER), gave("fine")))
-    assert said == no_result("report", ["written", "unclear"])
+    assert said == (
+        "You end the step `report` of log:writer with no result it may give.\n"
+        "Give written or unclear with lane-result first."
+    )
 
 
 # check
@@ -882,7 +1034,7 @@ def test_an_end_that_the_check_doesnt_pass_gives_the_steps_sentence_and_what_it_
     write_files(cwd, {"CHANGELOG.md": "# Changelog\n"})
     end = move("end", e.ended(WRITER), step="report")
     said = check.judge_end(rule(REPORT, "check"), REPORT, end)
-    assert said == check_fails("report", lane_bench.CHECK_SAYS)
+    assert said == REPORT_FAILS + lane_bench.CHECK_SAYS
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
@@ -906,7 +1058,7 @@ def test_a_check_that_exits_other_than_0_gives_what_it_said_on_either_output(
     Then the check gives the step's sentence, closed by what it said, its standard output first,
     with the blank lines and spaces around it left out"""
     end = move("end", e.ended(WRITER), step="report")
-    assert check.judge_end(check_rule(command), REPORT, end) == check_fails("report", said)
+    assert check.judge_end(check_rule(command), REPORT, end) == REPORT_FAILS + said
 
 
 @pytest.mark.supports("test_the_plugins_check_runs_in_the_worktree_the_conversation_works_in")
@@ -920,7 +1072,7 @@ def test_the_check_runs_in_the_events_folder(e: Events, tmp_path: Any):
     end = move("end", Events(other, e.transcript).ended(WRITER), step="report")
     said = check.judge_end(rule(REPORT, "check"), REPORT, end)
     assert said is not None
-    assert said.startswith(check_fails("report", f"{lane_bench.CHECK_SAYS}\ngrep: CHANGELOG.md"))
+    assert said.startswith(f"{REPORT_FAILS}{lane_bench.CHECK_SAYS}\ngrep: CHANGELOG.md")
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
@@ -946,66 +1098,83 @@ def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: st
     given, said = {
         "write": (
             e.write(os.path.join(cwd, "notes.txt"), WRITER),
-            writes_only("write", ["CHANGELOG.md", "docs/changes/"], "notes.txt"),
+            f"{WRITES}Write there instead of notes.txt.",
         ),
         "edit": (
             e.write(os.path.join(cwd, "notes.txt"), WRITER, tool="Edit"),
-            writes_only("write", ["CHANGELOG.md", "docs/changes/"], "notes.txt"),
+            f"{WRITES}Write there instead of notes.txt.",
         ),
         "read": (
             e.read(os.path.join(cwd, "secrets/key.txt"), WRITER),
-            never_reads("write", ["secrets/", ".env"], "secrets/key.txt"),
+            f"{NEVER_READS}Leave secrets/key.txt unread.",
         ),
-        "bash": (e.bash("git push", WRITER), runs_only("write", ["git log"])),
+        "bash": (e.bash("git push", WRITER), RUNS_GIT_LOG),
     }[event]
     assert rule_types.judge_call(move("call", given)) == said
 
 
-@pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
-@pytest.mark.parametrize("path", REACHES)
+@pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
 @pytest.mark.xfail(
     strict=True,
-    reason="rule_types.judge_call judges a Grep by the rule of the files never to read, not by"
-    " NotImplementedError",
+    reason="rule_types.judge_call judges a NotebookEdit by the rule of the files a step writes",
 )
+def test_a_notebook_edit_of_a_file_its_step_doesnt_write_is_judged_by_writes(e: Events, cwd: str):
+    """Given the writer at its step `write`, which writes CHANGELOG.md and docs/changes/
+    When it edits the notebook notes.ipynb by NotebookEdit
+    Then the sentence is the one of writes, naming notes.ipynb"""
+    given = e.notebook(os.path.join(cwd, "notes.ipynb"), WRITER)
+    said = rule_types.judge_call(move("call", given))
+    assert said == f"{WRITES}Write there instead of notes.ipynb."
+
+
+@pytest.mark.supports("test_a_write_of_a_file_that_its_step_names_goes_through")
+def test_a_notebook_edit_of_a_file_its_step_writes_breaks_no_rule(e: Events, cwd: str):
+    """Given the writer at its step `write`, which writes docs/changes/
+    When it edits the notebook docs/changes/1.2.0.ipynb by NotebookEdit
+    Then it breaks no rule"""
+    given = e.notebook(os.path.join(cwd, "docs", "changes", "1.2.0.ipynb"), WRITER)
+    assert rule_types.judge_call(move("call", given)) is None
+
+
+# Why a case of a Grep or a Glob judged by the rules of its step waits.
+SEARCHES = (
+    "rule_types.judge_call judges a Grep by the rule of the files never to read, and lets each Glob"
+    " through, as it reads no file's content, not by NotImplementedError"
+)
+
+
+@pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
+@pytest.mark.parametrize("path, named", REACHES)
+@pytest.mark.xfail(strict=True, reason=SEARCHES)
 def test_a_grep_that_reaches_a_file_never_to_read_is_judged_by_reads_none(
-    e: Events, cwd: str, path: str | None
+    e: Events, path: str | None, named: str
 ):
     """Given the writer at its step `write`, which never reads secrets/ nor .env
     When it greps where the search reaches one of them
-    Then the sentence is the one of reads_none"""
-    said = rule_types.judge_call(move("call", searched(e, "Grep", search_path(cwd, path))))
-    assert said is not None
-    assert said.startswith(NEVER_READS)
+    Then the sentence is the one of reads_none, naming the path searched"""
+    said = rule_types.judge_call(move("call", e.search("Grep", path, WRITER)))
+    assert said == f"{NEVER_READS}Give Grep a path outside those files instead of {named}."
 
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
-@pytest.mark.parametrize("path", [*REACHES, *BESIDE])
-@pytest.mark.xfail(
-    strict=True,
-    reason="rule_types.judge_call lets each Glob through, as it reads no file's content, not by"
-    " NotImplementedError",
-)
-def test_a_glob_breaks_no_rule_wherever_it_looks(e: Events, cwd: str, path: str | None):
+@pytest.mark.parametrize("path", [*[path for path, _ in REACHES], *BESIDE])
+@pytest.mark.xfail(strict=True, reason=SEARCHES)
+def test_a_glob_breaks_no_rule_wherever_it_looks(e: Events, path: str | None):
     """Given the writer at its step `write`, which never reads secrets/ nor .env
     When it globs in a folder under secrets/, in secrets/, at .env, in the conversation's folder,
-    with no path, in secrets-old/, or in docs/
+    in the folder above it, with no path, in secrets-old/, or in docs/
     Then it breaks no rule, as a Glob reads no file's content"""
-    assert rule_types.judge_call(move("call", searched(e, "Glob", search_path(cwd, path)))) is None
+    assert rule_types.judge_call(move("call", e.search("Glob", path, WRITER))) is None
 
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
 @pytest.mark.parametrize("path", BESIDE)
-@pytest.mark.xfail(
-    strict=True,
-    reason="rule_types.judge_call judges a Grep by the rule of the files never to read, not by"
-    " NotImplementedError",
-)
-def test_a_grep_that_reaches_no_file_never_to_read_breaks_no_rule(e: Events, cwd: str, path: str):
+@pytest.mark.xfail(strict=True, reason=SEARCHES)
+def test_a_grep_that_reaches_no_file_never_to_read_breaks_no_rule(e: Events, path: str):
     """Given the writer at its step `write`, which never reads secrets/ nor .env
     When it greps in secrets-old/ or in docs/
     Then it breaks no rule"""
-    assert rule_types.judge_call(move("call", searched(e, "Grep", search_path(cwd, path)))) is None
+    assert rule_types.judge_call(move("call", e.search("Grep", path, WRITER))) is None
 
 
 @pytest.mark.supports(
@@ -1016,7 +1185,7 @@ def test_a_bash_command_that_reaches_a_file_never_to_read_is_judged_by_commands(
     When it runs `cat secrets/key.txt`
     Then the sentence is the one of commands, as reads_none judges no Bash call"""
     said = rule_types.judge_call(move("call", e.bash("cat secrets/key.txt", WRITER)))
-    assert said == runs_only("write", ["git log"])
+    assert said == RUNS_GIT_LOG
 
 
 @pytest.mark.supports("test_a_step_is_held_only_to_the_types_its_rules_pick")
@@ -1051,15 +1220,6 @@ def test_a_call_is_judged_by_the_rules_of_its_own_step_alone(e: Events, cwd: str
         assert rule_types.judge_call(move("call", given, step=step)) is None
 
 
-@pytest.mark.supports("test_a_step_is_held_only_to_the_types_its_rules_pick")
-def test_a_call_of_a_tool_that_no_rule_type_judges_holds(e: Events, cwd: str):
-    """Given the writer at its step `write`, which writes CHANGELOG.md and docs/changes/
-    When it calls NotebookEdit on notes.ipynb
-    Then it breaks no rule, as no rule type judges that tool"""
-    given = e.write(os.path.join(cwd, "notes.ipynb"), WRITER, tool="NotebookEdit")
-    assert rule_types.judge_call(move("call", given)) is None
-
-
 # A step with two rules of the files it writes.
 TWICE: list[Step] = [
     {
@@ -1076,8 +1236,20 @@ TWICE: list[Step] = [
 @pytest.mark.parametrize(
     "path, said",
     [
-        ("docs/a.md", writes_only("write", ["CHANGELOG.md"], "docs/a.md")),
-        ("CHANGELOG.md", writes_only("write", ["docs/"], "CHANGELOG.md")),
+        (
+            "docs/a.md",
+            (
+                "You're at the step `write` of log:writer, which writes only CHANGELOG.md.\n"
+                "Write there instead of docs/a.md."
+            ),
+        ),
+        (
+            "CHANGELOG.md",
+            (
+                "You're at the step `write` of log:writer, which writes only docs/.\n"
+                "Write there instead of CHANGELOG.md."
+            ),
+        ),
     ],
 )
 def test_a_call_is_judged_by_each_rule_of_its_kind_and_gives_the_first_it_breaks(
@@ -1103,7 +1275,7 @@ def test_a_mark_is_judged_by_order_before_its_reads(e: Events):
     marking = move(
         "report", e.bash("lane-step report", WRITER), step="write", report=marked("report")
     )
-    assert rule_types.judge_mark(marking) == comes_before("write", "report")
+    assert rule_types.judge_mark(marking) == WRITE_BEFORE_REPORT
 
 
 @pytest.mark.supports("test_a_mark_is_checked_for_the_files_it_reads_whole_before_its_items")
@@ -1112,7 +1284,7 @@ def test_a_mark_is_judged_by_its_reads_before_its_items(e: Events):
     When it marks `write`
     Then the sentence is reads_whole's, naming NOTES.md, and no item"""
     said = rule_types.judge_mark(marking_write(e))
-    assert said == reads_whole_of("write", ["NOTES.md"], ["NOTES.md from its line 1"])
+    assert said == NOTES_UNREAD
 
 
 @pytest.mark.supports("test_a_mark_is_checked_for_the_files_it_reads_whole_before_its_items")
@@ -1123,7 +1295,10 @@ def test_a_mark_is_judged_by_its_items_once_its_reads_hold(e: Events):
     said = rule_types.judge_mark(
         marking_write(e, read("NOTES.md", 1, 6), mark("write", item="dated"))
     )
-    assert said == checklist_of("write", ["linked"])
+    assert said == (
+        "You're at the step `write` of log:writer, whose checklist isn't done: linked.\n"
+        "Do each and mark it done with lane-item write <item> first."
+    )
 
 
 # A step whose rules list the types that judge a mark in the order opposite to the one Lane asks.
@@ -1144,12 +1319,21 @@ REVERSED: list[Step] = [
 @pytest.mark.parametrize(
     "entries, said",
     [
-        ((), comes_before("write", "report")),
+        ((), WRITE_BEFORE_REPORT),
         (
             (mark("write"),),
-            reads_whole_of("report", ["CHANGELOG.md"], ["CHANGELOG.md from its line 1"]),
+            (
+                "You're at the step `report` of log:writer, which reads whole CHANGELOG.md.\n"
+                "Read CHANGELOG.md from its line 1 before you mark it done."
+            ),
         ),
-        ((mark("write"), read("CHANGELOG.md", 1, 6)), checklist_of("report", ["dated"])),
+        (
+            (mark("write"), read("CHANGELOG.md", 1, 6)),
+            (
+                "You're at the step `report` of log:writer, whose checklist isn't done: dated.\n"
+                "Do each and mark it done with lane-item report <item> first."
+            ),
+        ),
     ],
 )
 def test_a_mark_is_judged_by_order_reads_and_items_whatever_order_its_rules_list(
@@ -1192,6 +1376,20 @@ def test_a_mark_of_a_step_that_the_role_lacks_holds(e: Events):
 
 # The order of the rules: an end.
 
+# The sentences of an end of a writer of three steps whose first, `draft`, is undone, or gave no
+# result its rule names; and of the main conversation's end before its step `lead` is done.
+DRAFT_UNDONE = (
+    "You end before the step `draft` of log:writer is done.\n"
+    "Do it and mark it done with lane-step draft."
+)
+NO_DRAFTED = (
+    "You end the step `draft` of log:writer with no result it may give.\n"
+    "Give drafted with lane-result first."
+)
+LEAD_UNDONE = (
+    "You end before the step `lead` of log:up is done.\nDo it and mark it done with lane-step lead."
+)
+
 
 def with_check(rules: Rules, command: str = "touch ran; exit 1") -> Rules:
     """The rules, the check of the writer's `report` changed to the command."""
@@ -1208,7 +1406,7 @@ def test_an_end_is_judged_by_its_result_before_its_steps_and_its_check(e: Events
     Then the sentence is the result rule's of `report`, and the check didn't run"""
     ended = move("end", e.ended(WRITER), mark("write"), mark("report"))
     said = rule_types.judge_end(held(ended, with_check(RULES)))
-    assert said == no_result("report", ["written"])
+    assert said == NO_WRITTEN
     assert not os.path.exists(os.path.join(cwd, "ran"))
 
 
@@ -1219,7 +1417,7 @@ def test_an_end_is_judged_by_its_steps_before_its_check(e: Events, cwd: str):
     When it ends
     Then the sentence is order's of `report`, and the check didn't run"""
     ended = held(move("end", e.ended(WRITER), gave("written"), mark("write")), with_check(RULES))
-    assert rule_types.judge_end(ended) == ends_before("report")
+    assert rule_types.judge_end(ended) == REPORT_UNDONE
     assert not os.path.exists(os.path.join(cwd, "ran"))
 
 
@@ -1231,7 +1429,7 @@ def test_an_end_whose_result_and_steps_hold_is_judged_by_its_check(e: Events, cw
     Then the sentence is the check's of `report`, with what it said"""
     write_files(cwd, {"CHANGELOG.md": "# Changelog\n"})
     end = move("end", e.ended(WRITER), gave("written"), mark("write"), mark("report"))
-    assert rule_types.judge_end(end) == check_fails("report", lane_bench.CHECK_SAYS)
+    assert rule_types.judge_end(end) == REPORT_FAILS + lane_bench.CHECK_SAYS
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_passes_goes_through")
@@ -1248,7 +1446,7 @@ def test_an_end_that_breaks_no_rule_holds(e: Events):
 @pytest.mark.parametrize(
     "entries, said",
     [
-        ((), no_result("review", ["good", "more", "split"], "log:reviewer")),
+        pytest.param((), REVIEW_NO_RESULT, marks=pytest.mark.xfail(strict=True, reason=OR)),
         ((gave("good", REVIEWER),), None),
     ],
 )
@@ -1274,13 +1472,19 @@ def test_an_end_of_a_role_of_no_step_holds(e: Events):
 @pytest.mark.parametrize(
     "entries, said",
     [
-        ((), no_result("draft", ["drafted"])),
-        ((gave("drafted"),), ends_before("draft")),
-        ((mark("draft"), gave("drafted")), no_result("report", ["written"])),
-        ((mark("draft"), mark("report"), gave("written")), ends_before("write")),
+        ((), NO_DRAFTED),
+        ((gave("drafted"),), DRAFT_UNDONE),
+        ((mark("draft"), gave("drafted")), NO_WRITTEN),
+        (
+            (mark("draft"), mark("report"), gave("written")),
+            (
+                "You end before the step `write` of log:writer is done.\n"
+                "Do it and mark it done with lane-step write."
+            ),
+        ),
         (
             (mark("draft"), mark("write"), mark("report"), gave("drafted")),
-            no_result("report", ["written"]),
+            NO_WRITTEN,
         ),
         ((mark("draft"), mark("write"), mark("report"), gave("written")), None),
     ],
@@ -1339,8 +1543,8 @@ def test_an_end_with_a_result_that_ends_the_start_at_its_first_step_holds_with_l
 @pytest.mark.parametrize(
     "entries, said",
     [
-        ((gave("unclear"),), ends_before("draft")),
-        ((mark("draft"), gave("unclear")), check_fails("draft", "draft fails")),
+        ((gave("unclear"),), DRAFT_UNDONE),
+        ((mark("draft"), gave("unclear")), DRAFT_FAILS),
     ],
 )
 def test_an_end_with_a_result_that_ends_the_start_at_a_middle_step_holds_the_steps_before_it(
@@ -1400,7 +1604,7 @@ def test_an_end_is_judged_by_the_check_of_each_step_in_their_order(e: Events):
     Then the sentence is the check's of `draft`, the first"""
     entries = (mark("draft"), mark("write"), mark("report"), gave("written"))
     end = holding(move("end", e.ended(WRITER), *entries), ending({}))
-    assert rule_types.judge_end(end) == check_fails("draft", "draft fails")
+    assert rule_types.judge_end(end) == DRAFT_FAILS
 
 
 # The main conversation's turn's end.
@@ -1425,7 +1629,8 @@ def test_the_main_conversations_turn_end_is_judged_by_its_skills_check(
         write_files(cwd, {".log/up.md": "x\n"})
     ended = main(move("turn_end", e.stop(), step="lead"), [lead])
     said = rule_types.judge_end(ended)
-    assert said == (check_fails("lead", "no up.md", "log:up") if stops else None)
+    fails = "You end the step `lead` of log:up, which its check doesn't pass:\nno up.md"
+    assert said == (fails if stops else None)
 
 
 @pytest.mark.supports("test_a_read_of_the_main_conversation_counts_for_no_subagent")
@@ -1433,8 +1638,8 @@ def test_the_main_conversations_turn_end_is_judged_by_its_skills_check(
     "entries, said",
     [
         ((mark("lead", None),), None),
-        ((mark("lead", WRITER),), ends_before("lead", "log:up")),
-        ((), ends_before("lead", "log:up")),
+        ((mark("lead", WRITER),), LEAD_UNDONE),
+        ((), LEAD_UNDONE),
     ],
 )
 def test_the_main_conversations_turn_end_counts_its_own_marks_alone(

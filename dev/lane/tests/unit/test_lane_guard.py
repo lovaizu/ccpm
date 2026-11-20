@@ -35,7 +35,6 @@ from guard import (
     written,
 )
 from lane_events import Event, Events, Subagent, base_directory
-from lane_sentences import check_fails, no_result, reads_whole_of, writes_only
 from place import Move, SkillCall
 from record import Entry, Run, add, runs
 from repo_files import write_files
@@ -56,8 +55,31 @@ WRITER_DUE = "Due: log:writer."
 REVIEWER_DUE = "Due: log:reviewer."
 # The step's sentence of a write of notes.txt, by the main conversation at `lead`, and by the writer
 # at `write`.
-LEAD_WRITES = writes_only("lead", [".log/up.md"], "notes.txt", "log:up")
-WRITER_WRITES = writes_only("write", ["CHANGELOG.md", "docs/changes/"], "notes.txt")
+LEAD_WRITES = (
+    "You're at the step `lead` of log:up, which writes only .log/up.md.\n"
+    "Write there instead of notes.txt."
+)
+WRITER_WRITES = (
+    "You're at the step `write` of log:writer, which writes only CHANGELOG.md and docs/changes/.\n"
+    "Write there instead of notes.txt."
+)
+# The sentence of the writer's end with no result, and of the main conversation's turn's end that
+# the check of its step `lead` doesn't pass.
+NO_WRITTEN = (
+    "You end the step `report` of log:writer with no result it may give.\n"
+    "Give written with lane-result first."
+)
+LEAD_FAILS = f"You end the step `lead` of log:up, which its check doesn't pass:\n{UP_SAYS}"
+# What the main conversation, or a subagent, reads of a start of log's subagents while no start is
+# due, and why a case of it waits.
+NONE_DUE = (
+    "No start of log's subagents is due now.\n"
+    "Go on without it, and start one once Lane says it's due."
+)
+NONE_DUE_WAITS = (
+    "start_made stops a start of the plugin's subagents while no start is due with the sentence"
+    " that none is due and what to do instead, not with no sentence"
+)
 
 
 class Play:
@@ -237,6 +259,19 @@ def test_a_start_of_a_role_not_due_is_stopped_with_the_starts_due(g: Play):
     assert not of_kind("start")
 
 
+@pytest.mark.supports("test_another_start_of_the_plugins_subagents_is_stopped_with_the_starts_due")
+@pytest.mark.xfail(strict=True, reason=NONE_DUE_WAITS)
+def test_a_start_while_no_start_is_due_is_stopped_saying_none_is_due(g: Play):
+    """Given the writer a1 running, so that no start is due
+    When the main conversation starts the writer again
+    Then the guard stops it, saying that no start is due and what to do instead, and the record
+    holds a1's start alone"""
+    g.opened()
+    g.started()
+    assert answer(g.e.start("log:writer", "toolu_2")) == Answer(True, NONE_DUE)
+    assert of_kind("start") == [lane_entries.start("toolu_1")]
+
+
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
 def test_a_tied_subagents_call_is_held_to_its_step(g: Play):
     """Given the writer tied to a1
@@ -345,7 +380,7 @@ def test_a_message_queued_to_a_running_subagent_is_talk_and_its_later_pass_is_it
     assert answer(g.e.send(writer, "toolu_2")) == Answer()
     assert answer(g.e.queued(writer, "toolu_2")) == Answer()
     assert answer(g.e.stop()) == Answer()
-    assert answer(g.e.ended(writer)) == Answer(True, no_result("report", ["written"]))
+    assert answer(g.e.ended(writer)) == Answer(True, NO_WRITTEN)
     g.kept_steps(writer)
     assert answer(g.e.ended(writer)) == Answer()
     assert of_kind("start") == [lane_entries.start("toolu_1")]
@@ -475,7 +510,7 @@ def test_a_turns_end_in_a_run_with_no_order_is_held_to_its_skills_check(g: Play)
     Then the guard stops the end with the check's sentence of `lead`, and the run stands"""
     write_files(g.log, {"lane/rules.json": json.dumps(NO_ORDER)})
     assert g.opened() == Answer()
-    assert answer(g.e.stop()) == Answer(True, check_fails("lead", UP_SAYS, "log:up"))
+    assert answer(g.e.stop()) == Answer(True, LEAD_FAILS)
     assert not of_kind("ended")
 
 
@@ -509,13 +544,15 @@ def test_another_conversations_events_lie_outside_the_first_ones_run(
 
 
 @pytest.mark.supports("test_a_subagents_start_of_a_subagent_is_stopped")
+@pytest.mark.xfail(strict=True, reason=NONE_DUE_WAITS)
 def test_a_subagents_start_is_stopped(g: Play):
     """Given the writer a1 running, so that no start is due
     When a1 starts a writer by the Agent tool
-    Then the guard stops it, with no start due to give, and the record gains no start"""
+    Then the guard stops it, saying that no start is due and what to do instead, and the record
+    gains no start"""
     g.opened()
     writer = g.started()
-    assert answer(g.e.start("log:writer", "toolu_2", writer)) == Answer(True, "")
+    assert answer(g.e.start("log:writer", "toolu_2", writer)) == Answer(True, NONE_DUE)
     assert len(of_kind("start")) == 1
 
 
@@ -664,12 +701,14 @@ def test_run_opened_gives_each_role_due_and_how_many_at_once(g: Play, log: str):
 )
 @pytest.mark.parametrize("transcript", [False, True])
 def test_run_opened_before_the_base_directory_gives_nothing(g: Play, transcript: bool):
-    """Given a run with no folder, and no transcript yet, or one with no base directory
+    """Given a run with no folder, and no transcript yet, or one holding only the person's prompt
     When the run opens
     Then the answer is empty, and the run has no folder"""
     add("session-1", [RUN])
     if transcript:
-        write_files(os.path.dirname(g.e.transcript), {os.path.basename(g.e.transcript): "{}\n"})
+        prompt = {"type": "user", "message": {"role": "user", "content": "/log:up 1.2.0"}}
+        lines = {os.path.basename(g.e.transcript): json.dumps(prompt) + "\n"}
+        write_files(os.path.dirname(g.e.transcript), lines)
     assert run_opened(g.e.stop(), runs("session-1")[0]) == Answer()
     assert entries() == [RUN]
 
@@ -738,19 +777,20 @@ def test_start_made_by_a_subagent_is_stopped(g: Play, log: str, role: str):
 
 
 @pytest.mark.supports("test_a_role_named_twice_in_a_route_is_due_twice_at_once")
+@pytest.mark.xfail(strict=True, reason=NONE_DUE_WAITS)
 def test_start_made_of_a_role_due_twice_lets_two_starts_through_and_stops_a_third(
     g: Play, log: str
 ):
     """Given the reviewer's `split`, which makes the writer due twice at once
     When the main conversation starts the writer three times
-    Then the first two go through and the record gains their starts, and the third is stopped
-    with no start due to give"""
+    Then the first two go through and the record gains their starts, and the third is stopped,
+    saying that no start is due and what to do instead"""
     recorded_now(log, *SPLIT)
     said = [
         start_made(move("start", g.e.start("log:writer", use, prompt="Write it.")))
         for use in ("toolu_3", "toolu_4", "toolu_5")
     ]
-    assert said == [Answer(), Answer(), Answer(True, "")]
+    assert said == [Answer(), Answer(), Answer(True, NONE_DUE)]
     assert gained(log) == [
         lane_entries.start("toolu_3", prompt="Write it."),
         lane_entries.start("toolu_4", prompt="Write it."),
@@ -969,7 +1009,7 @@ def test_turn_ended_that_breaks_its_step_is_stopped_and_drops_its_untied_starts(
     ended = dataclasses.replace(
         move("turn_end", g.e.stop(), step="lead"), steps=NO_ORDER["roles"]["log:up"]["steps"]
     )
-    assert turn_ended(ended) == Answer(True, check_fails("lead", UP_SAYS, "log:up"))
+    assert turn_ended(ended) == Answer(True, LEAD_FAILS)
     assert gained(log) == [{"kind": "drop", "run": "r1", "tool_use_id": "toolu_1"}]
 
 
@@ -1200,7 +1240,11 @@ def test_report_made_of_a_step_whose_rules_break_gives_the_sentence_and_marks_no
     Then the answer stops it with the sentence of reads_whole, and the record gains nothing"""
     recorded_now(log, START, TIE)
     said = report_made(report_move(g, "step", "write"))
-    assert said == Answer(True, reads_whole_of("write", ["NOTES.md"], ["NOTES.md from its line 1"]))
+    assert said == Answer(
+        True,
+        "You're at the step `write` of log:writer, which reads whole NOTES.md.\n"
+        "Read NOTES.md from its line 1 before you mark it done.",
+    )
     assert gained(log) == []
 
 
@@ -1253,7 +1297,7 @@ def test_subagent_ended_with_no_result_is_stopped(g: Play, log: str):
     Then the answer stops it with the result rule of `report`, and the record gains nothing"""
     recorded_now(log, START, TIE)
     said = subagent_ended(move("end", g.e.ended(WRITER), WRITER, "write"))
-    assert said == Answer(True, no_result("report", ["written"]))
+    assert said == Answer(True, NO_WRITTEN)
     assert gained(log) == []
 
 

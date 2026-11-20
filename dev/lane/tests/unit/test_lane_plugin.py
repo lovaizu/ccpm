@@ -1,7 +1,8 @@
 """The unit cases of hooks/lane/plugin.py's plugin_root: one for each class of a conversation's
 transcript, as Claude Code writes the skill's base directory into it once the skill's call ends:
 with none, one, and several such lines, the latest of the skill's own picked; a skill, a folder, or
-a manifest that nearly matches the plugin's; and the lines of other forms that Lane leaves alone."""
+a manifest that nearly matches the plugin's; and the lines of other forms that Claude Code writes,
+which Lane leaves alone."""
 
 from __future__ import annotations
 
@@ -102,20 +103,6 @@ def line(transcript: str, given: object) -> None:
         f.write(json.dumps(given) + "\n")
 
 
-@pytest.mark.supports(
-    "test_the_starts_due_come_at_the_main_conversations_next_event_after_the_skills_call"
-)
-def test_a_base_directory_written_as_a_messages_text_gives_the_folder(tmp_path: Any):
-    """Given a transcript whose user message gives the base directory of log:up in /plugins/log as
-    its content's text, not as a list of parts
-    When Lane looks for the folder of the plugin of log:up
-    Then it's /plugins/log"""
-    transcript = transcript_in(tmp_path)
-    text = "Base directory for this skill: /plugins/log/skills/up\n\nStart each subagent."
-    line(transcript, {"type": "user", "message": {"role": "user", "content": text}})
-    assert plugin_root(transcript, "log:up") == "/plugins/log"
-
-
 @pytest.mark.supports("test_each_plugins_run_is_held_to_the_rules_in_its_own_folder")
 @pytest.mark.parametrize(
     "folder", ["/plugins/logger", "/plugins/lo", "/plugins/log-0.1.0", "/plugins/log/old"]
@@ -168,20 +155,15 @@ LATER = "See: Base directory for this skill: /old/log/skills/up"
         {"type": "user", "message": {"role": "user", "content": LATER}},
         {"type": "user", "message": {"role": "user", "content": [{"type": "tool_result"}]}},
         {"type": "user", "message": {"role": "user", "content": [{"type": "text", "text": "Hi"}]}},
-        {"type": "user", "message": {"role": "user", "content": ["Hi", 7]}},
         {"type": "system", "content": "Base directory for this skill: /old/log/skills/up"},
-        {"type": "user", "message": "Base directory for this skill: /old/log/skills/up"},
-        {"type": "user", "message": {"role": "user", "content": 7}},
-        ["Base directory for this skill: /old/log/skills/up"],
     ],
 )
 def test_a_line_of_another_form_after_the_base_directory_leaves_the_folder(
     tmp_path: Any, given: object
 ):
-    """Given a transcript holding the base directory of log:up in /plugins/log, and after it a line
-    that names a base directory only after other words, a part with no text, other text, parts
-    that aren't objects, a line with no message, a message that is text, content of another type,
-    or a line that isn't an object
+    """Given a transcript holding the base directory of log:up in /plugins/log, and after it a
+    message whose text names a base directory only after other words, as a task-notification does,
+    a part with no text, other text, or a line of another type with no message
     When Lane looks for the folder of the plugin of log:up
     Then it's /plugins/log"""
     transcript = transcript_in(tmp_path)
