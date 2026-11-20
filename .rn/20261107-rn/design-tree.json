@@ -599,6 +599,10 @@
               "about": "What rn and Lane mend to follow it",
               "decided": "rn's adapter of the rules gives each role's first step reads_whole of its part, its Cut, and the best practice it reads whole; rn's /rn:up holds the steps of its moment, the start and the pick-up of a run, in its SKILL.md; Lane's hooks block where Lane's script fails, by onFailure block on each entry; each once the E2E run that reads plugins/ ends",
               "by": "reasoning"
+            },
+            {
+              "about": "The main conversation over many turns",
+              "decided": null
             }
           ]
         },
@@ -616,6 +620,12 @@
     }
   ],
   "work": [
+    {
+      "do": "decide",
+      "path": "dev/plugin-development-guide.md",
+      "condition": "N1",
+      "about": "The main conversation over many turns"
+    },
     {
       "do": "make",
       "path": "dev/rn/tests/e2e"
