@@ -221,40 +221,7 @@
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
       "path": "plugins/lane",
       "kind": "software-design",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane/docs/rules-and-adapters.md",
-        "plugins/rn/domain/best-practices/software-design"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The change",
-              "decided": "the main conversation's steps given at each turn by the plugin's adapter of the rules where lane/rules.json names its skill with no steps, and a checklist's items given by the plugin's command at the mark, as Lane's architecture's S11 and its strategies say",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
@@ -1303,10 +1270,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/lane"
-    },
     {
       "do": "make",
       "path": "dev/lane/tests"
