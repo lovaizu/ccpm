@@ -50,15 +50,6 @@ def rules(top: str, role: str, prompt: str) -> tuple[int, str, str]:
 
 
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
-@pytest.mark.xfail(
-    strict=True,
-    reason="counterexamples: rules.py takes the Cut named whole into its rules, a prompt naming"
-    " <worktree>/.rn/20261119-invoices/rounds/1/generator.cut.json giving steps whose paths start"
-    " with <worktree>/; and it takes a mark opening the path into it, the prompt"
-    " ' `.rn/20261119-invoices/rounds/1/generator.cut.json` ' giving 1 with"
-    " 'rules.py: `.rn/20261119-invoices/rounds/1/generator.cut.json: no file is there', and the"
-    " same for a quote or a bracket before the path",
-)
 @given(
     role=st.sampled_from(["generator", "evaluator"]),
     number=st.integers(1, 12),

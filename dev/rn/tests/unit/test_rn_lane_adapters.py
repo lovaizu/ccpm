@@ -414,7 +414,6 @@ def test_rules_give_an_evaluator_its_steps_from_its_cut(tmp_path: Any):
 
 
 @pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
-@pytest.mark.xfail(strict=True, reason="rules.py takes the Cut named whole into its rules")
 @pytest.mark.parametrize("role", ["rn:generator", "rn:evaluator"])
 def test_rules_take_a_cut_named_whole_as_one_named_from_the_top(tmp_path: Any, role: str):
     """Given rn's worktree of the run under the repository's `.claude/worktrees/`, holding the

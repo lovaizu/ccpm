@@ -19,8 +19,10 @@ from fault import Wrong, end
 from schemas import form
 from tree import rounds
 
-# The path of a Cut of a run's Round, as scripts/cut.py prints it for the start's prompt.
-CUT = re.compile(r"\S*\.rn/[^/\s]+/rounds/\d+/[^/\s]+\.cut\.json")
+# The path of a Cut of a run's Round from the top of the run's worktree, as scripts/cut.py prints
+# it, found in a prompt that names it from the top or whole, bare or in a code span, quotes, or
+# brackets, since the match starts at `.rn/` and leaves out whatever comes before.
+CUT = re.compile(r"\.rn/[^/\s]+/rounds/\d+/[^/\s]+\.cut\.json")
 
 # The rules of a step that writes nothing.
 _NOTHING = [{"type": "writes", "paths": []}]
@@ -71,8 +73,9 @@ def main(given: str, cwd: str, plugin: str) -> tuple[int, str, str]:
 
 
 def _cut(given: str) -> str:
-    """The path of the Cut that the prompt of Lane's input names; Wrong where the input leaves its
-    form or the prompt names none."""
+    """The path from the top of the run's worktree of the Cut that the prompt of Lane's input
+    names, from the top or whole, bare or in a code span, quotes, or brackets; Wrong where the
+    input leaves its form or the prompt names none."""
     try:
         value: Any = json.loads(given)
     except ValueError as error:
