@@ -356,7 +356,7 @@
        },
        {
         "at": "decide",
-        "text": "Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that finds edge cases, such as mutation testing, would hold up the work on cases that no person meets."
+        "text": "Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that waits on another's schedule, such as a new version of the host, would hold up the work."
        },
        {
         "at": "decide",
@@ -404,7 +404,7 @@
       "id": "N14",
       "about": "Components, Test strategy",
       "what": "Does each thing that the document says the product does rest on a part that a unit or integration test can check?",
-      "why": "The E2E tests are slow and few, so they can only confirm what the lower levels already showed, and a thing that only a prompt holds varies from run to run, where only many runs on the model show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.",
+      "why": "A test that runs the product whole is slow and few, and none runs a product that holds a prompt, so only the lower levels show what the product does, and a thing that only a prompt holds varies from run to run, where only many runs on the model show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.",
       "items": [
        {
         "at": "decide",

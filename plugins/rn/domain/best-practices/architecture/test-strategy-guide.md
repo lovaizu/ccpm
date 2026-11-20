@@ -41,19 +41,22 @@ guide links them and copies nothing:
   A test that runs a prompt is a benchmark. The model's result varies from run to run, so a
   criterion would pass or fail by chance. The test runs each case several times, and a person judges
   from the results. It runs again on each new version of the model, as CT-AI's drift testing does.
+  A product that holds a prompt runs no test of the product whole through its prompts, since such a
+  run needs an AI to play its people, whose replies make the run's record no ground for a decision.
+  Its integration tests check the whole flow with a double in place of each prompt, and its people
+  try the product themselves once those pass.
 - Timing\
   Each check runs at one of three times, which the Test strategy's row names.
   - During the work, each check of the parts and of the architecture that decides whether a change
-    holds, such as lint, unit testing, code coverage, integration testing, and traceability. It
-    runs on each change, and the work waits on it.
+    holds, such as lint, unit testing, code coverage, property-based testing, integration testing,
+    and traceability. It runs on each change, and the work waits on it.
   - At stages, each test that runs the product whole, such as a scenario test. It grows from one
     pilot run as [the test implementation best practice](../test-implementation/best-practice.md)
     says, since a run takes minutes and a person decides from its results.
-  - Apart from the work, each check that measures the tests over code already made, such as
-    mutation testing or property-based testing, and each check that waits on something outside the
-    product's schedule, such as contract testing on each new version of the host. It runs in CI apart from the work, and its findings are mended at their cause apart from
-    the work. The work never waits on it, since it finds edge cases that the cases designed
-    beforehand left out and that no person meets in the main use.
+  - Apart from the work, each check that waits on something outside the product's schedule, such
+    as contract testing on each new version of the host. It runs in CI apart from the work, and its
+    findings are mended at their cause apart from the work, as the work can't wait on what comes on
+    another's schedule.
 
 ## Parts
 
@@ -66,8 +69,7 @@ Unit tests test each part against its contract.
 | Complexity analysis | Quality | Always. | The complexity of each function, such as its nesting, branches, returns, arguments, and statements. | Each limit at the default of the tool that checks it, such as a cognitive complexity of 15 in [SonarQube](https://docs.sonarsource.com/sonarqube-server/latest/user-guide/code-metrics/metrics-definition/). | CTAL-TTA, Fintan |
 | Unit testing | Quality | Always. | Each part against its contract. | Every case passes. | CTFL, CTAL-TA, Fintan |
 | Code coverage | Quality | Always. | The share of statements and branches that the tests run. | 100% statement (C0) and branch (C1) coverage. | CTFL, CTAL-TTA |
-| Property-based testing | Quality | Always. | Whether the code keeps a stated property over many inputs that a tool generates. | 0 counterexamples. | Added |
-| Mutation testing | Quality | Always. | Whether the tests fail when a tool makes small changes to the code. | 0 surviving mutants. | Added |
+| Property-based testing | Quality | Always. | Whether each invariant that the requirements state holds over many inputs that a tool generates. | 0 counterexamples. | Added |
 | Characterization testing | Quality | When the work changes existing code that no specification describes. | What a part does now, recorded as its expected result before the change. | Every case passes. | Added, from [Working Effectively with Legacy Code](https://www.oreilly.com/library/view/working-effectively-with/0131177052/) by Michael Feathers |
 | Data compatibility testing | Quality | When the product reads data that another program or an earlier version wrote. | Whether the product reads that data. | The product reads, without loss, each kind of data that each earlier version wrote. | Fintan |
 
@@ -90,7 +92,7 @@ End-to-end (E2E) tests test the product in real use against each key result of t
 
 | Check | Kind | When to pick | What it checks or measures | Recommended criterion | Sources |
 |---|---|---|---|---|---|
-| Scenario testing | Quality | Always. | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes. | Fintan |
+| Scenario testing | Quality | When the product holds no prompt, as the rule of Prompts says. | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes. | Fintan |
 | Installation testing | Quality | Always. | Whether the product installs, updates, and uninstalls as its documentation says. | The documented commands install, update, and uninstall the product on a fresh system. | SWEBOK |
 | Configuration testing | Quality | When the product supports more than one system, runtime, or setting. | The product on each combination of system, runtime, and settings that it supports. | Every case passes on each supported combination. | SWEBOK |
 | Back-to-back testing | Quality | When a change replaces a version and must keep its behavior. | Whether the new version gives the old version's result for the same input. | Each input gives the old version's result. | Fintan, CT-AI |
