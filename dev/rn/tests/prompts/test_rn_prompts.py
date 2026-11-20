@@ -16,7 +16,7 @@ import opus
 import pytest
 import rn_bench
 from repo_files import git, write_files
-from rn_bench import COMMAND, RUN, Bench
+from rn_bench import COMMAND, GUIDE, RUN, Bench
 
 pytestmark = [
     opus.NEEDS_LOGIN,
@@ -50,6 +50,35 @@ HOOKED = {
         "sys.exit(1 if bad else 0)\n"
     ),
 }
+# The command made, by which the guide of GUIDED prints an invoice.
+MAIN = (
+    "import argparse\n"
+    "from decimal import Decimal\n"
+    "\n"
+    "from invoicer import parse_lines, render\n"
+    "\n"
+    "given = argparse.ArgumentParser(prog='python3 -m invoicer')\n"
+    "given.add_argument('lines')\n"
+    "given.add_argument('--rate', required=True)\n"
+    "args = given.parse_args()\n"
+    "with open(args.lines, encoding='utf-8') as f:\n"
+    "    print(render(parse_lines(f.read()), Decimal(args.rate)))\n"
+)
+# A guide made for the accountant that takes the invoicer folder as theirs already, and never says
+# how they get it.
+GUIDED = (
+    "# Print an invoice\n"
+    "\n"
+    "1. In Calc, open the sheet of the invoice's lines: description, price, and quantity, with no\n"
+    "   header row.\n"
+    "2. Choose File > Save As, pick Text CSV, and save it as `lines.txt` in the invoicer folder,\n"
+    "   with `;` as the field delimiter and no text delimiter.\n"
+    "3. Open a terminal in the invoicer folder, and run\n"
+    "   `python3 -m invoicer lines.txt --rate 0.19` with your tax rate.\n"
+    "4. The invoice prints in the terminal, its total last. Copy it into your mail or print it.\n"
+)
+# The people's starting state, as the goal names it beside their end.
+STARTING = " They start as an accountant with Calc, Python 3, and a terminal, and no invoicer."
 
 
 def run(b: Bench, tmp: str, prompt: str) -> str:
@@ -256,3 +285,40 @@ def test_the_evaluator_answers_each_condition_of_its_group(tmp_path: Any, each: 
     items = [w[2] for w in calls if w[0] == "lane-item" and w[1:2] == ["3"]]
     assert sorted(set(items)) == ["N1", "N2", "N3"]
     assert calls[-1] == ["lane-result", "judged"]
+
+
+@pytest.mark.supports(
+    "test_an_evaluators_result_that_answers_each_condition_of_its_group_passes_its_check"
+)
+@pytest.mark.parametrize("each", range(RUNS))
+def test_the_evaluator_finds_a_guide_short_that_assumes_what_its_people_lack(
+    tmp_path: Any, each: int
+):
+    """Given the command done, a goal whose people start with no invoicer, the guide made taking
+    the invoicer folder as theirs, and an evaluator's Cut of the readme group C4, the groups before
+    it answered
+    When the evaluator runs alone with it
+    Then it answers N9 more, as an accountant from that starting state can't get the command by the
+    guide"""
+    b = rn_bench.bench(str(tmp_path))
+    rn_bench.command_done(b)
+    tree = b.tree()
+    tree["goal"]["decided"] += STARTING
+    b.write_tree(tree)
+    write_files(b.repo, {COMMAND: MAIN})
+    git(b.repo, "add", "-A")
+    git(b.repo, "commit", "-q", "-m", "The command, done")
+    made = b.cut("generator")
+    write_files(b.repo, {GUIDE: GUIDED})
+    b.write_result(made, {"result": "made", "carried_out": []})
+    cut = b.cut("evaluator")
+    while rn_bench.read_json(b, cut)["group"] != "C4":
+        conditions = rn_bench.read_json(b, cut)["conditions"]
+        b.write_result(
+            cut,
+            {"good": [{"condition": c, "lines": [f"{GUIDE}:1"]} for c in conditions], "more": []},
+        )
+        cut = b.cut("evaluator")
+    run(b, str(tmp_path), started("evaluator", cut))
+    written = result(b, cut)
+    assert "N9" in [a["condition"] for a in written["more"]], each

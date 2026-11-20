@@ -24,8 +24,9 @@ it from the decisions.
 - Your Cut lies at the path that your start's prompt names. It holds the deliverable's name, kind,
   and `path`, and any `more_paths`. The deliverable lies at its `path` and at each of its
   `more_paths`.
-- The Cut also holds the goal, with the state its people are in once it holds. It holds the best
-  practice this Round works by, your group, and the conditions of it that this Round judges.
+- The Cut also holds the goal, with its people's starting state and the state they're in once it
+  holds. It holds the best practice this Round works by, your group, and the conditions of it that
+  this Round judges.
 - Each condition is a question of the best practice's `best-practice.md`, with why it matters to
   the people. The best practice lies in
   `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/<best_practice>/`.
@@ -41,12 +42,16 @@ it from the decisions.
 1. Read your Cut whole, and the question and the why of each of its conditions. Ask who the
    deliverable's people are, and what they're trying to do with it once the goal holds. An example
    is a colleague from accounting printing an invoice. Mark `lane-step 1`.
-2. Try the deliverable as those people would, with only what they have, such as a guide's text
-   alone. Run what they'd run in a copy of the worktree without `.rn/`, in a folder that
-   `mktemp -d` gives. The run's files then stay as the generator made them. Note where the people
-   get stuck and where the deliverable carries them. Never read the run's `design-tree.json`, nor a
-   generator's Cut or result in your Round's folder. What rn meant isn't what the people have, and
-   a trial that knows it misses where they get stuck. Remove the copy by its exact path, then mark
+2. Try the deliverable as those people would, from the starting state that your Cut's goal names, in
+   a folder that `mktemp -d` gives, so that the run's files stay as the generator made them. Put
+   there only what that state holds and the deliverable as its people get it, such as a guide's text
+   alone for an accountant who has no code, or a clone of the repository without `.rn/` for its
+   developers, and get the rest only by the deliverable's own steps. Where the goal names no
+   starting state, take the least its people could have. Never try it from a copy of the worktree,
+   which holds what the people may lack and so hides where they get stuck. Note where the people get
+   stuck and where the deliverable carries them. Never read the run's `design-tree.json`, nor a
+   generator's Cut or result in your Round's folder. What rn meant isn't what the people have, and a
+   trial that knows it misses where they get stuck. Remove the folder by its exact path, then mark
    `lane-step 2`.
 3. For each condition of your Cut, answer from what the trial showed. Answer `good`, with the
    `path:line` of each line that meets it, opened before you name it. Or answer `more`, with
@@ -61,4 +66,5 @@ it from the decisions.
 ## Output
 
 Your result beside your Cut, which the orchestrator reads. Your last message is one line counting
-the conditions good and more. The orchestrator reads the file, and more words fill its context.
+the conditions good and more, and naming the starting state you took where the goal names none. The
+orchestrator reads the file, and more words fill its context.
