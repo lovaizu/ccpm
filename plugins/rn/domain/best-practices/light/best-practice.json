@@ -1,16 +1,16 @@
 {
  "goal": {
-  "what": "The people that a deliverable is made for get it soon, doing what a concrete check says, where a best practice of its own would cost more than it gives them, or the user wants it at once.",
+  "what": "The people that a deliverable is made for use it toward their aim soon after the user asks for it.",
   "critical_success_factors": [
    {
     "id": "C1",
-    "what": "The deliverable does for its people what a concrete check says, and holds nothing more.",
+    "what": "The deliverable gives its people what its name says, and holds nothing more.",
     "necessary_conditions": [
      {
       "id": "N1",
       "about": "the whole",
-      "what": "Does the check name a command to run or a record to read that shows the deliverable done?",
-      "why": "A light deliverable is as good as its check alone, as no best practice holds it, so a check that names no way to show it done, such as `it works`, holds it to nothing. Acceptance test-driven development writes the acceptance test before the work, and Gojko Adzic's [Specification by Example](https://gojko.net/books/specification-by-example/) states it as the key examples its people would check.",
+      "what": "Does the deliverable give its people what its name says as they meet it?",
+      "why": "A light deliverable has no best practice behind it, so its people get what they're after only where a concrete check, written before it's made, shows it: acceptance test-driven development writes the acceptance test before the work, and Gojko Adzic's [Specification by Example](https://gojko.net/books/specification-by-example/) states it as the key examples its people would check.",
       "items": [
        {
         "at": "decide",
@@ -28,31 +28,23 @@
        },
        {
         "at": "decide",
-        "text": "Name the command to run or the record to read that shows the check met, such as `claude plugin validate` on each plugin's folder. Where the check names none and its people's use gives none, end with the point, naming the one you'd take, since only the user says what shows it done."
-       }
-      ]
-     },
-     {
-      "id": "N2",
-      "about": "the whole",
-      "what": "Does the deliverable pass its check, run or read as its people meet it?",
-      "why": "The people get what they're after only where the deliverable passes the check as they'd meet it, not as its maker sees it.",
-      "items": [
+        "text": "Name the command to run or the record to read that shows the check met, such as `claude plugin validate` on each plugin's folder. Where the check names none and its people's use gives none, end with the point, naming the one you'd take, since a check that shows nothing, such as `it works`, holds the deliverable to nothing."
+       },
        {
         "at": "make",
         "text": "Make the deliverable in the format that the program or the person who reads it takes, such as the JSON that a tool loads or the Markdown that a person reads."
        },
        {
         "at": "make",
-        "text": "Run the command or read the record that N1 names, as its people meet the deliverable, such as in a fresh checkout, and mend the deliverable until it passes."
+        "text": "Run the command or read the record that you named, as the deliverable's people meet it, such as in a fresh checkout, and mend the deliverable until it passes."
        }
       ]
      },
      {
-      "id": "N3",
+      "id": "N2",
       "about": "the whole",
-      "what": "Does each part of the deliverable carry out its check or a decision of the deliverable or of an input?",
-      "why": "A part that carries out neither is one that the people reach their aim without, and that each later change must carry.",
+      "what": "Does each part of the deliverable give its people something they need for what its name says?",
+      "why": "A part that its people don't need slows the deliverable's making and their reading, and each later change must carry it.",
       "items": [
        {
         "at": "make",
@@ -61,7 +53,7 @@
       ]
      },
      {
-      "id": "N4",
+      "id": "N3",
       "about": "the whole",
       "what": "Does the deliverable say what each deliverable it rests on says, wherever it carries it?",
       "why": "A deliverable that says otherwise than what it rests on leaves its people to find which one holds.",

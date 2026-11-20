@@ -266,11 +266,6 @@
           "id": "N3",
           "good": false,
           "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
         }
       ]
     },
@@ -1323,11 +1318,6 @@
           "id": "N3",
           "good": false,
           "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
         }
       ]
     },
@@ -1839,11 +1829,6 @@
           "id": "N3",
           "good": false,
           "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
         }
       ]
     },
@@ -1907,11 +1892,6 @@
         },
         {
           "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
           "good": false,
           "decisions": []
         }
