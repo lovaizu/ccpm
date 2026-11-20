@@ -166,53 +166,7 @@
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "status": "open",
-      "inputs": [
-        "plugins/rn/domain/best-practices/meta"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Test quality",
-              "decided": "the cases written first and coverage alone: mutation testing leaves the code best practice, and N7 asks whether each test asserts its case's whole result and coverage leaves no line that no case calls for",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The developers learn from a test that runs the product whole what the product does, as each run ran as they meant and measured what they meant",
@@ -1479,10 +1433,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/code"
-    },
     {
       "do": "make",
       "path": "plugins/rn/domain/best-practices/test-design"
