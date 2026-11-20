@@ -478,7 +478,13 @@
         {
           "id": "N12",
           "good": false,
-          "decisions": []
+          "decisions": [
+            {
+              "about": "What Lane holds",
+              "decided": "lane/rules.json gives rn:up one step, never marked done, whose writes rule names .rn/ alone, so that the orchestrator writes only the run's folder, as P3.1 keeps running apart from making; it gives the orchestrator's steps of each turn no rule, as Lane counts the main conversation's steps once for each run; a principle case of P3.1 has the orchestrator's write beside .rn/ stopped with the step's sentence and its write of the design tree let through",
+              "by": "reasoning"
+            }
+          ]
         },
         {
           "id": "N13",
@@ -536,7 +542,7 @@
             },
             {
               "about": "The checklist of each step",
-              "decided": "each step that keeps a checklist gets from rn's adapter of a step's items only the practices of that step, its decide items in the step that decides and its make items in the step that makes, so items.py reads the step it's given",
+              "decided": "each step that keeps a checklist gets from rn's adapter of a step's items only the practices of that step, its decide items in the step that decides and its make items in the step that makes, as lane/adapters/rules.py gives them",
               "by": "reasoning"
             }
           ]
@@ -652,7 +658,7 @@
             },
             {
               "about": "The checklist of its group",
-              "decided": "an evaluator's step that keeps a checklist gets only the conditions of its Cut's group, so items.py reads the Cut's group",
+              "decided": "an evaluator's step that keeps a checklist gets only the conditions of its Cut's group, as lane/adapters/rules.py gives them",
               "by": "reasoning"
             }
           ]
