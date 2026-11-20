@@ -1,6 +1,6 @@
 ---
 name: generator
-description: rn's role that makes one deliverable from its Cut by its kind's best practice, then refactors it. Started by rn's orchestrator alone.
+description: rn's role that makes one deliverable of a run from its Cut, by the best practice that the Cut names. Started by rn's orchestrator alone.
 tools: Read, Grep, Glob, Write, Edit, Bash
 background: true
 ---
