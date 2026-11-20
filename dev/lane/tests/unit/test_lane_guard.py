@@ -4,8 +4,10 @@ the skill's call to the end of the routes, the run record kept in the case's tem
 the answers of an opening and a move joined; each interface below it, one for each class of the move
 it takes, a role due once and twice at once among them, a start of another plugin's subagent whose
 name nearly matches, and each class of the order's answer; and written, one for each event and
-class of answer. Each Then gives the whole answer, as Lane's rules-and-adapters.md words it, and
-each entry that the record gains."""
+class of answer; and, for a main conversation whose role takes its steps at each turn, answer, one
+for each transition of its turns, and turn_begun, turn_started, and turn_ended, one for each class
+of the prompt, the role, the adapter's answer, and the turn's end. Each Then gives the whole
+answer, as Lane's rules-and-adapters.md words it, and each entry that the record gains."""
 
 from __future__ import annotations
 
@@ -31,11 +33,13 @@ from guard import (
     skill_called,
     start_made,
     subagent_ended,
+    turn_begun,
     turn_ended,
+    turn_started,
     written,
 )
 from lane_events import Event, Events, Subagent, base_directory
-from place import Move, SkillCall
+from place import Move, SkillCall, Turn
 from record import Entry, Run, add, runs
 from repo_files import write_files
 from report import read_report, report
@@ -1371,3 +1375,281 @@ def test_an_empty_answer_is_written_as_nothing(g: Play, event: str):
     Then the guard writes nothing"""
     given = g.e.stop() if event == "stop" else g.e.bash("git status")
     assert written(given, Answer()) == ""
+
+
+# A main conversation whose role takes its steps at each turn: answer, by each transition of its
+# turns, and turn_begun, turn_started, and turn_ended, by each class of what they take.
+
+TURNS_UNBUILT = pytest.mark.xfail(
+    strict=True, reason="guard.turn_begun, guard.turn_started, and their kin are empty"
+)
+FIRST_STEPS: list[Step] = lane_bench.turn_steps([".log/1.2.0.md"])
+NOTIFIED = "<task-notification>Wrote docs/changes/1.2.0.md.</task-notification>"
+# The sentences of the main conversation's write of notes.txt in the run's first turn, and in a
+# turn of log:tag, which writes nothing; and of its turn's end before its step `up` is done.
+UP_WRITES = (
+    "You're at the step `up` of log:up, which writes only .log/1.2.0.md.\n"
+    "Write there instead of notes.txt."
+)
+TAG_WRITES = (
+    "You're at the step `tag` of log:tag, which writes nothing.\nLeave notes.txt unwritten."
+)
+UP_UNDONE = (
+    "You end before the step `up` of log:up is done.\nDo it and mark it done with lane-step up."
+)
+
+
+def turn_entry(prompt: str = "", steps: list[Step] = FIRST_STEPS, role: str = "log:up") -> Entry:
+    """The `turn` entry of the main conversation's turn in the role, begun by the prompt."""
+    return {"kind": "turn", "run": "r1", "role": role, "prompt": prompt, "steps": steps}
+
+
+def by_turn(log: str) -> None:
+    """Writes log's rules naming log:up and log:tag with no steps, and its adapter of the rules
+    that gives each turn its steps, TURN_ADAPTER."""
+    write_files(log, {"lane/rules.json": json.dumps(lane_bench.PER_TURN)})
+    write_files(log, {"lane/adapters/rules.py": lane_bench.TURN_ADAPTER})
+
+
+def main_marked(g: Play, step: str) -> Answer:
+    """The main conversation runs `lane-step` of the step; gives the guard's answer to its
+    PostToolUse with the line the reporter printed."""
+    command = f"lane-step {step}"
+    g(g.e.bash(command))
+    report("step", [step])
+    return g(g.e.bash_ran(command, g.capsys.readouterr().out))
+
+
+def first_turn_through(g: Play) -> None:
+    """The person's /log:up 1.2.0 in `log` taking its steps at each turn: the main conversation
+    starts the writer a1, marks `up` done, and ends its turn, its end let through."""
+    by_turn(g.log)
+    g.opened()
+    g.started()
+    main_marked(g, "up")
+    assert g(g.e.stop()) == Answer()
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words"
+)
+def test_the_runs_first_call_adds_its_first_turn_and_is_held_to_its_steps(g: Play):
+    """Given `log` naming log:up with no steps, its adapter of the rules TURN_ADAPTER, and the
+    person's /log:up 1.2.0 expanded, the transcript holding its base directory
+    When the main conversation writes notes.txt
+    Then the guard stops it, giving the writer due and the sentence of the step `up`, and the
+    record holds the run, its folder, and the first turn, of log:up, with an empty prompt and the
+    steps that the adapter gave"""
+    by_turn(g.log)
+    g(g.e.typed("log:up", "1.2.0"))
+    base_directory(g.e.transcript, g.log, "up")
+    said = g(g.e.write(os.path.join(g.e.cwd, "notes.txt")))
+    assert said == Answer(True, f"{WRITER_DUE}\n{UP_WRITES}")
+    assert entries() == [RUN, {"kind": "folder", "run": "r1", "plugin_root": g.log}, turn_entry()]
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_a_persons_prompt_after_the_turns_end_begins_a_turn_held_to_steps_from_it"
+)
+def test_a_turns_end_let_through_ends_it_and_the_next_prompt_and_call_begin_the_next(g: Play):
+    """Given the first turn of `log` taking its steps at each turn, `up` marked and the writer a1
+    tied
+    When the main conversation ends its turn, the person types `Write docs/notes.md.`, and the main
+    conversation writes docs/notes.md
+    Then the guard answers nothing to each, and the record gains the turn's end, the prompt begun,
+    and the next turn with the steps that the adapter gave for it"""
+    first_turn_through(g)
+    prompt = "Write docs/notes.md."
+    assert g(g.e.prompt(prompt)) == Answer()
+    assert g(g.e.write(os.path.join(g.e.cwd, "docs", "notes.md"))) == Answer()
+    assert entries()[-3:] == [
+        {"kind": "turn_ended", "run": "r1"},
+        {"kind": "turn_begun", "run": "r1", "prompt": prompt},
+        turn_entry(prompt, lane_bench.turn_steps(["docs/notes.md"])),
+    ]
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_a_subagents_end_after_a_turns_end_that_lane_stopped_goes_on_in_the_same_turn",
+    "test_a_subagents_end_that_reaches_the_main_conversation_within_its_turn_leaves_the_turn",
+)
+@pytest.mark.parametrize("how", ["stopped", "killed"])
+def test_a_notification_before_the_turns_end_is_let_through_begins_no_turn(g: Play, how: str):
+    """Given the first turn of `log` taking its steps at each turn, the writer a1 tied, and `up`
+    undone
+    When the main conversation ends its turn, which the guard stops, and a1's task-notification
+    reaches it; or the notification of a1 stopped by TaskStop reaches it within the turn; and then
+    the main conversation writes notes.txt
+    Then the write is stopped with the sentence of the first turn's step `up`, and the record holds
+    the first turn alone, with no turn's end and no prompt begun"""
+    by_turn(g.log)
+    g.opened()
+    g.started()
+    if how == "stopped":
+        assert g(g.e.stop()) == Answer(True, UP_UNDONE)
+        g(g.e.reached(WRITER, "toolu_1"))
+    else:
+        g(g.e.killed(WRITER, "toolu_1"))
+    assert g(g.e.write(os.path.join(g.e.cwd, "notes.txt"))) == Answer(True, UP_WRITES)
+    assert [e for e in entries() if e["kind"].startswith("turn")] == [turn_entry()]
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports("test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role")
+def test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role(g: Play):
+    """Given the first turn of `log` taking its steps at each turn for log:up and log:tag, its end
+    let through
+    When the person types /log:tag, which expands, and the main conversation writes notes.txt
+    Then the write is stopped with the sentence of the step `tag` of log:tag, and the record's last
+    entry is the turn of log:tag with /log:tag as its prompt"""
+    first_turn_through(g)
+    g(g.e.prompt("/log:tag"))
+    g(g.e.typed("log:tag"))
+    said = g(g.e.write(os.path.join(g.e.cwd, "notes.txt")))
+    assert said == Answer(True, TAG_WRITES)
+    assert entries()[-1] == turn_entry("/log:tag", lane_bench.turn_steps([], "tag"), "log:tag")
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_a_turn_whose_adapter_of_the_rules_is_missing_or_fails_stops_its_first_call"
+)
+def test_a_turns_first_call_whose_adapter_fails_is_stopped_and_adds_no_turn(g: Play):
+    """Given `log` naming log:up with no steps, whose adapter of the rules exits 1 saying it found
+    no event, and the person's /log:up 1.2.0 expanded
+    When the main conversation runs `git status`
+    Then the guard stops it, naming the adapter's path and what it said, and the record holds no
+    turn"""
+    by_turn(g.log)
+    write_files(g.log, {"lane/adapters/rules.py": "import sys\n\nsys.exit('no event')\n"})
+    said = g.opened()
+    assert said.stop
+    assert os.path.join(g.log, "lane", "adapters", "rules.py") in said.said
+    assert "no event" in said.said
+    assert of_kind("turn") == []
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification"
+)
+@pytest.mark.parametrize("prompt", ["Go on.", NOTIFIED])
+def test_turn_begun_keeps_the_prompt_that_begins_the_turn(g: Play, log: str, prompt: str):
+    """Given a run of log:up taking its steps at each turn, whose first turn ended
+    When the person's `Go on.`, or the writer's task-notification, begins the next turn
+    Then the answer is empty, and the record gains the prompt begun, as Claude Code gave it"""
+    by_turn(log)
+    recorded_now(log, turn_entry(), {"kind": "turn_ended", "run": "r1"})
+    [on] = runs("session-1")
+    assert turn_begun(g.e.prompt(prompt), on) == Answer()
+    assert gained(log) == [{"kind": "turn_begun", "run": "r1", "prompt": prompt}]
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
+    "test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role",
+)
+@pytest.mark.parametrize(
+    "role, prompt, steps",
+    [
+        ("log:up", "", FIRST_STEPS),
+        ("log:up", NOTIFIED, lane_bench.turn_steps(["docs/changes/1.2.0.md"])),
+        ("log:tag", "/log:tag", lane_bench.turn_steps([], "tag")),
+    ],
+)
+def test_turn_started_keeps_the_turn_with_the_steps_its_adapter_gives(
+    g: Play, log: str, role: str, prompt: str, steps: list[Step]
+):
+    """Given a run of log:up taking its steps at each turn, and its first turn with an empty
+    prompt, a turn of log:up begun by the writer's task-notification, or one of log:tag begun by
+    /log:tag
+    When its first call comes
+    Then the answer is empty, and the record gains the turn with its role, its prompt, and the
+    steps that TURN_ADAPTER gives for them"""
+    by_turn(log)
+    recorded_now(log)
+    [on] = runs("session-1")
+    assert turn_started(g.e.bash("git status"), Turn(on, role, prompt)) == Answer()
+    assert gained(log) == [turn_entry(prompt, steps, role)]
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_a_turn_whose_adapter_of_the_rules_is_missing_or_fails_stops_its_first_call"
+)
+def test_turn_started_with_no_adapter_of_the_rules_is_refused_naming_it(g: Play, log: str):
+    """Given a run of log:up taking its steps at each turn, with no adapter of the rules
+    When its first turn's first call comes
+    Then turn_started refuses with AdapterFailed naming lane/adapters/rules.py and log:up, and the
+    record gains nothing"""
+    write_files(log, {"lane/rules.json": json.dumps(lane_bench.PER_TURN)})
+    recorded_now(log)
+    [on] = runs("session-1")
+    with pytest.raises(AdapterFailed) as raised:
+        turn_started(g.e.bash("git status"), Turn(on, "log:up", ""))
+    assert "lane/adapters/rules.py" in str(raised.value)
+    assert "log:up" in str(raised.value)
+    assert gained(log) == []
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words"
+)
+def test_turn_started_whose_adapter_gives_no_step_keeps_the_turn_with_none(g: Play, log: str):
+    """Given a run of log:up taking its steps at each turn, whose adapter of the rules gives no step
+    When its first turn's first call comes
+    Then the answer is empty, and the record gains the turn with no step"""
+    by_turn(log)
+    write_files(log, {"lane/adapters/rules.py": "print('{\"steps\": []}')\n"})
+    recorded_now(log)
+    [on] = runs("session-1")
+    assert turn_started(g.e.bash("git status"), Turn(on, "log:up", "")) == Answer()
+    assert gained(log) == [turn_entry(steps=[])]
+
+
+def turn_end(g: Play, step: str | None) -> Move:
+    """The main conversation's end of its first turn, as place gives it, held to its steps, at the
+    step."""
+    [on] = runs("session-1")
+    return Move("turn_end", g.e.stop(), on, "log:up", None, None, FIRST_STEPS, step, None)
+
+
+@TURNS_UNBUILT
+@pytest.mark.supports(
+    "test_the_turns_end_before_its_step_is_marked_is_stopped_and_goes_through_once_it_is"
+)
+@pytest.mark.parametrize(
+    "more, step, said, gains",
+    [
+        (
+            (START, TIE, {"kind": "mark", "run": "r1", "agent_id": None, "step": "up"}),
+            None,
+            Answer(),
+            [{"kind": "turn_ended", "run": "r1"}],
+        ),
+        ((START, TIE), "up", Answer(True, UP_UNDONE), []),
+        (
+            ({"kind": "mark", "run": "r1", "agent_id": None, "step": "up"},),
+            None,
+            Answer(True, WRITER_DUE),
+            [],
+        ),
+    ],
+)
+def test_turn_ended_of_a_turn_ends_it_only_where_its_end_goes_through(
+    g: Play, more: tuple[Entry, ...], step: str | None, said: Answer, gains: list[Entry]
+):
+    """Given the first turn of a run of log:up taking its steps at each turn, with `up` marked and
+    the writer tied; with `up` undone; or with `up` marked and the writer due
+    When the main conversation ends its turn
+    Then the end goes through and the record gains the turn's end; or the end is stopped with the
+    sentence of `up`, or with the writer due, and the record gains nothing"""
+    by_turn(g.log)
+    recorded_now(g.log, turn_entry(), *more)
+    assert turn_ended(turn_end(g, step)) == said
+    assert gained(g.log) == gains

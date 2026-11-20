@@ -1,7 +1,7 @@
 """The unit cases of hooks/lane/rules.py's read_rules: one for each class of a plugin's
 lane/rules.json, in Lane's form or out of it, with the edges of each list that the form bounds, a
-role of no step, of one, and of several, and each refusal naming the file, the place, and what the
-plugin's author mends it to."""
+role of no step, of one, and of several, a checklist named by its items or by a command, and each
+refusal naming the file, the place, and what the plugin's author mends it to."""
 
 from __future__ import annotations
 
@@ -327,3 +327,41 @@ def test_a_routes_start_of_none_or_of_a_role_twice_is_in_the_form_and_an_empty_n
     else:
         n = len(lane_bench.RULES["routes"])
         assert f"routes/{n}/start/0" in refused(str(tmp_path), rules)
+
+
+@pytest.mark.supports("test_a_step_marked_before_the_items_its_command_gives_names_each_not_done")
+def test_a_checklist_given_by_a_command_is_in_the_form(tmp_path: Any):
+    """Given rules whose writer's step holds a checklist that names a command in place of its items
+    When Lane reads them
+    Then they read as they are"""
+    held(str(tmp_path), writer_rule({"type": "checklist", "command": "ls docs/changes"}))
+
+
+@pytest.mark.supports("test_a_step_marked_before_the_items_its_command_gives_names_each_not_done")
+@pytest.mark.parametrize(
+    "rule",
+    [
+        {"type": "checklist", "items": ["dated"], "command": "ls docs/changes"},
+        {"type": "checklist", "command": ""},
+        {"type": "checklist"},
+    ],
+)
+def test_a_checklist_with_both_items_and_a_command_or_neither_is_out_of_form(
+    tmp_path: Any, rule: Any
+):
+    """Given rules whose writer's checklist names both items and a command, an empty command, or
+    neither
+    When Lane reads them
+    Then it refuses with OutOfForm"""
+    refused(str(tmp_path), writer_rule(rule))
+
+
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words"
+)
+def test_the_main_conversations_role_named_with_no_steps_is_in_the_form(tmp_path: Any):
+    """Given rules that name the skills log:up and log:tag with no steps, for the plugin's adapter
+    of the rules to give at each turn
+    When Lane reads them
+    Then they read as they are"""
+    held(str(tmp_path), lane_bench.PER_TURN)

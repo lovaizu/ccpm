@@ -1,10 +1,11 @@
 """The integration cases of each decision that a component of Lane's architecture alone makes, and
 of each handoff between the parts with the data it passes, as the data model names it: the guard's
 finding of the plugin's folder, its choice of the order that answers, its stop where an adapter
-fails or gives out of its form, and the adapters and the check run in the conversation's folder;
-the rule types' order of checking a mark; the reporters' refusal and their report for the subagent
-that ran it; the route adapter's starts due from the routes; and the Rules out of form and the Run
-that keeps two results. Each runs `log` and Lane through the double of Claude Code."""
+fails or gives out of its form, for a start or for a turn, and the adapters and the check run in
+the conversation's folder; the rule types' order of checking a mark; the reporters' refusal and
+their report for the subagent that ran it; the route adapter's starts due from the routes; and the
+Rules out of form and the Run that keeps two results. Each runs `log` and Lane through the double
+of Claude Code."""
 
 from __future__ import annotations
 
@@ -20,6 +21,7 @@ from lane_bench import (
     reached,
     reviewed,
     started,
+    steps_by_turn,
     steps_from_adapter,
     to_review,
     written,
@@ -119,6 +121,31 @@ def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_stops_the_s
     answer, agent = opened(b).start("log:writer", prompt("log:writer"), "Write the entry")
     assert agent is None
     assert "rules.py" in answer.said
+    assert said in answer.said
+
+
+@pytest.mark.xfail(strict=True, reason="guard.turn_started and place.turn_opening are empty")
+@pytest.mark.supports("guard", "S11")
+@pytest.mark.parametrize(
+    "code, said",
+    [
+        (None, "lane/adapters/rules.py"),
+        ("import sys\n\nsys.exit('no event to read')\n", "no event to read"),
+    ],
+)
+def test_a_turn_whose_adapter_of_the_rules_is_missing_or_fails_stops_its_first_call(
+    b: Bench, code: str | None, said: str
+):
+    """Given `log` whose rules name log:up with no steps, and no adapter of the rules, or one that
+    exits 1 saying it found no event to read
+    When the person types /log:up 1.2.0, and the main conversation runs `git status`
+    Then the call is stopped, naming log:up and lane/adapters/rules.py, or rules.py and what it
+    said, for the plugin's author to mend"""
+    steps_by_turn(b)
+    b.adapter("rules.py", code)
+    answer = opened(b).bash("git status")
+    assert answer.blocked
+    assert ("log:up" if code is None else "rules.py") in answer.said
     assert said in answer.said
 
 

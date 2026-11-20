@@ -8,7 +8,11 @@ goes through; the sentence that lists a rule's values; and the order in which
 rule_types/__init__.py asks them, one for each combination of rules that a move breaks, with
 roles of no step, of one, and of three, a result rule on a step that isn't the last, a result
 that ends the start at its first, a middle, or its last step, and the main conversation's turn's
-end. Each Then gives the whole sentence, as Lane's rules-and-adapters.md words it."""
+end; a checklist's items, named or given by the plugin's command, with none, one, and several
+lines of its output, a failure, a line of no one word, and the event's folder; and the marks,
+reads, and results of a main conversation that takes its steps at each turn, in the turn at hand
+or in the one before. Each Then gives the whole sentence, as Lane's rules-and-adapters.md words
+it."""
 
 from __future__ import annotations
 
@@ -1636,5 +1640,250 @@ def test_the_main_conversations_turn_end_counts_its_own_marks_alone(
     When the main conversation ends its turn
     Then there's no sentence, or order's of `lead` of log:up"""
     lead: Step = {"name": "lead", "rules": [{"type": "order"}]}
+    ended = main(move("turn_end", e.stop(), *entries, step="lead"), [lead])
+    assert rule_types.judge_end(ended) == said
+
+
+# A checklist whose items the plugin's command gives at the mark.
+
+COMMANDED = pytest.mark.xfail(strict=True, reason="checklist.items gives no command's items yet")
+
+
+def by_command(command: str) -> Rule:
+    return {"type": "checklist", "command": command}
+
+
+@pytest.mark.supports("test_a_step_marked_before_its_items_names_each_item_not_done")
+def test_the_items_of_a_rule_that_names_them_are_those(e: Events):
+    """Given the writer's step `write`, whose checklist names `dated` and `linked`
+    When Lane takes the checklist's items at the writer's mark of `write`
+    Then they are `dated` and `linked`, in their order"""
+    assert checklist.items(rule(WRITE, "checklist"), marking_write(e)) == ["dated", "linked"]
+
+
+@COMMANDED
+@pytest.mark.supports("test_a_step_marked_before_the_items_its_command_gives_names_each_not_done")
+@pytest.mark.parametrize(
+    "command, items",
+    [
+        ("true", []),
+        ("printf 'dated\\n'", ["dated"]),
+        ("printf 'dated\\nlinked\\n'", ["dated", "linked"]),
+        ("printf 'dated\\nlinked'", ["dated", "linked"]),
+    ],
+)
+def test_the_items_of_a_command_are_each_line_of_its_output(
+    e: Events, command: str, items: list[str]
+):
+    """Given a checklist whose command prints nothing, one item, two items each on its line, or two
+    with no newline after the last
+    When Lane takes the checklist's items at the writer's mark of `write`
+    Then they are none, the one, or the two, in their order"""
+    assert checklist.items(by_command(command), marking_write(e)) == items
+
+
+@COMMANDED
+@pytest.mark.supports("test_a_checklist_command_runs_in_the_worktree_the_conversation_works_in")
+def test_the_command_of_a_checklist_runs_in_the_events_folder(e: Events, cwd: str):
+    """Given the event's folder holding a.md and b.md under docs/changes/, and a checklist whose
+    command lists that folder
+    When Lane takes the checklist's items at the writer's mark of `write`
+    Then they are a.md and b.md"""
+    write_files(cwd, {"docs/changes/a.md": "a\n", "docs/changes/b.md": "b\n"})
+    assert checklist.items(by_command("ls docs/changes"), marking_write(e)) == ["a.md", "b.md"]
+
+
+@COMMANDED
+@pytest.mark.supports(
+    "test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it_printed"
+)
+@pytest.mark.parametrize(
+    "command, printed",
+    [
+        ("echo 'no changes'; exit 1", "no changes"),
+        ("echo 'no changes' >&2; exit 2", "no changes"),
+        ("printf 'dated\\n'; exit 1", "dated"),
+        ("printf 'dated\\nlinked twice\\n'", "linked twice"),
+    ],
+)
+def test_a_command_that_fails_or_prints_a_line_of_no_one_word_is_refused_with_its_output(
+    e: Events, command: str, printed: str
+):
+    """Given a checklist whose command exits 1 saying `no changes`, exits 2 saying it on standard
+    error, exits 1 after printing an item, or exits 0 printing a line of two words
+    When Lane takes the checklist's items at the writer's mark of `write`
+    Then it refuses with ItemsFailed, holding what the command printed"""
+    with pytest.raises(checklist.ItemsFailed) as raised:
+        checklist.items(by_command(command), marking_write(e))
+    assert printed in str(raised.value)
+
+
+@COMMANDED
+@pytest.mark.supports(
+    "test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it_printed"
+)
+def test_a_command_that_cant_be_run_is_refused_with_os_error(e: Events, tmp_path: Any):
+    """Given an event whose folder isn't there, and a checklist given by a command
+    When Lane takes the checklist's items at the writer's mark of `write`
+    Then it refuses with OSError"""
+    gone = Events(os.path.join(str(tmp_path), "gone"), e.transcript)
+    with pytest.raises(OSError):
+        checklist.items(by_command("printf 'dated\\n'"), marking_write(gone))
+
+
+@COMMANDED
+@pytest.mark.supports("test_a_checklist_given_by_a_command_takes_the_items_at_the_mark")
+@pytest.mark.parametrize(
+    "entries, unmarked",
+    [
+        ([], "dated and linked"),
+        ([mark("write", item="linked")], "dated"),
+        ([mark("write", OTHER, "dated"), mark("write", item="date")], "dated and linked"),
+        ([mark("write", item="dated"), mark("write", item="linked")], None),
+    ],
+)
+def test_a_mark_is_judged_by_the_items_that_the_command_gives(
+    e: Events, entries: list[Entry], unmarked: str | None
+):
+    """Given a checklist whose command prints `dated` and `linked`, and no item marked, `linked`
+    alone, `dated` by another writer and `date`, which nearly matches it, or each
+    When the writer a1 marks `write`
+    Then the rule gives the step's sentence naming each item not marked, in their order, or
+    nothing"""
+    listing = by_command("printf 'dated\\nlinked\\n'")
+    said = checklist.judge_mark(listing, WRITE, marking_write(e, *entries))
+    expected = (
+        f"You're at the step `write` of log:writer, whose checklist isn't done: {unmarked}.\n"
+        "Do each and mark it done with lane-item write <item> first."
+    )
+    assert said == (expected if unmarked else None)
+
+
+@COMMANDED
+@pytest.mark.supports(
+    "test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it_printed"
+)
+def test_a_mark_whose_command_fails_gives_the_step_and_what_it_printed(e: Events):
+    """Given a checklist whose command exits 1 saying `no changes`
+    When the writer marks `write`
+    Then the rule gives a sentence naming the step `write` and holding what the command printed"""
+    said = checklist.judge_mark(by_command("echo 'no changes'; exit 1"), WRITE, marking_write(e))
+    assert said is not None
+    assert "`write`" in said
+    assert "no changes" in said
+
+
+# The marks, reads, and results of a main conversation that takes its steps at each turn, which
+# count for the turn whose `turn` entry they follow alone.
+
+TURNS = pytest.mark.xfail(strict=True, reason="place.own_entries counts no turn yet")
+LEAD_CHECKED: Step = {
+    "name": "lead",
+    "rules": [
+        {"type": "order"},
+        {"type": "reads_whole", "paths": ["NOTES.md"]},
+        {"type": "checklist", "items": ["noted"]},
+    ],
+}
+
+
+def turn_of(prompt: str) -> Entry:
+    return {
+        "kind": "turn",
+        "run": "r1",
+        "role": "log:up",
+        "prompt": prompt,
+        "steps": [LEAD_CHECKED],
+    }
+
+
+def before_and_in(before: list[Entry], within: list[Entry]) -> list[Entry]:
+    """The entries of a first turn, `before`, which ended, and of the next, `within`."""
+    ended: Entry = {"kind": "turn_ended", "run": "r1"}
+    begun: Entry = {"kind": "turn_begun", "run": "r1", "prompt": "Go on."}
+    return [turn_of(""), *before, ended, begun, turn_of("Go on."), *within]
+
+
+def main_marking(e: Events, entries: list[Entry]) -> Move:
+    """The main conversation's mark of `lead` in a run holding the entries, held to LEAD_CHECKED."""
+    marking = move("report", e.bash("lane-step lead"), *entries, step="lead", report=marked("lead"))
+    return main(marking, [LEAD_CHECKED])
+
+
+@TURNS
+@pytest.mark.supports("test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh")
+@pytest.mark.parametrize("earlier, said", [(True, "noted"), (False, None)])
+def test_the_main_conversations_items_count_for_the_turn_they_lie_in(
+    e: Events, earlier: bool, said: str | None
+):
+    """Given the main conversation's mark of the item `noted` of `lead` in the turn before the one
+    at hand, or in the one at hand
+    When it marks `lead`
+    Then the checklist gives the step's sentence naming `noted`, or nothing"""
+    item = [mark("lead", None, "noted")]
+    entries = before_and_in(item, []) if earlier else before_and_in([], item)
+    noted = rule(LEAD_CHECKED, "checklist")
+    expected = (
+        "You're at the step `lead` of log:up, whose checklist isn't done: noted.\n"
+        "Do each and mark it done with lane-item lead <item> first."
+    )
+    got = checklist.judge_mark(noted, LEAD_CHECKED, main_marking(e, entries))
+    assert got == (expected if said else None)
+
+
+@TURNS
+@pytest.mark.supports("test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh")
+@pytest.mark.parametrize("earlier", [True, False])
+def test_the_main_conversations_reads_count_for_the_turn_they_lie_in(e: Events, earlier: bool):
+    """Given the main conversation's read of NOTES.md whole in the turn before the one at hand, or
+    in the one at hand
+    When it marks `lead`
+    Then the rule of the files to read whole gives the step's sentence naming NOTES.md from its
+    line 1, or nothing"""
+    whole = [read("NOTES.md", 1, 6, None)]
+    entries = before_and_in(whole, []) if earlier else before_and_in([], whole)
+    reads = rule(LEAD_CHECKED, "reads_whole")
+    said = reads_whole.judge_mark(reads, LEAD_CHECKED, main_marking(e, entries))
+    unread = (
+        "You're at the step `lead` of log:up, which reads whole NOTES.md.\n"
+        "Read NOTES.md from its line 1 before you mark it done."
+    )
+    assert said == (unread if earlier else None)
+
+
+@TURNS
+@pytest.mark.supports("test_two_subagents_ends_one_after_the_other_each_begin_a_turn_of_their_own")
+@pytest.mark.parametrize(
+    "before, within, latest",
+    [
+        ([gave("noted", None)], [], None),
+        ([], [gave("noted", None)], "noted"),
+        ([gave("noted", None)], [gave("filed", None)], "filed"),
+    ],
+)
+def test_the_main_conversations_result_is_the_latest_of_the_turn_at_hand(
+    e: Events, before: list[Entry], within: list[Entry], latest: str | None
+):
+    """Given the main conversation's result `noted` in the turn before the one at hand, in the one
+    at hand, or `noted` before and `filed` in it
+    When Lane reads the result that the main conversation gave
+    Then it's none, `noted`, or `filed`"""
+    ended = main(move("turn_end", e.stop(), *before_and_in(before, within)), [LEAD_CHECKED])
+    assert result.given(ended) == latest
+
+
+@TURNS
+@pytest.mark.supports("test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh")
+@pytest.mark.parametrize("earlier, said", [(True, LEAD_UNDONE), (False, None)])
+def test_the_main_conversations_turn_end_counts_the_marks_of_the_turn_at_hand(
+    e: Events, earlier: bool, said: str | None
+):
+    """Given the main conversation's mark of `lead`, held in order, in the turn before the one at
+    hand, or in the one at hand
+    When it ends its turn
+    Then the sentence is order's of `lead` of log:up, or there's none"""
+    lead: Step = {"name": "lead", "rules": [{"type": "order"}]}
+    marks = [mark("lead", None)]
+    entries = before_and_in(marks, []) if earlier else before_and_in([], marks)
     ended = main(move("turn_end", e.stop(), *entries, step="lead"), [lead])
     assert rule_types.judge_end(ended) == said

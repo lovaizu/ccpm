@@ -1,10 +1,11 @@
 """The unit cases of hooks/lane/adapters.py: starts_due, one for each order that answers, the
 plugin's own adapter, the route adapter, and none, and for each class of what the plugin's adapter
 gives: the starts due, the run's end, a failure, and output out of its form; and given_steps, one
-for each class of what the adapter of the rules gives, no adapter among them; with what Lane gives
-an adapter on its standard input, and the folder it runs in; with each exit other than 0, output
-on standard error beside a good answer, the turn ended or not beside each order, and each refusal
-naming the adapter's path, what went wrong, and who mends it."""
+for each class of what the adapter of the rules gives, no adapter among them, for a start and for a
+turn of the main conversation; with what Lane gives an adapter on its standard input, and the
+folder it runs in; with each exit other than 0, output on standard error beside a good answer, the
+turn ended or not beside each order, and each refusal naming the adapter's path, what went wrong,
+and who mends it."""
 
 from __future__ import annotations
 
@@ -375,3 +376,24 @@ def test_the_adapter_of_the_rules_may_give_several_steps_in_their_order(log: str
     ]
     printing(log, "rules.py", {"steps": given})
     assert given_steps(log, cwd, run(log), "log:writer", "Write it.") == given
+
+
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
+    "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
+)
+@pytest.mark.parametrize("prompt", ["", "<task-notification>Wrote it.</task-notification>"])
+def test_the_adapter_of_the_rules_takes_the_main_conversations_role_and_the_turns_prompt(
+    log: str, cwd: str, prompt: str
+):
+    """Given an adapter of the rules that writes what it's given
+    When Lane asks it for the steps of a turn of the main conversation in log:up, the run's first
+    with an empty prompt, or one begun by a task-notification
+    Then it was given the run's skill and words, log:up as the role, and the turn's prompt, and ran
+    in the conversation's folder"""
+    adapter(log, "rules.py", ECHO.format(printed=json.dumps({"steps": []})))
+    given_steps(log, cwd, run(log), "log:up", prompt)
+    assert given(cwd) == {
+        "input": {"run": {"skill": "log:up", "words": "1.2.0"}, "role": "log:up", "prompt": prompt},
+        "cwd": os.path.realpath(cwd),
+    }

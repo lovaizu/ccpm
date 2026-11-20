@@ -235,11 +235,17 @@ The items done before the step. Lane stops a `lane-step` mark of the step while 
 Where the step's own work decides the items, such as each part that a change reaches, the rule
 names a `command` in place of `items`. Lane runs it at the mark, in the folder that the
 conversation works in, and takes each line of its output as an item, an empty output as none. Each
-item is one word, as `lane-item` takes it. A command that exits other than 0 stops the mark with
-what it printed.
+item is one word, as `lane-item` takes it. A command that exits other than 0, or prints a line that
+isn't one word, stops the mark with what it printed, as the plugin's author mends the command:
 
 ```json
 { "type": "checklist", "command": "python3 scripts/changed.py" }
+```
+
+```text
+You're at the step `write` of log:writer, whose checklist command fails:
+scripts/changed.py: no changes file
+Mend python3 scripts/changed.py, which gives the items one word a line.
 ```
 
 ```text

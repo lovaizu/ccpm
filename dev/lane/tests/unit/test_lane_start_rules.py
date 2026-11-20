@@ -2,7 +2,8 @@
 the plugin's rules give a role: its steps, a name with no steps, or nothing, for a subagent's role
 and for the main conversation's skill; with a role named with an empty list of steps, a role whose
 name nearly matches one that the rules name, and steps given beside rules that fix the role's own
-or don't name it."""
+or don't name it; and the main conversation's skill named with no steps, before its turn's steps
+are given and after."""
 
 from __future__ import annotations
 
@@ -129,3 +130,18 @@ def test_a_role_named_with_no_steps_and_none_given_has_none(given: list[Step] | 
     When Lane gives the steps of the start
     Then there's none"""
     assert steps(RULES, "log:scribe", given) == []
+
+
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words"
+)
+@pytest.mark.parametrize("given, held", [(None, []), (GIVEN, GIVEN)])
+def test_the_main_conversations_role_named_with_no_steps_is_held_to_its_turns_steps(
+    given: list[Step] | None, held: list[Step]
+):
+    """Given rules that name the skill log:up with no steps, and no turn's steps yet, or the steps
+    that the adapter gave the turn
+    When Lane decides whether the main conversation in log:up asks the adapter, and gives its steps
+    Then it does, and they are none, or those given"""
+    rules: Rules = copy.deepcopy(lane_bench.PER_TURN)
+    assert (asks_adapter(rules, "log:up"), steps(rules, "log:up", given)) == (True, held)

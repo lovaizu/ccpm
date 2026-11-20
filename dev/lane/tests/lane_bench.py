@@ -26,7 +26,7 @@ from claude_code import Agent, Answer, Conversation
 from repo_files import environment, git, write_files
 
 if TYPE_CHECKING:
-    from rules import Rules
+    from rules import Rules, Step
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 LANE = os.path.join(TOP, "plugins", "lane")
@@ -205,6 +205,34 @@ print(json.dumps({"steps": [{"name": "write", "rules": [{"type": "writes", "path
 ADAPTED: Rules = copy.deepcopy(RULES)
 ADAPTED["roles"]["log:writer"] = {}
 
+# An adapter of the rules that `log` gives for its main conversation, which answers each event in
+# its own turn: one step named by the skill of the turn's role, such as `up` for log:up, held in
+# order, which writes each Markdown file that the turn's prompt names, or, in the run's first turn,
+# whose prompt is empty, the note of the run's words under .log/.
+TURN_ADAPTER = """\
+import json, re, sys
+
+given = json.load(sys.stdin)
+name = given["role"].partition(":")[2]
+paths = re.findall(r"[\\w./-]+\\.md", given["prompt"])
+if not given["prompt"]:
+    paths = [".log/" + given["run"]["words"] + ".md"]
+rules = [{"type": "order"}, {"type": "writes", "paths": paths}]
+print(json.dumps({"steps": [{"name": name, "rules": rules}]}))
+"""
+
+# The rules of `log` naming its skills log:up and log:tag with no steps, so that the main
+# conversation takes the steps of each turn from TURN_ADAPTER, its subagents' steps and its routes
+# as RULES gives them.
+PER_TURN: Rules = copy.deepcopy(RULES)
+PER_TURN["roles"]["log:up"] = {}
+PER_TURN["roles"]["log:tag"] = {}
+
+
+def turn_steps(paths: list[str], name: str = "up") -> list[Step]:
+    """The steps that TURN_ADAPTER gives a turn whose step is the name, writing the paths."""
+    return [{"name": name, "rules": [{"type": "order"}, {"type": "writes", "paths": paths}]}]
+
 
 def prompt(role: str, words: str = WORDS) -> str:
     """The prompt that the main conversation gives the role's start, as log's skill words it."""
@@ -310,6 +338,13 @@ def steps_from_adapter(b: Bench) -> None:
     steps from RULES_ADAPTER, the plugin's adapter of the rules."""
     b.rules(ADAPTED)
     b.adapter("rules.py", RULES_ADAPTER)
+
+
+def steps_by_turn(b: Bench) -> None:
+    """Writes the rules of `log` naming log:up and log:tag with no steps, so that each turn of its
+    main conversation takes its steps from TURN_ADAPTER, the plugin's adapter of the rules."""
+    b.rules(PER_TURN)
+    b.adapter("rules.py", TURN_ADAPTER)
 
 
 def bench(tmp: str) -> Bench:

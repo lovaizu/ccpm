@@ -7,11 +7,17 @@ about, each event placed on its run, its start, its role, and its step, or outsi
 latest run not ended picked of several, the latest command whose skill has steps, the latest tie of
 a resumed subagent, a resume carrying its start's role, prompt, and steps, a Grep and a Glob, and
 the events of another plugin, of an untied subagent, or of no start, which it leaves alone; and
-command_of, marked, and latest_start, which place's callers share. Each Then of place gives the
-whole move."""
+command_of, marked, and latest_start, which place's callers share; and, for a main conversation
+whose role takes its steps at each turn, turn_beginning, one for each event that begins its next
+turn or doesn't, as its turn's end was let through, stopped, or not yet come, turn_opening, one
+for each first call or end of a turn and each event that opens none, with the latest prompt begun
+and the latest command's role, own_entries, one for each count of turns, and place, holding a
+call and an end to the latest turn's steps, a skill called within the turn among them. Each Then
+of place gives the whole move."""
 
 from __future__ import annotations
 
+import copy
 import dataclasses
 import json
 import os
@@ -22,7 +28,20 @@ import lane_entries
 import pytest
 from lane_events import Event, Events, Subagent
 from order import StartsDue, order_run
-from place import Move, SkillCall, command_of, latest_start, marked, opening, place, skill_call
+from place import (
+    Move,
+    SkillCall,
+    Turn,
+    command_of,
+    latest_start,
+    marked,
+    opening,
+    own_entries,
+    place,
+    skill_call,
+    turn_beginning,
+    turn_opening,
+)
 from record import Entry, Run
 from repo_files import write_files
 from report import report
@@ -925,3 +944,403 @@ def test_the_latest_start_of_a_subagent_is_that_of_its_latest_tie(e: Events):
         second,
         None,
     )
+
+
+# turn_beginning, turn_opening, own_entries, and place, for a main conversation that takes its steps
+# at each turn.
+
+# The steps that TURN_ADAPTER gives the run's first turn, and a later turn whose prompt names
+# docs/changes/1.2.0.md.
+FIRST: list[Step] = lane_bench.turn_steps([".log/1.2.0.md"])
+LATER: list[Step] = lane_bench.turn_steps(["docs/changes/1.2.0.md"])
+NOTIFIED = "<task-notification>Wrote docs/changes/1.2.0.md.</task-notification>"
+TURN_ENDED: Entry = {"kind": "turn_ended", "run": "r1"}
+UNBUILT = pytest.mark.xfail(strict=True, reason="place.turn_beginning and its kin are empty")
+
+
+def turn(prompt: str = "", steps: list[Step] = FIRST, role: str = "log:up") -> Entry:
+    """The `turn` entry of the main conversation's turn in the role, begun by the prompt."""
+    return {"kind": "turn", "run": "r1", "role": role, "prompt": prompt, "steps": steps}
+
+
+def begun(prompt: str) -> Entry:
+    """The `turn_begun` entry of the prompt that begins a turn after the run's first."""
+    return {"kind": "turn_begun", "run": "r1", "prompt": prompt}
+
+
+def typed(command: str) -> Entry:
+    return {"kind": "typed", "run": "r1", "command": command}
+
+
+def per_turn(log: str, rules: Any = lane_bench.PER_TURN) -> None:
+    """Writes log's rules, by default naming log:up and log:tag with no steps."""
+    write_files(log, {"lane/rules.json": json.dumps(rules)})
+
+
+# The rules of `log` that fix log:up's steps and name log:tag with no steps.
+TAG_PER_TURN: Any = copy.deepcopy(lane_bench.RULES)
+TAG_PER_TURN["roles"]["log:tag"] = {}
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
+    "test_a_persons_prompt_after_the_turns_end_begins_a_turn_held_to_steps_from_it",
+    "test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role",
+)
+@pytest.mark.parametrize("by", ["prompt", "command", "notification"])
+def test_the_first_prompt_after_a_turns_end_begins_the_next_turn(e: Events, log: str, by: str):
+    """Given a run of log:up whose rules name log:up with no steps, whose first turn ended, its end
+    let through
+    When the person types `Go on.`, or /log:tag, or the writer's task-notification reaches the main
+    conversation
+    Then the event begins the run's next turn"""
+    per_turn(log)
+    given = {
+        "prompt": lambda: e.prompt("Go on."),
+        "command": lambda: e.prompt("/log:tag"),
+        "notification": lambda: e.reached(WRITER, "u1"),
+    }[by]()
+    on = run(START, turn(), TIE, step_mark("up", None), TURN_ENDED)
+    assert turn_beginning(given, [on]) is on
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_a_subagents_end_after_a_turns_end_that_lane_stopped_goes_on_in_the_same_turn",
+    "test_a_subagents_end_that_reaches_the_main_conversation_within_its_turn_leaves_the_turn",
+)
+@pytest.mark.parametrize(
+    "entries",
+    [
+        (turn(),),
+        (turn(), TIE, step_mark("up", None)),
+        (turn(), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER)),
+    ],
+)
+def test_a_prompt_within_a_turn_begins_none(e: Events, log: str, entries: tuple[Entry, ...]):
+    """Given a run of log:up taking its steps at each turn, in its first turn, in its first turn
+    after its end was stopped, or in its second turn, none of them ended
+    When the writer's task-notification reaches the main conversation
+    Then it begins no turn, as it goes on in the turn at hand"""
+    per_turn(log)
+    on = run(START, *entries)
+    assert turn_beginning(e.reached(WRITER, "u1"), [on]) is None
+
+
+@pytest.mark.supports("test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role")
+@pytest.mark.parametrize(
+    "rules, begins",
+    [
+        pytest.param(TAG_PER_TURN, True, marks=UNBUILT),
+        (lane_bench.ADAPTED, False),
+        (lane_bench.RULES, False),
+    ],
+)
+def test_a_prompt_begins_a_turn_only_where_the_latest_commands_role_takes_its_steps_at_each_turn(
+    e: Events, log: str, rules: Any, begins: bool
+):
+    """Given a run of log:up in which /log:tag was typed, and whose turn's end was let through;
+    with rules that fix log:up's steps and name log:tag with none, that fix both and name only the
+    writer with none, or that fix each
+    When the person types `Go on.`
+    Then it begins the next turn, or none, as the role at hand takes its steps from the rules"""
+    per_turn(log, rules)
+    on = run(typed("log:tag"), turn(role="log:tag"), TURN_ENDED)
+    assert turn_beginning(e.prompt("Go on."), [on]) is (on if begins else None)
+
+
+@pytest.mark.supports(
+    "test_a_persons_prompt_after_the_turns_end_begins_a_turn_held_to_steps_from_it"
+)
+@pytest.mark.parametrize("event", ["write", "stop", "typed", "subagent"])
+def test_an_event_other_than_the_main_conversations_prompt_begins_no_turn(
+    e: Events, log: str, event: str
+):
+    """Given a run of log:up taking its steps at each turn, whose first turn ended
+    When the main conversation writes a file or ends its turn, the person's /log:tag expands, or
+    the writer writes a file
+    Then the event begins no turn"""
+    per_turn(log)
+    given = {
+        "write": lambda: e.write("/repo/notes.md"),
+        "stop": e.stop,
+        "typed": lambda: e.typed("log:tag"),
+        "subagent": lambda: e.write("/repo/notes.md", WRITER),
+    }[event]()
+    on = run(START, turn(), TIE, TURN_ENDED)
+    assert turn_beginning(given, [on]) is None
+
+
+@pytest.mark.supports(
+    "test_a_persons_prompt_after_the_turns_end_begins_a_turn_held_to_steps_from_it"
+)
+@pytest.mark.parametrize("opened, ended", [(False, False), (True, True)])
+def test_a_prompt_beside_no_run_with_a_folder_that_stands_begins_no_turn(
+    e: Events, log: str, opened: bool, ended: bool
+):
+    """Given a run of log:up taking its steps at each turn, with no folder yet, or ended
+    When the person types `Go on.`
+    Then it begins no turn"""
+    per_turn(log)
+    on = run(*((turn(), TURN_ENDED, ENDED) if ended else ()), opened=opened)
+    assert turn_beginning(e.prompt("Go on."), [on]) is None
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
+    "test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh",
+)
+@pytest.mark.parametrize("event", ["write", "bash", "stop"])
+def test_the_runs_first_call_or_end_opens_its_first_turn_with_no_prompt(
+    e: Events, log: str, event: str
+):
+    """Given a run of log:up taking its steps at each turn, which holds no turn
+    When the main conversation writes a file, runs `git status`, or ends its turn
+    Then it opens the run's first turn, of log:up, with an empty prompt"""
+    per_turn(log)
+    given = {
+        "write": lambda: e.write("/repo/notes.md"),
+        "bash": lambda: e.bash("git status"),
+        "stop": e.stop,
+    }[event]()
+    on = run()
+    assert turn_opening(given, [on]) == Turn(on, "log:up", "")
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
+    "test_two_subagents_ends_one_after_the_other_each_begin_a_turn_of_their_own",
+)
+@pytest.mark.parametrize(
+    "entries",
+    [
+        (turn(), TURN_ENDED, begun(NOTIFIED)),
+        (turn(), TURN_ENDED, begun("Go on."), turn("Go on.", []), TURN_ENDED, begun(NOTIFIED)),
+    ],
+)
+def test_the_first_call_after_a_prompt_opens_its_turn_with_the_latest_prompt_begun(
+    e: Events, log: str, entries: tuple[Entry, ...]
+):
+    """Given a run of log:up taking its steps at each turn, whose first turn ended and the
+    writer's task-notification began the next; or whose second turn, begun by `Go on.`, ended too
+    before that notification
+    When the main conversation writes a file
+    Then it opens the turn of log:up with the notification as its prompt"""
+    per_turn(log)
+    on = run(*entries)
+    assert turn_opening(e.write("/repo/notes.md"), [on]) == Turn(on, "log:up", NOTIFIED)
+
+
+@UNBUILT
+@pytest.mark.supports("test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role")
+@pytest.mark.parametrize("command, role", [("log:tag", "log:tag"), ("log:retry", "log:up")])
+def test_the_turns_role_is_that_of_the_latest_command_whose_role_the_rules_name(
+    e: Events, log: str, command: str, role: str
+):
+    """Given a run of log:up taking its steps at each turn, whose first turn ended, and the person's
+    /log:tag, whose skill the rules name with no steps, or /log:retry, which they don't name,
+    typed after it
+    When the main conversation writes a file
+    Then it opens the turn of log:tag, or of log:up, with the command as its prompt"""
+    per_turn(log)
+    on = run(turn(), TURN_ENDED, begun(f"/{command}"), typed(command))
+    assert turn_opening(e.write("/repo/notes.md"), [on]) == Turn(on, role, f"/{command}")
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_a_skill_called_within_a_turn_leaves_its_steps_and_gives_the_next_turn_its_role",
+    "test_a_subagents_end_after_a_turns_end_that_lane_stopped_goes_on_in_the_same_turn",
+)
+@pytest.mark.parametrize(
+    "entries",
+    [
+        (turn(),),
+        (turn(), typed("log:tag")),
+        (turn(), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER)),
+    ],
+)
+@pytest.mark.parametrize("event", ["write", "stop"])
+def test_a_call_or_end_of_a_turn_that_holds_its_steps_opens_none(
+    e: Events, log: str, entries: tuple[Entry, ...], event: str
+):
+    """Given a run of log:up taking its steps at each turn, in its first turn, in its first turn
+    after log:tag was called by the Skill tool, or in its second turn, each holding its steps
+    When the main conversation writes a file, or ends its turn
+    Then it opens no turn"""
+    per_turn(log)
+    given = e.write("/repo/notes.md") if event == "write" else e.stop()
+    assert turn_opening(given, [run(*entries)]) is None
+
+
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words"
+)
+@pytest.mark.parametrize("event", ["bash_ran", "prompt", "subagent", "subagent_end"])
+def test_an_event_other_than_the_main_conversations_call_or_end_opens_no_turn(
+    e: Events, log: str, event: str
+):
+    """Given a run of log:up taking its steps at each turn, which holds no turn
+    When the PostToolUse of the main conversation's `git status` comes, the person types a prompt,
+    the writer writes a file, or the writer ends
+    Then it opens no turn"""
+    per_turn(log)
+    given = {
+        "bash_ran": lambda: e.bash_ran("git status", ""),
+        "prompt": lambda: e.prompt("Go on."),
+        "subagent": lambda: e.write("/repo/notes.md", WRITER),
+        "subagent_end": lambda: e.ended(WRITER),
+    }[event]()
+    assert turn_opening(given, [run(START, TIE)]) is None
+
+
+@pytest.mark.supports("test_the_main_conversations_write_in_a_run_is_held_to_its_skills_step")
+@pytest.mark.parametrize("rules, opened", [(lane_bench.RULES, True), (lane_bench.PER_TURN, False)])
+def test_a_call_in_a_run_whose_rules_fix_its_steps_or_with_no_folder_opens_no_turn(
+    e: Events, log: str, rules: Any, opened: bool
+):
+    """Given a run of log:up whose rules fix its steps, or one taking its steps at each turn with no
+    folder yet
+    When the main conversation writes a file
+    Then it opens no turn"""
+    per_turn(log, rules)
+    assert turn_opening(e.write("/repo/notes.md"), [run(opened=opened)]) is None
+
+
+@pytest.mark.supports("test_two_starts_of_one_role_are_each_held_to_their_own_start")
+def test_a_subagents_own_entries_are_each_with_its_id_across_turns(e: Events):
+    """Given a run whose writer a1 marked `write` in the main conversation's first turn and gave
+    `written` in its second, with the main conversation's marks and the reviewer a2's mark beside
+    them
+    When Lane reads a1's own entries
+    Then they are a1's tie, mark, and result, in their order"""
+    mark_a1, gave = step_mark("write"), lane_entries.result("a1", "written")
+    on = run(
+        START,
+        turn(),
+        TIE,
+        mark_a1,
+        step_mark("up", None),
+        TURN_ENDED,
+        turn(NOTIFIED, LATER),
+        step_mark("review", "a2"),
+        gave,
+    )
+    assert own_entries(on, "a1") == [TIE, mark_a1, gave]
+
+
+@pytest.mark.supports("test_a_read_of_the_main_conversation_counts_for_no_subagent")
+def test_the_main_conversations_own_entries_with_no_turn_are_each_with_no_agent(e: Events):
+    """Given a run of log:up whose rules fix its steps, holding the writer's start, tie, and mark,
+    and the main conversation's mark of `lead`
+    When Lane reads the main conversation's own entries
+    Then they are each entry with no agent: the run, its folder, the start, and the mark of
+    `lead`"""
+    lead = step_mark("lead", None)
+    on = run(START, TIE, step_mark("write"), lead)
+    assert own_entries(on, None) == [*on.entries[:2], START, lead]
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh",
+    "test_two_subagents_ends_one_after_the_other_each_begin_a_turn_of_their_own",
+)
+@pytest.mark.parametrize("turns", [1, 2, 3])
+def test_the_main_conversations_own_entries_are_those_after_its_latest_turn(e: Events, turns: int):
+    """Given a run of log:up taking its steps at each turn, with one, two, or three turns, each
+    with the main conversation's mark of `up` and the writer's mark of `write` after its `turn`
+    When Lane reads the main conversation's own entries
+    Then they are those with no agent after the latest `turn` alone: its mark of `up`"""
+    entries: list[Entry] = [START, TIE]
+    for each in range(turns):
+        entries += [
+            turn() if each == 0 else turn(NOTIFIED, LATER),
+            step_mark("write"),
+            step_mark("up", None),
+        ]
+        if each < turns - 1:
+            entries += [TURN_ENDED, begun(NOTIFIED)]
+    on = run(*entries)
+    assert own_entries(on, None) == [step_mark("up", None)]
+
+
+@UNBUILT
+@pytest.mark.supports("test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh")
+def test_the_main_conversations_own_entries_at_its_turns_first_move_are_none(e: Events):
+    """Given a run of log:up taking its steps at each turn, whose second turn's `turn` entry is its
+    last, after the first turn's mark of `up`
+    When Lane reads the main conversation's own entries, and the steps it marked
+    Then there's none of either"""
+    on = run(turn(), step_mark("up", None), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER))
+    assert (own_entries(on, None), marked(on, None)) == ([], set())
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
+    "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
+)
+@pytest.mark.parametrize(
+    "entries, steps",
+    [
+        ((turn(),), FIRST),
+        ((turn(), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER)), LATER),
+    ],
+)
+def test_the_main_conversations_call_in_a_turn_is_held_to_the_latest_turns_steps(
+    e: Events, log: str, entries: tuple[Entry, ...], steps: list[Step]
+):
+    """Given a run of log:up taking its steps at each turn, in its first turn, or in its second,
+    whose steps differ
+    When the main conversation writes a file
+    Then the move is a call of log:up, held to the turn's steps, at its step `up`"""
+    per_turn(log)
+    given, on = e.write("/repo/notes.md"), run(*entries)
+    assert place(given, [on], by_routes) == main_move("call", given, on, steps=steps, step="up")
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_the_turns_end_before_its_step_is_marked_is_stopped_and_goes_through_once_it_is",
+    "test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh",
+)
+@pytest.mark.parametrize(
+    "entries, step",
+    [
+        ((turn(),), "up"),
+        ((turn(), step_mark("up", None)), None),
+        ((turn(), step_mark("up", None), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER)), "up"),
+    ],
+)
+def test_the_main_conversations_stop_ends_its_turn_at_the_first_step_the_turn_left_undone(
+    e: Events, log: str, entries: tuple[Entry, ...], step: str | None
+):
+    """Given a run of log:up taking its steps at each turn, in its first turn with `up` undone, or
+    marked; or in its second turn, `up` marked only in the first
+    When the main conversation ends its turn
+    Then the move is the end of the turn, held to the turn's steps, at `up`, at no step, or at
+    `up`"""
+    per_turn(log)
+    given, on = e.stop(), run(*entries)
+    steps = LATER if len(entries) > 2 else FIRST
+    assert place(given, [on], by_routes) == main_move("turn_end", given, on, steps=steps, step=step)
+
+
+@UNBUILT
+@pytest.mark.supports(
+    "test_a_skill_called_within_a_turn_leaves_its_steps_and_gives_the_next_turn_its_role"
+)
+def test_a_call_after_a_skill_called_within_the_turn_holds_to_the_turns_role_and_steps(
+    e: Events, log: str
+):
+    """Given a run of log:up taking its steps at each turn for log:up and log:tag, in its first
+    turn, after log:tag was called by the Skill tool
+    When the main conversation writes a file
+    Then the move is a call held to the turn's role, log:up, and its steps, at `up`"""
+    per_turn(log)
+    given, on = e.write("/repo/notes.md"), run(turn(), typed("log:tag"))
+    assert place(given, [on], by_routes) == main_move("call", given, on, steps=FIRST, step="up")
