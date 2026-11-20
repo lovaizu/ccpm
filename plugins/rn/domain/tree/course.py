@@ -1,7 +1,8 @@
 """Decides the course of the Rounds: which starts are due, each deliverable's beside those of the
 others being made, whether a Round makes the content by the kind's best practice or refactors it by
-the refactor best practice, the limit of two Rounds of each, and the groups a later Round judges,
-those holding a condition whose decisions changed."""
+the refactor best practice, which a deliverable of the kind light never takes, the limit of two
+Rounds of each, and the groups a later Round judges, those holding a condition whose decisions
+changed."""
 
 from __future__ import annotations
 
@@ -53,8 +54,9 @@ def due(tree: Tree, starts: Sequence[Start], running: Sequence[Due]) -> Sequence
     one of its inputs, beside each other such item, the generator, where its
     latest Round has no result of the generator, its point's answer changed a decision, or its
     evaluators judged it short on a condition that the design tree doesn't hold good and a decision
-    changed since, within the limit of two Rounds of content and two of refactoring that only the
-    user's decision passes; or one evaluator for each group due once the generator made it; or
+    changed since, or judged its content good, for a Round of refactoring unless its kind is
+    light, within the limit of two Rounds of content and two of refactoring that only the user's
+    decision passes; or one evaluator for each group due once the generator made it; or
     none, such as while a point waits, or once the limit leaves each finding to the orchestrator,
     which puts it to the user as a proposal. Each new Round takes the next number of the run.
     Refuses: nothing."""
@@ -167,7 +169,8 @@ def _after(
 ) -> list[Due]:
     """The generator due once each evaluator of the latest Round answered, or none. A condition
     short counts as good where the design tree holds it good, as the orchestrator found that its
-    people would never meet it."""
+    people would never meet it. Content of the kind light judged good gets no Round of
+    refactoring, as it is made by its check alone."""
     path = node["path"]
     practice = made[-1].cut["best_practice"]
     good = {c["id"] for c in node.get("necessary_conditions", []) if c["good"]}
@@ -175,7 +178,7 @@ def _after(
     if practice == node["kind"]:
         short -= good
     if not short:
-        if practice != node["kind"]:
+        if practice != node["kind"] or practice == "light":
             return []
         refactor = "refactor-doc" if path.endswith(".md") else "refactor-code"
         return [Due(path, "generator", "", refactor, next_)]

@@ -16,7 +16,7 @@ from typing import Any
 import pytest
 from fault import Wrong
 from repo_files import write_files
-from rn_bench import COMMAND, GUIDE, RUN, plan, vision
+from rn_bench import COMMAND, GUIDE, RUN, conditions, plan, vision
 from tree import course, cut, rounds
 from tree.course import Due
 from tree.rounds import Start
@@ -30,6 +30,7 @@ README_GROUPS = {
     "C4": ["N9", "N10"],
 }
 REFACTORING = {"C1": ["N1"], "C2": ["N2", "N3", "N4", "N5", "N6"], "C3": ["N7", "N8"]}
+LIGHT_GROUPS = {"C1": ["N1", "N2", "N3", "N4"]}
 GOAL = plan()["goal"]["decided"]
 
 
@@ -117,6 +118,20 @@ def changed(
     tree["deliverables"][0]["necessary_conditions"][1]["decisions"].append(
         {"about": about, "decided": "named by its number", "by": by}
     )
+    return tree
+
+
+def light(done: bool = False) -> dict[str, Any]:
+    """The plan with the command of the kind light, with that kind's conditions, its check decided
+    under N1, and no input, or, where `done`, signed off and out of the work."""
+    tree = plan()
+    command = tree["deliverables"][0]
+    command.update(kind="light", inputs=[], necessary_conditions=conditions("light"))
+    check = {"about": "The check", "decided": "python3 -m invoicer runs", "by": "user"}
+    command["necessary_conditions"][0]["decisions"] = [check]
+    if done:
+        command["status"] = "done"
+        tree["work"] = tree["work"][1:]
     return tree
 
 
@@ -613,6 +628,48 @@ def test_refactoring_short_with_its_decision_changed_gives_the_next_round_of_ref
         *evaluators(2, SHORT, REFACTORING, practice="refactor-code"),
     ]
     assert due(changed(), starts) == [gen(3, "refactor-code")]
+
+
+@pytest.mark.supports("test_refactoring_judged_good_leaves_the_deliverable_for_its_sign_off")
+def test_a_light_deliverable_judged_good_gives_none():
+    """Given the plan with the command of the kind light, its round 1 judged good on each condition
+    When course.due gives the starts due
+    Then none is due, as a light deliverable gets no Round of refactoring and the guide waits for
+    the command, its input, to be done"""
+    tree = light()
+    starts = [generator(1, "light", MADE, tree), *evaluators(1, {}, LIGHT_GROUPS, practice="light")]
+    assert due(tree, starts) == []
+
+
+@pytest.mark.supports("test_refactoring_judged_good_leaves_the_deliverable_for_its_sign_off")
+def test_a_light_deliverable_judged_good_and_done_gives_the_next_deliverables_generator():
+    """Given the light command's round 1 judged good, and the command then signed off and out of
+    the work
+    When course.due gives the starts due
+    Then the guide's generator of round 2 by readme is due alone"""
+    tree = light(done=True)
+    starts = [generator(1, "light", MADE, tree), *evaluators(1, {}, LIGHT_GROUPS, practice="light")]
+    assert due(tree, starts) == [gen(2, "readme", GUIDE)]
+
+
+@pytest.mark.supports("test_a_finding_taken_into_its_decision_gets_the_next_round_of_content")
+def test_a_light_deliverable_short_with_its_decision_changed_gives_the_next_round_of_light():
+    """Given the light command's round 1 judged with more on N2, and a decision under N2 added since
+    When course.due gives the starts due
+    Then the generator of round 2 by light is due"""
+    tree = light()
+    starts = [generator(1, "light", MADE, tree)]
+    starts += evaluators(1, SHORT, LIGHT_GROUPS, practice="light")
+    assert due(changed(light()), starts) == [gen(2, "light")]
+
+
+@pytest.mark.supports("test_a_deliverable_made_gets_one_evaluator_for_each_group_of_its_conditions")
+def test_a_light_deliverable_made_gives_one_evaluator_for_its_one_group():
+    """Given the light command's round 1 made
+    When course.due gives the starts due
+    Then one evaluator of round 1 by light is due, for C1, the light best practice's one group"""
+    tree = light()
+    assert due(tree, [generator(1, "light", MADE, tree)]) == evs(1, LIGHT_GROUPS, "light")
 
 
 @pytest.mark.supports("test_deliverables_that_rest_on_none_being_made_start_at_once")
