@@ -199,20 +199,20 @@ dev/rn/                            what only rn's developers use
 
 ## Test strategy
 
-| Check | Test target | Kind | Exit criteria or measure |
-|---|---|---|---|
-| Lint | Parts | Quality | 0 findings. |
-| Static analysis | Parts | Quality | 0 findings of mismatched types, copied code, or import cycles. |
-| Complexity analysis | Parts | Quality | Per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
-| Unit testing | Parts | Quality | Every case passes. |
-| Unit testing | Parts that hold a prompt | Benchmark | Each case's results over 3 runs. |
-| Code coverage | Parts | Quality | 100% statement (C0) and branch (C1) coverage. |
-| Property-based testing | Parts | Quality | 0 counterexamples in reading the design tree and the rounds. |
-| Mutation testing | Parts | Quality | 0 surviving mutants. |
-| Integration testing | Architecture | Quality | Every case passes, each handoff giving the data the data model names. |
-| Contract testing | Architecture | Quality | On each new gh, each recorded command gives what it recorded. |
-| Traceability | Architecture | Quality | Every element tested, every case naming one level up, and each strategy's case failing broken. |
-| Scenario testing | Product | Benchmark | KR1.1, KR1.2, and the orchestrator's context size, with runs added until one more moves no mean by a step. |
-| Installation testing | Product | Quality | rn installs by the README's commands in a fresh home, and `/rn:up` answers. |
-| Configuration testing | Product | Quality | Every case passes on Python 3.9 and on the newest Python. |
-| Conformance and compliance testing | Product | Quality | Claude Code's strict check of the plugin passes. |
+| Check | Test target | Kind | When | Exit criteria or measure |
+|---|---|---|---|---|
+| Lint | Parts | Quality | During the work | 0 findings. |
+| Static analysis | Parts | Quality | During the work | 0 findings of mismatched types, copied code, or import cycles. |
+| Complexity analysis | Parts | Quality | During the work | Per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
+| Unit testing | Parts | Quality | During the work | Every case passes. |
+| Unit testing | Parts that hold a prompt | Benchmark | During the work | Each case's results over 3 runs. |
+| Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
+| Property-based testing | Parts | Quality | Apart from the work | 0 counterexamples in reading the design tree and the rounds. |
+| Mutation testing | Parts | Quality | Apart from the work | 0 surviving mutants. |
+| Integration testing | Architecture | Quality | During the work | Every case passes, each handoff giving the data the data model names. |
+| Contract testing | Architecture | Quality | Apart from the work | On each new gh, each recorded command gives what it recorded. |
+| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each strategy's case failing broken. |
+| Scenario testing | Product | Benchmark | At stages | KR1.1, KR1.2, and the orchestrator's context size, with runs added until one more moves no mean by a step. |
+| Installation testing | Product | Quality | At stages | rn installs by the README's commands in a fresh home, and `/rn:up` answers. |
+| Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |
+| Conformance and compliance testing | Product | Quality | During the work | Claude Code's strict check of the plugin passes. |

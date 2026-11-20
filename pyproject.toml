@@ -16,8 +16,8 @@ dev = [
   "ruff>=0.17.2",
 ]
 # The checks that need a newer Python only to check, not to run: copied code, how deep each function
-# nests, and how well the tests catch faults, as N7 of
-# plugins/rn/domain/best-practices/code/best-practice.md says.
+# nests, and how well the tests catch faults, as each plugin's Test strategy sets them in
+# dev/<plugin>/architecture.md.
 test-quality = [
   "complexipy>=9.0.0",
   "cosmic-ray>=8.8.0",

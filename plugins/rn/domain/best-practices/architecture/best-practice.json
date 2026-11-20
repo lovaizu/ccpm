@@ -325,7 +325,7 @@
      {
       "id": "N12",
       "about": "Test strategy",
-      "what": "Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, and for a quality its criterion or for a benchmark what it measures?",
+      "what": "Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, when it runs, and for a quality its criterion or for a benchmark what it measures?",
       "why": "A failure that no test looks for reaches the users unseen, and a case's pass or fail decides the work only where its criterion is set before anyone writes it. Where a result varies from run to run, as a prompt's does, a criterion passes or fails by chance, so a benchmark measures it and a person decides. A row for every check of the guide decides nothing for most of them, so Test strategy holds only the types the product's purpose needs.",
       "items": [
        {
@@ -352,6 +352,10 @@
        },
        {
         "at": "decide",
+        "text": "Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that finds edge cases, such as mutation testing, would hold up the work on cases that no person meets."
+       },
+       {
+        "at": "decide",
         "text": "Take each quality's criterion that the guide recommends, or the one that the architecture the product builds on sets. Change it only where the product can't meet it, or a key result needs more, and say why in the row."
        },
        {
@@ -368,7 +372,7 @@
        },
        {
         "at": "make",
-        "text": "Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide or the prompt rule makes it."
+        "text": "Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide or the prompt rule makes it, and when it runs as the guide's rule of timing gives it."
        }
       ]
      },
@@ -408,7 +412,7 @@
        },
        {
         "at": "decide",
-        "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and measure it by the prompt's unit tests on the model, as N12.7 sets."
+        "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and measure it by the prompt's unit tests on the model, as N12.8 sets."
        }
       ]
      }

@@ -18,7 +18,7 @@
     - **N10** Does Deployment show each environment the product runs in, what runs in it, each store of data, each service outside the product, and how the product starts? (Components, Data model, Deployment)
     - **N11** Does Directory structure show the folders, with only the vital few files, and beside each top folder its purpose? (Components, Data model, Directory structure)
   - **C4** The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document and the product vision say.
-    - **N12** Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, and for a quality its criterion or for a benchmark what it measures? (Test strategy)
+    - **N12** Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, when it runs, and for a quality its criterion or for a benchmark what it measures? (Test strategy)
     - **N13** Is each gap that the software design and the test design found from the document mended in it, so that the two designs, made again from it, find none? (the whole)
     - **N14** Does each thing that the document says the product does rest on a part that a unit or integration test can check? (Components, Test strategy)
   - **C5** The developers can change the product without making the document wrong.
@@ -166,7 +166,7 @@ A developer making a change must find the one place it belongs. Simon Brown's pa
 
 ### N12
 
-Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, and for a quality its criterion or for a benchmark what it measures?
+Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, when it runs, and for a quality its criterion or for a benchmark what it measures?
 
 A failure that no test looks for reaches the users unseen, and a case's pass or fail decides the work only where its criterion is set before anyone writes it. Where a result varies from run to run, as a prompt's does, a criterion passes or fails by chance, so a benchmark measures it and a person decides. A row for every check of the guide decides nothing for most of them, so Test strategy holds only the types the product's purpose needs.
 
@@ -174,11 +174,12 @@ A failure that no test looks for reaches the users unseen, and a case's pass or 
 2. *While deciding.* Take each check's test target from the guide. Unit tests try the parts against their contracts, each prompt among them. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks.
 3. *While deciding.* Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write a row for each check picked.
 4. *While deciding.* Make each check a benchmark where its test's path runs a prompt, as the guide's rule says, and each other check as the guide gives it.
-5. *While deciding.* Take each quality's criterion that the guide recommends, or the one that the architecture the product builds on sets. Change it only where the product can't meet it, or a key result needs more, and say why in the row.
-6. *While deciding.* For each benchmark, name what it measures, such as a key result or each case's results over several runs of a prompt. Set no criterion, as a person judges from the results.
-7. *While deciding.* Set how many times a benchmark runs each case by its first runs: add runs until one more no longer changes what the results show, such as the mean of a key result by a step of its measure, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it.
-8. *While deciding.* For the trace of the architecture, set as the criterion that every element of this document, each story, principle item, component, and data, has an integration test, and that every test names an element or a case one level up that exists.
-9. *While making.* Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide or the prompt rule makes it.
+5. *While deciding.* Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that finds edge cases, such as mutation testing, would hold up the work on cases that no person meets.
+6. *While deciding.* Take each quality's criterion that the guide recommends, or the one that the architecture the product builds on sets. Change it only where the product can't meet it, or a key result needs more, and say why in the row.
+7. *While deciding.* For each benchmark, name what it measures, such as a key result or each case's results over several runs of a prompt. Set no criterion, as a person judges from the results.
+8. *While deciding.* Set how many times a benchmark runs each case by its first runs: add runs until one more no longer changes what the results show, such as the mean of a key result by a step of its measure, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it.
+9. *While deciding.* For the trace of the architecture, set as the criterion that every element of this document, each story, principle item, component, and data, has an integration test, and that every test names an element or a case one level up that exists.
+10. *While making.* Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide or the prompt rule makes it, and when it runs as the guide's rule of timing gives it.
 
 ### N13
 
@@ -198,7 +199,7 @@ The E2E tests are slow and few, so they can only confirm what the lower levels a
 
 1. *While deciding.* For each thing the document says the product does, name the part that holds it.
 2. *While deciding.* Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components.
-3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and measure it by the prompt's unit tests on the model, as N12.7 sets.
+3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and measure it by the prompt's unit tests on the model, as N12.8 sets.
 
 ### N15
 

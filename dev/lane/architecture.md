@@ -221,17 +221,17 @@ dev/lane/                         what only Lane's developers use
 
 ## Test strategy
 
-| Check | Test target | Kind | Exit criteria or measure |
-|---|---|---|---|
-| Lint | Parts | Quality | 0 findings. |
-| Static analysis | Parts | Quality | 0 findings of mismatched types, copied code, or import cycles. |
-| Complexity analysis | Parts | Quality | Per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
-| Unit testing | Parts | Quality | Every case passes. |
-| Code coverage | Parts | Quality | 100% statement (C0) and branch (C1) coverage. |
-| Property-based testing | Parts | Quality | 0 counterexamples in reading the rules, each rule type's check, and the guard's placing of moves. |
-| Mutation testing | Parts | Quality | 0 surviving mutants. |
-| Integration testing | Architecture | Quality | Every case passes, each handoff giving the data the data model names. |
-| Contract testing | Architecture | Quality | On each new Claude Code, each recorded state gives the double's events. |
-| Traceability | Architecture | Quality | Every element tested, every case naming one level up, and each principle's case failing broken. |
-| Configuration testing | Product | Quality | Every case passes on Python 3.9 and on the newest Python. |
-| Conformance and compliance testing | Product | Quality | Claude Code's strict check of Lane's plugin passes. |
+| Check | Test target | Kind | When | Exit criteria or measure |
+|---|---|---|---|---|
+| Lint | Parts | Quality | During the work | 0 findings. |
+| Static analysis | Parts | Quality | During the work | 0 findings of mismatched types, copied code, or import cycles. |
+| Complexity analysis | Parts | Quality | During the work | Per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
+| Unit testing | Parts | Quality | During the work | Every case passes. |
+| Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
+| Property-based testing | Parts | Quality | Apart from the work | 0 counterexamples in reading the rules, each rule type's check, and the guard's placing of moves. |
+| Mutation testing | Parts | Quality | Apart from the work | 0 surviving mutants. |
+| Integration testing | Architecture | Quality | During the work | Every case passes, each handoff giving the data the data model names. |
+| Contract testing | Architecture | Quality | Apart from the work | On each new Claude Code, each recorded state gives the double's events. |
+| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing broken. |
+| Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |
+| Conformance and compliance testing | Product | Quality | During the work | Claude Code's strict check of Lane's plugin passes. |

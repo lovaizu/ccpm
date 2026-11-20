@@ -1,8 +1,10 @@
 # `ci-fix`
 
-You mend the code or the tests of this repository where runs of Test quality or Nightly failed, by
-[the code best practice](../../plugins/rn/domain/best-practices/code/best-practice.md), so that the
-developers can trust that the tests catch each fault in the code. You're done when
+You mend the code or the tests of this repository where runs of Test quality or Nightly failed, so
+that the developers can trust that the tests catch each fault in the code. These checks run apart
+from the work, as the timing rule of
+[the test strategy guide](../../plugins/rn/domain/best-practices/architecture/test-strategy-guide.md)
+says, so the work never waits on you. You're done when
 `uv run --no-sync sh dev/scripts/check.sh` and
 `uv run --no-sync sh dev/scripts/quality.sh {base}` both exit 0, your commits are on the branch
 `{fix_branch}` on `origin`, and your report is your last message.
@@ -29,8 +31,8 @@ repository's git and GitHub. Fetching a public page to read it needs no ask.
 1. Read the failed log to its end. The step ends when you can name each failure: a mutant that
    the tests let live, an input that a property found the code fails on, or another check that
    failed.
-2. Read the code best practice to its end, the part on the faults that the tests catch in
-   particular, and the test rules of
+2. Read [the code best practice](../../plugins/rn/domain/best-practices/code/best-practice.md) to
+   its end, N7 on the faults that the tests catch in particular, and the test rules of
    [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md).
    Read the contract of each part that a failure lies in, and the part of its architecture,
    `dev/<plugin>/architecture.md`, that the part rests on.
@@ -41,8 +43,10 @@ repository's git and GitHub. Fetching a public page to read it needs no ask.
    - a change that can't alter what the code does
    - an input that the part needn't take, or one it must take and fails on
    - a check that failed for a cause outside the code and its tests, such as the run's machine
-4. Mend each at its cause, as the code best practice says for what it showed. First ask whether the
-   part needs the code, and remove it or make it simpler where no case of the tests calls for it.
+4. Mend each at its cause. First ask whether the part needs the code, and remove it or make it
+   simpler where no case of the tests calls for it. Mark a change that can't alter what the code
+   does beside the code as one that changes nothing, with why, such as `<` turned into `<=` where
+   the two values are never equal.
    Make a test assert more only where its case's Then already names what the failure changes, and
    add no case, as a case added to catch a mutant comes from the code that exists, not from what the
    part must do. For each other failure, name in the report the technique of the test design best

@@ -41,6 +41,20 @@ guide links them and copies nothing:
   A test that runs a prompt is a benchmark. The model's result varies from run to run, so a
   criterion would pass or fail by chance. The test runs each case several times, and a person judges
   from the results. It runs again on each new version of the model, as CT-AI's drift testing does.
+- Timing\
+  Each check runs at one of three times, which the Test strategy's row names.
+  - During the work, each check of the parts and of the architecture that decides whether a change
+    holds, such as lint, unit testing, code coverage, integration testing, and traceability. It
+    runs on each change, and the work waits on it.
+  - At stages, each test that runs the product whole, such as a scenario test. It grows from one
+    pilot run as [the test implementation best practice](../test-implementation/best-practice.md)
+    says, since a run takes minutes and a person decides from its results.
+  - Apart from the work, each check that measures the tests over code already made, such as
+    mutation testing or property-based testing at its most inputs, and each check that waits on
+    something outside the product's schedule, such as contract testing on each new version of the
+    host. It runs in CI apart from the work, and its findings are mended at their cause apart from
+    the work. The work never waits on it, since it finds edge cases that the cases designed
+    beforehand left out and that no person meets in the main use.
 
 ## Parts
 

@@ -104,17 +104,13 @@ A test that calls the code as its callers do fails only where a caller would bre
 
 Does breaking any behavior make a test fail?
 
-The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches. A mutant that survives shows a fault in how the cases or the code were made, which is mended where it was made, since a test added for each mutant comes from the code, and work that counts on a detector to find what the cases missed piles up such tests.
+The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches. The cases, designed before the code, catch them where each test asserts its whole Then, so the work goes on by the checks that Test strategy runs during the work. A detector that it runs apart from the work, such as mutation testing, finds what the cases missed, which is mended at its cause apart from the work, never in a round, as an edge case that no person meets would hold up the work.
 
 1. *While making.* Have each test assert the whole result that its case's Then names, such as the full list that a call gives, not only that the call returned or that the list isn't empty.
 2. *While making.* Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs. The trace: `{coverage}` run.
 3. *While making.* For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `asks`, and write its test once they add it.
 4. *While making.* For each interface that Test strategy names for property-based tests, write one property that holds for every input its contract allows, with a generator of those inputs, such as that reading back what was written gives it again.
 5. *While making.* For each input on which a property-based test finds the code fails, ask whether the contract must take it. Where it needn't, narrow what the interface takes, and refuse the input as N8 says. Where it must, fix the code, keep the input as a test of the case it falls in, and report why the design of the cases missed it.
-6. *While making.* Where the round takes CI's report on the code's last push, from the mutation testing that Test strategy runs on each push apart from the work, open the log of that run, such as its job's log on the pull request, and list each mutant that it reports as surviving, with its file, its line, and the change it made.
-7. *While making.* For each mutant that N7.6 lists, name the case that the changed code serves. Where none does, remove the code or make it simpler, so that no change of it passes unseen.
-8. *While making.* Where a mutant that N7.6 lists can't change what the code does, such as `<` turned into `<=` where the two values are never equal, mark it beside the code as one that changes nothing, with why.
-9. *While making.* Where a mutant that N7.6 lists breaks a case whose Then names what it changes, the test asserts less than its Then: make it assert the whole Then, as N7.1 says. Where no case's Then names it, the design of the cases lacks a case: change no test for it, and end with `asks`, naming for each the technique of the test design best practice that the cases lacked, such as several starts for a pick of the latest, so that whoever designs the cases designs them again.
 
 ### N8
 

@@ -143,9 +143,9 @@ Strategies:
 
 ## Test strategy
 
-| Check | Test target | Kind | Exit criteria or measure |
-|---|---|---|---|
-| `<check>` | `<target>` | `<kind>` | `<criterion or measure>` |
+| Check | Test target | Kind | When | Exit criteria or measure |
+|---|---|---|---|---|
+| `<check>` | `<target>` | `<kind>` | `<when>` | `<criterion or measure>` |
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -154,6 +154,8 @@ Strategies:
 >   the guide gives it. A check left out has no row.
 > - `<kind>`: `Quality` or `Benchmark`, as the guide gives it, or `Benchmark` where the test runs a
 >   prompt.
+> - `<when>`: `During the work`, `At stages`, or `Apart from the work`, as the guide's rule of
+>   timing gives it, with why where the row changes it.
 > - `<criterion or measure>`: for a quality, what passes, as a number where it's one, as the guide
 >   recommends unless the row says why not; for a benchmark, what it measures. No tool and no
 >   means.
