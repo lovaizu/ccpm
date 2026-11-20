@@ -2,23 +2,16 @@
 
 ## Goal tree
 
-- The people a goal serves reach it through only the deliverables and decisions that bring them there, as the maker reviews the design tree at each turn by the run's facts.
-  - **C1** The design tree holds the goal, the state its people are in once it holds, and only the deliverables that bring them there, each after the deliverables it needs.
-    - **N1** Does the goal state, in one sentence, what the user is trying to achieve, and the state its people are in once it holds? (goal)
-    - **N2** Does the tree hold the deliverables that bring the people to the goal's state, and only those? (deliverables)
-    - **N3** Does each deliverable name its kind: the best practice of the field's established way of making it, or `light` where it's made by its check alone? (deliverables)
-    - **N4** Does each deliverable name in its inputs each deliverable it rests on, read or run, and does the work order take it only after them? (deliverables, work)
-  - **C2** Each deliverable is made from decisions that bring its people closer to the goal's state.
-    - **N5** Does each deliverable hold the decisions and the open points for each necessary condition of its best practice? (deliverables)
-    - **N6** Does each decision say who settled it? (deliverables)
-  - **C3** At each turn, the maker reviews the design tree by the run's facts, its content and how the work goes, and keeps the work on the vital few.
-    - **N11** Does each node of the tree hold what the run's facts so far show brings the people to the goal's state: each deliverable, decision, open point, and the work next? (goal, deliverables, work)
-  - **C4** The maker and the user see where the work stands, and pick it up from there.
-    - **N7** Does each deliverable's name say what it brings toward the goal? (deliverables)
-    - **N8** Does each deliverable show its status and which necessary conditions it meets? (deliverables)
-  - **C5** The design tree stays true as the work changes it.
-    - **N9** After a change to a node, does every node that the change touches agree with it? (goal, deliverables)
-    - **N10** Does the tree hold only what holds now? (goal, deliverables)
+- The person who wants to achieve a goal piles up the vital few and rigorously cuts the trivial many, and so achieves the goal in the shortest time.
+  - **C1** The design tree holds only the deliverables and decisions without which the goal fails.
+    - **N1** Does the goal state what its people do once it's achieved? (goal)
+    - **N2** Does every node of the design tree serve the goal and still hold? (deliverables)
+  - **C2** At each turn, the maker reviews the design tree by the run's facts and judges again what's vital and what's trivial.
+    - **N3** Is each problem found fixed at the decision that caused it? (deliverables)
+    - **N4** Does each node agree with each node that a change touches, from the goal down to the work? (deliverables)
+  - **C3** The work goes in the order that achieves the goal in the shortest time.
+    - **N5** Is the first item of the work the one, among those that can start, that brings the goal's people closest? (work)
+    - **N6** Does the work start together each item that rests on no other item still being made? (work)
 
 ## Template
 
@@ -28,128 +21,63 @@
 
 ### N1
 
-Does the goal state, in one sentence, what the user is trying to achieve, and the state its people are in once it holds?
+Does the goal state what its people do once it's achieved?
 
-Every deliverable in the design tree is there to serve the goal, so the goal decides what goes in and what stays out, and shows the user that the work is after what they want.
+Each node of the design tree stays only where the goal fails without it, so a goal that names no state its people reach leaves nothing to tell the vital few from the trivial many. The items follow the [five whys](https://en.wikipedia.org/wiki/Five_whys), which asks why until the answer is the end, not a means to it.
 
 1. *While deciding.* Open the user's request, the words they gave, and write what they're trying to achieve as one sentence with the user as its subject.
 2. *While deciding.* Ask why that matters to the user, and again of each answer, until the answer names no deliverable while the work can still make it true. That last answer is the goal, such as `The user gets from rn each deliverable they mean` from a request to rebuild rn.
-3. *While deciding.* Write after the goal's sentence, in the same `decided`, the state its people are in once it holds: what they do then that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`, and their starting state: what they have and know before they use the deliverable, such as `an accountant with Calc and a terminal, and no invoicer`, since each later choice is judged by whether it brings them from there to the end, and each trial starts them there.
-4. *While deciding.* Put the sentence and the state to the user to confirm, beside the words of the request they came from, and write them as they confirm them, since only the user knows what they're after.
-5. *While deciding.* Write `user` in `by` once they confirm it.
-6. *While deciding.* For each deliverable, name the part of the goal's sentence it helps make true, and drop a deliverable for which you can name none.
+3. *While deciding.* Write after the goal's sentence, in the same `decided`, what its people do once it's achieved that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`.
+4. *While deciding.* Put the goal to the user beside the words of the request it came from, write it as they confirm it, and write `user` in `by`, since only the user knows what they're after.
 
 ### N2
 
-Does the tree hold the deliverables that bring the people to the goal's state, and only those?
+Does every node of the design tree serve the goal and still hold?
 
-A deliverable left out shows up only when the work reaches it, and the work stops there. The items follow a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure), which practitioners build down from the end objective until the parts together hold all of the work.
+A deliverable or decision that the goal doesn't need takes work that brings no one closer, and one that no longer holds leads its maker to build on what was dropped. The items follow the 100% rule of a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure), under which the parts hold all of the work that the end needs and nothing beyond it.
 
-1. *While deciding.* Open the goal and the user's request, and list each deliverable that the people use in the goal's state, such as a plugin with its README. Keep one only where the goal fails without it, and ask the user about one you can't tell.
-2. *While deciding.* List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and for each deliverable, open `best-practice.json` of the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a README. That folder is the deliverable's kind, which N3.1 writes. A deliverable that no folder's goal fits takes its kind at N3.2 or N3.3.
-3. *While deciding.* For each deliverable, list each kind that `inputs` of the best practice you opened for it names, or, where you opened none, each deliverable whose decisions it carries out or that it runs, such as the architecture whose user story an integration test checks.
-4. *While deciding.* For each kind listed, search the repository for a file of that kind for the same product, such as `dev/rn/product-vision.md` for rn's README. Take the file where the user's request leaves what it says as it is. Add a deliverable at the file's path where the request changes what it must say, such as a product vision whose roles a new kind of user widens. Where no such file exists, add a node of that kind with no file, such as the test design of a command added to a library that has none, and answer each necessary condition of its best practice in its decisions, leaving none out, since a choice of which to keep drops what the deliverable built on it needed, and a condition that turns out not to bear on the case is a fault of that best practice. Repeat N2.3 and this item for each deliverable and node you add, until one takes nothing.
-5. *While deciding.* Break each deliverable down until it's a work package: a part that ends at a check showing, on its own, that the people the goal serves get a part of what it promises them, such as one integration test for each user story of an architecture in place of one test of the whole plugin. A larger part leaves its maker to settle at once what no one checks between, and a smaller one passes checks that show nothing toward the goal.
+1. *While deciding.* List each deliverable that the goal's people use once it's achieved, such as a command with its guide, and each deliverable that one of them is made from, such as the command's architecture. Keep one only where the goal fails without it.
+2. *While deciding.* List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and give each deliverable as its kind the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a guide. Where no folder fits, give it the kind `light`, and write the check that judges it, such as a test that passes once it exists, as its decision about `The check`.
+3. *While deciding.* For each deliverable of a best practice's kind, write each necessary condition of that best practice with `good` false, and as its decisions only the points that bring the goal's people closer. Leave a point's `decided` null while a deliverable it takes from isn't done, since an answer given before its grounds exist rests on a guess.
+4. *While making.* At each turn, read each node from the goal down, and ask of each deliverable and decision whether the goal fails without it as the facts now stand. Drop each that it doesn't, and write each that the facts changed over its old text, so that the tree holds only what holds now, as git keeps how each came about.
+5. *While making.* Keep one line for a deliverable that's done: its name, path, kind, and status. A node with no file keeps its necessary conditions and their decisions too, as the deliverables built on it read them there.
 
 ### N3
 
-Does each deliverable name its kind: the best practice of the field's established way of making it, or `light` where it's made by its check alone?
+Is each problem found fixed at the decision that caused it?
 
-A deliverable of a kind that every product shares has a way of making it that the field has settled, and its best practice brings that way to the maker. A deliverable of this product alone has no such way, and a best practice made for it would only restate the product's own decisions, so a check judges it instead.
+A problem fixed where it shows comes back from the cause left in place, and each fix of a symptom adds work that brings the people no closer. The items follow [root cause analysis](https://en.wikipedia.org/wiki/Root_cause_analysis) by the five whys, which asks why until the answer is a cause that the maker can change.
 
-1. *While deciding.* Write as each deliverable's kind the folder whose best practice you opened for it at N2.2. Where a deliverable holds parts of several such kinds, its kind is the one whose best practice names the others for those parts.
-2. *While deciding.* Where no folder fits, search the field's guides and handbooks for how to make the deliverable. Where guides written for different products give the same steps, as they do for a changelog, put a deliverable that makes its best practice, of the kind `meta`, at the top level before the first deliverable of that kind.
-3. *While deciding.* Give the deliverable the kind `light` only where the user wants it at once, or where no best practice is worth its cost: no such guides agree, or a best practice would hold it to more than its people need, such as a file that keeps a run's state, a manifest, or the product's own guide or specification. The light best practice holds it to the check that judges it, such as the test that passes once the deliverable exists, so write a check that a command run or a record read shows met, since a light deliverable is only as good as its check.
+1. *While deciding.* List each problem that the facts since the last turn show: each `more` of a Round, each try that failed, each word of the user that says something is wrong, and each finding that came back from an earlier Round.
+2. *While deciding.* For each problem, ask why it happened, and again of each answer, until the answer is a node of the design tree: a decision, a deliverable, its inputs, or the order of the work, such as a guide made before the command it describes.
+3. *While deciding.* Change that node, and drop each fix of the problem that leaves it in place, such as a mend of the deliverable alone or a finding left out, since the cause brings the problem back.
+4. *While deciding.* Where the change is a point whose answers differ in what the people get, leave its `decided` null for the user, since only they can settle it.
 
 ### N4
 
-Does each deliverable name in its inputs each deliverable it rests on, read or run, and does the work order take it only after them?
+Does each node agree with each node that a change touches, from the goal down to the work?
 
-A deliverable started before its inputs rests on a guess, and its maker does the work again once they arrive. The items follow the inputs of a process kernel in [ETVX](https://msdbok.github.io/content/proc/basics/etvx.html), the work products a task takes, and the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method) of scheduling, which lists each activity's predecessors before it orders the activities.
+A node that a change touches, left unread, goes on saying what held before, and the next maker builds on it. The items follow [change impact analysis](https://en.wikipedia.org/wiki/Change_impact_analysis), which lists what a change reaches by the links between the parts before any part is changed again.
 
-1. *While deciding.* For each deliverable of a best practice's kind, write in its `inputs` the path of each file you took, and of each deliverable or node you added at N2.4, for a kind that the best practice's `inputs` names, such as `dev/rn/product-vision.md` in the inputs of rn's README. Use paths, not kinds, since deliverables of one kind can serve different products.
-2. *While deciding.* For a `light` deliverable, write in `inputs` the path of each deliverable whose decisions it carries out, such as the architecture whose user story an integration test checks, and of each deliverable it runs, such as the parts that the test calls.
-3. *While deciding.* Where other deliverables' results rest on a check, such as a script that CI runs on them, put in their inputs the check with a test that shows it failing on a case it must catch, since a check never seen failing may pass anything.
-4. *While making.* Write in `work` the work next, first to last: each deliverable to make by its path, and each point to decide by its deliverable's path, its condition, and its `about`, each after each deliverable that its inputs name, so that the inputs alone order the deliverables, and the list of deliverables holds no order of its own.
-5. *While making.* After each change, edit `design-tree.json` in place with the file tools, each text you replace occurring once in the file, or write the file whole, and run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit <run> '<ground>'`, where `<run>` is the run's folder and `<ground>` is why the change decides as it does, as N6.2 says. It gives 1 with the first fault where the tree leaves its schema or its checks, and leaves git as it was, so mend what it names and run it again. It gives 0 with the commit's hash once it has committed the run's folder with `<ground>` as the commit message.
-6. *While making.* Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py commit` checks neither, while it refuses a deliverable whose inputs leave out a kind that its best practice's `inputs` names, and an item of `work` whose inputs aren't done.
+1. *While making.* After each change to a node, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py touched <run> <path>`, where `<run>` is the run's folder and `<path>` is the changed node's path. It lists each node that the change touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it.
+2. *While making.* Read each node on the list beside the change, and rewrite each that names a path, kind, or decision that the change replaced or dropped, or that rests on what the change made false, such as a guide's decision on its people after the product vision's roles change.
+3. *While making.* Run `tree.py touched` again for each node you rewrote, until a pass rewrites nothing.
+4. *While making.* Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit <run> '<ground>'`, where `<ground>` is why the change decides as it does. It gives 1 with the first fault where the tree leaves its schema or its checks, and leaves git as it was, so mend what it names and run it again. It gives 0 with the commit's hash, with `<ground>` as the commit message, so that git keeps the grounds and the tree holds the decision alone.
 
 ### N5
 
-Does each deliverable hold the decisions and the open points for each necessary condition of its best practice?
+Is the first item of the work the one, among those that can start, that brings the goal's people closest?
 
-The maker builds a deliverable from the decisions that answer its best practice's conditions, and the user answers only the points that are theirs, each once its grounds exist. The items follow [grilling](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md), which asks only the decisions whose prerequisites are settled, one at a time with a recommendation, looks facts up itself, and leaves decisions to the user.
+An item started before what it rests on is done is made again once that arrives, and an item that brings the people little delays the one that brings them most. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method), which lists each activity's predecessors before it orders the activities, and the [critical path method](https://en.wikipedia.org/wiki/Critical_path_method), which puts first what the end waits on.
 
-1. *While deciding.* For each deliverable of a best practice's kind, open `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/<kind>/best-practice.json`, and write under the deliverable each necessary condition's ID, in that best practice's order, with `good` false.
-2. *While deciding.* For each condition, take each `decide` item of its practice, and write the point it settles as a decision's `about`, in a few words, such as `the roles` from the item of a product vision that names who hires the product. Where an item settles nothing for this deliverable, such as one whose case doesn't hold, write no point for it.
-3. *While deciding.* For a `light` deliverable, write under its N1 the check that judges it as the decision about `The check`, and as its other decisions each point that the check needs settled, such as which user story an integration test runs and what it shows.
-4. *While deciding.* Leave a point's `decided` null while a deliverable of the tree that it takes from isn't done, such as a README's people before the product vision is done, and settle it or put it to the user once that deliverable is done, since an answer given before its grounds exist rests on a guess.
-5. *While deciding.* Where a fact would settle a point, search the repository and the public documentation of what the point is about, and settle the point where a source states the fact.
-6. *While deciding.* Where no source states the fact but a trial or a longer search can find it, such as how the host behaves in a case its documentation doesn't state, add a research deliverable: of the kind `light`, at `{run}/research/<question>.md`, named by what the deliverable that holds the point can decide once it's done, with `each question has an answer that names its source, a page a reader can open or a command with what it printed` as its check.
-7. *While deciding.* Write as the research deliverable's decisions the question it answers, as a question with one answer, and the point it serves, by the deliverable's path, the condition's ID, and the point's `about`, such as `plugins/rn/README.md N3: the install command`.
-8. *While deciding.* Write the research deliverable's path in the `inputs` of the deliverable that holds the point, and leave the point's `decided` null until the research deliverable is done.
-9. *While deciding.* Settle each point where the user's words, the goal, the deliverables done, and the best practice leave one answer, or answers that differ only in how the work is done, not in what the user gets.
-10. *While deciding.* Put each point still open to the user, one in each message, with your recommendation and its ground, where the answers left differ in what the user gets, such as which people a product serves, and leave its `decided` null until they answer.
-11. *While deciding.* Take each feedback, a more of a round, a point, or the person's words, into the decision it bears on where it brings the people closer to the goal's state, and say how in the ground, such as a more that names what a guide's reader lacks to print an invoice. Keep the rest in the round's records, since a deliverable that takes in each thing named grows round by round away from its people.
-12. *While deciding.* When a deliverable becomes done, take each null point of the later deliverables that takes from it, and settle it or put it to the user as this practice's decide items say.
+1. *While deciding.* For each deliverable, write in `inputs` the path of each deliverable that it describes, runs, or presupposes, such as the command that a guide tells its people to run, and of each deliverable of a kind that its best practice's `inputs` names, since the inputs alone decide what can start.
+2. *While deciding.* Among the deliverables and points whose inputs are done, choose the one that brings the people closest to the goal's state by what the facts show, and write it first in `work`: a deliverable to make by its path, or a point to decide by its deliverable's path, its condition, and its `about`.
 
 ### N6
 
-Does each decision say who settled it?
+Does the work start together each item that rests on no other item still being made?
 
-The user checks, on each sign-off, the decisions taken without asking them, and finds the grounds of each in git.
+Two items that rest on nothing of each other wait for nothing, so starting them together cuts the time to the goal to that of the slower one. The items follow the precedence diagram, in which activities with no link between them run in parallel.
 
-1. *While deciding.* Write in `by` who settled each decision: `user` where the user said or confirmed it, `research` where a source found it, `reasoning` where the goal and the best practices leave one answer, and `maker` where the maker chose among answers that differ only in how it makes its own deliverable.
-2. *While making.* Write the grounds of each decision that a change makes, the point and why it holds, as `<ground>` of `tree.py commit`, which commits the change with it as the commit message, so that the user finds them in git and the tree holds the decision alone.
-
-### N7
-
-Does each deliverable's name say what it brings toward the goal?
-
-The user reads the design tree to see where the work stands and what comes next, without opening each deliverable.
-
-1. *While deciding.* As you add each deliverable, write as its name what holds toward the goal once it exists, with the people who gain it as its subject, such as `A newcomer decides from the README alone whether rn fits their work` in place of `rn's README`.
-2. *While deciding.* Write its path, its kind, and, in `more_paths`, each other file or folder it's made of, such as the tests of code that lie apart from it, in their own fields, so that the name says only what it brings.
-
-### N8
-
-Does each deliverable show its status and which necessary conditions it meets?
-
-Whoever picks up the work goes on from where it stopped, without reading back through what came before.
-
-1. *While making.* Keep each deliverable's status: `open` as you add it and whenever no one is making it, `doing` only while someone makes it, several at once only where they run in parallel, and `done` once each `good` it holds is true.
-2. *While making.* Read the deliverable's Rounds in the run's folder, `rounds/<n>/`, the latest last: the generator's result, `generator.json`, and the judging of it by one evaluator for each group of its best practice's conditions, `evaluator-<group>.json`, with each evaluator's answers: `good` with each condition good and the lines that meet it, and `more` with each condition not yet good and its `good_when`, what its people get once it's good.
-3. *While making.* Set a condition's `good` true only once you answer its question yes against the deliverable as it stands: where `good` of the last round names it, read the lines it gives in the deliverable, and where no round has judged it, read the deliverable for the lines that meet it. Leave it false where a `more` that N5.11 takes in names it, and answer a condition that only a `more` left in the round's records names by the goal's state, as that more brings its people nothing.
-4. *While making.* Set a condition's `good` back to false when a decision that answers it changes.
-5. *While making.* Where a change touches a deliverable that's `done`, write it whole again as `open`, with each necessary condition of its kind not good and each decision it held, from the tree as it stood before the commit that marked it done, as a deliverable that's done keeps one line, and its next round reworks it from the design.
-
-### N9
-
-After a change to a node, does every node that the change touches agree with it?
-
-A node that a change touches, left unread, goes on saying what held before, and the next role builds on it.
-
-1. *While making.* After each change to a node, list the nodes it touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it.
-2. *While making.* Read each node on the list beside the change. It holds where it names no path, kind, or decision that the change replaced or dropped, and rests on nothing that the change made false. Rewrite each other node in the same change, such as a README's decision on its people after the product vision's roles change.
-3. *While making.* List the nodes again for each node you rewrote, until a pass rewrites nothing.
-
-### N10
-
-Does the tree hold only what holds now?
-
-A reader acts on what the design tree says, and reads any history in it as part of the current decision, while git keeps how each point came about.
-
-1. *While making.* Write a changed decision over its old text, so that it reads as what holds now.
-2. *While making.* Keep one line for a deliverable that's done: its name, path, kind, and status. A node with no file keeps its necessary conditions and their decisions too, as the deliverables built on it read them there.
-3. *While making.* Once each point that a research deliverable serves holds its answer, drop the research deliverable, and its path from the `inputs` that name it, since the decisions hold what it found and the run's folder keeps the file.
-
-### N11
-
-Does each node of the tree hold what the run's facts so far show brings the people to the goal's state: each deliverable, decision, open point, and the work next?
-
-A plan holds what was known when it was laid, and each round, try, and answer shows more. Reviewed at each turn, the tree takes the work where the people gain most, while a tree kept as laid piles up rounds on points that bring them nothing.
-
-1. *While deciding.* At the start of each turn, list the facts since the last turn: each round's answers, each try's output, and each word of the person.
-2. *While deciding.* For each deliverable, ask whether the facts show that it still brings the people to the goal's state, and how far it stands from it. Take out a deliverable that no longer does, and add one that the facts show the state needs.
-3. *While deciding.* Where a round's answers name a point that came back from an earlier round, or two points whose fixes undo each other, go to the decision they rest on, and decide it again from the goal's state, since another round on the same decision ends the same way.
-4. *While deciding.* Choose as the work next the deliverable or point that brings the people closest to the goal's state by what the facts show, among those whose inputs are done, and write it first in `work`.
+1. *While deciding.* List the items of `work` whose inputs are done and that name none of each other in their inputs.
+2. *While deciding.* Write them next to each other in `work`, each after each item it rests on, so that they start together.

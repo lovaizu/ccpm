@@ -11,6 +11,6 @@ $ARGUMENTS
 
 ## Steps
 
-1. Take their words into the decisions they bear on, as the design tree best practice's N5.11 says,
+1. Take their words into the decisions they bear on, as the design tree best practice's N3 says,
    since what to change is theirs, and each decision it changes reopens what rests on it.
 2. Go on from step 3 of your part.
