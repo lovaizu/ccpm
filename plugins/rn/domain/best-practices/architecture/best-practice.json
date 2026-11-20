@@ -89,6 +89,10 @@
        {
         "at": "make",
         "text": "Remove each story or principle item that carries none, and each component or data that none reaches, from every figure, list, and sentence that names it."
+       },
+       {
+        "at": "make",
+        "text": "Where the product already exists, list each behavior of its code that the users meet, such as how an invoice shows its amounts, and ask whether it serves them as the README promises, from the users' starting state to their aim. Write each that doesn't as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place."
        }
       ]
      }

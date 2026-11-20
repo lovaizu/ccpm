@@ -34,7 +34,7 @@ Every deliverable in the design tree is there to serve the goal, so the goal dec
 
 1. *While deciding.* Open the user's request, the words they gave, and write what they're trying to achieve as one sentence with the user as its subject.
 2. *While deciding.* Ask why that matters to the user, and again of each answer, until the answer names no deliverable while the work can still make it true. That last answer is the goal, such as `The user gets from rn each deliverable they mean` from a request to rebuild rn.
-3. *While deciding.* Write after the goal's sentence, in the same `decided`, the state its people are in once it holds: what they do then that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`, since each later choice is judged by whether it brings them there.
+3. *While deciding.* Write after the goal's sentence, in the same `decided`, the state its people are in once it holds: what they do then that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`, and their starting state: what they have and know before they use the deliverable, such as `an accountant with Calc and a terminal, and no invoicer`, since each later choice is judged by whether it brings them from there to the end, and each trial starts them there.
 4. *While deciding.* Put the sentence and the state to the user to confirm, beside the words of the request they came from, and write them as they confirm them, since only the user knows what they're after.
 5. *While deciding.* Write `user` in `by` once they confirm it.
 6. *While deciding.* For each deliverable, name the part of the goal's sentence it helps make true, and drop a deliverable for which you can name none.

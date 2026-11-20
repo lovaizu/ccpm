@@ -92,8 +92,9 @@ Does the list of gaps name each place where the cases can't follow the architect
 A gap that the cases show is mended in the architecture while nothing rests on it, and a case bent around it leaves the document wrong for every developer after.
 
 1. *While making.* Read the cases against the architecture and the skeleton, and list each gap: a case that no part can hold; a part that no case reaches; a part whose cases change for more than one reason, such as a file's form and a remote's commands; and a handoff that no interface carries.
-2. *While making.* Write each gap in the form that the note of Gaps in the template gives, and write the case that meets the gap as the architecture draws it, with only the parts, interfaces, and behaviors that the architecture draws, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend.
-3. *While making.* Where the architecture or the skeleton changes, change the cases to it as N1 to N4 say, and read them again for gaps, until you list none.
+2. *While making.* Where an interface's contract leaves open part of what the people see, such as how an amount shows, list it as a gap, and write no Then from what the code does now, since a Then copied from the code passes the code's faults.
+3. *While making.* Write each gap in the form that the note of Gaps in the template gives, and write the case that meets the gap as the architecture draws it, with only the parts, interfaces, and behaviors that the architecture draws, since a case built on a part invented around the gap fixes that part in place before the architecture's maker decides the mend.
+4. *While making.* Where the architecture or the skeleton changes, change the cases to it as N1 to N4 say, and read them again for gaps, until you list none.
 
 ### N7
 

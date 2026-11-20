@@ -22,7 +22,7 @@
        },
        {
         "at": "decide",
-        "text": "Write after the goal's sentence, in the same `decided`, the state its people are in once it holds: what they do then that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`, since each later choice is judged by whether it brings them there."
+        "text": "Write after the goal's sentence, in the same `decided`, the state its people are in once it holds: what they do then that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`, and their starting state: what they have and know before they use the deliverable, such as `an accountant with Calc and a terminal, and no invoicer`, since each later choice is judged by whether it brings them from there to the end, and each trial starts them there."
        },
        {
         "at": "decide",

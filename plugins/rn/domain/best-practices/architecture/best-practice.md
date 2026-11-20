@@ -70,6 +70,7 @@ A part that nothing needs costs effort to build and to keep, and gives no one an
 2. *While making.* Once you have written Principles, for each principle item, name the doubt of the README's How it works, or the need of development or operation, that it carries.
 3. *While making.* Once you have written the views, for each component and each data, find the strategy or the arrow of a sequence that reaches it.
 4. *While making.* Remove each story or principle item that carries none, and each component or data that none reaches, from every figure, list, and sentence that names it.
+5. *While making.* Where the product already exists, list each behavior of its code that the users meet, such as how an invoice shows its amounts, and ask whether it serves them as the README promises, from the users' starting state to their aim. Write each that doesn't as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place.
 
 ### N4
 
