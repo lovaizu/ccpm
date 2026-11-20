@@ -259,7 +259,34 @@
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/rules-and-adapters.md",
       "kind": "light",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "An end on a result that ends",
+              "decided": "the main conversation's turn that ends on a result its step's ends names isn't held to the starts due, as that result says the AI can't go on, which no start mends",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
@@ -337,7 +364,60 @@
       "name": "A plugin's main conversation starts each subagent that its order makes due, and only those, and doesn't end its turn while one is due",
       "path": "dev/lane/tests/integration/test_lane_s9_starts.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "An end on a result that ends",
+              "decided": "the main conversation's turn that ends on a result its step's ends names goes through with a start due",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's run that stopped goes on where it stopped, after /compact or in a new conversation",
@@ -885,6 +965,14 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/lane/docs/rules-and-adapters.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s9_starts.py"
+    },
     {
       "do": "make",
       "path": "plugins/rn/domain/best-practices/prompt"
