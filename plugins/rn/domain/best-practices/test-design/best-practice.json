@@ -99,6 +99,30 @@
         "text": "Once an interface's cases are written, take each condition that its contract states and list the faults likely in a body that meets it: a bound one off, another element of several picked, a comparison turned around, and for or, a field left unread, and a refusal left out. Name for each the case that fails on it, and write a case where none does, with the result that the contract gives, since a fault that no case fails on is found only once the body is built, by a detector, and a case written then comes from the code."
        }
       ]
+     },
+     {
+      "id": "N7",
+      "about": "Properties",
+      "what": "Does each invariant that the architecture and the skeleton state of a part, each that must hold for every input its use can bring, have a property that names the element it rests on?",
+      "why": "A case shows a part right for the inputs its maker foresaw, while a property states what must hold for every input the use can bring, such as each form in which an AI names a file, and a tool then searches for one that breaks it. John Hughes's [How to Specify It!](https://research.chalmers.se/publication/517894) gives five kinds of property: invariant, postcondition, metamorphic, inductive, and model-based. In his trial, model-based and metamorphic properties caught the most faults, and he warns that a test that copies the code keeps the code's faults. So the maker takes each property from the architecture and the skeleton before any body is written, never from the code.",
+      "items": [
+       {
+        "at": "make",
+        "text": "Take each rule of Data model, each principle item that a part holds, and each condition of an interface's contract as the skeleton states it. Ask of each whether it must hold for every input that the product's use can bring, such as a design tree that stays in its schema after any change, and list each that must, with the element it rests on."
+       },
+       {
+        "at": "make",
+        "text": "Write each listed invariant as a property of one kind of Hughes's. Take model-based where a model plainer than the part gives the same result, such as a list of the files a step names in place of the guard. Take metamorphic where related inputs must give related results, such as a file named from the top and named whole, which must give the same rules. Take a postcondition, an invariant, or an inductive property where neither fits."
+       },
+       {
+        "at": "make",
+        "text": "Write for each property a generator of the inputs that the product's use can bring, from the forms that Data model and the contract name: the forms that an AI or a person writes, which no developer foresees, and the refused ones among them. Never shape a generator by the branches of the code, as it then reaches only what the code already treats."
+       },
+       {
+        "at": "make",
+        "text": "Write each property as a test in the place that Directory structure names for properties, with `Given any` and its inputs, When, and Then stated, naming the element it rests on, and see it fail at the empty bodies, as N4 says of a case."
+       }
+      ]
      }
     ]
    },
@@ -108,7 +132,7 @@
     "necessary_conditions": [
      {
       "id": "N4",
-      "about": "E2E cases, Integration cases, Unit cases",
+      "about": "E2E cases, Integration cases, Unit cases, Properties",
       "what": "Is each case a test in the test code, with its Given, When, and Then stated, that calls the skeleton only through its interfaces and fails on the empty bodies?",
       "why": "A case kept as a test is the one statement of what a part must do, and a case that passes on an empty body tests nothing. Dan North's [behaviour-driven development](https://dannorth.net/introducing-bdd/) writes each scenario as Given, When, and Then.",
       "items": [

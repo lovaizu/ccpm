@@ -31,6 +31,17 @@
 >   or by its state and event, with the integration case it supports, and its Given, When, and Then
 >   stated in the test, its Then the whole of what the interface gives and changes.
 
+## Properties
+
+`<properties>`
+
+> [!NOTE]
+> DELETE_TEMPLATE_COMMENT:
+> - `<properties>`: one test for each invariant that the architecture and the skeleton state of a
+>   part, of one kind of John Hughes's, with a generator of the inputs that the product's use can
+>   bring. Each test is named by what holds, with the element it rests on, and its Given any, When,
+>   and Then stated in the test.
+
 ## Trace
 
 `<trace>`
