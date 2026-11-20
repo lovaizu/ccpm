@@ -137,11 +137,12 @@ def _min_length(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Lef
 
 
 def _pattern(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Left:
-    """Where a string holds no match of pattern."""
+    """Where a string holds no match of pattern, saying what it takes by the schema's description
+    beside the pattern, as the plugin's author reads words, not a pattern."""
     pattern = schema.get("pattern")
     if pattern is None or re.search(pattern, value):
         return None
-    return at, f"takes text that matches {pattern}, not {_shown(value)}"
+    return at, f"takes {schema['description']}, not {_shown(value)}"
 
 
 def _minimum(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Left:

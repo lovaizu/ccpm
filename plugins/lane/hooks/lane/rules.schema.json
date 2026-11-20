@@ -96,7 +96,12 @@
             "type": { "const": "reads_whole" },
             "paths": {
               "type": "array",
-              "items": { "type": "string", "minLength": 1, "pattern": "[^/]$" },
+              "items": {
+                "description": "the path of a file, which never closes with /",
+                "type": "string",
+                "minLength": 1,
+                "pattern": "[^/]$"
+              },
               "minItems": 1
             }
           }

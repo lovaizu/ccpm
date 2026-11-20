@@ -465,6 +465,41 @@ def test_a_command_on_a_line_beside_a_named_one_gives_the_steps_sentence(e: Even
     assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == RUNS_GIT_LOG
 
 
+@pytest.mark.supports("test_a_command_that_its_step_names_goes_through")
+@pytest.mark.parametrize(
+    "command", ["git log\n\ngit log -5", "git log\n", "git log;", "git log\n;"]
+)
+def test_a_blank_part_beside_a_named_command_holds(e: Events, command: str):
+    """Given the step `write`, which runs `git log`
+    When the writer runs `git log` with a blank line inside, a closing newline, a closing `;`, or
+    a closing newline and `;`
+    Then the rule finds nothing, as a blank part is no command"""
+    call = move("call", e.bash(command, WRITER))
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) is None
+
+
+@pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
+@pytest.mark.parametrize("command", ["git log\n\ngit push", "git push\n", "git push;"])
+def test_a_command_beside_a_blank_part_gives_the_steps_sentence(e: Events, command: str):
+    """Given the step `write`, which runs `git log`
+    When the writer runs `git push` after a blank line, before a closing newline, or before a
+    closing `;`
+    Then the rule gives the step's sentence, naming `git log`"""
+    call = move("call", e.bash(command, WRITER))
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == RUNS_GIT_LOG
+
+
+@pytest.mark.supports("test_a_reporter_of_lanes_goes_through_though_no_step_names_it")
+def test_a_blank_part_beside_a_reporter_holds_where_the_rule_names_no_command(e: Events):
+    """Given a step whose rule of commands names none
+    When the writer runs `lane-step write` with a closing newline
+    Then the rule finds nothing, as a blank part is no command"""
+    none: Rule = {"type": "commands", "commands": []}
+    step: Step = {"name": "write", "rules": [none]}
+    call = move("call", e.bash("lane-step write\n", WRITER))
+    assert commands.judge_call(none, step, call) is None
+
+
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
 @pytest.mark.parametrize("command", ["git", "git logs", "git -C /repo log", "echo git log"])
 def test_a_command_that_doesnt_open_with_a_named_commands_words_gives_the_steps_sentence(

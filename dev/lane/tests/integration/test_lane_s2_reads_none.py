@@ -1,7 +1,9 @@
 """The integration cases of S2, the files a step never reads: a Read of a file that the step of its
 start names never to read, or of a file under a folder it names, stopped with the step's sentence;
-a Read of any other file let through; and a Bash command that reaches such a file stopped by the
-step's rule of commands. Each runs `log` and Lane through the double of Claude Code."""
+a Read of any other file let through; a Grep whose search reaches such a file stopped with the
+step's sentence, while a Glob there goes through; and a Bash command that reaches such a file
+stopped by the step's rule of commands. Each runs `log` and Lane through the double of Claude
+Code."""
 
 from __future__ import annotations
 
@@ -45,3 +47,25 @@ def test_a_bash_command_that_reads_a_file_never_to_read_is_stopped_by_its_comman
     answer = started(opened(b)).bash("cat secrets/key.txt")
     assert answer.blocked
     assert "git log" in answer.said
+
+
+@pytest.mark.supports("S2")
+def test_a_grep_whose_search_reaches_a_file_never_to_read_is_stopped_with_the_step(b: Bench):
+    """Given the writer running at its step `write`, which never reads secrets/ and .env
+    When it greps for `k` in secrets
+    Then the search is stopped with the step's sentence, asking for a path outside those files
+    instead of secrets"""
+    answer = started(opened(b)).grep("k", "secrets")
+    assert answer.blocked
+    assert answer.said == (
+        "You're at the step `write` of log:writer, which never reads secrets/ and .env.\n"
+        "Give Grep a path outside those files instead of secrets."
+    )
+
+
+@pytest.mark.supports("S2")
+def test_a_glob_in_a_folder_never_to_read_goes_through(b: Bench):
+    """Given the writer running at its step `write`, which never reads secrets/
+    When it globs `*.txt` in secrets
+    Then the search goes through, as a Glob reads no file's content"""
+    assert not started(opened(b)).glob("*.txt", "secrets").blocked

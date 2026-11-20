@@ -178,15 +178,24 @@ def test_a_rule_of_the_files_written_with_no_path_is_in_the_form(tmp_path: Any):
 
 
 @pytest.mark.supports("test_a_step_marked_done_with_a_file_unread_is_stopped_with_the_file")
-@pytest.mark.parametrize("paths", [["docs/"], ["NOTES.md", "docs/changes/"]])
+@pytest.mark.parametrize(
+    ("paths", "place", "folder"),
+    [(["docs/"], 0, "docs/"), (["NOTES.md", "docs/changes/"], 1, "docs/changes/")],
+)
 def test_a_folder_in_a_rule_of_the_files_to_read_whole_is_out_of_form(
-    tmp_path: Any, paths: list[str]
+    tmp_path: Any, paths: list[str], place: int, folder: str
 ):
     """Given rules whose writer's step reads whole the folder docs/, or NOTES.md and the folder
     docs/changes/
     When Lane reads them
-    Then it refuses with OutOfForm"""
-    refused(str(tmp_path), writer_rule({"type": "reads_whole", "paths": paths}))
+    Then it refuses with OutOfForm naming the folder's place and saying in words that the form
+    takes the path of a file there"""
+    said = refused(str(tmp_path), writer_rule({"type": "reads_whole", "paths": paths}))
+    assert said == (
+        f"Lane: {os.path.join(str(tmp_path), 'lane', 'rules.json')}, at "
+        f"roles/log:writer/steps/0/rules/0/paths/{place}: takes the path of a file, which never "
+        f'closes with /, not "{folder}". {MEND}'
+    )
 
 
 @pytest.mark.supports("test_a_step_marked_done_with_a_file_unread_is_stopped_with_the_file")

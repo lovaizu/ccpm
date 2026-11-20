@@ -18,14 +18,17 @@ def judge_call(rule: Rule, step: Step, move: Move) -> str | None:
     none, where a command of the call, split at `|`, `&&`, `||`, `;`, and each newline, opens with
     the words of no command that the rule names and is no reporter of Lane's; None where each
     command of it opens with a named command's words, such as `git log` for `git log --oneline`,
-    or is a reporter.
+    is a reporter, or is blank, such as a closing newline, which is no command.
     Changes: nothing.
     Refuses: nothing.
     """
     named = [command.split() for command in rule["commands"]]
     for part in re.split(r"\|\||&&|\||;|\n", move.event["tool_input"]["command"]):
         words = part.split()
-        if words[:1] in _REPORTERS or any(words[: len(each)] == each for each in named):
+        # A blank part, such as a closing newline, is no command, and a reporter is Lane's own.
+        if not words or words[:1] in _REPORTERS:
+            continue
+        if any(words[: len(each)] == each for each in named):
             continue
         at = f"You're at the step `{step['name']}` of {move.role}, which runs"
         if not named:
