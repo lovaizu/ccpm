@@ -350,12 +350,12 @@
           "decisions": [
             {
               "about": "The parts filled",
-              "decided": "hooks/adapters/items.py, which gives each practice of the Cut's best practice as N<n>.<m> in its order, as the parts of S1 and S2 already carry each other principle item",
+              "decided": "lane/adapters/rules.py gives a writes rule at each step of rn's roles that Lane can hold: none at the generator's step 1 and the evaluator's steps 1 and 3, the result alone at the generator's step 2, and none at the evaluator's step 2, whose trial may write what its people's use writes; each other principle item already lies in the parts of S1 and S2",
               "by": "reasoning"
             },
             {
-              "about": "The cases that wait",
-              "decided": "the sign-off before work that rests on a plan, and a role told its step where it writes beside its deliverable, as each rests on a guard of Lane's laid on rn's steps",
+              "about": "P5.1's case",
+              "decided": "the case types /rn:up and /rn:ty, so that a run of Lane holds the generator's start, and its write at step 1 is stopped with the step's sentence; its gap leaves dev/rn/tests/gaps.md",
               "by": "reasoning"
             }
           ]
