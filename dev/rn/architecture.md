@@ -22,9 +22,8 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
   - P2.2: a trial names only what's good and what would make it good.
 - P3: made the field's established way
   - P3.1: running, making, and judging are separate roles.
-  - P3.2: a deliverable's content is made the field's established way, then refactored to read
-    and change easily, or, where the user wants it at once or no way is worth its cost, made
-    lightly by its check alone, with no refactoring.
+  - P3.2: content is made the field's established way and refactored, or lightly by its check
+    alone.
   - P3.3: remaking has a limit, and each finding left goes to the user as a proposal.
 - P4: each role on its own work
   - P4.1: each role starts with only what its work needs.
@@ -76,9 +75,8 @@ Strategies:
   Intent: judge each condition with care while the wait stays short.
 - A later round judging only the conditions whose decisions changed. [P3.3]\
   Intent: spend the judging on conditions whose result can change.
-- rn's order given to Lane as the starts due, from the design tree: each deliverable's rounds
-  beside those of the others being made, with a round's making, judging, refactoring, and judging
-  the only order fixed. [P5.2]\
+- rn's order given to Lane as the starts due from the design tree, each deliverable's rounds
+  beside the others'. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
 - Lane applied to every activity of every role's steps that it can hold. [P5.1]\
   Intent: a role that leaves its steps notices at once and goes back.

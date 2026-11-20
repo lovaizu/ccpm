@@ -347,54 +347,7 @@
       "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
       "path": "dev/scripts/check.sh",
       "kind": "light",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "dev/lane/tests/integration/test_lane_s1_writes.py",
-        "dev/lane/tests/integration/test_lane_s2_reads_none.py",
-        "dev/lane/tests/integration/test_lane_s3_reads_whole.py",
-        "dev/lane/tests/integration/test_lane_s4_commands.py",
-        "dev/lane/tests/integration/test_lane_s5_order.py",
-        "dev/lane/tests/integration/test_lane_s6_checklist.py",
-        "dev/lane/tests/integration/test_lane_s7_result.py",
-        "dev/lane/tests/integration/test_lane_s8_check.py",
-        "dev/lane/tests/integration/test_lane_s9_starts.py",
-        "dev/lane/tests/integration/test_lane_s10_picked_up.py",
-        "dev/lane/tests/integration/test_lane_principles.py",
-        "dev/lane/tests/integration/test_lane_components.py",
-        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
-        "dev/rn/tests/integration/test_rn_s2_pause.py",
-        "dev/rn/tests/integration/test_rn_principles.py",
-        "dev/rn/tests/integration/test_rn_components.py"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The check",
-              "decided": "check.sh runs the template check of each product vision, README, and architecture, trace.py tags, and trace.py check of each plugin again, and gives 0",
-              "by": "reasoning"
-            },
-            {
-              "about": "What is turned back on",
-              "decided": "the template checks, trace.py tags, and trace.py check, which are off while rn and Lane are rebuilt",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
@@ -666,10 +619,6 @@
     {
       "do": "make",
       "path": "dev/rn/tests/e2e"
-    },
-    {
-      "do": "make",
-      "path": "dev/scripts/check.sh"
     },
     {
       "do": "make",

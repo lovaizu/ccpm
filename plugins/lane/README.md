@@ -1,17 +1,15 @@
 # Lane
 
-Lane is a Claude Code plugin that your plugin depends on, which gives your plugin's AI the step it
-leaves, as it leaves it.
+Lane is a plugin for your Claude Code plugin that gives its AI each step it leaves, as it leaves.
 
 In development: Lane's rebuild as a plugin that others depend on isn't released.
 
-Lane is for you when you build a Claude Code plugin whose skill and subagents must keep the steps
-you give them. With it, your AI notices at once each step it leaves.
+Lane is for you when your plugin's skill and subagents must keep the steps you give them. With it,
+you get an AI that notices each step it leaves, at once.
 
 ## Non-goals
 
-- Lane doesn't check work outside your plugin: it checks only a run of a skill of a plugin that
-  gives it rules.
+- Lane doesn't check work outside your plugin: only runs of a plugin that gives it rules.
 - Lane doesn't write your rules: you write them, from your steps, in your plugin's
   `lane/rules.json`.
 - Lane doesn't guard security: hold what must never happen with branch protection or Claude Code's
@@ -30,21 +28,6 @@ you give them. With it, your AI notices at once each step it leaves.
 
 ## Installation
 
-Name Lane among the dependencies of your plugin's `.claude-plugin/plugin.json`:
-
-```json
-"dependencies": [{ "name": "lane", "marketplace": "ccpm" }]
-```
-
-Allow the marketplace `ccpm` in your marketplace's `.claude-plugin/marketplace.json`:
-
-```json
-"allowCrossMarketplaceDependenciesOn": ["ccpm"]
-```
-
-Have each user of your plugin add `ccpm` before they install your plugin, as Claude Code installs
-a dependency only from a marketplace they've added:
-
 ```console
 claude plugin marketplace add lovaizu/ccpm
 claude plugin install <your plugin>@<your marketplace>
@@ -54,11 +37,23 @@ The install then lists `lane` among the dependencies it installed.
 
 ## Walkthrough
 
-At the end, your plugin's writer has kept to its step, and its reviewer's result has moved the
-run on.
+At the end, you have a writer kept to its step, and a run moved on by its reviewer's result.
 
 `log`, your plugin, writes a version's `CHANGELOG.md` entry: its skill `/log:up` starts a writer,
-and then a reviewer. Its `lane/rules.json` holds the writer's step and the routes:
+and then a reviewer. Its `.claude-plugin/plugin.json` names Lane among its dependencies:
+
+```json
+"dependencies": [{ "name": "lane", "marketplace": "ccpm" }]
+```
+
+Its marketplace's `.claude-plugin/marketplace.json` allows the marketplace `ccpm`, from which Claude
+Code installs Lane:
+
+```json
+"allowCrossMarketplaceDependenciesOn": ["ccpm"]
+```
+
+Its `lane/rules.json` holds the writer's step and the routes:
 
 ```json
 {
@@ -83,18 +78,18 @@ and then a reviewer. Its `lane/rules.json` holds the writer's step and the route
 }
 ```
 
-Your plugin's user types:
+Your plugin's user, who installed it as Installation shows, types:
 
 ```text
 /log:up 1.2.0
 ```
 
-The writer starts, and writes its notes to a file of its own. Lane stops the write, and the writer
+The writer starts, and writes its notes to `notes.md`. Lane stops the write, and the writer
 reads:
 
 ```text
 You're at the step `write` of log:writer, which writes only CHANGELOG.md.
-Write the entry there.
+Write there instead of notes.md.
 ```
 
 The writer writes the entry in `CHANGELOG.md`, runs `lane-result written`, and ends. The reviewer
@@ -107,8 +102,7 @@ log:reviewer gave more. Due: log:writer.
 
 ## How it works
 
-Lane gives an AI that leaves a step of your plugin the step's own sentence, so that it notices at
-once.
+Lane gives an AI that leaves your plugin's step the step's own sentence, so that it notices at once.
 
 ![How Lane works, from your plugin's rules to each move it checks](images/how-it-works.svg)
 
@@ -118,8 +112,8 @@ When Lane stops a call, the AI gets the sentence of the step it left and what to
 
 ### "The AI says it did the step, but did it?"
 
-A step, an item of its checklist, a read, or a result counts only from the AI's own call: a Read
-itself, or a run of one of Lane's commands that your step names. A reply never counts.
+A step, an item, a read, or a result counts only from the AI's own call, never from its reply. Such
+a call is a Read itself, or a run of a Lane command that your step names.
 
 ### "Each check is code to write and test."
 
@@ -129,7 +123,7 @@ makes both the check and the sentence the AI reads.
 ### "The main conversation starts the wrong subagent, or stops while one is due."
 
 Your routes say which subagent starts after each result. Lane gives the main conversation each
-start due, and stops any other start, and its end while a start is due.
+start due, and stops any other start, or its end while one is due.
 
 ### "A run that stops starts over."
 
