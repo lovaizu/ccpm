@@ -330,9 +330,10 @@ def end_of(role: str, cut: str, result: str) -> list[dict[str, Any]]:
 def generator_steps(practice: str, deliverable: str) -> dict[str, Any]:
     """The steps of round 1's generator, by the best practice, of the deliverable."""
     return steps_of(
-        [],
+        [{"type": "writes", "paths": []}],
         [
             {"type": "checklist", "items": practices(practice, "decide")},
+            {"type": "writes", "paths": [RESULT]},
             {"type": "result", "ends": ["point"]},
         ],
         [
@@ -347,10 +348,11 @@ def generator_steps(practice: str, deliverable: str) -> dict[str, Any]:
 def test_rules_give_the_generator_its_steps_from_its_cut(tmp_path: Any):
     """Given the generator's Cut of the command by code
     When rules.py runs for a start of rn:generator whose prompt names the Cut
-    Then it gives 0, saying nothing, with steps 1 to 4 in order, each with order: step 2 the
-    checklist of code's decide practices and a result that ends on point, step 3 that of its make
-    practices and the writes of the command and the result, and step 4 the writes of the result,
-    rn's check of the generator, and the result made, and nothing else"""
+    Then it gives 0, saying nothing, with steps 1 to 4 in order, each with order: step 1 writes
+    nothing, step 2 the checklist of code's decide practices, the writes of the result alone, and
+    a result that ends on point, step 3 that of its make practices and the writes of the command
+    and the result, and step 4 the writes of the result, rn's check of the generator, and the
+    result made, and nothing else"""
     top = worktree(str(tmp_path), {CUT: generator_cut()})
     assert rules_of(top, "rn:generator", CUT) == (0, generator_steps("code", COMMAND), "")
 
@@ -372,9 +374,9 @@ def test_rules_give_a_generator_of_refactoring_the_practices_of_the_refactor_bes
 def evaluator_steps(cut: str, unread: list[str], conditions: list[str]) -> dict[str, Any]:
     """The steps of an evaluator from its Cut, never reading the paths, judging the conditions."""
     return steps_of(
-        [],
+        [{"type": "writes", "paths": []}],
         [{"type": "reads_none", "paths": unread}],
-        [{"type": "checklist", "items": conditions}],
+        [{"type": "checklist", "items": conditions}, {"type": "writes", "paths": []}],
         end_of("evaluator", cut, "judged"),
     )
 
@@ -383,10 +385,10 @@ def evaluator_steps(cut: str, unread: list[str], conditions: list[str]) -> dict[
 def test_rules_give_an_evaluator_its_steps_from_its_cut(tmp_path: Any):
     """Given an evaluator's Cut of C2 of the command
     When rules.py runs for a start of rn:evaluator whose prompt names the Cut
-    Then it gives 0, saying nothing, with steps 1 to 4 in order, each with order: step 2 never
-    reading the design tree or the generator's Cut and result of the Round, step 3 the checklist
-    of N4 to N7, and step 4 the writes of the result, rn's check of the evaluator, and the result
-    judged, and nothing else"""
+    Then it gives 0, saying nothing, with steps 1 to 4 in order, each with order: step 1 writes
+    nothing, step 2 never reading the design tree or the generator's Cut and result of the Round,
+    and writing what it will, step 3 the checklist of N4 to N7 and writing nothing, and step 4 the
+    writes of the result, rn's check of the evaluator, and the result judged, and nothing else"""
     cut = evaluator("C2")
     conditions = ["N4", "N5", "N6", "N7"]
     top = worktree(str(tmp_path), {**made_files(), cut: evaluator_cut("C2", conditions)})

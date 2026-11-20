@@ -27,12 +27,6 @@ from rn_bench import (
     typed,
 )
 
-# Why a case is xfail while its gap in dev/rn/tests/gaps.md stands.
-NO_GUARD = (
-    "the generator's step 1, where the case writes, names no writes, so the guard lets each write"
-    " through, as dev/rn/tests/gaps.md says"
-)
-
 
 def given_again(b: Bench, module: str, code: str) -> None:
     """Gives an interface of the bench's module again, at the end of its file."""
@@ -285,17 +279,20 @@ def test_a_role_that_ends_with_no_result_in_its_file_is_held(b: Bench, broken: N
     assert b.check(agent, "generator", cut).exit_code == 1
 
 
-@pytest.mark.xfail(strict=True, reason=NO_GUARD)
 @pytest.mark.supports("P5.1")
 def test_a_role_that_writes_beside_its_deliverable_is_told_its_step(b: Bench, broken: None):
-    """Given the command's generator started with its Cut
-    When it writes a file other than its deliverable and its result
+    """Given /rn:up typed with the walkthrough's request, then /rn:ty, and the command's generator
+    started with its Cut
+    When it writes a file other than its deliverable and its result, at its step 1
     Then the guard stops the write with the step's sentence"""
     c = b.converse()
+    c.type("/rn:up a command with which the accounting team prints an invoice from its lines")
+    c.type("/rn:ty")
     _, agent = b.start(c, "generator", "make the command")
     assert agent is not None
     answer = agent.write(os.path.join(b.repo, "invoicer", "notes.py"), "")
     assert answer.blocked
+    assert "You're at the step `1` of rn:generator, which writes nothing." in answer.said
 
 
 @pytest.mark.supports("P5.2")
