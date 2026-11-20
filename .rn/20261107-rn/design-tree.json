@@ -215,34 +215,7 @@
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/rules-and-adapters.md",
       "kind": "light",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Command parts",
-              "decided": "Lane splits a command at |, &&, ||, ;, and each newline outside quotes, so that a quoted ground or request holding one stays one command",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
@@ -284,60 +257,7 @@
       "name": "A plugin's AI notices when it runs a command other than those its step names",
       "path": "dev/lane/tests/integration/test_lane_s4_commands.py",
       "kind": "code",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "dev/lane/tests"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Command parts",
-              "decided": "a quoted word that holds ; or && stays in its command, and an operator outside quotes still splits it",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A plugin's AI notices when it skips a step, or ends before each step is done in order",
@@ -397,40 +317,7 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/lane/docs/rules-and-adapters.md",
-        "plugins/rn/domain/best-practices/software-design"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Reads at review",
-              "decided": "the orchestrator's review runs ls and grep besides Lane's reporters, as Claude Code 2.1.329 gives no Glob or Grep, so the review lists and searches the repository; each skill tells the AI to read its part by Read",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
@@ -472,316 +359,19 @@
       "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/README.md",
-        "dev/rn/tests",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/prompt",
-        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
-        "dev/rn/tests/integration/test_rn_s2_pause.py",
-        "dev/rn/tests/integration/test_rn_principles.py",
-        "dev/rn/tests/integration/test_rn_components.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The rework",
-              "decided": "made again from rn's architecture as it changed; its unit cases run on Opus, 3 runs each",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
       "path": "plugins/rn/domain/generator.md",
       "kind": "prompt",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/README.md",
-        "dev/rn/tests",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/prompt",
-        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
-        "dev/rn/tests/integration/test_rn_s2_pause.py",
-        "dev/rn/tests/integration/test_rn_principles.py",
-        "dev/rn/tests/integration/test_rn_components.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The rework",
-              "decided": "made again from rn's architecture as it changed; its unit cases run on Opus, 3 runs each",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
       "path": "plugins/rn/domain/evaluator.md",
       "kind": "prompt",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/README.md",
-        "dev/rn/tests",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/prompt",
-        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
-        "dev/rn/tests/integration/test_rn_s2_pause.py",
-        "dev/rn/tests/integration/test_rn_principles.py",
-        "dev/rn/tests/integration/test_rn_components.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The rework",
-              "decided": "made again from rn's architecture as it changed; its unit cases run on Opus, 3 runs each",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Users install Lane and rn together from one pull request, each plugin's folder holding all it needs and its README's walkthrough taken from what its tests show",
@@ -844,30 +434,5 @@
       "status": "done"
     }
   ],
-  "work": [
-    {
-      "do": "make",
-      "path": "plugins/lane/docs/rules-and-adapters.md"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/tests/integration/test_lane_s4_commands.py"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/orchestrator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/generator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/evaluator.md"
-    }
-  ]
+  "work": []
 }
