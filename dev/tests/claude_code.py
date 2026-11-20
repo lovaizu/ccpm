@@ -974,9 +974,9 @@ class Conversation:
         paths."""
         folder = os.path.join(self.cwd, path or "")
         found = sorted(
-            os.path.relpath(os.path.join(folder, each), self.cwd)
-            for each in glob.glob(pattern, root_dir=folder, recursive=True)
-            if os.path.isfile(os.path.join(folder, each)) and ".git" not in each.split(os.sep)
+            os.path.relpath(each, self.cwd)
+            for each in glob.glob(os.path.join(glob.escape(folder), pattern), recursive=True)
+            if os.path.isfile(each) and ".git" not in os.path.relpath(each, folder).split(os.sep)
         )
         shown = (
             line(SEARCH, "the main conversation runs `Glob **/*.txt`, with the tools named"),
