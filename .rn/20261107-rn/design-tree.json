@@ -68,7 +68,59 @@
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Properties",
+              "decided": "a condition asks for a property of each invariant that the architecture and the skeleton state of a part, holding for every input its use can bring: each rule of Data model, each principle item that a part holds, and each interface's contract as the skeleton states it; each is written in test design before any body, in one of the kinds of John Hughes's How to Specify It, invariant, postcondition, metamorphic, inductive, or model-based, names the element it rests on, and never comes from the code; a counterexample is a fault of the code or of the design, taken back to its maker",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The cases that keep a fault out",
+              "decided": "the unit cases keep out each fault that a body could carry, designed before any body: each collection inside what an interface takes, such as a role's steps or a run's starts, has a case of none, one, and several, and a contract that picks one of several has a case where the one picked lies at neither end; each comparison the contract makes has a value that matches beside one that nearly does, such as another plugin's name with the same prefix; an input that sets the part up, such as a rule file, is divided into its classes like any other, never one bench for every case; an event of the same stream that the part must leave alone is a class; and once designed, each condition of the contract is taken with the faults likely in its body, such as one off, another element picked, and or for or, each named with the case that fails on it, a case added where none does; each case's Then names the whole of what the interface gives and changes; a mutant or a property's counterexample that survives is a fault of this design, taken back to it, not mended one by one",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
@@ -233,7 +285,68 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md",
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Unit cases designed again",
+              "decided": "a subagent designs Lane's unit cases again from the interfaces of Lane's skeleton by the test design best practice as mended, with no sight of Lane's code, and the cases that exist are kept only where the design gives them again",
+              "by": "reasoning"
+            },
+            {
+              "about": "Amends after reading the cases",
+              "decided": "each sentence a case expects is written out in the case's words, never built by Lane's own code such as rule_types.words.listed; a case of an input that no use brings, such as a transcript line that Claude Code never writes or a record that is a folder, goes; a NotebookEdit is a write that the rule of the files a step writes judges by its notebook_path, as S1 asks of each file written; a start stopped while no start is due gives a sentence saying none is due and what to do instead, as P1.1 asks; each new sentence is worded first in plugins/lane/docs/rules-and-adapters.md, and the cases take it from there",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Properties",
+              "decided": "derived again from the architecture and the skeleton alone, by the test design best practice's condition on properties, in place of those that the code gave",
+              "by": "user"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A plugin's AI notices when it writes a file that its step doesn't name",
@@ -317,7 +430,68 @@
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Unit cases designed again",
+              "decided": "a subagent designs rn's unit cases again from the interfaces of rn's skeleton by the test design best practice as mended, with no sight of rn's code, and the cases that exist are kept only where the design gives them again",
+              "by": "reasoning"
+            },
+            {
+              "about": "The Cut that a start's prompt names",
+              "decided": "lane/adapters/rules.py's unit cases take as classes a Cut named from the top and one named whole, as the orchestrator, an AI, writes the prompt",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Properties",
+              "decided": "derived again from the architecture and the skeleton alone, by the test design best practice's condition on properties, in place of those that the code gave",
+              "by": "user"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
@@ -433,7 +607,7 @@
             },
             {
               "about": "The Cut that a start's prompt names",
-              "decided": "lane/adapters/rules.py takes the Cut's path from the run's worktree whether the prompt names it from the top or whole, as the orchestrator, an AI, writes the prompt, and gives each path of its rules from the top, where Lane's guard compares them",
+              "decided": "lane/adapters/rules.py takes the Cut's path from the run's worktree whether the prompt names it from the top or whole, and gives each path of its rules from the top, where Lane's guard compares them, as its unit cases ask",
               "by": "reasoning"
             }
           ]
@@ -740,6 +914,18 @@
       "path": "dev/plugin-development-guide.md",
       "condition": "N1",
       "about": "The main conversation over many turns"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/test-design"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests"
     },
     {
       "do": "make",
