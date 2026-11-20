@@ -1,6 +1,6 @@
 """Decides which kinds a deliverable may have and which inputs it must name: a kind is a folder of
-rn's best practices, `meta`, or `specific`, and a deliverable of a best practice's kind names an
-input of each kind that its best practice takes."""
+rn's best practices, `specific` among them, or `meta`, and a deliverable of a best practice's kind
+names an input of each kind that its best practice takes."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def faults(tree: Tree, practices: str, top: str) -> Sequence[str]:
     nodes = {d["path"]: d["kind"] for d in tree["deliverables"]}
     found: list[str] = []
     for d in tree["deliverables"]:
-        if d["kind"] in ("meta", "specific") or d["status"] == "done":
+        if d["kind"] == "meta" or d["status"] == "done":
             continue
         practice = os.path.join(practices, d["kind"], "best-practice.json")
         if not os.path.isfile(practice):

@@ -673,11 +673,6 @@ def unsettled() -> dict[str, Any]:
     return tree
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="course.due must read a decision with no `by`, the design tree's form of a point"
-    " still open, when it compares the decisions of a Cut with the tree's",
-)
 @pytest.mark.supports("test_a_finding_taken_into_its_decision_gets_the_next_round_of_content")
 def test_findings_beside_a_point_still_open_with_no_decision_changed_give_none():
     """Given the plan with a point still open under N3, and round 1, cut from it, judged with more
@@ -689,11 +684,6 @@ def test_findings_beside_a_point_still_open_with_no_decision_changed_give_none()
     assert due(tree, starts) == []
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="course.due must read a decision with no `by`, the design tree's form of a point"
-    " still open, when it compares the decisions of a Cut with the tree's",
-)
 @pytest.mark.supports("test_a_point_answered_gets_the_generator_again")
 def test_a_point_still_open_in_the_cut_settled_since_gives_the_next_round():
     """Given the plan with a point still open under N3, round 1's generator, cut from it, ended

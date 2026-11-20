@@ -152,8 +152,9 @@ def _changed(
 
 
 def _held(decisions: Sequence[Mapping[str, Any]]) -> set[tuple[str, str, str, Any, Any]]:
-    """Each decision by its node's path, its condition, its point, what it holds, and who."""
-    return {(d["path"], d["condition"], d["about"], d["decided"], d["by"]) for d in decisions}
+    """Each decision by its node's path, its condition, its point, what it holds, and who, or None
+    for a point still open, which the design tree holds with no `by`."""
+    return {(d["path"], d["condition"], d["about"], d["decided"], d.get("by")) for d in decisions}
 
 
 def _by_user(before: Sequence[Mapping[str, Any]], after: Sequence[Mapping[str, Any]]) -> bool:
@@ -192,7 +193,8 @@ def decisions(tree: Tree, path: str) -> list[dict[str, Any]]:
 
     Takes: the design tree, and the deliverable's path.
     Gives: each decision of its node, then of each input node that keeps its conditions, as a node
-    with no file does, each by its node's path and its condition, in the tree's order.
+    with no file does, in the order of the deliverable's `inputs`, each by its node's path and its
+    condition, in the order its node holds them.
     Refuses: nothing."""
     nodes = {d["path"]: d for d in tree["deliverables"]}
     held = [path, *(i for i in nodes[path].get("inputs", []) if i in nodes)]

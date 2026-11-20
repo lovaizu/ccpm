@@ -1,5 +1,4 @@
-"""Decides when a deliverable may say it's done: each `good` it holds is true, or, where it's
-`specific`, its own `good` is."""
+"""Decides when a deliverable may say it's done: each `good` it holds is true."""
 
 from __future__ import annotations
 
