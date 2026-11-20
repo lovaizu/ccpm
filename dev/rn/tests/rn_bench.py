@@ -49,6 +49,22 @@ def conditions(kind: str) -> list[dict[str, Any]]:
     ]
 
 
+def practices(kind: str, at: str) -> list[str]:
+    """Each practice of the kind's best practice that its maker takes at `decide` or `make`, as
+    N<n>.<m>, the m-th practice of the condition N<n>, in its order, as rn's adapter of the rules
+    gives a step's checklist."""
+    path = os.path.join(RN, "domain", "best-practices", kind, "best-practice.json")
+    with open(path, encoding="utf-8") as f:
+        factors = json.load(f)["goal"]["critical_success_factors"]
+    return [
+        f"{n['id']}.{m}"
+        for c in factors
+        for n in c["necessary_conditions"]
+        for m, item in enumerate(n["items"], 1)
+        if item["at"] == at
+    ]
+
+
 def plan() -> dict[str, Any]:
     """The design tree of the walkthrough's plan, once the person signed it off: the command, with
     the tax rate given each time, before the guide that names it."""

@@ -18,7 +18,18 @@ from typing import Any
 
 import pytest
 from repo_files import write_files
-from rn_bench import COMMAND, GUIDE, RN, RUN, command, plan, started, typed, worktree
+from rn_bench import (
+    COMMAND,
+    GUIDE,
+    RN,
+    RUN,
+    command,
+    plan,
+    practices,
+    started,
+    typed,
+    worktree,
+)
 
 CUT = f"{RUN}/rounds/1/generator.cut.json"
 RESULT = f"{RUN}/rounds/1/generator.json"
@@ -292,21 +303,6 @@ def rules_of(top: str, role: str, cut: str) -> tuple[int, Any, str]:
     given.pop("kind")
     code, printed, said = command("lane/adapters/rules.py").main(json.dumps(given), top, RN)
     return code, json.loads(printed) if printed else printed, said
-
-
-def practices(kind: str, at: str) -> list[str]:
-    """Each practice of the kind's best practice that its maker takes at `decide` or `make`, as
-    N<n>.<m>, the m-th practice of the condition N<n>."""
-    path = os.path.join(RN, "domain", "best-practices", kind, "best-practice.json")
-    with open(path, encoding="utf-8") as f:
-        factors = json.load(f)["goal"]["critical_success_factors"]
-    return [
-        f"{n['id']}.{m}"
-        for c in factors
-        for n in c["necessary_conditions"]
-        for m, item in enumerate(n["items"], 1)
-        if item["at"] == at
-    ]
 
 
 def steps_of(*rules: list[dict[str, Any]]) -> dict[str, Any]:

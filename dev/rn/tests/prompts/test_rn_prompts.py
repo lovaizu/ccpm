@@ -23,6 +23,10 @@ pytestmark = [
 
 # The design tree of a run's folder.
 TREE = "design-tree.json"
+# The folder of the command's tests, which the command's generator writes beside the command.
+TESTS = "tests/"
+# The fields of each kind of report to Lane, in the order that its reporter prints them.
+FIELDS = {"step": ["step"], "item": ["step", "item"], "result": ["result"]}
 # The runs of each case, as rn's Test strategy sets.
 RUNS = 3
 
@@ -51,6 +55,64 @@ def loaded(record: str) -> list[str]:
         for part in event["message"].get("content", [])
         if part.get("type") == "tool_use" and part.get("name") == "Skill"
     ]
+
+
+def reported(tmp: str) -> list[list[str]]:
+    """Each report to Lane that the run's subagent made, in its order, as the reporter's words,
+    such as `["lane-step", "1"]`, from the subagent's transcript in the case's configuration
+    folder. A report is a Bash call whose output is the one line of JSON that a reporter prints,
+    as Lane reads it back, whatever else the command holds, such as a `cd` before it."""
+    pattern = os.path.join(tmp, "config", "projects", "*", "*", "subagents", "agent-*.jsonl")
+    reports = []
+    for path in sorted(glob.glob(pattern)):
+        with open(path, encoding="utf-8") as f:
+            events = [json.loads(line) for line in f if line.startswith("{")]
+        bash = {
+            part["id"]
+            for event in events
+            if event.get("type") == "assistant"
+            for part in event["message"].get("content", [])
+            if part.get("type") == "tool_use" and part.get("name") == "Bash"
+        }
+        reports += [
+            report(part.get("content"))
+            for event in events
+            if event.get("type") == "user" and isinstance(event["message"].get("content"), list)
+            for part in event["message"]["content"]
+            if part.get("type") == "tool_result" and part.get("tool_use_id") in bash
+        ]
+    return [words for words in reports if words]
+
+
+def report(output: Any) -> list[str]:
+    """The reporter's words of a Bash call's output that is a report to Lane, such as
+    `["lane-item", "3", "N1"]`; [] for any other output."""
+    try:
+        given = json.loads(output) if isinstance(output, str) else None
+    except ValueError:
+        return []
+    if not isinstance(given, dict):
+        return []
+    fields = [key for key in given if key != "kind"]
+    if fields != FIELDS.get(str(given.get("kind"))):
+        return []
+    return [f"lane-{given['kind']}", *(str(given[f]) for f in fields)]
+
+
+def started(role: str, cut: str) -> str:
+    """The prompt by which the case's main conversation starts the role with its Cut alone, passing
+    on what a run may not do, as the role gets nothing of the main conversation's system prompt."""
+    told = f"telling it: {opus.RULE}"
+    return f"Use the rn:{role} agent with its Cut {cut}, {told} Wait for it to end."
+
+
+def changed_beside(b: Bench, paths: tuple[str, ...]) -> list[str]:
+    """Each file of the bench's repository that differs from its last commit, or that git doesn't
+    know, beside the paths given, a path ending with `/` naming a folder, and beside the
+    __pycache__ that running Python leaves, which invoicer's own repository would ignore."""
+    lines = git(b.repo, "status", "--porcelain", "-uall").splitlines()
+    files = [line[3:] for line in lines]
+    return [f for f in files if not f.startswith(paths) and "/__pycache__/" not in f"/{f}"]
 
 
 def result(b: Bench, cut: str) -> Any:
@@ -94,16 +156,30 @@ def test_up_stays_out_of_a_fix_of_one_line(tmp_path: Any, each: int):
 @pytest.mark.supports("test_a_generators_result_that_carries_out_each_decision_passes_its_check")
 @pytest.mark.parametrize("each", range(RUNS))
 def test_the_generator_makes_the_command_from_its_cut(tmp_path: Any, each: int):
-    """Given the command's generator's Cut of round 1
+    """Given the command's generator's Cut of round 1, the command with its tests in tests/
     When the generator runs alone with it
-    Then it writes the command and its result made, with a place for each decision of its Cut"""
+    Then it writes the command and its result made, with a place for each decision of its Cut,
+    changes no file but the command, its tests, and the run's folder, and reports to Lane each of
+    its steps 1 to 4 done in their order, each practice of the code best practice taken while
+    deciding as an item of step 2 and each taken while making as one of step 3, and the result
+    made last"""
     b = rn_bench.bench(str(tmp_path))
+    tree = b.tree()
+    tree["deliverables"][0]["more_paths"] = [TESTS]
+    b.write_tree(tree)
     cut = b.cut("generator")
-    run(b, str(tmp_path), f"Use the rn:generator agent with its Cut {cut}, and wait for it to end")
+    run(b, str(tmp_path), started("generator", cut))
     written = result(b, cut)
     assert written["result"] == "made", each
     assert {d["about"] for d in written["carried_out"]} == {"The tax rate", "The lines"}
     assert os.path.exists(os.path.join(b.repo, COMMAND))
+    assert changed_beside(b, (COMMAND, TESTS, RUN + "/")) == []
+    calls = reported(str(tmp_path))
+    assert [w[1:] for w in calls if w[0] == "lane-step"] == [["1"], ["2"], ["3"], ["4"]]
+    for step, at in (("2", "decide"), ("3", "make")):
+        items = [w[2] for w in calls if w[0] == "lane-item" and w[1:2] == [step]]
+        assert sorted(set(items)) == sorted(rn_bench.practices("code", at)), step
+    assert calls[-1] == ["lane-result", "made"]
 
 
 @pytest.mark.supports(
@@ -113,11 +189,20 @@ def test_the_generator_makes_the_command_from_its_cut(tmp_path: Any, each: int):
 def test_the_evaluator_answers_each_condition_of_its_group(tmp_path: Any, each: int):
     """Given the command made, and an evaluator's Cut of the group C1
     When the evaluator runs alone with it
-    Then it answers N1, N2, and N3 each once, good with its lines or more with its good_when"""
+    Then it answers N1, N2, and N3 each once, good with its lines or more with its good_when,
+    changes no file but those of the run's folder, leaving the command as it was made, and reports
+    to Lane each of its steps 1 to 4 done in their order, each condition as an item of
+    step 3, and the result judged last"""
     b = rn_bench.bench(str(tmp_path))
     rn_bench.made(b)
     cut = b.cut("evaluator")
-    run(b, str(tmp_path), f"Use the rn:evaluator agent with its Cut {cut}, and wait for it to end")
+    run(b, str(tmp_path), started("evaluator", cut))
     written = result(b, cut)
     answered = [a["condition"] for a in written["good"] + written["more"]]
     assert sorted(answered) == ["N1", "N2", "N3"], each
+    assert changed_beside(b, (COMMAND, RUN + "/")) == []
+    calls = reported(str(tmp_path))
+    assert [w[1:] for w in calls if w[0] == "lane-step"] == [["1"], ["2"], ["3"], ["4"]]
+    items = [w[2] for w in calls if w[0] == "lane-item" and w[1:2] == ["3"]]
+    assert sorted(set(items)) == ["N1", "N2", "N3"]
+    assert calls[-1] == ["lane-result", "judged"]
