@@ -122,6 +122,10 @@
        },
        {
         "at": "make",
+        "text": "Give each case what the interface takes in the form that its use reads it, such as a record read from the JSON of its file in place of a literal written in the test, since a literal of the test and one of the code can be one object, and a body that compares them by identity passes the case and fails in use."
+       },
+       {
+        "at": "make",
         "text": "Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point."
        }
       ]

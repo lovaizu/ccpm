@@ -339,7 +339,7 @@
             },
             {
               "about": "Lane's surviving mutants",
-              "decided": "the ci-fix subagent's commit on ci-fix/rn-rebuild-f05952f7 is taken, as it removes code that no case calls for; no other survivor is mended one by one, as they show the unit cases short of the test design, which Lane's unit cases designed again meet; Lane's code then follows those cases a test at a time, and Lane's code deliverables are done once no mutant survives",
+              "decided": "no survivor is mended one by one, as they show the unit cases short of the test design, which Lane's unit cases designed again meet; Lane's code follows those cases a test at a time; a comparison of a tool's name that only two tools reach, a start's Agent or SendMessage and a read's Read or Grep, is marked as changing nothing, as the code best practice's N7.8 says; Lane's code deliverables are done once no mutant survives",
               "by": "user"
             },
             {
@@ -1084,6 +1084,11 @@
             {
               "about": "The kind light in rn's code",
               "decided": "inputs and status treat a deliverable of the kind light as one of any kind, by its best practice; course starts no round of refactoring after one, and rn's architecture says so at P3.2",
+              "by": "reasoning"
+            },
+            {
+              "about": "course's surviving mutants",
+              "decided": "course's unit cases take the design tree and each Cut in the form course reads them, from their JSON, as the test design's N4.3 says, and hold a deliverable whose kind comes after refactor-code in order, judged good after its refactoring, beside one whose kind comes before, as its N3.4 says",
               "by": "reasoning"
             }
           ]

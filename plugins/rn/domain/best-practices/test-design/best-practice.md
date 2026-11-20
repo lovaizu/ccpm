@@ -72,7 +72,8 @@ A case kept as a test is the one statement of what a part must do, and a case th
 
 1. *While making.* Write each case as a test in the place that Directory structure names for its level, in the form that the note of its section in the template gives, and keep the cases in the test code alone, since a list beside the code says each case twice.
 2. *While making.* Write in each case's Then the whole of what the interface gives and each change it makes, as its contract states them, such as the whole entry that a record gains and whether a call is stopped, since a Then that names a part of the result passes a body that gets the rest wrong.
-3. *While making.* Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point.
+3. *While making.* Give each case what the interface takes in the form that its use reads it, such as a record read from the JSON of its file in place of a literal written in the test, since a literal of the test and one of the code can be one object, and a body that compares them by identity passes the case and fails in use.
+4. *While making.* Run the tests and the type checker that Test strategy names, and see every case fail at an empty body, not at a fault of the test or a file that the skeleton lacks: a type that doesn't fit across a handoff is a gap that N6 lists, and a case that passes on an empty body tests nothing. Leave unrun a case that runs the real host or a model, which only the type checker reads at this point.
 
 ### N5
 
