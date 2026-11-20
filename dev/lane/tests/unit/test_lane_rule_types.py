@@ -7,12 +7,12 @@ doesn't, its path given relative as Claude Code gives it or from the root, besid
 goes through; the sentence that lists a rule's values; and the order in which
 rule_types/__init__.py asks them, one for each combination of rules that a move breaks, with
 roles of no step, of one, and of three, a result rule on a step that isn't the last, a result
-that ends the start at its first, a middle, or its last step, and the main conversation's turn's
-end; a checklist's items, named or given by the plugin's command, with none, one, and several
-lines of its output, a failure, a line of no one word, and the event's folder; and the marks,
-reads, and results of a main conversation that takes its steps at each turn, in the turn at hand
-or in the one before. Each Then gives the whole sentence, as Lane's rules-and-adapters.md words
-it."""
+that ends the start at its first, a middle, or its last step, whether an end ended at a step, and
+the main conversation's turn's end; a checklist's items, named or given by the plugin's command,
+with none, one, and several lines of its output, a failure, a line of no one word, and the event's
+folder; and the marks, reads, and results of a main conversation that takes its steps at each
+turn, in the turn at hand or in the one before. Each Then gives the whole sentence, as Lane's
+rules-and-adapters.md words it."""
 
 from __future__ import annotations
 
@@ -1584,6 +1584,23 @@ def test_a_result_that_two_steps_name_as_ending_the_start_ends_it_at_the_first(e
     assert (
         rule_types.judge_end(holding(move("end", e.ended(WRITER), gave("unclear")), steps)) is None
     )
+
+
+@pytest.mark.supports("test_a_turn_that_ends_on_a_result_that_ends_it_at_a_step_goes_through_due")
+@pytest.mark.parametrize(
+    "entries, ended",
+    [((gave("unclear"),), True), ((gave("written"),), False), ((), False)],
+    ids=["ends", "results", "none"],
+)
+def test_an_end_on_a_result_that_a_steps_ends_names_is_ended_at_a_step(
+    e: Events, entries: tuple[Entry, ...], ended: bool
+):
+    """Given a writer of three steps whose middle one names `unclear` among the results that end
+    the start, and the writer that gave `unclear`, `written`, or no result
+    When it ends
+    Then it ended at a step for `unclear` alone"""
+    end = holding(move("end", e.ended(WRITER), *entries), ending({1: "unclear"}, checks=False))
+    assert rule_types.ended_at_a_step(end) is ended
 
 
 @pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")

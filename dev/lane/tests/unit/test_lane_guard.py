@@ -974,6 +974,27 @@ def test_turn_ended_stops_only_while_a_start_is_due(
     assert gained(log) == []
 
 
+@pytest.mark.supports("test_a_turn_that_ends_on_a_result_that_ends_it_at_a_step_goes_through_due")
+@pytest.mark.parametrize(
+    "ends, said", [(["blocked"], Answer()), ([], Answer(True, WRITER_DUE))], ids=["ends", "none"]
+)
+def test_turn_ended_on_a_result_that_its_step_ends_on_goes_through_with_a_start_due(
+    g: Play, log: str, ends: list[str], said: Answer
+):
+    """Given the writer due, and the main conversation's turn that gave `blocked`, its step `lead`
+    naming `blocked` among the results that end the turn there, or naming none
+    When the main conversation ends its turn
+    Then the end goes through, as that result says it can't go on, or is stopped with the writer
+    due, and the record gains nothing"""
+    steps = copy.deepcopy(lane_bench.RULES["roles"]["log:up"]["steps"])
+    if ends:
+        steps[0]["rules"].append({"type": "result", "ends": ends})
+    recorded_now(log, {"kind": "result", "run": "r1", "role": "log:up", "result": "blocked"})
+    ended = dataclasses.replace(move("turn_end", g.e.stop()), steps=steps)
+    assert turn_ended(ended) == said
+    assert gained(log) == []
+
+
 @pytest.mark.supports("test_a_start_that_another_plugins_hook_denies_is_due_again_at_the_turns_end")
 def test_turn_ended_drops_each_start_still_untied(g: Play, log: str):
     """Given the writer's start tied to a1, and two other starts untied

@@ -246,7 +246,9 @@ def turn_ended(move: Move) -> Answer:
     its role's, or, where the role takes its steps at each turn, those of the turn's `turn` entry.
     Gives: a stop with the sentence that rule_types.judge_end gives, where the move has steps, its
     marks and result those that place.own_entries gives for the turn; else a stop with the starts
-    due, where a start is due; an empty answer where none is.
+    due, where a start is due and the turn didn't end on a result that a step's `ends` names, as
+    rule_types.ended_at_a_step gives it, since that result says the AI can't go on, which no start
+    mends; an empty answer where none is.
     Changes: the run record, by dropping each start still untied; and, where the turn's end goes
     through, by an `ended` entry where adapters.starts_due, asked with the turn ended, says the run
     ends, and, where the role takes its steps at each turn, by a `turn_ended` entry, so that the
@@ -267,7 +269,7 @@ def turn_ended(move: Move) -> Answer:
     if said is not None:
         return Answer(True, said)
     due = _due(run, move.event)
-    if due.get("starts"):
+    if due.get("starts") and not rule_types.ended_at_a_step(move):
         return Answer(True, _due_said(due))
     _end_if(run, move.event, turn_ended=True)
     if asks_adapter(_rules(run), move.role):

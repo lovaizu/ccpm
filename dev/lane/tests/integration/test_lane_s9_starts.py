@@ -1,10 +1,10 @@
 """The integration cases of S9, the starts held to the plugin's order: the run added at the skill's
 call, the starts due that the plugin's order gives, each start due let through with its prompt, any
-other start and the turn's end while a start is due stopped, a typed command and each result added
-and the starts due after them, until the order says the run ends; a run that waits, and a run of a
-plugin that gives no order; and each state of Claude Code that bears on them, as
-dev/lane/claude-code-states.md lists it. Each runs `log` and Lane through the double of Claude
-Code."""
+other start and the turn's end while a start is due stopped, but for a turn that ends on a result
+that ends it at a step, a typed command and each result added and the starts due after them, until
+the order says the run ends; a run that waits, and a run of a plugin that gives no order; and each
+state of Claude Code that bears on them, as dev/lane/claude-code-states.md lists it. Each runs
+`log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ import os
 import pytest
 from claude_code import AGENT_DENIED_BY_RULE, AGENT_UNKNOWN_TYPE, FOREGROUND, POSTED_FIRST
 from lane_bench import (
+    PER_TURN,
     WORDS,
     Bench,
     denier,
@@ -61,6 +62,41 @@ prompts = [m["prompt"] for m in moves if m["kind"] == "start"]
 done = any("docs/changes/" in each for each in prompts)
 print(json.dumps({"starts": [] if done else [{"role": "log:writer", "count": 1}]}))
 """
+
+# An adapter of the rules that `log` gives for its main conversation at each turn: the steps `up`
+# and `tell`, each held in order and writing nothing, `up`'s result rule naming `blocked` among the
+# results that end the turn there, as when only the person can mend what stopped it. The last step
+# names no such result, as Lane judges the last step's result rule at each end with every step done.
+BLOCKS = """\
+import json
+
+held = [{"type": "order"}, {"type": "writes", "paths": []}]
+up = {"name": "up", "rules": [*held, {"type": "result", "ends": ["blocked"]}]}
+print(json.dumps({"steps": [up, {"name": "tell", "rules": held}]}))
+"""
+
+
+@pytest.mark.supports("S9", "S7", "Starts due")
+def test_a_turn_that_ends_on_a_result_that_ends_it_at_a_step_goes_through_due(b: Bench):
+    """Given `log` whose main conversation takes at each turn the steps `up` and `tell`, `up`
+    naming `blocked` among the results that end the turn there, and the person typed /log:up
+    1.2.0, so that the writer is due
+    When the main conversation gives blocked and ends its turn, and then, after the person's
+    answer, marks `up` and `tell` done and ends the next turn with no result
+    Then the first end goes through, as blocked says it can't go on, which no start mends, and the
+    next end is stopped with the writer due"""
+    b.rules(PER_TURN)
+    b.adapter("rules.py", BLOCKS)
+    c = opened(b)
+    c.bash("lane-result blocked")
+    first = c.stop("The changelog lies outside the repository; move it in, and say so.")
+    assert not first.blocked, first.said
+    c.type("It's in.")
+    c.bash("lane-step up")
+    c.bash("lane-step tell")
+    later = c.stop("Done.")
+    assert later.blocked
+    assert "log:writer" in later.said
 
 
 @pytest.mark.supports("S9", "Starts due")

@@ -102,6 +102,20 @@ def judge_end(move: Move) -> str | None:
     return next((each for each in said if each is not None), None)
 
 
+def ended_at_a_step(move: Move) -> bool:
+    """Whether a start, or the main conversation's turn, ends on a result that ends it at a step.
+
+    Takes: an `end` move of a subagent, or a `turn_end` move of the main conversation, with the
+    steps that hold its start.
+    Gives: True where the result that result.given gives is one that a step's result rule names
+    among those that end the start there; False where it gave none, or another.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    gave = result.given(move)
+    return any(gave in _ends(step) for step in move.steps)
+
+
 def _ends(step: Step) -> list[str]:
     """The results that the step's rules name as ending the start there, which only a result rule
     names."""
