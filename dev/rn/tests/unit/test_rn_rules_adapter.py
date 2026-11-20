@@ -120,7 +120,7 @@ def shared(cwd: str, name: str = NAME) -> list[tuple[str, list[str]]]:
     tree = os.path.join(folder, "design-tree.json")
     run = os.path.relpath(folder, cwd)
     return [
-        step("review", writes(tree), commands(), BLOCKED),
+        step("review", writes(tree), commands("ls", "grep"), BLOCKED),
         step(
             "touched",
             writes(tree),
@@ -306,17 +306,19 @@ def test_each_step_of_a_turn_but_its_last_ends_on_blocked(cwd: str, event: str):
 
 
 @pytest.mark.supports("test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped")
-def test_the_orchestrators_review_runs_no_command_and_touched_only_tree_py_touched(cwd: str):
+def test_the_orchestrators_review_runs_only_ls_and_grep_and_touched_only_tree_py_touched(
+    cwd: str,
+):
     """Given a repository with one run, and a turn of an answer
     When the adapter gives the turn's steps
-    Then review's commands are none, so that Lane lets only its reporters through, and touched's
-    are tree.py touched alone"""
+    Then review's commands are `ls` and `grep` alone, so that Lane lets only those and its
+    reporters through, and touched's are tree.py touched alone"""
     paused_run(cwd)
     by_name = {
         s["name"]: [r for r in s["rules"] if r["type"] == "commands"]
         for s in ADAPTER.steps(given("rn:up", "yes"), cwd, RN)["steps"]
     }
-    assert by_name["review"] == [commands()]
+    assert by_name["review"] == [commands("ls", "grep")]
     assert by_name["touched"] == [commands(script("tree", "touched"))]
 
 

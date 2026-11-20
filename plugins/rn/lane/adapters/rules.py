@@ -31,6 +31,9 @@ Rule = dict[str, Any]
 # The rule of each step of the orchestrator's turn but its last: the turn ends there on a refusal
 # that only the user can mend.
 _BLOCKED: Rule = {"type": "result", "ends": ["blocked"]}
+# The plain commands that the orchestrator's review lists and searches the repository by, as
+# Claude Code 2.1.329 gives no Glob or Grep.
+_LOOKS = ("ls", "grep")
 
 # A start as Lane gives it, in the form of Lane's rules.in.schema.json, and its steps that rn
 # gives back, in the form of its rules.out.schema.json.
@@ -42,7 +45,7 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     """The steps of the turn or the start, each with its rules, each path as Lane compares it,
     `os.path.relpath(os.path.realpath(path), os.path.realpath(cwd))`, so that a folder outside the
     repository, such as the people's starting state or rn's best practices, comes as `../...`, and
-    each command as `python3 <plugin_root>/scripts/<script> <subcommand>`.
+    each command of rn's scripts as `python3 <plugin_root>/scripts/<script> <subcommand>`.
 
     Takes: the turn or the start as Lane gives it; the folder that the conversation works in, the
     top of the user's repository; and rn's folder.
@@ -58,10 +61,11 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
       send-back, `/rn:gm`, an answer, any other prompt of the person, and a role's end, a
       subagent's end as Claude Code gives it, none;
     - the steps that every other event shares: `review`, writing only the run's design tree and
-      running no command; `touched`, writing only the run's design tree and running only
-      `tree.py touched`, with the checklist whose command is `tree.py touched <run>`; `commit`,
-      running only `tree.py commit`; and `move`, running only `repository.py put-up` and
-      `tree.py cut`, writing nothing.
+      running only `ls` and `grep`, as Claude Code 2.1.329 gives no Glob or Grep, so that the
+      review lists and searches the repository; `touched`, writing only the run's design tree and
+      running only `tree.py touched`, with the checklist whose command is
+      `tree.py touched <run>`; `commit`, running only `tree.py commit`; and `move`, running only
+      `repository.py put-up` and `tree.py cut`, writing nothing.
     Each step of the turn but its last ends on `blocked`, so that a refusal that only the user can
     mend, such as that of `repository.py new` in a repository whose origin names no default
     branch, ends the turn. The last step keeps no such rule, as Lane judges the last step's result
@@ -130,7 +134,7 @@ def _turn(run: Given, prompt: str, cwd: str, plugin_root: str) -> list[Steps]:
     touched = f"python3 {plugin_root}/scripts/tree.py touched {_rel(place.folder, cwd)}"
     return [
         *own,
-        _step("review", _writes(cwd, [place.tree]), _commands(plugin_root), _BLOCKED),
+        _step("review", _writes(cwd, [place.tree]), _commands(plugin_root, plain=_LOOKS), _BLOCKED),
         _step(
             "touched",
             _writes(cwd, [place.tree]),
@@ -264,12 +268,16 @@ def _step(name: str, *rules: Rule) -> Steps:
     return {"name": name, "rules": [{"type": "order"}, *rules]}
 
 
-def _commands(plugin_root: str, *named_: tuple[str, str]) -> Rule:
-    """The rule of the commands of rn's scripts, each by its script and subcommand; with none
-    given, the rule lets only Lane's reporters through."""
+def _commands(plugin_root: str, *named_: tuple[str, str], plain: Sequence[str] = ()) -> Rule:
+    """The rule of the commands of rn's scripts, each by its script and subcommand, and of each
+    plain command, such as `ls`, by its own words; with none given, the rule lets only Lane's
+    reporters through."""
     return {
         "type": "commands",
-        "commands": [f"python3 {plugin_root}/scripts/{name}.py {sub}" for name, sub in named_],
+        "commands": [
+            *(f"python3 {plugin_root}/scripts/{name}.py {sub}" for name, sub in named_),
+            *plain,
+        ],
     }
 
 

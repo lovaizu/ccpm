@@ -363,16 +363,19 @@ def test_the_orchestrator_writing_a_deliverable_is_stopped(b: Bench, broken: Non
 @pytest.mark.supports("P3.1", "orchestrator")
 def test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped(b: Bench, broken: None):
     """Given a run whose plan the user signed off, its sign-off recorded
-    When the orchestrator writes the run's design tree by a Bash command in its review
-    Then Lane stops the call, as the step `review` runs no command, and the tree is as it was"""
+    When the orchestrator lists the repository by `ls` in its review, and then writes the run's
+    design tree by a Bash command other than `ls` and `grep`
+    Then the first goes through, and Lane stops the second, as the step `review` runs only `ls`
+    and `grep`, and the tree is as it was"""
     c = to_plan_signoff(b)
     c.type("/rn:ty")
     ran(c, b.script("tree", "signoff", b.run))
     marked(c, "record")
     before = b.tree()
+    assert not c.bash("ls").blocked
     answer = c.bash(f"printf '%s\\n' '{{}}' > {b.tree_path}")
     assert answer.blocked
-    assert "You're at the step `review` of rn:ty, which runs no command." in answer.said
+    assert "You're at the step `review` of rn:ty, which runs only ls and grep." in answer.said
     assert b.tree() == before
 
 

@@ -5,7 +5,7 @@ tools: <tools>
 background: true
 ---
 
-`<Plugin>`'s folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/<role>.md`: read it whole first, then carry it out with what you're given.
+`<Plugin>`'s folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/<role>.md`: read it whole with the Read tool first, then carry it out with what you're given.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:

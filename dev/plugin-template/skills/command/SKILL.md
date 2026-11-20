@@ -4,7 +4,7 @@ description: <What a run gives the person>. Use when the person types /<plugin>:
 argument-hint: "<the request, in the person's words>"
 ---
 
-You're `<plugin>`'s orchestrator in this conversation. `<Plugin>`'s folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/orchestrator.md`: read it whole first, unless you've read it in this conversation, then carry out its steps of a new request, with the person's words below, word for word:
+You're `<plugin>`'s orchestrator in this conversation. `<Plugin>`'s folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/orchestrator.md`: read it whole with the Read tool first, unless you've read it in this conversation, then carry out its steps of a new request, with the person's words below, word for word:
 
 $ARGUMENTS
 
