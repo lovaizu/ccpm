@@ -555,7 +555,7 @@
             },
             {
               "about": "The Cut that a start's prompt names",
-              "decided": "lane/adapters/rules.py takes the Cut's path from the run's worktree whether the prompt names it from the top or whole, and gives each path of its rules from the top, where Lane's guard compares them, as its unit cases ask",
+              "decided": "lane/adapters/rules.py takes the Cut's path from the run's worktree in any form that a prompt names it: from the top or whole, and in a code span, quotes, or brackets, and gives each path of its rules from the top, where Lane's guard compares them, as its unit case and its property ask",
               "by": "reasoning"
             }
           ]
