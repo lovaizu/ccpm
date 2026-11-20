@@ -43,7 +43,8 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
     Gives: the URL of the pull request's changes, `<pull request>/files`.
     Changes: runs `gh auth status` first; then commits each change in the run's worktree as
     `rn: <deliverable's name>`, pushes the work's branch to `origin`, and opens the pull request
-    into the default branch, titled by the first sentence of the design tree's goal, where the
+    into the default branch, titled by the first sentence of the design tree's goal, as
+    `template.markdown.sentences` splits it, where the
     branch has none open.
     Refuses: Missing, before any commit or push, where `gh auth status` finds no login, with what
     it said; Wrong where the design tree holds no deliverable of the path; Missing where the

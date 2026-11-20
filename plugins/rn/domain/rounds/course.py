@@ -38,8 +38,10 @@ def next_of(deliverable: Deliverable, rounds: Sequence[Done], refactors: bool) -
     whether its kind is refactored, as `practice.refactoring` gives a kind.
     Gives, the first that holds:
     - the sign-off, where the last Round's stage has LIMIT Rounds, each with both results, and
-      the node's open decisions keep the findings left, as proposals for the user;
-    - the answer, where a decision of the node is open, its `decided` null;
+      the node's open decisions keep the findings left, as proposals for the user: each open
+      decision of a condition not good is such a proposal;
+    - the answer, where a decision of the node is open, its `decided` null, a decision of a
+      condition good past the limit among them;
     - the generator resuming the last Round, where the last generator's result is `point`, as
       the decision that held its point is answered now, or where the last Round holds no
       generator's result, as a pause stopped it, starting again from its files and spending no
