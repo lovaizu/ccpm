@@ -1,13 +1,15 @@
 """The integration cases of S4, the commands a step runs: a Bash call of a command that the step of
 its start doesn't name stopped with the step's sentence, and so one chained after a named command;
-a named command, with more words after it too, and a reporter of Lane's let through; and the main
-conversation's calls in a run held to its skill's step. Each runs `log`
-and Lane through the double of Claude Code."""
+a named command, with more words after it too, or with a quoted word that holds an operator, and a
+reporter of Lane's let through; and the main conversation's calls in a run held to its skill's
+step. Each runs `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
 
+import copy
+
 import pytest
-from lane_bench import Bench, opened, started
+from lane_bench import RULES, Bench, opened, started
 
 
 @pytest.mark.supports("S4", "rule types")
@@ -49,6 +51,29 @@ def test_a_named_command_with_more_words_after_it_goes_through(b: Bench):
     answer = started(opened(b)).bash("git log --oneline")
     assert not answer.blocked
     assert answer.exit_code == 0
+
+
+def committing(b: Bench) -> None:
+    """Writes the rules of `log` with the writer's step `write` running only `git commit`."""
+    rules = copy.deepcopy(RULES)
+    write = rules["roles"]["log:writer"]["steps"][0]
+    write["rules"] = [r for r in write["rules"] if r["type"] != "commands"]
+    write["rules"].append({"type": "commands", "commands": ["git commit"]})
+    b.rules(rules)
+
+
+@pytest.mark.supports("S4")
+def test_a_quoted_operator_stays_in_its_named_command(b: Bench):
+    """Given `log` whose writer's step `write` runs only `git commit`, and the writer running
+    When it runs `git commit -m "Fix; test && more"`, and then `git commit -m x; rm y`
+    Then the first goes through, and the second is stopped with the step's sentence, naming
+    `git commit`"""
+    committing(b)
+    writer = started(opened(b))
+    assert not writer.bash('git commit -m "Fix; test && more"').blocked
+    answer = writer.bash("git commit -m x; rm y")
+    assert answer.blocked
+    assert "git commit" in answer.said
 
 
 @pytest.mark.supports("S4", "reporters")

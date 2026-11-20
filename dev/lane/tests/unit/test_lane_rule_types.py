@@ -453,6 +453,79 @@ def test_a_command_chained_beside_a_named_one_gives_the_steps_sentence(e: Events
     assert said == RUNS_GIT_LOG
 
 
+@pytest.mark.supports("test_a_quoted_operator_stays_in_its_named_command")
+@pytest.mark.parametrize(
+    "command",
+    [
+        'git log --grep "Fix; test && more"',
+        "git log --grep 'a || b | c'",
+        'git log --grep "a\nb"',
+        'git log --grep "it\'s; fine"',
+        "git log --grep 'say \"a; b\"'",
+        'git log --grep "a\\"; b"',
+        "git log --grep a\\;b",
+        "git log \\\n--oneline",
+        'git log --grep "a; b" | head -5',
+    ],
+)
+def test_an_operator_inside_quotes_or_after_a_backslash_stays_in_its_command(
+    e: Events, command: str
+):
+    """Given a step whose rule of commands names `git log` and `head`
+    When the writer runs `git log` with an operator inside double quotes, inside single quotes, a
+    newline inside double quotes, a single quote inside double quotes, a double quote inside single
+    quotes, an escaped double quote inside double quotes, a `;` after a backslash, a newline after
+    a backslash, or a quoted `;` before a pipe to `head`
+    Then the rule finds nothing, as each operator stays in its command"""
+    named: Rule = {"type": "commands", "commands": ["git log", "head"]}
+    step: Step = {"name": "write", "rules": [named]}
+    assert commands.judge_call(named, step, move("call", e.bash(command, WRITER))) is None
+
+
+@pytest.mark.supports("test_a_quoted_operator_stays_in_its_named_command")
+@pytest.mark.parametrize(
+    "command",
+    [
+        'git log --grep "a; b"; git push',
+        "git log --grep 'a' && git push",
+        "git log --grep 'a\\'; git push",
+        'git log --grep "a"\ngit push',
+    ],
+)
+def test_an_operator_after_closed_quotes_gives_the_steps_sentence(e: Events, command: str):
+    """Given the step `write`, which runs `git log`
+    When the writer runs `git push` after `git log` whose quotes close before the operator, as a
+    backslash inside single quotes is a plain character
+    Then the rule gives the step's sentence, naming `git log`"""
+    call = move("call", e.bash(command, WRITER))
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == RUNS_GIT_LOG
+
+
+@pytest.mark.supports("test_a_quoted_operator_stays_in_its_named_command")
+@pytest.mark.parametrize(
+    "command",
+    ['git log --grep "a; git push', "git log --grep 'a\ngit push", "git log 'a\\'\"; rm y"],
+)
+def test_an_operator_after_a_quote_that_doesnt_close_gives_the_steps_sentence(
+    e: Events, command: str
+):
+    """Given the step `write`, which runs `git log`
+    When the writer runs `git log` with a double quote or a single quote that doesn't close, and
+    another command after an operator past it
+    Then the rule gives the step's sentence, as each operator splits where a quote doesn't close"""
+    call = move("call", e.bash(command, WRITER))
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) == RUNS_GIT_LOG
+
+
+@pytest.mark.supports("test_a_quoted_operator_stays_in_its_named_command")
+def test_a_named_command_whose_quote_doesnt_close_holds(e: Events):
+    """Given the step `write`, which runs `git log`
+    When the writer runs `git log --grep "a`, whose quote doesn't close, with no operator
+    Then the rule finds nothing, as the command is one part"""
+    call = move("call", e.bash('git log --grep "a', WRITER))
+    assert commands.judge_call(rule(WRITE, "commands"), WRITE, call) is None
+
+
 @pytest.mark.supports("test_a_command_chained_after_a_named_one_is_stopped")
 @pytest.mark.parametrize(
     "command",
