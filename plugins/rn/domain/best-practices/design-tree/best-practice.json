@@ -106,15 +106,15 @@
        },
        {
         "at": "make",
-        "text": "Write in `work` the work next, first to last: each deliverable to make by its path, and each point to decide by its deliverable's path, its condition, and its `about`, each after each deliverable that its inputs name, so that `tree.py` draws the deliverables as a tree by their inputs and the list of deliverables holds no order of its own."
+        "text": "Write in `work` the work next, first to last: each deliverable to make by its path, and each point to decide by its deliverable's path, its condition, and its `about`, each after each deliverable that its inputs name, so that the inputs alone order the deliverables, and the list of deliverables holds no order of its own."
        },
        {
         "at": "make",
-        "text": "After each change, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py write {record} '<ground>'` with the change on its standard input as one JSON object, `{\"nodes\": {<path>: <node>}}`, where `{record}` is your record and `<ground>` is why the change decides as it does, as N6.2 says. It gives 1 where a path names no node or the tree changed leaves the schema, and leaves the run's tree as it was, so fix what it names and run it again. It gives 0 once it has committed the tree with `<ground>` as the commit message, and prints `changed`, `touched`, and `doing` as JSON."
+        "text": "After each change, edit `design-tree.json` in place with the file tools, each text you replace occurring once in the file, or write the file whole, and run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit <run> '<ground>'`, where `<run>` is the run's folder and `<ground>` is why the change decides as it does, as N6.2 says. It gives 1 with the first fault where the tree leaves its schema or its checks, and leaves git as it was, so mend what it names and run it again. It gives 0 with the commit's hash once it has committed the run's folder with `<ground>` as the commit message."
        },
        {
         "at": "make",
-        "text": "Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py write` checks neither, while it refuses a deliverable whose inputs leave out a kind that its best practice's `inputs` names, and an item of `work` whose inputs aren't done."
+        "text": "Check that a later deliverable names each research deliverable in its inputs, and that a later deliverable has the kind that each meta deliverable makes, and drop one that none uses, since `tree.py commit` checks neither, while it refuses a deliverable whose inputs leave out a kind that its best practice's `inputs` names, and an item of `work` whose inputs aren't done."
        }
       ]
      }
@@ -192,7 +192,7 @@
        },
        {
         "at": "make",
-        "text": "Write the grounds of each decision that a change makes, the point and why it holds, as `<ground>` of `tree.py write`, which commits the change with it as the commit message, so that the user finds them in git and the tree holds the decision alone."
+        "text": "Write the grounds of each decision that a change makes, the point and why it holds, as `<ground>` of `tree.py commit`, which commits the change with it as the commit message, so that the user finds them in git and the tree holds the decision alone."
        }
       ]
      }
@@ -260,7 +260,7 @@
        },
        {
         "at": "make",
-        "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py round <path>`, with `<path>` the deliverable's `path` in the tree. It prints as JSON each round of the deliverable, the latest last, each the generator's making of it and the judging of that by one evaluator for each group of its best practice's conditions, with each evaluator's answers: `good` with each condition good and the lines that meet it, and `more` with each condition not yet good and its `good_when`, what its people get once it's good. It gives 1 where the deliverable has had no round."
+        "text": "Read the deliverable's Rounds in the run's folder, `rounds/<n>/`, the latest last: the generator's result, `generator.json`, and the judging of it by one evaluator for each group of its best practice's conditions, `evaluator-<group>.json`, with each evaluator's answers: `good` with each condition good and the lines that meet it, and `more` with each condition not yet good and its `good_when`, what its people get once it's good."
        },
        {
         "at": "make",
@@ -290,7 +290,7 @@
       "items": [
        {
         "at": "make",
-        "text": "After each change to a node, list the nodes it touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it. `tree.py write` prints this list as `touched`."
+        "text": "After each change to a node, list the nodes it touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it."
        },
        {
         "at": "make",
