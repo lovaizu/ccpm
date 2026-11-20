@@ -56,7 +56,53 @@
       "name": "Each part a developer builds by the design gives, with the others, what the README promises",
       "path": "plugins/rn/domain/best-practices/architecture",
       "kind": "meta",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Test strategy",
+              "decided": "no mutation testing row; a product that holds a prompt is checked up to its integration tests, with no E2E test of the prompts, and its people try it themselves after",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before writing any body, whether the architecture can be built as parts that fit together, from a skeleton of each part, and each gap where it can't",
@@ -68,13 +114,105 @@
       "name": "A developer sees, before building any part, whether the parts joined as the architecture draws give each key result, from Given, When, and Then test cases that fail until each part is built",
       "path": "plugins/rn/domain/best-practices/test-design",
       "kind": "meta",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Properties",
+              "decided": "each property states an invariant taken from the requirements alone, to check that the requirements hold, never from the skeleton or the code; the test design writes the properties as test code before any body, as it writes the cases",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A maker of code designs it, tests it first, and writes it as the field's established practice says",
       "path": "plugins/rn/domain/best-practices/code",
       "kind": "meta",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "plugins/rn/domain/best-practices/meta"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Test quality",
+              "decided": "the cases written first and coverage alone: mutation testing leaves the code best practice, and N7 asks whether each test asserts its case's whole result and coverage leaves no line that no case calls for",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The developers learn from a test that runs the product whole what the product does, as each run ran as they meant and measured what they meant",
@@ -122,7 +260,125 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "plugins/rn/domain/best-practices/architecture"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Entries",
+              "decided": "each skill is an entry alone that points to domain/orchestrator.md; the main conversation follows it, which holds the steps of each entry, a new request, a pick-up, a send-back, a sign-off, a pause, and an answer, and the steps that every event shares",
+              "by": "user"
+            },
+            {
+              "about": "Roles",
+              "decided": "the subagents are the generator and the evaluator alone, one evaluator for each Round judging every condition from one trial; the main conversation starts and stops each role",
+              "by": "user"
+            },
+            {
+              "about": "Rounds",
+              "decided": "the generator tries the deliverable as its people would and writes good with its lines; the next Round's generator gets the evaluator's good and good_when that the orchestrator keeps, as given; within a session the orchestrator resumes the generator and the evaluator of the last Round by SendMessage, and in a new conversation it starts them from the Round's files",
+              "by": "user"
+            },
+            {
+              "about": "Scripts",
+              "decided": "each step with one right result runs a script: making the run's worktree and an empty design tree, finding the run to pick up, recording a sign-off, committing and pushing on a pause, putting a deliverable up with its commit, push, and pull request, listing the nodes a change of the design tree touches, the repository's commit checks on the generator's files, and the evaluator's folder of the people's starting state",
+              "by": "user"
+            },
+            {
+              "about": "Lane",
+              "decided": "Lane holds every activity of every role that one of its rules can hold, the main conversation's steps included, such as a checklist of the nodes that a change of the design tree touches",
+              "by": "user"
+            },
+            {
+              "about": "Test strategy",
+              "decided": "no mutation testing and no E2E test: the integration tests check the whole flow with the prompts' unit cases, and the user tries rn after; property-based tests take their invariants from the requirements alone",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers know whom Lane serves, and the one way it serves them",
@@ -203,7 +459,100 @@
       "name": "A plugin's author builds on Lane so that its AI notices each step it leaves, by giving Lane its rules and adapters alone",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md",
+        "plugins/rn/domain/best-practices/architecture"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Test strategy",
+              "decided": "no mutation testing row",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's author decides from the README alone whether Lane fits, and makes its plugin depend on it",
@@ -311,125 +660,19 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "status": "done"
-    },
-    {
-      "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
-      "path": "dev/rn/tests",
-      "kind": "test-design",
-      "status": "done"
-    },
-    {
-      "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
-      "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "The person's /rn:dn stops the run where it stands, and /rn:up in any conversation goes on from there",
-      "path": "dev/rn/tests/integration/test_rn_s2_pause.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "Each principle item of rn's architecture holds where its part keeps it, and its case fails with that part taken out",
-      "path": "dev/rn/tests/integration/test_rn_principles.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
-      "path": "dev/rn/tests/integration/test_rn_components.py",
-      "kind": "code",
-      "status": "done"
-    },
-    {
-      "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
-      "path": "dev/scripts/check.sh",
-      "kind": "light",
-      "status": "done"
-    },
-    {
-      "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
-      "path": "plugins/rn/domain/orchestrator.md",
-      "kind": "prompt",
-      "status": "done"
-    },
-    {
-      "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
-      "path": "plugins/rn/domain/generator.md",
-      "kind": "prompt",
-      "status": "done"
-    },
-    {
-      "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
-      "path": "plugins/rn/domain/evaluator.md",
-      "kind": "prompt",
-      "status": "done"
-    },
-    {
-      "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
-      "path": "dev/rn/tests/e2e",
-      "kind": "test-implementation",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "dev/rn/architecture.md",
-        "dev/rn/tests",
-        "plugins/rn/domain/orchestrator.md",
-        "plugins/rn/domain/generator.md",
-        "plugins/rn/domain/evaluator.md",
-        "plugins/rn/domain/best-practices/refactor-code",
-        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
-        "dev/rn/tests/integration/test_rn_s2_pause.py",
-        "dev/rn/tests/integration/test_rn_principles.py",
-        "dev/rn/tests/integration/test_rn_components.py",
-        "dev/lane/tests/integration/test_lane_s1_writes.py",
-        "dev/lane/tests/integration/test_lane_s2_reads_none.py",
-        "dev/lane/tests/integration/test_lane_s3_reads_whole.py",
-        "dev/lane/tests/integration/test_lane_s4_commands.py",
-        "dev/lane/tests/integration/test_lane_s5_order.py",
-        "dev/lane/tests/integration/test_lane_s6_checklist.py",
-        "dev/lane/tests/integration/test_lane_s7_result.py",
-        "dev/lane/tests/integration/test_lane_s8_check.py",
-        "dev/lane/tests/integration/test_lane_s9_starts.py",
-        "dev/lane/tests/integration/test_lane_s10_picked_up.py",
-        "dev/lane/tests/integration/test_lane_principles.py",
-        "dev/lane/tests/integration/test_lane_components.py"
-      ],
       "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/domain/best-practices/software-design"
+      ],
       "necessary_conditions": [
         {
           "id": "N1",
           "good": false,
           "decisions": [
             {
-              "about": "The E2E test's request",
-              "decided": "the README's walkthrough, a command and its guide with which the accounting team prints an invoice from its lines, made new in lovaizu/playground with nothing of it there before, so that the test sets up no commit of its own",
-              "by": "user"
-            },
-            {
-              "about": "A comparison with Claude Code alone",
-              "decided": "none: the E2E test shows KR1.1 and KR1.2 alone",
-              "by": "user"
-            },
-            {
-              "about": "The decision the report serves",
-              "decided": "whether KR1.1, then KR1.2, came closer, as Test strategy's Scenario testing row measures them over runs, and whether rn installs by the README's commands in a fresh home and /rn:up answers, as its Installation testing row sets",
-              "by": "reasoning"
-            },
-            {
-              "about": "KR1.1 from one run",
-              "decided": "each deliverable done in the design tree on the work's branch is tried by a stand-in of its people from their starting state alone: a colleague from accounting with Calc's lines, a terminal, and the guide's text, no invoicer set up; it counts as usable where code finds, in what the stand-in's terminal printed, the invoice whose amounts the lines and the rate give, each to the cent; a deliverable whose people aren't after printing an invoice is listed apart, unjudged",
-              "by": "reasoning"
-            },
-            {
-              "about": "KR1.2 from one run",
-              "decided": "the minutes from the person's first turn to the turn whose screen shows the pull request ready, their own turns included, from turns.jsonl",
-              "by": "reasoning"
-            },
-            {
-              "about": "A prompt that the run finds short",
-              "decided": "a finding of the E2E run that lies in rn's orchestrator, generator, or evaluator reopens that prompt in the design tree, as the prompts' unit cases confirm each alone and the E2E run confirms them together on a real request",
+              "about": "The rework",
+              "decided": "made again from rn's architecture as it changed, its scripts by the plugin guide's practice of a script that a role runs",
               "by": "reasoning"
             }
           ]
@@ -437,61 +680,661 @@
         {
           "id": "N2",
           "good": false,
-          "decisions": [
-            {
-              "about": "The records",
-              "decided": "e2e.py's records of each run, with run.json beside them holding what the run took: rn's commit, Claude Code's version, the model, and the E2E test file; and for each deliverable tried, its people stand-in's transcript with each command and what it printed",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N3",
           "good": false,
-          "decisions": [
-            {
-              "about": "A run as meant",
-              "decided": "the person's stand-in types /rn:up with the request first and then only answers and rn's commands, writes no file itself, and the run shows the pull request ready within its turns; each people stand-in reads only what its deliverable's people have and writes no file of the checkout; a run that misses any is listed apart with where it went otherwise, and counts toward no value",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N4",
           "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
+      "path": "dev/rn/tests",
+      "kind": "test-design",
+      "status": "open",
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
           "decisions": [
             {
-              "about": "Judges",
-              "decided": "none, as code decides each value from the records, so no message waits for the developer's marks",
-              "by": "reasoning"
-            },
-            {
-              "about": "The checks shown right",
-              "decided": "each check's tests run on the pilot run's records and on a copy broken as the check must catch, each seen failing before its check is written; the person's and the people's stand-ins are read in the pilot records for acting on their intent and on what they're given alone",
+              "about": "The rework",
+              "decided": "the cases made again from rn's architecture as it changed, up to the integration tests, with no mutation testing, and properties from the requirements alone",
               "by": "reasoning"
             }
           ]
         },
         {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
           "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
+      "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py",
+      "kind": "code",
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests",
+        "plugins/rn/domain/best-practices/code"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
           "good": false,
           "decisions": [
             {
-              "about": "Stages",
-              "decided": "the walkthrough run until one reaches the pull request ready with no departure, then the user runs rn on their own small requests through --plugin-dir, and each of their feedbacks goes into the tree; runs for KR1.1's and KR1.2's means come after",
-              "by": "user"
-            },
-            {
-              "about": "Watching a run",
-              "decided": "the developer watches each run's records as it goes, and stops it at the first place it departs from the walkthrough; e2e.py keeps the records of a run it stops and removes its folder even where a branch's removal fails",
-              "by": "reasoning"
-            },
-            {
-              "about": "The pilot records",
-              "decided": "walkthrough/20261117T204638Z, the first stage, on which each check's tests run",
+              "about": "The rework",
+              "decided": "the code that the cases ask, as rn's architecture changed",
               "by": "reasoning"
             }
           ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "The person's /rn:dn stops the run where it stands, and /rn:up in any conversation goes on from there",
+      "path": "dev/rn/tests/integration/test_rn_s2_pause.py",
+      "kind": "code",
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests",
+        "plugins/rn/domain/best-practices/code"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The rework",
+              "decided": "the code that the cases ask, as rn's architecture changed",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Each principle item of rn's architecture holds where its part keeps it, and its case fails with that part taken out",
+      "path": "dev/rn/tests/integration/test_rn_principles.py",
+      "kind": "code",
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests",
+        "plugins/rn/domain/best-practices/code"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The rework",
+              "decided": "the code that the cases ask, as rn's architecture changed",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
+      "path": "dev/rn/tests/integration/test_rn_components.py",
+      "kind": "code",
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "dev/rn/tests",
+        "plugins/rn/domain/best-practices/code"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The rework",
+              "decided": "the code that the cases ask, as rn's architecture changed",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
+      "path": "dev/scripts/check.sh",
+      "kind": "light",
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "dev/lane/architecture.md"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The check",
+              "decided": "check.sh exits 0 on the push; no mutation testing runs anywhere, so quality.sh, its CI workflow, its cosmic-ray settings, and ci-fix are gone",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
+      "path": "plugins/rn/domain/orchestrator.md",
+      "kind": "prompt",
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/README.md",
+        "dev/rn/tests",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/prompt",
+        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
+        "dev/rn/tests/integration/test_rn_s2_pause.py",
+        "dev/rn/tests/integration/test_rn_principles.py",
+        "dev/rn/tests/integration/test_rn_components.py"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The rework",
+              "decided": "made again from rn's architecture as it changed; its unit cases run on Opus, 3 runs each",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
+      "path": "plugins/rn/domain/generator.md",
+      "kind": "prompt",
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/README.md",
+        "dev/rn/tests",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/prompt",
+        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
+        "dev/rn/tests/integration/test_rn_s2_pause.py",
+        "dev/rn/tests/integration/test_rn_principles.py",
+        "dev/rn/tests/integration/test_rn_components.py"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The rework",
+              "decided": "made again from rn's architecture as it changed; its unit cases run on Opus, 3 runs each",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
+      "path": "plugins/rn/domain/evaluator.md",
+      "kind": "prompt",
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn/README.md",
+        "dev/rn/tests",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/prompt",
+        "dev/rn/tests/integration/test_rn_s1_deliverable.py",
+        "dev/rn/tests/integration/test_rn_s2_pause.py",
+        "dev/rn/tests/integration/test_rn_principles.py",
+        "dev/rn/tests/integration/test_rn_components.py"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The rework",
+              "decided": "made again from rn's architecture as it changed; its unit cases run on Opus, 3 runs each",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
         }
       ]
     },
@@ -502,7 +1345,7 @@
       "inputs": [
         "plugins/lane/README.md",
         "plugins/rn/README.md",
-        "dev/rn/tests/e2e"
+        "dev/plugin-development-guide.md"
       ],
       "status": "open",
       "necessary_conditions": [
@@ -512,7 +1355,7 @@
           "decisions": [
             {
               "about": "The check",
-              "decided": "claude plugin validate passes on each plugin's folder, Lane's README walkthrough is what its integration cases show word for word, rn's is its E2E test's recorded run, and one pull request holds both plugins",
+              "decided": "claude plugin validate passes on each plugin's folder, Lane's README walkthrough is what its integration cases show word for word, rn's is the user's own run of rn, and one pull request holds both plugins",
               "by": "reasoning"
             },
             {
@@ -526,9 +1369,9 @@
               "by": "user"
             },
             {
-              "about": "The README after the E2E test",
-              "decided": "the README's walkthrough takes the E2E test's recorded run, and its install steps are mended where the E2E test's install fell short",
-              "by": "reasoning"
+              "about": "rn's README walkthrough",
+              "decided": "the README's walkthrough takes the record of the user's own run of rn, as a run that a person made",
+              "by": "user"
             },
             {
               "about": "Lane's README at the release",
@@ -553,7 +1396,12 @@
       "name": "ccpm's guide to building a Claude Code plugin says what each plugin takes from it, as its architecture names",
       "path": "dev/plugin-development-guide.md",
       "kind": "light",
-      "inputs": [],
+      "inputs": [
+        "plugins/rn/domain/orchestrator.md",
+        "plugins/rn/domain/generator.md",
+        "plugins/rn/domain/evaluator.md",
+        "dev/scripts/check.sh"
+      ],
       "status": "open",
       "necessary_conditions": [
         {
@@ -567,7 +1415,7 @@
             },
             {
               "about": "Where the steps of a typed command lie",
-              "decided": "each command the person types has its SKILL.md hold the steps of that moment, as Claude Code loads it when typed, and the main conversation's part holds only the steps that every moment shares; where the plugin's work runs over many turns, the main conversation decides nothing and a subagent started at each event decides, so no context carries the run",
+              "decided": "each skill is an entry alone that points to domain/orchestrator.md, which holds the steps of each entry and the steps that every event shares, as no skill of a plugin converts or checks what comes from outside",
               "by": "user"
             },
             {
@@ -596,13 +1444,24 @@
               "by": "user"
             },
             {
-              "about": "What rn and Lane mend to follow it",
-              "decided": "rn's adapter of the rules gives each role's first step reads_whole of its part, its Cut, and the best practice it reads whole; rn's /rn:up holds the steps of its moment, the start and the pick-up of a run, in its SKILL.md; Lane's hooks block where Lane's script fails, by onFailure block on each entry; each once the E2E run that reads plugins/ ends",
-              "by": "reasoning"
+              "about": "The main conversation over many turns",
+              "decided": "the main conversation holds the conversation and the review of the design tree, as a talk with the person needs both; it runs a script for each step with one right result and starts each role, so its context holds the talk, the scripts' short results, and the roles' results",
+              "by": "user"
             },
             {
-              "about": "The main conversation over many turns",
-              "decided": null
+              "about": "A script that a role runs",
+              "decided": "the guide holds the know-how of a script that a prompt runs, from Anthropic's skill authoring best practices: it handles its errors, its command and output form stand in the step, its messages say how to fix the input, a plan is checked by a script before it runs, and no constant without a reason; its unit and name follow the field's best practice, found by a search when the guide is written",
+              "by": "user"
+            },
+            {
+              "about": "Test quality",
+              "decided": "the cases written first and coverage alone, with no mutation testing; property-based tests check the requirements; a plugin that holds a prompt is checked up to its integration tests, and its people try it after",
+              "by": "user"
+            },
+            {
+              "about": "Messages and resume",
+              "decided": "a role's point goes to the person as given, and their answer back as given: within a session by SendMessage to the role, and in a new conversation by a fresh start from the files",
+              "by": "user"
             }
           ]
         },
@@ -621,18 +1480,64 @@
   ],
   "work": [
     {
-      "do": "decide",
-      "path": "dev/plugin-development-guide.md",
-      "condition": "N1",
-      "about": "The main conversation over many turns"
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/code"
     },
     {
       "do": "make",
-      "path": "dev/rn/tests/e2e"
+      "path": "plugins/rn/domain/best-practices/test-design"
     },
     {
       "do": "make",
-      "path": ".claude-plugin/marketplace.json"
+      "path": "plugins/rn/domain/best-practices/architecture"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_s2_pause.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_principles.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_components.py"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/orchestrator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/generator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/evaluator.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/scripts/check.sh"
     },
     {
       "do": "make",
