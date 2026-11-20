@@ -215,7 +215,34 @@
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/rules-and-adapters.md",
       "kind": "light",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Command parts",
+              "decided": "Lane splits a command at |, &&, ||, ;, and each newline outside quotes, so that a quoted ground or request holding one stays one command",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
@@ -257,7 +284,60 @@
       "name": "A plugin's AI notices when it runs a command other than those its step names",
       "path": "dev/lane/tests/integration/test_lane_s4_commands.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Command parts",
+              "decided": "a quoted word that holds ; or && stays in its command, and an operator outside quotes still splits it",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's AI notices when it skips a step, or ends before each step is done in order",
@@ -317,7 +397,40 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/lane/docs/rules-and-adapters.md",
+        "plugins/rn/domain/best-practices/software-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Reads at review",
+              "decided": "the orchestrator's review runs ls and grep besides Lane's reporters, as Claude Code 2.1.329 gives no Glob or Grep, so the review lists and searches the repository; each skill tells the AI to read its part by Read",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
@@ -732,6 +845,18 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/lane/docs/rules-and-adapters.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s4_commands.py"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn"
+    },
     {
       "do": "make",
       "path": "plugins/rn/domain/orchestrator.md"
