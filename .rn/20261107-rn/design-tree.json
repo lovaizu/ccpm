@@ -285,55 +285,7 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane",
-        "plugins/rn/domain/best-practices/test-design"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Unit cases designed again",
-              "decided": "a subagent designs Lane's unit cases again from the interfaces of Lane's skeleton by the test design best practice as mended, with no sight of Lane's code, and the cases that exist are kept only where the design gives them again",
-              "by": "reasoning"
-            },
-            {
-              "about": "Amends after reading the cases",
-              "decided": "each sentence a case expects is written out in the case's words, never built by Lane's own code such as rule_types.words.listed; a case of an input that no use brings, such as a transcript line that Claude Code never writes or a record that is a folder, goes; a NotebookEdit is a write that the rule of the files a step writes judges by its notebook_path, as S1 asks of each file written; a start stopped while no start is due gives a sentence saying none is due and what to do instead, as P1.1 asks; each new sentence is worded first in plugins/lane/docs/rules-and-adapters.md, and the cases take it from there",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A plugin's AI notices when it writes a file that its step doesn't name",
@@ -1937,10 +1889,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "dev/lane/tests"
-    },
     {
       "do": "make",
       "path": "dev/lane/tests/integration/test_lane_s1_writes.py"
