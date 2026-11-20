@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 from fault import CantRun, Missing, Wrong
 from repo_files import git, write_files
-from rn_bench import COMMAND, GUIDE, RN, RUN, plan, vision, worktree
+from rn_bench import COMMAND, GUIDE, RN, RUN, conditions, plan, vision, worktree
 from schemas import form
 from tree import commit, design, inputs, status, work
 from tree import git as tree_git
@@ -258,14 +258,15 @@ def test_a_kind_that_names_no_best_practice_is_a_fault(tmp_path: Any):
 )
 @pytest.mark.parametrize("kind", ["specific", "meta"])
 def test_a_specific_or_meta_kind_takes_no_input(tmp_path: Any, kind: str):
-    """Given the plan with the command of the kind specific or meta, and no input
+    """Given the plan with the command of the kind specific or meta, with that kind's conditions,
+    the check of a specific one decided under N1, and no input
     When inputs.faults checks it
     Then it gives none"""
     tree = plan()
-    tree["deliverables"][0].update(kind=kind, inputs=[])
+    tree["deliverables"][0].update(kind=kind, inputs=[], necessary_conditions=conditions(kind))
     if kind == "specific":
-        tree["deliverables"][0].update(check="python3 -m invoicer runs", good=False, decisions=[])
-        tree["deliverables"][0].pop("necessary_conditions")
+        check = {"about": "The check", "decided": "python3 -m invoicer runs", "by": "user"}
+        tree["deliverables"][0]["necessary_conditions"][0]["decisions"] = [check]
     assert inputs.faults(tree, PRACTICES, repo(str(tmp_path))) == []
 
 
