@@ -577,34 +577,7 @@
       "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
       "path": "dev/scripts/check.sh",
       "kind": "light",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "dev/lane/architecture.md"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The check",
-              "decided": "check.sh exits 0 on the push and runs each plugin's property-based tests; no mutation testing and no E2E test run anywhere, so quality.sh, its CI workflow, its cosmic-ray settings, ci-fix, and e2e.py are gone",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
@@ -1089,10 +1062,6 @@
     {
       "do": "make",
       "path": "plugins/rn/domain/evaluator.md"
-    },
-    {
-      "do": "make",
-      "path": "dev/scripts/check.sh"
     },
     {
       "do": "make",
