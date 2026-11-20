@@ -3,7 +3,7 @@ results of its product vision, and the names that each of its test cases support
 case that names nothing one level up and each element that no integration case names; it reads
 each double's records and the lines the double names, and the pages that the lines taken from the
 documentation name, as the Integration tests of each architecture's Test strategy set. Each test
-runs it as check.sh or quality.sh does, on a plugin `p` that the test sets up in its own folder."""
+runs it as check.sh or CI does, on a plugin `p` that the test sets up in its own folder."""
 
 from __future__ import annotations
 
@@ -685,7 +685,7 @@ class Page(http.server.BaseHTTPRequestHandler):
 
 class SourcesTest(RecordedTest):
     """Each line taken from the documentation shows words that its page holds, which trace.py
-    sources checks in CI, as quality.sh runs it."""
+    sources checks in CI each night."""
 
     def setUp(self) -> None:
         super().setUp()

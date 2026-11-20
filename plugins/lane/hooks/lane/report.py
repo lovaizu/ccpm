@@ -31,8 +31,7 @@ def report(kind: str, words: list[str]) -> int:
     Refuses: 2, with what the reporter takes on standard error, where the words don't fit its kind.
     """
     fields = _FIELDS[kind]
-    # `is not` in place of `!=` changes nothing, as Python keeps one object of each small int.
-    if len(words) != len(fields):  # pragma: no mutate
+    if len(words) != len(fields):
         print(f"lane-{kind} takes {' '.join(f'<{f}>' for f in fields)}", file=sys.stderr)
         return 2
     print(json.dumps({"kind": kind, **dict(zip(fields, words))}))

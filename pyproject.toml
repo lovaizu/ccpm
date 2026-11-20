@@ -16,11 +16,10 @@ dev = [
   "ruff>=0.17.2",
 ]
 # The checks that need a newer Python only to check, not to run: copied code, how deep each function
-# nests, and how well the tests catch faults, as each plugin's Test strategy sets them in
-# dev/<plugin>/architecture.md.
+# nests, which lines the tests run, and the property-based tests, as each plugin's Test strategy
+# sets them in dev/<plugin>/architecture.md.
 test-quality = [
   "complexipy>=9.0.0",
-  "cosmic-ray>=8.8.0",
   "coverage>=7.17.2",
   "hypothesis>=6.170.15",
   "pylint>=4.1.3",
@@ -72,7 +71,7 @@ addopts = ["-p", "no:cacheprovider"]
 # dev/scripts/trace.py reads, as the plugin guide's Test says.
 markers = ["supports(name): the key result, element, or integration case one level up"]
 
-# How much of the E2E runner, of the trace script, of the double of Claude Code, and of rn's code
+# How much of the trace script, of the double of Claude Code, and of rn's code
 # the tests run, as N7 of plugins/rn/domain/best-practices/code/best-practice.md says: every
 # line and branch.
 [tool.coverage.run]
@@ -84,7 +83,6 @@ parallel = true
 # The C tracer holds none of them.
 core = "ctrace"
 include = [
-  "*/dev/scripts/e2e.py",
   "*/dev/scripts/trace.py",
   "*/dev/tests/claude_code.py",
   "*/rn/domain/*.py",

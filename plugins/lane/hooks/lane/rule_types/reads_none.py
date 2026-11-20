@@ -24,8 +24,7 @@ def judge_call(rule: Rule, step: Step, move: Move) -> str | None:
     Refuses: nothing.
     """
     read = of_call(move.event)
-    # `<=` in place of `==` changes nothing, as only a Read or a Grep reaches it.
-    if move.event["tool_name"] == "Grep":  # pragma: no mutate
+    if move.event["tool_name"] == "Grep":
         broken = reaches(rule["paths"], read)
         instead = f"Give Grep a path outside those files instead of {read}."
     else:

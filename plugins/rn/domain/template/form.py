@@ -47,9 +47,7 @@ _EACH = re.compile(r"\beach\b", re.IGNORECASE)
 _ANY = r"[^\n]+?"
 
 
-# Each dataclass marked frozen is never changed after it's made, so a mutant that unfreezes it
-# changes nothing.
-@dataclass(frozen=True)  # pragma: no mutate
+@dataclass(frozen=True)
 class _Note:
     """One item of a note of the template: the slots it names, and what it says of them."""
 
@@ -66,20 +64,18 @@ class Unit:
     from there to it repeats as a whole, None for none; how many sentences it takes, at least and at
     most, None for no most; and the units inside it."""
 
-    # An annotation stays text, by `from __future__ import annotations`, so a mutant of its `|`
-    # changes nothing.
     block: Block
-    pattern: re.Pattern[str] | None  # pragma: no mutate
+    pattern: re.Pattern[str] | None
     free: bool
     optional: bool
     repeats: bool
-    most: int | None  # pragma: no mutate
-    back_to: int | None  # pragma: no mutate
-    sentences: tuple[int, int | None]  # pragma: no mutate
+    most: int | None
+    back_to: int | None
+    sentences: tuple[int, int | None]
     units: list[Unit]
 
 
-@dataclass(frozen=True)  # pragma: no mutate
+@dataclass(frozen=True)
 class Form:
     """The template's form: its units, and each slot it names, with each figure of its own."""
 
@@ -88,7 +84,7 @@ class Form:
     figures: frozenset[str]
 
 
-@dataclass(frozen=True)  # pragma: no mutate
+@dataclass(frozen=True)
 class _Context:
     """What the units of the template are built with: the note items that hold for each block by
     its line, the headings of the sections that may be left out, and how many blocks of its
@@ -111,14 +107,12 @@ def form(blocks: tuple[Block, ...]) -> Form:
         for note in scoped[node.block.line]
         if note.slots & _slots(node.block)
     )
-    # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
-    # `is` changes nothing.
     # Each section may be left out, as the maker leaves out one that the deliverable's people
     # don't need, such as a License that the person leaves out of a guide.
     optional = frozenset(
         node.block.text
         for node in _walk(nodes)
-        if node.block.kind == HEADING and node.block.level == 2  # pragma: no mutate
+        if node.block.kind == HEADING and node.block.level == 2
     )
     units = _units(nodes, _Context(scoped, optional, holders))
     slots = frozenset(name for block in flat(blocks) for name in _slots(block))
@@ -254,13 +248,10 @@ def _unit(node: Node, context: _Context) -> Unit:
 def _repeats(block: Block) -> bool:
     """Whether the block may stand more than once, by its form alone: a heading below the top
     whose words hold a slot, or a list item whose first words do."""
-    # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
-    # `is` changes nothing.
-    if block.kind == ROW:  # pragma: no mutate
+    if block.kind == ROW:
         return bool(_slots(block))
     if block.kind == HEADING:
-        # A heading's level is at least 1, so a mutant of `>` to `!=` changes nothing.
-        return block.level > 1 and bool(_slots(block))  # pragma: no mutate
+        return block.level > 1 and bool(_slots(block))
     first = _TOKEN.match(block.text)
     return block.kind == ITEM and bool(first and _SLOT.search(first.group(0)))
 
@@ -307,9 +298,7 @@ def _repeat(units: list[Unit], kept: tuple[Node, ...], at: int, context: _Contex
 
 def _alone(context: _Context, notes: tuple[_Note, ...], note: _Note) -> bool:
     """Whether one block alone of the section whose note items these are holds the item's slots."""
-    # A note item's slots lie in at least the block that asks, so a mutant of `==` to `<=` changes
-    # nothing.
-    return context.holders[(id(notes), note)] == 1  # pragma: no mutate
+    return context.holders[(id(notes), note)] == 1
 
 
 def _number(word: str) -> int:
@@ -317,18 +306,14 @@ def _number(word: str) -> int:
     return _NUMBERS[word] if word in _NUMBERS else int(word)
 
 
-# An annotation stays text, by `from __future__ import annotations`, so a mutant of its `|` changes
-# nothing, here and on each function below that may give None.
-def _pattern_of(block: Block, notes: list[_Note]) -> re.Pattern[str] | None:  # pragma: no mutate
+def _pattern_of(block: Block, notes: list[_Note]) -> re.Pattern[str] | None:
     """The pattern that the document's block must match: a heading's, a paragraph's, or an item's
     words, or a code block's info string, None for a figure."""
     if block.kind == FIGURE:
         return None
     if block.kind == CODE:
         return re.compile(".+" if _SLOT.search(block.info) else re.escape(block.info))
-    # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
-    # `is` changes nothing.
-    if block.kind == ROW:  # pragma: no mutate
+    if block.kind == ROW:
         row = r" \| ".join(_pattern(cell).replace(_ANY, r"[^|\n]+?") for cell in cells(block.text))
         return re.compile(rf"\| {row} \|")
     word = next((m.group(1) for n in notes for m in [_LEAVE_WORD.search(n.words)] if m), "")
@@ -367,7 +352,7 @@ def _token(token: str) -> str:
     return r"\d+" if token == "<n>" else _ANY
 
 
-def _sentences_of(text: str, notes: list[_Note]) -> tuple[int, int | None]:  # pragma: no mutate
+def _sentences_of(text: str, notes: list[_Note]) -> tuple[int, int | None]:
     """How many sentences, least and most, None for no most, the template's words take: one for
     each of its sentences, and, for a sentence that is a slot alone, as many as its note says."""
     said = [
@@ -379,7 +364,7 @@ def _sentences_of(text: str, notes: list[_Note]) -> tuple[int, int | None]:  # p
     return sum(low for low, _ in said), None if None in highs else most
 
 
-def _said(slot: str, notes: list[_Note]) -> tuple[int, int | None]:  # pragma: no mutate
+def _said(slot: str, notes: list[_Note]) -> tuple[int, int | None]:
     """How many sentences the notes say the slot takes, (1, 1) where they say none."""
     for note in notes:
         match = _SENTENCES.search(note.words)

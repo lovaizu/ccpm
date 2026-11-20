@@ -58,8 +58,7 @@ AT = {"decide": "*While deciding.*", "make": "*While making.*"}
 # A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
 # that names no file: another site, or a place in the same page.
 LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
-# `FENCE`'s flags stand in the pattern, as the two flags joined by `|`, `+`, or `^` make the same
-# number, mutants no test can tell apart.
+# `FENCE`'s flags stand in the pattern, which reads as one string.
 FENCE = re.compile(r"(?ms)(^```.*?^```)")
 KEPT = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)")
 # rn's own best practices, where the check seeks a kind that lies beside no best practice's folder.
@@ -319,8 +318,7 @@ def section_faults(data: dict[str, Any], sections: list[Section]) -> list[str]:
     """Each section of the template, by its path of names, that it names more than once, or that
     no condition is about, in words."""
     found = []
-    # Each section counts once or more in sections, which it comes from.
-    for section in sorted({s for s in sections if sections.count(s) > 1}):  # pragma: no mutate
+    for section in sorted({s for s in sections if sections.count(s) > 1}):
         found.append(f"section {'.'.join(section)} is named more than once")
     named = {a.strip() for c in conditions(data) for a in c["about"].split(",")}
     for section in sections:
@@ -540,5 +538,5 @@ def main(argv: list[str]) -> int:
 
 
 # Run as the command, and not when the tests import it under the name practices.
-if __name__ == "__main__":  # pragma: no mutate
+if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

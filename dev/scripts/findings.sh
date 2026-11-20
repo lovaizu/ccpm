@@ -1,6 +1,6 @@
-# The report of a check of the code that fails, sourced by check.sh and quality.sh: it says what
-# the check is for, before the findings and again in short after them, so that whoever mends the
-# code, a person, the developer's subagent, or ci-fix.sh's, changes the design for its maintainer
+# The report of a check of the code that fails, sourced by check.sh: it says what the check is for,
+# before the findings and again in short after them, so that whoever mends the code, a person or
+# the developer's subagent, changes the design for its maintainer
 # and doesn't only change the code until the finding goes away. The prose checks of
 # lovaizu/repofiles report the same way, as an agent given no such text swapped the words of each
 # finding, and one given it rewrote most of them from the facts, as Issue #17 of lovaizu/checks

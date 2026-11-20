@@ -39,7 +39,7 @@ NEEDS_LOGIN = pytest.mark.skipif(
     not os.environ.get(TOKEN) and not os.path.isfile(CREDENTIALS),
     reason="runs the real Claude Code on Opus",
 )
-# What a run of a prompt may not do. Also in dev/scripts/e2e.py.
+# What a run of a prompt may not do.
 RULE = (
     "Install nothing, and send nothing to a translator, a web API, or any other service outside"
     " this repository's git."

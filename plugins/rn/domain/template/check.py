@@ -34,8 +34,7 @@ from template.markdown import (
 MOST_WORDS = 20
 
 
-# A Fault is never changed after it's made, so a mutant that unfreezes it changes nothing.
-@dataclass(frozen=True)  # pragma: no mutate
+@dataclass(frozen=True)
 class Fault:
     """One place where the document leaves its template: the document's line from 1, and what's
     wrong there, in words from which its writer mends it."""
@@ -81,9 +80,7 @@ def _strip(nodes: tuple[Node, ...]) -> tuple[Node, ...]:
     return tuple(Node(node.block, _strip(node.nodes)) for node in nodes if not is_note(node.block))
 
 
-# An annotation stays text, by `from __future__ import annotations`, so a mutant of its `|` changes
-# nothing.
-def _fit(unit: Unit, block: Block) -> int | None:  # pragma: no mutate
+def _fit(unit: Unit, block: Block) -> int | None:
     """0 where the block holds the unit's form, 1 where it's of the unit's kind but not its form,
     and None where it's of another kind."""
     if unit.free:
@@ -100,14 +97,11 @@ def _fit(unit: Unit, block: Block) -> int | None:  # pragma: no mutate
 # a unit missing or a block beside, and less than both, so the pairing names a block moved from
 # its place as missing there and beside where it stands, and a block reworded in its place as out
 # of form.
-# Among equals the pairing pairs first, so a mutant that moves a weight by one to an equal changes
-# no pairing that the faults show.
-_MISSING = 2  # pragma: no mutate
-_BESIDE = 2  # pragma: no mutate
-_OUT_OF_FORM = 3  # pragma: no mutate
-# Taking a run of units again weighs nothing, and a weight of one either way only moves a pairing
-# among those that the weights above already part, so a mutant of it changes none.
-_AGAIN = 0  # pragma: no mutate
+_MISSING = 2
+_BESIDE = 2
+_OUT_OF_FORM = 3
+# Taking a run of units again weighs nothing.
+_AGAIN = 0
 
 
 class _Move(Enum):
@@ -132,11 +126,10 @@ def _weights(units: list[Unit], nodes: tuple[Node, ...]) -> dict[_Place, int]:
         for used in (0, 1):
             for i in range(len(units), -1, -1):
                 steps = _steps(units, nodes, (i, j, used))
-                # Only the end has no step, and a weight there adds alike to every pairing, so a
-                # mutant of the 0 changes no pairing.
+                # Only the end has no step, and a weight there adds alike to every pairing.
                 weight[(i, j, used)] = min(
                     (own + weight[to] for own, _, to in steps),
-                    default=0,  # pragma: no mutate
+                    default=0,
                 )
     return weight
 
@@ -163,8 +156,7 @@ def _steps(units: list[Unit], nodes: tuple[Node, ...], at: _Place) -> list[_Step
     return found
 
 
-# An annotation stays text, so a mutant of its `|` changes nothing.
-def _pairing(unit: Unit, block: Block, used: int) -> int | None:  # pragma: no mutate
+def _pairing(unit: Unit, block: Block, used: int) -> int | None:
     """The weight of the fault of pairing the block with the unit, which has stood where `used`
     is 1, or None where they can't pair: where the block is of another kind, or the unit has stood
     and doesn't repeat. A unit that has stood takes another block out of its form at the weight of
@@ -224,9 +216,7 @@ def _counted(unit: Unit, block: Block) -> list[Fault]:
     takes = f"{least} or more" if most is None else f"{least} to {most}"
     if most == least:
         takes = f"{least}"
-    # Words that aren't blank hold at least one sentence, so a mutant of `==` to `<=` changes
-    # nothing.
-    noun = "sentence" if count == 1 else "sentences"  # pragma: no mutate
+    noun = "sentence" if count == 1 else "sentences"
     return [Fault(block.line, f"has {count} {noun}, where {_from(unit)} takes {takes}")]
 
 
@@ -283,8 +273,6 @@ def _long_sentences(blocks: tuple[Block, ...]) -> list[Fault]:
 def _prose(block: Block) -> list[str]:
     """The words of the block that a reader reads as sentences: a paragraph's or an item's, or each
     cell of a row, and none of another block."""
-    # A block's kind is a member of Kind, of which Python keeps one copy, so a mutant of `==` to
-    # `is` changes nothing.
-    if block.kind == ROW:  # pragma: no mutate
+    if block.kind == ROW:
         return cells(block.text)
     return [block.text] if block.kind in (PARAGRAPH, ITEM) else []

@@ -48,13 +48,14 @@ else
 fi
 
 # The property-based tests take hypothesis, which comes with pyproject.toml's test-quality group on
-# Python 3.11 or later, where quality.sh runs them, so pyrefly reads them only where it can resolve
-# hypothesis.
+# Python 3.11 or later, so pyrefly reads them, and pytest runs them, only where hypothesis is there.
 if python -c 'import hypothesis' 2>/dev/null; then
   properties=""
+  levels="unit integration properties"
 else
   properties="--project-excludes=**/properties/**"
-  echo "check.sh: pyrefly leaves out the property-based tests, as hypothesis isn't installed. It"\
+  levels="unit integration"
+  echo "check.sh: the property-based tests go unchecked, as hypothesis isn't installed. It"\
     "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
@@ -139,8 +140,9 @@ for architecture in dev/*/architecture.md; do
     echo "check.sh: the trace of $plugin's cases goes unchecked, as dev/$plugin/tests/ holds"\
       "none yet"
   fi
-  # The unit and integration tests of each plugin run on each push, as the plugin guide's Test says.
-  for level in unit integration; do
+  # The unit, integration, and property-based tests of each plugin run on each push, as each
+  # plugin's Test strategy runs them during the work.
+  for level in $levels; do
     [ ! -d "dev/$plugin/tests/$level" ] || plugin_tests="$plugin_tests dev/$plugin/tests/$level"
   done
 done
@@ -148,14 +150,12 @@ done
 # A double that gives what the real thing never would passes a test that the real one fails, so each
 # double of the plugins' tests takes each result from a line of a record that names its source, as
 # the plugin guide's Test says. This part of the check needs no network, so it runs on each push;
-# quality.sh checks the documentation's pages.
+# CI checks the documentation's pages each night, as a page changes apart from any push.
 python3 dev/scripts/trace.py doubles
 
-# A behavior that no test checks can break unseen, so the tests of the checks' own code, the E2E
-# runner and the double of Claude Code among them, run every line and branch of what
-# pyproject.toml has coverage count, as the architecture best practice says a unit passes. Mutation
-# testing and the property-based tests, which check the tests and not the change, run in CI by
-# dev/scripts/quality.sh, as that best practice times them.
+# A behavior that no test checks can break unseen, so the tests of the checks' own code, the double
+# of Claude Code among them, run every line and branch of what pyproject.toml has coverage count,
+# as the code best practice's N7 asks.
 if command -v coverage >/dev/null 2>&1; then
   # The tests run once, on each core, as coverage's own .pth starts it in each worker where
   # COVERAGE_PROCESS_START names its settings.

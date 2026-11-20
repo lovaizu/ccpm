@@ -273,20 +273,15 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
     tool = event.get("tool_name")
     start = _start_of(run, event["tool_use_id"])
     if start is not None:
-        # `<=` in place of `==` changes nothing, as only an Agent or a SendMessage made a start.
         agent_id = (
-            event["tool_response"]["agentId"]
-            if tool == "Agent"  # pragma: no mutate
-            else event["tool_input"]["to"]
+            event["tool_response"]["agentId"] if tool == "Agent" else event["tool_input"]["to"]
         )
         role = start["role"]
         steps = start_steps(rules, role, start.get("steps"))
         return Move("tie", event, run, role, agent_id, None, steps, None, None)
     if tool == "Read":
         return _read(event, run, rules)
-    # A comparison of the name with Bash changes nothing: of the tools that reach it, only Agent and
-    # AskUserQuestion sort before Bash, and the PostToolUse of neither holds a report either way.
-    if tool == "Bash":  # pragma: no mutate
+    if tool == "Bash":
         given = read_report(event["tool_response"].get("stdout", ""))
         return (
             None

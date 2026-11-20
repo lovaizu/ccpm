@@ -152,8 +152,7 @@ def start_made(move: Move) -> Answer:
     of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
     sentence saying that the plugin's author adds or mends lane/adapters/rules.py for the role.
     """
-    # `>=` in place of `==` changes nothing, as a start move is an Agent or a SendMessage.
-    resume = move.event["tool_name"] == "SendMessage"  # pragma: no mutate
+    resume = move.event["tool_name"] == "SendMessage"
     role = move.role if resume else move.event["tool_input"].get("subagent_type", "")
     due = _due(move.run, move.event)
     plugin = move.run.skill.partition(":")[0]
@@ -267,9 +266,7 @@ def fact_added(move: Move) -> Answer:
     Refuses: nothing.
     """
     entry: record.Entry = {"kind": move.kind, "run": move.run.id, "agent_id": move.agent_id}
-    # `is not` in place of `!=` changes nothing, as place gives each kind by a literal of its own,
-    # which Python keeps as one object.
-    if move.kind != "read":  # pragma: no mutate
+    if move.kind != "read":
         entry["tool_use_id"] = move.event["tool_use_id"]
     else:
         lines = move.event["tool_response"]["file"]
@@ -305,8 +302,7 @@ def report_made(move: Move) -> Answer:
     Refuses: nothing.
     """
     given = cast(Report, move.report)
-    # `>=` in place of `==` changes nothing, as no kind of report sorts after `step`.
-    if given["kind"] == "step":  # pragma: no mutate
+    if given["kind"] == "step":
         said = rule_types.judge_mark(move)
         if said is not None:
             return Answer(True, said)
