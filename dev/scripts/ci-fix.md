@@ -29,8 +29,8 @@ repository's git and GitHub. Fetching a public page to read it needs no ask.
 ## Steps
 
 1. Read the failed log to its end. The step ends when you can name each failure: a mutant that
-   the tests let live, an input that a property found the code fails on, or another check that
-   failed.
+   the tests let live, an input that a property found the code fails on, a plugin that holds no
+   property-based test, or another check that failed.
 2. Read [the code best practice](../../plugins/rn/domain/best-practices/code/best-practice.md) to
    its end, N7 on the faults that the tests catch in particular, and the test rules of
    [the architecture best practice](../../plugins/rn/domain/best-practices/architecture/best-practice.md).
@@ -42,6 +42,7 @@ repository's git and GitHub. Fetching a public page to read it needs no ask.
    - a case that the tests already name and check too loosely
    - a change that can't alter what the code does
    - an input that the part needn't take, or one it must take and fails on
+   - a plugin whose Test strategy runs property-based tests that it doesn't hold yet
    - a check that failed for a cause outside the code and its tests, such as the run's machine
 4. Mend each at its cause. First ask whether the part needs the code, and remove it or make it
    simpler where no case of the tests calls for it. Mark a change that can't alter what the code
@@ -50,7 +51,13 @@ repository's git and GitHub. Fetching a public page to read it needs no ask.
    Make a test assert more only where its case's Then already names what the failure changes, and
    add no case, as a case added to catch a mutant comes from the code that exists, not from what the
    part must do. For each other failure, name in the report the technique of the test design best
-   practice that the cases lacked. Where a failure needs a new case,
+   practice that the cases lacked. For an input that a property found the code fails on, narrow
+   what the interface takes and refuse the input, as N8 of the code best practice says, where the
+   contract needn't take it, and otherwise fix the code and keep the input as a test of the case
+   it falls in. For a plugin that holds no property-based test, write in
+   `dev/<plugin>/tests/properties/`, in the form of the other plugins' properties, one property for
+   each interface that its Test strategy names, holding for every input that the interface's
+   contract allows, with a generator of those inputs. Where a failure needs a new case,
    or its cause lies in the design or a best practice, change none of them: end with the point and
    your recommendation in the report.
 5. Run both checks that the opening names, and judge each by its exit code. Where one fails, go

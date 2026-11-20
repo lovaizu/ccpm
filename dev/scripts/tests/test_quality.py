@@ -56,11 +56,11 @@ class QualityTest(unittest.TestCase):
         git_in(self.dir, self.env, "init", "-q", "-b", "main", self.repo)
         for script in ("quality.sh", "findings.sh", "trace.py"):
             self.put(f"dev/scripts/{script}", self.source(script))
-        # Plugin a has property-based tests, and plugin b none.
+        # Plugins a and b, each with its property-based tests.
         for plugin in ("a", "b"):
             self.put(f"dev/{plugin}/cosmic-ray.toml", f"[cosmic-ray]\nmodule-path = '{plugin}'\n")
             self.put(f"plugins/{plugin}/code.py", "")
-        self.put("dev/a/tests/properties/test_a.py", "")
+            self.put(f"dev/{plugin}/tests/properties/test_{plugin}.py", "")
         self.base = self.commit()
 
     def source(self, script):
@@ -92,8 +92,10 @@ class QualityTest(unittest.TestCase):
         # Then: it passes, runs the property-based tests at the nightly profile, and runs the
         # mutants of each plugin's code, filtered by no commit.
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
-        self.assertIn("pytest -q -p no:cacheprovider dev/a/tests/properties night", self.ran())
-        self.assertEqual(self.ran().count("pytest"), 1, "only plugin a has property-based tests")
+        for plugin in ("a", "b"):
+            ran = f"pytest -q -p no:cacheprovider dev/{plugin}/tests/properties night"
+            self.assertIn(ran, self.ran())
+        self.assertEqual(self.ran().count("pytest"), 2, "a's property-based tests and b's")
         self.assertEqual(self.ran().count("cosmic-ray exec"), 2, "a's mutants and b's")
         self.assertNotIn("cr-filter-git", self.ran())
 
@@ -159,6 +161,16 @@ class QualityTest(unittest.TestCase):
         self.assertNotEqual(done.returncode, 0)
         self.assertIn("cr-report --surviving-only --show-diff", self.ran())
         self.assertIn("Don't add a test only to clear a finding.", done.stdout)
+
+    def test_a_plugin_that_holds_no_property_based_test_fails_naming_its_folder(self):
+        # Given: plugin b holds no property-based test.
+        git_in(self.repo, self.env, "rm", "-q", "dev/b/tests/properties/test_b.py")
+        self.commit()
+        # When: quality.sh runs.
+        done = self.quality()
+        # Then: it fails, naming the folder that CI's agent writes them in.
+        self.assertNotEqual(done.returncode, 0)
+        self.assertIn("dev/b/tests/properties holds no property-based test", done.stdout)
 
     def test_a_page_that_a_doubles_record_names_and_that_cannot_be_read_fails(self):
         line = '{"event": "e", "source": "http://127.0.0.1:9/docs", "shows": "words"}\n'

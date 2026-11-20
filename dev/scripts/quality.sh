@@ -74,6 +74,9 @@ for toml in dev/*/cosmic-ray.toml; do
   if changed "plugins/$plugin" "$properties" "$toml"; then
     if [ -d "$properties" ]; then
       held tests env HYPOTHESIS_PROFILE=$profile pytest -q -p no:cacheprovider "$properties"
+    else
+      # CI's agent writes them, as the plugin's Test strategy runs them apart from the work.
+      held tests sh -c "echo 'quality.sh: $properties holds no property-based test'; exit 1"
     fi
     mutants "$plugin" "$toml"
   else

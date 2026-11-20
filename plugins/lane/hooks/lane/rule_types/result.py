@@ -10,7 +10,14 @@ from rule_types.words import listed
 
 
 def given(move: Move) -> str | None:
-    """The latest result that the move's start gave, None where it gave none."""
+    """The latest result that the move's start gave.
+
+    Takes: a move of a subagent's start, its run as the record stands.
+    Gives: the result of the latest `result` entry of the run with the move's `agent_id`; None
+    where the run holds none.
+    Changes: nothing.
+    Refuses: nothing.
+    """
     results = [
         entry["result"]
         for entry in move.run.entries
