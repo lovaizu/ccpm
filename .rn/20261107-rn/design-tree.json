@@ -26,7 +26,51 @@
       "name": "An AI given a prompt does the task as its writer means, in cases the writer didn't foresee",
       "path": "plugins/rn/domain/best-practices/prompt",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Parts of the steps",
+              "decided": "the template's Steps may hold a section for each part of the steps that only some runs take, such as one event's, left out where every run takes the same steps",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
@@ -317,13 +361,122 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/lane/docs/rules-and-adapters.md",
+        "plugins/rn/domain/best-practices/software-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A turn with no run",
+              "decided": "a turn other than a new request in a repository with no run to go on with takes the step find alone, so that the orchestrator tells the user and the turn ends",
+              "by": "reasoning"
+            },
+            {
+              "about": "A blocker",
+              "decided": "each step of the orchestrator's turn but move ends on blocked, so that a script's refusal that only the user can mend, such as a repository with no origin, ends the turn with the blocker",
+              "by": "reasoning"
+            },
+            {
+              "about": "Commands at each step",
+              "decided": "each step that runs none of the people's commands holds its commands: the orchestrator's review none and touched tree.py touched alone, the generator's read and decide none, and the evaluator's read none; the generator's make and try and the evaluator's try run the people's own commands, so the prompt alone holds their writes",
+              "by": "reasoning"
+            },
+            {
+              "about": "A template part left out",
+              "decided": "the template check lets a document leave out a heading below the top whose note says Leave out",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/product-vision.md",
+        "plugins/rn/README.md",
+        "dev/rn/architecture.md",
+        "plugins/rn",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A pick-up with no run",
+              "decided": "the turn ends with rn's word that it has no run to pick up, no move stopped and no worktree made",
+              "by": "reasoning"
+            },
+            {
+              "about": "A blocker",
+              "decided": "a new request in a repository with no origin ends the turn with repository.py new's refusal",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The prompts bench",
+              "decided": "each prompt case runs as the people's repository stands, with origin, rn and Lane loaded, the evaluator's trial where repository.py trial makes it, the generator's node holding the walkthrough's command as a decision, the fixture's tax rounded as invoicer rounds it, and no xfail",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
@@ -728,89 +881,22 @@
       "name": "ccpm's guide to building a Claude Code plugin says what each plugin takes from it, as its architecture names",
       "path": "dev/plugin-development-guide.md",
       "kind": "light",
-      "inputs": [
-        "plugins/rn/domain/orchestrator.md",
-        "plugins/rn/domain/generator.md",
-        "plugins/rn/domain/evaluator.md",
-        "dev/scripts/check.sh"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The check",
-              "decided": "the plugin guide and dev/plugin-template say what each plugin takes from them, and rn and Lane follow them",
-              "by": "reasoning"
-            },
-            {
-              "about": "Where the steps of a typed command lie",
-              "decided": "each skill is an entry alone that points to domain/orchestrator.md, which holds the steps of each entry and the steps that every event shares, as no skill of a plugin converts or checks what comes from outside",
-              "by": "user"
-            },
-            {
-              "about": "Each step and each practice carried out",
-              "decided": "each role's steps say each practice and file it takes, and Lane lays the rule that their words call for: a step done in order, a checklist from the plugin's adapter of a step's items, a file read whole or never read, a path written only; the plugin's own check runs at each end only for what no rule of Lane's holds, such as a result against its cut",
-              "by": "user"
-            },
-            {
-              "about": "A prompt's tests",
-              "decided": "a prompt is a part: unit tests run it on the model its users run, several times, and E2E tests try it in real use",
-              "by": "user"
-            },
-            {
-              "about": "An evaluator's words",
-              "decided": "an evaluator answers each question good, with the lines that meet it, or what would make it good, in the plugin guide's words good, more, and good_when, and the plugin template, rn, and Lane use those words wherever they carry an evaluator's answer",
-              "by": "user"
-            },
-            {
-              "about": "Where a plugin writes its files, and the deliverables it makes",
-              "decided": "the guide's rule of where a plugin writes covers the files of the plugin's own run; a deliverable that a run makes for the user lies where the repository's layout or the tool that reads it puts it, such as a best practice rn makes at .rn/best-practices/<kind>/, as the design tree best practice decides a deliverable's path",
-              "by": "reasoning"
-            },
-            {
-              "about": "How a prompt's unit tests judge",
-              "decided": "each case runs as many times as Test strategy sets, each run a test of its own, and the developer judges the prompt from the results, with no criterion, as a criterion over runs that vary passes or fails by chance",
-              "by": "user"
-            },
-            {
-              "about": "The main conversation over many turns",
-              "decided": "the main conversation holds the conversation and the review of the design tree, as a talk with the person needs both; it runs a script for each step with one right result and starts each role, so its context holds the talk, the scripts' short results, and the roles' results",
-              "by": "user"
-            },
-            {
-              "about": "A script that a role runs",
-              "decided": "the guide holds the know-how of a script that a prompt runs, from Anthropic's skill authoring best practices: it handles its errors, its command and output form stand in the step, its messages say how to fix the input, a plan is checked by a script before it runs, and no constant without a reason; its unit and name follow the field's best practice, found by a search when the guide is written",
-              "by": "user"
-            },
-            {
-              "about": "Test quality",
-              "decided": "the cases written first and coverage alone, with no mutation testing; property-based tests check the requirements; a plugin that holds a prompt is checked up to its integration tests, and its people try it after",
-              "by": "user"
-            },
-            {
-              "about": "Messages and resume",
-              "decided": "a role's point goes to the person as given, and their answer back as given: within a session by SendMessage to the role, and in a new conversation by a fresh start from the files",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/prompt"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests"
+    },
     {
       "do": "make",
       "path": "plugins/rn/domain/orchestrator.md"
@@ -822,10 +908,6 @@
     {
       "do": "make",
       "path": "plugins/rn/domain/evaluator.md"
-    },
-    {
-      "do": "make",
-      "path": "dev/plugin-development-guide.md"
     }
   ]
 }
