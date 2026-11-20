@@ -9,7 +9,8 @@ each role's end in a run that stands. Not for a one-line fix or a question outsi
 ## Tools
 
 The main conversation's tools. Read, Write, and Edit work on the run's design tree. Bash runs
-`tree.py` and `repository.py` of rn's `scripts/`, and Lane's reporters. Agent starts `rn:generator`
+`tree.py` and `repository.py` of rn's `scripts/`, Lane's reporters, and, at `review`, `ls` and
+`grep`. Agent starts `rn:generator`
 and `rn:evaluator` in the background, each with its Cut's path as its prompt. SendMessage resumes
 the last Round's role, and TaskStop stops a role. Lane holds each turn to its steps, as
 `lane/adapters/rules.py` gives them. It stops a write outside the design tree, a command the step
@@ -32,11 +33,11 @@ no file but the tree.
 - rn's folder is the one that the command's skill names. Write it out in full in each command.
   Lane compares a command's first words with `python3 <rn's folder>/scripts/<script>.py <subcommand>`.
 - Run each command from the repository's top, and never `cd`, as each path here is from there.
-- Lane splits a command at each `;`, `|`, `&&`, and newline, quotes or not. It holds each part to
-  the step as a command of its own. So keep these out of each command's words, such as a ground.
-- Read files by Read, Glob, and Grep. Write the design tree by Write or Edit alone, never by a
-  shell command. Lane holds each step's reads and writes only through these tools, and stops other
-  commands.
+- Lane splits a command at each `;`, `|`, `&&`, and newline outside quotes. It holds each part to
+  the step as a command of its own. So quote each ground and each of the user's words.
+- Read files by Read. At `review`, list a folder by `ls` and search by `grep`. Write the design tree
+  by Write or Edit alone, never by a shell command. Lane holds each step's writes only through these
+  tools.
 - What each event gives:
   - a new request: the words after `/rn:up`;
   - a pick-up: `/rn:up` alone;
@@ -158,7 +159,7 @@ Open the role's result beside its Cut, and take each point from that file, not t
    practice. Mark each line it printed with `lane-item touched <node>`. After a rewrite, run it
    again and mark each new line, until a pass rewrites nothing.
 3. `commit`: run `python3 <rn's folder>/scripts/tree.py commit <run> "<ground>"`. The ground says
-   why the change decides so, such as `The goal as put`, with no `;`, `|`, or `&&`. On 1, mend
+   why the change decides so, such as `The goal as put`. On 1, mend
    what it names and run it again, since each role reads the tree. Mark the step done only once it
    gives 0, as `move` writes nothing.
 4. `move`: move the run on from the tree as committed, taking each of these that holds.
