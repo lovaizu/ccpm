@@ -321,100 +321,7 @@
       "name": "A plugin's author builds on Lane so that its AI notices each step it leaves, by giving Lane its rules and adapters alone",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "open",
-      "inputs": [
-        "dev/lane/product-vision.md",
-        "plugins/lane/README.md",
-        "plugins/rn/domain/best-practices/architecture"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Test strategy",
-              "decided": "no mutation testing row",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A plugin's author decides from the README alone whether Lane fits, and makes its plugin depend on it",
@@ -1344,10 +1251,6 @@
     {
       "do": "make",
       "path": "dev/rn/architecture.md"
-    },
-    {
-      "do": "make",
-      "path": "dev/lane/architecture.md"
     },
     {
       "do": "make",
