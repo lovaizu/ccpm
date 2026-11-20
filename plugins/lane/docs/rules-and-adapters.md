@@ -171,7 +171,8 @@ Read docs/style.md from its line 3 before you mark it done.
 ### `commands`
 
 The commands the step runs. Lane splits each Bash command at `|`, `&&`, `||`, `;`, and each
-newline, and stops the call where a part begins with the words of no named command. `git log` lets
+newline outside quotes, and stops the call where a part begins with the words of no named command.
+A quoted word that holds one, such as `git commit -m "Fix; test"`, stays in its command. `git log` lets
 through `git log --oneline`. A blank part, such as a blank line or a closing `;`, is no command and
 goes through. Lane's reporters always go through. A step with no `commands` rule runs
 any command.
