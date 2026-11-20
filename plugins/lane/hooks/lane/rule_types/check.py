@@ -3,8 +3,7 @@ end that the check doesn't pass."""
 
 from __future__ import annotations
 
-import subprocess
-
+import plugin_command
 from place import Move
 from rules import Rule, Step
 
@@ -20,14 +19,7 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing of Lane's; the check may read the conversation's folder.
     Refuses: OSError, where the check can't be run.
     """
-    done = subprocess.run(
-        rule["check"],
-        shell=True,
-        cwd=move.event["cwd"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    done = plugin_command.run(rule["check"], move.event["cwd"])
     if not done.returncode:
         return None
     return (

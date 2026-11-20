@@ -3,9 +3,9 @@ mark, each of which is done before the step, and the sentence of a step done bef
 
 from __future__ import annotations
 
-import subprocess
 from typing import cast
 
+import plugin_command
 from place import Move, own_entries
 from report import Report
 from rules import Rule, Step
@@ -32,14 +32,7 @@ def items(rule: Rule, move: Move) -> list[str]:
     """
     if "items" in rule:
         return rule["items"]
-    done = subprocess.run(
-        rule["command"],
-        shell=True,
-        cwd=move.event["cwd"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    done = plugin_command.run(rule["command"], move.event["cwd"])
     lines = done.stdout.splitlines()
     if done.returncode or any(line.split() != [line] for line in lines):
         step = cast(Report, move.report)["step"]
