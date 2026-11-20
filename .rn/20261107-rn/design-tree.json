@@ -323,57 +323,7 @@
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "open",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md",
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/test-design"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The rework",
-              "decided": "the cases made again from rn's architecture as it changed, up to the integration tests, with no mutation testing, and properties from the requirements alone",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
@@ -1112,10 +1062,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "dev/rn/tests"
-    },
     {
       "do": "make",
       "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py"
