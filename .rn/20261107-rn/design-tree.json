@@ -378,68 +378,7 @@
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md",
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/test-design"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Unit cases designed again",
-              "decided": "a subagent designs rn's unit cases again from the interfaces of rn's skeleton by the test design best practice as mended, with no sight of rn's code, and the cases that exist are kept only where the design gives them again",
-              "by": "reasoning"
-            },
-            {
-              "about": "The Cut that a start's prompt names",
-              "decided": "lane/adapters/rules.py's unit cases take as classes a Cut named from the top and one named whole, as the orchestrator, an AI, writes the prompt",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Properties",
-              "decided": "derived again from the architecture and the skeleton alone, by the test design best practice's condition on properties, in place of those that the code gave",
-              "by": "user"
-            }
-          ]
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
@@ -450,7 +389,7 @@
         "plugins/rn",
         "dev/rn/tests"
       ],
-      "status": "open",
+      "status": "doing",
       "necessary_conditions": [
         {
           "id": "N1",
@@ -862,10 +801,6 @@
       "path": "dev/plugin-development-guide.md",
       "condition": "N1",
       "about": "The main conversation over many turns"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests"
     },
     {
       "do": "make",
