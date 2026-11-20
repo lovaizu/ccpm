@@ -1,12 +1,12 @@
 """The unit cases of what rn gives Lane: lane/adapters/starts_due.py's main, one for each class of
 the run that Lane gives it and of the run's folder, the commands typed and the starts that run among
-them, and one for each combination of the words and the commands that decides whether the run waits,
-goes on, or ends; and lane/adapters/rules.py's main, one for each role's steps, a deliverable with
-more_paths, a Cut in a later slot, a Cut named whole beside one named from the top, the generators
-of other Rounds an evaluator may read, and each refusal. A start in a later slot, a result among the
-moves, and a Cut named from rn's worktree stand beside the starts that run, and each Then names the
-whole of what an adapter prints. Each adapter lies in a file that Lane runs as a command, so each is
-loaded from its path."""
+them, and one for each combination of the skill that began the run, its words, and the commands
+that decides whether the run waits, goes on, or ends; and lane/adapters/rules.py's main, one for
+each role's steps, a deliverable with more_paths, a Cut in a later slot, a Cut named whole beside
+one named from the top, the generators of other Rounds an evaluator may read, and each refusal. A
+start in a later slot, a result among the moves, and a Cut named from rn's worktree stand beside
+the starts that run, and each Then names the whole of what an adapter prints. Each adapter lies in
+a file that Lane runs as a command, so each is loaded from its path."""
 
 from __future__ import annotations
 
@@ -71,18 +71,20 @@ def made_files() -> dict[str, Any]:
 
 
 def starts_due(
-    top: str, words: str = "", moves: list[dict[str, Any]] | None = None
+    top: str, words: str = "", moves: list[dict[str, Any]] | None = None, skill: str = "rn:up"
 ) -> tuple[int, Any, str]:
-    """starts_due.py's main for a run of /rn:up with the words and the moves, rn:up alone by
-    default, in the worktree; what it printed as JSON where it's JSON."""
-    run = {"skill": "rn:up", "words": words, "moves": [typed("rn:up")] if moves is None else moves}
+    """starts_due.py's main for a run that the skill began, /rn:up by default, with the words and
+    the moves, rn:up alone by default, in the worktree; what it printed as JSON where it's JSON."""
+    run = {"skill": skill, "words": words, "moves": [typed("rn:up")] if moves is None else moves}
     code, printed, said = command("lane/adapters/starts_due.py").main(json.dumps({"run": run}), top)
     return code, json.loads(printed) if printed else printed, said
 
 
-def counts(top: str, words: str = "", moves: list[dict[str, Any]] | None = None) -> Any:
+def counts(
+    top: str, words: str = "", moves: list[dict[str, Any]] | None = None, skill: str = "rn:up"
+) -> Any:
     """Each role that starts_due.py gives due with its count, or what it gave otherwise."""
-    code, printed, said = starts_due(top, words, moves)
+    code, printed, said = starts_due(top, words, moves, skill)
     assert code == 0, said
     if set(printed) != {"starts"}:
         return printed
@@ -91,33 +93,38 @@ def counts(top: str, words: str = "", moves: list[dict[str, Any]] | None = None)
 
 @pytest.mark.supports("test_a_plan_signed_off_gives_lane_the_generator_of_its_first_deliverable")
 @pytest.mark.parametrize(
-    ("words", "moves", "due"),
+    ("skill", "words", "moves", "due"),
     [
-        (REQUEST, ["rn:up"], {}),
-        (REQUEST, ["rn:up", "rn:gm"], {}),
-        (REQUEST, ["rn:up", "rn:ty"], {"rn:generator": 1}),
-        (REQUEST, ["rn:up", "rn:ty", "rn:gm"], {"rn:generator": 1}),
-        ("", ["rn:up"], {"rn:generator": 1}),
-        ("", ["rn:up", "rn:dn"], {}),
+        ("rn:up", REQUEST, ["rn:up"], {}),
+        ("rn:up", REQUEST, ["rn:up", "rn:gm"], {}),
+        ("rn:up", REQUEST, ["rn:up", "rn:ty"], {"rn:generator": 1}),
+        ("rn:up", REQUEST, ["rn:up", "rn:ty", "rn:gm"], {"rn:generator": 1}),
+        ("rn:gm", REQUEST, ["rn:gm"], {"rn:generator": 1}),
+        ("rn:ty", REQUEST, ["rn:ty"], {"rn:generator": 1}),
+        ("rn:up", "", ["rn:up"], {"rn:generator": 1}),
+        ("rn:up", "", ["rn:up", "rn:dn"], {}),
     ],
     ids=[
         "a request",
         "a request sent back",
         "a request signed off",
         "a request signed off and then sent back",
+        "a run that /rn:gm began with words",
+        "a run that /rn:ty began with words",
         "a pick-up",
         "a pause",
     ],
 )
 def test_starts_due_wait_for_the_sign_off_of_a_new_runs_plan(
-    tmp_path: Any, words: str, moves: list[str], due: dict[str, int]
+    tmp_path: Any, skill: str, words: str, moves: list[str], due: dict[str, int]
 ):
-    """Given the plan with no Round, and a run with words or none, and the commands typed
+    """Given the plan with no Round, and a run that /rn:up, /rn:gm, or /rn:ty began, with words or
+    none, and the commands typed
     When starts_due.py runs
-    Then it gives no start where the words ask for a new run and no /rn:ty is typed yet, or where
-    the latest command is /rn:dn, and the command's generator otherwise"""
+    Then it gives no start where /rn:up began the run with words and no /rn:ty is typed yet, or
+    where the latest command is /rn:dn, and the command's generator otherwise"""
     top = worktree(str(tmp_path))
-    assert counts(top, words, [typed(m) for m in moves]) == due
+    assert counts(top, words, [typed(m) for m in moves], skill) == due
 
 
 @pytest.mark.supports("test_the_sign_off_of_the_pull_request_ends_the_run")
@@ -266,6 +273,7 @@ def test_starts_due_from_the_root_count_a_start_whose_prompt_names_its_cut_from_
     [
         ("{", {}, ""),
         ('{"run": {"skill": "rn:up"}}', {}, ""),
+        ('{"run": {"words": "", "moves": []}}', {}, ""),
         ('{"run": {"skill": "rn:up", "words": null, "moves": []}}', {}, ""),
         ('{"run": {"skill": "rn:up", "words": "", "moves": {}}}', {}, ""),
         ("[]", {}, ""),
@@ -275,6 +283,7 @@ def test_starts_due_from_the_root_count_a_start_whose_prompt_names_its_cut_from_
     ids=[
         "input not JSON",
         "input with no words or moves",
+        "input with no skill",
         "words that aren't text",
         "moves that aren't a list",
         "input that isn't an object",
@@ -285,9 +294,9 @@ def test_starts_due_from_the_root_count_a_start_whose_prompt_names_its_cut_from_
 def test_starts_due_refuse_input_or_a_runs_folder_out_of_its_form(
     tmp_path: Any, given: str, files: dict[str, Any], said: str
 ):
-    """Given Lane's input that isn't JSON or leaves its form, with no words or moves, words that
-    aren't text, moves that aren't a list, or no object at its top, or a run's folder with a Round
-    that isn't JSON or a design tree out of its form
+    """Given Lane's input that isn't JSON or leaves its form, with no words or moves, no skill,
+    words that aren't text, moves that aren't a list, or no object at its top, or a run's folder
+    with a Round that isn't JSON or a design tree out of its form
     When starts_due.py runs
     Then it gives 1, printing nothing, naming the file where one is at fault"""
     top = worktree(str(tmp_path), files)

@@ -38,42 +38,46 @@ def main(given: str, cwd: str) -> tuple[int, str, str]:
       didn't end, stopped, failed, or lost with its conversation, and counts for nothing, so that
       a pick-up in a new conversation, whose moves hold no start, gives each start due again for
       a fresh Cut. None where the latest command is `rn:dn` with no `rn:up` after it, as the run
-      waits paused, so that Lane lets the orchestrator's turn end; where the words ask for a new
-      run and the moves hold no `rn:ty` yet, as the plan waits for the person's sign-off; or where
-      no run's folder has work left.
+      waits paused, so that Lane lets the orchestrator's turn end; where `rn:up` began the run with
+      words, which ask for a new run, and the moves hold no `rn:ty` yet, as the plan waits for the
+      person's sign-off; or where no run's folder has work left.
     1 with what Wrong says, such as Lane's input out of its form, a design tree out of its schema,
     or a Round that isn't JSON. A design tree that isn't JSON never reaches it, as rounds.folder
     passes over it as one with no work left.
     Changes: nothing.
     Refuses: nothing beyond the exit codes above."""
     try:
-        words, moves = _run(given)
-        return 0, json.dumps(_due(words, moves, cwd)) + "\n", ""
+        skill, words, moves = _run(given)
+        return 0, json.dumps(_due(skill, words, moves, cwd)) + "\n", ""
     except Wrong as wrong:
         return 1, "", f"starts_due.py: {wrong}\n"
 
 
-def _run(given: str) -> tuple[str, list[dict[str, str]]]:
-    """The words and the moves of the run that Lane gives; Wrong where it leaves its form."""
+def _run(given: str) -> tuple[str, str, list[dict[str, str]]]:
+    """The skill, the words, and the moves of the run that Lane gives; Wrong where it leaves its
+    form."""
     try:
         value: Any = json.loads(given)
     except ValueError as error:
         raise Wrong(f"Lane's input isn't JSON: {error}") from None
     run = value.get("run") if isinstance(value, dict) else None
+    skill = run.get("skill") if isinstance(run, dict) else None
     words = run.get("words") if isinstance(run, dict) else None
     moves = run.get("moves") if isinstance(run, dict) else None
-    if not isinstance(words, str) or not isinstance(moves, list):
+    if not isinstance(skill, str) or not isinstance(words, str) or not isinstance(moves, list):
         raise Wrong(
-            "Lane's input takes the form of starts_due.in.schema.json: run, with words and moves"
+            "Lane's input takes the form of starts_due.in.schema.json: run, with skill, words, and"
+            " moves"
         )
-    return words, moves
+    return skill, words, moves
 
 
-def _due(words: str, moves: Sequence[dict[str, str]], cwd: str) -> dict[str, Any]:
-    """What the order gives for the run's words and moves, from the run's folder in `cwd`."""
+def _due(skill: str, words: str, moves: Sequence[dict[str, str]], cwd: str) -> dict[str, Any]:
+    """What the order gives for the run's skill, words, and moves, from the run's folder in
+    `cwd`."""
     commands = [m["command"] for m in moves if m["kind"] == "command"]
     latest = commands[-1] if commands else ""
-    if latest == "rn:dn" or (words and "rn:ty" not in commands):
+    if latest == "rn:dn" or (skill == "rn:up" and words and "rn:ty" not in commands):
         return {"starts": []}
     found = rounds.folder(cwd)
     if found is None:
