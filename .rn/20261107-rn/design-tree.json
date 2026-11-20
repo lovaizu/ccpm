@@ -359,123 +359,7 @@
       "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
       "path": "plugins/rn/domain/generator.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/README.md",
-        "dev/rn/tests",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Makes the deliverable from its cut with only what brings its people closer, handing back each point it can't settle, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            },
-            {
-              "about": "The checklist of each step",
-              "decided": "each step that keeps a checklist gets from rn's adapter of a step's items only the practices of that step, its decide items in the step that decides and its make items in the step that makes, as lane/adapters/rules.py gives them",
-              "by": "reasoning"
-            },
-            {
-              "about": "The repository's own checks",
-              "decided": "at its last step the generator runs on the files it wrote the checks that the repository runs on each commit, as its hook configuration names them, and mends what they name, as a deliverable that fails them stops the person's commit or pull request",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What Lane holds",
-              "decided": "the generator writes only its deliverable and its result, by a step's sentence that Lane holds with the paths that rn's adapter of a start gives as its values",
-              "by": "reasoning"
-            },
-            {
-              "about": "A deliverable's files",
-              "decided": "a deliverable lies at its path and, where it's made of files in more than one place, such as code and its tests, at each path of its optional more_paths too; the design tree's form, its best practice's N7.2, and each Cut carry more_paths, and rn's adapter of the rules lets the generator's making step write each of them beside its path and its result",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
@@ -741,10 +625,6 @@
       "path": "dev/plugin-development-guide.md",
       "condition": "N1",
       "about": "The main conversation over many turns"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/generator.md"
     },
     {
       "do": "make",
