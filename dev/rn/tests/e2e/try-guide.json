@@ -1,8 +1,0 @@
-{
- "branch": "rn-20261118-invoice-command-for-the-accounting-team",
- "intent": "You work in accounting. Print the invoice for your client Acme, who pays 19% tax, from the lines you saved from your spreadsheet as lines.csv.",
- "has": "the text of the guide your developer pointed you to; a terminal open in your home folder, on a laptop with git and python3 and nothing of invoicer on it; and lines.csv, the lines you saved from your spreadsheet.",
- "files": {
-  "lines.csv": "Hosting;40.00;1\nSupport hours;60.00;2\n"
- }
-}

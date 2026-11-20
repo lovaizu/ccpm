@@ -1,9 +1,0 @@
-{
-  "roles": {
-    "rn:up": {
-      "steps": [{ "name": "lead", "rules": [{ "type": "writes", "paths": [".rn/"] }] }]
-    },
-    "rn:generator": {},
-    "rn:evaluator": {}
-  }
-}
