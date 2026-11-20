@@ -341,6 +341,11 @@
               "about": "Lane's surviving mutants",
               "decided": "the ci-fix subagent's commit on ci-fix/rn-rebuild-f05952f7 is taken, as it removes code that no case calls for; no other survivor is mended one by one, as they show the unit cases short of the test design, which Lane's unit cases designed again meet; Lane's code then follows those cases a test at a time, and Lane's code deliverables are done once no mutant survives",
               "by": "user"
+            },
+            {
+              "about": "Mends after Lane's code met its cases",
+              "decided": "a blank part of a Bash command, such as a blank line or a closing newline or ;, is no command and goes through, as multi-line commands hold them; a refusal of the rules out of form says what the form takes in words, never as a pattern",
+              "by": "reasoning"
             }
           ]
         },
@@ -399,6 +404,11 @@
             {
               "about": "The parts filled",
               "decided": "the bodies that S2's integration cases reach beyond S1's: the guard's placing and judging of a Read, a Grep, and a Glob, and the rule type of the files never to read, each with its unit cases passing",
+              "by": "reasoning"
+            },
+            {
+              "about": "A Grep and a Glob",
+              "decided": "S2's integration cases hold a subagent's Grep that reaches a file its step never reads, stopped with the step's sentence, and its Glob there let through, on the double's recorded events",
               "by": "reasoning"
             }
           ]
