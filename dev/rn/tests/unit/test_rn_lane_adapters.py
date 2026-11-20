@@ -1,11 +1,12 @@
 """The unit cases of what rn gives Lane: lane/adapters/starts_due.py's main, one for each class of
 the run that Lane gives it and of the run's folder, the commands typed and the starts that run
 among them, and one for each combination of the words and the commands that decides whether the
-run waits, goes on, or ends; and lane/adapters/rules.py's main, one for each role's steps, a Cut in
-a later slot, the generators of other Rounds an evaluator may read, and each refusal. A start in a
-later slot, a result among the moves, and a Cut named from rn's worktree stand beside the starts
-that run, and each Then names the whole of what an adapter prints. Each adapter lies in a file
-that Lane runs as a command, so each is loaded from its path."""
+run waits, goes on, or ends; and lane/adapters/rules.py's main, one for each role's steps, a
+deliverable with more_paths, a Cut in a later slot, the generators of other Rounds an evaluator may
+read, and each refusal. A start in a later slot, a result among the moves, and a Cut named from
+rn's worktree stand beside the starts that run, and each Then names the whole of what an adapter
+prints. Each adapter lies in a file that Lane runs as a command, so each is loaded from its
+path."""
 
 from __future__ import annotations
 
@@ -327,8 +328,8 @@ def end_of(role: str, cut: str, result: str) -> list[dict[str, Any]]:
     ]
 
 
-def generator_steps(practice: str, deliverable: str) -> dict[str, Any]:
-    """The steps of round 1's generator, by the best practice, of the deliverable."""
+def generator_steps(practice: str, *deliverable: str) -> dict[str, Any]:
+    """The steps of round 1's generator, by the best practice, of the deliverable's paths."""
     return steps_of(
         [{"type": "writes", "paths": []}],
         [
@@ -338,7 +339,7 @@ def generator_steps(practice: str, deliverable: str) -> dict[str, Any]:
         ],
         [
             {"type": "checklist", "items": practices(practice, "make")},
-            {"type": "writes", "paths": [deliverable, RESULT]},
+            {"type": "writes", "paths": [*deliverable, RESULT]},
         ],
         end_of("generator", CUT, "made"),
     )
@@ -355,6 +356,26 @@ def test_rules_give_the_generator_its_steps_from_its_cut(tmp_path: Any):
     result made, and nothing else"""
     top = worktree(str(tmp_path), {CUT: generator_cut()})
     assert rules_of(top, "rn:generator", CUT) == (0, generator_steps("code", COMMAND), "")
+
+
+@pytest.mark.supports("test_a_role_that_writes_beside_its_deliverable_is_told_its_step")
+@pytest.mark.parametrize(
+    "more",
+    [["tests/test_main.py"], ["tests/test_main.py", "tests/fixtures/"]],
+    ids=["a file", "a file and a folder"],
+)
+def test_rules_let_the_generator_make_each_more_path_of_its_deliverable(
+    tmp_path: Any, more: list[str]
+):
+    """Given the generator's Cut of the command by code, its deliverable with more_paths of one
+    file, and of a file and a folder, as the case of its steps holds one with none
+    When rules.py runs for its start
+    Then it gives the generator's steps whole, step 3 the writes of the command, each of its
+    more_paths in their order, and the result"""
+    held = generator_cut()
+    held["deliverable"]["more_paths"] = more
+    top = worktree(str(tmp_path), {CUT: held})
+    assert rules_of(top, "rn:generator", CUT) == (0, generator_steps("code", COMMAND, *more), "")
 
 
 @pytest.mark.supports("test_a_round_of_refactoring_comes_only_after_the_content_is_good")

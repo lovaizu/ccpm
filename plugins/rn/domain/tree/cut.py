@@ -1,6 +1,7 @@
 """Decides what each role's Cut holds: for the generator, the deliverable, its kind's or the
 refactor best practice, the goal, and the decisions of its node and of each input node with no
-file; for an evaluator, the deliverable, its people's aim, and the conditions of its group."""
+file; for an evaluator, the deliverable, its people's aim, and the conditions of its group. The
+deliverable holds its name, path, and kind, and its more_paths where the node has them."""
 
 from __future__ import annotations
 
@@ -29,7 +30,7 @@ def write(run: str, tree: Tree, due: Due) -> str:
         raise Wrong(f"no deliverable {due.deliverable} is in the design tree to cut a start of")
     held: dict[str, Any] = {
         "role": due.role,
-        "deliverable": {k: node[k] for k in ("name", "path", "kind")},
+        "deliverable": {k: node[k] for k in ("name", "path", "kind", "more_paths") if k in node},
         "best_practice": due.best_practice,
         "goal": tree["goal"]["decided"],
     }

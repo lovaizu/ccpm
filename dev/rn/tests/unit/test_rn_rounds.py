@@ -4,8 +4,9 @@ course.decisions, one for each class of the best practice and the design tree th
 course.due, one for each transition of a deliverable's rounds that the use brings about, from the
 starts of its Rounds and those that run, with several deliverables, several evaluators, and several
 Rounds among them, as rn's use runs one generator and several evaluators a Round over several
-Rounds and deliverables; and cut.write, one for each class of start due. Each Then names the whole
-of what the interface gives: each start due whole, each Start whole, and each Cut whole."""
+Rounds and deliverables; and cut.write, one for each class of start due and of a deliverable with
+and without more_paths. Each Then names the whole of what the interface gives: each start due
+whole, each Start whole, and each Cut whole."""
 
 from __future__ import annotations
 
@@ -1006,6 +1007,44 @@ def test_write_gives_the_generator_its_deliverable_best_practice_goal_and_decisi
         "best_practice": "code",
         "goal": GOAL,
         "decisions": decisions(plan()),
+    }
+
+
+@pytest.mark.supports("test_each_cut_holds_its_role_deliverable_best_practice_and_goal")
+def test_write_gives_each_role_the_more_paths_of_a_deliverable_of_files_in_several_places(
+    tmp_path: Any,
+):
+    """Given the plan read from its JSON, with the command made of its tests too, a file and a
+    folder in more_paths, and the command's generator and evaluator of C1 of round 1 due
+    When cut.write writes each Cut
+    Then each holds the command's name, path, kind, and more_paths in their order, the generator's
+    with the goal and each decision, the evaluator's with C1 and N1 to N3"""
+    tree = plan()
+    tree["deliverables"][0]["more_paths"] = ["tests/test_main.py", "tests/fixtures/"]
+    run = run_folder(str(tmp_path), {"design-tree.json": tree})
+    read = written(f"{run}/design-tree.json")
+    made = cut.write(run, read, Due(COMMAND, "generator", "", "code", 1))
+    judged = cut.write(run, read, Due(COMMAND, "evaluator", "C1", "code", 1))
+    held = {
+        "name": tree["deliverables"][0]["name"],
+        "path": COMMAND,
+        "kind": "code",
+        "more_paths": ["tests/test_main.py", "tests/fixtures/"],
+    }
+    assert written(made) == {
+        "role": "generator",
+        "deliverable": held,
+        "best_practice": "code",
+        "goal": GOAL,
+        "decisions": decisions(tree),
+    }
+    assert written(judged) == {
+        "role": "evaluator",
+        "deliverable": held,
+        "best_practice": "code",
+        "goal": GOAL,
+        "group": "C1",
+        "conditions": CODE_GROUPS["C1"],
     }
 
 

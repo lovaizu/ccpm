@@ -244,7 +244,7 @@
        },
        {
         "at": "decide",
-        "text": "Write its path and its kind in their own fields, so that the name says only what it brings."
+        "text": "Write its path, its kind, and, in `more_paths`, each other file or folder it's made of, such as the tests of code that lie apart from it, in their own fields, so that the name says only what it brings."
        }
       ]
      },

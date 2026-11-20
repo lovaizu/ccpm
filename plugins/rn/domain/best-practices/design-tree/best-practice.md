@@ -109,7 +109,7 @@ Does each deliverable's name say what it brings toward the goal?
 The user reads the design tree to see where the work stands and what comes next, without opening each deliverable.
 
 1. *While deciding.* As you add each deliverable, write as its name what holds toward the goal once it exists, with the people who gain it as its subject, such as `A newcomer decides from the README alone whether rn fits their work` in place of `rn's README`.
-2. *While deciding.* Write its path and its kind in their own fields, so that the name says only what it brings.
+2. *While deciding.* Write its path, its kind, and, in `more_paths`, each other file or folder it's made of, such as the tests of code that lie apart from it, in their own fields, so that the name says only what it brings.
 
 ### N8
 

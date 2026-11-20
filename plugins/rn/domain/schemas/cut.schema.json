@@ -11,14 +11,20 @@
       "enum": ["generator", "evaluator"]
     },
     "deliverable": {
-      "description": "The deliverable's name, path, and kind, as the design tree holds them.",
+      "description": "The deliverable's name, path, kind, and more_paths where it has them, as the design tree holds them.",
       "type": "object",
       "required": ["name", "path", "kind"],
       "additionalProperties": false,
       "properties": {
         "name": {"type": "string"},
         "path": {"type": "string"},
-        "kind": {"type": "string"}
+        "kind": {"type": "string"},
+        "more_paths": {
+          "description": "Each other file or folder the deliverable is made of, a folder closing with `/`.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
       }
     },
     "best_practice": {

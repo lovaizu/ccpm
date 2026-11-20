@@ -39,8 +39,9 @@ def main(given: str, cwd: str, plugin: str) -> tuple[int, str, str]:
       `N<n>.<m>` of the Cut's best practice that its maker takes while deciding, the m-th practice
       of the condition N<n>, `writes` of the result alone, and a `result` that `ends` on `point`;
       at step 3, a `checklist` of each that its maker takes while making, and `writes` of the
-      deliverable's path and the result; at step 4, `writes` of the result, the `check`
-      `python3 <rn>/scripts/check.py generator <Cut>`, and a `result` of `made`;
+      deliverable's path, each of its `more_paths` in their order, and the result; at step 4,
+      `writes` of the result, the `check` `python3 <rn>/scripts/check.py generator <Cut>`, and a
+      `result` of `made`;
     - for `rn:evaluator`: at step 1, `writes` of no path; at step 2, `reads_none` of the run's
       design-tree.json and of each generator's Cut of the Round, in any slot, with the result
       beside it, and no `writes`, as its trial writes what its people's use writes; at step 3, a
@@ -130,6 +131,11 @@ def _result(cut: str) -> str:
     return cut.removesuffix(".cut.json") + ".json"
 
 
+def _paths(deliverable: dict[str, Any]) -> list[str]:
+    """The deliverable's path and each of its more_paths, in their order."""
+    return [deliverable["path"], *deliverable.get("more_paths", [])]
+
+
 def _generator(held: dict[str, Any], cut: str, plugin: str) -> list[dict[str, Any]]:
     """The generator's steps, from its Cut at `cut`."""
     taken = _practices(held, cut, plugin)
@@ -142,7 +148,7 @@ def _generator(held: dict[str, Any], cut: str, plugin: str) -> list[dict[str, An
         ],
         [
             {"type": "checklist", "items": taken["make"]},
-            {"type": "writes", "paths": [held["deliverable"]["path"], _result(cut)]},
+            {"type": "writes", "paths": [*_paths(held["deliverable"]), _result(cut)]},
         ],
         _end("generator", cut, plugin, "made"),
     )

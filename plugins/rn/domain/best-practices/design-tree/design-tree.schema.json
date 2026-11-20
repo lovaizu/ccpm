@@ -71,12 +71,21 @@
    "description": "Where the deliverable lies, from the top of the repository: a file, or a folder for a deliverable of many files. For a node with no file, where its file would lie, which names it.",
    "type": "string"
   },
+  "more_paths": {
+   "description": "Each other file or folder the deliverable is made of, from the top of the repository, where it lies in more than one place, such as the tests of code that lie apart from it. A folder closes with `/`. Left out where the deliverable lies at its path alone.",
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "string",
+    "minLength": 1
+   }
+  },
   "kind": {
    "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme, or `light` for a deliverable made by its check alone, where a best practice of its own would cost more than it gives, or the user wants it at once.",
    "type": "string"
   },
   "done": {
-   "description": "A deliverable that meets every necessary condition of its best practice. It keeps one line: its name, path, kind, and status, as its file holds what its decisions made.",
+   "description": "A deliverable that meets every necessary condition of its best practice. It keeps one line: its name, path, more_paths where it has them, kind, and status, as its files hold what its decisions made.",
    "type": "object",
    "required": [
     "name",
@@ -91,6 +100,9 @@
     },
     "path": {
      "$ref": "#/$defs/path"
+    },
+    "more_paths": {
+     "$ref": "#/$defs/more_paths"
     },
     "kind": {
      "$ref": "#/$defs/kind"
@@ -158,6 +170,9 @@
     },
     "path": {
      "$ref": "#/$defs/path"
+    },
+    "more_paths": {
+     "$ref": "#/$defs/more_paths"
     },
     "kind": {
      "$ref": "#/$defs/kind"
