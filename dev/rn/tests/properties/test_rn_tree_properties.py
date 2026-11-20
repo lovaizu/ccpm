@@ -34,10 +34,6 @@ from hypothesis import strategies as st
 from rounds.course import Next
 from tree import checks, form, signoff, touched
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="the design tree's bodies raise NotImplementedError"
-)
-
 NAME = "20261120-invoices"
 KINDS = ("light", "readme", "code")
 PATHS = ("invoicer/__main__.py", "docs/guide.md", "CHANGELOG.md", "tests/", "invoicer/cli.py")

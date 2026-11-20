@@ -15,10 +15,6 @@ from hypothesis import given
 from hypothesis import strategies as st
 from rn_adapters import adapter
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="starts_due.py's bodies raise NotImplementedError"
-)
-
 NAME = "20261120-invoices"
 PATHS = ("invoicer/__main__.py", "docs/guide.md", "CHANGELOG.md")
 

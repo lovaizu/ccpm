@@ -23,8 +23,6 @@ from repository.push import commit, pause, put_up
 from rn_runs import NAME, changed, committed_files, head, hook, made_run, subject
 from template.markdown import sentences
 
-pytestmark = pytest.mark.xfail(strict=True, reason="repository/push.py's bodies are empty")
-
 URL = "http://github.com/owner/repo/pull/1"
 # The first sentence of the walkthrough's goal, which titles the pull request.
 FIRST = (
@@ -401,15 +399,15 @@ def test_a_put_up_with_gh_logged_out_is_missing_its_login(tmp_path: Any, host: A
     """Given a run, and gh with no login
     When put_up is given the command
     Then Missing is raised with what gh said, that no GitHub host is logged into, before any
-    commit or push: the command's change stays uncommitted, the branch's head is as it was, the
-    remote holds no rn-<name>, and gh was asked `gh auth status` alone"""
+    commit or push: the change of invoicer's lines stays uncommitted, the branch's head is as it
+    was, the remote holds no rn-<name>, and gh was asked `gh auth status` alone"""
     run = made_run(str(tmp_path))
-    changed(run, {rn_files.COMMAND: "print()\n"})
+    changed(run, {"invoicer/lines.py": "print()\n"})
     before = head(worktree(run))
     gh_double.logged_out(gh_state)
     with pytest.raises(Missing, match="not logged into any GitHub hosts"):
         put_up(run, rn_files.COMMAND, host)
     assert head(worktree(run)) == before
-    assert git(worktree(run), "status", "--porcelain").split() == ["M", rn_files.COMMAND]
+    assert git(worktree(run), "status", "--porcelain").split() == ["M", "invoicer/lines.py"]
     assert git(origin(tmp_path), "branch", "--list", f"rn-{NAME}").strip() == ""
     assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]

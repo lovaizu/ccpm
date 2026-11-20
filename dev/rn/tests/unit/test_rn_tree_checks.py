@@ -17,10 +17,6 @@ from repo_files import write_files
 from rn_files import COMMAND, GUIDE
 from tree.checks import faults
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="tree/checks.py's body raises NotImplementedError"
-)
-
 NAME = "20261120-a-command-with-which-the"
 KINDS = ("design-tree", "light", "readme", "code")
 

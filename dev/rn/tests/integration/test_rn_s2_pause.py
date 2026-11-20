@@ -12,7 +12,6 @@ import rn_files
 from claude_code import Agent, Conversation
 from repo_files import git
 from rn_bench import (
-    NOT_BUILT,
     Bench,
     decided_command,
     ended,
@@ -26,8 +25,6 @@ from rn_bench import (
     started,
 )
 from rn_files import COMMAND, WORDS
-
-pytestmark = pytest.mark.xfail(strict=True, reason=NOT_BUILT)
 
 
 def paused(b: Bench, c: Conversation, agents: list[Agent]) -> str:

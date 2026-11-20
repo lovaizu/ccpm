@@ -3,10 +3,16 @@ that git runs before a commit, on those files alone, in the run's worktree."""
 
 from __future__ import annotations
 
+import os
 from collections.abc import Sequence
 
-from repository.host import Host
+from fault import CantRun, Wrong
+
+from repository.host import Host, checked
 from repository.place import RunPlace
+
+# The exit codes of a shell whose program can't be found or can't run.
+_CANT_RUN = (126, 127)
 
 
 def findings(run: RunPlace, files: Sequence[str], host: Host) -> list[str]:
@@ -19,4 +25,17 @@ def findings(run: RunPlace, files: Sequence[str], host: Host) -> list[str]:
     Refuses: Wrong where a file lies outside the worktree or doesn't exist, naming it; CantRun
     where a check can't run, such as its program missing, with what it said.
     """
-    raise NotImplementedError("repository.commit_checks.findings")
+    for each in files:
+        path = os.path.normpath(os.path.join(run.worktree, each))
+        if not path.startswith(os.path.normpath(run.worktree) + os.sep):
+            raise Wrong(f"{each}: lies outside the run's worktree; give files from its top")
+        if not os.path.exists(path):
+            raise Wrong(f"{each}: no such file in the run's worktree; give the files you wrote")
+    if not files:
+        return []
+    checked(host, ["git", "add", "--", *files], run.worktree, CantRun, "git can't stage the files")
+    ran = host(["git", "hook", "run", "--ignore-missing", "pre-commit"], run.worktree)
+    said = [each for each in (ran.out + ran.err).splitlines() if each.strip()]
+    if ran.code in _CANT_RUN:
+        raise CantRun(f"the repository's commit check can't run: {' '.join(said)}")
+    return said if ran.code != 0 else []

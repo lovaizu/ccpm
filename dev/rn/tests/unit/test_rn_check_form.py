@@ -17,10 +17,6 @@ import rn_files
 from check.form import faults
 from fault import CantRun
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="check/form.py's faults raises NotImplementedError"
-)
-
 DRAFT_07 = "http://json-schema.org/draft-07/schema#"
 
 

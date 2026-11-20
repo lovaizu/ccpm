@@ -3,8 +3,11 @@ test puts a double of them in their place."""
 
 from __future__ import annotations
 
+import subprocess
 from collections.abc import Sequence
 from typing import Callable, NamedTuple
+
+from fault import CantRun, Wrong
 
 
 class Ran(NamedTuple):
@@ -29,4 +32,25 @@ def run(argv: Sequence[str], cwd: str) -> Ran:
     Refuses: Wrong where the first word is neither `git` nor `gh`; CantRun where the program isn't
     found or can't start, naming it.
     """
-    raise NotImplementedError("repository.host.run")
+    if argv[0] not in ("git", "gh"):
+        raise Wrong(f"rn runs only git and gh, not {argv[0]!r}")
+    try:
+        done = subprocess.run(list(argv), cwd=cwd, capture_output=True, text=True, check=False)
+    except OSError as error:
+        raise CantRun(f"{argv[0]} can't start: {error}") from None
+    return Ran(done.returncode, done.stdout, done.stderr)
+
+
+def checked(host: Host, argv: Sequence[str], cwd: str, fault: type[Exception], what: str) -> Ran:
+    """Runs a command of git or gh through the host, as one that must give 0.
+
+    Takes: the host, the command's words and the folder to run it in, as `run` takes them, the
+    fault to raise, such as CantRun or Missing, and what the command does, for the message.
+    Gives: what it gave, where it gives 0.
+    Changes: whatever the command changes.
+    Refuses: the fault as `<what>: <what the command printed>`, where it gives other than 0.
+    """
+    ran = host(argv, cwd)
+    if ran.code != 0:
+        raise fault(f"{what}: {(ran.out + ran.err).strip()}")
+    return ran

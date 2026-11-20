@@ -12,7 +12,6 @@ import pytest
 import rn_files
 from repo_files import git
 from rn_bench import (
-    NOT_BUILT,
     Bench,
     command_signed,
     confirmed,
@@ -22,6 +21,7 @@ from rn_bench import (
     generated,
     held,
     judged_command,
+    listed,
     made_command,
     marked,
     next_round,
@@ -39,8 +39,6 @@ from rn_bench import (
     written_tree,
 )
 from rn_files import COMMAND, GOAL, GUIDE
-
-pytestmark = pytest.mark.xfail(strict=True, reason=NOT_BUILT)
 
 
 def log(b: Bench, ref: str) -> list[str]:
@@ -131,9 +129,13 @@ def test_each_node_a_change_touches_is_read_again_before_the_commit(b: Bench):
     answer = written_tree(b, c, changed)
     assert not answer.blocked, answer.said
     marked(c, "review")
+    nodes = ran(c, b.script("tree", "touched", b.run)).split()
     answer = c.bash("lane-step touched")
-    assert answer.blocked
-    assert "/deliverables/2" in answer.said
+    assert "/deliverables/2" in nodes
+    assert answer.said == (
+        f"You're at the step `touched` of rn:up, whose checklist isn't done: {listed(nodes)}.\n"
+        "Do each and mark it done with lane-item touched <item> first."
+    )
 
 
 @pytest.mark.supports("S1", "Design tree")
@@ -241,7 +243,8 @@ def test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given(b: Benc
     """Given a run whose command's evaluator judged Round content-1, N1 with more
     When the orchestrator holds N2 and N3 good, N1 not, and writes the generator's Cut
     Then the Cut lies in Round content-2, its findings the evaluator's good and more of content-1
-    word for word, and its last_good the generator's good of content-1"""
+    of N1 alone, the one condition the tree still holds not good, word for word, and its
+    last_good the generator's good of content-1"""
     c, notified = judged_command(
         b, {"N1": "The accountant prints an invoice with a comma in a line."}
     )
@@ -253,7 +256,11 @@ def test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given(b: Benc
     given = rn_files.read_json(os.path.join(b.repo, cut_path))
     judged = rn_files.read_json(os.path.join(first, "evaluator.json"))
     made = rn_files.read_json(os.path.join(first, "generator.json"))
-    assert given["findings"] == {"good": judged["good"], "more": judged["more"]}
+    short = {"N1"}
+    assert given["findings"] == {
+        "good": [each for each in judged["good"] if each["condition"] in short],
+        "more": [each for each in judged["more"] if each["condition"] in short],
+    }
     assert given["last_good"] == made["good"]
     assert (given["stage"], given["number"]) == ("content", 2)
 

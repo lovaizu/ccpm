@@ -13,8 +13,6 @@ import rn_files
 from fault import CantRun, Wrong
 from repository.host import Ran, run
 
-pytestmark = pytest.mark.xfail(strict=True, reason="repository/host.py's body is empty")
-
 
 @pytest.mark.supports(
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"

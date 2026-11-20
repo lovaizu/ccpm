@@ -30,9 +30,6 @@ from fault import Wrong
 from rn_adapters import adapter
 from rn_files import COMMAND, GUIDE, RN, WORDS
 
-pytestmark = pytest.mark.xfail(strict=True, reason="rules.py's bodies raise NotImplementedError")
-
-
 ADAPTER = adapter("rules")
 NAME = f"{date.today():%Y%m%d}-{rn_files.NAMED}"
 # The prompt of a subagent's end in the background, as Claude Code gives the main conversation.

@@ -18,8 +18,6 @@ import rn_files
 from fault import Wrong
 from practice import items, judged, kinds, read, refactoring
 
-pytestmark = pytest.mark.xfail(strict=True, reason="practice.py's bodies raise NotImplementedError")
-
 
 def rns_kinds() -> dict[str, str]:
     """Each folder of rn's best practices that holds a best-practice.json, by its name."""

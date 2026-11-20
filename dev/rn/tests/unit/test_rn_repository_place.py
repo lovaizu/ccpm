@@ -17,8 +17,6 @@ import rn_files
 from fault import Wrong
 from repository.place import RunPlace, named, of_folder
 
-pytestmark = pytest.mark.xfail(strict=True, reason="repository/place.py's bodies are empty")
-
 NAME = "20261120-invoices"
 DAY = date(2026, 11, 20)
 

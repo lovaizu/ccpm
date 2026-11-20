@@ -16,11 +16,8 @@ import pytest
 import rn_files
 from repo_files import git
 from rn_files import COMMAND, GOAL, GUIDE, RN
+from rn_runs import hook
 from tree.command import USAGE, main
-
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="tree/command.py's body raises NotImplementedError"
-)
 
 NAME = "20261120-a-command-with-which-the"
 BRANCH = f"rn-{NAME}"
@@ -301,6 +298,29 @@ def test_commit_of_the_tree_a_run_starts_from_commits_it_first(tmp_path: Any, ho
     assert code == 0
     assert out.strip() == r.head() != before
     assert git(r.worktree, "log", "-1", "--format=%B").strip() == "The goal as put."
+
+
+@pytest.mark.supports(
+    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
+)
+def test_commit_that_a_commit_check_refuses_gives_2_with_what_git_said(tmp_path: Any, host: Any):
+    """Given the walkthrough's run, its tree committed, then a decision settled in the guide's N1,
+    in a repository whose pre-commit hook refuses each commit saying `tree: no`
+    When tree.py commit runs with the ground
+    Then it gives 2, nothing on stdout, and stderr naming tree.py and the hook's line, and the
+    branch holds no new commit"""
+    r = Run(str(tmp_path), walkthrough())
+    hook(r.repo, "echo 'tree: no'\nexit 1\n")
+    changed = r.tree()
+    changed["deliverables"][2]["necessary_conditions"][0]["decisions"].append(
+        rn_files.decision("its people", "The accounting team.", "reasoning")
+    )
+    r.write(changed)
+    before = r.head()
+    code, out, err = r.main(host, "commit", r.run, "The README names its people.")
+    assert (code, out) == (2, "")
+    assert err.startswith("tree.py: ") and "tree: no" in err
+    assert r.head() == before
 
 
 # cut

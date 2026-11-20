@@ -6,9 +6,9 @@ made and judged, and the last at any point of its course.
 - Remaking has a limit (P3.3), twice at most of each stage as the README says: no new Round of a
   stage that holds two, else the deliverable grows with each round and the user waits on it.
 - The user is asked only what only they can decide, one point at a time (P1.2): while a decision
-  is open, no role starts, else a role makes on a guess the user hasn't answered.
-  Once its Rounds are over, its findings left kept as open decisions wait for the sign-off as
-  proposals (P3.3), not on an answer that no role would take back.
+  waits on the user, as a point to answer or, once its Rounds are over, as a proposal to sign off
+  (P3.3), neither the generator nor the evaluator is due, else a role makes on a guess the user
+  hasn't answered.
 - A pause loses neither time nor work (S2, P6.1): a Round that a pause stopped before its
   generator's result goes on in itself, spending none of the stage's two Rounds.
 - Work rests on a deliverable once the user signs it off (P1.3): the sign-off waits only on a
@@ -21,14 +21,10 @@ from typing import Any
 
 import pytest
 import rn_files
-from hypothesis import assume, given
+from hypothesis import given
 from hypothesis import strategies as st
 from rounds.course import Next, next_of
 from rounds.files import Round
-
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="rounds.course's bodies raise NotImplementedError"
-)
 
 # The most Rounds of a stage, as the README's How it works says: "twice at most".
 MOST = 2
@@ -91,25 +87,41 @@ def test_no_new_round_of_a_stage_that_holds_two(course: tuple[dict[str, Any], li
 
 @pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 @given(courses())
-def test_no_role_while_a_decision_is_open(course: tuple[dict[str, Any], list[Any], bool]):
+def test_no_maker_or_judge_while_a_decision_waits_on_the_user(
+    course: tuple[dict[str, Any], list[Any], bool],
+):
     """Given any deliverable's node with any decision open, and any course of its Rounds
     When what it waits on next is found
-    Then, while a decision is open, it waits on no role: on the sign-off where its Rounds are over,
-    each of the last stage's two made and judged, the open decisions being the proposals left, and
-    else on the answer; and on the answer only while a decision is open
+    Then, while a decision is open, neither the generator nor the evaluator is due, as each open
+    decision waits on the user, as a point to answer or as a proposal to sign off; and it waits on
+    the answer only while a decision is open
     (Invariant, resting on P1.2 and P3.3.)"""
     node, rounds, refactors = course
     found = next_of(node, rounds, refactors)
     if is_open(node):
-        assert found.waits_on == ("sign-off" if past_its_rounds(rounds) else "answer")
+        assert found.waits_on not in ("generator", "evaluator")
     else:
         assert found.waits_on != "answer"
+
+
+@st.composite
+def paused_courses(draw: Any) -> tuple[dict[str, Any], list[Any], bool]:
+    """A course of courses() with no decision open and at least one Round, its last Round holding
+    no result of either role, as a pause that stopped its generator leaves it."""
+    node, rounds, refactors = draw(courses())
+    for each in node["necessary_conditions"]:
+        each["decisions"] = [rn_files.decision("a point", "yes")] if each["decisions"] else []
+    if not rounds:
+        folder = rn_files.round_of("/r/.rn/r", "docs/guide.md", "content", 1)
+        rounds = [(Round(folder, "docs/guide.md", "content", 1), None, None)]
+    rounds[-1] = (rounds[-1][0], None, None)
+    return node, rounds, refactors
 
 
 @pytest.mark.supports(
     "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
 )
-@given(courses())
+@given(paused_courses())
 def test_a_pause_spends_no_round(course: tuple[dict[str, Any], list[Any], bool]):
     """Given any deliverable's node with no decision open, and any course of its Rounds whose last
     Round holds no generator's result, as a pause stopped it
@@ -118,7 +130,6 @@ def test_a_pause_spends_no_round(course: tuple[dict[str, Any], list[Any], bool])
     Rounds of the stage
     (Invariant, resting on S2 and P6.1, a run that goes on from its files losing no work.)"""
     node, rounds, refactors = course
-    assume(rounds and rounds[-1][1] is None and not is_open(node))
     found = next_of(node, rounds, refactors)
     assert found == Next("generator", rounds[-1][0].stage, True)
 

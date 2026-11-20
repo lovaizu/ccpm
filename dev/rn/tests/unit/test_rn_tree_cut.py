@@ -22,8 +22,6 @@ from rn_files import COMMAND, GOAL, GUIDE
 from rounds.files import Round
 from tree.cut import evaluator, generator
 
-pytestmark = pytest.mark.xfail(strict=True, reason="tree/cut.py's bodies raise NotImplementedError")
-
 NAME = "20261120-a-command-with-which-the"
 LIGHT = os.path.join(rn_files.PRACTICES, "light")
 

@@ -61,6 +61,8 @@ def room_in(tmp: str) -> Room:
     shutil.copytree(LANE, lane, ignore=shutil.ignore_patterns("__pycache__"))
     repo = rn_files.repository(os.path.join(tmp, "invoicer"))
     env = environment(tmp)
+    # The case's time zone, so that rn takes the day that the case takes.
+    env.update({name: os.environ[name] for name in ("TZ",) if name in os.environ})
     env["CLAUDE_CONFIG_DIR"] = os.path.join(tmp, "config")
     return Room(repo, rn, lane, env)
 

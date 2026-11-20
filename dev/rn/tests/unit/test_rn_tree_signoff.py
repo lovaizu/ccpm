@@ -19,10 +19,6 @@ from rn_files import COMMAND, GOAL, GUIDE
 from rounds.course import Next
 from tree.signoff import signed_off, waiting
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="tree/signoff.py's bodies raise NotImplementedError"
-)
-
 NAME = "20261120-a-command-with-which-the"
 PLAN = rn_files.plan_path(NAME)
 SIGN_OFF = Next("sign-off", None, False)

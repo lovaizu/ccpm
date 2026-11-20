@@ -23,10 +23,6 @@ from fault import Wrong
 from rn_files import COMMAND, GOAL, GUIDE
 from tree.touched import changed, touched
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="tree/touched.py's bodies raise NotImplementedError"
-)
-
 NAME = "20261120-a-command-with-which-the"
 SPEC = "docs/spec.md"
 D = rn_files.decision

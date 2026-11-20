@@ -5,13 +5,16 @@ and the evaluator only what the deliverable's people have."""
 
 from __future__ import annotations
 
+import os
 from typing import Any
 
-from practice import Found
+from fault import Wrong
+from practice import Found, judged
+from repository import trial
 from repository.place import RunPlace
 from rounds.files import Result, Round
 
-from tree.form import Tree
+from tree.form import Deliverable, Tree
 
 # A role's Cut, in the form of domain/schemas/<role>-cut.schema.json.
 Cut = dict[str, Any]
@@ -38,7 +41,27 @@ def generator(
     Changes: nothing.
     Refuses: Wrong where the tree holds no open deliverable of the Round's path.
     """
-    raise NotImplementedError("tree.cut.generator")
+    node = _open(tree, round_)
+    made, last_judged = last
+    findings = None
+    if last_judged is not None:
+        short = {each["id"] for each in node["necessary_conditions"] if not each["good"]}
+        findings = {
+            key: [each for each in last_judged[key] if each["condition"] in short]
+            for key in ("good", "more")
+        }
+    return {
+        "goal": tree["goal"]["decided"],
+        "deliverable": node,
+        "worktree": _from(run, run.worktree),
+        "inputs": [_from(run, os.path.join(run.worktree, each)) for each in node["inputs"]],
+        "best_practice": _from(run, practice.folder),
+        "stage": round_.stage,
+        "number": round_.number,
+        "round": _from(run, round_.folder),
+        "findings": findings,
+        "last_good": None if made is None else made.get("good"),
+    }
 
 
 def evaluator(tree: Tree, run: RunPlace, round_: Round, practice: Found) -> Cut:
@@ -53,4 +76,25 @@ def evaluator(tree: Tree, run: RunPlace, round_: Round, practice: Found) -> Cut:
     Changes: nothing.
     Refuses: Wrong where the tree holds no open deliverable of the Round's path.
     """
-    raise NotImplementedError("tree.cut.evaluator")
+    node = _open(tree, round_)
+    return {
+        "goal": tree["goal"]["decided"],
+        "deliverable": {key: node[key] for key in ("name", "path", "more_paths") if key in node},
+        "judges_by": judged(practice.practice),
+        "worktree": _from(run, run.worktree),
+        "trial": trial.folder(run, round_),
+        "round": _from(run, round_.folder),
+    }
+
+
+def _open(tree: Tree, round_: Round) -> Deliverable:
+    """The open deliverable of the Round's path."""
+    for each in tree["deliverables"]:
+        if each["path"] == round_.deliverable and each["status"] in ("open", "doing"):
+            return each
+    raise Wrong(f"{round_.deliverable}: no open deliverable of the design tree has the path")
+
+
+def _from(run: RunPlace, path: str) -> str:
+    """The path from the folder that the conversation works in, the top of the repository."""
+    return os.path.relpath(path, run.repository)

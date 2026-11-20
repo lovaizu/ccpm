@@ -3,10 +3,20 @@ work's branch, and the run's one pull request."""
 
 from __future__ import annotations
 
+import json
+import os
 from collections.abc import Sequence
 
-from repository.host import Host
+from fault import CantRun, Missing, Wrong
+from template.markdown import sentences
+from tree import form
+
+from repository.host import Host, Ran, checked
 from repository.place import RunPlace
+
+# What git says where origin refuses a push for want of a login or a permission, in lower case:
+# a remote that rejects the refs, as a folder that may not be written does, among them.
+_REFUSED = ("permission", "could not read username", "authentication failed", "remote rejected")
 
 
 def commit(run: RunPlace, paths: Sequence[str], message: str, host: Host) -> str:
@@ -19,7 +29,16 @@ def commit(run: RunPlace, paths: Sequence[str], message: str, host: Host) -> str
     them; CantRun where git fails, such as a commit check of the repository refusing, with what it
     said.
     """
-    raise NotImplementedError("repository.push.commit")
+    outside = [
+        each for each in paths if not _within(os.path.join(run.worktree, each), run.worktree)
+    ]
+    if outside:
+        raise Wrong(f"{', '.join(outside)}: lies outside the run's worktree; commit only its paths")
+    _git(host, run, "add", "--", *paths)
+    if host(["git", "diff", "--cached", "--quiet", "--", *paths], run.worktree).code == 0:
+        raise Wrong(f"{', '.join(paths)}: holds no change to commit")
+    _git(host, run, "commit", "-q", "-m", message, "--", *paths)
+    return _git(host, run, "rev-parse", "HEAD").out.strip()
 
 
 def pause(run: RunPlace, host: Host) -> str:
@@ -33,7 +52,8 @@ def pause(run: RunPlace, host: Host) -> str:
     Refuses: Missing where the repository has no remote `origin`, or the push is refused for want
     of a login or a permission, with what git said; CantRun where git fails otherwise.
     """
-    raise NotImplementedError("repository.push.pause")
+    _commit_all(run, f"rn: paused {run.name}", host)
+    return _push(run, host)
 
 
 def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
@@ -51,4 +71,71 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
     repository has no remote `origin`, or gh may not open a pull request, with what gh said;
     CantRun where git or gh fails otherwise.
     """
-    raise NotImplementedError("repository.push.put_up")
+    checked(
+        host,
+        ["gh", "auth", "status"],
+        run.worktree,
+        Missing,
+        "gh has no login to open the pull request",
+    )
+    tree = form.read(run.tree)
+    node = form.deliverable(tree, deliverable)
+    _commit_all(run, f"rn: {node['name']}", host)
+    _push(run, host)
+    shown = host(["gh", "pr", "view", run.branch, "--json", "url"], run.worktree)
+    if shown.code == 0:
+        url = json.loads(shown.out)["url"]
+    else:
+        goal = tree["goal"]["decided"]
+        made = checked(
+            host,
+            [
+                "gh",
+                "pr",
+                "create",
+                "--head",
+                run.branch,
+                "--title",
+                sentences(goal)[0],
+                "--body",
+                goal,
+            ],
+            run.worktree,
+            Missing,
+            "gh may not open the pull request",
+        )
+        url = made.out.strip()
+    return f"{url}/files"
+
+
+def _commit_all(run: RunPlace, message: str, host: Host) -> None:
+    """Commits each change in the run's worktree with the message, where there's one."""
+    _git(host, run, "add", "-A")
+    if host(["git", "diff", "--cached", "--quiet"], run.worktree).code != 0:
+        _git(host, run, "commit", "-q", "-m", message)
+
+
+def _push(run: RunPlace, host: Host) -> str:
+    """Pushes the work's branch to origin, setting it upstream, and gives the hash it holds."""
+    if host(["git", "remote", "get-url", "origin"], run.worktree).code != 0:
+        raise Missing("the repository has no remote origin to push the run's work to; add one")
+    pushed = host(["git", "push", "-q", "-u", "origin", run.branch], run.worktree)
+    if pushed.code != 0 and any(each in pushed.err.lower() for each in _REFUSED):
+        raise Missing(
+            "origin refuses the push of the run's work, for want of a login or a permission:"
+            f" {pushed.err.strip()}"
+        )
+    if pushed.code != 0:
+        raise CantRun(f"git can't push the run's work: {pushed.err.strip()}")
+    return _git(host, run, "rev-parse", "HEAD").out.strip()
+
+
+def _git(host: Host, run: RunPlace, *words: str) -> Ran:
+    """Runs git in the run's worktree, raising CantRun with what it said where it fails."""
+    return checked(host, ["git", *words], run.worktree, CantRun, f"git {words[0]} fails")
+
+
+def _within(path: str, folder: str) -> bool:
+    """Whether the path lies in the folder."""
+    path, folder = os.path.normpath(path), os.path.normpath(folder)
+    return path.startswith(folder + os.sep)

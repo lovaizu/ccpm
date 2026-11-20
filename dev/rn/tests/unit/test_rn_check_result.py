@@ -23,10 +23,6 @@ from fault import Wrong
 from repo_files import write_files
 from template.check import faults as template_faults
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="check/result.py's faults raises NotImplementedError"
-)
-
 NAME = "20261120-a-command-with-which-the"
 COMMAND = rn_files.COMMAND
 LINE = "from invoicer.lines import parse_lines"

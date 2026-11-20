@@ -4,8 +4,10 @@ tree that a run starts from, with the goal as put and the plan as its own delive
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
+from fault import CantRun, Wrong
 from practice import Practice
 
 # A design tree, in the form of domain/best-practices/design-tree/design-tree.schema.json.
@@ -27,7 +29,27 @@ def started(goal: str, plan: str, practice: Practice) -> Tree:
     Changes: nothing.
     Refuses: Wrong where the goal is empty.
     """
-    raise NotImplementedError("tree.form.started")
+    if not goal:
+        raise Wrong("the goal is empty; the tree starts from the goal as one sentence")
+    conditions = [
+        {"id": condition["id"], "good": False, "decisions": []}
+        for factor in practice["goal"]["critical_success_factors"]
+        for condition in factor["necessary_conditions"]
+    ]
+    return {
+        "goal": {"decided": goal, "by": "reasoning"},
+        "deliverables": [
+            {
+                "name": goal,
+                "path": plan,
+                "kind": "design-tree",
+                "inputs": [],
+                "status": "open",
+                "necessary_conditions": conditions,
+            }
+        ],
+        "work": [],
+    }
 
 
 def read(path: str) -> Tree:
@@ -38,7 +60,13 @@ def read(path: str) -> Tree:
     Changes: nothing.
     Refuses: Wrong where the file is missing or isn't JSON, naming it.
     """
-    raise NotImplementedError("tree.form.read")
+    try:
+        with open(path, encoding="utf-8") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        raise Wrong(f"{path}: no design tree lies there") from None
+    except ValueError as error:
+        raise Wrong(f"{path}: isn't JSON: {error}") from None
 
 
 def write(path: str, tree: Tree) -> None:
@@ -50,7 +78,11 @@ def write(path: str, tree: Tree) -> None:
     with a newline, so that git shows each change by its lines.
     Refuses: CantRun where the file can't be written, naming it.
     """
-    raise NotImplementedError("tree.form.write")
+    try:
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(json.dumps(tree, indent=1) + "\n")
+    except OSError as error:
+        raise CantRun(f"{path}: the design tree can't be written: {error}") from None
 
 
 def at(tree: Tree, pointer: str) -> Any:
@@ -61,7 +93,17 @@ def at(tree: Tree, pointer: str) -> Any:
     Changes: nothing.
     Refuses: Wrong where the pointer names no node of the tree, naming the pointer.
     """
-    raise NotImplementedError("tree.form.at")
+    if not pointer.startswith("/"):
+        raise Wrong(f"{pointer}: names no node of the design tree, as a pointer begins with /")
+    node: Any = tree
+    for name in pointer[1:].split("/"):
+        if isinstance(node, dict) and name in node:
+            node = node[name]
+        elif isinstance(node, list) and name.isdecimal() and int(name) < len(node):
+            node = node[int(name)]
+        else:
+            raise Wrong(f"{pointer}: names no node of the design tree")
+    return node
 
 
 def deliverable(tree: Tree, path: str) -> Deliverable:
@@ -72,4 +114,8 @@ def deliverable(tree: Tree, path: str) -> Deliverable:
     Changes: nothing.
     Refuses: Wrong where no deliverable has the path, naming each path the tree holds.
     """
-    raise NotImplementedError("tree.form.deliverable")
+    for each in tree["deliverables"]:
+        if each["path"] == path:
+            return each
+    paths = ", ".join(each["path"] for each in tree["deliverables"]) or "none"
+    raise Wrong(f"{path}: no deliverable of the design tree has the path; its paths are {paths}")

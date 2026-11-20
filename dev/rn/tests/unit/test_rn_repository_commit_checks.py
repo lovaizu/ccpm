@@ -16,8 +16,6 @@ from repo_files import git
 from repository.commit_checks import findings
 from rn_runs import changed, head, hook, made_run
 
-pytestmark = pytest.mark.xfail(strict=True, reason="repository/commit_checks.py's body is empty")
-
 # A check that prints each file a commit would hold, one a line, and fails.
 NAMES = "git diff --cached --name-only\nexit 1\n"
 
@@ -78,17 +76,15 @@ def test_a_check_that_fails_gives_each_of_its_lines_in_order(tmp_path: Any, host
 
 @pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_a_check_set_by_core_hookspath_runs(tmp_path: Any, host: Any):
-    """Given a run whose repository sets its checks in hooks/ by core.hooksPath, one failing
+    """Given a repository whose checks are committed on main in hooks/, set by core.hooksPath,
+    one failing on each commit of the command, and a run made from it
     When findings is asked of the command
     Then it gives the failing check's line"""
-    run = made_run(str(tmp_path))
-    folder = os.path.join(run.repository, "hooks")
-    os.makedirs(folder)
-    path = os.path.join(folder, "pre-commit")
-    with open(path, "w", encoding="utf-8") as f:
-        f.write("#!/bin/sh\necho 'from hooksPath'\nexit 1\n")
-    os.chmod(path, 0o755)
-    git(run.repository, "config", "core.hooksPath", "hooks")
+    refuses = (
+        "git diff --cached --name-only | grep -qx 'invoicer/__main__.py' || exit 0\n"
+        "echo 'from hooksPath'\nexit 1\n"
+    )
+    run = made_run(str(tmp_path), hooks={"pre-commit": refuses})
     changed(run, {rn_files.COMMAND: "print()\n"})
     assert findings(run, [rn_files.COMMAND], host) == ["from hooksPath"]
 

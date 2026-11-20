@@ -15,7 +15,6 @@ import pytest
 import rn_files
 from repo_files import git
 from rn_bench import (
-    NOT_BUILT,
     Bench,
     cut_of,
     decided_command,
@@ -23,6 +22,7 @@ from rn_bench import (
     evaluator_started,
     generated,
     held,
+    listed,
     marked,
     pointed,
     ran,
@@ -38,13 +38,19 @@ from rn_bench import (
 )
 from rn_files import COMMAND
 
-pytestmark = pytest.mark.xfail(strict=True, reason=NOT_BUILT)
-
 
 def given_again(b: Bench, module: str, code: str) -> None:
-    """Gives an interface of the module of the bench's copy of rn again, at the end of its file."""
-    with open(os.path.join(b.rn, module), "a", encoding="utf-8") as f:
-        f.write("\n\n" + code)
+    """Gives an interface of the module of the bench's copy of rn again, at the end of its code:
+    before the block that runs a script's main, where the module holds one, so that the interface
+    given again is the one the main calls, else at the end of its file."""
+    path = os.path.join(b.rn, module)
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    main = 'if __name__ == "__main__":'
+    at = text.find(main)
+    at = len(text) if at < 0 else at
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text[:at] + "\n\n" + code + "\n\n" + text[at:])
 
 
 def steps_without(b: Bench, kept: str) -> None:
@@ -139,13 +145,18 @@ def any_end_passes(b: Bench) -> None:
 
 
 def no_parallel(b: Bench) -> None:
-    """The starts due give at most one start of a role at a time."""
+    """The starts due give one start at a time: none while a start of rn's subagents has no
+    result yet, and else at most one of a role."""
     given_again(
         b,
         "lane/adapters/starts_due.py",
         "_given_due = due\n\n\n"
         "def due(given, cwd):\n"
         "    out = _given_due(given, cwd)\n"
+        "    moves = given['run']['moves']\n"
+        "    started = sum(1 for m in moves if m['kind'] == 'start')\n"
+        "    if started > sum(1 for m in moves if m['kind'] == 'result'):\n"
+        "        return {'starts': []}\n"
         "    for s in out.get('starts', []):\n"
         "        s['count'] = min(s['count'], 1)\n"
         "    return out\n",
@@ -348,8 +359,12 @@ def test_the_generators_make_is_held_to_its_best_practices_make_items(b: Bench, 
     _, generator = decided_command(b)
     generator.write(os.path.join(b.worktree, COMMAND), "print('invoice')\n")
     answer = generator.bash("lane-step make")
-    assert answer.blocked
-    assert "N1.4" in answer.said
+    left = rn_files.items_at("light", "make")
+    assert "N1.4" in left
+    assert answer.said == (
+        f"You're at the step `make` of rn:generator, whose checklist isn't done: {listed(left)}.\n"
+        "Do each and mark it done with lane-item make <item> first."
+    )
 
 
 @pytest.mark.supports("P3.3", "Round")
@@ -425,8 +440,10 @@ def test_a_generator_marking_make_before_decide_is_stopped(b: Bench, broken: Non
     c, generator = signed_plan(b)
     read_step(b, c, generator, cut_of(c, generator))
     answer = generator.bash("lane-step make")
-    assert answer.blocked
-    assert "`decide`" in answer.said
+    assert answer.said == (
+        "You're at the step `decide` of rn:generator, which comes before `make`.\n"
+        "Do `decide` and mark it done with lane-step decide first."
+    )
 
 
 @pytest.mark.supports("P5.2", "Design tree")

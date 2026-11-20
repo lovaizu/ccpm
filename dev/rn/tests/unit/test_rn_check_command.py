@@ -16,10 +16,6 @@ import rn_files
 from check.command import USAGE, main
 from repo_files import write_files
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="check/command.py's main raises NotImplementedError"
-)
-
 NAME = "20261120-a-command-with-which-the"
 COMMAND = rn_files.COMMAND
 LINE = "from invoicer.lines import parse_lines"

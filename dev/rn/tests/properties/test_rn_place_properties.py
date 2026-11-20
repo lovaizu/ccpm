@@ -15,10 +15,6 @@ from hypothesis import given
 from hypothesis import strategies as st
 from repository.place import named
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="repository.place's bodies raise NotImplementedError"
-)
-
 MARKS = ",.;:!?'\"()/-_*#&"
 # A word as a person types it: letters and digits, with marks around them.
 WORD = st.builds(

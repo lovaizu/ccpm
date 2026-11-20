@@ -16,13 +16,13 @@ from claude_code import Agent, Conversation
 from gh import gh_double
 from repo_files import git
 from rn_bench import (
-    NOT_BUILT,
     Bench,
     command_signed,
     confirmed,
     cut_of,
-    ended,
     evaluator_started,
+    from_cwd,
+    listed,
     marked,
     planned_tree,
     ran,
@@ -35,9 +35,9 @@ from rn_bench import (
 )
 from rn_files import COMMAND, GOAL, GUIDE, WORDS
 
-pytestmark = pytest.mark.xfail(strict=True, reason=NOT_BUILT)
 
-
+# The case of /rn:dn, whose turn Lane holds to its steps only once starts_due gives no start at
+# rn:dn, as its contract says.
 def at_make(b: Bench, c: Conversation, generator: Agent) -> None:
     """The generator reads its inputs and keeps its step `decide`, each item done."""
     read_step(b, c, generator, cut_of(c, generator))
@@ -164,11 +164,20 @@ def test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice
 def test_a_generators_read_marked_before_its_cut_is_read_whole_is_stopped(b: Bench):
     """Given a run whose command's generator started
     When it reports `read` done before reading its Cut
-    Then Lane stops the mark, naming the Cut's path"""
-    _c, generator = signed_plan(b)
+    Then Lane stops the mark with the step's sentence, naming the Cut, light's best-practice.md,
+    and invoicer's lines in the worktree, each unread from its line 1"""
+    c, generator = signed_plan(b)
+    given = cut_of(c, generator)
+    paths = [
+        from_cwd(c, generator.start_use["tool_input"]["prompt"]),
+        from_cwd(c, os.path.join(given["best_practice"], "best-practice.md")),
+        *[from_cwd(c, each) for each in given["inputs"]],
+    ]
     answer = generator.bash("lane-step read")
-    assert answer.blocked
-    assert generator.start_use["tool_input"]["prompt"] in answer.said
+    assert answer.said == (
+        f"You're at the step `read` of rn:generator, which reads whole {listed(paths)}.\n"
+        f"Read {listed([f'{each} from its line 1' for each in paths])} before you mark it done."
+    )
 
 
 @pytest.mark.supports("generator")
@@ -230,13 +239,18 @@ def test_a_generators_end_with_its_deliverable_off_its_template_is_held(b: Bench
 
 @pytest.mark.supports("generator", "scripts")
 def test_the_generators_checks_give_the_repositorys_commit_check_findings(b: Bench):
-    """Given invoicer's repository with a pre-commit hook that refuses each commit, saying
-    `invoicer/__main__.py: no tests`, and a run whose command's generator wrote the command
+    """Given invoicer's repository with a pre-commit hook that refuses each commit of the command,
+    saying `invoicer/__main__.py: no tests`, and a run whose command's generator wrote the command
     When it runs repository.py checks on the command
     Then it gives 1 with the hook's line, and the repository's own index is as it was"""
     hook = os.path.join(b.repo, ".git", "hooks", "pre-commit")
     with open(hook, "w", encoding="utf-8") as f:
-        f.write("#!/bin/sh\necho 'invoicer/__main__.py: no tests'\nexit 1\n")
+        f.write(
+            "#!/bin/sh\n"
+            "git diff --cached --name-only | grep -qx 'invoicer/__main__.py' || exit 0\n"
+            "echo 'invoicer/__main__.py: no tests'\n"
+            "exit 1\n"
+        )
     os.chmod(hook, 0o755)
     c, generator = signed_plan(b)
     at_make(b, c, generator)
@@ -311,7 +325,6 @@ def test_a_runs_own_best_practice_is_taken_before_rns(b: Bench):
     cut_path = shared_steps(
         b, c, ground="Signed off.", moves=[b.script("tree", "cut", b.run, "generator", COMMAND)]
     )[0].strip()
-    ended(c, "Making it.")
     given = rn_files.read_json(os.path.join(b.repo, cut_path))
     assert os.path.normpath(os.path.join(b.repo, given["best_practice"])) == own
 

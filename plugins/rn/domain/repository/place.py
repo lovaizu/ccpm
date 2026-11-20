@@ -3,8 +3,18 @@ and branch, its folder, and the paths of its design tree and its Rounds in that 
 
 from __future__ import annotations
 
+import os
+import re
 from dataclasses import dataclass
 from datetime import date
+
+from fault import Wrong
+
+# The most words of the goal that a run's name takes.
+_WORDS = 5
+# A run's folder, `<repository>/.claude/worktrees/rn-<name>/.rn/<name>`.
+_FOLDER = re.compile(r"(.+)/\.claude/worktrees/rn-([^/]+)/\.rn/([^/]+)")
+_FORM = "<repository>/.claude/worktrees/rn-<name>/.rn/<name>"
 
 
 @dataclass(frozen=True)
@@ -18,27 +28,27 @@ class RunPlace:
     @property
     def worktree(self) -> str:
         """The run's own worktree, `<repository>/.claude/worktrees/rn-<name>/`."""
-        raise NotImplementedError("repository.place.RunPlace.worktree")
+        return os.path.join(self.repository, ".claude", "worktrees", self.branch)
 
     @property
     def branch(self) -> str:
         """The work's branch, which the worktree has checked out, `rn-<name>`."""
-        raise NotImplementedError("repository.place.RunPlace.branch")
+        return f"rn-{self.name}"
 
     @property
     def folder(self) -> str:
         """The run's folder on the work's branch, `<worktree>/.rn/<name>/`."""
-        raise NotImplementedError("repository.place.RunPlace.folder")
+        return os.path.join(self.worktree, ".rn", self.name)
 
     @property
     def tree(self) -> str:
         """The run's design tree, `<folder>/design-tree.json`."""
-        raise NotImplementedError("repository.place.RunPlace.tree")
+        return os.path.join(self.folder, "design-tree.json")
 
     @property
     def rounds(self) -> str:
         """The folder of the run's Rounds, `<folder>/rounds/`."""
-        raise NotImplementedError("repository.place.RunPlace.rounds")
+        return os.path.join(self.folder, "rounds")
 
 
 def named(today: date, goal: str) -> str:
@@ -51,7 +61,12 @@ def named(today: date, goal: str) -> str:
     Refuses: Wrong where the goal holds no letter or digit, saying that `/rn:up` takes what the
     user wants in words.
     """
-    raise NotImplementedError("repository.place.named")
+    if not any(each.isalnum() for each in goal):
+        raise Wrong(
+            f"the goal {goal!r} holds no letter or digit; /rn:up takes what the user wants in words"
+        )
+    words = ["".join(each for each in word if each.isalnum()).lower() for word in goal.split()]
+    return f"{today:%Y%m%d}-{'-'.join(words[:_WORDS])}"
 
 
 def of_folder(cwd: str, folder: str) -> RunPlace:
@@ -64,4 +79,11 @@ def of_folder(cwd: str, folder: str) -> RunPlace:
     Refuses: Wrong where the path isn't a run's folder of that form, or holds no design tree,
     naming the path and the form it takes.
     """
-    raise NotImplementedError("repository.place.of_folder")
+    path = os.path.normpath(os.path.join(cwd, folder))
+    found = _FOLDER.fullmatch(path)
+    if not found or found[2] != found[3]:
+        raise Wrong(f"{folder}: isn't a run's folder, which takes the form {_FORM}")
+    run = RunPlace(found[1], found[2])
+    if not os.path.isfile(run.tree):
+        raise Wrong(f"{folder}: holds no design tree, design-tree.json, as a run's folder does")
+    return run

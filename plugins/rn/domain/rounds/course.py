@@ -56,4 +56,49 @@ def next_of(deliverable: Deliverable, rounds: Sequence[Done], refactors: bool) -
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("rounds.course.next_of")
+    conditions = deliverable["necessary_conditions"]
+    short = {each["id"] for each in conditions if not each["good"]}
+    opened = {
+        each["id"]
+        for each in conditions
+        for decision in each["decisions"]
+        if decision["decided"] is None
+    }
+    past = _past(rounds)
+    if past and short and opened == short:
+        return _SIGN_OFF
+    if opened and not (past and opened <= short):
+        return Next("answer", None, False)
+    if not rounds:
+        return Next("generator", "content", False)
+    return _after(rounds, short, refactors)
+
+
+# The sign-off, which a deliverable waits on with no Round to start.
+_SIGN_OFF = Next("sign-off", None, False)
+
+
+def _stage(rounds: Sequence[Done]) -> list[Done]:
+    """The Rounds of the last Round's stage."""
+    return [each for each in rounds if each[0].stage == rounds[-1][0].stage]
+
+
+def _past(rounds: Sequence[Done]) -> bool:
+    """Whether the last Round's stage has LIMIT Rounds, each with both results."""
+    stage = _stage(rounds) if rounds else []
+    return len(stage) >= LIMIT and all(made and judged for _, made, judged in stage)
+
+
+def _after(rounds: Sequence[Done], short: set[str], refactors: bool) -> Next:
+    """What the deliverable waits on from its last Round, no point of it waiting on the user."""
+    last, made, judged = rounds[-1]
+    if made is None or made["result"] == "point":
+        return Next("generator", last.stage, True)
+    if judged is None:
+        return Next("evaluator", last.stage, False)
+    if short:
+        more = len(_stage(rounds)) < LIMIT
+        return Next("generator", last.stage, False) if more else Next("orchestrator", None, False)
+    if refactors and not any(each[0].stage == "refactor" for each in rounds):
+        return Next("generator", "refactor", False)
+    return _SIGN_OFF

@@ -126,6 +126,8 @@ def bench(tmp: str) -> Bench:
     origin = rn_files.with_origin(repo, os.path.join(tmp, "origin.git"))
     gh = os.path.join(tmp, "gh")
     env = environment(tmp)
+    # The case's time zone, so that each script and hook takes the day that the case takes.
+    env.update({name: os.environ[name] for name in ("TZ",) if name in os.environ})
     env["PATH"] = os.pathsep.join([gh_double.program(os.path.join(tmp, "bin"), gh), env["PATH"]])
     return Bench(rn, lane, repo, origin, gh, os.path.join(tmp, "claude"), env)
 
@@ -143,10 +145,29 @@ def ran(c: Conversation, command: str, agent: Agent | None = None) -> str:
 
 
 def marked(c: Conversation, step: str, agent: Agent | None = None) -> Answer:
-    """The main conversation, or the agent, reports the step done; the mark must go through."""
+    """The main conversation, or the agent, reports the step done; the mark must go through, as
+    Lane says no step's sentence of it. Lane stops a mark at its PostToolUse, which the double
+    gives as what the model reads, not as a call stopped."""
     answer = c.bash(f"lane-step {step}", agent)
     assert not answer.blocked, answer.said
+    assert not stopped(answer.said), answer.said
     return answer
+
+
+def stopped(said: str) -> bool:
+    """Whether what the model reads holds a sentence of Lane's that stops a move."""
+    return any(each in said for each in ("You're at the step", "You end "))
+
+
+def from_cwd(c: Conversation, path: str) -> str:
+    """The path as Lane compares it, from the conversation's folder, as rules.py gives each."""
+    return os.path.relpath(os.path.realpath(os.path.join(c.cwd, path)), os.path.realpath(c.cwd))
+
+
+def listed(values: Sequence[str]) -> str:
+    """The values as Lane's sentences list them, the last two joined by `and`."""
+    *before, last = values
+    return f"{', '.join(before)} and {last}" if before else last
 
 
 def touched_items(b: Bench, c: Conversation, agent: Agent | None = None) -> list[str]:
@@ -303,7 +324,10 @@ COMMAND_TEXT = (
     "with open(sys.argv[1], encoding='utf-8') as f:\n"
     "    print(len(parse_lines(f.read().replace(',', ';'))))\n"
 )
-GUIDE_TEXT = "# Print an invoice\n\nSave the lines as `lines.csv`, and type the command.\n"
+# The guide, a README that holds the readme template, as check.py holds a generator's Markdown to
+# its kind's template: rn's own, which check.sh holds to it.
+with open(os.path.join(RN, "README.md"), encoding="utf-8") as _readme:
+    GUIDE_TEXT = _readme.read()
 
 
 def cut_of(c: Conversation, agent: Agent) -> dict[str, Any]:

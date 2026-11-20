@@ -24,11 +24,6 @@ from fault import Wrong
 from rn_adapters import adapter
 from rn_files import COMMAND, GUIDE
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="starts_due.py's bodies raise NotImplementedError"
-)
-
-
 ADAPTER = adapter("starts_due")
 NAME = "20261120-invoices"
 CHANGELOG = "CHANGELOG.md"
@@ -110,12 +105,13 @@ def cwd(tmp_path: Any) -> str:
 
 
 @pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
-def test_a_run_whose_latest_command_is_a_pause_ends(cwd: str):
+def test_a_run_whose_latest_command_is_a_pause_starts_none_and_goes_on(cwd: str):
     """Given a run whose command is due, and the moves /rn:up then /rn:dn
     When the adapter gives the starts due
-    Then the run ends"""
+    Then no start is due, and the run doesn't end, so that Lane holds the pause's turn to its
+    steps"""
     a_run(cwd, walkthrough())
-    assert ADAPTER.due(run(command("rn:up"), command("rn:dn")), cwd) == {"ends": True}
+    assert ADAPTER.due(run(command("rn:up"), command("rn:dn")), cwd) == {"starts": []}
 
 
 @pytest.mark.supports(
@@ -130,22 +126,72 @@ def test_a_run_picked_up_after_a_pause_goes_on(cwd: str):
     assert starts(out) == due(("rn:generator", 1))
 
 
-@pytest.mark.supports(
-    "test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch"
-)
-def test_a_run_whose_deliverables_are_each_done_ends(cwd: str):
-    """Given a run whose plan, command, and guide are each done
-    When the adapter gives the starts due
-    Then the run ends"""
-    tree = rn_files.tree(
+def each_done(name: str = NAME) -> dict[str, Any]:
+    """The tree of a run whose plan, command, and guide are each done."""
+    return rn_files.tree(
         [
-            rn_files.done_node(rn_files.GOAL, rn_files.plan_path(NAME), "design-tree"),
+            rn_files.done_node(rn_files.GOAL, rn_files.plan_path(name), "design-tree"),
             rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light"),
             rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme"),
         ]
     )
-    a_run(cwd, tree)
-    assert ADAPTER.due(run(command("rn:ty")), cwd) == {"ends": True}
+
+
+@pytest.mark.supports(
+    "test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch"
+)
+def test_a_run_called_with_its_words_whose_deliverables_are_each_done_ends(cwd: str):
+    """Given run 20261120-invoices, whose plan, command, and guide are each done, called by
+    /rn:up with the words `invoices`, with no start among the moves
+    When the adapter gives the starts due after /rn:ty
+    Then the run ends, found by its words though no run can be picked up"""
+    a_run(cwd, each_done())
+    moves = run(command("rn:up"), command("rn:ty"), words="invoices")
+    assert ADAPTER.due(moves, cwd) == {"ends": True}
+
+
+@pytest.mark.supports(
+    "test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch"
+)
+def test_a_run_called_with_words_of_no_run_takes_the_run_that_can_be_picked_up(cwd: str):
+    """Given run 20261120-invoices, each deliverable done, and run 20261121-changes, whose
+    command waits on its generator, called with the words `invoice`, which nearly name the first
+    When the adapter gives the starts due
+    Then the generator is due once, of 20261121-changes, as no run's name part is `invoice`"""
+    a_run(cwd, each_done())
+    newer = "20261121-changes"
+    a_run(cwd, rn_files.walkthrough_tree(newer), newer)
+    moves = run(command("rn:up"), words="invoice")
+    assert starts(ADAPTER.due(moves, cwd)) == due(("rn:generator", 1))
+
+
+@pytest.mark.supports("test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was")
+def test_a_run_called_with_words_is_the_newest_of_their_name_done_or_not(cwd: str):
+    """Given run 20261120-invoices, whose command waits on its generator, run 20261121-invoices,
+    each deliverable done, and run 20261122-changes, whose command waits on its generator, called
+    with the words `invoices`
+    When the adapter gives the starts due
+    Then the run ends, as the newest run of the words' name part is 20261121-invoices, done"""
+    a_run(cwd, walkthrough())
+    done = "20261121-invoices"
+    a_run(cwd, each_done(done), done)
+    other = "20261122-changes"
+    a_run(cwd, rn_files.walkthrough_tree(other), other)
+    assert ADAPTER.due(run(command("rn:up"), words="invoices"), cwd) == {"ends": True}
+
+
+@pytest.mark.supports("test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was")
+def test_a_run_called_with_words_is_found_by_them_before_the_newest_with_work_left(cwd: str):
+    """Given run 20261120-invoices, whose command waits on its generator, and a newer run
+    20261121-changes, whose changelog and command wait on their generators, called with the words
+    `invoices`
+    When the adapter gives the starts due
+    Then the generator is due once, of 20261120-invoices, not twice, of the newer run"""
+    a_run(cwd, walkthrough())
+    newer = "20261121-changes"
+    a_run(cwd, with_changelog(rn_files.walkthrough_tree(newer)), newer)
+    moves = run(command("rn:up"), words="invoices")
+    assert starts(ADAPTER.due(moves, cwd)) == due(("rn:generator", 1))
 
 
 # No start while the run waits.

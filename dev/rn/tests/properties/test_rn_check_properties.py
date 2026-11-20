@@ -25,10 +25,6 @@ from hypothesis import given
 from hypothesis import strategies as st
 from template import check as template
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="check.result's bodies raise NotImplementedError"
-)
-
 LINE = "# Print an invoice"
 WAYS = st.sampled_from(["good", "more", "both", "none", "good twice", "more twice"])
 

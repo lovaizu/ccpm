@@ -5,11 +5,16 @@ proposals the user signed off."""
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Mapping
 
+from fault import Wrong
 from rounds.course import Next
 
 from tree.form import Tree
+
+# The statuses of a deliverable not yet done.
+_OPEN = ("open", "doing")
 
 
 def waiting(tree: Tree, nexts: Mapping[str, Next]) -> str | None:
@@ -23,7 +28,15 @@ def waiting(tree: Tree, nexts: Mapping[str, Next]) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("tree.signoff.waiting")
+    opened = [each for each in tree["deliverables"] if each["status"] in _OPEN]
+    for each in opened:
+        good = all(condition["good"] for condition in each["necessary_conditions"])
+        if each["kind"] == "design-tree" and good:
+            return each["path"]
+    for each in opened:
+        if each["path"] in nexts and nexts[each["path"]].waits_on == "sign-off":
+            return each["path"]
+    return None
 
 
 def signed_off(tree: Tree, deliverable: str) -> Tree:
@@ -36,4 +49,22 @@ def signed_off(tree: Tree, deliverable: str) -> Tree:
     Changes: nothing.
     Refuses: Wrong where no open deliverable has the path.
     """
-    raise NotImplementedError("tree.signoff.signed_off")
+    signed = copy.deepcopy(tree)
+    deliverables = signed["deliverables"]
+    for index, node in enumerate(deliverables):
+        if node["path"] == deliverable and node["status"] in _OPEN:
+            deliverables[index] = _done(node)
+            signed["work"] = [each for each in signed["work"] if each["path"] != deliverable]
+            return signed
+    raise Wrong(f"{deliverable}: no open deliverable of the design tree has the path to sign off")
+
+
+def _done(node: Tree) -> Tree:
+    """The deliverable done: its one line, or, for a node with no file, with its conditions."""
+    kept = ("name", "path", "more_paths", "kind")
+    done = {key: node[key] for key in kept if key in node}
+    done["status"] = "done"
+    if "file" in node:
+        done["file"] = False
+        done["necessary_conditions"] = node["necessary_conditions"]
+    return done

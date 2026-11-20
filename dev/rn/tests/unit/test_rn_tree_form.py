@@ -16,10 +16,6 @@ from fault import CantRun, Wrong
 from rn_files import COMMAND, GOAL, GUIDE
 from tree.form import at, deliverable, read, started, write
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="tree/form.py's bodies raise NotImplementedError"
-)
-
 NAME = "20261120-a-command-with-which-the"
 PLAN = rn_files.plan_path(NAME)
 

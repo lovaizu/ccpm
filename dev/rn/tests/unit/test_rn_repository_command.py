@@ -17,8 +17,6 @@ from repo_files import git
 from repository.command import USAGE, main
 from rn_runs import NAME, changed, head, hook, made_run
 
-pytestmark = pytest.mark.xfail(strict=True, reason="repository/command.py's body is empty")
-
 RUN = f".claude/worktrees/rn-{NAME}/.rn/{NAME}"
 
 

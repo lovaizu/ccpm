@@ -17,10 +17,6 @@ import rn_files
 from rounds.course import LIMIT, Next, next_of
 from rounds.files import Result, Round
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="rounds/course.py's next_of raises NotImplementedError"
-)
-
 COMMAND = rn_files.COMMAND
 
 Done = tuple[Round, Optional[Result], Optional[Result]]

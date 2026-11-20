@@ -18,10 +18,6 @@ from fault import Wrong
 from repository.place import RunPlace
 from rounds.files import Round, at, new, of, result
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="rounds/files.py's bodies raise NotImplementedError"
-)
-
 NAME = "20261120-a-command-with-which-the"
 GUIDE = rn_files.GUIDE
 

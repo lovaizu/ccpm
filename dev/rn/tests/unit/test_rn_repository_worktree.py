@@ -19,8 +19,6 @@ from repository.place import RunPlace
 from repository.worktree import new, paused
 from rn_runs import NAME, head
 
-pytestmark = pytest.mark.xfail(strict=True, reason="repository/worktree.py's bodies are empty")
-
 GOAL = rn_files.GOAL
 PRACTICE = rn_files.practice("design-tree")
 

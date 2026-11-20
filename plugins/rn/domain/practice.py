@@ -5,7 +5,21 @@ that an evaluator judges by."""
 
 from __future__ import annotations
 
+import copy
+import json
+import os
 from typing import Any, NamedTuple
+
+from check.form import faults
+from fault import Wrong
+
+# rn's form of a best practice, beside this module.
+_SCHEMA = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "schemas", "best-practice.schema.json"
+)
+_FILE = "best-practice.json"
+# The kinds whose deliverables are code, refactored by refactor-code.
+_CODE = {"code", "software-design", "test-design", "test-implementation"}
 
 # A best practice as its best-practice.json holds it, in the form of
 # domain/schemas/best-practice.schema.json.
@@ -28,7 +42,18 @@ def kinds(plugin_root: str, worktree: str) -> dict[str, str]:
     Changes: nothing.
     Refuses: nothing; a folder with no `best-practice.json` is no kind.
     """
-    raise NotImplementedError("practice.kinds")
+    found: dict[str, str] = {}
+    for top in (
+        os.path.join(plugin_root, "domain", "best-practices"),
+        os.path.join(worktree, ".rn", "best-practices"),
+    ):
+        if not os.path.isdir(top):
+            continue
+        for kind in os.listdir(top):
+            folder = os.path.join(top, kind)
+            if os.path.isfile(os.path.join(folder, _FILE)):
+                found[kind] = folder
+    return found
 
 
 def read(folder: str) -> Practice:
@@ -41,7 +66,18 @@ def read(folder: str) -> Practice:
     `domain/schemas/best-practice.schema.json`, as `check.form.faults` holds it, naming the file
     and the first fault.
     """
-    raise NotImplementedError("practice.read")
+    path = os.path.join(folder, _FILE)
+    try:
+        with open(path, encoding="utf-8") as file:
+            practice = json.load(file)
+    except FileNotFoundError:
+        raise Wrong(f"{path}: no best practice lies there") from None
+    except ValueError as error:
+        raise Wrong(f"{path}: isn't JSON: {error}") from None
+    found = faults(practice, _SCHEMA)
+    if found:
+        raise Wrong(f"{path}: leaves rn's form of a best practice at {found[0]}")
+    return practice
 
 
 def items(practice: Practice, at: str) -> list[str]:
@@ -53,7 +89,14 @@ def items(practice: Practice, at: str) -> list[str]:
     Changes: nothing.
     Refuses: Wrong where `at` is neither `decide` nor `make`.
     """
-    raise NotImplementedError("practice.items")
+    if at not in ("decide", "make"):
+        raise Wrong(f"a maker takes items at decide or make, not {at!r}")
+    return [
+        f"{condition['id']}.{place}"
+        for condition in _conditions(practice)
+        for place, item in enumerate(condition["items"], 1)
+        if item["at"] == at
+    ]
 
 
 def judged(practice: Practice) -> dict[str, Any]:
@@ -66,7 +109,12 @@ def judged(practice: Practice) -> dict[str, Any]:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("practice.judged")
+    goal = copy.deepcopy(practice["goal"])
+    for factor in goal["critical_success_factors"]:
+        for condition in factor["necessary_conditions"]:
+            # A condition's practice is its why and its items, which its form holds beside it.
+            del condition["why"], condition["items"]
+    return goal
 
 
 def refactoring(kind: str) -> str | None:
@@ -79,4 +127,15 @@ def refactoring(kind: str) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    raise NotImplementedError("practice.refactoring")
+    if kind == "light":
+        return None
+    return "refactor-code" if kind in _CODE else "refactor-doc"
+
+
+def _conditions(practice: Practice) -> list[dict[str, Any]]:
+    """Each necessary condition of the best practice, in its order."""
+    return [
+        condition
+        for factor in practice["goal"]["critical_success_factors"]
+        for condition in factor["necessary_conditions"]
+    ]

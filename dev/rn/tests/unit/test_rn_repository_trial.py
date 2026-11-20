@@ -19,8 +19,6 @@ from repository.trial import folder, starting_state
 from rn_runs import NAME, changed, made_run
 from rounds.files import Round
 
-pytestmark = pytest.mark.xfail(strict=True, reason="repository/trial.py's bodies are empty")
-
 
 def a_round(run: RunPlace, deliverable: str, stage: str = "content", number: int = 1) -> Round:
     """The Round of the run's deliverable, by its folder in the run's Rounds."""
