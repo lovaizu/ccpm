@@ -221,7 +221,40 @@
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
       "path": "plugins/lane",
       "kind": "software-design",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane/docs/rules-and-adapters.md",
+        "plugins/rn/domain/best-practices/software-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The change",
+              "decided": "the main conversation's steps given at each turn by the plugin's adapter of the rules where lane/rules.json names its skill with no steps, and a checklist's items given by the plugin's command at the mark, as Lane's architecture's S11 and its strategies say",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's and rn's developers get each unit and integration case's result in seconds, as each runs in one process through the double of Claude Code",
@@ -233,7 +266,57 @@
       "name": "Lane's developers see, before anyone builds a part, whether Lane's parts joined as its architecture draws give each key result",
       "path": "dev/lane/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/lane/product-vision.md",
+        "plugins/lane/README.md",
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "plugins/rn/domain/best-practices/test-design"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The change",
+              "decided": "the cases of S11 and of a checklist whose items a command gives, derived by each technique of the test design best practice, and each case that the change reaches derived again",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's AI notices when it writes a file that its step doesn't name",
@@ -269,7 +352,121 @@
       "name": "A plugin's AI notices when it ends a step before each item of the step's checklist is done",
       "path": "dev/lane/tests/integration/test_lane_s6_checklist.py",
       "kind": "code",
-      "status": "done"
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests",
+        "plugins/rn/domain/best-practices/code"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The change",
+              "decided": "the code that the cases of a checklist whose items a command gives ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A plugin's main conversation takes, at each turn, the steps that its adapter gives for that turn's event",
+      "path": "dev/lane/tests/integration/test_lane_s11_turns.py",
+      "kind": "code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane",
+        "dev/lane/tests",
+        "plugins/rn/domain/best-practices/code"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The change",
+              "decided": "the code that S11's cases ask",
+              "by": "reasoning"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's run moves on only by the result its AI gives, never by what its reply says",
@@ -314,6 +511,7 @@
       "status": "open",
       "inputs": [
         "dev/rn/architecture.md",
+        "plugins/lane/docs/rules-and-adapters.md",
         "plugins/rn/domain/best-practices/software-design"
       ],
       "necessary_conditions": [
@@ -324,6 +522,11 @@
             {
               "about": "The rework",
               "decided": "made again from rn's architecture as it changed, its scripts by the plugin guide's practice of a script that a role runs",
+              "by": "reasoning"
+            },
+            {
+              "about": "The gaps",
+              "decided": "the run's design tree made with the goal as put; the plan kept as the design tree's own deliverable, and a sign-off as its deliverable done; a role's point kept as an open decision of its condition, and the user's answer as its decision; a finding dropped by holding its condition good, so the next generator gets each finding of a condition still short; the evaluator's folder of the starting state named by its Round, so that the adapter gives its writes at the start; the evaluator gives no point; the orchestrator's steps given at each turn by lane/adapters/rules.py, with the nodes that a change touches as a checklist that tree.py gives",
               "by": "reasoning"
             }
           ]
@@ -410,7 +613,9 @@
         "dev/rn/architecture.md",
         "plugins/rn",
         "dev/rn/tests",
-        "plugins/rn/domain/best-practices/code"
+        "plugins/rn/domain/best-practices/code",
+        "dev/lane/tests/integration/test_lane_s6_checklist.py",
+        "dev/lane/tests/integration/test_lane_s11_turns.py"
       ],
       "necessary_conditions": [
         {
@@ -470,7 +675,9 @@
         "dev/rn/architecture.md",
         "plugins/rn",
         "dev/rn/tests",
-        "plugins/rn/domain/best-practices/code"
+        "plugins/rn/domain/best-practices/code",
+        "dev/lane/tests/integration/test_lane_s6_checklist.py",
+        "dev/lane/tests/integration/test_lane_s11_turns.py"
       ],
       "necessary_conditions": [
         {
@@ -530,7 +737,9 @@
         "dev/rn/architecture.md",
         "plugins/rn",
         "dev/rn/tests",
-        "plugins/rn/domain/best-practices/code"
+        "plugins/rn/domain/best-practices/code",
+        "dev/lane/tests/integration/test_lane_s6_checklist.py",
+        "dev/lane/tests/integration/test_lane_s11_turns.py"
       ],
       "necessary_conditions": [
         {
@@ -590,7 +799,9 @@
         "dev/rn/architecture.md",
         "plugins/rn",
         "dev/rn/tests",
-        "plugins/rn/domain/best-practices/code"
+        "plugins/rn/domain/best-practices/code",
+        "dev/lane/tests/integration/test_lane_s6_checklist.py",
+        "dev/lane/tests/integration/test_lane_s11_turns.py"
       ],
       "necessary_conditions": [
         {
@@ -1132,11 +1343,27 @@
   "work": [
     {
       "do": "make",
+      "path": "plugins/lane"
+    },
+    {
+      "do": "make",
       "path": "plugins/rn"
     },
     {
       "do": "make",
+      "path": "dev/lane/tests"
+    },
+    {
+      "do": "make",
       "path": "dev/rn/tests"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s6_checklist.py"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s11_turns.py"
     },
     {
       "do": "make",
