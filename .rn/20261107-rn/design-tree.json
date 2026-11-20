@@ -343,6 +343,16 @@
               "by": "user"
             },
             {
+              "about": "Lane's property-based tests",
+              "decided": "dev/lane/tests/properties holds one property for each interface that Lane's Test strategy names, reading the rules, each rule type's check, and the guard's placing of moves, as the code best practice's N7.4 asks, in the form of rn's; quality.sh runs them apart from the work",
+              "by": "reasoning"
+            },
+            {
+              "about": "A contract left out",
+              "decided": "rule_types/result.py's given states what it takes, gives, changes, and refuses, as the code best practice's N2 asks",
+              "by": "reasoning"
+            },
+            {
               "about": "Mends after Lane's code met its cases",
               "decided": "a blank part of a Bash command, such as a blank line or a closing newline or ;, is no command and goes through, as multi-line commands hold them; a refusal of the rules out of form says what the form takes in words, never as a pattern",
               "by": "reasoning"
