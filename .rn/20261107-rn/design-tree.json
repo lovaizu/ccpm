@@ -122,125 +122,7 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "open",
-      "inputs": [
-        "dev/rn/product-vision.md",
-        "plugins/rn/README.md",
-        "plugins/rn/domain/best-practices/architecture"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Entries",
-              "decided": "each skill is an entry alone that points to domain/orchestrator.md; the main conversation follows it, which holds the steps of each entry, a new request, a pick-up, a send-back, a sign-off, a pause, and an answer, and the steps that every event shares",
-              "by": "user"
-            },
-            {
-              "about": "Roles",
-              "decided": "the subagents are the generator and the evaluator alone, one evaluator for each Round judging every condition from one trial; the main conversation starts and stops each role",
-              "by": "user"
-            },
-            {
-              "about": "Rounds",
-              "decided": "the generator tries the deliverable as its people would and writes good with its lines; the next Round's generator gets the evaluator's good and good_when that the orchestrator keeps, as given; within a session the orchestrator resumes the generator and the evaluator of the last Round by SendMessage, and in a new conversation it starts them from the Round's files",
-              "by": "user"
-            },
-            {
-              "about": "Scripts",
-              "decided": "each step with one right result runs a script: making the run's worktree and an empty design tree, finding the run to pick up, recording a sign-off, committing and pushing on a pause, putting a deliverable up with its commit, push, and pull request, listing the nodes a change of the design tree touches, the repository's commit checks on the generator's files, and the evaluator's folder of the people's starting state",
-              "by": "user"
-            },
-            {
-              "about": "Lane",
-              "decided": "Lane holds every activity of every role that one of its rules can hold, the main conversation's steps included, such as a checklist of the nodes that a change of the design tree touches",
-              "by": "user"
-            },
-            {
-              "about": "Test strategy",
-              "decided": "no mutation testing and no E2E test: the integration tests check the whole flow with the prompts' unit cases, and the user tries rn after; property-based tests take their invariants from the requirements alone",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers know whom Lane serves, and the one way it serves them",
@@ -1248,10 +1130,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "dev/rn/architecture.md"
-    },
     {
       "do": "make",
       "path": "plugins/rn"
