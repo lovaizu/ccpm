@@ -329,249 +329,25 @@
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
       "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py",
       "kind": "code",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests",
-        "plugins/rn/domain/best-practices/code",
-        "dev/lane/tests/integration/test_lane_s6_checklist.py",
-        "dev/lane/tests/integration/test_lane_s11_turns.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The rework",
-              "decided": "the code that the cases ask, as rn's architecture changed",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "The person's /rn:dn stops the run where it stands, and /rn:up in any conversation goes on from there",
       "path": "dev/rn/tests/integration/test_rn_s2_pause.py",
       "kind": "code",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests",
-        "plugins/rn/domain/best-practices/code",
-        "dev/lane/tests/integration/test_lane_s6_checklist.py",
-        "dev/lane/tests/integration/test_lane_s11_turns.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The rework",
-              "decided": "the code that the cases ask, as rn's architecture changed",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each principle item of rn's architecture holds where its part keeps it, and its case fails with that part taken out",
       "path": "dev/rn/tests/integration/test_rn_principles.py",
       "kind": "code",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests",
-        "plugins/rn/domain/best-practices/code",
-        "dev/lane/tests/integration/test_lane_s6_checklist.py",
-        "dev/lane/tests/integration/test_lane_s11_turns.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The rework",
-              "decided": "the code that the cases ask, as rn's architecture changed",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
       "path": "dev/rn/tests/integration/test_rn_components.py",
       "kind": "code",
-      "status": "open",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn",
-        "dev/rn/tests",
-        "plugins/rn/domain/best-practices/code",
-        "dev/lane/tests/integration/test_lane_s6_checklist.py",
-        "dev/lane/tests/integration/test_lane_s11_turns.py"
-      ],
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The rework",
-              "decided": "the code that the cases ask, as rn's architecture changed",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
@@ -1035,22 +811,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_s2_pause.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_principles.py"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests/integration/test_rn_components.py"
-    },
     {
       "do": "make",
       "path": "plugins/rn/domain/orchestrator.md"
