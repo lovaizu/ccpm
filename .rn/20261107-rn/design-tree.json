@@ -400,342 +400,19 @@
       "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/README.md",
-        "dev/rn/tests",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Keeps the work on what brings the people closer: reviews the tree each turn, asking the user only theirs, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            },
-            {
-              "about": "What a pause pushes",
-              "decided": "each change of the run's worktree, the deliverables' work so far with the run's folder, as the README's pause says its work so far is pushed",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What Lane holds",
-              "decided": "lane/rules.json gives rn:up one step, never marked done, whose writes rule names .rn/ alone, so that the orchestrator writes only the run's folder, as P3.1 keeps running apart from making; it gives the orchestrator's steps of each turn no rule, as Lane counts the main conversation's steps once for each run; a principle case of P3.1 has the orchestrator's write beside .rn/ stopped with the step's sentence and its write of the design tree let through",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
       "path": "plugins/rn/domain/generator.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/README.md",
-        "dev/rn/tests",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Makes the deliverable from its cut with only what brings its people closer, handing back each point it can't settle, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            },
-            {
-              "about": "The checklist of each step",
-              "decided": "each step that keeps a checklist gets from rn's adapter of a step's items only the practices of that step, its decide items in the step that decides and its make items in the step that makes, as lane/adapters/rules.py gives them",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What Lane holds",
-              "decided": "the generator writes only its deliverable and its result, by a step's sentence that Lane holds with the paths that rn's adapter of a start gives as its values",
-              "by": "reasoning"
-            },
-            {
-              "about": "A deliverable's files",
-              "decided": "a deliverable lies at its path and, where it's made of files in more than one place, such as code and its tests, at each path of its optional more_paths too; the design tree's form, its best practice's N7.2, and each Cut carry more_paths, and rn's adapter of the rules lets the generator's making step write each of them beside its path and its result",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
       "path": "plugins/rn/domain/evaluator.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/README.md",
-        "dev/rn/tests",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Finds, as the deliverable's people, what's good for them and what would make it good, condition by condition, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            },
-            {
-              "about": "The checklist of its group",
-              "decided": "an evaluator's step that keeps a checklist gets only the conditions of its Cut's group, as lane/adapters/rules.py gives them",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What Lane holds",
-              "decided": "an evaluator never reads the design tree, nor its Round's generator's Cut and result, and writes only its result, by its steps' sentences that Lane holds with the paths that rn's adapter of a start gives as its values",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
@@ -795,6 +472,11 @@
             {
               "about": "KR1.2 from one run",
               "decided": "the minutes from the person's first turn to the turn whose screen shows the pull request ready, their own turns included, from turns.jsonl",
+              "by": "reasoning"
+            },
+            {
+              "about": "A prompt that the run finds short",
+              "decided": "a finding of the E2E run that lies in rn's orchestrator, generator, or evaluator reopens that prompt in the design tree, as the prompts' unit cases confirm each alone and the E2E run confirms them together on a real request",
               "by": "reasoning"
             }
           ]
@@ -981,18 +663,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/orchestrator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/generator.md"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/evaluator.md"
-    },
     {
       "do": "make",
       "path": "dev/rn/tests/e2e"
