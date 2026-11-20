@@ -40,18 +40,13 @@
 
 `<steps>`
 
-### `<part>`
-
-`<part_steps>`
-
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<steps>`: the steps, in the order the AI takes them. Each step names the result that holds when
 >   it ends. It gives either the rules the step needs, each with its reason, or the script that does
 >   the step and how to run it.
-> - `<part>`, `<part_steps>`: one section for each part of the steps that only some runs take, such
->   as the steps of one event, named by when the AI takes it, and its steps as `<steps>` gives them.
->   Leave out each part where every run takes the same steps.
+> - Where some runs take steps that others don't, one step names each kind of run and gives each
+>   its own steps, as N5 says.
 
 ## Output
 

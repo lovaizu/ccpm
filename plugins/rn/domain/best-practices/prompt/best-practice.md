@@ -92,8 +92,9 @@ An AI that knows what each step's result is for, and thinks there from the facts
 1. *While deciding.* Go through the steps that the arrows of the prompt's component in the architecture's Sequences give it, and ask of each whether an AI that holds the goal, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI.
 2. *While deciding.* Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the design tree.`
 3. *While making.* Write the steps in the order their results must hold, such as in a numbered list.
-4. *While making.* Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.
-5. *While making.* Check that the last step leaves what the goal says the task is for.
+4. *While making.* Where some runs take steps that others don't, such as each event's own, write them as the [conditional workflow pattern](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#conditional-workflow-pattern) does: one step that names each kind of run and gives each its own steps, and the steps that every run takes once, after it. Where one run's own steps grow long, put them in a file of their own, and have that step name the file to read, as the same guide says.
+5. *While making.* Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses.
+6. *While making.* Check that the last step leaves what the goal says the task is for.
 
 ### N6
 

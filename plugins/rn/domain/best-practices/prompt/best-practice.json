@@ -140,6 +140,10 @@
        },
        {
         "at": "make",
+        "text": "Where some runs take steps that others don't, such as each event's own, write them as the [conditional workflow pattern](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#conditional-workflow-pattern) does: one step that names each kind of run and gives each its own steps, and the steps that every run takes once, after it. Where one run's own steps grow long, put them in a file of their own, and have that step name the file to read, as the same guide says."
+       },
+       {
+        "at": "make",
         "text": "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses."
        },
        {

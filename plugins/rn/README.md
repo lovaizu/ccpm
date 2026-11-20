@@ -34,7 +34,7 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install rn@ccpm
 ```
 
-At your repository's root in Claude Code, `/rn:up` alone says that rn has no run to pick up.
+At your repository's root in Claude Code, `/rn:on` asks what you want to make.
 
 ## Walkthrough
 
@@ -44,7 +44,19 @@ At the end, you have a pull request that adds a command and its guide for your a
 Python, so they ask a developer for each invoice. You type:
 
 ```text
-/rn:up a command with which the accounting team prints an invoice from its lines, without writing Python
+/rn:on
+```
+
+rn shows:
+
+```text
+What do you want to make?
+```
+
+You type:
+
+```text
+a command with which the accounting team prints an invoice from its lines, without writing Python
 ```
 
 rn shows:

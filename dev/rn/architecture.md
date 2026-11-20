@@ -33,6 +33,7 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
 - P5: the shortest path
   - P5.1: a role that leaves its steps is told at once and goes back.
   - P5.2: deliverables that rest on none still being made are made at the same time.
+  - P5.3: work that a stop leaves alone goes on.
 - P6: nothing lost on a stop
   - P6.1: the run's state lives in files, so that it goes on from any conversation.
 
@@ -88,8 +89,10 @@ Strategies:
 - One generator and one evaluator for each Round, the evaluator judging every condition from one
   trial. [P2.1]\
   Intent: the people's use is one act, so it's tried once and judged whole.
-- The generator trying the deliverable as its people would before it hands it on. [P2.1]\
-  Intent: the generator hands on only what it saw serve the people.
+- The generator trying the deliverable as its people would before it hands it on, and going back
+  to its decisions where a condition that the people meet falls short. [P2.1]\
+  Intent: the generator hands on only what it saw serve the people, and the maker, not the
+  judge, finds its own shortfall.
 - The generator taking as given what the last evaluator found good or short. [P2.2]\
   Intent: the generator mends by the judge's own measure.
 - The last Round's roles resumed within a session, and started from its files in a new
@@ -106,6 +109,11 @@ Strategies:
 - Lane applied to every activity of every role's steps that it can hold, the orchestrator's
   included. [P5.1]\
   Intent: a role that leaves its steps notices at once and goes back.
+- Each step held to what it does, never to the tools of one OS, such as a search by Bash's `find`
+  and `grep` or by the Glob and Grep tools. [P5.1]\
+  Intent: rn runs alike on each OS that Claude Code runs on.
+- A refusal that only the user can mend stopping only the work it concerns. [P5.3]\
+  Intent: the user mends one blocker while every other deliverable goes on.
 
 ### Sequences
 
@@ -119,7 +127,9 @@ sequenceDiagram
   participant S as scripts
   participant G as generator
   participant E as evaluator
-  U->>O: /rn:up with what they want [S1]
+  U->>O: /rn:on [S1]
+  O->>U: asks what they want [S1]
+  U->>O: what they want, in their own words [S1]
   O->>S: makes the run's worktree, and its design tree with the goal as put (Design tree) [P4.3]
   loop each event: a request, an answer, a sign-off, a send-back, or a role ended [P1.1]
     opt a sign-off [P1.3]
@@ -128,6 +138,9 @@ sequenceDiagram
     O->>T: reviews it by the run's facts and the user's words (Design tree) [P1.1]
     O->>S: lists each node that the change touches, to read again (Design tree) [P1.1]
     O->>S: checks and commits the change (Design tree) [P6.1]
+    opt a refusal that only the user can mend [P5.3]
+      O->>U: the blocker, and what the user does, the other work going on [P5.3]
+    end
     alt a point the orchestrator can settle [P1.2]
       O->>T: settles it, with its ground (Design tree) [P1.2]
     else a point only the user can settle [P1.2]
@@ -149,7 +162,8 @@ sequenceDiagram
           O->>G: resumes it with the answer, as given [P1.2]
         else
           G->>G: makes the content by its kind's best practice, or, once each condition is good, refactors it by the refactor best practice, taking the last evaluator's findings as given (Best practice, Round) [P3.2]
-          G->>G: tries it as its people would, and names what's good [P2.1]
+          G->>G: tries it as its people would, and goes back to its decisions where a condition that they meet falls short [P2.1]
+          G->>G: names what's good [P2.1]
           G->>S: runs the repository's checks on its files [P4.3]
           G-->>O: ends, with the Round written (Round) [P4.2]
           O->>E: starts it with its Cut, or resumes the last Round's (Cut) [P4.1]
@@ -184,7 +198,10 @@ sequenceDiagram
   O->>U: where it stopped, and the point or sign-off waiting [S2]
   Note over U,O: Later, in any conversation
   U->>O: /rn:up [S2]
-  O->>S: finds the run to pick up (Design tree) [P6.1]
+  O->>S: finds the run to pick up from the runs' commits (Design tree) [P6.1]
+  opt no run found [S2]
+    O->>U: asks which run to pick up [S2]
+  end
   O->>T: reads where it stopped (Design tree) [P6.1]
   O->>U: where it picks up, and the point or sign-off waiting [S2]
   O->>G: starts each role stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
@@ -195,7 +212,7 @@ sequenceDiagram
 ![rn's deployment](images/deployment.svg)
 
 The user installs rn as [the README](../../plugins/rn/README.md#installation) says, which installs
-Lane, and types `/rn:up` at their repository's root.
+Lane, and types `/rn:on` at their repository's root.
 
 Strategies:
 
@@ -206,10 +223,10 @@ Strategies:
 
 ```text
 plugins/rn/                        what Claude Code installs for the user
-├── skills/                        /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
+├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
 ├── agents/                        the generator's and the evaluator's starts
 ├── domain/
-│   ├── orchestrator.md            the steps of each event, and those that every event shares
+│   ├── orchestrator.md            the event's own step, then those that every event shares
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
 │   ├── schemas/                   the form of each Cut and result

@@ -48,7 +48,10 @@ Each key of `roles` names a role:
 
 Each role lists its `steps` in their order, each with a `name` and its `rules`. A step's rules are
 of the types under [Rule types](#rule-types). A step is at hand from the role's start until the
-AI marks it done with `lane-step`, and then the next step not marked done is at hand.
+AI marks it done with `lane-step`, and then the next step not marked done is at hand. Where a
+later step shows an earlier one short, the AI goes back to the earlier step with `lane-back`. That
+step and each step after it are then undone, and the AI takes each again in order, the items of
+their checklists too. Reads stay counted, as the file was read.
 
 A subagent's role named with no `steps` takes its steps from
 [the adapter of the rules](#the-rules-of-each-start) at each start:
@@ -428,6 +431,7 @@ puts them on the AI's path.
 | `lane-step <step>` | The step done. |
 | `lane-item <step> <item>` | The item of the step's checklist done. |
 | `lane-result <result>` | The start's result. |
+| `lane-back <step>` | The step gone back to, a step marked done, which undoes it and each step after it. |
 
 Each prints its report as one line of JSON, and Lane reads it back from the Bash call's output. A
 call that prints anything more counts as no report, so run each reporter as a Bash call of its
