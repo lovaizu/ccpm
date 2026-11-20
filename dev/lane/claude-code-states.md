@@ -39,6 +39,7 @@ what the transcript holds at each event as `transcript_holds`.
 | State | Events, in order | What the guard places them by | Records |
 |---|---|---|---|
 | The main conversation's calls in a Run | PreToolUse, then PostToolUse or PostToolUseFailure, and Stop at the end of a turn, each with no `agent_id` and no `agent_type`. | The Run of the event's `session_id`, and the main conversation by the missing `agent_id`. | `claude-code-2.1.322.jsonl:19-20` |
+| A turn of the main conversation | A UserPromptSubmit with no `agent_id` and a new `prompt_id`, its `prompt` the person's text as typed, such as `/lane:up changelog` for a command, which comes before the command's UserPromptExpansion, or the `<task-notification>` of a subagent's end; then the main conversation's events with that `prompt_id`; then its Stop with that `prompt_id`. Two subagents' ends that reach the main conversation one after the other each begin a turn of their own. | The main conversation's UserPromptSubmit, which gives the turn's `prompt`, and its Stop, as the guard's answers below say. | A person's prompt in `claude-code-2.1.322.jsonl:8-13`, with a command's words in `:2`; a subagent's end in `:18-20`; two ends in `claude-code-2.1.325-two-subagents.jsonl:21-25`; a command typed while a subagent runs in `claude-code-2.1.325-skill-command-while-subagent.jsonl:13-17` |
 | A subagent started in the background | The main conversation's PreToolUse of Agent, then SubagentStart and the PostToolUse of Agent in either order, the PostToolUse naming the subagent as `tool_response.agentId`; the subagent's calls and SubagentStop, each with its `agent_id` and `agent_type`; and its end reaching the main conversation as a UserPromptSubmit of a `<task-notification>`, with a new `prompt_id`. | The Start that the guard let through at the PreToolUse, tied to the `agentId` at the PostToolUse of the same `tool_use_id`, as Lane hooks no SubagentStart, and each later event by its `agent_id`. | `claude-code-2.1.322.jsonl:10-18`, and SubagentStart after the PostToolUse in `claude-code-2.1.325-skill-command-while-subagent.jsonl:6-8` |
 | A background subagent that runs on through a later prompt | The subagent's calls and SubagentStop after the main conversation's Stop and after a later prompt, each with the `prompt_id` of that later prompt. | The subagent's `agent_id`, never the `prompt_id`. | `claude-code-2.1.325-skill-command-while-subagent.jsonl:12-21` |
 | Several subagents at once, two of one role among them | One assistant message's two Agent calls, each with its PreToolUse, SubagentStart, and PostToolUse before the next call's PreToolUse; two `agent_id`s of the same `agent_type`; their ends in either order. | Each Start tied at the PostToolUse of its own Agent call, so two Starts of one role never wait to be tied at once. | `claude-code-2.1.325-two-subagents.jsonl:5-25`, `:30-50`, and `:55-75` |
@@ -103,3 +104,11 @@ guard.
   any, and the guard answers where the Run stands.
 - A command of the plugin typed once its Run ended, or where none stands: the guard adds a new Run,
   with the starts due that the plugin's order gives after the command.
+- A turn of a main conversation whose role takes its steps at each turn: the turn runs from the
+  Run's start, or from the first UserPromptSubmit after a Stop that the guard let through, to the
+  next Stop that the guard lets through. A Stop that the guard stops, and any UserPromptSubmit
+  before a Stop it lets through, go on in the same turn. The guard asks the plugin's adapter of the
+  rules for the turn's steps at the turn's first call or end, for the role of the Run's latest
+  command then, with the prompt of that first UserPromptSubmit, empty for the Run's first turn, and
+  holds the turn's calls, marks, and end to those steps. A command that the Skill tool calls later
+  in the turn leaves the turn's steps as they stand.

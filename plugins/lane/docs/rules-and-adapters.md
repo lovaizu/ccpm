@@ -58,8 +58,9 @@ A subagent's role named with no `steps` takes its steps from
 ```
 
 The main conversation's role named with no `steps` takes its steps from the same adapter at each
-turn of the run, from the person's prompt or the subagent's end that starts the turn to the turn's
-end. Each turn's steps start afresh, so a main conversation that answers each event in its own
+turn of the run. A turn runs from the run's start, or from the first prompt after a turn's end that
+Lane let through, the person's or a subagent's end, to the next turn's end that Lane lets through,
+so a turn's end that Lane stops goes on in the same turn. Each turn's steps start afresh, so a main conversation that answers each event in its own
 turn is held to that event's steps:
 
 ```json
@@ -379,9 +380,11 @@ where a role works on another deliverable at each start, such as a writer whose 
 prompt, or where the main conversation answers another event at each turn.
 
 Lane asks it when the main conversation starts the role, and keeps the steps for that start and
-each resume of it. For the main conversation, Lane asks it at each turn's first move, and keeps the
-steps for that turn, its `prompt` the person's prompt or the subagent's end that started the turn,
-as Claude Code gives it.
+each resume of it. For the main conversation, Lane asks it at each turn's first call or end, and keeps
+the steps for that turn. Its `role` is the skill of the run's latest command then, and a command
+that the Skill tool calls later in the turn leaves the turn's steps as they stand. Its `prompt` is
+the prompt that started the turn, as Claude Code gives it, and empty for the run's first turn, whose
+command and words `run` holds.
 
 Its input, in the form of [rules.in.schema.json](../hooks/lane/rules.in.schema.json):
 

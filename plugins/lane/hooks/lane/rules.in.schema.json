@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "What Lane gives a plugin's adapter of the rules",
-  "description": "A start of a role whose steps or rules the plugin's lane/rules.json leaves to the adapter, with the prompt that the main conversation gave it.",
+  "description": "A start of a role, or a turn of the main conversation, whose steps the plugin's lane/rules.json leaves to the adapter, with the prompt that the start or the turn began with.",
   "type": "object",
   "required": ["run", "role", "prompt"],
   "additionalProperties": false,
@@ -16,7 +16,14 @@
         "words": { "type": "string" }
       }
     },
-    "role": { "description": "The start's role, by its agent type.", "type": "string", "minLength": 1 },
-    "prompt": { "description": "The prompt that the main conversation gave the start.", "type": "string" }
+    "role": {
+      "description": "A start's role, by its agent type; for a turn, the main conversation's role, by the skill's name.",
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt": {
+      "description": "The prompt that the main conversation gave the start; for a turn, the prompt that began it as Claude Code gives it: the person's prompt, or the <task-notification> of a subagent's end; empty for the run's first turn, whose command and words run holds.",
+      "type": "string"
+    }
   }
 }

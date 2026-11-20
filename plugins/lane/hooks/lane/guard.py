@@ -15,7 +15,7 @@ import rule_types
 from adapters import AdapterFailed
 from named_files import of_call
 from order import StartsDue
-from place import Event, Move, SkillCall
+from place import Event, Move, SkillCall, Turn
 from plugin import plugin_root
 from record import Run
 from report import Report
@@ -54,8 +54,10 @@ def answer(event: Event) -> Answer:
 
     Takes: a hook event of hooks/hooks.json: PreToolUse, PostToolUse, PostToolUseFailure, Stop,
     SubagentStop, UserPromptSubmit, or UserPromptExpansion.
-    Gives: first, for each run that place.opening gives, the answer of run_opened; then the answer
-    of the interface below that the event's move reaches: skill_called for the skill's call that
+    Gives: first, for each run that place.opening gives, the answer of run_opened; then, for the
+    run that place.turn_beginning gives, the answer of turn_begun, and for the turn that
+    place.turn_opening gives, the answer of turn_started; then the answer of the interface
+    below that the event's move reaches: skill_called for the skill's call that
     place.skill_call gives, and for the others the move that place.place gives, with the starts due
     that adapters.starts_due gives, held to the rules
     in its run's plugin's folder; the answers joined, stopping where either stops; an empty answer
@@ -70,6 +72,8 @@ def answer(event: Event) -> Answer:
     """
     session = event["session_id"]
     answers = [run_opened(event, run) for run in place.opening(event, record.runs(session))]
+    runs = record.runs(session)
+    answers.append(_turn_given(event, runs))
     runs = record.runs(session)
     call = place.skill_call(event, runs)
     if call is not None:
@@ -87,6 +91,49 @@ def _placed(event: Event) -> Answer:
     runs = record.runs(event["session_id"])
     move = place.place(event, runs, lambda run: _due(run, event))
     return Answer() if move is None else _ANSWERS[move.kind](move)
+
+
+@_checked
+def _turn_given(event: Event, runs: list[Run]) -> Answer:
+    """The answer of turn_begun, for the run whose next turn the event's prompt begins, and of
+    turn_started, for the turn whose steps the event is the first to need; an empty one where it
+    reaches neither."""
+    begun = place.turn_beginning(event, runs)
+    if begun is not None:
+        return turn_begun(event, begun)
+    turn = place.turn_opening(event, runs)
+    return Answer() if turn is None else turn_started(event, turn)
+
+
+def turn_begun(event: Event, run: Run) -> Answer:
+    """S11: the first prompt after the main conversation's turn's end that the guard let through,
+    which begins the next turn of a role that takes its steps at each turn.
+
+    Takes: the UserPromptSubmit, the person's prompt or the `<task-notification>` of a subagent's
+    end, and the run that place.turn_beginning gives for it.
+    Gives: an empty answer.
+    Changes: the run record, by a `turn_begun` entry with the event's `prompt` as Claude Code gives
+    it, which turn_started gives the plugin's adapter of the rules.
+    Refuses: nothing.
+    """
+    raise NotImplementedError("guard.turn_begun")
+
+
+def turn_started(event: Event, turn: Turn) -> Answer:
+    """S11: the main conversation's turn's first call or end, where its role takes its steps from
+    the plugin's adapter of the rules at each turn.
+
+    Takes: the PreToolUse or Stop of the main conversation, whose `cwd` is the conversation's
+    folder, and the turn that place.turn_opening gives for it, with its run, role, and prompt,
+    empty for the run's first turn.
+    Gives: an empty answer, the event's own move then held to the turn's steps.
+    Changes: the run record, by a `turn` entry with the turn's role and prompt, and the steps that
+    adapters.given_steps gives for them, which hold the turn's calls, marks, and end until the
+    turn's end that the guard lets through.
+    Refuses: AdapterFailed, where the plugin's adapter of the rules is missing, fails, or gives out
+    of its form, which answer gives as a stop of the call or the end with what's wrong.
+    """
+    raise NotImplementedError("guard.turn_started")
 
 
 def skill_called(call: SkillCall) -> Answer:
@@ -180,16 +227,18 @@ def start_made(move: Move) -> Answer:
 
 @_checked
 def turn_ended(move: Move) -> Answer:
-    """S5, S8, and S9: the main conversation ends its turn, held to its skill's steps and to the
-    starts due.
+    """S5, S8, S9, and S11: the main conversation ends its turn, held to its role's steps, or the
+    turn's, and to the starts due.
 
-    Takes: a `turn_end` move at the main conversation's Stop.
-    Gives: a stop with the sentence that rule_types.judge_end gives, where the rules give the steps
-    of the move's role; else a stop with the starts due, where a start is due; an empty answer
-    where none is.
+    Takes: a `turn_end` move at the main conversation's Stop, with the steps that place gives it:
+    its role's, or, where the role takes its steps at each turn, those of the turn's `turn` entry.
+    Gives: a stop with the sentence that rule_types.judge_end gives, where the move has steps, its
+    marks and result those that place.own_entries gives for the turn; else a stop with the starts
+    due, where a start is due; an empty answer where none is.
     Changes: the run record, by dropping each start still untied; and, where the turn's end goes
     through, by an `ended` entry where adapters.starts_due, asked with the turn ended, says the run
-    ends.
+    ends, and, where the role takes its steps at each turn, by a `turn_ended` entry, so that the
+    next prompt begins the next turn; a turn's end that it stops goes on in the same turn.
     Refuses: nothing; an adapter of the starts due that failed stops the turn's end with what's
     wrong.
     """
@@ -209,7 +258,15 @@ def turn_ended(move: Move) -> Answer:
     if due.get("starts"):
         return Answer(True, _due_said(due))
     _end_if(run, move.event, turn_ended=True)
+    if asks_adapter(_rules(run), move.role):
+        _turn_closed(run)
     return Answer()
+
+
+def _turn_closed(run: Run) -> None:
+    """Adds the `turn_ended` entry of the main conversation's turn whose end the guard lets
+    through."""
+    raise NotImplementedError("guard._turn_closed")
 
 
 def command_typed(move: Move) -> Answer:

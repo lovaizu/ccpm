@@ -7,7 +7,7 @@
   "additionalProperties": false,
   "properties": {
     "roles": {
-      "description": "Each role's steps: a subagent's by its agent type, such as <plugin>:<role>, and the main conversation's in a run of a skill by the skill's name, such as <plugin>:<skill>; a subagent's role named with no steps takes them from the plugin's adapter of the rules for each start.",
+      "description": "Each role's steps: a subagent's by its agent type, such as <plugin>:<role>, and the main conversation's in a run of a skill by the skill's name, such as <plugin>:<skill>; a subagent's role named with no steps takes them from the plugin's adapter of the rules for each start, and the main conversation's role named with no steps takes them from that adapter for each turn of the run.",
       "type": "object",
       "additionalProperties": {
         "type": "object",
@@ -131,6 +131,16 @@
           "properties": {
             "type": { "const": "checklist" },
             "items": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        {
+          "description": "S6: the step is done only once each item of its checklist is done, the items given at the mark by the plugin's command, run in the conversation's folder: one item, one word, on each line of its output, none for an empty output; the mark stops with the command's output where it exits other than 0.",
+          "type": "object",
+          "required": ["type", "command"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "checklist" },
+            "command": { "type": "string", "minLength": 1 }
           }
         },
         {

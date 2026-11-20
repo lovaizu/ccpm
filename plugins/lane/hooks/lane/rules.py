@@ -12,7 +12,7 @@ from json_form import held
 
 class Rule(TypedDict, total=False):
     """One rule of a step: its `type`, the name of a module of rule_types/, and that type's
-    values."""
+    values, a checklist's `items` or the `command` that gives them at the mark."""
 
     type: str
     paths: list[str]
@@ -21,6 +21,7 @@ class Rule(TypedDict, total=False):
     results: list[str]
     ends: list[str]
     check: str
+    command: str
 
 
 class Step(TypedDict):
@@ -33,7 +34,7 @@ class Step(TypedDict):
 class Role(TypedDict, total=False):
     """The steps of one role, in their order: a subagent of the plugin, or the main conversation
     in a run of a skill; a subagent's role with no steps takes them from the plugin's adapter of
-    the rules for each start."""
+    the rules for each start, and the main conversation's for each turn."""
 
     steps: list[Step]
 

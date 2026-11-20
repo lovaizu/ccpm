@@ -14,14 +14,18 @@ from rules import Step
 
 
 class Entry(TypedDict, total=False):
-    """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `tie`, `drop`,
-    `read`, `mark`, `result`, `stopped`, `typed`, and `ended`, the `run` it belongs to, the
-    `agent_id` of the subagent whose move it is, None for the main conversation's, and the fields of
-    that kind: a `folder` gives the run's plugin's folder, a `start` the `prompt` that the main
-    conversation gave it, the prompt of the start it resumes for a resume, and the `steps` that the
-    plugin's adapter of the rules gave for it, where it gave any, a `stopped` the `agent_id` of a
-    start that ended with no result, such as one stopped by TaskStop, and an `ended` the end of the
-    run, once its order said the run ends."""
+    """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `turn_begun`,
+    `turn`, `turn_ended`, `tie`, `drop`, `read`, `mark`, `result`, `stopped`, `typed`, and `ended`,
+    the `run` it belongs to, the `agent_id` of the subagent whose move it is, None for the main
+    conversation's, and the fields of that kind: a `folder` gives the run's plugin's folder, a
+    `start` the `prompt` that the main conversation gave it, the prompt of the start it resumes for
+    a resume, and the `steps` that the plugin's adapter of the rules gave for it, where it gave any,
+    a `turn_begun` the `prompt` that began a turn of the main conversation after the run's first, a
+    `turn` the main conversation's `role` at the turn's first call or end, the turn's `prompt`, and
+    the `steps` that the plugin's adapter of the rules gave for it, each later entry of the main
+    conversation until the next `turn` belonging to that turn, a `turn_ended` the turn's end that
+    the guard let through, a `stopped` the `agent_id` of a start that ended with no result, such as
+    one stopped by TaskStop, and an `ended` the end of the run, once its order said the run ends."""
 
     kind: str
     run: str
@@ -45,7 +49,8 @@ class Entry(TypedDict, total=False):
 @dataclass
 class Run:
     """One run of a plugin's skill in a conversation, from the words typed after its command, with
-    its plugin's folder, None until a `folder` entry gives it, and each entry of it in its order."""
+    its plugin's folder, None until a `folder` entry gives it, and each entry of it in its order,
+    among them each command, turn, start, read, mark, and result."""
 
     id: str
     session_id: str

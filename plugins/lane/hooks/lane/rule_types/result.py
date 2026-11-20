@@ -3,25 +3,25 @@ and the sentence of an end with no result of them."""
 
 from __future__ import annotations
 
-from place import Move
+from place import Move, own_entries
 from rules import Rule, Step
 
 from rule_types.words import listed
 
 
 def given(move: Move) -> str | None:
-    """The latest result that the move's start gave.
+    """The latest result that the move's start, or the main conversation's turn, gave.
 
-    Takes: a move of a subagent's start, its run as the record stands.
-    Gives: the result of the latest `result` entry of the run with the move's `agent_id`; None
-    where the run holds none.
+    Takes: a move of a subagent's start, or of the main conversation, its run as the record stands.
+    Gives: the result of the latest `result` entry among those that place.own_entries gives for
+    the move's `agent_id`; None where they hold none.
     Changes: nothing.
     Refuses: nothing.
     """
     results = [
         entry["result"]
-        for entry in move.run.entries
-        if entry["kind"] == "result" and entry.get("agent_id") == move.agent_id
+        for entry in own_entries(move.run, move.agent_id)
+        if entry["kind"] == "result"
     ]
     return results[-1] if results else None
 

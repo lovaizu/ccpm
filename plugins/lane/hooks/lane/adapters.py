@@ -46,13 +46,14 @@ def starts_due(plugin_root: str, cwd: str, run: Run, rules: Rules, turn_ended: b
 
 
 def given_steps(plugin_root: str, cwd: str, run: Run, role: str, prompt: str) -> list[Step]:
-    """The steps and rules of a start, from the plugin's adapter of the rules,
-    lane/adapters/rules.py.
+    """The steps and rules of a start, or of a turn of the main conversation, from the plugin's
+    adapter of the rules, lane/adapters/rules.py.
 
-    Takes: the plugin's folder, the conversation's folder, the run, the start's role, and the
-    prompt that the main conversation gave it.
-    Gives: the start's steps, each with its rules, in the forms of rules.in.schema.json and
-    rules.out.schema.json.
+    Takes: the plugin's folder, the conversation's folder, the run, and the start's role with the
+    prompt that the main conversation gave it, or, for a turn, the main conversation's role, by the
+    skill's name, with the prompt that began the turn as Claude Code gives it.
+    Gives: the steps of the start or the turn, each with its rules, in the forms of
+    rules.in.schema.json and rules.out.schema.json.
     Changes: nothing of Lane's; the adapter may read the conversation's folder.
     Refuses: AdapterFailed, also where the plugin has no adapter of the rules, naming
     lane/adapters/rules.py and the role, for the plugin's author to add it.

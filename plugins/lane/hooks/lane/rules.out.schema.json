@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "What a plugin's adapter of the rules gives Lane",
-  "description": "The start's steps in their order, each with its rules in the form of rules.schema.json, for each step that the plugin's lane/rules.json leaves to the adapter.",
+  "description": "The steps of the start, or of the main conversation's turn, in their order, each with its rules in the form of rules.schema.json, for a role whose steps the plugin's lane/rules.json leaves to the adapter.",
   "type": "object",
   "required": ["steps"],
   "additionalProperties": false,

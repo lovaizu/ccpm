@@ -1,7 +1,8 @@
-"""Which run, start, role, and step each move of a conversation belongs to, and what kind of move it
-is, by what Claude Code's hook events carry, as dev/lane/claude-code-states.md lists: among them,
-whether a command of a plugin calls its skill or is a move of the plugin's run that stands, as a
-conversation holds one run of a plugin at a time."""
+"""Which run, start or turn, role, and step each move of a conversation belongs to, and what kind of
+move it is, by what Claude Code's hook events carry, as dev/lane/claude-code-states.md lists: among
+them, whether a command of a plugin calls its skill or is a move of the plugin's run that stands, as
+a conversation holds one run of a plugin at a time, and which event begins a turn of the main
+conversation."""
 
 from __future__ import annotations
 
@@ -14,6 +15,7 @@ from order import StartsDue
 from record import Entry, Run
 from report import Report, read_report
 from rules import Rules, Step, read_rules
+from start_rules import asks_adapter
 from start_rules import steps as start_steps
 
 # A hook event as Claude Code sends it on standard input.
@@ -34,6 +36,17 @@ class SkillCall:
 
 
 @dataclass
+class Turn:
+    """S11: a turn of the main conversation that its first move begins, on its run: the main
+    conversation's role, by the skill's name, and the prompt that began it, as Claude Code gives
+    it."""
+
+    run: Run
+    role: str
+    prompt: str
+
+
+@dataclass
 class Move:
     """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `drop`,
     `read`, `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role whose steps hold
@@ -43,8 +56,10 @@ class Move:
     the main conversation; for a `start`, the prompt that the main conversation gives it, the
     prompt of the start it resumes for a SendMessage, and None for any other move; the steps that
     hold its start, as start_rules.steps gives them from the plugin's rules and the steps that its
-    `start` entry holds, a SendMessage's `start` held to those of the start it resumes; the step
-    its start stands at; and the report where a reporter made the move."""
+    `start` entry holds, a SendMessage's `start` held to those of the start it resumes, and the
+    main conversation's, where its role takes its steps at each turn, held to those that the run's
+    latest `turn` entry holds; the step its start or turn stands at; and the report where a
+    reporter made the move."""
 
     kind: str
     event: Event
@@ -98,6 +113,81 @@ def opening(event: Event, runs: list[Run]) -> list[Run]:
     if "agent_id" in event or name == "UserPromptExpansion" or of_skill:
         return []
     return [run for run in runs if run.plugin_root is None]
+
+
+def turn_beginning(event: Event, runs: list[Run]) -> Run | None:
+    """S11: the run whose next turn of the main conversation the event's prompt begins, where the
+    main conversation's role takes its steps from the plugin's adapter of the rules at each turn.
+
+    Takes: a hook event, and the runs of its conversation.
+    Gives: the standing run, with its folder, at a UserPromptSubmit with no `agent_id`, the person's
+    prompt or the `<task-notification>` of a subagent's end, where it is the first since the Stop
+    that the guard last let through, the run's latest `turn_ended` entry, and the plugin's rules
+    name the main conversation's role, the skill of the run's latest command that they name, with
+    no steps; None at any other event, at a UserPromptSubmit before that Stop is let through, as it
+    goes on in the same turn, for a run with no folder yet, or where the rules give that role's
+    steps.
+    Changes: nothing.
+    Refuses: OutOfForm, where the rules of the plugin's run are out of form.
+    """
+    if event.get("hook_event_name") != "UserPromptSubmit" or "agent_id" in event:
+        return None
+    run = _per_turn(runs)
+    if run is None:
+        return None
+    raise NotImplementedError("place.turn_beginning")
+
+
+def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
+    """S11: the turn of the main conversation whose steps the event is the first to need, where
+    the main conversation's role takes its steps from the plugin's adapter of the rules at each
+    turn.
+
+    Takes: a hook event, and the runs of its conversation.
+    Gives: the turn, on the standing run with its folder, at the main conversation's PreToolUse or
+    Stop, the turn's first call or end, where the run holds no `turn` entry since its latest
+    `turn_ended` entry, or since its start for its first turn, and the plugin's rules name the main
+    conversation's role with no steps; the turn's role the skill of the run's latest command that
+    the rules name, as it stands at that event, so that a command that the Skill tool calls later
+    in the turn leaves the turn's steps as they stand; its prompt that of the run's latest
+    `turn_begun` entry since its latest `turn_ended`, empty for the run's first turn, whose command
+    and words the run holds. None at any other event, for a turn that holds its `turn` entry, for a
+    run with no folder yet, or where the rules give that role's steps.
+    Changes: nothing.
+    Refuses: OutOfForm, where the rules of the plugin's run are out of form.
+    """
+    if event.get("hook_event_name") not in ("PreToolUse", "Stop") or "agent_id" in event:
+        return None
+    run = _per_turn(runs)
+    if run is None:
+        return None
+    raise NotImplementedError("place.turn_opening")
+
+
+def _per_turn(runs: list[Run]) -> Run | None:
+    """The standing run, with its folder, where its plugin's rules leave the main conversation's
+    role's steps to the plugin's adapter of the rules at each turn; else None."""
+    run = _standing(runs)
+    rules = read_rules(run.plugin_root) if run is not None and run.plugin_root else None
+    if run is None or rules is None or not asks_adapter(rules, _main_role(run, rules)):
+        return None
+    return run
+
+
+def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
+    """S11: the entries of the moves that count for a start, or for the main conversation's turn.
+
+    Takes: the run, and the subagent's `agent_id`, None for the main conversation.
+    Gives: each entry of the run with the subagent's `agent_id`, in their order; for the main
+    conversation, each entry with no `agent_id`, and, where the run holds a `turn` entry, only those
+    after the latest, which the turn's first call or end added, as each turn's steps start afresh,
+    so that its marks, items, reads, and result count for the turn alone.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    if agent_id is None and any(entry["kind"] == "turn" for entry in run.entries):
+        raise NotImplementedError("place.own_entries")
+    return [entry for entry in run.entries if entry.get("agent_id") == agent_id]
 
 
 def place(event: Event, runs: list[Run], due: Due) -> Move | None:
@@ -184,15 +274,16 @@ def marked(run: Run, agent_id: str | None) -> set[str]:
     """The steps that a start marked done.
 
     Takes: the run, and the subagent's `agent_id`, None for the main conversation.
-    Gives: the name of each step that the run record holds a reporter's mark of, by the subagent
-    or the main conversation, the marks of items left out.
+    Gives: the name of each step that the run record holds a reporter's mark of, among the entries
+    that own_entries gives for the subagent or the main conversation, the marks of items left
+    out.
     Changes: nothing.
     Refuses: nothing.
     """
     return {
         entry["step"]
-        for entry in run.entries
-        if entry["kind"] == "mark" and entry.get("agent_id") == agent_id and "item" not in entry
+        for entry in own_entries(run, agent_id)
+        if entry["kind"] == "mark" and "item" not in entry
     }
 
 
@@ -306,16 +397,13 @@ def _read(event: Event, run: Run, rules: Rules) -> Move | None:
 
 
 def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> Move:
-    """A call of the main conversation, held to the steps of the run's latest command whose skill
-    the rules give steps of, or of a subagent, the event's or the one given, held to the steps of
-    the start it's tied to; each at the first of its steps that it hasn't marked done."""
+    """A call of the main conversation, held to the steps of its role, those of its turn where the
+    role takes its steps at each turn, or of a subagent, the event's or the one given, held to the
+    steps of the start it's tied to; each at the first of its steps that it hasn't marked done."""
     agent_id = agent_id or event.get("agent_id")
     if agent_id is None:
-        role = run.skill
-        for entry in run.entries:
-            if entry["kind"] == "typed" and start_steps(rules, entry["command"], None):
-                role = entry["command"]
-        steps = start_steps(rules, role, None)
+        role = _main_role(run, rules)
+        steps = start_steps(rules, role, _turn_steps(run) if asks_adapter(rules, role) else None)
     else:
         tie = next(e for e in reversed(run.entries) if _ties(e, agent_id))
         start = next(e for e in run.entries if e.get("tool_use_id") == tie["tool_use_id"])
@@ -324,6 +412,26 @@ def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> 
     done = marked(run, agent_id)
     step = next((each["name"] for each in steps if each["name"] not in done), None)
     return Move("call", event, run, role, agent_id, None, steps, step, None)
+
+
+def _main_role(run: Run, rules: Rules) -> str:
+    """The main conversation's role: the skill of the run's latest command whose role the rules
+    give steps of or leave to the plugin's adapter of the rules at each turn, else the skill that
+    called the run."""
+    role = run.skill
+    for entry in run.entries:
+        command = entry.get("command", "")
+        if entry["kind"] == "typed" and (
+            start_steps(rules, command, None) or asks_adapter(rules, command)
+        ):
+            role = command
+    return role
+
+
+def _turn_steps(run: Run) -> list[Step] | None:
+    """The steps that the run's latest `turn` entry holds, where it lies after the run's latest
+    `turn_ended` entry; None where the turn at hand holds none yet."""
+    raise NotImplementedError("place._turn_steps")
 
 
 # The move of each event that follows a call or a subagent's end, by the event's name.
