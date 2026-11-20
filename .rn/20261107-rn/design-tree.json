@@ -365,118 +365,7 @@
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
       "path": "plugins/rn/domain/evaluator.md",
       "kind": "prompt",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn/README.md",
-        "dev/rn/tests",
-        "plugins/rn",
-        "plugins/rn/domain/best-practices/prompt"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What the task is for",
-              "decided": "Finds, as the deliverable's people, what's good for them and what would make it good, condition by condition, as the architecture's Components now says, from rn's concept that each role starts from what the people are after",
-              "by": "reasoning"
-            },
-            {
-              "about": "The checklist of its group",
-              "decided": "an evaluator's step that keeps a checklist gets only the conditions of its Cut's group, as lane/adapters/rules.py gives them",
-              "by": "reasoning"
-            },
-            {
-              "about": "What the people have in a trial",
-              "decided": "the evaluator tries the deliverable from the people's starting state that the goal names, with only what it names and the deliverable as its people get it, in a folder that mktemp gives, never from a copy of the run's worktree, which holds what the people don't have",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What Lane holds",
-              "decided": "an evaluator never reads the design tree, nor its Round's generator's Cut and result, and writes only its result, by its steps' sentences that Lane holds with the paths that rn's adapter of a start gives as its values",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn gives the deliverable a person means at the size of a real request, as the product vision's key results show",
@@ -736,10 +625,6 @@
       "path": "dev/plugin-development-guide.md",
       "condition": "N1",
       "about": "The main conversation over many turns"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/evaluator.md"
     },
     {
       "do": "make",
