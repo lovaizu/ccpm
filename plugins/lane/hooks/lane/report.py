@@ -43,8 +43,8 @@ def read_report(output: str) -> Report | None:
     """The report that a reporter's Bash call printed.
 
     Takes: the standard output of a Bash call.
-    Gives: the report, where the output is the JSON of a report, as report prints it; None for any
-    other output.
+    Gives: the report, where the output is the JSON of a report, as report prints it, each value
+    text; None for any other output.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -52,7 +52,10 @@ def read_report(output: str) -> Report | None:
         given = json.loads(output)
     except ValueError:
         return None
-    fields = _FIELDS.get(given.get("kind", "")) if isinstance(given, dict) else None
+    # A reporter prints only text, its kind among it.
+    if not isinstance(given, dict) or not all(isinstance(each, str) for each in given.values()):
+        return None
+    fields = _FIELDS.get(given.get("kind", ""))
     if fields is None or set(given) != {"kind", *fields}:
         return None
     return cast(Report, given)

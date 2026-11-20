@@ -137,46 +137,45 @@ def run_opened(event: Event, run: Run) -> Answer:
 def start_made(move: Move) -> Answer:
     """S9: the main conversation starts a subagent of the plugin, or resumes one by SendMessage.
 
-    Takes: a `start` move at the PreToolUse of an Agent or SendMessage call.
+    Takes: a `start` move at the PreToolUse of an Agent or SendMessage call, a SendMessage's with
+    the role, the prompt, and the steps of the start it resumes, as place gives them.
     Gives: an empty answer for a start of a role due; for any other start of the plugin's
-    subagents, or one by a subagent, a stop with the starts due.
+    subagents, or one by a subagent, a stop with the starts due, or, where none is due, with the
+    sentence that no start of the plugin's subagents is due and to go on without it.
     Changes: the run record, by the start with its prompt, and with the steps that
     adapters.given_steps gives from the prompt where start_rules.asks_adapter says the start takes
     rules from the plugin's adapter of the rules, untied until the PostToolUse of its call; a
-    resume, by its start with the prompt and the steps of the start it resumes.
+    resume, by its start with the move's role and prompt, and with the move's steps where the role
+    takes them from the plugin's adapter of the rules.
     Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong,
     and so does, for a start that takes its steps from the plugin's adapter of the rules, an adapter
     of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
     sentence saying that the plugin's author adds or mends lane/adapters/rules.py for the role.
     """
-    resumed = _resumed(move)
-    role = move.event["tool_input"].get("subagent_type", resumed.get("role", ""))
+    resume = move.event["tool_name"] == "SendMessage"
+    role = move.role if resume else move.event["tool_input"].get("subagent_type", "")
     due = _due(move.run, move.event)
     plugin = move.run.skill.partition(":")[0]
     if role.partition(":")[0] != plugin and move.agent_id is None:
         return Answer()
     if move.agent_id is not None or not any(s["role"] == role for s in due.get("starts", [])):
-        return Answer(True, _due_said(due))
+        return Answer(True, _due_said(due) or _none_due(plugin))
     entry: record.Entry = {
         "kind": "start",
         "run": move.run.id,
         "role": role,
         "tool_use_id": move.event["tool_use_id"],
-        "prompt": resumed.get("prompt", move.prompt or ""),
+        "prompt": move.prompt or "",
     }
-    if "steps" in resumed:
-        entry["steps"] = resumed["steps"]
-    elif not resumed and asks_adapter(_rules(move.run), role):
+    if asks_adapter(_rules(move.run), role):
         cwd = move.event["cwd"]
-        entry["steps"] = adapters.given_steps(_root(move.run), cwd, move.run, role, entry["prompt"])
+        entry["steps"] = (
+            move.steps
+            if resume
+            else adapters.given_steps(_root(move.run), cwd, move.run, role, entry["prompt"])
+        )
     record.add(move.run.session_id, [entry])
     return Answer()
-
-
-def _resumed(move: Move) -> record.Entry:
-    """The start that a SendMessage resumes, as place.latest_start gives it for the subagent it
-    names; none for an Agent call."""
-    return place.latest_start(move.run, move.event["tool_input"].get("to", "")) or {}
 
 
 @_checked
@@ -407,6 +406,14 @@ def _due_said(due: StartsDue) -> str:
         for s in due.get("starts", [])
     ]
     return f"Due: {', '.join(roles)}." if roles else ""
+
+
+def _none_due(plugin: str) -> str:
+    """What the main conversation reads at a start of the plugin's subagents while none is due."""
+    return (
+        f"No start of {plugin}'s subagents is due now.\n"
+        "Go on without it, and start one once Lane says it's due."
+    )
 
 
 def main() -> int:

@@ -728,11 +728,6 @@ def test_a_prompt_with_no_task_notification_is_no_move(e: Events):
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@pytest.mark.xfail(
-    strict=True,
-    reason="place gives a resume's start move the role, the prompt, and the steps of the start it"
-    " resumes, not the main conversation's role and steps",
-)
 def test_a_send_message_to_an_ended_subagent_whose_role_is_due_is_a_start(e: Events):
     """Given the writer a1, whose end came with `written`, and the reviewer's `more`, so that the
     writer is due
@@ -746,11 +741,6 @@ def test_a_send_message_to_an_ended_subagent_whose_role_is_due_is_a_start(e: Eve
 
 @pytest.mark.supports(
     "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
-)
-@pytest.mark.xfail(
-    strict=True,
-    reason="place gives a resume's start move the role, the prompt, and the steps of the start it"
-    " resumes, not the main conversation's role and steps",
 )
 def test_a_resume_of_a_start_with_steps_given_carries_those_steps(e: Events, log: str):
     """Given rules that name the writer with no steps, the writer a1, whose start holds the step
@@ -767,11 +757,6 @@ def test_a_resume_of_a_start_with_steps_given_carries_those_steps(e: Events, log
 
 
 @pytest.mark.supports("test_a_subagent_stopped_by_task_stop_is_due_again")
-@pytest.mark.xfail(
-    strict=True,
-    reason="place gives a resume's start move the role, the prompt, and the steps of the start it"
-    " resumes, not the main conversation's role and steps",
-)
 def test_a_send_message_to_a_subagent_stopped_whose_role_is_due_again_is_a_start(e: Events):
     """Given the writer a1, which TaskStop stopped with no result, so that the writer is due again
     When the main conversation's PreToolUse of SendMessage to a1 comes
@@ -839,11 +824,6 @@ def test_a_send_message_by_a_subagent_or_to_one_with_no_start_is_talk(
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@pytest.mark.xfail(
-    strict=True,
-    reason="place gives a SendMessage's tie the role, steps, and step of the subagent it resumes,"
-    " as Move says of a subagent's move and as it gives an Agent call's tie",
-)
 def test_a_send_message_that_resumed_its_subagent_ties_it(e: Events):
     """Given the writer tied to a1, and a start by SendMessage u2 to it
     When the PostToolUse of u2 says it resumed a1

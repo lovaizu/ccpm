@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from typing import Any, Callable, Optional, cast
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -135,6 +136,14 @@ def _min_length(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Lef
     )
 
 
+def _pattern(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Left:
+    """Where a string holds no match of pattern."""
+    pattern = schema.get("pattern")
+    if pattern is None or re.search(pattern, value):
+        return None
+    return at, f"takes text that matches {pattern}, not {_shown(value)}"
+
+
 def _minimum(value: Any, schema: dict[str, Any], _root: Any, at: _At) -> _Left:
     """Where an integer is less than minimum."""
     least = schema.get("minimum")
@@ -167,6 +176,7 @@ _CHECKS: tuple[Callable[[Any, dict[str, Any], dict[str, Any], _At], _Left], ...]
     _required,
     _fields,
     _min_length,
+    _pattern,
     _minimum,
     _min_items,
     _items,

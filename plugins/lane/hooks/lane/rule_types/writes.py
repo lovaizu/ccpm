@@ -13,17 +13,18 @@ from rule_types.words import listed
 def judge_call(rule: Rule, step: Step, move: Move) -> str | None:
     """Judges a call by the rule.
 
-    Takes: the rule, the step it belongs to, and the move: a Write or Edit of the move's start.
+    Takes: the rule, the step it belongs to, and the move: a Write, Edit, or NotebookEdit of the
+    move's start.
     Gives: the step's sentence and the files it writes, where the call writes a file that no path of
-    the rule names and that lies under no folder it names; None where it does.
+    the rule names and that lies under no folder it names, or that it writes nothing, where the
+    rule names no path; None where it does.
     Changes: nothing.
     Refuses: nothing.
     """
     written = of_call(move.event)
     if named(rule["paths"], written):
         return None
-    return (
-        f"You're at the step `{step['name']}` of {move.role}, which writes only"
-        f" {listed(rule['paths'])}.\n"
-        f"Write there instead of {written}."
-    )
+    at = f"You're at the step `{step['name']}` of {move.role}, which writes"
+    if not rule["paths"]:
+        return f"{at} nothing.\nLeave {written} unwritten."
+    return f"{at} only {listed(rule['paths'])}.\nWrite there instead of {written}."

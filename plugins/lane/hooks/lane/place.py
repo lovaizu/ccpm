@@ -38,12 +38,13 @@ class Move:
     """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `drop`,
     `read`, `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role whose steps hold
     it, the subagent's agent type, or for the main conversation the skill of the run's latest
-    command whose steps its plugin's rules give, the skill that called the run before any; the
-    subagent's `agent_id`, None for the main conversation; for a `start`, the prompt that the main
-    conversation gives it, the prompt of the start it resumes for a SendMessage, and None for any
-    other move; the steps that hold its start, as start_rules.steps gives them from the plugin's
-    rules and the steps that its `start` entry holds; the step its start stands at; and the report
-    where a reporter made the move."""
+    command whose steps its plugin's rules give, the skill that called the run before any, and for
+    a SendMessage's `start` the role of the start it resumes; the subagent's `agent_id`, None for
+    the main conversation; for a `start`, the prompt that the main conversation gives it, the
+    prompt of the start it resumes for a SendMessage, and None for any other move; the steps that
+    hold its start, as start_rules.steps gives them from the plugin's rules and the steps that its
+    `start` entry holds, a SendMessage's `start` held to those of the start it resumes; the step
+    its start stands at; and the report where a reporter made the move."""
 
     kind: str
     event: Event
@@ -224,7 +225,8 @@ def _start_of(run: Run, tool_use_id: str) -> Entry | None:
 def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     """The move of a PreToolUse: a start by an Agent call, held to the steps of whoever starts it;
     a start by the main conversation's SendMessage to a subagent of the run that has ended and
-    whose role the order makes due, with the prompt of the start it resumes, and no move for any
+    whose role the order makes due, with the role, the prompt, and the steps of the start it
+    resumes, and no move for any
     other SendMessage, as talk, such as one that Claude Code queues to a subagent that still runs;
     else a call."""
     tool = event.get("tool_name")
@@ -239,7 +241,9 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     ended = resumed is not None and _ended_start(run, to)
     if call.agent_id is not None or not ended or resumed["role"] not in roles:
         return None
-    return replace(call, kind="start", step=None, prompt=resumed["prompt"])
+    role = resumed["role"]
+    steps = start_steps(rules, role, resumed.get("steps"))
+    return Move("start", event, run, role, None, resumed["prompt"], steps, None, None)
 
 
 def latest_start(run: Run, agent_id: str) -> Entry | None:
@@ -263,22 +267,22 @@ def _ended_start(run: Run, agent_id: str) -> bool:
 
 
 def _after(event: Event, run: Run, rules: Rules) -> Move | None:
-    """The move of a PostToolUse: a tie by an Agent call, a read by a Read, a report by a
-    reporter's Bash call, a tie by any other call that made a start, which only a SendMessage that
-    resumed its subagent does, else none."""
+    """The move of a PostToolUse: a tie by a call that made a start, an Agent call or a
+    SendMessage that resumed its subagent, of the role and steps of that start; a read by a Read; a
+    report by a reporter's Bash call; else none."""
     tool = event.get("tool_name")
-    if tool == "Agent":
-        start = _start_of(run, event["tool_use_id"])
-        if start is None:
-            return None
+    start = _start_of(run, event["tool_use_id"])
+    if start is not None:
+        agent_id = (
+            event["tool_response"]["agentId"] if tool == "Agent" else event["tool_input"]["to"]
+        )
         role = start["role"]
         steps = start_steps(rules, role, start.get("steps"))
-        agent_id = event["tool_response"]["agentId"]
         return Move("tie", event, run, role, agent_id, None, steps, None, None)
     if tool == "Read":
         return _read(event, run, rules)
-    # A comparison of the name with Bash changes nothing: of the tools past Agent and Read, only
-    # AskUserQuestion sorts before Bash, and its PostToolUse holds no report either way.
+    # A comparison of the name with Bash changes nothing: of the tools that reach it, only Agent and
+    # AskUserQuestion sort before Bash, and the PostToolUse of neither holds a report either way.
     if tool == "Bash":  # pragma: no mutate
         given = read_report(event["tool_response"].get("stdout", ""))
         return (
@@ -286,8 +290,6 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
             if given is None
             else replace(_call(event, run, rules), kind="report", report=given)
         )
-    if _start_of(run, event["tool_use_id"]) is not None:
-        return replace(_call(event, run, rules), kind="tie", agent_id=event["tool_input"]["to"])
     return None
 
 

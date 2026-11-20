@@ -71,14 +71,10 @@ NO_WRITTEN = (
 )
 LEAD_FAILS = f"You end the step `lead` of log:up, which its check doesn't pass:\n{UP_SAYS}"
 # What the main conversation, or a subagent, reads of a start of log's subagents while no start is
-# due, and why a case of it waits.
+# due.
 NONE_DUE = (
     "No start of log's subagents is due now.\n"
     "Go on without it, and start one once Lane says it's due."
-)
-NONE_DUE_WAITS = (
-    "start_made stops a start of the plugin's subagents while no start is due with the sentence"
-    " that none is due and what to do instead, not with no sentence"
 )
 
 
@@ -260,7 +256,6 @@ def test_a_start_of_a_role_not_due_is_stopped_with_the_starts_due(g: Play):
 
 
 @pytest.mark.supports("test_another_start_of_the_plugins_subagents_is_stopped_with_the_starts_due")
-@pytest.mark.xfail(strict=True, reason=NONE_DUE_WAITS)
 def test_a_start_while_no_start_is_due_is_stopped_saying_none_is_due(g: Play):
     """Given the writer a1 running, so that no start is due
     When the main conversation starts the writer again
@@ -544,7 +539,6 @@ def test_another_conversations_events_lie_outside_the_first_ones_run(
 
 
 @pytest.mark.supports("test_a_subagents_start_of_a_subagent_is_stopped")
-@pytest.mark.xfail(strict=True, reason=NONE_DUE_WAITS)
 def test_a_subagents_start_is_stopped(g: Play):
     """Given the writer a1 running, so that no start is due
     When a1 starts a writer by the Agent tool
@@ -777,7 +771,6 @@ def test_start_made_by_a_subagent_is_stopped(g: Play, log: str, role: str):
 
 
 @pytest.mark.supports("test_a_role_named_twice_in_a_route_is_due_twice_at_once")
-@pytest.mark.xfail(strict=True, reason=NONE_DUE_WAITS)
 def test_start_made_of_a_role_due_twice_lets_two_starts_through_and_stops_a_third(
     g: Play, log: str
 ):
@@ -895,11 +888,6 @@ def resume(
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@pytest.mark.xfail(
-    strict=True,
-    reason="start_made takes a resume's role, prompt, and steps from its move, as place gives them,"
-    " and doesn't find the start it resumes again",
-)
 def test_start_made_of_a_resume_keeps_the_prompt_and_steps_that_its_move_carries(g: Play, log: str):
     """Given `log` naming the writer with no steps, the writer a1's start, its `written`, and the
     reviewer's `more`, so that the writer is due

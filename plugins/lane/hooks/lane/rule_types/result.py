@@ -24,7 +24,8 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
 
     Takes: the rule, the step it belongs to, and the move: the end of the move's start, with the
     result that its reporter gave, as the run record holds.
-    Gives: the step's sentence and the results it may give, where the start gave no result or one
+    Gives: the step's sentence and the results it may give, offered with the last two joined by
+    `or`, where the start gave no result or one
     that neither the rule's `results` nor its `ends` name; for a rule that names only `ends`, the
     sentence tells the AI to mark the step done, and says that those results end the start only
     where it can't go on; None where it gave one of them.
@@ -38,9 +39,9 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
         return (
             f"You're at the step `{step['name']}` of {move.role}, whose work isn't done.\n"
             f"Do it and mark it done with lane-step {step['name']}; give"
-            f" {listed(ends)} with lane-result only where you can't go on."
+            f" {listed(ends, 'or')} with lane-result only where you can't go on."
         )
     return (
         f"You end the step `{step['name']}` of {move.role} with no result it may give.\n"
-        f"Give {listed(results + ends)} with lane-result first."
+        f"Give {listed(results + ends, 'or')} with lane-result first."
     )

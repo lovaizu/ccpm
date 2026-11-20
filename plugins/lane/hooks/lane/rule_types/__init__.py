@@ -15,7 +15,9 @@ from rule_types import check, checklist, commands, order, reads_none, reads_whol
 _CALLS = {
     "Write": {"writes": writes.judge_call},
     "Edit": {"writes": writes.judge_call},
+    "NotebookEdit": {"writes": writes.judge_call},
     "Read": {"reads_none": reads_none.judge_call},
+    "Grep": {"reads_none": reads_none.judge_call},
     "Bash": {"commands": commands.judge_call},
 }
 
@@ -24,15 +26,14 @@ def judge_call(move: Move) -> str | None:
     """Judges a call of a start by each rule of its step that judges a call.
 
     Takes: a `call` move, placed on its start's step, with the steps that hold its start.
-    Gives: the sentence of the first rule the call breaks, by writes, reads_none, and commands;
-    None where it breaks none, or where the move's step has no rule that judges a call.
+    Gives: the sentence of the first rule the call breaks, by writes for a Write, an Edit, or a
+    NotebookEdit, reads_none for a Read or a Grep, and commands for a Bash call; None where it
+    breaks none, where the move's step has no rule that judges a call, or for a call of any other
+    tool, such as a Glob, which reads no file's content.
     Changes: nothing.
     Refuses: nothing.
     """
-    tool = move.event.get("tool_name", "")
-    if tool in ("Grep", "Glob"):
-        raise NotImplementedError(f"rule_types.judge_call of {tool}")
-    judges = _CALLS.get(tool, {})
+    judges = _CALLS.get(move.event.get("tool_name", ""), {})
     said = (
         judges[rule["type"]](rule, step, move)
         for step in move.steps

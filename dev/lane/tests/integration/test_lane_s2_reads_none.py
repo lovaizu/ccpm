@@ -1,8 +1,7 @@
 """The integration cases of S2, the files a step never reads: a Read of a file that the step of its
 start names never to read, or of a file under a folder it names, stopped with the step's sentence;
 a Read of any other file let through; and a Bash command that reaches such a file stopped by the
-step's rule of commands. Each runs `log` and Lane through the double of Claude Code. A Grep or a
-Glob that reaches such a file waits for its record, as dev/lane/tests/gaps.md says."""
+step's rule of commands. Each runs `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
 

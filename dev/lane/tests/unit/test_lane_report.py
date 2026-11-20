@@ -118,10 +118,6 @@ def test_a_report_beside_other_output_reads_as_no_report(capsys: pytest.CaptureF
     "output",
     ['{"kind": ["step"], "step": "write"}\n', '{"kind": {"of": "step"}, "step": "write"}\n'],
 )
-@pytest.mark.xfail(
-    strict=True,
-    reason="read_report gives None for JSON whose kind is a list or an object, not a TypeError",
-)
 def test_output_whose_kind_is_a_list_or_an_object_reads_as_no_report(output: str):
     """Given the output of a Bash call that printed JSON whose kind is a list or an object
     When the guard reads it
@@ -132,10 +128,6 @@ def test_output_whose_kind_is_a_list_or_an_object_reads_as_no_report(output: str
 @pytest.mark.supports("test_a_reporters_result_counts_for_the_subagent_that_ran_it")
 @pytest.mark.parametrize(
     "output", ['{"kind": "step", "step": 1}\n', '{"kind": "item", "step": "write", "item": null}\n']
-)
-@pytest.mark.xfail(
-    strict=True,
-    reason="read_report gives None for JSON whose fields aren't text, as report prints only text",
 )
 def test_output_whose_fields_arent_text_reads_as_no_report(output: str):
     """Given the output of a Bash call that printed a report's fields with a value that isn't text

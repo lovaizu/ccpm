@@ -148,8 +148,6 @@ REVIEW_NO_RESULT = (
     "You end the step `review` of log:reviewer with no result it may give.\n"
     "Give good, more or split with lane-result first."
 )
-# Why a case of a sentence that offers several results waits.
-OR = "result.judge_end offers the results as alternatives, the last two joined by `or`, not `and`"
 
 # The first line of the sentence of the writer's step `report` whose check doesn't pass, and of the
 # first of three steps, `draft`, whose check says `draft fails`.
@@ -274,11 +272,6 @@ def test_a_write_through_a_link_is_judged_by_the_file_it_reaches(e: Events, cwd:
         ("docs/changes/1.2.0.ipynb", None),
     ],
 )
-@pytest.mark.xfail(
-    strict=True,
-    reason="writes.judge_call judges a NotebookEdit by its `notebook_path`, as a Write by its"
-    " `file_path`",
-)
 def test_a_notebook_edit_is_judged_by_its_notebook_path(
     e: Events, cwd: str, path: str, said: str | None
 ):
@@ -290,11 +283,6 @@ def test_a_notebook_edit_is_judged_by_its_notebook_path(
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
-@pytest.mark.xfail(
-    strict=True,
-    reason="writes.judge_call gives a rule that names no path the sentence of a step that writes"
-    " nothing, not a ValueError",
-)
 def test_a_write_at_a_step_that_writes_nothing_gives_its_sentence(e: Events, cwd: str):
     """Given a step whose rule of the files it writes names no path
     When the writer writes notes.txt
@@ -352,17 +340,10 @@ REACHES = [
 # Where a search reaches none: a folder beside one never read, whose name begins as its, and a
 # folder that holds none.
 BESIDE = ["secrets-old", "docs"]
-# Why a case of a Grep waits.
-GREP = (
-    "reads_none.judge_call judges a Grep by its `path`, taken from the event's `cwd`, or by `cwd`"
-    " where it names none, and gives the step's sentence asking for a path outside the files never"
-    " read"
-)
 
 
 @pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
 @pytest.mark.parametrize("path, named", REACHES)
-@pytest.mark.xfail(strict=True, reason=GREP)
 def test_a_grep_whose_search_reaches_a_file_never_to_read_gives_the_steps_sentence(
     e: Events, path: str | None, named: str
 ):
@@ -378,7 +359,6 @@ def test_a_grep_whose_search_reaches_a_file_never_to_read_gives_the_steps_senten
 
 
 @pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
-@pytest.mark.xfail(strict=True, reason=GREP)
 def test_a_grep_with_a_path_from_the_root_is_judged_by_the_file_it_reaches(e: Events, cwd: str):
     """Given the step `write`, which never reads secrets/ nor .env
     When the writer greps in secrets/, its path given from the root
@@ -390,7 +370,6 @@ def test_a_grep_with_a_path_from_the_root_is_judged_by_the_file_it_reaches(e: Ev
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
 @pytest.mark.parametrize("path", [*BESIDE, os.path.join("..", "secrets")])
-@pytest.mark.xfail(strict=True, reason=GREP)
 def test_a_grep_whose_search_reaches_no_file_never_to_read_holds(e: Events, path: str):
     """Given the step `write`, which never reads secrets/ nor .env
     When the writer greps in secrets-old/, whose name begins as secrets/, in docs/, or in a
@@ -474,13 +453,7 @@ def test_a_command_chained_beside_a_named_one_gives_the_steps_sentence(e: Events
 @pytest.mark.parametrize(
     "command",
     [
-        pytest.param(
-            "git log\ngit push",
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason="commands.judge_call splits a call at each newline too, as at `;`",
-            ),
-        ),
+        "git log\ngit push",
         "git push\ngit log",
     ],
 )
@@ -549,11 +522,6 @@ def test_a_command_that_nearly_matches_a_reporter_gives_the_steps_sentence(e: Ev
 
 
 @pytest.mark.supports("test_a_command_that_its_step_doesnt_name_is_stopped_with_the_step")
-@pytest.mark.xfail(
-    strict=True,
-    reason="commands.judge_call says that a step whose rule names no command runs none, and to run"
-    " it at a step that names it",
-)
 def test_a_rule_that_names_no_command_stops_each_but_a_reporter(e: Events):
     """Given a step whose rule of commands names none
     When the writer runs `git log`, and then `lane-step write`
@@ -918,7 +886,6 @@ def test_an_end_with_a_named_result_holds(e: Events, value: str):
         [gave("good", REVIEWER), gave("fine", REVIEWER)],
     ],
 )
-@pytest.mark.xfail(strict=True, reason=OR)
 def test_an_end_with_no_named_result_gives_the_results_it_may_give(e: Events, entries: list[Entry]):
     """Given the reviewer a3 that gave no result, one its rule doesn't name, one that nearly
     matches a named one, none while a2 gave one, or a named one and then another
@@ -971,7 +938,6 @@ def test_an_end_at_a_step_whose_rule_names_only_results_that_end_the_start_says_
 
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
-@pytest.mark.xfail(strict=True, reason=OR)
 def test_an_end_at_a_step_whose_rule_names_two_results_that_end_the_start_offers_either(
     e: Events,
 ):
@@ -991,7 +957,6 @@ def test_an_end_at_a_step_whose_rule_names_two_results_that_end_the_start_offers
 
 
 @pytest.mark.supports("test_an_end_with_a_result_that_the_rule_doesnt_name_is_stopped")
-@pytest.mark.xfail(strict=True, reason=OR)
 def test_an_end_with_a_result_of_neither_kind_names_each_result_it_may_give(e: Events):
     """Given a rule of results that names `written`, and `unclear` among those that end the start
     When the writer that gave `fine` ends
@@ -1114,10 +1079,6 @@ def test_a_call_is_judged_by_the_rule_of_its_kind(e: Events, cwd: str, event: st
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
-@pytest.mark.xfail(
-    strict=True,
-    reason="rule_types.judge_call judges a NotebookEdit by the rule of the files a step writes",
-)
 def test_a_notebook_edit_of_a_file_its_step_doesnt_write_is_judged_by_writes(e: Events, cwd: str):
     """Given the writer at its step `write`, which writes CHANGELOG.md and docs/changes/
     When it edits the notebook notes.ipynb by NotebookEdit
@@ -1136,16 +1097,8 @@ def test_a_notebook_edit_of_a_file_its_step_writes_breaks_no_rule(e: Events, cwd
     assert rule_types.judge_call(move("call", given)) is None
 
 
-# Why a case of a Grep or a Glob judged by the rules of its step waits.
-SEARCHES = (
-    "rule_types.judge_call judges a Grep by the rule of the files never to read, and lets each Glob"
-    " through, as it reads no file's content, not by NotImplementedError"
-)
-
-
 @pytest.mark.supports("test_a_read_of_a_file_under_a_folder_never_to_read_is_stopped_with_the_step")
 @pytest.mark.parametrize("path, named", REACHES)
-@pytest.mark.xfail(strict=True, reason=SEARCHES)
 def test_a_grep_that_reaches_a_file_never_to_read_is_judged_by_reads_none(
     e: Events, path: str | None, named: str
 ):
@@ -1158,7 +1111,6 @@ def test_a_grep_that_reaches_a_file_never_to_read_is_judged_by_reads_none(
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
 @pytest.mark.parametrize("path", [*[path for path, _ in REACHES], *BESIDE])
-@pytest.mark.xfail(strict=True, reason=SEARCHES)
 def test_a_glob_breaks_no_rule_wherever_it_looks(e: Events, path: str | None):
     """Given the writer at its step `write`, which never reads secrets/ nor .env
     When it globs in a folder under secrets/, in secrets/, at .env, in the conversation's folder,
@@ -1169,7 +1121,6 @@ def test_a_glob_breaks_no_rule_wherever_it_looks(e: Events, path: str | None):
 
 @pytest.mark.supports("test_a_read_of_another_file_goes_through")
 @pytest.mark.parametrize("path", BESIDE)
-@pytest.mark.xfail(strict=True, reason=SEARCHES)
 def test_a_grep_that_reaches_no_file_never_to_read_breaks_no_rule(e: Events, path: str):
     """Given the writer at its step `write`, which never reads secrets/ nor .env
     When it greps in secrets-old/ or in docs/
@@ -1446,7 +1397,7 @@ def test_an_end_that_breaks_no_rule_holds(e: Events):
 @pytest.mark.parametrize(
     "entries, said",
     [
-        pytest.param((), REVIEW_NO_RESULT, marks=pytest.mark.xfail(strict=True, reason=OR)),
+        ((), REVIEW_NO_RESULT),
         ((gave("good", REVIEWER),), None),
     ],
 )

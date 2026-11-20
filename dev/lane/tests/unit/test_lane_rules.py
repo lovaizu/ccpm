@@ -169,11 +169,6 @@ def test_a_rule_with_an_empty_list_is_out_of_form(tmp_path: Any, kind: str):
 
 
 @pytest.mark.supports("test_a_write_of_a_file_that_its_step_doesnt_name_is_stopped_with_the_step")
-@pytest.mark.xfail(
-    strict=True,
-    reason="rules.schema.json takes a rule of the files a step writes with no path, as a step that"
-    " writes nothing",
-)
 def test_a_rule_of_the_files_written_with_no_path_is_in_the_form(tmp_path: Any):
     """Given rules whose writer's step writes nothing, by a rule of the files it writes with an
     empty list
@@ -184,11 +179,6 @@ def test_a_rule_of_the_files_written_with_no_path_is_in_the_form(tmp_path: Any):
 
 @pytest.mark.supports("test_a_step_marked_done_with_a_file_unread_is_stopped_with_the_file")
 @pytest.mark.parametrize("paths", [["docs/"], ["NOTES.md", "docs/changes/"]])
-@pytest.mark.xfail(
-    strict=True,
-    reason="rules.schema.json refuses a path that ends with / in a rule of the files to read whole,"
-    " as a folder has no lines to read",
-)
 def test_a_folder_in_a_rule_of_the_files_to_read_whole_is_out_of_form(
     tmp_path: Any, paths: list[str]
 ):
