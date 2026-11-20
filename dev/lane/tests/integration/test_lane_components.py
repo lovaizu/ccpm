@@ -124,29 +124,40 @@ def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_stops_the_s
     assert said in answer.said
 
 
-@pytest.mark.xfail(strict=True, reason="guard.turn_started and place.turn_opening are empty")
 @pytest.mark.supports("guard", "S11")
-@pytest.mark.parametrize(
-    "code, said",
-    [
-        (None, "lane/adapters/rules.py"),
-        ("import sys\n\nsys.exit('no event to read')\n", "no event to read"),
-    ],
-)
-def test_a_turn_whose_adapter_of_the_rules_is_missing_or_fails_stops_its_first_call(
-    b: Bench, code: str | None, said: str
-):
-    """Given `log` whose rules name log:up with no steps, and no adapter of the rules, or one that
-    exits 1 saying it found no event to read
+def test_a_turn_whose_adapter_of_the_rules_is_missing_stops_its_first_call(b: Bench):
+    """Given `log` whose rules name log:up with no steps, and no adapter of the rules
     When the person types /log:up 1.2.0, and the main conversation runs `git status`
-    Then the call is stopped, naming log:up and lane/adapters/rules.py, or rules.py and what it
-    said, for the plugin's author to mend"""
+    Then the call is stopped with the writer due and the sentence that log:up takes its steps from
+    the adapter that the plugin doesn't give, naming lane/adapters/rules.py in log's folder, for
+    the plugin's author to add"""
     steps_by_turn(b)
-    b.adapter("rules.py", code)
+    b.adapter("rules.py", None)
     answer = opened(b).bash("git status")
     assert answer.blocked
-    assert ("log:up" if code is None else "rules.py") in answer.said
-    assert said in answer.said
+    assert answer.said == (
+        "Due: log:writer.\n"
+        "Lane: log:up takes its steps from the plugin's adapter of the rules, which the plugin"
+        f" doesn't give. The plugin's author adds lane/adapters/rules.py in {b.log}, or the"
+        " role's steps to lane/rules.json."
+    )
+
+
+@pytest.mark.supports("guard", "S11")
+def test_a_turn_whose_adapter_of_the_rules_fails_stops_its_first_call_with_what_it_said(b: Bench):
+    """Given `log` whose rules name log:up with no steps, and whose adapter of the rules exits 1
+    saying it found no event to read
+    When the person types /log:up 1.2.0, and the main conversation runs `git status`
+    Then the call is stopped with the writer due and the sentence that log's rules.py failed with
+    what it said, for the plugin's author to mend"""
+    steps_by_turn(b)
+    b.adapter("rules.py", "import sys\n\nsys.exit('no event to read')\n")
+    answer = opened(b).bash("git status")
+    assert answer.blocked
+    assert answer.said == (
+        f"Due: log:writer.\nLane: {b.log}/lane/adapters/rules.py failed: no event to read."
+        " The plugin's author mends it."
+    )
 
 
 @pytest.mark.supports("guard", "S8")

@@ -75,10 +75,6 @@ def wrote(writer: Agent, *names: str) -> None:
     writer.read(os.path.join(writer.conversation.cwd, "NOTES.md"))
 
 
-COMMANDED = pytest.mark.xfail(strict=True, reason="checklist.items gives no command's items yet")
-
-
-@COMMANDED
 @pytest.mark.supports("S6", "Rules")
 def test_a_step_marked_before_the_items_its_command_gives_names_each_not_done(b: Bench):
     """Given `log` whose writer's checklist of `write` is each file under docs/changes/, as its
@@ -94,7 +90,6 @@ def test_a_step_marked_before_the_items_its_command_gives_names_each_not_done(b:
     assert "a.md" not in said
 
 
-@COMMANDED
 @pytest.mark.supports("S6")
 def test_a_checklist_given_by_a_command_takes_the_items_at_the_mark(b: Bench):
     """Given `log` whose writer's checklist of `write` is each file under docs/changes/, and the
@@ -113,7 +108,6 @@ def test_a_checklist_given_by_a_command_takes_the_items_at_the_mark(b: Bench):
     assert "b.md" not in writer.bash("lane-step write").said
 
 
-@COMMANDED
 @pytest.mark.supports("S6", "guard")
 def test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it_printed(
     b: Bench,
@@ -122,16 +116,18 @@ def test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it
     changes are written yet, where docs/changes/ isn't there, and the writer running, NOTES.md read
     whole
     When it reports the step `write` done
-    Then the mark is stopped with the step `write` and what the command printed"""
+    Then the mark is stopped with the sentence that the step `write` of log:writer has a
+    checklist command that fails, with what the command printed and the command to mend"""
     listed_by_command(b)
     writer = started(opened(b))
     wrote(writer)
-    said = writer.bash("lane-step write").said
-    assert "`write`" in said
-    assert NO_CHANGES in said
+    assert writer.bash("lane-step write").said == (
+        "You're at the step `write` of log:writer, whose checklist command fails:\n"
+        f"{NO_CHANGES}\n"
+        f"Mend {LISTED}, which gives the items one word a line."
+    )
 
 
-@COMMANDED
 @pytest.mark.supports("S6", "guard")
 def test_a_checklist_command_runs_in_the_worktree_the_conversation_works_in(b: Bench):
     """Given `log` whose writer's checklist of `write` is each file under docs/changes/, and the

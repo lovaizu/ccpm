@@ -3,7 +3,11 @@ mark, each of which is done before the step, and the sentence of a step done bef
 
 from __future__ import annotations
 
+import subprocess
+from typing import cast
+
 from place import Move, own_entries
+from report import Report
 from rules import Rule, Step
 
 from rule_types.words import listed
@@ -28,7 +32,23 @@ def items(rule: Rule, move: Move) -> list[str]:
     """
     if "items" in rule:
         return rule["items"]
-    raise NotImplementedError("checklist.items")
+    done = subprocess.run(
+        rule["command"],
+        shell=True,
+        cwd=move.event["cwd"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    lines = done.stdout.splitlines()
+    if done.returncode or any(line.split() != [line] for line in lines):
+        step = cast(Report, move.report)["step"]
+        raise ItemsFailed(
+            f"You're at the step `{step}` of {move.role}, whose checklist command fails:\n"
+            f"{(done.stdout + done.stderr).strip()}\n"
+            f"Mend {rule['command']}, which gives the items one word a line."
+        )
+    return lines
 
 
 def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:

@@ -955,7 +955,6 @@ FIRST: list[Step] = lane_bench.turn_steps([".log/1.2.0.md"])
 LATER: list[Step] = lane_bench.turn_steps(["docs/changes/1.2.0.md"])
 NOTIFIED = "<task-notification>Wrote docs/changes/1.2.0.md.</task-notification>"
 TURN_ENDED: Entry = {"kind": "turn_ended", "run": "r1"}
-UNBUILT = pytest.mark.xfail(strict=True, reason="place.turn_beginning and its kin are empty")
 
 
 def turn(prompt: str = "", steps: list[Step] = FIRST, role: str = "log:up") -> Entry:
@@ -982,7 +981,6 @@ TAG_PER_TURN: Any = copy.deepcopy(lane_bench.RULES)
 TAG_PER_TURN["roles"]["log:tag"] = {}
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
     "test_a_persons_prompt_after_the_turns_end_begins_a_turn_held_to_steps_from_it",
@@ -1005,7 +1003,6 @@ def test_the_first_prompt_after_a_turns_end_begins_the_next_turn(e: Events, log:
     assert turn_beginning(given, [on]) is on
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_a_subagents_end_after_a_turns_end_that_lane_stopped_goes_on_in_the_same_turn",
     "test_a_subagents_end_that_reaches_the_main_conversation_within_its_turn_leaves_the_turn",
@@ -1032,7 +1029,7 @@ def test_a_prompt_within_a_turn_begins_none(e: Events, log: str, entries: tuple[
 @pytest.mark.parametrize(
     "rules, begins",
     [
-        pytest.param(TAG_PER_TURN, True, marks=UNBUILT),
+        (TAG_PER_TURN, True),
         (lane_bench.ADAPTED, False),
         (lane_bench.RULES, False),
     ],
@@ -1087,7 +1084,6 @@ def test_a_prompt_beside_no_run_with_a_folder_that_stands_begins_no_turn(
     assert turn_beginning(e.prompt("Go on."), [on]) is None
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
     "test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh",
@@ -1109,7 +1105,6 @@ def test_the_runs_first_call_or_end_opens_its_first_turn_with_no_prompt(
     assert turn_opening(given, [on]) == Turn(on, "log:up", "")
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
     "test_two_subagents_ends_one_after_the_other_each_begin_a_turn_of_their_own",
@@ -1134,7 +1129,6 @@ def test_the_first_call_after_a_prompt_opens_its_turn_with_the_latest_prompt_beg
     assert turn_opening(e.write("/repo/notes.md"), [on]) == Turn(on, "log:up", NOTIFIED)
 
 
-@UNBUILT
 @pytest.mark.supports("test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role")
 @pytest.mark.parametrize("command, role", [("log:tag", "log:tag"), ("log:retry", "log:up")])
 def test_the_turns_role_is_that_of_the_latest_command_whose_role_the_rules_name(
@@ -1150,7 +1144,6 @@ def test_the_turns_role_is_that_of_the_latest_command_whose_role_the_rules_name(
     assert turn_opening(e.write("/repo/notes.md"), [on]) == Turn(on, role, f"/{command}")
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_a_skill_called_within_a_turn_leaves_its_steps_and_gives_the_next_turn_its_role",
     "test_a_subagents_end_after_a_turns_end_that_lane_stopped_goes_on_in_the_same_turn",
@@ -1244,7 +1237,6 @@ def test_the_main_conversations_own_entries_with_no_turn_are_each_with_no_agent(
     assert own_entries(on, None) == [*on.entries[:2], START, lead]
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh",
     "test_two_subagents_ends_one_after_the_other_each_begin_a_turn_of_their_own",
@@ -1268,7 +1260,6 @@ def test_the_main_conversations_own_entries_are_those_after_its_latest_turn(e: E
     assert own_entries(on, None) == [step_mark("up", None)]
 
 
-@UNBUILT
 @pytest.mark.supports("test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh")
 def test_the_main_conversations_own_entries_at_its_turns_first_move_are_none(e: Events):
     """Given a run of log:up taking its steps at each turn, whose second turn's `turn` entry is its
@@ -1279,7 +1270,6 @@ def test_the_main_conversations_own_entries_at_its_turns_first_move_are_none(e: 
     assert (own_entries(on, None), marked(on, None)) == ([], set())
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
     "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
@@ -1303,7 +1293,6 @@ def test_the_main_conversations_call_in_a_turn_is_held_to_the_latest_turns_steps
     assert place(given, [on], by_routes) == main_move("call", given, on, steps=steps, step="up")
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_the_turns_end_before_its_step_is_marked_is_stopped_and_goes_through_once_it_is",
     "test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh",
@@ -1330,7 +1319,6 @@ def test_the_main_conversations_stop_ends_its_turn_at_the_first_step_the_turn_le
     assert place(given, [on], by_routes) == main_move("turn_end", given, on, steps=steps, step=step)
 
 
-@UNBUILT
 @pytest.mark.supports(
     "test_a_skill_called_within_a_turn_leaves_its_steps_and_gives_the_next_turn_its_role"
 )

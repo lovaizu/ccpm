@@ -116,7 +116,9 @@ def turn_begun(event: Event, run: Run) -> Answer:
     it, which turn_started gives the plugin's adapter of the rules.
     Refuses: nothing.
     """
-    raise NotImplementedError("guard.turn_begun")
+    entry: record.Entry = {"kind": "turn_begun", "run": run.id, "prompt": event["prompt"]}
+    record.add(run.session_id, [entry])
+    return Answer()
 
 
 def turn_started(event: Event, turn: Turn) -> Answer:
@@ -133,7 +135,17 @@ def turn_started(event: Event, turn: Turn) -> Answer:
     Refuses: AdapterFailed, where the plugin's adapter of the rules is missing, fails, or gives out
     of its form, which answer gives as a stop of the call or the end with what's wrong.
     """
-    raise NotImplementedError("guard.turn_started")
+    run = turn.run
+    steps = adapters.given_steps(_root(run), event["cwd"], run, turn.role, turn.prompt)
+    entry: record.Entry = {
+        "kind": "turn",
+        "run": run.id,
+        "role": turn.role,
+        "prompt": turn.prompt,
+        "steps": steps,
+    }
+    record.add(run.session_id, [entry])
+    return Answer()
 
 
 def skill_called(call: SkillCall) -> Answer:
@@ -266,7 +278,7 @@ def turn_ended(move: Move) -> Answer:
 def _turn_closed(run: Run) -> None:
     """Adds the `turn_ended` entry of the main conversation's turn whose end the guard lets
     through."""
-    raise NotImplementedError("guard._turn_closed")
+    record.add(run.session_id, [{"kind": "turn_ended", "run": run.id}])
 
 
 def command_typed(move: Move) -> Answer:

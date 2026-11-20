@@ -15,12 +15,28 @@ import pytest
 from claude_code import Agent, Conversation
 from lane_bench import Bench, opened, reached, started, steps_by_turn, written
 
-pytestmark = pytest.mark.xfail(
-    strict=True, reason="guard.turn_begun, guard.turn_started, and place.turn_opening are empty"
-)
-
 # The note that TURN_ADAPTER gives the run's first turn to write, from the run's words.
 FIRST_NOTE = ".log/1.2.0.md"
+
+
+def writes(paths: str, file: str) -> str:
+    """The sentence of the main conversation's write of the file at the step `up` of log:up, which
+    writes only the paths."""
+    return (
+        f"You're at the step `up` of log:up, which writes only {paths}.\n"
+        f"Write there instead of {file}."
+    )
+
+
+# The sentence of the main conversation's write of notes.txt at the step `tag` of log:tag, which
+# writes nothing.
+TAG_WRITES = (
+    "You're at the step `tag` of log:tag, which writes nothing.\nLeave notes.txt unwritten."
+)
+# The sentence of the main conversation's turn's end before its step `up` of log:up is done.
+UP_UNDONE = (
+    "You end before the step `up` of log:up is done.\nDo it and mark it done with lane-step up."
+)
 # What the writer replies as it ends, which its task-notification carries to the main conversation.
 WROTE = "Wrote docs/changes/1.2.0.md."
 
@@ -53,14 +69,14 @@ def test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_word
     turn with no prompt the step `up`, which writes the note of the run's words
     When the person types /log:up 1.2.0, and the main conversation writes notes.txt, and then
     .log/1.2.0.md
-    Then the first write is stopped with the sentence of the step `up` of log:up naming
-    .log/1.2.0.md, and the second goes through"""
+    Then the first write, the run's first event after the skill's call, is stopped with the
+    writer due and the sentence of the step `up` of log:up naming .log/1.2.0.md, and the second
+    goes through"""
     steps_by_turn(b)
     c = opened(b)
     answer = c.write(None, b.at("notes.txt"), "x\n")
     assert answer.blocked
-    assert "`up` of log:up" in answer.said
-    assert FIRST_NOTE in answer.said
+    assert answer.said == "Due: log:writer.\n" + writes(FIRST_NOTE, "notes.txt")
     assert not c.write(None, b.at(FIRST_NOTE), "x\n").blocked
 
 
@@ -76,7 +92,7 @@ def test_the_turns_end_before_its_step_is_marked_is_stopped_and_goes_through_onc
     started(c)
     answer = c.stop("The writer runs.")
     assert answer.blocked
-    assert "`up`" in answer.said
+    assert answer.said == UP_UNDONE
     c.bash("lane-step up")
     assert not c.stop("The writer runs.").blocked
 
@@ -95,7 +111,7 @@ def test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_it
     reached(writer, WROTE)
     answer = c.write(None, b.at(FIRST_NOTE), "x\n")
     assert answer.blocked
-    assert "docs/changes/1.2.0.md" in answer.said
+    assert answer.said == writes("docs/changes/1.2.0.md", FIRST_NOTE)
     assert not c.write(None, b.at("docs/changes/1.2.0.md"), "x\n").blocked
 
 
@@ -112,7 +128,7 @@ def test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh(b: B
     reached(writer, WROTE)
     answer = c.stop("The reviewer is due.")
     assert answer.blocked
-    assert "`up`" in answer.said
+    assert answer.said == UP_UNDONE
 
 
 @pytest.mark.supports("S11")
@@ -125,7 +141,7 @@ def test_a_persons_prompt_after_the_turns_end_begins_a_turn_held_to_steps_from_i
     c.type("Write docs/notes.md.")
     answer = c.write(None, b.at(FIRST_NOTE), "x\n")
     assert answer.blocked
-    assert "docs/notes.md" in answer.said
+    assert answer.said == writes("docs/notes.md", FIRST_NOTE)
     assert not c.write(None, b.at("docs/notes.md"), "x\n").blocked
 
 
@@ -140,7 +156,7 @@ def test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role(b:
     c.type("/log:tag")
     answer = c.write(None, b.at("notes.txt"), "x\n")
     assert answer.blocked
-    assert "`tag` of log:tag" in answer.said
+    assert answer.said == TAG_WRITES
 
 
 @pytest.mark.supports("S11", "S9")
@@ -160,14 +176,14 @@ def test_a_skill_called_within_a_turn_leaves_its_steps_and_gives_the_next_turn_i
     c.skill("log:tag", "")
     first = c.write(None, b.at("notes.txt"), "x\n")
     assert first.blocked
-    assert "`up`" in first.said
+    assert first.said == writes(FIRST_NOTE, "notes.txt")
     started(c, "log:tagger")
     c.bash("lane-step up")
     assert not c.stop("The tagger runs.").blocked
     c.type("Go on.")
     second = c.write(None, b.at("notes.txt"), "x\n")
     assert second.blocked
-    assert "`tag` of log:tag" in second.said
+    assert second.said == TAG_WRITES
 
 
 @pytest.mark.supports("S11", "S9")
@@ -194,7 +210,7 @@ def test_two_subagents_ends_one_after_the_other_each_begin_a_turn_of_their_own(b
     reached(two, "Wrote docs/changes/two.md.")
     answer = c.write(None, b.at("docs/changes/three.md"), "x\n")
     assert answer.blocked
-    assert "docs/changes/two.md" in answer.said
+    assert answer.said == writes("docs/changes/two.md", "docs/changes/three.md")
 
 
 @pytest.mark.supports("S11")
@@ -213,7 +229,7 @@ def test_a_subagents_end_after_a_turns_end_that_lane_stopped_goes_on_in_the_same
     reached(writer, WROTE)
     answer = c.write(None, b.at("docs/changes/1.2.0.md"), "x\n")
     assert answer.blocked
-    assert FIRST_NOTE in answer.said
+    assert answer.said == writes(FIRST_NOTE, "docs/changes/1.2.0.md")
     assert not c.write(None, b.at(FIRST_NOTE), "x\n").blocked
 
 

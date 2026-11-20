@@ -1380,9 +1380,6 @@ def test_an_empty_answer_is_written_as_nothing(g: Play, event: str):
 # A main conversation whose role takes its steps at each turn: answer, by each transition of its
 # turns, and turn_begun, turn_started, and turn_ended, by each class of what they take.
 
-TURNS_UNBUILT = pytest.mark.xfail(
-    strict=True, reason="guard.turn_begun, guard.turn_started, and their kin are empty"
-)
 FIRST_STEPS: list[Step] = lane_bench.turn_steps([".log/1.2.0.md"])
 NOTIFIED = "<task-notification>Wrote docs/changes/1.2.0.md.</task-notification>"
 # The sentences of the main conversation's write of notes.txt in the run's first turn, and in a
@@ -1430,7 +1427,6 @@ def first_turn_through(g: Play) -> None:
     assert g(g.e.stop()) == Answer()
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports(
     "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words"
 )
@@ -1449,7 +1445,6 @@ def test_the_runs_first_call_adds_its_first_turn_and_is_held_to_its_steps(g: Pla
     assert entries() == [RUN, {"kind": "folder", "run": "r1", "plugin_root": g.log}, turn_entry()]
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports(
     "test_a_persons_prompt_after_the_turns_end_begins_a_turn_held_to_steps_from_it"
 )
@@ -1471,7 +1466,6 @@ def test_a_turns_end_let_through_ends_it_and_the_next_prompt_and_call_begin_the_
     ]
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports(
     "test_a_subagents_end_after_a_turns_end_that_lane_stopped_goes_on_in_the_same_turn",
     "test_a_subagents_end_that_reaches_the_main_conversation_within_its_turn_leaves_the_turn",
@@ -1497,7 +1491,6 @@ def test_a_notification_before_the_turns_end_is_let_through_begins_no_turn(g: Pl
     assert [e for e in entries() if e["kind"].startswith("turn")] == [turn_entry()]
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports("test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role")
 def test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role(g: Play):
     """Given the first turn of `log` taking its steps at each turn for log:up and log:tag, its end
@@ -1513,26 +1506,23 @@ def test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role(g:
     assert entries()[-1] == turn_entry("/log:tag", lane_bench.turn_steps([], "tag"), "log:tag")
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports(
-    "test_a_turn_whose_adapter_of_the_rules_is_missing_or_fails_stops_its_first_call"
+    "test_a_turn_whose_adapter_of_the_rules_fails_stops_its_first_call_with_what_it_said"
 )
 def test_a_turns_first_call_whose_adapter_fails_is_stopped_and_adds_no_turn(g: Play):
     """Given `log` naming log:up with no steps, whose adapter of the rules exits 1 saying it found
     no event, and the person's /log:up 1.2.0 expanded
     When the main conversation runs `git status`
-    Then the guard stops it, naming the adapter's path and what it said, and the record holds no
-    turn"""
+    Then the guard stops it with the writer due and the sentence that the adapter's path failed
+    with what it said, and the record holds no turn"""
     by_turn(g.log)
     write_files(g.log, {"lane/adapters/rules.py": "import sys\n\nsys.exit('no event')\n"})
-    said = g.opened()
-    assert said.stop
-    assert os.path.join(g.log, "lane", "adapters", "rules.py") in said.said
-    assert "no event" in said.said
+    path = os.path.join(g.log, "lane", "adapters", "rules.py")
+    failed = f"Lane: {path} failed: no event. The plugin's author mends it."
+    assert g.opened() == Answer(True, f"{WRITER_DUE}\n{failed}")
     assert of_kind("turn") == []
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports(
     "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification"
 )
@@ -1548,7 +1538,6 @@ def test_turn_begun_keeps_the_prompt_that_begins_the_turn(g: Play, log: str, pro
     assert gained(log) == [{"kind": "turn_begun", "run": "r1", "prompt": prompt}]
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports(
     "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
     "test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role",
@@ -1577,26 +1566,26 @@ def test_turn_started_keeps_the_turn_with_the_steps_its_adapter_gives(
     assert gained(log) == [turn_entry(prompt, steps, role)]
 
 
-@TURNS_UNBUILT
-@pytest.mark.supports(
-    "test_a_turn_whose_adapter_of_the_rules_is_missing_or_fails_stops_its_first_call"
-)
+@pytest.mark.supports("test_a_turn_whose_adapter_of_the_rules_is_missing_stops_its_first_call")
 def test_turn_started_with_no_adapter_of_the_rules_is_refused_naming_it(g: Play, log: str):
     """Given a run of log:up taking its steps at each turn, with no adapter of the rules
     When its first turn's first call comes
-    Then turn_started refuses with AdapterFailed naming lane/adapters/rules.py and log:up, and the
+    Then turn_started refuses with AdapterFailed saying that log:up takes its steps from the
+    adapter that the plugin doesn't give, naming lane/adapters/rules.py in log's folder, and the
     record gains nothing"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.PER_TURN)})
     recorded_now(log)
     [on] = runs("session-1")
     with pytest.raises(AdapterFailed) as raised:
         turn_started(g.e.bash("git status"), Turn(on, "log:up", ""))
-    assert "lane/adapters/rules.py" in str(raised.value)
-    assert "log:up" in str(raised.value)
+    assert str(raised.value) == (
+        "Lane: log:up takes its steps from the plugin's adapter of the rules, which the plugin"
+        f" doesn't give. The plugin's author adds lane/adapters/rules.py in {log}, or the role's"
+        " steps to lane/rules.json."
+    )
     assert gained(log) == []
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports(
     "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words"
 )
@@ -1619,7 +1608,6 @@ def turn_end(g: Play, step: str | None) -> Move:
     return Move("turn_end", g.e.stop(), on, "log:up", None, None, FIRST_STEPS, step, None)
 
 
-@TURNS_UNBUILT
 @pytest.mark.supports(
     "test_the_turns_end_before_its_step_is_marked_is_stopped_and_goes_through_once_it_is"
 )

@@ -51,8 +51,9 @@ class Move:
     """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `drop`,
     `read`, `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role whose steps hold
     it, the subagent's agent type, or for the main conversation the skill of the run's latest
-    command whose steps its plugin's rules give, the skill that called the run before any, and for
-    a SendMessage's `start` the role of the start it resumes; the subagent's `agent_id`, None for
+    command whose steps its plugin's rules give, the skill that called the run before any, or, in
+    a turn whose `turn` entry stands, the role that entry holds, and for a SendMessage's `start`
+    the role of the start it resumes; the subagent's `agent_id`, None for
     the main conversation; for a `start`, the prompt that the main conversation gives it, the
     prompt of the start it resumes for a SendMessage, and None for any other move; the steps that
     hold its start, as start_rules.steps gives them from the plugin's rules and the steps that its
@@ -132,10 +133,13 @@ def turn_beginning(event: Event, runs: list[Run]) -> Run | None:
     """
     if event.get("hook_event_name") != "UserPromptSubmit" or "agent_id" in event:
         return None
-    run = _per_turn(runs)
-    if run is None:
+    found = _per_turn(runs)
+    if found is None:
         return None
-    raise NotImplementedError("place.turn_beginning")
+    run = found[0]
+    ended = any(entry["kind"] == "turn_ended" for entry in run.entries)
+    begun = any(entry["kind"] == "turn_begun" for entry in _this_turn(run))
+    return run if ended and not begun else None
 
 
 def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
@@ -158,20 +162,23 @@ def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
     """
     if event.get("hook_event_name") not in ("PreToolUse", "Stop") or "agent_id" in event:
         return None
-    run = _per_turn(runs)
-    if run is None:
+    found = _per_turn(runs)
+    if found is None or _turn_at_hand(found[0]) is not None:
         return None
-    raise NotImplementedError("place.turn_opening")
+    run, role = found
+    prompts = [entry["prompt"] for entry in _this_turn(run) if entry["kind"] == "turn_begun"]
+    return Turn(run, role, prompts[-1] if prompts else "")
 
 
-def _per_turn(runs: list[Run]) -> Run | None:
-    """The standing run, with its folder, where its plugin's rules leave the main conversation's
-    role's steps to the plugin's adapter of the rules at each turn; else None."""
+def _per_turn(runs: list[Run]) -> tuple[Run, str] | None:
+    """The standing run, with its folder, and the main conversation's role, where its plugin's
+    rules leave the role's steps to the plugin's adapter of the rules at each turn; else None."""
     run = _standing(runs)
     rules = read_rules(run.plugin_root) if run is not None and run.plugin_root else None
-    if run is None or rules is None or not asks_adapter(rules, _main_role(run, rules)):
+    if run is None or rules is None:
         return None
-    return run
+    role = _main_role(run, rules)
+    return (run, role) if asks_adapter(rules, role) else None
 
 
 def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
@@ -185,9 +192,11 @@ def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
     Changes: nothing.
     Refuses: nothing.
     """
-    if agent_id is None and any(entry["kind"] == "turn" for entry in run.entries):
-        raise NotImplementedError("place.own_entries")
-    return [entry for entry in run.entries if entry.get("agent_id") == agent_id]
+    entries = run.entries
+    turns = [i for i, entry in enumerate(entries) if entry["kind"] == "turn"]
+    if agent_id is None and turns:
+        entries = entries[turns[-1] + 1 :]
+    return [entry for entry in entries if entry.get("agent_id") == agent_id]
 
 
 def place(event: Event, runs: list[Run], due: Due) -> Move | None:
@@ -401,9 +410,12 @@ def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> 
     role takes its steps at each turn, or of a subagent, the event's or the one given, held to the
     steps of the start it's tied to; each at the first of its steps that it hasn't marked done."""
     agent_id = agent_id or event.get("agent_id")
-    if agent_id is None:
+    turn = _turn_at_hand(run) if agent_id is None else None
+    if turn is not None:
+        role, steps = turn["role"], turn["steps"]
+    elif agent_id is None:
         role = _main_role(run, rules)
-        steps = start_steps(rules, role, _turn_steps(run) if asks_adapter(rules, role) else None)
+        steps = start_steps(rules, role, None)
     else:
         tie = next(e for e in reversed(run.entries) if _ties(e, agent_id))
         start = next(e for e in run.entries if e.get("tool_use_id") == tie["tool_use_id"])
@@ -428,10 +440,17 @@ def _main_role(run: Run, rules: Rules) -> str:
     return role
 
 
-def _turn_steps(run: Run) -> list[Step] | None:
-    """The steps that the run's latest `turn` entry holds, where it lies after the run's latest
-    `turn_ended` entry; None where the turn at hand holds none yet."""
-    raise NotImplementedError("place._turn_steps")
+def _this_turn(run: Run) -> list[Entry]:
+    """The entries of the main conversation's turn at hand: those after the run's latest
+    `turn_ended` entry, or each of the run's before its first."""
+    ends = [i for i, entry in enumerate(run.entries) if entry["kind"] == "turn_ended"]
+    return run.entries[ends[-1] + 1 :] if ends else run.entries
+
+
+def _turn_at_hand(run: Run) -> Entry | None:
+    """The `turn` entry of the turn at hand, with the role and the steps that hold the main
+    conversation's moves in it; None where the turn holds none yet."""
+    return next((e for e in reversed(_this_turn(run)) if e["kind"] == "turn"), None)
 
 
 # The move of each event that follows a call or a subagent's end, by the event's name.

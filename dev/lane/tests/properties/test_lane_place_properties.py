@@ -146,7 +146,6 @@ def per_turn() -> Iterator[tuple[str, str]]:
         yield log, cwd
 
 
-@pytest.mark.xfail(strict=True, reason="place.own_entries and place._turn_steps are empty")
 @pytest.mark.supports("test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh")
 @given(st.lists(st.lists(MAIN_MARK, max_size=4), min_size=1, max_size=3), st.lists(MAIN_MARK))
 def test_the_turns_before_leave_the_end_of_the_turn_at_hand_as_it_stands_alone(

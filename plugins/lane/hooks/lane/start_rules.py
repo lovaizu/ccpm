@@ -25,11 +25,11 @@ def asks_adapter(rules: Rules, role: str) -> bool:
 
 
 def steps(rules: Rules, role: str, given: list[Step] | None) -> list[Step]:
-    """The steps and rules that hold a start of the role, or the main conversation's turn.
+    """The steps and rules that hold a start of the role, or the main conversation's role.
 
     Takes: the plugin's rules, the role, a subagent's agent type or the skill's name for the main
-    conversation, and the steps that the plugin's adapter of the rules gave for the start, or for
-    the main conversation's turn, None where asks_adapter gives False or no turn holds steps yet.
+    conversation, and the steps that the plugin's adapter of the rules gave for the start, None
+    where asks_adapter gives False; a turn's steps come from its `turn` entry, as place reads it.
     Gives: the role's steps that the rules give, in their order; the given steps, where the rules
     name the role with no steps; none where the rules don't name the role.
     Changes: nothing.
