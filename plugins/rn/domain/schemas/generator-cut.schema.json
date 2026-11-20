@@ -1,0 +1,165 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "generator's Cut",
+ "description": "What the orchestrator gives the generator for one Round, at <round>/generator-cut.json, which the start's prompt names by its path: all the generator gets of the run. Lane's adapter of the rules reads it for the start's steps.",
+ "type": "object",
+ "required": [
+  "goal",
+  "deliverable",
+  "inputs",
+  "best_practice",
+  "stage",
+  "number",
+  "round",
+  "findings",
+  "last_good"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "goal": {
+   "description": "The design tree's goal: the end the user is after, and what its people do once it holds.",
+   "type": "string",
+   "minLength": 1
+  },
+  "deliverable": {
+   "description": "The deliverable's node of the design tree as it stands, an open one of design-tree.schema.json: its name, paths, kind, inputs, and each necessary condition with its decisions, the user's answers to its points among them, by user.",
+   "type": "object"
+  },
+  "inputs": {
+   "description": "The path of each deliverable that the deliverable's inputs name, from the folder that the conversation works in.",
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   }
+  },
+  "best_practice": {
+   "description": "The folder of the best practice that the Round makes by: the deliverable's kind's for content, and the refactoring kind's for refactor.",
+   "type": "string",
+   "minLength": 1
+  },
+  "stage": {
+   "description": "content: the Round makes the content. refactor: it refactors it, once its content is made.",
+   "enum": [
+    "content",
+    "refactor"
+   ]
+  },
+  "number": {
+   "description": "The Round's number in its stage, from 1.",
+   "type": "integer",
+   "minimum": 1
+  },
+  "round": {
+   "description": "The Round's folder, from the folder that the conversation works in, where the role writes its result.",
+   "type": "string",
+   "minLength": 1
+  },
+  "findings": {
+   "description": "What the last evaluator of the deliverable found of each condition that the design tree still holds not good, as it gave it, which the generator takes as given; null before the first evaluator.",
+   "oneOf": [
+    {
+     "type": "null"
+    },
+    {
+     "type": "object",
+     "required": [
+      "good",
+      "more"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "good": {
+       "description": "Each condition that the deliverable meets, with the lines that meet it.",
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "condition",
+         "lines"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "condition": {
+          "description": "The condition's ID in the best practice, such as N2.",
+          "type": "string",
+          "minLength": 1
+         },
+         "lines": {
+          "description": "Each line of the deliverable that meets it, word for word as it stands, so that a reader checks the answer by reading them.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+           "type": "string",
+           "minLength": 1
+          }
+         }
+        }
+       }
+      },
+      "more": {
+       "description": "Each condition that the deliverable doesn't yet meet, with what would make it good.",
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "condition",
+         "good_when"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "condition": {
+          "description": "The condition's ID in the best practice, such as N2.",
+          "type": "string",
+          "minLength": 1
+         },
+         "good_when": {
+          "description": "What the deliverable's people get once it's good, in their terms, never how to make it, as the generator holds the sources and decides the mend.",
+          "type": "string",
+          "minLength": 1
+         }
+        }
+       }
+      }
+     }
+    }
+   ]
+  },
+  "last_good": {
+   "description": "What the deliverable's last generator found good as it tried it, as it gave it; null before the first.",
+   "oneOf": [
+    {
+     "type": "null"
+    },
+    {
+     "description": "Each condition that the deliverable meets, with the lines that meet it.",
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "condition",
+       "lines"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "condition": {
+        "description": "The condition's ID in the best practice, such as N2.",
+        "type": "string",
+        "minLength": 1
+       },
+       "lines": {
+        "description": "Each line of the deliverable that meets it, word for word as it stands, so that a reader checks the answer by reading them.",
+        "type": "array",
+        "minItems": 1,
+        "items": {
+         "type": "string",
+         "minLength": 1
+        }
+       }
+      }
+     }
+    }
+   ]
+  }
+ }
+}

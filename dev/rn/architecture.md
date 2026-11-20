@@ -59,7 +59,7 @@ Strategies:
   Intent: the work always rests on a design tree in form.
 - The plan kept as the design tree's own deliverable, and each sign-off as its deliverable done.
   [P1.3]\
-  Intent: the design tree alone says what waits for the user and what may start.
+  Intent: the run's files alone say what waits for the user and what may start.
 - Each point that the user settles kept as an open decision of its condition, and their answer
   as its decision. [P6.1]\
   Intent: a point and its answer outlive the conversation that asked it.
