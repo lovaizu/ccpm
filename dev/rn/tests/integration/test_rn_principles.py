@@ -292,7 +292,10 @@ def test_a_role_that_writes_beside_its_deliverable_is_told_its_step(b: Bench, br
     assert agent is not None
     answer = agent.write(os.path.join(b.repo, "invoicer", "notes.py"), "")
     assert answer.blocked
-    assert "You're at the step `1` of rn:generator, which writes nothing." in answer.said
+    assert answer.said == (
+        "You're at the step `1` of rn:generator, which writes nothing.\n"
+        "Leave invoicer/notes.py unwritten."
+    )
 
 
 @pytest.mark.supports("P5.2")

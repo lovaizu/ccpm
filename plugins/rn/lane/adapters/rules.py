@@ -23,7 +23,7 @@ from tree import rounds
 CUT = re.compile(r"\S*\.rn/[^/\s]+/rounds/\d+/[^/\s]+\.cut\.json")
 
 # The rules of a step that writes nothing.
-NOTHING = [{"type": "writes", "paths": []}]
+_NOTHING = [{"type": "writes", "paths": []}]
 
 
 def main(given: str, cwd: str, plugin: str) -> tuple[int, str, str]:
@@ -134,7 +134,7 @@ def _generator(held: dict[str, Any], cut: str, plugin: str) -> list[dict[str, An
     """The generator's steps, from its Cut at `cut`."""
     taken = _practices(held, cut, plugin)
     return _steps(
-        NOTHING,
+        _NOTHING,
         [
             {"type": "checklist", "items": taken["decide"]},
             {"type": "writes", "paths": [_result(cut)]},
@@ -156,9 +156,9 @@ def _evaluator(held: dict[str, Any], cut: str, cwd: str, plugin: str) -> list[di
     makers = [m for m in made if m.startswith(round_ + "generator")]
     unread = [f"{run}/design-tree.json", *(p for m in makers for p in (m, _result(m)))]
     return _steps(
-        NOTHING,
+        _NOTHING,
         [{"type": "reads_none", "paths": unread}],
-        [{"type": "checklist", "items": held["conditions"]}, *NOTHING],
+        [{"type": "checklist", "items": held["conditions"]}, *_NOTHING],
         _end("evaluator", cut, plugin, "judged"),
     )
 
