@@ -73,9 +73,9 @@ Each route says which roles start after a command or after a role's result:
 
 The route after the run's latest command makes its roles due, and so does the route after each
 result since, once for each such result. Two writers' `written` make the reviewer due twice. Each
-start made since counts against its role. The run ends once each start that the routes make due
-has its result and no start still runs, or once no route goes after the latest command or a result
-since.
+start made since counts against its role. The command that called the run, typed again, such as
+after `/compact`, leaves the starts due as they stand. Once no start is due, the run waits while
+a start still runs, and ends once none does.
 
 [routes.py](../hooks/lane/routes.py) holds this order.
 

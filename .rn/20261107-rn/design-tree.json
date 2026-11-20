@@ -215,59 +215,7 @@
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
       "path": "plugins/lane/docs/rules-and-adapters.md",
       "kind": "light",
-      "inputs": [
-        "dev/lane/architecture.md",
-        "plugins/lane"
-      ],
-      "status": "doing",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The check",
-              "decided": "each rule type and each adapter that Lane's code reads is defined, and each definition matches the code",
-              "by": "reasoning"
-            },
-            {
-              "about": "What it defines",
-              "decided": "what Lane takes in, the rule file and each adapter's input, and what it gives out, with no /lane:up",
-              "by": "reasoning"
-            },
-            {
-              "about": "A role's subagent",
-              "decided": "a plugin's role sets background: true, as Lane can't hold a subagent started in the foreground",
-              "by": "reasoning"
-            },
-            {
-              "about": "The main conversation's steps",
-              "decided": "under the skill's name, beside each subagent's steps under its agent type",
-              "by": "maker"
-            },
-            {
-              "about": "Which commands start a run",
-              "decided": "a command of the plugin starts a run where none of the plugin stands in the conversation, and is a move of the standing run otherwise",
-              "by": "maker"
-            },
-            {
-              "about": "Mends of Lane's code that the definition found",
-              "decided": "a Grep whose search reaches a file that the step never reads, by its path or by the folder it works in where it names none, is stopped with the step's sentence, which asks for a path outside those files, and a Glob goes through, as it reads no file's content; the states of Claude Code record a Grep's and a Glob's events first; the rules refuse a folder in a rule of the files to read whole; a sentence offers results as alternatives joined by or, and a rule of no commands says that the step runs none; the rule of commands splits a call at each newline too; the definition follows each mend; a rule of the files a step writes may name no path, as a step that writes nothing, and its sentence says the step writes nothing",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's hooks hold each plugin's run to the rules in its own folder, for any plugin that depends on Lane",
@@ -1249,10 +1197,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/lane/docs/rules-and-adapters.md"
-    },
     {
       "do": "make",
       "path": "dev/rn/tests/integration/test_rn_s1_deliverable.py"
