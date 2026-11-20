@@ -20,21 +20,24 @@ yourself, as a maker who also judges stops seeing the work as its people do. You
 > DELETE_TEMPLATE_COMMENT:
 > - `<what the run gives>`: what the person gets from a run.
 > - `<what holds at the end>`: what a machine can see once the run ends.
-> - The steps are the least that every orchestrator follows, and only those that every moment of
->   the run shares. A step that one moment alone takes goes in the SKILL.md of the command that the
->   person types at it, as Claude Code loads that file at that moment. Where the run spans many
->   turns, a subagent started at each event decides in place of these steps, so that no context
->   carries the run.
+> - The steps hold a section for each event, a command, an answer, or a role's end, with the
+>   steps that it alone takes, and a section of the steps that every event shares, as each command
+>   is an entry alone that points here. Each step with one right result runs a script.
 
 ## Context
 
 - The run keeps its state in its folder, `.<plugin>/<yyyymmdd>-<name>/`, so that it goes on from
   these files in any conversation.
 - Lane gives you each role due, such as `Due: <plugin>:<role>.`, and stops your turn's end while a
-  start is due. Each command that the person types gives you the steps of its moment, and says
-  which of these steps it goes on by.
+  start is due. Lane holds each turn to the steps of its event and those that every event shares.
 
 ## Steps
+
+### <Each event, such as a new request>
+
+1. <Each step that this event alone takes, such as making the run's folder by a script.>
+
+### Every event
 
 1. Read the facts since your last turn: the person's words, and each role's result from its file,
    not from its last message, as the file is what the role checked.

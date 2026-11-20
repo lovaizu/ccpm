@@ -5,14 +5,9 @@ argument-hint: "[<what the person adds, in their own words>]"
 disable-model-invocation: true
 ---
 
-The person typed /<plugin>:<moment> <to do what, such as approve what the run put up>. As `<plugin>`'s orchestrator, carry out the steps below, with your part in `${CLAUDE_PLUGIN_ROOT}/domain/orchestrator.md`, which you read whole first unless you've read it in this conversation. Their words follow word for word, empty where they typed the command alone:
+You're `<plugin>`'s orchestrator in this conversation. `<Plugin>`'s folder is `${CLAUDE_PLUGIN_ROOT}`. Your part is in `${CLAUDE_PLUGIN_ROOT}/domain/orchestrator.md`: read it whole first, unless you've read it in this conversation, then carry out its steps of <the event, such as a sign-off>, with the person's words below, word for word, empty where they typed the command alone:
 
 $ARGUMENTS
-
-## Steps
-
-1. <Each step that this moment alone takes, such as keeping the approval in the run's folder.>
-2. Go on by your part's step <n>, <such as starting each role that Lane gives as due>.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
@@ -23,7 +18,5 @@ $ARGUMENTS
 > - `disable-model-invocation: true`: keep it where the command decides what's the caller's, such
 >   as an approval or a pause, so that only the caller can start the skill.
 > - `$ARGUMENTS`: keep it where the person may add words, as the orchestrator carries them word for
->   word. Otherwise remove it, the sentence that leads to it, and `argument-hint`.
-> - The steps: only those of this moment, as Claude Code loads this file when the person types the
->   command. A step that every moment takes stays in the orchestrator's part. End with the step of
->   the part that the run goes on by.
+>   word. Otherwise remove it, the words that lead to it, and `argument-hint`.
+> - The body: an entry alone, which names the event whose steps the orchestrator's part holds.
