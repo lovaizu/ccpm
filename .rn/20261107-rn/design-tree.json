@@ -396,7 +396,7 @@
         "dev/lane/tests/integration/test_lane_principles.py",
         "dev/lane/tests/integration/test_lane_components.py"
       ],
-      "status": "doing",
+      "status": "open",
       "necessary_conditions": [
         {
           "id": "N1",
