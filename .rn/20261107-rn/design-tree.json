@@ -657,7 +657,7 @@
           "decisions": [
             {
               "about": "The check",
-              "decided": "check.sh exits 0 on the push; no mutation testing runs anywhere, so quality.sh, its CI workflow, its cosmic-ray settings, and ci-fix are gone",
+              "decided": "check.sh exits 0 on the push and runs each plugin's property-based tests; no mutation testing and no E2E test run anywhere, so quality.sh, its CI workflow, its cosmic-ray settings, ci-fix, and e2e.py are gone",
               "by": "reasoning"
             }
           ]
