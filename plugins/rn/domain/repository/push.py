@@ -41,11 +41,13 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
 
     Takes: the run, the path of the deliverable in the design tree, and the host.
     Gives: the URL of the pull request's changes, `<pull request>/files`.
-    Changes: commits each change in the run's worktree as `rn: <deliverable's name>`, pushes the
-    work's branch to `origin`, and opens the pull request into the default branch, titled by the
-    design tree's goal, where the branch has none open.
-    Refuses: Wrong where the design tree holds no deliverable of the path; Missing where the
-    repository has no remote `origin`, or gh isn't logged in or may not open a pull request, with
-    what gh said; CantRun where git or gh fails otherwise.
+    Changes: runs `gh auth status` first; then commits each change in the run's worktree as
+    `rn: <deliverable's name>`, pushes the work's branch to `origin`, and opens the pull request
+    into the default branch, titled by the first sentence of the design tree's goal, where the
+    branch has none open.
+    Refuses: Missing, before any commit or push, where `gh auth status` finds no login, with what
+    it said; Wrong where the design tree holds no deliverable of the path; Missing where the
+    repository has no remote `origin`, or gh may not open a pull request, with what gh said;
+    CantRun where git or gh fails otherwise.
     """
     raise NotImplementedError("repository.push.put_up")

@@ -1,5 +1,6 @@
 """Decides where each Round of a deliverable lies in the run's folder and what files it holds:
-`rounds/<deliverable>/<stage>-<n>/`, the deliverable's path with each `/` as `-`, holding each
+`rounds/<deliverable>/<stage>-<n>/`, the deliverable's path percent-encoded whole, as
+`urllib.parse.quote(path, safe="")` gives it, so that no two paths share a folder, holding each
 role's Cut and each role's result."""
 
 from __future__ import annotations
@@ -51,7 +52,8 @@ def at(run: RunPlace, folder: str) -> Round:
     """The Round whose folder a script is given.
 
     Takes: the run, and a Round's folder, from the folder the command runs in or absolute.
-    Gives: the Round.
+    Gives: the Round, its deliverable's path the folder's first name turned back by
+    `urllib.parse.unquote`.
     Changes: nothing.
     Refuses: Wrong where the folder isn't a Round's folder of the run, naming it and the form it
     takes.

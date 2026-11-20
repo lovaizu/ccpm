@@ -23,8 +23,10 @@ Steps = dict[str, Any]
 
 
 def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
-    """The steps of the turn or the start, each with its rules, each path from `cwd`, each command
-    as `python3 <plugin_root>/scripts/<script> <subcommand>`.
+    """The steps of the turn or the start, each with its rules, each path as Lane compares it,
+    `os.path.relpath(os.path.realpath(path), os.path.realpath(cwd))`, so that a folder outside the
+    repository, such as the people's starting state or rn's best practices, comes as `../...`, and
+    each command as `python3 <plugin_root>/scripts/<script> <subcommand>`.
 
     Takes: the turn or the start as Lane gives it; the folder that the conversation works in, the
     top of the user's repository; and rn's folder.
@@ -46,7 +48,8 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     For `rn:generator`, whose prompt is the path of its Cut from `cwd`, the steps `read`, `decide`,
     `make`, `try`, and `check`, each held in order: `read` reading whole the Cut, the best
     practice's `best-practice.md`, and each input that is a file, writing nothing; `decide` with the
-    best practice's `decide` items as its checklist, writing nothing, and ending on `point`; `make`
+    best practice's `decide` items as its checklist, writing only the Round's folder, where its
+    `generator.json` gives a point, and ending on `point`; `make`
     with its `make` items as its checklist, writing only the deliverable's paths; `try` writing only
     the Round's folder; and `check` running only `repository.py checks`, with the check `check.py
     generator <cut>`, and the results `made` or, ending, `point`.

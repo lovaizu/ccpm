@@ -19,8 +19,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> tuple[i
     """The exit code, stdout, and stderr of `tree.py` with the arguments, from the folder `cwd`,
     with rn's folder at `plugin_root`, and git reached through `host`.
 
-    - `touched <run> <pointer>`: 0 printing each node that `tree.touched.touched` gives, its
-      pointer a line, one word each, as Lane takes the lines as a checklist's items.
+    - `touched <run> <pointer>`: 0 printing each node that `tree.touched.touched` gives for the
+      tree in the work branch's last commit and the tree as it stands, its pointer a line, one word
+      each, as Lane takes the lines as a checklist's items.
     - `touched <run>`: the same for each node that `tree.touched.changed` gives between the tree in
       the work branch's last commit and the tree as it stands, each node once, the changed nodes
       left out.

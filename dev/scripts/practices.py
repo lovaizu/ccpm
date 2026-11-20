@@ -5,8 +5,8 @@ template where it's a JSON Schema that schema.py doesn't read whole, and each fi
 that neither it nor its template holds. `markdown` writes its Markdown beside
 it. Each gives 0, or 1 where it names any fault, and 2 with its usage where it gets no command it
 takes. It's ccpm's own tooling, kept out of rn's folder, as no run of rn checks a best practice's
-Markdown. It holds each best practice to its form, `forms/best-practice.schema.json` beside this
-script."""
+Markdown. It holds each best practice to its form, rn's
+`plugins/rn/domain/schemas/best-practice.schema.json`."""
 
 from __future__ import annotations
 
@@ -16,8 +16,8 @@ import re
 import sys
 from typing import Any, Callable
 
-# rn's folder of the work's knowledge, where its best practices lie. Their form, and the code that
-# reads a file to its form, lie beside this script.
+# rn's folder of the work's knowledge, where its best practices and their form lie. The code that
+# reads a file to its form lies beside this script.
 RN = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     "plugins",

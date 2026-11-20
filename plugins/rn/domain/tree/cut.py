@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from practice import Practice
+from practice import Found
 from repository.place import RunPlace
 from rounds.files import Result, Round
 
@@ -21,29 +21,31 @@ def generator(
     tree: Tree,
     run: RunPlace,
     round_: Round,
-    practice: Practice,
+    practice: Found,
     last: tuple[Result | None, Result | None],
 ) -> Cut:
     """The generator's Cut for the Round.
 
     Takes: the tree, the run, the Round to make, a new one or the last one resumed, the best
-    practice it makes by, its kind's for content and the refactoring kind's for refactor, and the
-    deliverable's last generator's result and last evaluator's result, each None before the first.
+    practice it makes by with its folder, its kind's for content and the refactoring kind's for
+    refactor, and the deliverable's last generator's result and last evaluator's result, each None
+    before the first.
     Gives: the Cut of `generator-cut.schema.json`: the goal; the deliverable's node, with each
-    decision and the user's answers as its decisions; the path of each deliverable its inputs name;
-    the best practice's folder; the Round's stage, number, and folder; the last evaluator's `good`
-    and `more` of each condition that the node holds not good, as it gave them; and the last
-    generator's `good`.
+    decision and the user's answers as its decisions; the run's worktree; the path of each
+    deliverable its inputs name; the best practice's folder; the Round's stage, number, and folder;
+    the last evaluator's `good` and `more` of each condition that the node holds not good, as it
+    gave them; and the last generator's `good`.
     Changes: nothing.
     Refuses: Wrong where the tree holds no open deliverable of the Round's path.
     """
     raise NotImplementedError("tree.cut.generator")
 
 
-def evaluator(tree: Tree, run: RunPlace, round_: Round, practice: Practice) -> Cut:
+def evaluator(tree: Tree, run: RunPlace, round_: Round, practice: Found) -> Cut:
     """The evaluator's Cut for the Round.
 
-    Takes: the tree, the run, the Round to judge, and the best practice of the deliverable's kind.
+    Takes: the tree, the run, the Round to judge, and the best practice of the deliverable's kind
+    with its folder.
     Gives: the Cut of `evaluator-cut.schema.json`: the goal, the deliverable's name and paths, what
     it judges by as `practice.judged` gives it, the run's worktree, the folder of the people's
     starting state as `repository.trial.folder` names it, and the Round's folder; none of the

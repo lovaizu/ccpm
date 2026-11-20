@@ -1,4 +1,4 @@
-"""A file a check reads, held to its form, a JSON Schema in forms/ beside this module, by
+"""A file a check reads, held to its form, a JSON Schema in rn's domain/schemas/, by
 schema.py; or refused, with why, so a check that can't read a file says so and never
 passes it."""
 
@@ -11,7 +11,14 @@ from typing import Any
 
 import schema
 
-FORMS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "forms")
+# rn holds the forms, as a run of rn holds a best practice it makes to the same one.
+FORMS = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    "plugins",
+    "rn",
+    "domain",
+    "schemas",
+)
 
 
 class Unreadable(Exception):
@@ -21,7 +28,7 @@ class Unreadable(Exception):
 
 @functools.cache
 def form(name: str) -> dict[str, Any]:
-    """The form of the name, forms/<name>.schema.json, read once."""
+    """The form of the name, <name>.schema.json in FORMS, read once."""
     with open(os.path.join(FORMS, f"{name}.schema.json"), encoding="utf-8") as f:
         return json.load(f)
 

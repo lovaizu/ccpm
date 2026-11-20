@@ -5,11 +5,18 @@ that an evaluator judges by."""
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, NamedTuple
 
 # A best practice as its best-practice.json holds it, in the form of
-# dev/scripts/forms/best-practice.schema.json.
+# domain/schemas/best-practice.schema.json.
 Practice = dict[str, Any]
+
+
+class Found(NamedTuple):
+    """A kind's best practice with the folder it lies in, which a Cut names."""
+
+    folder: str
+    practice: Practice
 
 
 def kinds(plugin_root: str, worktree: str) -> dict[str, str]:
@@ -30,8 +37,9 @@ def read(folder: str) -> Practice:
     Takes: the folder of a kind's best practice.
     Gives: its `best-practice.json`.
     Changes: nothing.
-    Refuses: Wrong where the file is missing, isn't JSON, or leaves its form, naming the file and
-    the first fault.
+    Refuses: Wrong where the file is missing, isn't JSON, or leaves rn's form of a best practice,
+    `domain/schemas/best-practice.schema.json`, as `check.form.faults` holds it, naming the file
+    and the first fault.
     """
     raise NotImplementedError("practice.read")
 
@@ -65,8 +73,9 @@ def refactoring(kind: str) -> str | None:
     """The kind of the best practice by which a deliverable of the kind is refactored.
 
     Takes: a deliverable's kind.
-    Gives: `refactor-code` for a kind whose deliverable is code or its tests, `refactor-doc` for
-    another kind with a best practice, and None for `light`, which its check alone makes.
+    Gives: `refactor-code` for `code`, `software-design`, `test-design`, and
+    `test-implementation`; None for `light`, which its check alone makes; and `refactor-doc` for
+    each other kind.
     Changes: nothing.
     Refuses: nothing.
     """

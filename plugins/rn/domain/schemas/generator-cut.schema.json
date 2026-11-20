@@ -6,6 +6,7 @@
  "required": [
   "goal",
   "deliverable",
+  "worktree",
   "inputs",
   "best_practice",
   "stage",
@@ -24,6 +25,11 @@
   "deliverable": {
    "description": "The deliverable's node of the design tree as it stands, an open one of design-tree.schema.json: its name, paths, kind, inputs, and each necessary condition with its decisions, the user's answers to its points among them, by user.",
    "type": "object"
+  },
+  "worktree": {
+   "description": "The run's worktree, from the folder that the conversation works in, from whose top the deliverable's paths are given.",
+   "type": "string",
+   "minLength": 1
   },
   "inputs": {
    "description": "The path of each deliverable that the deliverable's inputs name, from the folder that the conversation works in.",
