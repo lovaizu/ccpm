@@ -205,8 +205,8 @@
      {
       "id": "N7",
       "about": "Body, Tests",
-      "what": "Does breaking any behavior make a test fail?",
-      "why": "The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches. The cases, designed before the code, catch them where each test asserts its whole Then, so the work goes on by the checks that Test strategy runs during the work. A detector that it runs apart from the work, such as mutation testing or property-based testing, finds what the cases missed, which is mended at its cause apart from the work, never in a round, as an edge case that no person meets would hold up the work.",
+      "what": "Does each test assert the whole result of its case, with coverage leaving no line that no case calls for?",
+      "why": "The maintainer knows that every behavior still holds only where breaking any of them makes a test fail. The cases, designed before the code, catch each break where each test asserts its whole Then, and coverage shows each line that no test runs, which either lacks its case or does what no case asks.",
       "items": [
        {
         "at": "make",

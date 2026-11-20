@@ -11,7 +11,7 @@
     - **N4** Do the tests pass in any order and on every run, on a fresh machine set up from the code's setup alone? (Manifest, Tests)
     - **N5** Does each case of the specification, its edges and refusals included, have one test whose name says the case? (Tests)
     - **N6** Do the tests call the code only as its callers do, through its interfaces? (Interface, Tests)
-    - **N7** Does breaking any behavior make a test fail? (Body, Tests)
+    - **N7** Does each test assert the whole result of its case, with coverage leaving no line that no case calls for? (Body, Tests)
   - **C3** Whoever runs the code can fix a wrong input from outside.
     - **N8** Does the code refuse a wrong input from outside before it acts, with a message from which whoever ran it can fix the input? (Body)
 
@@ -102,9 +102,9 @@ A test that calls the code as its callers do fails only where a caller would bre
 
 ### N7
 
-Does breaking any behavior make a test fail?
+Does each test assert the whole result of its case, with coverage leaving no line that no case calls for?
 
-The maintainer knows that every behavior still holds only where breaking any of them makes a test fail, so a test is worth the faults it catches. The cases, designed before the code, catch them where each test asserts its whole Then, so the work goes on by the checks that Test strategy runs during the work. A detector that it runs apart from the work, such as mutation testing or property-based testing, finds what the cases missed, which is mended at its cause apart from the work, never in a round, as an edge case that no person meets would hold up the work.
+The maintainer knows that every behavior still holds only where breaking any of them makes a test fail. The cases, designed before the code, catch each break where each test asserts its whole Then, and coverage shows each line that no test runs, which either lacks its case or does what no case asks.
 
 1. *While making.* Have each test assert the whole result that its case's Then names, such as the full list that a call gives, not only that the call returned or that the list isn't empty.
 2. *While making.* Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs. The trace: `{coverage}` run.
