@@ -14,10 +14,14 @@ import copy
 import json
 import os
 import shutil
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
+from unittest import mock
 
+import claude_code
+import fresh_imports
 from claude_code import Agent, Answer, Conversation
 from repo_files import environment, git, write_files
 
@@ -26,6 +30,50 @@ if TYPE_CHECKING:
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 LANE = os.path.join(TOP, "plugins", "lane")
+
+# Lane's own modules, by name, as plugins/lane/hooks/lane/ holds them.
+LANE_MODULES = (
+    "guard",
+    "place",
+    "record",
+    "report",
+    "rules",
+    "json_form",
+    "named_files",
+    "plugin",
+    "adapters",
+    "routes",
+    "order",
+    "start_rules",
+    "rule_types",
+)
+
+
+class GuardFailed(Exception):
+    """Lane's guard ended in a traceback, given whole."""
+
+
+@contextmanager
+def guard_of_the_bench() -> Iterator[None]:
+    """Takes each of Lane's modules out of the process while the block runs, so that each hook
+    that the double runs imports the bench's copy, as a new process of Python would, and has each
+    run of Lane's guard that ends in a traceback raise GuardFailed where it ends.
+
+    guard.answer refuses nothing, as its contract says, so a traceback of the guard is a fault of
+    Lane on any event. Claude Code reads a hook that fails with no onFailure as no answer at all,
+    which the double gives as an answer that stops nothing, so a case that checks that a move goes
+    through would pass on a guard that never ran."""
+    run_python = claude_code.run_python
+
+    def checked(script: str, args: list[str], stdin: str, env: dict[str, str], cwd: str) -> Any:
+        code, out, err = run_python(script, args, stdin, env, cwd)
+        if script.endswith("/hooks/lane/guard.py") and "Traceback" in err:
+            raise GuardFailed(err)
+        return code, out, err
+
+    with fresh_imports.without(LANE_MODULES), mock.patch.object(claude_code, "run_python", checked):
+        yield
+
 
 # The words the person types after the command, the version whose entry the run writes.
 WORDS = "1.2.0"

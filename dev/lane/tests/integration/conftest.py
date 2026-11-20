@@ -12,53 +12,16 @@ from __future__ import annotations
 from collections.abc import Iterator
 from typing import Any
 
-import claude_code
-import fresh_imports
 import lane_bench
 import pytest
 
-# Lane's own modules, by name, as plugins/lane/hooks/lane/ holds them.
-LANE_MODULES = (
-    "guard",
-    "place",
-    "record",
-    "report",
-    "rules",
-    "json_form",
-    "named_files",
-    "plugin",
-    "adapters",
-    "routes",
-    "order",
-    "start_rules",
-    "rule_types",
-)
-
-
-class GuardFailed(Exception):
-    """Lane's guard ended in a traceback, given whole."""
-
 
 @pytest.fixture(autouse=True)
-def fresh_modules() -> Iterator[None]:
-    """Takes each of Lane's modules out of the process for the case, and puts back those it held
-    before."""
-    with fresh_imports.without(LANE_MODULES):
+def guard_of_the_bench() -> Iterator[None]:
+    """Has each hook that the double runs import the bench's copy of Lane, and each run of Lane's
+    guard that ends in a traceback fail the case with it, as lane_bench.guard_of_the_bench says."""
+    with lane_bench.guard_of_the_bench():
         yield
-
-
-@pytest.fixture(autouse=True)
-def guard_never_fails(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Has each run of Lane's guard that ends in a traceback fail the case with it."""
-    run_python = claude_code.run_python
-
-    def checked(script: str, args: list[str], stdin: str, env: dict[str, str], cwd: str) -> Any:
-        code, out, err = run_python(script, args, stdin, env, cwd)
-        if script.endswith("/hooks/lane/guard.py") and "Traceback" in err:
-            raise GuardFailed(err)
-        return code, out, err
-
-    monkeypatch.setattr(claude_code, "run_python", checked)
 
 
 @pytest.fixture
