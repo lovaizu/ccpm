@@ -14,6 +14,7 @@
   is due.
 - S10: a plugin wants a stopped run to go on where it stopped, after `/compact` or in a new
   conversation.
+- S11: a plugin wants its main conversation to take, at each turn, the steps of that turn's event.
 
 ## Solution strategy
 
@@ -37,13 +38,13 @@ Lane gives an AI that leaves its plugin's step the step's own sentence, so that 
 ![Lane's data](images/data-model.svg)
 
 - Rules\
-  What a plugin gives Lane: each step's rules, fixed for a role or given per start, and any routes.
+  What a plugin gives Lane: each step's rules, fixed or given per start or turn, and any routes.
 - Route\
   A fixed order: the roles to start after a role's result, or after a command that the person
   types.
 - Run\
   One run of a plugin's skill in a conversation, from its call until its order ends it. It holds
-  each command, start with its prompt, read, mark, and result.
+  each command, turn, start with its prompt, read, mark, and result.
 - Starts due\
   What the plugin's order gives for a run: each role to start now and how many, or the run's end.
 
@@ -57,6 +58,14 @@ Strategies:
 - A step's rules given per start by the plugin's adapter, where its file fixes none for the role.
   [P2.3]\
   Intent: a role that makes another deliverable at each start is held to that deliverable's rules.
+- The main conversation's steps given at each turn by the plugin's adapter, where the file gives
+  none. [S11]\
+  Intent: a main conversation that answers each event in its own turn starts each turn's steps
+  afresh.
+- A checklist's items given by the plugin's command at the mark, where the step's work decides
+  them. [S6]\
+  Intent: a checklist holds the items that the step's own work brings, such as each part a change
+  reaches.
 - A run's end given by the plugin's order, not by the run having no start due. [S9]\
   Intent: a run that waits, such as for the person's answer, goes on.
 - A run with no order held to its skill's steps alone, ending at the turn's end they let through.
@@ -141,6 +150,31 @@ sequenceDiagram
     else a result, or a command that the person types [S7]
       G->>RR: adds it (Run) [S7]
     end
+  end
+```
+
+#### S11: steps given at each turn
+
+```mermaid
+sequenceDiagram
+  actor U as person
+  participant M as the plugin's main conversation
+  participant G as guard
+  participant A as the plugin's adapter of the rules
+  participant RR as run record
+  U->>M: a prompt, or a subagent's end that reaches it [S11]
+  M->>G: the turn's first move [S11]
+  G->>A: asks for the turn's steps, with the run and the turn's prompt (Run) [S11]
+  G->>RR: adds the turn, with its steps (Run) [S11]
+  loop each call and mark of the turn [S11]
+    M->>G: the call or the mark [S11]
+    alt it breaks a rule of the step at hand [P1.1]
+      G-->>M: stops it, with the step's sentence [P1.1]
+    end
+  end
+  M->>G: ends the turn [S11]
+  alt a step of the turn isn't done [S5]
+    G-->>M: stops it, with the step's sentence [P1.1]
   end
 ```
 

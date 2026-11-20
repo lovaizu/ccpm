@@ -57,6 +57,15 @@ A subagent's role named with no `steps` takes its steps from
 "roles": { "log:writer": {} }
 ```
 
+The main conversation's role named with no `steps` takes its steps from the same adapter at each
+turn of the run, from the person's prompt or the subagent's end that starts the turn to the turn's
+end. Each turn's steps start afresh, so a main conversation that answers each event in its own
+turn is held to that event's steps:
+
+```json
+"roles": { "log:up": {} }
+```
+
 ### Routes
 
 Each route says which roles start after a command or after a role's result:
@@ -222,6 +231,16 @@ The items done before the step. Lane stops a `lane-step` mark of the step while 
 { "type": "checklist", "items": ["date", "links"] }
 ```
 
+Where the step's own work decides the items, such as each part that a change reaches, the rule
+names a `command` in place of `items`. Lane runs it at the mark, in the folder that the
+conversation works in, and takes each line of its output as an item, an empty output as none. Each
+item is one word, as `lane-item` takes it. A command that exits other than 0 stops the mark with
+what it printed.
+
+```json
+{ "type": "checklist", "command": "python3 scripts/changed.py" }
+```
+
 ```text
 You're at the step `write` of log:writer, whose checklist isn't done: links.
 Do each and mark it done with lane-item write <item> first.
@@ -355,11 +374,14 @@ conversation to its skill's steps alone, and ends at the turn's end that those s
 ### The rules of each start
 
 `lane/adapters/rules.py` gives the steps and rules of a start of a role that `lane/rules.json`
-names with no steps. Give it where a role works on another deliverable at each start, such as a
-writer whose files differ by the prompt.
+names with no steps, and of each turn of a main conversation that it names with no steps. Give it
+where a role works on another deliverable at each start, such as a writer whose files differ by the
+prompt, or where the main conversation answers another event at each turn.
 
 Lane asks it when the main conversation starts the role, and keeps the steps for that start and
-each resume of it.
+each resume of it. For the main conversation, Lane asks it at each turn's first move, and keeps the
+steps for that turn, its `prompt` the person's prompt or the subagent's end that started the turn,
+as Claude Code gives it.
 
 Its input, in the form of [rules.in.schema.json](../hooks/lane/rules.in.schema.json):
 
