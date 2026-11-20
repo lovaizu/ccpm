@@ -7,7 +7,8 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<e2e-cases>`: one test for each key result, named by what the users get, with the key result
->   it supports, such as `KR1.1`, and its Given, When, and Then stated in the test.
+>   it supports, such as `KR1.1`, and its Given, When, and Then stated in the test, or no test
+>   where Test strategy runs no test of the product whole.
 
 ## Integration cases
 
@@ -37,10 +38,10 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<properties>`: one test for each invariant that the architecture and the skeleton state of a
->   part, of one kind of John Hughes's, with a generator of the inputs that the product's use can
->   bring. Each test is named by what holds, with the element it rests on, and its Given any, When,
->   and Then stated in the test.
+> - `<properties>`: one test for each invariant that the requirements state, the product vision,
+>   the README, and the architecture, of one kind of John Hughes's, with a generator of the inputs
+>   that the product's use can bring. Each test is named by what holds, with the element it rests
+>   on, and its Given any, When, and Then stated in the test.
 
 ## Trace
 

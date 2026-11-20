@@ -9,8 +9,8 @@
      {
       "id": "N1",
       "about": "E2E cases",
-      "what": "Does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
-      "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result.",
+      "what": "Where Test strategy runs the product whole, does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
+      "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. Where Test strategy runs no test of the product whole, as for a product that holds a prompt, whose run needs an AI to play its people, the people try the product themselves once the integration cases pass, and no E2E case is written.",
       "items": [
        {
         "at": "decide",
@@ -24,7 +24,7 @@
        },
        {
         "at": "make",
-        "text": "For each key result, write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`."
+        "text": "Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`."
        }
       ]
      },
@@ -56,7 +56,7 @@
       "id": "N3",
       "about": "Unit cases",
       "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals, its edges, and the collections inside it included, and, where its result depends on what came before, for each transition that the product's use can bring about, so that each fault likely in its body fails a case, each naming the integration case it supports?",
-      "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. A part that keeps what came before, such as the steps a run has taken, breaks where its use sends an event in a state that no sequence draws, such as a subagent's end that reaches the main conversation after it resumed that subagent, which a case for each class of one call doesn't reach. The techniques are the four black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, decision table testing, and state transition testing. A fault that no case catches shows only later, to a detector such as mutation testing, and a case written then comes from the code, not from what the part must do, so the maker designs cases until no likely fault passes them. James Grenning's ZOMBIES takes each collection through zero, one, and many, and the syllabus's error guessing lists the faults likely in a body, each to design a case for.",
+      "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. A part that keeps what came before, such as the steps a run has taken, breaks where its use sends an event in a state that no sequence draws, such as a subagent's end that reaches the main conversation after it resumed that subagent, which a case for each class of one call doesn't reach. The techniques are the four black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, decision table testing, and state transition testing. A fault that no case catches shows only once the body is built, and a case written then comes from the code, not from what the part must do, so the maker designs cases until no likely fault passes them. James Grenning's ZOMBIES takes each collection through zero, one, and many, and the syllabus's error guessing lists the faults likely in a body, each to design a case for.",
       "items": [
        {
         "at": "make",
@@ -96,19 +96,19 @@
        },
        {
         "at": "make",
-        "text": "Once an interface's cases are written, take each condition that its contract states and list the faults likely in a body that meets it: a bound one off, another element of several picked, a comparison turned around, and for or, a field left unread, and a refusal left out. Name for each the case that fails on it, and write a case where none does, with the result that the contract gives, since a fault that no case fails on is found only once the body is built, by a detector, and a case written then comes from the code."
+        "text": "Once an interface's cases are written, take each condition that its contract states and list the faults likely in a body that meets it: a bound one off, another element of several picked, a comparison turned around, and for or, a field left unread, and a refusal left out. Name for each the case that fails on it, and write a case where none does, with the result that the contract gives, since a fault that no case fails on is found only once the body is built, and a case written then comes from the code."
        }
       ]
      },
      {
       "id": "N7",
       "about": "Properties",
-      "what": "Does each invariant that the architecture and the skeleton state of a part, each that must hold for every input its use can bring, have a property that names the element it rests on?",
-      "why": "A case shows a part right for the inputs its maker foresaw, while a property states what must hold for every input the use can bring, such as each form in which an AI names a file, and a tool then searches for one that breaks it. John Hughes's [How to Specify It!](https://research.chalmers.se/publication/517894) gives five kinds of property: invariant, postcondition, metamorphic, inductive, and model-based. In his trial, model-based and metamorphic properties caught the most faults, and he warns that a test that copies the code keeps the code's faults. So the maker takes each property from the architecture and the skeleton before any body is written, never from the code.",
+      "what": "Does each invariant that the requirements state, each that must hold for every input the product's use can bring, have a property that names the element it rests on?",
+      "why": "A case shows a part right for the inputs its maker foresaw, while a property states what must hold for every input the use can bring, such as each form in which an AI names a file, and a tool then searches for one that breaks it. John Hughes's [How to Specify It!](https://research.chalmers.se/publication/517894) gives five kinds of property: invariant, postcondition, metamorphic, inductive, and model-based. In his trial, model-based and metamorphic properties caught the most faults, and he warns that a test that copies the code keeps the code's faults. So the maker takes each property from the requirements alone, the product vision, the README, and the architecture, before any body is written, and never from the skeleton or the code, since a property exists to check that the requirements hold, not that the code is robust.",
       "items": [
        {
         "at": "make",
-        "text": "Take each rule of Data model, each principle item that a part holds, and each condition of an interface's contract as the skeleton states it. Ask of each whether it must hold for every input that the product's use can bring, and whether its break keeps the people from their aim, such as a design tree that leaves its schema after a change, which stops the run. List each that meets both, with the element it rests on, since a property of an invariant that no person meets finds inputs whose mends bring them nothing."
+        "text": "Take each key result, each step of the README's walkthrough, each rule of Data model, each principle item, and each decision of a component. Ask of each whether it must hold for every input that the product's use can bring, and whether its break keeps the people from their aim, such as a design tree that leaves its schema after a change, which stops the run. List each that meets both, with the element it rests on, since a property of an invariant that no person meets finds inputs whose mends bring them nothing."
        },
        {
         "at": "make",
@@ -116,7 +116,7 @@
        },
        {
         "at": "make",
-        "text": "Write for each property a generator of the inputs that the product's use can bring, from the forms that Data model and the contract name: the forms that an AI or a person writes, which no developer foresees, and the refused ones among them. Never shape a generator by the branches of the code, as it then reaches only what the code already treats."
+        "text": "Write for each property a generator of the inputs that the product's use can bring, from the forms that Data model and the walkthrough name: the forms that an AI or a person writes, which no developer foresees, and the refused ones among them. Never shape a generator by the branches of the code, as it then reaches only what the code already treats."
        },
        {
         "at": "make",
