@@ -41,8 +41,9 @@ def main(given: str, cwd: str, plugin: str) -> tuple[int, str, str]:
       `N<n>.<m>` of the Cut's best practice that its maker takes while deciding, the m-th practice
       of the condition N<n>, `writes` of the result alone, and a `result` that `ends` on `point`;
       at step 3, a `checklist` of each that its maker takes while making, and `writes` of the
-      deliverable's path, each of its `more_paths` in their order, and the result; at step 4,
-      `writes` of the result, the `check` `python3 <rn>/scripts/check.py generator <Cut>`, and a
+      deliverable's path, each of its `more_paths` in their order, and the result; at step 4, the
+      same `writes`, as it mends what rn's check names, the `check`
+      `python3 <rn>/scripts/check.py generator <Cut>`, and a
       `result` of `made`;
     - for `rn:evaluator`: at step 1, `writes` of no path; at step 2, `reads_none` of the run's
       design-tree.json and of each generator's Cut of the Round, in any slot, with the result
@@ -118,12 +119,12 @@ def _steps(*rules: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
 
 
-def _end(role: str, cut: str, plugin: str, result: str) -> list[dict[str, Any]]:
-    """The last step's rules: the writes of the result beside the Cut, rn's check of the role, and
-    the result that the role gives."""
+def _end(role: str, cut: str, plugin: str, result: str, made: list[str]) -> list[dict[str, Any]]:
+    """The last step's rules: the writes of the paths `made` that it mends and the result beside
+    the Cut, rn's check of the role, and the result that the role gives."""
     check = os.path.join(os.path.normpath(plugin), "scripts", "check.py")
     return [
-        {"type": "writes", "paths": [_result(cut)]},
+        {"type": "writes", "paths": [*made, _result(cut)]},
         {"type": "check", "check": f"python3 {shlex.quote(check)} {role} {shlex.quote(cut)}"},
         {"type": "result", "results": [result]},
     ]
@@ -153,7 +154,7 @@ def _generator(held: dict[str, Any], cut: str, plugin: str) -> list[dict[str, An
             {"type": "checklist", "items": taken["make"]},
             {"type": "writes", "paths": [*_paths(held["deliverable"]), _result(cut)]},
         ],
-        _end("generator", cut, plugin, "made"),
+        _end("generator", cut, plugin, "made", _paths(held["deliverable"])),
     )
 
 
@@ -168,7 +169,7 @@ def _evaluator(held: dict[str, Any], cut: str, cwd: str, plugin: str) -> list[di
         _NOTHING,
         [{"type": "reads_none", "paths": unread}],
         [{"type": "checklist", "items": held["conditions"]}, *_NOTHING],
-        _end("evaluator", cut, plugin, "judged"),
+        _end("evaluator", cut, plugin, "judged", []),
     )
 
 

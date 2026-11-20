@@ -314,11 +314,11 @@ def steps_of(*rules: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def end_of(role: str, cut: str, result: str) -> list[dict[str, Any]]:
-    """The last step's rules of the role's start from the Cut: the writes of the result beside the
-    Cut, rn's check of the role, and the result that ends it."""
+def end_of(role: str, cut: str, result: str, *made: str) -> list[dict[str, Any]]:
+    """The last step's rules of the role's start from the Cut: the writes of the paths it mends and
+    the result beside the Cut, rn's check of the role, and the result that ends it."""
     return [
-        {"type": "writes", "paths": [cut.removesuffix(".cut.json") + ".json"]},
+        {"type": "writes", "paths": [*made, cut.removesuffix(".cut.json") + ".json"]},
         {"type": "check", "check": f"python3 {RN}/scripts/check.py {role} {cut}"},
         {"type": "result", "results": [result]},
     ]
@@ -337,7 +337,7 @@ def generator_steps(practice: str, *deliverable: str) -> dict[str, Any]:
             {"type": "checklist", "items": practices(practice, "make")},
             {"type": "writes", "paths": [*deliverable, RESULT]},
         ],
-        end_of("generator", CUT, "made"),
+        end_of("generator", CUT, "made", *deliverable),
     )
 
 
@@ -348,8 +348,8 @@ def test_rules_give_the_generator_its_steps_from_its_cut(tmp_path: Any):
     Then it gives 0, saying nothing, with steps 1 to 4 in order, each with order: step 1 writes
     nothing, step 2 the checklist of code's decide practices, the writes of the result alone, and
     a result that ends on point, step 3 that of its make practices and the writes of the command
-    and the result, and step 4 the writes of the result, rn's check of the generator, and the
-    result made, and nothing else"""
+    and the result, and step 4 the writes of the command and the result, as it mends what rn's
+    check names, rn's check of the generator, and the result made, and nothing else"""
     top = worktree(str(tmp_path), {CUT: generator_cut()})
     assert rules_of(top, "rn:generator", CUT) == (0, generator_steps("code", COMMAND), "")
 
@@ -366,7 +366,7 @@ def test_rules_let_the_generator_make_each_more_path_of_its_deliverable(
     """Given the generator's Cut of the command by code, its deliverable with more_paths of one
     file, and of a file and a folder, as the case of its steps holds one with none
     When rules.py runs for its start
-    Then it gives the generator's steps whole, step 3 the writes of the command, each of its
+    Then it gives the generator's steps whole, steps 3 and 4 the writes of the command, each of its
     more_paths in their order, and the result"""
     held = generator_cut()
     held["deliverable"]["more_paths"] = more
@@ -381,7 +381,7 @@ def test_rules_give_a_generator_of_refactoring_the_practices_of_the_refactor_bes
     """Given the generator's Cut of the guide by refactor-doc
     When rules.py runs for its start
     Then it gives the generator's steps whole, steps 2 and 3 holding the decide and make practices
-    of refactor-doc, not of readme, and step 3 the writes of the guide"""
+    of refactor-doc, not of readme, and steps 3 and 4 the writes of the guide"""
     top = worktree(
         str(tmp_path), {CUT: {**generator_cut(GUIDE, "readme"), "best_practice": "refactor-doc"}}
     )
