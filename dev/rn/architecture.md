@@ -57,6 +57,14 @@ Strategies:
 - Each design tree edit checked before its commit, on each condition of its best practice that
   code can check. [P1.1]\
   Intent: the work always rests on a design tree in form.
+- The plan kept as the design tree's own deliverable, and each sign-off as its deliverable done.
+  [P1.3]\
+  Intent: the design tree alone says what waits for the user and what may start.
+- Each point that the user settles kept as an open decision of its condition, and their answer
+  as its decision. [P6.1]\
+  Intent: a point and its answer outlive the conversation that asked it.
+- A finding that the people would never meet dropped by holding its condition good. [P1.1]\
+  Intent: the next generator gets as given each finding of a condition still short.
 
 ### Components
 
@@ -112,7 +120,7 @@ sequenceDiagram
   participant G as generator
   participant E as evaluator
   U->>O: /rn:up with what they want [S1]
-  O->>S: makes the run's worktree and an empty design tree (Design tree) [P4.3]
+  O->>S: makes the run's worktree, and its design tree with the goal as put (Design tree) [P4.3]
   loop each event: a request, an answer, a sign-off, a send-back, or a role ended [P1.1]
     opt a sign-off [P1.3]
       O->>S: records it (Design tree) [P4.3]
@@ -133,9 +141,11 @@ sequenceDiagram
       par one for each such deliverable [P5.2]
         O->>G: starts it with its Cut, or resumes the last Round's (Cut) [P4.1]
         alt a point it can't settle [P1.2]
-          G-->>O: the point [P1.2]
+          G-->>O: the point (Round) [P1.2]
+          O->>T: keeps it as an open decision of its condition (Design tree) [P6.1]
           O->>U: the point, as given [P1.2]
           U->>O: answers [P1.2]
+          O->>T: writes the answer as its decision (Design tree) [P6.1]
           O->>G: resumes it with the answer, as given [P1.2]
         else
           G->>G: makes the content by its kind's best practice, or, once each condition is good, refactors it by the refactor best practice, taking the last evaluator's findings as given (Best practice, Round) [P3.2]
@@ -147,8 +157,8 @@ sequenceDiagram
           E->>E: tries it there as its people would [P2.1]
           E->>E: names, for each condition, what's good or what would make it good [P2.2]
           E-->>O: ends, with the Round written (Round) [P4.2]
-          O->>T: takes each finding that helps the people into the decision it comes from (Design tree) [P1.1]
-          O->>T: keeps each finding past two rounds of content or of refactoring as a proposal (Design tree) [P3.3]
+          O->>T: takes each finding that helps the people into the decision it comes from, and holds good each condition whose finding they'd never meet (Design tree) [P1.1]
+          O->>T: keeps each finding past two rounds of content or of refactoring as an open decision of its condition (Design tree) [P3.3]
         end
       end
     end
@@ -177,7 +187,7 @@ sequenceDiagram
   O->>S: finds the run to pick up (Design tree) [P6.1]
   O->>T: reads where it stopped (Design tree) [P6.1]
   O->>U: where it picks up, and the point or sign-off waiting [S2]
-  O->>G: starts each role stopped again, from the Round's files (Round) [P6.1]
+  O->>G: starts each role stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
 ```
 
 ### Deployment
@@ -204,7 +214,8 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── evaluator.md               what the evaluator does
 │   ├── schemas/                   the form of each Cut and result
 │   ├── tree/                      the code that checks the design tree
-│   ├── check/                     the code that checks each role's result
+│   ├── check/                     the code that checks each role's result against its form
+│   ├── rounds/                    the code that reads and writes the Rounds
 │   ├── template/                  the code that holds a document to its kind's template
 │   ├── repository/                the code that makes a run's worktree and puts a deliverable up
 │   └── best-practices/            rn's own best practice of each kind
