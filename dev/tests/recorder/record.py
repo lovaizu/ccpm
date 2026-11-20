@@ -86,6 +86,22 @@ SEARCH = (
     " for it. Reply with the word started. " + TOLD
 )
 
+WRITES = (
+    "Write the file main.txt by the Write tool with the content `main new`, without reading it"
+    " first. Then Read the file sub.txt by the Read tool with no offset and no limit. Then Write"
+    " the file sub.txt by the Write tool with the content `sub new`."
+)
+
+OVERWRITE = (
+    "Make these calls one at a time, in order, and make no other call, even where one fails."
+    " Write the file main.txt by the Write tool with the content `main new`, without reading it"
+    " first. Then Read the file main.txt by the Read tool with no offset and no limit. Then Write"
+    " the file main.txt by the Write tool with the content `main new`. Then start the subagent"
+    " rec:writer by the Agent tool with run_in_background set to true, the description `Writer`,"
+    " and the prompt: `" + WRITES + " Then reply with the word written.` Don't wait for it. Reply"
+    " with the word started. " + TOLD
+)
+
 SKILL_TOOL = "Call the skill rec:hi by the Skill tool, and follow it. " + TOLD
 
 SLEEPER_BIN = (
@@ -143,6 +159,13 @@ SCENARIOS = {
         lambda folder, stream: stopped(folder, 1, "rec:searcher") and results(stream) >= 2,
         ["--tools", "Agent,Bash,Read,Grep,Glob"],
     ),
+    # A Write of a file that the agent hasn't Read, then a Read and a Write of it, of the main
+    # conversation and of a subagent, whose first Write is of a file that only the main
+    # conversation has Read.
+    "overwrite": (
+        [(OVERWRITE, lambda folder, stream: True)],
+        lambda folder, stream: stopped(folder, 1, "rec:writer") and results(stream) >= 2,
+    ),
 }
 
 # Each file that a scenario's repository holds beside README.md.
@@ -151,6 +174,7 @@ FILES = {
     "read": {"long.txt": "".join(f"line {n}\n" for n in range(1, 2501))},
     "search": SEARCHED,
     "search-tools": SEARCHED,
+    "overwrite": {"main.txt": "main old\n", "sub.txt": "sub old\n"},
 }
 
 

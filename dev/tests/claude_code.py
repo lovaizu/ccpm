@@ -13,7 +13,9 @@ no record of a run holds, the main conversation's or a subagent's, carries the i
 hooks reference gives it, as recorded/claude-code-hooks-reference.jsonl takes it from there. An
 Agent call that fails after its PreToolUse sends the events that
 recorded/claude-code-2.1.327-agent-unknown-type.jsonl and
-recorded/claude-code-2.1.327-agent-denied-by-rule.jsonl show, as `start_failing` says. A Read
+recorded/claude-code-2.1.327-agent-denied-by-rule.jsonl show, as `start_failing` says. A Write
+over a file that's there sends the events that recorded/claude-code-2.1.329-overwrite.jsonl shows,
+whether its agent had Read the file or not. A Read
 sends the events that recorded/claude-code-2.1.325-read.jsonl shows, whole or in part, and a Grep
 or a Glob those that recorded/claude-code-2.1.328-search.jsonl shows. A
 subagent's start of a subagent, and a message queued by SendMessage for a subagent that runs, send
@@ -97,6 +99,9 @@ SEARCH = "claude-code-2.1.328-search.jsonl"
 # call.
 BASE_DIRECTORY = "claude-code-2.1.328-base-directory.jsonl"
 BASE_DIRECTORY_SKILL_TOOL = "claude-code-2.1.328-base-directory-skill-tool.jsonl"
+# The record of a Write over a file that's there, of the main conversation and of a subagent, of
+# Claude Code 2.1.329, each Write going through whether its agent had Read the file or not.
+OVERWRITE = "claude-code-2.1.329-overwrite.jsonl"
 # What the hooks reference shows of a call that no record of a run holds.
 REFERENCE = "claude-code-hooks-reference.jsonl"
 # The record of a subagent that a subagent starts, and of a message queued for a subagent that runs,
@@ -502,6 +507,34 @@ def program_call(command: str, env: dict[str, str]) -> list[str] | None:
     return [program, *words[1:]] if first == b"#!/usr/bin/env python3" else None
 
 
+def structured_patch(old: str, new: str) -> list[dict[str, Any]]:
+    """The `structuredPatch` of a Write that changes the text `old` into `new`: none where they're
+    the same, and otherwise one hunk that takes out each line of `old` and puts in each line of
+    `new`, a last line with no newline followed by `\\ No newline at end of file`, as
+    recorded/claude-code-2.1.329-overwrite.jsonl shows of each Write over a file. The record shows
+    only files of one line, so the double gives the whole file as one hunk, with no line kept as
+    context."""
+    if old == new:
+        return []
+
+    def marked(text: str, mark: str) -> list[str]:
+        found = [mark + each.rstrip("\n") for each in text.splitlines(keepends=True)]
+        return (
+            found + ["\\ No newline at end of file"] if text and not text.endswith("\n") else found
+        )
+
+    taken, put = old.splitlines(), new.splitlines()
+    return [
+        {
+            "oldStart": 1,
+            "oldLines": len(taken),
+            "newStart": 1,
+            "newLines": len(put),
+            "lines": marked(old, "-") + marked(new, "+"),
+        }
+    ]
+
+
 class Conversation:
     """One conversation of Claude Code in the repository, with the plugins loaded and the
     environment given, from its start. The person types by `type`, the main conversation calls its
@@ -861,13 +894,15 @@ class Conversation:
         return answer
 
     def write(self, agent: Agent | None, path: str, content: str) -> Answer:
-        """The agent, or the main conversation where `agent` is None, calls the Write tool to create
-        the file at the path with the content. Where the hooks let it through, the double writes the
-        file and sends PostToolUse, as the record shows. A call of the main conversation goes on the
-        records of its own calls, with the tool's name Write, as each call of the main conversation
-        in the record carries no `agent_id` and no `agent_type`. The record holds the Write of a new
-        file, so the double writes no file that's there."""
-        assert not os.path.exists(path), f"the record holds only a new file's Write: {path}"
+        """The agent, or the main conversation where `agent` is None, calls the Write tool to write
+        the file at the path whole with the content. Where the hooks let it through, the double
+        writes the file and sends PostToolUse. A new file's Write sends the events that the record
+        holds of a subagent's Write, a call of the main conversation on the records of its own
+        calls, with the tool's name Write, as each call of the main conversation in the record
+        carries no `agent_id` and no `agent_type`. A Write over a file that's there sends the events
+        that recorded/claude-code-2.1.329-overwrite.jsonl shows, as `overwrite` says."""
+        if os.path.exists(path):
+            return self.overwrite(agent, path, content)
         written = line(RUN, "CHANGELOG.md written")["payload"]
         tool_input = dict(written["tool_input"], file_path=path, content=content)
         use = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
@@ -885,6 +920,44 @@ class Conversation:
         with open(path, "w", encoding="utf-8") as f:
             f.write(content)
         response = dict(written["tool_response"], filePath=path, content=content)
+        after = self.send("PostToolUse", ran, {**use, "tool_response": response})
+        answer.said = "\n".join(s for s in (answer.said, after.said) if s)
+        answer.ran += after.ran
+        return answer
+
+    def overwrite(self, agent: Agent | None, path: str, content: str) -> Answer:
+        """The agent, or the main conversation where `agent` is None, calls the Write tool on the
+        file that's at the path. The double sends the PreToolUse and, where the hooks let it
+        through, writes the file and sends the PostToolUse that
+        recorded/claude-code-2.1.329-overwrite.jsonl shows, a subagent's with its `agent_id` and
+        `agent_type`. It writes a file that the agent hasn't Read, as that record shows each Write
+        of a file that its agent hasn't Read go through. The PostToolUse's `tool_response` gives
+        `type` `update`, the file's text before as `originalFile`, and the change as
+        `structuredPatch`, as `structured_patch` says."""
+        if agent:
+            before = line(OVERWRITE, "writer runs `Write sub.txt`")
+            ran = line(OVERWRITE, "writer's `Write sub.txt` ran")
+        else:
+            before = line(OVERWRITE, "the main conversation runs `Write main.txt`")
+            ran = line(OVERWRITE, "the main conversation's `Write main.txt` ran")
+        tool_input = {"file_path": path, "content": content}
+        use: dict[str, Any] = {"tool_input": tool_input, "tool_use_id": self.next_id("toolu_", 24)}
+        if agent:
+            use.update(agent_id=agent.id, agent_type=agent.type)
+        answer = self.send("PreToolUse", before, use)
+        if answer.blocked:
+            return answer
+        with open(path, encoding="utf-8") as f:
+            old = f.read()
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+        response = dict(
+            ran["payload"]["tool_response"],
+            filePath=path,
+            content=content,
+            originalFile=old,
+            structuredPatch=structured_patch(old, content),
+        )
         after = self.send("PostToolUse", ran, {**use, "tool_response": response})
         answer.said = "\n".join(s for s in (answer.said, after.said) if s)
         answer.ran += after.ran
@@ -1517,7 +1590,7 @@ class Agent:
         return self.conversation.bash(command, self)
 
     def write(self, path: str, content: str) -> Answer:
-        """The subagent calls the Write tool to create the file."""
+        """The subagent calls the Write tool to write the file whole."""
         return self.conversation.write(self, path, content)
 
     def edit(self, path: str, old: str, new: str) -> Answer:

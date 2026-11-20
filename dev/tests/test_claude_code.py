@@ -21,6 +21,7 @@ from claude_code import (
     AGENT_UNKNOWN_TYPE,
     COMPACT,
     FOREGROUND,
+    OVERWRITE,
     POSTED_FIRST,
     READ,
     RECORDED,
@@ -36,6 +37,7 @@ from claude_code import (
     plugin_validate,
     record_lines,
     run_python,
+    structured_patch,
 )
 
 
@@ -644,6 +646,99 @@ class ClaudeCodeDoubleTest(unittest.TestCase):
         # Then: the call is stopped, and no file is there.
         self.assertTrue(answer.blocked, "a PreToolUse deny stops the Write")
         self.assertFalse(os.path.exists(path), "the denied Write writes nothing")
+
+    def test_a_write_over_a_file_not_read_sends_the_events_of_the_record_of_an_overwrite(self):
+        # Given: a file of one line that the main conversation hasn't Read.
+        self.write("CHANGELOG.md", "main old\n")
+        path = os.path.join(self.repo, "CHANGELOG.md")
+        # When: the main conversation writes it whole.
+        answer = self.conversation.write(None, path, "main new")
+        # Then: the Write goes through, as the record shows, and its events are the record's.
+        self.assertFalse(answer.blocked)
+        with open(path, encoding="utf-8") as f:
+            self.assertEqual(f.read(), "main new", "the Write let through writes over the file")
+        before = "the main conversation runs `Write main.txt`"
+        ran = "the main conversation's `Write main.txt` ran"
+        self.assert_sent_as_recorded(
+            ["session started", before, ran], dict(recorded(), **payloads(OVERWRITE))
+        )
+        self.assertEqual(self.sent()[-2]["tool_input"], {"file_path": path, "content": "main new"})
+        self.assertEqual(
+            self.sent()[-1]["tool_response"],
+            dict(payloads(OVERWRITE)[ran]["tool_response"], filePath=path),
+            "the response is the record's: type update, the text before, and the change",
+        )
+
+    def test_a_subagents_write_over_a_file_it_read_sends_the_events_of_the_record(self):
+        _, agent = self.conversation.start("changelog:writer", "/changelog:write", "Write entries")
+        assert agent is not None  # No hook of the test's plugin stops the start.
+        self.write("CHANGELOG.md", "sub old\n")
+        path = os.path.join(self.repo, "CHANGELOG.md")
+        agent.read(path)
+        answer = agent.write(path, "sub new")
+        self.assertFalse(answer.blocked)
+        overwrites, reads = payloads(OVERWRITE), payloads(READ)
+        before, ran = "writer runs `Write sub.txt`", "writer's `Write sub.txt` ran"
+        read = "the main conversation runs `Read long.txt`"
+        was_read = "the main conversation's `Read long.txt` ran"
+        who = {"agent_id": agent.id, "agent_type": agent.type}
+        self.assert_sent_as_recorded(
+            [
+                "session started",
+                "the main conversation starts writer in the background",
+                "writer starts",
+                "writer runs in the background",
+                read,
+                was_read,
+                before,
+                ran,
+            ],
+            {
+                **recorded(),
+                **overwrites,
+                read: dict(reads[read], **who),
+                was_read: dict(reads[was_read], **who),
+            },
+        )
+        self.assertEqual(
+            self.sent()[-1]["tool_response"],
+            dict(overwrites[ran]["tool_response"], filePath=path),
+        )
+
+    def test_a_write_of_the_same_text_over_a_file_gives_no_change(self):
+        self.write("CHANGELOG.md", "main new")
+        path = os.path.join(self.repo, "CHANGELOG.md")
+        self.conversation.write(None, path, "main new")
+        response = self.sent()[-1]["tool_response"]
+        self.assertEqual(
+            (response["structuredPatch"], response["originalFile"]),
+            ([], "main new"),
+            "as the record shows of the Write of main.txt, time 2",
+        )
+
+    def test_a_change_of_lines_with_and_without_a_last_newline_is_one_hunk_of_the_whole_file(self):
+        self.assertEqual(
+            structured_patch("a\nb", "c\n"),
+            [
+                {
+                    "oldStart": 1,
+                    "oldLines": 2,
+                    "newStart": 1,
+                    "newLines": 1,
+                    "lines": ["-a", "-b", "\\ No newline at end of file", "+c"],
+                }
+            ],
+        )
+
+    def test_a_write_over_a_file_that_a_hook_denies_leaves_the_file(self):
+        self.write("CHANGELOG.md", "main old\n")
+        path = os.path.join(self.repo, "CHANGELOG.md")
+        self.conversation.env["DENY"] = "Write"
+        answer = self.conversation.write(None, path, "main new")
+        self.assertTrue(answer.blocked, "a PreToolUse deny stops the Write")
+        self.assertEqual(self.sent()[-1]["hook_event_name"], "PreToolUse")
+        with open(path, encoding="utf-8") as f:
+            self.assertEqual(f.read(), "main old\n", "the denied Write changes nothing")
 
     def test_an_edit_that_a_hook_denies_leaves_the_file(self):
         path = os.path.join(self.plugin, "skills", "write", "SKILL.md")

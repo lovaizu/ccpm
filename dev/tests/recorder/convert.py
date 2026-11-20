@@ -51,6 +51,8 @@ def command(payload):
     if payload["tool_name"] == "Read":
         lines = [f"{key} {given[key]}" for key in ("offset", "limit") if key in given]
         return " ".join(["Read", os.path.basename(given["file_path"]), *lines])
+    if payload["tool_name"] == "Write":
+        return f"Write {os.path.basename(given['file_path'])}"
     if payload["tool_name"] in ("Grep", "Glob"):
         named = [f"{key} {given[key]}" for key in sorted(given) if key != "pattern"]
         return " ".join([payload["tool_name"], given["pattern"], *named])
@@ -62,10 +64,10 @@ def command(payload):
 
 
 def label(description):
-    """The name of a subagent by the description of its Agent call: searcher, sleeper, or sleeper
-    one."""
-    if description == "Searcher":
-        return "searcher"
+    """The name of a subagent by the description of its Agent call: searcher, writer, sleeper, or
+    sleeper one."""
+    if description in ("Searcher", "Writer"):
+        return description.lower()
     return description.lower() if description.startswith("Sleeper ") else "sleeper"
 
 
