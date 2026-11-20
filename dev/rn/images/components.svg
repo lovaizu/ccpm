@@ -84,6 +84,15 @@
   <text class="data halo end" x="372" y="438">makes by</text>
   <path class="line" d="M590,370 L510,480" marker-end="url(#arrow)"/>
   <text class="data halo start" x="568" y="438">judges by</text>
+  <rect class="box" x="750" y="290" width="170" height="80" rx="6"/>
+  <text class="name" x="835.0" y="326.0">scripts</text>
+  <text class="kind" x="835.0" y="346.0">[script]</text>
+  <path class="line" d="M580,120 L790,290" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="742" y="232">runs</text>
+  <path class="line" d="M710,330 L750,330" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="730" y="321">run</text>
+  <path class="line" d="M860,290 L860,130" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="868" y="214">commits</text>
   <text class="label" x="740" y="440">Legend</text>
   <rect class="box" x="740" y="452" width="22" height="16" rx="3"/>
   <text class="label small" x="772" y="465">a role</text>

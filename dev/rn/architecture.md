@@ -28,6 +28,8 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
 - P4: each role on its own work
   - P4.1: each role starts with only what its work needs.
   - P4.2: what a role makes stays in files, and roles hand each other short results.
+  - P4.3: a step that has one right result is done the same way each time, without a role's
+    judgment.
 - P5: the shortest path
   - P5.1: a role that leaves its steps is told at once and goes back.
   - P5.2: deliverables that rest on none still being made are made at the same time.
@@ -47,7 +49,8 @@ rn piles up the vital few that bring a deliverable's people to their aim, and cu
   The field's established way to make one kind of deliverable, and its conditions, which making
   and judging both stand on.
 - Round\
-  One making or refactoring of a deliverable and its judging, from which the next mend is decided.
+  One making or refactoring of a deliverable, which its maker and its judge each try as its people
+  would. What each found good or short decides the next mend.
 
 Strategies:
 
@@ -65,20 +68,35 @@ Strategies:
   Makes a deliverable with which its people reach their aim.
 - evaluator (prompt)\
   Checks, as the people, whether a deliverable reaches their aim.
+- scripts (script)\
+  Does each step that has one right result.
 
 Strategies:
 
-- The main conversation as the orchestrator. [P3.1]\
-  Intent: start in the simplest form, and mend what it lacks by the E2E test's facts.
-- One generator for each deliverable, and one evaluator for each group of conditions that a best
-  practice bundles. [P2.1]\
-  Intent: judge each condition with care while the wait stays short.
-- A later round judging only the conditions whose decisions changed. [P3.3]\
-  Intent: spend the judging on conditions whose result can change.
+- Each command an entry alone, pointing to the orchestrator's steps for each event. [P1.1]\
+  Intent: every event reaches the one place that reviews the run, as no command checks its input.
+- The main conversation as the orchestrator, which starts and stops each other role. [P3.1]\
+  Intent: the talk with the user and the review of the design tree share one context.
+- One generator and one evaluator for each Round, the evaluator judging every condition from one
+  trial. [P2.1]\
+  Intent: the people's use is one act, so it's tried once and judged whole.
+- The generator trying the deliverable as its people would before it hands it on. [P2.1]\
+  Intent: the generator hands on only what it saw serve the people.
+- The generator taking as given what the last evaluator found good or short. [P2.2]\
+  Intent: the generator mends by the judge's own measure.
+- The last Round's roles resumed within a session, and started from its files in a new
+  conversation. [P6.1]\
+  Intent: each mend starts from what the last Round learned, wherever the run goes on.
+- A point that a role can't settle taken to the user as given, and the answer taken back as
+  given. [P1.2]\
+  Intent: the user answers the role's own question, and the role gets the user's own words.
+- Each step that has one right result done by a script that the role runs. [P4.3]\
+  Intent: each role spends its judgment and its context only where a step needs them.
 - rn's order given to Lane as the starts due from the design tree, each deliverable's rounds
   beside the others'. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
-- Lane applied to every activity of every role's steps that it can hold. [P5.1]\
+- Lane applied to every activity of every role's steps that it can hold, the orchestrator's
+  included. [P5.1]\
   Intent: a role that leaves its steps notices at once and goes back.
 
 ### Sequences
@@ -90,35 +108,45 @@ sequenceDiagram
   actor U as user
   participant O as orchestrator
   participant T as design tree
+  participant S as scripts
   participant G as generator
   participant E as evaluator
   U->>O: /rn:up with what they want [S1]
-  loop each event: a request, an answer, a sign-off, or a round ended [P1.1]
+  O->>S: makes the run's worktree and an empty design tree (Design tree) [P4.3]
+  loop each event: a request, an answer, a sign-off, a send-back, or a role ended [P1.1]
+    opt a sign-off [P1.3]
+      O->>S: records it (Design tree) [P4.3]
+    end
     O->>T: reviews it by the run's facts and the user's words (Design tree) [P1.1]
-    O->>T: commits the change [P6.1]
+    O->>S: lists each node that the change touches, to read again (Design tree) [P1.1]
+    O->>S: checks and commits the change (Design tree) [P6.1]
     alt a point the orchestrator can settle [P1.2]
       O->>T: settles it, with its ground (Design tree) [P1.2]
     else a point only the user can settle [P1.2]
       O->>U: one point, with a recommendation [P1.2]
       U->>O: answers [P1.2]
     else a plan or a deliverable waiting for sign-off [P1.3]
-      O->>U: puts it up [P1.3]
-      O->>U: adds each finding left as a proposal [P3.3]
+      O->>S: puts it up, committed and pushed in the pull request [P4.3]
+      O->>U: puts it up, with each finding left as a proposal [P3.3]
       U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
     else each deliverable whose inputs are signed off, resting on none still being made [P5.2]
       par one for each such deliverable [P5.2]
-        O->>G: starts it, with its Cut (Cut) [P4.1]
+        O->>G: starts it with its Cut, or resumes the last Round's (Cut) [P4.1]
         alt a point it can't settle [P1.2]
           G-->>O: the point [P1.2]
+          O->>U: the point, as given [P1.2]
+          U->>O: answers [P1.2]
+          O->>G: resumes it with the answer, as given [P1.2]
         else
-          G->>G: makes the content by its kind's best practice, or, once each condition is good, refactors it by the refactor best practice (Best practice) [P3.2]
+          G->>G: makes the content by its kind's best practice, or, once each condition is good, refactors it by the refactor best practice, taking the last evaluator's findings as given (Best practice, Round) [P3.2]
+          G->>G: tries it as its people would, and names what's good [P2.1]
+          G->>S: runs the repository's checks on its files [P4.3]
           G-->>O: ends, with the Round written (Round) [P4.2]
-          par one for each group of the best practice's conditions [P2.1]
-            O->>E: starts it, with its Cut (Cut) [P4.1]
-            E->>E: tries it as its people would [P2.1]
-            E->>E: names what's good and what would make it good [P2.2]
-            E-->>O: ends, with the Round written (Round) [P4.2]
-          end
+          O->>E: starts it with its Cut, or resumes the last Round's (Cut) [P4.1]
+          E->>S: makes a folder of the people's starting state [P2.1]
+          E->>E: tries it there as its people would [P2.1]
+          E->>E: names, for each condition, what's good or what would make it good [P2.2]
+          E-->>O: ends, with the Round written (Round) [P4.2]
           O->>T: takes each finding that helps the people into the decision it comes from (Design tree) [P1.1]
           O->>T: keeps each finding past two rounds of content or of refactoring as a proposal (Design tree) [P3.3]
         end
@@ -136,18 +164,20 @@ sequenceDiagram
   actor U as user
   participant O as orchestrator
   participant T as design tree
+  participant S as scripts
   participant G as generator
   participant E as evaluator
   U->>O: /rn:dn [S2]
   O->>G: stops it [S2]
   O->>E: stops it [S2]
-  O->>T: commits and pushes the run's folder (Design tree) [P6.1]
+  O->>S: commits and pushes the run's folder (Design tree) [P6.1]
   O->>U: where it stopped, and the point or sign-off waiting [S2]
   Note over U,O: Later, in any conversation
   U->>O: /rn:up [S2]
-  O->>T: reads the run's folder for where it stopped (Design tree) [P6.1]
+  O->>S: finds the run to pick up (Design tree) [P6.1]
+  O->>T: reads where it stopped (Design tree) [P6.1]
   O->>U: where it picks up, and the point or sign-off waiting [S2]
-  O->>G: starts each role stopped again, with a fresh Cut from the design tree (Cut) [P6.1]
+  O->>G: starts each role stopped again, from the Round's files (Round) [P6.1]
 ```
 
 ### Deployment
@@ -166,24 +196,25 @@ Strategies:
 
 ```text
 plugins/rn/                        what Claude Code installs for the user
-├── skills/                        /rn:up, /rn:dn, /rn:ty, and /rn:gm
+├── skills/                        /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
 ├── agents/                        the generator's and the evaluator's starts
 ├── domain/
-│   ├── orchestrator.md            what the main conversation does as the orchestrator
+│   ├── orchestrator.md            the steps of each event, and those that every event shares
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
 │   ├── schemas/                   the form of each Cut and result
 │   ├── tree/                      the code that checks the design tree
 │   ├── check/                     the code that checks each role's result
 │   ├── template/                  the code that holds a document to its kind's template
+│   ├── repository/                the code that makes a run's worktree and puts a deliverable up
 │   └── best-practices/            rn's own best practice of each kind
-├── scripts/                       runs each part's code
+├── scripts/                       each step with one right result, as a role runs it
 └── lane/                          what rn gives Lane
     ├── rules.json                 the rules of each role's steps
     └── adapters/                  the starts due from the design tree, and a step's practices
 
 dev/rn/                            what only rn's developers use
-└── tests/                         the test cases, from unit to E2E
+└── tests/                         the test cases, from unit to integration
 
 .claude/worktrees/                 rn's worktree of each run
 └── rn-<yyyymmdd>-<goal>/          one run's worktree, on the work's branch
@@ -205,12 +236,10 @@ dev/rn/                            what only rn's developers use
 | Unit testing | Parts | Quality | During the work | Every case passes. |
 | Unit testing | Parts that hold a prompt | Benchmark | During the work | Each case's results over 3 runs. |
 | Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
-| Property-based testing | Parts | Quality | Apart from the work | 0 counterexamples in reading the design tree and the rounds. |
-| Mutation testing | Parts | Quality | Apart from the work | 0 surviving mutants. |
-| Integration testing | Architecture | Quality | During the work | Every case passes, each handoff giving the data the data model names. |
+| Property-based testing | Parts | Quality | During the work | 0 counterexamples of each invariant that rn's product vision, README, and this document state. |
+| Integration testing | Architecture | Quality | During the work | Every case passes, with a double of each prompt, and each handoff gives the data the data model names. |
 | Contract testing | Architecture | Quality | Apart from the work | On each new gh, each recorded command gives what it recorded. |
 | Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each strategy's case failing broken. |
-| Scenario testing | Product | Benchmark | At stages | KR1.1, KR1.2, and the orchestrator's context size, with runs added until one more moves no mean by a step. |
-| Installation testing | Product | Quality | At stages | rn installs by the README's commands in a fresh home, and `/rn:up` answers. |
+| Installation testing | Product | Quality | Apart from the work | Once ccpm's marketplace lists rn, it installs with Lane by the README's commands in a fresh home. |
 | Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |
 | Conformance and compliance testing | Product | Quality | During the work | Claude Code's strict check of the plugin passes. |
