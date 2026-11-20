@@ -126,6 +126,7 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_an_evaluator_starts_with_only_what_the_deliverables_people_have": cut_of_the_whole_tree,
     "test_an_evaluators_answer_beside_good_and_more_is_held": results_unchecked,
     "test_no_evaluator_starts_before_the_generator_ends": due_without_course,
+    "test_the_orchestrator_writes_only_the_runs_folder": without_the_guard,
     "test_a_round_of_refactoring_comes_only_after_the_content_is_good": due_without_course,
     "test_findings_past_the_limit_start_no_further_round": due_without_course,
     "test_a_generator_starts_with_only_the_decisions_of_its_deliverable": cut_of_the_whole_tree,
@@ -225,6 +226,31 @@ def test_no_evaluator_starts_before_the_generator_ends(b: Bench, broken: None):
     Then none is due, as making and judging are separate roles"""
     b.cut("generator")
     assert none_due(b, "evaluator")
+
+
+@pytest.mark.supports("P3.1")
+def test_the_orchestrator_writes_only_the_runs_folder(b: Bench, broken: None):
+    """Given /rn:up typed with the walkthrough's request, at the run's start, before its design
+    tree is written
+    When the orchestrator writes a file beside .rn/, and then the run's design tree
+    Then the guard stops the first write with the step's sentence, and lets the design tree
+    through, as making is the generator's"""
+    tree = b.tree()
+    os.remove(os.path.join(b.run, "design-tree.json"))
+    c = b.converse()
+    c.type("/rn:up a command with which the accounting team prints an invoice from its lines")
+    notes = os.path.join(b.repo, "invoicer", "notes.py")
+    answer = c.write(None, notes, "")
+    assert answer.blocked
+    assert answer.said == (
+        "You're at the step `lead` of rn:up, which writes only .rn/.\n"
+        "Write there instead of invoicer/notes.py."
+    )
+    assert not os.path.exists(notes)
+    written = json.dumps(tree, indent=2) + "\n"
+    answer = c.write(None, os.path.join(b.run, "design-tree.json"), written)
+    assert not answer.blocked, answer.said
+    assert b.tree() == tree
 
 
 @pytest.mark.supports("P3.2")

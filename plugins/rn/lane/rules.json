@@ -1,13 +1,7 @@
 {
   "roles": {
     "rn:up": {
-      "steps": [
-        { "name": "1", "rules": [{ "type": "order" }] },
-        { "name": "2", "rules": [{ "type": "order" }] },
-        { "name": "3", "rules": [{ "type": "order" }] },
-        { "name": "4", "rules": [{ "type": "order" }] },
-        { "name": "5", "rules": [{ "type": "order" }] }
-      ]
+      "steps": [{ "name": "lead", "rules": [{ "type": "writes", "paths": [".rn/"] }] }]
     },
     "rn:generator": {},
     "rn:evaluator": {}
