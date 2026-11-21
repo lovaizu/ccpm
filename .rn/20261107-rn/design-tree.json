@@ -646,8 +646,13 @@
         },
         {
           "id": "N4",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "A deliverable that the repository holds before the run, such as a README: the generator's read step reads the Cut, the best practice, and the inputs, but not the deliverable as it stands, so a first Round may make it anew or keep it unasked",
+              "decided": null
+            }
+          ]
         },
         {
           "id": "N5",
