@@ -816,6 +816,21 @@ def test_start_made_of_a_role_with_no_steps_keeps_the_steps_its_adapter_gives(g:
 
 
 @pytest.mark.supports(
+    "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
+)
+def test_start_made_gives_the_adapter_no_turn_though_the_run_holds_turns(g: Play, log: str):
+    """Given `log` naming the writer with no steps, whose adapter of the rules writes what it's
+    given, the writer due, and the run's record holding a turn of the main conversation
+    When the main conversation starts the writer
+    Then the adapter was given no turn, as a start's turns are empty"""
+    write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
+    write_files(log, {"lane/adapters/rules.py": lane_bench.ECHO.format(printed='{"steps": []}')})
+    recorded_now(log, turn_entry(steps=[]))
+    start_made(move("start", g.e.start("log:writer", "toolu_1", prompt="Write it.")))
+    assert lane_bench.echoed(g.e.cwd)["input"]["turns"] == []
+
+
+@pytest.mark.supports(
     "test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_saying_so"
 )
 def test_start_made_of_a_role_with_no_steps_and_no_adapter_is_stopped_naming_it(g: Play, log: str):
@@ -1705,6 +1720,29 @@ def test_turn_started_whose_adapter_gives_no_step_keeps_the_turn_with_none(g: Pl
     [on] = runs("session-1")
     assert turn_started(g.e.bash("git status"), Turn(on, "log:up", "")) == Answer()
     assert gained(log) == [turn_entry(steps=[])]
+
+
+@pytest.mark.supports(
+    "test_a_turns_adapter_of_the_rules_is_given_each_earlier_turn_with_its_role_and_prompt"
+)
+def test_turn_started_gives_the_adapter_each_earlier_turn_oldest_first(g: Play, log: str):
+    """Given a run of log:up taking its steps at each turn, whose adapter of the rules writes what
+    it's given, and whose record holds the first turn, of log:up with an empty prompt, and a turn
+    of log:tag begun by /log:tag, each ended
+    When a turn of log:tag begun by `Go on.` takes its first call
+    Then the adapter was given those two turns, oldest first, each with its role and prompt
+    alone"""
+    by_turn(log)
+    write_files(log, {"lane/adapters/rules.py": lane_bench.ECHO.format(printed='{"steps": []}')})
+    ended: Entry = {"kind": "turn_ended", "run": "r1"}
+    tag = turn_entry("/log:tag", lane_bench.turn_steps([], "tag"), "log:tag")
+    recorded_now(log, turn_entry(), ended, tag, ended)
+    [on] = runs("session-1")
+    turn_started(g.e.bash("git status"), Turn(on, "log:tag", "Go on."))
+    assert lane_bench.echoed(g.e.cwd)["input"]["turns"] == [
+        {"role": "log:up", "prompt": ""},
+        {"role": "log:tag", "prompt": "/log:tag"},
+    ]
 
 
 def turn_end(g: Play, step: str | None) -> Move:

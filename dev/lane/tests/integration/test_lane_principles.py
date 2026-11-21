@@ -77,9 +77,7 @@ def folder_unfound(b: Bench) -> None:
 
 def steps_unasked(b: Bench) -> None:
     """The plugin's adapter of the rules is never asked, and gives each start no step."""
-    given_again(
-        b, "adapters.py", "def given_steps(plugin_root, cwd, run, role, prompt):\n    return []\n"
-    )
+    given_again(b, "adapters.py", "def given_steps(plugin_root, cwd, run, asked):\n    return []\n")
 
 
 def order_unasked(b: Bench) -> None:

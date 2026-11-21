@@ -2,10 +2,10 @@
 plugin's own adapter, the route adapter, and none, and for each class of what the plugin's adapter
 gives: the starts due, the run's end, a failure, and output out of its form; and given_steps, one
 for each class of what the adapter of the rules gives, no adapter among them, for a start and for a
-turn of the main conversation; with what Lane gives an adapter on its standard input, and the
-folder it runs in; with each exit other than 0, output on standard error beside a good answer, the
-turn ended or not beside each order, and each refusal naming the adapter's path, what went wrong,
-and who mends it."""
+turn of the main conversation, with its earlier turns at none, one, and several; with what Lane
+gives an adapter on its standard input, and the folder it runs in; with each exit other than 0,
+output on standard error beside a good answer, the turn ended or not beside each order, and each
+refusal naming the adapter's path, what went wrong, and who mends it."""
 
 from __future__ import annotations
 
@@ -16,22 +16,14 @@ from typing import Any
 import lane_bench
 import lane_entries
 import pytest
-from adapters import AdapterFailed, given_steps, starts_due
+from adapters import AdapterFailed, Asked, EarlierTurn, given_steps, starts_due
 from record import Entry, Run
 from repo_files import write_files
 
 RULES: Any = lane_bench.RULES
+ECHO = lane_bench.ECHO
 # The rules of a plugin that gives no order: steps for its skill, and no routes.
 NO_ORDER: Any = {"roles": {"log:up": RULES["roles"]["log:up"]}}
-# An adapter that writes what it was given and the folder it runs in beside the conversation's
-# files, and prints the output given.
-ECHO = """\
-import json, os, sys
-
-with open("given.json", "w") as f:
-    json.dump({{"input": json.load(sys.stdin), "cwd": os.getcwd()}}, f)
-print({printed!r})
-"""
 WRITER_DUE = {"starts": [{"role": "log:writer", "count": 1}]}
 
 
@@ -42,6 +34,11 @@ def run(log: str, *entries: Entry) -> Run:
         {"kind": "folder", "run": "r1", "plugin_root": log},
     ]
     return Run("r1", "session-1", "log:up", "1.2.0", log, [*head, *entries])
+
+
+def start(role: str, prompt: str) -> Asked:
+    """What a start of the role asks the adapter of the rules for, with the prompt and no turn."""
+    return {"role": role, "prompt": prompt, "turns": []}
 
 
 def adapter(log: str, name: str, code: str) -> None:
@@ -56,8 +53,7 @@ def printing(log: str, name: str, printed: Any) -> None:
 
 def given(cwd: str) -> dict[str, object]:
     """What the echoing adapter was given, and the folder it ran in."""
-    with open(os.path.join(cwd, "given.json"), encoding="utf-8") as f:
-        return json.load(f)
+    return lane_bench.echoed(cwd)
 
 
 def refused(call: Any) -> str:
@@ -200,7 +196,7 @@ def test_the_adapter_of_the_rules_gives_the_starts_steps_from_its_prompt(log: st
     Then it gives the step `write`, which writes that file"""
     adapter(log, "rules.py", lane_bench.RULES_ADAPTER)
     prompt = "Write docs/changes/1.2.0.md."
-    assert given_steps(log, cwd, run(log), "log:writer", prompt) == STEPS
+    assert given_steps(log, cwd, run(log), start("log:writer", prompt)) == STEPS
 
 
 @pytest.mark.supports(
@@ -209,15 +205,16 @@ def test_the_adapter_of_the_rules_gives_the_starts_steps_from_its_prompt(log: st
 def test_the_adapter_of_the_rules_takes_the_run_the_role_and_the_prompt(log: str, cwd: str):
     """Given an adapter of the rules that writes what it's given
     When Lane asks it for the steps of a writer's start
-    Then it was given the run's skill and words, the role, and the prompt, as rules.in.schema.json
-    says, and ran in the conversation's folder"""
+    Then it was given the run's skill and words, the role, the prompt, and no turn, as
+    rules.in.schema.json says, and ran in the conversation's folder"""
     adapter(log, "rules.py", ECHO.format(printed=json.dumps({"steps": []})))
-    given_steps(log, cwd, run(log), "log:writer", "Write it.")
+    given_steps(log, cwd, run(log), start("log:writer", "Write it."))
     assert given(cwd) == {
         "input": {
             "run": {"skill": "log:up", "words": "1.2.0"},
             "role": "log:writer",
             "prompt": "Write it.",
+            "turns": [],
         },
         "cwd": os.path.realpath(cwd),
     }
@@ -232,7 +229,7 @@ def test_a_plugin_without_an_adapter_of_the_rules_is_refused_naming_it_and_the_r
     """Given `log` with no adapter of the rules
     When Lane asks for the steps of a writer's start
     Then it refuses with AdapterFailed naming lane/adapters/rules.py and the writer"""
-    said = refused(lambda: given_steps(log, cwd, run(log), "log:writer", "Write it."))
+    said = refused(lambda: given_steps(log, cwd, run(log), start("log:writer", "Write it.")))
     assert "lane/adapters/rules.py" in said
     assert "log:writer" in said
     assert log in said
@@ -259,7 +256,7 @@ def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_is_refused(
     When Lane asks it for the steps of a writer's start
     Then it refuses with AdapterFailed naming rules.py"""
     adapter(log, "rules.py", code)
-    said = refused(lambda: given_steps(log, cwd, run(log), "log:writer", "Write."))
+    said = refused(lambda: given_steps(log, cwd, run(log), start("log:writer", "Write.")))
     assert path(log, "rules.py") in said
 
 
@@ -271,7 +268,7 @@ def test_the_adapter_of_the_rules_may_give_no_step(log: str, cwd: str):
     When Lane asks it for the steps of a writer's start
     Then there's none"""
     printing(log, "rules.py", {"steps": []})
-    assert given_steps(log, cwd, run(log), "log:writer", "Write it.") == []
+    assert given_steps(log, cwd, run(log), start("log:writer", "Write it.")) == []
 
 
 @pytest.mark.supports(
@@ -375,25 +372,49 @@ def test_the_adapter_of_the_rules_may_give_several_steps_in_their_order(log: str
         {"name": "report", "rules": [{"type": "result", "results": ["written"]}]},
     ]
     printing(log, "rules.py", {"steps": given})
-    assert given_steps(log, cwd, run(log), "log:writer", "Write it.") == given
+    assert given_steps(log, cwd, run(log), start("log:writer", "Write it.")) == given
 
 
 @pytest.mark.supports(
     "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
     "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
+    "test_a_turns_adapter_of_the_rules_is_given_each_earlier_turn_with_its_role_and_prompt",
 )
-@pytest.mark.parametrize("prompt", ["", "<task-notification>Wrote it.</task-notification>"])
-def test_the_adapter_of_the_rules_takes_the_main_conversations_role_and_the_turns_prompt(
-    log: str, cwd: str, prompt: str
+@pytest.mark.parametrize(
+    "prompt, turns",
+    [
+        ("", []),
+        (
+            "<task-notification>Wrote it.</task-notification>",
+            [{"role": "log:up", "prompt": ""}],
+        ),
+        (
+            "/log:tag",
+            [
+                {"role": "log:up", "prompt": ""},
+                {"role": "log:up", "prompt": "Write docs/notes.md."},
+            ],
+        ),
+    ],
+    ids=["first", "one-earlier", "several-earlier"],
+)
+def test_the_adapter_of_the_rules_takes_the_main_conversations_role_the_prompt_and_the_turns(
+    log: str, cwd: str, prompt: str, turns: list[EarlierTurn]
 ):
     """Given an adapter of the rules that writes what it's given
-    When Lane asks it for the steps of a turn of the main conversation in log:up, the run's first
-    with an empty prompt, or one begun by a task-notification
-    Then it was given the run's skill and words, log:up as the role, and the turn's prompt, and ran
-    in the conversation's folder"""
+    When Lane asks it for the steps of a turn of the main conversation in log:up: the run's first,
+    with an empty prompt and no earlier turn; one begun by a task-notification after the first; or
+    one begun by /log:tag after two
+    Then it was given the run's skill and words, log:up as the role, the turn's prompt, and each
+    earlier turn with its role and prompt, oldest first, and ran in the conversation's folder"""
     adapter(log, "rules.py", ECHO.format(printed=json.dumps({"steps": []})))
-    given_steps(log, cwd, run(log), "log:up", prompt)
+    given_steps(log, cwd, run(log), {"role": "log:up", "prompt": prompt, "turns": turns})
     assert given(cwd) == {
-        "input": {"run": {"skill": "log:up", "words": "1.2.0"}, "role": "log:up", "prompt": prompt},
+        "input": {
+            "run": {"skill": "log:up", "words": "1.2.0"},
+            "role": "log:up",
+            "prompt": prompt,
+            "turns": turns,
+        },
         "cwd": os.path.realpath(cwd),
     }

@@ -130,13 +130,20 @@ def turn_started(event: Event, turn: Turn) -> Answer:
     empty for the run's first turn.
     Gives: an empty answer, the event's own move then held to the turn's steps.
     Changes: the run record, by a `turn` entry with the turn's role and prompt, and the steps that
-    adapters.given_steps gives for them, which hold the turn's calls, marks, and end until the
+    adapters.given_steps gives for them with the role and prompt of each of the run's earlier
+    `turn` entries, oldest first, which hold the turn's calls, marks, and end until the
     turn's end that the guard lets through.
     Refuses: AdapterFailed, where the plugin's adapter of the rules is missing, fails, or gives out
     of its form, which answer gives as a stop of the call or the end with what's wrong.
     """
     run = turn.run
-    steps = adapters.given_steps(_root(run), event["cwd"], run, turn.role, turn.prompt)
+    turns: list[adapters.EarlierTurn] = [
+        {"role": entry["role"], "prompt": entry["prompt"]}
+        for entry in run.entries
+        if entry["kind"] == "turn"
+    ]
+    asked: adapters.Asked = {"role": turn.role, "prompt": turn.prompt, "turns": turns}
+    steps = adapters.given_steps(_root(run), event["cwd"], run, asked)
     entry: record.Entry = {
         "kind": "turn",
         "run": run.id,
@@ -202,10 +209,10 @@ def start_made(move: Move) -> Answer:
     subagents, or one by a subagent, a stop with the starts due, or, where none is due, with the
     sentence that no start of the plugin's subagents is due and to go on without it.
     Changes: the run record, by the start with its prompt, and with the steps that
-    adapters.given_steps gives from the prompt where start_rules.asks_adapter says the start takes
-    rules from the plugin's adapter of the rules, untied until the PostToolUse of its call; a
-    resume, by its start with the move's role and prompt, and with the move's steps where the role
-    takes them from the plugin's adapter of the rules.
+    adapters.given_steps gives from the prompt, with no turn, where start_rules.asks_adapter says
+    the start takes rules from the plugin's adapter of the rules, untied until the PostToolUse of
+    its call; a resume, by its start with the move's role and prompt, and with the move's steps
+    where the role takes them from the plugin's adapter of the rules.
     Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong,
     and so does, for a start that takes its steps from the plugin's adapter of the rules, an adapter
     of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
@@ -231,7 +238,12 @@ def start_made(move: Move) -> Answer:
         entry["steps"] = (
             move.steps
             if resume
-            else adapters.given_steps(_root(move.run), cwd, move.run, role, entry["prompt"])
+            else adapters.given_steps(
+                _root(move.run),
+                cwd,
+                move.run,
+                {"role": role, "prompt": entry["prompt"], "turns": []},
+            )
         )
     record.add(move.run.session_id, [entry])
     return Answer()

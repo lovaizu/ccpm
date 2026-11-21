@@ -1,12 +1,13 @@
 """The integration cases of S11, the steps given at each turn: a main conversation whose role
 `log`'s rules name with no steps takes, at each turn's first call or end, the steps that the
-plugin's adapter of the rules gives for the turn's prompt, empty for the run's first turn, and for
-the role of the run's latest command then; each call and mark of the turn is held to them, and its
-end is stopped while a step is undone. Each transition of a turn that Claude Code's states bring
-about has its case: a turn's end let through, then a person's prompt, a subagent's end, a command
-typed, or two subagents' ends one after the other, each beginning a turn; a turn's end that Lane
-stops, then a subagent's end, going on in the same turn; a subagent's end reaching the main
-conversation within its turn; a turn whose first move is its end; and a command that the Skill
+plugin's adapter of the rules gives for the turn's prompt, empty for the run's first turn, for the
+role of the run's latest command then, and for each earlier turn of the run; each call and mark of
+the turn is held to them, and its end is stopped while a step is undone. Each transition of a turn
+that Claude Code's states bring about has its case: a turn's end let through, then a person's
+prompt, a subagent's end, a command typed, or two subagents' ends one after the other, each
+beginning a turn; a turn whose steps rest on the earlier turns that the adapter is given; a turn's
+end that Lane stops, then a subagent's end, going on in the same turn; a subagent's end reaching the
+main conversation within its turn; a turn whose first move is its end; and a command that the Skill
 tool calls within a turn. Each runs `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
@@ -48,6 +49,20 @@ import json, sys
 moves = json.load(sys.stdin)["run"]["moves"]
 made = len([m for m in moves if m["kind"] == "start"])
 print(json.dumps({"starts": [{"role": "log:writer", "count": 2 - made}] if made < 2 else []}))
+"""
+
+# An adapter of the rules that gives each turn the step named by its role's skill, writing each
+# Markdown file that the turn's prompt names, or, where it names none, those that the latest
+# earlier turn's prompt names, as the answer to a question rests on the turn that asked it.
+EARLIER_TURNS = """\
+import json, re, sys
+
+given = json.load(sys.stdin)
+prompts = [turn["prompt"] for turn in given["turns"]] + [given["prompt"]]
+named = [re.findall(r"[\\w./-]+\\.md", prompt) for prompt in prompts]
+paths = ([each for each in named if each] or [[]])[-1]
+rules = [{"type": "order"}, {"type": "writes", "paths": paths}]
+print(json.dumps({"steps": [{"name": given["role"].partition(":")[2], "rules": rules}]}))
 """
 
 
@@ -139,6 +154,30 @@ def test_a_persons_prompt_after_the_turns_end_begins_a_turn_held_to_steps_from_i
     Then the first write is stopped naming docs/notes.md, and the second goes through"""
     c, _ = first_turn_ended(b)
     c.type("Write docs/notes.md.")
+    answer = c.write(None, b.at(FIRST_NOTE), "x\n")
+    assert answer.blocked
+    assert answer.said == writes("docs/notes.md", FIRST_NOTE)
+    assert not c.write(None, b.at("docs/notes.md"), "x\n").blocked
+
+
+@pytest.mark.supports("S11")
+def test_a_turns_adapter_of_the_rules_is_given_each_earlier_turn_with_its_role_and_prompt(
+    b: Bench,
+):
+    """Given `log` taking its steps at each turn from an adapter of the rules that, for a prompt
+    naming no Markdown file, writes those that the latest earlier turn's prompt names, and whose
+    first turn ended, its end let through
+    When the person types `Write docs/notes.md.`, the main conversation marks `up` done and ends
+    its turn, the person types `Again.`, and the main conversation writes .log/1.2.0.md, and then
+    docs/notes.md
+    Then the end goes through, the first write is stopped naming docs/notes.md, from the earlier
+    turn, and the second goes through"""
+    c, _ = first_turn_ended(b)
+    b.adapter("rules.py", EARLIER_TURNS)
+    c.type("Write docs/notes.md.")
+    c.bash("lane-step up")
+    assert not c.stop("Noted.").blocked
+    c.type("Again.")
     answer = c.write(None, b.at(FIRST_NOTE), "x\n")
     assert answer.blocked
     assert answer.said == writes("docs/notes.md", FIRST_NOTE)

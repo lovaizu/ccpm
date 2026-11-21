@@ -9,13 +9,30 @@ import json
 import os
 import subprocess
 import sys
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 
 import routes
 from json_form import held
 from order import StartsDue, order_run
 from record import Run
 from rules import Rules, Step
+
+
+class EarlierTurn(TypedDict):
+    """An earlier turn of the main conversation in the run: its role, by the skill's name, and the
+    prompt that began it, empty for the run's first turn."""
+
+    role: str
+    prompt: str
+
+
+class Asked(TypedDict):
+    """What a start or a turn asks the plugin's adapter of the rules for: its role, the prompt it
+    began with, and each earlier turn of the run, oldest first, none for a start."""
+
+    role: str
+    prompt: str
+    turns: list[EarlierTurn]
 
 
 class AdapterFailed(Exception):
@@ -45,13 +62,14 @@ def starts_due(plugin_root: str, cwd: str, run: Run, rules: Rules, turn_ended: b
     return {"ends": True} if turn_ended else {"starts": []}
 
 
-def given_steps(plugin_root: str, cwd: str, run: Run, role: str, prompt: str) -> list[Step]:
+def given_steps(plugin_root: str, cwd: str, run: Run, asked: Asked) -> list[Step]:
     """The steps and rules of a start, or of a turn of the main conversation, from the plugin's
     adapter of the rules, lane/adapters/rules.py.
 
-    Takes: the plugin's folder, the conversation's folder, the run, and the start's role with the
-    prompt that the main conversation gave it, or, for a turn, the main conversation's role, by the
-    skill's name, with the prompt that began the turn as Claude Code gives it.
+    Takes: the plugin's folder, the conversation's folder, the run, and what's asked: the start's
+    role with the prompt that the main conversation gave it and no turn, or, for a turn, the main
+    conversation's role, by the skill's name, with the prompt that began the turn as Claude Code
+    gives it and each earlier turn of the run, oldest first.
     Gives: the steps of the start or the turn, each with its rules, in the forms of
     rules.in.schema.json and rules.out.schema.json.
     Changes: nothing of Lane's; the adapter may read the conversation's folder.
@@ -60,11 +78,11 @@ def given_steps(plugin_root: str, cwd: str, run: Run, role: str, prompt: str) ->
     """
     if not os.path.isfile(_adapter(plugin_root, "rules.py")):
         raise AdapterFailed(
-            f"Lane: {role} takes its steps from the plugin's adapter of the rules, which the"
-            f" plugin doesn't give. The plugin's author adds lane/adapters/rules.py in"
+            f"Lane: {asked['role']} takes its steps from the plugin's adapter of the rules, which"
+            f" the plugin doesn't give. The plugin's author adds lane/adapters/rules.py in"
             f" {plugin_root}, or the role's steps to lane/rules.json."
         )
-    given = {"run": {"skill": run.skill, "words": run.words}, "role": role, "prompt": prompt}
+    given = {"run": {"skill": run.skill, "words": run.words}, **asked}
     return _ask(plugin_root, cwd, "rules", given)["steps"]
 
 

@@ -191,6 +191,23 @@ else:
     print(json.dumps({"starts": [{"role": "log:writer", "count": 1}]}))
 """
 
+# An adapter, of the rules or of the starts due, that writes what it was given and the folder it
+# runs in beside the conversation's files, and prints the output given.
+ECHO = """\
+import json, os, sys
+
+with open("given.json", "w") as f:
+    json.dump({{"input": json.load(sys.stdin), "cwd": os.getcwd()}}, f)
+print({printed!r})
+"""
+
+
+def echoed(cwd: str) -> dict[str, Any]:
+    """What ECHO was given, and the folder it ran in."""
+    with open(os.path.join(cwd, "given.json"), encoding="utf-8") as f:
+        return json.load(f)
+
+
 # An adapter of the rules that `log` gives for a role that its rules name with no steps: one step
 # `write`, which writes each Markdown file that the start's prompt names.
 RULES_ADAPTER = """\
