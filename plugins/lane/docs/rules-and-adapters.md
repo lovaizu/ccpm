@@ -441,6 +441,13 @@ own. A reporter given the wrong number of words exits 2, saying what it takes:
 lane-item takes <step> <item>
 ```
 
+Lane stops a `lane-back` to a step that isn't marked done, and undoes nothing:
+
+```text
+You're at the step `report` of log:writer, and `report` isn't marked done.
+Go back only to a step marked done, with lane-back <step>.
+```
+
 ## What Lane gives out
 
 | When | What the AI reads |

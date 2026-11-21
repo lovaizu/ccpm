@@ -15,7 +15,7 @@
 - S10: a plugin wants a stopped run to go on where it stopped, after `/compact` or in a new
   conversation.
 - S11: a plugin wants its main conversation to take, at each turn, the steps of that turn's event.
-- S12: a plugin wants its AI to go back to an earlier step, and take it and each step after it again.
+- S12: a plugin wants its AI to go back to an earlier step and take each step from there again.
 
 ## Solution strategy
 
@@ -87,8 +87,7 @@ Strategies:
 - rule types (module)\
   Make each rule's check and the sentence it gives one, so that what the AI reads is what holds.
 - reporters (command)\
-  Carry a step, an item, or a result done, or a step gone back to, to the guard as the AI's own
-  call.
+  Carry each step, item, result, or step gone back to, to the guard as the AI's own call.
 - route adapter (module)\
   Gives the starts due of a plugin that fixes its order, from its routes.
 
@@ -114,10 +113,8 @@ Strategies:
 - A result that a step's rules name as ending the start, letting the start end at that step.
   [S5, S7]\
   Intent: a role that can't go on, such as on the person's point, ends with its result.
-- A step gone back to undoing the marks of it and of each step after it, so that each is taken
-  again in order. [S12]\
-  Intent: a role whose later step shows an earlier one short, such as a trial that a decision
-  fails, mends it where it lies, skipping no step.
+- A step gone back to undoing its marks and those of each later step. [S12]\
+  Intent: a role whose later step shows an earlier one short mends it there, skipping no step.
 - A mark checked for the step due, then for the reads and the items that its rules ask. [S5]\
   Intent: a skipped step, item, or part of a file shows at the step skipped.
 - An end checked for its result, its steps, the plugin's check, and, for a turn, the starts due.

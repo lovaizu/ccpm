@@ -89,10 +89,9 @@ Strategies:
 - One generator and one evaluator for each Round, the evaluator judging every condition from one
   trial. [P2.1]\
   Intent: the people's use is one act, so it's tried once and judged whole.
-- The generator trying the deliverable as its people would before it hands it on, and going back
-  to its decisions where a condition that the people meet falls short. [P2.1]\
-  Intent: the generator hands on only what it saw serve the people, and the maker, not the
-  judge, finds its own shortfall.
+- The generator trying the deliverable as its people would, and going back to its decisions on a
+  shortfall they meet. [P2.1]\
+  Intent: the maker finds its own shortfall, and hands on only what it saw serve the people.
 - The generator taking as given what the last evaluator found good or short. [P2.2]\
   Intent: the generator mends by the judge's own measure.
 - The last Round's roles resumed within a session, and started from its files in a new
@@ -109,8 +108,7 @@ Strategies:
 - Lane applied to every activity of every role's steps that it can hold, the orchestrator's
   included. [P5.1]\
   Intent: a role that leaves its steps notices at once and goes back.
-- Each step held to what it does, never to the tools of one OS, such as a search by Bash's `find`
-  and `grep` or by the Glob and Grep tools. [P5.1]\
+- Each step held to what it does, never to one OS's tools, such as Glob or Bash's `find`. [P5.1]\
   Intent: rn runs alike on each OS that Claude Code runs on.
 - A refusal that only the user can mend stopping only the work it concerns. [P5.3]\
   Intent: the user mends one blocker while every other deliverable goes on.
