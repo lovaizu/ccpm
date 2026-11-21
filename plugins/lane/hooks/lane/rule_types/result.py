@@ -9,7 +9,7 @@ from rules import Rule, Step
 from rule_types.words import listed
 
 
-def given(move: Move) -> str | None:
+def latest(move: Move) -> str | None:
     """The latest result that the move's start, or the main conversation's turn, gave.
 
     Takes: a move of a subagent's start, or of the main conversation, its run as the record stands.
@@ -40,7 +40,7 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Refuses: nothing.
     """
     results, ends = rule.get("results", []), rule.get("ends", [])
-    if given(move) in results + ends:
+    if latest(move) in results + ends:
         return None
     if not results:
         return (

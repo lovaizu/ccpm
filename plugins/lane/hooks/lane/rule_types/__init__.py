@@ -83,7 +83,7 @@ def judge_end(move: Move) -> str | None:
     # The step whose result rule judges the end: the first the start hasn't marked done, where its
     # rules give one, else its last; none where its result ends the start at a step, as a result
     # that a rule names among those that end the start is one it may give.
-    gave = result.given(move)
+    gave = result.latest(move)
     ends_at = next((i for i, step in enumerate(steps) if gave in _ends(step)), None)
     due = [step for step in steps if step["name"] not in done][:1]
     ruled = [step for step in due if any(rule["type"] == "result" for rule in step["rules"])]
@@ -107,12 +107,12 @@ def ended_at_a_step(move: Move) -> bool:
 
     Takes: an `end` move of a subagent, or a `turn_end` move of the main conversation, with the
     steps that hold its start.
-    Gives: True where the result that result.given gives is one that a step's result rule names
+    Gives: True where the result that result.latest gives is one that a step's result rule names
     among those that end the start there; False where it gave none, or another.
     Changes: nothing.
     Refuses: nothing.
     """
-    gave = result.given(move)
+    gave = result.latest(move)
     return any(gave in _ends(step) for step in move.steps)
 
 

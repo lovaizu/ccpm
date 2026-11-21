@@ -19,7 +19,6 @@ from place import Event, Move, SkillCall, Turn
 from plugin import plugin_root
 from record import Run
 from report import Report
-from rule_types.result import given
 from rules import OutOfForm, Rules, read_rules
 from start_rules import asks_adapter
 
@@ -40,9 +39,9 @@ def _checked(answers: _Answers) -> _Answers:
     """The interface, its answer stopping the call with what's wrong and who fixes it where Lane
     can't check it, as a plugin's rules out of form or an adapter that failed."""
 
-    def checked(*given: object) -> Answer:
+    def checked(*taken: object) -> Answer:
         try:
-            return answers(*given)
+            return answers(*taken)
         except (OutOfForm, AdapterFailed) as wrong:
             return Answer(True, str(wrong))
 
@@ -74,8 +73,8 @@ def answer(event: Event) -> Answer:
         answers.append(skill_called(call))
     else:
         answers.append(_placed(event))
-    said = "\n".join(given.said for given in answers if given.said)
-    return Answer(any(given.stop for given in answers), said)
+    said = "\n".join(each.said for each in answers if each.said)
+    return Answer(any(each.stop for each in answers), said)
 
 
 @_checked
@@ -320,7 +319,7 @@ def result_reached(move: Move) -> Answer:
         run = replace(run, entries=[*run.entries, stopped])
         told = f"{move.role} stopped with no result."
     else:
-        gave = given(move)
+        gave = rule_types.result.latest(move)
         told = f"{move.role} gave {gave}." if gave else ""
     due = _end_if(run, move.event)
     return Answer(said=" ".join(each for each in (told, _due_said(due)) if each))
@@ -376,18 +375,19 @@ def report_made(move: Move) -> Answer:
     marks and items place.own_entries then leaves out.
     Refuses: nothing.
     """
-    given = cast(Report, move.report)
+    reported = cast(Report, move.report)
     names = [step["name"] for step in move.steps]
-    if given["kind"] == "step":
+    if reported["kind"] == "step":
         said = rule_types.judge_mark(move)
         if said is not None:
             return Answer(True, said)
-    entry: record.Entry = {**given, "run": move.run.id, "role": move.role}
-    entry.update(kind=_KINDS.get(given["kind"], "mark"), agent_id=move.agent_id)
-    if given["kind"] == "back":
-        if given["step"] not in names or given["step"] not in place.marked(move.run, move.agent_id):
-            return Answer(True, _not_gone_back(move, given["step"]))
-        entry["undone"] = names[names.index(given["step"]) :]
+    entry: record.Entry = {**reported, "run": move.run.id, "role": move.role}
+    entry.update(kind=_KINDS.get(reported["kind"], "mark"), agent_id=move.agent_id)
+    if reported["kind"] == "back":
+        back = reported["step"]
+        if back not in names or back not in place.marked(move.run, move.agent_id):
+            return Answer(True, _not_gone_back(move, back))
+        entry["undone"] = names[names.index(back) :]
     record.add(move.run.session_id, [entry])
     return Answer()
 
@@ -420,7 +420,7 @@ def subagent_ended(move: Move) -> Answer:
     return Answer() if said is None else Answer(True, said)
 
 
-def written(event: Event, given: Answer) -> str:
+def written(event: Event, answered: Answer) -> str:
     """The answer in the form that Claude Code reads from a hook of the event.
 
     Takes: the hook event, and the guard's answer.
@@ -430,23 +430,23 @@ def written(event: Event, given: Answer) -> str:
     Changes: nothing.
     Refuses: nothing.
     """
-    if not given.stop and not given.said:
+    if not answered.stop and not answered.said:
         return ""
     name = event["hook_event_name"]
-    if not given.stop:
+    if not answered.stop:
         output: dict[str, object] = {
-            "hookSpecificOutput": {"hookEventName": name, "additionalContext": given.said}
+            "hookSpecificOutput": {"hookEventName": name, "additionalContext": answered.said}
         }
     elif name == "PreToolUse":
         output = {
             "hookSpecificOutput": {
                 "hookEventName": name,
                 "permissionDecision": "deny",
-                "permissionDecisionReason": given.said,
+                "permissionDecisionReason": answered.said,
             }
         }
     else:
-        output = {"decision": "block", "reason": given.said}
+        output = {"decision": "block", "reason": answered.said}
     return json.dumps(output)
 
 
