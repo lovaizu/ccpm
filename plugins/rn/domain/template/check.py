@@ -1,7 +1,7 @@
 """Decides whether a document made by a best practice holds its kind's template and nothing beside
-it: each part of the template's form in its order and no other, each in its words and its number of
-sentences, no note or placeholder of the template left, and no sentence longer than MOST_WORDS
-words; and where the template of each kind lies."""
+it: each part of the template's form in its order and no other, each in its words, where the
+document's language keeps them, and its number of sentences, no note or placeholder of the template
+left, and no sentence longer than its language takes; and where the template of each kind lies."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from enum import Enum
 from fault import Wrong
 
 from template.form import Form, Unit, form, is_note, kept
+from template.language import ENGLISH, Language, of
 from template.markdown import (
     CODE,
     FIGURE,
@@ -19,6 +20,7 @@ from template.markdown import (
     ITEM,
     PARAGRAPH,
     ROW,
+    TABLE,
     Block,
     Node,
     cells,
@@ -26,12 +28,8 @@ from template.markdown import (
     read,
     sections,
     sentences,
-    words,
 )
 
-# The most words a sentence takes: the limit that ASD-STE100 sets for procedures, as the user
-# judged the 25 of GOV.UK and the Australian Government Style Manual too long to read.
-MOST_WORDS = 20
 # The file of a kind's template, in the folder of its best practice.
 TEMPLATE = "template.md"
 
@@ -60,13 +58,21 @@ def of_kind(plugin_root: str, kind: str) -> str:
     )
 
 
-def faults(template: str, document: str) -> tuple[Fault, ...]:
+def faults(template: str, document: str, language: str = ENGLISH) -> tuple[Fault, ...]:
     """Each place where the Markdown text `document` leaves the Markdown text `template`, in the
-    order of the document's lines, or () where it holds the template and nothing beside it."""
+    order of the document's lines, or () where it holds the template and nothing beside it.
+
+    `language` is the document's, by its name, such as English or Japanese. In English the
+    document keeps the template's own words. In any other it keeps each part of the form in its
+    order, its kind, its heading's level, its row's number of cells, its code block's language, and
+    its number of sentences, in words of its own. A sentence takes as many words or characters as
+    `template.language.of` gives the language. Raises Wrong where the language is blank."""
+    held = of(language)
     shape = form(read(template))
     blocks = read(document)
-    found = _paired(shape.units, _without_notes(sections(blocks)), 1)
-    found += _notes_left(blocks) + _placeholders_left(blocks, shape) + _long_sentences(blocks)
+    found = _Pairing(held.own_words).paired(shape.units, _without_notes(sections(blocks)), 1)
+    found += _notes_left(blocks) + _placeholders_left(blocks, shape)
+    found += _long_sentences(blocks, held)
     return tuple(sorted(found, key=lambda each: each.line))
 
 
@@ -75,19 +81,6 @@ def _without_notes(nodes: tuple[Node, ...]) -> tuple[Node, ...]:
     return tuple(
         Node(node.block, _without_notes(node.nodes)) for node in nodes if not is_note(node.block)
     )
-
-
-def _fit(unit: Unit, block: Block) -> int | None:
-    """0 where the block holds the unit's form, 1 where it's of the unit's kind but not its form,
-    and None where it's of another kind."""
-    if unit.free:
-        return None if block.kind == HEADING else 0
-    if block.kind != unit.block.kind or block.level != unit.block.level:
-        return None
-    if unit.pattern is None:
-        return 0
-    said = block.info if block.kind == CODE else block.text
-    return 0 if unit.pattern.fullmatch(said) else 1
 
 
 # The weight of each fault in the pairing. A block paired out of its unit's form weighs more than
@@ -116,92 +109,145 @@ _Place = tuple[int, int, int]
 _Step = tuple[int, _Move, _Place]
 
 
-def _weights(units: list[Unit], nodes: tuple[Node, ...]) -> dict[_Place, int]:
-    """The least weight of faults from each place of the pairing to its end."""
-    weight: dict[_Place, int] = {}
-    for j in range(len(nodes), -1, -1):
-        for used in (0, 1):
-            for i in range(len(units), -1, -1):
-                steps = _steps(units, nodes, (i, j, used))
-                # Only the end has no step, and a weight there adds alike to every pairing.
-                weight[(i, j, used)] = min(
-                    (own + weight[to] for own, _, to in steps),
-                    default=0,
-                )
-    return weight
+class _Pairing:
+    """The pairing of a document's nodes with the template's units by the least weight of faults.
 
+    Where the document keeps the template's own words, they tell which unit a block stands for,
+    so a step weighs the fault of its own block alone. Where it doesn't, only the form tells, so a
+    pair weighs too the faults inside it, and a block beside weighs as each block under it beside,
+    so that the pairing takes for each part the unit whose form it holds, such as the section after
+    one left out, and names a fault inside a part at its place, not the part as beside."""
 
-def _steps(units: list[Unit], nodes: tuple[Node, ...], at: _Place) -> list[_Step]:
-    """Each step from the place `at`, in the order the pairing takes among equals: a block paired,
-    the run of units again, the next unit, a block beside. Each leads to a place whose weight
-    _weights knows by then: one with the next node, or one with the same node and a later unit or
-    a unit not yet stood."""
-    i, j, used = at
-    m, n = len(units), len(nodes)
-    found: list[_Step] = []
-    pairing = _pairing(units[i], nodes[j].block, used) if i < m and j < n else None
-    if pairing is not None:
-        found.append((pairing, _Move.PAIR, (i, j + 1, 1)))
-    back = units[i].back_to if i < m and used else None
-    if back is not None:
-        found.append((_AGAIN, _Move.AGAIN, (back, j, 0)))
-    if i < m:
-        missing = _MISSING if not used and not units[i].optional else 0
-        found.append((missing, _Move.NEXT, (i + 1, j, 0)))
-    if j < n:
-        found.append((_BESIDE, _Move.BESIDE, (i, j + 1, used)))
-    return found
+    def __init__(self, own_words: bool):
+        self.own_words = own_words
+        # The least weight of the pairing of each run of units with each run of nodes, by their
+        # identities, as a pair of a document without the template's words weighs its inside.
+        self._known: dict[tuple[int, int], dict[_Place, int]] = {}
 
+    def _fit(self, unit: Unit, block: Block) -> int | None:
+        """0 where the block holds the unit's form, 1 where it's of the unit's kind but not its
+        form, and None where it's of another kind."""
+        if unit.free:
+            return None if block.kind == HEADING else 0
+        if block.kind != unit.block.kind or block.level != unit.block.level:
+            return None
+        return 0 if self._holds(unit, block) else 1
 
-def _pairing(unit: Unit, block: Block, used: int) -> int | None:
-    """The weight of the fault of pairing the block with the unit, which has stood where `used`
-    is 1, or None where they can't pair: where the block is of another kind, or the unit has stood
-    and doesn't repeat. A unit that has stood takes another block out of its form at the weight of
-    a block beside, so that the fault names the form the block leaves."""
-    fit = _fit(unit, block) if not used or unit.repeats else None
-    if fit is None:
-        return None
-    return fit * (_BESIDE if used else _OUT_OF_FORM)
+    def _holds(self, unit: Unit, block: Block) -> bool:
+        """Whether the block, of the unit's kind and level, holds the unit's form: its words, or,
+        without the template's own words, a table's header or row its number of cells, and a code
+        block its language in either, as a code block's language is no word of the document's."""
+        if unit.pattern is None:
+            return True
+        if block.kind == CODE:
+            return bool(unit.pattern.fullmatch(block.info))
+        if self.own_words:
+            return bool(unit.pattern.fullmatch(block.text))
+        if block.kind in (TABLE, ROW):
+            return len(cells(block.text)) == len(cells(unit.block.text))
+        return True
 
+    def _weights(self, units: list[Unit], nodes: tuple[Node, ...]) -> dict[_Place, int]:
+        """The least weight of faults from each place of the pairing to its end."""
+        key = (id(units), id(nodes))
+        if key in self._known:
+            return self._known[key]
+        weight: dict[_Place, int] = {}
+        for j in range(len(nodes), -1, -1):
+            for used in (0, 1):
+                for i in range(len(units), -1, -1):
+                    steps = self._steps(units, nodes, (i, j, used))
+                    # Only the end has no step, and a weight there adds alike to every pairing.
+                    weight[(i, j, used)] = min(
+                        (own + weight[to] for own, _, to in steps),
+                        default=0,
+                    )
+        self._known[key] = weight
+        return weight
 
-def _paired(units: list[Unit], nodes: tuple[Node, ...], where: int) -> list[Fault]:
-    """Each fault of the nodes against the units, by the pairing with the least weight of faults,
-    and of each pair's nodes inside against the unit's units. A unit missing at the end goes at the
-    last node's line, or at `where` where there's no node."""
-    weight = _weights(units, nodes)
-    found: list[Fault] = []
-    counts = [0] * len(units)
-    at = (0, 0, 0)
-    while at[0] < len(units) or at[1] < len(nodes):
-        own, move, after = min(_steps(units, nodes, at), key=lambda step: step[0] + weight[step[2]])
-        i, j, _ = at
-        line = nodes[min(j, len(nodes) - 1)].block.line if nodes else where
-        if move == _Move.BESIDE:
-            found.append(Fault(line, f"{_shown(nodes[j].block)} lies beside the template"))
-        elif move == _Move.NEXT and own:
-            found.append(Fault(line, f"lacks {_from(units[i])}"))
-        elif move == _Move.PAIR:
-            counts[i] += 1
-            found += _pair(units[i], nodes[j], counts[i])
-        at = after
-    return found
-
-
-def _pair(unit: Unit, node: Node, count: int) -> list[Fault]:
-    """The faults of a block paired with a unit, and of the blocks inside it."""
-    block = node.block
-    found: list[Fault] = []
-    if _fit(unit, block):
-        found.append(Fault(block.line, f"{_shown(block)} leaves the form of {_from(unit)}"))
-    if unit.most is not None and count > unit.most:
-        found.append(
-            Fault(block.line, f"{_shown(block)} goes past the {unit.most} of {_from(unit)}")
-        )
-    if unit.free:
+    def _steps(self, units: list[Unit], nodes: tuple[Node, ...], at: _Place) -> list[_Step]:
+        """Each step from the place `at`, in the order the pairing takes among equals: a block
+        paired, the run of units again, the next unit, a block beside. Each leads to a place whose
+        weight _weights knows by then: one with the next node, or one with the same node and a
+        later unit or a unit not yet stood."""
+        i, j, used = at
+        m, n = len(units), len(nodes)
+        found: list[_Step] = []
+        pairing = self._pairing(units[i], nodes[j], used) if i < m and j < n else None
+        if pairing is not None:
+            found.append((pairing, _Move.PAIR, (i, j + 1, 1)))
+        back = units[i].back_to if i < m and used else None
+        if back is not None:
+            found.append((_AGAIN, _Move.AGAIN, (back, j, 0)))
+        if i < m:
+            missing = _MISSING if not used and not units[i].optional else 0
+            found.append((missing, _Move.NEXT, (i + 1, j, 0)))
+        if j < n:
+            found.append((self._beside(nodes[j]), _Move.BESIDE, (i, j + 1, used)))
         return found
-    if block.kind in (PARAGRAPH, ITEM):
-        found += _counted(unit, block)
-    return found + _paired(unit.units, node.nodes, block.line)
+
+    def _pairing(self, unit: Unit, node: Node, used: int) -> int | None:
+        """The weight of the faults of pairing the node with the unit, which has stood where
+        `used` is 1, or None where they can't pair: where the block is of another kind, or the unit
+        has stood and doesn't repeat. A unit that has stood takes another block out of its form at
+        the weight of a block beside, so that the fault names the form the block leaves. Without
+        the template's own words, the pair weighs too the faults inside it."""
+        fit = self._fit(unit, node.block) if not used or unit.repeats else None
+        if fit is None:
+            return None
+        own = fit * (_BESIDE if used else _OUT_OF_FORM)
+        if self.own_words or unit.free:
+            return own
+        prose = node.block.kind in (PARAGRAPH, ITEM)
+        counted = _OUT_OF_FORM if prose and _counted(unit, node.block) else 0
+        return own + counted + self._weights(unit.units, node.nodes)[(0, 0, 0)]
+
+    def _beside(self, node: Node) -> int:
+        """The weight of the node beside the units: one block's, or, without the template's own
+        words, one for the node and each node under it."""
+        if self.own_words:
+            return _BESIDE
+        return _BESIDE + sum(self._beside(each) for each in node.nodes)
+
+    def paired(self, units: list[Unit], nodes: tuple[Node, ...], where: int) -> list[Fault]:
+        """Each fault of the nodes against the units, by the pairing with the least weight of
+        faults, and of each pair's nodes inside against the unit's units. A unit missing at the end
+        goes at the last node's line, or at `where` where there's no node."""
+        weight = self._weights(units, nodes)
+        found: list[Fault] = []
+        counts = [0] * len(units)
+        at = (0, 0, 0)
+        while at[0] < len(units) or at[1] < len(nodes):
+            own, move, after = min(
+                self._steps(units, nodes, at), key=lambda step: step[0] + weight[step[2]]
+            )
+            i, j, _ = at
+            line = nodes[min(j, len(nodes) - 1)].block.line if nodes else where
+            if move == _Move.BESIDE:
+                found.append(Fault(line, f"{_shown(nodes[j].block)} lies beside the template"))
+            elif move == _Move.NEXT and own:
+                found.append(Fault(line, f"lacks {_from(units[i])}"))
+            elif move == _Move.PAIR:
+                counts[i] += 1
+                found += self._pair(units[i], nodes[j], counts[i])
+            at = after
+        return found
+
+    def _pair(self, unit: Unit, node: Node, count: int) -> list[Fault]:
+        """The faults of a block paired with a unit, and of the blocks inside it."""
+        block = node.block
+        found: list[Fault] = []
+        if self._fit(unit, block):
+            found.append(Fault(block.line, f"{_shown(block)} leaves the form of {_from(unit)}"))
+        if unit.most is not None and count > unit.most:
+            found.append(
+                Fault(block.line, f"{_shown(block)} goes past the {unit.most} of {_from(unit)}")
+            )
+        if unit.free:
+            return found
+        if block.kind in (PARAGRAPH, ITEM):
+            found += _counted(unit, block)
+        return found + self.paired(unit.units, node.nodes, block.line)
 
 
 def _counted(unit: Unit, block: Block) -> list[Fault]:
@@ -256,19 +302,19 @@ def _placeholders_left(blocks: tuple[Block, ...], shape: Form) -> list[Fault]:
     return found
 
 
-def _long_sentences(blocks: tuple[Block, ...]) -> list[Fault]:
-    """A fault for each sentence of a paragraph, an item, or a cell of a row that holds more than
-    MOST_WORDS words."""
+def _long_sentences(blocks: tuple[Block, ...], language: Language) -> list[Fault]:
+    """A fault for each sentence of a paragraph, an item, or a cell of a row that holds more words
+    or characters than its language takes."""
     found = []
     for block in flat(blocks):
         for sentence in (each for text in _prose(block) for each in sentences(text)):
-            count = words(sentence)
-            if count > MOST_WORDS:
-                begins = " ".join(sentence.split()[:6])
+            count = language.length(sentence)
+            if count > language.most:
                 found.append(
                     Fault(
                         block.line,
-                        f"has a sentence of {count} words, more than {MOST_WORDS}: {begins} ...",
+                        f"has a sentence of {count} {language.unit}, more than {language.most}:"
+                        f" {language.begins(sentence)} ...",
                     )
                 )
     return found

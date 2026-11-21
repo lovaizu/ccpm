@@ -1,6 +1,6 @@
 """template.py, as ccpm's developers and rn run it to hold a document to its kind's template:
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/template.py <kind> <document>`. It runs the code of
-template.py in `domain/template/`, whose `command` module says what it takes and gives."""
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/template.py <kind> <document> [<language>]`. It runs the
+code of template.py in `domain/template/`, whose `command` module says what it takes and gives."""
 
 from __future__ import annotations
 

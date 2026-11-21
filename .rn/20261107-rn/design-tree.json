@@ -113,68 +113,7 @@
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
       "path": "plugins/rn/domain/template",
       "kind": "code",
-      "inputs": [
-        "dev/rn/architecture.md"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A document in any language: the check holds a document in the language its run settled as it holds one in English, where now the template's words, a sentence's end, a sentence's length, and the notes' rules are read as English alone",
-              "decided": "The check holds a document in any language that a run settles, as rn's deliverables come in the user's language",
-              "by": "user"
-            },
-            {
-              "about": "A sentence's length in a language other than English",
-              "decided": "A sentence takes at most 60 characters in a language written without spaces between words, such as Japanese, and at most 20 words in any other",
-              "by": "user"
-            },
-            {
-              "about": "The template's own words in a language other than English: its headings and labels, such as Intent:, written in English",
-              "decided": "The check takes the document's language. In English it holds the template's own words, as now; in another language it holds every part of the form in its order, with its kind, its heading level, and its number of sentences, but not the template's own words, which the maker puts in the document's language; a sentence ends at a mark of its language too, such as 。",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's product vision says what rn is for",
@@ -528,10 +467,5 @@
       "status": "done"
     }
   ],
-  "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/template"
-    }
-  ]
+  "work": []
 }

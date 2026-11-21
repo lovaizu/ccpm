@@ -1,9 +1,9 @@
 """The unit cases of template/markdown.py, how template.py reads Markdown for rn's check of a
-deliverable against its kind's template, through `read`, `sections`, `flat`, `sentences`, and
-`words`. A block's kind, its line, and its words turn on how each Markdown construct starts and
-ends, so the cases take one for each construct, and one for each way a list item or a code block
-goes on or ends. A sentence and a word turn on the marks that end or join them, so the cases take
-one for each."""
+deliverable against its kind's template, through `read`, `sections`, `flat`, `sentences`, `words`,
+and `characters`. A block's kind, its line, and its words turn on how each Markdown construct
+starts and ends, so the cases take one for each construct, and one for each way a list item or a
+code block goes on or ends. A sentence, a word, and a character turn on the marks that end, join,
+or hold them, so the cases take one for each."""
 
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ from template.markdown import (
     TABLE,
     Block,
     Node,
+    characters,
     flat,
     read,
     sections,
@@ -388,3 +389,45 @@ def test_a_table_holds_its_header_and_each_row_but_the_delimiter_row():
             children=(Block(ROW, 6, "| Unit | coverage: 100% |"), Block(ROW, 7, "| E2E | k = 3 |")),
         ),
     )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+@pytest.mark.parametrize("mark", ["。", "！", "？"])
+def test_sentences_split_after_a_japanese_mark_with_no_space_after_it(mark: str):
+    """Given two Japanese sentences, the first ending at `。`, `！`, or `？`, with no space after it
+    When they're split into sentences
+    Then the first ends at its mark"""
+    assert sentences(f"一つ目です{mark}二つ目です。") == [f"一つ目です{mark}", "二つ目です。"]
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+@pytest.mark.parametrize("close", ["」", "』", "）"])
+def test_a_japanese_sentence_closed_inside_a_quote_ends_after_the_quote(close: str):
+    """Given a Japanese sentence whose full stop lies inside a closing quote or bracket
+    When its block is split into sentences
+    Then the sentence ends after the closing mark"""
+    assert sentences(f"「止めます。{close}次です。") == [f"「止めます。{close}", "次です。"]
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_characters_count_each_but_a_space():
+    """Given a sentence of five characters and a space between two of them
+    When its characters are counted
+    Then they're five"""
+    assert characters("rn の本。") == 5
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_characters_count_a_code_span_as_one():
+    """Given a sentence of three characters and a code span
+    When its characters are counted
+    Then they're four"""
+    assert characters("`gh auth`を使う") == 4
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_characters_count_a_link_as_the_characters_it_shows():
+    """Given a sentence of one character and a link that shows two
+    When its characters are counted
+    Then they're three"""
+    assert characters("[手引](guide.md)へ") == 3

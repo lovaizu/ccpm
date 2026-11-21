@@ -31,8 +31,8 @@ def faults(role: str, cut: Cut, result: Result, worktree: str, cwd: str) -> list
     in both, or twice, and each ID the Cut doesn't hold; for both, each line of a `good` that no
     file of the deliverable holds as it stands; and, for the generator, where the folder of the
     best practice that the Cut names holds a `template.md`, each fault that `template.check.faults`
-    finds in each Markdown file among the deliverable's paths, as `<file>:<line>: <what>`, `<file>`
-    from the worktree's top. None where the result holds each.
+    finds in each Markdown file among the deliverable's paths in the Cut's language, as
+    `<file>:<line>: <what>`, `<file>` from the worktree's top. None where the result holds each.
     Changes: nothing.
     Refuses: Wrong where the role is neither `generator` nor `evaluator`.
     """
@@ -103,8 +103,8 @@ def _evaluator(cut: Cut, result: Result) -> list[str]:
 
 
 def _template(cut: Cut, files: dict[str, str], cwd: str) -> list[str]:
-    """Each place where a Markdown file of the deliverable leaves its kind's template, where the
-    best practice holds one."""
+    """Each place where a Markdown file of the deliverable leaves its kind's template in the Cut's
+    language, where the best practice holds one."""
     form = os.path.join(cwd, cut["best_practice"], check.TEMPLATE)
     if not os.path.isfile(form):
         return []
@@ -114,7 +114,7 @@ def _template(cut: Cut, files: dict[str, str], cwd: str) -> list[str]:
         f"{name}:{each.line}: {each.what}"
         for name, text in files.items()
         if name.endswith(".md")
-        for each in check.faults(template, text)
+        for each in check.faults(template, text, cut["language"])
     ]
 
 

@@ -393,6 +393,28 @@ def test_a_generators_markdown_on_its_kinds_template_has_no_fault(run: Run):
     assert guide_faults(run, "readme", ON) == []
 
 
+# A guide in Japanese on the readme template in its own words: a title and two paragraphs.
+ON_JA = (
+    "# 請求書印刷\n\n請求書印刷は表の行から請求書を印刷するコマンドです。\n\n"
+    "表に行を持つときに使えます。一度で請求書が手に入ります。\n"
+)
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_generators_markdown_is_held_to_the_template_in_its_cuts_language(run: Run):
+    """Given a generator's made of the guide, of the kind readme, whose Cut's language is Japanese,
+    the guide in Japanese on the template's form in its own words, which leaves the template's
+    English words
+    When its faults are asked
+    Then there are none, as the template check holds the guide in the Cut's language"""
+    assert template_places(ON_JA) != []
+    write_files(run.worktree, {GUIDE: ON_JA})
+    cut = generator_cut(run, guide_node("readme"), "readme")
+    cut["language"] = "Japanese"
+    result = from_json(run, "generator.json", rn_files.made([], [GUIDE]))
+    assert faults("generator", cut, result, run.worktree, run.repository) == []
+
+
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_generators_file_that_isnt_markdown_isnt_held_to_the_template(run: Run):
     """Given a generator's made of the guide, of the kind readme, on the template, with a more path

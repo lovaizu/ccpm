@@ -28,7 +28,7 @@
      "pattern": "^\\d+\\.\\d+\\.\\d+$"
     },
     "languages": {
-     "description": "The languages that the user settled.",
+     "description": "The languages that the user settled, each by its name in English, such as Japanese, as rn's checks read a language by that name.",
      "type": "object",
      "required": [
       "deliverables",

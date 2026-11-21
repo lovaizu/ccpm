@@ -40,7 +40,12 @@ _FIGURE = re.compile(r"!\[(.*)\]\((\S+?)\)")
 # A code span of Markdown, which the words of a block keep whole.
 CODE_SPAN = re.compile(r"`[^`\n]*`")
 _LINK = re.compile(r"!?\[([^\]\n]*)\]\([^)\n]*\)")
-_SENTENCE_END = re.compile(r"(?<=[.!?])\s+|(?<=[.!?][\"')\]])\s+")
+# A sentence ends at `.`, `?`, or `!` before a space, or at a full stop, a question mark, or an
+# exclamation mark of Japanese or Chinese, which takes no space after it, after the closing quote
+# or bracket that holds it, as in 「…。」.
+_SENTENCE_END = re.compile(
+    r"(?<=[.!?])\s+|(?<=[.!?][\"')\]])\s+|(?<=[。！？][」』）])\s*|(?<=[。！？])(?![」』）])\s*"
+)
 
 
 @dataclass(frozen=True)
@@ -259,8 +264,8 @@ def flat(blocks: tuple[Block, ...]) -> list[Block]:
 
 def sentences(text: str) -> list[str]:
     """The sentences of a block's words, in their order: split after `.`, `?`, or `!` before a
-    space, and at each newline, which a line that ends with a backslash gives, with a code span or a
-    link kept whole. [] for words that hold none."""
+    space, after `。`, `？`, or `！`, and at each newline, which a line that ends with a backslash
+    gives, with a code span or a link kept whole. [] for words that hold none."""
     spans: list[str] = []
 
     def hide(match: re.Match[str]) -> str:
@@ -284,3 +289,10 @@ def words(sentence: str) -> int:
     and a mark that holds no letter or digit, such as `-`, as none."""
     plain = _LINK.sub(r"\1", CODE_SPAN.sub("code", sentence))
     return sum(1 for word in plain.split() if re.search(r"\w", word))
+
+
+def characters(sentence: str) -> int:
+    """How many characters the sentence holds: a code span counts as one, as `words` counts it as
+    one word, a link as the characters it shows, and a space as none."""
+    plain = _LINK.sub(r"\1", CODE_SPAN.sub("c", sentence))
+    return sum(1 for each in plain if not each.isspace())

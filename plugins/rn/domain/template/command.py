@@ -9,9 +9,10 @@ import os
 from fault import Answer, Wrong, answered
 
 from template import check
+from template.language import ENGLISH
 
 USAGE = """\
-usage: template.py <kind> <document>
+usage: template.py <kind> <document> [<language>]
 """
 
 # What the reader of the faults is to do with them, as the purpose is a document of the vital few,
@@ -30,24 +31,30 @@ def main(argv: list[str], cwd: str, plugin_root: str) -> Answer:
     """The exit code, stdout, and stderr of `template.py` with the arguments, from the folder
     `cwd`, with rn's folder at `plugin_root`.
 
-    `<kind> <document>` gives 0 where the document, by its path from `cwd`, holds the template of
-    its kind among rn's best practices and nothing beside it, printing nothing, and 1 with each
-    place where it leaves it, one to a line as `<document>:<line>: <what>`, between a line before
-    them on why the template holds and one after them on when to change the template; or 1 where
-    the kind has no Markdown template, or the document is missing or isn't UTF-8 text.
+    `<kind> <document> [<language>]` gives 0 where the document, by its path from `cwd`, holds the
+    template of its kind among rn's best practices and nothing beside it, in its language, such as
+    Japanese, as `template.check.faults` holds it, English where none is given, printing nothing,
+    and 1 with each place where it leaves it, one to a line as `<document>:<line>: <what>`, between
+    a line before them on why the template holds and one after them on when to change the
+    template; or 1 where
+    the kind has no Markdown template, the document is missing or isn't UTF-8 text, or the
+    language is blank.
 
-    2 with the usage where the arguments are other than a kind and a document."""
-    if len(argv) != 2:
+    2 with the usage where the arguments are other than a kind, a document, and a language or
+    none."""
+    if len(argv) not in (2, 3):
         return 2, "", USAGE
-    return answered("template.py", lambda: _template(argv[0], argv[1], cwd, plugin_root))
+    language = argv[2] if len(argv) == 3 else ENGLISH
+    return answered("template.py", lambda: _template(argv[0], argv[1], language, cwd, plugin_root))
 
 
-def _template(kind: str, document: str, cwd: str, plugin_root: str) -> Answer:
-    """The result of `template.py` on the document against the kind's template."""
+def _template(kind: str, document: str, language: str, cwd: str, plugin_root: str) -> Answer:
+    """The result of `template.py` on the document in its language against the kind's
+    template."""
     path = check.of_kind(plugin_root, kind)
     with open(path, encoding="utf-8") as file:
         form = file.read()
-    found = check.faults(form, _read(os.path.join(cwd, document), document, kind))
+    found = check.faults(form, _read(os.path.join(cwd, document), document, kind), language)
     if not found:
         return 0, "", ""
     said = "".join(f"{document}:{each.line}: {each.what}\n" for each in found)

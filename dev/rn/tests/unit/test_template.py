@@ -2,8 +2,11 @@
 through `faults` and `of_kind`, and of its command, `template.py`, through `main`. Whether a
 document holds its template turns on each part of the template's form: its sections, items,
 paragraphs, figures, and code blocks, what its notes let a document leave out, repeat, or say in
-how many sentences, and how many words a sentence takes. So the cases take, for each part, the
-document that holds it and each way of leaving it, and a sentence on both sides of the limit."""
+how many sentences, and how many words a sentence takes; and on the document's language, in which
+a document other than English keeps the template's form but not its own words, and a sentence is
+bounded by characters where its language writes no space between words. So the cases take, for
+each part, the document that holds it and each way of leaving it, a sentence on both sides of each
+limit, and a document in Japanese that holds the form and one that leaves it."""
 
 from __future__ import annotations
 
@@ -14,8 +17,9 @@ from typing import Any
 
 import pytest
 from fault import Wrong
-from template.check import MOST_WORDS, Fault, faults, of_kind
+from template.check import Fault, faults, of_kind
 from template.command import USAGE, main
+from template.language import MOST_CHARACTERS, MOST_WORDS
 
 # rn's folder, at the top of the repository four folders up from this file.
 RN = os.path.normpath(
@@ -850,11 +854,11 @@ def test_template_gives_1_naming_the_kinds_for_a_kind_without_a_template(folder:
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
-@pytest.mark.parametrize("argv", [[], ["readme"], ["a", "b", "c"]])
-def test_template_with_other_than_a_kind_and_a_document_gives_2_with_the_usage(
+@pytest.mark.parametrize("argv", [[], ["readme"], ["a", "b", "c", "d"]])
+def test_template_with_other_than_a_kind_a_document_and_a_language_gives_2_with_the_usage(
     folder: str, argv: list[str]
 ):
-    """Given no argument, one, or three
+    """Given no argument, one, or four
     When `template.py` runs
     Then it gives 2 with the usage"""
     assert main(argv, folder, RN) == (2, "", USAGE)
@@ -1381,3 +1385,296 @@ def test_a_note_that_says_to_leave_out_a_lead_paragraph_lets_it_and_its_items_go
         note("`<strategy>`, `<intent>`: each decision. Leave out Strategies where there's none."),
     )
     assert faults(template, lines("# T")) == ()
+
+
+# A document in a language other than English.
+
+# A template of a title, a section of roles, and a paragraph, with a note.
+ROLES = lines(
+    "# `<Product>`",
+    "",
+    "## Roles",
+    "",
+    "- `<role>`\\",
+    "  `<who they are>`.",
+    "",
+    "`<Product>` is `<kind>`.",
+    "",
+    note("`<role>`: each kind of person."),
+)
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_document_of_the_templates_form_in_its_own_words_has_no_fault():
+    """Given a template of a title, a section of roles, and a paragraph, and a document in
+    Japanese of each part in its order, its heading in Japanese
+    When the document is checked in Japanese
+    Then it has no fault"""
+    document = lines(
+        "# rn", "", "## 役割", "", "- 利用者\\", "  頼む人です。", "", "rnはプラグインです。"
+    )
+    assert faults(ROLES, document, "Japanese") == ()
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_document_in_japanese_words_checked_in_english_leaves_the_templates_words():
+    """Given a template of a title, a section of roles, and a paragraph, and a document of each
+    part in its order, its heading in Japanese
+    When the document is checked with no language given, which is English
+    Then the one fault names the section as beside the template, as its heading isn't Roles"""
+    document = lines(
+        "# rn", "", "## 役割", "", "- 利用者\\", "  頼む人です。", "", "rnはプラグインです。"
+    )
+    assert faults(ROLES, document) == (Fault(3, '"## 役割" lies beside the template'),)
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_document_without_a_part_of_the_form_lacks_it():
+    """Given a template of a section A that holds a paragraph and a section B, and a document in
+    Japanese whose section holds the paragraph alone
+    When the document is checked in Japanese
+    Then the one fault names B as lacking"""
+    template = lines("# T", "", "## A", "", "`<a>`.", "", "### B", "", "`<b>`.")
+    document = lines("# 題", "", "## 甲", "", "段落です。")
+    assert faults(template, document, "Japanese") == (
+        Fault(5, 'lacks the template\'s "### B" at its line 7'),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_document_with_parts_out_of_order_is_named():
+    """Given a template of a paragraph and then an item, and a document in Japanese of an item and
+    then a paragraph
+    When the document is checked in Japanese
+    Then the faults name the paragraph lacking before the item, and the paragraph after it as
+    beside the template"""
+    template = lines("# T", "", "`<a>`.", "", "- `<b>`.")
+    document = lines("# 題", "", "- 項目です。", "", "段落です。")
+    assert faults(template, document, "Japanese") == (
+        Fault(3, 'lacks the template\'s "`<a>`." at its line 3'),
+        Fault(5, '"段落です。" lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_document_without_a_section_takes_each_other_by_its_form():
+    """Given a template of sections A of a paragraph, B of an item, and C of a paragraph, and a
+    document in Japanese of a section of an item and then one of a paragraph
+    When the document is checked in Japanese
+    Then it has no fault, as its sections hold the form of B and C, A being left out"""
+    template = lines(
+        "# T", "", "## A", "", "`<a>`.", "", "## B", "", "- `<b>`.", "", "## C", "", "`<c>`."
+    )
+    document = lines("# 題", "", "## 乙", "", "- 項目です。", "", "## 丙", "", "段落です。")
+    assert faults(template, document, "Japanese") == ()
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_section_with_a_fault_inside_is_named_at_the_fault():
+    """Given a template of a section A of a paragraph of one sentence and an item, and a document
+    in Japanese whose section's paragraph has two sentences
+    When the document is checked in Japanese
+    Then the one fault names the paragraph's two sentences, not the section"""
+    template = lines("# T", "", "## A", "", "`<a>`.", "", "- `<b>`.")
+    document = lines("# 題", "", "## 甲", "", "一つ目です。二つ目です。", "", "- 項目です。")
+    assert faults(template, document, "Japanese") == (
+        Fault(5, 'has 2 sentences, where the template\'s "`<a>`." at its line 5 takes 1'),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_heading_a_level_below_the_templates_lies_beside_it():
+    """Given a template of a section A of level 2, and a document in Japanese whose section is of
+    level 3
+    When the document is checked in Japanese
+    Then the one fault names the heading as beside the template"""
+    template = lines("# T", "", "## A")
+    document = lines("# 題", "", "### 甲")
+    assert faults(template, document, "Japanese") == (
+        Fault(3, '"### 甲" lies beside the template'),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_row_without_a_cell_of_the_template_leaves_its_form():
+    """Given a template of a table whose row has two cells, and a document in Japanese whose header
+    has two cells of its own words and whose row has one
+    When the document is checked in Japanese
+    Then the one fault names the row, as a row keeps its number of cells in any language"""
+    template = lines(
+        "# T", "", "| Test type | Exit criteria |", "|---|---|", "| `<type>` | `<exit>` |"
+    )
+    document = lines("# 題", "", "| 種類 | 終了条件 |", "|---|---|", "| 単体のみ |")
+    assert faults(template, document, "Japanese") == (
+        Fault(
+            5,
+            '"| 単体のみ |" leaves the form of the template\'s "| `<type>` | `<exit>` |"'
+            " at its line 5",
+        ),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_code_block_in_another_language_than_the_template_fixes_is_named():
+    """Given a template whose code block is of the language console, and a document in Japanese
+    whose code block is of text
+    When the document is checked in Japanese
+    Then the one fault names the code block, as a code block's language is no word of the
+    document's"""
+    template = lines("# T", "", "```console", "<command>", "```")
+    document = lines("# 題", "", "```text", "ls", "```")
+    assert faults(template, document, "Japanese") == (
+        Fault(3, '"```text" leaves the form of the template\'s "```console" at its line 3'),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_sentence_of_the_most_characters_has_no_fault():
+    """Given a template of a free slot, and a document in Japanese whose sentence has 60
+    characters, its full stop among them
+    When the document is checked in Japanese
+    Then it has no fault"""
+    template = lines("# T", "", "`<body>`")
+    sentence = "あ" * (MOST_CHARACTERS - 1) + "。"
+    assert faults(template, lines("# 題", "", sentence), "Japanese") == ()
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+@pytest.mark.parametrize("language", ["Japanese", "Simplified Chinese", "thai"])
+def test_a_sentence_of_more_than_the_most_characters_is_named_in_a_language_without_spaces(
+    language: str,
+):
+    """Given a template of a free slot, and a document whose sentence has 61 characters, in
+    Japanese, in Chinese named with another word before it, or in Thai named in small letters
+    When the document is checked in that language
+    Then the fault names its number of characters and its first characters"""
+    template = lines("# T", "", "`<body>`")
+    sentence = "あ" * MOST_CHARACTERS + "。"
+    assert faults(template, lines("# 題", "", sentence), language) == (
+        Fault(
+            3,
+            f"has a sentence of {MOST_CHARACTERS + 1} characters, more than {MOST_CHARACTERS}:"
+            f" {'あ' * 20} ...",
+        ),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_the_most_characters_of_a_sentence_are_60():
+    """Given the limit of characters, which the user set as the bound of an easy read that
+    Japanese writing guides name most
+    When it's read
+    Then it is 60"""
+    assert MOST_CHARACTERS == 60
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_code_span_counts_as_one_character():
+    """Given a document in Japanese whose sentence holds 59 characters and a code span of 11
+    When the document is checked in Japanese
+    Then it has no fault"""
+    template = lines("# T", "", "`<body>`")
+    sentence = "`template.py`" + "あ" * (MOST_CHARACTERS - 2) + "。"
+    assert faults(template, lines("# 題", "", sentence), "Japanese") == ()
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_sentence_of_more_than_the_most_words_is_named_in_a_language_with_spaces():
+    """Given a template of a free slot, and a document in French, whose words have spaces between
+    them, its sentence of 21 words and heading of its own words
+    When the document is checked in French
+    Then the one fault names its number of words"""
+    template = lines("# T", "", "## Roles", "", "`<body>`")
+    sentence = " ".join(["mot"] * (MOST_WORDS + 1)) + "."
+    assert faults(template, lines("# T", "", "## Rôles", "", sentence), "French") == (
+        Fault(
+            5,
+            f"has a sentence of {MOST_WORDS + 1} words, more than {MOST_WORDS}:"
+            " mot mot mot mot mot mot ...",
+        ),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_japanese_paragraph_of_two_sentences_ending_at_their_marks_is_named():
+    """Given a template of a paragraph of one sentence, and a document in Japanese whose paragraph
+    is two sentences, the first ending at `。` with no space after it
+    When the document is checked in Japanese
+    Then the fault names its two sentences"""
+    template = lines("# T", "", "`<a>`.")
+    document = lines("# 題", "", "一つ目です。二つ目です。")
+    assert faults(template, document, "Japanese") == (
+        Fault(3, 'has 2 sentences, where the template\'s "`<a>`." at its line 3 takes 1'),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_faults_refuse_a_blank_language():
+    """Given a template and a document
+    When the document is checked in a language of spaces alone
+    Then the check refuses it, saying what it takes"""
+    with pytest.raises(Wrong, match="the language is blank; give the document's language"):
+        faults(lines("# T"), lines("# T"), " ")
+
+
+# The Japanese product vision of tally, on rn's template in its own words.
+VISION_JA = lines(
+    "# tallyのプロダクトビジョン",
+    "",
+    "## 役割",
+    "",
+    "- 利用者\\",
+    "  請求書を合計する人です。",
+    "",
+    "## 目的と主要な結果",
+    "",
+    "- O1: 利用者が各請求書を正しく合計する。",
+    "  - KR1.1: 誤った合計の割合。低いほど良い。",
+    "  - KR1.2: 合計までの時間。短いほど良い。",
+    "",
+    "KR1.1を先に置き、前の結果を悪くしない変更だけを残す。",
+    "主要な結果に目標はなく、目標にした指標は良い指標でなくなる。変更が目的に近づけたかを示す。",
+    "",
+    "## コンセプト",
+    "",
+    "tallyは行を打つたびに足す。",
+    "",
+    "- 一度に足す行、O1のため\\",
+    "  利用者は各合計が増えるのを見る。",
+)
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_template_with_a_language_holds_the_document_in_it(folder: str):
+    """Given a product vision in Japanese on rn's template in its own words
+    When `template.py product-vision <document> Japanese` runs
+    Then it gives 0 and prints nothing"""
+    with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
+        file.write(VISION_JA)
+    assert main(["product-vision", "vision.md", "Japanese"], folder, RN) == (0, "", "")
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_template_without_a_language_holds_the_document_in_english(folder: str):
+    """Given a product vision in Japanese on rn's template in its own words
+    When `template.py product-vision <document>` runs, with no language
+    Then it gives 1, as the document leaves the template's English words"""
+    with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
+        file.write(VISION_JA)
+    code, printed, said = main(["product-vision", "vision.md"], folder, RN)
+    assert (code, printed) == (1, "")
+    assert 'vision.md:3: "## 役割" lies beside the template' in said.splitlines()
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_template_gives_1_naming_a_blank_language(folder: str):
+    """Given a product vision
+    When `template.py product-vision <document> ""` runs
+    Then it gives 1, saying what language it takes"""
+    with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
+        file.write(VISION_JA)
+    said = (
+        "template.py: the language is blank; give the document's language as a word, such as"
+        " English\n"
+    )
+    assert main(["product-vision", "vision.md", ""], folder, RN) == (1, "", said)
