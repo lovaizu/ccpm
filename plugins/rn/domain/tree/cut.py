@@ -14,7 +14,7 @@ from repository import trial
 from repository.place import RunPlace
 from rounds.files import Result, Round
 
-from tree.form import Deliverable, Tree
+from tree.form import OPEN, Deliverable, Tree
 
 # A role's Cut, in the form of domain/schemas/<role>-cut.schema.json.
 Cut = dict[str, Any]
@@ -90,7 +90,7 @@ def evaluator(tree: Tree, run: RunPlace, round_: Round, practice: Found) -> Cut:
 def _open(tree: Tree, round_: Round) -> Deliverable:
     """The open deliverable of the Round's path."""
     for each in tree["deliverables"]:
-        if each["path"] == round_.deliverable and each["status"] in ("open", "doing"):
+        if each["path"] == round_.deliverable and each["status"] in OPEN:
             return each
     raise Wrong(f"{round_.deliverable}: no open deliverable of the design tree has the path")
 

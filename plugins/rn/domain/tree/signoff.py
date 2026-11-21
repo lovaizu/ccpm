@@ -11,10 +11,7 @@ from collections.abc import Mapping
 from fault import Wrong
 from rounds.course import Next
 
-from tree.form import Tree
-
-# The statuses of a deliverable not yet done.
-_OPEN = ("open", "doing")
+from tree.form import OPEN, Tree
 
 
 def waiting(tree: Tree, nexts: Mapping[str, Next]) -> str | None:
@@ -28,7 +25,7 @@ def waiting(tree: Tree, nexts: Mapping[str, Next]) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    opened = [each for each in tree["deliverables"] if each["status"] in _OPEN]
+    opened = [each for each in tree["deliverables"] if each["status"] in OPEN]
     for each in opened:
         good = all(condition["good"] for condition in each["necessary_conditions"])
         if each["kind"] == "design-tree" and good:
@@ -52,7 +49,7 @@ def signed_off(tree: Tree, deliverable: str) -> Tree:
     signed = copy.deepcopy(tree)
     deliverables = signed["deliverables"]
     for index, node in enumerate(deliverables):
-        if node["path"] == deliverable and node["status"] in _OPEN:
+        if node["path"] == deliverable and node["status"] in OPEN:
             deliverables[index] = _done(node)
             signed["work"] = [each for each in signed["work"] if each["path"] != deliverable]
             return signed

@@ -14,6 +14,8 @@ from practice import Practice, conditions
 Tree = dict[str, Any]
 # A deliverable of the design tree: one of `done`, `done_no_file`, or `open` of its schema.
 Deliverable = dict[str, Any]
+# The statuses of a deliverable not yet done.
+OPEN = ("open", "doing")
 
 
 def started(goal: str, plan: str, practice: Practice) -> Tree:
