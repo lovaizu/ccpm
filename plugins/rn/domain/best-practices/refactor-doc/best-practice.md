@@ -2,7 +2,7 @@
 
 ## Goal tree
 
-- Whether they read the original or a machine translation, readers understand the document as its writer meant, in one read of only the parts they need.
+- Whether they read the original or a machine translation, readers new to the document understand it as its writer meant, in one read from the top of only the parts they need, with nothing left to guess.
   - **C1** The document says all that it said before the refactoring, and nothing more.
     - **N1** Does the document still state each fact, decision, and step that it stated before the refactoring, and none that it didn't? (the whole)
   - **C2** The reader finds the parts they need without reading the rest, as the structure gives each topic and each fact one place.
@@ -13,9 +13,11 @@
     - **N5** Does each sentence come after everything it depends on? (the whole)
     - **N6** Do lists, tables, and diagrams show the steps, the choices, and the relations that prose would make the reader piece together? (the whole)
     - **N7** Does each sentence make one point, with the actor as its subject and an active verb? (the whole)
-  - **C4** The reader reads each thing by the word they already use for it, the same word throughout.
-    - **N8** Does the document use the words its readers already use, in their usual meaning? (the whole)
-    - **N9** Does each thing have one name, used the same way throughout, and does each name refer to one thing? (the whole)
+    - **N8** Does each sentence hold only the commas that its reading needs? (the whole)
+  - **C4** The reader reads each thing by the common word they already use for it, the same word throughout, with no mark of text written by AI.
+    - **N9** Does the document use the words its readers already use, in their usual meaning? (the whole)
+    - **N10** Does each thing have one name, used the same way throughout, and does each name refer to one thing? (the whole)
+    - **N11** Does the document hold no expression that marks text written by AI? (the whole)
 
 ## Practices
 
@@ -25,7 +27,7 @@ Does the document still state each fact, decision, and step that it stated befor
 
 The document's content passed its evaluation before the refactoring, so a refactoring changes how the document says its content and never what it says, as a fact changed while editing reaches its readers unjudged. Editors keep this apart by the levels of editing, in which a structural edit, a line edit, and a copyedit each change the form of what the writer wrote.
 
-1. *While deciding.* Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it, and note in a line what each section is for. The trace: `{deliverable}` read to its end.
+1. *While deciding.* Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it, and note in a line what each section is for, and note the language that the document is written in, which picks the rules that the items on sentences, punctuation, and words take. The trace: `{deliverable}` read to its end.
 2. *While making.* After your last change, read the document to its end, and check each line of the list against it: put back each fact, decision, or step that it no longer states, and take out each that the refactoring added. Check a fact that you moved to another document in its new place, and leave out one that the person who owns the document said to cut. The trace: `{deliverable}` read to its end.
 
 ### N2
@@ -101,12 +103,24 @@ A sentence that makes one point, with the actor as its subject, reads one way fo
 
 1. *While making.* For each sentence, count the points it makes, and split it into one sentence for each, such as `The script reads the record and, if it's complete, ends the run.` into `The script reads the record. If the record is complete, the script ends the run.`
 2. *While making.* Ask who acts, make the actor the subject, and follow it with a verb that carries the action, such as `The guard checks the record.` in place of `The record is checked.`
-3. *While making.* For each pronoun, such as `it`, `they`, or `this`, ask whether it could refer to two nouns, or stands more than five words after its noun, and if so, write the noun.
-4. *While making.* Turn a noun made from a verb back into the verb, such as `make a decision` into `decide`.
-5. *While making.* Keep the object next to its verb, such as `Set the timeout before the first run.` in place of `Set, before the first run, the timeout.`
-6. *While making.* Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it. The trace: `{deliverable}` read to its end.
+3. *While making.* Where the document's language lets a sentence drop its subject, as Japanese does, write the subject wherever the sentences before it leave the reader more than one actor to take, as 公用文作成の考え方 asks, such as `rn は` before a sentence that follows one about Lane.
+4. *While making.* Read the predicate of each sentence against its subject, and where the two don't fit, rewrite the predicate, such as `この設定の目的は速く動かすことです` in place of `この設定の目的は速く動かすためです`.
+5. *While making.* For each pronoun, such as `it`, `they`, or `this`, ask whether it could refer to two nouns, or stands more than five words after its noun, and if so, write the noun.
+6. *While making.* Turn a noun made from a verb back into the verb, such as `make a decision` into `decide`.
+7. *While making.* Keep the object next to its verb, such as `Set the timeout before the first run.` in place of `Set, before the first run, the timeout.`
+8. *While making.* Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it. The trace: `{deliverable}` read to its end.
 
 ### N8
+
+Does each sentence hold only the commas that its reading needs?
+
+A comma tells the reader where the sentence breaks, so one that marks no break cuts the sentence into pieces that the reader must join again. Each language has its practitioners' rules for where a comma goes: for English the [Google developer documentation style guide](https://developers.google.com/style/commas), for Japanese the two principles of Honda Katsuichi's 日本語の作文技術.
+
+1. *While making.* In English, put a comma where the Google style guide asks for one, such as before the last item of a list of three or more and after an introductory phrase, and take out each other comma that marks no break.
+2. *While making.* In Japanese, keep a comma only at the border between two long modifiers or more, and where the words come in an order other than the usual one, by Honda's two principles, and take out each other comma, such as the one after a short subject, as in `rn は、` for `rn は`.
+3. *While making.* Where a sentence still needs three commas or more, split it into sentences of one point each, as N7 does.
+
+### N9
 
 Does the document use the words its readers already use, in their usual meaning?
 
@@ -115,10 +129,11 @@ A reader reads each word with the meaning they already know, so a word they don'
 1. *While deciding.* Find the words the readers use: open the documentation of the product the readers work in, such as Claude Code's documentation for the readers of a Claude Code plugin, and what the readers wrote for the work themselves, such as the issues they opened and their words in the work's inputs.
 2. *While deciding.* For each thing the document names, choose its word: take the word the product's documentation uses, since the readers learned it there, such as `subagent` in place of `child agent`. Where that documentation names no such thing, take the word the readers' own writing uses. Where neither has one, keep the document's term, and mark it to define.
 3. *While making.* Replace each word that differs from the one you chose with that word, in its usual meaning.
-4. *While making.* Define each term you marked where the reader first meets it, or link to a page that defines it, such as `A hook, a command that Claude Code runs at a set point of a session, ...`.
-5. *While making.* Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does.
+4. *While making.* Replace each coined word and each stiff or roundabout phrase with the common one that the readers use, by the guide of the document's language: for English the [Plain Language Guidelines](https://www.plainlanguage.gov/guidelines/), for Japanese [公用文作成の考え方](https://www.bunka.go.jp/seisaku/bunkashingikai/kokugo/hokoku/93657201.html), such as `use` in place of `utilize`.
+5. *While making.* Define each term you marked where the reader first meets it, or link to a page that defines it, such as `A hook, a command that Claude Code runs at a set point of a session, ...`.
+6. *While making.* Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does.
 
-### N9
+### N10
 
 Does each thing have one name, used the same way throughout, and does each name refer to one thing?
 
@@ -128,3 +143,12 @@ A reader who meets two names takes them for two things, and one name for two thi
 2. *While deciding.* For each thing with more than one name, keep the word you chose for it from the readers' words, and else the name the document uses most, and drop the others.
 3. *While deciding.* For each name that refers to two things, keep it for the thing the readers' words use it for, and give the other thing the word its readers use for it, or a term to define where the reader first meets it, such as `run` for one start of the workflow and `try` for one run of a command of the deliverable.
 4. *While making.* Replace each dropped name with the kept one, and write each kept name the same way each time, in its spelling, its capitals, and its code format.
+
+### N11
+
+Does the document hold no expression that marks text written by AI?
+
+A reader who meets the marks of text written by AI, such as hype, a bold label before each item, or a list of three where one point stands, reads past them for the fact, and trusts the document less. Practitioners keep lists of these marks for each language: for English Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing), for Japanese the rules of [textlint-rule-preset-ai-writing](https://github.com/textlint-ja/textlint-rule-preset-ai-writing).
+
+1. *While deciding.* Open the list of the document's language, and note each mark it names, such as for Japanese a bold label or an emoji before a list item, a hype word, an emphasis pattern, and a colon followed by a block. Add each expression that the person who owns the document asked to change before, as a dictionary of the repository holds them, such as a prh file.
+2. *While making.* Search the document for each mark, and rewrite each place as a plain statement of its fact in the readers' words, such as `The guard stops the call.` in place of `The guard robustly ensures seamless control.`
