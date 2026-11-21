@@ -10,10 +10,11 @@ orchestrator starts it."""
 
 from __future__ import annotations
 
+import glob
 import json
 import os
 import shutil
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from typing import Any
 
@@ -160,3 +161,51 @@ def result_of(room: Room, cut_path: str, role: str) -> Any:
         return None
     with open(path, encoding="utf-8") as f:
         return json.load(f)
+
+
+def _entries(room: Room, agents: bool) -> Iterator[Any]:
+    """Each content block of each assistant message that the room's runs recorded, in the order of
+    each record, from Claude Code's records in the room's configuration folder: the main
+    conversation's alone, or each subagent's too where `agents` says so."""
+    pattern = os.path.join(room.env["CLAUDE_CONFIG_DIR"], "projects", "**", "*.jsonl")
+    for path in sorted(glob.glob(pattern, recursive=True)):
+        if not agents and f"{os.sep}subagents{os.sep}" in path:
+            continue
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                entry = json.loads(line)
+                if entry.get("type") != "assistant":
+                    continue
+                content = entry.get("message", {}).get("content")
+                yield from content if isinstance(content, list) else ()
+
+
+def commands_of(room: Room, agents: bool = False) -> list[str]:
+    """Each command that the room's runs gave Bash, as their records hold it."""
+    return [
+        each["input"].get("command", "")
+        for each in _entries(room, agents)
+        if each.get("type") == "tool_use" and each.get("name") == "Bash"
+    ]
+
+
+def first_turn_said(room: Room) -> str:
+    """What the main conversation said in its first turn, each text joined, up to the first prompt
+    after it, such as Lane's word at the turn's end or a subagent's end, as `claude -p` prints only
+    the last message of its last turn."""
+    pattern = os.path.join(room.env["CLAUDE_CONFIG_DIR"], "projects", "*", "*.jsonl")
+    said: list[str] = []
+    answered = False
+    for path in sorted(glob.glob(pattern)):
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                entry = json.loads(line)
+                content = entry.get("message", {}).get("content")
+                blocks = content if isinstance(content, list) else [{"type": "text"}]
+                prompted = any(each.get("type") != "tool_result" for each in blocks)
+                if entry.get("type") == "user" and answered and prompted:
+                    return "\n".join(said)
+                if entry.get("type") == "assistant":
+                    answered = True
+                    said += [each.get("text", "") for each in blocks if each.get("type") == "text"]
+    return "\n".join(said)

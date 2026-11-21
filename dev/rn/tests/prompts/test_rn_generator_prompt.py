@@ -1,8 +1,10 @@
 """The unit cases of the generator's prompt, domain/generator.md, on Opus: a Cut whose points are
 each settled, where it makes the deliverable, one whose point only the user can settle, where it
-gives the point and makes nothing, and one with the last evaluator's findings, where it mends the
-condition short; each run three times, each decided by code from the files the run leaves. Run by
-the developer on the model, as rn's Test strategy says; check.sh never runs them."""
+gives the point and makes nothing, one with the last evaluator's findings, where it mends the
+condition short, and two whose trial meets a shortfall, where it goes back to decide for one the
+people meet and not for one they'd never meet; each run three times, each decided by code from the
+files and the records the run leaves. Run by the developer on the model, as rn's Test strategy
+says; check.sh never runs them."""
 
 from __future__ import annotations
 
@@ -12,9 +14,9 @@ import subprocess
 import opus
 import pytest
 import rn_files
-from repo_files import write_files
+from repo_files import git, write_files
 from rn_files import COMMAND
-from rn_prompts import RUNS, Room, as_role, generator_cut, result_of, run_of
+from rn_prompts import RUNS, Room, as_role, commands_of, generator_cut, result_of, run_of
 
 pytestmark = [opus.NEEDS_LOGIN]
 
@@ -119,3 +121,90 @@ def test_a_cut_with_a_finding_short_mends_its_condition(room: Room, run: int):
     as_role(room, "generator", cut_path)
     assert result_of(room, cut_path, "generator")["result"] == "made"
     assert prints(room, LINES.replace(";", ",")).returncode == 0
+
+
+# The accounting team's own files, as the repository holds them: what its spreadsheet exports for
+# March, the file of a tool it dropped, and its note of both, which the command's Cut takes as an
+# input.
+NOTE = "docs/accounting.md"
+MARCH = "samples/march.csv"
+LEGACY = "samples/legacy.csv"
+NOTE_TEXT = (
+    "# How the accounting team keeps invoice lines\n\n"
+    f"The team keeps each invoice's lines in its spreadsheet, and exports them as a file such as\n"
+    f"`{MARCH}`, the lines of March, to print the invoice.\n\n"
+    f"`{LEGACY}` comes from the tool that the team dropped in 2019. No one prints from it now.\n"
+)
+LEGACY_TEXT = "description,price,quantity\nHosting,40.00,1\n"
+# The decision about how the command reads a file, as the orchestrator settled it.
+READS = rn_files.decision(
+    "How the command reads the file",
+    "Read each line of the file as invoicer.parse_lines reads it, description;price;quantity.",
+    "reasoning",
+)
+
+
+def with_the_teams_files(room: Room, march: str) -> dict:
+    """Commits the team's files on main, March's export as given, and gives the command's node,
+    resting on invoicer's lines and the team's note, with the decisions about its check, the tax
+    rate, and how it reads a file."""
+    write_files(room.repo, {NOTE: NOTE_TEXT, MARCH: march, LEGACY: LEGACY_TEXT})
+    git(room.repo, "add", "-A")
+    git(room.repo, "commit", "-q", "-m", "The accounting team's files.")
+    node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py", NOTE])
+    return rn_files.decided(node, {"N1": [CHECK, TAX, READS]})
+
+
+def prints_march(room: Room) -> subprocess.CompletedProcess[str]:
+    """Runs the command in the run's worktree on March's export, as the team does."""
+    return subprocess.run(
+        ["python3", "-m", "invoicer", MARCH, "--rate", "0.19"],
+        cwd=room.worktree(NAME),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def went_back(room: Room) -> bool:
+    """Whether the generator went back to decide by Lane's lane-back, as its record holds it."""
+    return any("lane-back decide" in each for each in commands_of(room))
+
+
+@pytest.mark.supports(
+    "test_a_generator_whose_trial_falls_short_goes_back_to_decide_and_makes_it_again"
+)
+@pytest.mark.parametrize("run", RUNS)
+def test_a_shortfall_the_people_meet_goes_back_to_decide(room: Room, run: int):
+    """Given the command's Cut, deciding that it reads each line as invoicer does, while the
+    team's March export, which its note names, holds a header row first
+    When the generator runs on it
+    Then it goes back to decide by lane-back, its result is made, and the command prints an
+    invoice from March's export"""
+    node = with_the_teams_files(
+        room, "Description;Price;Quantity\nHosting;40.00;1\nSupport hours;120.00;1\n"
+    )
+    cut_path = started_on(room, node)
+    as_role(room, "generator", cut_path)
+    assert went_back(room)
+    assert result_of(room, cut_path, "generator")["result"] == "made"
+    assert prints_march(room).returncode == 0
+
+
+@pytest.mark.supports(
+    "test_a_generator_whose_trial_falls_short_goes_back_to_decide_and_makes_it_again"
+)
+@pytest.mark.parametrize("run", RUNS)
+def test_a_shortfall_the_people_would_never_meet_doesnt_go_back(room: Room, run: int):
+    """Given the command's Cut, deciding that it reads each line as invoicer does, as the team's
+    March export holds its lines, while the file of the tool the team dropped, which its note
+    names, holds commas and a header row
+    When the generator runs on it
+    Then it doesn't go back by lane-back, its result is made, and the command prints an invoice
+    from March's export"""
+    node = with_the_teams_files(room, LINES)
+    cut_path = started_on(room, node)
+    as_role(room, "generator", cut_path)
+    assert not any("lane-back" in each for each in commands_of(room))
+    assert result_of(room, cut_path, "generator")["result"] == "made"
+    assert prints_march(room).returncode == 0

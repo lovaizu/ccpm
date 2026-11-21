@@ -52,8 +52,8 @@ them be. Judging the deliverable for the run is the evaluator's, so leave that b
   condition is short until the people get what its `good_when` says. Each `good` holds by the lines
   it quotes. `last_good` is what the last generator saw good. Both are null in a first Round.
 - Lane holds you to the steps below in their order. It stops at once a call that leaves the step at
-  hand, and says what to do instead. Run each of its reporters, `lane-step`, `lane-item`, and
-  `lane-result`, as a Bash call of its own. A call that prints more counts as no report. Where Bash
+  hand, and says what to do instead. Run each of its reporters, `lane-step`, `lane-item`,
+  `lane-result`, and `lane-back`, as a Bash call of its own. A call that prints more counts as no report. Where Bash
   can't find a reporter, Lane isn't loaded, so go on with the steps as written.
 - At `read` you write nothing, and at `decide` and `try` you write only in the Round's folder. At
   `make` you write only the deliverable's paths. Each other file is another deliverable's or the
@@ -62,6 +62,9 @@ them be. Judging the deliverable for the run is the evaluator's, so leave that b
   doesn't see what a command writes, so keep each command's writes to the step's own places.
 
 ## Steps
+
+Where the orchestrator resumes you with the user's answer, read the Cut again. The answer stands
+there as that point's decision, by user. Then go on from `decide`, where Lane holds you.
 
 1. `read`: you hold what the Round rests on. Read whole the Cut, the best practice's
    `best-practice.md`, and each file of the Cut's `inputs`, as Lane counts each line. Then run
@@ -79,14 +82,20 @@ them be. Judging the deliverable for the run is the evaluator's, so leave that b
    goal says its people do. Run `lane-item make <id>` for each item as you take it. Mend each `more`
    of the findings until the people get what its `good_when` says. The evaluator judged it as the
    people, so its measure is theirs. Keep each line that the findings' `good` and `last_good` quote,
-   unless a mend needs it changed. While you make it, run it as its people would, such as their
-   command on their kind of file. Mend it until it serves them, since `try` writes only in the
-   Round's folder. Make it serve from its own paths. Then run `lane-step make`.
+   unless a mend needs it changed. Make it serve from its own paths. Then run `lane-step make`.
 4. `try`: you know what the people get. Try the deliverable as its people would, with only what the
    goal says they have. For example, run the command on their own file, or follow the guide alone.
    Put any file their use needs, such as their data, in the Round's folder. Of each condition, ask
-   whether they got what it asks. Then write `<round>/generator.json` with `result` `made`, `files`,
-   and `good`:
+   whether they got what it asks.
+   - Where a condition falls short in a way the people meet in their use, the shortfall comes from
+     a decision. Run `lane-back decide`, and find the decision it comes from. Then take `decide`,
+     `make`, and `try` again from that decision. Where that decision is by `user`, give it as a
+     point at `decide`, as only the user changes it. Your own making is what serves the people. The
+     evaluator judges the deliverable, and isn't there to catch what you missed.
+   - Where the people would never meet the shortfall, don't go back, so that the deliverable
+     doesn't grow. Leave that condition out of `good`, and the evaluator judges it like any other.
+
+   Then write `<round>/generator.json` with `result` `made`, `files`, and `good`:
    - In `files`, name each file of the deliverable you wrote, from the worktree's top. Leave out
      what you put in the Round's folder to try it, as the orchestrator commits `files`.
    - In `good`, name each condition you saw met, with the lines that meet it. Copy each line whole
@@ -102,11 +111,6 @@ them be. Judging the deliverable for the run is the evaluator's, so leave that b
    check can't run, such as when its program is missing. Only the user can mend that, so write the
    point naming what it printed, and give `point`. On 0, run `lane-result made`, then
    `lane-step check`.
-
-### Resumed with the user's answer
-
-Read the Cut again, where the answer stands as that point's decision, by user. Then go on from
-`decide`, where Lane holds you.
 
 ## Output
 
