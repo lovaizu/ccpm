@@ -23,8 +23,8 @@ deliverable's people to their aim, and cuts the trivial many.
   - P2.2: a trial names only what's good and what would make it good.
 - P3: made the field's established way
   - P3.1: running, making, and judging are separate roles.
-  - P3.2: content is made the field's established way and refactored, or lightly by its check
-    alone.
+  - P3.2: content is made the field's established way and refactored, or by its check alone
+    where no way is established.
   - P3.3: remaking has a limit, and each finding left goes to the user as a proposal.
 - P4: each role on its own work
   - P4.1: each role starts with only what its work needs.
@@ -205,7 +205,8 @@ sequenceDiagram
   end
   O->>T: reads where it stopped (Design tree) [P6.1]
   O->>U: where it picks up, and the point or sign-off waiting [S2]
-  O->>G: starts each role stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
+  O->>G: starts the generator stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
+  O->>E: starts the evaluator stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
 ```
 
 ### Deployment

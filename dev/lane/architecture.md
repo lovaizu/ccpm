@@ -41,8 +41,7 @@ Lane gives an AI that leaves its plugin's step the step's own sentence, so that 
 - Rules\
   What a plugin gives Lane: each step's rules, fixed or given per start or turn, and any routes.
 - Route\
-  A fixed order: the roles to start after a role's result, or after a command that the person
-  types.
+  A fixed order: the roles to start after a role's result, or after a command of the plugin.
 - Run\
   One run of a plugin's skill in a conversation, from its call until its order ends it. It holds
   each command, turn, start with its prompt, read, mark, and result.
@@ -155,7 +154,7 @@ sequenceDiagram
       G-->>M: stops it, with the starts due [P1.1]
     else the main conversation ends its turn while a start is due [S9]
       G-->>M: stops it, with the starts due [P1.1]
-    else a result, or a command that the person types [S7]
+    else a result, or a command of the plugin, typed or called by the Skill tool [S7]
       G->>RR: adds it (Run) [S7]
     end
   end

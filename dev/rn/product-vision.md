@@ -30,5 +30,5 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   [design tree](../../plugins/rn/domain/best-practices/design-tree/best-practice.md) by what the
   run has done and learned, keeping to the vital few.
 - Good found and made good, for O1\
-  rn finds what's good for the people and what would make the deliverable good, taking in only
-  what helps them.
+  rn finds what serves the people and what would serve them better, and makes only those
+  changes.

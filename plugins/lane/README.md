@@ -137,8 +137,8 @@ conversation, it goes on from the results your plugin keeps, through an
 
 ### "Does it check other work in the same conversation?"
 
-No. Lane checks only the run of your skill, from the skill's call until your plugin's routes start
-no more subagents.
+No. Lane checks only the run of your skill, from the skill's call until your plugin's order says
+the run ends.
 
 ## Documentation
 
