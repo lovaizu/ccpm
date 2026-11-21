@@ -142,10 +142,10 @@ class RunState:
     moves: list[OrderedMove] = field(default_factory=list)
     turns: list[Entry] = field(default_factory=list)
     turn: TurnAtHand = field(default_factory=TurnAtHand)
-    tied: dict[str, Start] = field(default_factory=dict)
+    latest_start: dict[str, Start] = field(default_factory=dict)
     done: dict[str | None, Done] = field(default_factory=dict)
     # Each start by the tool_use_id of its call, which its tie and its drop name.
-    calls: dict[str, Start] = field(default_factory=dict)
+    starts_by_call: dict[str, Start] = field(default_factory=dict)
 
     @property
     def starts(self) -> list[Start]:
@@ -194,18 +194,19 @@ def _typed(state: RunState, entry: Entry) -> None:
 
 def _start(state: RunState, entry: Entry) -> None:
     start = Start(entry)
-    state.calls[entry["tool_use_id"]] = start
+    state.starts_by_call[entry["tool_use_id"]] = start
     state.moves.append(start)
 
 
 def _tie(state: RunState, entry: Entry) -> None:
-    start = state.calls[entry["tool_use_id"]]
-    start.tie = _subagent(entry)
-    state.tied[start.tie] = start
+    start = state.starts_by_call[entry["tool_use_id"]]
+    # A tie always names its subagent, as the PostToolUse of a start's call gives it.
+    start.tie = cast(str, entry["agent_id"])
+    state.latest_start[start.tie] = start
 
 
 def _drop(state: RunState, entry: Entry) -> None:
-    state.calls[entry["tool_use_id"]].dropped = True
+    state.starts_by_call[entry["tool_use_id"]].dropped = True
 
 
 def _stopped(state: RunState, entry: Entry) -> None:
@@ -222,7 +223,7 @@ def _result(state: RunState, entry: Entry) -> None:
 def _end(state: RunState, agent_id: str | None, stopped: bool) -> None:
     """Ends the start that the subagent was last tied to, by a result or by a stop; the main
     conversation's result, or one of a subagent tied to no start, ends none."""
-    start = state.tied.get(agent_id) if agent_id is not None else None
+    start = state.latest_start.get(agent_id) if agent_id is not None else None
     if start is not None:
         start.ended = True
         start.stopped = start.stopped or stopped
@@ -266,11 +267,6 @@ def _done(state: RunState, agent_id: str | None) -> Done:
     """What counts for the subagent, or the main conversation by None, made where none counts
     yet."""
     return state.done.setdefault(agent_id, Done())
-
-
-def _subagent(entry: Entry) -> str:
-    """The `agent_id` of a tie or a stop, which a subagent's call or end always gives."""
-    return cast(str, entry["agent_id"])
 
 
 # What each kind of entry means for the run's state.

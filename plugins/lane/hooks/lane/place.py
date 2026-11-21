@@ -242,7 +242,7 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     if tool != "SendMessage":
         return call
     to = event["tool_input"].get("to", "")
-    resumed = run.state.tied.get(to)
+    resumed = run.state.latest_start.get(to)
     roles = [each["role"] for each in due(run).get("starts", [])]
     if call.agent_id is not None or resumed is None or not resumed.ended:
         return None
@@ -257,7 +257,7 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
     SendMessage that resumed its subagent, of the role and steps of that start; a read by a Read; a
     report by a reporter's Bash call; else none."""
     tool = event.get("tool_name")
-    start = run.state.calls.get(event["tool_use_id"])
+    start = run.state.starts_by_call.get(event["tool_use_id"])
     if start is not None:
         agent_id = (
             event["tool_response"]["agentId"] if tool == "Agent" else event["tool_input"]["to"]
@@ -278,7 +278,7 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
 
 def _failed(event: Event, run: Run, rules: Rules) -> Move | None:
     """The PostToolUseFailure of a start's Agent call as a `drop`; none of any other call."""
-    start = run.state.calls.get(event.get("tool_use_id", ""))
+    start = run.state.starts_by_call.get(event.get("tool_use_id", ""))
     return None if start is None else replace(_call(event, run, rules), kind="drop")
 
 
@@ -286,7 +286,7 @@ def _reached(event: Event, run: Run, rules: Rules) -> Move | None:
     """The UserPromptSubmit of a task-notification of a subagent of the run as its result
     reaching, by the subagent that its task-id names; none for any other prompt."""
     told = re.search(r"<task-notification>.*?<task-id>(.*?)</task-id>", event["prompt"], re.DOTALL)
-    if told is None or told[1] not in run.state.tied:
+    if told is None or told[1] not in run.state.latest_start:
         return None
     return replace(_call(event, run, rules, told[1]), kind="result_reached")
 
@@ -311,7 +311,7 @@ def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> 
     first of its steps that it hasn't marked done."""
     agent_id = agent_id or event.get("agent_id")
     if agent_id is not None:
-        holder = run.state.tied[agent_id].entry
+        holder = run.state.latest_start[agent_id].entry
     else:
         holder = run.state.turn.entry or {"role": _main_role(run, rules)}
     role, steps = _held(rules, holder)
@@ -356,7 +356,7 @@ def _standing_of(runs: list[Run], skill: str) -> Run | None:
 
 def _tied(runs: list[Run], agent_id: str) -> Run | None:
     """The run of the start that the subagent is tied to."""
-    return next((run for run in runs if agent_id in run.state.tied), None)
+    return next((run for run in runs if agent_id in run.state.latest_start), None)
 
 
 def _per_turn(runs: list[Run]) -> tuple[Run, str] | None:

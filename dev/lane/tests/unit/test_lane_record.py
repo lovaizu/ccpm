@@ -3,7 +3,11 @@ add, one for each class of entries it adds, with the transitions of the record t
 Claude Code's states brings about: a run added at the skill's call, its folder at the next event,
 each later entry after the ones before, a start kept with its prompt and the steps given for it, and
 two conversations apart; with none, one, and several runs, an entry placed on its own run though a
-later run was added, and none, one, and several entries added at once."""
+later run was added, and none, one, and several entries added at once; and read_state, for the
+start that each subagent was last tied to, and what counts for a subagent and for the main
+conversation: the steps each marked, a step gone back to that undoes the marks of the steps it
+names before it, one, two in either order, and one of another start, and the main conversation's
+moves with no turn, after its latest turn of one, two, or three, and at a turn's first move."""
 
 from __future__ import annotations
 
@@ -171,7 +175,7 @@ def test_the_start_a_subagent_was_last_tied_to_is_that_of_its_latest_tie():
     second: Entry = lane_entries.start("toolu_2", prompt="Write the second.")
     resume: Entry = lane_entries.start("toolu_3")
     entries = [START, TIE, second, lane_entries.tie("toolu_2", "a2"), resume]
-    tied = read_state([*entries, lane_entries.tie("toolu_3", "a1")]).tied
+    tied = read_state([*entries, lane_entries.tie("toolu_3", "a1")]).latest_start
     assert ({agent: start.entry for agent, start in tied.items()}, "a9" in tied) == (
         {"a1": resume, "a2": second},
         False,
