@@ -42,12 +42,14 @@ guide links them and copies nothing:
   criterion would pass or fail by chance. The test runs each case several times, and a person judges
   from the results. It runs again on each new version of the model, as CT-AI's drift testing does.
   A product that holds a prompt is run whole by a walkthrough run, once its integration tests pass.
-  A developer runs the README walkthrough's request on the model, with the product as it ships.
-  They type each of the people's words themselves, and read each reply against the product vision.
-  A script that plays the people or judges the run leaves a record that no decision rests on, so
-  the developer judges each reply. The integration tests put a double in place of each prompt and
-  of the host, so only this run shows where the product and its host differ. The developer mends
-  each stop at its root before going on, and the run's record becomes the README's walkthrough.
+  The developer's main conversation runs the README walkthrough's request on the model, with the
+  product as it ships. It types each of the people's words, and reads each reply against the
+  product vision. It chooses the next words from what the reply shows, and asks the developer where
+  a decision is theirs. A script fixes the people's words before the run, so it can't follow what a
+  reply shows or judge it by the purpose. A subagent can't ask the developer. The integration
+  tests put a double in place of each prompt and of the host, so only this run shows where the
+  product and its host differ. The main conversation mends each stop at its root before going on,
+  and the run's record becomes the README's walkthrough.
 - Timing\
   Each check runs at one of three times, which the Test strategy's row names.
   - During the work, each check of the parts and of the architecture that decides whether a change
