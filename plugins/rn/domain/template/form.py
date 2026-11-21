@@ -70,9 +70,10 @@ class Unit:
     optional: bool
     repeats: bool
     most: int | None
-    back_to: int | None
     sentences: tuple[int, int | None]
     units: list[Unit]
+    # Set by _repeat once the unit's siblings are known.
+    back_to: int | None = None
 
 
 @dataclass(frozen=True)
@@ -100,6 +101,8 @@ def form(blocks: tuple[Block, ...]) -> Form:
     nodes = sections(blocks)
     scoped: dict[int, tuple[_Note, ...]] = {}
     _scope(nodes, (), _by_heading(nodes), scoped)
+    # A section's note items are one tuple, which each block of the section shares in `scoped`, so
+    # the tuple's identity stands for the section.
     holders = Counter(
         (id(scoped[node.block.line]), note)
         for node in _walk(nodes)
@@ -235,15 +238,14 @@ def _unit(node: Node, context: _Context) -> Unit:
     notes = [note for note in context.scoped[block.line] if note.slots & _slots(block)]
     free = block.kind == PARAGRAPH and bool(_LONE_SLOT.fullmatch(block.text))
     return Unit(
-        block,
-        _pattern_of(block, notes),
-        free,
-        _left_out(block, notes, context.optional),
-        free or _repeats(block),
-        _most(notes),
-        None,
-        _sentences_of(block.text, notes),
-        _units(node.nodes, context),
+        block=block,
+        pattern=_pattern_of(block, notes),
+        free=free,
+        optional=_left_out(block, notes, context.optional),
+        repeats=free or _repeats(block),
+        most=_most(notes),
+        sentences=_sentences_of(block.text, notes),
+        units=_units(node.nodes, context),
     )
 
 
@@ -262,8 +264,10 @@ def _left_out(block: Block, notes: list[_Note], optional: frozenset[str]) -> boo
     """Whether the template lets the document leave the block out: a section of level 2 always, a
     section below it where a note item of its slots says to leave it out, as for any other block,
     and the title never."""
-    if block.kind == HEADING and (block.level == 1 or block.text in optional):
-        return block.level > 1
+    if block.kind == HEADING and block.level == 1:
+        return False
+    if block.kind == HEADING and block.text in optional:
+        return True
     return any(
         _LEAVE.search(note.words)
         and not _LEAVE_WORD.search(note.words)

@@ -32,6 +32,8 @@ from template.markdown import (
 # The most words a sentence takes: the limit that ASD-STE100 sets for procedures, as the user
 # judged the 25 of GOV.UK and the Australian Government Style Manual too long to read.
 MOST_WORDS = 20
+# The file of a kind's template, in the folder of its best practice.
+TEMPLATE = "template.md"
 
 
 @dataclass(frozen=True)
@@ -47,13 +49,11 @@ def of_kind(plugin_root: str, kind: str) -> str:
     """The path of the Markdown template of the kind among rn's best practices at `plugin_root`.
     Raises Wrong, naming the kinds that have one, where the kind has none."""
     folder = os.path.join(plugin_root, "domain", "best-practices")
-    path = os.path.join(folder, kind, "template.md")
+    path = os.path.join(folder, kind, TEMPLATE)
     if os.path.isfile(path):
         return path
     kinds = sorted(
-        each
-        for each in os.listdir(folder)
-        if os.path.isfile(os.path.join(folder, each, "template.md"))
+        each for each in os.listdir(folder) if os.path.isfile(os.path.join(folder, each, TEMPLATE))
     )
     raise Wrong(
         f"no kind {kind!r} has a Markdown template; the kinds that have one are {', '.join(kinds)}"
@@ -220,13 +220,17 @@ def _counted(unit: Unit, block: Block) -> list[Fault]:
     return [Fault(block.line, f"has {count} {noun}, where {_from(unit)} takes {takes}")]
 
 
+# The most characters of a block's words that a fault shows, enough for its writer to find it.
+_SHOWN = 60
+
+
 def _shown(block: Block) -> str:
     """The block as a writer finds it: its first words, after its Markdown mark."""
     mark = {HEADING: "#" * block.level + " ", ITEM: "- ", CODE: "```", FIGURE: "!["}.get(
         block.kind, ""
     )
     said = " ".join((block.info if block.kind == CODE else block.text).split())
-    return f'"{mark}{said[:60]}{"..." if len(said) > 60 else ""}"'
+    return f'"{mark}{said[:_SHOWN]}{"..." if len(said) > _SHOWN else ""}"'
 
 
 def _from(unit: Unit) -> str:
@@ -241,13 +245,13 @@ def _notes_left(blocks: tuple[Block, ...]) -> list[Fault]:
     ]
 
 
-def _placeholders_left(blocks: tuple[Block, ...], form: Form) -> list[Fault]:
+def _placeholders_left(blocks: tuple[Block, ...], shape: Form) -> list[Fault]:
     """A fault for each slot or figure of the template that the document keeps."""
     found = []
     for block in (each for each in flat(blocks) if not is_note(each)):
-        for name in sorted(kept(block) & form.slots):
+        for name in sorted(kept(block) & shape.slots):
             found.append(Fault(block.line, f"keeps the template's placeholder <{name}>"))
-        if block.info in form.figures:
+        if block.info in shape.figures:
             found.append(Fault(block.line, f"keeps the template's own figure {block.info}"))
     return found
 

@@ -107,7 +107,7 @@ def _evaluator(cut: Cut, result: Result) -> list[str]:
 def _template(cut: Cut, files: dict[str, str], cwd: str) -> list[str]:
     """Each place where a Markdown file of the deliverable leaves its kind's template, where the
     best practice holds one."""
-    form = os.path.join(cwd, cut["best_practice"], "template.md")
+    form = os.path.join(cwd, cut["best_practice"], check.TEMPLATE)
     if not os.path.isfile(form):
         return []
     with open(form, encoding="utf-8") as file:
