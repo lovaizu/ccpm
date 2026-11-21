@@ -259,15 +259,7 @@ def turn_ended(move: Move) -> Answer:
     Refuses: AdapterFailed, where an adapter of the starts due fails, which answer gives as a stop
     of the turn's end with what's wrong.
     """
-    entries = move.run.entries
-    settled = {e.get("tool_use_id") for e in entries if e["kind"] in ("tie", "drop")}
-    untied = [e for e in entries if e["kind"] == "start" and e["tool_use_id"] not in settled]
-    drops: list[record.Entry] = [
-        {"kind": "drop", "run": move.run.id, "tool_use_id": e["tool_use_id"]} for e in untied
-    ]
-    if drops:
-        record.add(move.run.session_id, drops)
-    run = replace(move.run, entries=[*entries, *drops])
+    run = _untied_dropped(move.run)
     said = rule_types.judge_end(replace(move, run=run))
     if said is not None:
         return Answer(True, said)
@@ -278,6 +270,21 @@ def turn_ended(move: Move) -> Answer:
     if asks_adapter(_rules(run), move.role):
         record.add(run.session_id, [{"kind": "turn_ended", "run": run.id}])
     return Answer()
+
+
+def _untied_dropped(run: Run) -> Run:
+    """The run with each start that no tie or drop settled dropped, in the record too, as an Agent
+    call that another plugin's PreToolUse hook denies comes to no PostToolUse, so that its role is
+    due again."""
+    settled = {e.get("tool_use_id") for e in run.entries if e["kind"] in ("tie", "drop")}
+    drops: list[record.Entry] = [
+        {"kind": "drop", "run": run.id, "tool_use_id": e["tool_use_id"]}
+        for e in run.entries
+        if e["kind"] == "start" and e["tool_use_id"] not in settled
+    ]
+    if drops:
+        record.add(run.session_id, drops)
+    return replace(run, entries=[*run.entries, *drops])
 
 
 def command_typed(move: Move) -> Answer:
