@@ -380,6 +380,144 @@
       "status": "done"
     },
     {
+      "name": "Lane's maintainers change its hooks quickly in one place, each behavior that its integration cases show holding",
+      "path": "plugins/lane/hooks/lane",
+      "more_paths": [
+        "dev/lane/tests/unit/",
+        "dev/lane/tests/properties/"
+      ],
+      "kind": "refactor-code",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "dev/lane/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The tests",
+              "decided": "each integration case under dev/<plugin>/tests/integration stays as it is, word for word, as the proof of each behavior; a unit or property case that calls an internal moves or is rewritten to the new structure, each behavior it checks still checked, and only a check of an internal form that no longer exists goes",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the change reaches",
+              "decided": "all of Lane's hooks, guard.py and place.py first, with the three kinds of a turn's record, turn_begun, turn, and turn_ended, made one",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "rn's maintainers change its code quickly in one place, each behavior that its integration cases show holding",
+      "path": "plugins/rn/domain",
+      "more_paths": [
+        "plugins/rn/lane/",
+        "plugins/rn/scripts/",
+        "dev/rn/tests/unit/",
+        "dev/rn/tests/properties/"
+      ],
+      "kind": "refactor-code",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The tests",
+              "decided": "each integration case under dev/<plugin>/tests/integration stays as it is, word for word, as the proof of each behavior; a unit or property case that calls an internal moves or is rewritten to the new structure, each behavior it checks still checked, and only a check of an internal form that no longer exists goes",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What the change reaches",
+              "decided": "all of rn's code, the template check under domain/template first",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        }
+      ]
+    },
+    {
       "name": "Users install Lane and rn together from one pull request, each plugin's folder holding all it needs and its README's walkthrough taken from what its tests show",
       "path": ".claude-plugin/marketplace.json",
       "kind": "light",
@@ -440,5 +578,14 @@
       "status": "done"
     }
   ],
-  "work": []
+  "work": [
+    {
+      "do": "make",
+      "path": "plugins/lane/hooks/lane"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain"
+    }
+  ]
 }
