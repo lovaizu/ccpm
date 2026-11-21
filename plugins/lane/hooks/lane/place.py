@@ -92,6 +92,26 @@ def skill_call(event: Event, runs: list[Run]) -> SkillCall | None:
     return SkillCall(event["session_id"], event["transcript_path"], skill, words)
 
 
+def command_of(event: Event) -> str | None:
+    """The skill that a command names, by its plugin's prefix.
+
+    Takes: a hook event.
+    Gives: the skill, such as `log:tag`, of a UserPromptExpansion's `command_name`, or of the
+    PostToolUse of a Skill call's `tool_input.skill`; None for any other event, or a skill whose
+    name holds no plugin's prefix, as Lane checks only a plugin's skill.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    name = event.get("hook_event_name")
+    if name == "UserPromptExpansion":
+        skill = event["command_name"]
+    elif (name, event.get("tool_name")) == ("PostToolUse", "Skill"):
+        skill = event["tool_input"]["skill"]
+    else:
+        return None
+    return skill if ":" in skill else None
+
+
 def opening(event: Event, runs: list[Run]) -> list[Run]:
     """The runs whose plugin's folder the event first lets the guard read from the transcript.
 
@@ -162,47 +182,6 @@ def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
     return Turn(run, role, prompts[-1] if prompts else "")
 
 
-def _per_turn(runs: list[Run]) -> tuple[Run, str] | None:
-    """The standing run, with its folder, and the main conversation's role, where its plugin's
-    rules leave the role's steps to the plugin's adapter of the rules at each turn; else None."""
-    run = _standing(runs)
-    rules = _rules_of(run)
-    if run is None or rules is None:
-        return None
-    role = _main_role(run, rules)
-    return (run, role) if asks_adapter(rules, role) else None
-
-
-def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
-    """S11: the entries of the moves that count for a start, or for the main conversation's turn.
-
-    Takes: the run, and the subagent's `agent_id`, None for the main conversation.
-    Gives: each entry of the run with the subagent's `agent_id`, in their order; for the main
-    conversation, each entry with no `agent_id`, and, where the run holds a `turn` entry, only those
-    after the latest, which the turn's first call or end added, as each turn's steps start afresh,
-    so that its marks, items, reads, and result count for the turn alone. S12: each mark of a step
-    or of its item before a `back` entry among them that undid the step is left out, so that the
-    step and each after it are taken again in order; reads, results, and later marks stay.
-    Changes: nothing.
-    Refuses: nothing.
-    """
-    entries = run.entries
-    if agent_id is None:
-        entries = _since(entries, lambda e: e["kind"] == "turn")
-    undone: set[str] = set()
-    kept: list[Entry] = []
-    # From the latest back, as a step gone back to undoes only the marks made before it.
-    for entry in reversed(entries):
-        if entry.get("agent_id") != agent_id:
-            continue
-        if entry["kind"] == "back":
-            undone.update(entry["undone"])
-        elif entry["kind"] == "mark" and entry["step"] in undone:
-            continue
-        kept.append(entry)
-    return kept[::-1]
-
-
 def place(event: Event, runs: list[Run], due: Due) -> Move | None:
     """The move that the event makes, on the run whose start it belongs to.
 
@@ -236,49 +215,34 @@ def place(event: Event, runs: list[Run], due: Due) -> Move | None:
     return replace(_call(event, run, rules), kind=_ENDS[name]) if name in _ENDS else None
 
 
-def _failed(event: Event, run: Run, rules: Rules) -> Move | None:
-    """The PostToolUseFailure of a start's Agent call as a `drop`; none of any other call."""
-    start = _start_of(run, event.get("tool_use_id", ""))
-    return None if start is None else replace(_call(event, run, rules), kind="drop")
+def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
+    """S11: the entries of the moves that count for a start, or for the main conversation's turn.
 
-
-def command_of(event: Event) -> str | None:
-    """The skill that a command names, by its plugin's prefix.
-
-    Takes: a hook event.
-    Gives: the skill, such as `log:tag`, of a UserPromptExpansion's `command_name`, or of the
-    PostToolUse of a Skill call's `tool_input.skill`; None for any other event, or a skill whose
-    name holds no plugin's prefix, as Lane checks only a plugin's skill.
+    Takes: the run, and the subagent's `agent_id`, None for the main conversation.
+    Gives: each entry of the run with the subagent's `agent_id`, in their order; for the main
+    conversation, each entry with no `agent_id`, and, where the run holds a `turn` entry, only those
+    after the latest, which the turn's first call or end added, as each turn's steps start afresh,
+    so that its marks, items, reads, and result count for the turn alone. S12: each mark of a step
+    or of its item before a `back` entry among them that undid the step is left out, so that the
+    step and each after it are taken again in order; reads, results, and later marks stay.
     Changes: nothing.
     Refuses: nothing.
     """
-    name = event.get("hook_event_name")
-    if name == "UserPromptExpansion":
-        skill = event["command_name"]
-    elif (name, event.get("tool_name")) == ("PostToolUse", "Skill"):
-        skill = event["tool_input"]["skill"]
-    else:
-        return None
-    return skill if ":" in skill else None
-
-
-def _run_of(event: Event, runs: list[Run]) -> Run | None:
-    """The run that the event belongs to: a command's, the standing run of its plugin; the main
-    conversation's, the latest run not ended; a subagent's, the run of the start it's tied to."""
-    command = command_of(event)
-    if command is not None:
-        return _standing_of(runs, command)
-    agent_id = event.get("agent_id")
-    return _standing(runs) if agent_id is None else _tied(runs, agent_id)
-
-
-def _reached(event: Event, run: Run, rules: Rules) -> Move | None:
-    """The UserPromptSubmit of a task-notification of a subagent of the run as its result
-    reaching, by the subagent that its task-id names; none for any other prompt."""
-    told = re.search(r"<task-notification>.*?<task-id>(.*?)</task-id>", event["prompt"], re.DOTALL)
-    if told is None or not any(_ties(entry, told[1]) for entry in run.entries):
-        return None
-    return replace(_call(event, run, rules, told[1]), kind="result_reached")
+    entries = run.entries
+    if agent_id is None:
+        entries = _since(entries, lambda e: e["kind"] == "turn")
+    undone: set[str] = set()
+    kept: list[Entry] = []
+    # From the latest back, as a step gone back to undoes only the marks made before it.
+    for entry in reversed(entries):
+        if entry.get("agent_id") != agent_id:
+            continue
+        if entry["kind"] == "back":
+            undone.update(entry["undone"])
+        elif entry["kind"] == "mark" and entry["step"] in undone:
+            continue
+        kept.append(entry)
+    return kept[::-1]
 
 
 def marked(run: Run, agent_id: str | None) -> set[str]:
@@ -298,42 +262,27 @@ def marked(run: Run, agent_id: str | None) -> set[str]:
     }
 
 
-def _rules_of(run: Run | None) -> Rules | None:
-    """The rules of the run's plugin; None for no run, a run with no folder yet, or a plugin that
-    gives no rules."""
-    return read_rules(run.plugin_root) if run is not None and run.plugin_root else None
+def latest_start(run: Run, agent_id: str) -> Entry | None:
+    """The start that the subagent was last tied to.
+
+    Takes: the run, and the subagent's `agent_id`.
+    Gives: the run's `start` entry of the call of the subagent's latest tie; None where no start of
+    the run is tied to it.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    ties = [entry for entry in run.entries if _ties(entry, agent_id)]
+    return _start_of(run, ties[-1]["tool_use_id"]) if ties else None
 
 
-def _ended(run: Run) -> bool:
-    """Whether the run's order said it ends."""
-    return any(entry["kind"] == "ended" for entry in run.entries)
-
-
-def _standing(runs: list[Run]) -> Run | None:
-    """The run that the main conversation's moves belong to: the latest that hasn't ended."""
-    return next((run for run in reversed(runs) if not _ended(run)), None)
-
-
-def _standing_of(runs: list[Run], skill: str) -> Run | None:
-    """The run of the skill's plugin, by the name before its `:`, that hasn't ended."""
-    plugin = skill.partition(":")[0]
-    return _standing([run for run in runs if run.skill.partition(":")[0] == plugin])
-
-
-def _tied(runs: list[Run], agent_id: str) -> Run | None:
-    """The run of the start that the subagent is tied to."""
-    tied = (run for run in runs for entry in run.entries if _ties(entry, agent_id))
-    return next(tied, None)
-
-
-def _ties(entry: Entry, agent_id: str) -> bool:
-    return entry["kind"] == "tie" and entry["agent_id"] == agent_id
-
-
-def _start_of(run: Run, tool_use_id: str) -> Entry | None:
-    """The run's start of the call."""
-    starts = (e for e in run.entries if e["kind"] == "start" and e["tool_use_id"] == tool_use_id)
-    return next(starts, None)
+def _run_of(event: Event, runs: list[Run]) -> Run | None:
+    """The run that the event belongs to: a command's, the standing run of its plugin; the main
+    conversation's, the latest run not ended; a subagent's, the run of the start it's tied to."""
+    command = command_of(event)
+    if command is not None:
+        return _standing_of(runs, command)
+    agent_id = event.get("agent_id")
+    return _standing(runs) if agent_id is None else _tied(runs, agent_id)
 
 
 def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
@@ -358,25 +307,6 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     return Move("start", event, run, role, None, resumed["prompt"], steps, None, None)
 
 
-def latest_start(run: Run, agent_id: str) -> Entry | None:
-    """The start that the subagent was last tied to.
-
-    Takes: the run, and the subagent's `agent_id`.
-    Gives: the run's `start` entry of the call of the subagent's latest tie; None where no start of
-    the run is tied to it.
-    Changes: nothing.
-    Refuses: nothing.
-    """
-    ties = [entry for entry in run.entries if _ties(entry, agent_id)]
-    return _start_of(run, ties[-1]["tool_use_id"]) if ties else None
-
-
-def _ended_start(run: Run, agent_id: str) -> bool:
-    """Whether the subagent's latest start has ended, by a result or a stop after its tie."""
-    after = _since(run.entries, lambda e: _ties(e, agent_id))
-    return any(e["kind"] in ("result", "stopped") and e.get("agent_id") == agent_id for e in after)
-
-
 def _after(event: Event, run: Run, rules: Rules) -> Move | None:
     """The move of a PostToolUse: a tie by a call that made a start, an Agent call or a
     SendMessage that resumed its subagent, of the role and steps of that start; a read by a Read; a
@@ -399,6 +329,21 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
             else replace(_call(event, run, rules), kind="report", report=given)
         )
     return None
+
+
+def _failed(event: Event, run: Run, rules: Rules) -> Move | None:
+    """The PostToolUseFailure of a start's Agent call as a `drop`; none of any other call."""
+    start = _start_of(run, event.get("tool_use_id", ""))
+    return None if start is None else replace(_call(event, run, rules), kind="drop")
+
+
+def _reached(event: Event, run: Run, rules: Rules) -> Move | None:
+    """The UserPromptSubmit of a task-notification of a subagent of the run as its result
+    reaching, by the subagent that its task-id names; none for any other prompt."""
+    told = re.search(r"<task-notification>.*?<task-id>(.*?)</task-id>", event["prompt"], re.DOTALL)
+    if told is None or not any(_ties(entry, told[1]) for entry in run.entries):
+        return None
+    return replace(_call(event, run, rules, told[1]), kind="result_reached")
 
 
 def _read(event: Event, run: Run, rules: Rules) -> Move | None:
@@ -450,22 +395,77 @@ def _main_role(run: Run, rules: Rules) -> str:
     return role
 
 
+def _rules_of(run: Run | None) -> Rules | None:
+    """The rules of the run's plugin; None for no run, a run with no folder yet, or a plugin that
+    gives no rules."""
+    return read_rules(run.plugin_root) if run is not None and run.plugin_root else None
+
+
+def _ended(run: Run) -> bool:
+    """Whether the run's order said it ends."""
+    return any(entry["kind"] == "ended" for entry in run.entries)
+
+
+def _standing(runs: list[Run]) -> Run | None:
+    """The run that the main conversation's moves belong to: the latest that hasn't ended."""
+    return next((run for run in reversed(runs) if not _ended(run)), None)
+
+
+def _standing_of(runs: list[Run], skill: str) -> Run | None:
+    """The run of the skill's plugin, by the name before its `:`, that hasn't ended."""
+    plugin = skill.partition(":")[0]
+    return _standing([run for run in runs if run.skill.partition(":")[0] == plugin])
+
+
+def _tied(runs: list[Run], agent_id: str) -> Run | None:
+    """The run of the start that the subagent is tied to."""
+    tied = (run for run in runs for entry in run.entries if _ties(entry, agent_id))
+    return next(tied, None)
+
+
+def _ties(entry: Entry, agent_id: str) -> bool:
+    return entry["kind"] == "tie" and entry["agent_id"] == agent_id
+
+
+def _start_of(run: Run, tool_use_id: str) -> Entry | None:
+    """The run's start of the call."""
+    starts = (e for e in run.entries if e["kind"] == "start" and e["tool_use_id"] == tool_use_id)
+    return next(starts, None)
+
+
+def _ended_start(run: Run, agent_id: str) -> bool:
+    """Whether the subagent's latest start has ended, by a result or a stop after its tie."""
+    after = _since(run.entries, lambda e: _ties(e, agent_id))
+    return any(e["kind"] in ("result", "stopped") and e.get("agent_id") == agent_id for e in after)
+
+
+def _per_turn(runs: list[Run]) -> tuple[Run, str] | None:
+    """The standing run, with its folder, and the main conversation's role, where its plugin's
+    rules leave the role's steps to the plugin's adapter of the rules at each turn; else None."""
+    run = _standing(runs)
+    rules = _rules_of(run)
+    if run is None or rules is None:
+        return None
+    role = _main_role(run, rules)
+    return (run, role) if asks_adapter(rules, role) else None
+
+
 def _this_turn(run: Run) -> list[Entry]:
     """The entries of the main conversation's turn at hand: those after the run's latest
     `turn_ended` entry, or each of the run's before its first."""
     return _since(run.entries, lambda e: e["kind"] == "turn_ended")
 
 
-def _since(entries: list[Entry], latest: Callable[[Entry], bool]) -> list[Entry]:
-    """The entries after the latest one that `latest` gives True for, or all where none does."""
-    found = [i for i, entry in enumerate(entries) if latest(entry)]
-    return entries[found[-1] + 1 :] if found else entries
-
-
 def _turn_at_hand(run: Run) -> Entry | None:
     """The `turn` entry of the turn at hand, with the role and the steps that hold the main
     conversation's moves in it; None where the turn holds none yet."""
     return next((e for e in reversed(_this_turn(run)) if e["kind"] == "turn"), None)
+
+
+def _since(entries: list[Entry], latest: Callable[[Entry], bool]) -> list[Entry]:
+    """The entries after the latest one that `latest` gives True for, or all where none does."""
+    found = [i for i, entry in enumerate(entries) if latest(entry)]
+    return entries[found[-1] + 1 :] if found else entries
 
 
 # The move of each event that follows a call or a subagent's end, by the event's name.
