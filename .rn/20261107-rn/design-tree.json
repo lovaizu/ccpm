@@ -86,7 +86,51 @@
       "name": "Readers take in a document as its writer meant in one reading, as each refactoring makes it clearer and keeps all it says",
       "path": "plugins/rn/domain/best-practices/refactor-doc",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where a change is made",
+              "decided": "a refactoring changes only a place where a reader new to the document, reading from the top, would misread it or have to guess, and keeps each heading and fixed text that the template of the document's kind gives, as a trial on Lane's README showed changes that no reader needed and a heading rule that the README's template contradicts",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Maintainers understand the code in one reading and change it in one place, as each refactoring makes it simpler and keeps every behavior",
@@ -452,5 +496,10 @@
       "status": "done"
     }
   ],
-  "work": []
+  "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/refactor-doc"
+    }
+  ]
 }
