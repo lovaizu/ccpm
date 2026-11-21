@@ -32,7 +32,51 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The run's context",
+              "decided": "The template holds the run's context: the rn version that wrote the tree, the language of the deliverables and the language of the talk, and the issues and the pull request of the run, and the tree of each run is brought to it in the same change",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -278,7 +322,9 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "inputs": [],
+      "inputs": [
+        "plugins/rn/domain/best-practices/design-tree"
+      ],
       "status": "open",
       "necessary_conditions": [
         {
@@ -323,8 +369,13 @@
         },
         {
           "id": "N7",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "The run's context: the design tree holds the run's context: the rn version that wrote the tree, the language of the deliverables and the language of the talk, and the issues and the pull request of the run",
+              "decided": null
+            }
+          ]
         },
         {
           "id": "N8",
@@ -854,6 +905,10 @@
   ],
   "work": [
     {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/design-tree"
+    },
+    {
       "do": "decide",
       "path": "dev/rn/product-vision.md",
       "condition": "N6",
@@ -870,6 +925,12 @@
       "path": "plugins/rn/README.md",
       "condition": "N8",
       "about": "What each settled: How it works says rn lists what each settled without asking, where each may be each new best practice or each deliverable"
+    },
+    {
+      "do": "decide",
+      "path": "dev/rn/architecture.md",
+      "condition": "N7",
+      "about": "The run's context: the design tree holds the run's context: the rn version that wrote the tree, the language of the deliverables and the language of the talk, and the issues and the pull request of the run"
     },
     {
       "do": "decide",
