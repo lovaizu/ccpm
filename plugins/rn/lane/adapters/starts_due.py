@@ -95,7 +95,8 @@ def _run(commands: list[str], starts: list[Given], cwd: str) -> RunPlace | None:
     the user until its plan is signed off; else the one that can be picked up, where its worktree
     lies here; else None."""
     if starts:
-        # A Cut lies at <run's folder>/rounds/<deliverable>/<stage>-<n>/<role>-cut.json.
+        # A Cut lies at <run's folder>/rounds/<deliverable>/<stage>-<n>/<role>-cut.json, <n> the
+        # Round's number among the deliverable's Rounds.
         cut = os.path.join(cwd, starts[-1]["prompt"])
         return of_folder(cwd, os.path.normpath(os.path.join(cut, *[os.pardir] * 4)))
     if set(commands) == {"rn:on"}:

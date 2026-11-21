@@ -647,6 +647,22 @@ def test_a_generators_inputs_read_whole_are_its_files_and_never_a_folder(cwd: st
     assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == relative(expected, cwd)
 
 
+@pytest.mark.supports("test_a_generators_read_marked_before_its_cut_is_read_whole_is_stopped")
+def test_a_generators_read_reads_whole_each_file_of_its_deliverable_that_stands(cwd: str):
+    """Given a generator's Cut of a guide that the repository holds before the run, with its
+    pictures' folder beside it
+    When the adapter gives the start's steps
+    Then read reads whole the Cut, the best practice, and the guide, and not the folder"""
+    (guide,) = in_worktree(cwd, "docs/guide.md")
+    in_worktree(cwd, "docs/images/")
+    node = rn_files.open_node("The guide", "docs/guide.md", "light")
+    node["more_paths"] = ["docs/images/"]
+    cut, _ = generator_cut(cwd, node)
+    images = os.path.join(rn_files.worktree_of(cwd, NAME), "docs/images") + "/"
+    expected = generator_steps(cwd, cut, "light", [LIGHT_MD, guide], [guide, images])
+    assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == relative(expected, cwd)
+
+
 @pytest.mark.supports("test_the_generators_make_writes_only_its_deliverables_paths")
 def test_a_generators_make_writes_each_path_of_a_deliverable_in_more_than_one_place(cwd: str):
     """Given a generator's Cut of code at invoicer/cli.py with its tests at tests/ beside it

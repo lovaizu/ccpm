@@ -11,7 +11,7 @@ from typing import Callable
 
 import practice
 from fault import Answer, answered
-from rounds import files
+from rounds import course, files
 from tree import form
 
 from repository import commit_checks, place, push, trial, worktree
@@ -41,7 +41,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `find`: 0 printing the folder from `cwd` of the run that `worktree.found` gives, its
       worktree made again where none lies, as a line, and nothing where there's none.
     - `pause <run>`: 0 printing the hash that `push.pause` gives.
-    - `put-up <run> <deliverable>`: 0 printing the URL that `push.put_up` gives.
+    - `put-up <run> <deliverable>`: 0 printing the URL that `push.put_up` gives, the deliverable's
+      last Round then marked as put up with its state, as `rounds.course.held` gives it from the
+      design tree and `rounds.files.mark` writes it.
     - `checks <run> <file>...`: 0 printing nothing where `commit_checks.findings` gives none, and 1
       with each finding a line.
     - `trial <run> <round>`, the Round's folder from `cwd`: 0 printing the folder that
@@ -87,7 +89,10 @@ def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    return 0, f"{push.put_up(place.of_folder(cwd, given[0]), given[1], host)}\n", ""
+    run = place.of_folder(cwd, given[0])
+    url = push.put_up(run, given[1], host)
+    files.mark(run, given[1], course.held(form.deliverable(form.read(run.tree), given[1])))
+    return 0, f"{url}\n", ""
 
 
 def _checks(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:

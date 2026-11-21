@@ -214,6 +214,7 @@ def _generator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
     ]
     node = cut["deliverable"]
     paths = [os.path.join(worktree, each) for each in [node["path"], *node.get("more_paths", [])]]
+    whole += [each for each in paths if os.path.isfile(each)]
     round_ = os.path.join(cwd, cut["round"]) + "/"
     return [
         _step(

@@ -1,11 +1,14 @@
 """The unit cases of rounds/files.py, where each Round of a deliverable lies and what it holds:
 Round.cut and Round.result for each role and a role of neither; `of` with none, one, and several
-Rounds, content before refactor and each stage by its number as a number, another deliverable's
-Rounds beside them, among them one whose path differs only by `/` against `-`, and a folder of
-another form; each folder named by the deliverable's path percent-encoded whole, paths holding `-`
-and `%` among them; `at` from an absolute and a relative folder, and
-from a folder outside the run's Rounds; `new` past the stage's last, a gap among them included, and
-a stage of neither; and `result` written, not written, and not JSON."""
+Rounds, in the order they were made by their numbers as numbers, a content Round after a refactor
+one among them, another deliverable's Rounds beside them, among them one whose path differs only by
+`/` against `-`, a folder of another form, and two folders that share a number; each folder named
+by the deliverable's path percent-encoded whole, paths holding `-` and `%` among them; `at` from an
+absolute and a relative folder, and from a folder outside the run's Rounds; `new` past the
+deliverable's last Round of either stage, a gap among them included, and a stage of neither;
+`mark` of the last of several Rounds with a state, again, and of a deliverable with none, and
+`marked` of a Round marked, of one not, and of a mark that isn't JSON; and `result` written, not
+written, and not JSON."""
 
 from __future__ import annotations
 
@@ -16,7 +19,7 @@ import pytest
 import rn_files
 from fault import Wrong
 from repository.place import RunPlace
-from rounds.files import Round, at, new, of, result
+from rounds.files import Round, at, mark, marked, new, of, result
 
 NAME = "20261120-a-command-with-which-the"
 GUIDE = rn_files.GUIDE
@@ -95,19 +98,20 @@ def test_of_a_deliverable_with_one_round_gives_it(run: RunPlace):
     assert seen(of(run, GUIDE)) == [expected(run, GUIDE, "content", 1)]
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
-def test_of_gives_content_before_refactor_each_by_its_number(run: RunPlace):
-    """Given a run whose guide has Rounds refactor-1, content-10, content-2, and content-1, made in
-    that order
+@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
+def test_of_gives_the_rounds_in_the_order_they_were_made_by_their_numbers(run: RunPlace):
+    """Given a run whose guide has Rounds content-11, refactor-10, content-2, and content-1, their
+    folders made in that order
     When the guide's Rounds are asked
-    Then it gives content-1, content-2, content-10, then refactor-1, as numbers order them"""
-    for stage, number in (("refactor", 1), ("content", 10), ("content", 2), ("content", 1)):
+    Then it gives content-1, content-2, refactor-10, then content-11, as numbers order them, the
+    content Round after the refactor one last"""
+    for stage, number in (("content", 11), ("refactor", 10), ("content", 2), ("content", 1)):
         rn_files.a_round(folder(run), GUIDE, stage, number)
     assert seen(of(run, GUIDE)) == [
         expected(run, GUIDE, "content", 1),
         expected(run, GUIDE, "content", 2),
-        expected(run, GUIDE, "content", 10),
-        expected(run, GUIDE, "refactor", 1),
+        expected(run, GUIDE, "refactor", 10),
+        expected(run, GUIDE, "content", 11),
     ]
 
 
@@ -133,6 +137,17 @@ def test_of_refuses_a_folder_of_another_form(run: RunPlace, name: str):
     rn_files.a_round(folder(run), GUIDE, "content", 1)
     os.makedirs(os.path.join(folder(run), "rounds", "docs%2Fguide.md", name))
     with pytest.raises(Wrong, match=name):
+        of(run, GUIDE)
+
+
+@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
+def test_of_refuses_two_folders_that_share_a_number(run: RunPlace):
+    """Given a run whose guide has Rounds content-1, content-2, and refactor-2
+    When the guide's Rounds are asked
+    Then it raises Wrong naming both folders that share the number 2"""
+    for stage, number in (("content", 1), ("content", 2), ("refactor", 2)):
+        rn_files.a_round(folder(run), GUIDE, stage, number)
+    with pytest.raises(Wrong, match="content-2.*refactor-2|refactor-2.*content-2"):
         of(run, GUIDE)
 
 
@@ -198,17 +213,18 @@ def test_new_with_no_round_of_the_stage_makes_its_first(run: RunPlace):
     assert os.path.isdir(made.folder)
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
-def test_new_makes_the_round_one_past_the_stages_last(run: RunPlace):
-    """Given a run whose guide has Rounds content-1 and content-3, and refactor-1
+@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
+def test_new_makes_the_round_one_past_the_deliverables_last(run: RunPlace):
+    """Given a run whose guide has Rounds content-1 and refactor-3, a gap between them
     When a new content Round, then a new refactor Round, of the guide are made
-    Then they are content-4 and refactor-2, each folder made"""
-    for stage, number in (("content", 1), ("content", 3), ("refactor", 1)):
+    Then they are content-4 and refactor-5, each one past the last Round of either stage, each
+    folder made"""
+    for stage, number in (("content", 1), ("refactor", 3)):
         rn_files.a_round(folder(run), GUIDE, stage, number)
     content, refactor = new(run, GUIDE, "content"), new(run, GUIDE, "refactor")
     assert seen([content, refactor]) == [
         expected(run, GUIDE, "content", 4),
-        expected(run, GUIDE, "refactor", 2),
+        expected(run, GUIDE, "refactor", 5),
     ]
     assert os.path.isdir(content.folder) and os.path.isdir(refactor.folder)
 
@@ -333,3 +349,42 @@ def test_at_turns_the_folders_name_back_into_the_deliverables_path(run: RunPlace
     Then it gives refactor-1 of the deliverable by its path as the design tree holds it"""
     place = rn_files.a_round(folder(run), deliverable, "refactor", 1)
     assert seen([at(run, place)]) == [expected(run, deliverable, "refactor", 1)]
+
+
+@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
+def test_mark_marks_the_deliverables_last_round_alone_with_the_state(run: RunPlace):
+    """Given a run whose guide has Rounds content-1 and refactor-2, and whose command has
+    content-3
+    When the guide's last Round is marked as put up with N1 not good and an open decision of N1,
+    then again with each condition good
+    Then each mark gives refactor-2, which holds the last state, and content-1 and the command's
+    content-3 hold none"""
+    for stage, number in (("content", 1), ("refactor", 2)):
+        rn_files.a_round(folder(run), GUIDE, stage, number)
+    rn_files.a_round(folder(run), rn_files.COMMAND, "content", 3)
+    left = {"short": ["N1"], "open": [{"condition": "N1", "about": "a comma in a line"}]}
+    given = [mark(run, GUIDE, left), mark(run, GUIDE, {"short": [], "open": []})]
+    assert seen([each for each in given if each]) == [expected(run, GUIDE, "refactor", 2)] * 2
+    assert [marked(each) for each in of(run, GUIDE)] == [None, {"short": [], "open": []}]
+    assert marked(of(run, rn_files.COMMAND)[0]) is None
+
+
+@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
+def test_mark_of_a_deliverable_with_no_round_marks_none(run: RunPlace):
+    """Given a run with no Round
+    When the plan's last Round is marked as put up
+    Then it gives None, and the run's folder holds no Rounds folder"""
+    assert mark(run, rn_files.plan_path(NAME), {"short": [], "open": []}) is None
+    assert not os.path.exists(os.path.join(folder(run), "rounds"))
+
+
+@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
+def test_marked_refuses_a_mark_that_isnt_json(run: RunPlace):
+    """Given a run whose guide's Round content-1 holds a put-up.json that isn't JSON
+    When the state it was put up with is asked
+    Then it raises Wrong naming the file"""
+    place = rn_files.a_round(folder(run), GUIDE, "content", 1)
+    with open(os.path.join(place, "put-up.json"), "w", encoding="utf-8") as file:
+        file.write("{")
+    with pytest.raises(Wrong, match="put-up.json"):
+        marked(of(run, GUIDE)[0])

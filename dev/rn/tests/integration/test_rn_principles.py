@@ -18,18 +18,25 @@ from rn_bench import (
     CHANGELOG,
     Bench,
     apart_tree,
+    command_signed,
     cut_of,
     decided_command,
     ended,
+    evaluated,
     evaluator_started,
+    from_cwd,
     generated,
     held,
+    judged_command,
     listed,
     marked,
+    next_round,
     pointed,
+    put_up,
     ran,
     read_step,
     requested,
+    sent_back,
     shared_steps,
     short_twice,
     signed_apart,
@@ -202,6 +209,31 @@ def signoff_unrecorded(b: Bench) -> None:
     )
 
 
+def refactoring_judged(b: Bench) -> None:
+    """A refactor Round that its generator made waits on its evaluator, as a Round of content
+    does."""
+    given_again(
+        b,
+        "domain/rounds/course.py",
+        "_given_next_of = next_of\n\n\n"
+        "def next_of(deliverable, rounds, refactors):\n"
+        "    last = rounds[-1] if rounds else None\n"
+        "    if last and last.round.stage == 'refactor' and last.evaluator is None and (\n"
+        "        last.generator and last.generator['result'] == 'made'\n"
+        "    ):\n"
+        "        return Next('evaluator', 'refactor', False)\n"
+        "    return _given_next_of(deliverable, rounds, refactors)\n",
+    )
+
+
+def put_up_unmarked(b: Bench) -> None:
+    """A Round put up for the sign-off is left unmarked, so that a send-back after it counts the
+    content Rounds before it."""
+    given_again(
+        b, "domain/rounds/files.py", "def mark(run, deliverable, state):\n    return None\n"
+    )
+
+
 def checks_unasked(b: Bench) -> None:
     """A change of the design tree is committed whatever its form."""
     given_again(
@@ -215,6 +247,7 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut": open_decisions_unread,
     "test_no_generator_starts_before_the_plan_is_signed_off": generator_always_due,
     "test_a_signoff_of_the_plan_makes_its_deliverables_generator_due": signoff_unrecorded,
+    "test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own": put_up_unmarked,
     "test_the_people_start_from_the_branch_without_rns_folder": trial_of_the_worktree,
     "test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped": result_unchecked,
     "test_the_orchestrator_writing_a_deliverable_is_stopped": lambda b: steps_without(
@@ -224,6 +257,7 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
         b, "r['type'] != 'commands'"
     ),
     "test_the_generators_make_is_held_to_its_best_practices_make_items": items_left_out,
+    "test_no_evaluator_starts_after_a_refactor_round": refactoring_judged,
     "test_a_deliverable_short_after_two_content_rounds_gets_no_third": no_limit,
     "test_the_evaluator_reading_the_design_tree_is_stopped": lambda b: steps_without(
         b, "r['type'] != 'reads_none'"
@@ -334,6 +368,27 @@ def test_a_signoff_of_the_plan_makes_its_deliverables_generator_due(b: Bench, br
     assert started(c, "rn:generator", cut_path) is not None
 
 
+@pytest.mark.supports("P1.3", "Round")
+def test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own(b: Bench, broken: None):
+    """Given a run whose command, of the kind light, the evaluator found short on N1 in Round
+    content-1 and judged good in content-2, LIMIT Rounds, put up for the user's sign-off
+    When the user types /rn:gm with what to change, and the orchestrator writes it as a decision
+    by user of N1, holds N1 not good, and writes the generator's Cut
+    Then the Cut lies in Round content-3, and the generator starts, as the send-back gets Rounds
+    of its own"""
+    c, _ = judged_command(b, {"N1": "The accountant prints an invoice with a comma in a line."})
+    _, generator = next_round(b, c, COMMAND, ["N2", "N3"])
+    generated(b, c, generator)
+    _, evaluator = next_round(b, c, COMMAND, ["N2", "N3"], "evaluator")
+    evaluated(b, c, evaluator)
+    put_up(b, c, COMMAND, rn_files.conditions("light"))
+    words = "print the total on its own last line"
+    cut_path = sent_back(b, c, COMMAND, rn_files.conditions("light"), words)
+    third = rn_files.round_of(b.folder, COMMAND, "content", 3)
+    assert os.path.join(b.repo, cut_path) == os.path.join(third, "generator-cut.json")
+    assert started(c, "rn:generator", cut_path) is not None
+
+
 # P2: judged by the people's aim.
 
 
@@ -431,6 +486,32 @@ def test_the_generators_make_is_held_to_its_best_practices_make_items(b: Bench, 
         f"You're at the step `make` of rn:generator, whose checklist isn't done: {listed(left)}.\n"
         "Do each and mark it done with lane-item make <item> first."
     )
+
+
+@pytest.mark.supports("P3.2", "generator", "Round")
+def test_no_evaluator_starts_after_a_refactor_round(b: Bench, broken: None):
+    """Given a run whose guide, of the kind readme, the evaluator judged good on each condition in
+    Round content-1, and whose new generator made Round refactor-2, its end reaching the main
+    conversation
+    When the orchestrator holds each condition good, keeps the shared steps, writes the evaluator's
+    Cut of the guide, and starts rn:evaluator with the path of an evaluator's Cut in refactor-2
+    Then tree.py cut gives 1 saying the guide waits on the user's sign-off, and Lane stops the
+    start, as no start of rn's subagents is due"""
+    c, generator = command_signed(b)
+    generated(b, c, generator)
+    _, evaluator = next_round(b, c, rn_files.GUIDE, [], "evaluator")
+    evaluated(b, c, evaluator)
+    _, refactoring = next_round(b, c, rn_files.GUIDE, rn_files.conditions("readme"))
+    generated(b, c, refactoring)
+    taken(b, c, held(b, rn_files.GUIDE, rn_files.conditions("readme")), "Refactored.")
+    refused = c.bash(b.script("tree", "cut", b.run, "evaluator", rn_files.GUIDE))
+    assert refused.exit_code == 1
+    assert "sign-off" in refused.output
+    refactor = rn_files.round_of(b.folder, rn_files.GUIDE, "refactor", 2)
+    prompt = from_cwd(c, os.path.join(refactor, "evaluator-cut.json"))
+    answer, agent = c.start("rn:evaluator", prompt, "Run rn:evaluator")
+    assert agent is None
+    assert "No start of rn's subagents is due now." in answer.said
 
 
 @pytest.mark.supports("P3.3", "Round")

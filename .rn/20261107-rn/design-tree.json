@@ -399,91 +399,13 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "inputs": [
-        "dev/rn/architecture.md"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The refactoring by a new generator, with no evaluator, as the architecture's components and S1 draw",
-              "decided": "The refactoring: once each condition of a deliverable of a kind with a best practice is good, a new generator makes one refactor Round with a Cut of the refactoring kind, and the deliverable then waits for its sign-off, with no evaluator in that Round",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "inputs": [
-        "dev/rn/architecture.md",
-        "plugins/rn"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The refactoring by a new generator, with no evaluator",
-              "decided": "Integration cases for the new generator's refactor Round once each condition is good, with no evaluator after it and none for kind light, as the architecture's strategy and S1 draw",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
@@ -519,10 +441,7 @@
       "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
-      "inputs": [
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
+      "inputs": [],
       "status": "open",
       "necessary_conditions": [
         {
@@ -532,7 +451,7 @@
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Its task: the refactor Round, with no evaluator",
@@ -608,7 +527,7 @@
         },
         {
           "id": "N16",
-          "good": true,
+          "good": false,
           "decisions": []
         }
       ]
@@ -617,10 +536,7 @@
       "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
       "path": "plugins/rn/domain/generator.md",
       "kind": "prompt",
-      "inputs": [
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
+      "inputs": [],
       "status": "open",
       "necessary_conditions": [
         {
@@ -630,7 +546,7 @@
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "Its task in a refactor Round",
@@ -646,11 +562,12 @@
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "A deliverable that the repository holds before the run, such as a README: the generator's read step reads the Cut, the best practice, and the inputs, but not the deliverable as it stands, so a first Round may make it anew or keep it unasked",
-              "decided": null
+              "decided": "Where the deliverable stands at its paths before the first Round, the generator reads it whole at read, keeps each part that meets its condition, and makes or mends only what falls short, by the best practice's items; the evaluator then judges it whole as in any Round",
+              "by": "user"
             }
           ]
         },
@@ -711,7 +628,7 @@
         },
         {
           "id": "N16",
-          "good": true,
+          "good": false,
           "decisions": []
         }
       ]
@@ -796,14 +713,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn"
-    },
-    {
-      "do": "make",
-      "path": "dev/rn/tests"
-    },
     {
       "do": "make",
       "path": "plugins/rn/domain/generator.md"

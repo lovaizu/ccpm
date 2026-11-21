@@ -66,6 +66,8 @@ Strategies:
 - Each point that the user settles kept as an open decision of its condition, and their answer
   as its decision. [P6.1]\
   Intent: a point and its answer outlive the conversation that asked it.
+- Each Round put up for sign-off marked as the end of its deliverable's Rounds. [P1.3]\
+  Intent: a send-back gets Rounds of its own, so that the user's change is remade.
 - A finding that the people would never meet dropped by holding its condition good. [P1.1]\
   Intent: the next generator gets as given each finding of a condition still short.
 
@@ -180,7 +182,8 @@ sequenceDiagram
           opt each condition good, for a kind with a best practice [P3.2]
             O->>G: starts a new one with a Cut of the refactor best practice of code or of a document (Cut) [P3.2]
             G->>G: refactors it by that best practice, keeping its intent (Best practice) [P3.2]
-            G->>S: runs the repository's checks and tests on its files [P4.3]
+            G->>G: runs the repository's tests as its developers run them [P3.2]
+            G->>S: runs the repository's checks on its files [P4.3]
             G-->>O: ends, with the Round written (Round) [P4.2]
           end
         end

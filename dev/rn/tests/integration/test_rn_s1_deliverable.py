@@ -10,6 +10,7 @@ import os
 
 import pytest
 import rn_files
+from claude_code import Conversation
 from gh import gh_double
 from repo_files import git
 from rn_bench import (
@@ -41,6 +42,7 @@ from rn_bench import (
     ran,
     reached,
     requested,
+    sent_back,
     short_twice,
     signed,
     signed_apart,
@@ -384,20 +386,104 @@ def test_a_deliverable_with_each_condition_good_is_refactored_by_its_refactor_be
     """Given a run whose guide, of the kind readme, the evaluator judged good on each condition in
     Round content-1
     When the orchestrator holds each condition good and writes the generator's Cut
-    Then the Cut lies in Round refactor-1, its stage refactor, number 1, and its best practice
-    rn's refactor-doc"""
+    Then the Cut lies in Round refactor-2, its stage refactor, number 2, the guide's second Round,
+    and its best practice rn's refactor-doc"""
     c, generator = command_signed(b)
     generated(b, c, generator)
     _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
     evaluated(b, c, evaluator)
     cut_path, _ = next_round(b, c, GUIDE, rn_files.conditions("readme"))
-    refactor = rn_files.round_of(b.folder, GUIDE, "refactor", 1)
+    refactor = rn_files.round_of(b.folder, GUIDE, "refactor", 2)
     assert os.path.join(b.repo, cut_path) == os.path.join(refactor, "generator-cut.json")
     given = rn_files.read_json(os.path.join(b.repo, cut_path))
-    assert (given["stage"], given["number"]) == ("refactor", 1)
+    assert (given["stage"], given["number"]) == ("refactor", 2)
     assert os.path.normpath(os.path.join(b.repo, given["best_practice"])) == os.path.join(
         b.rn, "domain", "best-practices", "refactor-doc"
     )
+
+
+@pytest.mark.supports("S1", "Round", "Cut")
+def test_the_refactoring_generators_made_waits_on_the_signoff_with_no_evaluator(b: Bench):
+    """Given a run whose guide, of the kind readme, the evaluator judged good on each condition in
+    Round content-1, and whose orchestrator started a new generator with the Cut of Round
+    refactor-2
+    When that generator refactors the guide by rn's refactor-doc, runs the repository's tests as
+    its developers run them, runs repository.py checks on its files, and ends with made, and the
+    orchestrator holds each condition good, puts the guide up, and writes the evaluator's Cut
+    Then Lane lets the tests through, the end reads `rn:generator gave made.` with no role due, its
+    result lies in Round refactor-2, repository.py put-up puts the guide up, and tree.py cut gives
+    1 saying the guide waits on the user's sign-off, writing no evaluator's Cut"""
+    c, generator = command_signed(b)
+    generated(b, c, generator)
+    _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
+    evaluated(b, c, evaluator)
+    _, refactoring = next_round(b, c, GUIDE, rn_files.conditions("readme"))
+    assert refactoring is not generator
+    notified = generated(b, c, refactoring)
+    assert "rn:generator gave made." in notified.said
+    assert "Due:" not in notified.said
+    refactor = rn_files.round_of(b.folder, GUIDE, "refactor", 2)
+    assert os.path.isfile(os.path.join(refactor, "generator.json"))
+    good = held(b, GUIDE, rn_files.conditions("readme"))
+    url = taken(b, c, good, "Refactored.", [b.script("repository", "put-up", b.run, GUIDE)])[0]
+    assert url.strip() == "http://github.com/owner/repo/pull/1/files"
+    refused = c.bash(b.script("tree", "cut", b.run, "evaluator", GUIDE))
+    assert refused.exit_code == 1
+    assert "waits on the user's sign-off, not on its evaluator" in refused.output
+    assert not os.path.exists(os.path.join(refactor, "evaluator-cut.json"))
+    ended(c, f"For your sign-off. Changes: {url.strip()}")
+
+
+def refactored(b: Bench) -> Conversation:
+    """A conversation whose guide the evaluator judged good in Round content-1, a new generator
+    refactored in Round refactor-2, and the orchestrator put up for the user's sign-off."""
+    c, generator = command_signed(b)
+    generated(b, c, generator)
+    _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
+    evaluated(b, c, evaluator)
+    _, refactoring = next_round(b, c, GUIDE, rn_files.conditions("readme"))
+    generated(b, c, refactoring)
+    put_up(b, c, GUIDE, rn_files.conditions("readme"))
+    return c
+
+
+@pytest.mark.supports("S1", "Design tree", "Round")
+def test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round(b: Bench):
+    """Given a run whose guide was judged good in Round content-1, refactored in refactor-2, and
+    put up for the user's sign-off
+    When the user types /rn:gm with what to change, and the orchestrator writes it as a decision
+    by user of N1, holds N1 not good, and writes the generator's Cut
+    Then the Cut lies in Round content-3, the last Round, its stage content, its deliverable holding
+    the user's words, and the generator starts"""
+    c = refactored(b)
+    words = "the guide is for the accounting team alone"
+    cut_path = sent_back(b, c, GUIDE, rn_files.conditions("readme"), words)
+    content = rn_files.round_of(b.folder, GUIDE, "content", 3)
+    assert os.path.join(b.repo, cut_path) == os.path.join(content, "generator-cut.json")
+    given = rn_files.read_json(os.path.join(b.repo, cut_path))
+    assert (given["stage"], given["number"]) == ("content", 3)
+    n1 = given["deliverable"]["necessary_conditions"][0]
+    assert (n1["id"], n1["good"]) == ("N1", False)
+    assert rn_files.decision(words, words, "user") in n1["decisions"]
+    assert started(c, "rn:generator", cut_path) is not None
+
+
+@pytest.mark.supports("S1", "Design tree", "Round")
+def test_a_send_back_after_the_contents_last_round_is_remade_in_a_new_content_round(b: Bench):
+    """Given a run whose command, of the kind light, which has no refactoring, the evaluator judged
+    good in Round content-1, put up for the user's sign-off
+    When the user types /rn:gm with what to change, and the orchestrator writes it as a decision
+    by user of N1, holds N1 not good, and writes the generator's Cut
+    Then the Cut lies in Round content-2, its stage content, and the generator starts"""
+    c, _ = judged_command(b)
+    put_up(b, c, COMMAND, rn_files.conditions("light"))
+    words = "print the total on its own last line"
+    cut_path = sent_back(b, c, COMMAND, rn_files.conditions("light"), words)
+    content = rn_files.round_of(b.folder, COMMAND, "content", 2)
+    assert os.path.join(b.repo, cut_path) == os.path.join(content, "generator-cut.json")
+    given = rn_files.read_json(os.path.join(b.repo, cut_path))
+    assert (given["stage"], given["number"]) == ("content", 2)
+    assert started(c, "rn:generator", cut_path) is not None
 
 
 @pytest.mark.supports("S1", "Design tree")
@@ -418,7 +504,8 @@ def test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts(b: Be
 
 @pytest.mark.supports("S1")
 def test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch(b: Bench):
-    """Given a run whose guide the evaluator judged good in its Rounds, and put up
+    """Given a run whose guide the evaluator judged good in its Round of content, which a new
+    generator refactored, and put up
     When the user signs the guide off
     Then each deliverable of the tree is done, the remote's branch holds the command and the guide,
     and the orchestrator's turn ends with no start due"""
@@ -428,8 +515,6 @@ def test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_request
     evaluated(b, c, evaluator)
     _, generator = next_round(b, c, GUIDE, rn_files.conditions("readme"))
     generated(b, c, generator)
-    _, evaluator = next_round(b, c, GUIDE, rn_files.conditions("readme"), "evaluator")
-    evaluated(b, c, evaluator)
     put_up(b, c, GUIDE, rn_files.conditions("readme"))
     signed(b, c)
     assert all(each["status"] == "done" for each in b.tree()["deliverables"])

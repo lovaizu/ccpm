@@ -49,17 +49,22 @@ each deliverable and the evaluator judges it, so you write no file but the tree.
 - The run's folder, `<run>` below, is the path that `repository.py new` or `find` prints, such as
   `.claude/worktrees/rn-<name>/.rn/<name>`. It holds the design tree, `design-tree.json`, in the
   form of `<rn's folder>/domain/best-practices/design-tree/design-tree.schema.json`. It holds each
-  Round at `rounds/<the deliverable's path, percent-encoded>/<content or refactor>-<n>/`. A Round
-  holds each role's Cut, and its result `<role>.json`, in the form of
+  Round at `rounds/<the deliverable's path, percent-encoded>/<content or refactor>-<n>/`, `<n>` its
+  number among the deliverable's Rounds in the order they were made. A Round holds each role's
+  Cut, and its result `<role>.json`, in the form of
   `<rn's folder>/domain/schemas/<role>-round.schema.json`.
 - The plan is the tree's own deliverable, of the kind `design-tree`. A deliverable that's open with
   each condition good waits for the user's sign-off, and is done once signed off.
 - Each point for the user is an open decision of its condition, its `decided` null. So are a role's
   point, a finding left past the Rounds, and a blocker that only the user can mend. The user's
   answer becomes that `decided`, by `user`.
-- A deliverable takes at most two Rounds of content, then two of refactoring for a kind that has
-  them. `tree.py cut <run> <role> <deliverable>` writes the role's Cut in the Round due, and prints
-  its path. It gives 1 where the deliverable waits on another: the other role, the user's answer,
+- A deliverable takes at most two Rounds of content, then one of refactoring for a kind that has
+  it, which no evaluator judges, as the refactoring keeps the intent the content's Rounds judged.
+  A send-back once a deliverable is put up starts them again, as `repository.py put-up` marks its
+  last Round with the conditions not good and the open decisions it put up, and any change to
+  them starts new Rounds, so that the user's change is remade.
+  `tree.py cut <run> <role> <deliverable>` writes the role's Cut in the Round due, and prints its
+  path. It gives 1 where the deliverable waits on another: the other role, the user's answer,
   the sign-off, or you.
 - Each script exits 0 with its result. On 1 or 2, it says what's wrong and how to mend it. Where
   Lane stops a call, its sentence names the step you're at and what that step takes.
@@ -104,7 +109,10 @@ origin names no default branch, as no run stands yet.
      Run no command.
      - A send-back: write the user's words, word for word, as a decision by `user` of the condition
        they concern. Hold that condition not good, so that the next Round makes what they asked.
-       Change the decision their words come back to, by N3 of the design tree best practice.
+       Settle each proposal left past its Rounds: their words settle the one they name, written
+       as its `decided`, by `user`. Drop each other, removing that decision and holding its
+       condition good, as the user took none of it at the sign-off. Change the decision their
+       words come back to, by N3 of the design tree best practice.
      - An answer: write the user's words as the point's `decided`, by `user`, as only they settle
        it. Where they confirm the goal, write `user` in its `by`. Where they correct it,
        write it as they put it. Where the point was a role's, resume that role with their words in
@@ -112,15 +120,16 @@ origin names no default branch, as no run stands yet.
      - A role's end: open the role's result beside its Cut. Take each point from that file, not
        the role's message.
        On `point`, keep the point as an open decision of its condition, its `about` a few words.
-       Put it to the user as the role gave it. On `made`, the evaluator of the same Round is due.
-       Change the tree only where the result shows a decision false. On `judged`, hold good each
-       condition under `good`. For each under `more`, ask whether the people would meet what its
-       `good_when` names in their use:
+       Put it to the user as the role gave it. On `made` in a Round of content, the evaluator of
+       the same Round is due. On `made` in a Round of refactoring, the deliverable waits for the
+       user's sign-off. Change the tree only where the result shows a decision false. On
+       `judged`, hold good each condition under `good`. For each under `more`, ask whether the
+       people would meet what its `good_when` names in their use:
        - Where they would, find the decision it comes from by N3, and change it there. Leave the
          condition not good.
        - Where they'd never meet it, hold the condition good, so that the deliverable doesn't grow.
-       - Where the stage holds two Rounds judged, keep each finding still left as an open decision
-         of its condition. It goes to the user as a proposal at the deliverable's sign-off.
+       - Where the content holds two Rounds judged, keep each finding still left as an open
+         decision of its condition. It goes to the user as a proposal at the deliverable's sign-off.
    - A pause, `stop` then `pause`: stop each of rn's roles still running by TaskStop. That way,
      no role writes after the push. Where this conversation doesn't hold the run's folder, find it
      under `.claude/worktrees/`. Then run `python3 <rn's folder>/scripts/repository.py pause <run>`.

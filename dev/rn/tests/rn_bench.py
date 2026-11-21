@@ -403,15 +403,18 @@ def items(c: Conversation, agent: Agent, step: str, ids: Sequence[str]) -> None:
 
 
 def read_step(b: Bench, c: Conversation, agent: Agent, given: Mapping[str, Any]) -> None:
-    """The generator reads whole its Cut, its best practice's best-practice.md, and each input
-    that is a file, and reports `read` done."""
+    """The generator reads whole its Cut, its best practice's best-practice.md, each input that is
+    a file, and each file of its deliverable that stands at its paths, and reports `read` done."""
     agent.read(os.path.join(c.cwd, agent.start_use["tool_input"]["prompt"]))
     md = os.path.join(c.cwd, given["best_practice"], "best-practice.md")
     if os.path.exists(md):
         agent.read(md)
-    for each in given["inputs"]:
-        if os.path.isfile(os.path.join(c.cwd, each)):
-            agent.read(os.path.join(c.cwd, each))
+    node = given["deliverable"]
+    worktree = os.path.join(c.cwd, given["worktree"])
+    stands = [os.path.join(worktree, each) for each in [node["path"], *node.get("more_paths", [])]]
+    for each in [*(os.path.join(c.cwd, one) for one in given["inputs"]), *stands]:
+        if os.path.isfile(each):
+            agent.read(each)
     marked(c, "read", agent)
 
 
@@ -429,9 +432,11 @@ def generated(
 ) -> Answer:
     """The generator keeps each of its steps and ends with `made`: it reads, reports each `decide`
     and `make` item of its best practice, writes each file of the deliverable, given by its path
-    from the worktree's top or else the deliverable's own text, writes its result in the Round's
-    folder, saw good each condition given or else every one, runs `repository.py checks` on its
-    files, and gives `made`. Gives what the main conversation reads as its end reaches it."""
+    from the worktree's top or else the deliverable's own text, in a refactor Round runs at `try`
+    the repository's tests as its developers run them, which must go through and give 0, writes
+    its result in the Round's folder, saw good each condition given or else every one, runs
+    `repository.py checks` on its files, and gives `made`. Gives what the main conversation reads
+    as its end reaches it."""
     given = cut_of(c, agent)
     node = given["deliverable"]
     read_step(b, c, agent, given)
@@ -447,6 +452,8 @@ def generated(
     # A generator names in `good` the conditions of its deliverable, as rn checks them, which in a
     # refactor Round are its content kind's, not those of the refactoring kind it makes by.
     seen = [each["id"] for each in node["necessary_conditions"]] if good is None else list(good)
+    if given["stage"] == "refactor":
+        ran(c, DEVELOPERS_TESTS.format(b.worktree), agent)
     first = next(iter(wrote.values())).splitlines()[0]
     result = rn_files.made([(each, [first]) for each in seen], list(wrote))
     agent.write(os.path.join(c.cwd, given["round"], "generator.json"), json.dumps(result))
@@ -455,6 +462,10 @@ def generated(
     agent.bash("lane-result made")
     marked(c, "check", agent)
     return reached(agent)
+
+
+# The repository's tests as invoicer's developers run them, from its worktree, writing no file.
+DEVELOPERS_TESTS = "(cd {} && python3 -B -c 'import invoicer.lines')"
 
 
 def pointed(b: Bench, c: Conversation, agent: Agent, words: str = rn_files.TAX_POINT) -> Answer:
@@ -644,3 +655,19 @@ def short_twice(b: Bench) -> Conversation:
     _, evaluator = next_round(b, c, rn_files.COMMAND, ["N2", "N3"], "evaluator")
     evaluated(b, c, evaluator, more)
     return c
+
+
+def sent_back(b: Bench, c: Conversation, deliverable: str, good: list[str], words: str) -> str:
+    """The user types /rn:gm with the words; the orchestrator writes them as a decision by user of
+    the deliverable's N1, held not good, keeps the shared steps, and writes the generator's Cut;
+    gives the Cut's path that tree.py cut printed."""
+    c.type(f"/rn:gm {words}")
+    send_back = {"N1": [rn_files.decision(words, words, "user")]}
+    design_tree = held(b, deliverable, [each for each in good if each != "N1"], send_back)
+    return taken(
+        b,
+        c,
+        design_tree,
+        "The user sends it back.",
+        [b.script("tree", "cut", b.run, "generator", deliverable)],
+    )[0].strip()

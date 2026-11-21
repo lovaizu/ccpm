@@ -70,8 +70,8 @@ def generator(
 def evaluator(tree: Tree, run: RunPlace, round_: Round, practice: Found) -> Cut:
     """The evaluator's Cut for the Round.
 
-    Takes: the tree, the run, the Round to judge, and the best practice of the deliverable's kind
-    with its folder.
+    Takes: the tree, the run, the Round of content to judge, and the best practice of the
+    deliverable's kind with its folder.
     Gives: the Cut of `evaluator-cut.schema.json`: the goal, the deliverable's name and paths, what
     it judges by as `practice.judged` gives it, the run's worktree, the folder of the people's
     starting state as `repository.trial.folder` names it, and the Round's folder; none of the

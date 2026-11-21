@@ -51,14 +51,14 @@
    "minLength": 1
   },
   "stage": {
-   "description": "content: the Round makes the content. refactor: it refactors it, once its content is made.",
+   "description": "content: the Round makes the content, which an evaluator judges. refactor: it refactors it, keeping its intent, once each condition is good, with no evaluator after it.",
    "enum": [
     "content",
     "refactor"
    ]
   },
   "number": {
-   "description": "The Round's number in its stage, from 1.",
+   "description": "The Round's number among the deliverable's Rounds, from 1, in the order they were made.",
    "type": "integer",
    "minimum": 1
   },

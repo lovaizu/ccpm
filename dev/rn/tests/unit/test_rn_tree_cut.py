@@ -162,13 +162,13 @@ def test_the_next_rounds_cut_takes_the_findings_of_each_condition_not_good_as_gi
 def test_findings_of_conditions_each_held_good_leave_none(repo: str):
     """Given the guide's evaluator whose more names N1, and a tree that holds each of the guide's
     conditions good
-    When the generator's Cut of its Round refactor-1 is made
+    When the generator's Cut of its Round refactor-2 is made
     Then its findings hold no good and no more"""
     judged = rn_files.judged([("N2", ["a"]), ("N3", ["b"])], [("N1", "The accountant prints.")])
     got = generator(
         walkthrough(guide_good=True),
         run_of(repo),
-        round_at(repo, GUIDE, "refactor", 1),
+        round_at(repo, GUIDE, "refactor", 2),
         found("refactor-doc"),
         (rn_files.made([], [GUIDE]), judged),
     )
@@ -221,18 +221,18 @@ def test_the_cut_names_each_input_in_the_worktree_in_its_order(repo: str, inputs
 )
 def test_a_refactor_rounds_cut_names_the_refactor_best_practice(repo: str):
     """Given a tree whose guide holds each condition good
-    When the generator's Cut of its Round refactor-1 is made by the refactor-doc best practice
-    Then it names refactor-doc's folder, the stage refactor, and the number 1"""
+    When the generator's Cut of its Round refactor-2 is made by the refactor-doc best practice
+    Then it names refactor-doc's folder, the stage refactor, and the number 2"""
     got = generator(
         walkthrough(guide_good=True),
         run_of(repo),
-        round_at(repo, GUIDE, "refactor", 1),
+        round_at(repo, GUIDE, "refactor", 2),
         found("refactor-doc"),
         (None, None),
     )
     assert from_top(repo, got["best_practice"]) == os.path.join(rn_files.PRACTICES, "refactor-doc")
-    assert (got["stage"], got["number"]) == ("refactor", 1)
-    assert from_top(repo, got["round"]) == round_at(repo, GUIDE, "refactor", 1).folder
+    assert (got["stage"], got["number"]) == ("refactor", 2)
+    assert from_top(repo, got["round"]) == round_at(repo, GUIDE, "refactor", 2).folder
 
 
 @pytest.mark.supports(
@@ -281,19 +281,19 @@ def test_the_evaluators_cut_holds_only_what_the_people_have(repo: str):
 @pytest.mark.supports("test_the_evaluators_cut_holds_only_what_the_people_have")
 def test_the_evaluators_cut_names_each_more_path_of_the_deliverable(repo: str):
     """Given a tree whose guide lies in more paths too
-    When the evaluator's Cut of its Round refactor-2 is made by the readme best practice
+    When the evaluator's Cut of its Round content-2 is made by the readme best practice
     Then its deliverable holds the guide's name, path, and more paths, and it judges by readme, in
-    a people's folder named by refactor-2"""
+    a people's folder named by content-2"""
     the = walkthrough(guide_good=True)
     the["deliverables"][2]["more_paths"] = ["docs/images/"]
-    got = evaluator(the, run_of(repo), round_at(repo, GUIDE, "refactor", 2), found("readme"))
+    got = evaluator(the, run_of(repo), round_at(repo, GUIDE, "content", 2), found("readme"))
     assert got["deliverable"] == {
         "name": rn_files.GUIDE_NAME,
         "path": GUIDE,
         "more_paths": ["docs/images/"],
     }
     assert got["judges_by"] == rn_files.judged_by("readme")
-    trial = trial_of(GUIDE, "refactor", 2)
+    trial = trial_of(GUIDE, "content", 2)
     assert os.path.normpath(got["trial"]) == trial
 
 

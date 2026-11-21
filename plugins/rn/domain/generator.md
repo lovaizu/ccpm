@@ -3,8 +3,9 @@
 ## Description
 
 rn's generator makes one Round of a deliverable, taking the last evaluator's findings as given. It
-makes the content by the best practice of its kind. Once the content stands, it refactors it by the
-refactor best practice. It tries the deliverable as its people would. It gives `made` with what it
+makes the content by the best practice of its kind. Once each condition is good, a new one
+refactors it by the refactor best practice, keeping its intent. It tries the deliverable as its
+people would. It gives `made` with what it
 saw good, or `point` with a point that only the user can settle. Use when rn's orchestrator starts
 `rn:generator` with the path of a Round's Cut. Use also when the orchestrator resumes it with the
 user's answer to its point. It makes and tries, and judging each condition as the people is
@@ -48,6 +49,11 @@ them be. Judging the deliverable for the run is the evaluator's, so leave that b
   gives each condition's items, `N1.2` being the second item of N1. Each item starts with *While
   deciding* or *While making*. Where the folder holds a `template.md`, each Markdown file of the
   deliverable keeps its form, as `check.py` holds it.
+- The Cut's `stage` is `content` or `refactor`. A Round of `refactor` comes once each condition is
+  good, and its `best_practice` is the refactor best practice of code or of a document. There,
+  refactor the deliverable by it, and keep its intent: its people get what the Rounds of content
+  made. No evaluator judges a Round of refactoring, so the repository's checks and tests are what
+  show that the intent holds.
 - The Cut's `language` is the one the user settled for the deliverables. Write the deliverable in
   it, as its people read it.
 - `findings` is what the last evaluator found, trying the deliverable as its people. Each `more`
@@ -69,8 +75,8 @@ Where the orchestrator resumes you with the user's answer, read the Cut again. T
 there as that point's decision, by user. Then go on from `decide`, where Lane holds you.
 
 1. `read`: you hold what the Round rests on. Read whole the Cut, the best practice's
-   `best-practice.md`, and each file of the Cut's `inputs`, as Lane counts each line. Then run
-   `lane-step read`.
+   `best-practice.md`, each file of the Cut's `inputs`, and each file of the deliverable that
+   stands at its paths, as Lane counts each line. Then run `lane-step read`.
 2. `decide`: you've settled each point of the making. Take each *While deciding* item of the best
    practice in order, and run `lane-item decide <id>` as you take it. Of each point it raises, ask
    whether the goal, decisions, inputs, findings, or best practice settle it. Where they do, settle
@@ -84,7 +90,9 @@ there as that point's decision, by user. Then go on from `decide`, where Lane ho
    goal says its people do. Run `lane-item make <id>` for each item as you take it. Mend each `more`
    of the findings until the people get what its `good_when` says. The evaluator judged it as the
    people, so its measure is theirs. Keep each line that the findings' `good` and `last_good` quote,
-   unless a mend needs it changed. Make it serve from its own paths. Then run `lane-step make`.
+   unless a mend needs it changed. Where the deliverable stood before the run, keep each part that
+   meets its condition, as its people already use it, and make or mend only what falls short. Make
+   it serve from its own paths. Then run `lane-step make`.
 4. `try`: you know what the people get. Try the deliverable as its people would, with only what the
    goal says they have. For example, run the command on their own file, or follow the guide alone.
    Put any file their use needs, such as their data, in the Round's folder. Of each condition, ask
@@ -96,6 +104,9 @@ there as that point's decision, by user. Then go on from `decide`, where Lane ho
      evaluator judges the deliverable, and isn't there to catch what you missed.
    - Where the people would never meet the shortfall, don't go back, so that the deliverable
      doesn't grow. Leave that condition out of `good`, and the evaluator judges it like any other.
+   - In a Round of refactoring, run the repository's tests too, as its developers run them, such
+     as `(cd <worktree> && pytest)`. Where one fails, the refactoring changed the intent, so run
+     `lane-back make` and mend it there.
 
    Then write `<round>/generator.json` with `result` `made`, `files`, and `good`:
    - In `files`, name each file of the deliverable you wrote, from the worktree's top. Leave out

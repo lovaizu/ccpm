@@ -1,5 +1,5 @@
 """The unit cases of repository/trial.py: `folder`, its path under the system's temporary folder for
-a Round of content and of refactor, its deliverable's path percent-encoded, the same at each call
+a first Round and a later one, its deliverable's path percent-encoded, the same at each call
 and none made, and apart for each Round, each run, and two paths alike but for a slash; and
 `starting_state`, a clone of the work's branch with the worktree's files as they stand, a change, a
 new file, and a removal not committed among them, without .rn/, made anew over what an earlier
@@ -46,23 +46,23 @@ def test_a_rounds_folder_lies_in_the_temporary_folder_by_run_and_round(temp: str
 
 
 @pytest.mark.supports("test_the_evaluators_try_writes_only_in_the_peoples_folder")
-def test_a_refactor_rounds_folder_names_its_stage_and_number(temp: str):
-    """Given the run 20261120-invoices, and the guide's Round refactor-2
+def test_a_later_rounds_folder_names_its_stage_and_number(temp: str):
+    """Given the run 20261120-invoices, and the guide's Round content-2
     When folder is asked
-    Then it's <temporary folder>/rn-trial-20261120-invoices-docs%2Fguide.md-refactor-2"""
+    Then it's <temporary folder>/rn-trial-20261120-invoices-docs%2Fguide.md-content-2"""
     run = RunPlace("/work/invoicer", NAME)
-    given = folder(run, a_round(run, rn_files.GUIDE, "refactor", 2))
-    assert same(given, os.path.join(temp, f"rn-trial-{NAME}-docs%2Fguide.md-refactor-2"))
+    given = folder(run, a_round(run, rn_files.GUIDE, "content", 2))
+    assert same(given, os.path.join(temp, f"rn-trial-{NAME}-docs%2Fguide.md-content-2"))
 
 
 @pytest.mark.supports("test_the_evaluators_try_writes_only_in_the_peoples_folder")
 def test_a_rounds_folder_is_the_same_at_each_call_and_apart_for_each_round_and_run(temp: str):
-    """Given two runs, and three Rounds of one deliverable: content-1, content-2, and refactor-1
+    """Given two runs, and two Rounds of one deliverable: content-1 and content-2
     When folder is asked twice of each Round of each run
     Then each call of the same run and Round gives the same folder, and no two others give the
     same one"""
     runs = [RunPlace("/work/invoicer", NAME), RunPlace("/work/invoicer", "20261121-invoices")]
-    rounds = [("content", 1), ("content", 2), ("refactor", 1)]
+    rounds = [("content", 1), ("content", 2)]
     given = {}
     for run in runs:
         for stage, number in rounds:

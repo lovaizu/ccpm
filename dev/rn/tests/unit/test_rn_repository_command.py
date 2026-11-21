@@ -1,8 +1,9 @@
 """The unit cases of repository/command.py's `main`, repository.py's command line: each subcommand
 with what it prints and its exit code, `find` of no run, and of the newest of several, its worktree
-made again, `checks` with findings and with none, and each fault by its exit code: 2 with the usage
-for arguments of another form, 1 with `repository.py: ` for an input that is Wrong and for something
-Missing, origin's HEAD naming no branch and gh with no login among them, and 2 for what CantRun."""
+made again, `put-up` marking the deliverable's last Round, `checks` with findings and with none,
+and each fault by its exit code: 2 with the usage for arguments of another form, 1 with
+`repository.py: ` for an input that is Wrong and for something Missing, origin's HEAD naming no
+branch and gh with no login among them, and 2 for what CantRun."""
 
 from __future__ import annotations
 
@@ -174,6 +175,27 @@ def test_put_up_prints_the_pull_requests_changes(tmp_path: Any, host: Any):
     run = made_run(str(tmp_path), design_tree=rn_files.walkthrough_tree(NAME, plan_done=False))
     given = main(["put-up", RUN, rn_files.plan_path(NAME)], run.repository, rn_files.RN, host)
     assert given == (0, "http://github.com/owner/repo/pull/1/files\n", "")
+
+
+@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
+def test_put_up_marks_the_deliverables_last_round_as_put_up(tmp_path: Any, host: Any):
+    """Given a run whose command has Rounds content-1 and content-2, its node holding N1 not good
+    with an open decision of N1, the rest good
+    When repository.py put-up is given the run's folder and the command's path
+    Then it gives 0 printing the pull request's changes, and content-2 alone holds put-up.json
+    with N1 not good and its open decision"""
+    left = {"N1": [rn_files.decision("a comma in a line", None)]}
+    design_tree = rn_files.walkthrough_tree(NAME, command_good=["N2", "N3"], command_decisions=left)
+    run = made_run(str(tmp_path), design_tree=design_tree)
+    folder = rn_files.folder_of(run.repository, NAME)
+    first, second = (rn_files.a_round(folder, rn_files.COMMAND, "content", n) for n in (1, 2))
+    given = main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)
+    assert given == (0, "http://github.com/owner/repo/pull/1/files\n", "")
+    assert not os.path.exists(os.path.join(first, "put-up.json"))
+    assert rn_files.read_json(os.path.join(second, "put-up.json")) == {
+        "short": ["N1"],
+        "open": [{"condition": "N1", "about": "a comma in a line"}],
+    }
 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
