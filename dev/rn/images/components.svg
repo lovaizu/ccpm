@@ -93,13 +93,6 @@
   <text class="data halo mid" x="730" y="321">run</text>
   <path class="line" d="M860,290 L860,130" marker-end="url(#arrow)"/>
   <text class="data halo start" x="868" y="214">commits</text>
-  <rect class="box" x="40" y="290" width="170" height="80" rx="6"/>
-  <text class="name" x="125.0" y="326.0">refactorer</text>
-  <text class="kind" x="125.0" y="346.0">[prompt]</text>
-  <path class="line" d="M340,130 L110,290" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="160" y="236">starts, with its Cut</text>
-  <path class="line" d="M125,370 L380,515" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="262" y="468">refactors by</text>
   <text class="label" x="740" y="440">Legend</text>
   <rect class="box" x="740" y="452" width="22" height="16" rx="3"/>
   <text class="label small" x="772" y="465">a role</text>

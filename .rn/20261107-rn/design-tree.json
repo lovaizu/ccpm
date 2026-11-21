@@ -419,8 +419,8 @@
           "good": false,
           "decisions": [
             {
-              "about": "A refactorer apart from the generator, with no evaluator, refactors each deliverable once its Rounds end, as the architecture's components and S1 draw",
-              "decided": "The refactorer: its prompt at domain/refactorer.md with its start at agents/refactorer.md, its Cut and result forms in domain/schemas/, its steps in lane/rules.json, and its start due from the design tree in lane/adapters/starts_due.py, once a deliverable of a kind with a best practice ends its Rounds",
+              "about": "The refactoring by a new generator, with no evaluator, as the architecture's components and S1 draw",
+              "decided": "The refactoring: once each condition of a deliverable of a kind with a best practice is good, a new generator makes one refactor Round with a Cut of the refactoring kind, and the deliverable then waits for its sign-off, with no evaluator in that Round",
               "by": "maker"
             }
           ]
@@ -452,8 +452,8 @@
           "good": false,
           "decisions": [
             {
-              "about": "The refactorer's component, its strategy, and its arrows in S1 and S2",
-              "decided": "Integration cases for the refactorer's component and strategy, S1's refactoring once the Rounds end and none for kind light, and S2's stop and start of the refactorer",
+              "about": "The refactoring by a new generator, with no evaluator",
+              "decided": "Integration cases for the new generator's refactor Round once each condition is good, with no evaluator after it and none for kind light, as the architecture's strategy and S1 draw",
               "by": "maker"
             }
           ]
@@ -535,8 +535,8 @@
           "good": false,
           "decisions": [
             {
-              "about": "Its task: starting and stopping the refactorer",
-              "decided": "The orchestrator starts the refactorer with its Cut once a deliverable of a kind with a best practice ends its Rounds, takes at most two Rounds of content, and stops and starts the refactorer on a pause and a pick-up",
+              "about": "Its task: the refactor Round, with no evaluator",
+              "decided": "A deliverable takes at most two Rounds of content, then one of refactoring for a kind that has it, which no evaluator judges",
               "by": "maker"
             }
           ]
@@ -633,8 +633,8 @@
           "good": false,
           "decisions": [
             {
-              "about": "Its task: the generator no longer refactors",
-              "decided": "The generator makes the content alone, by its kind's best practice or its check alone, and no longer refactors, as the architecture gives the refactoring to the refactorer",
+              "about": "Its task in a refactor Round",
+              "decided": "In a refactor Round, the generator refactors the deliverable by its Cut's refactoring best practice, keeping its intent, and runs the repository's checks and tests, as no evaluator judges that Round",
               "by": "maker"
             }
           ]
@@ -707,98 +707,6 @@
         {
           "id": "N16",
           "good": true,
-          "decisions": []
-        }
-      ]
-    },
-    {
-      "name": "A refactorer makes a deliverable plain for whoever reads it next, keeping its intent, from its Cut alone",
-      "path": "plugins/rn/domain/refactorer.md",
-      "kind": "prompt",
-      "inputs": [
-        "plugins/rn",
-        "dev/rn/tests"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": false,
           "decisions": []
         }
       ]
@@ -890,10 +798,6 @@
     {
       "do": "make",
       "path": "dev/rn/tests"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/refactorer.md"
     },
     {
       "do": "make",
