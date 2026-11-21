@@ -271,11 +271,7 @@ def _evaluator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
             cwd,
         ),
     }
-    ids = [
-        each["id"]
-        for factor in cut["judges_by"]["critical_success_factors"]
-        for each in factor["necessary_conditions"]
-    ]
+    ids = [each["id"] for each in practice.conditions(cut["judges_by"])]
     return [
         _step(
             "read",

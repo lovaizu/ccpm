@@ -93,7 +93,7 @@ def items(practice: Practice, at: str) -> list[str]:
         raise Wrong(f"a maker takes items at decide or make, not {at!r}")
     return [
         f"{condition['id']}.{place}"
-        for condition in _conditions(practice)
+        for condition in conditions(practice["goal"])
         for place, item in enumerate(condition["items"], 1)
         if item["at"] == at
     ]
@@ -110,10 +110,9 @@ def judged(practice: Practice) -> dict[str, Any]:
     Refuses: nothing.
     """
     goal = copy.deepcopy(practice["goal"])
-    for factor in goal["critical_success_factors"]:
-        for condition in factor["necessary_conditions"]:
-            # A condition's practice is its why and its items, which its form holds beside it.
-            del condition["why"], condition["items"]
+    for condition in conditions(goal):
+        # A condition's practice is its why and its items, which its form holds beside it.
+        del condition["why"], condition["items"]
     return goal
 
 
@@ -132,10 +131,11 @@ def refactoring(kind: str) -> str | None:
     return "refactor-code" if kind in _CODE else "refactor-doc"
 
 
-def _conditions(practice: Practice) -> list[dict[str, Any]]:
-    """Each necessary condition of the best practice, in its order."""
+def conditions(goal: dict[str, Any]) -> list[dict[str, Any]]:
+    """Each necessary condition of a best practice's goal, or of what `judged` gives, in its
+    order."""
     return [
         condition
-        for factor in practice["goal"]["critical_success_factors"]
+        for factor in goal["critical_success_factors"]
         for condition in factor["necessary_conditions"]
     ]

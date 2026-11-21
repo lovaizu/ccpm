@@ -9,6 +9,7 @@ from collections import Counter
 from typing import Any
 
 from fault import Wrong
+from practice import conditions
 from rounds.files import Result
 from template import check
 from tree.cut import Cut
@@ -83,26 +84,22 @@ def _generator(cut: Cut, result: Result, worktree: str, cwd: str) -> list[str]:
 
 def _evaluator(cut: Cut, result: Result) -> list[str]:
     """The faults that only an evaluator's result can have: each condition answered once."""
-    conditions = [
-        each["id"]
-        for factor in cut["judges_by"]["critical_success_factors"]
-        for each in factor["necessary_conditions"]
-    ]
+    ids = [each["id"] for each in conditions(cut["judges_by"])]
     answered = Counter(each["condition"] for each in result["good"] + result["more"])
     found = [
         f"{each}: answered in neither good nor more; answer it in one of them"
-        for each in conditions
+        for each in ids
         if each not in answered
     ]
     found += [
         f"{each}: answered {count} times; answer it once, in good or in more"
         for each, count in answered.items()
-        if each in conditions and count > 1
+        if each in ids and count > 1
     ]
     found += [
-        f"{each}: isn't a condition of the Cut; answer only {', '.join(conditions)}"
+        f"{each}: isn't a condition of the Cut; answer only {', '.join(ids)}"
         for each in answered
-        if each not in conditions
+        if each not in ids
     ]
     return found
 

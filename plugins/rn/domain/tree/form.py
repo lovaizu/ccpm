@@ -8,7 +8,7 @@ import json
 from typing import Any
 
 from fault import CantRun, Wrong
-from practice import Practice
+from practice import Practice, conditions
 
 # A design tree, in the form of domain/best-practices/design-tree/design-tree.schema.json.
 Tree = dict[str, Any]
@@ -31,10 +31,9 @@ def started(goal: str, plan: str, practice: Practice) -> Tree:
     """
     if not goal:
         raise Wrong("the goal is empty; the tree starts from the goal as one sentence")
-    conditions = [
+    held = [
         {"id": condition["id"], "good": False, "decisions": []}
-        for factor in practice["goal"]["critical_success_factors"]
-        for condition in factor["necessary_conditions"]
+        for condition in conditions(practice["goal"])
     ]
     return {
         "goal": {"decided": goal, "by": "reasoning"},
@@ -45,7 +44,7 @@ def started(goal: str, plan: str, practice: Practice) -> Tree:
                 "kind": "design-tree",
                 "inputs": [],
                 "status": "open",
-                "necessary_conditions": conditions,
+                "necessary_conditions": held,
             }
         ],
         "work": [],

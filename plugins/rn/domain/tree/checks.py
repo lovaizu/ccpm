@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from check.form import faults as form_faults
-from practice import Practice
+from practice import Practice, conditions
 
 from tree.form import Deliverable, Tree
 
@@ -67,12 +67,7 @@ def _kind(node: Deliverable, practices: Mapping[str, Practice], at: str) -> list
         return [f"{at}/kind: takes one of the kinds of the best practices, {kinds}"]
     if node["status"] not in _OPEN:
         return []
-    practice = practices[node["kind"]]
-    wanted = [
-        condition["id"]
-        for factor in practice["goal"]["critical_success_factors"]
-        for condition in factor["necessary_conditions"]
-    ]
+    wanted = [condition["id"] for condition in conditions(practices[node["kind"]]["goal"])]
     held = [each["id"] for each in node["necessary_conditions"]]
     if held == wanted:
         return []
