@@ -16,7 +16,8 @@ as rn runs it, by [rn's architecture](../../dev/rn/architecture.md).**
   of rn's.
 
 **Until rn is released, the main conversation keeps the design tree
-`.rn/20261107-rn/design-tree.json`, and takes its deliverables from the top.** Each session resumes from the tree.
+`.rn/20261107-rn/design-tree.json`, and takes its deliverables from the top.** Each session
+resumes from the tree.
 
 - Rationale: the tree holds each decision and where the work stands, so a new session needs nothing
   else.
