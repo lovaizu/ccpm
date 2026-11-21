@@ -98,7 +98,9 @@
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
       "path": "plugins/rn/domain/template",
       "kind": "code",
-      "inputs": [],
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
       "status": "open",
       "necessary_conditions": [
         {
@@ -116,8 +118,9 @@
           "good": false,
           "decisions": [
             {
-              "about": "How a template states what the check holds: the check reads its rules out of the English of the template's notes, such as one or two sentences, each, and Leave out where, so a note reworded changes the check unseen",
-              "decided": null
+              "about": "A document in any language: the check holds a document in the language its run settled as it holds one in English, where now the template's words, a sentence's end, a sentence's length, and the notes' rules are read as English alone",
+              "decided": "The check holds a document in any language that a run settles, as rn's deliverables come in the user's language",
+              "by": "user"
             }
           ]
         },
@@ -245,6 +248,11 @@
             {
               "about": "What each settled: How it works says rn lists what each settled without asking, where each may be each new best practice or each deliverable",
               "decided": null
+            },
+            {
+              "about": "The languages: whether rn writes and talks in the user's language",
+              "decided": "At the start of a run, rn proposes the language of the deliverables and the language of its talk, each from what the repository and the user's instructions already set, and the user settles both; everything rn writes and says then comes in the language chosen for it",
+              "by": "user"
             }
           ]
         },
@@ -280,8 +288,13 @@
         },
         {
           "id": "N2",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "The languages: a user story that brings the user the deliverables and the talk in the languages they settle at the start of a run",
+              "decided": null
+            }
+          ]
         },
         {
           "id": "N3",
@@ -842,12 +855,6 @@
   "work": [
     {
       "do": "decide",
-      "path": "plugins/rn/domain/template",
-      "condition": "N3",
-      "about": "How a template states what the check holds: the check reads its rules out of the English of the template's notes, such as one or two sentences, each, and Leave out where, so a note reworded changes the check unseen"
-    },
-    {
-      "do": "decide",
       "path": "dev/rn/product-vision.md",
       "condition": "N6",
       "about": "The run's facts: the concept's second idea names the run's facts, which the vision never defines"
@@ -863,6 +870,12 @@
       "path": "plugins/rn/README.md",
       "condition": "N8",
       "about": "What each settled: How it works says rn lists what each settled without asking, where each may be each new best practice or each deliverable"
+    },
+    {
+      "do": "decide",
+      "path": "dev/rn/architecture.md",
+      "condition": "N2",
+      "about": "The languages: a user story that brings the user the deliverables and the talk in the languages they settle at the start of a run"
     },
     {
       "do": "decide",
@@ -887,6 +900,18 @@
       "path": "plugins/lane/README.md",
       "condition": "N8",
       "about": "When a run ends: the README says once the routes start no more subagents, and docs/rules-and-adapters.md says once the order says so, which starts_due.py may give"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/README.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/template"
     }
   ]
 }
