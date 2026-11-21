@@ -98,19 +98,167 @@
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
       "path": "plugins/rn/domain/template",
       "kind": "code",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How a template states what the check holds: the check reads its rules out of the English of the template's notes, such as one or two sentences, each, and Leave out where, so a note reworded changes the check unseen",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The run's facts: the concept's second idea names the run's facts, which the vision never defines",
+              "decided": null
+            },
+            {
+              "about": "What rn takes in: the concept's third idea says rn takes in only what helps the people, without naming what it takes in",
+              "decided": null
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
       "path": "plugins/rn/README.md",
       "kind": "readme",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What each settled: How it works says rn lists what each settled without asking, where each may be each new best practice or each deliverable",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
@@ -122,7 +270,100 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "What lightly means: P3.2 says a deliverable is made lightly by its check, without naming the kind light",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "S2's last arrow: it starts each role stopped again toward the generator alone, where S2 stops the evaluator too",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers know whom Lane serves, and the one way it serves them",
@@ -203,13 +444,159 @@
       "name": "A plugin's author builds on Lane so that its AI notices each step it leaves, by giving Lane its rules and adapters alone",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": [
+            {
+              "about": "How a command reaches a run: the Route definition and S9 say a command that the person types, and docs/rules-and-adapters.md says one typed or called by the Skill tool",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's author decides from the README alone whether Lane fits, and makes its plugin depend on it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": [
+            {
+              "about": "When a run ends: the README says once the routes start no more subagents, and docs/rules-and-adapters.md says once the order says so, which starts_due.py may give",
+              "decided": null
+            }
+          ]
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
@@ -452,5 +839,54 @@
       "status": "done"
     }
   ],
-  "work": []
+  "work": [
+    {
+      "do": "decide",
+      "path": "plugins/rn/domain/template",
+      "condition": "N3",
+      "about": "How a template states what the check holds: the check reads its rules out of the English of the template's notes, such as one or two sentences, each, and Leave out where, so a note reworded changes the check unseen"
+    },
+    {
+      "do": "decide",
+      "path": "dev/rn/product-vision.md",
+      "condition": "N6",
+      "about": "The run's facts: the concept's second idea names the run's facts, which the vision never defines"
+    },
+    {
+      "do": "decide",
+      "path": "dev/rn/product-vision.md",
+      "condition": "N6",
+      "about": "What rn takes in: the concept's third idea says rn takes in only what helps the people, without naming what it takes in"
+    },
+    {
+      "do": "decide",
+      "path": "plugins/rn/README.md",
+      "condition": "N8",
+      "about": "What each settled: How it works says rn lists what each settled without asking, where each may be each new best practice or each deliverable"
+    },
+    {
+      "do": "decide",
+      "path": "dev/rn/architecture.md",
+      "condition": "N4",
+      "about": "What lightly means: P3.2 says a deliverable is made lightly by its check, without naming the kind light"
+    },
+    {
+      "do": "decide",
+      "path": "dev/rn/architecture.md",
+      "condition": "N8",
+      "about": "S2's last arrow: it starts each role stopped again toward the generator alone, where S2 stops the evaluator too"
+    },
+    {
+      "do": "decide",
+      "path": "dev/lane/architecture.md",
+      "condition": "N9",
+      "about": "How a command reaches a run: the Route definition and S9 say a command that the person types, and docs/rules-and-adapters.md says one typed or called by the Skill tool"
+    },
+    {
+      "do": "decide",
+      "path": "plugins/lane/README.md",
+      "condition": "N8",
+      "about": "When a run ends: the README says once the routes start no more subagents, and docs/rules-and-adapters.md says once the order says so, which starts_due.py may give"
+    }
+  ]
 }
