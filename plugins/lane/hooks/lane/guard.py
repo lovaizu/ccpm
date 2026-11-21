@@ -55,7 +55,7 @@ def answer(event: Event) -> Answer:
     Takes: a hook event of hooks/hooks.json: PreToolUse, PostToolUse, PostToolUseFailure, Stop,
     SubagentStop, UserPromptSubmit, or UserPromptExpansion.
     Gives: the answers, joined and stopping where any stops, of run_opened for each run that
-    place.opening gives; of turn_begun or turn_started for the run or the turn that
+    place.opening gives; of turn_begun or turn_opened for the run or the turn that
     place.turn_beginning or place.turn_opening gives; and of skill_called for the call that
     place.skill_call gives, else of the interface that the move of place.place reaches. An empty
     answer where the event lies outside each run, or its run's plugin gives no rules. The starts
@@ -90,13 +90,13 @@ def _placed(event: Event) -> Answer:
 @_checked
 def _turn_given(event: Event, runs: list[Run]) -> Answer:
     """The answer of turn_begun, for the run whose next turn the event's prompt begins, and of
-    turn_started, for the turn whose steps the event is the first to need; an empty one where it
+    turn_opened, for the turn whose steps the event is the first to need; an empty one where it
     reaches neither."""
     begun = place.turn_beginning(event, runs)
     if begun is not None:
         return turn_begun(event, begun)
     turn = place.turn_opening(event, runs)
-    return Answer() if turn is None else turn_started(event, turn)
+    return Answer() if turn is None else turn_opened(event, turn)
 
 
 def turn_begun(event: Event, run: Run) -> Answer:
@@ -107,7 +107,7 @@ def turn_begun(event: Event, run: Run) -> Answer:
     end, and the run that place.turn_beginning gives for it.
     Gives: an empty answer.
     Changes: the run record, by a `turn_begun` entry with the event's `prompt` as Claude Code gives
-    it, which turn_started gives the plugin's adapter of the rules.
+    it, which turn_opened gives the plugin's adapter of the rules.
     Refuses: nothing.
     """
     entry: record.Entry = {"kind": "turn_begun", "run": run.id, "prompt": event["prompt"]}
@@ -115,7 +115,7 @@ def turn_begun(event: Event, run: Run) -> Answer:
     return Answer()
 
 
-def turn_started(event: Event, turn: Turn) -> Answer:
+def turn_opened(event: Event, turn: Turn) -> Answer:
     """S11: the main conversation's turn's first call or end, where its role takes its steps from
     the plugin's adapter of the rules at each turn.
 

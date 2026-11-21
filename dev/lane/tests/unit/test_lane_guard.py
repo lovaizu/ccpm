@@ -5,7 +5,7 @@ the answers of an opening and a move joined; each interface below it, one for ea
 it takes, a role due once and twice at once among them, a start of another plugin's subagent whose
 name nearly matches, and each class of the order's answer; and written, one for each event and
 class of answer; and, for a main conversation whose role takes its steps at each turn, answer, one
-for each transition of its turns, and turn_begun, turn_started, and turn_ended, one for each class
+for each transition of its turns, and turn_begun, turn_opened, and turn_ended, one for each class
 of the prompt, the role, the adapter's answer, and the turn's end; and report_made of a step gone
 back to, one for each step marked done, and for a step not marked done, one its steps don't name,
 and one gone back to once each step is done. Each Then gives the whole
@@ -37,7 +37,7 @@ from guard import (
     subagent_ended,
     turn_begun,
     turn_ended,
-    turn_started,
+    turn_opened,
     written,
 )
 from lane_events import Event, Events, Subagent, base_directory
@@ -1499,7 +1499,7 @@ def test_an_empty_answer_is_written_as_nothing(g: Play, event: str):
 
 
 # A main conversation whose role takes its steps at each turn: answer, by each transition of its
-# turns, and turn_begun, turn_started, and turn_ended, by each class of what they take.
+# turns, and turn_begun, turn_opened, and turn_ended, by each class of what they take.
 
 FIRST_STEPS: list[Step] = lane_bench.turn_steps([".log/1.2.0.md"])
 NOTIFIED = "<task-notification>Wrote docs/changes/1.2.0.md.</task-notification>"
@@ -1671,7 +1671,7 @@ def test_turn_begun_keeps_the_prompt_that_begins_the_turn(g: Play, log: str, pro
         ("log:tag", "/log:tag", lane_bench.turn_steps([], "tag")),
     ],
 )
-def test_turn_started_keeps_the_turn_with_the_steps_its_adapter_gives(
+def test_turn_opened_keeps_the_turn_with_the_steps_its_adapter_gives(
     g: Play, log: str, role: str, prompt: str, steps: list[Step]
 ):
     """Given a run of log:up taking its steps at each turn, and its first turn with an empty
@@ -1683,22 +1683,22 @@ def test_turn_started_keeps_the_turn_with_the_steps_its_adapter_gives(
     by_turn(log)
     recorded_now(log)
     [on] = runs("session-1")
-    assert turn_started(g.e.bash("git status"), Turn(on, role, prompt)) == Answer()
+    assert turn_opened(g.e.bash("git status"), Turn(on, role, prompt)) == Answer()
     assert gained(log) == [turn_entry(prompt, steps, role)]
 
 
 @pytest.mark.supports("test_a_turn_whose_adapter_of_the_rules_is_missing_stops_its_first_call")
-def test_turn_started_with_no_adapter_of_the_rules_is_refused_naming_it(g: Play, log: str):
+def test_turn_opened_with_no_adapter_of_the_rules_is_refused_naming_it(g: Play, log: str):
     """Given a run of log:up taking its steps at each turn, with no adapter of the rules
     When its first turn's first call comes
-    Then turn_started refuses with AdapterFailed saying that log:up takes its steps from the
+    Then turn_opened refuses with AdapterFailed saying that log:up takes its steps from the
     adapter that the plugin doesn't give, naming lane/adapters/rules.py in log's folder, and the
     record gains nothing"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.PER_TURN)})
     recorded_now(log)
     [on] = runs("session-1")
     with pytest.raises(AdapterFailed) as raised:
-        turn_started(g.e.bash("git status"), Turn(on, "log:up", ""))
+        turn_opened(g.e.bash("git status"), Turn(on, "log:up", ""))
     assert str(raised.value) == (
         "Lane: log:up takes its steps from the plugin's adapter of the rules, which the plugin"
         f" doesn't give. The plugin's author adds lane/adapters/rules.py in {log}, or the role's"
@@ -1710,7 +1710,7 @@ def test_turn_started_with_no_adapter_of_the_rules_is_refused_naming_it(g: Play,
 @pytest.mark.supports(
     "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words"
 )
-def test_turn_started_whose_adapter_gives_no_step_keeps_the_turn_with_none(g: Play, log: str):
+def test_turn_opened_whose_adapter_gives_no_step_keeps_the_turn_with_none(g: Play, log: str):
     """Given a run of log:up taking its steps at each turn, whose adapter of the rules gives no step
     When its first turn's first call comes
     Then the answer is empty, and the record gains the turn with no step"""
@@ -1718,14 +1718,14 @@ def test_turn_started_whose_adapter_gives_no_step_keeps_the_turn_with_none(g: Pl
     write_files(log, {"lane/adapters/rules.py": "print('{\"steps\": []}')\n"})
     recorded_now(log)
     [on] = runs("session-1")
-    assert turn_started(g.e.bash("git status"), Turn(on, "log:up", "")) == Answer()
+    assert turn_opened(g.e.bash("git status"), Turn(on, "log:up", "")) == Answer()
     assert gained(log) == [turn_entry(steps=[])]
 
 
 @pytest.mark.supports(
     "test_a_turns_adapter_of_the_rules_is_given_each_earlier_turn_with_its_role_and_prompt"
 )
-def test_turn_started_gives_the_adapter_each_earlier_turn_oldest_first(g: Play, log: str):
+def test_turn_opened_gives_the_adapter_each_earlier_turn_oldest_first(g: Play, log: str):
     """Given a run of log:up taking its steps at each turn, whose adapter of the rules writes what
     it's given, and whose record holds the first turn, of log:up with an empty prompt, and a turn
     of log:tag begun by /log:tag, each ended
@@ -1738,7 +1738,7 @@ def test_turn_started_gives_the_adapter_each_earlier_turn_oldest_first(g: Play, 
     tag = turn_entry("/log:tag", lane_bench.turn_steps([], "tag"), "log:tag")
     recorded_now(log, turn_entry(), ended, tag, ended)
     [on] = runs("session-1")
-    turn_started(g.e.bash("git status"), Turn(on, "log:tag", "Go on."))
+    turn_opened(g.e.bash("git status"), Turn(on, "log:tag", "Go on."))
     assert lane_bench.echoed(g.e.cwd)["input"]["turns"] == [
         {"role": "log:up", "prompt": ""},
         {"role": "log:tag", "prompt": "/log:tag"},
