@@ -43,7 +43,8 @@ deliverable's people to their aim, and cuts the trivial many.
 ![rn's data](images/data-model.svg)
 
 - Design tree\
-  Holds what to make, why, and how far the run got, for each review and each pick-up. Its form is
+  Holds what to make, why, and how far the run got, for each review and each pick-up. It also
+  holds rn's version, the languages, and the run's issues and pull request. Its form is
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s.
 - Cut\
   A role's part of the design tree, so that each role starts with only the decisions its work needs.
@@ -130,7 +131,7 @@ sequenceDiagram
   U->>O: /rn:on [S1]
   O->>U: asks what they want [S1]
   U->>O: what they want, in their own words [S1]
-  O->>S: makes the run's worktree, and its design tree with the goal as the orchestrator puts it (Design tree) [P4.3]
+  O->>S: makes the run's worktree, and its design tree with the goal and the languages as the orchestrator puts them (Design tree) [P4.3]
   loop each event: a request, an answer, a sign-off, a send-back, or a role ended [P1.1]
     opt a sign-off [P1.3]
       O->>S: records it (Design tree) [P4.3]
@@ -147,7 +148,7 @@ sequenceDiagram
       O->>U: one point, with a recommendation [P1.2]
       U->>O: answers [P1.2]
     else a plan or a deliverable waiting for sign-off [P1.3]
-      O->>S: puts it up, committed and pushed in the pull request [P4.3]
+      O->>S: puts it up, committed and pushed in the pull request, which names the run's issues (Design tree) [P4.3]
       O->>U: puts it up, with each finding left as a proposal [P3.3]
       U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
     else each deliverable whose inputs are signed off, resting on none still being made [P5.2]

@@ -339,7 +339,8 @@
           "decisions": [
             {
               "about": "The languages: a user story that brings the user the deliverables and the talk in the languages they settle at the start of a run",
-              "decided": null
+              "decided": "S1 holds it, as the user settles the languages with the goal at the start of the deliverable they're after, so no story of its own",
+              "by": "maker"
             }
           ]
         },
@@ -379,8 +380,9 @@
           "good": false,
           "decisions": [
             {
-              "about": "The run's context: the design tree holds the run's context: the rn version that wrote the tree, the language of the deliverables and the language of the talk, and the issues and the pull request of the run",
-              "decided": null
+              "about": "The run's context: where the design tree's context is written",
+              "decided": "The design tree holds the run's context. new writes rn's version from its plugin.json and the languages that the orchestrator proposes, with no issue and no pull request; the orchestrator writes in its review the issues that the user's words name, and puts the languages and issues to the user with the goal; put-up writes the pull request's URL once it opens it, and names in its body each issue to close and each to refer to",
+              "by": "maker"
             }
           ]
         },
@@ -926,18 +928,6 @@
       "path": "plugins/rn/README.md",
       "condition": "N8",
       "about": "What each settled: How it works says rn lists what each settled without asking, where each may be each new best practice or each deliverable"
-    },
-    {
-      "do": "decide",
-      "path": "dev/rn/architecture.md",
-      "condition": "N7",
-      "about": "The run's context: the design tree holds the run's context: the rn version that wrote the tree, the language of the deliverables and the language of the talk, and the issues and the pull request of the run"
-    },
-    {
-      "do": "decide",
-      "path": "dev/rn/architecture.md",
-      "condition": "N2",
-      "about": "The languages: a user story that brings the user the deliverables and the talk in the languages they settle at the start of a run"
     },
     {
       "do": "decide",
