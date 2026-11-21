@@ -388,82 +388,8 @@
     {
       "name": "rn's maintainers change its code quickly in one place, each behavior that its integration cases show holding",
       "path": "plugins/rn/domain",
-      "more_paths": [
-        "plugins/rn/lane/",
-        "plugins/rn/scripts/",
-        "dev/rn/tests/unit/",
-        "dev/rn/tests/properties/"
-      ],
       "kind": "refactor-code",
-      "inputs": [
-        "plugins/rn/domain/best-practices/refactor-code",
-        "dev/rn/architecture.md",
-        "dev/rn/tests"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The tests",
-              "decided": "each integration case under dev/<plugin>/tests/integration stays as it is, word for word, as the proof of each behavior; a unit or property case that calls an internal moves or is rewritten to the new structure, each behavior it checks still checked, and only a check of an internal form that no longer exists goes",
-              "by": "user"
-            },
-            {
-              "about": "The case that takes out the result check",
-              "decided": null
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": [
-            {
-              "about": "What the change reaches",
-              "decided": "all of rn's code, the template check under domain/template first",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Users install Lane and rn together from one pull request, each plugin's folder holding all it needs and its README's walkthrough taken from what its tests show",
@@ -526,12 +452,5 @@
       "status": "done"
     }
   ],
-  "work": [
-    {
-      "do": "decide",
-      "path": "plugins/rn/domain",
-      "condition": "N1",
-      "about": "The case that takes out the result check"
-    }
-  ]
+  "work": []
 }

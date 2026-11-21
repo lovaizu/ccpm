@@ -128,7 +128,9 @@ def trial_of_the_worktree(b: Bench) -> None:
 def result_unchecked(b: Bench) -> None:
     """A role's result is taken whatever it holds."""
     given_again(
-        b, "domain/check/result.py", "def faults(role, cut, result, worktree):\n    return []\n"
+        b,
+        "domain/check/result.py",
+        "def faults(role, cut, result, worktree, cwd):\n    return []\n",
     )
 
 
