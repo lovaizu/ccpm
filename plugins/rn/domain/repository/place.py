@@ -1,5 +1,6 @@
 """Decides where a run lies and what it's called: its name from the day and the goal, its worktree
-and branch, its folder, and the paths of its design tree and its Rounds in that folder."""
+and branch, its folder, the paths of its design tree and its Rounds in that folder, and which run a
+request's words named."""
 
 from __future__ import annotations
 
@@ -15,6 +16,8 @@ _WORDS = 5
 # A run's folder, `<repository>/.claude/worktrees/rn-<name>/.rn/<name>`.
 _FOLDER = re.compile(r"(.+)/\.claude/worktrees/rn-([^/]+)/\.rn/([^/]+)")
 _FORM = "<repository>/.claude/worktrees/rn-<name>/.rn/<name>"
+# A run's worktree's folder name, `rn-<yyyymmdd>-<goal>`.
+_WORKTREE = re.compile(r"rn-(\d{8})-(.+)")
 
 
 @dataclass(frozen=True)
@@ -67,6 +70,25 @@ def named(today: date, goal: str) -> str:
         )
     words = ["".join(each for each in word if each.isalnum()).lower() for word in goal.split()]
     return f"{today:%Y%m%d}-{'-'.join(words[:_WORDS])}"
+
+
+def made(repository: str, words: str) -> RunPlace | None:
+    """The run that a request of the words made in the repository, on whichever day it was made.
+
+    Takes: the top of the user's repository, and the user's words in reply to `/rn:on`.
+    Gives: the run whose name `named` gives from the words on some day, and whose design tree lies
+    in its worktree here, the latest day's where several do, as a request made before midnight
+    and answered after it names its run by the day before; None where none does.
+    Changes: nothing.
+    Refuses: Wrong as `named` refuses the words.
+    """
+    goal = named(date.today(), words).partition("-")[2]
+    worktrees = os.path.join(repository, ".claude", "worktrees")
+    folders = os.listdir(worktrees) if os.path.isdir(worktrees) else []
+    matched = [_WORKTREE.fullmatch(each) for each in folders]
+    days = sorted((each[1] for each in matched if each and each[2] == goal), reverse=True)
+    runs = [RunPlace(repository, f"{day}-{goal}") for day in days]
+    return next((run for run in runs if os.path.isfile(run.tree)), None)
 
 
 def of_folder(cwd: str, folder: str) -> RunPlace:

@@ -4,7 +4,9 @@ sides, upper case, characters other than letters and digits, a day of one digit,
 words with no letter or digit; and `of_folder`, one for each form in which a script is given a run's
 folder, from the folder it runs in and absolute, and each refusal: a folder of another form, a near
 match of the worktree's prefix, a run's folder whose name differs from its worktree's, and one with
-no design tree."""
+no design tree; and `made`, one for a run of the words made today, one made the day before, the
+latest of several days, each near match of the name, a worktree with no design tree, no worktrees,
+and the refusal of words with no letter or digit."""
 
 from __future__ import annotations
 
@@ -15,7 +17,7 @@ from typing import Any
 import pytest
 import rn_files
 from fault import Wrong
-from repository.place import RunPlace, named, of_folder
+from repository.place import RunPlace, made, named, of_folder
 
 NAME = "20261120-invoices"
 DAY = date(2026, 11, 20)
@@ -256,3 +258,82 @@ def test_a_folder_of_another_form_is_refused_naming_the_form_it_takes(tmp_path: 
     with pytest.raises(Wrong) as raised:
         of_folder(repo, given)
     assert given in str(raised.value)
+
+
+# made: the run that a request's words named on some day.
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+def test_the_run_named_from_the_words_today_is_the_run_made(tmp_path: Any):
+    """Given a repository whose run 20261120-invoices has its design tree
+    When made is asked for the run of the words `Invoices`
+    Then it gives that run"""
+    repo, _ = a_run_folder(tmp_path)
+    assert made(repo, "Invoices") == RunPlace(repo, NAME)
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+def test_the_run_named_from_the_words_on_an_earlier_day_is_the_run_made(tmp_path: Any):
+    """Given a repository whose run 20261119-invoices, named the day before, has its design tree,
+    as a request made before midnight and answered after it leaves it
+    When made is asked for the run of the words `Invoices`
+    Then it gives that run"""
+    repo, _ = a_run_folder(tmp_path, "20261119-invoices")
+    assert made(repo, "Invoices") == RunPlace(repo, "20261119-invoices")
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+def test_of_runs_named_from_the_words_on_several_days_the_latest_days_is_the_run_made(
+    tmp_path: Any,
+):
+    """Given a repository whose runs 20261101-invoices, 20261120-invoices, and 20261105-invoices
+    each have their design tree
+    When made is asked for the run of the words `Invoices`
+    Then it gives 20261120-invoices, the latest day's"""
+    repo, _ = a_run_folder(tmp_path, "20261101-invoices")
+    a_run_folder(tmp_path, "20261120-invoices")
+    a_run_folder(tmp_path, "20261105-invoices")
+    assert made(repo, "Invoices") == RunPlace(repo, "20261120-invoices")
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+@pytest.mark.parametrize(
+    "name",
+    ["20261120-invoices-due", "20261120-invoice", "2026112-invoices", "x20261120-invoices"],
+    ids=["more-words", "fewer-letters", "short-day", "not-a-day"],
+)
+def test_a_run_whose_name_nearly_matches_the_words_isnt_the_run_made(tmp_path: Any, name: str):
+    """Given a repository whose only run's name nearly matches the words `Invoices`: another goal
+    that starts with them, one a letter short, a day of seven digits, or one that isn't a day
+    When made is asked for the run of the words
+    Then it gives None"""
+    repo, _ = a_run_folder(tmp_path, name)
+    assert made(repo, "Invoices") is None
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+def test_a_worktree_of_the_words_with_no_design_tree_isnt_the_run_made(tmp_path: Any):
+    """Given a repository holding the worktree of 20261120-invoices with no design tree, as a
+    refused `new` may leave it
+    When made is asked for the run of the words `Invoices`
+    Then it gives None"""
+    repo = os.path.realpath(str(tmp_path))
+    os.makedirs(rn_files.worktree_of(repo, NAME))
+    assert made(repo, "Invoices") is None
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+def test_a_repository_with_no_worktrees_has_no_run_made(tmp_path: Any):
+    """Given a repository with no .claude/worktrees/
+    When made is asked for the run of the words `Invoices`
+    Then it gives None"""
+    assert made(os.path.realpath(str(tmp_path)), "Invoices") is None
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+def test_made_for_words_with_no_letter_or_digit_is_refused(tmp_path: Any):
+    """Given a repository, and words with no letter or digit
+    When made is asked for the run of the words
+    Then Wrong is raised, saying that /rn:on takes what the user wants in words"""
+    with pytest.raises(Wrong, match="/rn:on"):
+        made(os.path.realpath(str(tmp_path)), "!!!")

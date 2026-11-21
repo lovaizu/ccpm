@@ -1,7 +1,9 @@
 """The unit cases of lane/adapters/rules.py, the steps that rn gives Lane: `steps`, one for each
-event of the orchestrator's turn, the hearing of /rn:on, the user's words after it beside no run, a
-run signed off, one whose worktree isn't here, and one done, an answer in the run that a
-conversation of /rn:on made, a pick-up of one run among none, one, and several, newest by its last
+event of the orchestrator's turn, the hearing of /rn:on, first or typed again, the user's words
+after it beside no run, a run signed off, one whose worktree isn't here, one done, and a newer one
+whose plan waits, the words after /rn:on typed again, an answer, a role's end, and a sign-off in the
+run that a conversation of /rn:on made, though another is newer, made the day before, or not made, a
+turn after /rn:up typed in it, a pick-up of one run among none, one, and several, newest by its last
 commit, its worktree there or gone, a sign-off, a pause, a send-back, an answer, another prompt, a
 role's end as Claude Code gives it, and a prompt that nearly names a command, and a turn other than
 the hearing and a new request with no run or outside a git repository; each step of a turn, the last
@@ -42,11 +44,20 @@ NAME = f"{date.today():%Y%m%d}-{rn_files.NAMED}"
 ENDED = line(RUN, "writer's end reaches the main conversation")["payload"]["prompt"]
 
 
-def given(role: str, prompt: str, skill: str = "rn:up") -> dict[str, Any]:
+def given(
+    role: str, prompt: str, skill: str = "rn:up", turns: Sequence[Mapping[str, str]] = ()
+) -> dict[str, Any]:
     """What Lane gives the adapter, read from the JSON of its text, the run's words empty, as rn's
-    commands take none but /rn:gm's."""
-    text = json.dumps({"run": {"skill": skill, "words": ""}, "role": role, "prompt": prompt})
+    commands take none but /rn:gm's, with the earlier turns given, none unless given."""
+    run = {"skill": skill, "words": ""}
+    text = json.dumps({"run": run, "role": role, "prompt": prompt, "turns": list(turns)})
     return json.loads(text)
+
+
+# The earlier turns of a conversation of /rn:on: its first turn, the hearing, with an empty prompt;
+# and that turn and the request, the user's words after it.
+HEARD = [{"role": "rn:on", "prompt": ""}]
+ASKED = [*HEARD, {"role": "rn:on", "prompt": WORDS}]
 
 
 def script(name: str, subcommand: str) -> str:
@@ -203,17 +214,19 @@ def take(repo: str, name: str = NAME) -> tuple[str, list[str]]:
 
 
 @pytest.mark.supports("test_rn_on_asks_what_to_make_writing_nothing_and_running_no_command")
-@pytest.mark.parametrize("prompt", ["", "/rn:on"], ids=["first-turn", "typed-again"])
+@pytest.mark.parametrize(
+    ("prompt", "turns"), [("", []), ("/rn:on", ASKED)], ids=["first-turn", "typed-again"]
+)
 def test_the_hearing_takes_hear_alone_writing_nothing_and_running_no_command(
-    repo: str, prompt: str
+    repo: str, prompt: str, turns: list[dict[str, str]]
 ):
     """Given a repository with a run whose plan waits, and a turn of /rn:on, the run's first or
-    typed again
+    typed again after a request
     When the adapter gives the turn's steps
     Then they are `hear` alone, writing nothing and running no command, with no rule of results,
     as it's the turn's last"""
     a_run(repo, tree=unsigned())
-    steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on"), repo, RN)
+    steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on", turns=turns), repo, RN)
     assert shown(steps) == [HEAR]
 
 
@@ -222,14 +235,15 @@ def test_the_hearing_takes_hear_alone_writing_nothing_and_running_no_command(
 )
 @pytest.mark.parametrize(
     "before",
-    ["none", "signed", "no-worktree", "done"],
+    ["none", "signed", "no-worktree", "done", "waiting"],
 )
 def test_the_words_after_the_hearing_start_by_repository_py_new_then_the_shared_steps(
     repo: str, before: str
 ):
     """Given a repository with no run, a run whose plan is signed off, a run with its plan waiting
-    whose worktree isn't here, or a run whose every deliverable is done, and a turn of rn:on whose
-    prompt is the user's words
+    whose worktree isn't here, a run whose every deliverable is done, or a paused run here, newest
+    by its last commit, whose plan waits on its sign-off; and a turn of rn:on whose prompt is the
+    user's words, after the run's first turn, the hearing
     When the adapter gives the turn's steps
     Then they are `start`, running only repository.py new, and the shared steps on the run named
     from today and the words"""
@@ -240,23 +254,96 @@ def test_the_words_after_the_hearing_start_by_repository_py_new_then_the_shared_
         a_run(repo, other, unsigned(other), worktree=False)
     elif before == "done":
         a_run(repo, other, done_tree(other))
-    steps = ADAPTER.steps(given("rn:on", WORDS, skill="rn:on"), repo, RN)
+    elif before == "waiting":
+        a_run(repo, other, unsigned(other), when="2026-11-21T09:00:00")
+    steps = ADAPTER.steps(given("rn:on", WORDS, skill="rn:on", turns=HEARD), repo, RN)
     assert shown(steps) == relative([START, *shared(repo)], repo)
 
 
 @pytest.mark.supports(
-    "test_a_point_only_the_user_can_settle_is_kept_open_and_their_answer_written_by_user"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
-@pytest.mark.parametrize("prompt", ["yes", "with each invoice"], ids=["goal", "point"])
+def test_the_words_after_the_hearing_typed_again_start_a_new_run(repo: str):
+    """Given the run that a conversation of /rn:on made, its plan waiting, and a turn of rn:on whose
+    prompt is the user's words for another run, after /rn:on typed again
+    When the adapter gives the turn's steps
+    Then they are `start` and the shared steps on the run named from today and the new words"""
+    a_run(repo, tree=unsigned())
+    turns = [*ASKED, {"role": "rn:on", "prompt": "/rn:on"}]
+    steps = ADAPTER.steps(given("rn:on", "Receipts", skill="rn:on", turns=turns), repo, RN)
+    other = f"{date.today():%Y%m%d}-receipts"
+    assert shown(steps) == relative([START, *shared(repo, other)], repo)
+
+
+@pytest.mark.supports(
+    "test_a_point_only_the_user_can_settle_is_kept_open_and_their_answer_written_by_user",
+    "test_an_answer_after_the_request_goes_into_the_run_the_request_made",
+)
+@pytest.mark.parametrize(
+    "prompt", ["yes", "with each invoice", ENDED], ids=["goal", "point", "role-end"]
+)
 def test_an_answer_in_a_conversation_of_rn_on_takes_it_into_the_run_it_made(repo: str, prompt: str):
-    """Given the run that a conversation of /rn:on made, its plan waiting, newer than a run whose
-    plan is signed off, and a turn of rn:on whose prompt is the user's answer
+    """Given the run that a conversation of /rn:on made from the request's words, its plan waiting,
+    and another paused run, newer by its last commit, whose plan waits too; and a turn of rn:on
+    after the hearing and the request, whose prompt is the user's answer or a role's end
     When the adapter gives the turn's steps
     Then they are `take` and the shared steps on the run made, not a new request"""
-    a_run(repo, "20261101-old", when="2026-11-01T09:00:00")
     a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
-    steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on"), repo, RN)
+    a_run(repo, "20261101-old", unsigned("20261101-old"), when="2026-11-21T09:00:00")
+    steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on", turns=ASKED), repo, RN)
     assert shown(steps) == relative([take(repo), *shared(repo)], repo)
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+def test_an_answer_after_midnight_takes_it_into_the_run_made_the_day_before(repo: str):
+    """Given the run that a conversation of /rn:on made from the request's words the day before,
+    and a turn of rn:on after the hearing and the request, whose prompt is the user's answer
+    When the adapter gives the turn's steps
+    Then they are `take` and the shared steps on the run made the day before"""
+    name = f"{date.fromordinal(date.today().toordinal() - 1):%Y%m%d}-{rn_files.NAMED}"
+    a_run(repo, name, unsigned(name))
+    steps = ADAPTER.steps(given("rn:on", "yes", skill="rn:on", turns=ASKED), repo, RN)
+    assert shown(steps) == relative([take(repo, name), *shared(repo, name)], repo)
+
+
+@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
+def test_a_signoff_in_a_conversation_of_rn_on_records_it_on_the_run_it_made(repo: str):
+    """Given the run that a conversation of /rn:on made, and another run, newer by its last commit;
+    and a turn of rn:ty, /rn:ty typed after the hearing, the request, and an answer
+    When the adapter gives the turn's steps
+    Then they are `record` and the shared steps on the run made"""
+    a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
+    a_run(repo, "20261101-old", when="2026-11-21T09:00:00")
+    turns = [*ASKED, {"role": "rn:on", "prompt": "yes"}]
+    steps = ADAPTER.steps(given("rn:ty", "/rn:ty", skill="rn:on", turns=turns), repo, RN)
+    assert shown(steps) == relative(
+        [step("record", commands(script("tree", "signoff")), BLOCKED), *shared(repo)], repo
+    )
+
+
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+def test_an_answer_after_a_request_that_made_no_run_takes_find_alone(repo: str):
+    """Given a repository with another run but none of the request's words, as a refused `new`
+    leaves it, and a turn of rn:on after the hearing and the request
+    When the adapter gives the turn's steps
+    Then they are `find` alone, running only repository.py find"""
+    a_run(repo, "20261101-old")
+    steps = ADAPTER.steps(given("rn:on", "yes", skill="rn:on", turns=ASKED), repo, RN)
+    assert shown(steps) == [step("find", commands(script("repository", "find")))]
+
+
+@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
+def test_a_turn_after_a_pick_up_in_a_conversation_of_rn_on_takes_the_newest_run(repo: str):
+    """Given the run that a conversation of /rn:on made, and another run, newer by its last commit;
+    and a turn of rn:up, an answer after the hearing, the request, and /rn:up typed
+    When the adapter gives the turn's steps
+    Then they are `take` and the shared steps on the newest run, the one that the pick-up found"""
+    a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
+    a_run(repo, "20261101-old", when="2026-11-21T09:00:00")
+    turns = [*ASKED, {"role": "rn:up", "prompt": "/rn:up"}]
+    steps = ADAPTER.steps(given("rn:up", "yes", skill="rn:on", turns=turns), repo, RN)
+    old = "20261101-old"
+    assert shown(steps) == relative([take(repo, old), *shared(repo, old)], repo)
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
@@ -330,7 +417,6 @@ def test_a_pause_stops_the_roles_then_pauses_with_no_shared_step(repo: str):
         ("rn:up", "with each invoice"),
         ("rn:ty", "What's left?"),
         ("rn:up", ENDED),
-        ("rn:on", ENDED),
         ("rn:up", "/rn:onx"),
     ],
     ids=[
@@ -339,7 +425,6 @@ def test_a_pause_stops_the_roles_then_pauses_with_no_shared_step(repo: str):
         "answer",
         "other-prompt",
         "role-end",
-        "role-end-of-on",
         "near-command",
     ],
 )
@@ -349,7 +434,7 @@ def test_each_other_event_takes_it_then_keeps_the_shared_steps(repo: str, role: 
     When the adapter gives the turn's steps
     Then they are `take`, writing only the run's design tree and running no command, and the
     shared steps, on that run"""
-    a_run(repo, tree=unsigned() if role == "rn:on" else None)
+    a_run(repo)
     assert shown(ADAPTER.steps(given(role, prompt), repo, RN)) == relative(
         [take(repo), *shared(repo)], repo
     )
@@ -380,13 +465,13 @@ def test_a_turn_other_than_a_new_request_with_no_run_takes_find_alone(
 
 
 TURNS = {
-    "new request": ("rn:on", WORDS, "rn:on"),
-    "pick-up": ("rn:up", "/rn:up", "rn:up"),
-    "sign-off": ("rn:ty", "/rn:ty", "rn:up"),
-    "pause": ("rn:dn", "/rn:dn", "rn:up"),
-    "send-back": ("rn:gm", "/rn:gm the guide first", "rn:up"),
-    "answer": ("rn:up", "yes", "rn:up"),
-    "role-end": ("rn:up", ENDED, "rn:up"),
+    "new request": ("rn:on", WORDS, "rn:on", HEARD),
+    "pick-up": ("rn:up", "/rn:up", "rn:up", []),
+    "sign-off": ("rn:ty", "/rn:ty", "rn:up", []),
+    "pause": ("rn:dn", "/rn:dn", "rn:up", []),
+    "send-back": ("rn:gm", "/rn:gm the guide first", "rn:up", []),
+    "answer": ("rn:up", "yes", "rn:up", []),
+    "role-end": ("rn:up", ENDED, "rn:up", []),
 }
 
 
@@ -398,8 +483,8 @@ def test_each_step_of_a_turn_but_its_last_ends_on_blocked(repo: str, event: str)
     Then each step but the last holds the rule that ends the turn on blocked, and the last holds
     no rule of results, as Lane judges it at each end with every step done"""
     a_run(repo)
-    role, prompt, skill = TURNS[event]
-    each = ADAPTER.steps(given(role, prompt, skill=skill), repo, RN)["steps"]
+    role, prompt, skill, turns = TURNS[event]
+    each = ADAPTER.steps(given(role, prompt, skill=skill, turns=turns), repo, RN)["steps"]
     assert [BLOCKED in s["rules"] for s in each] == [True] * (len(each) - 1) + [False]
     assert not [r for r in each[-1]["rules"] if r["type"] == "result"]
 
@@ -769,7 +854,7 @@ def test_main_gives_0_with_the_steps_as_one_line_of_json(repo: str):
     """Given Lane's input of a new request's turn as JSON on standard input
     When main runs
     Then it gives 0, the steps that `steps` gives as one line of JSON, and nothing on stderr"""
-    text = json.dumps(given("rn:on", WORDS, skill="rn:on"))
+    text = json.dumps(given("rn:on", WORDS, skill="rn:on", turns=HEARD))
     code, out, err = ADAPTER.main(text, repo, RN)
     assert (code, err) == (0, "")
     assert out.endswith("\n") and out.count("\n") == 1
@@ -777,9 +862,13 @@ def test_main_gives_0_with_the_steps_as_one_line_of_json(repo: str):
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
-@pytest.mark.parametrize("stdin", ["", "{run", "[]"])
+@pytest.mark.parametrize(
+    "stdin",
+    ["", "{run", "[]", '{"run": {"skill": "rn:up", "words": ""}, "role": "rn:up", "prompt": ""}'],
+)
 def test_main_gives_1_where_its_input_isnt_lanes_json(cwd: str, stdin: str):
-    """Given standard input that's empty, not JSON, or JSON of another form
+    """Given standard input that's empty, not JSON, JSON of another form, or a turn with no
+    `turns`
     When main runs
     Then it gives 1, nothing on stdout, and `rules.py: ` with what's wrong on stderr"""
     code, out, err = ADAPTER.main(stdin, cwd, RN)

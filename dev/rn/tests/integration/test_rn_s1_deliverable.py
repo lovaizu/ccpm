@@ -34,6 +34,7 @@ from rn_bench import (
     made_command,
     marked,
     next_round,
+    planned_tree,
     pointed,
     put_up,
     put_up_plan,
@@ -52,6 +53,7 @@ from rn_bench import (
     written_tree,
 )
 from rn_files import COMMAND, GOAL, GUIDE
+from rn_runs import branch_run
 
 
 def log(b: Bench, ref: str) -> list[str]:
@@ -79,6 +81,24 @@ def test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_
     assert git(b.repo, "branch", "--show-current").strip() == "main"
     assert git(b.repo, "rev-parse", "main").strip() == head
     assert git(b.repo, "status", "--porcelain").strip() == ""
+
+
+@pytest.mark.supports("S1", "Design tree")
+def test_an_answer_after_the_request_goes_into_the_run_the_request_made(b: Bench):
+    """Given invoicer's repository with a paused run 20261101-old, newest by its last commit, whose
+    plan waits on its sign-off
+    When the user types /rn:on, then the walkthrough's words, and the orchestrator makes the run by
+    repository.py new and keeps the shared steps; and the user confirms the goal, and the
+    orchestrator writes the plan into the run's design tree and keeps the shared steps
+    Then Lane lets each move through, and the run made holds the plan, 20261101-old's tree as it
+    was"""
+    old = "20261101-old"
+    waiting = rn_files.tree([rn_files.plan(old, good=False)], goal=GOAL, by="reasoning")
+    folder = branch_run(b.repo, old, waiting, "2099-01-01T09:00:00")
+    c = requested(b)
+    confirmed(b, c)
+    assert b.tree() == planned_tree(b, answered=False)
+    assert rn_files.read_json(os.path.join(folder, "design-tree.json")) == waiting
 
 
 @pytest.mark.supports("S1")

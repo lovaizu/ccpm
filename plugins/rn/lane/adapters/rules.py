@@ -22,9 +22,8 @@ import practice
 from check import form
 from fault import Wrong, end
 from repository import host
-from repository.place import RunPlace, named
+from repository.place import RunPlace, made, named
 from repository.worktree import newest
-from tree import form as tree_form
 
 # The orchestrator's roles, the skills of rn that a run stands on, and rn's subagents.
 _ORCHESTRATOR = ("rn:on", "rn:up", "rn:dn", "rn:ty", "rn:gm")
@@ -49,25 +48,28 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     repository, such as the people's starting state or rn's best practices, comes as `../...`, and
     each command of rn's scripts as `python3 <plugin_root>/scripts/<script> <subcommand>`.
 
-    Takes: the turn or the start as Lane gives it; the folder that the conversation works in, the
+    Takes: the turn or the start as Lane gives it, a turn with each earlier turn of the run in
+    `turns`; the folder that the conversation works in, the
     top of the user's repository; and rn's folder.
     Gives, for a turn of the orchestrator, whose role is the skill of rn that the run stands on,
     `rn:on`, `rn:up`, `rn:dn`, `rn:ty`, or `rn:gm`, the steps of the event that its prompt starts,
     the run's first turn's by its skill, each held in order and run on the run's folder:
     - for `/rn:on`, the hearing, `hear` alone, writing nothing and running no command, as the
       orchestrator asks the user what they want to make;
-    - for a new request, a prompt of the user's words in a turn of `rn:on`, while no run made in
-      the conversation lies, the run that `repository.worktree.newest` gives lying with no
-      worktree here or with its plan, the deliverable of the kind `design-tree`, done: `start`,
-      running only `repository.py new`, on the run that `place.named` names from today and the
-      words;
-    - else, on the run that `repository.worktree.newest` gives, the event's own step: for a
+    - for a new request, a prompt of the user's words in a turn whose latest earlier turn in
+      `turns` is that of `/rn:on`, the run's first with an empty prompt or one whose prompt is the
+      typed command: `start`, running only `repository.py new`, on the run that `place.named`
+      names from today and the words;
+    - else, on the run that the turn concerns, the event's own step: for a
       pick-up, `/rn:up`, `find`, running only `repository.py find`; for a sign-off, `/rn:ty`,
       `record`, running only `tree.py signoff`; for a send-back, `/rn:gm`, an answer, any other
       prompt of the person, and a role's end, a subagent's end as Claude Code gives it, `take`,
       writing only the run's design tree and running no command; and for a pause, `/rn:dn`,
       `stop`, writing nothing, and `pause`, running only `repository.py pause`, with no step
-      after them;
+      after them. The run that the turn concerns is, where the latest turn that typed `/rn:on` or
+      `/rn:up`, the turn's own among them, typed `/rn:on`, the run that the request, the turn
+      right after it, made, as `place.made` finds it from the request's words, on whichever day
+      it was made; else the run that `repository.worktree.newest` gives;
     - after the event's own step, for each event but a pause, the steps that every event shares:
       `review`, writing only the run's design tree and running only `find` and `grep`, the Glob
       and Grep tools going through, as the tools that search differ by OS; `touched`, writing
@@ -79,8 +81,9 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     origin names no default branch, ends the turn. The last step keeps no such rule, as Lane
     judges the last step's result rule at each end with every step done, and would stop each end
     with no result. A turn other than the hearing and a new request, in a repository with no run
-    to pick up, takes the step `find` alone, running only `repository.py find`, so that the
-    orchestrator asks the user which run to pick up, and the turn ends.
+    to pick up, or after a request that made no run, takes the step `find` alone, running only
+    `repository.py find`, so that the orchestrator asks the user which run to pick up, and the
+    turn ends.
     For `rn:generator`, whose prompt is the path of its Cut from `cwd`, the steps `read`, `decide`,
     `make`, `try`, and `check`, each held in order: `read` reading whole the Cut, the best
     practice's `best-practice.md`, which every best practice's folder holds, so that a folder
@@ -107,7 +110,7 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     """
     role, prompt = given["role"], given["prompt"]
     if role in _ORCHESTRATOR:
-        return {"steps": _turn(given["run"], role, prompt, cwd, plugin_root)}
+        return {"steps": _turn(given, cwd, plugin_root)}
     if role == "rn:generator":
         return {"steps": _generator(_cut(prompt, cwd, "generator"), prompt, cwd, plugin_root)}
     if role == "rn:evaluator":
@@ -118,16 +121,18 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     )
 
 
-def _turn(run: Given, role: str, prompt: str, cwd: str, plugin_root: str) -> list[Steps]:
+def _turn(given: Given, cwd: str, plugin_root: str) -> list[Steps]:
     """The steps of the orchestrator's turn, by the event that its prompt starts: the run's first
     turn's by its skill."""
-    said = prompt.strip() or f"/{run['skill']}"
-    command = said.partition(" ")[0] if said.startswith("/rn:") else ""
+    skill = given["run"]["skill"]
+    said = _said(given["prompt"], skill)
+    command = _command(said)
     if command == "/rn:on":
         return [_step("hear", _writes(cwd, []), _commands(plugin_root))]
-    found = newest(cwd, host.run)
+    typed = [_command(_said(each["prompt"], skill)) for each in given["turns"]]
     find = _commands(plugin_root, ("repository", "find"))
-    if role == "rn:on" and not command and not _unsigned(found):
+    found = _run_of(given, [*typed, command], cwd)
+    if not command and typed[-1:] == ["/rn:on"]:
         place = RunPlace(cwd, named(date.today(), said))
         own = _step("start", _commands(plugin_root, ("repository", "new")), _BLOCKED)
     elif found is None:
@@ -165,14 +170,28 @@ def _turn(run: Given, role: str, prompt: str, cwd: str, plugin_root: str) -> lis
     ]
 
 
-def _unsigned(run: RunPlace | None) -> bool:
-    """Whether the run lies here with its plan, the deliverable of the kind `design-tree`, not
-    done, as the run that a conversation of `/rn:on` made stands until the user signs its plan off
-    by `/rn:ty`."""
-    if run is None or not os.path.isfile(run.tree):
-        return False
-    deliverables = tree_form.read(run.tree)["deliverables"]
-    return any(each["kind"] == "design-tree" and each["status"] != "done" for each in deliverables)
+def _said(prompt: str, skill: str) -> str:
+    """What a turn's prompt says: the prompt, or, for the run's first turn, whose prompt is empty,
+    the command of the run's skill."""
+    return prompt.strip() or f"/{skill}"
+
+
+def _command(said: str) -> str:
+    """The command of rn that a turn's words type, such as `/rn:ty`, or `` for none."""
+    return said.partition(" ")[0] if said.startswith("/rn:") else ""
+
+
+def _run_of(given: Given, typed: list[str], cwd: str) -> RunPlace | None:
+    """The run that the turn concerns, from the command that each turn of the run typed, the turn's
+    own last: where the latest `/rn:on` or `/rn:up` is `/rn:on`, the run that the request, the turn
+    right after it, made, found by the request's words, or None before the request; else the run
+    that `repository.worktree.newest` gives, as `/rn:up` picks it up."""
+    begun = [i for i, each in enumerate(typed) if each in ("/rn:on", "/rn:up")]
+    if not begun or typed[begun[-1]] == "/rn:up":
+        return newest(cwd, host.run)
+    request = begun[-1] + 1
+    turns = given["turns"]
+    return made(cwd, turns[request]["prompt"]) if request < len(turns) else None
 
 
 def _cut(prompt: str, cwd: str, role: str) -> Given:
@@ -327,7 +346,8 @@ def main(stdin: str, cwd: str, plugin_root: str) -> tuple[int, str, str]:
 
     Takes: what Lane writes on its standard input, the folder it runs in, and rn's folder.
     Gives: 0 with `steps`'s output as one line of JSON; 1 with `rules.py: <what's wrong>` where the
-    input isn't JSON or `steps` refuses it as Wrong. Lane stops the turn or the start on any but 0.
+    input isn't JSON, lacks any of `run`, `role`, `prompt`, and `turns`, or `steps` refuses it as
+    Wrong. Lane stops the turn or the start on any but 0.
     Changes: nothing.
     Refuses: nothing; each fault is its exit code.
     """
@@ -336,7 +356,7 @@ def main(stdin: str, cwd: str, plugin_root: str) -> tuple[int, str, str]:
     except ValueError as error:
         return 1, "", f"rules.py: its input isn't JSON: {error}\n"
     try:
-        if not isinstance(given, dict) or not {"run", "role", "prompt"} <= set(given):
+        if not isinstance(given, dict) or not {"run", "role", "prompt", "turns"} <= set(given):
             raise Wrong("its input isn't a start or a turn as Lane gives it")
         return 0, json.dumps(steps(given, cwd, plugin_root)) + "\n", ""
     except Wrong as wrong:
