@@ -38,10 +38,11 @@ At your repository's root in Claude Code, `/rn:on` asks what you want to make.
 
 ## Walkthrough
 
-At the end, you have a pull request that adds a command and its guide for your accounting team.
+At the end, you have a pull request that adds a command and a guide for your accounting team.
 
-`invoicer`, a Python library that your team calls, renders invoices. Your accounting team writes no
-Python, so they ask a developer for each invoice. You type:
+This run comes from an end-to-end test of rn, with its talk in Japanese. Your accounting team asks
+a developer for each invoice, and you want them to print it themselves. At your repository's root in Claude Code,
+you type:
 
 ```text
 /rn:on
@@ -56,121 +57,142 @@ What do you want to make?
 You type:
 
 ```text
-a command with which the accounting team prints an invoice from its lines, without writing Python
+経理チームが、Python を書かずに、明細から請求書を印刷できるコマンドがほしい
+```
+
+rn puts the goal in its words, and proposes Japanese for the deliverables and for its talk:
+
+```text
+目標の確認です。私なりにまとめると次のとおりです。
+
+目標:
+  経理チームが、開発者の手を借りずに、明細から請求書を自分たちで印刷できるようにする。経理チームの人は、ガイドだけを見ながら、明細ファイルからコマンド一つで請求書を印刷する。
+  (コマンドとガイドは日本語で作り、このやり取りも日本語で進めます)
+この理解で合っていますか?
+```
+
+You type `はい`. rn asks whether to set down the rules of an invoice first, such as the issuer's
+registration number:
+
+```text
+ひとつ、決めていただきたいことがあります。
+  請求書のレイアウトを作る前に、請求書の書き方の決まりごと(インボイス制度で必要な記載事項、たとえば登録番号、税率ごとの合計と消費税額、交付先の名前など)を先にまとめるべきかどうかです。まとめておけば、印刷した請求書がそのまま取引先に出せることを確かめながら作れます。まとめなければ、その分早く着手できますが、記載事項の抜けは印刷されるまで気づきにくくなります。
+  先にまとめることをおすすめします。請求書には決まった書き方があり、記載事項が欠けた請求書は経理チームが使えないからです。
+
+請求書の決まりごとを先にまとめますか?(おすすめ:はい)
+```
+
+You type `はい`. rn shows its plan:
+
+```text
+計画ができました。ご承認ください。
+  1. 経理チームが明細から請求書を印刷できるまでの計画
+  2. 請求書の決まりごと(インボイス制度の記載事項など)をまとめたもの
+  3. 経理チームが何のために、どこまでできれば足りるかの整理
+  4. 経理チーム向けのガイド(ガイドだけを見て準備から印刷までできるもの)
+  5. 明細の読み込みから請求書の印刷までの全体の組み立て
+  6. コマンドの各部品の役割と呼び出し方
+  7. 守るべき振る舞いを確かめるテストケースの一覧
+  8. 明細ファイルを渡すだけで請求書を印刷できるコマンド本体
+  請求書のレイアウトそのものは、2 の決まりごとができてから計画に加えます。
+  変更内容: https://github.com/lovaizu/playground/pull/38/files
+承認する場合は /rn:ty、変えたい点がある場合は /rn:gm に続けてその内容を入力してください。
+```
+
+You type `/rn:ty`. rn makes the deliverables, and you sign off the rules of an invoice and the
+team's aim, each with `/rn:ty`. While it makes the guide, rn asks you three questions in the same
+form as the first. To printing the registration number and the tax of each rate, you answer
+`載せる`. To a license, you answer `社内だけで使うので付けない`. To where the team asks for help,
+you answer `このリポジトリの Issues にしてください`.
+
+rn shows the guide:
+
+```text
+「経理チーム向けのガイド」ができました。ご承認ください。
+  これでできること:経理チームのメンバーが、このガイドだけを見て次のことを確かめられます。invoice が自分たちの仕事に合うか、準備に何が要るか、どんな請求書が出てくるか、つまずいたらどうするか。ただし、まだ開発中なので、いまはインストールも印刷もできません。
+  ご相談せずに決めたこと:
+  - 使う環境は Windows の PowerShell にしました
+  - インストールは、配布ファイル(invoice 0.1.0)を uv というツールで入れる3行の手順にしました。配布ファイルはまだありません
+  - 発行者の名称・登録番号・振込先などは、初回の実行で一度だけ尋ねます
+  - 消費税の端数は、税率ごとに一度だけ切り捨てます
+  - 明細の CSV に必要な7つの列と、単価の税抜・税込の示し方を書きました
+  - 「できないこと」には「明細を作ったり直したりはしない」を挙げました
+  - 「ほかの資料」には、経理チームが開けるページと Issues だけを載せました
+  ほかに直せる点の提案:
+  - 冒頭に「いまはインストールのコマンドもまだ通らない」と書き添える。いまは、試した人が見慣れないエラー(404)に出会い、開発者に尋ねてしまいます
+  - インストールの3行がエラーなく通り、最後に「invoice 0.1.0」と出るのを確かめる。コマンド本体の配布ができてからでないと確かめられません
+  変更内容: https://github.com/lovaizu/playground/pull/38/files
+承認する場合は /rn:ty、変えたい点がある場合は /rn:gm に続けてその内容を入力してください。
+```
+
+Your team works on Linux, which rn didn't know. You type:
+
+```text
+/rn:gm 経理チームは Linux のノートPCを使っていて、明細は LibreOffice Calc で管理しています。Windows の PowerShell ではなく、Linux の端末で動く手順にしてください
 ```
 
 rn shows:
 
 ```text
-The goal, as I'd put it:
-  The accounting team prints each invoice themselves from the lines they keep in a
-  spreadsheet, without asking a developer.
-The deliverables in English, and our talk in English.
-Is that what you're after?
+ご指摘のとおり、ガイドを Linux の端末向けに作り直しています。直すのは次の2つで、明細は LibreOffice Calc から CSV で書き出す前提にします。
+- インストール手順
+- 「使ってみる」の実行例
+
+ほかに直せる点として出した2つの提案は、今回のご指示に含まれていなかったので取り下げました。
 ```
 
-You type:
+rn shows the guide again, made for the Linux terminal, and you type `/rn:ty`. In the same form,
+you then sign off the architecture, the invoice's layout, the command's parts, and their tests. For the parts, you take one of rn's proposals with `/rn:gm`.
+
+Once rn has made the command, it asks:
 
 ```text
-yes
+ひとつ、決めていただきたいことがあります。
+  承認済みの「部品の役割」と「テストケースの一覧」を、いまのコマンド本体の振る舞いに合わせて直し直すかどうかです。
+  コマンド本体には、あとから決めた点が入っています。
+  - 全角の数字・英字・記号は半角に、半角カナは全角に読み替える
+  - 取引日は「2026/11/20」の形も受け付ける
+  - 明細の行は取引日の順に並べる
+  - 宛先の敬称を会社の形から決める
+  ところが、承認済みの2つの文書は、まだ「明細の順に並べる」と書いていたり、これらを「決まっていない」としていたりします。このままだと、あとでコマンドを直す人は、文書とコードのどちらが正しいのか分かりません。
+  - 直す場合:「部品の役割」と「テストケースの一覧」をもう一度作り直します。コマンド本体はそのあとで手直しし、テストを文書のケースと一対一に合わせます。
+  - 直さない場合:文書と食い違ったまま、コマンド本体の残りの手直し(依存の版の固定と、テストで結果をまるごと確かめること)だけ進めます。
+  直すことをおすすめします。コマンドを守っていく人が、文書だけを頼りに正しい振る舞いを確かめられるようにするためです。
+
+承認済みの2つの文書を、コマンド本体の振る舞いに合わせて作り直しますか?(おすすめ:作り直す)
 ```
 
-rn shows:
+You type `作り直してください`, and sign off the two remade documents and the command, each with
+`/rn:ty`. rn shows:
 
 ```text
-A question that's yours:
-  Should the tax rate be given with each invoice, or set once?
-  I recommend setting it once, as the rate rarely changes.
+完了しました。プルリクエストはマージできる状態です: https://github.com/lovaizu/playground/pull/38
+
+マージする前に、2点確認してください。
+- 古いテスト `invoice/tests/unit/test_width.py` と `test_sheet.py` の削除が、このプルリクエストに含まれているかを、私はまだ確かめていません。残っていると、テストが走らなくなるおそれがあります。
+- インストール手順の3行目は、v0.1.0 のリリースを公開するまで 404 で止まります。経理チームがガイドどおりに invoice を入れられるのは、公開したあとです。
 ```
 
-You type:
-
-```text
-with each invoice
-```
-
-rn shows:
-
-```text
-The plan, for your sign-off:
-  1. A command that prints an invoice from a file of its lines, with the tax rate given each time
-  2. A guide from which the accounting team prints an invoice on its own
-/rn:ty to approve, or /rn:gm with what to change.
-```
-
-You type:
-
-```text
-/rn:ty
-```
-
-rn makes both deliverables. That evening, before rn finishes, you type:
-
-```text
-/rn:dn
-```
-
-rn shows:
-
-```text
-Paused "invoices for the accounting team" while making "A command that prints an invoice
-from a file of its lines".
-Its work so far is pushed. Type /rn:up in any conversation to go on.
-```
-
-The next day, in a new conversation, you type:
-
-```text
-/rn:up
-```
-
-rn shows:
-
-```text
-Picking up "invoices for the accounting team", making "A command that prints an invoice
-from a file of its lines", where it stopped.
-```
-
-Later, rn shows:
-
-```text
-"A command that prints an invoice from a file of its lines", for your sign-off:
-  What its people can do with it: anyone at a terminal prints an invoice from a file of
-  its lines with one command.
-  Decisions I took without asking:
-  - Read each line as invoicer already does, description;price;quantity, which a
-    spreadsheet saves as CSV with semicolons.
-  Changes: https://github.com/<owner>/invoicer/pull/12/files
-/rn:ty to approve, or /rn:gm with what to change.
-```
-
-You type:
-
-```text
-/rn:ty
-```
-
-rn shows the guide for your sign-off in the same form, and you type `/rn:ty` again.
-
-rn shows:
-
-```text
-Done. The pull request is ready for your merge: https://github.com/<owner>/invoicer/pull/12
-```
-
-On the pull request's branch, a colleague from accounting follows the guide alone. They save the
-lines from their spreadsheet as `lines.csv`, and type:
+A colleague from accounting follows the guide alone. They save the month's lines from LibreOffice
+Calc as CSV, open a terminal in that folder, and type one command. The command's end-to-end test
+checks this screen and the printed invoice:
 
 ```console
-$ python3 -m invoicer lines.csv --rate 0.19
-Hosting                              40.00 EUR
-Support hours                       120.00 EUR
-Subtotal                            160.00 EUR
-Tax                                  30.40 EUR
-Total                               190.40 EUR
+$ invoice 2026年11月分明細.csv
+はじめて使うので、発行者の情報を伺います。次からは聞きません。
+発行者の正式名称: 株式会社あおば事務用品
+登録番号(T と 13 桁の数字): T1234567890123
+締め日と支払条件(例: 月末締め翌月末払い): 月末締め翌月末払い
+お振込先の銀行名: さくら銀行
+支店名: 本店営業部
+口座種別(普通か当座): 普通
+口座番号: 1234567
+口座名義(カナ): カ)アオバジムヨウヒン
+株式会社みなと商事 御中: 請求書番号 2026-11-001、ご請求金額 51,980 円
+既定のプリンター「経理室プリンター」で 1 枚を印刷しました。
 ```
 
-You then merge the pull request.
+The next month, the command prints without a question. You then merge the pull request.
 
 ## How it works
 
