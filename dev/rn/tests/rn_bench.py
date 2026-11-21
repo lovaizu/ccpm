@@ -444,7 +444,9 @@ def generated(
         agent.write(os.path.join(b.worktree, path), content)
     items(c, agent, "make", rn_files.items_at(kind, "make"))
     marked(c, "make", agent)
-    seen = rn_files.conditions(kind) if good is None else list(good)
+    # A generator names in `good` the conditions of its deliverable, as rn checks them, which in a
+    # refactor Round are its content kind's, not those of the refactoring kind it makes by.
+    seen = [each["id"] for each in node["necessary_conditions"]] if good is None else list(good)
     first = next(iter(wrote.values())).splitlines()[0]
     result = rn_files.made([(each, [first]) for each in seen], list(wrote))
     agent.write(os.path.join(c.cwd, given["round"], "generator.json"), json.dumps(result))
