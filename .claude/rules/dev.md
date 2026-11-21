@@ -15,8 +15,8 @@ as rn runs it, by [rn's architecture](../../dev/rn/architecture.md).**
   ccpm's own plugins goes the way rn's architecture draws, and a lack that the work meets is a lack
   of rn's.
 
-**Until rn runs, the main conversation keeps the design tree `.rn/20261107-rn/design-tree.json`,
-and takes its deliverables from the top.** Each session resumes from the tree.
+**Until rn is released, the main conversation keeps the design tree
+`.rn/20261107-rn/design-tree.json`, and takes its deliverables from the top.** Each session resumes from the tree.
 
 - Rationale: the tree holds each decision and where the work stands, so a new session needs nothing
   else.
@@ -27,8 +27,8 @@ one it takes from, waits for, or whose check it rests on.**
 - Rationale: a deliverable added or changed in one place leaves another before what it rests on,
   and the work then starts it on a guess.
 
-**Until rn runs, the main conversation makes each document itself, with no evaluators: the best
-practices and their templates, the plugin guide, and each plugin's product vision, README, and
+**Until rn is released, the main conversation makes each document itself, with no evaluators: the
+best practices and their templates, the plugin guide, and each plugin's product vision, README, and
 architecture.** It makes each to its best practice and its template, and keeps only the vital few.
 
 - Rationale: rounds of evaluators work only once rn runs them. Run by hand, each round added what
