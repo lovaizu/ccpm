@@ -66,8 +66,10 @@ def answer(event: Event) -> Answer:
     """
     session = event["session_id"]
     answers = [run_opened(event, run) for run in place.opening(event, record.runs(session))]
+    # Read again, as an opening adds its run's folder; _placed reads once more, as a turn's
+    # opening adds the turn's steps, which hold the event's move.
     runs = record.runs(session)
-    answers.append(_turn_given(event, runs))
+    answers.append(_turn_begun_or_opened(event, runs))
     call = place.skill_call(event, runs)
     if call is not None:
         answers.append(skill_called(call))
@@ -87,7 +89,7 @@ def _placed(event: Event) -> Answer:
 
 
 @_checked
-def _turn_given(event: Event, runs: list[Run]) -> Answer:
+def _turn_begun_or_opened(event: Event, runs: list[Run]) -> Answer:
     """The answer of turn_begun, for the run whose next turn the event's prompt begins, and of
     turn_opened, for the turn whose steps the event is the first to need; an empty one where it
     reaches neither."""
