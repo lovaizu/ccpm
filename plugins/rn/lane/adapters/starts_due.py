@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(HERE, "..", "..", "domain"))
 import json
 from collections import Counter
 
-from fault import Wrong, end
+from fault import Answer, Wrong, end
 from repository import host
 from repository.place import RunPlace, of_folder
 from repository.worktree import newest
@@ -112,7 +112,7 @@ def _running(run: RunPlace, moves: list[Given], cwd: str) -> set[tuple[str, str]
     return {(role, path) for role, paths in pending.items() for path in paths}
 
 
-def main(stdin: str, cwd: str) -> tuple[int, str, str]:
+def main(stdin: str, cwd: str) -> Answer:
     """The exit code, stdout, and stderr of the adapter, as Lane runs it.
 
     Takes: what Lane writes on its standard input, and the folder it runs in.

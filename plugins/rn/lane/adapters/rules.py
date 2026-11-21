@@ -20,7 +20,7 @@ from datetime import date
 
 import practice
 from check import form
-from fault import Wrong, end
+from fault import Answer, Wrong, end
 from repository import host
 from repository.place import RunPlace, made, named
 from repository.worktree import newest
@@ -331,7 +331,7 @@ def _rel(path: str, cwd: str) -> str:
     return shown + "/" if path.endswith("/") else shown
 
 
-def main(stdin: str, cwd: str, plugin_root: str) -> tuple[int, str, str]:
+def main(stdin: str, cwd: str, plugin_root: str) -> Answer:
     """The exit code, stdout, and stderr of the adapter, as Lane runs it.
 
     Takes: what Lane writes on its standard input, the folder it runs in, and rn's folder.

@@ -9,7 +9,7 @@ from collections.abc import Sequence
 from typing import Any, Callable
 
 import practice
-from fault import CantRun, Missing, Wrong
+from fault import Answer, Wrong, answered
 from repository import push
 from repository.host import Host
 from repository.place import RunPlace, of_folder
@@ -34,7 +34,7 @@ usage: tree.py touched <run> [<pointer>]
 """
 
 
-def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
+def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     """The exit code, stdout, and stderr of `tree.py` with the arguments, from the folder `cwd`,
     with rn's folder at `plugin_root`, and git reached through `host`.
 
@@ -65,17 +65,13 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> tuple[i
     subcommand, least, most = _SUBCOMMANDS[argv[0]]
     if not least <= len(argv) - 1 <= most:
         return 2, "", USAGE
-    try:
-        return subcommand(of_folder(cwd, argv[1]), list(argv[2:]), cwd, plugin_root, host)
-    except (Wrong, Missing) as wrong:
-        return 1, "", f"tree.py: {wrong}\n"
-    except CantRun as stopped:
-        return 2, "", f"tree.py: {stopped}\n"
+    return answered(
+        "tree.py",
+        lambda: subcommand(of_folder(cwd, argv[1]), list(argv[2:]), cwd, plugin_root, host),
+    )
 
 
-def _touched(
-    run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
-) -> tuple[int, str, str]:
+def _touched(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     before, after = _committed(run, host), form.read(run.tree)
     if given:
         return 0, _lines(touched.touched(before, after, given[0])), ""
@@ -86,9 +82,7 @@ def _touched(
     return 0, _lines(list(dict.fromkeys(node for node in found if node not in made))), ""
 
 
-def _commit(
-    run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
-) -> tuple[int, str, str]:
+def _commit(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     tree = form.read(run.tree)
     practices = {
         kind: practice.read(folder)
@@ -103,9 +97,7 @@ def _commit(
     return 0, f"{push.commit(run, [path], given[0], host)}\n", ""
 
 
-def _cut(
-    run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
-) -> tuple[int, str, str]:
+def _cut(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     role, path = given
     tree = form.read(run.tree)
     node = form.deliverable(tree, path)
@@ -132,9 +124,7 @@ def _cut(
     return 0, f"{os.path.relpath(round_.cut(role), cwd)}\n", ""
 
 
-def _signoff(
-    run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
-) -> tuple[int, str, str]:
+def _signoff(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     tree = form.read(run.tree)
     nexts = {
         node["path"]: course.next_in(run, node)
@@ -177,7 +167,7 @@ def _lines(nodes: list[str]) -> str:
     return "".join(f"{each}\n" for each in nodes)
 
 
-_Subcommand = Callable[[RunPlace, list[str], str, str, Host], tuple[int, str, str]]
+_Subcommand = Callable[[RunPlace, list[str], str, str, Host], Answer]
 # Each subcommand, with its least and most count of arguments after its name, the run's among them.
 _SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int]] = {
     "touched": (_touched, 1, 2),

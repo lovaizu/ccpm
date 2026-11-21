@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import os
 
-from fault import Wrong
+from fault import Answer, Wrong, answered
 
 from template import check
 
@@ -26,7 +26,7 @@ _AFTER = (
 )
 
 
-def main(argv: list[str], cwd: str, plugin_root: str) -> tuple[int, str, str]:
+def main(argv: list[str], cwd: str, plugin_root: str) -> Answer:
     """The exit code, stdout, and stderr of `template.py` with the arguments, from the folder
     `cwd`, with rn's folder at `plugin_root`.
 
@@ -39,13 +39,10 @@ def main(argv: list[str], cwd: str, plugin_root: str) -> tuple[int, str, str]:
     2 with the usage where the arguments are other than a kind and a document."""
     if len(argv) != 2:
         return 2, "", USAGE
-    try:
-        return _template(argv[0], argv[1], cwd, plugin_root)
-    except Wrong as wrong:
-        return 1, "", f"template.py: {wrong}\n"
+    return answered("template.py", lambda: _template(argv[0], argv[1], cwd, plugin_root))
 
 
-def _template(kind: str, document: str, cwd: str, plugin_root: str) -> tuple[int, str, str]:
+def _template(kind: str, document: str, cwd: str, plugin_root: str) -> Answer:
     """The result of `template.py` on the document against the kind's template."""
     path = check.of_kind(plugin_root, kind)
     with open(path, encoding="utf-8") as file:

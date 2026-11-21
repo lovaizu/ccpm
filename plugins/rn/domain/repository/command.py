@@ -9,7 +9,7 @@ from datetime import date
 from typing import Callable
 
 import practice
-from fault import CantRun, Missing, Wrong
+from fault import Answer, answered
 from rounds import files
 
 from repository import commit_checks, place, push, trial, worktree
@@ -25,7 +25,7 @@ usage: repository.py new <words> <goal>
 """
 
 
-def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
+def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     """The exit code, stdout, and stderr of `repository.py` with the arguments, from the folder
     `cwd`, the top of the user's repository, with rn's folder at `plugin_root`, and git and gh
     reached through `host`.
@@ -52,15 +52,10 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> tuple[i
     given = list(argv[1:])
     if len(given) < least or (most is not None and len(given) > most):
         return 2, "", USAGE
-    try:
-        return subcommand(given, cwd, plugin_root, host)
-    except (Wrong, Missing) as wrong:
-        return 1, "", f"repository.py: {wrong}\n"
-    except CantRun as stopped:
-        return 2, "", f"repository.py: {stopped}\n"
+    return answered("repository.py", lambda: subcommand(given, cwd, plugin_root, host))
 
 
-def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
+def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     words, goal = given
     run = place.RunPlace(cwd, place.named(date.today(), words))
     design_tree = practice.read(
@@ -70,31 +65,31 @@ def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int,
     return 0, f"{os.path.relpath(made.folder, cwd)}\n", ""
 
 
-def _find(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
+def _find(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     found = worktree.found(cwd, host)
     return 0, f"{os.path.relpath(found.folder, cwd)}\n" if found else "", ""
 
 
-def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
+def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     return 0, f"{push.pause(place.of_folder(cwd, given[0]), host)}\n", ""
 
 
-def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
+def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     return 0, f"{push.put_up(place.of_folder(cwd, given[0]), given[1], host)}\n", ""
 
 
-def _checks(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
+def _checks(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     found = commit_checks.findings(place.of_folder(cwd, given[0]), given[1:], host)
     return (1 if found else 0), "".join(f"{each}\n" for each in found), ""
 
 
-def _trial(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
+def _trial(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     run = place.of_folder(cwd, given[0])
     round_ = files.at(run, os.path.join(cwd, given[1]))
     return 0, f"{trial.starting_state(run, round_, host)}\n", ""
 
 
-_Subcommand = Callable[[list[str], str, str, Host], tuple[int, str, str]]
+_Subcommand = Callable[[list[str], str, str, Host], Answer]
 # Each subcommand, with its least and most count of arguments after its name, None where it takes
 # any more.
 _SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int | None]] = {

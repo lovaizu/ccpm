@@ -8,7 +8,7 @@ import os
 from collections.abc import Sequence
 from typing import Any
 
-from fault import Wrong
+from fault import Answer, Wrong
 
 from check import form, result
 
@@ -17,7 +17,7 @@ usage: check.py <role> <cut>
 """
 
 
-def main(argv: Sequence[str], cwd: str, plugin_root: str) -> tuple[int, str, str]:
+def main(argv: Sequence[str], cwd: str, plugin_root: str) -> Answer:
     """The exit code, stdout, and stderr of `check.py` with the arguments, from the folder `cwd`,
     with rn's folder at `plugin_root`.
 

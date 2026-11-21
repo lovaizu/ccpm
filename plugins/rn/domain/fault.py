@@ -5,7 +5,10 @@ couldn't run; and how each ends, with what it prints and the exit code it gives.
 from __future__ import annotations
 
 import sys
-from typing import NoReturn
+from typing import Callable, NoReturn
+
+# What a command's `main` gives: the exit code, what goes to stdout, and what goes to stderr.
+Answer = tuple[int, str, str]
 
 
 class Wrong(Exception):
@@ -24,10 +27,22 @@ class CantRun(Exception):
     passes nothing it didn't check. The command gives 2."""
 
 
-def end(result: tuple[int, str, str]) -> NoReturn:
+def answered(script: str, call: Callable[[], Answer]) -> Answer:
+    """What the call gives, or, where it raises, the exit code of the fault with
+    `<script>: <what's wrong>`: 1 where the input is Wrong or something is Missing, and 2 where it
+    CantRun."""
+    try:
+        return call()
+    except (Wrong, Missing) as wrong:
+        return 1, "", f"{script}: {wrong}\n"
+    except CantRun as stopped:
+        return 2, "", f"{script}: {stopped}\n"
+
+
+def end(answer: Answer) -> NoReturn:
     """Ends the command with what its `main` gave: the exit code, what goes to stdout, and what
     goes to stderr."""
-    code, printed, said = result
+    code, printed, said = answer
     sys.stdout.write(printed)
     sys.stderr.write(said)
     raise SystemExit(code)
