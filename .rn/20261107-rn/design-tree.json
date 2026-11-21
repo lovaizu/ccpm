@@ -396,7 +396,7 @@
       "necessary_conditions": [
         {
           "id": "N1",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "The tests",
@@ -411,39 +411,43 @@
           "decisions": [
             {
               "about": "What the change reaches",
-              "decided": "all of Lane's hooks, guard.py and place.py first, with the three kinds of a turn's record, turn_begun, turn, and turn_ended, made one",
+              "decided": "all of Lane's hooks, guard.py and place.py first",
               "by": "user"
+            },
+            {
+              "about": "The kinds of a turn's record",
+              "decided": null
             }
           ]
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]
@@ -473,12 +477,16 @@
               "about": "The tests",
               "decided": "each integration case under dev/<plugin>/tests/integration stays as it is, word for word, as the proof of each behavior; a unit or property case that calls an internal moves or is rewritten to the new structure, each behavior it checks still checked, and only a check of an internal form that no longer exists goes",
               "by": "user"
+            },
+            {
+              "about": "The case that takes out the result check",
+              "decided": null
             }
           ]
         },
         {
           "id": "N2",
-          "good": false,
+          "good": true,
           "decisions": [
             {
               "about": "What the change reaches",
@@ -489,32 +497,32 @@
         },
         {
           "id": "N3",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N4",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N5",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N6",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N7",
-          "good": false,
+          "good": true,
           "decisions": []
         },
         {
           "id": "N8",
-          "good": false,
+          "good": true,
           "decisions": []
         }
       ]
@@ -582,12 +590,16 @@
   ],
   "work": [
     {
-      "do": "make",
-      "path": "plugins/lane/hooks/lane"
+      "do": "decide",
+      "path": "plugins/lane/hooks/lane",
+      "condition": "N2",
+      "about": "The kinds of a turn's record"
     },
     {
-      "do": "make",
-      "path": "plugins/rn/domain"
+      "do": "decide",
+      "path": "plugins/rn/domain",
+      "condition": "N1",
+      "about": "The case that takes out the result check"
     }
   ]
 }
