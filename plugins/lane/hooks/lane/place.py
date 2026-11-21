@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, replace
-from typing import Any, Callable, cast
+from typing import Any, Callable
 
 from named_files import named, of_call
 from order import StartsDue
@@ -260,19 +260,6 @@ def marked(run: Run, agent_id: str | None) -> set[str]:
     }
 
 
-def latest_start(run: Run, agent_id: str) -> Entry | None:
-    """The start that the subagent was last tied to.
-
-    Takes: the run, and the subagent's `agent_id`.
-    Gives: the run's `start` entry of the call of the subagent's latest tie; None where no start of
-    the run is tied to it.
-    Changes: nothing.
-    Refuses: nothing.
-    """
-    ties = [entry for entry in run.entries if _ties(entry, agent_id)]
-    return _start_of(run, ties[-1]["tool_use_id"]) if ties else None
-
-
 def _run_of(event: Event, runs: list[Run]) -> Run | None:
     """The run that the event belongs to: a command's, the standing run of its plugin; the main
     conversation's, the latest run not ended; a subagent's, the run of the start it's tied to."""
@@ -296,13 +283,14 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     if tool != "SendMessage":
         return call
     to = event["tool_input"].get("to", "")
-    resumed = latest_start(run, to)
+    resumed = run.state.tied.get(to)
     roles = [each["role"] for each in due(run).get("starts", [])]
-    ended = resumed is not None and _ended_start(run, to)
-    if call.agent_id is not None or not ended or resumed["role"] not in roles:
+    if call.agent_id is not None or resumed is None or not resumed.ended:
         return None
-    role, steps = _held(rules, resumed)
-    return Move("start", event, run, role, None, resumed["prompt"], steps, None, None)
+    if resumed.entry["role"] not in roles:
+        return None
+    role, steps = _held(rules, resumed.entry)
+    return Move("start", event, run, role, None, resumed.entry["prompt"], steps, None, None)
 
 
 def _after(event: Event, run: Run, rules: Rules) -> Move | None:
@@ -310,12 +298,12 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
     SendMessage that resumed its subagent, of the role and steps of that start; a read by a Read; a
     report by a reporter's Bash call; else none."""
     tool = event.get("tool_name")
-    start = _start_of(run, event["tool_use_id"])
+    start = run.state.calls.get(event["tool_use_id"])
     if start is not None:
         agent_id = (
             event["tool_response"]["agentId"] if tool == "Agent" else event["tool_input"]["to"]
         )
-        role, steps = _held(rules, start)
+        role, steps = _held(rules, start.entry)
         return Move("tie", event, run, role, agent_id, None, steps, None, None)
     if tool == "Read":
         return _read(event, run, rules)
@@ -331,7 +319,7 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
 
 def _failed(event: Event, run: Run, rules: Rules) -> Move | None:
     """The PostToolUseFailure of a start's Agent call as a `drop`; none of any other call."""
-    start = _start_of(run, event.get("tool_use_id", ""))
+    start = run.state.calls.get(event.get("tool_use_id", ""))
     return None if start is None else replace(_call(event, run, rules), kind="drop")
 
 
@@ -339,7 +327,7 @@ def _reached(event: Event, run: Run, rules: Rules) -> Move | None:
     """The UserPromptSubmit of a task-notification of a subagent of the run as its result
     reaching, by the subagent that its task-id names; none for any other prompt."""
     told = re.search(r"<task-notification>.*?<task-id>(.*?)</task-id>", event["prompt"], re.DOTALL)
-    if told is None or not any(_ties(entry, told[1]) for entry in run.entries):
+    if told is None or told[1] not in run.state.tied:
         return None
     return replace(_call(event, run, rules, told[1]), kind="result_reached")
 
@@ -364,7 +352,7 @@ def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> 
     first of its steps that it hasn't marked done."""
     agent_id = agent_id or event.get("agent_id")
     if agent_id is not None:
-        holder = cast(Entry, latest_start(run, agent_id))
+        holder = run.state.tied[agent_id].entry
     else:
         holder = run.state.turn.entry or {"role": _main_role(run, rules)}
     role, steps = _held(rules, holder)
@@ -384,11 +372,8 @@ def _main_role(run: Run, rules: Rules) -> str:
     give steps of or leave to the plugin's adapter of the rules at each turn, else the skill that
     called the run."""
     role = run.skill
-    for entry in run.entries:
-        command = entry.get("command", "")
-        if entry["kind"] == "typed" and (
-            start_steps(rules, command, None) or asks_adapter(rules, command)
-        ):
+    for command in run.state.commands:
+        if start_steps(rules, command, None) or asks_adapter(rules, command):
             role = command
     return role
 
@@ -399,14 +384,9 @@ def _rules_of(run: Run | None) -> Rules | None:
     return read_rules(run.plugin_root) if run is not None and run.plugin_root else None
 
 
-def _ended(run: Run) -> bool:
-    """Whether the run's order said it ends."""
-    return any(entry["kind"] == "ended" for entry in run.entries)
-
-
 def _standing(runs: list[Run]) -> Run | None:
     """The run that the main conversation's moves belong to: the latest that hasn't ended."""
-    return next((run for run in reversed(runs) if not _ended(run)), None)
+    return next((run for run in reversed(runs) if not run.state.ended), None)
 
 
 def _standing_of(runs: list[Run], skill: str) -> Run | None:
@@ -417,24 +397,7 @@ def _standing_of(runs: list[Run], skill: str) -> Run | None:
 
 def _tied(runs: list[Run], agent_id: str) -> Run | None:
     """The run of the start that the subagent is tied to."""
-    tied = (run for run in runs for entry in run.entries if _ties(entry, agent_id))
-    return next(tied, None)
-
-
-def _ties(entry: Entry, agent_id: str) -> bool:
-    return entry["kind"] == "tie" and entry["agent_id"] == agent_id
-
-
-def _start_of(run: Run, tool_use_id: str) -> Entry | None:
-    """The run's start of the call."""
-    starts = (e for e in run.entries if e["kind"] == "start" and e["tool_use_id"] == tool_use_id)
-    return next(starts, None)
-
-
-def _ended_start(run: Run, agent_id: str) -> bool:
-    """Whether the subagent's latest start has ended, by a result or a stop after its tie."""
-    after = _since(run.entries, lambda e: _ties(e, agent_id))
-    return any(e["kind"] in ("result", "stopped") and e.get("agent_id") == agent_id for e in after)
+    return next((run for run in runs if agent_id in run.state.tied), None)
 
 
 def _per_turn(runs: list[Run]) -> tuple[Run, str] | None:

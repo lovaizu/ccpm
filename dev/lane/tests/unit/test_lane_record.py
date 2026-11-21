@@ -13,7 +13,7 @@ import stat
 
 import lane_entries
 import pytest
-from record import Entry, Run, add, runs
+from record import Entry, Run, add, read_state, runs
 
 RUN: Entry = {"kind": "run", "run": "r1", "skill": "log:up", "words": "1.2.0"}
 FOLDER: Entry = {"kind": "folder", "run": "r1", "plugin_root": "/plugins/log"}
@@ -156,3 +156,23 @@ def test_no_entry_added_leaves_the_record_as_it_stands():
     add("session-1", [RUN, FOLDER])
     add("session-1", [])
     assert runs("session-1")[0].entries == [RUN, FOLDER]
+
+
+# read_state
+
+
+@pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
+def test_the_start_a_subagent_was_last_tied_to_is_that_of_its_latest_tie():
+    """Given the writer a1 started by toolu_1 and resumed by toolu_3, tied to each in turn, and a2
+    started by toolu_2 between them
+    When Lane reads the start that each subagent was last tied to
+    Then a1's is the start of toolu_3, a2's that of toolu_2, and a9, which no start ties, has
+    none"""
+    second: Entry = lane_entries.start("toolu_2", prompt="Write the second.")
+    resume: Entry = lane_entries.start("toolu_3")
+    entries = [START, TIE, second, lane_entries.tie("toolu_2", "a2"), resume]
+    tied = read_state([*entries, lane_entries.tie("toolu_3", "a1")]).tied
+    assert ({agent: start.entry for agent, start in tied.items()}, "a9" in tied) == (
+        {"a1": resume, "a2": second},
+        False,
+    )

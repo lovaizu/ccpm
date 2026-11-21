@@ -7,7 +7,7 @@ about, each event placed on its run, its start, its role, and its step, or outsi
 latest run not ended picked of several, the latest command whose skill has steps, the latest tie of
 a resumed subagent, a resume carrying its start's role, prompt, and steps, a Grep and a Glob, and
 the events of another plugin, of an untied subagent, or of no start, which it leaves alone; and
-command_of, marked, and latest_start, which place's callers share, marked and own_entries with a
+command_of and marked, which place's callers share, marked and own_entries with a
 step gone back to that undoes the marks of the steps it names before it, one, two in either order,
 and one of another start; and, for a main conversation
 whose role takes its steps at each turn, turn_beginning, one for each event that begins its next
@@ -35,7 +35,6 @@ from place import (
     SkillCall,
     Turn,
     command_of,
-    latest_start,
     marked,
     opening,
     own_entries,
@@ -884,7 +883,7 @@ def test_the_post_tool_use_of_a_send_message_queued_to_a_running_subagent_is_no_
     assert place(e.queued(WRITER, "u2"), [tied()], by_routes) is None
 
 
-# command_of, marked, and latest_start
+# command_of and marked
 
 
 @pytest.mark.supports("test_a_skill_called_by_the_skill_tool_adds_the_run")
@@ -1053,22 +1052,6 @@ def test_a_step_gone_back_to_undoes_only_the_marks_of_whoever_went_back(e: Event
         {"write", "report"},
         set(),
         set(),
-    )
-
-
-@pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-def test_the_latest_start_of_a_subagent_is_that_of_its_latest_tie(e: Events):
-    """Given the writer a1 started by u1 and resumed by u3, tied to each in turn, and a2 started by
-    u2 between them
-    When Lane reads the latest start of a1, of a2, and of a9, which no start ties
-    Then they are the start of u3, of u2, and none"""
-    second: Entry = lane_entries.start("u2", prompt="Write the second.")
-    resume: Entry = lane_entries.start("u3", prompt=PROMPT)
-    on = run(START, TIE, second, lane_entries.tie("u2", "a2"), resume, lane_entries.tie("u3", "a1"))
-    assert (latest_start(on, "a1"), latest_start(on, "a2"), latest_start(on, "a9")) == (
-        resume,
-        second,
-        None,
     )
 
 
