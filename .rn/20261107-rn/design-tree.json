@@ -86,51 +86,7 @@
       "name": "Readers take in a document as its writer meant in one reading, as each refactoring makes it clearer and keeps all it says",
       "path": "plugins/rn/domain/best-practices/refactor-doc",
       "kind": "meta",
-      "inputs": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Where a change is made",
-              "decided": "a refactoring changes only a place where a reader new to the document, reading from the top, would misread it or have to guess, and keeps each heading and fixed text that the template of the document's kind gives, as a trial on Lane's README showed changes that no reader needed and a heading rule that the README's template contradicts",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Maintainers understand the code in one reading and change it in one place, as each refactoring makes it simpler and keeps every behavior",
@@ -148,13 +104,103 @@
       "name": "rn's product vision says what rn is for",
       "path": "dev/rn/product-vision.md",
       "kind": "product-vision",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/refactor-doc"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
       "path": "plugins/rn/README.md",
       "kind": "readme",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/refactor-doc"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
@@ -166,7 +212,92 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/refactor-doc"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Lane's developers know whom Lane serves, and the one way it serves them",
@@ -247,13 +378,153 @@
       "name": "A plugin's author builds on Lane so that its AI notices each step it leaves, by giving Lane its rules and adapters alone",
       "path": "dev/lane/architecture.md",
       "kind": "architecture",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/refactor-doc"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's author decides from the README alone whether Lane fits, and makes its plugin depend on it",
       "path": "plugins/lane/README.md",
       "kind": "readme",
-      "status": "done"
+      "inputs": [
+        "plugins/rn/domain/best-practices/refactor-doc"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's author finds what Lane takes in, its rules and each adapter's input, and what Lane gives out",
@@ -499,7 +770,23 @@
   "work": [
     {
       "do": "make",
-      "path": "plugins/rn/domain/best-practices/refactor-doc"
+      "path": "dev/rn/product-vision.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/README.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/lane/README.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/architecture.md"
+    },
+    {
+      "do": "make",
+      "path": "dev/lane/architecture.md"
     }
   ]
 }

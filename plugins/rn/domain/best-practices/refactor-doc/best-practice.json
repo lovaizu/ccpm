@@ -56,6 +56,14 @@
        },
        {
         "at": "decide",
+        "text": "Change a place only where a reader on your list, new to the document and reading it once from the top, would misread it or have to guess, such as a pronoun that could point to two nouns or a term that the document never defines, and leave each other place as it stands, as every item of this best practice takes, since a change that helps no reader is one more for each reviewer to judge."
+       },
+       {
+        "at": "decide",
+        "text": "Open the template of the document's kind, `template.md` in the folder of the kind's best practice where it holds one, and keep each heading and each fixed text that it gives as they stand, such as `Installation` in a README, since the kind's best practice decides them."
+       },
+       {
+        "at": "decide",
         "text": "Split the document into sections of one topic each: for each section, ask whether a reader with one purpose would read part of it and skip the rest, and if so, split it there. For example, split `Setup` into `Install the plugin` and `Configure the proxy` where only readers behind a proxy configure one."
        },
        {
