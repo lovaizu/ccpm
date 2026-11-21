@@ -45,6 +45,11 @@ COMMAND = "invoicer/__main__.py"
 COMMAND_NAME = "A command that prints an invoice from a file of its lines"
 GUIDE = "docs/guide.md"
 GUIDE_NAME = "A guide from which the accounting team prints an invoice on its own"
+# The languages that the walkthrough's user settles: of the deliverables, and of the talk.
+DELIVERABLES_LANGUAGE = "English"
+CONVERSATION_LANGUAGE = "English"
+# The languages as `repository.py new` takes them, after the words and the goal.
+LANGUAGES = (DELIVERABLES_LANGUAGE, CONVERSATION_LANGUAGE)
 # The point that the walkthrough puts to the user, and their answer.
 TAX_POINT = "Should the tax rate be given with each invoice, or set once?"
 TAX_ABOUT = "the tax rate"
@@ -164,14 +169,34 @@ def work(do: str, path: str, condition_id: str | None = None, about: str | None 
     return item
 
 
+def version() -> str:
+    """rn's version, as its plugin.json gives it."""
+    return read_json(os.path.join(RN, ".claude-plugin", "plugin.json"))["version"]
+
+
+def context(
+    closes: Sequence[int] = (), refs: Sequence[int] = (), pr: str | None = None
+) -> dict[str, Any]:
+    """A design tree's context: rn's version, the walkthrough's languages, the issues, and the
+    pull request."""
+    return {
+        "rn": version(),
+        "languages": {"deliverables": DELIVERABLES_LANGUAGE, "conversation": CONVERSATION_LANGUAGE},
+        "issues": {"closes": list(closes), "refs": list(refs)},
+        "pr": pr,
+    }
+
+
 def tree(
     deliverables: Sequence[Mapping[str, Any]],
     order: Sequence[Mapping[str, Any]] = (),
     goal: str = GOAL,
     by: str = "user",
 ) -> dict[str, Any]:
-    """A design tree with the goal, the deliverables, and the work."""
+    """A design tree with the context as a run starts it, the goal, the deliverables, and the
+    work."""
     return {
+        "context": context(),
         "goal": {"decided": goal, "by": by},
         "deliverables": [copy.deepcopy(dict(each)) for each in deliverables],
         "work": [dict(each) for each in order],

@@ -1,4 +1,19 @@
 {
+  "context": {
+    "rn": "0.9.0",
+    "languages": {
+      "deliverables": "English",
+      "conversation": "Japanese"
+    },
+    "issues": {
+      "closes": [
+        54,
+        53
+      ],
+      "refs": []
+    },
+    "pr": "https://github.com/lovaizu/ccpm/pull/66"
+  },
   "goal": {
     "decided": "The user gets from rn each deliverable they mean, one that its people can use for what they're after, and answers only what's theirs. Once it holds, a person who asks rn for a deliverable, as rn's README walkthrough does, gets one that its people use alone toward their aim, as a colleague from accounting prints an invoice from the guide alone.",
     "by": "user"
@@ -32,51 +47,7 @@
       "name": "The user reaches their goal through the design tree's deliverables, which leave nothing out and start nothing too early",
       "path": "plugins/rn/domain/best-practices/design-tree",
       "kind": "meta",
-      "inputs": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The run's context",
-              "decided": "The template holds the run's context: the rn version that wrote the tree, the language of the deliverables and the language of the talk, and the issues and the pull request of the run, and the tree of each run is brought to it in the same change",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
@@ -913,10 +884,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/design-tree"
-    },
     {
       "do": "decide",
       "path": "dev/rn/product-vision.md",

@@ -6,6 +6,7 @@
   - **C1** The design tree holds only the deliverables and decisions without which the goal fails.
     - **N1** Does the goal state what its people do once it's achieved? (goal)
     - **N2** Does every node of the design tree serve the goal and still hold? (deliverables)
+    - **N7** Does the context name the rn that wrote the tree, the languages that the user settled, and the run's issues and pull request? (context)
   - **C2** At each turn, the maker reviews the design tree by the run's facts and judges again what's vital and what's trivial.
     - **N3** Is each problem found fixed at the decision that caused it? (deliverables)
     - **N4** Does each node agree with each node that a change touches, from the goal down to the work? (deliverables)
@@ -81,3 +82,14 @@ Two items that rest on nothing of each other wait for nothing, so starting them 
 
 1. *While deciding.* List the items of `work` whose inputs are done and that name none of each other in their inputs.
 2. *While deciding.* Write them next to each other in `work`, each after each item it rests on, so that they start together.
+
+### N7
+
+Does the context name the rn that wrote the tree, the languages that the user settled, and the run's issues and pull request?
+
+A newer rn reads a tree by the version that wrote it, the deliverables and the conversation reach their people only in a language they read, and a merge closes only the issues that the pull request names. The items follow GitHub's [linking of a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue), which closes an issue on merge where the pull request's body names it after `Closes`.
+
+1. *While deciding.* Write in `rn` the `version` of `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, and write it again once a newer rn brings the tree to its form.
+2. *While deciding.* Propose the language of the deliverables from what the repository's documents and the user's instructions set, or else English, and the language of the conversation from the user's instructions and words. Write each as the user settles it.
+3. *While deciding.* Ask the user which issues the run completes and which it only serves, and write their numbers in `closes` and `refs`.
+4. *While making.* Write in `pr` the URL of the pull request once the run opens it, and leave it null until then.

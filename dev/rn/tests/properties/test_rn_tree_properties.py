@@ -80,9 +80,23 @@ def deliverable(draw: Any, path: str, before: list[str]) -> dict[str, Any]:
 
 
 @st.composite
+def contexts(draw: Any) -> dict[str, Any]:
+    """A tree's context: any version, any languages, none, one, or several issues to close and to
+    refer to, and a pull request or none."""
+    issues = st.lists(st.integers(1, 9999), max_size=3)
+    return {
+        "rn": ".".join(str(draw(st.integers(0, 99))) for _ in range(3)),
+        "languages": {"deliverables": draw(TEXT), "conversation": draw(TEXT)},
+        "issues": {"closes": draw(issues), "refs": draw(issues)},
+        "pr": draw(st.none() | TEXT),
+    }
+
+
+@st.composite
 def trees(draw: Any) -> dict[str, Any]:
-    """A design tree in its schema and its checks: the goal by anyone, the plan done or open, then
-    one to four deliverables, and work that makes some of them and decides some of their points."""
+    """A design tree in its schema and its checks: any context, the goal by anyone, the plan done
+    or open, then one to four deliverables, and work that makes some of them and decides some of
+    their points."""
     head = rn_files.plan(NAME, good=draw(st.booleans()))
     if draw(st.booleans()):
         head = rn_files.done_node(rn_files.GOAL, rn_files.plan_path(NAME), "design-tree")
@@ -98,7 +112,9 @@ def trees(draw: Any) -> dict[str, Any]:
             for d in each["decisions"]:
                 if draw(st.integers(0, 3)) == 0:
                     order.append(rn_files.work("decide", node["path"], each["id"], d["about"]))
-    return rn_files.tree([head, *nodes], order, goal=draw(TEXT), by=draw(BY))
+    tree = rn_files.tree([head, *nodes], order, goal=draw(TEXT), by=draw(BY))
+    tree["context"] = draw(contexts())
+    return tree
 
 
 def leaves(value: Any, pointer: str = "") -> list[tuple[str, Any]]:

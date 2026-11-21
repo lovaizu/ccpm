@@ -84,12 +84,13 @@ origin names no default branch, as no run stands yet.
      and run no command, as their reply is the request. Mark `hear` done, and end the turn.
    - A new request, `start`: read the design tree best practice by Read,
      `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Put the goal by its N1.1
-     to N1.3, with what its people do once it holds. Then run
-     `python3 <rn's folder>/scripts/repository.py new "<the user's words>" "<the goal>"`, the words
-     as typed. It makes the run's worktree and its design tree, with the goal by `reasoning`. Where
-     it refuses the run's name as taken, end on blocked, and recommend `/rn:up` to pick it up. In
-     the review, leave the tree as `new` wrote it. In the move, put the goal to the user, as the
-     plan rests on a goal only they can confirm.
+     to N1.3, with what its people do once it holds. Propose the languages by its N7.2. Then run
+     `python3 <rn's folder>/scripts/repository.py new "<the user's words>" "<the goal>"
+     "<the deliverables' language>" "<the conversation's language>"`, the words as typed. It makes
+     the run's worktree and its design tree, with the goal by `reasoning`. Where it refuses the
+     run's name as taken, end on blocked, and recommend `/rn:up` to pick it up. In the review,
+     write only the issues that the user's words name, by its N7.3. In the move, put the goal, the
+     languages, and the issues to the user. Only they can confirm what the plan rests on.
    - A pick-up, `find`: run `python3 <rn's folder>/scripts/repository.py find`. It prints the folder
      of the newest run with work left, from the runs' commits. It makes the run's worktree again
      where none lies. Where it prints nothing, ask the user which run to pick up, in the form of
@@ -162,10 +163,11 @@ origin names no default branch, as no run stands yet.
 
 ## Output
 
-Each message to the user holds one point, in the user's language and their request's words. It
-says first what it asks or reports, as they decide from its first lines. Say a term of rn's own,
-such as a Round or a Cut, in everyday words, or leave it out. A message that asks ends
-with the one choice, alone on its last line, and the option you recommend.
+Each message to the user holds one point, in their request's words. Write it in the conversation's
+language of the design tree's context, or in the user's own before the tree exists. It says first
+what it asks or reports, as they decide from its first lines. Say a term of rn's own, such as a
+Round or a Cut, in everyday words, or leave it out. A message that asks ends with the one choice,
+alone on its last line, and the option you recommend.
 
 Each claim rests on what a script printed or a file holds in this turn. A URL is as put-up printed
 it, and a pause is pushed once pause gave 0.

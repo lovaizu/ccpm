@@ -57,6 +57,30 @@
                 "text": "Keep one line for a deliverable that's done: its name, path, kind, and status. A node with no file keeps its necessary conditions and their decisions too, as the deliverables built on it read them there."
               }
             ]
+          },
+          {
+            "id": "N7",
+            "about": "context",
+            "what": "Does the context name the rn that wrote the tree, the languages that the user settled, and the run's issues and pull request?",
+            "why": "A newer rn reads a tree by the version that wrote it, the deliverables and the conversation reach their people only in a language they read, and a merge closes only the issues that the pull request names. The items follow GitHub's [linking of a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue), which closes an issue on merge where the pull request's body names it after `Closes`.",
+            "items": [
+              {
+                "at": "decide",
+                "text": "Write in `rn` the `version` of `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, and write it again once a newer rn brings the tree to its form."
+              },
+              {
+                "at": "decide",
+                "text": "Propose the language of the deliverables from what the repository's documents and the user's instructions set, or else English, and the language of the conversation from the user's instructions and words. Write each as the user settles it."
+              },
+              {
+                "at": "decide",
+                "text": "Ask the user which issues the run completes and which it only serves, and write their numbers in `closes` and `refs`."
+              },
+              {
+                "at": "make",
+                "text": "Write in `pr` the URL of the pull request once the run opens it, and leave it null until then."
+              }
+            ]
           }
         ]
       },

@@ -32,10 +32,53 @@ def test_new_prints_the_new_runs_folder_from_the_repositorys_top(tmp_path: Any, 
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
     name = f"{date.today():%Y%m%d}-{rn_files.NAMED}"
     folder = f".claude/worktrees/rn-{name}/.rn/{name}"
-    given = main(["new", rn_files.WORDS, rn_files.GOAL], repo, rn_files.RN, host)
+    argv = ["new", rn_files.WORDS, rn_files.GOAL, *rn_files.LANGUAGES]
+    given = main(argv, repo, rn_files.RN, host)
     assert given == (0, folder + "\n", "")
     tree = rn_files.read_json(os.path.join(repo, folder, "design-tree.json"))
     assert tree["goal"] == {"decided": rn_files.GOAL, "by": "reasoning"}
+
+
+@pytest.mark.supports(
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+)
+def test_new_writes_rns_version_and_the_languages_in_the_trees_context(tmp_path: Any, host: Any):
+    """Given invoicer's repository with a remote
+    When repository.py new is given the walkthrough's words, the goal, English, and Japanese
+    Then the run's design tree's context holds rn's version as its plugin.json gives it, English
+    as the deliverables' language and Japanese as the conversation's, no issues, and no pull
+    request"""
+    repo = rn_files.repository(str(tmp_path / "invoicer"))
+    rn_files.with_origin(repo, str(tmp_path / "origin.git"))
+    argv = ["new", rn_files.WORDS, rn_files.GOAL, "English", "Japanese"]
+    code, out, _ = main(argv, repo, rn_files.RN, host)
+    assert code == 0
+    tree = rn_files.read_json(os.path.join(repo, out.strip(), "design-tree.json"))
+    plugin = rn_files.read_json(os.path.join(rn_files.RN, ".claude-plugin", "plugin.json"))
+    assert tree["context"] == {
+        "rn": plugin["version"],
+        "languages": {"deliverables": "English", "conversation": "Japanese"},
+        "issues": {"closes": [], "refs": []},
+        "pr": None,
+    }
+
+
+@pytest.mark.supports(
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+)
+def test_new_of_an_empty_language_says_which_to_give(tmp_path: Any, host: Any):
+    """Given invoicer's repository with a remote
+    When repository.py new is given the walkthrough's words, the goal, an empty deliverables'
+    language, and Japanese
+    Then it gives 1 with `repository.py: ` and which language is empty on stderr, and makes no
+    worktree"""
+    repo = rn_files.repository(str(tmp_path / "invoicer"))
+    rn_files.with_origin(repo, str(tmp_path / "origin.git"))
+    argv = ["new", rn_files.WORDS, rn_files.GOAL, "", "Japanese"]
+    code, out, err = main(argv, repo, rn_files.RN, host)
+    assert (code, out) == (1, "")
+    assert err.startswith("repository.py: the deliverables language is empty")
+    assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
 @pytest.mark.supports(
@@ -47,7 +90,9 @@ def test_new_of_words_with_no_letter_says_what_rn_on_takes(tmp_path: Any, host: 
     Then it gives 1 with `repository.py: ` and what's wrong on stderr, and makes no worktree"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
-    code, out, err = main(["new", "?!", rn_files.GOAL], repo, rn_files.RN, host)
+    code, out, err = main(
+        ["new", "?!", rn_files.GOAL, *rn_files.LANGUAGES], repo, rn_files.RN, host
+    )
     assert (code, out) == (1, "")
     assert err.startswith("repository.py: ") and "/rn:on" in err
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
@@ -61,7 +106,8 @@ def test_new_with_no_default_branch_on_origin_says_what_is_missing(tmp_path: Any
     When repository.py new is given the walkthrough's words and the goal
     Then it gives 1 with `repository.py: ` and what's missing on stderr, and makes no worktree"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
-    code, out, err = main(["new", rn_files.WORDS, rn_files.GOAL], repo, rn_files.RN, host)
+    argv = ["new", rn_files.WORDS, rn_files.GOAL, *rn_files.LANGUAGES]
+    code, out, err = main(argv, repo, rn_files.RN, host)
     assert (code, out) == (1, "")
     assert err.startswith("repository.py: ")
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
@@ -237,8 +283,8 @@ def test_a_folder_that_isnt_a_runs_is_wrong(tmp_path: Any, host: Any, sub: str):
     [
         [],
         ["start"],
-        ["new", rn_files.WORDS],
-        ["new", rn_files.WORDS, rn_files.GOAL, "more"],
+        ["new", rn_files.WORDS, rn_files.GOAL],
+        ["new", rn_files.WORDS, rn_files.GOAL, *rn_files.LANGUAGES, "more"],
         ["find", "more"],
         ["pause"],
         ["put-up", RUN],

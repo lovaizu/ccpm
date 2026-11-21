@@ -48,6 +48,8 @@ them be. Judging the deliverable for the run is the evaluator's, so leave that b
   gives each condition's items, `N1.2` being the second item of N1. Each item starts with *While
   deciding* or *While making*. Where the folder holds a `template.md`, each Markdown file of the
   deliverable keeps its form, as `check.py` holds it.
+- The Cut's `language` is the one the user settled for the deliverables. Write the deliverable in
+  it, as its people read it.
 - `findings` is what the last evaluator found, trying the deliverable as its people. Each `more`
   condition is short until the people get what its `good_when` says. Each `good` holds by the lines
   it quotes. `last_good` is what the last generator saw good. Both are null in a first Round.

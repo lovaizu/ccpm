@@ -25,6 +25,7 @@ from rn_runs import NAME, branch_run, dated_commit, head
 
 GOAL = rn_files.GOAL
 PRACTICE = rn_files.practice("design-tree")
+CONTEXT = rn_files.context()
 
 
 def started_tree(name: str, goal: str = GOAL) -> dict[str, Any]:
@@ -54,7 +55,7 @@ def test_a_new_run_has_its_branch_from_main_checked_out_with_the_tree_uncommitte
     repo = a_repository(tmp_path)
     before = head(repo, "main")
     run = RunPlace(repo, NAME)
-    assert new(run, GOAL, PRACTICE, host) == run
+    assert new(run, CONTEXT, GOAL, PRACTICE, host) == run
     worktree = rn_files.worktree_of(repo, NAME)
     assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
     assert head(worktree) == before
@@ -85,7 +86,7 @@ def test_a_new_run_branches_from_the_default_branch_while_the_user_is_on_another
     git(repo, "commit", "-q", "-m", "Mine.")
     mine = head(repo)
     write_files(repo, {"NOTES.md": "mine, still\n"})
-    new(RunPlace(repo, NAME), GOAL, PRACTICE, host)
+    new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, host)
     assert head(rn_files.worktree_of(repo, NAME)) == trunk
     assert git(repo, "branch", "--show-current").strip() == "mine"
     assert head(repo) == mine
@@ -112,7 +113,7 @@ def test_a_new_run_branches_from_what_origins_head_names_not_the_branch_checked_
     trunk = head(repo, "trunk")
     git(repo, "checkout", "-q", "main")
     git(repo, "remote", "set-head", "origin", "trunk")
-    new(RunPlace(repo, NAME), GOAL, PRACTICE, host)
+    new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, host)
     assert head(rn_files.worktree_of(repo, NAME)) == trunk
     assert head(repo, "main") == main
     assert git(repo, "branch", "--show-current").strip() == "main"
@@ -134,7 +135,7 @@ def test_a_repository_whose_origin_head_names_no_branch_is_missing_its_default(
         rn_files.with_origin(repo, str(tmp_path / "origin.git"))
         git(repo, "remote", "set-head", "origin", "--delete")
     with pytest.raises(Missing):
-        new(RunPlace(repo, NAME), GOAL, PRACTICE, host)
+        new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, host)
     assert not os.path.exists(rn_files.worktree_of(repo, NAME))
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
 
@@ -149,7 +150,7 @@ def test_an_empty_goal_is_refused_with_nothing_made(tmp_path: Any, host: Any, go
     Then Wrong is raised, and no branch or worktree of the run is made"""
     repo = a_repository(tmp_path)
     with pytest.raises(Wrong):
-        new(RunPlace(repo, NAME), goal, PRACTICE, host)
+        new(RunPlace(repo, NAME), CONTEXT, goal, PRACTICE, host)
     assert not os.path.exists(rn_files.worktree_of(repo, NAME))
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
 
@@ -161,11 +162,11 @@ def test_a_run_of_the_name_already_there_is_refused_and_left_as_it_was(tmp_path:
     Then Wrong is raised naming the run, and its design tree is as it was"""
     repo = a_repository(tmp_path)
     run = RunPlace(repo, NAME)
-    new(run, GOAL, PRACTICE, host)
+    new(run, CONTEXT, GOAL, PRACTICE, host)
     tree_path = os.path.join(rn_files.folder_of(repo, NAME), "design-tree.json")
     before = rn_files.read_json(tree_path)
     with pytest.raises(Wrong, match=NAME):
-        new(run, "The user gets another thing.", PRACTICE, host)
+        new(run, CONTEXT, "The user gets another thing.", PRACTICE, host)
     assert rn_files.read_json(tree_path) == before
 
 
@@ -179,7 +180,7 @@ def test_a_folder_that_isnt_a_git_repository_is_missing_one(tmp_path: Any, host:
     folder = os.path.realpath(str(tmp_path / "plain"))
     write_files(folder, {"README.md": "# plain\n"})
     with pytest.raises(Missing):
-        new(RunPlace(folder, NAME), GOAL, PRACTICE, host)
+        new(RunPlace(folder, NAME), CONTEXT, GOAL, PRACTICE, host)
     assert not os.path.exists(rn_files.worktree_of(folder, NAME))
 
 
@@ -192,7 +193,7 @@ def test_a_folder_inside_a_repository_but_not_its_top_is_missing_one(tmp_path: A
     Then Missing is raised"""
     repo = a_repository(tmp_path)
     with pytest.raises(Missing):
-        new(RunPlace(os.path.join(repo, "invoicer"), NAME), GOAL, PRACTICE, host)
+        new(RunPlace(os.path.join(repo, "invoicer"), NAME), CONTEXT, GOAL, PRACTICE, host)
 
 
 @pytest.mark.supports(
@@ -206,7 +207,7 @@ def test_a_repository_with_no_commit_is_missing_one(tmp_path: Any, host: Any):
     os.makedirs(repo)
     git(repo, "init", "-q", "-b", "main")
     with pytest.raises(Missing):
-        new(RunPlace(repo, NAME), GOAL, PRACTICE, host)
+        new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, host)
 
 
 # newest and found

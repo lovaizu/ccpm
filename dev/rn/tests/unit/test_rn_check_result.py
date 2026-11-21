@@ -84,6 +84,7 @@ def generator_cut(run: Run, node: Any = None, kind: str = "light") -> Any:
         node["more_paths"] = ["tests/"]
     cut = {
         "goal": rn_files.GOAL,
+        "language": rn_files.DELIVERABLES_LANGUAGE,
         "deliverable": node,
         "worktree": os.path.relpath(run.worktree, run.repository),
         "inputs": [

@@ -1,6 +1,7 @@
 """Decides how the design tree is kept as a file: read and written as JSON in the form of the
 design tree best practice's `design-tree.schema.json`, each node named by its JSON Pointer, and the
-tree that a run starts from, with the goal as put and the plan as its own deliverable."""
+tree that a run starts from, with its context, the goal as put, and the plan as its own
+deliverable."""
 
 from __future__ import annotations
 
@@ -16,18 +17,45 @@ Tree = dict[str, Any]
 Deliverable = dict[str, Any]
 # The statuses of a deliverable not yet done.
 OPEN = ("open", "doing")
+# The context of a design tree: the `context` of its schema.
+Context = dict[str, Any]
 
 
-def started(goal: str, plan: str, practice: Practice) -> Tree:
+def context(version: str, deliverables: str, conversation: str) -> Context:
+    """The context that a run starts with.
+
+    Takes: rn's version, as its plugin.json gives it; and the language of the deliverables and
+    that of the conversation, each as the user settled it, such as English and Japanese.
+    Gives: a context holding the version, the two languages as given, no issue to close or to
+    refer to, and no pull request.
+    Changes: nothing.
+    Refuses: Wrong where a language is empty or only spaces, naming which.
+    """
+    languages = {"deliverables": deliverables, "conversation": conversation}
+    for key, given in languages.items():
+        if not given.strip():
+            raise Wrong(
+                f"the {key} language is empty; give the language of the {key} as a word, such as"
+                " English"
+            )
+    return {
+        "rn": version,
+        "languages": languages,
+        "issues": {"closes": [], "refs": []},
+        "pr": None,
+    }
+
+
+def started(context: Context, goal: str, plan: str, practice: Practice) -> Tree:
     """The design tree that a run starts from.
 
-    Takes: the goal as the orchestrator puts it, one sentence with the user as its subject; the
-    plan's path from the run's worktree, `.rn/<name>/design-tree.json`, the tree's own; and the
-    design tree best practice.
-    Gives: a tree whose goal is the sentence, `by` reasoning until the user confirms it; whose one
-    deliverable is the plan, named by the goal, of the kind `design-tree`, at the plan's path, with
-    no inputs, status open, and each necessary condition of the best practice in its order, good
-    false, with no decision; and whose work is none.
+    Takes: the context that `context` gives; the goal as the orchestrator puts it, one sentence
+    with the user as its subject; the plan's path from the run's worktree,
+    `.rn/<name>/design-tree.json`, the tree's own; and the design tree best practice.
+    Gives: a tree whose context is the one given; whose goal is the sentence, `by` reasoning until
+    the user confirms it; whose one deliverable is the plan, named by the goal, of the kind
+    `design-tree`, at the plan's path, with no inputs, status open, and each necessary condition
+    of the best practice in its order, good false, with no decision; and whose work is none.
     Changes: nothing.
     Refuses: Wrong where the goal is empty.
     """
@@ -38,6 +66,7 @@ def started(goal: str, plan: str, practice: Practice) -> Tree:
         for condition in conditions(practice["goal"])
     ]
     return {
+        "context": context,
         "goal": {"decided": goal, "by": "reasoning"},
         "deliverables": [
             {

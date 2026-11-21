@@ -8,8 +8,8 @@ from typing import Any
 
 from tree.form import Tree, at
 
-# The order of the tree's parts, from the goal down.
-_PARTS = {"goal": 0, "deliverables": 1, "work": 2}
+# The order of the tree's parts, from the context and the goal down.
+_PARTS = {"context": 0, "goal": 1, "deliverables": 2, "work": 3}
 # The depth, in a pointer's names, of each node of a deliverable: the deliverable, a condition, and
 # a decision.
 _DELIVERABLE, _CONDITION, _DECISION = 2, 4, 6

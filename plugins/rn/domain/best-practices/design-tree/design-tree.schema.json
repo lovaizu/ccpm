@@ -1,15 +1,94 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "design tree",
- "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, and the work order. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
+ "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: its context, the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, and the work order. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
  "type": "object",
  "required": [
+  "context",
   "goal",
   "deliverables",
   "work"
  ],
  "additionalProperties": false,
  "properties": {
+  "context": {
+   "description": "What the run is bound by, apart from its goal.",
+   "type": "object",
+   "required": [
+    "rn",
+    "languages",
+    "issues",
+    "pr"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "rn": {
+     "description": "The version of rn that wrote the tree, as its plugin.json gives it.",
+     "type": "string",
+     "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "languages": {
+     "description": "The languages that the user settled.",
+     "type": "object",
+     "required": [
+      "deliverables",
+      "conversation"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "deliverables": {
+       "description": "The language of each deliverable, such as English.",
+       "type": "string",
+       "minLength": 1
+      },
+      "conversation": {
+       "description": "The language of each message to the user, such as Japanese.",
+       "type": "string",
+       "minLength": 1
+      }
+     }
+    },
+    "issues": {
+     "description": "The issues of the run, by number.",
+     "type": "object",
+     "required": [
+      "closes",
+      "refs"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "closes": {
+       "description": "Each issue that the run completes, which the merge closes.",
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 1
+       }
+      },
+      "refs": {
+       "description": "Each issue that the run only serves.",
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 1
+       }
+      }
+     }
+    },
+    "pr": {
+     "description": "The URL of the pull request that carries the run's deliverables, null until the run opens it.",
+     "anyOf": [
+      {
+       "type": "string",
+       "minLength": 1
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
   "goal": {
    "description": "The one end the user is after, which every deliverable serves.",
    "type": "object",

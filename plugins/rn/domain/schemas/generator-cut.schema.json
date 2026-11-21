@@ -5,6 +5,7 @@
  "type": "object",
  "required": [
   "goal",
+  "language",
   "deliverable",
   "worktree",
   "inputs",
@@ -19,6 +20,11 @@
  "properties": {
   "goal": {
    "description": "The design tree's goal: the end the user is after, and what its people do once it holds.",
+   "type": "string",
+   "minLength": 1
+  },
+  "language": {
+   "description": "The language each deliverable is written in, as the design tree's context holds it, such as English.",
    "type": "string",
    "minLength": 1
   },

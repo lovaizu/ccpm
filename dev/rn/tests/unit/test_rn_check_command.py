@@ -39,6 +39,7 @@ class Run:
             node = node or rn_files.walkthrough_tree(NAME)["deliverables"][1]
             cut: dict[str, Any] = {
                 "goal": rn_files.GOAL,
+                "language": rn_files.DELIVERABLES_LANGUAGE,
                 "deliverable": node,
                 "worktree": os.path.relpath(self.worktree, self.repository),
                 "inputs": [],

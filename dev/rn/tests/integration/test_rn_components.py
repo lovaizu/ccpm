@@ -142,15 +142,15 @@ def test_the_orchestrators_move_pushes_only_by_repository_py(b: Bench):
 def test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice(b: Bench):
     """Given a run whose plan the user signed off
     When the orchestrator writes the command's Cut and starts its generator
-    Then the Cut holds the goal, the command's node as the tree holds it, the run's worktree, the
-    path of invoicer's
-    lines in the worktree as its one input, rn's light best practice, Round content-1, and no
-    findings or good of an earlier Round"""
+    Then the Cut holds the goal, the deliverables' language, the command's node as the tree holds
+    it, the run's worktree, the path of invoicer's lines in the worktree as its one input, rn's
+    light best practice, Round content-1, and no findings or good of an earlier Round"""
     c, generator = signed_plan(b)
     given = cut_of(c, generator)
     node = next(each for each in b.tree()["deliverables"] if each["path"] == COMMAND)
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
     assert given["goal"] == GOAL
+    assert given["language"] == rn_files.DELIVERABLES_LANGUAGE
     assert given["deliverable"] == node
     assert os.path.normpath(os.path.join(b.repo, given["worktree"])) == b.worktree
     assert [os.path.normpath(os.path.join(b.repo, each)) for each in given["inputs"]] == [

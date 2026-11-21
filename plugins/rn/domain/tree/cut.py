@@ -1,7 +1,8 @@
 """Decides what each role's Cut holds of the design tree and the Rounds, so that each role starts
-with only what its work needs: the generator its deliverable's decisions, the user's answers among
-them, the last evaluator's findings of each condition still short as given, and its own last good;
-and the evaluator only what the deliverable's people have."""
+with only what its work needs: the generator the language it writes in, its deliverable's
+decisions, the user's answers among them, the last evaluator's findings of each condition still
+short as given, and its own last good; and the evaluator only what the deliverable's people
+have."""
 
 from __future__ import annotations
 
@@ -33,7 +34,8 @@ def generator(
     practice it makes by with its folder, its kind's for content and the refactoring kind's for
     refactor, and the deliverable's last generator's result and last evaluator's result, each None
     before the first.
-    Gives: the Cut of `generator-cut.schema.json`: the goal; the deliverable's node, with each
+    Gives: the Cut of `generator-cut.schema.json`: the goal; the language of the deliverables, as
+    the tree's context holds it; the deliverable's node, with each
     decision and the user's answers as its decisions; the run's worktree; the path of each
     deliverable its inputs name; the best practice's folder; the Round's stage, number, and folder;
     the last evaluator's `good` and `more` of each condition that the node holds not good, as it
@@ -52,6 +54,7 @@ def generator(
         }
     return {
         "goal": tree["goal"]["decided"],
+        "language": tree["context"]["languages"]["deliverables"],
         "deliverable": node,
         "worktree": _from(run, run.worktree),
         "inputs": [_from(run, os.path.join(run.worktree, each)) for each in node["inputs"]],

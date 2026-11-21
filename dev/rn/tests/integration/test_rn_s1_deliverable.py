@@ -113,7 +113,7 @@ def test_rn_on_asks_what_to_make_writing_nothing_and_running_no_command(b: Bench
     assert "domain/orchestrator.md" in typed.output
     wrote = c.write(None, b.at("NOTES.md"), "A goal.\n")
     assert wrote.blocked and "`hear`" in wrote.said
-    answer = c.bash(b.script("repository", "new", rn_files.WORDS, GOAL))
+    answer = c.bash(b.script("repository", "new", rn_files.WORDS, GOAL, *rn_files.LANGUAGES))
     assert answer.blocked and "`hear`" in answer.said
     marked(c, "hear")
     ended(c, "What do you want to make?")
@@ -132,7 +132,7 @@ def test_a_new_request_with_no_origin_ends_its_turn_on_blocked(b: Bench):
     git(b.repo, "remote", "remove", "origin")
     c = heard(b)
     c.type(rn_files.WORDS)
-    refused = c.bash(b.script("repository", "new", rn_files.WORDS, GOAL))
+    refused = c.bash(b.script("repository", "new", rn_files.WORDS, GOAL, *rn_files.LANGUAGES))
     assert not refused.blocked, refused.said
     assert refused.exit_code == 1
     assert "origin's HEAD names no default branch" in refused.output

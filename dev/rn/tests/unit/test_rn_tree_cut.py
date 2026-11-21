@@ -80,14 +80,15 @@ def in_worktree(repo: str, path: str) -> str:
 def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str):
     """Given the walkthrough's tree, the command resting on invoicer's lines, and no Round before
     When the generator's Cut of the command's Round content-1 is made by the light best practice
-    Then it holds the goal, the command's node as the tree holds it, the run's worktree, invoicer's
-    lines in the worktree, light's folder, content, 1, the Round's folder, and no findings or last
-    good"""
+    Then it holds the goal, the deliverables' language, the command's node as the tree holds it,
+    the run's worktree, invoicer's lines in the worktree, light's folder, content, 1, the Round's
+    folder, and no findings or last good"""
     the = walkthrough()
     got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), (None, None))
     assert sorted(got) == sorted(
         [
             "goal",
+            "language",
             "deliverable",
             "worktree",
             "inputs",
@@ -100,6 +101,7 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str
         ]
     )
     assert got["goal"] == GOAL
+    assert got["language"] == rn_files.DELIVERABLES_LANGUAGE
     assert got["deliverable"] == the["deliverables"][1]
     assert from_top(repo, got["worktree"]) == rn_files.worktree_of(repo, NAME)
     assert [from_top(repo, each) for each in got["inputs"]] == [
@@ -109,6 +111,20 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str
     assert (got["stage"], got["number"]) == ("content", 1)
     assert from_top(repo, got["round"]) == round_at(repo, COMMAND).folder
     assert (got["findings"], got["last_good"]) == (None, None)
+
+
+@pytest.mark.supports(
+    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
+)
+def test_the_cut_holds_the_deliverables_language_not_the_conversations(repo: str):
+    """Given the walkthrough's tree whose context holds Japanese as the deliverables' language and
+    English as the conversation's
+    When the generator's Cut of the command's Round content-1 is made
+    Then its language is Japanese"""
+    the = walkthrough()
+    the["context"]["languages"] = {"deliverables": "Japanese", "conversation": "English"}
+    got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), (None, None))
+    assert got["language"] == "Japanese"
 
 
 @pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")

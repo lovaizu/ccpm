@@ -60,9 +60,11 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
     Gives: the URL of the pull request's changes, `<pull request>/files`.
     Changes: runs `gh auth status` first; then commits each change in the run's worktree as
     `rn: <deliverable's name>`, pushes the work's branch to `origin`, and opens the pull request
-    into the default branch, titled by the first sentence of the design tree's goal, as
-    `template.markdown.sentences` splits it, where the
-    branch has none open.
+    into the default branch, where the branch has none open: titled by the first sentence of the
+    design tree's goal, as `template.markdown.sentences` splits it, its body the goal, then a
+    line `Closes #N` for each issue of the tree's `context.issues.closes` and a line `Refs #N` for
+    each of its `refs`, in their order. Where the tree's `context.pr` is null, it then writes the
+    pull request's URL there, commits it as `rn: the pull request of <name>`, and pushes it.
     Refuses: Missing, before any commit or push, where `gh auth status` finds no login, with what
     it said; Wrong where the design tree holds no deliverable of the path; Missing where the
     repository has no remote `origin`, or gh may not open a pull request, with what gh said;
@@ -95,14 +97,27 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
                 "--title",
                 sentences(goal)[0],
                 "--body",
-                goal,
+                _body(goal, tree["context"]["issues"]),
             ],
             run.worktree,
             Missing,
             "gh may not open the pull request",
         )
         url = made.out.strip()
+    if tree["context"]["pr"] is None:
+        tree["context"]["pr"] = url
+        form.write(run.tree, tree)
+        _commit_all(run, f"rn: the pull request of {run.name}", host)
+        _push(run, host)
     return f"{url}/files"
+
+
+def _body(goal: str, issues: dict[str, list[int]]) -> str:
+    """The pull request's body: the goal, then a line naming each issue that the run closes and
+    each that it refers to."""
+    lines = [f"Closes #{each}" for each in issues["closes"]]
+    lines += [f"Refs #{each}" for each in issues["refs"]]
+    return "\n\n".join([goal, "\n".join(lines)]) if lines else goal
 
 
 def _commit_all(run: RunPlace, message: str, host: Host) -> None:

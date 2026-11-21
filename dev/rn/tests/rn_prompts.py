@@ -107,6 +107,7 @@ def generator_cut(
     kind = node["kind"]
     given = {
         "goal": rn_files.GOAL,
+        "language": rn_files.DELIVERABLES_LANGUAGE,
         "deliverable": dict(node),
         "worktree": os.path.relpath(room.worktree(name), room.repo),
         "inputs": [

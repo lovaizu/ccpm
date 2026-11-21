@@ -25,7 +25,7 @@ import rn_files
 from claude_code import Agent, Answer, Conversation
 from gh import gh_double
 from repo_files import environment, git
-from rn_files import GOAL, TOP, WORDS
+from rn_files import GOAL, LANGUAGES, TOP, WORDS
 
 RN = os.path.join(TOP, "plugins", "rn")
 LANE = os.path.join(TOP, "plugins", "lane")
@@ -250,7 +250,7 @@ def requested(b: Bench) -> Conversation:
     shares, and put the goal to the user."""
     c = heard(b)
     c.type(WORDS)
-    ran(c, b.script("repository", "new", WORDS, GOAL))
+    ran(c, b.script("repository", "new", WORDS, GOAL, *LANGUAGES))
     marked(c, "start")
     shared_steps(b, c, ground="The goal as put.")
     ended(c, f"The goal, as I'd put it:\n  {GOAL}\nIs that what you're after?")

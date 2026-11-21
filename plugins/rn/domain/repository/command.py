@@ -3,6 +3,7 @@ code by which whoever ran it reads its result."""
 
 from __future__ import annotations
 
+import json
 import os
 from collections.abc import Sequence
 from datetime import date
@@ -11,12 +12,13 @@ from typing import Callable
 import practice
 from fault import Answer, answered
 from rounds import files
+from tree import form
 
 from repository import commit_checks, place, push, trial, worktree
 from repository.host import Host
 
 USAGE = """\
-usage: repository.py new <words> <goal>
+usage: repository.py new <words> <goal> <deliverables language> <conversation language>
        repository.py find
        repository.py pause <run>
        repository.py put-up <run> <deliverable>
@@ -30,9 +32,12 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     `cwd`, the top of the user's repository, with rn's folder at `plugin_root`, and git and gh
     reached through `host`.
 
-    - `new <words> <goal>`, the user's words and the goal as put, each one argument: 0 printing the
-      new run's folder from `cwd`, as `worktree.new` makes it, named by `place.named` from today
-      and the words, with rn's design tree best practice.
+    - `new <words> <goal> <deliverables language> <conversation language>`, the user's words, the
+      goal as put, and the languages that the user settled, each one argument: 0 printing the new
+      run's folder from `cwd`, as `worktree.new` makes it, named by `place.named` from today and
+      the words, with the context that `tree.form.context` gives for rn's version, from
+      `.claude-plugin/plugin.json` under `plugin_root`, and the languages, and with rn's design
+      tree best practice.
     - `find`: 0 printing the folder from `cwd` of the run that `worktree.found` gives, its
       worktree made again where none lies, as a line, and nothing where there's none.
     - `pause <run>`: 0 printing the hash that `push.pause` gives.
@@ -56,13 +61,20 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    words, goal = given
+    words, goal, deliverables, conversation = given
     run = place.RunPlace(cwd, place.named(date.today(), words))
+    context = form.context(_version(plugin_root), deliverables, conversation)
     design_tree = practice.read(
         os.path.join(plugin_root, "domain", "best-practices", "design-tree")
     )
-    made = worktree.new(run, goal, design_tree, host)
+    made = worktree.new(run, context, goal, design_tree, host)
     return 0, f"{os.path.relpath(made.folder, cwd)}\n", ""
+
+
+def _version(plugin_root: str) -> str:
+    """rn's version, as its plugin.json gives it."""
+    with open(os.path.join(plugin_root, ".claude-plugin", "plugin.json"), encoding="utf-8") as file:
+        return json.load(file)["version"]
 
 
 def _find(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
@@ -93,7 +105,7 @@ _Subcommand = Callable[[list[str], str, str, Host], Answer]
 # Each subcommand, with its least and most count of arguments after its name, None where it takes
 # any more.
 _SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int | None]] = {
-    "new": (_new, 2, 2),
+    "new": (_new, 4, 4),
     "find": (_find, 0, 0),
     "pause": (_pause, 1, 1),
     "put-up": (_put_up, 2, 2),

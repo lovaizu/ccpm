@@ -20,16 +20,20 @@ _EXCLUDED = "/.claude/worktrees/"
 _REFS = ("refs/heads/rn-*", "refs/remotes/origin/rn-*")
 
 
-def new(run: RunPlace, goal: str, practice: Practice, host: Host) -> RunPlace:
+def new(
+    run: RunPlace, context: form.Context, goal: str, practice: Practice, host: Host
+) -> RunPlace:
     """Makes a run's worktree and its design tree with the goal as put.
 
     Takes: the run to make, named by `place.named` from the day and the user's words in reply
-    to `/rn:on`; the goal as the orchestrator puts it; the design tree best practice; and the host.
+    to `/rn:on`; the run's context, as `tree.form.context` gives it; the goal as the orchestrator
+    puts it; the design tree best practice; and the host.
     Gives: the run, made.
     Changes: adds the branch `rn-<name>` from the head of the default branch that
     `git symbolic-ref refs/remotes/origin/HEAD` names, checks
     it out in the run's worktree, and writes there the design tree that `tree.form.started` gives
-    for the goal, uncommitted; the user's own worktree and branch stay as they were.
+    for the context and the goal, uncommitted; the user's own worktree and branch stay as they
+    were.
     Refuses: Missing where the run's repository isn't the top of a git repository with a commit, or
     `refs/remotes/origin/HEAD` names no default branch; Wrong where the goal is empty, or a run of
     the name already lies there; CantRun where git fails, with what it said.
@@ -58,7 +62,7 @@ def new(run: RunPlace, goal: str, practice: Practice, host: Host) -> RunPlace:
     _exclude(run, host)
     plan = os.path.relpath(run.tree, run.worktree)
     os.makedirs(run.folder)
-    form.write(run.tree, form.started(goal, plan, practice))
+    form.write(run.tree, form.started(context, goal, plan, practice))
     return run
 
 

@@ -126,6 +126,7 @@ def test_a_generators_markdown_gives_exactly_the_template_checks_places(text: st
         round_ = rn_files.round_of(os.path.join(worktree, ".rn", "r"), rn_files.GUIDE, "content", 1)
         cut = {
             "goal": rn_files.GOAL,
+            "language": rn_files.DELIVERABLES_LANGUAGE,
             "deliverable": rn_files.open_node(rn_files.GUIDE_NAME, rn_files.GUIDE, kind),
             "worktree": worktree,
             "inputs": [],

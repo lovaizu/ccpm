@@ -536,6 +536,7 @@ def generator_cut(
     worktree = rn_files.worktree_of(cwd, NAME)
     cut = {
         "goal": rn_files.GOAL,
+        "language": rn_files.DELIVERABLES_LANGUAGE,
         "deliverable": dict(node),
         "worktree": os.path.relpath(worktree, cwd),
         "inputs": [os.path.relpath(os.path.join(worktree, each), cwd) for each in inputs],

@@ -3,9 +3,10 @@ change beside one without, the rest of the index left alone, and each refusal: a
 worktree, no change, and a commit check that refuses; `pause`, with changes and with none, each
 pushed with its upstream set, and each refusal: no origin, a push refused for want of a permission,
 and a remote that isn't there; and `put_up`, which asks gh's login first, its first time opening the
-pull request titled by the goal's first sentence, of a goal of two sentences and of one, its second
-opening none, and each refusal: gh with no login before any commit or push, a deliverable the tree
-lacks, and no origin."""
+pull request titled by the goal's first sentence, of a goal of two sentences and of one, its body
+naming the issues and naming none, the pull request's URL written into the tree, its second
+opening none, an open pull request's URL written where the tree has none, and each refusal: gh
+with no login before any commit or push, a deliverable the tree lacks, and no origin."""
 
 from __future__ import annotations
 
@@ -262,6 +263,17 @@ def title(argv: list[str]) -> str | None:
     return None
 
 
+def body(argv: list[str]) -> str | None:
+    """The body that a `gh pr create` names, as `--body <body>`, `--body=<body>`, or
+    `-b <body>`."""
+    for place, word in enumerate(argv):
+        if word in ("--body", "-b") and place + 1 < len(argv):
+            return argv[place + 1]
+        if word.startswith("--body="):
+            return word[len("--body=") :]
+    return None
+
+
 def created(gh_state: str) -> list[list[str]]:
     """Each `gh pr create` that the double was asked."""
     return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "create"]]
@@ -283,9 +295,76 @@ def test_a_first_put_up_pushes_and_opens_the_pull_request_titled_by_the_goal(
     changed(run, {rn_files.GUIDE: "# Guide\n"})
     assert put_up(run, rn_files.plan_path(NAME), host) == f"{URL}/files"
     assert gh_double.state(gh_state)["asked"][0][:3] == ["gh", "auth", "status"]
-    assert subject(worktree(run)) == f"rn: {rn_files.GOAL}"
+    assert subject(worktree(run), "HEAD~1") == f"rn: {rn_files.GOAL}"
+    assert committed_files(worktree(run), "HEAD~1") == [rn_files.GUIDE]
     assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
     assert [title(each) for each in created(gh_state)] == [FIRST]
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+def test_a_first_put_ups_body_names_each_issue_it_closes_then_each_it_refers_to(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given a run whose tree's context names issues 12 and 3 to close and 8 to refer to, with no
+    pull request
+    When put_up is given the command
+    Then gh was asked once to open a pull request whose body is the goal, a blank line, then
+    `Closes #12`, `Closes #3`, and `Refs #8`, one per line"""
+    design_tree = rn_files.walkthrough_tree(NAME)
+    design_tree["context"] = rn_files.context(closes=[12, 3], refs=[8])
+    run = made_run(str(tmp_path), design_tree=design_tree)
+    put_up(run, rn_files.COMMAND, host)
+    assert [body(each) for each in created(gh_state)] == [
+        f"{rn_files.GOAL}\n\nCloses #12\nCloses #3\nRefs #8"
+    ]
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+def test_a_first_put_ups_body_of_a_run_with_no_issue_is_the_goal_alone(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given a run whose tree's context names no issue, with no pull request
+    When put_up is given the command
+    Then gh was asked once to open a pull request whose body is the goal alone"""
+    run = made_run(str(tmp_path))
+    put_up(run, rn_files.COMMAND, host)
+    assert [body(each) for each in created(gh_state)] == [rn_files.GOAL]
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+def test_a_first_put_up_writes_the_pull_requests_url_into_the_tree_and_pushes_it(
+    tmp_path: Any, host: Any
+):
+    """Given a run whose tree's context holds no pull request, with none open
+    When put_up is given the command
+    Then the tree's context holds the pull request's URL, committed alone as
+    `rn: the pull request of <name>` and pushed to origin's rn-<name>, with nothing left
+    uncommitted"""
+    run = made_run(str(tmp_path))
+    put_up(run, rn_files.COMMAND, host)
+    tree = rn_files.read_json(os.path.join(worktree(run), tree_file(run)))
+    assert tree["context"]["pr"] == URL
+    assert subject(worktree(run)) == f"rn: the pull request of {NAME}"
+    assert committed_files(worktree(run)) == [tree_file(run)]
+    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
+    assert git(worktree(run), "status", "--porcelain") == ""
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+def test_a_put_up_whose_pull_request_is_open_writes_its_url_where_the_tree_has_none(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given a run whose pull request is open, and whose tree's context holds no pull request
+    When put_up is given the command
+    Then the tree's context holds the open pull request's URL, committed and pushed, and gh was
+    asked to open no pull request"""
+    run = made_run(str(tmp_path))
+    gh_double.keep(gh_state, {**gh_double.state(gh_state), "pull_request": URL})
+    put_up(run, rn_files.COMMAND, host)
+    tree = rn_files.read_json(os.path.join(worktree(run), tree_file(run)))
+    assert tree["context"]["pr"] == URL
+    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
+    assert created(gh_state) == []
 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
@@ -357,10 +436,13 @@ def test_a_second_put_up_opens_no_second_pull_request(tmp_path: Any, host: Any, 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
 def test_a_put_up_with_no_change_makes_no_commit(tmp_path: Any, host: Any):
-    """Given a run with nothing changed since its last commit
+    """Given a run with nothing changed since its last commit, whose tree's context holds its
+    pull request
     When put_up is given the command
     Then it gives the pull request's changes, and the branch's head, pushed, is as it was"""
-    run = made_run(str(tmp_path))
+    design_tree = rn_files.walkthrough_tree(NAME)
+    design_tree["context"] = rn_files.context(pr=URL)
+    run = made_run(str(tmp_path), design_tree=design_tree)
     before = head(worktree(run))
     assert put_up(run, rn_files.COMMAND, host) == f"{URL}/files"
     assert head(worktree(run)) == before == head(origin(tmp_path), f"rn-{NAME}")
