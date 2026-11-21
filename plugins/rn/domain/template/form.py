@@ -162,11 +162,13 @@ def _all_notes(nodes: tuple[Node, ...]) -> list[_Note]:
     return [note for node in _walk(nodes) if is_note(node.block) for note in _notes_of(node.block)]
 
 
-def _left_sections(note: _Note) -> list[str]:
-    """The heading of the section that the note item says to leave out where it has nothing, if
-    any."""
-    match = _LEAVE_SECTION.search(note.words)
-    return [match.group(1)] if match else []
+def _first(pattern: re.Pattern[str], notes: list[_Note]) -> str | None:
+    """The first group of the pattern's first match in the note items' words, or None."""
+    for note in notes:
+        match = pattern.search(note.words)
+        if match:
+            return match.group(1)
+    return None
 
 
 # How the note items of a section of each level are gathered: the top section's from its own
@@ -238,7 +240,7 @@ def _unit(node: Node, context: _Context) -> Unit:
         free,
         _left_out(block, notes, context.optional),
         free or _repeats(block),
-        next((_number(m.group(1)) for n in notes for m in [_MOST.search(n.words)] if m), None),
+        _most(notes),
         None,
         _sentences_of(block.text, notes),
         _units(node.nodes, context),
@@ -265,7 +267,8 @@ def _left_out(block: Block, notes: list[_Note], optional: frozenset[str]) -> boo
     return any(
         _LEAVE.search(note.words)
         and not _LEAVE_WORD.search(note.words)
-        and not set(_left_sections(note)) & optional
+        # An item that leaves out a section of level 2 leaves out that section, not this block.
+        and _first(_LEAVE_SECTION, [note]) not in optional
         for note in notes
     )
 
@@ -294,18 +297,19 @@ def _repeat(units: list[Unit], kept: tuple[Node, ...], at: int, context: _Contex
             continue
         if holding[1:]:
             units[holding[-1]].back_to = at
-        elif block.kind in (PARAGRAPH, CODE) and _alone(context, notes, note):
+        elif block.kind in (PARAGRAPH, CODE) and context.holders[(id(notes), note)] == 1:
             units[at].repeats = True
-
-
-def _alone(context: _Context, notes: tuple[_Note, ...], note: _Note) -> bool:
-    """Whether one block alone of the section whose note items these are holds the item's slots."""
-    return context.holders[(id(notes), note)] == 1
 
 
 def _number(word: str) -> int:
     """The number that the word or digits name."""
     return _NUMBERS[word] if word in _NUMBERS else int(word)
+
+
+def _most(notes: list[_Note]) -> int | None:
+    """How many times at most the note items let a block stand, None for no most."""
+    most = _first(_MOST, notes)
+    return None if most is None else _number(most)
 
 
 def _pattern_of(block: Block, notes: list[_Note]) -> re.Pattern[str] | None:
@@ -318,7 +322,7 @@ def _pattern_of(block: Block, notes: list[_Note]) -> re.Pattern[str] | None:
     if block.kind == ROW:
         row = r" \| ".join(_pattern(cell).replace(_ANY, r"[^|\n]+?") for cell in cells(block.text))
         return re.compile(rf"\| {row} \|")
-    word = next((m.group(1) for n in notes for m in [_LEAVE_WORD.search(n.words)] if m), "")
+    word = _first(_LEAVE_WORD, notes) or ""
     return re.compile(_optional_link(block.text, word))
 
 

@@ -65,19 +65,16 @@ def faults(template: str, document: str) -> tuple[Fault, ...]:
     order of the document's lines, or () where it holds the template and nothing beside it."""
     shape = form(read(template))
     blocks = read(document)
-    found = _paired(shape.units, _without_notes(blocks), 1)
+    found = _paired(shape.units, _without_notes(sections(blocks)), 1)
     found += _notes_left(blocks) + _placeholders_left(blocks, shape) + _long_sentences(blocks)
     return tuple(sorted(found, key=lambda each: each.line))
 
 
-def _without_notes(blocks: tuple[Block, ...]) -> tuple[Node, ...]:
-    """The document's nodes, each note of the template left out, as _notes_left names them."""
-    return _strip(sections(blocks))
-
-
-def _strip(nodes: tuple[Node, ...]) -> tuple[Node, ...]:
-    """The nodes without notes of the template, at any depth."""
-    return tuple(Node(node.block, _strip(node.nodes)) for node in nodes if not is_note(node.block))
+def _without_notes(nodes: tuple[Node, ...]) -> tuple[Node, ...]:
+    """The nodes without notes of the template, at any depth, as _notes_left names them."""
+    return tuple(
+        Node(node.block, _without_notes(node.nodes)) for node in nodes if not is_note(node.block)
+    )
 
 
 def _fit(unit: Unit, block: Block) -> int | None:
@@ -213,9 +210,12 @@ def _counted(unit: Unit, block: Block) -> list[Fault]:
     count = len(sentences(block.text))
     if least <= count and (most is None or count <= most):
         return []
-    takes = f"{least} or more" if most is None else f"{least} to {most}"
     if most == least:
         takes = f"{least}"
+    elif most is None:
+        takes = f"{least} or more"
+    else:
+        takes = f"{least} to {most}"
     noun = "sentence" if count == 1 else "sentences"
     return [Fault(block.line, f"has {count} {noun}, where {_from(unit)} takes {takes}")]
 
