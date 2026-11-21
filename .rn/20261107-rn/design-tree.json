@@ -232,8 +232,9 @@
           "good": false,
           "decisions": [
             {
-              "about": "The run's facts: the concept's second idea names the run's facts, which the vision never defines",
-              "decided": null
+              "about": "What the review rests on: the concept's second idea says what rn reviews the design tree by",
+              "decided": "What the run has done and learned, in plain words, as Scrum's empiricism decides by experience",
+              "by": "user"
             },
             {
               "about": "What rn takes in: the concept's third idea says rn takes in only what helps the people, without naming what it takes in",
@@ -907,12 +908,6 @@
     {
       "do": "make",
       "path": "plugins/rn/domain/best-practices/design-tree"
-    },
-    {
-      "do": "decide",
-      "path": "dev/rn/product-vision.md",
-      "condition": "N6",
-      "about": "The run's facts: the concept's second idea names the run's facts, which the vision never defines"
     },
     {
       "do": "decide",

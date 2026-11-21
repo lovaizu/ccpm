@@ -25,10 +25,10 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
 
 - From the people's purpose, for O1\
   Each part of rn starts from what the people are after, and makes what brings them there.
-- Reviewed each turn by the facts, for O1\
-  At each turn, rn reviews the
-  [design tree](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s content and
-  order by the run's facts, keeping to the vital few.
+- Reviewed each turn by what was learned, for O1\
+  Each turn, rn reviews the
+  [design tree](../../plugins/rn/domain/best-practices/design-tree/best-practice.md) by what the
+  run has done and learned, keeping to the vital few.
 - Good found and made good, for O1\
   rn finds what's good for the people and what would make the deliverable good, taking in only
   what helps them.
