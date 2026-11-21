@@ -63,6 +63,8 @@ Strategies:
   none. [S11]\
   Intent: a main conversation that answers each event in its own turn starts each turn's steps
   afresh.
+- Each earlier turn's role and prompt given with a turn. [S11]\
+  Intent: a turn's event can rest on the turn before it, such as an answer to its question.
 - A checklist's items given by the plugin's command at the mark, where the step's work decides
   them. [S6]\
   Intent: a checklist holds the items that the step's own work brings, such as each part a change

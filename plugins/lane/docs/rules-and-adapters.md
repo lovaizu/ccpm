@@ -396,6 +396,9 @@ the steps for that turn. Its `role` is the skill of the run's latest command the
 that the Skill tool calls later in the turn leaves the turn's steps as they stand. Its `prompt` is
 the prompt that started the turn, as Claude Code gives it, and empty for the run's first turn, whose
 command and words `run` holds.
+Its `turns` holds each earlier turn of the run, oldest first, with its `role` and `prompt`,
+so that a turn's steps can turn on the turns before it, such as an answer to the question the
+last turn asked. A start's `turns` is empty.
 
 Its input, in the form of [rules.in.schema.json](../hooks/lane/rules.in.schema.json):
 
@@ -403,7 +406,8 @@ Its input, in the form of [rules.in.schema.json](../hooks/lane/rules.in.schema.j
 {
   "run": { "skill": "log:up", "words": "1.2.0" },
   "role": "log:writer",
-  "prompt": "Write the entry of 1.2.0 in docs/changes/1.2.0.md."
+  "prompt": "Write the entry of 1.2.0 in docs/changes/1.2.0.md.",
+  "turns": []
 }
 ```
 
