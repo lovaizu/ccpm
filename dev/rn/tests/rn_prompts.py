@@ -189,12 +189,12 @@ def commands_of(room: Room, agents: bool = False) -> list[str]:
     ]
 
 
-def first_turn_said(room: Room) -> str:
-    """What the main conversation said in its first turn, each text joined, up to the first prompt
-    after it, such as Lane's word at the turn's end or a subagent's end, as `claude -p` prints only
-    the last message of its last turn."""
+def first_turn(room: Room) -> list[Any]:
+    """Each content block of the main conversation's first turn, up to the first prompt after it,
+    such as Lane's word at the turn's end or a subagent's end, as `claude -p` goes on to the turns
+    that these start, and prints only the last message of its last turn."""
     pattern = os.path.join(room.env["CLAUDE_CONFIG_DIR"], "projects", "*", "*.jsonl")
-    said: list[str] = []
+    taken: list[Any] = []
     answered = False
     for path in sorted(glob.glob(pattern)):
         with open(path, encoding="utf-8") as f:
@@ -204,8 +204,24 @@ def first_turn_said(room: Room) -> str:
                 blocks = content if isinstance(content, list) else [{"type": "text"}]
                 prompted = any(each.get("type") != "tool_result" for each in blocks)
                 if entry.get("type") == "user" and answered and prompted:
-                    return "\n".join(said)
+                    return taken
                 if entry.get("type") == "assistant":
                     answered = True
-                    said += [each.get("text", "") for each in blocks if each.get("type") == "text"]
-    return "\n".join(said)
+                    taken += blocks
+    return taken
+
+
+def first_turn_said(room: Room) -> str:
+    """What the main conversation said in its first turn, each text joined."""
+    return "\n".join(
+        each.get("text", "") for each in first_turn(room) if each.get("type") == "text"
+    )
+
+
+def first_turn_commands(room: Room) -> list[str]:
+    """Each command that the main conversation gave Bash in its first turn."""
+    return [
+        each["input"].get("command", "")
+        for each in first_turn(room)
+        if each.get("type") == "tool_use" and each.get("name") == "Bash"
+    ]

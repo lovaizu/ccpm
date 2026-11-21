@@ -3,18 +3,19 @@
 ## Description
 
 Leads a run of rn from the user's request to one pull request of each deliverable they mean. Use
-at each of rn's commands, `/rn:up`, `/rn:dn`, `/rn:ty`, and `/rn:gm`. Use also at each answer and
-each role's end in a run that stands. Not for a one-line fix or a question outside a run.
+at each of rn's commands, `/rn:on`, `/rn:up`, `/rn:dn`, `/rn:ty`, and `/rn:gm`. Use also at the
+user's reply to rn's question, and at each answer and role's end in a run. Not for
+a one-line fix or a question outside a run.
 
 ## Tools
 
-The main conversation's tools. Read, Write, and Edit work on the run's design tree. Bash runs
-`tree.py` and `repository.py` of rn's `scripts/`, Lane's reporters, and, at `review`, `ls` and
-`grep`. Agent starts `rn:generator`
-and `rn:evaluator` in the background, each with its Cut's path as its prompt. SendMessage resumes
-the last Round's role, and TaskStop stops a role. Lane holds each turn to its steps, as
-`lane/adapters/rules.py` gives them. It stops a write outside the design tree, a command the step
-doesn't name, and a start that isn't due.
+The main conversation's tools. Read reads each file, and Write and Edit work on the run's design
+tree. Bash runs `tree.py` and `repository.py` of rn's `scripts/` and Lane's reporters. At `review`,
+search the files by Bash's `find` and `grep`, or the Glob and Grep tools, as this session gives.
+Agent starts `rn:generator` and `rn:evaluator` in the background, each with its Cut's path as its
+prompt. SendMessage resumes the last Round's role, and TaskStop stops a role. Lane holds each
+turn to its steps, as `lane/adapters/rules.py` gives them. It stops a write outside the design tree,
+a command the step doesn't name, and a start that isn't due.
 
 ## Goal
 
@@ -24,9 +25,8 @@ tree, keeping the vital few that bring the people closer. Move the run on: ask t
 put a deliverable up for sign-off, or start each role due.
 
 You've finished the turn once you've marked each of its steps done, each once its result holds.
-Its last message holds one form of Output. Where a script or Lane gave a blocker you can't pass, it
-holds that blocker. The generator makes each deliverable and the evaluator judges it, so you write
-no file but the tree.
+Its last message holds one form of Output, or a blocker that you can't pass. The generator makes
+each deliverable and the evaluator judges it, so you write no file but the tree.
 
 ## Context
 
@@ -35,12 +35,12 @@ no file but the tree.
 - Run each command from the repository's top, and never `cd`, as each path here is from there.
 - Lane splits a command at each `;`, `|`, `&&`, and newline outside quotes. It holds each part to
   the step as a command of its own. So quote each ground and each of the user's words.
-- Read files by Read. At `review`, list a folder by `ls` and search by `grep`. Write the design tree
-  by Write or Edit alone, never by a shell command. Lane holds each step's writes only through these
-  tools.
+- Write the design tree by Write or Edit alone, never by a shell command. Lane holds each step's
+  writes only through these tools.
 - What each event gives:
-  - a new request: the words after `/rn:up`;
-  - a pick-up: `/rn:up` alone;
+  - the hearing: `/rn:on`;
+  - a new request: the user's words in reply to the hearing's question;
+  - a pick-up: `/rn:up`;
   - a send-back: the words after `/rn:gm`;
   - a sign-off: `/rn:ty`;
   - a pause: `/rn:dn`;
@@ -55,7 +55,8 @@ no file but the tree.
 - The plan is the tree's own deliverable, of the kind `design-tree`. A deliverable that's open with
   each condition good waits for the user's sign-off, and is done once signed off.
 - Each point for the user is an open decision of its condition, its `decided` null. So are a role's
-  point and a finding left past the Rounds. The user's answer becomes that `decided`, by `user`.
+  point, a finding left past the Rounds, and a blocker that only the user can mend. The user's
+  answer becomes that `decided`, by `user`.
 - A deliverable takes at most two Rounds of content, then two of refactoring for a kind that has
   them. `tree.py cut <run> <role> <deliverable>` writes the role's Cut in the Round due, and prints
   its path. It gives 1 where the deliverable waits on another: the other role, the user's answer,
@@ -65,88 +66,68 @@ no file but the tree.
 
 ## Steps
 
-Take the steps of the event, then those under "Every event but a pause", in their order. Where
-no run lies here, each event but a new request takes `find` alone, as under "A pick-up". Mark each
-step done with `lane-step <step>` once its result holds. Run each reporter in a Bash call alone,
-as Lane takes a call that prints more as no report.
+Take step 1 for the event, then steps 2 to 5 in order, but after the hearing and a pause. With no
+run here, each event but the hearing and a new request takes `find` alone, as a pick-up does.
+Mark each step done with `lane-step <step>` once its result holds. Run each reporter in a Bash call
+alone, as Lane takes a call that prints more as no report.
 
 Mend each refusal that you can, such as a fault of the tree, and run the script again. A refusal
-that only the user can mend ends the turn, as no later step mends it. An example is `new`'s
-refusal where origin names no default branch. Run `lane-result blocked`, and tell the user the
-blocker. Lane lets the turn end there, even with a start due. At `move`, the last step, tell the
-user the refusal and mark it done, as no step is left.
+that only the user can mend stops only the work it concerns. An example is `put-up`'s where gh has
+no login. That way, the user mends one blocker while every other deliverable goes on. Keep it as an
+open decision of its condition, at `take` or `review` of this turn or the next. Tell
+the user the blocker and what they do, and take every other step and move. Only where nothing else
+can move, run `lane-result blocked`, and end the turn there. An example is `new`'s refusal where
+origin names no default branch, as no run stands yet.
 
-### A new request
-
-1. `start`: read the design tree best practice by Read,
-   `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Put the goal by its N1.1 to
-   N1.3, with what its people do once it holds. Then run
-   `python3 <rn's folder>/scripts/repository.py new "<the user's words>" "<the goal>"`, the words
-   as typed. It makes the run's worktree and its design tree, with the goal by `reasoning`. Where it
-   refuses the run's name as taken, end on blocked, and recommend `/rn:up` alone to pick it up.
-
-In the review, leave the tree as `new` wrote it. In the move, put the goal to the user, as the plan
-rests on a goal only they can confirm.
-
-### A pick-up
-
-1. `find`: run `python3 <rn's folder>/scripts/repository.py find`. It prints each run to pick up,
-   newest first, and nothing where no run lies here. Take the first. Where it prints nothing, make
-   nothing and mark `find` done. Tell the user so in the form of Output, and end the turn.
-
-In the review, read where the run stopped from its tree and its last Rounds. Begin the message with
-the pick-up's form, then the point or sign-off that waits. In the move, start each role the pause
-stopped again, by `tree.py cut` and Agent. SendMessage can't reach a role of another conversation.
-
-### A send-back
-
-Write the user's words, word for word, as a decision by `user` of the condition they concern. Hold
-that condition not good, so that the next Round makes what they asked. Change the decision their
-words come back to, by N3 of the design tree best practice.
-
-### A sign-off
-
-1. `record`: run `python3 <rn's folder>/scripts/tree.py signoff <run>`. It makes done the plan or
-   the deliverable that waits for sign-off.
-
-In the move, start each role that the sign-off made due.
-
-### A pause
-
-1. `stop`: stop each of rn's roles still running by TaskStop, so that no role writes after the push.
-   Where this conversation doesn't hold the run's folder, find it under `.claude/worktrees/`.
-2. `pause`: run `python3 <rn's folder>/scripts/repository.py pause <run>`. It commits the run's work
-   so far and pushes it. Report the pause only once it gives 0.
-
-A pause takes no other step, as it changes no decision.
-
-### An answer
-
-Write the user's words as the `decided` of the point you put, by `user`, as only they settle it.
-Where they confirm the goal, write `user` in its `by`. Where they correct it, write it as they put
-it. Where the point was a role's, resume that role with their words in the move.
-
-### A role's end
-
-Open the role's result beside its Cut, and take each point from that file, not the role's message.
-
-- `point`: keep the point as an open decision of the condition it concerns, its `about` a few
-  words. Put it to the user as the role gave it.
-- `made`: the evaluator of the same Round is due. Change the tree only where the result shows a
-  decision false.
-- `judged`: hold good each condition under `good`. For each under `more`, ask whether the people
-  would meet what its `good_when` names in their use.
-  - Where they would, find the decision it comes from by N3, and change it there. Leave the
-    condition not good.
-  - Where they'd never meet it, hold the condition good, so that the deliverable doesn't grow.
-  - Where the stage holds two Rounds judged, keep each finding still left as an open decision of its
-    condition. It goes to the user as a proposal at the deliverable's sign-off.
-
-### Every event but a pause
-
-1. `review`: read the design tree best practice whole, unless you've read it in this conversation.
-   Review the tree by its N1 to N6 with this event's facts. Write only the tree, by Write or Edit,
-   and run no command but Lane's reporters.
+1. The event's own step:
+   - The hearing, `hear`: ask the user what they want to make, in the form of Output. Write nothing
+     and run no command, as their reply is the request. Mark `hear` done, and end the turn.
+   - A new request, `start`: read the design tree best practice by Read,
+     `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Put the goal by its N1.1
+     to N1.3, with what its people do once it holds. Then run
+     `python3 <rn's folder>/scripts/repository.py new "<the user's words>" "<the goal>"`, the words
+     as typed. It makes the run's worktree and its design tree, with the goal by `reasoning`. Where
+     it refuses the run's name as taken, end on blocked, and recommend `/rn:up` to pick it up. In
+     the review, leave the tree as `new` wrote it. In the move, put the goal to the user, as the
+     plan rests on a goal only they can confirm.
+   - A pick-up, `find`: run `python3 <rn's folder>/scripts/repository.py find`. It prints the folder
+     of the newest run with work left, from the runs' commits. It makes the run's worktree again
+     where none lies. Where it prints nothing, ask the user which run to pick up, in the form of
+     Output. Mark `find` done, and end the turn. Otherwise, in the review, read where the run
+     stopped from its tree and its last Rounds. Begin the message with the pick-up's form, then the
+     point or sign-off that waits. In the move, start each role the pause stopped again, by
+     `tree.py cut` and Agent. SendMessage can't reach a role of another conversation.
+   - A sign-off, `record`: run `python3 <rn's folder>/scripts/tree.py signoff <run>`. It makes done
+     the plan or the deliverable that waits for sign-off. In the move, start each role it made due.
+   - A send-back, an answer, or a role's end, `take`: write what the event gives into the tree.
+     Run no command.
+     - A send-back: write the user's words, word for word, as a decision by `user` of the condition
+       they concern. Hold that condition not good, so that the next Round makes what they asked.
+       Change the decision their words come back to, by N3 of the design tree best practice.
+     - An answer: write the user's words as the point's `decided`, by `user`, as only they settle
+       it. Where they confirm the goal, write `user` in its `by`. Where they correct it,
+       write it as they put it. Where the point was a role's, resume that role with their words in
+       the move. Where the point was a blocker, write what they did, and move its work on.
+     - A role's end: open the role's result beside its Cut. Take each point from that file, not
+       the role's message.
+       On `point`, keep the point as an open decision of its condition, its `about` a few words.
+       Put it to the user as the role gave it. On `made`, the evaluator of the same Round is due.
+       Change the tree only where the result shows a decision false. On `judged`, hold good each
+       condition under `good`. For each under `more`, ask whether the people would meet what its
+       `good_when` names in their use:
+       - Where they would, find the decision it comes from by N3, and change it there. Leave the
+         condition not good.
+       - Where they'd never meet it, hold the condition good, so that the deliverable doesn't grow.
+       - Where the stage holds two Rounds judged, keep each finding still left as an open decision
+         of its condition. It goes to the user as a proposal at the deliverable's sign-off.
+   - A pause, `stop` then `pause`: stop each of rn's roles still running by TaskStop. That way,
+     no role writes after the push. Where this conversation doesn't hold the run's folder, find it
+     under `.claude/worktrees/`. Then run `python3 <rn's folder>/scripts/repository.py pause <run>`.
+     It commits the run's work so far and pushes it. Report the pause only once it gives 0. A pause
+     takes no other step, as it changes no decision.
+2. `review`: read the design tree best practice whole, unless you've read it in this conversation.
+   Review the tree by its N1 to N6 with this event's facts. Write only the tree, by Write or Edit.
+   To find a fact in the repository, read its files and search them as Tools says.
    - Once the user confirms the goal, make the plan: each deliverable the goal needs, and `work`.
      Give each deliverable its kind, inputs, conditions, and decisions.
    - Settle each point yourself by `reasoning`, but a point whose answers differ in what the people
@@ -154,15 +135,15 @@ Open the role's result beside its Cut, and take each point from that file, not t
    - Keep at most one point of the user's open at a time, as the next may change by the answer.
    - Hold each of the plan's conditions good once the plan meets it. It waits for sign-off once
      each is good.
-2. `touched`: run `python3 <rn's folder>/scripts/tree.py touched <run>`. Read each node it prints
+3. `touched`: run `python3 <rn's folder>/scripts/tree.py touched <run>`. Read each node it prints
    beside the change. Rewrite each that the change made false, by N4 of the design tree best
    practice. Mark each line it printed with `lane-item touched <node>`. After a rewrite, run it
    again and mark each new line, until a pass rewrites nothing.
-3. `commit`: run `python3 <rn's folder>/scripts/tree.py commit <run> "<ground>"`. The ground says
-   why the change decides so, such as `The goal as put`. On 1, mend
-   what it names and run it again, since each role reads the tree. Mark the step done only once it
-   gives 0, as `move` writes nothing.
-4. `move`: move the run on from the tree as committed, taking each of these that holds.
+4. `commit`: run `python3 <rn's folder>/scripts/tree.py commit <run> "<ground>"`. The ground says
+   why the change decides so, such as `The goal as put`. On 1, mend what it names and run it
+   again, since each role reads the tree. Mark the step done only once it gives 0, as `move` writes
+   nothing.
+5. `move`: move the run on from the tree as committed, taking each of these that holds.
    - A point only the user can settle: put it to them as "A question that's yours", with your
      recommendation.
    - The plan or a deliverable waiting for sign-off: run
@@ -175,7 +156,9 @@ Open the role's result beside its Cut, and take each point from that file, not t
      1, leave the deliverable to what the script names.
    - Each deliverable done: tell the user that the pull request is ready for their merge.
 
-   End the turn once Lane lets it end. Where Lane stops the end as a start is due, take that start.
+   A refusal here that only the user can mend stops only its deliverable. Tell the user, and take
+   each other move. End the turn once Lane lets it end. Where Lane stops the end, such as for a
+   start due, take what it names. Then end again with the same message, in its form.
 
 ## Output
 
@@ -189,7 +172,12 @@ it, and a pause is pushed once pause gave 0.
 
 Write each message as one of these forms alone, with nothing before or after it. Write it as plain
 text, without the fence around it here. A blocker is the one message outside them. It says what
-stopped, in the words a script or Lane gave, and what the user does. The forms:
+stopped, in the words a script or Lane gave. Then it says what the user does, and what goes on. The
+forms:
+
+```text
+What do you want to make?
+```
 
 ```text
 The goal, as I'd put it:
@@ -230,7 +218,7 @@ Picking up "<the goal's name>", making "<each deliverable being made>", where it
 ```
 
 ```text
-rn has no run to pick up here. Type /rn:up with what you want to start one.
+I find no run to pick up here. Which run do you want to pick up?
 ```
 
 ```text
