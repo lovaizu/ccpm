@@ -467,5 +467,10 @@
       "status": "done"
     }
   ],
-  "work": []
+  "work": [
+    {
+      "do": "make",
+      "path": ".claude-plugin/marketplace.json"
+    }
+  ]
 }
