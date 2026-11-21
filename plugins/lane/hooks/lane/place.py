@@ -150,9 +150,8 @@ def turn_beginning(event: Event, runs: list[Run]) -> Run | None:
     if found is None:
         return None
     run = found[0]
-    ended = any(entry["kind"] == "turn_ended" for entry in run.entries)
-    begun = any(entry["kind"] == "turn_begun" for entry in _this_turn(run))
-    return run if ended and not begun else None
+    turn = run.state.turn
+    return run if turn.after_an_end and turn.prompt is None else None
 
 
 def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
@@ -175,11 +174,10 @@ def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
     if event.get("hook_event_name") not in ("PreToolUse", "Stop") or "agent_id" in event:
         return None
     found = _per_turn(runs)
-    if found is None or _turn_at_hand(found[0]) is not None:
+    if found is None or found[0].state.turn.entry is not None:
         return None
     run, role = found
-    prompts = [entry["prompt"] for entry in _this_turn(run) if entry["kind"] == "turn_begun"]
-    return Turn(run, role, prompts[-1] if prompts else "")
+    return Turn(run, role, run.state.turn.prompt or "")
 
 
 def place(event: Event, runs: list[Run], due: Due) -> Move | None:
@@ -368,7 +366,7 @@ def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> 
     if agent_id is not None:
         holder = cast(Entry, latest_start(run, agent_id))
     else:
-        holder = _turn_at_hand(run) or {"role": _main_role(run, rules)}
+        holder = run.state.turn.entry or {"role": _main_role(run, rules)}
     role, steps = _held(rules, holder)
     done = marked(run, agent_id)
     step = next((each["name"] for each in steps if each["name"] not in done), None)
@@ -448,18 +446,6 @@ def _per_turn(runs: list[Run]) -> tuple[Run, str] | None:
         return None
     role = _main_role(run, rules)
     return (run, role) if asks_adapter(rules, role) else None
-
-
-def _this_turn(run: Run) -> list[Entry]:
-    """The entries of the main conversation's turn at hand: those after the run's latest
-    `turn_ended` entry, or each of the run's before its first."""
-    return _since(run.entries, lambda e: e["kind"] == "turn_ended")
-
-
-def _turn_at_hand(run: Run) -> Entry | None:
-    """The `turn` entry of the turn at hand, with the role and the steps that hold the main
-    conversation's moves in it; None where the turn holds none yet."""
-    return next((e for e in reversed(_this_turn(run)) if e["kind"] == "turn"), None)
 
 
 def _since(entries: list[Entry], latest: Callable[[Entry], bool]) -> list[Entry]:
