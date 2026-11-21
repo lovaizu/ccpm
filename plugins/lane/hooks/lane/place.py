@@ -362,8 +362,7 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     ended = resumed is not None and _ended_start(run, to)
     if call.agent_id is not None or not ended or resumed["role"] not in roles:
         return None
-    role = resumed["role"]
-    steps = start_steps(rules, role, resumed.get("steps"))
+    role, steps = _held(rules, resumed)
     return Move("start", event, run, role, None, resumed["prompt"], steps, None, None)
 
 
@@ -396,8 +395,7 @@ def _after(event: Event, run: Run, rules: Rules) -> Move | None:
         agent_id = (
             event["tool_response"]["agentId"] if tool == "Agent" else event["tool_input"]["to"]
         )
-        role = start["role"]
-        steps = start_steps(rules, role, start.get("steps"))
+        role, steps = _held(rules, start)
         return Move("tie", event, run, role, agent_id, None, steps, None, None)
     if tool == "Read":
         return _read(event, run, rules)
@@ -430,16 +428,20 @@ def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> 
     role takes its steps at each turn, or of a subagent, the event's or the one given, held to the
     steps of the start it's tied to; each at the first of its steps that it hasn't marked done."""
     agent_id = agent_id or event.get("agent_id")
-    # A turn's entry holds the main conversation's moves as a start's entry holds a subagent's.
     if agent_id is not None:
         holder = cast(Entry, latest_start(run, agent_id))
     else:
         holder = _turn_at_hand(run) or {"role": _main_role(run, rules)}
-    role = holder["role"]
-    steps = start_steps(rules, role, holder.get("steps"))
+    role, steps = _held(rules, holder)
     done = marked(run, agent_id)
     step = next((each["name"] for each in steps if each["name"] not in done), None)
     return Move("call", event, run, role, agent_id, None, steps, step, None)
+
+
+def _held(rules: Rules, holder: Entry) -> tuple[str, list[Step]]:
+    """The role and the steps of the entry that holds a start's moves, or a turn's, as a `turn`
+    entry holds the main conversation's moves as a `start` entry holds a subagent's."""
+    return holder["role"], start_steps(rules, holder["role"], holder.get("steps"))
 
 
 def _main_role(run: Run, rules: Rules) -> str:
