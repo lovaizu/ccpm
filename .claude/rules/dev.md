@@ -37,9 +37,9 @@ architecture.** It makes each to its best practice and its template, and keeps o
 **A subagent makes the test cases, the skeleton, and the code, and the main conversation reads all
 it made.** The main conversation first writes the policy into the design tree's decisions, and
 briefs the subagent with the best practice of the deliverable's kind and the documents agreed. It
-then reads each line the subagent made against the
-architecture and the best practice, and takes only the vital few by the plugin's purpose. It writes
-each gap into the architecture and the design tree before the tests and the code.
+then reads each line the subagent made against the architecture and the best practice, and takes
+only the vital few by the plugin's purpose. It writes each gap into the architecture and the design
+tree before the tests and the code.
 
 - Rationale: the main conversation keeps the whole only where it sets each policy and reads each
   result itself, as a subagent's report is a claim, not a result.
@@ -55,8 +55,7 @@ way where one exists.
 
 **Until the user says yes, install nothing, and send nothing to a translator, a web API, or any
 service other than Claude Code and the repository's git and GitHub. Running `claude`, such as a
-prompt's tests and the E2E tests on Opus, needs no ask, and neither does fetching a public page to
-read it. Say so in every brief to a subagent and in every `claude -p` you start.**
+prompt's tests on Opus, needs no ask, and neither does fetching a public page to read it. Say so in every brief to a subagent and in every `claude -p` you start.**
 
 - Rationale: text sent out may hold what the user never meant to share, such as their email
   address. Claude Code and GitHub already hold the work, as the user runs the work through them.
