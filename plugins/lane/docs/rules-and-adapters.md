@@ -390,8 +390,9 @@ names with no steps, and of each turn of a main conversation that it names with 
 where a role works on another deliverable at each start, such as a writer whose files differ by the
 prompt, or where the main conversation answers another event at each turn.
 
-Lane asks it when the main conversation starts the role, and keeps the steps for that start and
-each resume of it. For the main conversation, Lane asks it at each turn's first call or end, and keeps
+Lane asks it when the main conversation starts the role, and again at each resume of the start,
+with the prompt of the start, so that the steps follow what an answer changed. Each step marked
+done and each read stay as they stood. For the main conversation, Lane asks it at each turn's first call or end, and keeps
 the steps for that turn. Its `role` is the skill of the run's latest command then, and a command
 that the Skill tool calls later in the turn leaves the turn's steps as they stand. Its `prompt` is
 the prompt that started the turn, as Claude Code gives it, and empty for the run's first turn, whose

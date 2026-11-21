@@ -314,7 +314,29 @@
       "name": "A plugin's main conversation starts each subagent that its order makes due, and only those, and doesn't end its turn while one is due",
       "path": "dev/lane/tests/integration/test_lane_s9_starts.py",
       "kind": "code",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/lane/architecture.md",
+        "plugins/lane/docs/rules-and-adapters.md"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The steps of a resumed start",
+              "decided": "A resume by SendMessage of a role that takes its steps from the plugin's adapter of the rules takes the steps that the adapter gives at the resume, for the prompt of the start it resumes, as an answer may change the deliverable that the start makes, such as a path the answer adds; each step marked done and each read stay as they stood",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A plugin's run that stopped goes on where it stopped, after /compact or in a new conversation",
@@ -473,6 +495,10 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "dev/lane/tests/integration/test_lane_s9_starts.py"
+    },
     {
       "do": "make",
       "path": ".claude-plugin/marketplace.json"
