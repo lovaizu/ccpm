@@ -382,75 +382,8 @@
     {
       "name": "Lane's maintainers change its hooks quickly in one place, each behavior that its integration cases show holding",
       "path": "plugins/lane/hooks/lane",
-      "more_paths": [
-        "dev/lane/tests/unit/",
-        "dev/lane/tests/properties/"
-      ],
       "kind": "refactor-code",
-      "inputs": [
-        "plugins/rn/domain/best-practices/refactor-code",
-        "dev/lane/architecture.md"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The tests",
-              "decided": "each integration case under dev/lane/tests/integration stays as it is, word for word, as the proof of each behavior; a unit or property case that calls an internal moves or is rewritten to the new structure, each behavior it checks still checked",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The run's state",
-              "decided": "one function reads a run's record once into the run's state, such as its turn at hand, each start with its tie and end, and each role's marks, and each place that now scans the record reads that state, so that the meaning of each kind of entry is written once; the record's entries and file stay as they are",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N9",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "rn's maintainers change its code quickly in one place, each behavior that its integration cases show holding",
@@ -519,10 +452,5 @@
       "status": "done"
     }
   ],
-  "work": [
-    {
-      "do": "make",
-      "path": "plugins/lane/hooks/lane"
-    }
-  ]
+  "work": []
 }
