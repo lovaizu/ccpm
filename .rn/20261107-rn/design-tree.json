@@ -86,57 +86,7 @@
       "name": "Readers take in a document as its writer meant in one reading, as each refactoring makes it clearer and keeps all it says",
       "path": "plugins/rn/domain/best-practices/refactor-doc",
       "kind": "meta",
-      "inputs": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Its place",
-              "decided": "a step of its own after the deliverable's content passes its evaluation, which changes no behavior and nothing that the content says, as making and tidying at once draws findings to the form before the essentials settle",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The practitioners' steps",
-              "decided": "the maker edits by the levels of editing in their order, the structure first, then each sentence, then the wording, as writing teachers take the higher-order concerns before the lower-order ones",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Maintainers understand the code in one reading and change it in one place, as each refactoring makes it simpler and keeps every behavior",
@@ -638,10 +588,6 @@
     {
       "do": "make",
       "path": "plugins/rn/domain"
-    },
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/refactor-doc"
     }
   ]
 }

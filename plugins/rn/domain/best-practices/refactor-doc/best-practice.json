@@ -4,17 +4,17 @@
   "critical_success_factors": [
    {
     "id": "C1",
-    "what": "The reader finds the parts they need without reading the rest.",
+    "what": "The document says all that it said before the refactoring, and nothing more.",
     "necessary_conditions": [
      {
       "id": "N1",
       "about": "the whole",
-      "what": "Do each heading and the first sentence under it say what the section gives the reader?",
-      "why": "Readers choose what to read by the headings and the first sentence under each, and skip the rest, so a heading and a first sentence that say what the section gives take each reader straight to the parts they need.",
+      "what": "Does the document still state each fact, decision, and step that it stated before the refactoring, and none that it didn't?",
+      "why": "The document's content passed its evaluation before the refactoring, so a refactoring changes how the document says its content and never what it says, as a fact changed while editing reaches its readers unjudged. Editors keep this apart by the levels of editing, in which a structural edit, a line edit, and a copyedit each change the form of what the writer wrote.",
       "items": [
        {
         "at": "decide",
-        "text": "Read the document to its end before you change anything, and note in a line what each section is for.",
+        "text": "Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it, and note in a line what each section is for.",
         "trace": {
          "action": "read",
          "takes": [
@@ -22,6 +22,30 @@
          ]
         }
        },
+       {
+        "at": "make",
+        "text": "After your last change, read the document to its end, and check each line of the list against it: put back each fact, decision, or step that it no longer states, and take out each that the refactoring added. Check a fact that you moved to another document in its new place, and leave out one that the person who owns the document said to cut.",
+        "trace": {
+         "action": "read",
+         "takes": [
+          "{deliverable}"
+         ]
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The reader finds the parts they need without reading the rest, as the structure gives each topic and each fact one place.",
+    "necessary_conditions": [
+     {
+      "id": "N2",
+      "about": "the whole",
+      "what": "Do each heading and the first sentence under it say what the section gives the reader?",
+      "why": "Readers choose what to read by the headings and the first sentence under each, and skip the rest, so a heading and a first sentence that say what the section gives take each reader straight to the parts they need.",
+      "items": [
        {
         "at": "decide",
         "text": "Find the readers: open the work's goal and its inputs, such as the users that a product vision names, and the document's opening where it names its audience, and list each kind of reader named there with the purpose they come with, such as `a developer who installs the plugin and wants its first command to run`. Where none of these names the readers, or two name different ones, ask the person who owns the document, since a document written for a guessed reader serves someone it wasn't meant for."
@@ -53,7 +77,7 @@
       ]
      },
      {
-      "id": "N2",
+      "id": "N3",
       "about": "the whole",
       "what": "Does the document hold only what its readers need?",
       "why": "Every sentence costs the reader time, and one that carries nothing they need still costs it and hides the sentences that do.",
@@ -97,15 +121,43 @@
         }
        }
       ]
+     },
+     {
+      "id": "N4",
+      "about": "the whole",
+      "what": "Does the document state each fact in one place, with every other place linking to it?",
+      "why": "Two places that state one fact drift apart, and a reader who finds both can't tell which one holds.",
+      "items": [
+       {
+        "at": "decide",
+        "text": "List each fact that the document states in more than one place, including one that a figure draws or the work itself shows, such as a command's options, which its `--help` shows."
+       },
+       {
+        "at": "decide",
+        "text": "For each fact on the list, choose the one place that states it: the work itself where it shows the fact, such as a script's `--help` for its options, and else the section whose topic the fact is, where a reader looks for it first."
+       },
+       {
+        "at": "decide",
+        "text": "Where two places state a fact differently, keep both, and ask the person who owns the document which one is right, since choosing one yourself would change what the document says."
+       },
+       {
+        "at": "make",
+        "text": "Where the place you chose is a section of the document, state the fact there in full."
+       },
+       {
+        "at": "make",
+        "text": "In every other place, replace the fact with a link to its place and a few words on what the reader finds there, such as `For what each option does, see [Options](#options).`"
+       }
+      ]
      }
     ]
    },
    {
-    "id": "C2",
+    "id": "C3",
     "what": "The reader understands each sentence and figure on the first read.",
     "necessary_conditions": [
      {
-      "id": "N3",
+      "id": "N5",
       "about": "the whole",
       "what": "Does each sentence come after everything it depends on?",
       "why": "A reader who has to turn back or read ahead to understand a sentence loses the thread, and a reader in a second language, or of a machine translation, loses it sooner.",
@@ -143,7 +195,7 @@
       ]
      },
      {
-      "id": "N4",
+      "id": "N6",
       "about": "the whole",
       "what": "Do lists, tables, and diagrams show the steps, the choices, and the relations that prose would make the reader piece together?",
       "why": "A reader takes in at once the steps, the choices, or the relations that a list, a table, or a diagram shows, but has to piece them together from prose.",
@@ -167,7 +219,7 @@
       ]
      },
      {
-      "id": "N5",
+      "id": "N7",
       "about": "the whole",
       "what": "Does each sentence make one point, with the actor as its subject and an active verb?",
       "why": "A sentence that makes one point, with the actor as its subject, reads one way for every reader and for a machine translator, as the [Google developer documentation style guide](https://developers.google.com/style/translation) asks for readers who read in a second language.",
@@ -203,9 +255,15 @@
         }
        }
       ]
-     },
+     }
+    ]
+   },
+   {
+    "id": "C4",
+    "what": "The reader reads each thing by the word they already use for it, the same word throughout.",
+    "necessary_conditions": [
      {
-      "id": "N6",
+      "id": "N8",
       "about": "the whole",
       "what": "Does the document use the words its readers already use, in their usual meaning?",
       "why": "A reader reads each word with the meaning they already know, so a word they don't use, such as a term the team coined, makes them guess what it means.",
@@ -231,43 +289,9 @@
         "text": "Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does."
        }
       ]
-     }
-    ]
-   },
-   {
-    "id": "C3",
-    "what": "Every part of the document says the same thing about each fact and uses the same name for each thing.",
-    "necessary_conditions": [
-     {
-      "id": "N7",
-      "about": "the whole",
-      "what": "Does the document state each fact in one place, with every other place linking to it?",
-      "why": "Two places that state one fact drift apart, and a reader who finds both can't tell which one holds.",
-      "items": [
-       {
-        "at": "decide",
-        "text": "List each fact that the document states in more than one place, including one that a figure draws or the work itself shows, such as a command's options, which its `--help` shows."
-       },
-       {
-        "at": "decide",
-        "text": "For each fact on the list, choose the one place that states it: the work itself where it shows the fact, such as a script's `--help` for its options, and else the section whose topic the fact is, where a reader looks for it first."
-       },
-       {
-        "at": "decide",
-        "text": "Where two places state a fact differently, keep both, and ask the person who owns the document which one is right, since choosing one yourself would change what the document says."
-       },
-       {
-        "at": "make",
-        "text": "Where the place you chose is a section of the document, state the fact there in full."
-       },
-       {
-        "at": "make",
-        "text": "In every other place, replace the fact with a link to its place and a few words on what the reader finds there, such as `For what each option does, see [Options](#options).`"
-       }
-      ]
      },
      {
-      "id": "N8",
+      "id": "N9",
       "about": "the whole",
       "what": "Does each thing have one name, used the same way throughout, and does each name refer to one thing?",
       "why": "A reader who meets two names takes them for two things, and one name for two things merges them, while one name for each thing lets the reader and a translator keep one picture of it from start to end.",
