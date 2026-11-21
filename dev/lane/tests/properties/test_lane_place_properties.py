@@ -5,7 +5,10 @@ each move placed on its run and start says, since a call placed on another start
 rules that aren't its own, leaving its step unnoticed or stopping a right move; and a main
 conversation that takes its steps at each turn must have each turn's end placed as if no turn came
 before, as the Strategy of the main conversation's steps given at each turn says, since a mark of
-an earlier turn counted in a later one lets a step of that later event go undone."""
+an earlier turn counted in a later one lets a step of that later event go undone; and a start
+that goes back to a step must have its next call placed at that step, or at an earlier one it left
+undone, as the Strategy of a step gone back to says, since a call placed after it skips the steps
+it goes back to take again."""
 
 from __future__ import annotations
 
@@ -175,3 +178,48 @@ def test_the_turns_before_leave_the_end_of_the_turn_at_hand_as_it_stands_alone(
         return (moved.kind, moved.role, moved.agent_id, moved.steps, moved.step)
 
     assert ended([*head, *turns_ended(earlier), *at_hand]) == ended([*head, *at_hand])
+
+
+@pytest.mark.supports(
+    "test_a_later_step_marked_after_going_back_is_stopped_with_the_step_gone_back_to"
+)
+@given(st.lists(MARK, max_size=8), st.sampled_from(["write", "report"]))
+def test_a_start_that_goes_back_to_a_step_is_at_it_or_at_an_earlier_step_left_undone(
+    folders: tuple[str, str], marks: list[Entry], step: str
+):
+    """Given a run of log:up whose writer is tied to a1, with any marks of steps and items in any
+    order, by a1, by another start, and by the main conversation, then a1's mark of a step and its
+    going back to that step
+    When a1 writes a file
+    Then place gives a `call` at the first step before the one gone back to that a1 hasn't marked
+    done, else at the step gone back to, never at a step after it
+    (Model-based, resting on the Strategy of a step gone back to undoing the marks of it and of each
+    step after it, S12, so that each is taken again in order.)"""
+    log, cwd = folders
+    names = STEPS[WRITER.id][1]
+    entries: list[Entry] = [
+        {"kind": "run", "run": "r1", "skill": "log:up", "words": lane_bench.WORDS},
+        lane_entries.start("u1"),
+        lane_entries.tie("u1", WRITER.id),
+        lane_entries.start("u2"),
+        lane_entries.tie("u2", OTHER.id),
+        *marks,
+        {"kind": "mark", "run": "r1", "agent_id": WRITER.id, "step": step},
+        {
+            "kind": "back",
+            "run": "r1",
+            "agent_id": WRITER.id,
+            "role": "log:writer",
+            "step": step,
+            "undone": names[names.index(step) :],
+        },
+    ]
+    run = Run("r1", "session-1", "log:up", lane_bench.WORDS, log, entries)
+    e = Events(cwd, os.path.join(os.path.dirname(cwd), "transcripts", "session-1.jsonl"))
+    moved = place(
+        e.write(os.path.join(cwd, "CHANGELOG.md"), WRITER), [run], lambda _: {"starts": []}
+    )
+    done = {m["step"] for m in marks if m["agent_id"] == WRITER.id and "item" not in m}
+    before = names[: names.index(step)]
+    assert moved is not None
+    assert moved.step == next((each for each in before if each not in done), step)

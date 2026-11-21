@@ -188,7 +188,9 @@ def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
     Gives: each entry of the run with the subagent's `agent_id`, in their order; for the main
     conversation, each entry with no `agent_id`, and, where the run holds a `turn` entry, only those
     after the latest, which the turn's first call or end added, as each turn's steps start afresh,
-    so that its marks, items, reads, and result count for the turn alone.
+    so that its marks, items, reads, and result count for the turn alone. S12: each mark of a step
+    or of its item before a `back` entry among them that undid the step is left out, so that the
+    step and each after it are taken again in order; reads, results, and later marks stay.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -196,7 +198,18 @@ def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
     turns = [i for i, entry in enumerate(entries) if entry["kind"] == "turn"]
     if agent_id is None and turns:
         entries = entries[turns[-1] + 1 :]
-    return [entry for entry in entries if entry.get("agent_id") == agent_id]
+    undone: set[str] = set()
+    kept: list[Entry] = []
+    # From the latest back, as a step gone back to undoes only the marks made before it.
+    for entry in reversed(entries):
+        if entry.get("agent_id") != agent_id:
+            continue
+        if entry["kind"] == "back":
+            undone.update(entry["undone"])
+        elif entry["kind"] == "mark" and entry["step"] in undone:
+            continue
+        kept.append(entry)
+    return kept[::-1]
 
 
 def place(event: Event, runs: list[Run], due: Due) -> Move | None:

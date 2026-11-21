@@ -7,7 +7,9 @@ about, each event placed on its run, its start, its role, and its step, or outsi
 latest run not ended picked of several, the latest command whose skill has steps, the latest tie of
 a resumed subagent, a resume carrying its start's role, prompt, and steps, a Grep and a Glob, and
 the events of another plugin, of an untied subagent, or of no start, which it leaves alone; and
-command_of, marked, and latest_start, which place's callers share; and, for a main conversation
+command_of, marked, and latest_start, which place's callers share, marked and own_entries with a
+step gone back to that undoes the marks of the steps it names before it, one, two in either order,
+and one of another start; and, for a main conversation
 whose role takes its steps at each turn, turn_beginning, one for each event that begins its next
 turn or doesn't, as its turn's end was let through, stopped, or not yet come, turn_opening, one
 for each first call or end of a turn and each event that opens none, with the latest prompt begun
@@ -927,6 +929,130 @@ def test_the_steps_a_start_marked_are_its_own_marks_of_steps(e: Events):
         {"write"},
         {"report"},
         {"lead"},
+    )
+
+
+def back(step: str, undone: list[str], agent_id: str | None = "a1") -> Entry:
+    """The step that the subagent, or the main conversation for None, went back to, with the steps
+    it undid: the step and each after it."""
+    role = "log:up" if agent_id is None else "log:writer"
+    return {
+        "kind": "back",
+        "run": "r1",
+        "agent_id": agent_id,
+        "role": role,
+        "step": step,
+        "undone": undone,
+    }
+
+
+@pytest.mark.supports(
+    "test_a_step_gone_back_to_asks_its_items_again_and_keeps_its_reads",
+    "test_an_end_after_going_back_is_stopped_with_the_step_gone_back_to",
+)
+def test_a_step_gone_back_to_undoes_the_marks_and_items_of_each_step_it_undid(e: Events):
+    """Given a run whose writer a1 read NOTES.md, marked the items `dated` and `linked` and the step
+    `write`, read CHANGELOG.md, gave `written`, and marked `report`, then went back to `write`,
+    undoing `write` and `report`
+    When Lane reads a1's own entries, and the steps it marked
+    Then they are its tie, both reads, its result, and its step gone back to, with no mark"""
+    notes = lane_entries.read("a1", "NOTES.md", 1, 6)
+    changelog = lane_entries.read("a1", "CHANGELOG.md", 1, 4)
+    gave = lane_entries.result("a1", "written")
+    went = back("write", ["write", "report"])
+    on = run(
+        START,
+        TIE,
+        notes,
+        step_mark("write", item="dated"),
+        step_mark("write", item="linked"),
+        step_mark("write"),
+        changelog,
+        gave,
+        step_mark("report"),
+        went,
+    )
+    assert (own_entries(on, "a1"), marked(on, "a1")) == ([TIE, notes, changelog, gave, went], set())
+
+
+@pytest.mark.supports(
+    "test_a_later_step_marked_after_going_back_is_stopped_with_the_step_gone_back_to"
+)
+def test_a_step_gone_back_to_leaves_the_marks_of_each_step_before_it(e: Events):
+    """Given a run whose writer a1 marked the item `dated` and the step `write`, and the step
+    `report`, then went back to `report`, undoing it alone
+    When Lane reads the steps a1 marked, and its own entries
+    Then it marked `write`, and its own entries keep the marks of `write` and its item"""
+    item, write = step_mark("write", item="dated"), step_mark("write")
+    went = back("report", ["report"])
+    on = run(START, TIE, item, write, step_mark("report"), went)
+    assert (marked(on, "a1"), own_entries(on, "a1")) == ({"write"}, [TIE, item, write, went])
+
+
+@pytest.mark.supports("test_each_step_taken_again_in_order_after_going_back_lets_the_end_through")
+def test_marks_after_a_step_gone_back_to_count(e: Events):
+    """Given a run whose writer a1 marked `write`, went back to it, then marked the item `dated`
+    and the step `write` again
+    When Lane reads a1's own entries, and the steps it marked
+    Then they hold the marks made after it went back, and it marked `write`"""
+    went, item = back("write", ["write", "report"]), step_mark("write", item="dated")
+    write = step_mark("write")
+    on = run(START, TIE, step_mark("write"), went, item, write)
+    assert (own_entries(on, "a1"), marked(on, "a1")) == ([TIE, went, item, write], {"write"})
+
+
+@pytest.mark.supports("test_each_step_taken_again_in_order_after_going_back_lets_the_end_through")
+@pytest.mark.parametrize(
+    "first, then, done",
+    [
+        (back("report", ["report"]), back("write", ["write", "report"]), {"write"}),
+        (back("write", ["write", "report"]), back("report", ["report"]), {"write"}),
+    ],
+)
+def test_each_step_gone_back_to_undoes_only_the_marks_before_it(
+    e: Events, first: Entry, then: Entry, done: set[str]
+):
+    """Given a run whose writer a1 marked `write` and `report`, went back to the first step, marked
+    again each step it undid, went back to the second, and marked `write` again: back to `report`
+    then `write`, or to `write` then `report`
+    When Lane reads the steps a1 marked
+    Then it marked `write` alone in each, as a step gone back to undoes no mark after it"""
+    again = [step_mark(each) for each in first["undone"]]
+    on = run(
+        START,
+        TIE,
+        step_mark("write"),
+        step_mark("report"),
+        first,
+        *again,
+        then,
+        *([step_mark("write")] if "write" in then["undone"] else []),
+    )
+    assert marked(on, "a1") == done
+
+
+@pytest.mark.supports("test_two_starts_of_one_role_are_each_held_to_their_own_start")
+def test_a_step_gone_back_to_undoes_only_the_marks_of_whoever_went_back(e: Events):
+    """Given a run whose writers a1 and a2 and the main conversation each marked their steps, then
+    a2 went back to `write`, and the main conversation to `lead`
+    When Lane reads the steps that a1, a2, and the main conversation marked
+    Then a1 marked `write` and `report`, and a2 and the main conversation marked none"""
+    on = run(
+        START,
+        TIE,
+        lane_entries.start("u2"),
+        lane_entries.tie("u2", "a2"),
+        step_mark("write"),
+        step_mark("report"),
+        step_mark("write", "a2"),
+        step_mark("lead", None),
+        back("write", ["write", "report"], "a2"),
+        back("lead", ["lead"], None),
+    )
+    assert (marked(on, "a1"), marked(on, "a2"), marked(on, None)) == (
+        {"write", "report"},
+        set(),
+        set(),
     )
 
 

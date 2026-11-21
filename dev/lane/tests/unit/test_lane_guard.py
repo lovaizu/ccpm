@@ -6,7 +6,9 @@ it takes, a role due once and twice at once among them, a start of another plugi
 name nearly matches, and each class of the order's answer; and written, one for each event and
 class of answer; and, for a main conversation whose role takes its steps at each turn, answer, one
 for each transition of its turns, and turn_begun, turn_started, and turn_ended, one for each class
-of the prompt, the role, the adapter's answer, and the turn's end. Each Then gives the whole
+of the prompt, the role, the adapter's answer, and the turn's end; and report_made of a step gone
+back to, one for each step marked done, and for a step not marked done, one its steps don't name,
+and one gone back to once each step is done. Each Then gives the whole
 answer, as Lane's rules-and-adapters.md words it, and each entry that the record gains."""
 
 from __future__ import annotations
@@ -1232,16 +1234,15 @@ def test_call_made_stops_only_a_call_that_breaks_its_step(
     assert gained(log) == []
 
 
-def report_move(g: Play, kind: str, *words: str) -> Move:
-    """The report move of a1's reporter of the kind, with the report it printed."""
+def report_move(g: Play, kind: str, *words: str, at: str | None = "write") -> Move:
+    """The report move of a1's reporter of the kind, with the report it printed, at the step `at`,
+    `write` unless given."""
     report(kind, list(words))
     printed = g.capsys.readouterr().out
     [run] = runs("session-1")
     event = g.e.bash_ran(f"lane-{kind}", printed, WRITER)
     steps = lane_bench.RULES["roles"][WRITER.type]["steps"]
-    return Move(
-        "report", event, run, WRITER.type, WRITER.id, None, steps, "write", read_report(printed)
-    )
+    return Move("report", event, run, WRITER.type, WRITER.id, None, steps, at, read_report(printed))
 
 
 @pytest.mark.supports("test_a_step_marked_done_with_a_file_unread_is_stopped_with_the_file")
@@ -1301,6 +1302,90 @@ def test_report_made_of_an_item_or_a_result_adds_it_though_its_step_breaks_its_r
     recorded_now(log, START, TIE)
     assert report_made(report_move(g, kind, *words)) == Answer()
     assert gained(log) == [{**entry, "run": "r1", "agent_id": "a1"}]
+
+
+def a1_mark(step: str) -> Entry:
+    """a1's mark of the step done."""
+    return {"kind": "mark", "run": "r1", "role": "log:writer", "agent_id": "a1", "step": step}
+
+
+@pytest.mark.supports(
+    "test_a_later_step_marked_after_going_back_is_stopped_with_the_step_gone_back_to"
+)
+@pytest.mark.parametrize(
+    "marks, step, undone",
+    [
+        (("write",), "write", ["write", "report"]),
+        (("write", "report"), "write", ["write", "report"]),
+        (("write", "report"), "report", ["report"]),
+    ],
+)
+def test_report_made_of_a_step_gone_back_to_adds_it_with_each_step_it_undoes(
+    g: Play, log: str, marks: tuple[str, ...], step: str, undone: list[str]
+):
+    """Given the writer tied to a1, which marked `write`, or `write` and `report`
+    When it goes back to `write`, or to `report`
+    Then the answer is empty, and the record gains a1's step gone back to by its role, undoing the
+    step and each step after it in its role's steps, marked or not"""
+    recorded_now(log, START, TIE, *(a1_mark(each) for each in marks))
+    at = None if len(marks) == 2 else "report"
+    assert report_made(report_move(g, "back", step, at=at)) == Answer()
+    assert gained(log) == [
+        {
+            "kind": "back",
+            "step": step,
+            "run": "r1",
+            "role": "log:writer",
+            "agent_id": "a1",
+            "undone": undone,
+        }
+    ]
+
+
+# The second line of the sentence of a step gone back to that isn't marked done.
+GO_BACK = "Go back only to a step marked done, with lane-back <step>."
+
+
+@pytest.mark.supports("test_a_step_gone_back_to_that_isnt_marked_done_is_stopped_with_its_sentence")
+@pytest.mark.parametrize(
+    "marks, step, said",
+    [
+        ((), "write", "You're at the step `write` of log:writer, and `write` isn't marked done."),
+        (
+            ("write",),
+            "report",
+            "You're at the step `report` of log:writer, and `report` isn't marked done.",
+        ),
+        (
+            ("write",),
+            "size",
+            "You're at the step `report` of log:writer, and `size` isn't marked done.",
+        ),
+        (
+            ("write", "draft"),
+            "draft",
+            "You're at the step `report` of log:writer, and `draft` isn't marked done.",
+        ),
+        (
+            ("write", "report"),
+            "size",
+            "You've marked each step of log:writer done, and `size` isn't one of them.",
+        ),
+    ],
+)
+def test_report_made_of_a_step_gone_back_to_that_isnt_marked_done_is_stopped(
+    g: Play, log: str, marks: tuple[str, ...], step: str, said: str
+):
+    """Given the writer tied to a1, which marked no step, `write`, `write` and a step `draft` that
+    its steps don't name, or each step, at the first step it didn't mark
+    When it goes back to `write` or `report`, which it didn't mark, to `size`, which its steps
+    don't name, or to `draft`
+    Then the answer stops it with the sentence naming the step at hand, or that each step is marked
+    done, and the step it went back to, and the record gains nothing"""
+    recorded_now(log, START, TIE, *(a1_mark(each) for each in marks))
+    at = next((each for each in ("write", "report") if each not in marks), None)
+    assert report_made(report_move(g, "back", step, at=at)) == Answer(True, f"{said}\n{GO_BACK}")
+    assert gained(log) == []
 
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")

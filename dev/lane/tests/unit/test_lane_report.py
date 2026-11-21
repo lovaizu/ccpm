@@ -1,7 +1,7 @@
-"""The unit cases of hooks/lane/report.py: report, one for each kind of reporter and each count of
-words that fits or doesn't fit it, and read_report, one for each class of a Bash call's output: a
-report of each kind, JSON that nearly matches one, with a field more, less, or of another type, JSON
-that isn't an object, and text that isn't JSON."""
+"""The unit cases of hooks/lane/report.py: report, one for each kind of reporter, a step gone back
+to among them, and each count of words that fits or doesn't fit it, and read_report, one for each
+class of a Bash call's output: a report of each kind, JSON that nearly matches one, with a field
+more, less, or of another type, JSON that isn't an object, and text that isn't JSON."""
 
 from __future__ import annotations
 
@@ -47,6 +47,18 @@ def test_a_result_prints_its_report(capsys: pytest.CaptureFixture[str]):
 
 
 @pytest.mark.supports(
+    "test_a_later_step_marked_after_going_back_is_stopped_with_the_step_gone_back_to"
+)
+def test_a_step_gone_back_to_prints_its_report(capsys: pytest.CaptureFixture[str]):
+    """Given the reporter of a step gone back to
+    When it reports `write`
+    Then it gives 0, and its line reads back as going back to the step `write`"""
+    code, out = printed(capsys, "back", ["write"])
+    assert code == 0
+    assert read_report(out) == {"kind": "back", "step": "write"}
+
+
+@pytest.mark.supports(
     "test_a_reporter_given_words_that_dont_fit_its_kind_exits_2_with_what_it_takes"
 )
 @pytest.mark.parametrize(
@@ -58,6 +70,8 @@ def test_a_result_prints_its_report(capsys: pytest.CaptureFixture[str]):
         ("item", ["write", "dated", "linked"], "lane-item takes <step> <item>"),
         ("result", [], "lane-result takes <result>"),
         ("result", ["good", "more"], "lane-result takes <result>"),
+        ("back", [], "lane-back takes <step>"),
+        ("back", ["write", "report"], "lane-back takes <step>"),
     ],
 )
 def test_words_that_dont_fit_the_kind_give_2_with_what_it_takes(
@@ -86,6 +100,8 @@ def test_words_that_dont_fit_the_kind_give_2_with_what_it_takes(
         '{"kind": "step", "step": "write", "item": "dated"}\n',
         '{"kind": "item", "step": "write"}\n',
         '{"kind": "result", "step": "write"}\n',
+        '{"kind": "back"}\n',
+        '{"kind": "back", "step": "write", "item": "dated"}\n',
         '{"kind": "Step", "step": "write"}\n',
         '{"kind": null, "step": "write"}\n',
         '["step", "write"]\n',

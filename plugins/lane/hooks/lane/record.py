@@ -15,7 +15,8 @@ from rules import Step
 
 class Entry(TypedDict, total=False):
     """One line of the run record: its `kind`, one of `run`, `folder`, `start`, `turn_begun`,
-    `turn`, `turn_ended`, `tie`, `drop`, `read`, `mark`, `result`, `stopped`, `typed`, and `ended`,
+    `turn`, `turn_ended`, `tie`, `drop`, `read`, `mark`, `result`, `back`, `stopped`, `typed`, and
+    `ended`,
     the `run` it belongs to, the `agent_id` of the subagent whose move it is, None for the main
     conversation's, and the fields of that kind: a `folder` gives the run's plugin's folder, a
     `start` the `prompt` that the main conversation gave it, the prompt of the start it resumes for
@@ -24,8 +25,10 @@ class Entry(TypedDict, total=False):
     `turn` the main conversation's `role` at the turn's first call or end, the turn's `prompt`, and
     the `steps` that the plugin's adapter of the rules gave for it, each later entry of the main
     conversation until the next `turn` belonging to that turn, a `turn_ended` the turn's end that
-    the guard let through, a `stopped` the `agent_id` of a start that ended with no result, such as
-    one stopped by TaskStop, and an `ended` the end of the run, once its order said the run ends."""
+    the guard let through, a `back` the `step` that a start or the main conversation went back to
+    and the steps it `undone`, that step and each after it, whose earlier marks no longer count, a
+    `stopped` the `agent_id` of a start that ended with no result, such as one stopped by TaskStop,
+    and an `ended` the end of the run, once its order said the run ends."""
 
     kind: str
     run: str
@@ -44,6 +47,7 @@ class Entry(TypedDict, total=False):
     command: str
     prompt: str
     steps: list[Step]
+    undone: list[str]
 
 
 @dataclass

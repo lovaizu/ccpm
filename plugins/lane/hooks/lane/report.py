@@ -8,12 +8,18 @@ import sys
 from typing import TypedDict, cast
 
 # The words that each kind of reporter takes, by the fields of its report.
-_FIELDS = {"step": ("step",), "item": ("step", "item"), "result": ("result",)}
+_FIELDS = {
+    "step": ("step",),
+    "item": ("step", "item"),
+    "result": ("result",),
+    "back": ("step",),
+}
 
 
 class Report(TypedDict, total=False):
-    """What a reporter of bin/ prints for the guard: its `kind`, one of `step`, `item`, and
-    `result`, and the step, the item, or the result it reports done."""
+    """What a reporter of bin/ prints for the guard: its `kind`, one of `step`, `item`, `result`,
+    and `back`, and the step, the item, or the result it reports done, or the step it goes back
+    to."""
 
     kind: str
     step: str
@@ -22,10 +28,10 @@ class Report(TypedDict, total=False):
 
 
 def report(kind: str, words: list[str]) -> int:
-    """Prints the report of a step, an item, or a result done.
+    """Prints the report of a step, an item, or a result done, or of a step gone back to.
 
-    Takes: the reporter's kind, `step`, `item`, or `result`, and the words the AI gave it: the
-    step; the step and the item; or the result.
+    Takes: the reporter's kind, `step`, `item`, `result`, or `back`, and the words the AI gave it:
+    the step; the step and the item; the result; or the step it goes back to.
     Gives: 0, once it prints the report as one line of JSON on standard output.
     Changes: nothing; the guard adds the report to the run at the Bash call's PostToolUse.
     Refuses: 2, with what the reporter takes on standard error, where the words don't fit its kind.

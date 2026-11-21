@@ -363,24 +363,47 @@ def call_made(move: Move) -> Answer:
 
 
 def report_made(move: Move) -> Answer:
-    """S3, S5, S6, and S7: a start runs a reporter of bin/, which counts as done only where its
-    step's rules hold.
+    """S3, S5, S6, S7, and S12: a start runs a reporter of bin/, which counts as done only where its
+    step's rules hold, or, for a step gone back to, where the step is marked done.
 
     Takes: a `report` move at the PostToolUse of the reporter's Bash call.
-    Gives: for a step done, a stop with the sentence that rule_types.judge_mark gives; an empty
-    answer where the report holds.
-    Changes: the run record, by the mark or the result, where it holds.
+    Gives: for a step done, a stop with the sentence that rule_types.judge_mark gives; for a step
+    gone back to that its role's steps don't name, or that place.marked doesn't give, a stop with
+    the sentence naming the step at hand and the step gone back to, as no rule names where a step
+    may go back; an empty answer where the report holds.
+    Changes: the run record, by the mark or the result, where it holds; for a step gone back to, by
+    a `back` entry with the step and each step after it in its role's steps as `undone`, whose
+    marks and items place.own_entries then leaves out.
     Refuses: nothing.
     """
     given = cast(Report, move.report)
+    names = [step["name"] for step in move.steps]
     if given["kind"] == "step":
         said = rule_types.judge_mark(move)
         if said is not None:
             return Answer(True, said)
     entry: record.Entry = {**given, "run": move.run.id, "role": move.role}
-    entry.update(kind="result" if given["kind"] == "result" else "mark", agent_id=move.agent_id)
+    entry.update(kind=_KINDS.get(given["kind"], "mark"), agent_id=move.agent_id)
+    if given["kind"] == "back":
+        if given["step"] not in names or given["step"] not in place.marked(move.run, move.agent_id):
+            return Answer(True, _not_gone_back(move, given["step"]))
+        entry["undone"] = names[names.index(given["step"]) :]
     record.add(move.run.session_id, [entry])
     return Answer()
+
+
+# The kind of entry that each kind of report adds, a mark for any other.
+_KINDS = {"result": "result", "back": "back"}
+
+
+def _not_gone_back(move: Move, step: str) -> str:
+    """The sentence of a step gone back to that the move's start hasn't marked done."""
+    at_hand = (
+        f"You've marked each step of {move.role} done, and `{step}` isn't one of them."
+        if move.step is None
+        else f"You're at the step `{move.step}` of {move.role}, and `{step}` isn't marked done."
+    )
+    return f"{at_hand}\nGo back only to a step marked done, with lane-back <step>."
 
 
 def subagent_ended(move: Move) -> Answer:
