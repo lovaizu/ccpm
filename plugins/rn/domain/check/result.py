@@ -10,14 +10,12 @@ from typing import Any
 
 from fault import Wrong
 from practice import conditions
-from rounds.files import Result
+from rounds.files import ROLES, Result
 from template import check
 from tree.cut import Cut
 
 from check.form import faults as form_faults
-
-# The folder of rn's schemas, beside this package.
-_SCHEMAS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "schemas")
+from check.form import schema
 
 
 def faults(role: str, cut: Cut, result: Result, worktree: str, cwd: str) -> list[str]:
@@ -38,9 +36,9 @@ def faults(role: str, cut: Cut, result: Result, worktree: str, cwd: str) -> list
     Changes: nothing.
     Refuses: Wrong where the role is neither `generator` nor `evaluator`.
     """
-    if role not in ("generator", "evaluator"):
+    if role not in ROLES:
         raise Wrong(f"check.py checks the result of generator or evaluator, not {role!r}")
-    found = form_faults(result, os.path.join(_SCHEMAS, f"{role}-round.schema.json"))
+    found = form_faults(result, schema(f"{role}-round"))
     if found:
         # The checks below read the result in its form.
         return found

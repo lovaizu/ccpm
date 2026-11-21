@@ -10,13 +10,9 @@ import json
 import os
 from typing import Any, NamedTuple
 
-from check.form import faults
+from check.form import faults, schema
 from fault import Wrong
 
-# rn's form of a best practice, beside this module.
-_SCHEMA = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "schemas", "best-practice.schema.json"
-)
 _FILE = "best-practice.json"
 # The kinds whose deliverables are code, refactored by refactor-code.
 _CODE = {"code", "software-design", "test-design", "test-implementation"}
@@ -74,7 +70,7 @@ def read(folder: str) -> Practice:
         raise Wrong(f"{path}: no best practice lies there") from None
     except ValueError as error:
         raise Wrong(f"{path}: isn't JSON: {error}") from None
-    found = faults(practice, _SCHEMA)
+    found = faults(practice, schema("best-practice"))
     if found:
         raise Wrong(f"{path}: leaves rn's form of a best practice at {found[0]}")
     return practice

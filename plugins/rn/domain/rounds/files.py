@@ -18,7 +18,8 @@ from repository.place import RunPlace
 # The name of a Round's folder: its stage and its number in the stage from 1.
 _NAME = re.compile(r"(content|refactor)-([1-9][0-9]*)")
 _STAGES = ("content", "refactor")
-_ROLES = ("generator", "evaluator")
+# The roles whose files a Round holds.
+ROLES = ("generator", "evaluator")
 
 # A role's result, as it writes it in the form of domain/schemas/<role>-round.schema.json.
 Result = dict[str, Any]
@@ -133,6 +134,6 @@ def _folder_of(run: RunPlace, deliverable: str) -> str:
 
 def _role(role: str) -> str:
     """The role, refused as Wrong where it's neither generator nor evaluator."""
-    if role not in _ROLES:
+    if role not in ROLES:
         raise Wrong(f"a Round holds the files of generator and evaluator, not {role!r}")
     return role

@@ -27,7 +27,6 @@ from repository.worktree import newest
 
 # The orchestrator's roles: the skills of rn that a run stands on.
 _ORCHESTRATOR = ("rn:on", "rn:up", "rn:dn", "rn:ty", "rn:gm")
-_SCHEMAS = os.path.join(HERE, "..", "..", "domain", "schemas")
 Rule = dict[str, Any]
 # The rule of each step of the orchestrator's turn but its last: the turn ends there on a refusal
 # that only the user can mend, where nothing else can move.
@@ -198,7 +197,7 @@ def _cut(prompt: str, cwd: str, role: str) -> Given:
         raise Wrong(
             f"the prompt of rn:{role} names no Cut it can read, {prompt!r}: {error}"
         ) from None
-    found = form.faults(cut, os.path.join(_SCHEMAS, f"{role}-cut.schema.json"))
+    found = form.faults(cut, form.schema(f"{role}-cut"))
     if found:
         raise Wrong(f"{prompt}: isn't a Cut of rn:{role}: {found[0]}")
     return cut

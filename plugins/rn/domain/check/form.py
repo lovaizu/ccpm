@@ -1,13 +1,17 @@
 """Decides how a JSON value is held to one of rn's JSON Schemas, in the part of draft-07 that rn's
-schemas and the design tree's use, with the standard library alone."""
+schemas and the design tree's use, with the standard library alone, and where rn's schemas lie."""
 
 from __future__ import annotations
 
 import json
+import os
 import re
 from typing import Any, Callable
 
 from fault import CantRun
+
+# The folder of rn's own schemas, domain/schemas/.
+_SCHEMAS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "schemas")
 
 # Each type that rn's schemas name, by whether a value from JSON is of it; a bool is no integer.
 _TYPES: dict[str, Callable[[Any], bool]] = {
@@ -20,6 +24,12 @@ _TYPES: dict[str, Callable[[Any], bool]] = {
 }
 # The keywords that only describe, and hold nothing of the value.
 _NOTES = {"$schema", "title", "description", "$defs"}
+
+
+def schema(name: str) -> str:
+    """The path of rn's schema of the name, such as `generator-cut` for
+    `domain/schemas/generator-cut.schema.json`."""
+    return os.path.join(_SCHEMAS, f"{name}.schema.json")
 
 
 def faults(value: Any, schema_path: str) -> list[str]:

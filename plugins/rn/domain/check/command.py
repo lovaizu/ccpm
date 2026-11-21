@@ -9,6 +9,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from fault import Answer, Wrong
+from rounds.files import ROLES
 
 from check import form, result
 
@@ -40,7 +41,7 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str) -> Answer:
 
 def _faults(role: str, cut_path: str, cwd: str, plugin_root: str) -> list[str]:
     """Each fault of the role's result against its Cut, or the path where it writes one."""
-    if role not in ("generator", "evaluator"):
+    if role not in ROLES:
         raise Wrong(f"{role!r} is no role whose result check.py holds; give generator or evaluator")
     cut = _read(os.path.join(cwd, cut_path), cut_path)
     schema = os.path.join(plugin_root, "domain", "schemas", f"{role}-cut.schema.json")
