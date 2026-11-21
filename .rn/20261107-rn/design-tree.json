@@ -368,7 +368,28 @@
       "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
       "path": "dev/rn/tests/integration/test_rn_components.py",
       "kind": "code",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where a role tries, and what the repository's checks judge",
+              "decided": "The generator tries its deliverable in a folder outside the work's branch, as the evaluator does in the folder that repository.py trial makes, so that the run's commits and the pull request hold only the deliverables' files and the run's records; repository.py checks runs the repository's commit check on the generator's files alone, with an index of HEAD and those files, never on what another role staged",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Each push again holds every plugin's product vision, README, and architecture to its template, and every case to its architecture",
@@ -386,7 +407,24 @@
       "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
       "path": "plugins/rn/domain/generator.md",
       "kind": "prompt",
-      "status": "done"
+      "status": "open",
+      "inputs": [
+        "dev/rn/architecture.md",
+        "dev/rn/tests/integration/test_rn_components.py"
+      ],
+      "necessary_conditions": [
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Where the generator tries",
+              "decided": "At try, the generator puts each file that the people's use needs in its trial folder outside the work's branch, never in the Round's folder, which holds only its Cut and its result",
+              "by": "maker"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
@@ -473,6 +511,14 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "dev/rn/tests/integration/test_rn_components.py"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/generator.md"
+    },
     {
       "do": "make",
       "path": ".claude-plugin/marketplace.json"

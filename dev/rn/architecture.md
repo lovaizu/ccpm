@@ -99,6 +99,9 @@ Strategies:
 - The generator trying the deliverable as its people would, and going back to its decisions on a
   shortfall they meet. [P2.1]\
   Intent: the generator finds its own shortfall, and hands on only what it saw serve the people.
+- Each role trying the deliverable outside the work's branch, and checking only its own files.
+  [P4.3]\
+  Intent: the pull request holds only the deliverables and the run's records.
 - The generator taking as given what the last evaluator found good or short. [P2.2]\
   Intent: the generator mends by the evaluator's own measure.
 - The last Round's roles resumed within the same conversation, and started from its files in a new
