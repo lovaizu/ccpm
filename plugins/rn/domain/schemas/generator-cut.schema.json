@@ -13,6 +13,7 @@
   "stage",
   "number",
   "round",
+  "trial",
   "findings",
   "last_good"
  ],
@@ -64,6 +65,11 @@
   },
   "round": {
    "description": "The Round's folder, from the folder that the conversation works in, where the role writes its result.",
+   "type": "string",
+   "minLength": 1
+  },
+  "trial": {
+   "description": "The folder of the people's starting state, named by the Round, which repository.py trial makes and the generator tries the deliverable in, outside the work's branch.",
    "type": "string",
    "minLength": 1
   },

@@ -1,8 +1,8 @@
 """The unit cases of repository/commit_checks.py's `findings`: a repository that sets no check, a
 check that passes, one that fails with one line and with several, one set by core.hooksPath, the
-files given alone checked beside another changed file, none, one, and several files, the files
-staged, and each refusal: a file outside the worktree, a file that doesn't exist, and a check whose
-program is missing."""
+files given alone checked beside another changed file and beside another staged one, none, one, and
+several files, the worktree's index left as it was, and each refusal: a file outside the worktree, a
+file that doesn't exist, and a check whose program is missing."""
 
 from __future__ import annotations
 
@@ -27,15 +27,15 @@ def staged(run: Any) -> list[str]:
 
 
 @pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
-def test_a_repository_with_no_check_gives_none_and_stages_the_files(tmp_path: Any, host: Any):
+def test_a_repository_with_no_check_gives_none_and_stages_nothing(tmp_path: Any, host: Any):
     """Given a run whose repository sets no pre-commit check, and the command written
     When findings is asked of the command
-    Then it gives none, the command is staged, and the branch's head is as it was"""
+    Then it gives none, nothing is staged in the worktree, and the branch's head is as it was"""
     run = made_run(str(tmp_path))
     changed(run, {rn_files.COMMAND: "print()\n"})
     before = head(rn_files.worktree_of(run.repository, run.name))
     assert findings(run, [rn_files.COMMAND], host) == []
-    assert staged(run) == [rn_files.COMMAND]
+    assert staged(run) == []
     assert head(rn_files.worktree_of(run.repository, run.name)) == before
 
 
@@ -94,12 +94,26 @@ def test_the_check_reads_the_files_given_alone(tmp_path: Any, host: Any):
     """Given a run whose command and guide are written, and whose check prints each file a commit
     would hold and fails
     When findings is asked of the command alone
-    Then it gives the command alone, and the guide stays unstaged"""
+    Then it gives the command alone, and nothing is staged in the worktree"""
     run = made_run(str(tmp_path))
     hook(run.repository, NAMES)
     changed(run, {rn_files.COMMAND: "print()\n", rn_files.GUIDE: "# Guide\n"})
     assert findings(run, [rn_files.COMMAND], host) == [rn_files.COMMAND]
-    assert staged(run) == [rn_files.COMMAND]
+    assert staged(run) == []
+
+
+@pytest.mark.supports("test_the_generators_checks_judge_its_files_alone_beside_another_staged")
+def test_the_check_reads_the_files_given_alone_beside_another_staged(tmp_path: Any, host: Any):
+    """Given a run whose command and guide are written, the guide staged in the worktree, and whose
+    check prints each file a commit would hold and fails
+    When findings is asked of the command alone
+    Then it gives the command alone, and the worktree's index holds the guide alone, as it was"""
+    run = made_run(str(tmp_path))
+    hook(run.repository, NAMES)
+    changed(run, {rn_files.COMMAND: "print()\n", rn_files.GUIDE: "# Guide\n"})
+    git(rn_files.worktree_of(run.repository, run.name), "add", "--", rn_files.GUIDE)
+    assert findings(run, [rn_files.COMMAND], host) == [rn_files.COMMAND]
+    assert staged(run) == [rn_files.GUIDE]
 
 
 @pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")

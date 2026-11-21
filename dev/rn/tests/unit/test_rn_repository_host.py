@@ -1,7 +1,8 @@
 """The unit cases of repository/host.py's `run`, the one way rn's code reaches git and gh: one for
-each class of what it takes, git, gh, and a program of another name, a near match among them; and
-of what it gives, a command that gives 0 and one that gives another code, each with its stdout and
-stderr whole; and the refusal of a program not found."""
+each class of what it takes, git, gh, and a program of another name, a near match among them, and
+variables of its environment given and none; and of what it gives, a command that gives 0 and one
+that gives another code, each with its stdout and stderr whole; and the refusal of a program not
+found."""
 
 from __future__ import annotations
 
@@ -48,6 +49,19 @@ def test_git_changes_what_its_command_changes(tmp_path: Any):
     folder = str(tmp_path)
     assert run(["git", "init", "-q"], folder) == Ran(0, "", "")
     assert os.path.isdir(os.path.join(folder, ".git"))
+
+
+@pytest.mark.supports("test_the_generators_checks_judge_its_files_alone_beside_another_staged")
+def test_git_runs_with_the_variables_given_beside_rns_own(tmp_path: Any):
+    """Given a git repository
+    When run is given `git var GIT_AUTHOR_IDENT` in it, with GIT_AUTHOR_NAME set to `Ada`
+    Then it gives 0, git naming Ada as the author, and rn's own environment keeps its value"""
+    repo = rn_files.repository(str(tmp_path / "invoicer"))
+    before = os.environ.get("GIT_AUTHOR_NAME")
+    ran = run(["git", "var", "GIT_AUTHOR_IDENT"], repo, {"GIT_AUTHOR_NAME": "Ada"})
+    assert ran.code == 0
+    assert ran.out.startswith("Ada <")
+    assert os.environ.get("GIT_AUTHOR_NAME") == before
 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")

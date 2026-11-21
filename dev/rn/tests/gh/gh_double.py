@@ -104,11 +104,14 @@ def host(folder: str) -> Any:
 
     ran: list[tuple[list[str], str]] = []
 
-    def run(argv: Sequence[str], cwd: str) -> HostRan:
+    def run(argv: Sequence[str], cwd: str, env: Any = None) -> HostRan:
         ran.append((list(argv), cwd))
         if argv[0] == "gh":
             return HostRan(*answer(argv, folder))
-        done = subprocess.run(list(argv), cwd=cwd, capture_output=True, text=True, check=False)
+        whole = {**os.environ, **env} if env else None
+        done = subprocess.run(
+            list(argv), cwd=cwd, env=whole, capture_output=True, text=True, check=False
+        )
         return HostRan(done.returncode, done.stdout, done.stderr)
 
     run.ran = ran  # type: ignore[attr-defined]

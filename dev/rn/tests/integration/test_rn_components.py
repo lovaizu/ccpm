@@ -162,6 +162,7 @@ def test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice
     assert (given["stage"], given["number"]) == ("content", 1)
     assert os.path.normpath(os.path.join(b.repo, given["round"])) == first
     assert (given["findings"], given["last_good"]) == (None, None)
+    assert os.path.isabs(given["trial"])
 
 
 @pytest.mark.supports("generator", "Cut")
@@ -194,6 +195,47 @@ def test_the_generators_make_writes_only_its_deliverables_paths(b: Bench):
     answer = generator.write(os.path.join(b.worktree, "README.md"), "# invoicer\n")
     assert answer.blocked
     assert COMMAND in answer.said
+
+
+def at_try(b: Bench, c: Conversation, generator: Agent) -> str:
+    """The generator makes the command, keeps its step `make`, and makes its folder of the people's
+    starting state by `repository.py trial`; gives the folder that trial printed."""
+    at_make(b, c, generator)
+    generator.write(os.path.join(b.worktree, COMMAND), "print('invoice')\n")
+    for each in rn_files.items_at(kind_of_cut(c, generator), "make"):
+        generator.bash(f"lane-item make {each}")
+    marked(c, "make", generator)
+    return ran(c, b.script("repository", "trial", b.run, cut_of(c, generator)["round"]), generator)
+
+
+@pytest.mark.supports("generator", "scripts")
+def test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work(b: Bench):
+    """Given a run whose command's generator made the command
+    When it runs repository.py trial for its Round at the step `try`, and writes the people's
+    lines.csv in the folder it printed
+    Then the folder is the Cut's trial, outside the run's worktree, holding the command, and Lane
+    lets the write through"""
+    c, generator = signed_plan(b)
+    trial = at_try(b, c, generator).strip()
+    assert os.path.samefile(trial, cut_of(c, generator)["trial"])
+    assert not os.path.realpath(trial).startswith(os.path.realpath(b.worktree) + os.sep)
+    assert os.path.isfile(os.path.join(trial, COMMAND))
+    answer = generator.write(os.path.join(trial, "lines.csv"), "Hosting;40.00;1\n")
+    assert not answer.blocked, answer.said
+
+
+@pytest.mark.supports("generator", "Round")
+def test_the_generators_try_writing_the_peoples_files_in_its_round_is_stopped(b: Bench):
+    """Given a run whose command's generator made the command and its folder of the people's
+    starting state
+    When it writes the people's lines.csv in its Round's folder at the step `try`
+    Then Lane stops the write, naming the people's folder as what the step writes"""
+    c, generator = signed_plan(b)
+    trial = at_try(b, c, generator).strip()
+    round_ = cut_of(c, generator)["round"]
+    answer = generator.write(os.path.join(c.cwd, round_, "lines.csv"), "Hosting;40.00;1\n")
+    assert answer.blocked
+    assert os.path.basename(os.path.normpath(trial)) in answer.said
 
 
 @pytest.mark.supports("generator", "Round")
@@ -263,6 +305,34 @@ def test_the_generators_checks_give_the_repositorys_commit_check_findings(b: Ben
     assert found.exit_code == 1
     assert "invoicer/__main__.py: no tests" in found.output
     assert git(b.repo, "diff", "--cached", "--name-only").strip() == ""
+
+
+@pytest.mark.supports("generator", "scripts")
+def test_the_generators_checks_judge_its_files_alone_beside_another_staged(b: Bench):
+    """Given invoicer's repository with a pre-commit hook that refuses each commit of the guide,
+    and a run whose worktree holds the guide staged, as another deliverable's, and whose command's
+    generator wrote the command
+    When it runs repository.py checks on the command
+    Then it gives 0, and the worktree's index holds the guide alone, as it was"""
+    hook = os.path.join(b.repo, ".git", "hooks", "pre-commit")
+    with open(hook, "w", encoding="utf-8") as f:
+        f.write(
+            "#!/bin/sh\n"
+            f"git diff --cached --name-only | grep -qx '{GUIDE}' || exit 0\n"
+            f"echo '{GUIDE}: no title'\n"
+            "exit 1\n"
+        )
+    os.chmod(hook, 0o755)
+    c, generator = signed_plan(b)
+    os.makedirs(os.path.dirname(os.path.join(b.worktree, GUIDE)), exist_ok=True)
+    with open(os.path.join(b.worktree, GUIDE), "w", encoding="utf-8") as f:
+        f.write("guide\n")
+    git(b.worktree, "add", "--", GUIDE)
+    at_make(b, c, generator)
+    generator.write(os.path.join(b.worktree, COMMAND), "print('invoice')\n")
+    found = c.bash(b.script("repository", "checks", b.run, COMMAND), generator)
+    assert found.exit_code == 0, found.output
+    assert git(b.worktree, "diff", "--cached", "--name-only").split() == [GUIDE]
 
 
 # The evaluator: its Cut, and what its steps never read or write.

@@ -78,10 +78,11 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     For `rn:generator`, whose prompt is the path of its Cut from `cwd`: `read`, reading whole the
     Cut, the best practice's `best-practice.md`, so that a folder without one holds the step, and
     each input that is a file, writing nothing and running no command; `decide`, with the best
-    practice's `decide` items as its checklist, writing only the Round's folder, running no
-    command, and ending on `point`; `make`, with its `make` items as its checklist, writing only
-    the deliverable's paths; `try`, writing only the Round's folder, from which the generator goes
-    back to `decide` by Lane's `lane-back`, which needs no rule of rn's; and `check`, running only
+    practice's `decide` items as its checklist, writing only the Round's `generator.json`, running
+    no command, and ending on `point`; `make`, with its `make` items as its checklist, writing only
+    the deliverable's paths; `try`, writing only the Round's `generator.json` and the folder of the
+    people's starting state that the Cut's `trial` names, from which the generator goes back to
+    `decide` by Lane's `lane-back`, which needs no rule of rn's; and `check`, running only
     `repository.py checks`, with the check `check.py generator <cut>`, and the results `made` or,
     ending, `point`.
     For `rn:evaluator`, whose prompt is the path of its Cut from `cwd`, steps that never read the
@@ -215,7 +216,8 @@ def _generator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
     node = cut["deliverable"]
     paths = [os.path.join(worktree, each) for each in [node["path"], *node.get("more_paths", [])]]
     whole += [each for each in paths if os.path.isfile(each)]
-    round_ = os.path.join(cwd, cut["round"]) + "/"
+    result = os.path.join(cwd, cut["round"], "generator.json")
+    trial = cut["trial"].rstrip("/") + "/"
     return [
         _step(
             "read",
@@ -226,7 +228,7 @@ def _generator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
         _step(
             "decide",
             {"type": "checklist", "items": practice.items(held, "decide")},
-            _writes(cwd, [round_]),
+            _writes(cwd, [result]),
             _commands(plugin_root),
             {"type": "result", "ends": ["point"]},
         ),
@@ -235,7 +237,7 @@ def _generator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
             {"type": "checklist", "items": practice.items(held, "make")},
             _writes(cwd, paths),
         ),
-        _step("try", _writes(cwd, [round_])),
+        _step("try", _writes(cwd, [result, trial])),
         _step(
             "check",
             _commands(plugin_root, ("repository", "checks")),

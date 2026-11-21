@@ -38,7 +38,8 @@ def generator(
     the tree's context holds it; the deliverable's node, with each
     decision and the user's answers as its decisions; the run's worktree; the path of each
     deliverable its inputs name; the best practice's folder; the Round's stage, number, and folder;
-    the last evaluator's `good` and `more` of each condition that the node holds not good, as it
+    the folder of the people's starting state as `repository.trial.folder` names it; the last
+    evaluator's `good` and `more` of each condition that the node holds not good, as it
     gave them; and the last generator's `good`.
     Changes: nothing.
     Refuses: Wrong where the tree holds no open deliverable of the Round's path.
@@ -62,6 +63,7 @@ def generator(
         "stage": round_.stage,
         "number": round_.number,
         "round": _from(run, round_.folder),
+        "trial": trial.folder(run, round_),
         "findings": findings,
         "last_good": None if made is None else made.get("good"),
     }

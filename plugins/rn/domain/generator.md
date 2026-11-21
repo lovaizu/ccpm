@@ -14,8 +14,8 @@ rn:evaluator's.
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs what the
-deliverable's people run, `repository.py checks`, `check.py generator`, and Lane's reporters. Lane
-stops each call that your step doesn't take.
+deliverable's people run, `repository.py trial`, `repository.py checks`, `check.py generator`, and
+Lane's reporters. Lane stops each call that your step doesn't take.
 
 ## Goal
 
@@ -63,9 +63,10 @@ them be. Judging the deliverable for the run is the evaluator's, so leave that b
   hand, and says what to do instead. Run each of its reporters, `lane-step`, `lane-item`,
   `lane-result`, and `lane-back`, as a Bash call of its own. A call that prints more counts as no report. Where Bash
   can't find a reporter, Lane isn't loaded, so go on with the steps as written.
-- At `read` you write nothing, and at `decide` and `try` you write only in the Round's folder. At
-  `make` you write only the deliverable's paths. Each other file is another deliverable's or the
-  user's. At `read` and `decide`, run only Lane's reporters, as Lane lets no other command through.
+- At `read` you write nothing. At `decide` you write only `<round>/generator.json`, and at `try`
+  only that and the Cut's `trial`. At `make` you write only the deliverable's paths. Each other
+  file is another deliverable's or the user's. At `read` and `decide`, run only Lane's reporters,
+  as Lane lets no other command through.
 - At `make` and `try`, Lane lets any command through, as the people's own commands run there. Lane
   doesn't see what a command writes, so keep each command's writes to the step's own places.
 
@@ -93,10 +94,13 @@ there as that point's decision, by user. Then go on from `decide`, where Lane ho
    unless a mend needs it changed. Where the deliverable stood before the run, keep each part that
    meets its condition, as its people already use it, and make or mend only what falls short. Make
    it serve from its own paths. Then run `lane-step make`.
-4. `try`: you know what the people get. Try the deliverable as its people would, with only what the
-   goal says they have. For example, run the command on their own file, or follow the guide alone.
-   Put any file their use needs, such as their data, in the Round's folder. Of each condition, ask
-   whether they got what it asks.
+4. `try`: you know what the people get. Run
+   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py trial <run's folder> <round>`. It makes the
+   Cut's `trial` anew and prints its path. That folder lies outside the work's branch, and holds
+   the branch as its people get it. There, try the deliverable as its people would, with only what
+   the goal says they have. For example, run the command on their own file, or follow the guide
+   alone. Put any file their use needs, such as their data, in that folder. The pull request takes
+   whatever lands in the worktree. Of each condition, ask whether they got what it asks.
    - Where a condition falls short in a way the people meet in their use, the shortfall comes from
      a decision. Run `lane-back decide`, and find the decision it comes from. Then take `decide`,
      `make`, and `try` again from that decision. Where that decision is by `user`, give it as a
@@ -105,12 +109,12 @@ there as that point's decision, by user. Then go on from `decide`, where Lane ho
    - Where the people would never meet the shortfall, don't go back, so that the deliverable
      doesn't grow. Leave that condition out of `good`, and the evaluator judges it like any other.
    - In a Round of refactoring, run the repository's tests too, as its developers run them, such
-     as `(cd <worktree> && pytest)`. Where one fails, the refactoring changed the intent, so run
+     as `(cd <trial> && pytest)`. Where one fails, the refactoring changed the intent, so run
      `lane-back make` and mend it there.
 
    Then write `<round>/generator.json` with `result` `made`, `files`, and `good`:
    - In `files`, name each file of the deliverable you wrote, from the worktree's top. Leave out
-     what you put in the Round's folder to try it, as the orchestrator commits `files`.
+     what you put in the Cut's `trial` to try it, as the orchestrator commits `files`.
    - In `good`, name each condition you saw met, with the lines that meet it. Copy each line whole
      from the deliverable as it stands, indentation included. Leave out each condition you didn't
      see met. The orchestrator and the next generator take `good` as seen.

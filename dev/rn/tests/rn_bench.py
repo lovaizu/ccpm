@@ -433,7 +433,8 @@ def generated(
     """The generator keeps each of its steps and ends with `made`: it reads, reports each `decide`
     and `make` item of its best practice, writes each file of the deliverable, given by its path
     from the worktree's top or else the deliverable's own text, in a refactor Round runs at `try`
-    the repository's tests as its developers run them, which must go through and give 0, writes
+    the repository's tests as its developers run them, in its folder of the people's starting
+    state that `repository.py trial` makes, which must go through and give 0, writes
     its result in the Round's folder, saw good each condition given or else every one, runs
     `repository.py checks` on its files, and gives `made`. Gives what the main conversation reads
     as its end reaches it."""
@@ -453,7 +454,8 @@ def generated(
     # refactor Round are its content kind's, not those of the refactoring kind it makes by.
     seen = [each["id"] for each in node["necessary_conditions"]] if good is None else list(good)
     if given["stage"] == "refactor":
-        ran(c, DEVELOPERS_TESTS.format(b.worktree), agent)
+        trial = ran(c, b.script("repository", "trial", b.run, given["round"]), agent).strip()
+        ran(c, DEVELOPERS_TESTS.format(trial), agent)
     first = next(iter(wrote.values())).splitlines()[0]
     result = rn_files.made([(each, [first]) for each in seen], list(wrote))
     agent.write(os.path.join(c.cwd, given["round"], "generator.json"), json.dumps(result))
@@ -464,7 +466,8 @@ def generated(
     return reached(agent)
 
 
-# The repository's tests as invoicer's developers run them, from its worktree, writing no file.
+# The repository's tests as invoicer's developers run them, from a folder of its branch, writing no
+# file.
 DEVELOPERS_TESTS = "(cd {} && python3 -B -c 'import invoicer.lines')"
 
 

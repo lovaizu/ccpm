@@ -82,7 +82,8 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str
     When the generator's Cut of the command's Round content-1 is made by the light best practice
     Then it holds the goal, the deliverables' language, the command's node as the tree holds it,
     the run's worktree, invoicer's lines in the worktree, light's folder, content, 1, the Round's
-    folder, and no findings or last good"""
+    folder, the people's folder in the system's temporary folder, named by the run and the Round,
+    and no findings or last good"""
     the = walkthrough()
     got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), (None, None))
     assert sorted(got) == sorted(
@@ -96,6 +97,7 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str
             "stage",
             "number",
             "round",
+            "trial",
             "findings",
             "last_good",
         ]
@@ -110,6 +112,7 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str
     assert from_top(repo, got["best_practice"]) == LIGHT
     assert (got["stage"], got["number"]) == ("content", 1)
     assert from_top(repo, got["round"]) == round_at(repo, COMMAND).folder
+    assert os.path.normpath(got["trial"]) == trial_of(COMMAND, "content", 1)
     assert (got["findings"], got["last_good"]) == (None, None)
 
 

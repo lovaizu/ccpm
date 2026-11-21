@@ -3,9 +3,10 @@ test puts a double of them in their place."""
 
 from __future__ import annotations
 
+import os
 import subprocess
-from collections.abc import Sequence
-from typing import Callable, NamedTuple
+from collections.abc import Mapping, Sequence
+from typing import NamedTuple, Protocol
 
 from fault import CantRun, Wrong
 
@@ -18,15 +19,21 @@ class Ran(NamedTuple):
     err: str
 
 
-# A program run as rn's code runs git or gh: the command's words, from `git` or `gh` on, and the
-# folder it runs in, to what it gave. `run` is the real one; a test passes a double.
-Host = Callable[[Sequence[str], str], Ran]
+class Host(Protocol):
+    """A program run as rn's code runs git or gh: the command's words, from `git` or `gh` on, the
+    folder it runs in, and any variables of its environment beside rn's own, to what it gave.
+    `run` is the real one; a test passes a double."""
+
+    def __call__(
+        self, argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None
+    ) -> Ran: ...
 
 
-def run(argv: Sequence[str], cwd: str) -> Ran:
+def run(argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None) -> Ran:
     """Runs git or gh as a process of its own.
 
-    Takes: the command's words, whose first is `git` or `gh`, and the folder to run it in.
+    Takes: the command's words, whose first is `git` or `gh`, the folder to run it in, and any
+    variables to set in its environment beside those of rn's own process.
     Gives: its exit code, stdout, and stderr, whatever the code, as the caller judges the result.
     Changes: whatever the command changes.
     Refuses: Wrong where the first word is neither `git` nor `gh`; CantRun where the program isn't
@@ -35,7 +42,14 @@ def run(argv: Sequence[str], cwd: str) -> Ran:
     if argv[0] not in ("git", "gh"):
         raise Wrong(f"rn runs only git and gh, not {argv[0]!r}")
     try:
-        done = subprocess.run(list(argv), cwd=cwd, capture_output=True, text=True, check=False)
+        done = subprocess.run(
+            list(argv),
+            cwd=cwd,
+            env={**os.environ, **env} if env else None,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
     except OSError as error:
         raise CantRun(f"{argv[0]} can't start: {error}") from None
     return Ran(done.returncode, done.stdout, done.stderr)

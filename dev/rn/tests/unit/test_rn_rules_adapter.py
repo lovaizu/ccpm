@@ -521,6 +521,14 @@ def test_a_role_that_isnt_rns_is_refused(cwd: str, role: str):
 # The generator's start, by its Cut.
 
 
+def trial_of(path: str, stage: str = "content", number: int = 1) -> str:
+    """The people's folder of the deliverable's Round of the stage and number, as
+    repository.trial.folder names it."""
+    return os.path.join(
+        tempfile.gettempdir(), f"rn-trial-{NAME}-{quote(path, safe='')}-{stage}-{number}"
+    )
+
+
 def generator_cut(
     cwd: str,
     node: Mapping[str, Any],
@@ -544,6 +552,7 @@ def generator_cut(
         "stage": stage,
         "number": 1,
         "round": os.path.relpath(round_, cwd),
+        "trial": trial_of(node["path"], stage),
         "findings": None,
         "last_good": None,
     }
@@ -557,22 +566,24 @@ def generator_steps(
 ) -> list[tuple[str, list[str]]]:
     """The generator's steps for the Cut, its best practice of the kind, the files it reads whole
     beside the Cut, and its deliverable's paths, each absolute, as `relative` then gives them; its
-    Round's folder is the Cut's, which decide writes for a point and try for its result."""
-    round_ = os.path.dirname(os.path.join(cwd, cut))
+    Round's generator.json is the Cut's, which decide writes for a point and try for its result,
+    and try writes too the people's folder that the Cut names."""
     whole = os.path.join(cwd, cut)
+    result = os.path.join(os.path.dirname(whole), "generator.json")
+    trial = rn_files.read_json(whole)["trial"] + "/"
     return [
         step("read", {"type": "reads_whole", "paths": [whole, *reads]}, writes(), commands()),
         step(
             "decide",
             {"type": "checklist", "items": rn_files.items_at(kind, "decide")},
-            writes(round_ + "/"),
+            writes(result),
             commands(),
             {"type": "result", "ends": ["point"]},
         ),
         step(
             "make", {"type": "checklist", "items": rn_files.items_at(kind, "make")}, writes(*paths)
         ),
-        step("try", writes(round_ + "/")),
+        step("try", writes(result, trial)),
         step(
             "check",
             commands(script("repository", "checks")),
@@ -608,8 +619,8 @@ def test_a_generators_start_with_one_input_takes_its_five_steps(cwd: str):
     When the adapter gives the start's steps
     Then they are read, decide, make, try, and check, each in order: read reading whole the Cut,
     light's best-practice.md, and the lines; decide with light's decide items, writing only the
-    Round's folder, ending on point;
-    make with its make items, writing the command; try writing the Round's folder; and check
+    Round's generator.json, ending on point; make with its make items, writing the command; try
+    writing the Round's generator.json and the people's folder that the Cut names; and check
     running repository.py checks, with check.py generator on the Cut, made or, ending, point"""
     (lines,) = in_worktree(cwd, "invoicer/lines.py")
     node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"])
@@ -722,7 +733,7 @@ def test_a_runs_own_best_practice_gives_its_own_items(cwd: str):
     expected[1] = step(
         "decide",
         {"type": "checklist", "items": decide},
-        writes(os.path.dirname(os.path.join(cwd, cut)) + "/"),
+        writes(os.path.join(os.path.dirname(os.path.join(cwd, cut)), "generator.json")),
         commands(),
         {"type": "result", "ends": ["point"]},
     )
@@ -763,9 +774,7 @@ def evaluator_cut(cwd: str, number: int = 1) -> tuple[str, str, str]:
     path from cwd, the Round's folder, and the people's folder, each absolute but the first."""
     folder = paused_run(cwd)
     round_ = rn_files.round_of(folder, COMMAND, "content", number)
-    trial = os.path.join(
-        tempfile.gettempdir(), f"rn-trial-{NAME}-{quote(COMMAND, safe='')}-content-{number}"
-    )
+    trial = trial_of(COMMAND, "content", number)
     cut = {
         "goal": rn_files.GOAL,
         "deliverable": {"name": rn_files.COMMAND_NAME, "path": COMMAND},
@@ -975,15 +984,17 @@ def test_a_cwd_reached_through_a_link_gives_the_same_paths_as_its_real_folder(cw
 
 
 @pytest.mark.supports("test_a_generators_point_reaches_the_user_and_their_answer_resumes_it")
-def test_a_generators_decide_writes_only_its_rounds_folder_for_a_point(cwd: str):
+def test_a_generators_decide_writes_only_its_rounds_result_for_a_point(cwd: str):
     """Given the command's generator Cut in Round content-1
     When the adapter gives the start's steps
-    Then decide writes only the Round's folder, from the repository's top with its closing `/`,
-    where generator.json gives a point, and ends on point"""
+    Then decide writes only the Round's generator.json, from the repository's top, which gives a
+    point, and ends on point"""
     node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light")
     cut, round_ = generator_cut(cwd, node)
     steps = ADAPTER.steps(given("rn:generator", cut), cwd, RN)
-    assert rules_of(steps, "decide", "writes") == [os.path.relpath(round_, cwd) + "/"]
+    assert rules_of(steps, "decide", "writes") == [
+        os.path.relpath(os.path.join(round_, "generator.json"), cwd)
+    ]
     decide = next(each for each in steps["steps"] if each["name"] == "decide")
     assert {"type": "result", "ends": ["point"]} in decide["rules"]
 

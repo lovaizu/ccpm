@@ -120,6 +120,7 @@ def generator_cut(
         "stage": "content",
         "number": 1,
         "round": os.path.relpath(folder, room.repo),
+        "trial": trial_of(room, name, folder),
         "findings": findings,
         "last_good": last_good,
     }

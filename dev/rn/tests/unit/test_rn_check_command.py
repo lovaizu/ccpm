@@ -49,6 +49,7 @@ class Run:
                 "stage": "content",
                 "number": 1,
                 "round": self.round,
+                "trial": "/tmp/rn-trial-x",
                 "findings": None,
                 "last_good": None,
             }
