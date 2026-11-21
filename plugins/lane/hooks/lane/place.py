@@ -92,8 +92,7 @@ def skill_call(event: Event, runs: list[Run]) -> SkillCall | None:
         return None
     given = event.get("command_args", event.get("tool_input", {}).get("args", ""))
     words = given if isinstance(given, str) else ""
-    plugin = skill.partition(":")[0]
-    if any(run.skill.partition(":")[0] == plugin and not _ended(run) for run in runs):
+    if _standing_of(runs, skill) is not None:
         return None
     return SkillCall(event["session_id"], event["transcript_path"], skill, words)
 
@@ -174,7 +173,7 @@ def _per_turn(runs: list[Run]) -> tuple[Run, str] | None:
     """The standing run, with its folder, and the main conversation's role, where its plugin's
     rules leave the role's steps to the plugin's adapter of the rules at each turn; else None."""
     run = _standing(runs)
-    rules = read_rules(run.plugin_root) if run is not None and run.plugin_root else None
+    rules = _rules_of(run)
     if run is None or rules is None:
         return None
     role = _main_role(run, rules)
@@ -195,9 +194,8 @@ def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
     Refuses: nothing.
     """
     entries = run.entries
-    turns = [i for i, entry in enumerate(entries) if entry["kind"] == "turn"]
-    if agent_id is None and turns:
-        entries = entries[turns[-1] + 1 :]
+    if agent_id is None:
+        entries = _since(entries, lambda e: e["kind"] == "turn")
     undone: set[str] = set()
     kept: list[Entry] = []
     # From the latest back, as a step gone back to undoes only the marks made before it.
@@ -232,7 +230,7 @@ def place(event: Event, runs: list[Run], due: Due) -> Move | None:
     Refuses: OutOfForm, where the rules of the plugin's run are out of form at its command.
     """
     run = _run_of(event, runs)
-    rules = read_rules(run.plugin_root) if run is not None and run.plugin_root else None
+    rules = _rules_of(run)
     if run is None or rules is None:
         return None
     if command_of(event) is not None:
@@ -276,9 +274,7 @@ def _run_of(event: Event, runs: list[Run]) -> Run | None:
     conversation's, the latest run not ended; a subagent's, the run of the start it's tied to."""
     command = command_of(event)
     if command is not None:
-        plugin = command.partition(":")[0]
-        mine = [run for run in runs if run.skill.partition(":")[0] == plugin]
-        return _standing(mine)
+        return _standing_of(runs, command)
     agent_id = event.get("agent_id")
     return _standing(runs) if agent_id is None else _tied(runs, agent_id)
 
@@ -309,6 +305,12 @@ def marked(run: Run, agent_id: str | None) -> set[str]:
     }
 
 
+def _rules_of(run: Run | None) -> Rules | None:
+    """The rules of the run's plugin; None for no run, a run with no folder yet, or a plugin that
+    gives no rules."""
+    return read_rules(run.plugin_root) if run is not None and run.plugin_root else None
+
+
 def _ended(run: Run) -> bool:
     """Whether the run's order said it ends."""
     return any(entry["kind"] == "ended" for entry in run.entries)
@@ -317,6 +319,12 @@ def _ended(run: Run) -> bool:
 def _standing(runs: list[Run]) -> Run | None:
     """The run that the main conversation's moves belong to: the latest that hasn't ended."""
     return next((run for run in reversed(runs) if not _ended(run)), None)
+
+
+def _standing_of(runs: list[Run], skill: str) -> Run | None:
+    """The run of the skill's plugin, by the name before its `:`, that hasn't ended."""
+    plugin = skill.partition(":")[0]
+    return _standing([run for run in runs if run.skill.partition(":")[0] == plugin])
 
 
 def _tied(runs: list[Run], agent_id: str) -> Run | None:
@@ -374,8 +382,7 @@ def latest_start(run: Run, agent_id: str) -> Entry | None:
 
 def _ended_start(run: Run, agent_id: str) -> bool:
     """Whether the subagent's latest start has ended, by a result or a stop after its tie."""
-    ties = [i for i, entry in enumerate(run.entries) if _ties(entry, agent_id)]
-    after = run.entries[ties[-1] :]
+    after = _since(run.entries, lambda e: _ties(e, agent_id))
     return any(e["kind"] in ("result", "stopped") and e.get("agent_id") == agent_id for e in after)
 
 
@@ -452,8 +459,13 @@ def _main_role(run: Run, rules: Rules) -> str:
 def _this_turn(run: Run) -> list[Entry]:
     """The entries of the main conversation's turn at hand: those after the run's latest
     `turn_ended` entry, or each of the run's before its first."""
-    ends = [i for i, entry in enumerate(run.entries) if entry["kind"] == "turn_ended"]
-    return run.entries[ends[-1] + 1 :] if ends else run.entries
+    return _since(run.entries, lambda e: e["kind"] == "turn_ended")
+
+
+def _since(entries: list[Entry], latest: Callable[[Entry], bool]) -> list[Entry]:
+    """The entries after the latest one that `latest` gives True for, or all where none does."""
+    found = [i for i, entry in enumerate(entries) if latest(entry)]
+    return entries[found[-1] + 1 :] if found else entries
 
 
 def _turn_at_hand(run: Run) -> Entry | None:
