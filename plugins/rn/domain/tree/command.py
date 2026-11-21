@@ -17,8 +17,6 @@ from rounds import course, files
 
 from tree import checks, cut, form, signoff, touched
 
-# Each subcommand's least and most count of arguments after its name.
-_ARITY = {"touched": (1, 2), "commit": (2, 2), "cut": (3, 3), "signoff": (1, 1)}
 # Whom a deliverable waits on, as a refused cut says it.
 _WHO = {
     "generator": "its generator",
@@ -62,14 +60,13 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> tuple[i
     where it CantRun, such as a commit check of the repository refusing the design tree's commit,
     with what git said; 2 with the usage where the arguments are other than these.
     """
-    if not argv or argv[0] not in _ARITY:
+    if not argv or argv[0] not in _SUBCOMMANDS:
         return 2, "", USAGE
-    least, most = _ARITY[argv[0]]
+    subcommand, least, most = _SUBCOMMANDS[argv[0]]
     if not least <= len(argv) - 1 <= most:
         return 2, "", USAGE
     try:
-        run = of_folder(cwd, argv[1])
-        return _SUBCOMMANDS[argv[0]](run, list(argv[2:]), cwd, plugin_root, host)
+        return subcommand(of_folder(cwd, argv[1]), list(argv[2:]), cwd, plugin_root, host)
     except (Wrong, Missing) as wrong:
         return 1, "", f"tree.py: {wrong}\n"
     except CantRun as stopped:
@@ -180,9 +177,11 @@ def _lines(nodes: list[str]) -> str:
     return "".join(f"{each}\n" for each in nodes)
 
 
-_SUBCOMMANDS: dict[str, Callable[[RunPlace, list[str], str, str, Host], tuple[int, str, str]]] = {
-    "touched": _touched,
-    "commit": _commit,
-    "cut": _cut,
-    "signoff": _signoff,
+_Subcommand = Callable[[RunPlace, list[str], str, str, Host], tuple[int, str, str]]
+# Each subcommand, with its least and most count of arguments after its name, the run's among them.
+_SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int]] = {
+    "touched": (_touched, 1, 2),
+    "commit": (_commit, 2, 2),
+    "cut": (_cut, 3, 3),
+    "signoff": (_signoff, 1, 1),
 }

@@ -15,16 +15,6 @@ from rounds import files
 from repository import commit_checks, place, push, trial, worktree
 from repository.host import Host
 
-# Each subcommand's least and most count of arguments after its name, None where it takes any more.
-_ARITY: dict[str, tuple[int, int | None]] = {
-    "new": (2, 2),
-    "find": (0, 0),
-    "pause": (1, 1),
-    "put-up": (2, 2),
-    "checks": (1, None),
-    "trial": (2, 2),
-}
-
 USAGE = """\
 usage: repository.py new <words> <goal>
        repository.py find
@@ -56,14 +46,14 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> tuple[i
     wrong>` where the input is Wrong or something is Missing, saying how to mend it; 2 with what
     stopped it where it CantRun; 2 with the usage where the arguments are other than these.
     """
-    if not argv or argv[0] not in _ARITY:
+    if not argv or argv[0] not in _SUBCOMMANDS:
         return 2, "", USAGE
-    least, most = _ARITY[argv[0]]
+    subcommand, least, most = _SUBCOMMANDS[argv[0]]
     given = list(argv[1:])
     if len(given) < least or (most is not None and len(given) > most):
         return 2, "", USAGE
     try:
-        return _SUBCOMMANDS[argv[0]](given, cwd, plugin_root, host)
+        return subcommand(given, cwd, plugin_root, host)
     except (Wrong, Missing) as wrong:
         return 1, "", f"repository.py: {wrong}\n"
     except CantRun as stopped:
@@ -104,11 +94,14 @@ def _trial(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[in
     return 0, f"{trial.starting_state(run, round_, host)}\n", ""
 
 
-_SUBCOMMANDS: dict[str, Callable[[list[str], str, str, Host], tuple[int, str, str]]] = {
-    "new": _new,
-    "find": _find,
-    "pause": _pause,
-    "put-up": _put_up,
-    "checks": _checks,
-    "trial": _trial,
+_Subcommand = Callable[[list[str], str, str, Host], tuple[int, str, str]]
+# Each subcommand, with its least and most count of arguments after its name, None where it takes
+# any more.
+_SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int | None]] = {
+    "new": (_new, 2, 2),
+    "find": (_find, 0, 0),
+    "pause": (_pause, 1, 1),
+    "put-up": (_put_up, 2, 2),
+    "checks": (_checks, 1, None),
+    "trial": (_trial, 2, 2),
 }
