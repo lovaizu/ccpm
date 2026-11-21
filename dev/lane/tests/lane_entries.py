@@ -25,6 +25,15 @@ def result(agent_id: str, value: str, role: str = "log:writer") -> Entry:
     return {"kind": "result", "run": "r1", "agent_id": agent_id, "role": role, "result": value}
 
 
+def mark(step: str, agent_id: str | None = "a1", item: str | None = None) -> Entry:
+    """The subagent's mark of the step done, or of its item where one is given, or the main
+    conversation's for None."""
+    entry: Entry = {"kind": "mark", "run": "r1", "agent_id": agent_id, "step": step}
+    if item:
+        entry["item"] = item
+    return entry
+
+
 def read(agent_id: str | None, path: str, first: int, last: int) -> Entry:
     """The subagent's read of the file at the path, from its line `first` to its line `last`, or the
     main conversation's for None."""

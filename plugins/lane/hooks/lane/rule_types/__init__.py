@@ -5,7 +5,7 @@ then the plugin's own check of each of those steps, the step at which the start 
 
 from __future__ import annotations
 
-from place import Move, marked
+from place import Move
 from rules import Step
 
 from rule_types import check, checklist, commands, order, reads_none, reads_whole, result, writes
@@ -79,11 +79,11 @@ def judge_end(move: Move) -> str | None:
     Refuses: OSError, where the plugin's check can't be run.
     """
     steps = move.steps
-    done = marked(move.run, move.agent_id)
+    done = move.done.steps
     # The step whose result rule judges the end: the first the start hasn't marked done, where its
     # rules give one, else its last; none where its result ends the start at a step, as a result
     # that a rule names among those that end the start is one it may give.
-    gave = result.latest(move)
+    gave = move.done.result
     ends_at = next((i for i, step in enumerate(steps) if gave in _ends(step)), None)
     due = [step for step in steps if step["name"] not in done][:1]
     ruled = [step for step in due if any(rule["type"] == "result" for rule in step["rules"])]
@@ -107,12 +107,12 @@ def ended_at_a_step(move: Move) -> bool:
 
     Takes: an `end` move of a subagent, or a `turn_end` move of the main conversation, with the
     steps that hold its start.
-    Gives: True where the result that result.latest gives is one that a step's result rule names
+    Gives: True where the result that Move.done gives is one that a step's result rule names
     among those that end the start there; False where it gave none, or another.
     Changes: nothing.
     Refuses: nothing.
     """
-    gave = result.latest(move)
+    gave = move.done.result
     return any(gave in _ends(step) for step in move.steps)
 
 

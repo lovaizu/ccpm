@@ -248,7 +248,7 @@ def turn_ended(move: Move) -> Answer:
     Takes: a `turn_end` move at the main conversation's Stop, with the steps that place gives it:
     its role's, or, where the role takes its steps at each turn, those of the turn's `turn` entry.
     Gives: a stop with the sentence that rule_types.judge_end gives, where the move has steps, its
-    marks and result those that place.own_entries gives for the turn; else a stop with the starts
+    marks and result those that Move.done gives for the turn; else a stop with the starts
     due, where a start is due and the turn didn't end on a result that a step's `ends` names, as
     rule_types.ended_at_a_step gives it, since that result says the AI can't go on, which no start
     mends; an empty answer where none is.
@@ -323,7 +323,7 @@ def result_reached(move: Move) -> Answer:
         run = replace(run, entries=[*run.entries, stopped])
         told = f"{move.role} stopped with no result."
     else:
-        gave = rule_types.result.latest(move)
+        gave = move.done.result
         told = f"{move.role} gave {gave}." if gave else ""
     due = _end_if(run, move.event)
     return Answer(said=" ".join(each for each in (told, _due_said(due)) if each))
@@ -371,12 +371,12 @@ def report_made(move: Move) -> Answer:
 
     Takes: a `report` move at the PostToolUse of the reporter's Bash call.
     Gives: for a step done, a stop with the sentence that rule_types.judge_mark gives; for a step
-    gone back to that its role's steps don't name, or that place.marked doesn't give, a stop with
+    gone back to that its role's steps don't name, or that Move.done gives no mark of, a stop with
     the sentence naming the step at hand and the step gone back to, as no rule names where a step
     may go back; an empty answer where the report holds.
     Changes: the run record, by the mark or the result, where it holds; for a step gone back to, by
     a `back` entry with the step and each step after it in its role's steps as `undone`, whose
-    marks and items place.own_entries then leaves out.
+    marks and items made before it no longer count in Move.done.
     Refuses: nothing.
     """
     reported = cast(Report, move.report)
@@ -389,7 +389,7 @@ def report_made(move: Move) -> Answer:
     entry.update(kind=_KINDS.get(reported["kind"], "mark"), agent_id=move.agent_id)
     if reported["kind"] == "back":
         back = reported["step"]
-        if back not in names or back not in place.marked(move.run, move.agent_id):
+        if back not in names or back not in move.done.steps:
             return Answer(True, _not_gone_back(move, back))
         entry["undone"] = names[names.index(back) :]
     record.add(move.run.session_id, [entry])

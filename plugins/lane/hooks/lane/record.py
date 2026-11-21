@@ -209,16 +209,23 @@ def _drop(state: RunState, entry: Entry) -> None:
 
 
 def _stopped(state: RunState, entry: Entry) -> None:
-    start = state.tied[_subagent(entry)]
-    start.ended = start.stopped = True
+    _end(state, entry.get("agent_id"), stopped=True)
 
 
 def _result(state: RunState, entry: Entry) -> None:
     agent_id = entry.get("agent_id")
     state.moves.append(Result(entry["role"], entry["result"]))
     _done(state, agent_id).result = entry["result"]
-    if agent_id is not None:
-        state.tied[agent_id].ended = True
+    _end(state, agent_id, stopped=False)
+
+
+def _end(state: RunState, agent_id: str | None, stopped: bool) -> None:
+    """Ends the start that the subagent was last tied to, by a result or by a stop; the main
+    conversation's result, or one of a subagent tied to no start, ends none."""
+    start = state.tied.get(agent_id) if agent_id is not None else None
+    if start is not None:
+        start.ended = True
+        start.stopped = start.stopped or stopped
 
 
 def _mark(state: RunState, entry: Entry) -> None:

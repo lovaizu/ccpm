@@ -3,27 +3,10 @@ and the sentence of an end with no result of them."""
 
 from __future__ import annotations
 
-from place import Move, own_entries
+from place import Move
 from rules import Rule, Step
 
 from rule_types.words import listed
-
-
-def latest(move: Move) -> str | None:
-    """The latest result that the move's start, or the main conversation's turn, gave.
-
-    Takes: a move of a subagent's start, or of the main conversation, its run as the record stands.
-    Gives: the result of the latest `result` entry among those that place.own_entries gives for
-    the move's `agent_id`; None where they hold none.
-    Changes: nothing.
-    Refuses: nothing.
-    """
-    results = [
-        entry["result"]
-        for entry in own_entries(move.run, move.agent_id)
-        if entry["kind"] == "result"
-    ]
-    return results[-1] if results else None
 
 
 def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
@@ -40,7 +23,7 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Refuses: nothing.
     """
     results, ends = rule.get("results", []), rule.get("ends", [])
-    if latest(move) in results + ends:
+    if move.done.result in results + ends:
         return None
     if not results:
         return (

@@ -12,7 +12,7 @@ from typing import Any, Callable
 
 from named_files import named, of_call
 from order import StartsDue
-from record import Entry, Run
+from record import Done, Entry, Run
 from report import Report, read_report
 from rules import Rules, Step, read_rules
 from start_rules import asks_adapter
@@ -66,6 +66,12 @@ class Move:
     steps: list[Step]
     step: str | None
     report: Report | None
+
+    @property
+    def done(self) -> Done:
+        """S11: what counts for the move's subagent, across its starts, or for the main
+        conversation's turn, as the run's state gives it."""
+        return self.run.state.done_by(self.agent_id)
 
 
 def skill_call(event: Event, runs: list[Run]) -> SkillCall | None:
@@ -213,53 +219,6 @@ def place(event: Event, runs: list[Run], due: Due) -> Move | None:
     return replace(_call(event, run, rules), kind=_ENDS[name]) if name in _ENDS else None
 
 
-def own_entries(run: Run, agent_id: str | None) -> list[Entry]:
-    """S11: the entries of the moves that count for a start, or for the main conversation's turn.
-
-    Takes: the run, and the subagent's `agent_id`, None for the main conversation.
-    Gives: each entry of the run with the subagent's `agent_id`, in their order; for the main
-    conversation, each entry with no `agent_id`, and, where the run holds a `turn` entry, only those
-    after the latest, which the turn's first call or end added, as each turn's steps start afresh,
-    so that its marks, items, reads, and result count for the turn alone. S12: each mark of a step
-    or of its item before a `back` entry among them that undid the step is left out, so that the
-    step and each after it are taken again in order; reads, results, and later marks stay.
-    Changes: nothing.
-    Refuses: nothing.
-    """
-    entries = run.entries
-    if agent_id is None:
-        entries = _since(entries, lambda e: e["kind"] == "turn")
-    undone: set[str] = set()
-    kept: list[Entry] = []
-    # From the latest back, as a step gone back to undoes only the marks made before it.
-    for entry in reversed(entries):
-        if entry.get("agent_id") != agent_id:
-            continue
-        if entry["kind"] == "back":
-            undone.update(entry["undone"])
-        elif entry["kind"] == "mark" and entry["step"] in undone:
-            continue
-        kept.append(entry)
-    return kept[::-1]
-
-
-def marked(run: Run, agent_id: str | None) -> set[str]:
-    """The steps that a start marked done.
-
-    Takes: the run, and the subagent's `agent_id`, None for the main conversation.
-    Gives: the name of each step that the run record holds a reporter's mark of, among the entries
-    that own_entries gives for the subagent or the main conversation, the marks of items left
-    out.
-    Changes: nothing.
-    Refuses: nothing.
-    """
-    return {
-        entry["step"]
-        for entry in own_entries(run, agent_id)
-        if entry["kind"] == "mark" and "item" not in entry
-    }
-
-
 def _run_of(event: Event, runs: list[Run]) -> Run | None:
     """The run that the event belongs to: a command's, the standing run of its plugin; the main
     conversation's, the latest run not ended; a subagent's, the run of the start it's tied to."""
@@ -356,7 +315,7 @@ def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> 
     else:
         holder = run.state.turn.entry or {"role": _main_role(run, rules)}
     role, steps = _held(rules, holder)
-    done = marked(run, agent_id)
+    done = run.state.done_by(agent_id).steps
     step = next((each["name"] for each in steps if each["name"] not in done), None)
     return Move("call", event, run, role, agent_id, None, steps, step, None)
 
@@ -409,12 +368,6 @@ def _per_turn(runs: list[Run]) -> tuple[Run, str] | None:
         return None
     role = _main_role(run, rules)
     return (run, role) if asks_adapter(rules, role) else None
-
-
-def _since(entries: list[Entry], latest: Callable[[Entry], bool]) -> list[Entry]:
-    """The entries after the latest one that `latest` gives True for, or all where none does."""
-    found = [i for i, entry in enumerate(entries) if latest(entry)]
-    return entries[found[-1] + 1 :] if found else entries
 
 
 # The move of each event that follows a call or a subagent's end, by the event's name.

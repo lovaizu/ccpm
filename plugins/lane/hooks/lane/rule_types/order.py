@@ -3,7 +3,7 @@ each step is done."""
 
 from __future__ import annotations
 
-from place import Move, marked
+from place import Move
 from rules import Rule, Step
 
 
@@ -17,7 +17,7 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    done = marked(move.run, move.agent_id)
+    done = move.done.steps
     before = [each["name"] for each in move.steps[: move.steps.index(step)]]
     due = next((name for name in before if name not in done), None)
     if due is None:
@@ -38,7 +38,7 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    if step["name"] in marked(move.run, move.agent_id):
+    if step["name"] in move.done.steps:
         return None
     return (
         f"You end before the step `{step['name']}` of {move.role} is done.\n"

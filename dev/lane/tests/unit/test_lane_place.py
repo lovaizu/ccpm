@@ -6,16 +6,13 @@ place, one for each transition of a run's moves that Lane's list of Claude Code'
 about, each event placed on its run, its start, its role, and its step, or outside each run, the
 latest run not ended picked of several, the latest command whose skill has steps, the latest tie of
 a resumed subagent, a resume carrying its start's role, prompt, and steps, a Grep and a Glob, and
-the events of another plugin, of an untied subagent, or of no start, which it leaves alone; and
-command_of and marked, which place's callers share, marked and own_entries with a
-step gone back to that undoes the marks of the steps it names before it, one, two in either order,
-and one of another start; and, for a main conversation
-whose role takes its steps at each turn, turn_beginning, one for each event that begins its next
-turn or doesn't, as its turn's end was let through, stopped, or not yet come, turn_opening, one
-for each first call or end of a turn and each event that opens none, with the latest prompt begun
-and the latest command's role, own_entries, one for each count of turns, and place, holding a
-call and an end to the latest turn's steps, a skill called within the turn among them. Each Then
-of place gives the whole move."""
+the events of another plugin, of an untied subagent, or of no start, which it leaves alone;
+command_of, which place's callers share; and, for a main conversation whose role takes its steps
+at each turn, turn_beginning, one for each event that begins its next turn or doesn't, as its
+turn's end was let through, stopped, or not yet come, turn_opening, one for each first call or end
+of a turn and each event that opens none, with the latest prompt begun and the latest command's
+role, and place, holding a call and an end to the latest turn's steps, a skill called within the
+turn among them. Each Then of place gives the whole move."""
 
 from __future__ import annotations
 
@@ -35,9 +32,7 @@ from place import (
     SkillCall,
     Turn,
     command_of,
-    marked,
     opening,
-    own_entries,
     place,
     skill_call,
     turn_beginning,
@@ -95,13 +90,6 @@ ENDED: Entry = {"kind": "ended", "run": "r1"}
 def tied() -> Run:
     """A run of log:up whose writer is tied to a1."""
     return run(START, TIE)
-
-
-def step_mark(step: str, agent_id: str | None = "a1", item: str | None = None) -> Entry:
-    entry: Entry = {"kind": "mark", "run": "r1", "agent_id": agent_id, "step": step}
-    if item:
-        entry["item"] = item
-    return entry
 
 
 # The writer's `written` and the reviewer's `good`, after which log's routes start no more.
@@ -373,7 +361,7 @@ def test_the_main_conversations_call_after_its_step_is_marked_is_at_no_step(e: E
     """Given a run of log:up whose main conversation marked `lead`, its one step
     When it writes a file
     Then the move is a call at no step"""
-    given, on = e.write("/repo/notes.txt"), run(step_mark("lead", None))
+    given, on = e.write("/repo/notes.txt"), run(lane_entries.mark("lead", None))
     assert place(given, [on], by_routes) == main_move("call", given, on, step=None)
 
 
@@ -533,11 +521,11 @@ def test_a_tied_subagents_call_is_a_call_of_its_role_at_its_first_step(e: Events
 @pytest.mark.parametrize(
     "marks, step",
     [
-        ((step_mark("write"),), "report"),
-        ((step_mark("write"), step_mark("report")), None),
-        ((step_mark("report"),), "write"),
-        ((step_mark("write", None), step_mark("write", "a2")), "write"),
-        ((step_mark("write", item="dated"),), "write"),
+        ((lane_entries.mark("write"),), "report"),
+        ((lane_entries.mark("write"), lane_entries.mark("report")), None),
+        ((lane_entries.mark("report"),), "write"),
+        ((lane_entries.mark("write", None), lane_entries.mark("write", "a2")), "write"),
+        ((lane_entries.mark("write", item="dated"),), "write"),
     ],
 )
 def test_a_subagents_call_is_at_the_first_step_it_hasnt_marked(
@@ -661,7 +649,7 @@ def test_the_stop_of_a_later_pass_after_a_queued_message_ends_the_same_start(e: 
     started it again
     When a1's SubagentStop of the later pass comes
     Then the move is the end of the start of u1, at the step `report`, its marks as they stand"""
-    given, on = e.ended(WRITER), run(START, TIE, step_mark("write"))
+    given, on = e.ended(WRITER), run(START, TIE, lane_entries.mark("write"))
     assert place(given, [on], by_routes) == writer_move("end", given, on, step="report")
 
 
@@ -883,7 +871,7 @@ def test_the_post_tool_use_of_a_send_message_queued_to_a_running_subagent_is_no_
     assert place(e.queued(WRITER, "u2"), [tied()], by_routes) is None
 
 
-# command_of and marked
+# command_of
 
 
 @pytest.mark.supports("test_a_skill_called_by_the_skill_tool_adds_the_run")
@@ -912,151 +900,8 @@ def test_a_command_names_its_plugins_skill(e: Events, event: str, skill: str | N
     assert command_of(given) == skill
 
 
-@pytest.mark.supports("test_a_read_of_the_main_conversation_counts_for_no_subagent")
-def test_the_steps_a_start_marked_are_its_own_marks_of_steps(e: Events):
-    """Given a run holding a1's marks of `write` and of the item `dated` of `report`, a2's mark of
-    `report`, and the main conversation's mark of `lead`
-    When Lane reads the steps that a1, a2, and the main conversation marked
-    Then they are `write`, `report`, and `lead`"""
-    on = run(
-        step_mark("write"),
-        step_mark("report", item="dated"),
-        step_mark("report", "a2"),
-        step_mark("lead", None),
-    )
-    assert (marked(on, "a1"), marked(on, "a2"), marked(on, None)) == (
-        {"write"},
-        {"report"},
-        {"lead"},
-    )
-
-
-def back(step: str, undone: list[str], agent_id: str | None = "a1") -> Entry:
-    """The step that the subagent, or the main conversation for None, went back to, with the steps
-    it undid: the step and each after it."""
-    role = "log:up" if agent_id is None else "log:writer"
-    return {
-        "kind": "back",
-        "run": "r1",
-        "agent_id": agent_id,
-        "role": role,
-        "step": step,
-        "undone": undone,
-    }
-
-
-@pytest.mark.supports(
-    "test_a_step_gone_back_to_asks_its_items_again_and_keeps_its_reads",
-    "test_an_end_after_going_back_is_stopped_with_the_step_gone_back_to",
-)
-def test_a_step_gone_back_to_undoes_the_marks_and_items_of_each_step_it_undid(e: Events):
-    """Given a run whose writer a1 read NOTES.md, marked the items `dated` and `linked` and the step
-    `write`, read CHANGELOG.md, gave `written`, and marked `report`, then went back to `write`,
-    undoing `write` and `report`
-    When Lane reads a1's own entries, and the steps it marked
-    Then they are its tie, both reads, its result, and its step gone back to, with no mark"""
-    notes = lane_entries.read("a1", "NOTES.md", 1, 6)
-    changelog = lane_entries.read("a1", "CHANGELOG.md", 1, 4)
-    gave = lane_entries.result("a1", "written")
-    went = back("write", ["write", "report"])
-    on = run(
-        START,
-        TIE,
-        notes,
-        step_mark("write", item="dated"),
-        step_mark("write", item="linked"),
-        step_mark("write"),
-        changelog,
-        gave,
-        step_mark("report"),
-        went,
-    )
-    assert (own_entries(on, "a1"), marked(on, "a1")) == ([TIE, notes, changelog, gave, went], set())
-
-
-@pytest.mark.supports(
-    "test_a_later_step_marked_after_going_back_is_stopped_with_the_step_gone_back_to"
-)
-def test_a_step_gone_back_to_leaves_the_marks_of_each_step_before_it(e: Events):
-    """Given a run whose writer a1 marked the item `dated` and the step `write`, and the step
-    `report`, then went back to `report`, undoing it alone
-    When Lane reads the steps a1 marked, and its own entries
-    Then it marked `write`, and its own entries keep the marks of `write` and its item"""
-    item, write = step_mark("write", item="dated"), step_mark("write")
-    went = back("report", ["report"])
-    on = run(START, TIE, item, write, step_mark("report"), went)
-    assert (marked(on, "a1"), own_entries(on, "a1")) == ({"write"}, [TIE, item, write, went])
-
-
-@pytest.mark.supports("test_each_step_taken_again_in_order_after_going_back_lets_the_end_through")
-def test_marks_after_a_step_gone_back_to_count(e: Events):
-    """Given a run whose writer a1 marked `write`, went back to it, then marked the item `dated`
-    and the step `write` again
-    When Lane reads a1's own entries, and the steps it marked
-    Then they hold the marks made after it went back, and it marked `write`"""
-    went, item = back("write", ["write", "report"]), step_mark("write", item="dated")
-    write = step_mark("write")
-    on = run(START, TIE, step_mark("write"), went, item, write)
-    assert (own_entries(on, "a1"), marked(on, "a1")) == ([TIE, went, item, write], {"write"})
-
-
-@pytest.mark.supports("test_each_step_taken_again_in_order_after_going_back_lets_the_end_through")
-@pytest.mark.parametrize(
-    "first, then, done",
-    [
-        (back("report", ["report"]), back("write", ["write", "report"]), {"write"}),
-        (back("write", ["write", "report"]), back("report", ["report"]), {"write"}),
-    ],
-)
-def test_each_step_gone_back_to_undoes_only_the_marks_before_it(
-    e: Events, first: Entry, then: Entry, done: set[str]
-):
-    """Given a run whose writer a1 marked `write` and `report`, went back to the first step, marked
-    again each step it undid, went back to the second, and marked `write` again: back to `report`
-    then `write`, or to `write` then `report`
-    When Lane reads the steps a1 marked
-    Then it marked `write` alone in each, as a step gone back to undoes no mark after it"""
-    again = [step_mark(each) for each in first["undone"]]
-    on = run(
-        START,
-        TIE,
-        step_mark("write"),
-        step_mark("report"),
-        first,
-        *again,
-        then,
-        *([step_mark("write")] if "write" in then["undone"] else []),
-    )
-    assert marked(on, "a1") == done
-
-
-@pytest.mark.supports("test_two_starts_of_one_role_are_each_held_to_their_own_start")
-def test_a_step_gone_back_to_undoes_only_the_marks_of_whoever_went_back(e: Events):
-    """Given a run whose writers a1 and a2 and the main conversation each marked their steps, then
-    a2 went back to `write`, and the main conversation to `lead`
-    When Lane reads the steps that a1, a2, and the main conversation marked
-    Then a1 marked `write` and `report`, and a2 and the main conversation marked none"""
-    on = run(
-        START,
-        TIE,
-        lane_entries.start("u2"),
-        lane_entries.tie("u2", "a2"),
-        step_mark("write"),
-        step_mark("report"),
-        step_mark("write", "a2"),
-        step_mark("lead", None),
-        back("write", ["write", "report"], "a2"),
-        back("lead", ["lead"], None),
-    )
-    assert (marked(on, "a1"), marked(on, "a2"), marked(on, None)) == (
-        {"write", "report"},
-        set(),
-        set(),
-    )
-
-
-# turn_beginning, turn_opening, own_entries, and place, for a main conversation that takes its steps
-# at each turn.
+# turn_beginning, turn_opening, and place, for a main conversation that takes its steps at each
+# turn.
 
 # The steps that TURN_ADAPTER gives the run's first turn, and a later turn whose prompt names
 # docs/changes/1.2.0.md.
@@ -1108,7 +953,7 @@ def test_the_first_prompt_after_a_turns_end_begins_the_next_turn(e: Events, log:
         "command": lambda: e.prompt("/log:tag"),
         "notification": lambda: e.reached(WRITER, "u1"),
     }[by]()
-    on = run(START, turn(), TIE, step_mark("up", None), TURN_ENDED)
+    on = run(START, turn(), TIE, lane_entries.mark("up", None), TURN_ENDED)
     assert turn_beginning(given, [on]) is on
 
 
@@ -1120,7 +965,7 @@ def test_the_first_prompt_after_a_turns_end_begins_the_next_turn(e: Events, log:
     "entries",
     [
         (turn(),),
-        (turn(), TIE, step_mark("up", None)),
+        (turn(), TIE, lane_entries.mark("up", None)),
         (turn(), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER)),
     ],
 )
@@ -1312,73 +1157,6 @@ def test_a_call_in_a_run_whose_rules_fix_its_steps_or_with_no_folder_opens_no_tu
     assert turn_opening(e.write("/repo/notes.md"), [run(opened=opened)]) is None
 
 
-@pytest.mark.supports("test_two_starts_of_one_role_are_each_held_to_their_own_start")
-def test_a_subagents_own_entries_are_each_with_its_id_across_turns(e: Events):
-    """Given a run whose writer a1 marked `write` in the main conversation's first turn and gave
-    `written` in its second, with the main conversation's marks and the reviewer a2's mark beside
-    them
-    When Lane reads a1's own entries
-    Then they are a1's tie, mark, and result, in their order"""
-    mark_a1, gave = step_mark("write"), lane_entries.result("a1", "written")
-    on = run(
-        START,
-        turn(),
-        TIE,
-        mark_a1,
-        step_mark("up", None),
-        TURN_ENDED,
-        turn(NOTIFIED, LATER),
-        step_mark("review", "a2"),
-        gave,
-    )
-    assert own_entries(on, "a1") == [TIE, mark_a1, gave]
-
-
-@pytest.mark.supports("test_a_read_of_the_main_conversation_counts_for_no_subagent")
-def test_the_main_conversations_own_entries_with_no_turn_are_each_with_no_agent(e: Events):
-    """Given a run of log:up whose rules fix its steps, holding the writer's start, tie, and mark,
-    and the main conversation's mark of `lead`
-    When Lane reads the main conversation's own entries
-    Then they are each entry with no agent: the run, its folder, the start, and the mark of
-    `lead`"""
-    lead = step_mark("lead", None)
-    on = run(START, TIE, step_mark("write"), lead)
-    assert own_entries(on, None) == [*on.entries[:2], START, lead]
-
-
-@pytest.mark.supports(
-    "test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh",
-    "test_two_subagents_ends_one_after_the_other_each_begin_a_turn_of_their_own",
-)
-@pytest.mark.parametrize("turns", [1, 2, 3])
-def test_the_main_conversations_own_entries_are_those_after_its_latest_turn(e: Events, turns: int):
-    """Given a run of log:up taking its steps at each turn, with one, two, or three turns, each
-    with the main conversation's mark of `up` and the writer's mark of `write` after its `turn`
-    When Lane reads the main conversation's own entries
-    Then they are those with no agent after the latest `turn` alone: its mark of `up`"""
-    entries: list[Entry] = [START, TIE]
-    for each in range(turns):
-        entries += [
-            turn() if each == 0 else turn(NOTIFIED, LATER),
-            step_mark("write"),
-            step_mark("up", None),
-        ]
-        if each < turns - 1:
-            entries += [TURN_ENDED, begun(NOTIFIED)]
-    on = run(*entries)
-    assert own_entries(on, None) == [step_mark("up", None)]
-
-
-@pytest.mark.supports("test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh")
-def test_the_main_conversations_own_entries_at_its_turns_first_move_are_none(e: Events):
-    """Given a run of log:up taking its steps at each turn, whose second turn's `turn` entry is its
-    last, after the first turn's mark of `up`
-    When Lane reads the main conversation's own entries, and the steps it marked
-    Then there's none of either"""
-    on = run(turn(), step_mark("up", None), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER))
-    assert (own_entries(on, None), marked(on, None)) == ([], set())
-
-
 @pytest.mark.supports(
     "test_the_runs_first_turn_takes_its_steps_from_the_adapter_with_the_runs_words",
     "test_a_subagents_end_after_the_turns_end_begins_a_turn_held_to_steps_from_its_notification",
@@ -1410,8 +1188,17 @@ def test_the_main_conversations_call_in_a_turn_is_held_to_the_latest_turns_steps
     "entries, step",
     [
         ((turn(),), "up"),
-        ((turn(), step_mark("up", None)), None),
-        ((turn(), step_mark("up", None), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER)), "up"),
+        ((turn(), lane_entries.mark("up", None)), None),
+        (
+            (
+                turn(),
+                lane_entries.mark("up", None),
+                TURN_ENDED,
+                begun(NOTIFIED),
+                turn(NOTIFIED, LATER),
+            ),
+            "up",
+        ),
     ],
 )
 def test_the_main_conversations_stop_ends_its_turn_at_the_first_step_the_turn_left_undone(

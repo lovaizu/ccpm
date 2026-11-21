@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import cast
 
 import plugin_command
-from place import Move, own_entries
+from place import Move
 from report import Report
 from rules import Rule, Step
 
@@ -48,7 +48,7 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     """Judges a mark by the rule.
 
     Takes: the rule, with its items or the command that gives them, the step it belongs to, and the
-    move: a reporter's mark of the step done, with the marks of items that place.own_entries gives
+    move: a reporter's mark of the step done, with the marks of items that Move.done gives
     for the move's start or turn.
     Gives: the step's sentence and each item that items gives not yet marked done; the sentence of
     ItemsFailed, where the command fails; None where each item is marked done.
@@ -59,11 +59,7 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
         listed_items = items(rule, move)
     except ItemsFailed as failed:
         return str(failed)
-    done = {
-        entry.get("item")
-        for entry in own_entries(move.run, move.agent_id)
-        if entry["kind"] == "mark" and entry["step"] == step["name"]
-    }
+    done = move.done.items.get(step["name"], set())
     left = [item for item in listed_items if item not in done]
     if not left:
         return None

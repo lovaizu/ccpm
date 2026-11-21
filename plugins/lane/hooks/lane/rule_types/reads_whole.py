@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import os
 
-from place import Move, own_entries
+from place import Move
 from rules import Rule, Step
 
 from rule_types.words import listed
@@ -15,7 +15,7 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     """Judges a mark by the rule.
 
     Takes: the rule, the step it belongs to, and the move: a reporter's mark of the step done, with
-    the reads that place.own_entries gives for the move's start or turn.
+    the lines that Move.done gives read for the move's start or turn.
     Gives: the step's sentence and the lines of each file of the rule that no Read of the start or
     the turn has read; None where each file is read whole.
     Changes: nothing.
@@ -41,10 +41,5 @@ def _first_unread(move: Move, path: str) -> int | None:
     is; a file counting the empty line after its last newline, as Read counts it."""
     with open(os.path.join(move.event["cwd"], path), encoding="utf-8") as f:
         lines = f.read().split("\n")
-    read = {
-        line
-        for entry in own_entries(move.run, move.agent_id)
-        if entry["kind"] == "read" and entry["path"] == path
-        for line in range(entry["first_line"], entry["last_line"] + 1)
-    }
+    read = move.done.lines.get(path, set())
     return next((line for line, _ in enumerate(lines, 1) if line not in read), None)

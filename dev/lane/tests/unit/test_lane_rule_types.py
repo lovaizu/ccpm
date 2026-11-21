@@ -974,7 +974,7 @@ def test_the_start_gave_its_latest_result(e: Events, entries: list[Entry], lates
     one, none while a2 gave one, or none while the main conversation gave one
     When Lane reads the result that a1 gave
     Then it's the latest of a1's, or none"""
-    assert result.latest(move("end", e.ended(WRITER), *entries)) == latest
+    assert move("end", e.ended(WRITER), *entries).done.result == latest
 
 
 @pytest.mark.supports("test_the_reviewers_more_makes_the_writer_due_again")
@@ -1954,7 +1954,7 @@ def test_the_main_conversations_result_is_the_latest_of_the_turn_at_hand(
     When Lane reads the result that the main conversation gave
     Then it's none, `noted`, or `filed`"""
     ended = main(move("turn_end", e.stop(), *before_and_in(before, within)), [LEAD_CHECKED])
-    assert result.latest(ended) == latest
+    assert ended.done.result == latest
 
 
 @pytest.mark.supports("test_a_turn_whose_first_move_is_its_end_is_held_to_its_own_steps_afresh")
