@@ -238,10 +238,7 @@ def _generator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
         _step(
             "check",
             _commands(plugin_root, ("repository", "checks")),
-            {
-                "type": "check",
-                "check": f"python3 {plugin_root}/scripts/check.py generator {prompt}",
-            },
+            _check(plugin_root, "generator", prompt),
             {"type": "result", "results": ["made"], "ends": ["point"]},
         ),
     ]
@@ -286,10 +283,7 @@ def _evaluator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
             never,
             {"type": "checklist", "items": ids},
             _writes(cwd, [round_ + "/"]),
-            {
-                "type": "check",
-                "check": f"python3 {plugin_root}/scripts/check.py evaluator {prompt}",
-            },
+            _check(plugin_root, "evaluator", prompt),
             {"type": "result", "results": ["judged"]},
         ),
     ]
@@ -298,6 +292,11 @@ def _evaluator(cut: Given, prompt: str, cwd: str, plugin_root: str) -> list[Step
 def _step(name: str, *rules: Rule) -> Steps:
     """A step held in order, with its rules."""
     return {"name": name, "rules": [{"type": "order"}, *rules]}
+
+
+def _check(plugin_root: str, role: str, prompt: str) -> Rule:
+    """The rule of the check at the role's end, `check.py <role> <cut>`."""
+    return {"type": "check", "check": f"python3 {plugin_root}/scripts/check.py {role} {prompt}"}
 
 
 def _commands(plugin_root: str, *named_: tuple[str, str], plain: Sequence[str] = ()) -> Rule:
