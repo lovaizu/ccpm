@@ -41,10 +41,13 @@ guide links them and copies nothing:
   A test that runs a prompt is a benchmark. The model's result varies from run to run, so a
   criterion would pass or fail by chance. The test runs each case several times, and a person judges
   from the results. It runs again on each new version of the model, as CT-AI's drift testing does.
-  A product that holds a prompt runs no test of the product whole through its prompts, since such a
-  run needs an AI to play its people, whose replies make the run's record no ground for a decision.
-  Its integration tests check the whole flow with a double in place of each prompt, and its people
-  try the product themselves once those pass.
+  A product that holds a prompt is run whole by a walkthrough run, once its integration tests pass.
+  A developer runs the README walkthrough's request on the model, with the product as it ships.
+  They type each of the people's words themselves, and read each reply against the product vision.
+  A script that plays the people or judges the run leaves a record that no decision rests on, so
+  the developer judges each reply. The integration tests put a double in place of each prompt and
+  of the host, so only this run shows where the product and its host differ. The developer mends
+  each stop at its root before going on, and the run's record becomes the README's walkthrough.
 - Timing\
   Each check runs at one of three times, which the Test strategy's row names.
   - During the work, each check of the parts and of the architecture that decides whether a change
@@ -92,7 +95,7 @@ End-to-end (E2E) tests test the product in real use against each key result of t
 
 | Check | Kind | When to pick | What it checks or measures | Recommended criterion | Sources |
 |---|---|---|---|---|---|
-| Scenario testing | Quality | When the product holds no prompt, as the rule of Prompts says. | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes. | Fintan |
+| Scenario testing | Quality | Always, as a walkthrough run where the product holds a prompt, as the rule of Prompts says. | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes, and a walkthrough run reaches the walkthrough's result with no stop that a fault caused. | Fintan |
 | Installation testing | Quality | Always. | Whether the product installs, updates, and uninstalls as its documentation says. | The documented commands install, update, and uninstall the product on a fresh system. | SWEBOK |
 | Configuration testing | Quality | When the product supports more than one system, runtime, or setting. | The product on each combination of system, runtime, and settings that it supports. | Every case passes on each supported combination. | SWEBOK |
 | Back-to-back testing | Quality | When a change replaces a version and must keep its behavior. | Whether the new version gives the old version's result for the same input. | Each input gives the old version's result. | Fintan, CT-AI |

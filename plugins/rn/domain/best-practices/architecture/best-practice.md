@@ -196,7 +196,7 @@ A skeleton of the parts and test cases through it, made from the document before
 
 Does each thing that the document says the product does rest on a part that a unit or integration test can check?
 
-A test that runs the product whole is slow and few, and none runs a product that holds a prompt, so only the lower levels show what the product does, and a thing that only a prompt holds varies from run to run, where only many runs on the model show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.
+A test that runs the product whole is slow and few, and for a product that holds a prompt it's a walkthrough run that a developer reads, so only the lower levels show what each change does, and a thing that only a prompt holds varies from run to run, where only many runs on the model show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.
 
 1. *While deciding.* For each thing the document says the product does, name the part that holds it.
 2. *While deciding.* Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components.

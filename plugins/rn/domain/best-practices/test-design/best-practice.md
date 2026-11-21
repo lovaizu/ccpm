@@ -32,10 +32,10 @@
 
 Where Test strategy runs the product whole, does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?
 
-The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. Where Test strategy runs no test of the product whole, as for a product that holds a prompt, whose run needs an AI to play its people, the people try the product themselves once the integration cases pass, and no E2E case is written.
+The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. For a product that holds a prompt, Test strategy runs the product whole as a walkthrough run, in which a developer types the people's words and reads each reply, so its E2E case is the README walkthrough's request, and no E2E test code is written.
 
 1. *While deciding.* Open the product vision, the README, the architecture, and the skeleton, and read the sections that `inputs` takes from each: the key results, the walkthrough, each principle item, decision, and handoff of the architecture, Test strategy with its checks and levels, and each interface that the skeleton offers, such as the one through which a test puts a double of the host in its place. The trace: `{inputs}` read to its end.
-2. *While making.* Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`.
+2. *While making.* Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`. Where the product holds a prompt, write the request and the person's words in the README's walkthrough instead.
 
 ### N2
 

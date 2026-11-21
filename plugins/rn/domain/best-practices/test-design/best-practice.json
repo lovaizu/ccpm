@@ -10,7 +10,7 @@
       "id": "N1",
       "about": "E2E cases",
       "what": "Where Test strategy runs the product whole, does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
-      "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. Where Test strategy runs no test of the product whole, as for a product that holds a prompt, whose run needs an AI to play its people, the people try the product themselves once the integration cases pass, and no E2E case is written.",
+      "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. For a product that holds a prompt, Test strategy runs the product whole as a walkthrough run, in which a developer types the people's words and reads each reply, so its E2E case is the README walkthrough's request, and no E2E test code is written.",
       "items": [
        {
         "at": "decide",
@@ -24,7 +24,7 @@
        },
        {
         "at": "make",
-        "text": "Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`."
+        "text": "Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`. Where the product holds a prompt, write the request and the person's words in the README's walkthrough instead."
        }
       ]
      },

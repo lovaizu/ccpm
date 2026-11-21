@@ -442,8 +442,10 @@ that depend on each other can't change or install alone.
 
 A plugin is tested at the test levels of
 [the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md):
-unit and integration tests, and end-to-end (E2E) tests only for a plugin that holds no prompt, as
-the people of a plugin that holds one try it themselves once its integration tests pass. The unit tests of its code follow
+unit and integration tests, and end-to-end (E2E) tests, which for a plugin that holds a prompt are
+the walkthrough run of
+[the test strategy guide](../plugins/rn/domain/best-practices/architecture/test-strategy-guide.md).
+The unit tests of its code follow
 [the code best practice](../plugins/rn/domain/best-practices/code/best-practice.md), and those of
 its prompts [the prompt best practice](../plugins/rn/domain/best-practices/prompt/best-practice.md).
 Its architecture's Test strategy sets the tools and the criteria. This section holds only what

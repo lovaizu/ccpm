@@ -41,8 +41,8 @@ At your repository's root in Claude Code, `/rn:on` asks what you want to make.
 At the end, you have a pull request that adds a command and a guide for your accounting team.
 
 This run comes from an end-to-end test of rn, with its talk in Japanese. Your accounting team asks
-a developer for each invoice, and you want them to print it themselves. At your repository's root in Claude Code,
-you type:
+a developer for each invoice, and you want them to print it themselves. At your repository's root
+in Claude Code, you type:
 
 ```text
 /rn:on
