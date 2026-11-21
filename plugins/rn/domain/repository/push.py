@@ -4,7 +4,6 @@ work's branch, and the run's one pull request."""
 from __future__ import annotations
 
 import json
-import os
 from collections.abc import Sequence
 
 from fault import CantRun, Missing, Wrong
@@ -29,9 +28,7 @@ def commit(run: RunPlace, paths: Sequence[str], message: str, host: Host) -> str
     them; CantRun where git fails, such as a commit check of the repository refusing, with what it
     said.
     """
-    outside = [
-        each for each in paths if not _within(os.path.join(run.worktree, each), run.worktree)
-    ]
+    outside = [each for each in paths if not run.holds(each)]
     if outside:
         raise Wrong(f"{', '.join(outside)}: lies outside the run's worktree; commit only its paths")
     _git(host, run, "add", "--", *paths)
@@ -133,9 +130,3 @@ def _push(run: RunPlace, host: Host) -> str:
 def _git(host: Host, run: RunPlace, *words: str) -> Ran:
     """Runs git in the run's worktree, raising CantRun with what it said where it fails."""
     return checked(host, ["git", *words], run.worktree, CantRun, f"git {words[0]} fails")
-
-
-def _within(path: str, folder: str) -> bool:
-    """Whether the path lies in the folder."""
-    path, folder = os.path.normpath(path), os.path.normpath(folder)
-    return path.startswith(folder + os.sep)

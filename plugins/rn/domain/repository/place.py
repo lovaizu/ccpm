@@ -53,6 +53,11 @@ class RunPlace:
         """The folder of the run's Rounds, `<folder>/rounds/`."""
         return os.path.join(self.folder, "rounds")
 
+    def holds(self, path: str) -> bool:
+        """Whether the path, from the worktree's top, lies inside the worktree."""
+        within = os.path.normpath(os.path.join(self.worktree, path))
+        return within.startswith(os.path.normpath(self.worktree) + os.sep)
+
 
 def named(today: date, goal: str) -> str:
     """The name of a run started on the day toward the goal.

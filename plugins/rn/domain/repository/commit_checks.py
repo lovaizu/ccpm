@@ -26,10 +26,9 @@ def findings(run: RunPlace, files: Sequence[str], host: Host) -> list[str]:
     where a check can't run, such as its program missing, with what it said.
     """
     for each in files:
-        path = os.path.normpath(os.path.join(run.worktree, each))
-        if not path.startswith(os.path.normpath(run.worktree) + os.sep):
+        if not run.holds(each):
             raise Wrong(f"{each}: lies outside the run's worktree; give files from its top")
-        if not os.path.exists(path):
+        if not os.path.exists(os.path.join(run.worktree, each)):
             raise Wrong(f"{each}: no such file in the run's worktree; give the files you wrote")
     if not files:
         return []
