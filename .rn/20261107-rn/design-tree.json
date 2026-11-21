@@ -423,7 +423,7 @@
           "decisions": [
             {
               "about": "The check",
-              "decided": "claude plugin validate passes on each plugin's folder, Lane's README walkthrough is what its integration cases show word for word, rn's is the user's own run of rn, and one pull request holds both plugins",
+              "decided": "claude plugin validate passes on each plugin's folder, Lane's README walkthrough is what its integration cases show word for word, rn's is the record of the maker's run of rn, and one pull request holds both plugins",
               "by": "reasoning"
             },
             {
@@ -438,7 +438,7 @@
             },
             {
               "about": "rn's README walkthrough",
-              "decided": "the README's walkthrough takes the record of the user's own run of rn, as a run that a person made",
+              "decided": "the README's walkthrough takes the record of the maker's run of rn by --plugin-dir, as the record of an end-to-end test",
               "by": "user"
             },
             {
@@ -447,8 +447,8 @@
               "by": "reasoning"
             },
             {
-              "about": "A run before the user's own",
-              "decided": "Before the user runs rn, the maker runs rn once from its folder by --plugin-dir, on the README walkthrough's request with the conversation in Japanese, through to the pull request, and mends what breaks, as nothing since 2026-11-18 ran rn whole with the real model: the languages, the context, the refactor Round, the send-back, and the evaluator after them",
+              "about": "A run of rn whole",
+              "decided": "Before the release, the maker runs rn once from its folder by --plugin-dir, on the README walkthrough's request with the conversation in Japanese, through to the pull request, and mends what breaks, as nothing since 2026-11-18 ran rn whole with the real model: the languages, the context, the refactor Round, the send-back, and the evaluator after them",
               "by": "user"
             }
           ]
