@@ -389,13 +389,91 @@
       "name": "rn's developers see, before anyone writes a body, whether rn's parts fit together as its architecture draws",
       "path": "plugins/rn",
       "kind": "software-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "A refactorer apart from the generator, with no evaluator, refactors each deliverable once its Rounds end, as the architecture's components and S1 draw",
+              "decided": "The refactorer: its prompt at domain/refactorer.md with its start at agents/refactorer.md, its Cut and result forms in domain/schemas/, its steps in lane/rules.json, and its start due from the design tree in lane/adapters/starts_due.py, once a deliverable of a kind with a best practice ends its Rounds",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "rn's developers see, before anyone builds a part, whether rn's parts joined as its architecture draws give each key result",
       "path": "dev/rn/tests",
       "kind": "test-design",
-      "status": "done"
+      "inputs": [
+        "dev/rn/architecture.md",
+        "plugins/rn"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "The refactorer's component, its strategy, and its arrows in S1 and S2",
+              "decided": "Integration cases for the refactorer's component and strategy, S1's refactoring once the Rounds end and none for kind light, and S2's stop and start of the refactorer",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A person's /rn:up with what they want gets the deliverable made in rounds, asked only what's theirs, and handed over in a pull request",
@@ -431,13 +509,289 @@
       "name": "At each turn, the main conversation reviews the design tree by the run's facts, asks the person only what's theirs, and starts each round due",
       "path": "plugins/rn/domain/orchestrator.md",
       "kind": "prompt",
-      "status": "done"
+      "inputs": [
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Its task: starting and stopping the refactorer",
+              "decided": "The orchestrator starts the refactorer with its Cut once a deliverable of a kind with a best practice ends its Rounds, takes at most two Rounds of content, and stops and starts the refactorer on a pause and a pick-up",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "A generator makes a deliverable from its Cut alone by its kind's best practice, and says where it carried out each decision and each point it settled",
       "path": "plugins/rn/domain/generator.md",
       "kind": "prompt",
-      "status": "done"
+      "inputs": [
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Its task: the generator no longer refactors",
+              "decided": "The generator makes the content alone, by its kind's best practice or its check alone, and no longer refactors, as the architecture gives the refactoring to the refactorer",
+              "by": "maker"
+            }
+          ]
+        },
+        {
+          "id": "N3",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": true,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": true,
+          "decisions": []
+        }
+      ]
+    },
+    {
+      "name": "A refactorer makes a deliverable plain for whoever reads it next, keeping its intent, from its Cut alone",
+      "path": "plugins/rn/domain/refactorer.md",
+      "kind": "prompt",
+      "inputs": [
+        "plugins/rn",
+        "dev/rn/tests"
+      ],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N8",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N9",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N10",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N11",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N12",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N13",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N14",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N15",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N16",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "An evaluator judges a deliverable as its people meet it, and answers each necessary condition of its group good or more in its people's words",
@@ -519,6 +873,26 @@
     }
   ],
   "work": [
+    {
+      "do": "make",
+      "path": "plugins/rn"
+    },
+    {
+      "do": "make",
+      "path": "dev/rn/tests"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/refactorer.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/generator.md"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/orchestrator.md"
+    },
     {
       "do": "make",
       "path": "plugins/rn/domain/template"
