@@ -67,18 +67,26 @@ def due(given: Given, cwd: str) -> Due:
     done = {each["path"] for each in deliverables if each["status"] == "done"}
     if any(each["kind"] == "design-tree" and each["path"] not in done for each in deliverables):
         return {"starts": []}
-    made = {each["path"] for each in tree["work"] if each["do"] == "make"}
-    named = {each["path"] for each in deliverables}
     running = _running(run, moves, cwd)
-    count: Counter[str] = Counter()
-    for node in deliverables:
-        inputs = {each for each in node.get("inputs", []) if each in named}
-        if node["path"] not in made or node["path"] in done or not inputs <= done:
-            continue
-        role = course.next_in(run, node).waits_on
-        if role in _ROLES.values() and (role, node["path"]) not in running:
-            count[role] += 1
+    count = Counter(
+        role
+        for role, path in _waiting(run, tree, done)
+        if role in _ROLES.values() and (role, path) not in running
+    )
     return {"starts": [{"role": f"rn:{role}", "count": n} for role, n in count.items()]}
+
+
+def _waiting(run: RunPlace, tree: form.Tree, done: set[str]) -> list[tuple[str, str]]:
+    """What each deliverable that `work` makes waits on, by its path, where it isn't done and each
+    of its inputs that is a deliverable is."""
+    made = {each["path"] for each in tree["work"] if each["do"] == "make"}
+    named = {each["path"] for each in tree["deliverables"]}
+    found = []
+    for node in tree["deliverables"]:
+        inputs = {each for each in node.get("inputs", []) if each in named}
+        if node["path"] in made and node["path"] not in done and inputs <= done:
+            found.append((course.next_in(run, node).waits_on, node["path"]))
+    return found
 
 
 def _run(commands: list[str], starts: list[Given], cwd: str) -> RunPlace | None:
