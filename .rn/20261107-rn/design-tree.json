@@ -485,6 +485,11 @@
               "about": "The user's decisions of 2026-11-20",
               "decided": "/rn:on starts a run and asks what to make, the next turn putting the goal and making the run; /rn:up resumes the newest run from the runs' commits, its branch rn-* with a design tree holding a deliverable not done, making its worktree again where none lies, and asks which run where none is found; the orchestrator's first step is the event's own, sign-off, send-back, answer, and a role's end writing the design tree there, and review, touched, commit, and move are the same for each event; a refusal that only the user can mend stops only its deliverable's work, the turn ending on blocked only where nothing else can move; review searches by Bash's find and grep, and by the Glob and Grep tools, as the tools differ by OS; the generator's try goes back to decide by lane-back where a condition that the people meet falls short",
               "by": "user"
+            },
+            {
+              "about": "Telling the request from an answer",
+              "decided": "Lane gives the rules adapter each earlier turn's role and prompt; the first turn after the turn of /rn:on, the run's first or one whose prompt is the typed command, holds the request, and any later turn an answer",
+              "by": "reasoning"
             }
           ]
         },
@@ -541,7 +546,7 @@
           "decisions": [
             {
               "about": "A pick-up with no run",
-              "decided": "the turn ends with rn's word that it has no run to pick up, no move stopped and no worktree made",
+              "decided": "the turn ends with rn asking the user which run to pick up, no move stopped and no worktree made",
               "by": "reasoning"
             },
             {
