@@ -35,15 +35,14 @@ architecture.** It makes each to its best practice and its template, and keeps o
   the evaluators named, until the documents held trivia that no decision of the tree asked for.
 
 **A subagent makes the test cases, the skeleton, and the code, and the main conversation reads all
-it made.** The main conversation first writes the policy into the design tree's decisions, deletes
-the code made before, and briefs the subagent with the best practice of the deliverable's kind and
-the documents agreed, never the deleted code. It then reads each line the subagent made against the
+it made.** The main conversation first writes the policy into the design tree's decisions, and
+briefs the subagent with the best practice of the deliverable's kind and the documents agreed. It
+then reads each line the subagent made against the
 architecture and the best practice, and takes only the vital few by the plugin's purpose. It writes
 each gap into the architecture and the design tree before the tests and the code.
 
-- Rationale: a maker that sees earlier code copies it, and the main conversation keeps the whole
-  only where it sets each policy and reads each result itself, as a subagent's report is a claim,
-  not a result.
+- Rationale: the main conversation keeps the whole only where it sets each policy and reads each
+  result itself, as a subagent's report is a claim, not a result.
 
 **Before any fix to a part, write the part's purpose and the simplest way that could meet it at
 all, beside how the part meets it now, and make the part that way, removing each mechanism that
