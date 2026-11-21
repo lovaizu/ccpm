@@ -192,7 +192,6 @@ def run_opened(event: Event, run: Run) -> Answer:
     return Answer() if read_rules(root) is None else Answer(said=_due_said(_due(opened, event)))
 
 
-@_checked
 def start_made(move: Move) -> Answer:
     """S9: the main conversation starts a subagent of the plugin, or resumes one by SendMessage.
 
@@ -206,10 +205,10 @@ def start_made(move: Move) -> Answer:
     the start takes rules from the plugin's adapter of the rules, untied until the PostToolUse of
     its call; a resume, by its start with the move's role and prompt, and with the move's steps
     where the role takes them from the plugin's adapter of the rules.
-    Refuses: nothing; an adapter of the starts due that failed stops the call with what's wrong,
-    and so does, for a start that takes its steps from the plugin's adapter of the rules, an adapter
-    of the rules that the plugin doesn't give, that fails, or that gives out of its form, its
-    sentence saying that the plugin's author adds or mends lane/adapters/rules.py for the role.
+    Refuses: AdapterFailed, where an adapter of the starts due fails, or, for a start that takes
+    its steps from the plugin's adapter of the rules, where that adapter is missing, fails, or gives
+    out of its form, saying that the plugin's author adds or mends lane/adapters/rules.py for the
+    role, which answer gives as a stop of the call with what's wrong.
     """
     resume = move.event["tool_name"] == "SendMessage"
     role = move.role if resume else move.event["tool_input"].get("subagent_type", "")
@@ -242,7 +241,6 @@ def start_made(move: Move) -> Answer:
     return Answer()
 
 
-@_checked
 def turn_ended(move: Move) -> Answer:
     """S5, S8, S9, and S11: the main conversation ends its turn, held to its role's steps, or the
     turn's, and to the starts due.
@@ -258,8 +256,8 @@ def turn_ended(move: Move) -> Answer:
     through, by an `ended` entry where adapters.starts_due, asked with the turn ended, says the run
     ends, and, where the role takes its steps at each turn, by a `turn_ended` entry, so that the
     next prompt begins the next turn; a turn's end that it stops goes on in the same turn.
-    Refuses: nothing; an adapter of the starts due that failed stops the turn's end with what's
-    wrong.
+    Refuses: AdapterFailed, where an adapter of the starts due fails, which answer gives as a stop
+    of the turn's end with what's wrong.
     """
     entries = move.run.entries
     settled = {e.get("tool_use_id") for e in entries if e["kind"] in ("tie", "drop")}

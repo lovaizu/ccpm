@@ -836,12 +836,15 @@ def test_start_made_gives_the_adapter_no_turn_though_the_run_holds_turns(g: Play
 def test_start_made_of_a_role_with_no_steps_and_no_adapter_is_stopped_naming_it(g: Play, log: str):
     """Given `log` naming the writer with no steps, with no adapter of the rules, and the writer due
     When the main conversation starts the writer
-    Then the guard stops it, naming lane/adapters/rules.py, the writer, and `log`'s folder, and
-    the record gains nothing"""
+    Then start_made refuses with AdapterFailed, and answer stops the start with it, naming
+    lane/adapters/rules.py, the writer, and `log`'s folder, and the record gains nothing"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
     recorded_now(log)
-    said = start_made(move("start", g.e.start("log:writer", "toolu_1")))
-    assert said.stop
+    event = g.e.start("log:writer", "toolu_1")
+    with pytest.raises(AdapterFailed) as raised:
+        start_made(move("start", event))
+    said = answer(event)
+    assert said == Answer(True, str(raised.value))
     for named in ("lane/adapters/rules.py", "log:writer", log):
         assert named in said.said
     assert gained(log) == []
@@ -856,13 +859,16 @@ def test_start_made_with_an_adapter_of_the_rules_that_fails_is_stopped_with_what
     """Given `log` naming the writer with no steps, whose adapter of the rules exits 1 saying it
     found no prompt, and the writer due
     When the main conversation starts the writer
-    Then the guard stops it, naming the adapter's path and what it said, and the record gains
-    nothing"""
+    Then start_made refuses with AdapterFailed, and answer stops the start with it, naming the
+    adapter's path and what it said, and the record gains nothing"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
     write_files(log, {"lane/adapters/rules.py": "import sys\n\nsys.exit('no prompt')\n"})
     recorded_now(log)
-    said = start_made(move("start", g.e.start("log:writer", "toolu_1")))
-    assert said.stop
+    event = g.e.start("log:writer", "toolu_1")
+    with pytest.raises(AdapterFailed) as raised:
+        start_made(move("start", event))
+    said = answer(event)
+    assert said == Answer(True, str(raised.value))
     assert os.path.join(log, "lane", "adapters", "rules.py") in said.said
     assert "no prompt" in said.said
     assert gained(log) == []
@@ -940,14 +946,18 @@ def test_a_move_with_an_adapter_of_the_starts_due_that_fails_stops_with_what_it_
     """Given `log` whose adapter of the starts due exits 1 saying it found no version, and the
     writer tied to a1 with its `written`
     When the main conversation ends its turn, or starts the writer
-    Then the guard stops the move, naming the adapter's path and what it said"""
+    Then the interface refuses with AdapterFailed, and answer stops the move with it, naming the
+    adapter's path and what it said"""
     write_files(log, {"lane/adapters/starts_due.py": "import sys\n\nsys.exit('no version')\n"})
     recorded(log, START, TIE, GAVE)
-    if kind == "turn_end":
-        said = turn_ended(move("turn_end", g.e.stop()))
-    else:
-        said = start_made(move("start", g.e.start("log:writer", "toolu_2")))
-    assert said.stop
+    event = g.e.stop() if kind == "turn_end" else g.e.start("log:writer", "toolu_2")
+    with pytest.raises(AdapterFailed) as raised:
+        if kind == "turn_end":
+            turn_ended(move("turn_end", event))
+        else:
+            start_made(move("start", event))
+    said = answer(event)
+    assert said == Answer(True, str(raised.value))
     assert os.path.join(log, "lane", "adapters", "starts_due.py") in said.said
     assert "no version" in said.said
 
