@@ -69,12 +69,18 @@ def named(today: date, goal: str) -> str:
     Refuses: Wrong where the goal holds no letter or digit, saying that `/rn:on` takes what the
     user wants in words.
     """
-    if not any(each.isalnum() for each in goal):
+    return f"{today:%Y%m%d}-{_goal(goal)}"
+
+
+def _goal(words: str) -> str:
+    """The goal's part of a run's name, refused as `named` refuses the words."""
+    if not any(each.isalnum() for each in words):
         raise Wrong(
-            f"the goal {goal!r} holds no letter or digit; /rn:on takes what the user wants in words"
+            f"the goal {words!r} holds no letter or digit;"
+            " /rn:on takes what the user wants in words"
         )
-    words = ["".join(each for each in word if each.isalnum()).lower() for word in goal.split()]
-    return f"{today:%Y%m%d}-{'-'.join(words[:_WORDS])}"
+    kept = ["".join(each for each in word if each.isalnum()).lower() for word in words.split()]
+    return "-".join(kept[:_WORDS])
 
 
 def made(repository: str, words: str) -> RunPlace | None:
@@ -87,7 +93,7 @@ def made(repository: str, words: str) -> RunPlace | None:
     Changes: nothing.
     Refuses: Wrong as `named` refuses the words.
     """
-    goal = named(date.today(), words).partition("-")[2]
+    goal = _goal(words)
     worktrees = os.path.join(repository, ".claude", "worktrees")
     folders = os.listdir(worktrees) if os.path.isdir(worktrees) else []
     matched = [_WORKTREE.fullmatch(each) for each in folders]
