@@ -15,7 +15,6 @@ sys.path.insert(0, os.path.join(HERE, "..", "..", "domain"))
 import json
 from collections import Counter
 
-import practice
 from fault import Wrong, end
 from repository import host
 from repository.place import RunPlace, of_folder
@@ -76,7 +75,7 @@ def due(given: Given, cwd: str) -> Due:
         inputs = {each for each in node.get("inputs", []) if each in named}
         if node["path"] not in made or node["path"] in done or not inputs <= done:
             continue
-        role = _waits_on(run, node)
+        role = course.next_in(run, node).waits_on
         if role in _ROLES.values() and (role, node["path"]) not in running:
             count[role] += 1
     return {"starts": [{"role": f"rn:{role}", "count": n} for role, n in count.items()]}
@@ -95,16 +94,6 @@ def _run(commands: list[str], starts: list[Given], cwd: str) -> RunPlace | None:
         return None
     found = newest(cwd, host.run)
     return found if found and os.path.isfile(found.tree) else None
-
-
-def _waits_on(run: RunPlace, node: Given) -> str:
-    """What the deliverable waits on, as rounds.course gives it."""
-    done = [
-        (each, files.result(each, "generator"), files.result(each, "evaluator"))
-        for each in files.of(run, node["path"])
-    ]
-    refactors = practice.refactoring(node["kind"]) is not None
-    return course.next_of(node, done, refactors).waits_on
 
 
 def _running(run: RunPlace, moves: list[Given], cwd: str) -> set[tuple[str, str]]:

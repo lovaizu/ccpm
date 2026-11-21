@@ -7,8 +7,11 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import NamedTuple, Optional
 
+import practice
+from repository.place import RunPlace
 from tree.form import Deliverable
 
+from rounds import files
 from rounds.files import Result, Round
 
 # The most Rounds of content, and of refactoring, that a deliverable takes, as remaking has a
@@ -72,6 +75,23 @@ def next_of(deliverable: Deliverable, rounds: Sequence[Done], refactors: bool) -
     if not rounds:
         return Next("generator", "content", False)
     return _after(rounds, short, refactors)
+
+
+def so_far(run: RunPlace, deliverable: str) -> list[Done]:
+    """Each Round of the deliverable so far, as `rounds.files.of` gives them, with each role's
+    result in it, as `rounds.files.result` gives it, refused as they refuse."""
+    return [
+        (each, files.result(each, "generator"), files.result(each, "evaluator"))
+        for each in files.of(run, deliverable)
+    ]
+
+
+def next_in(run: RunPlace, deliverable: Deliverable) -> Next:
+    """What the deliverable waits on, as `next_of` gives it from its Rounds so far in the run, its
+    kind refactored where `practice.refactoring` names a refactoring kind, refused as `so_far`
+    refuses."""
+    refactors = practice.refactoring(deliverable["kind"]) is not None
+    return next_of(deliverable, so_far(run, deliverable["path"]), refactors)
 
 
 # The sign-off, which a deliverable waits on with no Round to start.

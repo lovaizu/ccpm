@@ -113,8 +113,8 @@ def _cut(
     tree = form.read(run.tree)
     node = form.deliverable(tree, path)
     kinds = practice.kinds(plugin_root, run.worktree)
-    done = _rounds(run, path)
-    next_ = course.next_of(node, done, practice.refactoring(node["kind"]) is not None)
+    done = course.so_far(run, path)
+    next_ = course.next_in(run, node)
     if next_.waits_on != role:
         return 1, "", f"tree.py: {path} waits on {_WHO[next_.waits_on]}, not on its {role}\n"
     if role == "generator" and not next_.resumes:
@@ -140,9 +140,7 @@ def _signoff(
 ) -> tuple[int, str, str]:
     tree = form.read(run.tree)
     nexts = {
-        node["path"]: course.next_of(
-            node, _rounds(run, node["path"]), practice.refactoring(node["kind"]) is not None
-        )
+        node["path"]: course.next_in(run, node)
         for node in tree["deliverables"]
         if node["status"] != "done" and node["kind"] != "design-tree"
     }
@@ -169,14 +167,6 @@ def _held(tree: Any, pointer: str) -> str:
         except Wrong:
             pointer = pointer.rsplit("/", 1)[0]
     return pointer
-
-
-def _rounds(run: RunPlace, path: str) -> list[course.Done]:
-    """Each Round of the deliverable so far, with each role's result in it."""
-    return [
-        (each, files.result(each, "generator"), files.result(each, "evaluator"))
-        for each in files.of(run, path)
-    ]
 
 
 def _last(done: list[course.Done], role: int) -> Any:
