@@ -65,6 +65,7 @@ rn shows:
 The goal, as I'd put it:
   The accounting team prints each invoice themselves from the lines they keep in a
   spreadsheet, without asking a developer.
+The deliverables in English, and our talk in English.
 Is that what you're after?
 ```
 
@@ -182,6 +183,11 @@ rn works only on the few things that decide whether a deliverable's people can u
 rn asks only the decisions that change what the people get, one at a time, each with a
 recommendation. You sign off the plan and each deliverable, so you get what you mean without a
 specification.
+
+### "Does it work in a language other than English?"
+
+Yes. rn proposes a language for the deliverables and one for its talk, and you settle both with
+the goal.
 
 ### "Its output misses what this kind of work needs."
 

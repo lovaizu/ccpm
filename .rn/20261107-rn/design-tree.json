@@ -176,71 +176,7 @@
       "name": "A newcomer decides from the README alone whether rn fits their work, and starts using it",
       "path": "plugins/rn/README.md",
       "kind": "readme",
-      "inputs": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": [
-            {
-              "about": "A kind with no best practice: How it works says rn makes one first and lists what each settled without asking, where the design tree best practice gives such a deliverable the kind light",
-              "decided": "Where rn has no best practice for a deliverable's kind, it asks the user whether to make one first, a deliverable of kind meta in .rn/best-practices/<kind>/ that this one rests on, or to make the deliverable as kind light, by its check alone",
-              "by": "user"
-            },
-            {
-              "about": "The languages: whether rn writes and talks in the user's language",
-              "decided": "At the start of a run, rn proposes the language of the deliverables and the language of its talk, each from what the repository and the user's instructions already set, and the user settles both; everything rn writes and says then comes in the language chosen for it",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "A developer sees, before building any part, each test case that names nothing one level up and each element of the architecture that no case tests, and check.sh runs every plugin's cases with that check",
@@ -692,10 +628,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn/README.md"
-    },
     {
       "do": "make",
       "path": "dev/rn/architecture.md"
