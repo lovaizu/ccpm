@@ -410,17 +410,8 @@
           "decisions": [
             {
               "about": "What the change reaches",
-              "decided": "all of Lane's hooks, guard.py and place.py first",
+              "decided": "all of Lane's hooks, guard.py and place.py first, with the three kinds of a turn's record, turn_begun, turn, and turn_ended, made one",
               "by": "user"
-            },
-            {
-              "about": "The kinds of a turn's record",
-              "decided": null
-            },
-            {
-              "about": "What goes",
-              "decided": "the Turn record and _turn_given, as one function of place gives the move that opens a turn, turn_begun or turn, and one function of guard writes its entry; the exception that checklist.py raises and catches in itself; the starts-due callback that place takes, as start_made alone asks the starts due; and the inner @_checked on start_made and turn_ended, as _placed already holds it",
-              "by": "reasoning"
             }
           ]
         },
@@ -447,13 +438,7 @@
         {
           "id": "N7",
           "good": false,
-          "decisions": [
-            {
-              "about": "What is written once",
-              "decided": "json_form.py checks a minimum, of a length, a value, or a count of items, by one function from a table, each message word for word as now",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N8",
@@ -497,11 +482,6 @@
               "about": "What the change reaches",
               "decided": "all of rn's code, the template check under domain/template first",
               "by": "user"
-            },
-            {
-              "about": "What goes",
-              "decided": "the template check's reading of a note's `at most N` and of `Leave out `X` and the link`, as no template uses either and the meta best practice's N7 removes each cap; each check of a role that no caller can reach, in check/result.py and rounds/files.py; and each fault that an earlier check already stops, in tree/form.py and tree/signoff.py",
-              "by": "reasoning"
             }
           ]
         },
@@ -528,24 +508,12 @@
         {
           "id": "N7",
           "good": false,
-          "decisions": [
-            {
-              "about": "What is written once",
-              "decided": "one function in fault.py runs a script's entry, checks its count of arguments, and turns Wrong and Missing into 1 and CantRun into 2, for each of rn's scripts and adapters; one function reads a Cut and checks it against its role's schema, for the rules adapter and the result check",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         },
         {
           "id": "N8",
           "good": false,
-          "decisions": [
-            {
-              "about": "Kinds of a value",
-              "decided": "a kind that no code reads as a value is a string constant, not an Enum, as template/markdown.py's Kind and template/check.py's _Move",
-              "by": "reasoning"
-            }
-          ]
+          "decisions": []
         }
       ]
     },
@@ -611,12 +579,6 @@
     }
   ],
   "work": [
-    {
-      "do": "decide",
-      "path": "plugins/lane/hooks/lane",
-      "condition": "N2",
-      "about": "The kinds of a turn's record"
-    },
     {
       "do": "make",
       "path": "plugins/lane/hooks/lane"
