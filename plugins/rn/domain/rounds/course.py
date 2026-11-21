@@ -5,7 +5,7 @@ the user, and after them none, each finding left kept by the orchestrator as an 
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 import practice
 from repository.place import RunPlace
@@ -18,9 +18,14 @@ from rounds.files import Result, Round
 # limit (the architecture's P3.3).
 LIMIT = 2
 
-# A Round so far, with the generator's result and the evaluator's in it, None where the role
-# wrote none yet.
-Done = tuple[Round, Optional[Result], Optional[Result]]
+
+class Done(NamedTuple):
+    """A Round so far, with the generator's result and the evaluator's in it, None where the role
+    wrote none yet."""
+
+    round: Round
+    generator: Result | None
+    evaluator: Result | None
 
 
 class Next(NamedTuple):
@@ -81,7 +86,7 @@ def so_far(run: RunPlace, deliverable: str) -> list[Done]:
     """Each Round of the deliverable so far, as `rounds.files.of` gives them, with each role's
     result in it, as `rounds.files.result` gives it, refused as they refuse."""
     return [
-        (each, files.result(each, "generator"), files.result(each, "evaluator"))
+        Done(each, files.result(each, "generator"), files.result(each, "evaluator"))
         for each in files.of(run, deliverable)
     ]
 
@@ -100,13 +105,13 @@ _SIGN_OFF = Next("sign-off", None, False)
 
 def _stage(rounds: Sequence[Done]) -> list[Done]:
     """The Rounds of the last Round's stage."""
-    return [each for each in rounds if each[0].stage == rounds[-1][0].stage]
+    return [each for each in rounds if each.round.stage == rounds[-1].round.stage]
 
 
 def _past(rounds: Sequence[Done]) -> bool:
     """Whether the last Round's stage has LIMIT Rounds, each with both results."""
     stage = _stage(rounds) if rounds else []
-    return len(stage) >= LIMIT and all(made and judged for _, made, judged in stage)
+    return len(stage) >= LIMIT and all(each.generator and each.evaluator for each in stage)
 
 
 def _after(rounds: Sequence[Done], short: set[str], refactors: bool) -> Next:
@@ -119,6 +124,6 @@ def _after(rounds: Sequence[Done], short: set[str], refactors: bool) -> Next:
     if short:
         more = len(_stage(rounds)) < LIMIT
         return Next("generator", last.stage, False) if more else Next("orchestrator", None, False)
-    if refactors and not any(each[0].stage == "refactor" for each in rounds):
+    if refactors and not any(each.round.stage == "refactor" for each in rounds):
         return Next("generator", "refactor", False)
     return _SIGN_OFF

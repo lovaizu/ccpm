@@ -23,7 +23,7 @@ import pytest
 import rn_files
 from hypothesis import given
 from hypothesis import strategies as st
-from rounds.course import Next, next_of
+from rounds.course import Done, Next, next_of
 from rounds.files import Round
 
 # The most Rounds of a stage, as the README's How it works says: "twice at most".
@@ -53,7 +53,7 @@ def courses(draw: Any) -> tuple[dict[str, Any], list[Any], bool]:
         held = "judged" if place < len(stages) else draw(LAST)
         made = {"none": None, "point": rn_files.point()}.get(held, rn_files.made())
         judged = rn_files.judged() if held == "judged" else None
-        rounds.append((Round(folder, "docs/guide.md", stage, number), made, judged))
+        rounds.append(Done(Round(folder, "docs/guide.md", stage, number), made, judged))
     return node, rounds, draw(st.booleans())
 
 
@@ -113,8 +113,8 @@ def paused_courses(draw: Any) -> tuple[dict[str, Any], list[Any], bool]:
         each["decisions"] = [rn_files.decision("a point", "yes")] if each["decisions"] else []
     if not rounds:
         folder = rn_files.round_of("/r/.rn/r", "docs/guide.md", "content", 1)
-        rounds = [(Round(folder, "docs/guide.md", "content", 1), None, None)]
-    rounds[-1] = (rounds[-1][0], None, None)
+        rounds = [Done(Round(folder, "docs/guide.md", "content", 1), None, None)]
+    rounds[-1] = Done(rounds[-1].round, None, None)
     return node, rounds, refactors
 
 

@@ -109,13 +109,16 @@ def _cut(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
     if role == "generator" and not next_.resumes:
         round_ = files.new(run, path, str(next_.stage))
     else:
-        round_ = done[-1][0]
+        round_ = done[-1].round
     kind = node["kind"]
     if role == "generator" and round_.stage == "refactor":
         kind = str(practice.refactoring(kind))
     found = practice.Found(kinds[kind], practice.read(kinds[kind]))
     if role == "generator":
-        last = (_last(done, 1), _last(done, 2))
+        last = (
+            _last([each.generator for each in done]),
+            _last([each.evaluator for each in done]),
+        )
         written = cut.generator(tree, run, round_, found, last)
     else:
         written = cut.evaluator(tree, run, round_, found)
@@ -156,10 +159,10 @@ def _held(tree: Any, pointer: str) -> str:
     return pointer
 
 
-def _last(done: list[course.Done], role: int) -> Any:
-    """The role's latest result among the Rounds, by its place in each, or None."""
-    found = [each[role] for each in done if each[role] is not None]
-    return found[-1] if found else None
+def _last(results: list[Any]) -> Any:
+    """The latest of a role's results in the Rounds, None where it wrote none, or None."""
+    written = [each for each in results if each is not None]
+    return written[-1] if written else None
 
 
 def _lines(nodes: list[str]) -> str:

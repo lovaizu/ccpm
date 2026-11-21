@@ -10,16 +10,14 @@ from __future__ import annotations
 
 import os
 from collections.abc import Sequence
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 import rn_files
-from rounds.course import LIMIT, Next, next_of
-from rounds.files import Result, Round
+from rounds.course import LIMIT, Done, Next, next_of
+from rounds.files import Round
 
 COMMAND = rn_files.COMMAND
-
-Done = tuple[Round, Optional[Result], Optional[Result]]
 
 
 @pytest.fixture
@@ -43,7 +41,7 @@ def rounds(folder: str, *each: tuple[str, int, Any, Any]) -> list[Done]:
         place = rn_files.round_of(os.path.join(folder, "run"), COMMAND, stage, number)
         generator = None if made is None else read_back(folder, f"g-{stage}-{number}", made)
         evaluator = None if judged is None else read_back(folder, f"e-{stage}-{number}", judged)
-        found.append((Round(place, COMMAND, stage, number), generator, evaluator))
+        found.append(Done(Round(place, COMMAND, stage, number), generator, evaluator))
     return found
 
 
