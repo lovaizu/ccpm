@@ -55,10 +55,9 @@ Strategies:
   deciding it.
 - Each start kept with its prompt, which the plugin's adapters are given. [P2.3]\
   Intent: the plugin tells its starts of one role apart by what it wrote for each.
-- A step's rules given per start by the plugin's adapter, where its file fixes none for the role,
-  and given again at each resume of the start. [P2.3]\
-  Intent: a role that makes another deliverable at each start is held to that deliverable's rules,
-  as they stand once an answer that it waited on changes them.
+- A step's rules given at each start and resume by the plugin's adapter, where its file fixes none.
+  [P2.3]\
+  Intent: a role is held to its deliverable's rules, as they stand once an answer changes them.
 - The main conversation's steps given at each turn by the plugin's adapter, where the file gives
   none. [S11]\
   Intent: a main conversation that answers each event in its own turn starts each turn's steps
