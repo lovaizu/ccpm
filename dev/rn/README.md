@@ -1,6 +1,8 @@
-# rn
+# `rn`
 
-How rn keeps its promises, and why, is in [rn/docs/design.md](../../rn/docs/design.md).
+What rn must give its users is in [its product vision](product-vision.md). How rn gives it, and how
+its tests check it, is in [architecture.md](architecture.md).
 
-- Tests: `python3 -m unittest discover -s dev/rn/tests` from the repository root.
-- Trials: each file in `trials/` but `common.py` runs one scene of rn as its user would, in the practice repository: `python3 dev/rn/trials/<scene>.py --help` says what it takes.
+The best practice of each kind lies in
+[plugins/rn/domain/best-practices](../../plugins/rn/domain/best-practices/).
+`python3 dev/scripts/practices.py form <its JSON>` checks it, and `markdown` writes its Markdown.

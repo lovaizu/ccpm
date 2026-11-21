@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A plugin's lane/rules.json",
+  "description": "What a plugin gives Lane: each role's steps, each step's rules, each of one type with its values, and, where the plugin fixes its order, its routes.",
+  "type": "object",
+  "required": ["roles"],
+  "additionalProperties": false,
+  "properties": {
+    "roles": {
+      "description": "Each role's steps: a subagent's by its agent type, such as <plugin>:<role>, and the main conversation's in a run of a skill by the skill's name, such as <plugin>:<skill>; a subagent's role named with no steps takes them from the plugin's adapter of the rules for each start, and the main conversation's role named with no steps takes them from that adapter for each turn of the run.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "steps": {
+            "description": "The role's steps, in their order.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "rules"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string", "minLength": 1 },
+                "rules": { "type": "array", "items": { "$ref": "#/$defs/rule" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "routes": {
+      "description": "Where the plugin fixes its order: the roles to start after a role's result, or after a command that the person types.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["after", "start"],
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["command"],
+                "additionalProperties": false,
+                "properties": { "command": { "type": "string", "minLength": 1 } }
+              },
+              {
+                "type": "object",
+                "required": ["role", "result"],
+                "additionalProperties": false,
+                "properties": {
+                  "role": { "description": "The role's agent type.", "type": "string", "minLength": 1 },
+                  "result": { "type": "string", "minLength": 1 }
+                }
+              }
+            ]
+          },
+          "start": {
+            "description": "The roles to start, each by its agent type; a role named several times starts as many times at once.",
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "paths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+    "rule": {
+      "description": "One rule of a step, of one type of rule_types/ with that type's values.",
+      "oneOf": [
+        {
+          "description": "S1: the files the step writes, none where it names no path; a path that closes with / names a folder, which lets through each file under it.",
+          "type": "object",
+          "required": ["type", "paths"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "writes" },
+            "paths": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        {
+          "description": "S2: the files the step never reads.",
+          "type": "object",
+          "required": ["type", "paths"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "reads_none" }, "paths": { "$ref": "#/$defs/paths" } }
+        },
+        {
+          "description": "S3: the files the step reads whole before it's done; each path names a file, as a folder, whose path closes with /, has no lines to read.",
+          "type": "object",
+          "required": ["type", "paths"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "reads_whole" },
+            "paths": {
+              "type": "array",
+              "items": {
+                "description": "the path of a file, which never closes with /",
+                "type": "string",
+                "minLength": 1,
+                "pattern": "[^/]$"
+              },
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "description": "S4: the commands the step runs.",
+          "type": "object",
+          "required": ["type", "commands"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "commands" },
+            "commands": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        {
+          "description": "S5: the step comes after each step before it is done.",
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "order" } }
+        },
+        {
+          "description": "S6: the step is done only once each item of its checklist is done.",
+          "type": "object",
+          "required": ["type", "items"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "checklist" },
+            "items": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        {
+          "description": "S6: the step is done only once each item of its checklist is done, the items given at the mark by the plugin's command, run in the conversation's folder: one item, one word, on each line of its output, none for an empty output; the mark stops with the command's output where it exits other than 0.",
+          "type": "object",
+          "required": ["type", "command"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "checklist" },
+            "command": { "type": "string", "minLength": 1 }
+          }
+        },
+        {
+          "description": "S7: the results the role may give, by which the run moves on, and those that end the start at this step, its later steps not done.",
+          "type": "object",
+          "required": ["type"],
+          "anyOf": [{ "required": ["results"] }, { "required": ["ends"] }],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "const": "result" },
+            "results": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1
+            },
+            "ends": {
+              "description": "The results that end the start at this step.",
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1
+            }
+          }
+        },
+        {
+          "description": "S8: the plugin's own check, a command run in the conversation's folder, which passes on exit 0.",
+          "type": "object",
+          "required": ["type", "check"],
+          "additionalProperties": false,
+          "properties": { "type": { "const": "check" }, "check": { "type": "string", "minLength": 1 } }
+        }
+      ]
+    }
+  }
+}

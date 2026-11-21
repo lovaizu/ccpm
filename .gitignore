@@ -1,2 +1,8 @@
 .coverage
 .coverage.*
+.testmondata
+__pycache__/
+node_modules/
+.review/
+dev/lane/tests/e2e/records/
+dev/rn/tests/e2e/records/

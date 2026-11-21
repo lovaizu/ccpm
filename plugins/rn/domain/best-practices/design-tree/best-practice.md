@@ -1,0 +1,95 @@
+# `design-tree`
+
+## Goal tree
+
+- The person who wants to achieve a goal piles up the vital few and rigorously cuts the trivial many, and so achieves the goal in the shortest time.
+  - **C1** The design tree holds only the deliverables and decisions without which the goal fails.
+    - **N1** Does the goal state what its people do once it's achieved? (goal)
+    - **N2** Does every node of the design tree serve the goal and still hold? (deliverables)
+    - **N7** Does the context name the rn that wrote the tree, the languages that the user settled, and the run's issues and pull request? (context)
+  - **C2** At each turn, the maker reviews the design tree by what the run has done and learned, and judges again what's vital and what's trivial.
+    - **N3** Is each problem found fixed at the decision that caused it? (deliverables)
+    - **N4** Does each node agree with each node that a change touches, from the goal down to the work? (deliverables)
+  - **C3** The work goes in the order that achieves the goal in the shortest time.
+    - **N5** Is the first item of the work the one, among those that can start, that brings the goal's people closest? (work)
+    - **N6** Does the work start together each item that rests on no other item still being made? (work)
+
+## Template
+
+[design-tree.schema.json](design-tree.schema.json)
+
+## Practices
+
+### N1
+
+Does the goal state what its people do once it's achieved?
+
+Each node of the design tree stays only where the goal fails without it, so a goal that names no state its people reach leaves nothing to tell the vital few from the trivial many. The items follow the [five whys](https://en.wikipedia.org/wiki/Five_whys), which asks why until the answer is the end, not a means to it.
+
+1. *While deciding.* Open the user's request, the words they gave, and write what they're trying to achieve as one sentence with the user as its subject.
+2. *While deciding.* Ask why that matters to the user, and again of each answer, until the answer names no deliverable while the work can still make it true. That last answer is the goal, such as `The user gets from rn each deliverable they mean` from a request to rebuild rn.
+3. *While deciding.* Write after the goal's sentence, in the same `decided`, what its people do once it's achieved that they couldn't before, such as `a colleague from accounting prints an invoice from the guide alone`.
+4. *While deciding.* Put the goal to the user beside the words of the request it came from, write it as they confirm it, and write `user` in `by`, since only the user knows what they're after.
+
+### N2
+
+Does every node of the design tree serve the goal and still hold?
+
+A deliverable or decision that the goal doesn't need takes work that brings no one closer, and one that no longer holds leads its maker to build on what was dropped. The items follow the 100% rule of a [work breakdown structure](https://en.wikipedia.org/wiki/Work_breakdown_structure), under which the parts hold all of the work that the end needs and nothing beyond it.
+
+1. *While deciding.* List each deliverable that the goal's people use once it's achieved, such as a command with its guide, and each deliverable that one of them is made from, such as the command's architecture. Keep one only where the goal fails without it.
+2. *While deciding.* List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/` and of `.rn/best-practices/`, and give each deliverable as its kind the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a guide. Where no folder fits, ask the user whether to make a best practice of that kind first, and recommend it where the field has an established way of making the kind, such as for an invoice. Making it first adds a deliverable of kind `meta` at `.rn/best-practices/<kind>/`, which this one rests on. Otherwise give it the kind `light`, and write the check that judges it, such as a test that passes once it exists, as its decision about `The check`.
+3. *While deciding.* For each deliverable of a best practice's kind, write each necessary condition of that best practice with `good` false, and as its decisions only the points that bring the goal's people closer. Leave a point's `decided` null while a deliverable it takes from isn't done, since an answer given before its grounds exist rests on a guess.
+4. *While making.* At each turn, read each node from the goal down, and ask of each deliverable and decision whether the goal fails without it as the facts now stand. Drop each that it doesn't, and write each that the facts changed over its old text, so that the tree holds only what holds now, as git keeps how each came about.
+5. *While making.* Keep one line for a deliverable that's done: its name, path, kind, and status. A node with no file keeps its necessary conditions and their decisions too, as the deliverables built on it read them there.
+
+### N3
+
+Is each problem found fixed at the decision that caused it?
+
+A problem fixed where it shows comes back from the cause left in place, and each fix of a symptom adds work that brings the people no closer. The items follow [root cause analysis](https://en.wikipedia.org/wiki/Root_cause_analysis) by the five whys, which asks why until the answer is a cause that the maker can change.
+
+1. *While deciding.* List each problem that the facts since the last turn show: each `more` of a Round, each try that failed, each word of the user that says something is wrong, and each finding that came back from an earlier Round.
+2. *While deciding.* For each problem, ask why it happened, and again of each answer, until the answer is a node of the design tree: a decision, a deliverable, its inputs, or the order of the work, such as a guide made before the command it describes.
+3. *While deciding.* Change that node, and drop each fix of the problem that leaves it in place, such as a mend of the deliverable alone or a finding left out, since the cause brings the problem back.
+4. *While deciding.* Where the change is a point whose answers differ in what the people get, leave its `decided` null for the user, since only they can settle it.
+
+### N4
+
+Does each node agree with each node that a change touches, from the goal down to the work?
+
+A node that a change touches, left unread, goes on saying what held before, and the next maker builds on it. The items follow [change impact analysis](https://en.wikipedia.org/wiki/Change_impact_analysis), which lists what a change reaches by the links between the parts before any part is changed again.
+
+1. *While making.* After each change to a node, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py touched <run> <path>`, where `<run>` is the run's folder and `<path>` is the changed node's path. It lists each node that the change touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it.
+2. *While making.* Read each node on the list beside the change, and rewrite each that names a path, kind, or decision that the change replaced or dropped, or that rests on what the change made false, such as a guide's decision on its people after the product vision's roles change.
+3. *While making.* Run `tree.py touched` again for each node you rewrote, until a pass rewrites nothing.
+4. *While making.* Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit <run> '<ground>'`, where `<ground>` is why the change decides as it does. It gives 1 with the first fault where the tree leaves its schema or its checks, and leaves git as it was, so mend what it names and run it again. It gives 0 with the commit's hash, with `<ground>` as the commit message, so that git keeps the grounds and the tree holds the decision alone.
+
+### N5
+
+Is the first item of the work the one, among those that can start, that brings the goal's people closest?
+
+An item started before what it rests on is done is made again once that arrives, and an item that brings the people little delays the one that brings them most. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method), which lists each activity's predecessors before it orders the activities, and the [critical path method](https://en.wikipedia.org/wiki/Critical_path_method), which puts first what the end waits on.
+
+1. *While deciding.* For each deliverable, write in `inputs` the path of each deliverable that it describes, runs, or presupposes, such as the command that a guide tells its people to run, and of each deliverable of a kind that its best practice's `inputs` names, since the inputs alone decide what can start.
+2. *While deciding.* Among the deliverables and points whose inputs are done, choose the one that brings the people closest to the goal's state by what the facts show, and write it first in `work`: a deliverable to make by its path, or a point to decide by its deliverable's path, its condition, and its `about`.
+
+### N6
+
+Does the work start together each item that rests on no other item still being made?
+
+Two items that rest on nothing of each other wait for nothing, so starting them together cuts the time to the goal to that of the slower one. The items follow the precedence diagram, in which activities with no link between them run in parallel.
+
+1. *While deciding.* List the items of `work` whose inputs are done and that name none of each other in their inputs.
+2. *While deciding.* Write them next to each other in `work`, each after each item it rests on, so that they start together.
+
+### N7
+
+Does the context name the rn that wrote the tree, the languages that the user settled, and the run's issues and pull request?
+
+A newer rn reads a tree by the version that wrote it, the deliverables and the conversation reach their people only in a language they read, and a merge closes only the issues that the pull request names. The items follow GitHub's [linking of a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue), which closes an issue on merge where the pull request's body names it after `Closes`.
+
+1. *While deciding.* Write in `rn` the `version` of `${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`, and write it again once a newer rn brings the tree to its form.
+2. *While deciding.* Propose the language of the deliverables from what the repository's documents and the user's instructions set, or else English, and the language of the conversation from the user's instructions and words. Write each as the user settles it.
+3. *While deciding.* Ask the user which issues the run completes and which it only serves, and write their numbers in `closes` and `refs`.
+4. *While making.* Write in `pr` the URL of the pull request once the run opens it, and leave it null until then.

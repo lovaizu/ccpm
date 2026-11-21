@@ -1,0 +1,11 @@
+{
+  "roles": {
+    "rn:on": {},
+    "rn:up": {},
+    "rn:dn": {},
+    "rn:ty": {},
+    "rn:gm": {},
+    "rn:generator": {},
+    "rn:evaluator": {}
+  }
+}

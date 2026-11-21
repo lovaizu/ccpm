@@ -1,8 +1,0 @@
-extends: existence
-message: "Bold — style.md: Do not use bold."
-level: warning
-scope: raw
-nonword: true
-tokens:
-  - '\*\*[^*\n]+\*\*'
-  - '__[^_\n]+__'
