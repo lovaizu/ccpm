@@ -4,7 +4,7 @@
 
 - S1: a plugin wants its AI to notice when it writes a file that its step doesn't name.
 - S2: a plugin wants its AI to notice when it reads a file that its step says never to read.
-- S3: a plugin wants its AI to notice when it ends a step before reading whole a file it names.
+- S3: a plugin wants its AI to notice ending a step before reading whole a file the step names.
 - S4: a plugin wants its AI to notice when it runs a command other than those its step names.
 - S5: a plugin wants its AI to notice when it skips a step, or ends with a step undone.
 - S6: a plugin wants its AI to notice when it ends a step with an item of its checklist undone.
@@ -24,7 +24,7 @@
 Lane gives an AI that leaves its plugin's step the step's own sentence, so that it notices at once.
 
 - P1: the AI notices each step it leaves
-  - P1.1: a call that Lane stops gets the step's sentence and what to do, or why Lane can't check it.
+  - P1.1: a stopped call gets the step's sentence and what to do, or why Lane can't check the call.
   - P1.2: a step, item, read, or result counts only from the AI's own call, never its reply.
 - P2: one way for any plugin, applied by adapters alone
   - P2.1: each thing Lane can make an AI notice is one rule type, which a plugin's author picks.
@@ -76,8 +76,8 @@ Strategies:
   Intent: a skill with steps and no subagents takes Lane with its rules alone.
 - A run's record that only grows, holding only what no later move gives again. [S10]\
   Intent: moves checked at the same moment lose nothing of one another's.
-- A run's record kept for its conversation alone, a new one going on from the plugin's files.
-  [S10]\
+- A run's record kept for its conversation alone, a run in a new conversation going on from the
+  plugin's files. [S10]\
   Intent: what a run has done past its conversation lies only where the plugin keeps it.
 
 ### Components
@@ -96,14 +96,16 @@ Strategies:
 Strategies:
 
 - The plugin's folder found from its skill's base directory in the conversation, as
-  [its states](claude-code-states.md#where-the-guard-finds-the-plugin-it-serves) say. [P2.2]\
+  [Claude Code's states](claude-code-states.md#where-the-guard-finds-the-plugin-it-serves) say.
+  [P2.2]\
   Intent: Lane serves a plugin that it never names, as Claude Code gives the folder either way.
 - The plugin's adapter of the starts due, run on its own, else Lane's route adapter inside the
   guard. [P2.3]\
   Intent: a fixed order needs no code of the plugin's, and a decided one gives only its answer.
 - The reporters as commands that Claude Code puts on the AI's path. [P1.2]\
   Intent: a plugin's step names a reporter without knowing where Lane lies.
-- A rule of the paths a role writes that names a folder letting through each file under it. [S1]\
+- A folder named in a rule of the paths that a role writes letting through each file under it.
+  [S1]\
   Intent: a deliverable of several files, such as code with its tests, is written whole.
 - Each move placed on its run and start by what Claude Code's events carry, as
   [its states](claude-code-states.md) list. [P2.5]\
@@ -117,7 +119,8 @@ Strategies:
   Intent: a role that can't go on, such as on the person's point, ends with its result.
 - A step gone back to undoing its marks and those of each later step. [S12]\
   Intent: a role whose later step shows an earlier one short mends it there, skipping no step.
-- A mark checked for the step due, then for the reads and the items that its rules ask. [S5]\
+- A mark checked for the steps before its step, then for the reads and items its step's rules
+  ask. [S5]\
   Intent: a skipped step, item, or part of a file shows at the step skipped.
 - An end checked for its result, its steps, the plugin's check, and, for a turn, the starts due.
   [S5, S8, S9]\
@@ -250,6 +253,6 @@ dev/lane/                         what only Lane's developers use
 | Property-based testing | Parts | Quality | During the work | 0 counterexamples in reading the rules, each rule type's check, and the guard's placing of moves. |
 | Integration testing | Architecture | Quality | During the work | Every case passes, each handoff giving the data the data model names. |
 | Contract testing | Architecture | Quality | Apart from the work | On each new Claude Code, each recorded state gives the double's events. |
-| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing broken. |
+| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing with its part broken. |
 | Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |
 | Conformance and compliance testing | Product | Quality | During the work | Claude Code's strict check of Lane's plugin passes. |

@@ -5,7 +5,7 @@ Lane is a plugin for your Claude Code plugin that gives its AI each step it leav
 In development: Lane's rebuild as a plugin that others depend on isn't released.
 
 Lane is for you when your plugin's skill and subagents must keep the steps you give them. With it,
-you get an AI that notices each step it leaves, at once.
+you get an AI that notices at once each step it leaves.
 
 ## Non-goals
 
@@ -39,8 +39,9 @@ The install then lists `lane` among the dependencies it installed.
 
 At the end, you have a writer kept to its step, and a run moved on by its reviewer's result.
 
-`log`, your plugin, writes a version's `CHANGELOG.md` entry: its skill `/log:up` starts a writer,
-and then a reviewer. Its `.claude-plugin/plugin.json` names Lane among its dependencies:
+`log`, your plugin, writes a version's `CHANGELOG.md` entry: its skill `/log:up` starts a writer
+subagent, and then a reviewer subagent. Its `.claude-plugin/plugin.json` names Lane among its
+dependencies:
 
 ```json
 "dependencies": [{ "name": "lane", "marketplace": "ccpm" }]
@@ -53,7 +54,8 @@ Code installs Lane:
 "allowCrossMarketplaceDependenciesOn": ["ccpm"]
 ```
 
-Its `lane/rules.json` holds the writer's step and the routes:
+Its `lane/rules.json` holds each subagent's step, and the routes that say what starts after the
+command and after each result:
 
 ```json
 {
@@ -92,9 +94,9 @@ You're at the step `write` of log:writer, which writes only CHANGELOG.md.
 Write there instead of notes.md.
 ```
 
-The writer writes the entry in `CHANGELOG.md`, runs `lane-result written`, and ends. The reviewer
-starts, as the route after `written` says, runs `lane-result more`, and ends. The main conversation
-then reads:
+The writer writes the entry in `CHANGELOG.md`, runs Lane's command
+`lane-result written`, and ends. The reviewer starts, as the route after `written` says, runs
+`lane-result more`, and ends. The main conversation then reads:
 
 ```text
 log:reviewer gave more. Due: log:writer.
@@ -102,7 +104,8 @@ log:reviewer gave more. Due: log:writer.
 
 ## How it works
 
-Lane gives an AI that leaves your plugin's step the step's own sentence, so that it notices at once.
+When an AI leaves your plugin's step, Lane gives it the step's own sentence, so that it notices at
+once.
 
 ![How Lane works, from your plugin's rules to each move it checks](images/how-it-works.svg)
 
@@ -112,8 +115,8 @@ When Lane stops a call, the AI gets the sentence of the step it left and what to
 
 ### "The AI says it did the step, but did it?"
 
-A step, an item, a read, or a result counts only from the AI's own call, never from its reply. Such
-a call is a Read itself, or a run of a Lane command that your step names.
+Lane counts steps, checklist items, reads, and results only from the AI's own calls, never its
+replies. Such a call is a Read tool call, or a run of a Lane command that your step names.
 
 ### "Each check is code to write and test."
 
@@ -122,17 +125,20 @@ makes both the check and the sentence the AI reads.
 
 ### "The main conversation starts the wrong subagent, or stops while one is due."
 
-Your routes say which subagent starts after each result. Lane gives the main conversation each
-start due, and stops any other start, or its end while one is due.
+Your routes say which subagent starts after each result, and Lane gives the main conversation each
+subagent due to start. Lane stops the main conversation from starting any other subagent, and from
+ending its turn while one is due.
 
 ### "A run that stops starts over."
 
 Lane keeps a record of the run's starts and results, so the run goes on after `/compact`. In a new
-conversation, it goes on from the results your plugin keeps, through an adapter of yours.
+conversation, it goes on from the results your plugin keeps, through an
+[adapter](docs/rules-and-adapters.md#adapters) of yours.
 
 ### "Does it check other work in the same conversation?"
 
-No. Lane checks only your skill's run, from its call until its routes start no more.
+No. Lane checks only the run of your skill, from the skill's call until your plugin's routes start
+no more subagents.
 
 ## Documentation
 

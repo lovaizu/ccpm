@@ -1,13 +1,13 @@
 # rn
 
-rn is a Claude Code plugin that makes what you ask for so the people it's for can use it.
+rn is a Claude Code plugin that makes what you ask for, ready for the people you make it for.
 
-In development: this README describes the rebuilt rn, which isn't built yet, so don't install rn
-for your work.
+In development: this README describes rn after its rebuild, which isn't done yet, so don't
+install rn for your work.
 
 rn is for you when you have Claude Code make something in a GitHub repository for other people to
-use. With it, you get each deliverable you mean, one its people can use, and answer only what's
-yours.
+use. With it, you get each deliverable you mean, one its people can use, and you decide only
+what's yours.
 
 ## Non-goals
 
@@ -149,7 +149,7 @@ You type:
 /rn:ty
 ```
 
-rn puts up the guide in the same form, and you type `/rn:ty` again.
+rn shows the guide for your sign-off in the same form, and you type `/rn:ty` again.
 
 rn shows:
 
@@ -191,27 +191,28 @@ Where it has none for a kind, it makes one first, and lists what each settled wi
 ### "It looks done, but the people it's for can't use it."
 
 AI evaluators read each deliverable with only what its people have, never what rn meant. rn remakes
-it from what they find, twice at most, and shows you what's still short to decide on.
+it from what they find, twice at most, then shows you what's still short for you to decide.
 
 ### "Each fix breaks something else."
 
 rn takes each shortfall back to the decision it comes from, and makes the deliverable again from
 the decisions. A shortfall the people would never meet changes nothing, so the deliverable doesn't
-grow with each round.
+grow with each remake.
 
 ### "Does it keep working on what no one needs?"
 
-No. Each turn, rn reviews the plan by what the run showed, and works next where the people gain
-most.
+No. Each turn, rn reviews the plan by what its work showed, and works next where the
+people gain most.
 
 ### "Does it skip a step when no one watches?"
 
-No. Lane, installed with rn, stops any part of rn that leaves its steps, and shows it its step.
+No. Lane, a plugin installed with rn, stops each part of rn that leaves a step and shows it that
+step.
 
 ### "Does it change the repository's files, or merge on its own?"
 
-No. rn works in its own worktree and branch, runs commands in a throwaway copy, and leaves the
-merge to you.
+No. rn works in its own worktree and branch, runs commands in a throwaway copy, and leaves
+the merge to you.
 
 ## Documentation
 

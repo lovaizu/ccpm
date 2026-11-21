@@ -11,7 +11,8 @@
 
 ### Principles
 
-rn piles up the vital few that bring a deliverable's people to their aim, and cuts the trivial many.
+rn piles up the [vital few](https://en.wikipedia.org/wiki/Pareto_principle) that bring a
+deliverable's people to their aim, and cuts the trivial many.
 
 - P1: toward the people's aim
   - P1.1: the run reviews its course by its facts at each event.
@@ -82,7 +83,7 @@ Strategies:
 
 Strategies:
 
-- Each command an entry alone, pointing to the orchestrator's steps for each event. [P1.1]\
+- Each command only an entry point, pointing to the orchestrator's steps for each event. [P1.1]\
   Intent: every event reaches the one place that reviews the run, as no command checks its input.
 - The main conversation as the orchestrator, which starts and stops each other role. [P3.1]\
   Intent: the talk with the user and the review of the design tree share one context.
@@ -91,10 +92,10 @@ Strategies:
   Intent: the people's use is one act, so it's tried once and judged whole.
 - The generator trying the deliverable as its people would, and going back to its decisions on a
   shortfall they meet. [P2.1]\
-  Intent: the maker finds its own shortfall, and hands on only what it saw serve the people.
+  Intent: the generator finds its own shortfall, and hands on only what it saw serve the people.
 - The generator taking as given what the last evaluator found good or short. [P2.2]\
-  Intent: the generator mends by the judge's own measure.
-- The last Round's roles resumed within a session, and started from its files in a new
+  Intent: the generator mends by the evaluator's own measure.
+- The last Round's roles resumed within the same conversation, and started from its files in a new
   conversation. [P6.1]\
   Intent: each mend starts from what the last Round learned, wherever the run goes on.
 - A point that a role can't settle taken to the user as given, and the answer taken back as
@@ -102,15 +103,16 @@ Strategies:
   Intent: the user answers the role's own question, and the role gets the user's own words.
 - Each step that has one right result done by a script that the role runs. [P4.3]\
   Intent: each role spends its judgment and its context only where a step needs them.
-- rn's order given to Lane as the starts due from the design tree, each deliverable's rounds
+- rn's order given to Lane as the starts due from the design tree, each deliverable's Rounds
   beside the others'. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
 - Lane applied to every activity of every role's steps that it can hold, the orchestrator's
   included. [P5.1]\
   Intent: a role that leaves its steps notices at once and goes back.
-- Each step held to what it does, never to one OS's tools, such as Glob or Bash's `find`. [P5.1]\
+- Each step written as what it does, never tied to one OS's tools, such as Glob or Bash's
+  `find`. [P5.1]\
   Intent: rn runs alike on each OS that Claude Code runs on.
-- A refusal that only the user can mend stopping only the work it concerns. [P5.3]\
+- A script's refusal that only the user can mend stopping only the work it concerns. [P5.3]\
   Intent: the user mends one blocker while every other deliverable goes on.
 
 ### Sequences
@@ -128,7 +130,7 @@ sequenceDiagram
   U->>O: /rn:on [S1]
   O->>U: asks what they want [S1]
   U->>O: what they want, in their own words [S1]
-  O->>S: makes the run's worktree, and its design tree with the goal as put (Design tree) [P4.3]
+  O->>S: makes the run's worktree, and its design tree with the goal as the orchestrator puts it (Design tree) [P4.3]
   loop each event: a request, an answer, a sign-off, a send-back, or a role ended [P1.1]
     opt a sign-off [P1.3]
       O->>S: records it (Design tree) [P4.3]
@@ -170,7 +172,7 @@ sequenceDiagram
           E->>E: names, for each condition, what's good or what would make it good [P2.2]
           E-->>O: ends, with the Round written (Round) [P4.2]
           O->>T: takes each finding that helps the people into the decision it comes from, and holds good each condition whose finding they'd never meet (Design tree) [P1.1]
-          O->>T: keeps each finding past two rounds of content or of refactoring as an open decision of its condition (Design tree) [P3.3]
+          O->>T: keeps each finding past two Rounds of content or of refactoring as an open decision of its condition (Design tree) [P3.3]
         end
       end
     end
@@ -264,8 +266,8 @@ dev/rn/                            what only rn's developers use
 | Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
 | Property-based testing | Parts | Quality | During the work | 0 counterexamples of each invariant that rn's product vision, README, and this document state. |
 | Integration testing | Architecture | Quality | During the work | Every case passes, with a double of each prompt, and each handoff gives the data the data model names. |
-| Contract testing | Architecture | Quality | Apart from the work | On each new gh, each recorded command gives what it recorded. |
-| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each strategy's case failing broken. |
+| Contract testing | Architecture | Quality | Apart from the work | On each new version of gh, each recorded command gives what it recorded. |
+| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each strategy's case failing once the strategy is broken. |
 | Installation testing | Product | Quality | Apart from the work | Once ccpm's marketplace lists rn, it installs with Lane by the README's commands in a fresh home. |
 | Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |
 | Conformance and compliance testing | Product | Quality | During the work | Claude Code's strict check of the plugin passes. |
