@@ -53,12 +53,12 @@ def judge_mark(move: Move) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    marked = move.report["step"] if move.report else None
+    step_marked = move.report["step"] if move.report else None
     said = (
         judge(rule, step, move)
         for kind, judge in _MARKS.items()
         for step in move.steps
-        if step["name"] == marked
+        if step["name"] == step_marked
         for rule in step["rules"]
         if rule["type"] == kind
     )

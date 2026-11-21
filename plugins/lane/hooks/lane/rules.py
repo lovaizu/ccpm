@@ -55,6 +55,8 @@ class Route(TypedDict):
     start: list[str]
 
 
+# A class apart from Rules only so that `roles` is required and `routes` isn't, as the TypedDict of
+# Python 3.9, which Lane runs on, has no NotRequired.
 class Steps(TypedDict):
     """Each role's steps, a subagent's by its agent type and the main conversation's by the skill's
     name."""
