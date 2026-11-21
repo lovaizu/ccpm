@@ -8,11 +8,14 @@ state of Claude Code that bears on them, as dev/lane/claude-code-states.md lists
 
 from __future__ import annotations
 
+import copy
 import os
 
 import pytest
 from claude_code import AGENT_DENIED_BY_RULE, AGENT_UNKNOWN_TYPE, FOREGROUND, POSTED_FIRST
 from lane_bench import (
+    ADAPTED,
+    ENTRY,
     PER_TURN,
     WORDS,
     Bench,
@@ -25,6 +28,7 @@ from lane_bench import (
     to_review,
     written,
 )
+from repo_files import write_files
 
 # A plugin beside `log` that gives no order: its skill holds the main conversation to one step,
 # which writes NOTE.md and passes its check once NOTE.md is there.
@@ -74,6 +78,32 @@ held = [{"type": "order"}, {"type": "writes", "paths": []}]
 up = {"name": "up", "rules": [*held, {"type": "result", "ends": ["blocked"]}]}
 print(json.dumps({"steps": [up, {"name": "tell", "rules": held}]}))
 """
+
+# An adapter of the rules that `log` gives for its writer, which reads the plugin's facts, the Cut
+# in .log/cut.txt, for the paths the writer writes: the step `notes`, which reads NOTES.md whole,
+# and the step `write`, which writes each path that the Cut lists, from the notes read whole, and
+# gives `written`, or `asks`, which ends the start there while the writer waits for the person's
+# answer.
+BY_CUT = """\
+import json
+
+with open(".log/cut.txt") as f:
+    paths = f.read().split()
+notes = [{"type": "order"}, {"type": "reads_whole", "paths": ["NOTES.md"]}]
+write = [
+    {"type": "order"},
+    {"type": "writes", "paths": paths},
+    {"type": "reads_whole", "paths": ["NOTES.md"]},
+    {"type": "result", "results": ["written"], "ends": ["asks"]},
+]
+steps = [{"name": "notes", "rules": notes}, {"name": "write", "rules": write}]
+print(json.dumps({"steps": steps}))
+"""
+
+# The rules of `log` naming its writer with no steps, for BY_CUT to give, and starting the writer
+# again after its `asks`.
+ASKS = copy.deepcopy(ADAPTED)
+ASKS["routes"].append({"after": {"role": "log:writer", "result": "asks"}, "start": ["log:writer"]})
 
 
 @pytest.mark.supports("S9", "S7", "Starts due")
@@ -357,6 +387,34 @@ def test_a_resume_that_the_order_makes_due_goes_through_as_its_start(b: Bench):
     reviewed(c, "more")
     assert not c.resume(writer, prompt("log:writer")).blocked
     assert not c.stop("The writer runs again.").blocked
+
+
+@pytest.mark.supports("S9", "S1", "S3", "S5")
+def test_a_resume_takes_the_steps_that_the_plugins_adapter_of_the_rules_gives_at_the_resume(
+    b: Bench,
+):
+    """Given `log` whose adapter of the rules gives the writer's steps from the Cut, which lists
+    CHANGELOG.md; the writer started, which read NOTES.md whole, marked `notes` done, gave `asks`,
+    and ended; and the Cut then rewritten to list docs/new/ too, while the writer waited
+    When the main conversation resumes the writer by SendMessage, and the writer writes
+    docs/new/entry.md, marks `write` done, gives `written`, and ends
+    Then each goes through, as the resumed start takes the steps that the adapter gives for the
+    same prompt at the resume, with `notes` still done and NOTES.md still read"""
+    b.rules(ASKS)
+    b.adapter("rules.py", BY_CUT)
+    write_files(b.repo, {".log/cut.txt": "CHANGELOG.md\n"})
+    c = opened(b)
+    writer = started(c)
+    writer.read(b.at("NOTES.md"))
+    writer.bash("lane-step notes")
+    writer.bash("lane-result asks")
+    reached(writer, "Which folder holds the entry?")
+    write_files(b.repo, {".log/cut.txt": "CHANGELOG.md\ndocs/new/\n"})
+    assert not c.resume(writer, "docs/new/.").blocked
+    assert not writer.write(b.at("docs/new/entry.md"), ENTRY).blocked
+    assert not writer.bash("lane-step write").blocked
+    writer.bash("lane-result written")
+    assert not writer.end("Wrote docs/new/entry.md.")[0].blocked
 
 
 @pytest.mark.supports("S9")

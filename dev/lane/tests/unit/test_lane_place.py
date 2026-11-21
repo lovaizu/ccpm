@@ -5,7 +5,7 @@ transcript holds the skill's base directory or not yet, with runs of which some 
 place, one for each transition of a run's moves that Lane's list of Claude Code's states brings
 about, each event placed on its run, its start, its role, and its step, or outside each run, the
 latest run not ended picked of several, the latest command whose skill has steps, the latest tie of
-a resumed subagent, a resume carrying its start's role, prompt, and steps, a Grep and a Glob, and
+a resumed subagent, a resume carrying its start's role and prompt, a Grep and a Glob, and
 the events of another plugin, of an untied subagent, or of no start, which it leaves alone;
 command_of, which place's callers share; and, for a main conversation whose role takes its steps
 at each turn, turn_beginning, one for each event that begins its next turn or doesn't, as its
@@ -740,27 +740,28 @@ def test_a_send_message_to_an_ended_subagent_whose_role_is_due_is_a_start(e: Eve
     """Given the writer a1, whose end came with `written`, and the reviewer's `more`, so that the
     writer is due
     When the main conversation's PreToolUse of SendMessage to a1 comes
-    Then the move is a start by the main conversation, at no step, with the role, the prompt, not
-    the message, and the steps of a1's start"""
+    Then the move is a start by the main conversation, at no step, held to its steps, with the
+    role and the prompt, not the message, of a1's start"""
     given, on = e.send(WRITER, "u3"), run(*MORE)
-    expected = Move("start", given, on, "log:writer", None, PROMPT, WRITES, None, None)
+    expected = Move("start", given, on, "log:writer", None, PROMPT, UP, None, None)
     assert place(given, [on], by_routes) == expected
 
 
 @pytest.mark.supports(
     "test_a_role_with_no_fixed_steps_takes_them_from_the_plugins_adapter_for_each_start"
 )
-def test_a_resume_of_a_start_with_steps_given_carries_those_steps(e: Events, log: str):
+def test_a_resume_of_a_start_with_steps_given_leaves_those_steps(e: Events, log: str):
     """Given rules that name the writer with no steps, the writer a1, whose start holds the step
     `draft` that the plugin's adapter of the rules gave and whose end came with `written`, and the
     reviewer's `more`, so that the writer is due
     When the main conversation's PreToolUse of SendMessage to a1 comes
-    Then the move is a start with the writer's role, a1's prompt, and the step `draft`"""
+    Then the move is a start with the writer's role and a1's prompt, held to the main
+    conversation's steps, not `draft`, as the resume asks the adapter again"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
     drafted: list[Step] = [{"name": "draft", "rules": [{"type": "writes", "paths": ["docs/"]}]}]
     given = e.send(WRITER, "u3")
     on = run({**START, "steps": drafted}, *MORE[1:])
-    expected = Move("start", given, on, "log:writer", None, PROMPT, drafted, None, None)
+    expected = Move("start", given, on, "log:writer", None, PROMPT, UP, None, None)
     assert place(given, [on], by_routes) == expected
 
 
@@ -768,10 +769,10 @@ def test_a_resume_of_a_start_with_steps_given_carries_those_steps(e: Events, log
 def test_a_send_message_to_a_subagent_stopped_whose_role_is_due_again_is_a_start(e: Events):
     """Given the writer a1, which TaskStop stopped with no result, so that the writer is due again
     When the main conversation's PreToolUse of SendMessage to a1 comes
-    Then the move is a start with the role, the prompt, and the steps of a1's start"""
+    Then the move is a start with the role and the prompt of a1's start"""
     stopped: Entry = {"kind": "stopped", "run": "r1", "agent_id": "a1"}
     given, on = e.send(WRITER, "u2"), run(START, TIE, stopped)
-    expected = Move("start", given, on, "log:writer", None, PROMPT, WRITES, None, None)
+    expected = Move("start", given, on, "log:writer", None, PROMPT, UP, None, None)
     assert place(given, [on], by_routes) == expected
 
 

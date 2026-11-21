@@ -875,65 +875,56 @@ def test_start_made_with_an_adapter_of_the_rules_that_fails_is_stopped_with_what
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-@pytest.mark.parametrize("adapted", [False, True])
-def test_start_made_of_a_resume_keeps_the_prompt_and_steps_of_the_start_it_resumes(
-    g: Play, log: str, adapted: bool
-):
-    """Given the writer a1's start, its `written`, and the reviewer's `more`, so that the writer is
-    due; and `log` naming the writer with its steps, or with none and giving no adapter of the
-    rules now, a1's start holding the steps that the adapter gave
+def test_start_made_of_a_resume_of_a_role_with_its_steps_keeps_its_prompt(g: Play, log: str):
+    """Given `log` naming the writer with its steps, the writer a1's start, its `written`, and the
+    reviewer's `more`, so that the writer is due
     When the main conversation resumes a1 by SendMessage
-    Then the resume goes through, and the record gains its start with a1's prompt and, where a1's
-    start holds steps, those steps"""
-    given: list[Step] = [
-        {"name": "write", "rules": [{"type": "writes", "paths": ["CHANGELOG.md"]}]}
-    ]
-    first: Entry = {**START, "steps": given} if adapted else START
-    if adapted:
-        write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
-    reviewer: list[Entry] = [
-        lane_entries.start("toolu_2", "log:reviewer"),
-        lane_entries.tie("toolu_2", "a2"),
-        lane_entries.result("a2", "more", "log:reviewer"),
-    ]
-    recorded_now(log, first, TIE, GAVE, *reviewer)
+    Then the resume goes through, and the record gains its start with a1's prompt and no steps"""
+    recorded_now(log, START, TIE, GAVE, *REVIEWED_MORE)
+    assert start_made(resume(g, START)) == Answer()
+    assert gained(log) == [{**START, "tool_use_id": "toolu_3"}]
+
+
+@pytest.mark.supports(
+    "test_a_resume_takes_the_steps_that_the_plugins_adapter_of_the_rules_gives_at_the_resume"
+)
+def test_start_made_of_a_resume_asks_the_adapter_of_the_rules_again_with_its_prompt(
+    g: Play, log: str
+):
+    """Given `log` naming the writer with no steps, whose adapter of the rules gives a step `write`
+    that writes each Markdown file that the prompt names; the writer a1's start with the prompt
+    `Write NEW.md.`, holding the step `draft` that the adapter gave before; its `written`, and the
+    reviewer's `more`, so that the writer is due
+    When the main conversation resumes a1 by SendMessage
+    Then the resume goes through, and the record gains its start with a1's prompt and the step
+    that the adapter gives for it now, not `draft`"""
+    write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
+    write_files(log, {"lane/adapters/rules.py": lane_bench.RULES_ADAPTER})
+    first: Entry = {
+        **lane_entries.start("toolu_1", prompt="Write NEW.md."),
+        "steps": [{"name": "draft", "rules": []}],
+    }
+    recorded_now(log, first, TIE, GAVE, *REVIEWED_MORE)
     assert start_made(resume(g, first)) == Answer()
-    assert gained(log) == [{**first, "tool_use_id": "toolu_3"}]
+    now: list[Step] = [{"name": "write", "rules": [{"type": "writes", "paths": ["NEW.md"]}]}]
+    assert gained(log) == [{**first, "tool_use_id": "toolu_3", "steps": now}]
 
 
-def resume(
-    g: Play, resumed: Entry, prompt: str | None = None, steps: list[Step] | None = None
-) -> Move:
-    """The start move of the main conversation's SendMessage toolu_3 to a1, as place gives it: with
-    the role, the prompt, and the steps of the start it resumes, or the prompt and steps given."""
-    held = steps or resumed.get("steps") or lane_bench.RULES["roles"]["log:writer"]["steps"]
+# The reviewer a2's start, its tie, and its `more`, which make the writer due again.
+REVIEWED_MORE: list[Entry] = [
+    lane_entries.start("toolu_2", "log:reviewer"),
+    lane_entries.tie("toolu_2", "a2"),
+    lane_entries.result("a2", "more", "log:reviewer"),
+]
+
+
+def resume(g: Play, resumed: Entry) -> Move:
+    """The start move of the main conversation's SendMessage toolu_3 to a1, as place gives it: held
+    to the main conversation's steps, with the role and the prompt of the start it resumes."""
     [run] = runs("session-1")
     event = g.e.send(WRITER, "toolu_3")
-    return Move(
-        "start", event, run, "log:writer", None, prompt or resumed["prompt"], held, None, None
-    )
-
-
-@pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
-def test_start_made_of_a_resume_keeps_the_prompt_and_steps_that_its_move_carries(g: Play, log: str):
-    """Given `log` naming the writer with no steps, the writer a1's start, its `written`, and the
-    reviewer's `more`, so that the writer is due
-    When the main conversation resumes a1, its move carrying the prompt `Write it again.` and the
-    step `redo`
-    Then the resume goes through, and the record gains its start with that prompt and step"""
-    write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
-    first: Entry = {**START, "steps": [{"name": "write", "rules": []}]}
-    redo: list[Step] = [{"name": "redo", "rules": []}]
-    reviewer: list[Entry] = [
-        lane_entries.start("toolu_2", "log:reviewer"),
-        lane_entries.tie("toolu_2", "a2"),
-        lane_entries.result("a2", "more", "log:reviewer"),
-    ]
-    recorded_now(log, first, TIE, GAVE, *reviewer)
-    assert start_made(resume(g, first, "Write it again.", redo)) == Answer()
-    assert gained(log) == [
-        {**first, "tool_use_id": "toolu_3", "prompt": "Write it again.", "steps": redo}
-    ]
+    up = lane_bench.RULES["roles"]["log:up"]["steps"]
+    return Move("start", event, run, "log:writer", None, resumed["prompt"], up, None, None)
 
 
 @pytest.mark.supports(

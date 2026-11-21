@@ -50,9 +50,10 @@ class Turn:
 class Move:
     """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `drop`, `read`,
     `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role and the steps that hold
-    it, by start_rules.steps: a subagent's those of its start, a SendMessage's `start` those of the
-    start it resumes, and the main conversation's those of its turn's `turn` entry, else of the
-    run's latest command that the rules name, else of the skill that called the run; the
+    it, by start_rules.steps: a subagent's those of its start, and the main conversation's, a
+    SendMessage's `start` too, those of its turn's `turn` entry, else of the run's latest command
+    that the rules name, else of the skill that called the run, a SendMessage's `start` taking the
+    role of the start it resumes; the
     subagent's `agent_id`, None for the main conversation; for a `start`, its prompt, that of the
     start it resumes for a SendMessage, and None for any other move; the step its start or turn
     stands at; and the report where a reporter made the move."""
@@ -232,9 +233,9 @@ def _run_of(event: Event, runs: list[Run]) -> Run | None:
 def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     """The move of a PreToolUse: a start by an Agent call, held to the steps of whoever starts it;
     a start by the main conversation's SendMessage to a subagent of the run that has ended and
-    whose role the order makes due, with the role, the prompt, and the steps of the start it
-    resumes; no move for any other SendMessage, as talk, such as one that Claude Code queues to a
-    subagent that still runs; else a call."""
+    whose role the order makes due, held to the steps of the main conversation, with the role and
+    the prompt of the start it resumes; no move for any other SendMessage, as talk, such as one
+    that Claude Code queues to a subagent that still runs; else a call."""
     tool = event.get("tool_name")
     call = _call(event, run, rules)
     if tool == "Agent":
@@ -248,8 +249,9 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
         return None
     if resumed.entry["role"] not in roles:
         return None
-    role, steps = _held(rules, resumed.entry)
-    return Move("start", event, run, role, None, resumed.entry["prompt"], steps, None, None)
+    return replace(
+        call, kind="start", role=resumed.entry["role"], step=None, prompt=resumed.entry["prompt"]
+    )
 
 
 def _after(event: Event, run: Run, rules: Rules) -> Move | None:

@@ -196,15 +196,16 @@ def start_made(move: Move) -> Answer:
     """S9: the main conversation starts a subagent of the plugin, or resumes one by SendMessage.
 
     Takes: a `start` move at the PreToolUse of an Agent or SendMessage call, a SendMessage's with
-    the role, the prompt, and the steps of the start it resumes, as place gives them.
+    the role and the prompt of the start it resumes, as place gives them.
     Gives: an empty answer for a start of a role due; for any other start of the plugin's
     subagents, or one by a subagent, a stop with the starts due, or, where none is due, with the
     sentence that no start of the plugin's subagents is due and to go on without it.
-    Changes: the run record, by the start with its prompt, and with the steps that
-    adapters.given_steps gives from the prompt, with no turn, where start_rules.asks_adapter says
-    the start takes rules from the plugin's adapter of the rules, untied until the PostToolUse of
-    its call; a resume, by its start with the move's role and prompt, and with the move's steps
-    where the role takes them from the plugin's adapter of the rules.
+    Changes: the run record, by the start with its prompt, a resume's with the move's role and
+    prompt, and with the steps that adapters.given_steps gives from the prompt, with no turn, where
+    start_rules.asks_adapter says the start takes rules from the plugin's adapter of the rules, a
+    resume asking it again so that its steps follow what changed while it waited, untied until the
+    PostToolUse of its call; each step marked done and each read stay as they stood, as Move.done
+    counts them across the subagent's starts.
     Refuses: AdapterFailed, where an adapter of the starts due fails, or, for a start that takes
     its steps from the plugin's adapter of the rules, where that adapter is missing, fails, or gives
     out of its form, saying that the plugin's author adds or mends lane/adapters/rules.py for the
@@ -226,16 +227,11 @@ def start_made(move: Move) -> Answer:
         "prompt": move.prompt or "",
     }
     if asks_adapter(_rules(move.run), role):
-        cwd = move.event["cwd"]
-        entry["steps"] = (
-            move.steps
-            if resume
-            else adapters.given_steps(
-                _root(move.run),
-                cwd,
-                move.run,
-                {"role": role, "prompt": entry["prompt"], "turns": []},
-            )
+        entry["steps"] = adapters.given_steps(
+            _root(move.run),
+            move.event["cwd"],
+            move.run,
+            {"role": role, "prompt": entry["prompt"], "turns": []},
         )
     record.add(move.run.session_id, [entry])
     return Answer()
