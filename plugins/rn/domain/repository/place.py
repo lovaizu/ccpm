@@ -54,16 +54,16 @@ class RunPlace:
 def named(today: date, goal: str) -> str:
     """The name of a run started on the day toward the goal.
 
-    Takes: the day, and the goal in the user's words, as typed after `/rn:up`.
+    Takes: the day, and the goal in the user's words, as typed in reply to `/rn:on`.
     Gives: `<yyyymmdd>-<goal>`, the goal as at most five of its words, lower case, joined by `-`,
     with each character other than a letter or a digit left out.
     Changes: nothing.
-    Refuses: Wrong where the goal holds no letter or digit, saying that `/rn:up` takes what the
+    Refuses: Wrong where the goal holds no letter or digit, saying that `/rn:on` takes what the
     user wants in words.
     """
     if not any(each.isalnum() for each in goal):
         raise Wrong(
-            f"the goal {goal!r} holds no letter or digit; /rn:up takes what the user wants in words"
+            f"the goal {goal!r} holds no letter or digit; /rn:on takes what the user wants in words"
         )
     words = ["".join(each for each in word if each.isalnum()).lower() for word in goal.split()]
     return f"{today:%Y%m%d}-{'-'.join(words[:_WORDS])}"

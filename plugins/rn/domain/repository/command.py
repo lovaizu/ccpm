@@ -43,8 +43,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> tuple[i
     - `new <words> <goal>`, the user's words and the goal as put, each one argument: 0 printing the
       new run's folder from `cwd`, as `worktree.new` makes it, named by `place.named` from today
       and the words, with rn's design tree best practice.
-    - `find`: 0 printing each run that `worktree.paused` gives, its folder from `cwd` a line,
-      newest first, and nothing where there's none.
+    - `find`: 0 printing the folder from `cwd` of the run that `worktree.found` gives, its
+      worktree made again where none lies, as a line, and nothing where there's none.
     - `pause <run>`: 0 printing the hash that `push.pause` gives.
     - `put-up <run> <deliverable>`: 0 printing the URL that `push.put_up` gives.
     - `checks <run> <file>...`: 0 printing nothing where `commit_checks.findings` gives none, and 1
@@ -81,8 +81,8 @@ def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int,
 
 
 def _find(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:
-    found = worktree.paused(cwd)
-    return 0, "".join(f"{os.path.relpath(each.folder, cwd)}\n" for each in found), ""
+    found = worktree.found(cwd, host)
+    return 0, f"{os.path.relpath(found.folder, cwd)}\n" if found else "", ""
 
 
 def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> tuple[int, str, str]:

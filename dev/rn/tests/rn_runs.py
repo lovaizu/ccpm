@@ -6,6 +6,7 @@ there, so that each case starts from a run that no body of rn made."""
 from __future__ import annotations
 
 import os
+import subprocess
 from collections.abc import Mapping
 from typing import Any
 
@@ -37,6 +38,34 @@ def made_run(
     git(worktree, "add", "-A")
     git(worktree, "commit", "-q", "-m", "The run's design tree.")
     return RunPlace(repo, name)
+
+
+def branch_run(
+    repo: str,
+    name: str,
+    design_tree: Mapping[str, Any],
+    when: str = "2026-11-20T09:00:00",
+    worktree: bool = True,
+) -> str:
+    """Makes the run of the name in the repository, which has a commit, as a run leaves it: its
+    branch rn-<name> from HEAD, checked out in its worktree, and its design tree committed there at
+    the time given, as both git's author and committer date; with no worktree where `worktree`
+    says so, the branch kept, as a worktree removed leaves it. Gives the run's folder."""
+    path = rn_files.worktree_of(repo, name)
+    git(repo, "worktree", "add", "-q", "-b", f"rn-{name}", path, "HEAD")
+    folder = rn_files.run_folder(repo, name, design_tree)
+    dated_commit(path, "The run's design tree.", when)
+    if not worktree:
+        git(repo, "worktree", "remove", "--force", path)
+    return folder
+
+
+def dated_commit(folder: str, message: str, when: str) -> None:
+    """Commits each change of the folder's worktree with the message, at the time given as both
+    git's author and committer date, so that a case orders branches by their last commit."""
+    git(folder, "add", "-A")
+    env = {**os.environ, "GIT_AUTHOR_DATE": when, "GIT_COMMITTER_DATE": when}
+    subprocess.run(["git", "-C", folder, "commit", "-q", "-m", message], env=env, check=True)
 
 
 def committed_hooks(repo: str, hooks: Mapping[str, str]) -> None:

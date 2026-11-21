@@ -1,15 +1,16 @@
 """The unit cases of lane/adapters/starts_due.py, rn's order as Lane asks it: `due`, one for each
-combination that its contract lists, the latest command `rn:dn` or another, each deliverable done,
-no worktree, the plan open, a deliverable with no item `make` or with an input not done, the roles
-that a deliverable's Rounds wait on, a Round that a pause stopped before a role's result, a
-deliverable past its Rounds whose findings wait as proposals for its sign-off, an open decision,
-a start with no result yet among the moves, the orchestrator's result blocked, another plugin's
-start, none, one, and two deliverables due at once, and the run named by the latest start's prompt
-among several; each refusal; and `main`, for each exit it gives.
+combination that its contract lists, the latest command `rn:dn` or another, `rn:on` as the only
+command, each deliverable done, no run and no worktree here, the plan open, a deliverable with no
+item `make` or with an input not done, the roles that a deliverable's Rounds wait on, a Round that a
+pause stopped before a role's result, a deliverable past its Rounds whose findings wait as proposals
+for its sign-off, an open decision, a blocker kept for the user beside a deliverable that goes on, a
+start with no result yet among the moves, the orchestrator's result blocked, another plugin's start,
+none, one, and two deliverables due at once, and the run named by the latest start's prompt or else
+the newest by its last commit among several; each refusal; and `main`, for each exit it gives.
 
 Each input is in the form of Lane's starts_due.in.schema.json, read from the JSON of its text, and
-the run's files in the forms that the architecture's Directory structure names. The starts are
-taken in any order, as the contract orders none."""
+the run's files in the forms that the architecture's Directory structure names. The starts are taken
+in any order, as the contract orders none."""
 
 from __future__ import annotations
 
@@ -21,8 +22,10 @@ from typing import Any
 import pytest
 import rn_files
 from fault import Wrong
+from repo_files import git, write_files
 from rn_adapters import adapter
-from rn_files import COMMAND, GUIDE, WORDS
+from rn_files import COMMAND, GUIDE
+from rn_runs import branch_run
 
 ADAPTER = adapter("starts_due")
 NAME = "20261120-invoices"
@@ -41,9 +44,10 @@ def result(role: str, given: str) -> dict[str, Any]:
     return {"kind": "result", "role": role, "result": given}
 
 
-def run(*moves: Mapping[str, Any], words: str = "") -> dict[str, Any]:
-    """What Lane gives the adapter, read from the JSON of its text."""
-    text = json.dumps({"run": {"skill": "rn:up", "words": words, "moves": list(moves)}})
+def run(*moves: Mapping[str, Any]) -> dict[str, Any]:
+    """What Lane gives the adapter, read from the JSON of its text, the run's words empty, as rn's
+    commands take none but /rn:gm's."""
+    text = json.dumps({"run": {"skill": "rn:up", "words": "", "moves": list(moves)}})
     return json.loads(text)
 
 
@@ -59,13 +63,15 @@ def due(*roles: tuple[str, int]) -> dict[str, Any]:
     return {"starts": [{"role": r, "count": n} for r, n in sorted(roles)]}
 
 
-def a_run(cwd: str, tree: Mapping[str, Any], name: str = NAME) -> str:
-    """Writes the run's design tree and invoicer's lines in its worktree; gives its folder."""
-    folder = rn_files.run_folder(cwd, name, tree)
-    lines = os.path.join(rn_files.worktree_of(cwd, name), "invoicer", "lines.py")
-    os.makedirs(os.path.dirname(lines), exist_ok=True)
-    with open(lines, "w", encoding="utf-8") as f:
-        f.write("def parse_lines(text):\n    return []\n")
+def a_run(cwd: str, tree: Mapping[str, Any], name: str = NAME, worktree: bool = True) -> str:
+    """Makes the run as a run leaves it, its branch rn-<name> with its design tree and invoicer's
+    lines committed in its worktree on the day its name gives, so that the newer by name is the
+    newer by its last commit; with no worktree here where `worktree` says so. Gives its folder."""
+    lines = {"invoicer/lines.py": "def parse_lines(text):\n    return []\n"}
+    folder = branch_run(cwd, name, tree, f"{name[:4]}-{name[4:6]}-{name[6:8]}T09:00:00")
+    write_files(rn_files.worktree_of(cwd, name), lines)
+    if not worktree:
+        git(cwd, "worktree", "remove", "--force", rn_files.worktree_of(cwd, name))
     return folder
 
 
@@ -95,10 +101,8 @@ ALL_GOOD = [("N1", ["x"]), ("N2", ["x"]), ("N3", ["x"])]
 
 @pytest.fixture
 def cwd(tmp_path: Any) -> str:
-    """The top of the user's repository, with no run."""
-    folder = os.path.join(str(tmp_path), "repo")
-    os.makedirs(folder)
-    return os.path.realpath(folder)
+    """The top of the user's git repository, with a commit and no run."""
+    return rn_files.repository(os.path.join(str(tmp_path), "repo"), {"README.md": "invoicer\n"})
 
 
 # The run's end.
@@ -140,70 +144,63 @@ def each_done(name: str = NAME) -> dict[str, Any]:
 @pytest.mark.supports(
     "test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch"
 )
-def test_a_run_called_with_its_words_whose_deliverables_are_each_done_ends(cwd: str):
-    """Given run 20261120-invoices, whose plan, command, and guide are each done, called by
-    /rn:up with the words `invoices`, with no start among the moves
+def test_a_run_named_by_its_start_whose_deliverables_are_each_done_ends(cwd: str):
+    """Given run 20261120-invoices, whose plan, command, and guide are each done, and the moves of
+    a start of its guide's generator with its result
     When the adapter gives the starts due after /rn:ty
-    Then the run ends, found by its words though no run can be picked up"""
-    a_run(cwd, each_done())
-    moves = run(command("rn:up"), command("rn:ty"), words="invoices")
+    Then the run ends, found by the start's Cut though no run can be picked up"""
+    folder = a_run(cwd, each_done())
+    prompt = cut_prompt(cwd, folder, GUIDE)
+    moves = run(
+        command("rn:up"),
+        start("rn:generator", prompt),
+        result("rn:generator", "made"),
+        command("rn:ty"),
+    )
     assert ADAPTER.due(moves, cwd) == {"ends": True}
 
 
+@pytest.mark.supports("test_rn_on_asks_what_to_make_writing_nothing_and_running_no_command")
+@pytest.mark.parametrize("given_result", [False, True], ids=["hearing", "blocked"])
+def test_a_run_of_rn_on_alone_starts_none_beside_another_runs_due_work(
+    cwd: str, given_result: bool
+):
+    """Given run 20261120-invoices, whose command waits on its generator, and the move /rn:on
+    alone, or with the orchestrator's result blocked after it
+    When the adapter gives the starts due
+    Then none is due, as the conversation's own run waits on the user's goal and the plan's
+    sign-off"""
+    a_run(cwd, walkthrough())
+    moves = [command("rn:on"), *([result("rn:on", "blocked")] if given_result else [])]
+    assert ADAPTER.due(run(*moves), cwd) == {"starts": []}
+
+
 @pytest.mark.supports(
-    "test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch"
+    "test_a_signoff_of_the_plan_makes_it_done_and_starts_the_generator_of_each_deliverable_due"
 )
-def test_a_run_called_with_words_of_no_run_takes_the_run_that_can_be_picked_up(cwd: str):
-    """Given run 20261120-invoices, each deliverable done, and run 20261121-changes, whose
-    command waits on its generator, called with the words `invoice`, which nearly name the first
+def test_a_run_of_rn_on_signed_off_by_rn_ty_starts_its_due_work(cwd: str):
+    """Given run 20261120-invoices, whose command waits on its generator, and the moves /rn:on
+    then /rn:ty
     When the adapter gives the starts due
-    Then the generator is due once, of 20261121-changes, as no run's name part is `invoice`"""
-    a_run(cwd, each_done())
-    newer = "20261121-changes"
-    a_run(cwd, rn_files.walkthrough_tree(newer), newer)
-    moves = run(command("rn:up"), words="invoice")
-    assert starts(ADAPTER.due(moves, cwd)) == due(("rn:generator", 1))
-
-
-@pytest.mark.supports("test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was")
-def test_a_run_called_with_words_is_the_newest_of_their_name_done_or_not(cwd: str):
-    """Given run 20261120-invoices, whose command waits on its generator, run 20261121-invoices,
-    each deliverable done, and run 20261122-changes, whose command waits on its generator, called
-    with the words `invoices`
-    When the adapter gives the starts due
-    Then the run ends, as the newest run of the words' name part is 20261121-invoices, done"""
+    Then the command's generator is due once"""
     a_run(cwd, walkthrough())
-    done = "20261121-invoices"
-    a_run(cwd, each_done(done), done)
-    other = "20261122-changes"
-    a_run(cwd, rn_files.walkthrough_tree(other), other)
-    assert ADAPTER.due(run(command("rn:up"), words="invoices"), cwd) == {"ends": True}
-
-
-@pytest.mark.supports("test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was")
-def test_a_run_called_with_words_is_found_by_them_before_the_newest_with_work_left(cwd: str):
-    """Given run 20261120-invoices, whose command waits on its generator, and a newer run
-    20261121-changes, whose changelog and command wait on their generators, called with the words
-    `invoices`
-    When the adapter gives the starts due
-    Then the generator is due once, of 20261120-invoices, not twice, of the newer run"""
-    a_run(cwd, walkthrough())
-    newer = "20261121-changes"
-    a_run(cwd, with_changelog(rn_files.walkthrough_tree(newer)), newer)
-    moves = run(command("rn:up"), words="invoices")
-    assert starts(ADAPTER.due(moves, cwd)) == due(("rn:generator", 1))
+    out = ADAPTER.due(run(command("rn:on"), command("rn:ty")), cwd)
+    assert starts(out) == due(("rn:generator", 1))
 
 
 # No start while the run waits.
 
 
 @pytest.mark.supports("test_a_turn_with_the_plan_open_starts_no_role")
-def test_a_run_with_no_worktree_yet_starts_none(cwd: str):
-    """Given a repository with no run, and the move /rn:up with words
+@pytest.mark.parametrize("before", ["no-run", "worktree-gone"])
+def test_a_run_with_no_worktree_here_starts_none(cwd: str, before: str):
+    """Given a repository with no run, or with a run whose command waits on its generator but whose
+    worktree isn't here yet, and the move /rn:up
     When the adapter gives the starts due
-    Then none is due"""
-    out = ADAPTER.due(run(command("rn:up"), words=rn_files.WORDS), cwd)
-    assert out == {"starts": []}
+    Then none is due, until repository.py find makes the worktree"""
+    if before == "worktree-gone":
+        a_run(cwd, walkthrough(), worktree=False)
+    assert ADAPTER.due(run(command("rn:up")), cwd) == {"starts": []}
 
 
 @pytest.mark.supports("test_no_generator_starts_before_the_plan_is_signed_off")
@@ -297,6 +294,20 @@ def test_a_deliverable_with_an_open_decision_waits_on_the_answer_and_no_role(cwd
     folder = a_run(cwd, walkthrough(command_decisions={"N1": [point]}))
     rn_files.a_round(folder, COMMAND, "content", 1, {"generator": rn_files.point()})
     assert ADAPTER.due(run(command("rn:up")), cwd) == {"starts": []}
+
+
+@pytest.mark.supports("test_a_blocker_only_the_user_can_mend_stops_only_its_deliverable")
+def test_a_blocker_kept_for_the_user_stops_its_deliverable_and_the_other_goes_on(cwd: str):
+    """Given a run whose command and changelog rest on nothing still being made, a refusal that
+    only the user can mend kept as an open decision of the command's N1
+    When the adapter gives the starts due
+    Then rn:generator is due once, for the changelog, the command waiting on the user"""
+    blocker = rn_files.decision("gh's login", None)
+    folder = a_run(cwd, with_changelog(walkthrough(command_decisions={"N1": [blocker]})))
+    prompt = cut_prompt(cwd, folder, CHANGELOG)
+    assert starts(ADAPTER.due(run(command("rn:ty")), cwd)) == due(("rn:generator", 1))
+    moves = run(command("rn:ty"), start("rn:generator", prompt))
+    assert ADAPTER.due(moves, cwd) == {"starts": []}
 
 
 @pytest.mark.supports(
@@ -473,12 +484,12 @@ def test_another_plugins_start_naming_the_cut_counts_for_nothing(cwd: str, role:
 
 
 @pytest.mark.supports("test_a_new_request_with_no_origin_ends_its_turn_on_blocked")
-def test_a_new_request_whose_turn_gave_blocked_with_no_worktree_starts_none(cwd: str):
-    """Given a repository with no run, and the moves /rn:up with words, then the orchestrator's
-    result blocked
+def test_a_pick_up_whose_turn_gave_blocked_with_no_run_starts_none(cwd: str):
+    """Given a repository with no run, and the moves /rn:up, then the orchestrator's result
+    blocked
     When the adapter gives the starts due
     Then none is due, so that Lane lets the turn end"""
-    out = ADAPTER.due(run(command("rn:up"), result("rn:up", "blocked"), words=WORDS), cwd)
+    out = ADAPTER.due(run(command("rn:up"), result("rn:up", "blocked")), cwd)
     assert out == {"starts": []}
 
 

@@ -179,8 +179,8 @@ def test_a_name_writes_a_day_of_one_digit_with_two():
 def test_a_name_of_words_with_no_letter_or_digit_is_refused(words: str):
     """Given words with no letter or digit
     When a run is named
-    Then Wrong is raised, saying that /rn:up takes what the user wants in words"""
-    with pytest.raises(Wrong, match="/rn:up"):
+    Then Wrong is raised, saying that /rn:on takes what the user wants in words"""
+    with pytest.raises(Wrong, match="/rn:on"):
         named(DAY, words)
 
 

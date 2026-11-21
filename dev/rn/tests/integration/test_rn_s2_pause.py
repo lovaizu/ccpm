@@ -1,7 +1,8 @@
 """The integration cases of S2, a pause and a pick-up: each path through its sequence, the pause
-while a generator runs, while an evaluator runs, and while a point waits, and the pick-up in a new
-conversation of each, and of none. Each runs rn and Lane through the double of Claude Code and the
-double of gh, with a double of each prompt's work."""
+while a generator runs, while an evaluator runs, and while a point waits, and the pick-up from the
+runs' commits in a new conversation of each, of a run whose worktree and local branch are gone, and
+of none, where the orchestrator asks which run to pick up. Each runs rn and Lane through the double
+of Claude Code and the double of gh, with a double of each prompt's work."""
 
 from __future__ import annotations
 
@@ -16,6 +17,7 @@ from rn_bench import (
     decided_command,
     ended,
     evaluator_started,
+    heard,
     held,
     marked,
     pointed,
@@ -23,6 +25,7 @@ from rn_bench import (
     shared_steps,
     signed_plan,
     started,
+    taken,
 )
 from rn_files import COMMAND, WORDS
 
@@ -43,8 +46,8 @@ def paused(b: Bench, c: Conversation, agents: list[Agent]) -> str:
 
 
 def picked_up(b: Bench) -> Conversation:
-    """A new conversation in which the user typed /rn:up alone, and the orchestrator found the run
-    by repository.py find at the step `find`."""
+    """A new conversation in which the user typed /rn:up, and the orchestrator found the run by
+    repository.py find at the step `find`."""
     c = b.converse()
     c.type("/rn:up")
     assert ran(c, b.script("repository", "find")).split() == [b.run]
@@ -110,7 +113,7 @@ def test_a_pause_leaves_the_users_own_worktree_and_branch_as_they_were(b: Bench)
 @pytest.mark.supports("S2", "Round", "Cut")
 def test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut(b: Bench):
     """Given a run paused while its command's generator ran in Round content-1
-    When the user types /rn:up alone in a new conversation, and the orchestrator keeps the shared
+    When the user types /rn:up in a new conversation, and the orchestrator keeps the shared
     steps and writes the generator's Cut
     Then the Cut lies in Round content-1 again, and the generator starts with it"""
     c, generator = mid_command(b)
@@ -151,7 +154,7 @@ def test_a_pick_up_with_a_point_waiting_keeps_it_open_and_starts_no_role(b: Benc
     c, generator = signed_plan(b)
     pointed(b, c, generator, "Should a line's quantity default to 1?")
     point = rn_files.decision("a line's quantity", None)
-    shared_steps(b, c, held(b, COMMAND, [], {"N1": [point]}), "The generator's point.")
+    taken(b, c, held(b, COMMAND, [], {"N1": [point]}), "The generator's point.")
     ended(c, "A question that's yours:\n  Should a line's quantity default to 1?")
     paused(b, c, [])
     later = picked_up(b)
@@ -163,33 +166,60 @@ def test_a_pick_up_with_a_point_waiting_keeps_it_open_and_starts_no_role(b: Benc
     ended(later, "A question that's yours:\n  Should a line's quantity default to 1?")
 
 
+@pytest.mark.supports("S2", "scripts", "Design tree")
+def test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again(b: Bench):
+    """Given a run paused while its command's generator ran, whose worktree and local branch the
+    user then removed, so that only origin's branch holds the run
+    When the user types /rn:up in a new conversation, the orchestrator runs repository.py find,
+    keeps the shared steps, and writes the generator's Cut
+    Then find prints the run's folder, its worktree lies there again on rn-<name> at origin's head
+    with the design tree that the pause pushed, and the generator starts with a Cut in Round
+    content-1"""
+    c, generator = mid_command(b)
+    paused(b, c, [generator])
+    pushed = b.tree()
+    git(b.repo, "worktree", "remove", "--force", b.worktree)
+    git(b.repo, "branch", "-D", f"rn-{b.name()}")
+    later = picked_up(b)
+    assert (
+        git(b.worktree, "rev-parse", "HEAD").strip()
+        == git(b.origin, "rev-parse", f"rn-{b.name()}").strip()
+    )
+    assert b.tree() == pushed
+    cut_path = shared_steps(
+        b, later, ground="Picked up.", moves=[b.script("tree", "cut", b.run, "generator", COMMAND)]
+    )[0].strip()
+    first = rn_files.round_of(b.folder, COMMAND, "content", 1)
+    assert os.path.join(b.repo, cut_path) == os.path.join(first, "generator-cut.json")
+    assert started(later, "rn:generator", cut_path) is not None
+
+
 @pytest.mark.supports("S2")
-def test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up(b: Bench):
+def test_a_pick_up_with_no_run_asks_which_run_to_pick_up(b: Bench):
     """Given invoicer's repository with no run of rn
-    When the user types /rn:up alone, and the orchestrator runs repository.py find, which prints
-    nothing, marks `find` done, and tells the user that rn has no run to pick up
+    When the user types /rn:up, and the orchestrator runs repository.py find, which prints
+    nothing, marks `find` done, and asks the user which run to pick up
     Then the turn ends, Lane stopping no move, and the repository has no worktree of rn"""
     c = b.converse()
     typed = c.type("/rn:up")
     assert not typed.blocked, typed.said
     assert ran(c, b.script("repository", "find")) == ""
     marked(c, "find")
-    ended(c, "rn has no run to pick up here. Type /rn:up with what you want.")
+    ended(c, "I find no run to pick up here. Which run do you want to pick up?")
     assert not os.path.exists(b.at(".claude/worktrees"))
 
 
 @pytest.mark.supports("S2", "Design tree")
 def test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was(b: Bench):
     """Given a run paused while its command's generator ran
-    When the user types /rn:up with the same words in a new conversation
-    Then repository.py new refuses the run's name as taken, the turn ends on blocked with the
-    paused run's generator due, Lane stopping no move, and the worktree's design tree is as the
-    pause left it"""
+    When the user types /rn:on in a new conversation, then the same words
+    Then repository.py new refuses the run's name as taken, the turn ends on blocked, Lane stopping
+    no move, and the worktree's design tree is as the pause left it"""
     c, generator = mid_command(b)
     paused(b, c, [generator])
     before = b.tree()
-    later = b.converse()
-    later.type(f"/rn:up {WORDS}")
+    later = heard(b)
+    later.type(WORDS)
     refused = later.bash(b.script("repository", "new", WORDS, rn_files.GOAL))
     assert refused.exit_code == 1
     assert b.name() in refused.output

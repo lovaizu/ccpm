@@ -1,8 +1,8 @@
 """The unit cases of repository/command.py's `main`, repository.py's command line: each subcommand
-with what it prints and its exit code, `find` of no run, one, and several, `checks` with findings
-and with none, and each fault by its exit code: 2 with the usage for arguments of another form, 1
-with `repository.py: ` for an input that is Wrong and for something Missing, origin's HEAD naming
-no branch and gh with no login among them, and 2 for what CantRun."""
+with what it prints and its exit code, `find` of no run, and of the newest of several, its worktree
+made again, `checks` with findings and with none, and each fault by its exit code: 2 with the usage
+for arguments of another form, 1 with `repository.py: ` for an input that is Wrong and for something
+Missing, origin's HEAD naming no branch and gh with no login among them, and 2 for what CantRun."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ import rn_files
 from gh import gh_double
 from repo_files import git
 from repository.command import USAGE, main
-from rn_runs import NAME, changed, head, hook, made_run
+from rn_runs import NAME, branch_run, changed, head, hook, made_run
 
 RUN = f".claude/worktrees/rn-{NAME}/.rn/{NAME}"
 
@@ -41,7 +41,7 @@ def test_new_prints_the_new_runs_folder_from_the_repositorys_top(tmp_path: Any, 
 @pytest.mark.supports(
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
-def test_new_of_words_with_no_letter_says_what_rn_up_takes(tmp_path: Any, host: Any):
+def test_new_of_words_with_no_letter_says_what_rn_on_takes(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote
     When repository.py new is given words with no letter or digit
     Then it gives 1 with `repository.py: ` and what's wrong on stderr, and makes no worktree"""
@@ -49,7 +49,7 @@ def test_new_of_words_with_no_letter_says_what_rn_up_takes(tmp_path: Any, host: 
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
     code, out, err = main(["new", "?!", rn_files.GOAL], repo, rn_files.RN, host)
     assert (code, out) == (1, "")
-    assert err.startswith("repository.py: ") and "/rn:up" in err
+    assert err.startswith("repository.py: ") and "/rn:on" in err
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
@@ -67,7 +67,7 @@ def test_new_with_no_default_branch_on_origin_says_what_is_missing(tmp_path: Any
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
 def test_find_of_no_run_prints_nothing(tmp_path: Any, host: Any):
     """Given invoicer's repository with no run
     When repository.py find is run
@@ -76,25 +76,26 @@ def test_find_of_no_run_prints_nothing(tmp_path: Any, host: Any):
     assert main(["find"], repo, rn_files.RN, host) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_find_prints_each_run_newest_first_a_line(tmp_path: Any, host: Any):
-    """Given a repository with three runs with work left, made in no order, and one whose every
-    deliverable is done
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_find_prints_the_newest_run_and_makes_its_worktree_again(tmp_path: Any, host: Any):
+    """Given a repository with two runs with work left, the newer by its last commit with its
+    worktree removed, and one newer still whose every deliverable is done
     When repository.py find is run
-    Then it gives 0 printing each run with work left, newest first, its folder from the top a
-    line"""
-    repo = os.path.realpath(str(tmp_path))
-    for name in ("20261115-b", "20261120-a", "20261101-z"):
-        rn_files.run_folder(repo, name, rn_files.walkthrough_tree(name))
+    Then it gives 0 printing the newer run with work left, its folder from the top, as one line,
+    and that run's worktree lies there again"""
+    repo = rn_files.repository(str(tmp_path / "invoicer"))
+    for name, when in (
+        ("20261120-a", "2026-11-15T09:00:00"),
+        ("20261101-z", "2026-11-20T09:00:00"),
+    ):
+        branch_run(repo, name, rn_files.walkthrough_tree(name), when, worktree=name != "20261101-z")
     done = rn_files.tree(
         [rn_files.done_node(rn_files.GOAL, rn_files.plan_path("x"), "design-tree")]
     )
-    rn_files.run_folder(repo, "20261121-done", done)
-    printed = "".join(
-        f".claude/worktrees/rn-{name}/.rn/{name}\n"
-        for name in ("20261120-a", "20261115-b", "20261101-z")
-    )
+    branch_run(repo, "20261121-done", done, "2026-11-21T09:00:00")
+    printed = ".claude/worktrees/rn-20261101-z/.rn/20261101-z\n"
     assert main(["find"], repo, rn_files.RN, host) == (0, printed, "")
+    assert os.path.isfile(os.path.join(repo, printed.strip(), "design-tree.json"))
 
 
 @pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")

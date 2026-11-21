@@ -1,6 +1,6 @@
 """The property-based test of a run's name, as rn's Test strategy names it: the user types any words
-after /rn:up, and the run's worktree, branch, and folder are named by `<yyyymmdd>-<goal>`, as the
-architecture's Directory structure says, so a name of another form leaves a run that no pick-up
+in reply to /rn:on, and the run's worktree, branch, and folder are named by `<yyyymmdd>-<goal>`, as
+the architecture's Directory structure says, so a name of another form leaves a run that no pick-up
 finds, or a branch git refuses. The model: at most five of the words, each lower case with each
 character other than a letter or a digit left out, joined by `-`."""
 

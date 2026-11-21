@@ -15,7 +15,9 @@ import pytest
 import rn_files
 from repo_files import git
 from rn_bench import (
+    CHANGELOG,
     Bench,
+    apart_tree,
     cut_of,
     decided_command,
     ended,
@@ -30,9 +32,11 @@ from rn_bench import (
     requested,
     shared_steps,
     short_twice,
-    signed,
+    signed_apart,
     signed_plan,
     started,
+    stopped,
+    taken,
     to_plan_signoff,
     touched_items,
     trial_made,
@@ -165,8 +169,28 @@ def no_parallel(b: Bench) -> None:
 
 
 def no_run_found(b: Bench) -> None:
-    """No run is found among the worktrees of the repository."""
-    given_again(b, "domain/repository/worktree.py", "def paused(repository):\n    return []\n")
+    """No run is found among the runs' branches of the repository."""
+    given_again(
+        b, "domain/repository/worktree.py", "def newest(repository, host):\n    return None\n"
+    )
+
+
+def blocker_stops_all(b: Bench) -> None:
+    """The starts due give none while any deliverable of a run keeps an open decision, so that one
+    blocker stops every deliverable's work."""
+    given_again(
+        b,
+        "lane/adapters/starts_due.py",
+        "_given_due = due\n\n\n"
+        "def due(given, cwd):\n"
+        "    import glob\n"
+        "    for path in glob.glob(f'{cwd}/.claude/worktrees/rn-*/.rn/*/design-tree.json'):\n"
+        "        nodes = form.read(path)['deliverables']\n"
+        "        conditions = [c for n in nodes for c in n.get('necessary_conditions', [])]\n"
+        "        if any(d['decided'] is None for c in conditions for d in c['decisions']):\n"
+        "            return {'starts': []}\n"
+        "    return _given_due(given, cwd)\n",
+    )
 
 
 def signoff_unrecorded(b: Bench) -> None:
@@ -211,6 +235,9 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     ),
     "test_two_deliverables_resting_on_none_start_together": no_parallel,
     "test_a_new_conversation_picks_up_the_run_from_its_files": no_run_found,
+    "test_a_blocker_kept_for_the_user_leaves_the_other_deliverables_work_going_on": (
+        blocker_stops_all
+    ),
 }
 
 
@@ -227,10 +254,11 @@ def broken(b: Bench, request: pytest.FixtureRequest) -> None:
 @pytest.mark.supports("P1.1", "orchestrator")
 def test_an_orchestrators_turn_ended_before_its_review_is_stopped(b: Bench, broken: None):
     """Given a run whose command's generator ended with made
-    When the orchestrator ends its turn at once
+    When the orchestrator takes the end and ends its turn at once
     Then Lane stops the end, naming the step `review`"""
     c, generator = signed_plan(b)
     generated(b, c, generator)
+    marked(c, "take")
     answer = c.stop("Going on.")
     assert answer.blocked
     assert "`review`" in answer.said
@@ -248,6 +276,7 @@ def test_a_tree_change_out_of_form_is_refused_at_its_commit(b: Bench, broken: No
     design_tree["deliverables"][1]["kind"] = "no-such-kind"
     answer = c.write(None, b.tree_path, json.dumps(design_tree, indent=1) + "\n")
     assert not answer.blocked, answer.said
+    marked(c, "take")
     marked(c, "review")
     touched_items(b, c)
     marked(c, "touched")
@@ -269,7 +298,7 @@ def test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut(b: Bench, broke
     c, generator = signed_plan(b)
     pointed(b, c, generator, "Should a line's quantity default to 1?")
     point = rn_files.decision("a line's quantity", None)
-    shared_steps(b, c, held(b, COMMAND, [], {"N1": [point]}), "The generator's point.")
+    taken(b, c, held(b, COMMAND, [], {"N1": [point]}), "The generator's point.")
     refused = c.bash(b.script("tree", "cut", b.run, "generator", COMMAND))
     assert refused.exit_code == 1
     assert "user" in refused.output
@@ -363,19 +392,26 @@ def test_the_orchestrator_writing_a_deliverable_is_stopped(b: Bench, broken: Non
 @pytest.mark.supports("P3.1", "orchestrator")
 def test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped(b: Bench, broken: None):
     """Given a run whose plan the user signed off, its sign-off recorded
-    When the orchestrator lists the repository by `ls` in its review, and then writes the run's
-    design tree by a Bash command other than `ls` and `grep`
-    Then the first goes through, and Lane stops the second, as the step `review` runs only `ls`
+    When the orchestrator searches the repository in its review by Bash's `find` and `grep`, and
+    by the Glob and Grep tools, as the tools that search differ by OS, and then writes the run's
+    design tree by a Bash command other than `find` and `grep`
+    Then each search goes through, and Lane stops the write, as the step `review` runs only `find`
     and `grep`, and the tree is as it was"""
     c = to_plan_signoff(b)
     c.type("/rn:ty")
     ran(c, b.script("tree", "signoff", b.run))
     marked(c, "record")
     before = b.tree()
-    assert not c.bash("ls").blocked
+    for searched in (
+        c.bash("find invoicer -name '*.py'"),
+        c.bash("grep -rn parse_lines invoicer"),
+        c.glob(None, "**/*.py"),
+        c.grep(None, "parse_lines"),
+    ):
+        assert not searched.blocked and not stopped(searched.said), searched.said
     answer = c.bash(f"printf '%s\\n' '{{}}' > {b.tree_path}")
     assert answer.blocked
-    assert "You're at the step `review` of rn:ty, which runs only ls and grep." in answer.said
+    assert "You're at the step `review` of rn:ty, which runs only find and grep." in answer.said
     assert b.tree() == before
 
 
@@ -404,7 +440,7 @@ def test_a_deliverable_short_after_two_content_rounds_gets_no_third(b: Bench, br
     Then tree.py cut gives 1 saying the command waits on the orchestrator, and the turn ends, Lane
     stopping no move"""
     c = short_twice(b)
-    shared_steps(b, c, held(b, COMMAND, ["N2", "N3"]), "The Round's findings.")
+    taken(b, c, held(b, COMMAND, ["N2", "N3"]), "The Round's findings.")
     refused = c.bash(b.script("tree", "cut", b.run, "generator", COMMAND))
     assert refused.exit_code == 1
     assert "orchestrator" in refused.output
@@ -456,8 +492,8 @@ def test_the_orchestrators_commit_by_git_in_place_of_tree_py_is_stopped(b: Bench
     Then Lane stops the call, as the step runs only tree.py commit"""
     c = requested(b)
     c.type("yes")
-    marked(c, "review")
-    marked(c, "touched")
+    for step in ("take", "review", "touched"):
+        marked(c, step)
     answer = c.bash(f"git -C {b.worktree} commit -am 'The goal.'")
     assert answer.blocked
     assert "`commit`" in answer.said
@@ -487,37 +523,29 @@ def test_two_deliverables_resting_on_none_start_together(b: Bench, broken: None)
     When the user signs the plan off
     Then both generators start, each with its own Cut, as Lane gives rn:generator as due 2 times
     at once"""
-    c = requested(b)
-    c.type("yes")
-    name = b.name()
-    design_tree = rn_files.tree(
-        [
-            rn_files.plan(name),
-            rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"]),
-            rn_files.open_node("The changes of 1.5.0", "CHANGELOG.md", "light"),
-        ],
-        [rn_files.work("make", COMMAND), rn_files.work("make", "CHANGELOG.md")],
-    )
-    shared_steps(
-        b,
-        c,
-        design_tree,
-        "The plan.",
-        [b.script("repository", "put-up", b.run, rn_files.plan_path(name))],
-    )
-    ended(c, "The plan, for your sign-off.")
-    cuts = signed(
-        b,
-        c,
-        [
-            b.script("tree", "cut", b.run, "generator", COMMAND),
-            b.script("tree", "cut", b.run, "generator", "CHANGELOG.md"),
-        ],
-    )
-    first, one = c.start("rn:generator", cuts[0].strip(), "Run rn:generator")
+    c, cuts = signed_apart(b, apart_tree(b), [COMMAND, CHANGELOG])
+    first, one = c.start("rn:generator", cuts[0], "Run rn:generator")
     assert one is not None, first.said
-    second, other = c.start("rn:generator", cuts[1].strip(), "Run rn:generator")
+    second, other = c.start("rn:generator", cuts[1], "Run rn:generator")
     assert other is not None, second.said
+
+
+@pytest.mark.supports("P5.3", "Design tree")
+def test_a_blocker_kept_for_the_user_leaves_the_other_deliverables_work_going_on(
+    b: Bench, broken: None
+):
+    """Given a run whose plan holds the command and a changelog, each resting on none, the command
+    keeping a refusal that only the user can mend as an open decision of its N1, put up for the
+    user's sign-off
+    When the user signs the plan off, and the orchestrator writes the changelog's Cut
+    Then the changelog's generator starts, and a start for the command is stopped as not due"""
+    blocker = rn_files.decision("a tool the repository's check needs", None)
+    c, (cut_path,) = signed_apart(b, apart_tree(b, [blocker]), [CHANGELOG])
+    first, one = c.start("rn:generator", cut_path, "Run rn:generator")
+    assert one is not None, first.said
+    second, other = c.start("rn:generator", "Make the command.", "Run rn:generator")
+    assert other is None
+    assert "No start of rn's subagents is due now." in second.said
 
 
 # P6: nothing lost on a stop.
@@ -526,7 +554,7 @@ def test_two_deliverables_resting_on_none_start_together(b: Bench, broken: None)
 @pytest.mark.supports("P6.1", "scripts", "Design tree")
 def test_a_new_conversation_picks_up_the_run_from_its_files(b: Bench, broken: None):
     """Given a run whose plan is put up, paused by /rn:dn
-    When the user types /rn:up alone in a new conversation, and the orchestrator runs
+    When the user types /rn:up in a new conversation, and the orchestrator runs
     repository.py find
     Then it prints the run's folder from the repository's top"""
     c = to_plan_signoff(b)

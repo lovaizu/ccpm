@@ -41,7 +41,7 @@ def test_a_request_in_words_makes_the_run_and_puts_its_goal_to_the_user(room: Ro
     assert "Is that what you're after?" in printed
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
 @pytest.mark.parametrize("run", RUNS)
 def test_a_pick_up_with_no_run_makes_none(room: Room, run: int):
     """Given invoicer's repository with no run of rn

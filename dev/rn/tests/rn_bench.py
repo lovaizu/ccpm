@@ -208,6 +208,23 @@ def shared_steps(
     return printed
 
 
+def taken(
+    b: Bench,
+    c: Conversation,
+    design_tree: Mapping[str, Any] | None = None,
+    ground: str = "The run's facts decide it.",
+    moves: Sequence[str] = (),
+) -> list[str]:
+    """The orchestrator keeps `take`, the first step of a send-back, an answer, and a role's end,
+    writing the design tree there where one is given, and then the steps that every event shares,
+    as `shared_steps` keeps them. Gives what each move printed."""
+    if design_tree is not None:
+        answer = written_tree(b, c, design_tree)
+        assert not answer.blocked, answer.said
+    marked(c, "take")
+    return shared_steps(b, c, None, ground, moves)
+
+
 def ended(c: Conversation, message: str = "Done.") -> Answer:
     """The orchestrator ends its turn with the message; the end must go through."""
     answer = c.stop(message)
@@ -215,12 +232,24 @@ def ended(c: Conversation, message: str = "Done.") -> Answer:
     return answer
 
 
-def requested(b: Bench) -> Conversation:
-    """A conversation in which the user typed `/rn:up` with the walkthrough's words, and the
-    orchestrator made the run's worktree and its design tree with the goal as put, by
-    `repository.py new`, kept the steps that every event shares, and put the goal to the user."""
+def heard(b: Bench) -> Conversation:
+    """A conversation in which the user typed `/rn:on`, and the orchestrator kept its step `hear`
+    and asked what they want to make."""
     c = b.converse()
-    c.type(f"/rn:up {WORDS}")
+    typed = c.type("/rn:on")
+    assert not typed.blocked, typed.said
+    marked(c, "hear")
+    ended(c, "What do you want to make?")
+    return c
+
+
+def requested(b: Bench) -> Conversation:
+    """A conversation in which the user typed `/rn:on`, the orchestrator asked what they want to
+    make, the user typed the walkthrough's words, and the orchestrator made the run's worktree and
+    its design tree with the goal as put, by `repository.py new`, kept the steps that every event
+    shares, and put the goal to the user."""
+    c = heard(b)
+    c.type(WORDS)
     ran(c, b.script("repository", "new", WORDS, GOAL))
     marked(c, "start")
     shared_steps(b, c, ground="The goal as put.")
@@ -250,7 +279,7 @@ def confirmed(b: Bench, c: Conversation) -> None:
     """The user confirms the goal; the orchestrator writes the plan with the tax rate's point open
     and puts the point to the user."""
     c.type("yes")
-    shared_steps(b, c, planned_tree(b, answered=False), "The goal, as the user confirms it.")
+    taken(b, c, planned_tree(b, answered=False), "The goal, as the user confirms it.")
     ended(c, f"A question that's yours:\n  {rn_files.TAX_POINT}")
 
 
@@ -259,7 +288,7 @@ def put_up_plan(b: Bench, c: Conversation) -> str:
     the plan up by `repository.py put-up`, and shows it; gives the URL that put-up printed."""
     c.type(rn_files.TAX_ANSWER)
     plan = rn_files.plan_path(b.name())
-    printed = shared_steps(
+    printed = taken(
         b,
         c,
         planned_tree(b, answered=True),
@@ -279,6 +308,37 @@ def to_plan_signoff(b: Bench) -> Conversation:
     confirmed(b, c)
     put_up_plan(b, c)
     return c
+
+
+CHANGELOG = "CHANGELOG.md"
+
+
+def apart_tree(b: Bench, decisions: Sequence[Mapping[str, Any]] = ()) -> dict[str, Any]:
+    """The plan once the user confirms the goal, each of its conditions good: the command and a
+    changelog, each resting on none, each in the work, the command's N1 holding each decision
+    given."""
+    command = rn_files.open_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
+    command["inputs"] = ["invoicer/lines.py"]
+    command["necessary_conditions"][0]["decisions"] += [dict(each) for each in decisions]
+    return rn_files.tree(
+        [rn_files.plan(b.name()), command, rn_files.open_node("The changes", CHANGELOG, "light")],
+        [rn_files.work("make", rn_files.COMMAND), rn_files.work("make", CHANGELOG)],
+    )
+
+
+def signed_apart(
+    b: Bench, design_tree: Mapping[str, Any], made: Sequence[str]
+) -> tuple[Conversation, list[str]]:
+    """A conversation whose goal the user confirmed, the orchestrator wrote the plan given and put
+    it up, and the user signed it off by `/rn:ty`, the orchestrator writing the generator's Cut of
+    each deliverable given; gives the conversation and each Cut's path."""
+    c = requested(b)
+    c.type("yes")
+    plan = rn_files.plan_path(b.name())
+    taken(b, c, design_tree, "The plan.", [b.script("repository", "put-up", b.run, plan)])
+    ended(c, "The plan, for your sign-off.")
+    moves = [b.script("tree", "cut", b.run, "generator", each) for each in made]
+    return c, [each.strip() for each in signed(b, c, moves)]
 
 
 def cut(b: Bench, c: Conversation, role: str, deliverable: str) -> str:
@@ -478,7 +538,7 @@ def evaluator_started(b: Bench) -> tuple[Conversation, Agent]:
     """A conversation whose command's generator made its first Round, and whose orchestrator, at
     the generator's end, kept the shared steps, wrote the evaluator's Cut, and started it."""
     c, _ = made_command(b)
-    cut_path = shared_steps(
+    cut_path = taken(
         b,
         c,
         ground="The generator made its Round.",
@@ -502,7 +562,7 @@ def next_round(
     """At a role's end, the orchestrator holds good the conditions given, keeps the shared steps,
     writes the role's Cut for the deliverable, and starts the role; gives the Cut's path and the
     role's agent."""
-    cut_path = shared_steps(
+    cut_path = taken(
         b,
         c,
         held(b, deliverable, good),
@@ -517,7 +577,7 @@ def next_round(
 def put_up(b: Bench, c: Conversation, deliverable: str, good: Sequence[str]) -> str:
     """At a role's end, the orchestrator holds good the conditions given, keeps the shared steps,
     and puts the deliverable up by `repository.py put-up`; gives the URL it printed."""
-    url = shared_steps(
+    url = taken(
         b,
         c,
         held(b, deliverable, good),

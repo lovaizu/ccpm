@@ -14,12 +14,12 @@ sys.path.insert(0, os.path.join(HERE, "..", "..", "domain"))
 
 import json
 from collections import Counter
-from datetime import date
 
 import practice
 from fault import Wrong, end
-from repository.place import RunPlace, named, of_folder
-from repository.worktree import paused
+from repository import host
+from repository.place import RunPlace, of_folder
+from repository.worktree import newest
 from rounds import course, files
 from tree import form
 
@@ -39,16 +39,17 @@ def due(given: Given, cwd: str) -> Due:
     user's repository.
     Gives: `{"ends": true}` where each deliverable of its design tree is done; `{"starts": []}`
     where the run's latest command is `rn:dn`, so that Lane holds the pause's turn to its steps and
-    the run waits for `/rn:up`, where the run has no worktree yet, or where its plan, the
-    deliverable of the kind `design-tree`, isn't done; else `{"starts": [...]}`, for `rn:generator`
-    and `rn:evaluator`, the count of each: one for each deliverable that an item `make` of `work`
-    names, whose inputs are each done, that rests through its inputs on no deliverable still being
-    made, and that waits on the role, as `rounds.course.next_of` gives it, a deliverable with an
-    open decision waiting on the answer and on no role, less each start of the role whose prompt
-    names a Cut of the deliverable and that has no result yet in the moves. The run is the one whose
-    folder the latest start's prompt names; else, for a run called with words, the newest run under
-    `.claude/worktrees/` whose name ends with the part after the date that `place.named` gives for
-    the words, done or not; else the first that `repository.worktree.paused` gives.
+    the run waits for `/rn:up`, where its only command is `rn:on`, as the run that the
+    conversation makes waits on the user's goal and their sign-off of its plan, where the run has
+    no worktree here, or where its plan, the deliverable of the kind `design-tree`, isn't done;
+    else `{"starts": [...]}`, for `rn:generator` and `rn:evaluator`, the count of each: one for
+    each deliverable that an item `make` of `work` names, whose inputs are each done, that rests
+    through its inputs on no deliverable still being made, and that waits on the role, as
+    `rounds.course.next_of` gives it, a deliverable with an open decision, such as a refusal that
+    only the user can mend kept for them, waiting on the answer and on no role, so that the work
+    it concerns stops and the rest goes on, less each start of the role whose prompt names a Cut
+    of the deliverable and that has no result yet in the moves. The run is the one whose folder
+    the latest start's prompt names; else the one that `repository.worktree.newest` gives.
     Changes: nothing.
     Refuses: Wrong where the design tree or a Round can't be read, naming the file.
     """
@@ -57,7 +58,7 @@ def due(given: Given, cwd: str) -> Due:
     if commands and commands[-1] == "rn:dn":
         return {"starts": []}
     starts = [each for each in moves if each["kind"] == "start" and each["role"] in _ROLES]
-    run = _run(starts, given["run"]["words"], cwd)
+    run = _run(commands, starts, cwd)
     if run is None:
         return {"starts": []}
     tree = form.read(run.tree)
@@ -81,34 +82,19 @@ def due(given: Given, cwd: str) -> Due:
     return {"starts": [{"role": f"rn:{role}", "count": n} for role, n in count.items()]}
 
 
-def _run(starts: list[Given], words: str, cwd: str) -> RunPlace | None:
-    """The run that the latest start of rn's subagents names by its Cut; else the newest run of
-    the words' name part, done or not; else the first that can be picked up; else None."""
+def _run(commands: list[str], starts: list[Given], cwd: str) -> RunPlace | None:
+    """The run whose starts are due: the one that the latest start of rn's subagents names by its
+    Cut; else none where the run's only command is `rn:on`, as the conversation's own run waits on
+    the user until its plan is signed off; else the one that can be picked up, where its worktree
+    lies here; else None."""
     if starts:
         # A Cut lies at <run's folder>/rounds/<deliverable>/<stage>-<n>/<role>-cut.json.
         cut = os.path.join(cwd, starts[-1]["prompt"])
         return of_folder(cwd, os.path.normpath(os.path.join(cut, *[os.pardir] * 4)))
-    if words:
-        part = named(date.today(), words).split("-", 1)[1]
-        found = sorted(
-            (each for each in _runs(cwd) if each.name.split("-", 1)[1] == part),
-            key=lambda each: each.name,
-        )
-        if found:
-            return found[-1]
-    found = paused(cwd)
-    return found[0] if found else None
-
-
-def _runs(cwd: str) -> list[RunPlace]:
-    """Each run under the repository's `.claude/worktrees/` that holds its design tree."""
-    worktrees = os.path.join(cwd, ".claude", "worktrees")
-    if not os.path.isdir(worktrees):
-        return []
-    runs = [
-        RunPlace(cwd, folder[3:]) for folder in os.listdir(worktrees) if folder.startswith("rn-")
-    ]
-    return [each for each in runs if os.path.isfile(each.tree)]
+    if set(commands) == {"rn:on"}:
+        return None
+    found = newest(cwd, host.run)
+    return found if found and os.path.isfile(found.tree) else None
 
 
 def _waits_on(run: RunPlace, node: Given) -> str:

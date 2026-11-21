@@ -6,6 +6,7 @@ agreed to, and the user waits on its remaking."""
 
 from __future__ import annotations
 
+import os
 import tempfile
 from typing import Any
 
@@ -14,6 +15,7 @@ import rn_files
 from hypothesis import given
 from hypothesis import strategies as st
 from rn_adapters import adapter
+from rn_runs import branch_run
 
 NAME = "20261120-invoices"
 PATHS = ("invoicer/__main__.py", "docs/guide.md", "CHANGELOG.md")
@@ -44,6 +46,7 @@ def open_plans(draw: Any) -> dict[str, Any]:
 MOVES = st.lists(
     st.sampled_from(
         [
+            {"kind": "command", "command": "rn:on"},
             {"kind": "command", "command": "rn:up"},
             {"kind": "command", "command": "rn:ty"},
             {"kind": "command", "command": "rn:gm"},
@@ -61,7 +64,8 @@ def test_no_role_is_due_while_the_plan_is_open(tree: dict[str, Any], moves: list
     When the starts due are found
     Then none is due
     (Invariant, resting on P1.3.)"""
-    with tempfile.TemporaryDirectory() as cwd:
-        rn_files.run_folder(cwd, NAME, tree)
+    with tempfile.TemporaryDirectory() as folder:
+        cwd = rn_files.repository(os.path.join(folder, "repo"), {"README.md": "invoicer\n"})
+        branch_run(cwd, NAME, tree)
         out = ADAPTER.due({"run": {"skill": "rn:up", "words": "", "moves": moves}}, cwd)
     assert out == {"starts": []}

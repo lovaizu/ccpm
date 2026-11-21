@@ -1,5 +1,5 @@
 """Decides the steps of each turn of rn's orchestrator and of each start of its generator and
-evaluator, and the rules of each step, as Lane asks them: the steps of the turn's event and those
+evaluator, and the rules of each step, as Lane asks them: the turn's event's own step and those
 that every event shares, and for a role the files each step reads, writes, and never reads, the
 commands it runs, the practices of its kind's best practice as its checklist, and its check at the
 end."""
@@ -21,19 +21,21 @@ from datetime import date
 import practice
 from check import form
 from fault import Wrong, end
+from repository import host
 from repository.place import RunPlace, named
-from repository.worktree import paused
+from repository.worktree import newest
+from tree import form as tree_form
 
 # The orchestrator's roles, the skills of rn that a run stands on, and rn's subagents.
-_ORCHESTRATOR = ("rn:up", "rn:dn", "rn:ty", "rn:gm")
+_ORCHESTRATOR = ("rn:on", "rn:up", "rn:dn", "rn:ty", "rn:gm")
 _SCHEMAS = os.path.join(HERE, "..", "..", "domain", "schemas")
 Rule = dict[str, Any]
 # The rule of each step of the orchestrator's turn but its last: the turn ends there on a refusal
-# that only the user can mend.
+# that only the user can mend, where nothing else can move.
 _BLOCKED: Rule = {"type": "result", "ends": ["blocked"]}
-# The plain commands that the orchestrator's review lists and searches the repository by, as
-# Claude Code 2.1.329 gives no Glob or Grep.
-_LOOKS = ("ls", "grep")
+# The plain commands by which the orchestrator's review searches the repository's files, beside
+# the Glob and Grep tools, which no rule of a step holds, as the tools differ by OS.
+_LOOKS = ("find", "grep")
 
 # A start as Lane gives it, in the form of Lane's rules.in.schema.json, and its steps that rn
 # gives back, in the form of its rules.out.schema.json.
@@ -50,29 +52,35 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     Takes: the turn or the start as Lane gives it; the folder that the conversation works in, the
     top of the user's repository; and rn's folder.
     Gives, for a turn of the orchestrator, whose role is the skill of rn that the run stands on,
-    `rn:up`, `rn:dn`, `rn:ty`, or `rn:gm`, the steps of the event that its prompt starts, each held
-    in order and run on the run's folder: a new request, a prompt `/rn:up` with words, and a
-    pick-up, `/rn:up` alone, the run being the one that `place.named` names from the day and the
-    words for a new request, else the first that `repository.worktree.paused` gives:
-    - the event's own steps: for a new request `start`, running only `repository.py new`; for a
-      pick-up `find`, running only `repository.py find`; for a sign-off, `/rn:ty`, `record`,
-      running only `tree.py signoff`; for a pause, `/rn:dn`, `stop`, writing nothing, and
-      `pause`, running only `repository.py pause`, and no step that every event shares; for a
-      send-back, `/rn:gm`, an answer, any other prompt of the person, and a role's end, a
-      subagent's end as Claude Code gives it, none;
-    - the steps that every other event shares: `review`, writing only the run's design tree and
-      running only `ls` and `grep`, as Claude Code 2.1.329 gives no Glob or Grep, so that the
-      review lists and searches the repository; `touched`, writing only the run's design tree and
-      running only `tree.py touched`, with the checklist whose command is
-      `tree.py touched <run>`; `commit`, running only `tree.py commit`; and `move`, running only
-      `repository.py put-up` and `tree.py cut`, writing nothing.
+    `rn:on`, `rn:up`, `rn:dn`, `rn:ty`, or `rn:gm`, the steps of the event that its prompt starts,
+    the run's first turn's by its skill, each held in order and run on the run's folder:
+    - for `/rn:on`, the hearing, `hear` alone, writing nothing and running no command, as the
+      orchestrator asks the user what they want to make;
+    - for a new request, a prompt of the user's words in a turn of `rn:on`, while no run made in
+      the conversation lies, the run that `repository.worktree.newest` gives lying with no
+      worktree here or with its plan, the deliverable of the kind `design-tree`, done: `start`,
+      running only `repository.py new`, on the run that `place.named` names from today and the
+      words;
+    - else, on the run that `repository.worktree.newest` gives, the event's own step: for a
+      pick-up, `/rn:up`, `find`, running only `repository.py find`; for a sign-off, `/rn:ty`,
+      `record`, running only `tree.py signoff`; for a send-back, `/rn:gm`, an answer, any other
+      prompt of the person, and a role's end, a subagent's end as Claude Code gives it, `take`,
+      writing only the run's design tree and running no command; and for a pause, `/rn:dn`,
+      `stop`, writing nothing, and `pause`, running only `repository.py pause`, with no step
+      after them;
+    - after the event's own step, for each event but a pause, the steps that every event shares:
+      `review`, writing only the run's design tree and running only `find` and `grep`, the Glob
+      and Grep tools going through, as the tools that search differ by OS; `touched`, writing
+      only the run's design tree and running only `tree.py touched`, with the checklist whose
+      command is `tree.py touched <run>`; `commit`, running only `tree.py commit`; and `move`,
+      running only `repository.py put-up` and `tree.py cut`, writing nothing.
     Each step of the turn but its last ends on `blocked`, so that a refusal that only the user can
-    mend, such as that of `repository.py new` in a repository whose origin names no default
-    branch, ends the turn. The last step keeps no such rule, as Lane judges the last step's result
-    rule at each end with every step done, and would stop each end with no result. A turn other
-    than a new request, in a repository with no run to pick up, takes the step `find` alone,
-    running only `repository.py find`, so that the orchestrator tells the user that rn has no run
-    to pick up, and the turn ends.
+    mend, where nothing else can move, such as that of `repository.py new` in a repository whose
+    origin names no default branch, ends the turn. The last step keeps no such rule, as Lane
+    judges the last step's result rule at each end with every step done, and would stop each end
+    with no result. A turn other than the hearing and a new request, in a repository with no run
+    to pick up, takes the step `find` alone, running only `repository.py find`, so that the
+    orchestrator asks the user which run to pick up, and the turn ends.
     For `rn:generator`, whose prompt is the path of its Cut from `cwd`, the steps `read`, `decide`,
     `make`, `try`, and `check`, each held in order: `read` reading whole the Cut, the best
     practice's `best-practice.md`, which every best practice's folder holds, so that a folder
@@ -80,7 +88,9 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     running no command; `decide` with the best practice's `decide` items as its checklist, writing
     only the Round's folder, where its `generator.json` gives a point, running no command, and
     ending on `point`; `make` with its `make` items as its checklist, writing only the
-    deliverable's paths; `try` writing only the Round's folder; and `check` running only
+    deliverable's paths; `try` writing only the Round's folder, from which the generator goes
+    back to `decide` by Lane's `lane-back` where a condition that the people meet falls short, as
+    Lane holds a step gone back to with no rule of rn's; and `check` running only
     `repository.py checks`, with the check `check.py generator <cut>`, and the results `made` or,
     ending, `point`.
     For `rn:evaluator`, whose prompt is the path of its Cut from `cwd`, the steps `read`, `start`,
@@ -97,7 +107,7 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     """
     role, prompt = given["role"], given["prompt"]
     if role in _ORCHESTRATOR:
-        return {"steps": _turn(given["run"], prompt, cwd, plugin_root)}
+        return {"steps": _turn(given["run"], role, prompt, cwd, plugin_root)}
     if role == "rn:generator":
         return {"steps": _generator(_cut(prompt, cwd, "generator"), prompt, cwd, plugin_root)}
     if role == "rn:evaluator":
@@ -108,32 +118,36 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     )
 
 
-def _turn(run: Given, prompt: str, cwd: str, plugin_root: str) -> list[Steps]:
+def _turn(run: Given, role: str, prompt: str, cwd: str, plugin_root: str) -> list[Steps]:
     """The steps of the orchestrator's turn, by the event that its prompt starts: the run's first
-    turn's by its command and words."""
-    said = prompt.strip() or f"/{run['skill']} {run['words']}".strip()
-    command, _, words = said.partition(" ")
+    turn's by its skill."""
+    said = prompt.strip() or f"/{run['skill']}"
+    command = said.partition(" ")[0] if said.startswith("/rn:") else ""
+    if command == "/rn:on":
+        return [_step("hear", _writes(cwd, []), _commands(plugin_root))]
+    found = newest(cwd, host.run)
     find = _commands(plugin_root, ("repository", "find"))
-    if command == "/rn:up" and words.strip():
-        place = RunPlace(cwd, named(date.today(), words))
-        own = [_step("start", _commands(plugin_root, ("repository", "new")), _BLOCKED)]
-    else:
-        found = paused(cwd)
-        if not found:
-            return [_step("find", find)]
-        place = found[0]
-        own = {
-            "/rn:up": [_step("find", find, _BLOCKED)],
-            "/rn:ty": [_step("record", _commands(plugin_root, ("tree", "signoff")), _BLOCKED)],
-        }.get(command, [])
-    if command == "/rn:dn":
+    if role == "rn:on" and not command and not _unsigned(found):
+        place = RunPlace(cwd, named(date.today(), said))
+        own = _step("start", _commands(plugin_root, ("repository", "new")), _BLOCKED)
+    elif found is None:
+        return [_step("find", find)]
+    elif command == "/rn:dn":
         return [
             _step("stop", _writes(cwd, []), _BLOCKED),
             _step("pause", _commands(plugin_root, ("repository", "pause"))),
         ]
+    else:
+        place = found
+        own = {
+            "/rn:up": _step("find", find, _BLOCKED),
+            "/rn:ty": _step("record", _commands(plugin_root, ("tree", "signoff")), _BLOCKED),
+        }.get(command) or _step(
+            "take", _writes(cwd, [place.tree]), _commands(plugin_root), _BLOCKED
+        )
     touched = f"python3 {plugin_root}/scripts/tree.py touched {_rel(place.folder, cwd)}"
     return [
-        *own,
+        own,
         _step("review", _writes(cwd, [place.tree]), _commands(plugin_root, plain=_LOOKS), _BLOCKED),
         _step(
             "touched",
@@ -149,6 +163,16 @@ def _turn(run: Given, prompt: str, cwd: str, plugin_root: str) -> list[Steps]:
             _commands(plugin_root, ("repository", "put-up"), ("tree", "cut")),
         ),
     ]
+
+
+def _unsigned(run: RunPlace | None) -> bool:
+    """Whether the run lies here with its plan, the deliverable of the kind `design-tree`, not
+    done, as the run that a conversation of `/rn:on` made stands until the user signs its plan off
+    by `/rn:ty`."""
+    if run is None or not os.path.isfile(run.tree):
+        return False
+    deliverables = tree_form.read(run.tree)["deliverables"]
+    return any(each["kind"] == "design-tree" and each["status"] != "done" for each in deliverables)
 
 
 def _cut(prompt: str, cwd: str, role: str) -> Given:
@@ -270,7 +294,7 @@ def _step(name: str, *rules: Rule) -> Steps:
 
 def _commands(plugin_root: str, *named_: tuple[str, str], plain: Sequence[str] = ()) -> Rule:
     """The rule of the commands of rn's scripts, each by its script and subcommand, and of each
-    plain command, such as `ls`, by its own words; with none given, the rule lets only Lane's
+    plain command, such as `grep`, by its own words; with none given, the rule lets only Lane's
     reporters through."""
     return {
         "type": "commands",

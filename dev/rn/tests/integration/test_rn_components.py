@@ -23,6 +23,7 @@ from rn_bench import (
     ended,
     evaluator_started,
     from_cwd,
+    heard,
     listed,
     marked,
     planned_tree,
@@ -31,6 +32,7 @@ from rn_bench import (
     requested,
     shared_steps,
     signed_plan,
+    taken,
     to_plan_signoff,
     trial_made,
 )
@@ -82,8 +84,10 @@ def made_with(
     [
         ("/rn:ty", "record"),
         ("/rn:dn", "stop"),
-        ("/rn:gm the guide first", "review"),
-        ("yes", "review"),
+        ("/rn:gm the guide first", "take"),
+        ("yes", "take"),
+        ("/rn:up", "find"),
+        ("/rn:on", "hear"),
     ],
 )
 def test_each_event_in_a_run_loads_the_orchestrator_and_holds_its_turn_to_its_steps(
@@ -105,12 +109,11 @@ def test_each_event_in_a_run_loads_the_orchestrator_and_holds_its_turn_to_its_st
 @pytest.mark.supports("orchestrator", "scripts")
 def test_a_new_requests_turn_is_held_to_repository_py_new_first(b: Bench):
     """Given invoicer's repository with no run of rn
-    When the user types /rn:up with the walkthrough's words, and the orchestrator runs git
+    When the user types /rn:on, then the walkthrough's words, and the orchestrator runs git
     worktree add in place of repository.py new
     Then Lane stops the call at the step `start`"""
-    c = b.converse()
-    typed = c.type(f"/rn:up {WORDS}")
-    assert "domain/orchestrator.md" in typed.output
+    c = heard(b)
+    c.type(WORDS)
     answer = c.bash(f"git worktree add .claude/worktrees/rn-{b.name()}")
     assert answer.blocked
     assert "`start`" in answer.said
@@ -123,8 +126,8 @@ def test_the_orchestrators_move_pushes_only_by_repository_py(b: Bench):
     Then Lane stops the call, as move runs only repository.py put-up and tree.py cut"""
     c = requested(b)
     c.type("yes")
-    marked(c, "review")
-    marked(c, "touched")
+    for step in ("take", "review", "touched"):
+        marked(c, step)
     ran(c, b.script("tree", "commit", b.run, "The goal."))
     marked(c, "commit")
     answer = c.bash(f"git -C {b.worktree} push origin HEAD")
@@ -350,7 +353,7 @@ def test_a_put_up_without_a_login_of_gh_is_refused_before_any_push(b: Bench):
     c = requested(b)
     confirmed(b, c)
     c.type(rn_files.TAX_ANSWER)
-    shared_steps(b, c, planned_tree(b, answered=True), "The user's answer.")
+    taken(b, c, planned_tree(b, answered=True), "The user's answer.")
     gh_double.logged_out(b.gh)
     refused = c.bash(b.script("repository", "put-up", b.run, rn_files.plan_path(b.name())))
     assert refused.exit_code == 1

@@ -2,22 +2,26 @@
 names: main, trunk with the user on another branch with work of their own, and trunk while the user
 is on main, whose head differs; with each refusal: an empty goal, a run of the name already there, a
 folder that isn't a repository, a repository with no commit, and one whose origin's HEAD names no
-branch, with a remote or with none; and `paused`, with no run, one, and several, newest first by
-name, a run whose every deliverable is done left out, folders that nearly match a run's left out,
-and the refusal of a design tree that isn't JSON."""
+branch, with a remote or with none; `newest`, from the runs' branches, with no repository, no run,
+one, and several, newest by its last commit, a newer run whose every deliverable is done or that
+holds no design tree passed over, branches that nearly match a run's left out, a run's newer local
+branch deciding over origin's, and the refusal of a design tree that isn't JSON; and `found`, with
+the run's worktree there, removed with its local branch kept, its folder deleted, a run that only
+origin holds in a fresh clone, and a worktree that git can't make."""
 
 from __future__ import annotations
 
 import os
+import shutil
 from typing import Any
 
 import pytest
 import rn_files
-from fault import Missing, Wrong
+from fault import CantRun, Missing, Wrong
 from repo_files import git, write_files
 from repository.place import RunPlace
-from repository.worktree import new, paused
-from rn_runs import NAME, head
+from repository.worktree import found, new, newest
+from rn_runs import NAME, branch_run, dated_commit, head
 
 GOAL = rn_files.GOAL
 PRACTICE = rn_files.practice("design-tree")
@@ -205,121 +209,209 @@ def test_a_repository_with_no_commit_is_missing_one(tmp_path: Any, host: Any):
         new(RunPlace(repo, NAME), GOAL, PRACTICE, host)
 
 
-# paused
+# newest and found
 
 
-def a_run(repo: str, name: str, done: bool = False) -> None:
-    """Writes the run's design tree in its worktree: the walkthrough's, or one whose every
-    deliverable is done."""
+def a_tree(name: str, done: bool = False) -> dict[str, Any]:
+    """The walkthrough's design tree of the run, or one whose every deliverable is done."""
     if done:
-        design_tree = rn_files.tree(
-            [rn_files.done_node(GOAL, rn_files.plan_path(name), "design-tree")]
-        )
-    else:
-        design_tree = rn_files.walkthrough_tree(name)
-    rn_files.run_folder(repo, name, design_tree)
+        return rn_files.tree([rn_files.done_node(GOAL, rn_files.plan_path(name), "design-tree")])
+    return rn_files.walkthrough_tree(name)
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up")
-def test_a_repository_with_no_worktrees_folder_has_no_run(tmp_path: Any):
-    """Given a repository with no .claude/worktrees
-    When paused is asked
-    Then it gives none"""
-    assert paused(os.path.realpath(str(tmp_path))) == []
+def cloned(tmp_path: Any, origin: str) -> str:
+    """A fresh clone of the remote, as on another machine, with no worktree of rn."""
+    clone = os.path.realpath(str(tmp_path / "clone"))
+    git(str(tmp_path), "clone", "-q", origin, clone)
+    return clone
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up")
-def test_an_empty_worktrees_folder_has_no_run(tmp_path: Any):
-    """Given a repository whose .claude/worktrees holds nothing
-    When paused is asked
-    Then it gives none"""
-    repo = os.path.realpath(str(tmp_path))
-    os.makedirs(os.path.join(repo, ".claude", "worktrees"))
-    assert paused(repo) == []
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+def test_a_folder_that_isnt_a_repository_has_no_run(tmp_path: Any, host: Any):
+    """Given a folder that isn't a git repository
+    When newest is asked
+    Then it gives None"""
+    assert newest(os.path.realpath(str(tmp_path)), host) is None
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_one_run_with_work_left_is_given(tmp_path: Any):
-    """Given a repository with one run whose design tree holds an open deliverable
-    When paused is asked
-    Then it gives that run"""
-    repo = os.path.realpath(str(tmp_path))
-    a_run(repo, NAME)
-    assert paused(repo) == [RunPlace(repo, NAME)]
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+def test_a_repository_with_no_branch_of_rn_has_no_run(tmp_path: Any, host: Any):
+    """Given a repository with a remote and no branch rn-*
+    When newest and found are asked
+    Then each gives None, and found makes no worktree"""
+    repo = a_repository(tmp_path)
+    assert newest(repo, host) is None
+    assert found(repo, host) is None
+    assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_several_runs_come_newest_first_by_name(tmp_path: Any):
-    """Given a repository with four runs with work left, of three days and two of one day, made
-    in no order
-    When paused is asked
-    Then it gives them newest first by name"""
-    repo = os.path.realpath(str(tmp_path))
-    for name in ("20261115-b", "20261120-a", "20261101-z", "20261120-b"):
-        a_run(repo, name)
-    assert paused(repo) == [
-        RunPlace(repo, "20261120-b"),
-        RunPlace(repo, "20261120-a"),
-        RunPlace(repo, "20261115-b"),
-        RunPlace(repo, "20261101-z"),
-    ]
+def test_one_run_with_work_left_is_given_with_its_worktree_as_it_was(tmp_path: Any, host: Any):
+    """Given a repository with one run whose committed design tree holds an open deliverable, its
+    worktree there with a change not committed
+    When newest and found are asked
+    Then each gives that run, and the worktree keeps its change"""
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME))
+    note = os.path.join(rn_files.worktree_of(repo, NAME), "NOTES.md")
+    write_files(rn_files.worktree_of(repo, NAME), {"NOTES.md": "kept\n"})
+    assert newest(repo, host) == RunPlace(repo, NAME)
+    assert found(repo, host) == RunPlace(repo, NAME)
+    with open(note, encoding="utf-8") as f:
+        assert f.read() == "kept\n"
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_a_run_whose_every_deliverable_is_done_is_left_out(tmp_path: Any):
-    """Given a repository with a run whose every deliverable is done, older than one with work
-    left, and newer than another
-    When paused is asked
-    Then it gives the two with work left, newest first"""
-    repo = os.path.realpath(str(tmp_path))
-    a_run(repo, "20261110-old")
-    a_run(repo, "20261115-done", done=True)
-    a_run(repo, "20261120-new")
-    assert paused(repo) == [RunPlace(repo, "20261120-new"), RunPlace(repo, "20261110-old")]
+def test_of_several_runs_the_newest_by_its_last_commit_is_given(tmp_path: Any, host: Any):
+    """Given a repository with three runs with work left, whose names order them otherwise than
+    their last commits, the newest commit on 20261101-z
+    When newest is asked
+    Then it gives 20261101-z, neither the first nor the last by name"""
+    repo = a_repository(tmp_path)
+    for name, when in (
+        ("20261115-b", "2026-11-15T09:00:00"),
+        ("20261101-z", "2026-11-21T09:00:00"),
+        ("20261120-a", "2026-11-20T09:00:00"),
+    ):
+        branch_run(repo, name, a_tree(name), when)
+    assert newest(repo, host) == RunPlace(repo, "20261101-z")
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_a_run_whose_open_deliverable_is_being_made_is_given(tmp_path: Any):
+def test_a_newer_run_whose_every_deliverable_is_done_is_passed_over(tmp_path: Any, host: Any):
+    """Given a repository with a run whose every deliverable is done, newer than one with work
+    left, and a branch rn-<name> newer still that holds no design tree
+    When newest is asked
+    Then it gives the run with work left"""
+    repo = a_repository(tmp_path)
+    branch_run(repo, "20261110-old", a_tree("20261110-old"), "2026-11-10T09:00:00")
+    branch_run(repo, "20261115-done", a_tree("20261115-done", True), "2026-11-15T09:00:00")
+    git(repo, "branch", "rn-20261121-bare", "main")
+    assert newest(repo, host) == RunPlace(repo, "20261110-old")
+
+
+@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
+def test_a_run_whose_open_deliverable_is_being_made_is_given(tmp_path: Any, host: Any):
     """Given a repository with one run whose only deliverable not done has status doing
-    When paused is asked
+    When newest is asked
     Then it gives that run"""
-    repo = os.path.realpath(str(tmp_path))
+    repo = a_repository(tmp_path)
     node = rn_files.open_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
     node["status"] = "doing"
-    rn_files.run_folder(
-        repo,
-        NAME,
-        rn_files.tree([rn_files.done_node(GOAL, rn_files.plan_path(NAME), "design-tree"), node]),
-    )
-    assert paused(repo) == [RunPlace(repo, NAME)]
+    plan = rn_files.done_node(GOAL, rn_files.plan_path(NAME), "design-tree")
+    branch_run(repo, NAME, rn_files.tree([plan, node]))
+    assert newest(repo, host) == RunPlace(repo, NAME)
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_folders_that_nearly_match_a_run_are_left_out(tmp_path: Any):
-    """Given a repository with one run, beside a worktree rn2-<name> and one <name> with no rn-,
-    each holding a design tree with work left, and a worktree rn-<name> with no design tree
-    When paused is asked
+def test_branches_that_nearly_match_a_run_are_left_out(tmp_path: Any, host: Any):
+    """Given a repository with one run, beside newer branches rn2-<name> and <name> with no rn-,
+    each holding a design tree with work left
+    When newest is asked
     Then it gives the one run"""
-    repo = os.path.realpath(str(tmp_path))
-    a_run(repo, NAME)
-    worktrees = os.path.join(repo, ".claude", "worktrees")
-    for folder in ("rn2-20261121-x", "20261122-y"):
-        name = folder.split("-", 1)[1] if folder.startswith("rn2") else folder
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME), "2026-11-10T09:00:00")
+    for branch, name in (("rn2-20261121-x", "20261121-x"), ("20261122-y", "20261122-y")):
+        git(repo, "checkout", "-q", "-b", branch, "main")
         rn_files.write_json(
-            os.path.join(worktrees, folder, ".rn", name, "design-tree.json"),
-            rn_files.walkthrough_tree(name),
+            os.path.join(repo, ".rn", name, "design-tree.json"), rn_files.walkthrough_tree(name)
         )
-    os.makedirs(os.path.join(worktrees, "rn-20261123-z", ".rn", "20261123-z"))
-    assert paused(repo) == [RunPlace(repo, NAME)]
+        dated_commit(repo, "A tree.", "2026-11-21T09:00:00")
+    git(repo, "checkout", "-q", "main")
+    assert newest(repo, host) == RunPlace(repo, NAME)
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_run_whose_worktree_is_gone_gets_it_again_on_its_local_branch(tmp_path: Any, host: Any):
+    """Given a repository whose one run's worktree was removed, its local branch kept
+    When newest and found are asked
+    Then newest gives the run and makes nothing; found gives it, its worktree checked out on
+    rn-<name> again at the branch's head, holding the committed design tree, and git shows nothing
+    untracked in the user's own worktree"""
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME), worktree=False)
+    worktree = rn_files.worktree_of(repo, NAME)
+    assert newest(repo, host) == RunPlace(repo, NAME)
+    assert not os.path.exists(worktree)
+    assert found(repo, host) == RunPlace(repo, NAME)
+    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
+    assert head(worktree) == head(repo, f"rn-{NAME}")
+    assert rn_files.read_json(RunPlace(repo, NAME).tree) == a_tree(NAME)
+    assert git(repo, "status", "--porcelain").strip() == ""
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_run_whose_worktree_folder_was_deleted_gets_it_again(tmp_path: Any, host: Any):
+    """Given a repository whose one run's worktree folder was deleted, git still recording it
+    When found is asked
+    Then it gives the run, its worktree there again on rn-<name>"""
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME))
+    worktree = rn_files.worktree_of(repo, NAME)
+    shutil.rmtree(worktree)
+    assert found(repo, host) == RunPlace(repo, NAME)
+    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_run_only_origin_holds_gets_its_worktree_on_a_branch_from_origins(
+    tmp_path: Any, host: Any
+):
+    """Given a fresh clone of a remote that holds a run's branch, pushed, with no local branch of
+    rn
+    When found is asked in the clone
+    Then it gives the run, its worktree on a new local branch rn-<name> at origin's head, tracking
+    it, holding the committed design tree"""
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME))
+    git(repo, "push", "-q", "origin", f"rn-{NAME}")
+    clone = cloned(tmp_path, str(tmp_path / "origin.git"))
+    assert found(clone, host) == RunPlace(clone, NAME)
+    worktree = rn_files.worktree_of(clone, NAME)
+    assert head(worktree) == head(repo, f"rn-{NAME}")
+    upstream = git(worktree, "rev-parse", "--abbrev-ref", "@{upstream}").strip()
+    assert upstream == f"origin/rn-{NAME}"
+    assert rn_files.read_json(RunPlace(clone, NAME).tree) == a_tree(NAME)
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_a_design_tree_that_isnt_json_is_refused_naming_its_path(tmp_path: Any):
-    """Given a repository with a run whose design tree isn't JSON
-    When paused is asked
-    Then Wrong is raised, naming the design tree's path"""
-    repo = os.path.realpath(str(tmp_path))
-    path = os.path.join(rn_files.folder_of(repo, NAME), "design-tree.json")
-    write_files(repo, {os.path.relpath(path, repo): "{ not json"})
-    with pytest.raises(Wrong, match="design-tree.json"):
-        paused(repo)
+def test_a_runs_newer_local_branch_decides_over_origins_older_one(tmp_path: Any, host: Any):
+    """Given a run pushed with work left, whose local branch then made each deliverable done in a
+    newer commit not pushed
+    When newest is asked
+    Then it gives None, as the run's newest branch has no work left"""
+    repo = a_repository(tmp_path)
+    folder = branch_run(repo, NAME, a_tree(NAME), "2026-11-20T09:00:00")
+    git(repo, "push", "-q", "origin", f"rn-{NAME}")
+    rn_files.write_json(os.path.join(folder, "design-tree.json"), a_tree(NAME, done=True))
+    dated_commit(rn_files.worktree_of(repo, NAME), "Done.", "2026-11-21T09:00:00")
+    assert newest(repo, host) is None
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_worktree_git_cant_make_is_cantrun_with_what_git_said(tmp_path: Any, host: Any):
+    """Given a repository whose run's worktree was removed, and a file lying where the worktree
+    goes
+    When found is asked
+    Then CantRun is raised with what git said"""
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME), worktree=False)
+    with open(rn_files.worktree_of(repo, NAME), "w", encoding="utf-8") as f:
+        f.write("in the way\n")
+    with pytest.raises(CantRun, match="git can't make the run's worktree again"):
+        found(repo, host)
+
+
+@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
+def test_a_design_tree_that_isnt_json_is_refused_naming_the_branch_and_path(
+    tmp_path: Any, host: Any
+):
+    """Given a repository with a run whose committed design tree isn't JSON
+    When newest is asked
+    Then Wrong is raised, naming the branch and the design tree's path"""
+    repo = a_repository(tmp_path)
+    folder = branch_run(repo, NAME, a_tree(NAME))
+    write_files(folder, {"design-tree.json": "{ not json"})
+    dated_commit(rn_files.worktree_of(repo, NAME), "Broken.", "2026-11-21T09:00:00")
+    with pytest.raises(Wrong, match=f"refs/heads/rn-{NAME}:.rn/{NAME}/design-tree.json"):
+        newest(repo, host)

@@ -1,13 +1,16 @@
 """The unit cases of lane/adapters/rules.py, the steps that rn gives Lane: `steps`, one for each
-event of the orchestrator's turn, a new request, a pick-up of one run among none, one, and
-several, a sign-off, a pause, a send-back, an answer, another prompt, and a role's end as Claude
-Code gives it, and a turn other than a new request with no run; each step of a turn, the last and
-each other, by whether it ends on `blocked`; one for each class of the generator's Cut, its inputs
-at none, one, and several, a folder among them, a deliverable of more than one path, a refactor
-Round, and a run's own best practice; one for each class of the evaluator's Cut, with no other
-Round and with several; each step of a role by whether it runs commands; and each refusal, a role
-of another plugin or one that nearly matches rn's, and a prompt that names no Cut in its form; and
-`main`, for each exit it gives.
+event of the orchestrator's turn, the hearing of /rn:on, the user's words after it beside no run, a
+run signed off, one whose worktree isn't here, and one done, an answer in the run that a
+conversation of /rn:on made, a pick-up of one run among none, one, and several, newest by its last
+commit, its worktree there or gone, a sign-off, a pause, a send-back, an answer, another prompt, a
+role's end as Claude Code gives it, and a prompt that nearly names a command, and a turn other than
+the hearing and a new request with no run or outside a git repository; each step of a turn, the last
+and each other, by whether it ends on `blocked`; one for each class of the generator's Cut, its
+inputs at none, one, and several, a folder among them, a deliverable of more than one path, a
+refactor Round, and a run's own best practice; one for each class of the evaluator's Cut, with no
+other Round and with several; each step of a role by whether it runs commands; and each refusal, a
+role of another plugin or one that nearly matches rn's, and a prompt that names no Cut in its form;
+and `main`, for each exit it gives.
 
 Each input is in the form of Lane's rules.in.schema.json, read from the JSON of its text, and each
 Then holds the whole of the steps, each path exactly as the contract gives it,
@@ -31,6 +34,7 @@ from claude_code import RUN, line
 from fault import Wrong
 from rn_adapters import adapter
 from rn_files import COMMAND, GUIDE, RN, WORDS
+from rn_runs import branch_run
 
 ADAPTER = adapter("rules")
 NAME = f"{date.today():%Y%m%d}-{rn_files.NAMED}"
@@ -38,9 +42,10 @@ NAME = f"{date.today():%Y%m%d}-{rn_files.NAMED}"
 ENDED = line(RUN, "writer's end reaches the main conversation")["payload"]["prompt"]
 
 
-def given(role: str, prompt: str, skill: str = "rn:up", words: str = "") -> dict[str, Any]:
-    """What Lane gives the adapter, read from the JSON of its text."""
-    text = json.dumps({"run": {"skill": skill, "words": words}, "role": role, "prompt": prompt})
+def given(role: str, prompt: str, skill: str = "rn:up") -> dict[str, Any]:
+    """What Lane gives the adapter, read from the JSON of its text, the run's words empty, as rn's
+    commands take none but /rn:gm's."""
+    text = json.dumps({"run": {"skill": skill, "words": ""}, "role": role, "prompt": prompt})
     return json.loads(text)
 
 
@@ -120,7 +125,7 @@ def shared(cwd: str, name: str = NAME) -> list[tuple[str, list[str]]]:
     tree = os.path.join(folder, "design-tree.json")
     run = os.path.relpath(folder, cwd)
     return [
-        step("review", writes(tree), commands("ls", "grep"), BLOCKED),
+        step("review", writes(tree), commands("find", "grep"), BLOCKED),
         step(
             "touched",
             writes(tree),
@@ -134,8 +139,8 @@ def shared(cwd: str, name: str = NAME) -> list[tuple[str, list[str]]]:
 
 
 def paused_run(cwd: str, name: str = NAME, done: bool = False) -> str:
-    """Writes a run of the name under the repository's top, its command open, or each of its
-    deliverables done; gives its folder."""
+    """Writes a run of the name under the repository's top, as files alone, its command open, or
+    each of its deliverables done; gives its folder."""
     tree = rn_files.walkthrough_tree(name)
     if done:
         tree = rn_files.tree(
@@ -144,99 +149,176 @@ def paused_run(cwd: str, name: str = NAME, done: bool = False) -> str:
     return rn_files.run_folder(cwd, name, tree)
 
 
+def a_run(
+    repo: str,
+    name: str = NAME,
+    tree: Mapping[str, Any] | None = None,
+    when: str = "2026-11-20T09:00:00",
+    worktree: bool = True,
+) -> str:
+    """Makes a run of the name in the repository as a run leaves it, its branch and its committed
+    design tree, the walkthrough's unless given, its plan done, at the time given; gives its
+    folder."""
+    return branch_run(repo, name, tree or rn_files.walkthrough_tree(name), when, worktree)
+
+
+def unsigned(name: str = NAME) -> dict[str, Any]:
+    """The design tree of a run whose plan waits for the user's goal and sign-off."""
+    return rn_files.tree([rn_files.plan(name, good=False)], goal=rn_files.GOAL, by="reasoning")
+
+
+def done_tree(name: str) -> dict[str, Any]:
+    """The design tree of a run whose every deliverable is done."""
+    return rn_files.tree(
+        [rn_files.done_node(rn_files.GOAL, rn_files.plan_path(name), "design-tree")]
+    )
+
+
 @pytest.fixture
 def cwd(tmp_path: Any) -> str:
-    """The top of the user's repository, with no run."""
+    """The top of the user's repository, with no run, as files alone."""
     folder = os.path.join(str(tmp_path), "repo")
     os.makedirs(folder)
     return os.path.realpath(folder)
 
 
+@pytest.fixture
+def repo(tmp_path: Any) -> str:
+    """The top of the user's git repository, with a commit and no run."""
+    return rn_files.repository(os.path.join(str(tmp_path), "git"), {"README.md": "invoicer\n"})
+
+
 # The orchestrator's turn, by its event.
 
+HEAR = step("hear", writes(), commands())
+START = step("start", commands(script("repository", "new")), BLOCKED)
+FIND = step("find", commands(script("repository", "find")), BLOCKED)
+TAKE_RULES = (commands(), BLOCKED)
 
-@pytest.mark.supports("test_a_new_requests_turn_is_held_to_repository_py_new_first")
-def test_a_new_requests_turn_starts_by_repository_py_new_then_the_shared_steps(cwd: str):
-    """Given a repository with no run, and a turn of rn:up whose prompt is /rn:up with words
+
+def take(repo: str, name: str = NAME) -> tuple[str, list[str]]:
+    """The step `take` on the run of the name: writing only its design tree, running no command."""
+    tree = os.path.join(rn_files.folder_of(repo, name), "design-tree.json")
+    return step("take", writes(tree), *TAKE_RULES)
+
+
+@pytest.mark.supports("test_rn_on_asks_what_to_make_writing_nothing_and_running_no_command")
+@pytest.mark.parametrize("prompt", ["", "/rn:on"], ids=["first-turn", "typed-again"])
+def test_the_hearing_takes_hear_alone_writing_nothing_and_running_no_command(
+    repo: str, prompt: str
+):
+    """Given a repository with a run whose plan waits, and a turn of /rn:on, the run's first or
+    typed again
+    When the adapter gives the turn's steps
+    Then they are `hear` alone, writing nothing and running no command, with no rule of results,
+    as it's the turn's last"""
+    a_run(repo, tree=unsigned())
+    steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on"), repo, RN)
+    assert shown(steps) == [HEAR]
+
+
+@pytest.mark.supports(
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+)
+@pytest.mark.parametrize(
+    "before",
+    ["none", "signed", "no-worktree", "done"],
+)
+def test_the_words_after_the_hearing_start_by_repository_py_new_then_the_shared_steps(
+    repo: str, before: str
+):
+    """Given a repository with no run, a run whose plan is signed off, a run with its plan waiting
+    whose worktree isn't here, or a run whose every deliverable is done, and a turn of rn:on whose
+    prompt is the user's words
     When the adapter gives the turn's steps
     Then they are `start`, running only repository.py new, and the shared steps on the run named
     from today and the words"""
-    steps = ADAPTER.steps(given("rn:up", f"/rn:up {WORDS}", words=WORDS), cwd, RN)
-    assert shown(steps) == relative(
-        [
-            step("start", commands(script("repository", "new")), BLOCKED),
-            *shared(cwd),
-        ],
-        cwd,
-    )
+    other = "20261101-old"
+    if before == "signed":
+        a_run(repo, other)
+    elif before == "no-worktree":
+        a_run(repo, other, unsigned(other), worktree=False)
+    elif before == "done":
+        a_run(repo, other, done_tree(other))
+    steps = ADAPTER.steps(given("rn:on", WORDS, skill="rn:on"), repo, RN)
+    assert shown(steps) == relative([START, *shared(repo)], repo)
+
+
+@pytest.mark.supports(
+    "test_a_point_only_the_user_can_settle_is_kept_open_and_their_answer_written_by_user"
+)
+@pytest.mark.parametrize("prompt", ["yes", "with each invoice"], ids=["goal", "point"])
+def test_an_answer_in_a_conversation_of_rn_on_takes_it_into_the_run_it_made(repo: str, prompt: str):
+    """Given the run that a conversation of /rn:on made, its plan waiting, newer than a run whose
+    plan is signed off, and a turn of rn:on whose prompt is the user's answer
+    When the adapter gives the turn's steps
+    Then they are `take` and the shared steps on the run made, not a new request"""
+    a_run(repo, "20261101-old", when="2026-11-01T09:00:00")
+    a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
+    steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on"), repo, RN)
+    assert shown(steps) == relative([take(repo), *shared(repo)], repo)
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_a_pick_up_finds_the_run_then_keeps_the_shared_steps(cwd: str):
-    """Given a repository with one run whose command is open, and a turn of /rn:up alone
+def test_a_pick_up_finds_the_run_then_keeps_the_shared_steps(repo: str):
+    """Given a repository with one run whose command is open, and a turn of /rn:up
     When the adapter gives the turn's steps
     Then they are `find`, running only repository.py find, and the shared steps on that run"""
-    paused_run(cwd)
-    steps = ADAPTER.steps(given("rn:up", "/rn:up"), cwd, RN)
-    assert shown(steps) == relative(
-        [
-            step("find", commands(script("repository", "find")), BLOCKED),
-            *shared(cwd),
-        ],
-        cwd,
-    )
+    a_run(repo)
+    steps = ADAPTER.steps(given("rn:up", "", skill="rn:up"), repo, RN)
+    assert shown(steps) == relative([FIND, *shared(repo)], repo)
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_pick_up_of_a_run_whose_worktree_is_gone_names_its_paths_before_find_makes_it(
+    repo: str,
+):
+    """Given a repository with one run whose worktree was removed, and a turn of /rn:up
+    When the adapter gives the turn's steps
+    Then they are `find` and the shared steps on that run's paths, as find makes its worktree"""
+    a_run(repo, worktree=False)
+    steps = ADAPTER.steps(given("rn:up", "/rn:up"), repo, RN)
+    assert shown(steps) == relative([FIND, *shared(repo)], repo)
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_a_pick_up_among_several_runs_takes_the_newest_with_work_left(cwd: str):
-    """Given runs 20261101-old and 20261120-new with work left, and 20261121-done with each
-    deliverable done
+def test_a_pick_up_among_several_runs_takes_the_newest_by_its_last_commit(repo: str):
+    """Given runs 20261120-new and 20261101-old with work left, 20261101-old's last commit the
+    newer, and 20261121-done with each deliverable done, newest of all
     When the adapter gives the steps of a pick-up
-    Then the shared steps are on 20261120-new"""
-    for name, done in (("20261101-old", False), ("20261120-new", False), ("20261121-done", True)):
-        paused_run(cwd, name, done)
-    steps = ADAPTER.steps(given("rn:up", "/rn:up"), cwd, RN)
-    assert shown(steps) == relative(
-        [
-            step("find", commands(script("repository", "find")), BLOCKED),
-            *shared(cwd, "20261120-new"),
-        ],
-        cwd,
-    )
+    Then the shared steps are on 20261101-old"""
+    a_run(repo, "20261120-new", when="2026-11-10T09:00:00")
+    a_run(repo, "20261101-old", when="2026-11-15T09:00:00")
+    a_run(repo, "20261121-done", done_tree("20261121-done"), "2026-11-21T09:00:00")
+    steps = ADAPTER.steps(given("rn:up", "/rn:up"), repo, RN)
+    assert shown(steps) == relative([FIND, *shared(repo, "20261101-old")], repo)
 
 
 @pytest.mark.supports(
     "test_each_event_in_a_run_loads_the_orchestrator_and_holds_its_turn_to_its_steps"
 )
-def test_a_signoff_records_it_then_keeps_the_shared_steps(cwd: str):
+def test_a_signoff_records_it_then_keeps_the_shared_steps(repo: str):
     """Given a repository with one run, and a turn of rn:ty whose prompt is /rn:ty
     When the adapter gives the turn's steps
     Then they are `record`, running only tree.py signoff, and the shared steps"""
-    paused_run(cwd)
-    steps = ADAPTER.steps(given("rn:ty", "/rn:ty"), cwd, RN)
+    a_run(repo)
+    steps = ADAPTER.steps(given("rn:ty", "/rn:ty"), repo, RN)
     assert shown(steps) == relative(
-        [
-            step("record", commands(script("tree", "signoff")), BLOCKED),
-            *shared(cwd),
-        ],
-        cwd,
+        [step("record", commands(script("tree", "signoff")), BLOCKED), *shared(repo)], repo
     )
 
 
 @pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
-def test_a_pause_stops_the_roles_then_pauses_with_no_shared_step(cwd: str):
+def test_a_pause_stops_the_roles_then_pauses_with_no_shared_step(repo: str):
     """Given a repository with one run, and a turn of rn:dn whose prompt is /rn:dn
     When the adapter gives the turn's steps
     Then they are `stop`, writing nothing, and `pause`, running only repository.py pause, alone"""
-    paused_run(cwd)
-    steps = ADAPTER.steps(given("rn:dn", "/rn:dn"), cwd, RN)
-    assert shown(steps) == relative(
-        [
-            step("stop", writes(), BLOCKED),
-            step("pause", commands(script("repository", "pause"))),
-        ],
-        cwd,
-    )
+    a_run(repo)
+    steps = ADAPTER.steps(given("rn:dn", "/rn:dn"), repo, RN)
+    assert shown(steps) == [
+        step("stop", writes(), BLOCKED),
+        step("pause", commands(script("repository", "pause"))),
+    ]
 
 
 @pytest.mark.supports("test_an_orchestrators_turn_ended_before_its_review_is_stopped")
@@ -246,83 +328,101 @@ def test_a_pause_stops_the_roles_then_pauses_with_no_shared_step(cwd: str):
         ("rn:gm", "/rn:gm the guide first"),
         ("rn:gm", "/rn:gm"),
         ("rn:up", "with each invoice"),
-        ("rn:up", "What's left?"),
+        ("rn:ty", "What's left?"),
         ("rn:up", ENDED),
+        ("rn:on", ENDED),
+        ("rn:up", "/rn:onx"),
     ],
-    ids=["send-back", "send-back-alone", "answer", "other-prompt", "role-end"],
+    ids=[
+        "send-back",
+        "send-back-alone",
+        "answer",
+        "other-prompt",
+        "role-end",
+        "role-end-of-on",
+        "near-command",
+    ],
 )
-def test_each_other_event_takes_the_shared_steps_alone(cwd: str, role: str, prompt: str):
-    """Given a repository with one run, and a turn of a send-back, an answer, another prompt, or a
-    role's end as Claude Code's task-notification
+def test_each_other_event_takes_it_then_keeps_the_shared_steps(repo: str, role: str, prompt: str):
+    """Given a repository with one run, and a turn of a send-back, an answer, another prompt, a
+    role's end as Claude Code's task-notification, or a prompt that nearly names a command
     When the adapter gives the turn's steps
-    Then they are the shared steps alone, on that run"""
-    paused_run(cwd)
-    assert shown(ADAPTER.steps(given(role, prompt), cwd, RN)) == relative(shared(cwd), cwd)
+    Then they are `take`, writing only the run's design tree and running no command, and the
+    shared steps, on that run"""
+    a_run(repo, tree=unsigned() if role == "rn:on" else None)
+    assert shown(ADAPTER.steps(given(role, prompt), repo, RN)) == relative(
+        [take(repo), *shared(repo)], repo
+    )
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up")
-@pytest.mark.parametrize("done", [False, True], ids=["no-run", "only-done"])
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+@pytest.mark.parametrize("before", ["no-run", "only-done", "no-repository"])
 @pytest.mark.parametrize(
     ("role", "prompt"),
     [("rn:up", "/rn:up"), ("rn:ty", "/rn:ty"), ("rn:dn", "/rn:dn"), ("rn:up", "yes")],
     ids=["pick-up", "sign-off", "pause", "answer"],
 )
 def test_a_turn_other_than_a_new_request_with_no_run_takes_find_alone(
-    cwd: str, role: str, prompt: str, done: bool
+    repo: str, cwd: str, role: str, prompt: str, before: str
 ):
-    """Given a repository with no run, or only a run whose deliverables are each done
-    When the adapter gives the steps of a turn other than a new request
+    """Given a repository with no run, or only a run whose deliverables are each done, or a folder
+    that isn't a git repository, holding a run's files
+    When the adapter gives the steps of a turn other than the hearing and a new request
     Then they are `find` alone, running only repository.py find, with no rule that ends it on
     blocked, as it's the turn's last"""
-    if done:
-        paused_run(cwd, "20261121-done", done=True)
-    steps = ADAPTER.steps(given(role, prompt), cwd, RN)
+    top = cwd if before == "no-repository" else repo
+    if before == "only-done":
+        a_run(repo, "20261121-done", done_tree("20261121-done"))
+    if before == "no-repository":
+        paused_run(cwd)
+    steps = ADAPTER.steps(given(role, prompt), top, RN)
     assert shown(steps) == [step("find", commands(script("repository", "find")))]
 
 
 TURNS = {
-    "new request": ("rn:up", f"/rn:up {WORDS}", WORDS),
-    "pick-up": ("rn:up", "/rn:up", ""),
-    "sign-off": ("rn:ty", "/rn:ty", ""),
-    "pause": ("rn:dn", "/rn:dn", ""),
-    "send-back": ("rn:gm", "/rn:gm the guide first", ""),
-    "answer": ("rn:up", "yes", ""),
-    "role-end": ("rn:up", ENDED, ""),
+    "new request": ("rn:on", WORDS, "rn:on"),
+    "pick-up": ("rn:up", "/rn:up", "rn:up"),
+    "sign-off": ("rn:ty", "/rn:ty", "rn:up"),
+    "pause": ("rn:dn", "/rn:dn", "rn:up"),
+    "send-back": ("rn:gm", "/rn:gm the guide first", "rn:up"),
+    "answer": ("rn:up", "yes", "rn:up"),
+    "role-end": ("rn:up", ENDED, "rn:up"),
 }
 
 
 @pytest.mark.supports("test_a_new_request_with_no_origin_ends_its_turn_on_blocked")
 @pytest.mark.parametrize("event", list(TURNS))
-def test_each_step_of_a_turn_but_its_last_ends_on_blocked(cwd: str, event: str):
-    """Given a repository with one run, and a turn of each event
+def test_each_step_of_a_turn_but_its_last_ends_on_blocked(repo: str, event: str):
+    """Given a repository with one run whose plan is signed off, and a turn of each event
     When the adapter gives the turn's steps
     Then each step but the last holds the rule that ends the turn on blocked, and the last holds
     no rule of results, as Lane judges it at each end with every step done"""
-    paused_run(cwd)
-    role, prompt, words = TURNS[event]
-    each = ADAPTER.steps(given(role, prompt, words=words), cwd, RN)["steps"]
+    a_run(repo)
+    role, prompt, skill = TURNS[event]
+    each = ADAPTER.steps(given(role, prompt, skill=skill), repo, RN)["steps"]
     assert [BLOCKED in s["rules"] for s in each] == [True] * (len(each) - 1) + [False]
     assert not [r for r in each[-1]["rules"] if r["type"] == "result"]
 
 
 @pytest.mark.supports("test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped")
-def test_the_orchestrators_review_runs_only_ls_and_grep_and_touched_only_tree_py_touched(
-    cwd: str,
+def test_the_orchestrators_review_runs_only_find_and_grep_and_touched_only_tree_py_touched(
+    repo: str,
 ):
     """Given a repository with one run, and a turn of an answer
     When the adapter gives the turn's steps
-    Then review's commands are `ls` and `grep` alone, so that Lane lets only those and its
-    reporters through, and touched's are tree.py touched alone"""
-    paused_run(cwd)
+    Then review's commands are `find` and `grep` alone, so that Lane lets only those and its
+    reporters through, beside the Glob and Grep tools, which no rule holds, and touched's are
+    tree.py touched alone"""
+    a_run(repo)
     by_name = {
         s["name"]: [r for r in s["rules"] if r["type"] == "commands"]
-        for s in ADAPTER.steps(given("rn:up", "yes"), cwd, RN)["steps"]
+        for s in ADAPTER.steps(given("rn:up", "yes"), repo, RN)["steps"]
     }
-    assert by_name["review"] == [commands("ls", "grep")]
+    assert by_name["review"] == [commands("find", "grep")]
     assert by_name["touched"] == [commands(script("tree", "touched"))]
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
 @pytest.mark.parametrize("role", ["log:up", "rn:upx", "rn:evaluate", "rnx:generator", "rn:"])
 def test_a_role_that_isnt_rns_is_refused(cwd: str, role: str):
     """Given a role of another plugin, or one that nearly matches one of rn's
@@ -665,18 +765,18 @@ def test_an_evaluators_prompt_that_names_no_cut_in_its_form_is_refused(cwd: str,
 
 
 @pytest.mark.supports("test_a_new_requests_turn_is_held_to_repository_py_new_first")
-def test_main_gives_0_with_the_steps_as_one_line_of_json(cwd: str):
+def test_main_gives_0_with_the_steps_as_one_line_of_json(repo: str):
     """Given Lane's input of a new request's turn as JSON on standard input
     When main runs
     Then it gives 0, the steps that `steps` gives as one line of JSON, and nothing on stderr"""
-    text = json.dumps(given("rn:up", f"/rn:up {WORDS}", words=WORDS))
-    code, out, err = ADAPTER.main(text, cwd, RN)
+    text = json.dumps(given("rn:on", WORDS, skill="rn:on"))
+    code, out, err = ADAPTER.main(text, repo, RN)
     assert (code, err) == (0, "")
     assert out.endswith("\n") and out.count("\n") == 1
-    assert json.loads(out) == ADAPTER.steps(json.loads(text), cwd, RN)
+    assert json.loads(out) == ADAPTER.steps(json.loads(text), repo, RN)
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
 @pytest.mark.parametrize("stdin", ["", "{run", "[]"])
 def test_main_gives_1_where_its_input_isnt_lanes_json(cwd: str, stdin: str):
     """Given standard input that's empty, not JSON, or JSON of another form
@@ -687,7 +787,7 @@ def test_main_gives_1_where_its_input_isnt_lanes_json(cwd: str, stdin: str):
     assert err.startswith("rules.py: ")
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_says_rn_has_none_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
 def test_main_gives_1_where_steps_refuses_the_start(cwd: str):
     """Given a start of log:up, a role of another plugin
     When main runs
@@ -699,13 +799,13 @@ def test_main_gives_1_where_steps_refuses_the_start(cwd: str):
 
 
 @pytest.mark.supports("test_the_orchestrator_writing_a_deliverable_is_stopped")
-def test_the_orchestrators_paths_are_each_from_the_repositorys_top(cwd: str):
+def test_the_orchestrators_paths_are_each_from_the_repositorys_top(repo: str):
     """Given a repository with one run, and a turn of an answer
     When the adapter gives the turn's steps
     Then each path its rules name is relative, from the folder that the conversation works in,
     as Lane reads a rule's paths"""
-    paused_run(cwd)
-    steps = ADAPTER.steps(given("rn:up", "yes"), cwd, RN)
+    a_run(repo)
+    steps = ADAPTER.steps(given("rn:up", "yes"), repo, RN)
     paths = [p for s in steps["steps"] for r in s["rules"] for p in r.get("paths", [])]
     assert paths and not [p for p in paths if os.path.isabs(p) or p.startswith("..")]
 
