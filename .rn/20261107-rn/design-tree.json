@@ -360,8 +360,14 @@
         },
         {
           "id": "N5",
-          "good": true,
-          "decisions": []
+          "good": false,
+          "decisions": [
+            {
+              "about": "Who refactors: the refactoring of code and of a document, after the content's Rounds",
+              "decided": "A subagent of its own, apart from the generator, refactors each deliverable by its kind's refactor best practice, keeping its intent, with no evaluator, as the repository's checks and tests show that the intent holds; so no finding is left from the refactoring",
+              "by": "user"
+            }
+          ]
         },
         {
           "id": "N6",
