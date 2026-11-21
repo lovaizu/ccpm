@@ -445,6 +445,11 @@
               "about": "Lane's README at the release",
               "decided": "made again from the design: its walkthrough from the run that Lane's integration cases show, its install run once ccpm's marketplace lists Lane, and a link to the definition of rules and adapters",
               "by": "reasoning"
+            },
+            {
+              "about": "A run before the user's own",
+              "decided": "Before the user runs rn, the maker runs rn once from its folder by --plugin-dir, on the README walkthrough's request with the conversation in Japanese, through to the pull request, and mends what breaks, as nothing since 2026-11-18 ran rn whole with the real model: the languages, the context, the refactor Round, the send-back, and the evaluator after them",
+              "by": "user"
             }
           ]
         },
