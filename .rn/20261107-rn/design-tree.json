@@ -86,7 +86,68 @@
       "name": "Readers take in a document as its writer meant in one reading, as each refactoring makes it clearer and keeps all it says",
       "path": "plugins/rn/domain/best-practices/refactor-doc",
       "kind": "meta",
-      "status": "done"
+      "inputs": [],
+      "status": "open",
+      "necessary_conditions": [
+        {
+          "id": "N1",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Its readers",
+              "decided": "a reader new to the document understands it in one read from the top, with nothing left to guess",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N2",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N3",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Languages",
+              "decided": "one best practice for each language a document is written in, its structure and sentence steps shared, and its items on words and punctuation taking the rules of the document's language: for English the Google developer documentation style and the Plain Language Guidelines, for Japanese the Agency for Cultural Affairs' 公用文作成の考え方 and Honda Katsuichi's principles of the comma",
+              "by": "user"
+            },
+            {
+              "about": "What it asks of the words",
+              "decided": "common phrasing and terms in place of coined or AI-like ones, a subject and a predicate that the reader never has to guess, and in Japanese only the commas that the reading needs",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N4",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N5",
+          "good": false,
+          "decisions": [
+            {
+              "about": "Expressions of AI",
+              "decided": "the maker finds each expression that marks text written by AI by a list that practitioners keep: for English Wikipedia's Signs of AI writing, for Japanese the rules of textlint-rule-preset-ai-writing",
+              "by": "user"
+            }
+          ]
+        },
+        {
+          "id": "N7",
+          "good": false,
+          "decisions": []
+        },
+        {
+          "id": "N6",
+          "good": false,
+          "decisions": []
+        }
+      ]
     },
     {
       "name": "Maintainers understand the code in one reading and change it in one place, as each refactoring makes it simpler and keeps every behavior",
@@ -588,6 +649,10 @@
     {
       "do": "make",
       "path": "plugins/rn/domain"
+    },
+    {
+      "do": "make",
+      "path": "plugins/rn/domain/best-practices/refactor-doc"
     }
   ]
 }
