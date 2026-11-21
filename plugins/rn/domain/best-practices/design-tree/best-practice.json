@@ -86,7 +86,7 @@
       },
       {
         "id": "C2",
-        "what": "At each turn, the maker reviews the design tree by the run's facts and judges again what's vital and what's trivial.",
+        "what": "At each turn, the maker reviews the design tree by what the run has done and learned, and judges again what's vital and what's trivial.",
         "necessary_conditions": [
           {
             "id": "N3",

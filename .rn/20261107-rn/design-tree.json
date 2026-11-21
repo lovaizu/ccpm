@@ -188,116 +188,7 @@
       "name": "rn's developers build its parts so that together they give what its README promises",
       "path": "dev/rn/architecture.md",
       "kind": "architecture",
-      "inputs": [
-        "plugins/rn/domain/best-practices/design-tree"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The languages: a user story that brings the user the deliverables and the talk in the languages they settle at the start of a run",
-              "decided": "S1 holds it, as the user settles the languages with the goal at the start of the deliverable they're after, so no story of its own",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Who refactors: the refactoring of code and of a document, after the content's Rounds",
-              "decided": "A subagent of its own, apart from the generator, refactors each deliverable by its kind's refactor best practice, keeping its intent, with no evaluator, as the repository's checks and tests show that the intent holds; so no finding is left from the refactoring",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N6",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The run's context: where the design tree's context is written",
-              "decided": "The design tree holds the run's context. new writes rn's version from its plugin.json and the languages that the orchestrator proposes, with no issue and no pull request; the orchestrator writes in its review the issues that the user's words name, and puts the languages and issues to the user with the goal; put-up writes the pull request's URL once it opens it, and names in its body each issue to close and each to refer to",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N8",
-          "good": false,
-          "decisions": [
-            {
-              "about": "S2's last arrow: it starts each role stopped again toward the generator alone, where S2 stops the evaluator too",
-              "decided": "S2 starts the stopped generator and the stopped evaluator again, each by its own arrow",
-              "by": "maker"
-            }
-          ]
-        },
-        {
-          "id": "N9",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N10",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N11",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N12",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N13",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N14",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N15",
-          "good": true,
-          "decisions": []
-        },
-        {
-          "id": "N16",
-          "good": true,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Lane's developers know whom Lane serves, and the one way it serves them",
@@ -628,10 +519,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "dev/rn/architecture.md"
-    },
     {
       "do": "make",
       "path": "plugins/rn/domain/template"

@@ -15,14 +15,14 @@ rn piles up the [vital few](https://en.wikipedia.org/wiki/Pareto_principle) that
 deliverable's people to their aim, and cuts the trivial many.
 
 - P1: toward the people's aim
-  - P1.1: the run reviews its course by its facts at each event.
+  - P1.1: the run reviews its course at each event by what it has done and learned.
   - P1.2: the user is asked only what only they can decide, one point at a time.
   - P1.3: work that rests on a plan or a deliverable starts once the user signs it off.
 - P2: judged by the people's aim
   - P2.1: a deliverable is tried as its people would, with only what they have.
   - P2.2: a trial names only what's good and what would make it good.
 - P3: made the field's established way
-  - P3.1: running, making, and judging are separate roles.
+  - P3.1: running, making, refactoring, and judging are separate roles.
   - P3.2: content is made by its kind's best practice and refactored, or, as the user picks, by
     its check alone.
   - P3.3: remaking has a limit, and each finding left goes to the user as a proposal.
@@ -52,8 +52,8 @@ deliverable's people to their aim, and cuts the trivial many.
   The field's established way to make one kind of deliverable, and its conditions, which making
   and judging both stand on.
 - Round\
-  One making or refactoring of a deliverable, which its maker and its judge each try as its people
-  would. What each found good or short decides the next mend.
+  One making of a deliverable, which its maker and its judge each try as its people would. What
+  each found good or short decides the next mend.
 
 Strategies:
 
@@ -79,6 +79,8 @@ Strategies:
   Makes a deliverable with which its people reach their aim.
 - evaluator (prompt)\
   Checks, as the people, whether a deliverable reaches their aim.
+- refactorer (prompt)\
+  Makes a deliverable plain for whoever reads it next, keeping its intent.
 - scripts (script)\
   Does each step that has one right result.
 
@@ -91,6 +93,9 @@ Strategies:
 - One generator and one evaluator for each Round, the evaluator judging every condition from one
   trial. [P2.1]\
   Intent: the people's use is one act, so it's tried once and judged whole.
+- A refactorer apart from the generator, with no evaluator, once the Rounds end. [P3.2]\
+  Intent: a new reader meets what the content's maker misses, and the checks and tests show the
+  intent holds.
 - The generator trying the deliverable as its people would, and going back to its decisions on a
   shortfall they meet. [P2.1]\
   Intent: the generator finds its own shortfall, and hands on only what it saw serve the people.
@@ -128,6 +133,7 @@ sequenceDiagram
   participant S as scripts
   participant G as generator
   participant E as evaluator
+  participant R as refactorer
   U->>O: /rn:on [S1]
   O->>U: asks what they want [S1]
   U->>O: what they want, in their own words [S1]
@@ -136,7 +142,7 @@ sequenceDiagram
     opt a sign-off [P1.3]
       O->>S: records it (Design tree) [P4.3]
     end
-    O->>T: reviews it by the run's facts and the user's words (Design tree) [P1.1]
+    O->>T: reviews it by what the run has done and learned, and the user's words (Design tree) [P1.1]
     O->>S: lists each node that the change touches, to read again (Design tree) [P1.1]
     O->>S: checks and commits the change (Design tree) [P6.1]
     opt a refusal that only the user can mend [P5.3]
@@ -162,7 +168,7 @@ sequenceDiagram
           O->>T: writes the answer as its decision (Design tree) [P6.1]
           O->>G: resumes it with the answer, as given [P1.2]
         else
-          G->>G: makes the content by its kind's best practice, or, once each condition is good, refactors it by the refactor best practice, taking the last evaluator's findings as given (Best practice, Round) [P3.2]
+          G->>G: makes the content by its kind's best practice, or by its check alone, taking the last evaluator's findings as given (Best practice, Round) [P3.2]
           G->>G: tries it as its people would, and goes back to its decisions where a condition that they meet falls short [P2.1]
           G->>G: names what's good [P2.1]
           G->>S: runs the repository's checks on its files [P4.3]
@@ -173,7 +179,13 @@ sequenceDiagram
           E->>E: names, for each condition, what's good or what would make it good [P2.2]
           E-->>O: ends, with the Round written (Round) [P4.2]
           O->>T: takes each finding that helps the people into the decision it comes from, and holds good each condition whose finding they'd never meet (Design tree) [P1.1]
-          O->>T: keeps each finding past two Rounds of content or of refactoring as an open decision of its condition (Design tree) [P3.3]
+          O->>T: keeps each finding past two Rounds as an open decision of its condition (Design tree) [P3.3]
+          opt the Rounds ended, for a kind with a best practice [P3.2]
+            O->>R: starts it with its Cut (Cut) [P4.1]
+            R->>R: refactors it by the refactor best practice of code or of a document, keeping its intent (Best practice) [P3.2]
+            R->>S: runs the repository's checks and tests on its files [P4.3]
+            R-->>O: ends, with what it changed [P4.2]
+          end
         end
       end
     end
@@ -192,9 +204,11 @@ sequenceDiagram
   participant S as scripts
   participant G as generator
   participant E as evaluator
+  participant R as refactorer
   U->>O: /rn:dn [S2]
   O->>G: stops it [S2]
   O->>E: stops it [S2]
+  O->>R: stops it [S2]
   O->>S: commits and pushes the run's folder (Design tree) [P6.1]
   O->>U: where it stopped, and the point or sign-off waiting [S2]
   Note over U,O: Later, in any conversation
@@ -207,6 +221,7 @@ sequenceDiagram
   O->>U: where it picks up, and the point or sign-off waiting [S2]
   O->>G: starts the generator stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
   O->>E: starts the evaluator stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
+  O->>R: starts the refactorer stopped again, from a fresh Cut (Cut) [P6.1]
 ```
 
 ### Deployment
@@ -226,11 +241,12 @@ Strategies:
 ```text
 plugins/rn/                        what Claude Code installs for the user
 ├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
-├── agents/                        the generator's and the evaluator's starts
+├── agents/                        the generator's, the evaluator's, and the refactorer's starts
 ├── domain/
 │   ├── orchestrator.md            the event's own step, then those that every event shares
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
+│   ├── refactorer.md              what the refactorer does
 │   ├── schemas/                   the form of each Cut and result
 │   ├── tree/                      the code that checks the design tree
 │   ├── check/                     the code that checks each role's result against its form

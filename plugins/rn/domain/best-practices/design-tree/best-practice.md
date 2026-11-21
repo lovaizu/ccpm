@@ -7,7 +7,7 @@
     - **N1** Does the goal state what its people do once it's achieved? (goal)
     - **N2** Does every node of the design tree serve the goal and still hold? (deliverables)
     - **N7** Does the context name the rn that wrote the tree, the languages that the user settled, and the run's issues and pull request? (context)
-  - **C2** At each turn, the maker reviews the design tree by the run's facts and judges again what's vital and what's trivial.
+  - **C2** At each turn, the maker reviews the design tree by what the run has done and learned, and judges again what's vital and what's trivial.
     - **N3** Is each problem found fixed at the decision that caused it? (deliverables)
     - **N4** Does each node agree with each node that a change touches, from the goal down to the work? (deliverables)
   - **C3** The work goes in the order that achieves the goal in the shortest time.
