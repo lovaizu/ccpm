@@ -142,62 +142,7 @@
       "name": "Maintainers understand the code in one reading and change it in one place, as each refactoring makes it simpler and keeps every behavior",
       "path": "plugins/rn/domain/best-practices/refactor-code",
       "kind": "meta",
-      "inputs": [],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "Its place",
-              "decided": "a step of its own after the deliverable's content passes its evaluation, which changes no behavior and nothing that the content says, as making and tidying at once draws findings to the form before the essentials settle",
-              "by": "user"
-            },
-            {
-              "about": "Goal",
-              "decided": "the code is simple by Kent Beck's four rules of simple design: it passes the tests, reveals its intent, holds no duplication, and has the fewest elements",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N4",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N5",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The practitioners' steps",
-              "decided": "the maker finds what to change in the whole deliverable by Martin Fowler's code smells, the design-level ones included, and changes it by Fowler's small refactorings, each keeping the tests passing; a change that the architecture's decisions forbid, of its components, data model, or sequences, stops the work and goes back with its grounds, as it's the architecture's to decide",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N7",
-          "good": false,
-          "decisions": []
-        },
-        {
-          "id": "N6",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "Each document of ccpm made by a best practice holds its kind's template and nothing beside it, as rn's check finds each place where one leaves it",
@@ -686,10 +631,6 @@
     }
   ],
   "work": [
-    {
-      "do": "make",
-      "path": "plugins/rn/domain/best-practices/refactor-code"
-    },
     {
       "do": "make",
       "path": "plugins/lane/hooks/lane"
