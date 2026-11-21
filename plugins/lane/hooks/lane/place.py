@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, replace
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 from named_files import named, of_call
 from order import StartsDue
@@ -423,17 +423,13 @@ def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> 
     role takes its steps at each turn, or of a subagent, the event's or the one given, held to the
     steps of the start it's tied to; each at the first of its steps that it hasn't marked done."""
     agent_id = agent_id or event.get("agent_id")
-    turn = _turn_at_hand(run) if agent_id is None else None
-    if turn is not None:
-        role, steps = turn["role"], turn["steps"]
-    elif agent_id is None:
-        role = _main_role(run, rules)
-        steps = start_steps(rules, role, None)
+    # A turn's entry holds the main conversation's moves as a start's entry holds a subagent's.
+    if agent_id is not None:
+        holder = cast(Entry, latest_start(run, agent_id))
     else:
-        tie = next(e for e in reversed(run.entries) if _ties(e, agent_id))
-        start = next(e for e in run.entries if e.get("tool_use_id") == tie["tool_use_id"])
-        role = start["role"]
-        steps = start_steps(rules, role, start.get("steps"))
+        holder = _turn_at_hand(run) or {"role": _main_role(run, rules)}
+    role = holder["role"]
+    steps = start_steps(rules, role, holder.get("steps"))
     done = marked(run, agent_id)
     step = next((each["name"] for each in steps if each["name"] not in done), None)
     return Move("call", event, run, role, agent_id, None, steps, step, None)
