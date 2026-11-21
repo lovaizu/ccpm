@@ -23,8 +23,8 @@ deliverable's people to their aim, and cuts the trivial many.
   - P2.2: a trial names only what's good and what would make it good.
 - P3: made the field's established way
   - P3.1: running, making, and judging are separate roles.
-  - P3.2: content is made the field's established way and refactored, or by its check alone
-    where no way is established.
+  - P3.2: content is made by its kind's best practice and refactored, or, as the user picks, by
+    its check alone.
   - P3.3: remaking has a limit, and each finding left goes to the user as a proposal.
 - P4: each role on its own work
   - P4.1: each role starts with only what its work needs.

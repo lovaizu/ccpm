@@ -42,7 +42,7 @@
               },
               {
                 "at": "decide",
-                "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/`, and give each deliverable as its kind the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a guide. Where no folder fits, give it the kind `light`, and write the check that judges it, such as a test that passes once it exists, as its decision about `The check`."
+                "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/` and of `.rn/best-practices/`, and give each deliverable as its kind the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a guide. Where no folder fits, ask the user whether to make a best practice of that kind first, and recommend it where the field has an established way of making the kind, such as for an invoice. Making it first adds a deliverable of kind `meta` at `.rn/best-practices/<kind>/`, which this one rests on. Otherwise give it the kind `light`, and write the check that judges it, such as a test that passes once it exists, as its decision about `The check`."
               },
               {
                 "at": "decide",

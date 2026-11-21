@@ -186,7 +186,7 @@ specification.
 ### "Its output misses what this kind of work needs."
 
 rn plans and makes each deliverable by the best practice of its kind, such as one for a README.
-Where it has none for a kind, it makes one first, and lists what each settled without asking.
+For a kind it has none for, it asks you first whether to make one.
 
 ### "It looks done, but the people it's for can't use it."
 

@@ -219,8 +219,9 @@
           "good": false,
           "decisions": [
             {
-              "about": "What each settled: How it works says rn lists what each settled without asking, where each may be each new best practice or each deliverable",
-              "decided": null
+              "about": "A kind with no best practice: How it works says rn makes one first and lists what each settled without asking, where the design tree best practice gives such a deliverable the kind light",
+              "decided": "Where rn has no best practice for a deliverable's kind, it asks the user whether to make one first, a deliverable of kind meta in .rn/best-practices/<kind>/ that this one rests on, or to make the deliverable as kind light, by its check alone",
+              "by": "user"
             },
             {
               "about": "The languages: whether rn writes and talks in the user's language",
@@ -279,14 +280,8 @@
         },
         {
           "id": "N4",
-          "good": false,
-          "decisions": [
-            {
-              "about": "What lightly means: P3.2 says a deliverable is made lightly by its check, without naming the kind light",
-              "decided": "P3.2 says a deliverable is made by its check alone where no way is established",
-              "by": "maker"
-            }
-          ]
+          "good": true,
+          "decisions": []
         },
         {
           "id": "N5",
@@ -697,12 +692,6 @@
     }
   ],
   "work": [
-    {
-      "do": "decide",
-      "path": "plugins/rn/README.md",
-      "condition": "N8",
-      "about": "What each settled: How it works says rn lists what each settled without asking, where each may be each new best practice or each deliverable"
-    },
     {
       "do": "make",
       "path": "plugins/rn/README.md"
