@@ -48,19 +48,14 @@ class Turn:
 
 @dataclass
 class Move:
-    """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `drop`,
-    `read`, `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role whose steps hold
-    it, the subagent's agent type, or for the main conversation the skill of the run's latest
-    command whose steps its plugin's rules give, the skill that called the run before any, or, in
-    a turn whose `turn` entry stands, the role that entry holds, and for a SendMessage's `start`
-    the role of the start it resumes; the subagent's `agent_id`, None for
-    the main conversation; for a `start`, the prompt that the main conversation gives it, the
-    prompt of the start it resumes for a SendMessage, and None for any other move; the steps that
-    hold its start, as start_rules.steps gives them from the plugin's rules and the steps that its
-    `start` entry holds, a SendMessage's `start` held to those of the start it resumes, and the
-    main conversation's, where its role takes its steps at each turn, held to those that the run's
-    latest `turn` entry holds; the step its start or turn stands at; and the report where a
-    reporter made the move."""
+    """One move placed on its run: its `kind`, one of `call`, `start`, `tie`, `drop`, `read`,
+    `report`, `end`, `turn_end`, `typed`, and `result_reached`; the role and the steps that hold
+    it, by start_rules.steps: a subagent's those of its start, a SendMessage's `start` those of the
+    start it resumes, and the main conversation's those of its turn's `turn` entry, else of the
+    run's latest command that the rules name, else of the skill that called the run; the
+    subagent's `agent_id`, None for the main conversation; for a `start`, its prompt, that of the
+    start it resumes for a SendMessage, and None for any other move; the step its start or turn
+    stands at; and the report where a reporter made the move."""
 
     kind: str
     event: Event
@@ -121,12 +116,11 @@ def turn_beginning(event: Event, runs: list[Run]) -> Run | None:
 
     Takes: a hook event, and the runs of its conversation.
     Gives: the standing run, with its folder, at a UserPromptSubmit with no `agent_id`, the person's
-    prompt or the `<task-notification>` of a subagent's end, where it is the first since the Stop
-    that the guard last let through, the run's latest `turn_ended` entry, and the plugin's rules
-    name the main conversation's role, the skill of the run's latest command that they name, with
-    no steps; None at any other event, at a UserPromptSubmit before that Stop is let through, as it
-    goes on in the same turn, for a run with no folder yet, or where the rules give that role's
-    steps.
+    prompt or the `<task-notification>` of a subagent's end, where it is the first since the run's
+    latest `turn_ended` entry, the Stop that the guard last let through, and the rules name the
+    main conversation's role with no steps. None at any other event, at a UserPromptSubmit before
+    that Stop, as it goes on in the same turn, for a run with no folder yet, or where the rules
+    give that role's steps.
     Changes: nothing.
     Refuses: OutOfForm, where the rules of the plugin's run are out of form.
     """
@@ -149,13 +143,12 @@ def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
     Takes: a hook event, and the runs of its conversation.
     Gives: the turn, on the standing run with its folder, at the main conversation's PreToolUse or
     Stop, the turn's first call or end, where the run holds no `turn` entry since its latest
-    `turn_ended` entry, or since its start for its first turn, and the plugin's rules name the main
-    conversation's role with no steps; the turn's role the skill of the run's latest command that
-    the rules name, as it stands at that event, so that a command that the Skill tool calls later
-    in the turn leaves the turn's steps as they stand; its prompt that of the run's latest
-    `turn_begun` entry since its latest `turn_ended`, empty for the run's first turn, whose command
-    and words the run holds. None at any other event, for a turn that holds its `turn` entry, for a
-    run with no folder yet, or where the rules give that role's steps.
+    `turn_ended` entry, or since its start, and the rules name the main conversation's role with no
+    steps: its role the skill of the run's latest command that the rules name at that event, so
+    that a command that the Skill tool calls later in the turn leaves the turn's steps as they
+    stand; its prompt that of the turn's `turn_begun` entry, empty for the run's first turn, whose
+    command and words the run holds. None at any other event, for a turn that holds its `turn`
+    entry, for a run with no folder yet, or where the rules give that role's steps.
     Changes: nothing.
     Refuses: OutOfForm, where the rules of the plugin's run are out of form.
     """
@@ -347,9 +340,8 @@ def _before(event: Event, run: Run, rules: Rules, due: Due) -> Move | None:
     """The move of a PreToolUse: a start by an Agent call, held to the steps of whoever starts it;
     a start by the main conversation's SendMessage to a subagent of the run that has ended and
     whose role the order makes due, with the role, the prompt, and the steps of the start it
-    resumes, and no move for any
-    other SendMessage, as talk, such as one that Claude Code queues to a subagent that still runs;
-    else a call."""
+    resumes; no move for any other SendMessage, as talk, such as one that Claude Code queues to a
+    subagent that still runs; else a call."""
     tool = event.get("tool_name")
     call = _call(event, run, rules)
     if tool == "Agent":
@@ -424,9 +416,9 @@ def _read(event: Event, run: Run, rules: Rules) -> Move | None:
 
 
 def _call(event: Event, run: Run, rules: Rules, agent_id: str | None = None) -> Move:
-    """A call of the main conversation, held to the steps of its role, those of its turn where the
-    role takes its steps at each turn, or of a subagent, the event's or the one given, held to the
-    steps of the start it's tied to; each at the first of its steps that it hasn't marked done."""
+    """A call of a subagent, the event's or the one given, held to the start it's tied to, or of
+    the main conversation, held to its turn's `turn` entry, else to its role's steps; each at the
+    first of its steps that it hasn't marked done."""
     agent_id = agent_id or event.get("agent_id")
     if agent_id is not None:
         holder = cast(Entry, latest_start(run, agent_id))
