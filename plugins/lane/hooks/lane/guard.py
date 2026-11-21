@@ -133,9 +133,7 @@ def turn_opened(event: Event, turn: Turn) -> Answer:
     """
     run = turn.run
     turns: list[adapters.EarlierTurn] = [
-        {"role": entry["role"], "prompt": entry["prompt"]}
-        for entry in run.entries
-        if entry["kind"] == "turn"
+        {"role": entry["role"], "prompt": entry["prompt"]} for entry in run.state.turns
     ]
     asked: adapters.Asked = {"role": turn.role, "prompt": turn.prompt, "turns": turns}
     steps = adapters.given_steps(_root(run), event["cwd"], run, asked)
@@ -278,11 +276,10 @@ def _untied_dropped(run: Run) -> Run:
     """The run with each start that no tie or drop settled dropped, in the record too, as an Agent
     call that another plugin's PreToolUse hook denies comes to no PostToolUse, so that its role is
     due again."""
-    settled = {e.get("tool_use_id") for e in run.entries if e["kind"] in ("tie", "drop")}
     drops: list[record.Entry] = [
-        {"kind": "drop", "run": run.id, "tool_use_id": e["tool_use_id"]}
-        for e in run.entries
-        if e["kind"] == "start" and e["tool_use_id"] not in settled
+        {"kind": "drop", "run": run.id, "tool_use_id": start.entry["tool_use_id"]}
+        for start in run.state.starts
+        if start.tie is None and not start.dropped
     ]
     if drops:
         record.add(run.session_id, drops)
