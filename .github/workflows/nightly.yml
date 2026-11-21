@@ -82,4 +82,4 @@ jobs:
         with:
           persist-credentials: false
       # The prose checks of Lint, at the commit that lint.yml names.
-      - uses: lovaizu/repofiles@391fa231dda6e419774a78b7cbaa1da2b38f786d # v0.4.0
+      - uses: lovaizu/repofiles@2c9f3c90ef51ec380c03c992115ec593617c8d79 # v0.6.1
