@@ -54,19 +54,14 @@ def answer(event: Event) -> Answer:
 
     Takes: a hook event of hooks/hooks.json: PreToolUse, PostToolUse, PostToolUseFailure, Stop,
     SubagentStop, UserPromptSubmit, or UserPromptExpansion.
-    Gives: first, for each run that place.opening gives, the answer of run_opened; then, for the
-    run that place.turn_beginning gives, the answer of turn_begun, and for the turn that
-    place.turn_opening gives, the answer of turn_started; then the answer of the interface
-    below that the event's move reaches: skill_called for the skill's call that
-    place.skill_call gives, and for the others the move that place.place gives, with the starts due
-    that adapters.starts_due gives, held to the rules
-    in its run's plugin's folder; the answers joined, stopping where either stops; an empty answer
-    where the event lies outside each run, or its run's plugin gives no rules. Wherever an answer
-    gives the starts due, or holds a start to them, they are those that adapters.starts_due gives
-    for the run as it stands once the move is added, none while the run waits; turn_ended asks
-    them of a turn's end that it lets through.
-    Changes: what each interface it reaches changes; where adapters.starts_due says the run ends,
-    the run record, by an `ended` entry of the run.
+    Gives: the answers, joined and stopping where any stops, of run_opened for each run that
+    place.opening gives; of turn_begun or turn_started for the run or the turn that
+    place.turn_beginning or place.turn_opening gives; and of skill_called for the call that
+    place.skill_call gives, else of the interface that the move of place.place reaches. An empty
+    answer where the event lies outside each run, or its run's plugin gives no rules. The starts
+    due that an answer gives, or holds a start to, are those that adapters.starts_due gives for
+    the run once the move is added, none while the run waits.
+    Changes: what each interface it reaches changes.
     Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
     adapter that failed, the answer says why and who fixes that, and stops the call.
     """
@@ -74,7 +69,6 @@ def answer(event: Event) -> Answer:
     answers = [run_opened(event, run) for run in place.opening(event, record.runs(session))]
     runs = record.runs(session)
     answers.append(_turn_given(event, runs))
-    runs = record.runs(session)
     call = place.skill_call(event, runs)
     if call is not None:
         answers.append(skill_called(call))
@@ -285,14 +279,8 @@ def turn_ended(move: Move) -> Answer:
         return Answer(True, _due_said(due))
     _end_if(run, move.event, turn_ended=True)
     if asks_adapter(_rules(run), move.role):
-        _turn_closed(run)
+        record.add(run.session_id, [{"kind": "turn_ended", "run": run.id}])
     return Answer()
-
-
-def _turn_closed(run: Run) -> None:
-    """Adds the `turn_ended` entry of the main conversation's turn whose end the guard lets
-    through."""
-    record.add(run.session_id, [{"kind": "turn_ended", "run": run.id}])
 
 
 def command_typed(move: Move) -> Answer:
@@ -487,15 +475,16 @@ def _rules(run: Run) -> Rules:
     return cast(Rules, read_rules(_root(run)))
 
 
-def _due(run: Run, event: Event) -> StartsDue:
-    """The starts due of the run as it stands, by its plugin's order, while the turn runs."""
-    return adapters.starts_due(_root(run), event["cwd"], run, _rules(run), False)
+def _due(run: Run, event: Event, turn_ended: bool = False) -> StartsDue:
+    """The starts due of the run as it stands, by its plugin's order, while the turn runs or once
+    its end is let through."""
+    return adapters.starts_due(_root(run), event["cwd"], run, _rules(run), turn_ended)
 
 
 def _end_if(run: Run, event: Event, turn_ended: bool = False) -> StartsDue:
-    """The starts due of the run as it stands, by its plugin's order, its record given an `ended`
-    entry where the order says the run ends."""
-    due = adapters.starts_due(_root(run), event["cwd"], run, _rules(run), turn_ended)
+    """The starts due that _due gives, the run record given an `ended` entry where the order says
+    the run ends."""
+    due = _due(run, event, turn_ended)
     if due.get("ends"):
         record.add(run.session_id, [{"kind": "ended", "run": run.id}])
     return due
