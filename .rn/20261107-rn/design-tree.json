@@ -473,10 +473,6 @@
               "by": "user"
             },
             {
-              "about": "A walkthrough run with the user's own permission settings",
-              "decided": null
-            },
-            {
               "about": "The rules of dev.md that hold until rn is released, and this design tree, after the merge",
               "decided": null
             },
