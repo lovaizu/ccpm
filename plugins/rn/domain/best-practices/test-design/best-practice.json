@@ -88,6 +88,10 @@
        },
        {
         "at": "make",
+        "text": "Where an interface's contract names something that it reads from outside to check, such as a file, or the reply of an adapter or another program, write one case for each of the check's three results: no problem, a problem, and could not check, such as a file it reads that's gone. State in each case's Then what follows the result, since a check that answers a read it couldn't make as a problem stops what no one can mend, and one that answers it as no problem passes what it never checked."
+       },
+       {
+        "at": "make",
         "text": "Where an interface's result depends on what came before, such as a guard that keeps each start still open or a check that reads a record entry by entry, list each state that the product's use brings the part into and each event that the use sends it there, from the architecture's sequences and from what the host's records show it sends. Write one case for each of those transitions, with the state it moves to or the refusal it gives, an event that its state doesn't expect included where the use sends it, since a case of a transition that no use brings about fixes a behavior that no person meets, and a mend made for it breaks the use."
        },
        {

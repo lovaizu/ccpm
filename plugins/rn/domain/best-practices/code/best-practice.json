@@ -80,7 +80,7 @@
        },
        {
         "at": "make",
-        "text": "Write the body one test at a time, once you see the test fail as N5.8 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case."
+        "text": "Write the body one test at a time, once you see the test fail as N5.9 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case."
        },
        {
         "at": "make",
@@ -153,6 +153,10 @@
        {
         "at": "make",
         "text": "Write one test for each case that N5.1 designs, in the test code beside the part's unit tests, in the form that the note of Tests in the template gives. Where its name needs `and`, split it into two tests."
+       },
+       {
+        "at": "make",
+        "text": "Before you write code by which the body newly reads something from outside to check, such as a file or another program's reply, write one test for each of the check's three results: no problem, a problem, and could not check, such as a file it reads that's gone, each asserting what follows the result, since a body written first answers a read that fails as one of the other two."
        },
        {
         "at": "make",
