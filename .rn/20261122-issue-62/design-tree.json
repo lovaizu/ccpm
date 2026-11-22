@@ -353,13 +353,45 @@
    ]
   },
   {
+   "name": "Each part of overnight does what its architecture gives it, as each case of its tests passes",
+   "path": "plugins/overnight/domain",
+   "more_paths": ["plugins/overnight/scripts/", "plugins/overnight/skills/"],
+   "kind": "code",
+   "inputs": ["dev/overnight/architecture.md", "plugins/overnight", "dev/overnight/tests"],
+   "status": "open",
+   "necessary_conditions": [
+    {"id": "N1", "good": false, "decisions": []},
+    {"id": "N2", "good": false, "decisions": []},
+    {"id": "N3", "good": false, "decisions": []},
+    {"id": "N4", "good": false, "decisions": []},
+    {"id": "N5", "good": false, "decisions": []},
+    {"id": "N6", "good": false, "decisions": []},
+    {"id": "N7", "good": false, "decisions": []},
+    {"id": "N8", "good": false, "decisions": []}
+   ]
+  },
+  {
+   "name": "overnight's developers see from one real night's run, on the real claude -p and its usage limit, that the queue finishes, waits out the limit, resumes, and leaves the morning log as the README's walkthrough says",
+   "path": "dev/overnight/tests/e2e",
+   "kind": "test-implementation",
+   "inputs": ["dev/overnight/product-vision.md", "plugins/overnight/README.md", "dev/overnight/architecture.md", "plugins/overnight/domain"],
+   "status": "open",
+   "necessary_conditions": [
+    {"id": "N1", "good": false, "decisions": []},
+    {"id": "N2", "good": false, "decisions": []},
+    {"id": "N3", "good": false, "decisions": []},
+    {"id": "N4", "good": false, "decisions": []},
+    {"id": "N5", "good": false, "decisions": []}
+   ]
+  },
+  {
    "name": "Users install overnight from ccpm's marketplace at its first release",
    "path": ".claude-plugin/marketplace.json",
    "kind": "light",
    "inputs": [
-    "plugins/overnight",
+    "plugins/overnight/domain",
     "plugins/overnight/README.md",
-    "dev/overnight/tests"
+    "dev/overnight/tests/e2e"
    ],
    "status": "open",
    "necessary_conditions": [
@@ -369,7 +401,7 @@
      "decisions": [
       {
        "about": "The check",
-       "decided": "claude plugin validate --strict passes for overnight and the marketplace; the marketplace and the root README list overnight at the version of its plugin.json, its CHANGELOG gives the release's line, and check.sh passes with every case of dev/overnight/tests",
+       "decided": "claude plugin validate --strict passes for overnight and the marketplace; the marketplace and the root README list overnight at the version of its plugin.json, its CHANGELOG gives the release's line, the README's walkthrough shows what the real night's run of dev/overnight/tests/e2e gave, and check.sh passes with every case of dev/overnight/tests",
        "by": "reasoning"
       }
      ]
