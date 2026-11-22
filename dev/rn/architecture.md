@@ -66,6 +66,9 @@ Strategies:
 - Each point that the user settles kept as an open decision of its condition, and their answer
   as its decision. [P6.1]\
   Intent: a point and its answer outlive the conversation that asked it.
+- The pull request opened as a draft, and marked ready by the sign-off that leaves each
+  deliverable done. [P1.3]\
+  Intent: nobody merges or reviews the work before the user signs off all of it.
 - Each Round put up for sign-off marked as the end of its deliverable's Rounds. [P1.3]\
   Intent: a send-back gets Rounds of its own, so that the user's change is remade.
 - A finding that the people would never meet dropped by holding its condition good. [P1.1]\
@@ -142,7 +145,7 @@ sequenceDiagram
   O->>S: makes the run's worktree, and its design tree with the goal and the languages as the orchestrator puts them (Design tree) [P4.3]
   loop each event: a request, an answer, a sign-off, a send-back, or a role ended [P1.1]
     opt a sign-off [P1.3]
-      O->>S: records it (Design tree) [P4.3]
+      O->>S: records it, and marks the pull request ready once each deliverable is done (Design tree) [P4.3]
     end
     O->>T: reviews it by what the run has done and learned, and the user's words (Design tree) [P1.1]
     O->>S: lists each node that the change touches, to read again (Design tree) [P1.1]
