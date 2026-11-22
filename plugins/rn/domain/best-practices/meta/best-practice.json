@@ -218,7 +218,7 @@
        },
        {
         "at": "make",
-        "text": "Give a trace to each item that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. An item with a trace takes its place by its call, among the decisions or steps whose content it supplies, such as the read of an input just before the decision that takes from it, since a checker such as Lane checks each item by its trace in the order of the calls, and the evaluator checks what the judgments made."
+        "text": "Give a trace to each item that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. An item with a trace takes its place by its call, among the decisions or steps whose content it supplies, such as the read of an input just before the decision that takes from it, since the calls then show each item done in their order, and the evaluator checks what the judgments made."
        },
        {
         "at": "make",

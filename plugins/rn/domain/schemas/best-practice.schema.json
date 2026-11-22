@@ -133,7 +133,7 @@
                 "minLength": 1
               },
               "trace": {
-                "description": "The call that shows the item done, which Lane holds the item by as a lane of the trace kind: a command run, matched whole, a file read to its end, or a file made, each take one such call. Lane counts the item done once one command taken comes back, once the role makes one file taken, or once it reads each file taken to its end. An item whose trace not every run makes carries none.",
+                "description": "The call that shows the item done: a command run, matched whole, a file read to its end, or a file made, each take one such call. The item is done once one command taken comes back, once the role makes one file taken, or once it reads each file taken to its end. An item whose trace not every run makes carries none.",
                 "type": "object",
                 "required": [
                   "action",
