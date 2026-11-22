@@ -6,6 +6,7 @@
 
 - When a role's Cut can't be read, such as after you delete the run's worktree or its folder, the role's check says it couldn't check the role's result, and the role ends, instead of being stopped at each end, so a run you drop never holds the conversation in a loop.
 - When one of rn's scripts or adapters fails on an error that it doesn't expect, it exits 2 with the error's traceback. Lane then says what it couldn't check and lets the move through, where it stopped the move at each try before.
+- Where a script or `check.py` exits 2, the orchestrator, the generator, and the evaluator don't run it again. Each says what the script couldn't check and why, and goes on.
 
 ## [0.10.0] - 2026-11-22
 

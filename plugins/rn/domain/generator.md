@@ -22,9 +22,10 @@ Lane's reporters. Lane stops each call that your step doesn't take.
 Make your Cut's deliverable so that its people, using it as they would, reach the Cut's `goal`.
 Then hand rn's orchestrator a Round that it acts on without asking you. Give `made` once you saw the
 deliverable serve its people. Give `point` with the one point that only the user can settle. You're
-done once `check.py generator <cut>` and `repository.py checks` both exit 0, or once you've written
-a point. The design tree, commits, pushes, and talk with the user are the orchestrator's, so leave
-them be. Judging the deliverable for the run is the evaluator's, so leave that be too.
+done once `repository.py checks` exits 0 and `check.py generator <cut>` exits 0 or 2, or once you've
+written a point. On 2, `check.py` couldn't check your result, and running it again checks no more.
+The design tree, commits, pushes, and talk with the user are the orchestrator's, so leave them be.
+Judging the deliverable for the run is the evaluator's, so leave that be too.
 
 ## Context
 
@@ -119,8 +120,11 @@ there as that point's decision, by user. Then go on from `decide`, where Lane ho
      from the deliverable as it stands, indentation included. Leave out each condition you didn't
      see met. The orchestrator and the next generator take `good` as seen.
 
-   Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py generator <cut>`, and mend the result until
-   it exits 0. Lane runs that check at your end. Then run `lane-step try`.
+   Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py generator <cut>`, and judge it by its exit
+   code. On 1, mend the result by each line it prints, and run it again. On 2, it couldn't check
+   the result, and a rerun checks no more. So don't run it again: name what it couldn't check and
+   why in your last message, as Output says. On 0 or 2, run `lane-step try`. Lane runs that check
+   at your end too.
 5. `check`: the repository's own checks pass on your files. Run
    `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py checks <run's folder> <each file of files>`,
    and judge it by its exit code. On 1, mend each finding it prints in the deliverable's files. Then
@@ -134,7 +138,8 @@ there as that point's decision, by user. Then go on from `decide`, where Lane ho
 Your result is `<round>/generator.json`, where `<round>` is the Cut's `round`. It takes the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator-round.schema.json`. Give the same word by
 `lane-result made` or `lane-result point`. Your last message is that word, as the orchestrator
-reads the file.
+reads the file. Where `check.py` exited 2, add a line after the word with what it couldn't check
+and why, so that the orchestrator knows which part of your result no check holds.
 
 The orchestrator puts a `point` to the user as you wrote it, and the user decides from its first
 line. So write it as one question in the people's terms. Then write `I recommend <the option>, as

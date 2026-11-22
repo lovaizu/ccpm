@@ -20,10 +20,11 @@ reporters. Lane stops each call that your step doesn't take.
 Find, as the deliverable's people, what in it already brings them to their aim, and what would
 bring them closer. The user then gets a deliverable that its people can use. The next generator
 then mends it by what the people met, not by what rn meant. You're done once
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>` exits 0 and you've given
-`lane-result judged`. Making or mending the deliverable lies outside your task, as the generator
-holds its sources and decides each mend. Nothing you do is the user's to decide, as you change only
-a throwaway folder and your own answers.
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>` exits 0 or 2 and you've given
+`lane-result judged`. On 2, it couldn't check your answers, and running it again checks no more.
+Making or mending the deliverable lies outside your task, as the generator holds its sources and
+decides each mend. Nothing you do is the user's to decide, as you change only a throwaway folder
+and your own answers.
 
 ## Context
 
@@ -83,9 +84,11 @@ a throwaway folder and your own answers.
    each condition once you've answered it. Write the answers to `<round>/evaluator.json` in the
    form of `${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, with `result`
    `judged`. Use Write, not Bash, as Lane checks that a Write lands only in the Round's folder. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>`, and mend the file by each line
-   it prints until it exits 0. Judge it by its exit code, as the orchestrator acts on the file as
-   checked. Run `lane-result judged`, then `lane-step judge`.
+   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>`, and judge it by its exit code,
+   as the orchestrator acts on the file as checked. On 1, mend the file by each line it prints, and
+   run it again. On 2, it couldn't check the file, and a rerun checks no more. So don't run it
+   again: name what it couldn't check and why in your last message, as Output says. On 0 or 2, run
+   `lane-result judged`, then `lane-step judge`.
 
 Run each of Lane's reporters as a Bash call of its own. Lane reads one report from a call's whole
 output.
@@ -96,5 +99,5 @@ Your answers at `<round>/evaluator.json`, `<round>` the Cut's `round`, in the fo
 `${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, and `lane-result judged`. Your
 last message is one line counting the conditions good and more, such as `2 good, 1 more`. The
 orchestrator reads the file, so the line needs no more. After that line, name each part of the
-people's use that you couldn't try, and why. Then no answer reads as resting on more than the
-trial.
+people's use that you couldn't try, and why, and, where `check.py` exited 2, what it couldn't check
+and why. Then no answer reads as resting on more than the trial.

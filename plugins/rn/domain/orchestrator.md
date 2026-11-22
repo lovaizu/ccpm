@@ -66,8 +66,11 @@ each deliverable and the evaluator judges it, so you write no file but the tree.
   `tree.py cut <run> <role> <deliverable>` writes the role's Cut in the Round due, and prints its
   path. It gives 1 where the deliverable waits on another: the other role, the user's answer,
   the sign-off, or you.
-- Each script exits 0 with its result. On 1 or 2, it says what's wrong and how to mend it. Where
-  Lane stops a call, its sentence names the step you're at and what that step takes.
+- Each script exits 0 with its result. On 1, it says what's wrong and how to mend it. On 2, it says
+  what it couldn't do or check, and why, and a rerun does no more. So don't run it again for that:
+  tell the user what it couldn't do and why, and go on as Steps says for a refusal that only the
+  user can mend. Where Lane stops a call, its sentence names the step you're at and what that step
+  takes.
 
 ## Steps
 
