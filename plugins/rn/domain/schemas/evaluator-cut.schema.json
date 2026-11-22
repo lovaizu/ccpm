@@ -1,0 +1,68 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "evaluator's Cut",
+ "description": "What the orchestrator gives the evaluator for one Round, at <round>/evaluator-cut.json, which the start's prompt names by its path: only what the deliverable's people have, and what it judges by. Lane's adapter of the rules reads it for the start's steps.",
+ "type": "object",
+ "required": [
+  "goal",
+  "deliverable",
+  "judges_by",
+  "worktree",
+  "round",
+  "trial"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "goal": {
+   "description": "The design tree's goal: the end the user is after, and what its people do once it holds.",
+   "type": "string",
+   "minLength": 1
+  },
+  "deliverable": {
+   "description": "The deliverable that the people use.",
+   "type": "object",
+   "required": [
+    "name",
+    "path"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "name": {
+     "type": "string",
+     "minLength": 1
+    },
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "more_paths": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1
+    }
+   }
+  },
+  "judges_by": {
+   "description": "The goal and the critical success factors of the deliverable's kind's best practice, each condition with its id, about, and what alone, without its practice.",
+   "type": "object"
+  },
+  "worktree": {
+   "description": "The run's worktree, from the folder that the conversation works in, of which repository.py trial makes the folder of the people's starting state.",
+   "type": "string",
+   "minLength": 1
+  },
+  "round": {
+   "description": "The Round's folder, from the folder that the conversation works in, where the role writes its result.",
+   "type": "string",
+   "minLength": 1
+  },
+  "trial": {
+   "description": "The folder of the people's starting state, named by the Round, which repository.py trial makes and the evaluator tries the deliverable in.",
+   "type": "string",
+   "minLength": 1
+  }
+ }
+}

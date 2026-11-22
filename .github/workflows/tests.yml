@@ -1,23 +1,60 @@
-name: tests
+name: Tests
 
 on: push
 
+# The tests only read the repository, so the token the workflow gives them can change nothing.
+permissions:
+  contents: read
+  actions: read
+
+# A push stops the run of the push before it on the same branch, as the newer run checks all it
+# would have: what changed since the last commit whose run passed.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  tests:
-    # Python 3.9 runs on Ubuntu 24.04, as setup-python has no 3.9 for Ubuntu 26.04, which
-    # `ubuntu-latest` now is.
-    runs-on: ubuntu-24.04
+  # The oldest Python that users run and the newest, as Python 3.9 and
+  # the standard library of `dev/plugin-development-guide.md` says. 3.9 runs on Ubuntu 24.04, as
+  # setup-python has no 3.9 for Ubuntu 26.04, which `ubuntu-latest` now is.
+  check:
+    strategy:
+      matrix:
+        include:
+          - python: "3.9"
+            os: ubuntu-24.04
+          - python: "3.x"
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      - id: python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.9"
-      - run: pip install "coverage>=7.10"
-      # Each plugin keeps its tests in dev/<plugin>/tests/ (.claude/rules/plugin.md).
-      - run: |
-          for tests in dev/*/tests; do
-            plugin="${tests#dev/}"
-            coverage run --source="${plugin%/tests}" -m unittest discover -s "$tests"
-          done
-      - run: coverage combine
-      - run: coverage report
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - env:
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: uv sync --locked ${{ matrix.python == '3.x' && '--group test-quality' || '' }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      # This step installs Claude Code and Mermaid for dev/scripts/check.sh from their lock, with
+      # install scripts off except Claude Code's own, which only links its binary.
+      - working-directory: dev/scripts
+        run: |
+          npm ci --ignore-scripts
+          node node_modules/@anthropic-ai/claude-code/install.cjs
+          echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: uv run --no-sync sh dev/scripts/check.sh
+
+  # What main requires: every job passed. The prose checks run in Lint, which lovaizu/repofiles
+  # puts.
+  tests:
+    needs: [check]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          CHECKED: ${{ needs.check.result }}
+        run: '[ "$CHECKED" = success ]'

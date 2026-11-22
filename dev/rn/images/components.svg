@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580">
+  <title>rn&#x27;s components</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .lane { fill: #ddf4ff; stroke: #54aeff; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .lane { fill: #0c2d6b; stroke: #4493f8; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="960" height="580"/>
+  <rect class="frame" x="230" y="230" width="480" height="170" rx="10"/>
+  <text class="frame-name" x="246" y="252">round: one making and judging of a deliverable</text>
+  <rect class="box" x="40" y="50" width="180" height="80" rx="6"/>
+  <text class="name" x="130.0" y="95.0">user</text>
+  <rect class="box" x="340" y="50" width="240" height="80" rx="6"/>
+  <text class="name" x="460.0" y="86.0">orchestrator</text>
+  <text class="kind" x="460.0" y="106.0">[prompt]</text>
+  <rect class="store" x="700" y="50" width="200" height="80" rx="6"/>
+  <text class="name" x="800.0" y="95.0">design tree</text>
+  <rect class="box" x="260" y="290" width="180" height="80" rx="6"/>
+  <text class="name" x="350.0" y="326.0">generator</text>
+  <text class="kind" x="350.0" y="346.0">[prompt]</text>
+  <rect class="box" x="500" y="290" width="180" height="80" rx="6"/>
+  <text class="name" x="590.0" y="326.0">evaluator</text>
+  <text class="kind" x="590.0" y="346.0">[prompt]</text>
+  <rect class="store" x="380" y="480" width="180" height="70" rx="6"/>
+  <text class="name" x="470.0" y="520.0">best practice</text>
+  <path class="line" d="M220,75 L340,75" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="280" y="66">request, answers, /rn:ty</text>
+  <path class="line" d="M340,105 L220,105" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="280" y="124">points, sign-offs</text>
+  <path class="line" d="M580,90 L700,90" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="640" y="81">reviews and edits</text>
+  <path class="line" d="M410,130 L350,290" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="368" y="200">starts, with its Cut</text>
+  <path class="line" d="M510,130 L590,290" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="572" y="200">starts, with its Cut</text>
+  <path class="line dashed" d="M470,230 L470,130" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="478" y="168">done, with the Round</text>
+  <path class="line" d="M350,370 L430,480" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="372" y="438">makes by</text>
+  <path class="line" d="M590,370 L510,480" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="568" y="438">judges by</text>
+  <rect class="box" x="750" y="290" width="170" height="80" rx="6"/>
+  <text class="name" x="835.0" y="326.0">scripts</text>
+  <text class="kind" x="835.0" y="346.0">[script]</text>
+  <path class="line" d="M580,120 L790,290" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="742" y="232">runs</text>
+  <path class="line" d="M710,330 L750,330" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="730" y="321">run</text>
+  <path class="line" d="M860,290 L860,130" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="868" y="214">commits</text>
+  <text class="label" x="740" y="440">Legend</text>
+  <rect class="box" x="740" y="452" width="22" height="16" rx="3"/>
+  <text class="label small" x="772" y="465">a role</text>
+  <rect class="store" x="740" y="478" width="22" height="16" rx="3"/>
+  <text class="label small" x="772" y="491">a store of data</text>
+  <rect class="frame" x="740" y="504" width="22" height="16" rx="3"/>
+  <text class="label small" x="772" y="517">a round</text>
+  <path class="line dashed" d="M740,538 L762,538" marker-end="url(#arrow)"/>
+  <text class="label small" x="772" y="542">a result handed back</text>
+</svg>

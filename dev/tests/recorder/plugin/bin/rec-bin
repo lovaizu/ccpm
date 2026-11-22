@@ -1,0 +1,3 @@
+#!/bin/sh
+# Prints where the shell found this command, which shows that the plugin's bin/ is on the PATH.
+echo "rec-bin ran from $0"
