@@ -45,7 +45,6 @@ MARKER = "DELETE_TEMPLATE_COMMENT"
 # The key by which a template in JSON is a JSON Schema of the deliverable.
 SCHEMA = "$schema"
 NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
-MARK = re.compile(r"^(?:> " + MARKER + r":|\s*\"" + MARKER + r"\"\s*:)", re.MULTILINE)
 QUESTION = re.compile(r"\bN\d+\b")
 # An item named in a text, by its condition's ID and its place, such as N6.2.
 ITEM = re.compile(r"\b(N\d+)\.(\d+)\b")
@@ -91,11 +90,6 @@ def sections(template: str) -> list[str]:
     before = NOTE.sub("", template[: first.start() if first else len(template)])
     said = [line for line in before.splitlines()[1:] if line.strip()]
     return ([OPENING] if said else []) + SECTION.findall(template)
-
-
-def notes_left(text: str) -> list[int]:
-    """The number of each line of the text that opens a note of a template, left unwritten."""
-    return [text.count("\n", 0, m.start()) + 1 for m in MARK.finditer(text)]
 
 
 # A section of a template, by the names of the sections it lies in and its own, from the top: one

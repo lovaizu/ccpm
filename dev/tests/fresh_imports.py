@@ -8,23 +8,6 @@ import contextlib
 import sys
 from collections.abc import Collection, Generator
 
-# The modules of Lane's guard, by name, as the guard that the earlier Lane laid in a plugin holds
-# them in its hooks/lane/domain/.
-GUARD = (
-    "events",
-    "guard",
-    "place",
-    "runs",
-    "run_record",
-    "form",
-    "adapters",
-    "answers",
-    "script_calls",
-    "lanes",
-    "manifest",
-    "marks",
-)
-
 
 @contextlib.contextmanager
 def without(names: Collection[str]) -> Generator[None, None, None]:

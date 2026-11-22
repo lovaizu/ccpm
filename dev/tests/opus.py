@@ -1,16 +1,12 @@
-"""How the plugins' prompt and E2E cases run the real Claude Code on Opus: only on the developer's
-login, a prompt in a folder with the plugins it loads, or a judgment that replies in JSON of a form
-it's given."""
+"""How the plugins' prompt cases run the real Claude Code on Opus: only on the developer's login,
+a prompt in a folder with the plugins it loads."""
 
 from __future__ import annotations
 
-import json
 import os
 import shutil
 import subprocess
-import tempfile
 from collections.abc import Mapping, Sequence
-from typing import Any
 
 import pytest
 
@@ -65,26 +61,6 @@ def prompted(
         check=False,
     )
     return done.stdout
-
-
-def judged(prompt: str, form: Mapping[str, Any]) -> Any:
-    """The JSON that Opus replies with to the prompt, in the form that the JSON Schema gives, run
-    by `claude -p` with a settings folder of its own. The prompt goes on standard input, as the
-    records of a run that a judge reads can pass what the system takes as a command's arguments,
-    such as ARG_MAX's 2 MiB on Linux."""
-    with tempfile.TemporaryDirectory() as config:
-        done = subprocess.run(
-            ["claude", "-p", "--model", "opus", "--output-format", "json"]
-            + ["--json-schema", json.dumps(form)],
-            input=prompt,
-            capture_output=True,
-            text=True,
-            check=True,
-            env=logged_in(dict(os.environ, CLAUDE_CONFIG_DIR=config)),
-        )
-    # Claude Code checks the reply against the form and gives it apart from the reply's text, which
-    # may hold prose around the JSON, braces among it.
-    return json.loads(done.stdout)["structured_output"]
 
 
 def logged_in(env: Mapping[str, str]) -> dict[str, str]:

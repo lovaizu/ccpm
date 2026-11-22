@@ -34,13 +34,6 @@ LANE = os.path.join(TOP, "plugins", "lane")
 # runs in the case's process imports afresh from the bench's copy.
 RN_MODULES = ("fault", "practice", "tree", "rounds", "check", "repository", "template")
 
-# Why each integration case fails now, as the plugin guide's A case of a part not yet built says.
-NOT_BUILT = (
-    "rn's bodies raise NotImplementedError, and Lane doesn't yet give a main conversation the steps"
-    " of each turn, or a checklist's items from a command, as"
-    " plugins/lane/docs/rules-and-adapters.md defines them"
-)
-
 
 @contextmanager
 def rn_of_the_bench() -> Iterator[None]:

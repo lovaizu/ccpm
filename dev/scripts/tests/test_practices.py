@@ -320,25 +320,6 @@ class Sections(unittest.TestCase):
         self.assertEqual(practices.sections(text), ["the opening", "Roles"])
 
 
-class NotesLeft(unittest.TestCase):
-    def test_a_note_of_a_markdown_template_by_its_line(self):
-        text = "# t\n\n> [!NOTE]\n> DELETE_TEMPLATE_COMMENT:\n> - <slot>: what.\n"
-        self.assertEqual(practices.notes_left(text), [4])
-
-    def test_a_note_of_a_json_template_by_its_key(self):
-        text = '{\n "goal": "g",\n "x": {\n  "DELETE_TEMPLATE_COMMENT": "y"\n }\n}'
-        self.assertEqual(practices.notes_left(text), [4])
-
-    def test_lines_counted_from_a_first_line_that_is_blank(self):
-        text = "\n> [!NOTE]\n> DELETE_TEMPLATE_COMMENT: what.\n"
-        self.assertEqual(practices.notes_left(text), [3])
-
-    def test_the_marker_named_in_a_sentence_is_no_note(self):
-        steps = '{"steps": ["Open each note with `DELETE_TEMPLATE_COMMENT:`."]}'
-        text = steps + "\nSay > DELETE_TEMPLATE_COMMENT:"
-        self.assertEqual(practices.notes_left(text), [])
-
-
 class Keys(unittest.TestCase):
     """keys, the sections of a template in JSON: each key at any depth, by its path from the top."""
 
