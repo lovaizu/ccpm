@@ -464,33 +464,27 @@
           "decisions": [
             {
               "about": "The issues that the release judges",
-              "decided": null,
-              "by": null
+              "decided": null
             },
             {
               "about": "The description of pull request #66",
-              "decided": null,
-              "by": null
+              "decided": null
             },
             {
               "about": "A walkthrough run with the user's own permission settings",
-              "decided": null,
-              "by": null
+              "decided": null
             },
             {
               "about": "The rules of dev.md that hold until rn is released, and this design tree, after the merge",
-              "decided": null,
-              "by": null
+              "decided": null
             },
             {
               "about": "A second refactor Round after a content Round that follows one",
-              "decided": null,
-              "by": null
+              "decided": null
             },
             {
               "about": "The recorder's scenarios that a module-wide xfail hides",
-              "decided": null,
-              "by": null
+              "decided": null
             }
           ]
         },
