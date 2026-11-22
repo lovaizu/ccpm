@@ -511,7 +511,9 @@ def test_a_first_put_up_opens_the_pull_request_as_a_draft(tmp_path: Any, host: A
 # ready
 
 
-@pytest.mark.supports("test_the_last_signoff_marks_the_pull_request_ready")
+@pytest.mark.supports(
+    "test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready"
+)
 def test_ready_marks_the_pull_request_of_the_works_branch_ready(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -524,7 +526,9 @@ def test_ready_marks_the_pull_request_of_the_works_branch_ready(
     assert host.ran[-1] == (["gh", "pr", "ready", f"rn-{NAME}"], worktree(run))
 
 
-@pytest.mark.supports("test_the_last_signoff_marks_the_pull_request_ready")
+@pytest.mark.supports(
+    "test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready"
+)
 def test_ready_where_gh_fails_is_missing_with_what_gh_said(tmp_path: Any, host: Any, gh_state: str):
     """Given a run whose plan was put up, and gh then with no login
     When ready is given the run

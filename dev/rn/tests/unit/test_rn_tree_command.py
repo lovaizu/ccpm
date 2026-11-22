@@ -2,10 +2,11 @@
 pointer and without, of none, one, and two changes; `commit` of a change in form, of one out of it,
 and of none; `cut` for each role and each thing a deliverable waits on, a new Round and the last
 one again, the Round that a pause stopped, and a stage at its limit with its findings kept;
-`signoff` of the plan, of a deliverable with its findings left, and of none waiting, marking the
-pull request ready only by the sign-off that leaves each deliverable done, and refused with what gh
-said where gh fails at it, the tree as it was; a run's folder
-out of its form or with no design tree; and arguments other than the usage's. Each runs in the
+`signoff` of the plan, of a deliverable with its findings left, of the last, asking gh nothing,
+and of none waiting; `commit` of a tree leaving a deliverable open, pushing nothing, and of each
+deliverable done, pushing the branch and then marking the pull request ready, refused where origin
+is missing or gh fails, and mended by its run again; a run's folder out of its form or with no
+design tree; and arguments other than the usage's. Each runs in the
 user's repository, the run's worktree a git worktree on the work's branch, with a host that runs
 git for real."""
 
@@ -621,59 +622,149 @@ def readied(gh_state: str) -> list[list[str]]:
     return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "ready"]]
 
 
-@pytest.mark.supports("test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open")
-def test_signoff_that_leaves_a_deliverable_open_marks_no_pull_request_ready(
-    tmp_path: Any, host: Any, gh_state: str
-):
-    """Given the walkthrough's run whose command waits for sign-off and whose guide is open, its
-    pull request open
-    When tree.py signoff runs
-    Then it gives 0, and gh was asked to mark no pull request ready"""
-    r = left_past(str(tmp_path))
-    opened_pr(gh_state)
-    assert r.main(host, "signoff", r.run)[0] == 0
-    assert readied(gh_state) == []
-
-
-@pytest.mark.supports("test_the_last_signoff_marks_the_pull_request_ready")
-def test_signoff_that_leaves_each_deliverable_done_marks_the_pull_request_ready(
+@pytest.mark.supports(
+    "test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch"
+)
+def test_signoff_that_leaves_each_deliverable_done_writes_it_asking_gh_nothing(
     tmp_path: Any, host: Any, gh_state: str
 ):
     """Given the walkthrough's run whose plan and guide are done, and whose command waits for
     sign-off, its pull request open
     When tree.py signoff runs
-    Then it gives 0 printing the tree's path, each deliverable is done, and gh was asked once, in
-    the run's worktree, to mark rn-<name>'s pull request ready"""
+    Then it gives 0 printing the tree's path, each deliverable is done, the branch holds no new
+    commit, and gh was asked nothing, as the commit marks the pull request ready"""
     r = all_but_command(str(tmp_path))
     opened_pr(gh_state)
+    before = r.head()
     code, out, err = r.main(host, "signoff", r.run)
     assert (code, err) == (0, "")
     assert os.path.normpath(os.path.join(r.repo, out.strip())) == r.tree_path
     assert [each["status"] for each in r.tree()["deliverables"]] == ["done", "done", "done"]
-    assert [(argv, cwd) for argv, cwd in host.ran if argv[:3] == ["gh", "pr", "ready"]] == [
-        (["gh", "pr", "ready", BRANCH], r.worktree)
+    assert r.head() == before
+    assert gh_double.state(gh_state)["asked"] == []
+
+
+# commit of each deliverable done
+
+
+def signed_last(tmp: str, host: Any, gh_state: str, origin: bool = True) -> Run:
+    """The run of `all_but_command` with its command signed off by tree.py signoff, each
+    deliverable done in the tree not yet committed, its pull request open, and the repository
+    given a remote origin where `origin`."""
+    r = all_but_command(tmp)
+    if origin:
+        rn_files.with_origin(r.repo, os.path.join(tmp, "origin.git"))
+    opened_pr(gh_state)
+    assert r.main(host, "signoff", r.run)[0] == 0
+    return r
+
+
+def pushed(tmp: str) -> str:
+    """The hash that origin's work branch holds, or the empty string where it holds none."""
+    origin = os.path.join(tmp, "origin.git")
+    return git(origin, "branch", "--list", "--format=%(objectname)", BRANCH).strip()
+
+
+def sent(host: Any) -> list[tuple[list[str], str]]:
+    """Each push and each `gh pr ready` that the host ran, in order, with its folder."""
+    return [
+        (argv, cwd)
+        for argv, cwd in host.ran
+        if argv[:2] == ["git", "push"] or argv[:3] == ["gh", "pr", "ready"]
     ]
 
 
-@pytest.mark.supports("test_the_last_signoff_marks_the_pull_request_ready")
-def test_signoff_whose_ready_gh_refuses_gives_1_with_what_gh_said_leaving_the_tree(
+@pytest.mark.supports("test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open")
+def test_commit_that_leaves_a_deliverable_open_pushes_nothing_and_marks_no_pull_request_ready(
     tmp_path: Any, host: Any, gh_state: str
 ):
-    """Given the walkthrough's run whose plan and guide are done, and whose command waits for
-    sign-off, its pull request open, and gh then with no login
-    When tree.py signoff runs
-    Then it gives 1 with what gh said, that no GitHub host is logged into, and the tree is as it
-    was, so that signoff runs again once gh is mended"""
-    r = all_but_command(str(tmp_path))
+    """Given the walkthrough's run with a remote origin, whose command was signed off by tree.py
+    signoff and whose guide is open, its pull request open
+    When tree.py commit runs with the ground
+    Then it gives 0 printing the new commit's hash, origin holds no work branch, and gh was asked
+    to mark no pull request ready"""
+    r = left_past(str(tmp_path))
+    rn_files.with_origin(r.repo, os.path.join(str(tmp_path), "origin.git"))
     opened_pr(gh_state)
+    assert r.main(host, "signoff", r.run)[0] == 0
+    code, out, err = r.main(host, "commit", r.run, "The user signs it off.")
+    assert (code, out, err) == (0, f"{r.head()}\n", "")
+    assert pushed(str(tmp_path)) == ""
+    assert sent(host) == []
+
+
+@pytest.mark.supports(
+    "test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready"
+)
+def test_commit_that_leaves_each_deliverable_done_pushes_it_then_marks_the_pull_request_ready(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given the walkthrough's run with a remote origin, whose last deliverable was signed off by
+    tree.py signoff, its pull request open
+    When tree.py commit runs with the ground
+    Then it gives 0 printing the new commit's hash, which origin's work branch holds, and the
+    host pushed rn-<name> and then asked gh to mark its pull request ready, in the run's worktree"""
+    r = signed_last(str(tmp_path), host, gh_state)
+    before = r.head()
+    code, out, err = r.main(host, "commit", r.run, "The user signs it off.")
+    assert (code, err) == (0, "")
+    assert out == f"{r.head()}\n" and r.head() != before
+    assert pushed(str(tmp_path)) == r.head()
+    assert sent(host) == [
+        (["git", "push", "-q", "-u", "origin", BRANCH], r.worktree),
+        (["gh", "pr", "ready", BRANCH], r.worktree),
+    ]
+
+
+@pytest.mark.supports(
+    "test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready"
+)
+def test_commit_of_each_deliverable_done_with_no_origin_gives_1_and_its_run_again_mends_it(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given the walkthrough's run with no remote origin, whose last deliverable was signed off by
+    tree.py signoff, its pull request open
+    When tree.py commit runs, then origin is added, and tree.py commit runs again
+    Then the first gives 1 saying the repository has no remote origin, the tree committed and gh
+    asked to mark nothing ready; the second gives 0 printing the same hash, which origin's work
+    branch holds, and gh was asked once to mark the pull request ready"""
+    r = signed_last(str(tmp_path), host, gh_state, origin=False)
+    refused(r.main(host, "commit", r.run, "The user signs it off."), "no remote origin")
+    committed = r.head()
+    assert git(r.worktree, "status", "--porcelain", "--", r.tree_path).strip() == ""
+    assert readied(gh_state) == []
+    rn_files.with_origin(r.repo, os.path.join(str(tmp_path), "origin.git"))
+    assert r.main(host, "commit", r.run, "The user signs it off.") == (0, f"{committed}\n", "")
+    assert pushed(str(tmp_path)) == committed
+    assert readied(gh_state) == [["gh", "pr", "ready", BRANCH]]
+
+
+@pytest.mark.supports(
+    "test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready"
+)
+def test_commit_of_each_deliverable_done_whose_ready_gh_refuses_gives_1_and_its_run_again_mends_it(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given the walkthrough's run with a remote origin, whose last deliverable was signed off by
+    tree.py signoff, its pull request open, and gh then with no login
+    When tree.py commit runs, then gh is logged in again, and tree.py commit runs again
+    Then the first gives 1 with what gh said, that no GitHub host is logged into, the commit
+    pushed; the second gives 0 printing the same hash, and gh was asked again to mark the pull
+    request ready"""
+    r = signed_last(str(tmp_path), host, gh_state)
     gh_double.logged_out(gh_state)
-    before = r.tree()
     refused(
-        r.main(host, "signoff", r.run),
+        r.main(host, "commit", r.run, "The user signs it off."),
         "gh may not mark the pull request ready",
         "not logged into any GitHub hosts",
     )
-    assert r.tree() == before
+    committed = r.head()
+    assert pushed(str(tmp_path)) == committed
+    kept = gh_double.state(gh_state)
+    kept["logged_in"] = True
+    gh_double.keep(gh_state, kept)
+    assert r.main(host, "commit", r.run, "The user signs it off.") == (0, f"{committed}\n", "")
+    assert readied(gh_state) == [["gh", "pr", "ready", BRANCH]] * 2
 
 
 # The run's folder

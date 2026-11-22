@@ -44,13 +44,12 @@ def pause(run: RunPlace, host: Host) -> str:
     Takes: the run, and the host.
     Gives: the hash of the commit that the branch's remote now holds.
     Changes: commits each change in the run's worktree, the run's folder and the deliverables'
-    files, as `rn: paused <name>`, where there's one, and pushes the work's branch to `origin`,
-    setting it upstream.
-    Refuses: Missing where the repository has no remote `origin`, or the push is refused for want
-    of a login or a permission, with what git said; CantRun where git fails otherwise.
+    files, as `rn: paused <name>`, where there's one, and pushes the work's branch, as `push`
+    does.
+    Refuses: as `push` refuses; CantRun where git fails otherwise.
     """
     _commit_all(run, f"rn: paused {run.name}", host)
-    return _push(run, host)
+    return push(run, host)
 
 
 def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
@@ -81,7 +80,7 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
     tree = form.read(run.tree)
     node = form.deliverable(tree, deliverable)
     _commit_all(run, f"rn: {node['name']}", host)
-    _push(run, host)
+    push(run, host)
     shown = host(["gh", "pr", "view", run.branch, "--json", "url"], run.worktree)
     if shown.code == 0:
         url = json.loads(shown.out)["url"]
@@ -110,7 +109,7 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
         tree["context"]["pr"] = url
         form.write(run.tree, tree)
         _commit_all(run, f"rn: the pull request of {run.name}", host)
-        _push(run, host)
+        push(run, host)
     return f"{url}/files"
 
 
@@ -146,8 +145,15 @@ def _commit_all(run: RunPlace, message: str, host: Host) -> None:
         _git(host, run, "commit", "-q", "-m", message)
 
 
-def _push(run: RunPlace, host: Host) -> str:
-    """Pushes the work's branch to origin, setting it upstream, and gives the hash it holds."""
+def push(run: RunPlace, host: Host) -> str:
+    """Pushes the work's branch to origin.
+
+    Takes: the run, and the host.
+    Gives: the hash of the commit that the branch's remote now holds.
+    Changes: pushes the work's branch to `origin`, setting it upstream.
+    Refuses: Missing where the repository has no remote `origin`, or the push is refused for want
+    of a login or a permission, with what git said; CantRun where git fails otherwise.
+    """
     if host(["git", "remote", "get-url", "origin"], run.worktree).code != 0:
         raise Missing("the repository has no remote origin to push the run's work to; add one")
     pushed = host(["git", "push", "-q", "-u", "origin", run.branch], run.worktree)

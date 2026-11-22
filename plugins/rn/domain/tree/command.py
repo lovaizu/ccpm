@@ -47,15 +47,17 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `commit <run> <ground>`: where `tree.checks.faults` finds none, commits the design tree as
       `push.commit` does with `<ground>` as the message, and gives 0 printing the hash; else 1
       with the first fault, git left as it was; 0 printing the last commit's hash, committing
-      nothing, where the tree has no change since it.
+      nothing, where the tree has no change since it. Where the tree holds each deliverable done,
+      it then pushes the work's branch, as `push.push` does, and marks the pull request ready, as
+      `push.ready` does, even where it committed nothing, so that where git or gh refuses, as
+      those two say, the commit kept, a run again once the cause is mended pushes and marks it.
     - `cut <run> <role> <deliverable>`, `<role>` `generator` or `evaluator`: writes the role's Cut
       in the Round that `rounds.course.next_of` gives the deliverable, made anew where the
       generator starts a new Round, and gives 0 printing the Cut's path from `cwd`; 1 where the
       deliverable waits on another role, the user, or the orchestrator, saying which.
     - `signoff <run>`: writes the tree that `tree.signoff.signed_off` gives for the deliverable
-      that `tree.signoff.waiting` names, and gives 0 printing its path; 1 where none waits. Where
-      that tree holds each deliverable done, it first marks the pull request ready, as
-      `push.ready` does, and gives 1 with what gh said, the tree as it was, where gh refuses.
+      that `tree.signoff.waiting` names, and gives 0 printing its path; 1 where none waits. It
+      commits and pushes nothing, as `commit` does once the tree is reviewed.
 
     `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `tree.py: <what's wrong>`
     where the input is Wrong or something is Missing, saying how to mend it; 2 with what stopped it
@@ -94,9 +96,16 @@ def _commit(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: H
     if found:
         return 1, "", f"tree.py: {found[0]}\n"
     path = os.path.relpath(run.tree, run.worktree)
-    if not host(["git", "status", "--porcelain", "--", path], run.worktree).out.strip():
-        return 0, f"{host(['git', 'rev-parse', 'HEAD'], run.worktree).out.strip()}\n", ""
-    return 0, f"{push.commit(run, [path], given[0], host)}\n", ""
+    if host(["git", "status", "--porcelain", "--", path], run.worktree).out.strip():
+        made = push.commit(run, [path], given[0], host)
+    else:
+        made = host(["git", "rev-parse", "HEAD"], run.worktree).out.strip()
+    # Pushed and marked ready even where nothing was new to commit, so that a run again after a
+    # refusal of git or gh pushes and marks it ready.
+    if all(node["status"] == "done" for node in tree["deliverables"]):
+        push.push(run, host)
+        push.ready(run, host)
+    return 0, f"{made}\n", ""
 
 
 def _cut(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
@@ -139,12 +148,7 @@ def _signoff(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: 
     waiting = signoff.waiting(tree, nexts)
     if waiting is None:
         return 1, "", "tree.py: no deliverable waits for the user's sign-off\n"
-    signed = signoff.signed_off(tree, waiting)
-    # Marked ready before the tree is written, so that a refusal of gh leaves the sign-off to run
-    # again once gh is mended.
-    if all(node["status"] == "done" for node in signed["deliverables"]):
-        push.ready(run, host)
-    form.write(run.tree, signed)
+    form.write(run.tree, signoff.signed_off(tree, waiting))
     return 0, f"{os.path.relpath(run.tree, cwd)}\n", ""
 
 

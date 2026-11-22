@@ -530,8 +530,12 @@ def test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_request
 def test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open(b: Bench):
     """Given a run whose plan and command were put up and signed off, the guide still open
     When the guide's generator starts
-    Then gh was asked to open the pull request once, as a draft, and never to mark it ready"""
+    Then the commit of the command's sign-off is the branch's last, origin's branch doesn't hold
+    it, and gh was asked to open the pull request once, as a draft, and never to mark it ready"""
     command_signed(b)
+    branch = f"rn-{b.name()}"
+    assert log(b, branch)[0] == "The user signs it off."
+    assert git(b.origin, "rev-parse", branch) != git(b.worktree, "rev-parse", "HEAD")
     asked = b.asked_gh()
     created = [each for each in asked if each[1:3] == ["pr", "create"]]
     assert len(created) == 1
@@ -540,11 +544,12 @@ def test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open(b: Benc
 
 
 @pytest.mark.supports("S1", "Design tree")
-def test_the_last_signoff_marks_the_pull_request_ready(b: Bench):
+def test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready(b: Bench):
     """Given a run whose plan and command are done, and whose guide was judged good, refactored,
     and put up
-    When the user signs the guide off and the orchestrator records it
-    Then gh was asked once to mark the work's branch's pull request ready, after it opened it"""
+    When the user signs the guide off, and the orchestrator records it and commits the change
+    Then origin's branch holds the commit of the sign-off, its tree with each deliverable done,
+    and gh was asked once to mark the work's branch's pull request ready, after it opened it"""
     c, generator = command_signed(b)
     generated(b, c, generator)
     _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
@@ -553,9 +558,14 @@ def test_the_last_signoff_marks_the_pull_request_ready(b: Bench):
     generated(b, c, generator)
     put_up(b, c, GUIDE, rn_files.conditions("readme"))
     signed(b, c)
+    branch = f"rn-{b.name()}"
+    assert git(b.origin, "rev-parse", branch) == git(b.worktree, "rev-parse", "HEAD")
+    assert git(b.origin, "log", "-1", "--format=%s", branch).strip() == "The user signs it off."
+    pushed = json.loads(git(b.origin, "show", f"{branch}:.rn/{b.name()}/design-tree.json"))
+    assert [each["status"] for each in pushed["deliverables"]] == ["done", "done", "done"]
     asked = [each for each in b.asked_gh() if each[1:3] in (["pr", "create"], ["pr", "ready"])]
     assert [each[2] for each in asked] == ["create", "ready"]
-    assert asked[1] == ["gh", "pr", "ready", f"rn-{b.name()}"]
+    assert asked[1] == ["gh", "pr", "ready", branch]
 
 
 @pytest.mark.supports("S1", "Round")
