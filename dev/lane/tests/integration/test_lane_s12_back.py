@@ -56,8 +56,8 @@ def test_an_end_after_going_back_is_stopped_with_the_step_gone_back_to(b: Bench)
     answer = gone_back(b).end("Done.")[0]
     assert answer.blocked
     assert answer.said == (
-        "You end before the step `write` of log:writer is done.\n"
-        "Do it and mark it done with lane-step write."
+        "You end before the result of the step `write` of log:writer is made.\n"
+        "Make it, then record it with lane-step write."
     )
 
 

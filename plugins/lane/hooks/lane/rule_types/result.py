@@ -17,8 +17,8 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Gives: the step's sentence and the results it may give, offered with the last two joined by
     `or`, where the start gave no result or one
     that neither the rule's `results` nor its `ends` name; for a rule that names only `ends`, the
-    sentence tells the AI to mark the step done, and says that those results end the start only
-    where it can't go on; None where it gave one of them.
+    sentence tells the AI to make the step's result, then record it, and says that those results
+    end the start only where it can't go on; None where it gave one of them.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -27,8 +27,8 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
         return None
     if not results:
         return (
-            f"You're at the step `{step['name']}` of {move.role}, whose work isn't done.\n"
-            f"Do it and mark it done with lane-step {step['name']}; give"
+            f"You're at the step `{step['name']}` of {move.role}, whose result isn't made.\n"
+            f"Make it, then record it with lane-step {step['name']}; give"
             f" {listed(ends, 'or')} with lane-result only where you can't go on."
         )
     return (

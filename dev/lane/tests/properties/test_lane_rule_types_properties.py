@@ -276,8 +276,8 @@ def test_a_step_is_held_to_each_step_before_it_by_the_writers_own_marks(
     assert order.judge_mark(step["rules"][0], step, marking) == expected
     end = move("end", e.ended(WRITER), steps, entries, step=step["name"])
     undone = step["name"] not in done and (
-        f"You end before the step `{step['name']}` of log:writer is done.\n"
-        f"Do it and mark it done with lane-step {step['name']}."
+        f"You end before the result of the step `{step['name']}` of log:writer is made.\n"
+        f"Make it, then record it with lane-step {step['name']}."
     )
     assert order.judge_end(step["rules"][0], step, end) == (undone or None)
 

@@ -34,13 +34,14 @@ def judge_end(rule: Rule, step: Step, move: Move) -> str | None:
     Takes: the rule, the step it belongs to, and the move: the end of the move's start, with its
     marks that the run record holds, rule_types asking it only of the steps before the one at
     which a result that ends the start lets it end.
-    Gives: the step's sentence, where the step isn't marked done; None where it is.
+    Gives: the step's sentence, which names the step whose result isn't made yet and tells the AI
+    to make it, then record it, where the step isn't marked done; None where it is.
     Changes: nothing.
     Refuses: nothing.
     """
     if step["name"] in move.done.steps:
         return None
     return (
-        f"You end before the step `{step['name']}` of {move.role} is done.\n"
-        f"Do it and mark it done with lane-step {step['name']}."
+        f"You end before the result of the step `{step['name']}` of {move.role} is made.\n"
+        f"Make it, then record it with lane-step {step['name']}."
     )

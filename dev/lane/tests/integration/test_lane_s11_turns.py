@@ -14,7 +14,16 @@ from __future__ import annotations
 
 import pytest
 from claude_code import Agent, Conversation
-from lane_bench import Bench, opened, reached, started, steps_by_turn, written
+from lane_bench import (
+    TAG_WRITES,
+    UP_UNDONE,
+    Bench,
+    opened,
+    reached,
+    started,
+    steps_by_turn,
+    written,
+)
 
 # The note that TURN_ADAPTER gives the run's first turn to write, from the run's words.
 FIRST_NOTE = ".log/1.2.0.md"
@@ -29,15 +38,6 @@ def writes(paths: str, file: str) -> str:
     )
 
 
-# The sentence of the main conversation's write of notes.txt at the step `tag` of log:tag, which
-# writes nothing.
-TAG_WRITES = (
-    "You're at the step `tag` of log:tag, which writes nothing.\nLeave notes.txt unwritten."
-)
-# The sentence of the main conversation's turn's end before its step `up` of log:up is done.
-UP_UNDONE = (
-    "You end before the step `up` of log:up is done.\nDo it and mark it done with lane-step up."
-)
 # What the writer replies as it ends, which its task-notification carries to the main conversation.
 WROTE = "Wrote docs/changes/1.2.0.md."
 

@@ -1671,17 +1671,10 @@ def test_an_empty_answer_is_written_as_nothing(g: Play, event: str):
 
 FIRST_STEPS: list[Step] = lane_bench.turn_steps([".log/1.2.0.md"])
 NOTIFIED = "<task-notification>Wrote docs/changes/1.2.0.md.</task-notification>"
-# The sentences of the main conversation's write of notes.txt in the run's first turn, and in a
-# turn of log:tag, which writes nothing; and of its turn's end before its step `up` is done.
+# The sentence of the main conversation's write of notes.txt in the run's first turn.
 UP_WRITES = (
     "You're at the step `up` of log:up, which writes only .log/1.2.0.md.\n"
     "Write there instead of notes.txt."
-)
-TAG_WRITES = (
-    "You're at the step `tag` of log:tag, which writes nothing.\nLeave notes.txt unwritten."
-)
-UP_UNDONE = (
-    "You end before the step `up` of log:up is done.\nDo it and mark it done with lane-step up."
 )
 
 
@@ -1772,7 +1765,7 @@ def test_a_notification_before_the_turns_end_is_let_through_begins_no_turn(g: Pl
     g.opened()
     g.started()
     if how == "stopped":
-        assert g(g.e.stop()) == Answer(True, UP_UNDONE)
+        assert g(g.e.stop()) == Answer(True, lane_bench.UP_UNDONE)
         g(g.e.reached(WRITER, "toolu_1"))
     else:
         g(g.e.killed(WRITER, "toolu_1"))
@@ -1791,7 +1784,7 @@ def test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role(g:
     g(g.e.prompt("/log:tag"))
     g(g.e.typed("log:tag"))
     said = g(g.e.write(os.path.join(g.e.cwd, "notes.txt")))
-    assert said == Answer(True, TAG_WRITES)
+    assert said == Answer(True, lane_bench.TAG_WRITES)
     assert entries()[-1] == turn_entry("/log:tag", lane_bench.turn_steps([], "tag"), "log:tag")
 
 
@@ -1935,7 +1928,7 @@ def turn_end(g: Play, step: str | None) -> Move:
             Answer(),
             [{"kind": "turn_ended", "run": "r1"}],
         ),
-        ((START, TIE), "up", Answer(True, UP_UNDONE), []),
+        ((START, TIE), "up", Answer(True, lane_bench.UP_UNDONE), []),
         (
             ({"kind": "mark", "run": "r1", "agent_id": None, "step": "up"},),
             None,

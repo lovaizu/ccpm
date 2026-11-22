@@ -274,6 +274,15 @@ print(json.dumps({"steps": [{"name": name, "rules": rules}]}))
 PER_TURN: Rules = copy.deepcopy(RULES)
 PER_TURN["roles"]["log:up"] = {}
 PER_TURN["roles"]["log:tag"] = {}
+# The sentences of the main conversation's write of notes.txt in a turn of log:tag, which writes
+# nothing, and of its turn's end before the result of its step `up` of log:up is made.
+TAG_WRITES = (
+    "You're at the step `tag` of log:tag, which writes nothing.\nLeave notes.txt unwritten."
+)
+UP_UNDONE = (
+    "You end before the result of the step `up` of log:up is made.\n"
+    "Make it, then record it with lane-step up."
+)
 
 
 def turn_steps(paths: list[str], name: str = "up") -> list[Step]:

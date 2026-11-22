@@ -227,11 +227,11 @@ You're at the step `read` of log:writer, which comes before `write`.
 Do `read` and mark it done with lane-step read first.
 ```
 
-At an end before `write` is done:
+At an end before the result of `write` is made:
 
 ```text
-You end before the step `write` of log:writer is done.
-Do it and mark it done with lane-step write.
+You end before the result of the step `write` of log:writer is made.
+Make it, then record it with lane-step write.
 ```
 
 ### `checklist`
@@ -287,8 +287,8 @@ Give written or blocked with lane-result first.
 For a rule that names only `ends`:
 
 ```text
-You're at the step `write` of log:writer, whose work isn't done.
-Do it and mark it done with lane-step write; give blocked with lane-result only where you can't go on.
+You're at the step `write` of log:writer, whose result isn't made.
+Make it, then record it with lane-step write; give blocked with lane-result only where you can't go on.
 ```
 
 Lane gives the main conversation the start's latest result, and the run moves on by it.

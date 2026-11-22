@@ -138,8 +138,8 @@ WRITE_BEFORE_REPORT = (
     "Do `write` and mark it done with lane-step write first."
 )
 REPORT_UNDONE = (
-    "You end before the step `report` of log:writer is done.\n"
-    "Do it and mark it done with lane-step report."
+    "You end before the result of the step `report` of log:writer is made.\n"
+    "Make it, then record it with lane-step report."
 )
 NOTES_UNREAD = (
     "You're at the step `write` of log:writer, which reads whole NOTES.md.\n"
@@ -1070,20 +1070,20 @@ def test_an_end_with_a_result_of_either_kind_holds_its_rule(e: Events, rule_: Ru
 
 @pytest.mark.supports("test_an_end_with_no_result_is_stopped_with_the_results_it_may_give")
 @pytest.mark.parametrize("entries", [[], [gave("fine")], [gave("unclear", OTHER)]])
-def test_an_end_at_a_step_whose_rule_names_only_results_that_end_the_start_says_to_mark_it(
+def test_an_end_at_a_step_whose_rule_names_only_results_that_end_the_start_says_to_make_its_result(
     e: Events, entries: list[Entry]
 ):
     """Given a rule of results that names only `unclear`, among those that end the start
     When the writer that gave no result, one the rule doesn't name, or none while a2 gave
     `unclear`, ends at its step
-    Then the rule gives the step's sentence, telling it to mark the step done, and naming
-    `unclear` as a result only where it can't go on"""
+    Then the rule gives the step's sentence, telling it to make the step's result and record it,
+    and naming `unclear` as a result only where it can't go on"""
     ends: Rule = {"type": "result", "ends": ["unclear"]}
     step: Step = {"name": "write", "rules": [ends]}
     said = result.judge_end(ends, step, move("end", e.ended(WRITER), *entries))
     assert said == (
-        "You're at the step `write` of log:writer, whose work isn't done.\n"
-        "Do it and mark it done with lane-step write; give unclear with lane-result only where"
+        "You're at the step `write` of log:writer, whose result isn't made.\n"
+        "Make it, then record it with lane-step write; give unclear with lane-result only where"
         " you can't go on."
     )
 
@@ -1101,8 +1101,8 @@ def test_an_end_at_a_step_whose_rule_names_two_results_that_end_the_start_offers
     step: Step = {"name": "write", "rules": [ends]}
     said = result.judge_end(ends, step, move("end", e.ended(WRITER)))
     assert said == (
-        "You're at the step `write` of log:writer, whose work isn't done.\n"
-        "Do it and mark it done with lane-step write; give unclear or blocked with lane-result"
+        "You're at the step `write` of log:writer, whose result isn't made.\n"
+        "Make it, then record it with lane-step write; give unclear or blocked with lane-result"
         " only where you can't go on."
     )
 
@@ -1507,17 +1507,19 @@ def test_a_mark_of_a_step_that_the_role_lacks_holds(e: Events):
 # The order of the rules: an end.
 
 # The sentences of an end of a writer of three steps whose first, `draft`, is undone, or gave no
-# result its rule names; and of the main conversation's end before its step `lead` is done.
+# result its rule names; and of the main conversation's end before the result of its step `lead`
+# is made.
 DRAFT_UNDONE = (
-    "You end before the step `draft` of log:writer is done.\n"
-    "Do it and mark it done with lane-step draft."
+    "You end before the result of the step `draft` of log:writer is made.\n"
+    "Make it, then record it with lane-step draft."
 )
 NO_DRAFTED = (
     "You end the step `draft` of log:writer with no result it may give.\n"
     "Give drafted with lane-result first."
 )
 LEAD_UNDONE = (
-    "You end before the step `lead` of log:up is done.\nDo it and mark it done with lane-step lead."
+    "You end before the result of the step `lead` of log:up is made.\n"
+    "Make it, then record it with lane-step lead."
 )
 
 
@@ -1608,8 +1610,8 @@ def test_an_end_of_a_role_of_no_step_holds(e: Events):
         (
             (mark("draft"), mark("report"), gave("written")),
             (
-                "You end before the step `write` of log:writer is done.\n"
-                "Do it and mark it done with lane-step write."
+                "You end before the result of the step `write` of log:writer is made.\n"
+                "Make it, then record it with lane-step write."
             ),
         ),
         (
