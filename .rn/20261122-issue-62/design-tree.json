@@ -32,13 +32,25 @@
     },
     {
      "id": "N2",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "The plan put to the user",
+       "decided": "The plan put up for sign-off says what is made toward the goal, how the work goes, and why that way is good",
+       "by": "user"
+      }
+     ]
     },
     {
      "id": "N7",
      "good": true,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "Messages to the user",
+       "decided": "Each message to the user speaks of the goal and what is made for it, never of the design tree or rn's steps, which the user has no interest in",
+       "by": "user"
+      }
+     ]
     },
     {
      "id": "N3",
