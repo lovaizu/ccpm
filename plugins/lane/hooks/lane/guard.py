@@ -37,14 +37,14 @@ _Answers = TypeVar("_Answers", bound=Callable[..., Answer])
 
 
 def _checked(answers: _Answers) -> _Answers:
-    """The interface, its answer stopping the call with what's wrong and who fixes it where Lane
-    can't check it, as a plugin's rules out of form or an adapter that failed."""
+    """The interface, its answer stopping nothing and saying what Lane couldn't check and why
+    where Lane can't check the event, as a plugin's rules out of form or an adapter that failed."""
 
     def checked(*taken: object) -> Answer:
         try:
             return answers(*taken)
-        except (OutOfForm, AdapterFailed) as wrong:
-            return Answer(True, str(wrong))
+        except (OutOfForm, AdapterFailed) as couldnt:
+            return Answer(said=str(couldnt))
 
     return cast(_Answers, checked)
 
@@ -60,11 +60,20 @@ def answer(event: Event) -> Answer:
     place.skill_call gives, else of the interface that the move of place.place reaches. An empty
     answer where the event lies outside each run, or its run's plugin gives no rules. The starts
     due that an answer gives, or holds a start to, are those that adapters.starts_due gives for
-    the run once the move is added, none while the run waits.
+    the run once the move is added, none while the run waits; each sentence said once.
     Changes: what each interface it reaches changes.
-    Refuses: nothing; where Lane can't check the event, such as a plugin's rules out of form or an
-    adapter that failed, the answer says why and who fixes that, and stops the call.
+    Refuses: nothing; where Lane can't check the event, such as where the run record can't be
+    read, a plugin's rules are out of form, or an adapter failed, the answer stops nothing for that
+    and says what Lane couldn't check and why.
     """
+    try:
+        return _answered(event)
+    except record.Unread as unread:
+        return Answer(said=str(unread))
+
+
+def _answered(event: Event) -> Answer:
+    """The guard's answer to a hook event, as answer gives it, where the run record can be read."""
     session = event["session_id"]
     answers = [run_opened(event, run) for run in place.opening(event, record.runs(session))]
     # Read again, as an opening adds its run's folder; _placed reads once more, as a turn's
@@ -76,7 +85,7 @@ def answer(event: Event) -> Answer:
         answers.append(skill_called(call))
     else:
         answers.append(_placed(event))
-    said = "\n".join(each.said for each in answers if each.said)
+    said = _joined(*dict.fromkeys(each.said for each in answers))
     return Answer(any(each.stop for each in answers), said)
 
 
@@ -130,7 +139,9 @@ def turn_opened(event: Event, turn: Turn) -> Answer:
     `turn` entries, oldest first, which hold the turn's calls, marks, and end until the
     turn's end that the guard lets through.
     Refuses: AdapterFailed, where the plugin's adapter of the rules is missing, fails, or gives out
-    of its form, which answer gives as a stop of the call or the end with what's wrong.
+    of its form, which answer gives as what Lane couldn't check and why, stopping nothing, the
+    event's own move then held to no step, and the turn's next call or end asking the adapter
+    again.
     """
     run = turn.run
     turns: list[adapters.EarlierTurn] = [
@@ -177,15 +188,21 @@ def run_opened(event: Event, run: Run) -> Answer:
     Takes: the event, whose `transcript_path` holds the skill's base directory, and the run with no
     folder.
     Gives: the starts due of the run, where the plugin gives rules; an empty answer where the plugin
-    gives none, or the transcript holds no base directory of the skill yet.
+    gives none, or the transcript holds no base directory of the skill yet; what Lane couldn't
+    check and why, stopping nothing, where the transcript can't be read, a plugin's rules are out
+    of form, or an adapter failed.
     Changes: the run record, by the run's folder, where the transcript gives it.
-    Refuses: nothing; a plugin's rules out of form, or an adapter that failed, stops the event's
-    call with what's wrong.
+    Refuses: nothing.
     """
     try:
         root = plugin_root(event["transcript_path"], run.skill)
     except FileNotFoundError:
         root = None
+    except (OSError, ValueError) as error:
+        return Answer(
+            said=f"Lane couldn't check the run of {run.skill}: its plugin's folder can't be found"
+            f" from {event['transcript_path']}: {error}"
+        )
     if root is None:
         return Answer()
     record.add(run.session_id, [{"kind": "folder", "run": run.id, "plugin_root": root}])
@@ -198,28 +215,29 @@ def start_made(move: Move) -> Answer:
 
     Takes: a `start` move at the PreToolUse of an Agent or SendMessage call, a SendMessage's with
     the role and the prompt of the start it resumes, as place gives them.
-    Gives: an empty answer for a start of a role due; for any other start of the plugin's
-    subagents, or one by a subagent, a stop with the starts due, or, where none is due, with the
-    sentence that no start of the plugin's subagents is due and to go on without it.
+    Gives: an empty answer for a start of a role due, or of the plugin's role where Lane can't
+    check which starts are due; for any other start of the plugin's subagents, or one by a
+    subagent, a stop with the starts due, or, where none is due or Lane can't check which are, with
+    the sentence that no start of the plugin's subagents is due and to go on without it; each
+    saying what Lane couldn't check and why, where an adapter failed.
     Changes: the run record, by the start with its prompt, a resume's with the move's role and
     prompt, and with the steps that adapters.given_steps gives from the prompt, with no turn, where
     start_rules.asks_adapter says the start takes rules from the plugin's adapter of the rules, a
     resume asking it again so that its steps follow what changed while it waited, untied until the
     PostToolUse of its call; each step marked done and each read stay as they stood, as Move.done
-    counts them across the subagent's starts.
-    Refuses: AdapterFailed, where an adapter of the starts due fails, or, for a start that takes
-    its steps from the plugin's adapter of the rules, where that adapter is missing, fails, or gives
-    out of its form, saying that the plugin's author adds or mends lane/adapters/rules.py for the
-    role, which answer gives as a stop of the call with what's wrong.
+    counts them across the subagent's starts; a start whose steps the plugin's adapter of the rules
+    doesn't give, as it is missing, fails, or gives out of its form, with no steps.
+    Refuses: nothing.
     """
     resume = move.event["tool_name"] == "SendMessage"
     role = move.role if resume else move.event["tool_input"].get("subagent_type", "")
-    due = _due(move.run, move.event)
     plugin = move.run.skill.partition(":")[0]
     if role.partition(":")[0] != plugin and move.agent_id is None:
         return Answer()
-    if move.agent_id is not None or not any(s["role"] == role for s in due.get("starts", [])):
-        return Answer(True, _due_said(due) or _none_due(plugin))
+    due, unchecked = _asked(lambda: _due(move.run, move.event))
+    held = due is None or any(s["role"] == role for s in due.get("starts", []))
+    if move.agent_id is not None or not held:
+        return Answer(True, _joined(_due_said(due or {}) or _none_due(plugin), unchecked))
     entry: record.Entry = {
         "kind": "start",
         "run": move.run.id,
@@ -228,14 +246,15 @@ def start_made(move: Move) -> Answer:
         "prompt": move.prompt or "",
     }
     if asks_adapter(_rules(move.run), role):
-        entry["steps"] = adapters.given_steps(
-            _root(move.run),
-            move.event["cwd"],
-            move.run,
-            {"role": role, "prompt": entry["prompt"], "turns": []},
-        )
+        asked: adapters.Asked = {"role": role, "prompt": entry["prompt"], "turns": []}
+        try:
+            entry["steps"] = adapters.given_steps(
+                _root(move.run), move.event["cwd"], move.run, asked
+            )
+        except AdapterFailed as failed:
+            unchecked = _joined(unchecked, str(failed))
     record.add(move.run.session_id, [entry])
-    return Answer()
+    return Answer(said=unchecked)
 
 
 def turn_ended(move: Move) -> Answer:
@@ -249,25 +268,27 @@ def turn_ended(move: Move) -> Answer:
     due, where a start is due and the turn didn't end on a result that a step's `ends` names, as
     rule_types.ended_at_a_step gives it, since that result says the AI can't go on, which no start
     mends; else an answer that stops nothing, saying what Lane couldn't check and why where
-    rule_types.judge_end refuses with Unchecked, and empty where it doesn't.
+    rule_types.judge_end refuses with Unchecked or an adapter of the starts due fails, and empty
+    where neither does.
     Changes: the run record, by dropping each start still untied; and, where the turn's end goes
     through, by an `ended` entry where adapters.starts_due, asked with the turn ended, says the run
     ends, and, where the role takes its steps at each turn, by a `turn_ended` entry, so that the
-    next prompt begins the next turn; a turn's end that it stops goes on in the same turn.
-    Refuses: AdapterFailed, where an adapter of the starts due fails, which answer gives as a stop
-    of the turn's end with what's wrong.
+    next prompt begins the next turn; a turn's end that it stops goes on in the same turn; where
+    an adapter of the starts due fails, no `ended` entry, as Lane can't tell whether the run ends.
+    Refuses: nothing.
     """
     run = _untied_dropped(move.run)
     said, unchecked = _judged(rule_types.judge_end, replace(move, run=run))
     if said is not None:
         return Answer(True, said)
-    due = _due(run, move.event)
-    if due.get("starts") and not rule_types.ended_at_a_step(move):
+    due, couldnt = _asked(lambda: _due(run, move.event))
+    if due is not None and due.get("starts") and not rule_types.ended_at_a_step(move):
         return Answer(True, _due_said(due))
-    _end_if(run, move.event, turn_ended=True)
+    if due is not None:
+        _, couldnt = _asked(lambda: _end_if(run, move.event, turn_ended=True))
     if asks_adapter(_rules(run), move.role):
         record.add(run.session_id, [{"kind": "turn_ended", "run": run.id}])
-    return Answer(said=unchecked)
+    return Answer(said=_joined(unchecked, couldnt))
 
 
 def _untied_dropped(run: Run) -> Run:
@@ -290,16 +311,17 @@ def command_typed(move: Move) -> Answer:
 
     Takes: a `typed` move at the UserPromptExpansion of the command, or at the PostToolUse of its
     Skill call, which place gives while the run of the command's plugin stands.
-    Gives: where the run stands: the starts due once the command is added.
+    Gives: where the run stands: the starts due once the command is added; what Lane couldn't
+    check and why where an adapter of the starts due fails.
     Changes: the run record, by the command.
-    Refuses: AdapterFailed, where an adapter of the starts due fails, which answer gives as a stop
-    of the call with what's wrong.
+    Refuses: nothing.
     """
     command = place.command_of(move.event) or ""
     typed: record.Entry = {"kind": "typed", "run": move.run.id, "command": command}
     record.add(move.run.session_id, [typed])
     run = replace(move.run, entries=[*move.run.entries, typed])
-    return Answer(said=_due_said(_end_if(run, move.event)))
+    due, unchecked = _asked(lambda: _end_if(run, move.event))
+    return Answer(said=_joined(_due_said(due or {}), unchecked))
 
 
 def result_reached(move: Move) -> Answer:
@@ -308,11 +330,11 @@ def result_reached(move: Move) -> Answer:
     Takes: a `result_reached` move at the UserPromptSubmit of the subagent's
     `<task-notification>`.
     Gives: the result, and the starts due after it; the start's role due again, where the order
-    gives it, as a start stopped with no result counts as not made.
+    gives it, as a start stopped with no result counts as not made; what Lane couldn't check and
+    why where an adapter of the starts due fails.
     Changes: the run record, by a `stopped` entry of the subagent's start, where it was stopped
     with no result, such as by TaskStop; else nothing.
-    Refuses: AdapterFailed, where an adapter of the starts due fails, which answer gives as a stop
-    of the call with what's wrong.
+    Refuses: nothing.
     """
     run = move.run
     if "<status>killed</status>" in move.event["prompt"]:
@@ -323,8 +345,9 @@ def result_reached(move: Move) -> Answer:
     else:
         gave = move.done.result
         told = f"{move.role} gave {gave}." if gave else ""
-    due = _end_if(run, move.event)
-    return Answer(said=" ".join(each for each in (told, _due_said(due)) if each))
+    due, unchecked = _asked(lambda: _end_if(run, move.event))
+    said = " ".join(each for each in (told, _due_said(due or {})) if each)
+    return Answer(said=_joined(said, unchecked))
 
 
 def fact_added(move: Move) -> Answer:
@@ -502,6 +525,20 @@ def _end_if(run: Run, event: Event, turn_ended: bool = False) -> StartsDue:
     if due.get("ends"):
         record.add(run.session_id, [{"kind": "ended", "run": run.id}])
     return due
+
+
+def _asked(ask: Callable[[], StartsDue]) -> tuple[StartsDue | None, str]:
+    """The starts due that the call gives, and an empty sentence; or, where an adapter of the starts
+    due fails, None, and what Lane couldn't check and why."""
+    try:
+        return ask(), ""
+    except AdapterFailed as failed:
+        return None, str(failed)
+
+
+def _joined(*said: str) -> str:
+    """The sentences said, one a line, leaving out each empty one."""
+    return "\n".join(each for each in said if each)
 
 
 def _due_said(due: StartsDue) -> str:

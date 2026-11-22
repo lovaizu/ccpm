@@ -35,7 +35,13 @@ folder, at the main conversation's first event after the skill's call.
 ## The rule file
 
 `lane/rules.json` holds each role's steps and, where your plugin fixes its order, its routes. Lane
-holds the file to [rules.schema.json](../hooks/lane/rules.schema.json).
+holds the file to [rules.schema.json](../hooks/lane/rules.schema.json). While the file breaks that
+form, Lane can't check your run's moves, so it lets each through and tells the AI what it couldn't
+check and why:
+
+```text
+Lane couldn't check this move by the plugin's rules: /plugins/log/lane/rules.json leaves the form of Lane's hooks/lane/rules.schema.json, at the top: lacks roles
+```
 
 ### Roles and steps
 
@@ -350,9 +356,20 @@ Lane runs each adapter as a Python file, with the `python3` that runs Lane:
    standard input.
 1. It reads the adapter's output as JSON on standard output, and holds it to the adapter's output
    schema.
-1. Where the adapter exits other than 0, prints no JSON, or gives output out of its form, Lane
-   stops the move at hand, such as a start or a turn's end, with the adapter's path and what went
-   wrong.
+1. Where the adapter can't be run, exits other than 0, prints no JSON, or gives output out of its
+   form, Lane can't check what it asked. It stops nothing for that, and tells the AI what it
+   couldn't check, with the adapter's path and what went wrong.
+
+At a turn's end, for example:
+
+```text
+Lane couldn't check which starts are due: /plugins/log/lane/adapters/starts_due.py failed: no version found
+```
+
+Without the starts due, Lane lets each start of your plugin's subagents by the main conversation
+through, a turn's end through without ending the run, and a command or a result through. Without
+the steps of a start or a turn, Lane holds it to no step. Lane asks the adapter again at the next
+move that needs it, and says so again while it fails.
 
 ### The starts due
 
@@ -478,7 +495,7 @@ Go back only to a step marked done, with lane-back <step>.
 | The run's first event after the skill's call, and each further command | The starts due, such as `Due: log:writer.` or `Due: log:writer 2 times at once.` |
 | A subagent's end reaches the main conversation | Its result and the starts due, such as `log:reviewer gave more. Due: log:writer.` A subagent stopped by TaskStop gives `log:writer stopped with no result.`, and its role is due again. |
 | The main conversation starts a role not due, or ends its turn while a start is due | The starts due, as the reason Lane stops it, or, for a start while none is due, the sentence below. |
-| `lane/rules.json` breaks its form, or an adapter fails | What's wrong, the file, and who mends it, as the reason Lane stops the call. |
+| Lane can't check a move, as `lane/rules.json` breaks its form, an adapter fails, or a rule [can't be checked](#when-lane-cant-check-a-rule) | What Lane couldn't check and why, beside the move it lets through. |
 
 Lane stops any start that a subagent makes, in the same words. It leaves alone a start of another
 plugin's subagent.

@@ -98,7 +98,7 @@ def no_skill_call(b: Bench) -> None:
 
 BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_a_stopped_call_gives_the_step_left_and_what_to_do_instead": sentence_left_out,
-    "test_rules_out_of_form_stop_the_call_saying_what_the_author_mends": rules_unread,
+    "test_rules_out_of_form_let_the_call_through_saying_what_lane_couldnt_check": rules_unread,
     "test_a_result_said_only_in_the_reply_counts_for_nothing": reply_counts,
     "test_a_step_is_held_only_to_the_types_its_rules_pick": types_unpicked,
     "test_each_plugins_run_is_held_to_the_rules_in_its_own_folder": folder_unfound,
@@ -130,14 +130,17 @@ def test_a_stopped_call_gives_the_step_left_and_what_to_do_instead(b: Bench, bro
 
 
 @pytest.mark.supports("P1.1")
-def test_rules_out_of_form_stop_the_call_saying_what_the_author_mends(b: Bench, broken: None):
+def test_rules_out_of_form_let_the_call_through_saying_what_lane_couldnt_check(
+    b: Bench, broken: None
+):
     """Given `log` whose lane/rules.json has no roles
     When the person types /log:up 1.2.0, and the main conversation ends its turn
-    Then the end is stopped, saying that Lane can't check the run, the file, and what its form
-    lacks, for the plugin's author to mend"""
+    Then the end goes through, saying that Lane couldn't check it by the plugin's rules, naming the
+    file and what its form lacks"""
     b.rules({"routes": RULES["routes"]})
     answer = opened(b).stop("Started.")
-    assert answer.blocked
+    assert not answer.blocked
+    assert answer.said.startswith("Lane couldn't check this move by the plugin's rules: ")
     assert "lane/rules.json" in answer.said
     assert "roles" in answer.said
 

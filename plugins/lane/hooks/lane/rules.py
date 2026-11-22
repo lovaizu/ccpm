@@ -72,8 +72,8 @@ class Rules(Steps, total=False):
 
 
 class OutOfForm(Exception):
-    """A plugin's lane/rules.json out of Lane's form, said with the file, the place in it, and
-    what the form takes there, so that the plugin's author can mend it."""
+    """A plugin's lane/rules.json out of Lane's form, said with what Lane couldn't check and why:
+    the file, the place in it, and what the form takes there."""
 
 
 def read_rules(plugin_root: str) -> Rules | None:
@@ -94,12 +94,14 @@ def read_rules(plugin_root: str) -> Rules | None:
     try:
         rules = json.loads(text)
     except ValueError as error:
-        raise OutOfForm(f"Lane: {path} isn't JSON: {error}. {_MEND}") from None
+        raise OutOfForm(f"{_UNCHECKED}{path} isn't JSON: {error}") from None
     left = held(rules, "rules.schema.json")
     if left is not None:
-        raise OutOfForm(f"Lane: {path}, at {left}. {_MEND}")
+        raise OutOfForm(
+            f"{_UNCHECKED}{path} leaves the form of Lane's hooks/lane/rules.schema.json, at {left}"
+        )
     return cast(Rules, rules)
 
 
-# What the plugin's author does with a file out of Lane's form.
-_MEND = "The plugin's author mends it to the form of Lane's hooks/lane/rules.schema.json."
+# What Lane couldn't check where a plugin's rules are out of its form.
+_UNCHECKED = "Lane couldn't check this move by the plugin's rules: "

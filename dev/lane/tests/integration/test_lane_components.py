@@ -1,7 +1,8 @@
 """The integration cases of each decision that a component of Lane's architecture alone makes, and
 of each handoff between the parts with the data it passes, as the concept model names it: the
-guard's finding of the plugin's folder, its choice of the order that answers, its stop where an
-adapter fails or gives out of its form, for a start or for a turn, and the adapters and the check
+guard's finding of the plugin's folder, its choice of the order that answers, the move it lets
+through saying what it couldn't check where an adapter fails or gives out of its form, for a turn's
+end, a start, or a turn's first call, and the adapters and the check
 run in the conversation's folder; the rule types' order of checking a mark; the reporters' refusal
 and their report for the subagent that ran it; the route adapter's starts due from the routes; and
 the Rules out of form and the Run that keeps two results. Each runs `log` and Lane through the
@@ -60,103 +61,113 @@ def test_the_plugins_own_adapter_of_the_starts_due_answers_in_place_of_its_route
 
 
 @pytest.mark.supports("guard")
-def test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said(
+def test_an_adapter_of_the_starts_due_that_fails_lets_the_end_through_with_what_it_said(
     b: Bench,
 ):
-    """Given `log` whose adapter of the starts due exits 1 saying it found no version
-    When the person types /log:up 1.2.0, and the main conversation ends its turn
-    Then the end is stopped, naming the adapter and what it said, for the plugin's author to mend"""
+    """Given `log` whose adapter of the starts due exits 1 saying it found no version, as where the
+    folder that it reads is gone
+    When the person types /log:up 1.2.0, the main conversation ends its turn, the person types
+    `Go on.`, and the main conversation ends its turn again
+    Then each end goes through, the main conversation reading at each that Lane couldn't check which
+    starts are due, as the adapter failed with what it said"""
     b.adapter("starts_due.py", "import sys\n\nsys.exit('no version found')\n")
-    answer = opened(b).stop("Started.")
-    assert answer.blocked
-    assert "starts_due.py" in answer.said
-    assert "no version found" in answer.said
+    c = opened(b)
+    said = (
+        f"Lane couldn't check which starts are due: {b.log}/lane/adapters/starts_due.py failed:"
+        " no version found"
+    )
+    first = c.stop("Started.")
+    assert (first.blocked, first.said) == (False, said)
+    c.type("Go on.")
+    again = c.stop("Went on.")
+    assert (again.blocked, again.said) == (False, said)
 
 
 @pytest.mark.supports("guard", "Starts due")
-def test_starts_due_out_of_their_form_stop_naming_the_adapter(b: Bench):
+def test_starts_due_out_of_their_form_let_the_end_through_naming_the_adapter(b: Bench):
     """Given `log` whose adapter of the starts due gives a start with no count
     When the person types /log:up 1.2.0, and the main conversation ends its turn
-    Then the end is stopped, naming the adapter and the field its form takes"""
+    Then the end goes through, saying that Lane couldn't check which starts are due, naming the
+    adapter and the field its form takes"""
     b.adapter("starts_due.py", 'print(\'{"starts": [{"role": "log:writer"}]}\')\n')
     answer = opened(b).stop("Started.")
-    assert answer.blocked
+    assert not answer.blocked
+    assert answer.said.startswith("Lane couldn't check which starts are due: ")
     assert "starts_due.py" in answer.said
     assert "count" in answer.said
 
 
 @pytest.mark.supports("guard")
-def test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_saying_so(
+def test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_goes_through_saying_so(
     b: Bench,
 ):
     """Given `log` whose rules name the writer with no steps, and no adapter of the rules
-    When the person types /log:up 1.2.0, and the main conversation starts the writer
-    Then the start is stopped, naming lane/adapters/rules.py and the writer, for the plugin's author
-    to add"""
+    When the person types /log:up 1.2.0, the main conversation starts the writer, and the writer
+    writes notes.txt
+    Then the start goes through, and so does the write, as the writer is held to no step"""
     steps_from_adapter(b)
     b.adapter("rules.py", None)
-    answer, agent = opened(b).start("log:writer", prompt("log:writer"), "Write the entry")
-    assert agent is None
-    assert "lane/adapters/rules.py" in answer.said
-    assert "log:writer" in answer.said
+    agent = opened(b).start("log:writer", prompt("log:writer"), "Write the entry")[1]
+    assert agent is not None
+    assert not agent.write(b.at("notes.txt"), "x\n").blocked
 
 
 @pytest.mark.supports("guard")
 @pytest.mark.parametrize(
-    "code, said",
+    "code",
     [
-        ("import sys\n\nsys.exit('no prompt to read')\n", "no prompt to read"),
-        ('print(\'{"steps": [{"name": "write"}]}\')\n', "rules"),
+        "import sys\n\nsys.exit('no prompt to read')\n",
+        'print(\'{"steps": [{"name": "write"}]}\')\n',
     ],
 )
-def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_stops_the_start(
-    b: Bench, code: str, said: str
+def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_lets_the_start_through(
+    b: Bench, code: str
 ):
     """Given `log` whose rules name the writer with no steps, and whose adapter of the rules exits
     1, or gives a step with no rules
-    When the person types /log:up 1.2.0, and the main conversation starts the writer
-    Then the start is stopped, naming rules.py and what's wrong"""
+    When the person types /log:up 1.2.0, the main conversation starts the writer, and the writer
+    writes notes.txt
+    Then the start goes through, and so does the write, as the writer is held to no step"""
     steps_from_adapter(b)
     b.adapter("rules.py", code)
-    answer, agent = opened(b).start("log:writer", prompt("log:writer"), "Write the entry")
-    assert agent is None
-    assert "rules.py" in answer.said
-    assert said in answer.said
+    agent = opened(b).start("log:writer", prompt("log:writer"), "Write the entry")[1]
+    assert agent is not None
+    assert not agent.write(b.at("notes.txt"), "x\n").blocked
 
 
 @pytest.mark.supports("guard", "S11")
-def test_a_turn_whose_adapter_of_the_rules_is_missing_stops_its_first_call(b: Bench):
+def test_a_turn_whose_adapter_of_the_rules_is_missing_lets_its_first_call_through(b: Bench):
     """Given `log` whose rules name log:up with no steps, and no adapter of the rules
     When the person types /log:up 1.2.0, and the main conversation runs `git status`
-    Then the call is stopped with the writer due and the sentence that log:up takes its steps from
-    the adapter that the plugin doesn't give, naming lane/adapters/rules.py in log's folder, for
-    the plugin's author to add"""
+    Then the call goes through with the writer due and the sentence that Lane couldn't check the
+    steps of log:up, as they come from lane/adapters/rules.py, which log's folder doesn't hold"""
     steps_by_turn(b)
     b.adapter("rules.py", None)
     answer = opened(b).bash("git status")
-    assert answer.blocked
+    assert not answer.blocked
     assert answer.said == (
         "Due: log:writer.\n"
-        "Lane: log:up takes its steps from the plugin's adapter of the rules, which the plugin"
-        f" doesn't give. The plugin's author adds lane/adapters/rules.py in {b.log}, or the"
-        " role's steps to lane/rules.json."
+        "Lane couldn't check the steps of log:up: they come from the plugin's adapter of the"
+        f" rules, lane/adapters/rules.py, which {b.log} doesn't hold"
     )
 
 
 @pytest.mark.supports("guard", "S11")
-def test_a_turn_whose_adapter_of_the_rules_fails_stops_its_first_call_with_what_it_said(b: Bench):
+def test_a_turn_whose_adapter_of_the_rules_fails_lets_its_first_call_through_with_what_it_said(
+    b: Bench,
+):
     """Given `log` whose rules name log:up with no steps, and whose adapter of the rules exits 1
     saying it found no event to read
     When the person types /log:up 1.2.0, and the main conversation runs `git status`
-    Then the call is stopped with the writer due and the sentence that log's rules.py failed with
-    what it said, for the plugin's author to mend"""
+    Then the call goes through with the writer due and the sentence that Lane couldn't check the
+    steps of log:up, as log's rules.py failed with what it said"""
     steps_by_turn(b)
     b.adapter("rules.py", "import sys\n\nsys.exit('no event to read')\n")
     answer = opened(b).bash("git status")
-    assert answer.blocked
+    assert not answer.blocked
     assert answer.said == (
-        f"Due: log:writer.\nLane: {b.log}/lane/adapters/rules.py failed: no event to read."
-        " The plugin's author mends it."
+        "Due: log:writer.\nLane couldn't check the steps of log:up:"
+        f" {b.log}/lane/adapters/rules.py failed: no event to read"
     )
 
 
@@ -292,17 +303,19 @@ def test_a_result_that_no_route_goes_after_ends_the_run_once_no_start_runs(b: Be
 
 
 @pytest.mark.supports("Rules")
-def test_a_rule_of_a_type_that_lane_lacks_stops_saying_what_to_mend(b: Bench):
+def test_a_rule_of_a_type_that_lane_lacks_lets_the_end_through_saying_lane_couldnt_check(b: Bench):
     """Given `log` whose writer's step holds a rule of the type `size`
     When the person types /log:up 1.2.0, and the main conversation ends its turn
-    Then the end is stopped, naming lane/rules.json and the rule's type"""
+    Then the end goes through, saying that Lane couldn't check it by the plugin's rules, naming
+    lane/rules.json and the rule's type"""
     rules = {
         "roles": {"log:writer": {"steps": [{"name": "write", "rules": [{"type": "size"}]}]}},
         "routes": [{"after": {"command": "log:up"}, "start": ["log:writer"]}],
     }
     b.rules(rules)
     answer = opened(b).stop("Started.")
-    assert answer.blocked
+    assert not answer.blocked
+    assert answer.said.startswith("Lane couldn't check this move by the plugin's rules: ")
     assert "lane/rules.json" in answer.said
     assert "size" in answer.said
 

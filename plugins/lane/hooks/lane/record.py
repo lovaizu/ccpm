@@ -289,6 +289,11 @@ _READS: dict[str, Callable[[RunState, Entry], None]] = {
 }
 
 
+class Unread(Exception):
+    """A record of a conversation that can't be read, said with what Lane couldn't check and why:
+    the record's path and what went wrong."""
+
+
 def runs(session_id: str) -> list[Run]:
     """Where each run of the conversation stands.
 
@@ -297,13 +302,18 @@ def runs(session_id: str) -> list[Run]:
     entry, and its entries in the order they were added; none where the conversation has no record
     yet.
     Changes: nothing.
-    Refuses: OSError, where the record can't be read.
+    Refuses: Unread, where the record can't be read, or a line of it isn't JSON.
     """
     try:
         with open(_path(session_id), encoding="utf-8") as f:
             entries: list[Entry] = [json.loads(line) for line in f]
     except FileNotFoundError:
         return []
+    except (OSError, ValueError) as error:
+        raise Unread(
+            "Lane couldn't check this move: its record of the conversation,"
+            f" {_path(session_id)}, can't be read: {error}"
+        ) from None
     found: dict[str, Run] = {}
     for entry in entries:
         if entry["kind"] == "run":

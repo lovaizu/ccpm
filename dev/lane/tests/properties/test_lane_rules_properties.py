@@ -153,7 +153,7 @@ def slip(rules: dict[str, Any], data: st.DataObject) -> dict[str, Any]:
     return slipped
 
 
-@pytest.mark.supports("test_rules_out_of_form_stop_the_call_saying_what_the_author_mends")
+@pytest.mark.supports("test_rules_out_of_form_let_the_call_through_saying_what_lane_couldnt_check")
 @given(WITH_A_RULE, st.data())
 def test_rules_out_of_form_at_any_place_are_refused_naming_the_file(
     rules: dict[str, Any], data: st.DataObject

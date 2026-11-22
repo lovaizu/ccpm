@@ -368,6 +368,59 @@ def test_a_resume_that_no_route_makes_due_goes_through_and_moves_nothing(g: Play
 
 
 @pytest.mark.supports(
+    "test_an_adapter_of_the_starts_due_that_fails_lets_the_end_through_with_what_it_said"
+)
+def test_a_resume_whose_adapter_of_the_starts_due_fails_goes_through_as_talk_saying_so(g: Play):
+    """Given the writer a1 ended, and `log` whose adapter of the starts due then exits 1 saying it
+    found no version
+    When the main conversation resumes a1 by SendMessage
+    Then the resume goes through, saying that Lane couldn't check which starts are due, and why,
+    and the record gains nothing, as Lane can't tell a resume due from talk"""
+    writer = g.to_review()
+    write_files(g.log, {"lane/adapters/starts_due.py": "import sys\n\nsys.exit('no version')\n"})
+    before = entries()
+    assert answer(g.e.send(writer, "toolu_2")) == Answer(False, no_version(g.log))
+    assert entries() == before
+
+
+@pytest.mark.supports(
+    "test_the_starts_due_come_at_the_main_conversations_next_event_after_the_skills_call"
+)
+def test_the_next_event_whose_transcript_cant_be_read_goes_through_saying_so(g: Play):
+    """Given the person's /log:up 1.2.0 expanded, and a transcript whose line isn't JSON
+    When the main conversation runs `git status`
+    Then the guard lets it through, saying that Lane couldn't check the run of log:up, as its
+    plugin's folder can't be found from the transcript, and why; and the run has no folder, so
+    that the next event looks again"""
+    g(g.e.typed("log:up", "1.2.0"))
+    write_files(os.path.dirname(g.e.transcript), {os.path.basename(g.e.transcript): "{cut\n"})
+    said = g(g.e.bash("git status"))
+    opens = (
+        "Lane couldn't check the run of log:up: its plugin's folder can't be found from"
+        f" {g.e.transcript}: "
+    )
+    assert not said.stop
+    assert said.said.startswith(opens)
+    assert entries() == [RUN]
+
+
+@pytest.mark.supports("test_after_compact_the_run_goes_on_with_its_starts_due")
+def test_an_event_whose_record_cant_be_read_goes_through_saying_so(g: Play, temp: str):
+    """Given a record of the conversation whose line isn't JSON
+    When the main conversation runs `git status`
+    Then the guard lets it through, saying that Lane couldn't check the move, as the record, by
+    its path, can't be read, and why"""
+    path = os.path.join(temp, "lane-session-1.jsonl")
+    write_files(temp, {"lane-session-1.jsonl": "{cut\n"})
+    said = answer(g.e.bash("git status"))
+    opens = (
+        f"Lane couldn't check this move: its record of the conversation, {path}, can't be read: "
+    )
+    assert not said.stop
+    assert said.said.startswith(opens)
+
+
+@pytest.mark.supports(
     "test_a_message_queued_to_a_running_subagent_goes_through_and_its_later_pass_is_its_same_start"
 )
 def test_a_message_queued_to_a_running_subagent_is_talk_and_its_later_pass_is_its_start(g: Play):
@@ -566,21 +619,21 @@ def test_a_subagents_message_to_another_subagent_goes_through(g: Play):
     assert answer(g.e.send(Subagent("a2", "log:writer"), "toolu_2", writer)) == Answer()
 
 
-# What the plugin's author mends a rule file out of Lane's form to.
-MEND = "The plugin's author mends it to the form of Lane's hooks/lane/rules.schema.json."
-
-
-@pytest.mark.supports("test_rules_out_of_form_stop_the_call_saying_what_the_author_mends")
-def test_rules_out_of_form_stop_the_next_event_saying_what_to_mend(g: Play):
+@pytest.mark.supports("test_rules_out_of_form_let_the_call_through_saying_what_lane_couldnt_check")
+def test_rules_out_of_form_let_the_next_event_through_saying_what_lane_couldnt_check(g: Play):
     """Given `log` whose lane/rules.json has no roles
     When the person types /log:up 1.2.0, and the main conversation runs `git status`
-    Then the guard stops the call, naming the file and the roles, and who mends it to which form"""
+    Then the guard lets the call through, saying once that Lane couldn't check it by the plugin's
+    rules, naming the file and the roles, and the record gains the run's folder alone"""
     write_files(g.log, {"lane/rules.json": json.dumps({"routes": lane_bench.RULES["routes"]})})
     said = g.opened()
-    assert said.stop
-    assert said.said.startswith(f"Lane: {os.path.join(g.log, 'lane', 'rules.json')}, at ")
+    path = os.path.join(g.log, "lane", "rules.json")
+    opens = f"Lane couldn't check this move by the plugin's rules: {path} leaves the form of"
+    assert not said.stop
+    assert said.said.startswith(opens)
+    assert "\n" not in said.said, "the sentence is said once"
     assert "roles" in said.said
-    assert said.said.endswith(MEND)
+    assert [each["kind"] for each in entries()] == ["run", "folder"]
 
 
 @pytest.mark.supports("test_work_outside_a_run_of_a_plugin_with_rules_is_left_alone")
@@ -831,47 +884,46 @@ def test_start_made_gives_the_adapter_no_turn_though_the_run_holds_turns(g: Play
 
 
 @pytest.mark.supports(
-    "test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_saying_so"
+    "test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_goes_through_saying_so"
 )
-def test_start_made_of_a_role_with_no_steps_and_no_adapter_is_stopped_naming_it(g: Play, log: str):
+def test_start_made_of_a_role_with_no_steps_and_no_adapter_keeps_it_with_none_saying_so(
+    g: Play, log: str
+):
     """Given `log` naming the writer with no steps, with no adapter of the rules, and the writer due
     When the main conversation starts the writer
-    Then start_made refuses with AdapterFailed, and answer stops the start with it, naming
-    lane/adapters/rules.py, the writer, and `log`'s folder, and the record gains nothing"""
+    Then the start goes through, saying that Lane couldn't check the writer's steps, as `log`'s
+    folder holds no lane/adapters/rules.py, and the record gains the start with no steps"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
     recorded_now(log)
-    event = g.e.start("log:writer", "toolu_1")
-    with pytest.raises(AdapterFailed) as raised:
-        start_made(move("start", event))
-    said = answer(event)
-    assert said == Answer(True, str(raised.value))
-    for named in ("lane/adapters/rules.py", "log:writer", log):
-        assert named in said.said
-    assert gained(log) == []
+    said = start_made(move("start", g.e.start("log:writer", "toolu_1")))
+    assert said == Answer(
+        False,
+        "Lane couldn't check the steps of log:writer: they come from the plugin's adapter of the"
+        f" rules, lane/adapters/rules.py, which {log} doesn't hold",
+    )
+    assert gained(log) == [lane_entries.start("toolu_1")]
 
 
 @pytest.mark.supports(
-    "test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_stops_the_start"
+    "test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_lets_the_start_through"
 )
-def test_start_made_with_an_adapter_of_the_rules_that_fails_is_stopped_with_what_it_said(
+def test_start_made_with_an_adapter_of_the_rules_that_fails_keeps_it_with_no_steps_saying_so(
     g: Play, log: str
 ):
     """Given `log` naming the writer with no steps, whose adapter of the rules exits 1 saying it
     found no prompt, and the writer due
     When the main conversation starts the writer
-    Then start_made refuses with AdapterFailed, and answer stops the start with it, naming the
-    adapter's path and what it said, and the record gains nothing"""
+    Then the start goes through, saying that Lane couldn't check the writer's steps, as the
+    adapter failed with what it said, and the record gains the start with no steps"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.ADAPTED)})
     write_files(log, {"lane/adapters/rules.py": "import sys\n\nsys.exit('no prompt')\n"})
     recorded_now(log)
-    event = g.e.start("log:writer", "toolu_1")
-    with pytest.raises(AdapterFailed) as raised:
-        start_made(move("start", event))
-    said = answer(event)
-    assert said == Answer(True, str(raised.value))
-    assert os.path.join(log, "lane", "adapters", "rules.py") in said.said
-    assert "no prompt" in said.said
-    assert gained(log) == []
+    said = start_made(move("start", g.e.start("log:writer", "toolu_1")))
+    path = os.path.join(log, "lane", "adapters", "rules.py")
+    assert said == Answer(
+        False, f"Lane couldn't check the steps of log:writer: {path} failed: no prompt"
+    )
+    assert gained(log) == [lane_entries.start("toolu_1")]
 
 
 @pytest.mark.supports("test_a_resume_that_the_order_makes_due_goes_through_as_its_start")
@@ -928,55 +980,78 @@ def resume(g: Play, resumed: Entry) -> Move:
 
 
 @pytest.mark.supports(
-    "test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said"
+    "test_an_adapter_of_the_starts_due_that_fails_lets_the_end_through_with_what_it_said"
 )
-@pytest.mark.parametrize("kind", ["turn_end", "start"])
-def test_a_move_with_an_adapter_of_the_starts_due_that_fails_stops_with_what_it_said(
-    g: Play, log: str, kind: str
+def test_turn_ended_with_an_adapter_of_the_starts_due_that_fails_goes_through_saying_so(
+    g: Play, log: str
 ):
     """Given `log` whose adapter of the starts due exits 1 saying it found no version, and the
     writer tied to a1 with its `written`
-    When the main conversation ends its turn, or starts the writer
-    Then the interface refuses with AdapterFailed, and answer stops the move with it, naming the
-    adapter's path and what it said"""
+    When the main conversation ends its turn
+    Then the end goes through, saying that Lane couldn't check which starts are due, as the adapter
+    failed with what it said, and the record gains no end of the run"""
     write_files(log, {"lane/adapters/starts_due.py": "import sys\n\nsys.exit('no version')\n"})
-    recorded(log, START, TIE, GAVE)
-    event = g.e.stop() if kind == "turn_end" else g.e.start("log:writer", "toolu_2")
-    with pytest.raises(AdapterFailed) as raised:
-        if kind == "turn_end":
-            turn_ended(move("turn_end", event))
-        else:
-            start_made(move("start", event))
-    said = answer(event)
-    assert said == Answer(True, str(raised.value))
-    assert os.path.join(log, "lane", "adapters", "starts_due.py") in said.said
-    assert "no version" in said.said
+    recorded_now(log, START, TIE, GAVE)
+    assert turn_ended(move("turn_end", g.e.stop())) == Answer(False, no_version(log))
+    assert gained(log) == []
+
+
+def no_version(log: str) -> str:
+    """What the guard says where `log`'s adapter of the starts due exits 1 saying `no version`."""
+    path = os.path.join(log, "lane", "adapters", "starts_due.py")
+    return f"Lane couldn't check which starts are due: {path} failed: no version"
 
 
 @pytest.mark.supports(
-    "test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said"
+    "test_an_adapter_of_the_starts_due_that_fails_lets_the_end_through_with_what_it_said"
+)
+@pytest.mark.parametrize(
+    "agent, said, gains",
+    [
+        (None, Answer(False), [lane_entries.start("toolu_2")]),
+        (WRITER, Answer(True, NONE_DUE), []),
+    ],
+    ids=["main", "subagent"],
+)
+def test_start_made_with_an_adapter_of_the_starts_due_that_fails_is_held_as_a_start_due(
+    g: Play, log: str, agent: Subagent | None, said: Answer, gains: list[Entry]
+):
+    """Given `log` whose adapter of the starts due exits 1 saying it found no version, and the
+    writer tied to a1 with its `written`
+    When the main conversation starts the writer, or the writer a1 does
+    Then the main conversation's start goes through, and the record gains it; the subagent's is
+    stopped with the sentence that no start is due, as only the main conversation starts one; each
+    saying that Lane couldn't check which starts are due, and why"""
+    write_files(log, {"lane/adapters/starts_due.py": "import sys\n\nsys.exit('no version')\n"})
+    recorded_now(log, START, TIE, GAVE)
+    made = start_made(move("start", g.e.start("log:writer", "toolu_2", agent), agent))
+    told = "\n".join(each for each in (said.said, no_version(log)) if each)
+    assert made == Answer(said.stop, told)
+    assert gained(log) == gains
+
+
+@pytest.mark.supports(
+    "test_an_adapter_of_the_starts_due_that_fails_lets_the_end_through_with_what_it_said"
 )
 @pytest.mark.parametrize("kind", ["typed", "result_reached"])
-def test_a_command_or_a_result_with_an_adapter_of_the_starts_due_that_fails_is_refused(
+def test_a_command_or_a_result_with_an_adapter_of_the_starts_due_that_fails_goes_through(
     g: Play, log: str, kind: str
 ):
     """Given `log` whose adapter of the starts due exits 1 saying it found no version, and the
     writer tied to a1 with its `written`
     When the person types /log:retry, or a1's end reaches the main conversation
-    Then the interface refuses with AdapterFailed naming the adapter's path and what it said, and
-    answer stops the event with it"""
+    Then the guard lets it through, saying a1's result where it reached, and that Lane couldn't
+    check which starts are due, and why; and the record gains the command, or nothing"""
     write_files(log, {"lane/adapters/starts_due.py": "import sys\n\nsys.exit('no version')\n"})
-    recorded(log, START, TIE, GAVE)
-    event = g.e.typed("log:retry") if kind == "typed" else g.e.reached(WRITER, "toolu_1")
-    with pytest.raises(AdapterFailed) as raised:
-        if kind == "typed":
-            command_typed(move("typed", event))
-        else:
-            result_reached(move("result_reached", event, WRITER))
-    said = answer(event)
-    assert said == Answer(True, str(raised.value))
-    assert os.path.join(log, "lane", "adapters", "starts_due.py") in said.said
-    assert "no version" in said.said
+    recorded_now(log, START, TIE, GAVE)
+    if kind == "typed":
+        said = answer(g.e.typed("log:retry"))
+        assert said == Answer(False, no_version(log))
+        assert gained(log) == [{"kind": "typed", "run": "r1", "command": "log:retry"}]
+    else:
+        said = result_reached(move("result_reached", g.e.reached(WRITER, "toolu_1"), WRITER))
+        assert said == Answer(False, f"log:writer gave written.\n{no_version(log)}")
+        assert gained(log) == []
 
 
 @pytest.mark.supports("test_the_turns_end_while_the_commands_start_is_due_is_stopped_with_it")
@@ -1721,19 +1796,21 @@ def test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role(g:
 
 
 @pytest.mark.supports(
-    "test_a_turn_whose_adapter_of_the_rules_fails_stops_its_first_call_with_what_it_said"
+    "test_a_turn_whose_adapter_of_the_rules_fails_lets_its_first_call_through_with_what_it_said"
 )
-def test_a_turns_first_call_whose_adapter_fails_is_stopped_and_adds_no_turn(g: Play):
+def test_a_turns_first_call_whose_adapter_fails_goes_through_and_adds_no_turn(g: Play):
     """Given `log` naming log:up with no steps, whose adapter of the rules exits 1 saying it found
     no event, and the person's /log:up 1.2.0 expanded
-    When the main conversation runs `git status`
-    Then the guard stops it with the writer due and the sentence that the adapter's path failed
-    with what it said, and the record holds no turn"""
+    When the main conversation runs `git status`, and then writes notes.txt
+    Then the guard lets each through with the sentence that Lane couldn't check the steps of
+    log:up, as the adapter's path failed with what it said, the first with the writer due, and the
+    record holds no turn, so that the next call asks the adapter again"""
     by_turn(g.log)
     write_files(g.log, {"lane/adapters/rules.py": "import sys\n\nsys.exit('no event')\n"})
     path = os.path.join(g.log, "lane", "adapters", "rules.py")
-    failed = f"Lane: {path} failed: no event. The plugin's author mends it."
-    assert g.opened() == Answer(True, f"{WRITER_DUE}\n{failed}")
+    failed = f"Lane couldn't check the steps of log:up: {path} failed: no event"
+    assert g.opened() == Answer(False, f"{WRITER_DUE}\n{failed}")
+    assert g(g.e.write(os.path.join(g.e.cwd, "notes.txt"))) == Answer(False, failed)
     assert of_kind("turn") == []
 
 
@@ -1780,12 +1857,14 @@ def test_turn_opened_keeps_the_turn_with_the_steps_its_adapter_gives(
     assert gained(log) == [turn_entry(prompt, steps, role)]
 
 
-@pytest.mark.supports("test_a_turn_whose_adapter_of_the_rules_is_missing_stops_its_first_call")
+@pytest.mark.supports(
+    "test_a_turn_whose_adapter_of_the_rules_is_missing_lets_its_first_call_through"
+)
 def test_turn_opened_with_no_adapter_of_the_rules_is_refused_naming_it(g: Play, log: str):
     """Given a run of log:up taking its steps at each turn, with no adapter of the rules
     When its first turn's first call comes
-    Then turn_opened refuses with AdapterFailed saying that log:up takes its steps from the
-    adapter that the plugin doesn't give, naming lane/adapters/rules.py in log's folder, and the
+    Then turn_opened refuses with AdapterFailed saying that Lane couldn't check the steps of log:up,
+    as they come from the adapter, lane/adapters/rules.py, which log's folder doesn't hold, and the
     record gains nothing"""
     write_files(log, {"lane/rules.json": json.dumps(lane_bench.PER_TURN)})
     recorded_now(log)
@@ -1793,9 +1872,8 @@ def test_turn_opened_with_no_adapter_of_the_rules_is_refused_naming_it(g: Play, 
     with pytest.raises(AdapterFailed) as raised:
         turn_opened(g.e.bash("git status"), Turn(on, "log:up", ""))
     assert str(raised.value) == (
-        "Lane: log:up takes its steps from the plugin's adapter of the rules, which the plugin"
-        f" doesn't give. The plugin's author adds lane/adapters/rules.py in {log}, or the role's"
-        " steps to lane/rules.json."
+        "Lane couldn't check the steps of log:up: they come from the plugin's adapter of the"
+        f" rules, lane/adapters/rules.py, which {log} doesn't hold"
     )
     assert gained(log) == []
 

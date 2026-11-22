@@ -427,7 +427,7 @@ def test_a_command_of_a_plugin_with_no_run_lies_outside(e: Events, skill: str):
     assert place(e.typed(skill), [run()], by_routes) is None
 
 
-@pytest.mark.supports("test_rules_out_of_form_stop_the_call_saying_what_the_author_mends")
+@pytest.mark.supports("test_rules_out_of_form_let_the_call_through_saying_what_lane_couldnt_check")
 def test_a_command_of_a_run_whose_rules_are_out_of_form_is_refused(e: Events, log: str):
     """Given a run of log:up whose plugin's lane/rules.json now lacks its roles
     When the UserPromptExpansion of /log:retry comes

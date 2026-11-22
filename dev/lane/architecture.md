@@ -24,7 +24,8 @@
 Lane gives an AI that leaves its plugin's step the step's own sentence, so that it notices at once.
 
 - P1: the AI notices each step it leaves
-  - P1.1: a stopped call gets the step's sentence and what to do, or why Lane can't check the call.
+  - P1.1: a stopped call gets its step's sentence and what to do; an unchecked call goes on,
+    saying why.
   - P1.2: a step, item, read, or result counts only from the AI's own call, never its reply.
 - P2: one way for any plugin, applied by adapters alone
   - P2.1: each thing Lane can make an AI notice is one rule type, which a plugin's author picks.

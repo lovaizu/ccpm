@@ -4,8 +4,9 @@ gives: the starts due, the run's end, a failure, and output out of its form; and
 for each class of what the adapter of the rules gives, no adapter among them, for a start and for a
 turn of the main conversation, with its earlier turns at none, one, and several; with what Lane
 gives an adapter on its standard input, and the folder it runs in; with each exit other than 0,
-output on standard error beside a good answer, the turn ended or not beside each order, and each
-refusal naming the adapter's path, what went wrong, and who mends it."""
+output on standard error beside a good answer, the turn ended or not beside each order, an adapter
+that can't be run, and each refusal saying what Lane couldn't check, naming the adapter's path and
+what went wrong."""
 
 from __future__ import annotations
 
@@ -56,13 +57,18 @@ def given(cwd: str) -> dict[str, object]:
     return lane_bench.echoed(cwd)
 
 
-def refused(call: Any) -> str:
-    """What AdapterFailed says of the call, which closes with who mends the adapter."""
+def refused(call: Any, unchecked: str) -> str:
+    """What AdapterFailed says of the call, which opens with what Lane couldn't check."""
     with pytest.raises(AdapterFailed) as raised:
         call()
     said = str(raised.value)
-    assert "The plugin's author" in said
+    assert said.startswith(f"Lane couldn't check {unchecked}: ")
     return said
+
+
+# What Lane couldn't check where an adapter fails: the starts due, and a writer's steps.
+DUE = "which starts are due"
+WRITERS = "the steps of log:writer"
 
 
 def path(log: str, name: str) -> str:
@@ -145,7 +151,7 @@ def test_a_plugin_with_no_order_has_its_run_end_once_the_turn_ended(log: str, cw
 
 
 @pytest.mark.supports(
-    "test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said"
+    "test_an_adapter_of_the_starts_due_that_fails_lets_the_end_through_with_what_it_said"
 )
 def test_an_adapter_of_the_starts_due_that_fails_is_refused_with_its_file_and_what_it_said(
     log: str, cwd: str
@@ -154,12 +160,25 @@ def test_an_adapter_of_the_starts_due_that_fails_is_refused_with_its_file_and_wh
     When Lane asks it for the starts due
     Then it refuses with AdapterFailed naming starts_due.py and what it said"""
     adapter(log, "starts_due.py", "import sys\n\nsys.exit('no version found')\n")
-    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
-    assert path(log, "starts_due.py") in said
-    assert "no version found" in said
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False), DUE)
+    assert said.endswith(f"{path(log, 'starts_due.py')} failed: no version found")
 
 
-@pytest.mark.supports("test_starts_due_out_of_their_form_stop_naming_the_adapter")
+@pytest.mark.supports(
+    "test_an_adapter_of_the_starts_due_that_fails_lets_the_end_through_with_what_it_said"
+)
+def test_an_adapter_that_cant_be_run_is_refused_with_its_file_and_why(log: str, tmp_path: Any):
+    """Given an adapter of the starts due, and a conversation's folder that isn't there
+    When Lane asks it for the starts due
+    Then it refuses with AdapterFailed naming starts_due.py, which can't be run, and why"""
+    printing(log, "starts_due.py", {"starts": []})
+    gone = os.path.join(str(tmp_path), "gone")
+    said = refused(lambda: starts_due(log, gone, run(log), RULES, False), DUE)
+    assert f"{path(log, 'starts_due.py')} can't be run: " in said
+    assert gone in said, "the folder that isn't there is named"
+
+
+@pytest.mark.supports("test_starts_due_out_of_their_form_let_the_end_through_naming_the_adapter")
 @pytest.mark.parametrize(
     "code",
     [
@@ -178,7 +197,7 @@ def test_starts_due_out_of_their_form_are_refused_naming_the_adapter(log: str, c
     When Lane asks it for the starts due
     Then it refuses with AdapterFailed naming starts_due.py"""
     adapter(log, "starts_due.py", code)
-    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False), DUE)
     assert path(log, "starts_due.py") in said
 
 
@@ -221,7 +240,7 @@ def test_the_adapter_of_the_rules_takes_the_run_the_role_and_the_prompt(log: str
 
 
 @pytest.mark.supports(
-    "test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_is_stopped_saying_so"
+    "test_a_start_of_a_role_with_no_steps_and_no_adapter_of_the_rules_goes_through_saying_so"
 )
 def test_a_plugin_without_an_adapter_of_the_rules_is_refused_naming_it_and_the_role(
     log: str, cwd: str
@@ -229,14 +248,15 @@ def test_a_plugin_without_an_adapter_of_the_rules_is_refused_naming_it_and_the_r
     """Given `log` with no adapter of the rules
     When Lane asks for the steps of a writer's start
     Then it refuses with AdapterFailed naming lane/adapters/rules.py and the writer"""
-    said = refused(lambda: given_steps(log, cwd, run(log), start("log:writer", "Write it.")))
+    said = refused(
+        lambda: given_steps(log, cwd, run(log), start("log:writer", "Write it.")), WRITERS
+    )
     assert "lane/adapters/rules.py" in said
-    assert "log:writer" in said
     assert log in said
 
 
 @pytest.mark.supports(
-    "test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_stops_the_start"
+    "test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_lets_the_start_through"
 )
 @pytest.mark.parametrize(
     "code",
@@ -256,7 +276,7 @@ def test_an_adapter_of_the_rules_that_fails_or_gives_out_of_its_form_is_refused(
     When Lane asks it for the steps of a writer's start
     Then it refuses with AdapterFailed naming rules.py"""
     adapter(log, "rules.py", code)
-    said = refused(lambda: given_steps(log, cwd, run(log), start("log:writer", "Write.")))
+    said = refused(lambda: given_steps(log, cwd, run(log), start("log:writer", "Write.")), WRITERS)
     assert path(log, "rules.py") in said
 
 
@@ -298,7 +318,7 @@ def test_a_plugin_with_routes_gives_the_route_adapters_wait_though_the_turn_ende
 
 
 @pytest.mark.supports(
-    "test_an_adapter_of_the_starts_due_that_fails_stops_with_the_adapter_and_what_it_said"
+    "test_an_adapter_of_the_starts_due_that_fails_lets_the_end_through_with_what_it_said"
 )
 @pytest.mark.parametrize(
     "code",
@@ -318,9 +338,8 @@ def test_an_adapter_that_exits_other_than_0_is_refused_though_it_printed_its_ans
     When Lane asks it for the starts due
     Then it refuses with AdapterFailed naming its path and what it said"""
     adapter(log, "starts_due.py", code)
-    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
-    assert path(log, "starts_due.py") in said
-    assert "no version found" in said
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False), DUE)
+    assert said.endswith(f"{path(log, 'starts_due.py')} failed: no version found")
 
 
 @pytest.mark.supports("test_the_starts_due_are_those_that_the_plugins_order_gives")
@@ -338,24 +357,24 @@ def test_an_adapter_that_says_more_on_standard_error_and_exits_0_answers(log: st
     assert gave == {"starts": [{"role": "log:reviewer", "count": 1}]}
 
 
-@pytest.mark.supports("test_starts_due_out_of_their_form_stop_naming_the_adapter")
+@pytest.mark.supports("test_starts_due_out_of_their_form_let_the_end_through_naming_the_adapter")
 def test_an_adapter_that_prints_no_json_is_refused_with_what_it_printed(log: str, cwd: str):
     """Given an adapter of the starts due that prints `the writer`, which isn't JSON
     When Lane asks it for the starts due
     Then it refuses with AdapterFailed naming its path and what it printed"""
     adapter(log, "starts_due.py", "print('the writer')\n")
-    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False), DUE)
     assert path(log, "starts_due.py") in said
     assert "the writer" in said
 
 
-@pytest.mark.supports("test_starts_due_out_of_their_form_stop_naming_the_adapter")
+@pytest.mark.supports("test_starts_due_out_of_their_form_let_the_end_through_naming_the_adapter")
 def test_starts_due_out_of_their_form_are_refused_naming_the_place(log: str, cwd: str):
     """Given an adapter of the starts due that prints a start with a count of 0
     When Lane asks it for the starts due
     Then it refuses with AdapterFailed naming the place of the count"""
     printing(log, "starts_due.py", {"starts": [{"role": "log:writer", "count": 0}]})
-    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False))
+    said = refused(lambda: starts_due(log, cwd, run(log), RULES, False), DUE)
     assert "starts/0/count" in said
 
 

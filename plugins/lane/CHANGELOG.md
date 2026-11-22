@@ -8,7 +8,7 @@
 
 ### Fixed
 
-- Where Lane can't check a rule, such as a `check` that couldn't check, a checklist command that fails, or a file to read whole that's gone, it lets the move through and tells the AI what it couldn't check and why, instead of stopping it, so a run never loops on a stop that no one in the conversation can mend.
+- Where Lane can't check a move, such as when your adapter fails because the run's folder is gone, your `lane/rules.json` breaks its form, a `check` couldn't check, a checklist command fails, or a file to read whole is gone, it lets the move through and tells the AI what it couldn't check and why, instead of stopping it, so a conversation never loops on a stop that no one in it can mend.
 
 ## [0.1.0] - 2026-11-22
 

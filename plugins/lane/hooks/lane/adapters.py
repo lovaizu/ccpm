@@ -36,8 +36,9 @@ class Asked(TypedDict):
 
 
 class AdapterFailed(Exception):
-    """An adapter that failed or gave output out of its form, said with the adapter's file and what
-    it gave, so that the plugin's author can mend it."""
+    """An adapter that couldn't give its answer, as it is missing, can't be run, fails, or gives
+    output out of its form, said with what Lane couldn't check and why: the adapter's file and what
+    it gave."""
 
 
 def starts_due(plugin_root: str, cwd: str, run: Run, rules: Rules, turn_ended: bool) -> StartsDue:
@@ -56,7 +57,7 @@ def starts_due(plugin_root: str, cwd: str, run: Run, rules: Rules, turn_ended: b
     """
     if os.path.isfile(_adapter(plugin_root, "starts_due.py")):
         given = {"run": order_run(run)}
-        return cast(StartsDue, _ask(plugin_root, cwd, "starts_due", given))
+        return cast(StartsDue, _ask(plugin_root, cwd, "starts_due", given, "which starts are due"))
     if "routes" in rules:
         return routes.starts_due(rules["routes"], order_run(run))
     return {"ends": True} if turn_ended else {"starts": []}
@@ -73,17 +74,17 @@ def given_steps(plugin_root: str, cwd: str, run: Run, asked: Asked) -> list[Step
     Gives: the steps of the start or the turn, each with its rules, in the forms of
     rules.in.schema.json and rules.out.schema.json.
     Changes: nothing of Lane's; the adapter may read the conversation's folder.
-    Refuses: AdapterFailed, also where the plugin has no adapter of the rules, naming
-    lane/adapters/rules.py and the role, for the plugin's author to add it.
+    Refuses: AdapterFailed, also where the plugin has no adapter of the rules, saying that Lane
+    couldn't check the role's steps, as the plugin's folder holds no lane/adapters/rules.py.
     """
+    what = f"the steps of {asked['role']}"
     if not os.path.isfile(_adapter(plugin_root, "rules.py")):
         raise AdapterFailed(
-            f"Lane: {asked['role']} takes its steps from the plugin's adapter of the rules, which"
-            f" the plugin doesn't give. The plugin's author adds lane/adapters/rules.py in"
-            f" {plugin_root}, or the role's steps to lane/rules.json."
+            f"Lane couldn't check {what}: they come from the plugin's adapter of the rules,"
+            f" lane/adapters/rules.py, which {plugin_root} doesn't hold"
         )
     given = {"run": {"skill": run.skill, "words": run.words}, **asked}
-    return _ask(plugin_root, cwd, "rules", given)["steps"]
+    return _ask(plugin_root, cwd, "rules", given, what)["steps"]
 
 
 def _adapter(plugin_root: str, name: str) -> str:
@@ -91,25 +92,29 @@ def _adapter(plugin_root: str, name: str) -> str:
     return os.path.join(plugin_root, "lane", "adapters", name)
 
 
-def _ask(plugin_root: str, cwd: str, name: str, given: Any) -> Any:
-    """What the plugin's adapter of the name gives for the input, held to its schema."""
+def _ask(plugin_root: str, cwd: str, name: str, given: Any, what: str) -> Any:
+    """What the plugin's adapter of the name gives for the input, held to its schema; where it
+    gives none, AdapterFailed saying that Lane couldn't check what the call names, and why."""
     path = _adapter(plugin_root, f"{name}.py")
-    done = subprocess.run(
-        [sys.executable, path],
-        input=json.dumps(given),
-        cwd=cwd,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    mend = "The plugin's author mends it."
+    unchecked = f"Lane couldn't check {what}: {path}"
+    try:
+        done = subprocess.run(
+            [sys.executable, path],
+            input=json.dumps(given),
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as error:
+        raise AdapterFailed(f"{unchecked} can't be run: {error}") from None
     if done.returncode:
-        raise AdapterFailed(f"Lane: {path} failed: {done.stderr.strip()}. {mend}")
+        raise AdapterFailed(f"{unchecked} failed: {done.stderr.strip()}")
     try:
         gave = json.loads(done.stdout)
     except ValueError:
-        raise AdapterFailed(f"Lane: {path} gave no JSON: {done.stdout.strip()}. {mend}") from None
+        raise AdapterFailed(f"{unchecked} gave no JSON: {done.stdout.strip()}") from None
     left = held(gave, f"{name}.out.schema.json")
     if left is not None:
-        raise AdapterFailed(f"Lane: {path} gave out of its form, at {left}. {mend}")
+        raise AdapterFailed(f"{unchecked} gave out of its form, at {left}")
     return gave
