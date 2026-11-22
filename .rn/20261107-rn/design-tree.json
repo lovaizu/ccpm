@@ -469,7 +469,8 @@
             },
             {
               "about": "The description of pull request #66",
-              "decided": null
+              "decided": "its title gives each plugin's version, as #60's does, and its body the issues it closes, how each plugin is rebuilt and tested, and the link to this tree, with no session URL, as only the user can open one",
+              "by": "user"
             },
             {
               "about": "A walkthrough run with the user's own permission settings",
