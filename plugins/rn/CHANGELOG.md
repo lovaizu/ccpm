@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- When a role's Cut can't be read, such as after you delete the run's worktree or its folder, the role's check says it couldn't check the role's result, and the role ends, instead of being stopped at each end, so a run you drop never holds the conversation in a loop.
+
 ## [0.10.0] - 2026-11-22
 
 ### Changed

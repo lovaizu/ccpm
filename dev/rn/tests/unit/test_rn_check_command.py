@@ -1,8 +1,9 @@
 """The unit cases of check/command.py, check.py's command line as Lane's check at a role's end runs
 it: for each role, a result that holds, one with faults, and none written; a generator's guide off
 its kind's template, each place on a line, the worktree and the folder taken from the Cut and from
-`cwd`, not from the process's own folder; a Cut out of its schema
-or missing; a role of neither; and each count of arguments other than two. Each runs from the
+`cwd`, not from the process's own folder; a result that isn't JSON; a Cut out of its schema or
+missing, a schema that can't be read, and a role of neither, each of which check.py couldn't check
+by; and each count of arguments other than two. Each runs from the
 user's repository's top, with the Cut's path from there, as Lane runs a check in the folder that the
 conversation works in."""
 
@@ -140,44 +141,94 @@ def test_a_role_that_wrote_no_result_gives_1_with_where_it_writes_one(run: Run, 
 
 
 @pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
-def test_a_cut_out_of_its_schema_gives_1_saying_whats_wrong(run: Run):
+def test_a_result_that_isnt_json_gives_1_naming_it(run: Run):
+    """Given the generator's Cut, and a result beside it that isn't JSON
+    When check.py runs on it
+    Then it gives 1, its output starting `check.py: ` and naming the result's path, as the role
+    mends what it wrote"""
+    cut = run.cut("generator")
+    written = os.path.join(run.round, "generator.json")
+    write_files(run.repository, {written: "{made"})
+    code, out, err = main(["generator", cut], run.repository, rn_files.RN)
+    assert code == 1
+    assert (out + err).startswith(f"check.py: {written}: ")
+
+
+@pytest.mark.supports(
+    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+)
+def test_a_cut_out_of_its_schema_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given a generator's Cut with no goal, and a result that would hold it
     When check.py runs on it
-    Then it gives 1, its output starting `check.py: ` and naming goal"""
+    Then it gives 2, saying that it couldn't check the generator's result, as its Cut leaves its
+    form at goal"""
     cut = run.cut("generator")
     given = rn_files.read_json(os.path.join(run.repository, cut))
     del given["goal"]
     rn_files.write_json(os.path.join(run.repository, cut), given)
     run.result("generator", GOOD["generator"])
     code, out, err = main(["generator", cut], run.repository, rn_files.RN)
-    assert code == 1
-    assert (out + err).startswith("check.py: ")
+    assert code == 2
+    assert (out + err).startswith(
+        f"check.py: couldn't check the generator's result, as its Cut {cut} leaves the form of"
+        " a generator's Cut at "
+    )
     assert "goal" in out + err
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
-def test_a_cut_that_isnt_there_gives_1_naming_it(run: Run):
+@pytest.mark.supports(
+    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+)
+def test_a_cut_that_isnt_there_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given no Cut at the path given
     When check.py runs on it
-    Then it gives 1, its output starting `check.py: ` and naming the path"""
+    Then it gives 2, saying that it couldn't check the generator's result, as its Cut, by its
+    path, can't be read"""
     missing = os.path.join(run.round, "generator-cut.json")
     code, out, err = main(["generator", missing], run.repository, rn_files.RN)
-    assert code == 1
+    assert code == 2
+    assert (out + err).startswith(
+        f"check.py: couldn't check the generator's result, as its Cut {missing} can't be read"
+        " as JSON: "
+    )
+
+
+@pytest.mark.supports(
+    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+)
+def test_a_schema_that_cant_be_read_gives_2_saying_what_check_py_couldnt_check(
+    run: Run, tmp_path: Any
+):
+    """Given the generator's Cut and its result, and an rn folder that holds no schema
+    When check.py runs on it
+    Then it gives 2, saying that the schema can't be read, by its path"""
+    cut = run.cut("generator")
+    run.result("generator", GOOD["generator"])
+    bare = os.path.join(str(tmp_path), "rn")
+    os.makedirs(bare)
+    code, out, err = main(["generator", cut], run.repository, bare)
+    assert code == 2
     assert (out + err).startswith("check.py: ")
-    assert missing in out + err
+    assert "generator-cut.schema.json: the schema can't be read: " in out + err
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
+@pytest.mark.supports(
+    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+)
 @pytest.mark.parametrize("role", ["orchestrator", "Generator"])
-def test_a_role_of_neither_gives_1_saying_whats_wrong(run: Run, role: str):
+def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run, role: str):
     """Given the generator's Cut and its result
     When check.py runs on a role that is neither generator nor evaluator
-    Then it gives 1, its output starting `check.py: `"""
+    Then it gives 2, saying that it couldn't check a result of the role, as it checks only the
+    generator's and the evaluator's"""
     cut = run.cut("generator")
     run.result("generator", GOOD["generator"])
     code, out, err = main([role, cut], run.repository, rn_files.RN)
-    assert code == 1
-    assert (out + err).startswith("check.py: ")
+    assert code == 2
+    assert out + err == (
+        f"check.py: couldn't check a result of {role!r}, as it checks only the generator's and"
+        " the evaluator's\n"
+    )
 
 
 @pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")

@@ -269,6 +269,38 @@ def test_a_generators_good_quoting_a_line_no_file_holds_is_stopped(b: Bench):
     assert "print('receipt')" in said
 
 
+@pytest.mark.supports("generator", "scripts")
+def test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check(
+    b: Bench,
+):
+    """Given a run whose command's generator kept each step, wrote its result, and gave made
+    When the user deletes the run's folder, as in dropping the run, and the generator ends
+    Then the end goes through, the generator reading that Lane couldn't check its step `check` by
+    check.py, which exits 2 saying that it couldn't check the generator's result, as its Cut can't
+    be read"""
+    c, generator = signed_plan(b)
+    given = cut_of(c, generator)
+    at_make(b, c, generator)
+    path = given["deliverable"]["path"]
+    generator.write(os.path.join(b.worktree, path), "print('invoice')\n")
+    for each in rn_files.items_at(kind_of_cut(c, generator), "make"):
+        generator.bash(f"lane-item make {each}")
+    marked(c, "make", generator)
+    good = rn_files.made([("N1", ["print('invoice')"])], [COMMAND])
+    generator.write(os.path.join(c.cwd, given["round"], "generator.json"), json.dumps(good))
+    marked(c, "try", generator)
+    ran(c, b.script("repository", "checks", b.run, path), generator)
+    generator.bash("lane-result made")
+    marked(c, "check", generator)
+    shutil.rmtree(os.path.join(c.cwd, b.run))
+    stopped, _ = generator.end("made")
+    assert not stopped.blocked
+    assert stopped.said.startswith(
+        "Lane couldn't check the step `check` of rn:generator by its check: "
+    )
+    assert "exits 2:\ncheck.py: couldn't check the generator's result, as its Cut " in stopped.said
+
+
 @pytest.mark.supports("generator", "Best practice")
 def test_a_generators_end_with_its_deliverable_off_its_template_is_held(b: Bench):
     """Given a run whose guide's generator, of the kind readme, kept each step

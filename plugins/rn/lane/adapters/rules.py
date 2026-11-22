@@ -338,7 +338,8 @@ def main(stdin: str, cwd: str, plugin_root: str) -> Answer:
     Takes: what Lane writes on its standard input, the folder it runs in, and rn's folder.
     Gives: 0 with `steps`'s output as one line of JSON; 1 with `rules.py: <what's wrong>` where the
     input isn't JSON, lacks any of `run`, `role`, `prompt`, and `turns`, or `steps` refuses it as
-    Wrong. Lane stops the turn or the start on any but 0.
+    Wrong. Lane reads any but 0 as steps it couldn't check, and says so with what the adapter
+    said.
     Changes: nothing.
     Refuses: nothing; each fault is its exit code.
     """

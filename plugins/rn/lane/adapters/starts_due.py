@@ -126,8 +126,8 @@ def main(stdin: str, cwd: str) -> Answer:
 
     Takes: what Lane writes on its standard input, and the folder it runs in.
     Gives: 0 with `due`'s output as one line of JSON; 1 with `starts_due.py: <what's wrong>`
-    where the input isn't JSON or `due` refuses it as Wrong. Lane stops the move at hand on any
-    but 0.
+    where the input isn't JSON or `due` refuses it as Wrong. Lane reads any but 0 as starts due it
+    couldn't check, and says so with what the adapter said.
     Changes: nothing.
     Refuses: nothing; each fault is its exit code.
     """
