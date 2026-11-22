@@ -204,7 +204,9 @@ terms than its purpose set.
 
 The caller decides what is theirs, and what is hard to undo, such as a merge. Such a point counts as
 approved only by the caller's own action, such as a skill the AI cannot call
-(`disable-model-invocation: true`).
+(`disable-model-invocation: true`). Only a skill that approves, or whose work is hard to undo, is
+kept from the AI; a skill that starts, picks up, or pauses work stays one that an AI can call, so
+that an AI can give out work.
 
 *Why*: an AI that decides for the caller leaves them answerable for what they never saw. An approval
 that an agent can give itself stops nothing.
