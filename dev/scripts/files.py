@@ -28,9 +28,12 @@ class Unreadable(Exception):
 
 @functools.cache
 def form(name: str) -> dict[str, Any]:
-    """The form of the name, <name>.schema.json in FORMS, read once."""
+    """The form of the name, <name>.schema.json in FORMS, read once and `schema.checked` as one
+    schema.py reads whole, so no value is held to a keyword left unread."""
     with open(os.path.join(FORMS, f"{name}.schema.json"), encoding="utf-8") as f:
-        return json.load(f)
+        shape = json.load(f)
+    schema.checked(shape)
+    return shape
 
 
 def read(path: str) -> Any:

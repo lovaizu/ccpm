@@ -338,8 +338,8 @@ def cases_in(path: str) -> list[Case]:
 
 
 def ignored(paths: list[str]) -> set[str]:
-    """Each of the paths that git ignores, such as the records an E2E test keeps, none outside a git
-    repository."""
+    """Each of the paths that git ignores, such as a test file that a developer's own .gitignore
+    keeps out of the repository, none outside a git repository."""
     done = subprocess.run(
         ["git", "check-ignore", "--stdin"],
         input="\n".join(paths),

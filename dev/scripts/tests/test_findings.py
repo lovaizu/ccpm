@@ -45,13 +45,14 @@ class HeldTest(unittest.TestCase):
         )
 
     def test_a_tests_check_that_fails_gives_its_findings_between_what_it_is_for(self):
-        # When: a check of the tests that prints a finding and exits 1 runs under held.
-        done = held("tests", "echo 'mutant 7 survived'; exit 1")
+        # When: the coverage report, a check of the tests, prints a line not run and exits 2 under
+        # held.
+        done = held("tests", "echo 'dev/scripts/files.py 30 1 97% 36'; exit 2")
         # Then: the finding stands after what the check is for and before its short form.
-        self.assertEqual(done.returncode, 1, "the check's exit code")
+        self.assertEqual(done.returncode, 2, "the check's exit code")
         before, finding, after = done.stdout.split("\n\n")
         self.assertIn("code/best-practice.md", before, "the tests text first")
-        self.assertEqual(finding, "mutant 7 survived")
+        self.assertEqual(finding, "dev/scripts/files.py 30 1 97% 36")
         self.assertEqual(
             after, "Mend the design or the code. Don't add a test only to clear a finding.\n"
         )

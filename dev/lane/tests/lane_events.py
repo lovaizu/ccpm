@@ -1,8 +1,9 @@
 """How Lane's unit cases make each hook event that Claude Code sends, from the line of a record in
 dev/tests/recorded/ that shows it, as dev/lane/claude-code-states.md lists them, made one
 conversation's by its session, its folder, its transcript, and the fields of the move; and the
-transcript's line that names a skill's base directory, in the form of the transcripts that rn's
-E2E runs kept of Claude Code 2.1.327."""
+transcript's line that names a skill's base directory, in the form in which the double of Claude
+Code writes it from the text that dev/tests/recorded/claude-code-2.1.328-base-directory.jsonl shows
+the transcript holding."""
 
 from __future__ import annotations
 
@@ -33,14 +34,12 @@ def base_directory(transcript: str, plugin_root: str, skill: str) -> None:
     naming its base directory in the plugin's folder."""
     message = {
         "type": "user",
-        "isMeta": True,
         "message": {
             "role": "user",
             "content": [
                 {
                     "type": "text",
-                    "text": f"Base directory for this skill: {plugin_root}/skills/{skill}\n\n"
-                    "Start each subagent that Lane gives as due.",
+                    "text": f"Base directory for this skill: {plugin_root}/skills/{skill}",
                 }
             ],
         },
