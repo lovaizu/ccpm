@@ -51,8 +51,8 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     Takes: the rule, with its items or the command that gives them, the step it belongs to, and the
     move: a reporter's mark of the step done, with the marks of items that Move.done gives
     for the move's start or turn.
-    Gives: the step's sentence and each item that items gives not yet marked done; None where each
-    item is marked done.
+    Gives: the step's sentence, with each item that items gives not yet marked done, which tells
+    the AI to take each, then record it; None where each item is marked done.
     Changes: nothing of Lane's; the rule's command may read the conversation's folder.
     Refuses: Unchecked, as items refuses.
     """
@@ -63,5 +63,5 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     return (
         f"You're at the step `{step['name']}` of {move.role}, whose checklist isn't done:"
         f" {listed(left)}.\n"
-        f"Do each and mark it done with lane-item {step['name']} <item> first."
+        f"Take each, then record it with lane-item {step['name']} <item>."
     )

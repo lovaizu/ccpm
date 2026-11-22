@@ -1348,7 +1348,7 @@ def test_report_made_of_a_step_whose_rules_break_gives_the_sentence_and_marks_no
     assert said == Answer(
         True,
         "You're at the step `write` of log:writer, which reads whole NOTES.md.\n"
-        "Read NOTES.md from its line 1 before you mark it done.",
+        "Read NOTES.md from its line 1, then record the step with lane-step write.",
     )
     assert gained(log) == []
 

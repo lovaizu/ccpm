@@ -135,7 +135,7 @@ RUNS_GIT_LOG = (
 )
 WRITE_BEFORE_REPORT = (
     "You're at the step `write` of log:writer, which comes before `report`.\n"
-    "Do `write` and mark it done with lane-step write first."
+    "Make its result, then record it with lane-step write."
 )
 REPORT_UNDONE = (
     "You end before the result of the step `report` of log:writer is made.\n"
@@ -143,7 +143,7 @@ REPORT_UNDONE = (
 )
 NOTES_UNREAD = (
     "You're at the step `write` of log:writer, which reads whole NOTES.md.\n"
-    "Read NOTES.md from its line 1 before you mark it done."
+    "Read NOTES.md from its line 1, then record the step with lane-step write."
 )
 NO_WRITTEN = (
     "You end the step `report` of log:writer with no result it may give.\n"
@@ -730,7 +730,7 @@ def test_a_mark_of_the_third_step_gives_the_first_step_before_it_not_done(
     said = order.judge_mark(rule(THREE[2], "order"), THREE[2], marking)
     expected = (
         f"You're at the step `{due}` of log:writer, which comes before `report`.\n"
-        f"Do `{due}` and mark it done with lane-step {due} first."
+        f"Make its result, then record it with lane-step {due}."
     )
     assert said == (expected if due else None)
 
@@ -807,7 +807,7 @@ def test_reads_that_leave_a_line_give_the_first_line_not_read(
     said = reads_whole.judge_mark(rule(WRITE, "reads_whole"), WRITE, marking_write(e, *reads))
     assert said == (
         "You're at the step `write` of log:writer, which reads whole NOTES.md.\n"
-        f"Read NOTES.md from its line {first_unread} before you mark it done."
+        f"Read NOTES.md from its line {first_unread}, then record the step with lane-step write."
     )
 
 
@@ -857,7 +857,7 @@ def test_a_rule_of_two_files_names_each_not_read_whole(
     said = reads_whole.judge_mark(BOTH, step, marking_write(e, *reads))
     expected = (
         "You're at the step `write` of log:writer, which reads whole NOTES.md and CHANGELOG.md.\n"
-        f"Read {unread} before you mark it done."
+        f"Read {unread}, then record the step with lane-step write."
     )
     assert said == (expected if unread else None)
 
@@ -895,7 +895,7 @@ def test_a_file_unread_beside_one_that_cant_be_read_gives_the_steps_sentence(e: 
     step: Step = {"name": "write", "rules": [both]}
     assert reads_whole.judge_mark(both, step, marking_write(e)) == (
         "You're at the step `write` of log:writer, which reads whole GONE.md and NOTES.md.\n"
-        "Read NOTES.md from its line 1 before you mark it done."
+        "Read NOTES.md from its line 1, then record the step with lane-step write."
     )
 
 
@@ -914,7 +914,7 @@ def test_a_file_with_no_last_newline_counts_its_last_line_alone(
     said = reads_whole.judge_mark(two, step, marking_write(e, read("TWO.md", 1, last)))
     expected = (
         "You're at the step `write` of log:writer, which reads whole TWO.md.\n"
-        f"Read TWO.md from its line {first_unread} before you mark it done."
+        f"Read TWO.md from its line {first_unread}, then record the step with lane-step write."
     )
     assert said == (expected if first_unread else None)
 
@@ -967,7 +967,7 @@ def test_items_not_marked_give_the_steps_sentence_naming_each(
     said = checklist.judge_mark(rule(WRITE, "checklist"), WRITE, marking)
     assert said == (
         f"You're at the step `write` of log:writer, whose checklist isn't done: {unmarked}.\n"
-        "Do each and mark it done with lane-item write <item> first."
+        "Take each, then record it with lane-item write <item>."
     )
 
 
@@ -1427,7 +1427,7 @@ def test_a_mark_is_judged_by_its_items_once_its_reads_hold(e: Events):
     )
     assert said == (
         "You're at the step `write` of log:writer, whose checklist isn't done: linked.\n"
-        "Do each and mark it done with lane-item write <item> first."
+        "Take each, then record it with lane-item write <item>."
     )
 
 
@@ -1454,14 +1454,14 @@ REVERSED: list[Step] = [
             (mark("write"),),
             (
                 "You're at the step `report` of log:writer, which reads whole CHANGELOG.md.\n"
-                "Read CHANGELOG.md from its line 1 before you mark it done."
+                "Read CHANGELOG.md from its line 1, then record the step with lane-step report."
             ),
         ),
         (
             (mark("write"), read("CHANGELOG.md", 1, 6)),
             (
                 "You're at the step `report` of log:writer, whose checklist isn't done: dated.\n"
-                "Do each and mark it done with lane-item report <item> first."
+                "Take each, then record it with lane-item report <item>."
             ),
         ),
     ],
@@ -1980,7 +1980,7 @@ def test_a_mark_is_judged_by_the_items_that_the_command_gives(
     said = checklist.judge_mark(listing, WRITE, marking_write(e, *entries))
     expected = (
         f"You're at the step `write` of log:writer, whose checklist isn't done: {unmarked}.\n"
-        "Do each and mark it done with lane-item write <item> first."
+        "Take each, then record it with lane-item write <item>."
     )
     assert said == (expected if unmarked else None)
 
@@ -2051,7 +2051,7 @@ def test_the_main_conversations_items_count_for_the_turn_they_lie_in(
     noted = rule(LEAD_CHECKED, "checklist")
     expected = (
         "You're at the step `lead` of log:up, whose checklist isn't done: noted.\n"
-        "Do each and mark it done with lane-item lead <item> first."
+        "Take each, then record it with lane-item lead <item>."
     )
     got = checklist.judge_mark(noted, LEAD_CHECKED, main_marking(e, entries))
     assert got == (expected if said else None)
@@ -2071,7 +2071,7 @@ def test_the_main_conversations_reads_count_for_the_turn_they_lie_in(e: Events, 
     said = reads_whole.judge_mark(reads, LEAD_CHECKED, main_marking(e, entries))
     unread = (
         "You're at the step `lead` of log:up, which reads whole NOTES.md.\n"
-        "Read NOTES.md from its line 1 before you mark it done."
+        "Read NOTES.md from its line 1, then record the step with lane-step lead."
     )
     assert said == (unread if earlier else None)
 

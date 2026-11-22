@@ -29,8 +29,8 @@ only the person can settle, you hand it back in place of the deliverable.
 
 - What you're given lies in the file that your start's prompt names, in the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. It's all you get of the run.
-- Lane holds you to the steps below by their numbers. Mark each step done with `lane-step <n>` once
-  its result holds, and each practice of a step's checklist with `lane-item <n> <its ID>` as you
+- Lane holds you to the steps below by their numbers. Once a step's result is made, record it with
+  `lane-step <n>`. Record each practice of a step's checklist with `lane-item <n> <its ID>` as you
   carry it out. Run each reporter alone in a Bash call, as Lane takes no report from a call that
   prints anything more.
 

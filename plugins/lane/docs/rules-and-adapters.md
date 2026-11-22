@@ -175,7 +175,7 @@ isn't there, is one that Lane [can't check](#when-lane-cant-check-a-rule).
 
 ```text
 You're at the step `write` of log:writer, which reads whole docs/style.md.
-Read docs/style.md from its line 3 before you mark it done.
+Read docs/style.md from its line 3, then record the step with lane-step write.
 ```
 
 ### `commands`
@@ -224,7 +224,7 @@ At a mark of `write` before `read` is done:
 
 ```text
 You're at the step `read` of log:writer, which comes before `write`.
-Do `read` and mark it done with lane-step read first.
+Make its result, then record it with lane-step read.
 ```
 
 At an end before the result of `write` is made:
@@ -261,7 +261,7 @@ scripts/changed.py: no changes file
 
 ```text
 You're at the step `write` of log:writer, whose checklist isn't done: links.
-Do each and mark it done with lane-item write <item> first.
+Take each, then record it with lane-item write <item>.
 ```
 
 ### `result`

@@ -488,7 +488,7 @@ def test_the_generators_make_is_held_to_its_best_practices_make_items(b: Bench, 
     assert "N1.4" in left
     assert answer.said == (
         f"You're at the step `make` of rn:generator, whose checklist isn't done: {listed(left)}.\n"
-        "Do each and mark it done with lane-item make <item> first."
+        "Take each, then record it with lane-item make <item>."
     )
 
 
@@ -599,7 +599,7 @@ def test_a_generator_marking_make_before_decide_is_stopped(b: Bench, broken: Non
     answer = generator.bash("lane-step make")
     assert answer.said == (
         "You're at the step `decide` of rn:generator, which comes before `make`.\n"
-        "Do `decide` and mark it done with lane-step decide first."
+        "Make its result, then record it with lane-step decide."
     )
 
 

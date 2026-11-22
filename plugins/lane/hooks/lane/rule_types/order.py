@@ -12,8 +12,8 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
 
     Takes: the rule, the step it belongs to, and the move: a reporter's mark of the step done, with
     the marks of the move's start that the run record holds.
-    Gives: the step's sentence and the step due, where a step before it isn't marked done; None
-    where each is.
+    Gives: the step's sentence, which names the step due and tells the AI to make its result, then
+    record it, where a step before it isn't marked done; None where each is.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -24,7 +24,7 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
         return None
     return (
         f"You're at the step `{due}` of {move.role}, which comes before `{step['name']}`.\n"
-        f"Do `{due}` and mark it done with lane-step {due} first."
+        f"Make its result, then record it with lane-step {due}."
     )
 
 

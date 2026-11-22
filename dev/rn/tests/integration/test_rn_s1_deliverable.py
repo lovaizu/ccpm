@@ -211,7 +211,7 @@ def test_each_node_a_change_touches_is_read_again_before_the_commit(b: Bench):
     assert "/deliverables/2" in nodes
     assert answer.said == (
         f"You're at the step `touched` of rn:on, whose checklist isn't done: {listed(nodes)}.\n"
-        "Do each and mark it done with lane-item touched <item> first."
+        "Take each, then record it with lane-item touched <item>."
     )
 
 

@@ -203,7 +203,8 @@ def test_a_generators_read_marked_before_its_cut_is_read_whole_is_stopped(b: Ben
     answer = generator.bash("lane-step read")
     assert answer.said == (
         f"You're at the step `read` of rn:generator, which reads whole {listed(paths)}.\n"
-        f"Read {listed([f'{each} from its line 1' for each in paths])} before you mark it done."
+        f"Read {listed([f'{each} from its line 1' for each in paths])}, then record the step"
+        " with lane-step read."
     )
 
 

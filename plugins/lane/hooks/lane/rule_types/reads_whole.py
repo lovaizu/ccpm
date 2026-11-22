@@ -39,7 +39,7 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
         return (
             f"You're at the step `{step['name']}` of {move.role}, which reads whole"
             f" {listed(rule['paths'])}.\n"
-            f"Read {listed(unread)} before you mark it done."
+            f"Read {listed(unread)}, then record the step with lane-step {step['name']}."
         )
     if unchecked:
         raise Unchecked("\n".join(unchecked))

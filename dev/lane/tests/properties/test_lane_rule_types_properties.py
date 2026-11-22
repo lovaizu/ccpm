@@ -271,7 +271,7 @@ def test_a_step_is_held_to_each_step_before_it_by_the_writers_own_marks(
     due = next((name for name in names_[:at] if name not in done), None)
     expected = due and (
         f"You're at the step `{due}` of log:writer, which comes before `{step['name']}`.\n"
-        f"Do `{due}` and mark it done with lane-step {due} first."
+        f"Make its result, then record it with lane-step {due}."
     )
     assert order.judge_mark(step["rules"][0], step, marking) == expected
     end = move("end", e.ended(WRITER), steps, entries, step=step["name"])
@@ -323,7 +323,7 @@ def test_a_step_is_held_to_each_item_of_its_checklist_by_the_writers_own_marks(
     undone = [item for item in items if item not in done]
     expected = undone and (
         f"You're at the step `write` of log:writer, whose checklist isn't done: {listed(undone)}.\n"
-        "Do each and mark it done with lane-item write <item> first."
+        "Take each, then record it with lane-item write <item>."
     )
     assert checklist.judge_mark(rule, step, marking) == (expected or None)
 
@@ -381,7 +381,7 @@ def test_a_file_counts_as_read_whole_only_where_the_writers_reads_cover_each_lin
     )
     expected = unread and (
         "You're at the step `write` of log:writer, which reads whole NOTES.md.\n"
-        f"Read NOTES.md from its line {unread[0]} before you mark it done."
+        f"Read NOTES.md from its line {unread[0]}, then record the step with lane-step write."
     )
     assert reads_whole.judge_mark(rule, step, marking) == (expected or None)
 

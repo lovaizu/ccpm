@@ -32,7 +32,7 @@ def test_a_later_step_marked_after_going_back_is_stopped_with_the_step_gone_back
     Then the mark is stopped with the sentence of `report` naming `write` as the step due"""
     assert gone_back(b).bash("lane-step report").said == (
         "You're at the step `write` of log:writer, which comes before `report`.\n"
-        "Do `write` and mark it done with lane-step write first."
+        "Make its result, then record it with lane-step write."
     )
 
 
@@ -44,7 +44,7 @@ def test_a_step_gone_back_to_asks_its_items_again_and_keeps_its_reads(b: Bench):
     sentence of NOTES.md, as the read stays counted"""
     assert gone_back(b).bash("lane-step write").said == (
         "You're at the step `write` of log:writer, whose checklist isn't done: dated and linked.\n"
-        "Do each and mark it done with lane-item write <item> first."
+        "Take each, then record it with lane-item write <item>."
     )
 
 
@@ -106,5 +106,5 @@ def test_going_back_goes_through_at_a_step_whose_rule_of_commands_doesnt_name_it
     assert (back.blocked, back.exit_code, back.said) == (False, 0, ""), back.output
     assert writer.bash("lane-step report").said == (
         "You're at the step `write` of log:writer, which comes before `report`.\n"
-        "Do `write` and mark it done with lane-step write first."
+        "Make its result, then record it with lane-step write."
     )

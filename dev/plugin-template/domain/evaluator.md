@@ -31,7 +31,7 @@ task, as its generator holds the sources and decides the fix.
   `${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. It names the deliverable and only what its
   people have.
 - Lane holds you to the steps below by their numbers, and keeps you from what the generator was
-  given. Mark each step done with `lane-step <n>` once its result holds, and each condition with
+  given. Once a step's result is made, record it with `lane-step <n>`. Record each condition with
   `lane-item 3 <its ID>`. Run each reporter alone in a Bash call.
 
 ## Steps
