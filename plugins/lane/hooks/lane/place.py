@@ -37,13 +37,15 @@ class SkillCall:
 
 @dataclass
 class Turn:
-    """S11: a turn of the main conversation that its first move begins, on its run: the main
-    conversation's role, by the skill's name, and the prompt that began it, as Claude Code gives
-    it."""
+    """S11: a turn of the main conversation that its first move begins, or its next move after a
+    command called within it, on its run: the main conversation's role, by the skill's name, the
+    prompt that began it, as Claude Code gives it, and the latest command that it called, None for
+    none."""
 
     run: Run
     role: str
     prompt: str
+    command: str | None
 
 
 @dataclass
@@ -168,13 +170,15 @@ def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
 
     Takes: a hook event, and the runs of its conversation.
     Gives: the turn, on the standing run with its folder, at the main conversation's PreToolUse or
-    Stop, the turn's first call or end, where the run holds no `turn` entry since its latest
-    `turn_ended` entry, or since its start, and the rules name the main conversation's role with no
-    steps: its role the skill of the run's latest command that the rules name at that event, so
-    that a command that the Skill tool calls later in the turn leaves the turn's steps as they
-    stand; its prompt that of the turn's `turn_begun` entry, empty for the run's first turn, whose
-    command and words the run holds. None at any other event, for a turn that holds its `turn`
-    entry, for a run with no folder yet, or where the rules give that role's steps.
+    Stop, the turn's first call or end, or its first after a command called within it, typed or by
+    the Skill tool, where the run holds no `turn` entry since its latest `turn_ended` entry, or
+    since its start, or since that command, and the rules name the main conversation's role with
+    no steps: its role the skill of the run's latest command that the rules name at that event; its
+    prompt that of the turn's `turn_begun` entry, empty for the run's first turn, whose command and
+    words the run holds; and its command the latest that the turn called, the run's skill for the
+    run's first turn until it calls another, None for a turn that called none. None at any other
+    event, for a turn that holds its `turn` entry, for a run with no folder yet, or where the rules
+    give that role's steps.
     Changes: nothing.
     Refuses: OutOfForm, where the rules of the plugin's run are out of form.
     """
@@ -184,7 +188,9 @@ def turn_opening(event: Event, runs: list[Run]) -> Turn | None:
     if found is None or found[0].state.turn.entry is not None:
         return None
     run, role = found
-    return Turn(run, role, run.state.turn.prompt or "")
+    turn = run.state.turn
+    command = turn.command or (None if turn.after_an_end else run.skill)
+    return Turn(run, role, turn.prompt or "", command)
 
 
 def place(event: Event, runs: list[Run], due: Due) -> Move | None:

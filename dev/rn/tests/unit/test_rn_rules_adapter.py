@@ -43,20 +43,47 @@ NAME = f"{date.today():%Y%m%d}-{rn_files.NAMED}"
 ENDED = line(RUN, "writer's end reaches the main conversation")["payload"]["prompt"]
 
 
+# rn's commands, each by its skill.
+COMMANDS = ("rn:on", "rn:up", "rn:dn", "rn:ty", "rn:gm")
+
+
+def typed(prompt: str, skill: str) -> str | None:
+    """The command that a turn of the prompt called, as Lane gives it where the user types it: the
+    skill of the command that the prompt types, the run's skill for the run's first turn, whose
+    prompt is empty, and None for words that type none of rn's commands."""
+    if not prompt:
+        return skill
+    first = prompt.partition(" ")[0].lstrip("/")
+    return first if prompt.startswith("/") and first in COMMANDS else None
+
+
+def turn(role: str, prompt: str, skill: str = "rn:on") -> dict[str, Any]:
+    """An earlier turn as Lane gives it, with the command that its prompt typed."""
+    return {"role": role, "prompt": prompt, "command": typed(prompt, skill)}
+
+
 def given(
-    role: str, prompt: str, skill: str = "rn:up", turns: Sequence[Mapping[str, str]] = ()
+    role: str,
+    prompt: str,
+    skill: str = "rn:up",
+    turns: Sequence[Mapping[str, Any]] = (),
+    command: str | None = "",
 ) -> dict[str, Any]:
     """What Lane gives the adapter, read from the JSON of its text, the run's words empty, as rn's
-    commands take none but /rn:gm's, with the earlier turns given, none unless given."""
+    commands take none but /rn:gm's, with the earlier turns given, none unless given, and the
+    command given, else the one that the prompt typed."""
     run = {"skill": skill, "words": ""}
-    text = json.dumps({"run": run, "role": role, "prompt": prompt, "turns": list(turns)})
+    called = typed(prompt, skill) if command == "" else command
+    text = json.dumps(
+        {"run": run, "role": role, "prompt": prompt, "command": called, "turns": list(turns)}
+    )
     return json.loads(text)
 
 
 # The earlier turns of a conversation of /rn:on: its first turn, the hearing, with an empty prompt;
 # and that turn and the request, the user's words after it.
-HEARD = [{"role": "rn:on", "prompt": ""}]
-ASKED = [*HEARD, {"role": "rn:on", "prompt": WORDS}]
+HEARD = [turn("rn:on", "")]
+ASKED = [*HEARD, turn("rn:on", WORDS)]
 
 
 def shown(steps: Mapping[str, Any]) -> list[tuple[str, list[str]]]:
@@ -244,7 +271,7 @@ def test_the_words_after_the_hearing_typed_again_start_a_new_run(repo: str):
     When the adapter gives the turn's steps
     Then they are `start` and the shared steps on the run named from today and the new words"""
     a_run(repo, tree=unsigned())
-    turns = [*ASKED, {"role": "rn:on", "prompt": "/rn:on"}]
+    turns = [*ASKED, turn("rn:on", "/rn:on")]
     steps = ADAPTER.steps(given("rn:on", "Receipts", skill="rn:on", turns=turns), repo, RN)
     other = f"{date.today():%Y%m%d}-receipts"
     assert shown(steps) == relative([START, *shared(repo, other)], repo)
@@ -289,7 +316,7 @@ def test_a_signoff_in_a_conversation_of_rn_on_records_it_on_the_run_it_made(repo
     Then they are `record` and the shared steps on the run made"""
     a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
     a_run(repo, "20261101-old", when="2026-11-21T09:00:00")
-    turns = [*ASKED, {"role": "rn:on", "prompt": "yes"}]
+    turns = [*ASKED, turn("rn:on", "yes")]
     steps = ADAPTER.steps(given("rn:ty", "/rn:ty", skill="rn:on", turns=turns), repo, RN)
     assert shown(steps) == relative([step("record", BLOCKED), *shared(repo)], repo)
 
@@ -313,7 +340,7 @@ def test_a_turn_after_a_pick_up_in_a_conversation_of_rn_on_takes_the_newest_run(
     Then they are `take` and the shared steps on the newest run, the one that the pick-up found"""
     a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
     a_run(repo, "20261101-old", when="2026-11-21T09:00:00")
-    turns = [*ASKED, {"role": "rn:up", "prompt": "/rn:up"}]
+    turns = [*ASKED, turn("rn:up", "/rn:up")]
     steps = ADAPTER.steps(given("rn:up", "yes", skill="rn:on", turns=turns), repo, RN)
     old = "20261101-old"
     assert shown(steps) == relative([TAKE, *shared(repo, old)], repo)
@@ -377,6 +404,21 @@ def test_a_pause_stops_the_roles_then_pauses_with_no_shared_step(repo: str):
         step("stop", BLOCKED),
         step("pause"),
     ]
+
+
+@pytest.mark.supports(
+    "test_a_command_called_by_the_skill_tool_in_a_standing_run_takes_the_typed_commands_steps"
+)
+def test_a_command_called_by_the_skill_tool_takes_the_steps_of_the_command_typed(repo: str):
+    """Given a repository with one run, and a turn of the user's `Go on.` in which an AI called
+    rn:dn, or rn:up, by the Skill tool
+    When the adapter gives the turn's steps
+    Then they are those of the typed command: `stop` and `pause`, or `find` and the shared steps"""
+    a_run(repo)
+    paused = ADAPTER.steps(given("rn:dn", "Go on.", command="rn:dn"), repo, RN)
+    assert shown(paused) == [step("stop", BLOCKED), step("pause")]
+    found = ADAPTER.steps(given("rn:up", "Go on.", command="rn:up"), repo, RN)
+    assert shown(found) == relative([FIND, *shared(repo)], repo)
 
 
 @pytest.mark.supports("test_an_orchestrators_turn_ended_before_its_review_is_stopped")
@@ -805,11 +847,16 @@ def test_main_gives_0_with_the_steps_as_one_line_of_json(repo: str):
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
 @pytest.mark.parametrize(
     "stdin",
-    ["", "{run", "[]", '{"run": {"skill": "rn:up", "words": ""}, "role": "rn:up", "prompt": ""}'],
+    [
+        "",
+        "{run",
+        "[]",
+        '{"run": {"skill": "rn:up", "words": ""}, "role": "rn:up", "prompt": "", "turns": []}',
+    ],
 )
 def test_main_gives_1_where_its_input_isnt_lanes_json(cwd: str, stdin: str):
     """Given standard input that's empty, not JSON, JSON of another form, or a turn with no
-    `turns`
+    `command`
     When main runs
     Then it gives 1, nothing on stdout, and `rules.py: ` with what's wrong on stderr"""
     code, out, err = ADAPTER.main(stdin, cwd, RN)

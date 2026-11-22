@@ -38,8 +38,9 @@ def run(log: str, *entries: Entry) -> Run:
 
 
 def start(role: str, prompt: str) -> Asked:
-    """What a start of the role asks the adapter of the rules for, with the prompt and no turn."""
-    return {"role": role, "prompt": prompt, "turns": []}
+    """What a start of the role asks the adapter of the rules for, with the prompt, no command, and
+    no turn."""
+    return {"role": role, "prompt": prompt, "command": None, "turns": []}
 
 
 def adapter(log: str, name: str, code: str) -> None:
@@ -224,7 +225,7 @@ def test_the_adapter_of_the_rules_gives_the_starts_steps_from_its_prompt(log: st
 def test_the_adapter_of_the_rules_takes_the_run_the_role_and_the_prompt(log: str, cwd: str):
     """Given an adapter of the rules that writes what it's given
     When Lane asks it for the steps of a writer's start
-    Then it was given the run's skill and words, the role, the prompt, and no turn, as
+    Then it was given the run's skill and words, the role, the prompt, no command, and no turn, as
     rules.in.schema.json says, and ran in the conversation's folder"""
     adapter(log, "rules.py", ECHO.format(printed=json.dumps({"steps": []})))
     given_steps(log, cwd, run(log), start("log:writer", "Write it."))
@@ -233,6 +234,7 @@ def test_the_adapter_of_the_rules_takes_the_run_the_role_and_the_prompt(log: str
             "run": {"skill": "log:up", "words": "1.2.0"},
             "role": "log:writer",
             "prompt": "Write it.",
+            "command": None,
             "turns": [],
         },
         "cwd": os.path.realpath(cwd),
@@ -400,39 +402,44 @@ def test_the_adapter_of_the_rules_may_give_several_steps_in_their_order(log: str
     "test_a_turns_adapter_of_the_rules_is_given_each_earlier_turn_with_its_role_and_prompt",
 )
 @pytest.mark.parametrize(
-    "prompt, turns",
+    "prompt, command, turns",
     [
-        ("", []),
+        ("", "log:up", []),
         (
             "<task-notification>Wrote it.</task-notification>",
-            [{"role": "log:up", "prompt": ""}],
+            None,
+            [{"role": "log:up", "prompt": "", "command": "log:up"}],
         ),
         (
             "/log:tag",
+            "log:tag",
             [
-                {"role": "log:up", "prompt": ""},
-                {"role": "log:up", "prompt": "Write docs/notes.md."},
+                {"role": "log:up", "prompt": "", "command": "log:up"},
+                {"role": "log:up", "prompt": "Write docs/notes.md.", "command": None},
             ],
         ),
     ],
     ids=["first", "one-earlier", "several-earlier"],
 )
 def test_the_adapter_of_the_rules_takes_the_main_conversations_role_the_prompt_and_the_turns(
-    log: str, cwd: str, prompt: str, turns: list[EarlierTurn]
+    log: str, cwd: str, prompt: str, command: str | None, turns: list[EarlierTurn]
 ):
     """Given an adapter of the rules that writes what it's given
     When Lane asks it for the steps of a turn of the main conversation in log:up: the run's first,
     with an empty prompt and no earlier turn; one begun by a task-notification after the first; or
     one begun by /log:tag after two
-    Then it was given the run's skill and words, log:up as the role, the turn's prompt, and each
-    earlier turn with its role and prompt, oldest first, and ran in the conversation's folder"""
+    Then it was given the run's skill and words, log:up as the role, the turn's prompt and command,
+    and each earlier turn with its role, prompt, and command, oldest first, and ran in the
+    conversation's folder"""
     adapter(log, "rules.py", ECHO.format(printed=json.dumps({"steps": []})))
-    given_steps(log, cwd, run(log), {"role": "log:up", "prompt": prompt, "turns": turns})
+    asked: Asked = {"role": "log:up", "prompt": prompt, "command": command, "turns": turns}
+    given_steps(log, cwd, run(log), asked)
     assert given(cwd) == {
         "input": {
             "run": {"skill": "log:up", "words": "1.2.0"},
             "role": "log:up",
             "prompt": prompt,
+            "command": command,
             "turns": turns,
         },
         "cwd": os.path.realpath(cwd),

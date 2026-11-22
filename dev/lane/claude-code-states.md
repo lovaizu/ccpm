@@ -110,5 +110,7 @@ guard.
   before a Stop it lets through, go on in the same turn. The guard asks the plugin's adapter of the
   rules for the turn's steps at the turn's first call or end, for the role of the Run's latest
   command then, with the prompt of that first UserPromptSubmit, empty for the Run's first turn, and
-  holds the turn's calls, marks, and end to those steps. A command that the Skill tool calls later
-  in the turn leaves the turn's steps as they stand.
+  holds the turn's calls, marks, and end to those steps. A command of the plugin that the turn
+  calls later, typed or by the Skill tool, sets those steps aside, and the guard asks the adapter
+  again at the turn's next call or end, for the command's role, so that an AI's Skill call gets
+  the steps that the typed command gets.

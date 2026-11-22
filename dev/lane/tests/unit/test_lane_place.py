@@ -1049,7 +1049,7 @@ def test_the_runs_first_call_or_end_opens_its_first_turn_with_no_prompt(
 ):
     """Given a run of log:up taking its steps at each turn, which holds no turn
     When the main conversation writes a file, runs `git status`, or ends its turn
-    Then it opens the run's first turn, of log:up, with an empty prompt"""
+    Then it opens the run's first turn, of log:up, with an empty prompt and the run's command"""
     per_turn(log)
     given = {
         "write": lambda: e.write("/repo/notes.md"),
@@ -1057,7 +1057,7 @@ def test_the_runs_first_call_or_end_opens_its_first_turn_with_no_prompt(
         "stop": e.stop,
     }[event]()
     on = run()
-    assert turn_opening(given, [on]) == Turn(on, "log:up", "")
+    assert turn_opening(given, [on]) == Turn(on, "log:up", "", "log:up")
 
 
 @pytest.mark.supports(
@@ -1078,10 +1078,10 @@ def test_the_first_call_after_a_prompt_opens_its_turn_with_the_latest_prompt_beg
     writer's task-notification began the next; or whose second turn, begun by `Go on.`, ended too
     before that notification
     When the main conversation writes a file
-    Then it opens the turn of log:up with the notification as its prompt"""
+    Then it opens the turn of log:up with the notification as its prompt and no command"""
     per_turn(log)
     on = run(*entries)
-    assert turn_opening(e.write("/repo/notes.md"), [on]) == Turn(on, "log:up", NOTIFIED)
+    assert turn_opening(e.write("/repo/notes.md"), [on]) == Turn(on, "log:up", NOTIFIED, None)
 
 
 @pytest.mark.supports("test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role")
@@ -1093,21 +1093,47 @@ def test_the_turns_role_is_that_of_the_latest_command_whose_role_the_rules_name(
     /log:tag, whose skill the rules name with no steps, or /log:retry, which they don't name,
     typed after it
     When the main conversation writes a file
-    Then it opens the turn of log:tag, or of log:up, with the command as its prompt"""
+    Then it opens the turn of log:tag, or of log:up, with the command as its prompt and its
+    command"""
     per_turn(log)
     on = run(turn(), TURN_ENDED, begun(f"/{command}"), typed(command))
-    assert turn_opening(e.write("/repo/notes.md"), [on]) == Turn(on, role, f"/{command}")
+    opened = Turn(on, role, f"/{command}", command)
+    assert turn_opening(e.write("/repo/notes.md"), [on]) == opened
+
+
+@pytest.mark.supports("test_a_skill_called_within_a_turn_gives_the_turn_its_skills_steps_afresh")
+@pytest.mark.parametrize(
+    "entries, prompt",
+    [
+        ((turn(), typed("log:tag")), ""),
+        (
+            (turn(), TURN_ENDED, begun("Tag it."), turn("Tag it.", LATER), typed("log:tag")),
+            "Tag it.",
+        ),
+    ],
+)
+def test_a_call_after_a_skill_called_within_the_turn_opens_the_turn_afresh_in_its_role(
+    e: Events, log: str, entries: tuple[Entry, ...], prompt: str
+):
+    """Given a run of log:up taking its steps at each turn for log:up and log:tag, in its first
+    turn, or in a turn begun by `Tag it.`, each holding its steps, after log:tag was called by the
+    Skill tool
+    When the main conversation writes a file
+    Then it opens the turn again, of log:tag, with the turn's prompt and log:tag as its command"""
+    per_turn(log)
+    on = run(*entries)
+    assert turn_opening(e.write("/repo/notes.md"), [on]) == Turn(on, "log:tag", prompt, "log:tag")
 
 
 @pytest.mark.supports(
-    "test_a_skill_called_within_a_turn_leaves_its_steps_and_gives_the_next_turn_its_role",
+    "test_a_skill_called_within_a_turn_gives_the_turn_its_skills_steps_afresh",
     "test_a_subagents_end_after_a_turns_end_that_lane_stopped_goes_on_in_the_same_turn",
 )
 @pytest.mark.parametrize(
     "entries",
     [
         (turn(),),
-        (turn(), typed("log:tag")),
+        (turn(), typed("log:tag"), turn("", LATER, "log:tag")),
         (turn(), TURN_ENDED, begun(NOTIFIED), turn(NOTIFIED, LATER)),
     ],
 )
@@ -1116,7 +1142,8 @@ def test_a_call_or_end_of_a_turn_that_holds_its_steps_opens_none(
     e: Events, log: str, entries: tuple[Entry, ...], event: str
 ):
     """Given a run of log:up taking its steps at each turn, in its first turn, in its first turn
-    after log:tag was called by the Skill tool, or in its second turn, each holding its steps
+    after log:tag was called by the Skill tool and its steps given again, or in its second turn,
+    each holding its steps
     When the main conversation writes a file, or ends its turn
     Then it opens no turn"""
     per_turn(log)
@@ -1216,16 +1243,17 @@ def test_the_main_conversations_stop_ends_its_turn_at_the_first_step_the_turn_le
     assert place(given, [on], by_routes) == main_move("turn_end", given, on, steps=steps, step=step)
 
 
-@pytest.mark.supports(
-    "test_a_skill_called_within_a_turn_leaves_its_steps_and_gives_the_next_turn_its_role"
-)
-def test_a_call_after_a_skill_called_within_the_turn_holds_to_the_turns_role_and_steps(
+@pytest.mark.supports("test_a_skill_called_within_a_turn_gives_the_turn_its_skills_steps_afresh")
+def test_a_call_after_a_skill_called_within_the_turn_holds_to_the_steps_given_again(
     e: Events, log: str
 ):
     """Given a run of log:up taking its steps at each turn for log:up and log:tag, in its first
-    turn, after log:tag was called by the Skill tool
+    turn, after log:tag was called by the Skill tool and the turn's steps given again for log:tag
     When the main conversation writes a file
-    Then the move is a call held to the turn's role, log:up, and its steps, at `up`"""
+    Then the move is a call held to the role log:tag and the steps given again"""
     per_turn(log)
-    given, on = e.write("/repo/notes.md"), run(turn(), typed("log:tag"))
-    assert place(given, [on], by_routes) == main_move("call", given, on, steps=FIRST, step="up")
+    given = e.write("/repo/notes.md")
+    on = run(turn(), typed("log:tag"), turn("", LATER, "log:tag"))
+    assert place(given, [on], by_routes) == main_move(
+        "call", given, on, role="log:tag", steps=LATER, step="up"
+    )

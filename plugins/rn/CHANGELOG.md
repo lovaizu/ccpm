@@ -9,6 +9,7 @@
 
 ### Fixed
 
+- When an AI calls `/rn:dn` or `/rn:up` by the Skill tool while a run stands, rn takes the steps of the typed command, such as stopping the roles and pushing the work for `/rn:dn`, instead of taking the AI's call as an answer to the run.
 - Lane no longer holds rn's orchestrator, generator, or evaluator to the commands each step runs, nor the orchestrator and the generator to the files each step writes, so rn can run what its work needs, such as `gh issue view` while it hears your request, instead of looking for a way round a stop. Each step still names the script it runs. The evaluator stays held to the files it reads and writes, so it judges as your deliverable's people, apart from its maker.
 - Before rn starts making a deliverable, it reads the best practice of the deliverable's kind and asks you, one at a time, each point that the best practice says to ask you before making, such as a product vision's concept, so the making starts with your answers instead of stopping to ask them.
 - rn ends a turn once each of its steps has made its result, such as the question asked or the plan reviewed by your answer, in place of once it has marked each step done, so rn no longer marks a step done while leaving its work undone.

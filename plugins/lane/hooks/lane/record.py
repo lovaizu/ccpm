@@ -30,7 +30,9 @@ class Entry(TypedDict, total=False):
     the guard let through, a `back` the `step` that a start or the main conversation went back to
     and the steps it `undone`, that step and each after it, whose earlier marks no longer count, a
     `stopped` the `agent_id` of a start that ended with no result, such as one stopped by TaskStop,
-    and an `ended` the end of the run, once its order said the run ends."""
+    a `typed` the `command` of the run's plugin that the turn called, and an `ended` the end of the
+    run, once its order said the run ends. A `turn` holds the `command` too, the latest that its
+    turn called, None for none."""
 
     kind: str
     run: str
@@ -46,7 +48,7 @@ class Entry(TypedDict, total=False):
     step: str
     item: str
     result: str
-    command: str
+    command: str | None
     prompt: str
     steps: list[Step]
     undone: list[str]
@@ -119,12 +121,16 @@ class TurnAtHand:
     """S11: the main conversation's turn at hand, from the run's start or from the latest turn's
     end that the guard let through: whether such an end comes before it, the prompt that its
     `turn_begun` entry gives, None where it holds none, and its `turn` entry, with the role and the
-    steps that hold the main conversation's moves in it, None until the turn's first call or
-    end."""
+    steps that hold the main conversation's moves in it, None until the turn's first call or end
+    and again after a command called within it; the latest command that it called, None for none;
+    and whether a command called within it set its `turn` entry aside, which the turn's next `turn`
+    entry takes the place of."""
 
     after_an_end: bool = False
     prompt: str | None = None
     entry: Entry | None = None
+    command: str | None = None
+    again: bool = False
 
 
 # A move of the run that its plugin's order sees.
@@ -189,7 +195,13 @@ def _ended(state: RunState, entry: Entry) -> None:
 
 
 def _typed(state: RunState, entry: Entry) -> None:
-    state.moves.append(Command(entry["command"]))
+    # A command of the run's plugin always names its skill, as place.command_of gives it.
+    command = cast(str, entry["command"])
+    state.moves.append(Command(command))
+    state.turn.command = command
+    if state.turn.entry is not None:
+        state.turn.entry = None
+        state.turn.again = True
 
 
 def _start(state: RunState, entry: Entry) -> None:
@@ -254,8 +266,12 @@ def _turn_begun(state: RunState, entry: Entry) -> None:
 
 
 def _turn(state: RunState, entry: Entry) -> None:
-    state.turns.append(entry)
+    if state.turn.again:
+        state.turns[-1] = entry
+    else:
+        state.turns.append(entry)
     state.turn.entry = entry
+    state.turn.again = False
     state.done[None] = Done()
 
 

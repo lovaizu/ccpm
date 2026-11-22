@@ -3,7 +3,7 @@
   "title": "What Lane gives a plugin's adapter of the rules",
   "description": "A start of a role, or a turn of the main conversation, whose steps the plugin's lane/rules.json leaves to the adapter, with the prompt that the start or the turn began with.",
   "type": "object",
-  "required": ["run", "role", "prompt", "turns"],
+  "required": ["run", "role", "prompt", "command", "turns"],
   "additionalProperties": false,
   "properties": {
     "run": {
@@ -25,16 +25,21 @@
       "description": "The prompt that the main conversation gave the start; for a turn, the prompt that began it as Claude Code gives it: the person's prompt, or the <task-notification> of a subagent's end; empty for the run's first turn, whose command and words run holds.",
       "type": "string"
     },
+    "command": {
+      "description": "For a turn, the latest command of the plugin that the turn called, typed or by the Skill tool, by the skill's name, the run's skill for the run's first turn until it calls another; null for a turn that called none, and for a start.",
+      "type": ["string", "null"]
+    },
     "turns": {
-      "description": "Each earlier turn of the main conversation in the run, oldest first, with its role and the prompt that began it; empty for a start.",
+      "description": "Each earlier turn of the main conversation in the run, oldest first, with its role, the prompt that began it, and the latest command that it called; empty for a start.",
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["role", "prompt"],
+        "required": ["role", "prompt", "command"],
         "additionalProperties": false,
         "properties": {
           "role": { "type": "string", "minLength": 1 },
-          "prompt": { "type": "string" }
+          "prompt": { "type": "string" },
+          "command": { "type": ["string", "null"] }
         }
       }
     }

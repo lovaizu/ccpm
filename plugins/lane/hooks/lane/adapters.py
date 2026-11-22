@@ -19,19 +19,23 @@ from rules import Rules, Step
 
 
 class EarlierTurn(TypedDict):
-    """An earlier turn of the main conversation in the run: its role, by the skill's name, and the
-    prompt that began it, empty for the run's first turn."""
+    """An earlier turn of the main conversation in the run: its role, by the skill's name, the
+    prompt that began it, empty for the run's first turn, and the latest command that it called,
+    None for none."""
 
     role: str
     prompt: str
+    command: str | None
 
 
 class Asked(TypedDict):
     """What a start or a turn asks the plugin's adapter of the rules for: its role, the prompt it
-    began with, and each earlier turn of the run, oldest first, none for a start."""
+    began with, the latest command that the turn called, None for none and for a start, and each
+    earlier turn of the run, oldest first, none for a start."""
 
     role: str
     prompt: str
+    command: str | None
     turns: list[EarlierTurn]
 
 

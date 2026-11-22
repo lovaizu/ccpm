@@ -7,8 +7,9 @@ that Claude Code's states bring about has its case: a turn's end let through, th
 prompt, a subagent's end, a command typed, or two subagents' ends one after the other, each
 beginning a turn; a turn whose steps rest on the earlier turns that the adapter is given; a turn's
 end that Lane stops, then a subagent's end, going on in the same turn; a subagent's end reaching the
-main conversation within its turn; a turn whose first move is its end; and a command that the Skill
-tool calls within a turn. Each runs `log` and Lane through the double of Claude Code."""
+main conversation within its turn; a turn whose first move is its end; a command that the Skill
+tool calls within a turn, which gives the turn its steps afresh; and the command that each turn
+called, which the adapter is given. Each runs `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
 
@@ -64,6 +65,27 @@ paths = ([each for each in named if each] or [[]])[-1]
 rules = [{"type": "order"}, {"type": "writes", "paths": paths}]
 print(json.dumps({"steps": [{"name": given["role"].partition(":")[2], "rules": rules}]}))
 """
+
+# An adapter of the rules that gives each turn one step, writing nothing, named by the command that
+# each earlier turn called and that this turn called, oldest first, `none` for a turn that called
+# none, so that a write's sentence shows what the adapter was given.
+COMMANDS = """\
+import json, sys
+
+given = json.load(sys.stdin)
+called = [turn["command"] for turn in given["turns"]] + [given["command"]]
+name = "-".join((each or ":none").partition(":")[2] for each in called)
+rules = [{"type": "order"}, {"type": "writes", "paths": []}]
+print(json.dumps({"steps": [{"name": name, "rules": rules}]}))
+"""
+
+
+def writes_nothing(step: str, role: str) -> str:
+    """The sentence of the main conversation's write of notes.txt at the step of the role, which
+    writes nothing."""
+    return (
+        f"You're at the step `{step}` of {role}, which writes nothing.\nLeave notes.txt unwritten."
+    )
 
 
 def first_turn_ended(b: Bench) -> tuple[Conversation, Agent]:
@@ -199,30 +221,70 @@ def test_a_command_typed_after_the_turns_end_begins_a_turn_in_its_skills_role(b:
 
 
 @pytest.mark.supports("S11", "S9")
-def test_a_skill_called_within_a_turn_leaves_its_steps_and_gives_the_next_turn_its_role(
-    b: Bench,
-):
+def test_a_skill_called_within_a_turn_gives_the_turn_its_skills_steps_afresh(b: Bench):
     """Given the person's /log:up 1.2.0 in `log` taking its steps at each turn for log:up and
     log:tag, and the writer started
     When the main conversation calls log:tag by the Skill tool, writes notes.txt, starts the
-    tagger, marks `up` done, and ends its turn, and then the person types `Go on.`, and the main
-    conversation writes notes.txt again
-    Then the first write is stopped with the sentence of the step `up`, the end goes through, and
-    the second write is stopped with the sentence of the step `tag` of log:tag"""
+    tagger, marks `tag` done, and ends its turn
+    Then the write is stopped with the sentence of the step `tag` of log:tag, which the adapter
+    gives that role, writing the run's first turn's note, and the end goes through"""
     steps_by_turn(b)
     c = opened(b)
     started(c)
     c.skill("log:tag", "")
-    first = c.write(None, b.at("notes.txt"), "x\n")
-    assert first.blocked
-    assert first.said == writes(FIRST_NOTE, "notes.txt")
+    answer = c.write(None, b.at("notes.txt"), "x\n")
+    assert answer.blocked
+    assert answer.said == (
+        f"You're at the step `tag` of log:tag, which writes only {FIRST_NOTE}.\n"
+        "Write there instead of notes.txt."
+    )
     started(c, "log:tagger")
-    c.bash("lane-step up")
-    assert not c.stop("The tagger runs.").blocked
+    c.bash("lane-step tag")
+    assert not c.stop("Tagged.").blocked
+
+
+@pytest.mark.supports("S11", "S9")
+def test_a_turns_adapter_of_the_rules_is_given_the_command_that_each_turn_called(b: Bench):
+    """Given `log` taking its steps at each turn from an adapter of the rules that names the step
+    by the command that each earlier turn and this turn called, and whose first turn, of /log:up,
+    started the writer
+    When the main conversation writes notes.txt in that turn, in a turn of the person's `Go on.`,
+    in a turn of `Tag it.` before and after it calls log:tag by the Skill tool, starting the
+    tagger, and in a turn of a typed /log:tag, marking each turn's step done and ending it
+    Then each write is stopped at the step `up`, `up-none`, `up-none-none`, `up-none-tag`, and
+    `up-none-tag-tag`, of log:up until the Skill call and of log:tag after it"""
+    steps_by_turn(b)
+    b.adapter("rules.py", COMMANDS)
+    c = opened(b)
+    started(c)
+    seen = []
+
+    def wrote(role: str) -> str:
+        answer = c.write(None, b.at("notes.txt"), "x\n")
+        assert answer.blocked
+        step = answer.said.split("`")[1]
+        assert answer.said == writes_nothing(step, role)
+        seen.append(step)
+        return step
+
+    def ended() -> None:
+        c.bash(f"lane-step {seen[-1]}")
+        assert not c.stop("Done.").blocked
+
+    wrote("log:up")
+    ended()
     c.type("Go on.")
-    second = c.write(None, b.at("notes.txt"), "x\n")
-    assert second.blocked
-    assert second.said == TAG_WRITES
+    wrote("log:up")
+    ended()
+    c.type("Tag it.")
+    wrote("log:up")
+    c.skill("log:tag", "")
+    wrote("log:tag")
+    started(c, "log:tagger")
+    ended()
+    c.type("/log:tag")
+    wrote("log:tag")
+    assert seen == ["up", "up-none", "up-none-none", "up-none-tag", "up-none-tag-tag"]
 
 
 @pytest.mark.supports("S11", "S9")

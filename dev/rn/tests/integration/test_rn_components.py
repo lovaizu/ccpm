@@ -106,6 +106,29 @@ def test_each_event_in_a_run_loads_the_orchestrator_and_holds_its_turn_to_its_st
 
 
 @pytest.mark.supports("orchestrator")
+@pytest.mark.parametrize("how", ["typed", "skill-tool"])
+@pytest.mark.parametrize(("skill", "first"), [("rn:dn", "stop"), ("rn:up", "find")])
+def test_a_command_called_by_the_skill_tool_in_a_standing_run_takes_the_typed_commands_steps(
+    b: Bench, how: str, skill: str, first: str
+):
+    """Given a run whose goal the orchestrator put to the user
+    When the user types /rn:dn or /rn:up, or, in a turn of the user's `Go on.`, an AI calls rn:dn
+    or rn:up by the Skill tool, and the orchestrator ends its turn at once
+    Then Lane stops the end at `stop` of rn:dn or `find` of rn:up, the typed command's first step,
+    either way"""
+    c = requested(b)
+    if how == "typed":
+        c.type(f"/{skill}")
+    else:
+        c.type("Go on.")
+        called = c.skill(skill, "")
+        assert not called.blocked, called.said
+    answer = c.stop("Done.")
+    assert answer.blocked
+    assert f"the step `{first}` of {skill}," in answer.said
+
+
+@pytest.mark.supports("orchestrator")
 @pytest.mark.parametrize(
     ("skill", "refused"),
     [("rn:on", False), ("rn:up", False), ("rn:dn", False), ("rn:ty", True), ("rn:gm", True)],

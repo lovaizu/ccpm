@@ -880,7 +880,8 @@ def test_start_made_gives_the_adapter_no_turn_though_the_run_holds_turns(g: Play
     write_files(log, {"lane/adapters/rules.py": lane_bench.ECHO.format(printed='{"steps": []}')})
     recorded_now(log, turn_entry(steps=[]))
     start_made(move("start", g.e.start("log:writer", "toolu_1", prompt="Write it.")))
-    assert lane_bench.echoed(g.e.cwd)["input"]["turns"] == []
+    given = lane_bench.echoed(g.e.cwd)["input"]
+    assert (given["turns"], given["command"]) == ([], None)
 
 
 @pytest.mark.supports(
@@ -1679,8 +1680,18 @@ UP_WRITES = (
 
 
 def turn_entry(prompt: str = "", steps: list[Step] = FIRST_STEPS, role: str = "log:up") -> Entry:
-    """The `turn` entry of the main conversation's turn in the role, begun by the prompt."""
-    return {"kind": "turn", "run": "r1", "role": role, "prompt": prompt, "steps": steps}
+    """The `turn` entry of the main conversation's turn in the role, begun by the prompt, with the
+    command that it called: the role's own for the run's first turn, whose prompt is empty, and for
+    a turn begun by a typed command; none for any other."""
+    called = role if prompt == "" or prompt.startswith("/") else None
+    return {
+        "kind": "turn",
+        "run": "r1",
+        "role": role,
+        "prompt": prompt,
+        "command": called,
+        "steps": steps,
+    }
 
 
 def by_turn(log: str) -> None:
@@ -1841,12 +1852,13 @@ def test_turn_opened_keeps_the_turn_with_the_steps_its_adapter_gives(
     prompt, a turn of log:up begun by the writer's task-notification, or one of log:tag begun by
     /log:tag
     When its first call comes
-    Then the answer is empty, and the record gains the turn with its role, its prompt, and the
-    steps that TURN_ADAPTER gives for them"""
+    Then the answer is empty, and the record gains the turn with its role, its prompt, its
+    command, and the steps that TURN_ADAPTER gives for them"""
     by_turn(log)
     recorded_now(log)
     [on] = runs("session-1")
-    assert turn_opened(g.e.bash("git status"), Turn(on, role, prompt)) == Answer()
+    called = turn_entry(prompt, steps, role)["command"]
+    assert turn_opened(g.e.bash("git status"), Turn(on, role, prompt, called)) == Answer()
     assert gained(log) == [turn_entry(prompt, steps, role)]
 
 
@@ -1863,7 +1875,7 @@ def test_turn_opened_with_no_adapter_of_the_rules_is_refused_naming_it(g: Play, 
     recorded_now(log)
     [on] = runs("session-1")
     with pytest.raises(AdapterFailed) as raised:
-        turn_opened(g.e.bash("git status"), Turn(on, "log:up", ""))
+        turn_opened(g.e.bash("git status"), Turn(on, "log:up", "", "log:up"))
     assert str(raised.value) == (
         "Lane couldn't check the steps of log:up: they come from the plugin's adapter of the"
         f" rules, lane/adapters/rules.py, which {log} doesn't hold"
@@ -1882,7 +1894,7 @@ def test_turn_opened_whose_adapter_gives_no_step_keeps_the_turn_with_none(g: Pla
     write_files(log, {"lane/adapters/rules.py": "print('{\"steps\": []}')\n"})
     recorded_now(log)
     [on] = runs("session-1")
-    assert turn_opened(g.e.bash("git status"), Turn(on, "log:up", "")) == Answer()
+    assert turn_opened(g.e.bash("git status"), Turn(on, "log:up", "", "log:up")) == Answer()
     assert gained(log) == [turn_entry(steps=[])]
 
 
@@ -1894,19 +1906,47 @@ def test_turn_opened_gives_the_adapter_each_earlier_turn_oldest_first(g: Play, l
     it's given, and whose record holds the first turn, of log:up with an empty prompt, and a turn
     of log:tag begun by /log:tag, each ended
     When a turn of log:tag begun by `Go on.` takes its first call
-    Then the adapter was given those two turns, oldest first, each with its role and prompt
-    alone"""
+    Then the adapter was given those two turns, oldest first, each with its role, prompt, and
+    command alone, and the turn's own command, none"""
     by_turn(log)
     write_files(log, {"lane/adapters/rules.py": lane_bench.ECHO.format(printed='{"steps": []}')})
     ended: Entry = {"kind": "turn_ended", "run": "r1"}
     tag = turn_entry("/log:tag", lane_bench.turn_steps([], "tag"), "log:tag")
     recorded_now(log, turn_entry(), ended, tag, ended)
     [on] = runs("session-1")
-    turn_opened(g.e.bash("git status"), Turn(on, "log:tag", "Go on."))
-    assert lane_bench.echoed(g.e.cwd)["input"]["turns"] == [
-        {"role": "log:up", "prompt": ""},
-        {"role": "log:tag", "prompt": "/log:tag"},
+    turn_opened(g.e.bash("git status"), Turn(on, "log:tag", "Go on.", None))
+    given = lane_bench.echoed(g.e.cwd)["input"]
+    assert given["turns"] == [
+        {"role": "log:up", "prompt": "", "command": "log:up"},
+        {"role": "log:tag", "prompt": "/log:tag", "command": "log:tag"},
     ]
+    assert given["command"] is None
+
+
+@pytest.mark.supports(
+    "test_a_turns_adapter_of_the_rules_is_given_the_command_that_each_turn_called"
+)
+def test_turn_opened_again_after_a_command_within_the_turn_takes_the_place_of_its_turn(
+    g: Play, log: str
+):
+    """Given a run of log:up taking its steps at each turn, whose adapter of the rules writes what
+    it's given, and whose record holds its first turn's steps and then log:tag called by the Skill
+    tool within that turn
+    When the turn's next call comes
+    Then the adapter was given no earlier turn and log:tag as the turn's command, and the record
+    gains the turn of log:tag, which the run's state holds as its only turn"""
+    by_turn(log)
+    write_files(log, {"lane/adapters/rules.py": lane_bench.ECHO.format(printed='{"steps": []}')})
+    called: Entry = {"kind": "typed", "run": "r1", "command": "log:tag"}
+    recorded_now(log, turn_entry(), called)
+    [on] = runs("session-1")
+    turn_opened(g.e.bash("git status"), Turn(on, "log:tag", "", "log:tag"))
+    given = lane_bench.echoed(g.e.cwd)["input"]
+    assert (given["turns"], given["command"]) == ([], "log:tag")
+    again = {**turn_entry(steps=[], role="log:tag"), "command": "log:tag"}
+    assert gained(log) == [again]
+    [on] = runs("session-1")
+    assert on.state.turns == [again]
 
 
 def turn_end(g: Play, step: str | None) -> Move:

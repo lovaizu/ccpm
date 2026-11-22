@@ -4,6 +4,7 @@
 
 ### Changed
 
+- When a turn calls a command of your plugin, typed or by the Skill tool, Lane asks your `lane/adapters/rules.py` for the turn's steps again, and gives it the new field `command`, the command that the turn called, or `null` for none, beside each earlier turn's. An AI that calls a command by the Skill tool then gets the steps that a person who types it gets, where before the turn kept the steps it had.
 - Your `check` fails the step only where it exits 1. Any other code, such as 2 where it can't read what it checks, says it couldn't check, so a check tells a step left short apart from one it couldn't judge.
 
 ### Fixed

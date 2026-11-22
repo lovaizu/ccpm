@@ -426,14 +426,19 @@ prompt, or where the main conversation answers another event at each turn.
 
 Lane asks it when the main conversation starts the role, and again at each resume of the start,
 with the prompt of the start, so that the steps follow what an answer changed. Each step marked
-done and each read stay as they stood. For the main conversation, Lane asks it at each turn's first call or end, and keeps
-the steps for that turn. Its `role` is the skill of the run's latest command then, and a command
-that the Skill tool calls later in the turn leaves the turn's steps as they stand. Its `prompt` is
-the prompt that started the turn, as Claude Code gives it, and empty for the run's first turn, whose
-command and words `run` holds.
-Its `turns` holds each earlier turn of the run, oldest first, with its `role` and `prompt`,
-so that a turn's steps can turn on the turns before it, such as an answer to the question the
-last turn asked. A start's `turns` is empty.
+done and each read stay as they stood. For the main conversation, Lane asks it at each turn's
+first call or end, and keeps the steps for that turn. A command of your plugin that the turn calls
+later, typed or by the Skill tool, sets those steps aside, and Lane asks again at the turn's next
+call or end. That way, an AI that calls a command by the Skill tool gets the steps that a person
+who types it gets. Its `role` is the skill of the run's latest command then. Its `prompt` is the
+prompt that started the turn, as Claude Code gives it, and empty for the run's first turn, whose
+command and words `run` holds. Its `command` is the latest command of your plugin that the turn
+called, typed or by the Skill tool, such as `log:tag`. It's the run's skill for the run's first
+turn, and `null` for a turn that called none, such as a person's answer, and for a start. Tell the
+turn's event by `command`, not by the prompt's words, as a Skill call leaves the prompt as it was.
+Its `turns` holds each earlier turn of the run, oldest first, with its `role`, `prompt`, and
+`command`, so that a turn's steps can turn on the turns before it, such as an answer to the
+question the last turn asked. A start's `turns` is empty.
 
 Its input, in the form of [rules.in.schema.json](../hooks/lane/rules.in.schema.json):
 
@@ -442,6 +447,7 @@ Its input, in the form of [rules.in.schema.json](../hooks/lane/rules.in.schema.j
   "run": { "skill": "log:up", "words": "1.2.0" },
   "role": "log:writer",
   "prompt": "Write the entry of 1.2.0 in docs/changes/1.2.0.md.",
+  "command": null,
   "turns": []
 }
 ```

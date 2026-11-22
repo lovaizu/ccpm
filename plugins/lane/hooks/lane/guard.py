@@ -131,29 +131,39 @@ def turn_opened(event: Event, turn: Turn) -> Answer:
     the plugin's adapter of the rules at each turn.
 
     Takes: the PreToolUse or Stop of the main conversation, whose `cwd` is the conversation's
-    folder, and the turn that place.turn_opening gives for it, with its run, role, and prompt,
-    empty for the run's first turn.
+    folder, and the turn that place.turn_opening gives for it, with its run, role, prompt, empty
+    for the run's first turn, and command.
     Gives: an empty answer, the event's own move then held to the turn's steps.
-    Changes: the run record, by a `turn` entry with the turn's role and prompt, and the steps that
-    adapters.given_steps gives for them with the role and prompt of each of the run's earlier
-    `turn` entries, oldest first, which hold the turn's calls, marks, and end until the
-    turn's end that the guard lets through.
+    Changes: the run record, by a `turn` entry with the turn's role, prompt, and command, and the
+    steps that adapters.given_steps gives for them with the role, prompt, and command of each of
+    the run's earlier turns, oldest first, which hold the turn's calls, marks, and end until the
+    turn's end that the guard lets through, or until a command called within it, after which the
+    turn's next call or end asks again.
     Refuses: AdapterFailed, where the plugin's adapter of the rules is missing, fails, or gives out
     of its form, which answer gives as what Lane couldn't check and why, stopping nothing, the
     event's own move then held to no step, and the turn's next call or end asking the adapter
     again.
     """
     run = turn.run
+    # The turn's own `turn` entry, set aside by a command called within it, is no earlier turn.
+    earlier = run.state.turns[:-1] if run.state.turn.again else run.state.turns
     turns: list[adapters.EarlierTurn] = [
-        {"role": entry["role"], "prompt": entry["prompt"]} for entry in run.state.turns
+        {"role": entry["role"], "prompt": entry["prompt"], "command": entry.get("command")}
+        for entry in earlier
     ]
-    asked: adapters.Asked = {"role": turn.role, "prompt": turn.prompt, "turns": turns}
+    asked: adapters.Asked = {
+        "role": turn.role,
+        "prompt": turn.prompt,
+        "command": turn.command,
+        "turns": turns,
+    }
     steps = adapters.given_steps(_root(run), event["cwd"], run, asked)
     entry: record.Entry = {
         "kind": "turn",
         "run": run.id,
         "role": turn.role,
         "prompt": turn.prompt,
+        "command": turn.command,
         "steps": steps,
     }
     record.add(run.session_id, [entry])
@@ -246,7 +256,12 @@ def start_made(move: Move) -> Answer:
         "prompt": move.prompt or "",
     }
     if asks_adapter(_rules(move.run), role):
-        asked: adapters.Asked = {"role": role, "prompt": entry["prompt"], "turns": []}
+        asked: adapters.Asked = {
+            "role": role,
+            "prompt": entry["prompt"],
+            "command": None,
+            "turns": [],
+        }
         try:
             entry["steps"] = adapters.given_steps(
                 _root(move.run), move.event["cwd"], move.run, asked
