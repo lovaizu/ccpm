@@ -1,0 +1,64 @@
+{
+ "goal": "Once overnight is released, its users, a person or an AI, get their queued Claude Code tasks done in the hours nobody answers, through the usage limit, instead of spending the daytime limit on them: in the evening they queue tasks to start at a set time, and in the morning they read which tasks finished and which were given up, and merge the results from their main session.",
+ "language": "English",
+ "deliverable": {
+  "name": "overnight's developers know whom overnight serves, and what its users do with it once it holds",
+  "path": "dev/overnight/product-vision.md",
+  "kind": "product-vision",
+  "inputs": [],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": false,
+    "decisions": [
+     {
+      "about": "Roles",
+      "decided": "a person, or an AI such as another plugin's orchestrator, who has Claude Code tasks to run while nobody answers",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": [
+     {
+      "about": "Tasks run at once",
+      "decided": "the user sets how many tasks run at once",
+      "by": "user"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261122-issue-62",
+ "inputs": [],
+ "best_practice": "../../../../../home/agent/.claude/plugins/cache/ccpm/rn/0.10.0/domain/best-practices/product-vision",
+ "stage": "content",
+ "number": 1,
+ "round": ".claude/worktrees/rn-20261122-issue-62/.rn/20261122-issue-62/rounds/dev%2Fovernight%2Fproduct-vision.md/content-1",
+ "trial": "/tmp/rn-trial-20261122-issue-62-dev%2Fovernight%2Fproduct-vision.md-content-1/",
+ "findings": null,
+ "last_good": null
+}
