@@ -4,4 +4,3 @@
 __pycache__/
 node_modules/
 .review/
-dev/rn/tests/e2e/records/
