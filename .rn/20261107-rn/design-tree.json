@@ -410,81 +410,7 @@
       "name": "Users install Lane and rn together from one pull request, each plugin's folder holding all it needs and its README's walkthrough taken from what its tests show",
       "path": ".claude-plugin/marketplace.json",
       "kind": "light",
-      "inputs": [
-        "plugins/lane/README.md",
-        "plugins/rn/README.md",
-        "dev/plugin-development-guide.md"
-      ],
-      "status": "open",
-      "necessary_conditions": [
-        {
-          "id": "N1",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The check",
-              "decided": "claude plugin validate passes on each plugin's folder, Lane's README walkthrough is what its integration cases show word for word, rn's is the record of the maker's run of rn, and one pull request holds both plugins",
-              "by": "reasoning"
-            },
-            {
-              "about": "Each plugin's folder",
-              "decided": "each plugin's folder holds everything it needs and its own copy of the repository's LICENSE, links any page outside it by its URL on GitHub, and sets homepage and repository in plugin.json; rn uses Lane through dependencies, and Lane uses no other plugin",
-              "by": "user"
-            },
-            {
-              "about": "The release",
-              "decided": "Lane releases together with rn, in one pull request, once rn is done",
-              "by": "user"
-            },
-            {
-              "about": "rn's README walkthrough",
-              "decided": "the README's walkthrough takes the record of the maker's run of rn by --plugin-dir, as the record of an end-to-end test",
-              "by": "user"
-            },
-            {
-              "about": "Lane's README at the release",
-              "decided": "made again from the design: its walkthrough from the run that Lane's integration cases show, its install run once ccpm's marketplace lists Lane, and a link to the definition of rules and adapters",
-              "by": "reasoning"
-            },
-            {
-              "about": "A run of rn whole",
-              "decided": "Before the release, the maker runs rn once from its folder by --plugin-dir, on the README walkthrough's request with the conversation in Japanese, through to the pull request, and mends what breaks, as nothing had run rn whole with the real model since its rebuild: the languages, the context, the refactor Round, the send-back, and the evaluator after them",
-              "by": "user"
-            },
-            {
-              "about": "The install after the merge",
-              "decided": "once the merge lands, rn installs from ccpm's marketplace in a fresh home with Lane among its dependencies, by the README's two commands",
-              "by": "reasoning"
-            }
-          ]
-        },
-        {
-          "id": "N2",
-          "good": false,
-          "decisions": [
-            {
-              "about": "The issues that the release judges",
-              "decided": "each of the eight issues that pull request #66 names is closed, with where the rebuilt rn and Lane leave it behind; #45, seen once again, is weighed again only if more runs show it",
-              "by": "user"
-            },
-            {
-              "about": "The description of pull request #66",
-              "decided": "its title gives each plugin's version, as #60's does, and its body the issues it closes, how each plugin is rebuilt and tested, and the link to this tree, with no session URL, as only the user can open one",
-              "by": "user"
-            },
-            {
-              "about": "The rules of dev.md that hold until rn is released, and this design tree, after the merge",
-              "decided": "this pull request drops the two rules of dev.md that hold until rn is released, the main conversation keeping this tree and making each document itself, and dev.md's first rule runs the work on ccpm's plugins by rn; this tree stays as the run's record, as each run of rn's does",
-              "by": "user"
-            }
-          ]
-        },
-        {
-          "id": "N3",
-          "good": false,
-          "decisions": []
-        }
-      ]
+      "status": "done"
     },
     {
       "name": "ccpm's guide to building a Claude Code plugin says what each plugin takes from it, as its architecture names",
@@ -493,10 +419,5 @@
       "status": "done"
     }
   ],
-  "work": [
-    {
-      "do": "make",
-      "path": ".claude-plugin/marketplace.json"
-    }
-  ]
+  "work": []
 }
