@@ -121,6 +121,7 @@ def _starts_block(line: str) -> bool:
         _HEADING.fullmatch(line)
         or _FENCE.fullmatch(line)
         or _QUOTE.match(line)
+        or _TABLE.match(line)
         or _MARKER.match(line)
     )
 

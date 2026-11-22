@@ -392,6 +392,31 @@ def test_a_table_holds_its_header_and_each_row_but_the_delimiter_row():
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_table_ends_the_paragraph_above_it():
+    """Given a paragraph line right before a table of a header, a delimiter row, and a row
+    When the text is read
+    Then the paragraph at line 1 and the table at line 2, holding the row at line 4, are two
+    blocks"""
+    assert read("Intro text\n| a | b |\n|---|---|\n| 1 | 2 |") == (
+        Block(PARAGRAPH, 1, "Intro text"),
+        Block(TABLE, 2, "| a | b |", children=(Block(ROW, 4, "| 1 | 2 |"),)),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_table_not_indented_right_after_an_items_words_ends_the_item():
+    """Given a list item's line right before a table not indented, of a header, a delimiter row,
+    and a row
+    When the text is read
+    Then the item at line 1, holding only its words, and the table at line 2, holding the row at
+    line 4, are two blocks"""
+    assert read("- Item\n| a | b |\n|---|---|\n| 1 | 2 |") == (
+        Block(ITEM, 1, "Item"),
+        Block(TABLE, 2, "| a | b |", children=(Block(ROW, 4, "| 1 | 2 |"),)),
+    )
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 @pytest.mark.parametrize("mark", ["。", "！", "？"])
 def test_sentences_split_after_a_japanese_mark_with_no_space_after_it(mark: str):
     """Given two Japanese sentences, the first ending at `。`, `！`, or `？`, with no space after it
