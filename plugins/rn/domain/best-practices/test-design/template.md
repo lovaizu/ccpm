@@ -8,7 +8,7 @@
 > DELETE_TEMPLATE_COMMENT:
 > - `<e2e-cases>`: one test for each key result, named by what the users get, with the key result
 >   it supports, such as `KR1.1`, and its Given, When, and Then stated in the test, or no test
->   where Test strategy runs no test of the product whole.
+>   where the product holds a prompt, as its walkthrough run tries it whole.
 
 ## Integration cases
 

@@ -24,7 +24,7 @@
        },
        {
         "at": "make",
-        "text": "Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`. Where the product holds a prompt, write the request and the person's words in the README's walkthrough instead."
+        "text": "Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`. Where the product holds a prompt, write no E2E case, as its walkthrough run is its E2E test."
        }
       ]
      },

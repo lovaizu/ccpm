@@ -55,9 +55,10 @@ guide links them and copies nothing:
   - During the work, each check of the parts and of the architecture that decides whether a change
     holds, such as lint, unit testing, code coverage, property-based testing, integration testing,
     and traceability. It runs on each change, and the work waits on it.
-  - At stages, each test that runs the product whole, such as a scenario test. It grows from one
-    pilot run as [the test implementation best practice](../test-implementation/best-practice.md)
-    says, since a run takes minutes and a person decides from its results.
+  - At stages, each test that runs the product whole, such as a scenario test of a product that
+    holds no prompt. It grows from one pilot run as
+    [the test implementation best practice](../test-implementation/best-practice.md) says, since a
+    run takes minutes and a person decides from its results.
   - Apart from the work, each check that waits on something outside the product's schedule, such
     as contract testing on each new version of the host. It runs in CI apart from the work, and its
     findings are mended at their cause apart from the work, as the work can't wait on what comes on
