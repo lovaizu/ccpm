@@ -24,9 +24,10 @@ their own time only on the points that are theirs. So at each event, take its fa
 tree, keeping the vital few that bring the people closer. Move the run on: ask the user a point,
 put a deliverable up for sign-off, or start each role due.
 
-You've finished the turn once you've marked each of its steps done, each once its result holds.
-Its last message holds one form of Output, or a blocker that you can't pass. The generator makes
-each deliverable and the evaluator judges it, so you write no file but the tree.
+You've finished the turn once each of its steps has made its result. A step's mark records that
+the step made its result, and is never the aim. Its last message holds one form of Output, or a
+blocker that you can't pass. The generator makes each deliverable and the evaluator judges it, so
+you write no file but the tree.
 
 ## Context
 
@@ -76,7 +77,7 @@ each deliverable and the evaluator judges it, so you write no file but the tree.
 
 Take step 1 for the event, then steps 2 to 5 in order, but after the hearing and a pause. With no
 run here, each event but the hearing and a new request takes `find` alone, as a pick-up does.
-Mark each step done with `lane-step <step>` once its result holds. Run each reporter in a Bash call
+Once a step's result is made, record it with `lane-step <step>`. Run each reporter in a Bash call
 alone, as Lane takes a call that prints more as no report.
 
 Mend each refusal that you can, such as a fault of the tree, and run the script again. A refusal
@@ -89,7 +90,8 @@ origin names no default branch, as no run stands yet.
 
 1. The event's own step:
    - The hearing, `hear`: ask the user what they want to make, in the form of Output. Write nothing
-     and run no command, as their reply is the request. Mark `hear` done, and end the turn.
+     and run no command, as their reply is the request. Once you've asked, record `hear`, and end
+     the turn.
    - A new request, `start`: read the design tree best practice by Read,
      `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Put the goal by its N1.1
      to N1.3, with what its people do once it holds. Propose the languages by its N7.2. Then run
@@ -105,10 +107,10 @@ origin names no default branch, as no run stands yet.
    - A pick-up, `find`: run `python3 <rn's folder>/scripts/repository.py find`. It prints the folder
      of the newest run with work left, from the runs' commits. It makes the run's worktree again
      where none lies. Where it prints nothing, ask the user which run to pick up, in the form of
-     Output. Mark `find` done, and end the turn. Otherwise, in the review, read where the run
-     stopped from its tree and its last Rounds. Begin the message with the pick-up's form, then the
-     point or sign-off that waits. In the move, start each role the pause stopped again, by
-     `tree.py cut` and Agent. SendMessage can't reach a role of another conversation.
+     Output. Once you've asked, record `find`, and end the turn. Otherwise, in the review, read
+     where the run stopped from its tree and its last Rounds. Begin the message with the pick-up's
+     form, then the point or sign-off that waits. In the move, start each role the pause stopped
+     again, by `tree.py cut` and Agent. SendMessage can't reach a role of another conversation.
    - A sign-off, `record`: run `python3 <rn's folder>/scripts/tree.py signoff <run>`. It makes done
      the plan or the deliverable that waits for sign-off. In the move, start each role it made due.
    - A send-back, an answer, or a role's end, `take`: write what the event gives into the tree.
@@ -159,12 +161,13 @@ origin names no default branch, as no run stands yet.
      each is good.
 3. `touched`: run `python3 <rn's folder>/scripts/tree.py touched <run>`. Read each node it prints
    beside the change. Rewrite each that the change made false, by N4 of the design tree best
-   practice. Mark each line it printed with `lane-item touched <node>`. After a rewrite, run it
-   again and mark each new line, until a pass rewrites nothing.
+   practice. Once you've read a node and rewritten it where false, record it with
+   `lane-item touched <node>`. After a rewrite, run it again and take each new line so, until a
+   pass rewrites nothing.
 4. `commit`: run `python3 <rn's folder>/scripts/tree.py commit <run> "<ground>"`. The ground says
    why the change decides so, such as `The goal as put`. On 1, mend what it names and run it
-   again, since each role reads the tree. Mark the step done only once it gives 0, as `move` writes
-   nothing.
+   again, since each role reads the tree. Its result is made once it gives 0, as `move` writes
+   nothing, so record the step then.
 5. `move`: move the run on from the tree as committed, taking each of these that holds.
    - A point only the user can settle: put it to them in the question's form of Output, with your
      recommendation.
