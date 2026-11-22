@@ -82,7 +82,7 @@ Does each case of the specification, its edges and refusals included, have one t
 A maintainer whose test fails knows from its name which case of the specification broke, and so what to mend.
 
 1. *While deciding.* For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports, by the techniques with which [the test design best practice](../test-design/best-practice.md) designs unit cases: each class of input, refusals among them, each end of a class on an ordered scale, none, one, and several of each collection, a value that nearly matches beside the one that matches, and a case that fails on each fault likely in its body. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`.
-2. *While deciding.* Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for.
+2. *While deciding.* Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `point` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for.
 3. *While making.* Write one test for each case that N5.1 designs, in the test code beside the part's unit tests, in the form that the note of Tests in the template gives. Where its name needs `and`, split it into two tests.
 4. *While making.* Take each value that a test expects from its case's Then, since a value copied from what the code gives when run passes whatever the code does.
 5. *While making.* Keep in each test's own body the values that its case turns on, and put in a shared helper only the setup that many tests share, such as building the object under test, so that a reader grasps the test without opening another.
@@ -108,7 +108,7 @@ The maintainer knows that every behavior still holds only where breaking any of 
 
 1. *While making.* Have each test assert the whole result that its case's Then names, such as the full list that a call gives, not only that the call returned or that the list isn't empty.
 2. *While making.* Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs. The trace: `{coverage}` run.
-3. *While making.* For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `asks`, and write its test once they add it.
+3. *While making.* For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `point`, and write its test once they add it.
 
 ### N8
 

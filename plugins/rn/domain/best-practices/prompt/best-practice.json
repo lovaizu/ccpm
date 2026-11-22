@@ -106,7 +106,7 @@
        },
        {
         "at": "decide",
-        "text": "Add each decision of your cut that the steps turn on and the architecture doesn't hold, such as a limit that the user set on what the prompt may change. Where a step needs a fact that neither the architecture, your cut, nor the repository gives, such as which branch the prompt may push to, end with `asks`, naming the fact and your recommendation, since a fact only the user holds becomes a guess when the prompt leaves it out."
+        "text": "Add each decision of your cut that the steps turn on and the architecture doesn't hold, such as a limit that the user set on what the prompt may change. Where a step needs a fact that neither the architecture, your cut, nor the repository gives, such as which branch the prompt may push to, end with `point`, naming the fact and your recommendation, since a fact only the user holds becomes a guess when the prompt leaves it out."
        },
        {
         "at": "decide",
@@ -230,7 +230,7 @@
        },
        {
         "at": "make",
-        "text": "Have each such step run its program by that path. Where Components holds no program for it and the deliverable is a folder that holds scripts, such as a skill's, write one there that gives the result on every run and handles its own errors, such as `scripts/validate.py`. Where the deliverable can't hold it, end with `asks`, naming the step and the program it needs, since a part that the architecture lacks is a decision of the architecture."
+        "text": "Have each such step run its program by that path. Where Components holds no program for it and the deliverable is a folder that holds scripts, such as a skill's, write one there that gives the result on every run and handles its own errors, such as `scripts/validate.py`. Where the deliverable can't hold it, end with `point`, naming the step and the program it needs, since a part that the architecture lacks is a decision of the architecture."
        }
       ]
      },
@@ -282,7 +282,7 @@
        },
        {
         "at": "make",
-        "text": "For each rule that a hook holds, look in the architecture's Components for a hook that holds such rules, such as a guard, and add the rule to it by the path Directory structure gives. Where Components holds none and the deliverable is a folder that holds a hooks file, such as a plugin's `hooks/hooks.json`, write the hook there. Where the deliverable can't hold it, end with `asks`, naming the rule and the hook it needs, as for a program in N9.2."
+        "text": "For each rule that a hook holds, look in the architecture's Components for a hook that holds such rules, such as a guard, and add the rule to it by the path Directory structure gives. Where Components holds none and the deliverable is a folder that holds a hooks file, such as a plugin's `hooks/hooks.json`, write the hook there. Where the deliverable can't hold it, end with `point`, naming the rule and the hook it needs, as for a program in N9.2."
        },
        {
         "at": "make",

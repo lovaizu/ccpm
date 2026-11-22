@@ -28,7 +28,7 @@
        },
        {
         "at": "decide",
-        "text": "Run the command. If a test fails, change nothing, and end with `asks`, naming the test and its failure, since a test that already fails can't tell you whether a step broke something.",
+        "text": "Run the command. If a test fails, change nothing, and end with `point`, naming the test and its failure, since a test that already fails can't tell you whether a step broke something.",
         "trace": {
          "action": "run",
          "takes": [
@@ -54,7 +54,7 @@
        },
        {
         "at": "make",
-        "text": "Where a behavior looks wrong, because its name, its comment, or what its callers do with it says otherwise, leave the behavior and its test as they are, and name it in the `asks` you end with, with the test that pins it, since a caller may rest on it and only the person can decide to change it."
+        "text": "Where a behavior looks wrong, because its name, its comment, or what its callers do with it says otherwise, leave the behavior and its test as they are, and name it in the `point` you end with, with the test that pins it, since a caller may rest on it and only the person can decide to change it."
        }
       ]
      },
@@ -70,7 +70,7 @@
        },
        {
         "at": "decide",
-        "text": "Where it does, take the change out of the plan, and name it in the `asks` you end with: the smell it mends, the places it reaches, and the decision of the architecture that it changes, since the architecture is to decide it first."
+        "text": "Where it does, take the change out of the plan, and name it in the `point` you end with: the smell it mends, the places it reaches, and the decision of the architecture that it changes, since the architecture is to decide it first."
        }
       ]
      }
@@ -248,7 +248,7 @@
        },
        {
         "at": "make",
-        "text": "Where none of these gives the reason, leave the code unchanged, and name the line in the `asks` you end with, since a guessed reason misleads the next maintainer."
+        "text": "Where none of these gives the reason, leave the code unchanged, and name the line in the `point` you end with, since a guessed reason misleads the next maintainer."
        },
        {
         "at": "make",

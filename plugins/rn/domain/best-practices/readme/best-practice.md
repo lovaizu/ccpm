@@ -134,7 +134,7 @@ A reader tries a product when what it gives them for their problem outweighs the
 5. *While deciding.* For each one left, take from the concept the idea that answers it.
 6. *While deciding.* Where the concept has none, tell what's missing: an idea that matters to the users, where the answer would change what they do or get, or only the way to make it work, where they'd do and get the same.
 7. *While deciding.* Where an idea that matters to the users is missing, ask the user to add it to the product vision.
-8. *While deciding.* Where only the way to make it work is missing, hand it back as a requirement that the architecture meets, such as with rn's `asks`.
+8. *While deciding.* Where only the way to make it work is missing, hand it back as a requirement that the architecture meets, such as with rn's `point`.
 9. *While making.* Put those parts together as one mechanism below the one way, and say for each part how it follows from that way.
 10. *While making.* Show the mechanism in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part.
 11. *While making.* Label each part in the reader's words.

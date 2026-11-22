@@ -31,12 +31,12 @@ A refactoring changes how the code does its work and never what it does, so the 
 
 1. *While deciding.* Open the inputs of your cut, and note from the architecture each decision that the code carries out, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second. The trace: `{inputs}` read to its end.
 2. *While deciding.* Where the architecture gives no command, take the one that the code's manifest gives, such as pyproject.toml or a Makefile, else the runner that the test files import, such as `python -m pytest` for files that import pytest.
-3. *While deciding.* Run the command. If a test fails, change nothing, and end with `asks`, naming the test and its failure, since a test that already fails can't tell you whether a step broke something. The trace: `{tests}` run.
+3. *While deciding.* Run the command. If a test fails, change nothing, and end with `point`, naming the test and its failure, since a test that already fails can't tell you whether a step broke something. The trace: `{tests}` run.
 4. *While making.* Take each change as the smallest step after which the tests can run again, such as renaming one name, moving one function, or changing the form of one kind of data, and where a step needs a second step before the tests can run, take the second first.
 5. *While making.* Before each step, search the tests for each function or class that the step reaches, such as by `grep -rn parse_date tests/`, and where a behavior it reaches, such as a branch or a refusal, has no test, write one that pins what the code does now: assert a value you know is wrong, run it, and put into the assertion the value that the failure shows.
 6. *While making.* Where a step renames or moves a name that a test calls, change only the test's call, and leave each expected result as it was, since a changed expectation hides a changed behavior.
 7. *While making.* After each step, run the tests, and where one fails, undo the step, such as by `git restore` on the files it changed, and take a smaller one.
-8. *While making.* Where a behavior looks wrong, because its name, its comment, or what its callers do with it says otherwise, leave the behavior and its test as they are, and name it in the `asks` you end with, with the test that pins it, since a caller may rest on it and only the person can decide to change it.
+8. *While making.* Where a behavior looks wrong, because its name, its comment, or what its callers do with it says otherwise, leave the behavior and its test as they are, and name it in the `point` you end with, with the test that pins it, since a caller may rest on it and only the person can decide to change it.
 
 ### N2
 
@@ -45,7 +45,7 @@ Does the code still carry out each decision of the architecture: each component'
 The developers read the architecture to know where a part belongs and what it hands to which, so code that a refactoring moved away from it sends each of them to the wrong place. A change of a component, of the data model, or of a sequence is a change of the architecture, which its own best practice decides before any code follows, as a refactoring changes the code's structure within the design.
 
 1. *While deciding.* For each change that you plan, ask whether it moves a job from one component to another, adds or removes a component or a data of the data model, or changes what one part hands another in a sequence, by the decisions that you noted from the architecture.
-2. *While deciding.* Where it does, take the change out of the plan, and name it in the `asks` you end with: the smell it mends, the places it reaches, and the decision of the architecture that it changes, since the architecture is to decide it first.
+2. *While deciding.* Where it does, take the change out of the plan, and name it in the `point` you end with: the smell it mends, the places it reaches, and the decision of the architecture that it changes, since the architecture is to decide it first.
 
 ### N3
 
@@ -120,5 +120,5 @@ A maintainer who doesn't know why odd code is there may straighten it and undo w
 
 1. *While making.* Read the files that N3.1 lists as a maintainer who knows the language but not the purpose, and mark code that looks wrong, roundabout, or more than it needs, such as a sleep before a retry or a copy of a list that nothing changes.
 2. *While making.* For each mark, where a name of a few words can say the reason, extract the code into a function or a constant of that name, else find the reason in the commit that brought the line, such as by `git log -L 40,42:sync.py`, or in the inputs of your cut, and write it in a comment right there.
-3. *While making.* Where none of these gives the reason, leave the code unchanged, and name the line in the `asks` you end with, since a guessed reason misleads the next maintainer.
+3. *While making.* Where none of these gives the reason, leave the code unchanged, and name the line in the `point` you end with, since a guessed reason misleads the next maintainer.
 4. *While making.* Remove each comment that says only what the code under it says plainly, or that holds code taken out of use, and correct each that says what the code no longer does.

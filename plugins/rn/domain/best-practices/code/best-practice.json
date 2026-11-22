@@ -148,7 +148,7 @@
        },
        {
         "at": "decide",
-        "text": "Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `asks` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for."
+        "text": "Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `point` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for."
        },
        {
         "at": "make",
@@ -224,7 +224,7 @@
        },
        {
         "at": "make",
-        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `asks`, and write its test once they add it."
+        "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `point`, and write its test once they add it."
        }
       ]
      }
