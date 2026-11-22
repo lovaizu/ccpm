@@ -142,8 +142,9 @@ reads the file. Where `check.py` or `repository.py checks` exited 2, add a line 
 with what it couldn't check and why, so that the orchestrator knows which part of your result no
 check holds.
 
-The orchestrator puts a `point` to the user as you wrote it, and the user decides from its first
-line. So write it as one question in the people's terms. Then write `I recommend <the option>, as
-<its ground>.` The option is one of the question's own, the one you'd take from what you hold. That
-way, the user settles it with a yes. For example: `Should the tax rate be given with each invoice,
-or set once? I recommend setting it once, as the rate rarely changes.`
+The orchestrator puts a `point` to the user in their language, from what you wrote, and the user
+decides from its first line. So write it as one question in the people's terms. Then write
+`I recommend <the option>, as <its ground>.` The option is one of the question's own, the one
+you'd take from what you hold. That way, the user settles it with a yes. For example: `Should
+the tax rate be given with each invoice, or set once? I recommend setting it once, as the rate
+rarely changes.`

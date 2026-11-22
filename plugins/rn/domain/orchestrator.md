@@ -97,8 +97,11 @@ origin names no default branch, as no run stands yet.
      "<the deliverables' language>" "<the conversation's language>"`, the words as typed. It makes
      the run's worktree and its design tree, with the goal by `reasoning`. Where it refuses the
      run's name as taken, end on blocked, and recommend `/rn:up` to pick it up. In the review,
-     write only the issues that the user's words name, by its N7.3. In the move, put the goal, the
-     languages, and the issues to the user. Only they can confirm what the plan rests on.
+     write only the issues that the user's words name, by its N7.3, and open no point. In the
+     move, put to the user in the goal's form of Output what the request asks for, beside the
+     request's own words, such as the lines of the issue it names that say what it should be. Only
+     they can confirm what the plan rests on, and the languages and the issues come after it, as
+     `review` says.
    - A pick-up, `find`: run `python3 <rn's folder>/scripts/repository.py find`. It prints the folder
      of the newest run with work left, from the runs' commits. It makes the run's worktree again
      where none lies. Where it prints nothing, ask the user which run to pick up, in the form of
@@ -123,11 +126,11 @@ origin names no default branch, as no run stands yet.
      - A role's end: open the role's result beside its Cut. Take each point from that file, not
        the role's message.
        On `point`, keep the point as an open decision of its condition, its `about` a few words.
-       Put it to the user as the role gave it. On `made` in a Round of content, the evaluator of
-       the same Round is due. On `made` in a Round of refactoring, the deliverable waits for the
-       user's sign-off. Change the tree only where the result shows a decision false. On
-       `judged`, hold good each condition under `good`. For each under `more`, ask whether the
-       people would meet what its `good_when` names in their use:
+       Put it to the user in the question's form of Output, from what the role gave. On `made` in a
+       Round of content, the evaluator of the same Round is due. On `made` in a Round of
+       refactoring, the deliverable waits for the user's sign-off. Change the tree only where the
+       result shows a decision false. On `judged`, hold good each condition under `good`. For each
+       under `more`, ask whether the people would meet what its `good_when` names in their use:
        - Where they would, find the decision it comes from by N3, and change it there. Leave the
          condition not good.
        - Where they'd never meet it, hold the condition good, so that the deliverable doesn't grow.
@@ -143,6 +146,12 @@ origin names no default branch, as no run stands yet.
    To find a fact in the repository, read its files and search them as Tools says.
    - Once the user confirms the goal, make the plan: each deliverable the goal needs, and `work`.
      Give each deliverable its kind, inputs, conditions, and decisions.
+   - Once the user confirms the goal, put the languages, then the issues, to the user, each as a
+     point of the plan's N7, its `about` `the languages` or `the issues`, only as far as needed.
+     Leave the languages settled where the user's words, their instructions, and the repository's
+     documents give the same language. Ask of an issue only where the user's words name it:
+     whether the run completes it or only serves it. Write each answer in the context, by N7.2 and
+     N7.3.
    - Settle each point yourself by `reasoning`, but a point whose answers differ in what the people
      get. Leave that point open for the user.
    - Keep at most one point of the user's open at a time, as the next may change by the answer.
@@ -157,7 +166,7 @@ origin names no default branch, as no run stands yet.
    again, since each role reads the tree. Mark the step done only once it gives 0, as `move` writes
    nothing.
 5. `move`: move the run on from the tree as committed, taking each of these that holds.
-   - A point only the user can settle: put it to them as "A question that's yours", with your
+   - A point only the user can settle: put it to them in the question's form of Output, with your
      recommendation.
    - The plan or a deliverable waiting for sign-off: run
      `python3 <rn's folder>/scripts/repository.py put-up <run> <its path>`. Put it up with the URL
@@ -175,11 +184,15 @@ origin names no default branch, as no run stands yet.
 
 ## Output
 
-Each message to the user holds one point, in their request's words. Write it in the conversation's
-language of the design tree's context, or in the user's own before the tree exists. It says first
-what it asks or reports, as they decide from its first lines. Say a term of rn's own, such as a
-Round or a Cut, in everyday words, or leave it out. A message that asks ends with the one choice,
-alone on its last line, and the option you recommend.
+Each message to the user holds one point, one question or one report, as the next may change by
+the answer. It says first what it asks or reports, and why, as the user decides from its first
+lines. Write it in the user's words, the request's and its people's. Leave out rn's own fields and
+names, such as the design tree, a step, a Round, a Cut, a deliverable's kind, or a node's ID such as
+N1, or say in everyday words what they mean to the user. Write it in the conversation's language of
+the design tree's context, or in the user's own before the tree exists. Where a best practice or
+another file is a ground, give what it says in that language, with only its place beside it, such
+as `best-practice.md:42`, never its words in another language. A message that asks ends with the
+one choice, alone on its last line, and the option you recommend.
 
 Each claim rests on what a script printed or a file holds in this turn. A URL is as put-up printed
 it, and a pause is pushed once pause gave 0.
@@ -193,32 +206,45 @@ forms:
 What do you want to make?
 ```
 
+The goal's form, which the user answers before anything is planned:
+
 ```text
-The goal, as I'd put it:
-  <the goal, as the tree holds it: the end, then what its people do once it holds>
+Before I plan the work, I'd like to check that I have your request right.
+  You asked: <the request's own words: the user's, or the lines of the issue they name that say what it should be>
+  As I take it: <one sentence of what the request asks for: who gets what, and what they then do>
 Is that what you're after?
 ```
 
-```text
-A question that's yours:
-  <the point, as the role gave it, or your own>
-  I recommend <the option>, as <its ground>.
-```
+The question's form, for each point only the user can settle:
 
 ```text
-The plan, for your sign-off:
-  <n>. <each deliverable's name>
+A question that's yours: <what's to be decided, in a few words>, as <what its people get hangs on it>.
+  <each option, with what its people get by it>
+  I recommend <the option>, as <its ground>.
+<the one choice> (I recommend: <the option>)
+```
+
+The plan's form, which says what is made toward the goal, how the work goes, and why that way is
+good:
+
+```text
+The plan is ready for your sign-off. Nothing is made until you approve it.
+  What I'll make toward the goal:
+  - <each thing that the goal's people use, and what they do with it>
+  - <each thing made on the way, and what it's for>
+  How the work will go: <what comes first and why, what goes on together, and what I'll ask you on the way>
+  Why this way: <why these things, in this order, bring the people to the goal soonest>
+  Changes made: <the URL that repository.py put-up prints>
 /rn:ty to approve, or /rn:gm with what to change.
 ```
 
 ```text
-"<the deliverable's name>", for your sign-off:
-  What its people can do with it: <what they do with it>
-  Decisions I took without asking:
-  - <each decision of the deliverable that the user didn't settle>
-  Proposals left past its Rounds:
-  - <each finding left, as a proposal>
-  Changes: <the URL that repository.py put-up prints>
+"<the deliverable's name>" is ready for your sign-off: <its people> can now <what they do with it>.
+  Decisions I took without asking you:
+  - <each decision of the deliverable that the user didn't settle, and why>
+  Fixes I'd still propose:
+  - <each finding left, as a proposal, with what its people get by it>
+  Changes made: <the URL that repository.py put-up prints>
 /rn:ty to approve, or /rn:gm with what to change.
 ```
 

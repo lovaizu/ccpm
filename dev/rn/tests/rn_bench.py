@@ -246,7 +246,11 @@ def requested(b: Bench) -> Conversation:
     ran(c, b.script("repository", "new", WORDS, GOAL, *LANGUAGES))
     marked(c, "start")
     shared_steps(b, c, ground="The goal as put.")
-    ended(c, f"The goal, as I'd put it:\n  {GOAL}\nIs that what you're after?")
+    ended(
+        c,
+        "Before I plan the work, I'd like to check that I have your request right.\n"
+        f"  You asked: {WORDS}\n  As I take it: {GOAL}\nIs that what you're after?",
+    )
     return c
 
 
@@ -273,7 +277,7 @@ def confirmed(b: Bench, c: Conversation) -> None:
     and puts the point to the user."""
     c.type("yes")
     taken(b, c, planned_tree(b, answered=False), "The goal, as the user confirms it.")
-    ended(c, f"A question that's yours:\n  {rn_files.TAX_POINT}")
+    ended(c, f"A question that's yours: the tax rate.\n  {rn_files.TAX_POINT}")
 
 
 def put_up_plan(b: Bench, c: Conversation) -> str:
@@ -290,7 +294,8 @@ def put_up_plan(b: Bench, c: Conversation) -> str:
     )
     ended(
         c,
-        "The plan, for your sign-off:\n  1. ...\n/rn:ty to approve, or /rn:gm with what to change.",
+        "The plan is ready for your sign-off. Nothing is made until you approve it.\n"
+        "/rn:ty to approve, or /rn:gm with what to change.",
     )
     return printed[0].strip()
 
@@ -329,7 +334,7 @@ def signed_apart(
     c.type("yes")
     plan = rn_files.plan_path(b.name())
     taken(b, c, design_tree, "The plan.", [b.script("repository", "put-up", b.run, plan)])
-    ended(c, "The plan, for your sign-off.")
+    ended(c, "The plan is ready for your sign-off.")
     moves = [b.script("tree", "cut", b.run, "generator", each) for each in made]
     return c, [each.strip() for each in signed(b, c, moves)]
 

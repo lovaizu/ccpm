@@ -264,7 +264,7 @@ def test_a_send_back_of_the_plan_leaves_it_open_and_starts_no_role(b: Bench):
     answer, agent = c.start("rn:generator", "Make the command.", "Run rn:generator")
     assert agent is None
     assert "No start of rn's subagents is due now." in answer.said
-    ended(c, "The plan, for your sign-off:\n  1. ...")
+    ended(c, "The plan is ready for your sign-off. Nothing is made until you approve it.")
 
 
 @pytest.mark.supports("S1", "Round", "Cut")
@@ -285,7 +285,11 @@ def test_a_generators_point_reaches_the_user_and_their_answer_resumes_it(b: Benc
         held(b, COMMAND, [], {"N1": [rn_files.decision(about, None)]}),
         "The generator's point.",
     )
-    ended(c, "A question that's yours:\n  Should a line's quantity default to 1?")
+    ended(
+        c,
+        "A question that's yours: whether a line's quantity defaults to 1.\n"
+        "  I recommend 1, as the team types each line.",
+    )
     c.type("yes, 1")
     answer = rn_files.decision(about, "yes, 1", "user")
     tree = b.tree()
@@ -374,7 +378,7 @@ def test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal(b
         [b.script("repository", "put-up", b.run, COMMAND)],
     )[0].strip()
     assert url == "http://github.com/owner/repo/pull/1/files"
-    ended(c, "Proposals left past its Rounds:\n  - a comma in a line")
+    ended(c, "Fixes I'd still propose:\n  - a comma in a line")
     signed(b, c)
     assert rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light") in b.tree()["deliverables"]
 

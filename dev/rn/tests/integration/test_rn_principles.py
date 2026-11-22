@@ -338,7 +338,11 @@ def test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut(b: Bench, broke
     refused = c.bash(b.script("tree", "cut", b.run, "generator", COMMAND))
     assert refused.exit_code == 1
     assert "user" in refused.output
-    ended(c, "A question that's yours:\n  Should a line's quantity default to 1?")
+    ended(
+        c,
+        "A question that's yours: whether a line's quantity defaults to 1.\n"
+        "  I recommend 1, as the team types each line.",
+    )
 
 
 @pytest.mark.supports("P1.3", "orchestrator")

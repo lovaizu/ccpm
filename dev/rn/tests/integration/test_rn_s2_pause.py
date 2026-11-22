@@ -155,7 +155,11 @@ def test_a_pick_up_with_a_point_waiting_keeps_it_open_and_starts_no_role(b: Benc
     pointed(b, c, generator, "Should a line's quantity default to 1?")
     point = rn_files.decision("a line's quantity", None)
     taken(b, c, held(b, COMMAND, [], {"N1": [point]}), "The generator's point.")
-    ended(c, "A question that's yours:\n  Should a line's quantity default to 1?")
+    ended(
+        c,
+        "A question that's yours: whether a line's quantity defaults to 1.\n"
+        "  I recommend 1, as the team types each line.",
+    )
     paused(b, c, [])
     later = picked_up(b)
     shared_steps(b, later, ground="Picked up.")
@@ -163,7 +167,11 @@ def test_a_pick_up_with_a_point_waiting_keeps_it_open_and_starts_no_role(b: Benc
     answer, agent = later.start("rn:generator", "Make the command.", "Run rn:generator")
     assert agent is None
     assert "No start of rn's subagents is due now." in answer.said
-    ended(later, "A question that's yours:\n  Should a line's quantity default to 1?")
+    ended(
+        later,
+        "A question that's yours: whether a line's quantity defaults to 1.\n"
+        "  I recommend 1, as the team types each line.",
+    )
 
 
 @pytest.mark.supports("S2", "scripts", "Design tree")
