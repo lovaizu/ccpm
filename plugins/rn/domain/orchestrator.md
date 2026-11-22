@@ -189,10 +189,11 @@ the answer. It says first what it asks or reports, and why, as the user decides 
 lines. Write it in the user's words, the request's and its people's. Leave out rn's own fields and
 names, such as the design tree, a step, a Round, a Cut, a deliverable's kind, or a node's ID such as
 N1, or say in everyday words what they mean to the user. Write it in the conversation's language of
-the design tree's context, or in the user's own before the tree exists. Where a best practice or
-another file is a ground, give what it says in that language, with only its place beside it, such
-as `best-practice.md:42`, never its words in another language. A message that asks ends with the
-one choice, alone on its last line, and the option you recommend.
+the design tree's context, or in the user's own before the tree exists. Where you give what a best
+practice, an issue, or another file says, as a ground or as the request, give it in that language,
+with only its place beside it, such as `best-practice.md:42` or `#62`, never its words in another
+language. A message that asks ends with the one choice, alone on its last line, and the option you
+recommend.
 
 Each claim rests on what a script printed or a file holds in this turn. A URL is as put-up printed
 it, and a pause is pushed once pause gave 0.
