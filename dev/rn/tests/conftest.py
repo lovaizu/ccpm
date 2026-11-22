@@ -1,6 +1,6 @@
 """What every level of rn's cases shares: the folder of rn's code on the import path, as template.py
 puts `domain/` there, the top of the repository, the folder of the double of Claude Code and the
-helpers that both plugins' tests share, and this folder, where the bench of rn's walkthrough lies,
+helpers that both plugins' tests share, and this folder, where rn's bench lies,
 as the type checker finds each there."""
 
 from __future__ import annotations

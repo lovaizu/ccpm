@@ -6,7 +6,7 @@ Each runs `log` and Lane through the double of Claude Code."""
 from __future__ import annotations
 
 import pytest
-from lane_bench import Bench, reviewed, started, to_review
+from lane_bench import ENTRY, WALKTHROUGH, Bench, opened, reached, reviewed, started, to_review
 
 
 @pytest.mark.supports("S7", "rule types")
@@ -35,9 +35,14 @@ def test_an_end_with_a_result_that_the_rule_doesnt_name_is_stopped(b: Bench):
 
 @pytest.mark.supports("S7", "Route")
 def test_the_reviewers_more_makes_the_writer_due_again(b: Bench):
-    """Given the reviewer due
-    When it reports `more` and ends
-    Then the main conversation reads `more` and the writer due, as the walkthrough shows"""
-    answer = reviewed(to_review(b), "more")
-    assert "more" in answer.said
-    assert "log:writer" in answer.said
+    """Given `log` with the rules of Lane's README walkthrough, whose writer wrote CHANGELOG.md,
+    reported `written`, and ended
+    When the reviewer reports `more` and ends
+    Then the main conversation reads the walkthrough's line word for word"""
+    b.rules(WALKTHROUGH)
+    c = opened(b)
+    writer = started(c)
+    writer.write(b.at("CHANGELOG.md"), ENTRY)
+    writer.bash("lane-result written")
+    reached(writer)
+    assert reviewed(c, "more").said == "log:reviewer gave more. Due: log:writer."

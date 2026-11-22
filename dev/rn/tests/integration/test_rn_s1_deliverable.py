@@ -1,5 +1,5 @@
 """The integration cases of S1, a deliverable made in rounds: each path through its sequence, from
-the user's request to the last sign-off, on the README's walkthrough with invoicer. Each runs rn
+the user's request to the last sign-off, on the bench's own request for invoicer. Each runs rn
 and Lane through the double of Claude Code and the double of gh, with a double of each prompt's
 work, as rn's Test strategy says under Integration testing."""
 

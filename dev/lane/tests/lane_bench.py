@@ -41,6 +41,7 @@ LANE_MODULES = (
     "json_form",
     "named_files",
     "plugin",
+    "plugin_command",
     "adapters",
     "routes",
     "order",
@@ -158,6 +159,35 @@ RULES: Rules = {
         {"after": {"command": "log:retry"}, "start": ["log:writer"]},
         {"after": {"command": "log:tag"}, "start": ["log:tagger"]},
         {"after": {"role": "log:tagger", "result": "tagged"}, "start": []},
+    ],
+}
+
+# The rules of `log` that plugins/lane/README.md's walkthrough shows: the writer's one step,
+# which writes CHANGELOG.md and gives `written`, the reviewer's, which gives `good` or `more`, and
+# the routes after the command, after `written`, and after `more`.
+WALKTHROUGH: Rules = {
+    "roles": {
+        "log:writer": {
+            "steps": [
+                {
+                    "name": "write",
+                    "rules": [
+                        {"type": "writes", "paths": ["CHANGELOG.md"]},
+                        {"type": "result", "results": ["written"]},
+                    ],
+                }
+            ]
+        },
+        "log:reviewer": {
+            "steps": [
+                {"name": "review", "rules": [{"type": "result", "results": ["good", "more"]}]}
+            ]
+        },
+    },
+    "routes": [
+        {"after": {"command": "log:up"}, "start": ["log:writer"]},
+        {"after": {"role": "log:writer", "result": "written"}, "start": ["log:reviewer"]},
+        {"after": {"role": "log:reviewer", "result": "more"}, "start": ["log:writer"]},
     ],
 }
 

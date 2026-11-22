@@ -96,12 +96,12 @@ def files_under(top: str) -> set[str]:
 
 @pytest.mark.supports("test_the_people_start_from_the_branch_without_rns_folder")
 def test_the_starting_state_holds_the_branch_as_its_people_get_it(tmp_path: Any, host: Any):
-    """Given a run whose worktree holds a new command, a changed README, and lines.py removed, none
-    committed, and its design tree and a Round under .rn/
+    """Given a run whose worktree holds a new command, a changed docs/product-vision.md, and
+    lines.py removed, none committed, and its design tree and a Round under .rn/
     When starting_state is made for the command's Round content-1
     Then it gives the folder that `folder` names, a clone on the branch rn-<name> holding each file
-    of the worktree as it stands, the command and the README's change in, lines.py out, and nothing
-    of .rn/"""
+    of the worktree as it stands, the command and the change to docs/product-vision.md in, lines.py
+    out, and nothing of .rn/"""
     run = made_run(str(tmp_path))
     round_ = a_round(run, rn_files.COMMAND)
     os.makedirs(round_.folder)

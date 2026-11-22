@@ -8,7 +8,7 @@ from __future__ import annotations
 import os
 
 import pytest
-from lane_bench import ENTRY, Bench, opened, started
+from lane_bench import ENTRY, WALKTHROUGH, Bench, opened, started
 
 
 @pytest.mark.supports("S1", "rule types")
@@ -65,3 +65,18 @@ def test_the_main_conversations_write_in_a_run_is_held_to_its_skills_step(b: Ben
     assert "lead" in answer.said
     assert ".log/up.md" in answer.said
     assert not c.write(None, b.at(".log/up.md"), "x\n").blocked
+
+
+@pytest.mark.supports("S1")
+def test_the_walkthroughs_writer_reads_the_step_s_sentence_word_for_word(b: Bench):
+    """Given `log` with the rules of Lane's README walkthrough, and its writer running at its step
+    `write`
+    When it writes its notes to notes.md
+    Then the write is stopped, and the writer reads the walkthrough's sentence word for word"""
+    b.rules(WALKTHROUGH)
+    answer = started(opened(b)).write(b.at("notes.md"), "x\n")
+    assert answer.blocked
+    assert answer.said == (
+        "You're at the step `write` of log:writer, which writes only CHANGELOG.md.\n"
+        "Write there instead of notes.md."
+    )

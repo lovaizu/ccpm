@@ -106,7 +106,8 @@ def relative(expected: list[tuple[str, list[str]]], cwd: str) -> list[tuple[str,
 
 
 def step(name: str, *rules: Mapping[str, Any]) -> tuple[str, list[str]]:
-    """A step as `absolute` gives it, with `order` and the rules given, paths already absolute."""
+    """A step as `shown` gives it, with `order` and the rules given, its paths absolute until
+    `relative` gives each as Lane compares it."""
     each: list[Mapping[str, Any]] = [{"type": "order"}, *rules]
     shown = []
     for given_rule in each:

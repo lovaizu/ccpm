@@ -399,7 +399,7 @@ def test_a_worktree_git_cant_make_is_cantrun_with_what_git_said(tmp_path: Any, h
     branch_run(repo, NAME, a_tree(NAME), worktree=False)
     with open(rn_files.worktree_of(repo, NAME), "w", encoding="utf-8") as f:
         f.write("in the way\n")
-    with pytest.raises(CantRun, match="git can't make the run's worktree again"):
+    with pytest.raises(CantRun, match="git can't make the run's worktree again: .*already exists"):
         found(repo, host)
 
 

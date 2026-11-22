@@ -23,10 +23,10 @@ pytestmark = [opus.NEEDS_LOGIN]
 NAME = "20261120-a-command-with-which-the"
 TAX = rn_files.decision(rn_files.TAX_ABOUT, rn_files.TAX_ANSWER, "user")
 LINES = "Hosting;40.00;1\nSupport hours;120.00;1\n"
-# The command its people run, as the README's walkthrough shows it, which the case runs too.
+# The command its people run, as the bench's own request gives it, which the case runs too.
 RUN = ["python3", "-m", "invoicer", "lines.csv", "--rate", "0.19"]
 # The check of the command, as N1.2 of the light best practice reads it: the decision about
-# `The check`, which names the command of the README's walkthrough and the rate's form.
+# `The check`, which names the command of the bench's own request and the rate's form.
 CHECK = rn_files.decision(
     "The check",
     f"The accountant saves the invoice's lines as lines.csv, runs `{' '.join(RUN)}` at the"

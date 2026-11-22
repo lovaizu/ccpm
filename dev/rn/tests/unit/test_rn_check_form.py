@@ -182,7 +182,7 @@ def test_a_const_takes_its_one_value(schema):
 def test_one_of_takes_a_value_that_holds_exactly_one_branch(schema):
     """Given a schema whose property `a` takes one of an integer or a value of 0 at least
     When -1, 1, and "x" are held to it
-    Then -1 has no fault, holding the first alone, 1 a fault, holding both, and "x" a fault,
+    Then -1 has no fault, holding the first alone, 1 a fault, holding both, and "x" no fault,
     holding the second alone, as a string meets `minimum` vacuously"""
     path = schema(
         {"type": "object", "properties": {"a": {"oneOf": [{"type": "integer"}, {"minimum": 0}]}}}

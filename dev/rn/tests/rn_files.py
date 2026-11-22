@@ -26,9 +26,10 @@ SCHEMAS = os.path.join(RN, "domain", "schemas")
 TREE_SCHEMA = os.path.join(PRACTICES, "design-tree", "design-tree.schema.json")
 INVOICER = os.path.join(TOP, "dev", "rn", "tests", "invoicer")
 
-# The walkthrough of rn's README: the user's words in reply to /rn:on, the goal as the orchestrator
-# puts it with what its people do then, and the two deliverables of the plan, the command and its
-# guide, the guide resting on the command.
+# The bench's own request, in English, apart from the Japanese run that rn's README walkthrough
+# shows: the user's words in reply to /rn:on, the goal as the orchestrator puts it with what its
+# people do then, and the two deliverables of the plan, the command and its guide, the guide resting
+# on the command.
 WORDS = (
     "a command with which the accounting team prints an invoice from its lines, without writing"
     " Python"

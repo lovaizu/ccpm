@@ -43,13 +43,11 @@ def test_a_step_marked_with_one_item_done_names_only_the_other(b: Bench):
 def test_a_step_marked_once_each_item_is_done_holds(b: Bench):
     """Given the writer running, NOTES.md read whole, and each item done
     When it reports the step `write` done
-    Then it reads no sentence naming an item"""
+    Then the mark holds, with no sentence"""
     writer = started(opened(b))
     writer.read(b.at("NOTES.md"))
     items(writer)
-    said = writer.bash("lane-step write").said
-    assert "dated" not in said
-    assert "linked" not in said
+    assert writer.bash("lane-step write").said == ""
 
 
 # A checklist whose items the plugin's command gives at the mark: each file that the writer wrote

@@ -225,14 +225,21 @@ def test_a_reporter_given_words_that_dont_fit_its_kind_exits_2_with_what_it_take
 
 @pytest.mark.supports("reporters", "Run")
 def test_a_reporters_result_counts_for_the_subagent_that_ran_it(b: Bench):
-    """Given two writers running after the reviewer's `split`
+    """Given two writers running after the reviewer's `split`, the first having kept each step
+    but its result
     When the second reports `written`, and the first ends
-    Then the first's end is stopped, as the result is the second's"""
+    Then the first's end is stopped for want of its result, as the result is the second's"""
     c = to_review(b)
     reviewed(c, "split")
     first, second = started(c), started(c)
+    written(first, result=None)
     second.bash("lane-result written")
-    assert first.end("Done.")[0].blocked
+    answer = first.end("Done.")[0]
+    assert answer.blocked
+    assert answer.said == (
+        "You end the step `report` of log:writer with no result it may give.\n"
+        "Give written with lane-result first."
+    )
 
 
 # route adapter

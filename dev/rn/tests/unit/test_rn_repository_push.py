@@ -88,7 +88,7 @@ def test_a_commit_of_several_paths_and_a_folder_holds_each(tmp_path: Any, host: 
     "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
 )
 def test_a_commit_takes_a_path_with_no_change_beside_one_with_one(tmp_path: Any, host: Any):
-    """Given a run whose design tree is changed and whose README isn't
+    """Given a run whose design tree is changed and whose docs/product-vision.md isn't
     When commit is given both
     Then it commits the design tree alone"""
     run = made_run(str(tmp_path))
@@ -190,7 +190,8 @@ def test_a_pause_with_no_change_pushes_the_last_commit_alone(tmp_path: Any, host
 
 @pytest.mark.supports("test_a_pause_leaves_the_users_own_worktree_and_branch_as_they_were")
 def test_a_pause_leaves_the_users_branch_and_change_as_they_were(tmp_path: Any, host: Any):
-    """Given a run whose design tree is changed, and the user's own change to README.md on main
+    """Given a run whose design tree is changed, and the user's own change to docs/test-design.md
+    on main
     When pause is given the run
     Then main's head, the user's branch, and their change are as they were, and origin's main too"""
     run = made_run(str(tmp_path))
@@ -231,7 +232,7 @@ def test_a_pause_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
         for each in [folder, *(os.path.join(folder, f) for f in files)]:
             os.chmod(each, os.stat(each).st_mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH))
     try:
-        with pytest.raises(Missing, match="ermission"):
+        with pytest.raises(Missing, match=r"(?s)a permission: .*\[remote rejected\]"):
             pause(run, host)
     finally:
         for folder, _, _ in os.walk(origin(tmp_path)):
@@ -245,7 +246,7 @@ def test_a_pause_to_a_remote_that_isnt_there_cant_run(tmp_path: Any, host: Any):
     Then CantRun is raised, with what git said"""
     run = made_run(str(tmp_path), origin=False)
     git(run.repository, "remote", "add", "origin", str(tmp_path / "gone.git"))
-    with pytest.raises(CantRun):
+    with pytest.raises(CantRun, match="push the run's work: .*does not appear to be a git repo"):
         pause(run, host)
 
 

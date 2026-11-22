@@ -39,23 +39,23 @@ def test_reads_in_parts_that_cover_each_line_read_the_file_whole(b: Bench):
     """Given the writer running, each item done, and NOTES.md read in two parts, lines 1 to 3 and
     4 to 6
     When it reports the step `write` done
-    Then the mark holds, and no sentence names NOTES.md"""
+    Then the mark holds, with no sentence"""
     writer = started(opened(b))
     items(writer)
     writer.read(b.at("NOTES.md"), offset=1, limit=3)
     writer.read(b.at("NOTES.md"), offset=4, limit=3)
-    assert "NOTES.md" not in writer.bash("lane-step write").said
+    assert writer.bash("lane-step write").said == ""
 
 
 @pytest.mark.supports("S3")
 def test_a_read_whole_holds_the_mark(b: Bench):
     """Given the writer running, each item done, and NOTES.md read with no limit
     When it reports the step `write` done
-    Then no sentence names NOTES.md"""
+    Then the mark holds, with no sentence"""
     writer = started(opened(b))
     items(writer)
     writer.read(b.at("NOTES.md"))
-    assert "NOTES.md" not in writer.bash("lane-step write").said
+    assert writer.bash("lane-step write").said == ""
 
 
 @pytest.mark.supports("S3")
