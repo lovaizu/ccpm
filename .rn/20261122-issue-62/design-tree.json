@@ -32,25 +32,13 @@
     },
     {
      "id": "N2",
-     "good": false,
-     "decisions": [
-      {
-       "about": "The plan put to the user",
-       "decided": "The plan put up for sign-off says what is made toward the goal, how the work goes, and why that way is good",
-       "by": "user"
-      }
-     ]
+     "good": true,
+     "decisions": []
     },
     {
      "id": "N7",
      "good": true,
-     "decisions": [
-      {
-       "about": "Messages to the user",
-       "decided": "Each message to the user speaks of the goal and what is made for it, never of the design tree or rn's steps, which the user has no interest in",
-       "by": "user"
-      }
-     ]
+     "decisions": []
     },
     {
      "id": "N3",
@@ -400,6 +388,80 @@
        "about": "The check",
        "decided": "claude plugin validate --strict passes for overnight and the marketplace; the marketplace and the root README list overnight at the version of its plugin.json, its CHANGELOG gives the release's line, and check.sh passes with every case of dev/overnight/tests",
        "by": "reasoning"
+      }
+     ]
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "rn's developers get as issues the vital few of what the user met in rn while overnight was made, each traced to its cause in rn",
+   "path": ".rn/20261122-issue-62/rn-feedback",
+   "kind": "light",
+   "file": false,
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md",
+    "dev/overnight/architecture.md",
+    "plugins/overnight",
+    "dev/overnight/tests",
+    "plugins/overnight/domain",
+    ".claude-plugin/marketplace.json"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": [
+      {
+       "about": "The check",
+       "decided": "Once overnight is released, each event below is sorted by its cause in rn; only the causes without which rn's users fail to reach their aim become issues of rn, each naming its events, once the user says yes; an event an open issue already holds goes to that issue",
+       "by": "user"
+      },
+      {
+       "about": "Event: the goal put with no lead-in",
+       "decided": "After /rn:on and 'issue #62', rn put the goal, the languages, and the issues at once with no word of what it asked or why; the user: 'いきなりすぎて意味不明です', and the design tree and rn's steps are of no interest to the user",
+       "by": "user"
+      },
+      {
+       "about": "Event: the plan put as names alone",
+       "decided": "rn put the plan for sign-off as a list of deliverables' names; the user: 'what is made toward the goal, how the work goes, and why that way is good' should be proposed",
+       "by": "user"
+      },
+      {
+       "about": "Event: a plan with a gap",
+       "decided": "rn's plan went from the test design straight to the release, with no build; the user: '５テスト設計で６リリース？'",
+       "by": "user"
+      },
+      {
+       "about": "Event: points settled before their inputs",
+       "decided": "Before any product vision or architecture, rn put how many tasks run at once, the parts' names, and the limit's logic, taken from the issue's text, and proposed a real night's run as a test that rests on hitting the limit; the user: 'こんなに一気に計画を立てるの？まだ設計もアーキテクチャも作ってないのに？設計ツリーのBP見てるの？'",
+       "by": "user"
+      },
+      {
+       "about": "Event: English quoted to a Japanese user",
+       "decided": "rn quoted the best practice in English in a Japanese conversation; the user: '英語分からん'",
+       "by": "user"
+      },
+      {
+       "about": "Event: the worktree apart from herdr",
+       "decided": "rn made the run's worktree by git worktree add inside herdr, so herdr showed no workspace for it; opened by herdr worktree open, it shows in agents only after a restart; issue #74 holds the herdr part",
+       "by": "user"
+      },
+      {
+       "about": "Event: no AI starts rn",
+       "decided": "rn's commands carry disable-model-invocation: true, so an AI that the user asks to take a piece of work, such as another Claude Code, can't run it through rn",
+       "by": "user"
       }
      ]
     },
