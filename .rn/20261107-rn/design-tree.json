@@ -464,7 +464,8 @@
           "decisions": [
             {
               "about": "The issues that the release judges",
-              "decided": null
+              "decided": "each of the eight issues that pull request #66 names is closed, with where the rebuilt rn and Lane leave it behind; #45, seen once again, is weighed again only if more runs show it",
+              "by": "user"
             },
             {
               "about": "The description of pull request #66",
