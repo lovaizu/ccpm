@@ -106,6 +106,28 @@ def test_each_event_in_a_run_loads_the_orchestrator_and_holds_its_turn_to_its_st
     assert f"`{first}`" in answer.said
 
 
+@pytest.mark.supports("orchestrator")
+@pytest.mark.parametrize(
+    ("skill", "refused"),
+    [("rn:on", False), ("rn:up", False), ("rn:dn", False), ("rn:ty", True), ("rn:gm", True)],
+)
+def test_an_ai_calls_the_commands_that_give_out_work_and_never_those_that_approve(
+    b: Bench, skill: str, refused: bool
+):
+    """Given invoicer's repository with no run of rn
+    When the main conversation calls the command's skill by the Skill tool, as an AI that gives
+    out work does
+    Then Claude Code loads the orchestrator for rn:on, rn:up, and rn:dn, whose frontmatter holds
+    no disable-model-invocation, and refuses rn:ty and rn:gm, whose frontmatter holds it true, as
+    only the user approves"""
+    called = b.converse().skill(skill, "")
+    assert called.blocked == refused, called.said
+    if refused:
+        assert "disable-model-invocation" in called.said
+    else:
+        assert "domain/orchestrator.md" in called.output
+
+
 @pytest.mark.supports("orchestrator", "scripts")
 def test_a_new_requests_turn_is_held_to_repository_py_new_first(b: Bench):
     """Given invoicer's repository with no run of rn

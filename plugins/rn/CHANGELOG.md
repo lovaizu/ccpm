@@ -5,6 +5,7 @@
 ### Added
 
 - When you run rn inside herdr, it makes each run's worktree through herdr, and opens it in herdr again when it picks up a run whose worktree is gone, so each run shows as a herdr workspace that you can switch to. Outside herdr, rn makes the worktree with git as before.
+- An AI can now start, pick up, and pause a run of rn by `/rn:on`, `/rn:up`, and `/rn:dn`, so an AI that you tell to give out work can have the AI in each worktree run it through rn. Only you sign off or send back what rn put up, by `/rn:ty` or `/rn:gm`.
 
 ### Fixed
 
