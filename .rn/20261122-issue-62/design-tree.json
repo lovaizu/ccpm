@@ -371,25 +371,9 @@
    ]
   },
   {
-   "name": "overnight's parts joined give each key result, as each integration case passes",
+   "name": "overnight gives each key result, as each test at each level that its test strategy sets passes",
    "path": "dev/overnight/tests/integration",
-   "kind": "code",
-   "inputs": ["dev/overnight/architecture.md", "dev/overnight/tests", "plugins/overnight/domain"],
-   "status": "open",
-   "necessary_conditions": [
-    {"id": "N1", "good": false, "decisions": []},
-    {"id": "N2", "good": false, "decisions": []},
-    {"id": "N3", "good": false, "decisions": []},
-    {"id": "N4", "good": false, "decisions": []},
-    {"id": "N5", "good": false, "decisions": []},
-    {"id": "N6", "good": false, "decisions": []},
-    {"id": "N7", "good": false, "decisions": []},
-    {"id": "N8", "good": false, "decisions": []}
-   ]
-  },
-  {
-   "name": "overnight's skill does what its users ask, as each of its unit cases passes on the model its users run; dropped where the architecture's test strategy gives overnight no prompt",
-   "path": "dev/overnight/tests/prompts",
+   "more_paths": ["dev/overnight/tests/prompts/"],
    "kind": "code",
    "inputs": ["dev/overnight/architecture.md", "dev/overnight/tests", "plugins/overnight/domain"],
    "status": "open",
@@ -411,7 +395,6 @@
    "inputs": [
     "plugins/overnight/domain",
     "dev/overnight/tests/integration",
-    "dev/overnight/tests/prompts",
     "plugins/overnight/README.md"
    ],
    "status": "open",
@@ -452,7 +435,6 @@
     "dev/overnight/tests",
     "plugins/overnight/domain",
     "dev/overnight/tests/integration",
-    "dev/overnight/tests/prompts",
     ".claude-plugin/marketplace.json"
    ],
    "status": "open",
