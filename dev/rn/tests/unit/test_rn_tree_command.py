@@ -2,7 +2,9 @@
 pointer and without, of none, one, and two changes; `commit` of a change in form, of one out of it,
 and of none; `cut` for each role and each thing a deliverable waits on, a new Round and the last
 one again, the Round that a pause stopped, and a stage at its limit with its findings kept;
-`signoff` of the plan, of a deliverable with its findings left, and of none waiting; a run's folder
+`signoff` of the plan, of a deliverable with its findings left, and of none waiting, marking the
+pull request ready only by the sign-off that leaves each deliverable done, and refused with what gh
+said where gh fails at it, the tree as it was; a run's folder
 out of its form or with no design tree; and arguments other than the usage's. Each runs in the
 user's repository, the run's worktree a git worktree on the work's branch, with a host that runs
 git for real."""
@@ -14,6 +16,7 @@ from typing import Any
 
 import pytest
 import rn_files
+from gh import gh_double
 from repo_files import git
 from rn_files import COMMAND, GOAL, GUIDE, RN
 from rn_runs import hook
@@ -593,6 +596,84 @@ def test_signoff_of_a_deliverable_past_its_rounds_writes_it_done(tmp_path: Any, 
     assert r.tree()["deliverables"][1] == rn_files.done_node(
         rn_files.COMMAND_NAME, COMMAND, "light"
     )
+
+
+def all_but_command(tmp: str) -> Run:
+    """The walkthrough's run as `left_past` makes it, but with its guide done, so that the command
+    alone waits for the user's sign-off; its pull request open, as put-up opened it."""
+    r = left_past(tmp)
+    the = r.tree()
+    the["deliverables"][2] = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
+    the["work"] = [rn_files.work("make", COMMAND)]
+    r.write(the)
+    return r
+
+
+def opened_pr(gh_state: str) -> None:
+    """Sets the double of gh's state to the pull request that put-up opened."""
+    kept = gh_double.state(gh_state)
+    kept["pull_request"] = "http://github.com/owner/repo/pull/1"
+    gh_double.keep(gh_state, kept)
+
+
+def readied(gh_state: str) -> list[list[str]]:
+    """Each `gh pr ready` that the double of gh was asked."""
+    return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "ready"]]
+
+
+@pytest.mark.supports("test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open")
+def test_signoff_that_leaves_a_deliverable_open_marks_no_pull_request_ready(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given the walkthrough's run whose command waits for sign-off and whose guide is open, its
+    pull request open
+    When tree.py signoff runs
+    Then it gives 0, and gh was asked to mark no pull request ready"""
+    r = left_past(str(tmp_path))
+    opened_pr(gh_state)
+    assert r.main(host, "signoff", r.run)[0] == 0
+    assert readied(gh_state) == []
+
+
+@pytest.mark.supports("test_the_last_signoff_marks_the_pull_request_ready")
+def test_signoff_that_leaves_each_deliverable_done_marks_the_pull_request_ready(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given the walkthrough's run whose plan and guide are done, and whose command waits for
+    sign-off, its pull request open
+    When tree.py signoff runs
+    Then it gives 0 printing the tree's path, each deliverable is done, and gh was asked once, in
+    the run's worktree, to mark rn-<name>'s pull request ready"""
+    r = all_but_command(str(tmp_path))
+    opened_pr(gh_state)
+    code, out, err = r.main(host, "signoff", r.run)
+    assert (code, err) == (0, "")
+    assert os.path.normpath(os.path.join(r.repo, out.strip())) == r.tree_path
+    assert [each["status"] for each in r.tree()["deliverables"]] == ["done", "done", "done"]
+    assert [(argv, cwd) for argv, cwd in host.ran if argv[:3] == ["gh", "pr", "ready"]] == [
+        (["gh", "pr", "ready", BRANCH], r.worktree)
+    ]
+
+
+@pytest.mark.supports("test_the_last_signoff_marks_the_pull_request_ready")
+def test_signoff_whose_ready_gh_refuses_gives_1_with_what_gh_said_leaving_the_tree(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given the walkthrough's run whose plan and guide are done, and whose command waits for
+    sign-off, its pull request open, and gh then with no login
+    When tree.py signoff runs
+    Then it gives 1 with what gh said, that no GitHub host is logged into, and the tree is as it
+    was, so that signoff runs again once gh is mended"""
+    r = all_but_command(str(tmp_path))
+    opened_pr(gh_state)
+    gh_double.logged_out(gh_state)
+    before = r.tree()
+    refused(
+        r.main(host, "signoff", r.run),
+        "gh may not mark the pull request ready",
+        "not logged into any GitHub hosts",
+    )
+    assert r.tree() == before
 
 
 # The run's folder

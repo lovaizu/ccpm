@@ -5,8 +5,10 @@ pushed with its upstream set, and each refusal: no origin, a push refused for wa
 and a remote that isn't there; and `put_up`, which asks gh's login first, its first time opening the
 pull request titled by the goal's first sentence, of a goal of two sentences and of one, its body
 naming the issues and naming none, the pull request's URL written into the tree, its second
-opening none, an open pull request's URL written where the tree has none, and each refusal: gh
-with no login before any commit or push, a deliverable the tree lacks, and no origin."""
+opening none, an open pull request's URL written where the tree has none, the pull request opened
+as a draft, and each refusal: gh with no login before any commit or push, a deliverable the tree
+lacks, and no origin; and `ready`, which marks the work's branch's pull request ready, refused with
+what gh said where gh fails."""
 
 from __future__ import annotations
 
@@ -20,7 +22,7 @@ from fault import CantRun, Missing, Wrong
 from gh import gh_double
 from repo_files import git
 from repository.place import RunPlace
-from repository.push import commit, pause, put_up
+from repository.push import commit, pause, put_up, ready
 from rn_runs import NAME, changed, committed_files, head, hook, made_run, subject
 from template.markdown import sentences
 
@@ -494,3 +496,45 @@ def test_a_put_up_with_gh_logged_out_is_missing_its_login(tmp_path: Any, host: A
     assert git(worktree(run), "status", "--porcelain").split() == ["M", "invoicer/lines.py"]
     assert git(origin(tmp_path), "branch", "--list", f"rn-{NAME}").strip() == ""
     assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]
+
+
+@pytest.mark.supports("test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open")
+def test_a_first_put_up_opens_the_pull_request_as_a_draft(tmp_path: Any, host: Any, gh_state: str):
+    """Given a run whose plan is open, with no pull request
+    When put_up is given the plan
+    Then gh was asked once to open a pull request, as a draft"""
+    run = made_run(str(tmp_path), design_tree=rn_files.walkthrough_tree(NAME, plan_done=False))
+    put_up(run, rn_files.plan_path(NAME), host)
+    assert ["--draft" in each for each in created(gh_state)] == [True]
+
+
+# ready
+
+
+@pytest.mark.supports("test_the_last_signoff_marks_the_pull_request_ready")
+def test_ready_marks_the_pull_request_of_the_works_branch_ready(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given a run whose plan was put up
+    When ready is given the run
+    Then gh was asked last, in the run's worktree, to mark rn-<name>'s pull request ready"""
+    run = made_run(str(tmp_path))
+    put_up(run, rn_files.plan_path(NAME), host)
+    ready(run, host)
+    assert host.ran[-1] == (["gh", "pr", "ready", f"rn-{NAME}"], worktree(run))
+
+
+@pytest.mark.supports("test_the_last_signoff_marks_the_pull_request_ready")
+def test_ready_where_gh_fails_is_missing_with_what_gh_said(tmp_path: Any, host: Any, gh_state: str):
+    """Given a run whose plan was put up, and gh then with no login
+    When ready is given the run
+    Then Missing is raised, saying gh may not mark the pull request ready, with what gh said"""
+    run = made_run(str(tmp_path))
+    put_up(run, rn_files.plan_path(NAME), host)
+    gh_double.logged_out(gh_state)
+    with pytest.raises(Missing) as refused:
+        ready(run, host)
+    assert str(refused.value) == (
+        "gh may not mark the pull request ready:"
+        " You are not logged into any GitHub hosts. To log in, run: gh auth login"
+    )

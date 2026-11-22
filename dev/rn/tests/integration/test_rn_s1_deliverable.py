@@ -526,6 +526,38 @@ def test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_request
     assert not stopped.blocked, stopped.said
 
 
+@pytest.mark.supports("S1", "Design tree")
+def test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open(b: Bench):
+    """Given a run whose plan and command were put up and signed off, the guide still open
+    When the guide's generator starts
+    Then gh was asked to open the pull request once, as a draft, and never to mark it ready"""
+    command_signed(b)
+    asked = b.asked_gh()
+    created = [each for each in asked if each[1:3] == ["pr", "create"]]
+    assert len(created) == 1
+    assert "--draft" in created[0], "the pull request opens as a draft"
+    assert [each for each in asked if each[1:3] == ["pr", "ready"]] == []
+
+
+@pytest.mark.supports("S1", "Design tree")
+def test_the_last_signoff_marks_the_pull_request_ready(b: Bench):
+    """Given a run whose plan and command are done, and whose guide was judged good, refactored,
+    and put up
+    When the user signs the guide off and the orchestrator records it
+    Then gh was asked once to mark the work's branch's pull request ready, after it opened it"""
+    c, generator = command_signed(b)
+    generated(b, c, generator)
+    _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
+    evaluated(b, c, evaluator)
+    _, generator = next_round(b, c, GUIDE, rn_files.conditions("readme"))
+    generated(b, c, generator)
+    put_up(b, c, GUIDE, rn_files.conditions("readme"))
+    signed(b, c)
+    asked = [each for each in b.asked_gh() if each[1:3] in (["pr", "create"], ["pr", "ready"])]
+    assert [each[2] for each in asked] == ["create", "ready"]
+    assert asked[1] == ["gh", "pr", "ready", f"rn-{b.name()}"]
+
+
 @pytest.mark.supports("S1", "Round")
 def test_a_resumed_generator_after_its_answer_ends_with_made_and_the_evaluator_is_due(b: Bench):
     """Given a run whose command's generator gave a point that the user answered, and that the

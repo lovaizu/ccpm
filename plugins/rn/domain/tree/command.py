@@ -53,7 +53,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       generator starts a new Round, and gives 0 printing the Cut's path from `cwd`; 1 where the
       deliverable waits on another role, the user, or the orchestrator, saying which.
     - `signoff <run>`: writes the tree that `tree.signoff.signed_off` gives for the deliverable
-      that `tree.signoff.waiting` names, and gives 0 printing its path; 1 where none waits.
+      that `tree.signoff.waiting` names, and gives 0 printing its path; 1 where none waits. Where
+      that tree holds each deliverable done, it first marks the pull request ready, as
+      `push.ready` does, and gives 1 with what gh said, the tree as it was, where gh refuses.
 
     `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `tree.py: <what's wrong>`
     where the input is Wrong or something is Missing, saying how to mend it; 2 with what stopped it
@@ -137,7 +139,12 @@ def _signoff(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: 
     waiting = signoff.waiting(tree, nexts)
     if waiting is None:
         return 1, "", "tree.py: no deliverable waits for the user's sign-off\n"
-    form.write(run.tree, signoff.signed_off(tree, waiting))
+    signed = signoff.signed_off(tree, waiting)
+    # Marked ready before the tree is written, so that a refusal of gh leaves the sign-off to run
+    # again once gh is mended.
+    if all(node["status"] == "done" for node in signed["deliverables"]):
+        push.ready(run, host)
+    form.write(run.tree, signed)
     return 0, f"{os.path.relpath(run.tree, cwd)}\n", ""
 
 

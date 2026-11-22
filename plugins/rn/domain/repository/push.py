@@ -1,5 +1,5 @@
 """Decides how the run's work reaches GitHub: what each commit holds and says, the push of the
-work's branch, and the run's one pull request."""
+work's branch, and the run's one pull request, a draft until it's marked ready."""
 
 from __future__ import annotations
 
@@ -60,11 +60,12 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
     Gives: the URL of the pull request's changes, `<pull request>/files`.
     Changes: runs `gh auth status` first; then commits each change in the run's worktree as
     `rn: <deliverable's name>`, pushes the work's branch to `origin`, and opens the pull request
-    into the default branch, where the branch has none open: titled by the first sentence of the
-    design tree's goal, as `template.markdown.sentences` splits it, its body the goal, then a
-    line `Closes #N` for each issue of the tree's `context.issues.closes` and a line `Refs #N` for
-    each of its `refs`, in their order. Where the tree's `context.pr` is null, it then writes the
-    pull request's URL there, commits it as `rn: the pull request of <name>`, and pushes it.
+    into the default branch as a draft, where the branch has none open: titled by the first
+    sentence of the design tree's goal, as `template.markdown.sentences` splits it, its body the
+    goal, then a line `Closes #N` for each issue of the tree's `context.issues.closes` and a line
+    `Refs #N` for each of its `refs`, in their order. Where the tree's `context.pr` is null, it
+    then writes the pull request's URL there, commits it as `rn: the pull request of <name>`, and
+    pushes it.
     Refuses: Missing, before any commit or push, where `gh auth status` finds no login, with what
     it said; Wrong where the design tree holds no deliverable of the path; Missing where the
     repository has no remote `origin`, or gh may not open a pull request, with what gh said;
@@ -92,6 +93,7 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
                 "gh",
                 "pr",
                 "create",
+                "--draft",
                 "--head",
                 run.branch,
                 "--title",
@@ -110,6 +112,23 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
         _commit_all(run, f"rn: the pull request of {run.name}", host)
         _push(run, host)
     return f"{url}/files"
+
+
+def ready(run: RunPlace, host: Host) -> None:
+    """Marks the run's pull request ready, out of its draft.
+
+    Takes: the run, and the host.
+    Gives: nothing.
+    Changes: runs `gh pr ready <the work's branch>` in the run's worktree.
+    Refuses: Missing where gh may not mark it ready, such as with no login, with what gh said.
+    """
+    checked(
+        host,
+        ["gh", "pr", "ready", run.branch],
+        run.worktree,
+        Missing,
+        "gh may not mark the pull request ready",
+    )
 
 
 def _body(goal: str, issues: dict[str, list[int]]) -> str:

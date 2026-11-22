@@ -1,8 +1,9 @@
 """The double of gh that rn's cases run in its place, as rn's Test strategy says under Integration
 testing and Contract testing. It answers each command of gh that rn's code runs from one line of a
 record in recorded/: gh 2.102.1's runs for `gh auth status` and `gh pr view`, and gh's manual for
-`gh pr create`, as the plugin guide's Each result of a double from a record says. A command that no
-record holds fails with exit 1, naming itself, so that a body that runs it shows the gap.
+`gh pr create` and `gh pr ready`, as the plugin guide's Each result of a double from a record
+says. A command that no record holds fails with exit 1, naming itself, so that a body that runs it
+shows the gap.
 
 It serves two ways in: `host`, a Host of repository.host for the unit cases, which runs git for
 real and gh from the records; and `program`, a `gh` written into a folder for the integration
@@ -84,6 +85,8 @@ def answer(argv: Sequence[str], folder: str) -> tuple[int, str, str]:
     elif words == ["pr", "create"] and kept["pull_request"] is None:
         given = line(MANUAL, "gh pr create prints the URL of the pull request")
         kept["pull_request"] = given["stdout"].strip()
+    elif words == ["pr", "ready"] and kept["pull_request"] is not None:
+        given = line(MANUAL, "gh pr ready marks the pull request ready")
     else:
         given: dict[str, Any] = {"exit": 1, "stderr": f"gh double: no record of {' '.join(argv)}\n"}
     keep(folder, kept)
