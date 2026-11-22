@@ -42,7 +42,6 @@ from rn_bench import (
     signed_apart,
     signed_plan,
     started,
-    stopped,
     taken,
     to_plan_signoff,
     touched_items,
@@ -234,6 +233,14 @@ def put_up_unmarked(b: Bench) -> None:
     )
 
 
+def checks_in_place(b: Bench) -> None:
+    """The repository's commit checks run on the worktree's own index, as a commit of all that it
+    stages would."""
+    given_again(
+        b, "domain/repository/commit_checks.py", "def _with_index(host, index):\n    return host\n"
+    )
+
+
 def checks_unasked(b: Bench) -> None:
     """A change of the design tree is committed whatever its form."""
     given_again(
@@ -250,11 +257,8 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own": put_up_unmarked,
     "test_the_people_start_from_the_branch_without_rns_folder": trial_of_the_worktree,
     "test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped": result_unchecked,
-    "test_the_orchestrator_writing_a_deliverable_is_stopped": lambda b: steps_without(
+    "test_the_evaluator_mending_the_deliverable_is_stopped": lambda b: steps_without(
         b, "r['type'] != 'writes'"
-    ),
-    "test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped": lambda b: steps_without(
-        b, "r['type'] != 'commands'"
     ),
     "test_the_generators_make_is_held_to_its_best_practices_make_items": items_left_out,
     "test_no_evaluator_starts_after_a_refactor_round": refactoring_judged,
@@ -263,9 +267,7 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
         b, "r['type'] != 'reads_none'"
     ),
     "test_a_generators_end_with_no_result_written_is_stopped": any_end_passes,
-    "test_the_orchestrators_commit_by_git_in_place_of_tree_py_is_stopped": lambda b: steps_without(
-        b, "r['type'] != 'commands'"
-    ),
+    "test_the_generators_checks_judge_its_files_alone_beside_another_staged": checks_in_place,
     "test_a_generator_marking_make_before_decide_is_stopped": lambda b: steps_without(
         b, "r['type'] != 'order'"
     ),
@@ -436,44 +438,20 @@ def test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped(b: Bench, b
 # P3: made the field's established way.
 
 
-@pytest.mark.supports("P3.1", "orchestrator")
-def test_the_orchestrator_writing_a_deliverable_is_stopped(b: Bench, broken: None):
-    """Given a run whose plan the user signed off
-    When the orchestrator writes the command's file in its review
-    Then Lane stops the write, as the step `review` writes only the run's design tree"""
-    c = to_plan_signoff(b)
-    c.type("/rn:ty")
-    ran(c, b.script("tree", "signoff", b.run))
-    marked(c, "record")
-    answer = c.write(None, os.path.join(b.worktree, COMMAND), "print('invoice')\n")
+@pytest.mark.supports("P3.1", "evaluator")
+def test_the_evaluator_mending_the_deliverable_is_stopped(b: Bench, broken: None):
+    """Given a run whose command's evaluator made the people's folder
+    When it writes the command in the run's worktree at the step `try`, mending what it judges
+    Then Lane stops the write, and the command is as its generator made it"""
+    c, evaluator, _, _ = trial_made(b)
+    marked(c, "start", evaluator)
+    path = os.path.join(b.worktree, COMMAND)
+    with open(path, encoding="utf-8") as f:
+        made = f.read()
+    answer = evaluator.write(path, "print('mended')\n")
     assert answer.blocked
-    assert "`review`" in answer.said
-
-
-@pytest.mark.supports("P3.1", "orchestrator")
-def test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped(b: Bench, broken: None):
-    """Given a run whose plan the user signed off, its sign-off recorded
-    When the orchestrator searches the repository in its review by Bash's `find` and `grep`, and
-    by the Glob and Grep tools, as the tools that search differ by OS, and then writes the run's
-    design tree by a Bash command other than `find` and `grep`
-    Then each search goes through, and Lane stops the write, as the step `review` runs only `find`
-    and `grep`, and the tree is as it was"""
-    c = to_plan_signoff(b)
-    c.type("/rn:ty")
-    ran(c, b.script("tree", "signoff", b.run))
-    marked(c, "record")
-    before = b.tree()
-    for searched in (
-        c.bash("find invoicer -name '*.py'"),
-        c.bash("grep -rn parse_lines invoicer"),
-        c.glob(None, "**/*.py"),
-        c.grep(None, "parse_lines"),
-    ):
-        assert not searched.blocked and not stopped(searched.said), searched.said
-    answer = c.bash(f"printf '%s\\n' '{{}}' > {b.tree_path}")
-    assert answer.blocked
-    assert "You're at the step `review` of rn:ty, which runs only find and grep." in answer.said
-    assert b.tree() == before
+    with open(path, encoding="utf-8") as f:
+        assert f.read() == made
 
 
 @pytest.mark.supports("P3.2", "generator", "Best practice")
@@ -572,18 +550,32 @@ def test_a_generators_end_with_no_result_written_is_stopped(b: Bench, broken: No
     assert os.path.join(given["round"], "generator.json") in stopped.said
 
 
-@pytest.mark.supports("P4.3", "scripts", "orchestrator")
-def test_the_orchestrators_commit_by_git_in_place_of_tree_py_is_stopped(b: Bench, broken: None):
-    """Given a run whose goal the user confirmed, the orchestrator's review and touched done
-    When it commits the design tree by git at the step `commit`
-    Then Lane stops the call, as the step runs only tree.py commit"""
-    c = requested(b)
-    c.type("yes")
-    for step in ("take", "review", "touched"):
-        marked(c, step)
-    answer = c.bash(f"git -C {b.worktree} commit -am 'The goal.'")
-    assert answer.blocked
-    assert "`commit`" in answer.said
+@pytest.mark.supports("P4.3", "generator", "scripts")
+def test_the_generators_checks_judge_its_files_alone_beside_another_staged(b: Bench, broken: None):
+    """Given invoicer's repository with a pre-commit hook that refuses each commit of the guide,
+    and a run whose worktree holds the guide staged, as another deliverable's, and whose command's
+    generator wrote the command
+    When it runs repository.py checks on the command
+    Then it gives 0, and the worktree's index holds the guide alone, as it was"""
+    hook = os.path.join(b.repo, ".git", "hooks", "pre-commit")
+    with open(hook, "w", encoding="utf-8") as f:
+        f.write(
+            "#!/bin/sh\n"
+            f"git diff --cached --name-only | grep -qx '{rn_files.GUIDE}' || exit 0\n"
+            f"echo '{rn_files.GUIDE}: no title'\n"
+            "exit 1\n"
+        )
+    os.chmod(hook, 0o755)
+    c, generator = decided_command(b)
+    guide = os.path.join(b.worktree, rn_files.GUIDE)
+    os.makedirs(os.path.dirname(guide), exist_ok=True)
+    with open(guide, "w", encoding="utf-8") as f:
+        f.write("guide\n")
+    git(b.worktree, "add", "--", rn_files.GUIDE)
+    generator.write(os.path.join(b.worktree, COMMAND), "print('invoice')\n")
+    found = c.bash(b.script("repository", "checks", b.run, COMMAND), generator)
+    assert found.exit_code == 0, found.output
+    assert git(b.worktree, "diff", "--cached", "--name-only").split() == [rn_files.GUIDE]
 
 
 # P5: the shortest path.

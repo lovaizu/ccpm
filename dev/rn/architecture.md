@@ -118,9 +118,9 @@ Strategies:
 - rn's order given to Lane as the starts due from the design tree, each deliverable's Rounds
   beside the others'. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
-- Lane applied to every activity of every role's steps that it can hold, the orchestrator's
-  included. [P5.1]\
-  Intent: a role that leaves its steps notices at once and goes back.
+- Lane applied to each role's steps in order, and to its reads or writes only where its purpose
+  bars them. [P5.1]\
+  Intent: a role that leaves its steps goes back at once, with no needless bind to look round.
 - Each step written as what it does, never tied to one OS's tools, such as Glob or Bash's
   `find`. [P5.1]\
   Intent: rn runs alike on each OS that Claude Code runs on.

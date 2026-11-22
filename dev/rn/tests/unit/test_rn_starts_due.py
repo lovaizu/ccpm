@@ -160,7 +160,7 @@ def test_a_run_named_by_its_start_whose_deliverables_are_each_done_ends(cwd: str
     assert ADAPTER.due(moves, cwd) == {"ends": True}
 
 
-@pytest.mark.supports("test_rn_on_asks_what_to_make_writing_nothing_and_running_no_command")
+@pytest.mark.supports("test_rn_on_asks_what_to_make_letting_its_commands_through")
 @pytest.mark.parametrize("given_result", [False, True], ids=["hearing", "blocked"])
 def test_a_run_of_rn_on_alone_starts_none_beside_another_runs_due_work(
     cwd: str, given_result: bool

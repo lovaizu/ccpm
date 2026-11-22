@@ -10,9 +10,8 @@ the hearing and a new request with no run or outside a git repository; each step
 and each other, by whether it ends on `blocked`; one for each class of the generator's Cut, its
 inputs at none, one, and several, a folder among them, a deliverable of more than one path, a
 refactor Round, and a run's own best practice; one for each class of the evaluator's Cut, with no
-other Round and with several; each step of a role by whether it runs commands; and each refusal, a
-role of another plugin or one that nearly matches rn's, and a prompt that names no Cut in its form;
-and `main`, for each exit it gives.
+other Round and with several; and each refusal, a role of another plugin or one that nearly
+matches rn's, and a prompt that names no Cut in its form; and `main`, for each exit it gives.
 
 Each input is in the form of Lane's rules.in.schema.json, read from the JSON of its text, and each
 Then holds the whole of the steps, each path exactly as the contract gives it,
@@ -60,22 +59,16 @@ HEARD = [{"role": "rn:on", "prompt": ""}]
 ASKED = [*HEARD, {"role": "rn:on", "prompt": WORDS}]
 
 
-def script(name: str, subcommand: str) -> str:
-    """A command of rn's script, as the steps name it."""
-    return f"python3 {RN}/scripts/{name}.py {subcommand}"
-
-
 def shown(steps: Mapping[str, Any]) -> list[tuple[str, list[str]]]:
     """Each step's name with its rules as the adapter gives them, each rule as sorted JSON with its
-    paths and commands sorted, as the contract orders neither."""
+    paths sorted, as the contract orders neither."""
     found = []
     for each_step in steps["steps"]:
         rules = []
         for rule in each_step["rules"]:
             each = dict(rule)
-            for key in ("paths", "commands"):
-                if key in each:
-                    each[key] = sorted(each[key])
+            if "paths" in each:
+                each["paths"] = sorted(each["paths"])
             rules.append(json.dumps(each, sort_keys=True))
         found.append((each_step["name"], sorted(rules)))
     return found
@@ -112,9 +105,8 @@ def step(name: str, *rules: Mapping[str, Any]) -> tuple[str, list[str]]:
     shown = []
     for given_rule in each:
         rule: dict[str, Any] = dict(given_rule)
-        for key in ("paths", "commands"):
-            if key in rule:
-                rule[key] = sorted(rule[key])
+        if "paths" in rule:
+            rule["paths"] = sorted(rule["paths"])
         shown.append(json.dumps(rule, sort_keys=True))
     return name, sorted(shown)
 
@@ -123,30 +115,22 @@ def writes(*paths: str) -> dict[str, Any]:
     return {"type": "writes", "paths": list(paths)}
 
 
-def commands(*names: str) -> dict[str, Any]:
-    return {"type": "commands", "commands": list(names)}
-
-
 # The rule of each step of the orchestrator's turn but its last.
 BLOCKED = {"type": "result", "ends": ["blocked"]}
 
 
 def shared(cwd: str, name: str = NAME) -> list[tuple[str, list[str]]]:
     """The steps that every event but a pause shares, on the run of the name."""
-    folder = rn_files.folder_of(cwd, name)
-    tree = os.path.join(folder, "design-tree.json")
-    run = os.path.relpath(folder, cwd)
+    run = os.path.relpath(rn_files.folder_of(cwd, name), cwd)
     return [
-        step("review", writes(tree), commands("find", "grep"), BLOCKED),
+        step("review", BLOCKED),
         step(
             "touched",
-            writes(tree),
-            commands(script("tree", "touched")),
             {"type": "checklist", "command": f"python3 {RN}/scripts/tree.py touched {run}"},
             BLOCKED,
         ),
-        step("commit", commands(script("tree", "commit")), BLOCKED),
-        step("move", writes(), commands(script("repository", "put-up"), script("tree", "cut"))),
+        step("commit", BLOCKED),
+        step("move"),
     ]
 
 
@@ -202,30 +186,21 @@ def repo(tmp_path: Any) -> str:
 
 # The orchestrator's turn, by its event.
 
-HEAR = step("hear", writes(), commands())
-START = step("start", commands(script("repository", "new")), BLOCKED)
-FIND = step("find", commands(script("repository", "find")), BLOCKED)
-TAKE_RULES = (commands(), BLOCKED)
+HEAR = step("hear")
+START = step("start", BLOCKED)
+FIND = step("find", BLOCKED)
+TAKE = step("take", BLOCKED)
 
 
-def take(repo: str, name: str = NAME) -> tuple[str, list[str]]:
-    """The step `take` on the run of the name: writing only its design tree, running no command."""
-    tree = os.path.join(rn_files.folder_of(repo, name), "design-tree.json")
-    return step("take", writes(tree), *TAKE_RULES)
-
-
-@pytest.mark.supports("test_rn_on_asks_what_to_make_writing_nothing_and_running_no_command")
+@pytest.mark.supports("test_rn_on_asks_what_to_make_letting_its_commands_through")
 @pytest.mark.parametrize(
     ("prompt", "turns"), [("", []), ("/rn:on", ASKED)], ids=["first-turn", "typed-again"]
 )
-def test_the_hearing_takes_hear_alone_writing_nothing_and_running_no_command(
-    repo: str, prompt: str, turns: list[dict[str, str]]
-):
+def test_the_hearing_takes_hear_alone(repo: str, prompt: str, turns: list[dict[str, str]]):
     """Given a repository with a run whose plan waits, and a turn of /rn:on, the run's first or
     typed again after a request
     When the adapter gives the turn's steps
-    Then they are `hear` alone, writing nothing and running no command, with no rule of results,
-    as it's the turn's last"""
+    Then they are `hear` alone, held in order, with no rule of results, as it's the turn's last"""
     a_run(repo, tree=unsigned())
     steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on", turns=turns), repo, RN)
     assert shown(steps) == [HEAR]
@@ -246,8 +221,7 @@ def test_the_words_after_the_hearing_start_by_repository_py_new_then_the_shared_
     by its last commit, whose plan waits on its sign-off; and a turn of rn:on whose prompt is the
     user's words, after the run's first turn, the hearing
     When the adapter gives the turn's steps
-    Then they are `start`, running only repository.py new, and the shared steps on the run named
-    from today and the words"""
+    Then they are `start` and the shared steps on the run named from today and the words"""
     other = "20261101-old"
     if before == "signed":
         a_run(repo, other)
@@ -292,7 +266,7 @@ def test_an_answer_in_a_conversation_of_rn_on_takes_it_into_the_run_it_made(repo
     a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
     a_run(repo, "20261101-old", unsigned("20261101-old"), when="2026-11-21T09:00:00")
     steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on", turns=ASKED), repo, RN)
-    assert shown(steps) == relative([take(repo), *shared(repo)], repo)
+    assert shown(steps) == relative([TAKE, *shared(repo)], repo)
 
 
 @pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
@@ -304,7 +278,7 @@ def test_an_answer_after_midnight_takes_it_into_the_run_made_the_day_before(repo
     name = f"{date.fromordinal(date.today().toordinal() - 1):%Y%m%d}-{rn_files.NAMED}"
     a_run(repo, name, unsigned(name))
     steps = ADAPTER.steps(given("rn:on", "yes", skill="rn:on", turns=ASKED), repo, RN)
-    assert shown(steps) == relative([take(repo, name), *shared(repo, name)], repo)
+    assert shown(steps) == relative([TAKE, *shared(repo, name)], repo)
 
 
 @pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
@@ -317,9 +291,7 @@ def test_a_signoff_in_a_conversation_of_rn_on_records_it_on_the_run_it_made(repo
     a_run(repo, "20261101-old", when="2026-11-21T09:00:00")
     turns = [*ASKED, {"role": "rn:on", "prompt": "yes"}]
     steps = ADAPTER.steps(given("rn:ty", "/rn:ty", skill="rn:on", turns=turns), repo, RN)
-    assert shown(steps) == relative(
-        [step("record", commands(script("tree", "signoff")), BLOCKED), *shared(repo)], repo
-    )
+    assert shown(steps) == relative([step("record", BLOCKED), *shared(repo)], repo)
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
@@ -327,10 +299,10 @@ def test_an_answer_after_a_request_that_made_no_run_takes_find_alone(repo: str):
     """Given a repository with another run but none of the request's words, as a refused `new`
     leaves it, and a turn of rn:on after the hearing and the request
     When the adapter gives the turn's steps
-    Then they are `find` alone, running only repository.py find"""
+    Then they are `find` alone"""
     a_run(repo, "20261101-old")
     steps = ADAPTER.steps(given("rn:on", "yes", skill="rn:on", turns=ASKED), repo, RN)
-    assert shown(steps) == [step("find", commands(script("repository", "find")))]
+    assert shown(steps) == [step("find")]
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
@@ -344,14 +316,14 @@ def test_a_turn_after_a_pick_up_in_a_conversation_of_rn_on_takes_the_newest_run(
     turns = [*ASKED, {"role": "rn:up", "prompt": "/rn:up"}]
     steps = ADAPTER.steps(given("rn:up", "yes", skill="rn:on", turns=turns), repo, RN)
     old = "20261101-old"
-    assert shown(steps) == relative([take(repo, old), *shared(repo, old)], repo)
+    assert shown(steps) == relative([TAKE, *shared(repo, old)], repo)
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_pick_up_finds_the_run_then_keeps_the_shared_steps(repo: str):
     """Given a repository with one run whose command is open, and a turn of /rn:up
     When the adapter gives the turn's steps
-    Then they are `find`, running only repository.py find, and the shared steps on that run"""
+    Then they are `find` and the shared steps on that run"""
     a_run(repo)
     steps = ADAPTER.steps(given("rn:up", "", skill="rn:up"), repo, RN)
     assert shown(steps) == relative([FIND, *shared(repo)], repo)
@@ -388,24 +360,22 @@ def test_a_pick_up_among_several_runs_takes_the_newest_by_its_last_commit(repo: 
 def test_a_signoff_records_it_then_keeps_the_shared_steps(repo: str):
     """Given a repository with one run, and a turn of rn:ty whose prompt is /rn:ty
     When the adapter gives the turn's steps
-    Then they are `record`, running only tree.py signoff, and the shared steps"""
+    Then they are `record` and the shared steps"""
     a_run(repo)
     steps = ADAPTER.steps(given("rn:ty", "/rn:ty"), repo, RN)
-    assert shown(steps) == relative(
-        [step("record", commands(script("tree", "signoff")), BLOCKED), *shared(repo)], repo
-    )
+    assert shown(steps) == relative([step("record", BLOCKED), *shared(repo)], repo)
 
 
 @pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
 def test_a_pause_stops_the_roles_then_pauses_with_no_shared_step(repo: str):
     """Given a repository with one run, and a turn of rn:dn whose prompt is /rn:dn
     When the adapter gives the turn's steps
-    Then they are `stop`, writing nothing, and `pause`, running only repository.py pause, alone"""
+    Then they are `stop` and `pause` alone"""
     a_run(repo)
     steps = ADAPTER.steps(given("rn:dn", "/rn:dn"), repo, RN)
     assert shown(steps) == [
-        step("stop", writes(), BLOCKED),
-        step("pause", commands(script("repository", "pause"))),
+        step("stop", BLOCKED),
+        step("pause"),
     ]
 
 
@@ -433,11 +403,10 @@ def test_each_other_event_takes_it_then_keeps_the_shared_steps(repo: str, role: 
     """Given a repository with one run, and a turn of a send-back, an answer, another prompt, a
     role's end as Claude Code's task-notification, or a prompt that nearly names a command
     When the adapter gives the turn's steps
-    Then they are `take`, writing only the run's design tree and running no command, and the
-    shared steps, on that run"""
+    Then they are `take` and the shared steps, on that run"""
     a_run(repo)
     assert shown(ADAPTER.steps(given(role, prompt), repo, RN)) == relative(
-        [take(repo), *shared(repo)], repo
+        [TAKE, *shared(repo)], repo
     )
 
 
@@ -454,15 +423,14 @@ def test_a_turn_other_than_a_new_request_with_no_run_takes_find_alone(
     """Given a repository with no run, or only a run whose deliverables are each done, or a folder
     that isn't a git repository, holding a run's files
     When the adapter gives the steps of a turn other than the hearing and a new request
-    Then they are `find` alone, running only repository.py find, with no rule that ends it on
-    blocked, as it's the turn's last"""
+    Then they are `find` alone, with no rule that ends it on blocked, as it's the turn's last"""
     top = cwd if before == "no-repository" else repo
     if before == "only-done":
         a_run(repo, "20261121-done", done_tree("20261121-done"))
     if before == "no-repository":
         paused_run(cwd)
     steps = ADAPTER.steps(given(role, prompt), top, RN)
-    assert shown(steps) == [step("find", commands(script("repository", "find")))]
+    assert shown(steps) == [step("find")]
 
 
 TURNS = {
@@ -488,24 +456,6 @@ def test_each_step_of_a_turn_but_its_last_ends_on_blocked(repo: str, event: str)
     each = ADAPTER.steps(given(role, prompt, skill=skill, turns=turns), repo, RN)["steps"]
     assert [BLOCKED in s["rules"] for s in each] == [True] * (len(each) - 1) + [False]
     assert not [r for r in each[-1]["rules"] if r["type"] == "result"]
-
-
-@pytest.mark.supports("test_the_orchestrators_review_writing_the_tree_by_bash_is_stopped")
-def test_the_orchestrators_review_runs_only_find_and_grep_and_touched_only_tree_py_touched(
-    repo: str,
-):
-    """Given a repository with one run, and a turn of an answer
-    When the adapter gives the turn's steps
-    Then review's commands are `find` and `grep` alone, so that Lane lets only those and its
-    reporters through, beside the Glob and Grep tools, which no rule holds, and touched's are
-    tree.py touched alone"""
-    a_run(repo)
-    by_name = {
-        s["name"]: [r for r in s["rules"] if r["type"] == "commands"]
-        for s in ADAPTER.steps(given("rn:up", "yes"), repo, RN)["steps"]
-    }
-    assert by_name["review"] == [commands("find", "grep")]
-    assert by_name["touched"] == [commands(script("tree", "touched"))]
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
@@ -563,31 +513,21 @@ def generator_cut(
 
 
 def generator_steps(
-    cwd: str, cut: str, kind: str, reads: Sequence[str], paths: Sequence[str]
+    cwd: str, cut: str, kind: str, reads: Sequence[str]
 ) -> list[tuple[str, list[str]]]:
     """The generator's steps for the Cut, its best practice of the kind, the files it reads whole
-    beside the Cut, and its deliverable's paths, each absolute, as `relative` then gives them; its
-    Round's generator.json is the Cut's, which decide writes for a point and try for its result,
-    and try writes too the people's folder that the Cut names."""
-    whole = os.path.join(cwd, cut)
-    result = os.path.join(os.path.dirname(whole), "generator.json")
-    trial = rn_files.read_json(whole)["trial"] + "/"
+    beside the Cut, each absolute, as `relative` then gives them."""
     return [
-        step("read", {"type": "reads_whole", "paths": [whole, *reads]}, writes(), commands()),
+        step("read", {"type": "reads_whole", "paths": [os.path.join(cwd, cut), *reads]}),
         step(
             "decide",
             {"type": "checklist", "items": rn_files.items_at(kind, "decide")},
-            writes(result),
-            commands(),
             {"type": "result", "ends": ["point"]},
         ),
-        step(
-            "make", {"type": "checklist", "items": rn_files.items_at(kind, "make")}, writes(*paths)
-        ),
-        step("try", writes(result, trial)),
+        step("make", {"type": "checklist", "items": rn_files.items_at(kind, "make")}),
+        step("try"),
         step(
             "check",
-            commands(script("repository", "checks")),
             {"type": "check", "check": f"python3 {RN}/scripts/check.py generator {cut}"},
             {"type": "result", "results": ["made"], "ends": ["point"]},
         ),
@@ -619,15 +559,13 @@ def test_a_generators_start_with_one_input_takes_its_five_steps(cwd: str):
     """Given the command's generator Cut, of the kind light, whose one input is invoicer's lines
     When the adapter gives the start's steps
     Then they are read, decide, make, try, and check, each in order: read reading whole the Cut,
-    light's best-practice.md, and the lines; decide with light's decide items, writing only the
-    Round's generator.json, ending on point; make with its make items, writing the command; try
-    writing the Round's generator.json and the people's folder that the Cut names; and check
-    running repository.py checks, with check.py generator on the Cut, made or, ending, point"""
+    light's best-practice.md, and the lines; decide with light's decide items, ending on point;
+    make with its make items; try; and check with check.py generator on the Cut, made or, ending,
+    point"""
     (lines,) = in_worktree(cwd, "invoicer/lines.py")
     node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"])
     cut, _ = generator_cut(cwd, node, ["invoicer/lines.py"])
-    command = os.path.join(rn_files.worktree_of(cwd, NAME), COMMAND)
-    expected = generator_steps(cwd, cut, "light", [LIGHT_MD, lines], [command])
+    expected = generator_steps(cwd, cut, "light", [LIGHT_MD, lines])
     assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == relative(expected, cwd)
 
 
@@ -638,8 +576,7 @@ def test_a_generators_start_with_no_input_reads_the_cut_and_its_best_practice_al
     Then read reads whole the Cut and the best practice's best-practice.md alone"""
     node = rn_files.open_node("The changes of 1.5.0", "CHANGELOG.md", "light")
     cut, _ = generator_cut(cwd, node)
-    path = os.path.join(rn_files.worktree_of(cwd, NAME), "CHANGELOG.md")
-    expected = generator_steps(cwd, cut, "light", [LIGHT_MD], [path])
+    expected = generator_steps(cwd, cut, "light", [LIGHT_MD])
     assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == relative(expected, cwd)
 
 
@@ -654,8 +591,7 @@ def test_a_generators_inputs_read_whole_are_its_files_and_never_a_folder(cwd: st
     inputs = ["invoicer/lines.py", "invoicer/tax.py", "docs/"]
     node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", inputs)
     cut, _ = generator_cut(cwd, node, inputs)
-    command = os.path.join(rn_files.worktree_of(cwd, NAME), COMMAND)
-    expected = generator_steps(cwd, cut, "light", [LIGHT_MD, lines, tax], [command])
+    expected = generator_steps(cwd, cut, "light", [LIGHT_MD, lines, tax])
     assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == relative(expected, cwd)
 
 
@@ -670,24 +606,7 @@ def test_a_generators_read_reads_whole_each_file_of_its_deliverable_that_stands(
     node = rn_files.open_node("The guide", "docs/guide.md", "light")
     node["more_paths"] = ["docs/images/"]
     cut, _ = generator_cut(cwd, node)
-    images = os.path.join(rn_files.worktree_of(cwd, NAME), "docs/images") + "/"
-    expected = generator_steps(cwd, cut, "light", [LIGHT_MD, guide], [guide, images])
-    assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == relative(expected, cwd)
-
-
-@pytest.mark.supports("test_the_generators_make_writes_only_its_deliverables_paths")
-def test_a_generators_make_writes_each_path_of_a_deliverable_in_more_than_one_place(cwd: str):
-    """Given a generator's Cut of code at invoicer/cli.py with its tests at tests/ beside it
-    When the adapter gives the start's steps
-    Then make writes the code and the tests' folder, with code's make items"""
-    node = rn_files.open_node("The command", "invoicer/cli.py", "code")
-    node["more_paths"] = ["tests/"]
-    practice = os.path.join(rn_files.PRACTICES, "code")
-    cut, _ = generator_cut(cwd, node, practice=practice)
-    worktree = rn_files.worktree_of(cwd, NAME)
-    paths = [os.path.join(worktree, "invoicer/cli.py"), os.path.join(worktree, "tests") + "/"]
-    md = os.path.join(practice, "best-practice.md")
-    expected = generator_steps(cwd, cut, "code", [md], paths)
+    expected = generator_steps(cwd, cut, "light", [LIGHT_MD, guide])
     assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == relative(expected, cwd)
 
 
@@ -700,9 +619,8 @@ def test_a_refactor_rounds_items_are_those_of_the_refactor_best_practice(cwd: st
     node = rn_files.open_node(rn_files.GUIDE_NAME, GUIDE, "readme", good=True)
     practice = os.path.join(rn_files.PRACTICES, "refactor-doc")
     cut, _ = generator_cut(cwd, node, practice=practice, stage="refactor")
-    guide = os.path.join(rn_files.worktree_of(cwd, NAME), GUIDE)
     md = os.path.join(practice, "best-practice.md")
-    expected = generator_steps(cwd, cut, "refactor-doc", [md], [guide])
+    expected = generator_steps(cwd, cut, "refactor-doc", [md])
     assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == relative(expected, cwd)
 
 
@@ -729,16 +647,11 @@ def test_a_runs_own_best_practice_gives_its_own_items(cwd: str):
     first = items["necessary_conditions"][0]
     decide = [f"N1.{n}" for n, i in enumerate(first["items"], 1) if i["at"] == "decide"]
     make = [f"N1.{n}" for n, i in enumerate(first["items"], 1) if i["at"] == "make"]
-    path = os.path.join(rn_files.worktree_of(cwd, NAME), "CHANGELOG.md")
-    expected = generator_steps(cwd, cut, "light", [os.path.join(own, "best-practice.md")], [path])
+    expected = generator_steps(cwd, cut, "light", [os.path.join(own, "best-practice.md")])
     expected[1] = step(
-        "decide",
-        {"type": "checklist", "items": decide},
-        writes(os.path.join(os.path.dirname(os.path.join(cwd, cut)), "generator.json")),
-        commands(),
-        {"type": "result", "ends": ["point"]},
+        "decide", {"type": "checklist", "items": decide}, {"type": "result", "ends": ["point"]}
     )
-    expected[2] = step("make", {"type": "checklist", "items": make}, writes(path))
+    expected[2] = step("make", {"type": "checklist", "items": make})
     assert steps == relative(expected, cwd)
 
 
@@ -810,9 +723,8 @@ def evaluator_steps(
             never,
             {"type": "reads_whole", "paths": [os.path.join(cwd, cut)]},
             writes(),
-            commands(),
         ),
-        step("start", never, commands(script("repository", "trial")), writes()),
+        step("start", never, writes()),
         step("try", never, writes(trial + "/")),
         step(
             "judge",
@@ -830,8 +742,8 @@ def test_an_evaluators_start_with_no_other_round_takes_its_four_steps(cwd: str):
     """Given the command's evaluator Cut in Round content-1, the run's only Round
     When the adapter gives the start's steps
     Then they are read, start, try, and judge, each in order, each never reading the design tree,
-    the generator's Cut, or its result: read reading whole the Cut; start running only
-    repository.py trial; try writing only the people's folder; judge with light's conditions as
+    the generator's Cut, or its result: read reading whole the Cut and writing nothing; start
+    writing nothing; try writing only the people's folder; judge with light's conditions as
     its checklist, writing only the Round's folder, with check.py evaluator and judged"""
     cut, round_, trial = evaluator_cut(cwd)
     expected = evaluator_steps(cwd, cut, round_, trial)
@@ -876,7 +788,9 @@ def test_an_evaluators_prompt_that_names_no_cut_in_its_form_is_refused(cwd: str,
 # main, as Lane runs it.
 
 
-@pytest.mark.supports("test_a_new_requests_turn_is_held_to_repository_py_new_first")
+@pytest.mark.supports(
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+)
 def test_main_gives_0_with_the_steps_as_one_line_of_json(repo: str):
     """Given Lane's input of a new request's turn as JSON on standard input
     When main runs
@@ -912,18 +826,6 @@ def test_main_gives_1_where_steps_refuses_the_start(cwd: str):
     code, out, err = ADAPTER.main(json.dumps(given("log:up", "Make it.")), cwd, RN)
     assert (code, out) == (1, "")
     assert err.startswith("rules.py: ") and "log:up" in err
-
-
-@pytest.mark.supports("test_the_orchestrator_writing_a_deliverable_is_stopped")
-def test_the_orchestrators_paths_are_each_from_the_repositorys_top(repo: str):
-    """Given a repository with one run, and a turn of an answer
-    When the adapter gives the turn's steps
-    Then each path its rules name is relative, from the folder that the conversation works in,
-    as Lane reads a rule's paths"""
-    a_run(repo)
-    steps = ADAPTER.steps(given("rn:up", "yes"), repo, RN)
-    paths = [p for s in steps["steps"] for r in s["rules"] for p in r.get("paths", [])]
-    assert paths and not [p for p in paths if os.path.isabs(p) or p.startswith("..")]
 
 
 # Each path as Lane compares it.
@@ -968,7 +870,7 @@ def test_the_peoples_folder_outside_the_repository_comes_as_a_path_up_from_it(cw
     assert writes_ == [expected]
 
 
-@pytest.mark.supports("test_the_generators_make_writes_only_its_deliverables_paths")
+@pytest.mark.supports("test_a_generators_read_marked_before_its_cut_is_read_whole_is_stopped")
 def test_a_cwd_reached_through_a_link_gives_the_same_paths_as_its_real_folder(cwd: str):
     """Given the command's generator Cut, and the repository reached through a symbolic link
     When the adapter gives the start's steps from the link and from the real folder
@@ -978,47 +880,6 @@ def test_a_cwd_reached_through_a_link_gives_the_same_paths_as_its_real_folder(cw
     cut, _ = generator_cut(cwd, node, ["invoicer/lines.py"])
     link = os.path.join(os.path.dirname(cwd), "link")
     os.symlink(cwd, link)
-    command = os.path.join(rn_files.worktree_of(cwd, NAME), COMMAND)
-    expected = relative(generator_steps(cwd, cut, "light", [LIGHT_MD, lines], [command]), cwd)
+    expected = relative(generator_steps(cwd, cut, "light", [LIGHT_MD, lines]), cwd)
     assert shown(ADAPTER.steps(given("rn:generator", cut), link, RN)) == expected
     assert shown(ADAPTER.steps(given("rn:generator", cut), cwd, RN)) == expected
-
-
-@pytest.mark.supports("test_a_generators_point_reaches_the_user_and_their_answer_resumes_it")
-def test_a_generators_decide_writes_only_its_rounds_result_for_a_point(cwd: str):
-    """Given the command's generator Cut in Round content-1
-    When the adapter gives the start's steps
-    Then decide writes only the Round's generator.json, from the repository's top, which gives a
-    point, and ends on point"""
-    node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light")
-    cut, round_ = generator_cut(cwd, node)
-    steps = ADAPTER.steps(given("rn:generator", cut), cwd, RN)
-    assert rules_of(steps, "decide", "writes") == [
-        os.path.relpath(os.path.join(round_, "generator.json"), cwd)
-    ]
-    decide = next(each for each in steps["steps"] if each["name"] == "decide")
-    assert {"type": "result", "ends": ["point"]} in decide["rules"]
-
-
-def commands_by_step(steps: Mapping[str, Any]) -> dict[str, list[dict[str, Any]]]:
-    """The rules of the commands at each step, by its name."""
-    return {
-        each["name"]: [rule for rule in each["rules"] if rule["type"] == "commands"]
-        for each in steps["steps"]
-    }
-
-
-@pytest.mark.supports("test_a_generators_read_marked_before_its_cut_is_read_whole_is_stopped")
-def test_a_roles_steps_that_run_none_of_the_peoples_commands_run_none(cwd: str):
-    """Given the command's generator Cut and its evaluator Cut
-    When the adapter gives each start's steps
-    Then the generator's read and decide and the evaluator's read run no command, and the
-    generator's make and try and the evaluator's try keep no rule of commands, as the people's own
-    commands run there"""
-    node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light")
-    cut, _ = generator_cut(cwd, node)
-    made = commands_by_step(ADAPTER.steps(given("rn:generator", cut), cwd, RN))
-    judged_cut, _, _ = evaluator_cut(cwd)
-    judged = commands_by_step(ADAPTER.steps(given("rn:evaluator", judged_cut), cwd, RN))
-    assert (made["read"], made["decide"], judged["read"]) == ([commands()],) * 3
-    assert (made["make"], made["try"], judged["try"]) == ([],) * 3

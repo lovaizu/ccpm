@@ -104,23 +104,20 @@ def test_an_answer_after_the_request_goes_into_the_run_the_request_made(b: Bench
 
 
 @pytest.mark.supports("S1")
-def test_rn_on_asks_what_to_make_writing_nothing_and_running_no_command(b: Bench):
+def test_rn_on_asks_what_to_make_letting_its_commands_through(b: Bench):
     """Given invoicer's repository with no run of rn
-    When the user types /rn:on, and the orchestrator writes a file, runs repository.py new, marks
-    `hear` done, and ends its turn asking what they want to make
-    Then Lane stops the write and the command at the step `hear`, the end goes through, and the
-    repository has no worktree of rn"""
+    When the user types /rn:on, and the orchestrator reads the repository's history by git log,
+    marks `hear` done, and ends its turn asking what they want to make
+    Then Lane lets the command and the end through, and the repository has no worktree of rn"""
     c = b.converse()
     typed = c.type("/rn:on")
     assert "domain/orchestrator.md" in typed.output
-    wrote = c.write(None, b.at("NOTES.md"), "A goal.\n")
-    assert wrote.blocked and "`hear`" in wrote.said
-    answer = c.bash(b.script("repository", "new", rn_files.WORDS, GOAL, *rn_files.LANGUAGES))
-    assert answer.blocked and "`hear`" in answer.said
+    looked = c.bash("git log --oneline")
+    assert not looked.blocked and not stopped(looked.said), looked.said
+    assert looked.exit_code == 0, looked.output
     marked(c, "hear")
     ended(c, "What do you want to make?")
     assert not os.path.exists(b.at(".claude/worktrees"))
-    assert not os.path.exists(b.at("NOTES.md"))
 
 
 @pytest.mark.supports("S1")

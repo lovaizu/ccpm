@@ -64,7 +64,7 @@ def open_decisions(design_tree: dict) -> list:
     ]
 
 
-@pytest.mark.supports("test_rn_on_asks_what_to_make_writing_nothing_and_running_no_command")
+@pytest.mark.supports("test_rn_on_asks_what_to_make_letting_its_commands_through")
 @pytest.mark.parametrize("run", RUNS)
 def test_rn_on_asks_what_to_make_and_makes_nothing(room: Room, run: int):
     """Given invoicer's repository with no run of rn

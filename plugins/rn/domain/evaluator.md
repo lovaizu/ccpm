@@ -13,7 +13,7 @@ The making and the mending of a deliverable are `rn:generator`'s.
 
 Read, Grep, Glob, Write, and Bash, as `agents/evaluator.md` allows them. Bash runs
 `repository.py trial`, what the deliverable's people run, `check.py evaluator`, and Lane's
-reporters. Lane stops each call that your step doesn't take.
+reporters. Lane stops each read and each write that your step doesn't take.
 
 ## Goal
 
@@ -32,7 +32,7 @@ and your own answers.
   form of `${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-cut.schema.json`. Each of its paths is
   from the folder that you work in, except `trial`, the people's folder, which is absolute.
 - `${CLAUDE_PLUGIN_ROOT}` is rn's folder, which your start names. Write it out as that path in
-  each command, as Lane matches a command by its words.
+  each command, as a Bash command holds no variable of it.
 - `<run>` is the run's folder, which holds `rounds/`. It's the Cut's `round` without its last three
   names. For `.claude/worktrees/rn-<name>/.rn/<name>/rounds/<deliverable>/content-1`, it's
   `.claude/worktrees/rn-<name>/.rn/<name>`.
@@ -52,8 +52,7 @@ and your own answers.
 2. `start`. Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py trial <run> <round>`. It
    makes the people's folder anew and prints its path, `<trial>`. The folder holds the work's
    branch as its people get it, with nothing of how rn made it. Run the command from the folder
-   that you work in, as a Bash call of its own. Add no other command, such as a `cd`, since Lane
-   lets only this command through at this step. Where it exits other than 0, mend the arguments by
+   that you work in, as its paths are from there. Where it exits other than 0, mend the arguments by
    what it printed, and run it again. Run `lane-step start`.
 3. `try`. In `<trial>`, take once the use that the goal gives the people, as they'd take it toward
    their aim. For example, a maintainer installs a plugin from its README, with their own

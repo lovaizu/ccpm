@@ -23,7 +23,6 @@ from rn_bench import (
     ended,
     evaluator_started,
     from_cwd,
-    heard,
     listed,
     marked,
     planned_tree,
@@ -36,7 +35,7 @@ from rn_bench import (
     to_plan_signoff,
     trial_made,
 )
-from rn_files import COMMAND, GOAL, GUIDE, WORDS
+from rn_files import COMMAND, GOAL, GUIDE
 
 
 # The case of /rn:dn, whose turn Lane holds to its steps only once starts_due gives no start at
@@ -128,35 +127,6 @@ def test_an_ai_calls_the_commands_that_give_out_work_and_never_those_that_approv
         assert "domain/orchestrator.md" in called.output
 
 
-@pytest.mark.supports("orchestrator", "scripts")
-def test_a_new_requests_turn_is_held_to_repository_py_new_first(b: Bench):
-    """Given invoicer's repository with no run of rn
-    When the user types /rn:on, then the walkthrough's words, and the orchestrator runs git
-    worktree add in place of repository.py new
-    Then Lane stops the call at the step `start`"""
-    c = heard(b)
-    c.type(WORDS)
-    answer = c.bash(f"git worktree add .claude/worktrees/rn-{b.name()}")
-    assert answer.blocked
-    assert "`start`" in answer.said
-
-
-@pytest.mark.supports("orchestrator", "scripts")
-def test_the_orchestrators_move_pushes_only_by_repository_py(b: Bench):
-    """Given a run whose goal the user confirmed, its review, touched, and commit done
-    When the orchestrator runs git push at the step `move`
-    Then Lane stops the call, as move runs only repository.py put-up and tree.py cut"""
-    c = requested(b)
-    c.type("yes")
-    for step in ("take", "review", "touched"):
-        marked(c, step)
-    ran(c, b.script("tree", "commit", b.run, "The goal."))
-    marked(c, "commit")
-    answer = c.bash(f"git -C {b.worktree} push origin HEAD")
-    assert answer.blocked
-    assert "`move`" in answer.said
-
-
 # The generator: its steps, its Cut, and the checks of its end.
 
 
@@ -208,18 +178,6 @@ def test_a_generators_read_marked_before_its_cut_is_read_whole_is_stopped(b: Ben
     )
 
 
-@pytest.mark.supports("generator")
-def test_the_generators_make_writes_only_its_deliverables_paths(b: Bench):
-    """Given a run whose command's generator decided
-    When it writes invoicer's README at the step `make`
-    Then Lane stops the write, naming the command's path as what the step writes"""
-    c, generator = signed_plan(b)
-    at_make(b, c, generator)
-    answer = generator.write(os.path.join(b.worktree, "README.md"), "# invoicer\n")
-    assert answer.blocked
-    assert COMMAND in answer.said
-
-
 def at_try(b: Bench, c: Conversation, generator: Agent) -> str:
     """The generator makes the command, keeps its step `make`, and makes its folder of the people's
     starting state by `repository.py trial`; gives the folder that trial printed."""
@@ -245,20 +203,6 @@ def test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_wor
     assert os.path.isfile(os.path.join(trial, COMMAND))
     answer = generator.write(os.path.join(trial, "lines.csv"), "Hosting;40.00;1\n")
     assert not answer.blocked, answer.said
-
-
-@pytest.mark.supports("generator", "Round")
-def test_the_generators_try_writing_the_peoples_files_in_its_round_is_stopped(b: Bench):
-    """Given a run whose command's generator made the command and its folder of the people's
-    starting state
-    When it writes the people's lines.csv in its Round's folder at the step `try`
-    Then Lane stops the write, naming the people's folder as what the step writes"""
-    c, generator = signed_plan(b)
-    trial = at_try(b, c, generator).strip()
-    round_ = cut_of(c, generator)["round"]
-    answer = generator.write(os.path.join(c.cwd, round_, "lines.csv"), "Hosting;40.00;1\n")
-    assert answer.blocked
-    assert os.path.basename(os.path.normpath(trial)) in answer.said
 
 
 @pytest.mark.supports("generator", "Round")
@@ -360,34 +304,6 @@ def test_the_generators_checks_give_the_repositorys_commit_check_findings(b: Ben
     assert found.exit_code == 1
     assert "invoicer/__main__.py: no tests" in found.output
     assert git(b.repo, "diff", "--cached", "--name-only").strip() == ""
-
-
-@pytest.mark.supports("generator", "scripts")
-def test_the_generators_checks_judge_its_files_alone_beside_another_staged(b: Bench):
-    """Given invoicer's repository with a pre-commit hook that refuses each commit of the guide,
-    and a run whose worktree holds the guide staged, as another deliverable's, and whose command's
-    generator wrote the command
-    When it runs repository.py checks on the command
-    Then it gives 0, and the worktree's index holds the guide alone, as it was"""
-    hook = os.path.join(b.repo, ".git", "hooks", "pre-commit")
-    with open(hook, "w", encoding="utf-8") as f:
-        f.write(
-            "#!/bin/sh\n"
-            f"git diff --cached --name-only | grep -qx '{GUIDE}' || exit 0\n"
-            f"echo '{GUIDE}: no title'\n"
-            "exit 1\n"
-        )
-    os.chmod(hook, 0o755)
-    c, generator = signed_plan(b)
-    os.makedirs(os.path.dirname(os.path.join(b.worktree, GUIDE)), exist_ok=True)
-    with open(os.path.join(b.worktree, GUIDE), "w", encoding="utf-8") as f:
-        f.write("guide\n")
-    git(b.worktree, "add", "--", GUIDE)
-    at_make(b, c, generator)
-    generator.write(os.path.join(b.worktree, COMMAND), "print('invoice')\n")
-    found = c.bash(b.script("repository", "checks", b.run, COMMAND), generator)
-    assert found.exit_code == 0, found.output
-    assert git(b.worktree, "diff", "--cached", "--name-only").split() == [GUIDE]
 
 
 # The evaluator: its Cut, and what its steps never read or write.

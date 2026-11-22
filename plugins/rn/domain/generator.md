@@ -15,7 +15,7 @@ rn:evaluator's.
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs what the
 deliverable's people run, `repository.py trial`, `repository.py checks`, `check.py generator`, and
-Lane's reporters. Lane stops each call that your step doesn't take.
+Lane's reporters.
 
 ## Goal
 
@@ -31,11 +31,11 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
 
 - Your start's prompt is the path of your Cut, `<round>/generator-cut.json`. It takes the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator-cut.schema.json`. `${CLAUDE_PLUGIN_ROOT}` is rn's
-  folder, which your agent definition gives in full. Write it out in full in each command, as Lane
-  matches a command by its words.
+  folder, which your agent definition gives in full. Write it out in full in each command, as a
+  Bash command holds no variable of it.
 - Each path in the Cut is from the folder you work in. The deliverable's `path` and `more_paths`
   are the exception, as they're from the Cut's `worktree`. Run rn's scripts and Lane's reporters
-  from the folder you work in. Lane holds a command by its words and its paths from there. Run a
+  from the folder you work in, as the Cut's paths are from there. Run a
   command of the people's where they run it, in a subshell such as `(cd <worktree> && <command>)`.
   A subshell leaves your shell in the folder you work in.
 - The Cut is all you get of the run. Leave the run's `design-tree.json` and other Rounds unread.
@@ -60,16 +60,12 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
 - `findings` is what the last evaluator found, trying the deliverable as its people. Each `more`
   condition is short until the people get what its `good_when` says. Each `good` holds by the lines
   it quotes. `last_good` is what the last generator saw good. Both are null in a first Round.
-- Lane holds you to the steps below in their order. It stops at once a call that leaves the step at
-  hand, and says what to do instead. Run each of its reporters, `lane-step`, `lane-item`,
+- Lane holds you to the steps below in their order. It stops at once a mark or an end that leaves
+  the step at hand, and says what to do instead. Run each of its reporters, `lane-step`, `lane-item`,
   `lane-result`, and `lane-back`, as a Bash call of its own. A call that prints more counts as no report. Where Bash
   can't find a reporter, Lane isn't loaded, so go on with the steps as written.
-- At `read` you write nothing. At `decide` you write only `<round>/generator.json`, and at `try`
-  only that and the Cut's `trial`. At `make` you write only the deliverable's paths. Each other
-  file is another deliverable's or the user's. At `read` and `decide`, run only Lane's reporters,
-  as Lane lets no other command through.
-- At `make` and `try`, Lane lets any command through, as the people's own commands run there. Lane
-  doesn't see what a command writes, so keep each command's writes to the step's own places.
+- Write only the deliverable's paths, `<round>/generator.json`, and the Cut's `trial`. Each other
+  file is another deliverable's or the user's.
 
 ## Steps
 

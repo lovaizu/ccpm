@@ -14,8 +14,8 @@ tree. Bash runs `tree.py` and `repository.py` of rn's `scripts/` and Lane's repo
 search the files by Bash's `find` and `grep`, or the Glob and Grep tools, as this session gives.
 Agent starts `rn:generator` and `rn:evaluator` in the background, each with its Cut's path as its
 prompt. SendMessage resumes the last Round's role, and TaskStop stops a role. Lane holds each
-turn to its steps, as `lane/adapters/rules.py` gives them. It stops a write outside the design tree,
-a command the step doesn't name, and a start that isn't due.
+turn to its steps, as `lane/adapters/rules.py` gives them. It stops a step taken out of order, a
+step whose checklist isn't done, and a start that isn't due.
 
 ## Goal
 
@@ -31,13 +31,11 @@ you write no file but the tree.
 
 ## Context
 
-- rn's folder is the one that the command's skill names. Write it out in full in each command.
-  Lane compares a command's first words with `python3 <rn's folder>/scripts/<script>.py <subcommand>`.
+- rn's folder is the one that the command's skill names. Write it out in full in each command, as
+  a Bash command holds no variable of it.
 - Run each command from the repository's top, and never `cd`, as each path here is from there.
-- Lane splits a command at each `;`, `|`, `&&`, and newline outside quotes. It holds each part to
-  the step as a command of its own. So quote each ground and each of the user's words.
-- Write the design tree by Write or Edit alone, never by a shell command. Lane holds each step's
-  writes only through these tools.
+- Quote each ground and each of the user's words in a command, as the shell splits them
+  otherwise.
 - What each event gives:
   - the hearing: `/rn:on`;
   - a new request: the user's words in reply to the hearing's question;
@@ -89,8 +87,8 @@ can move, run `lane-result blocked`, and end the turn there. An example is `new`
 origin names no default branch, as no run stands yet.
 
 1. The event's own step:
-   - The hearing, `hear`: ask the user what they want to make, in the form of Output. Write nothing
-     and run no command, as their reply is the request. Once you've asked, record `hear`, and end
+   - The hearing, `hear`: ask the user what they want to make, in the form of Output. Write nothing,
+     as their reply is the request. Once you've asked, record `hear`, and end
      the turn.
    - A new request, `start`: read the design tree best practice by Read,
      `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Put the goal by its N1.1
@@ -114,11 +112,10 @@ origin names no default branch, as no run stands yet.
    - A sign-off, `record`: run `python3 <rn's folder>/scripts/tree.py signoff <run>`. It makes done
      the plan or the deliverable that waits for sign-off. In the move, start each role it made due.
    - A send-back, an answer, or a role's end, `take`: write what the event gives into the tree.
-     Run no command.
      - A send-back: write the user's words, word for word, as a decision by `user` of the condition
        they concern. Hold that condition not good, so that the next Round makes what they asked.
        Settle each proposal left past its Rounds: their words settle the one they name, written
-       as its `decided`, by `user`. Drop each other, removing that decision and holding its
+       as its `decided`, by `user`. Drop each other proposal: remove its decision and hold its
        condition good, as the user took none of it at the sign-off. Change the decision their
        words come back to, by N3 of the design tree best practice.
      - An answer: write the user's words as the point's `decided`, by `user`, as only they settle
@@ -144,8 +141,8 @@ origin names no default branch, as no run stands yet.
      It commits the run's work so far and pushes it. Report the pause only once it gives 0. A pause
      takes no other step, as it changes no decision.
 2. `review`: read the design tree best practice whole, unless you've read it in this conversation.
-   Review the tree by its N1 to N6 with this event's facts. Write only the tree, by Write or Edit.
-   To find a fact in the repository, read its files and search them as Tools says.
+   Review the tree by its N1 to N6 with this event's facts. Write only the tree. Use the Write or Edit tool.
+   Find each fact in the repository by reading and searching its files, as Tools says.
    - Once the user confirms the goal, make the plan: each deliverable the goal needs, and `work`.
      Give each deliverable its kind, inputs, conditions, and decisions.
    - Once the user confirms the goal, put the languages, then the issues, to the user, each as a
@@ -171,7 +168,7 @@ origin names no default branch, as no run stands yet.
    `lane-item touched <node>`. After a rewrite, run it again and take each new line so, until a
    pass rewrites nothing.
 4. `commit`: run `python3 <rn's folder>/scripts/tree.py commit <run> "<ground>"`. The ground says
-   why the change decides so, such as `The goal as put`. On 1, mend what it names and run it
+   why the change decides so, such as `The goal as put`. If it gives 1, mend what it names, then run it
    again, since each role reads the tree. Its result is made once it gives 0, as `move` writes
    nothing, so record the step then.
 5. `move`: move the run on from the tree as committed, taking each of these that holds.
@@ -207,10 +204,10 @@ recommend.
 Each claim rests on what a script printed or a file holds in this turn. A URL is as put-up printed
 it, and a pause is pushed once pause gave 0.
 
-Write each message as one of these forms alone, with nothing before or after it. Write it as plain
+Write each message as one of these forms alone. Put nothing before or after it. Write it as plain
 text, without the fence around it here. A blocker is the one message outside them. It says what
-stopped, in the words a script or Lane gave. Then it says what the user does, and what goes on. The
-forms:
+stopped in the words that a script or Lane gave. Then it says what the user does, and what goes on.
+The forms:
 
 ```text
 What do you want to make?
