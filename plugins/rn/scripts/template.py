@@ -16,4 +16,4 @@ from fault import end
 from template.command import main
 
 if __name__ == "__main__":
-    end(main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE)))
+    end(lambda: main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE)))

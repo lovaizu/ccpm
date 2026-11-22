@@ -5,6 +5,7 @@ couldn't run; and how each ends, with what it prints and the exit code it gives.
 from __future__ import annotations
 
 import sys
+import traceback
 from typing import Callable, NoReturn
 
 # What a command's `main` gives: the exit code, what goes to stdout, and what goes to stderr.
@@ -39,10 +40,15 @@ def answered(script: str, call: Callable[[], Answer]) -> Answer:
         return 2, "", f"{script}: {stopped}\n"
 
 
-def end(answer: Answer) -> NoReturn:
+def end(main: Callable[[], Answer]) -> NoReturn:
     """Ends the command with what its `main` gave: the exit code, what goes to stdout, and what
-    goes to stderr."""
-    code, printed, said = answer
+    goes to stderr. Where `main` raises an error that no fault names, it ends with 2 and the
+    error's traceback on stderr, as Lane reads 1 as a problem that stops the move and 2 as a
+    check that couldn't check, which lets it through."""
+    try:
+        code, printed, said = main()
+    except Exception:  # noqa: BLE001 - the entry of each command, where any error ends it.
+        code, printed, said = 2, "", traceback.format_exc()
     sys.stdout.write(printed)
     sys.stderr.write(said)
     raise SystemExit(code)

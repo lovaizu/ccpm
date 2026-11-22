@@ -18,4 +18,4 @@ from repository.command import main
 from repository.host import run
 
 if __name__ == "__main__":
-    end(main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE), run))
+    end(lambda: main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE), run))

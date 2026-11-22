@@ -356,4 +356,4 @@ def main(stdin: str, cwd: str, plugin_root: str) -> Answer:
 
 
 if __name__ == "__main__":
-    end(main(sys.stdin.read(), os.getcwd(), os.path.dirname(os.path.dirname(HERE))))
+    end(lambda: main(sys.stdin.read(), os.getcwd(), os.path.dirname(os.path.dirname(HERE))))

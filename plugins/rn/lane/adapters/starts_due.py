@@ -144,4 +144,4 @@ def main(stdin: str, cwd: str) -> Answer:
 
 
 if __name__ == "__main__":
-    end(main(sys.stdin.read(), os.getcwd()))
+    end(lambda: main(sys.stdin.read(), os.getcwd()))

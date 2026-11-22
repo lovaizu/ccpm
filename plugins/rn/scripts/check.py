@@ -16,4 +16,4 @@ from check.command import main
 from fault import end
 
 if __name__ == "__main__":
-    end(main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE)))
+    end(lambda: main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE)))
