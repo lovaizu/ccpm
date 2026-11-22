@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- When you run rn inside herdr, it makes each run's worktree through herdr, and opens it in herdr again when it picks up a run whose worktree is gone, so each run shows as a herdr workspace that you can switch to. Outside herdr, rn makes the worktree with git as before.
+
 ### Fixed
 
 - When a role's Cut can't be read, such as after you delete the run's worktree or its folder, the role's check says it couldn't check the role's result, and the role ends, instead of being stopped at each end, so a run you drop never holds the conversation in a loop.

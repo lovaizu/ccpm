@@ -1,8 +1,8 @@
-"""The unit cases of repository/host.py's `run`, the one way rn's code reaches git and gh: one for
-each class of what it takes, git, gh, and a program of another name, a near match among them, and
-variables of its environment given and none; and of what it gives, a command that gives 0 and one
-that gives another code, each with its stdout and stderr whole; and the refusal of a program not
-found."""
+"""The unit cases of repository/host.py's `run`, the one way rn's code reaches git, gh, and herdr:
+one for each class of what it takes, git, gh, herdr, and a program of another name, a near match
+among them, and variables of its environment given and none; and of what it gives, a command that
+gives 0 and one that gives another code, each with its stdout and stderr whole; and the refusal of
+a program not found."""
 
 from __future__ import annotations
 
@@ -81,9 +81,28 @@ def test_gh_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.M
 @pytest.mark.supports(
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
-@pytest.mark.parametrize("program", ["ls", "gitk", "git2", "ghx", "/usr/bin/git", ""])
+def test_herdr_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
+    """Given a program herdr first on the PATH that prints its arguments and gives 1
+    When run is given `herdr worktree open --no-focus`
+    Then it gives 1, `worktree open --no-focus` and a newline as stdout, and what it said on
+    stderr"""
+    bin_folder = tmp_path / "bin"
+    bin_folder.mkdir()
+    herdr = bin_folder / "herdr"
+    herdr.write_text('#!/bin/sh\necho "$@"\necho said >&2\nexit 1\n')
+    herdr.chmod(0o755)
+    monkeypatch.setenv("PATH", f"{bin_folder}{os.pathsep}{os.environ['PATH']}")
+    argv = ["herdr", "worktree", "open", "--no-focus"]
+    assert run(argv, str(tmp_path)) == Ran(1, "worktree open --no-focus\n", "said\n")
+
+
+@pytest.mark.supports(
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+)
+@pytest.mark.parametrize("program", ["ls", "gitk", "git2", "ghx", "herdrx", "/usr/bin/git", ""])
 def test_a_program_other_than_git_or_gh_is_refused(tmp_path: Any, program: str):
-    """Given a program named other than git or gh, a near match or git by its path among them
+    """Given a program named other than git, gh, or herdr, a near match or git by its path among
+    them
     When run is given it
     Then Wrong is raised, and nothing runs"""
     with pytest.raises(Wrong):

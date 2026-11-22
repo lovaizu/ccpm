@@ -1,5 +1,5 @@
-"""Decides how rn's code reaches git and gh, the only programs outside rn that it runs, so that a
-test puts a double of them in their place."""
+"""Decides how rn's code reaches git, gh, and herdr, the only programs outside rn that it runs, so
+that a test puts a double of them in their place."""
 
 from __future__ import annotations
 
@@ -20,9 +20,9 @@ class Ran(NamedTuple):
 
 
 class Host(Protocol):
-    """A program run as rn's code runs git or gh: the command's words, from `git` or `gh` on, the
-    folder it runs in, and any variables of its environment beside rn's own, to what it gave.
-    `run` is the real one; a test passes a double."""
+    """A program run as rn's code runs git, gh, or herdr: the command's words, from the program's
+    name on, the folder it runs in, and any variables of its environment beside rn's own, to what
+    it gave. `run` is the real one; a test passes a double."""
 
     def __call__(
         self, argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None
@@ -30,17 +30,17 @@ class Host(Protocol):
 
 
 def run(argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None) -> Ran:
-    """Runs git or gh as a process of its own.
+    """Runs git, gh, or herdr as a process of its own.
 
-    Takes: the command's words, whose first is `git` or `gh`, the folder to run it in, and any
-    variables to set in its environment beside those of rn's own process.
+    Takes: the command's words, whose first is `git`, `gh`, or `herdr`, the folder to run it in,
+    and any variables to set in its environment beside those of rn's own process.
     Gives: its exit code, stdout, and stderr, whatever the code, as the caller judges the result.
     Changes: whatever the command changes.
-    Refuses: Wrong where the first word is neither `git` nor `gh`; CantRun where the program isn't
-    found or can't start, naming it.
+    Refuses: Wrong where the first word is none of `git`, `gh`, and `herdr`; CantRun where the
+    program isn't found or can't start, naming it.
     """
-    if argv[0] not in ("git", "gh"):
-        raise Wrong(f"rn runs only git and gh, not {argv[0]!r}")
+    if argv[0] not in ("git", "gh", "herdr"):
+        raise Wrong(f"rn runs only git, gh, and herdr, not {argv[0]!r}")
     try:
         done = subprocess.run(
             list(argv),
@@ -56,7 +56,7 @@ def run(argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None) -> 
 
 
 def checked(host: Host, argv: Sequence[str], cwd: str, fault: type[Exception], what: str) -> Ran:
-    """Runs a command of git or gh through the host, as one that must give 0.
+    """Runs a command of git, gh, or herdr through the host, as one that must give 0.
 
     Takes: the host, the command's words and the folder to run it in, as `run` takes them, the
     fault to raise, such as CantRun or Missing, and what the command does, for the message.

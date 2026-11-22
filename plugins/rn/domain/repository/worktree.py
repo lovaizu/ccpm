@@ -1,6 +1,7 @@
 """Decides how a run's worktree comes to be and is found again: made with its branch from the
 default branch that origin's HEAD names, with its design tree, and found from the runs' branches
-whose committed design tree holds work left, its worktree made again where none lies."""
+whose committed design tree holds work left, its worktree made again where none lies; and, inside
+herdr, made and opened through herdr, so that the run shows as a herdr workspace."""
 
 from __future__ import annotations
 
@@ -30,13 +31,14 @@ def new(
     puts it; the design tree best practice; and the host.
     Gives: the run, made.
     Changes: adds the branch `rn-<name>` from the head of the default branch that
-    `git symbolic-ref refs/remotes/origin/HEAD` names, checks
+    `git symbolic-ref refs/remotes/origin/HEAD` names, tracking none, checks
     it out in the run's worktree, and writes there the design tree that `tree.form.started` gives
     for the context and the goal, uncommitted; the user's own worktree and branch stay as they
-    were.
+    were. Inside herdr, herdr makes the branch and the worktree and opens its workspace, leaving
+    the focus where it is.
     Refuses: Missing where the run's repository isn't the top of a git repository with a commit, or
     `refs/remotes/origin/HEAD` names no default branch; Wrong where the goal is empty, or a run of
-    the name already lies there; CantRun where git fails, with what it said.
+    the name already lies there; CantRun where git or herdr fails, with what it said.
     """
     if not goal.strip():
         raise Wrong("the goal is empty; give the goal as one sentence with the user as its subject")
@@ -52,18 +54,38 @@ def new(
             " to origin, and run git remote set-head origin --auto"
         )
     start = default.out.strip()
-    checked(
-        host,
-        ["git", "worktree", "add", "-q", "--no-track", "-b", run.branch, run.worktree, start],
-        run.repository,
-        CantRun,
-        "git can't make the run's worktree",
-    )
+    if _inside_herdr():
+        _made_by_herdr(run, start, host)
+    else:
+        checked(
+            host,
+            ["git", "worktree", "add", "-q", "--no-track", "-b", run.branch, run.worktree, start],
+            run.repository,
+            CantRun,
+            "git can't make the run's worktree",
+        )
     _exclude(run, host)
     plan = os.path.relpath(run.tree, run.worktree)
     os.makedirs(run.folder)
     form.write(run.tree, form.started(context, goal, plan, practice))
     return run
+
+
+def _inside_herdr() -> bool:
+    """Whether rn runs in a pane of herdr, by the variable that herdr sets in each pane's
+    environment, tested as herdr 0.9.5's `herdr --skill` tests it."""
+    return os.environ.get("HERDR_ENV") == "1"
+
+
+def _made_by_herdr(run: RunPlace, start: str, host: Host) -> None:
+    """Has herdr make the run's branch from the start and its worktree, and open its workspace.
+    herdr gives the branch the base as its upstream where the base is a remote's branch, so herdr
+    takes the start's commit, from which the branch tracks none, as git's `--no-track` makes it."""
+    commit = ["git", "rev-parse", "--verify", f"{start}^{{commit}}"]
+    base = checked(host, commit, run.repository, CantRun, "git can't read the default branch")
+    create = ["herdr", "worktree", "create", "--cwd", run.repository, "--branch", run.branch]
+    where = ["--base", base.out.strip(), "--path", run.worktree, "--no-focus"]
+    checked(host, [*create, *where], run.repository, CantRun, "herdr can't make the run's worktree")
 
 
 def _exclude(run: RunPlace, host: Host) -> None:
@@ -119,9 +141,11 @@ def found(repository: str, host: Host) -> RunPlace | None:
     Changes: where the run's worktree is gone, prunes git's record of gone worktrees and adds the
     worktree again: on the local branch `rn-<name>` where it lies, else on a new local branch
     `rn-<name>` from origin's, so that a pick-up works in a fresh clone or on another machine;
-    keeps the runs' worktrees out of the user's untracked files, as `new` does.
-    Refuses: Wrong as `newest` refuses; CantRun where git can't make the worktree, with what it
-    said.
+    keeps the runs' worktrees out of the user's untracked files, as `new` does. Inside herdr, then
+    has herdr open the worktree's workspace, leaving the focus where it is, as herdr opens only a
+    worktree that lies there.
+    Refuses: Wrong as `newest` refuses; CantRun where git can't make the worktree, or herdr can't
+    open it, with what it said.
     """
     run = newest(repository, host)
     if run is None or os.path.isdir(run.worktree):
@@ -131,4 +155,8 @@ def found(repository: str, host: Host) -> RunPlace | None:
     add = ["git", "worktree", "add", "-q", run.worktree, run.branch]
     checked(host, add, repository, CantRun, "git can't make the run's worktree again")
     _exclude(run, host)
+    if _inside_herdr():
+        opened = ["herdr", "worktree", "open", "--cwd", repository, "--path", run.worktree]
+        what = "herdr can't open the run's worktree"
+        checked(host, [*opened, "--no-focus"], repository, CantRun, what)
     return run

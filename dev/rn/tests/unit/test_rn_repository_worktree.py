@@ -7,7 +7,8 @@ one, and several, newest by its last commit, a newer run whose every deliverable
 holds no design tree passed over, branches that nearly match a run's left out, a run's newer local
 branch deciding over origin's, and the refusal of a design tree that isn't JSON; and `found`, with
 the run's worktree there, removed with its local branch kept, its folder deleted, a run that only
-origin holds in a fresh clone, and a worktree that git can't make."""
+origin holds in a fresh clone, and a worktree that git can't make; and, inside herdr and outside,
+`new` and `found` with the worktree gone, each with herdr failing inside it."""
 
 from __future__ import annotations
 
@@ -18,6 +19,7 @@ from typing import Any
 import pytest
 import rn_files
 from fault import CantRun, Missing, Wrong
+from herdr import herdr_double
 from repo_files import git, write_files
 from repository.place import RunPlace
 from repository.worktree import found, new, newest
@@ -416,3 +418,125 @@ def test_a_design_tree_that_isnt_json_is_refused_naming_the_branch_and_path(
     dated_commit(rn_files.worktree_of(repo, NAME), "Broken.", "2026-11-21T09:00:00")
     with pytest.raises(Wrong, match=f"refs/heads/rn-{NAME}:.rn/{NAME}/design-tree.json"):
         newest(repo, host)
+
+
+# Inside herdr and outside
+
+
+def herdr_commands(host: Any) -> list[list[str]]:
+    """Each herdr command that the double of herdr was asked, by its words."""
+    return [argv for argv, _ in host.asked]
+
+
+@pytest.mark.supports(
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+)
+def test_a_new_run_inside_herdr_has_its_worktree_made_by_herdr_from_mains_commit(
+    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
+):
+    """Given invoicer's repository on main with a remote, inside herdr, `HERDR_ENV` 1
+    When new makes the run
+    Then herdr was asked, in the repository, to create the worktree on rn-<name> from the commit
+    of origin's main at the run's worktree, keeping the focus where it is; the worktree has
+    rn-<name> checked out at main's head with no upstream, holding the started tree; and git made
+    no worktree itself"""
+    monkeypatch.setenv("HERDR_ENV", "1")
+    herdr = herdr_double.host(host)
+    repo = a_repository(tmp_path)
+    worktree = rn_files.worktree_of(repo, NAME)
+    new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, herdr)
+    create = ["herdr", "worktree", "create", "--cwd", repo, "--branch", f"rn-{NAME}"]
+    rest = ["--base", head(repo, "main"), "--path", worktree, "--no-focus"]
+    assert herdr.asked == [([*create, *rest], repo)]
+    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
+    assert head(worktree) == head(repo, "main")
+    assert git(worktree, "for-each-ref", "--format=%(upstream)", f"refs/heads/rn-{NAME}") == "\n"
+    assert rn_files.read_json(RunPlace(repo, NAME).tree) == started_tree(NAME)
+    assert not [argv for argv, _ in host.ran if argv[:3] == ["git", "worktree", "add"]]
+
+
+@pytest.mark.supports(
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+)
+@pytest.mark.parametrize("value", [None, "0", ""])
+def test_a_new_run_outside_herdr_has_its_worktree_made_by_git(
+    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch, value: str | None
+):
+    """Given invoicer's repository on main with a remote, outside herdr: `HERDR_ENV` unset, 0, or
+    empty
+    When new makes the run
+    Then herdr was asked nothing, and git made the run's worktree on rn-<name>"""
+    if value is not None:
+        monkeypatch.setenv("HERDR_ENV", value)
+    herdr = herdr_double.host(host)
+    repo = a_repository(tmp_path)
+    new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, herdr)
+    assert herdr_commands(herdr) == []
+    worktree = rn_files.worktree_of(repo, NAME)
+    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
+
+
+@pytest.mark.supports(
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+)
+def test_a_new_run_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said(
+    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
+):
+    """Given invoicer's repository on main with a remote, inside herdr, whose server isn't running
+    When new makes the run
+    Then CantRun is raised with what herdr said, and no worktree, branch, or design tree is made"""
+    monkeypatch.setenv("HERDR_ENV", "1")
+    repo = a_repository(tmp_path)
+    with pytest.raises(CantRun, match="herdr can't make the run's worktree: .*server_not_running"):
+        new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, herdr_double.host(host, running=False))
+    assert not os.path.exists(rn_files.worktree_of(repo, NAME))
+    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_pick_up_inside_herdr_has_git_make_the_worktree_again_and_herdr_open_it(
+    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
+):
+    """Given a repository whose one run's worktree was removed, its local branch kept, inside
+    herdr
+    When found is asked
+    Then it gives the run, its worktree checked out on rn-<name> again, and herdr was asked, in the
+    repository, to open the worktree at its path, keeping the focus where it is"""
+    monkeypatch.setenv("HERDR_ENV", "1")
+    herdr = herdr_double.host(host)
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME), worktree=False)
+    worktree = rn_files.worktree_of(repo, NAME)
+    assert found(repo, herdr) == RunPlace(repo, NAME)
+    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
+    opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", worktree, "--no-focus"]
+    assert herdr.asked == [(opened, repo)]
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_pick_up_outside_herdr_asks_herdr_nothing(tmp_path: Any, host: Any):
+    """Given a repository whose one run's worktree was removed, its local branch kept, outside
+    herdr
+    When found is asked
+    Then it gives the run, its worktree made again by git, and herdr was asked nothing"""
+    herdr = herdr_double.host(host)
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME), worktree=False)
+    assert found(repo, herdr) == RunPlace(repo, NAME)
+    assert os.path.isdir(rn_files.worktree_of(repo, NAME))
+    assert herdr_commands(herdr) == []
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_pick_up_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said(
+    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
+):
+    """Given a repository whose one run's worktree was removed, inside herdr, whose server isn't
+    running
+    When found is asked
+    Then CantRun is raised with what herdr said"""
+    monkeypatch.setenv("HERDR_ENV", "1")
+    repo = a_repository(tmp_path)
+    branch_run(repo, NAME, a_tree(NAME), worktree=False)
+    with pytest.raises(CantRun, match="herdr can't open the run's worktree: .*server_not_running"):
+        found(repo, herdr_double.host(host, running=False))

@@ -1,6 +1,6 @@
 """What rn's unit cases share: the system's temporary folder of each case, empty, where the folder
-of the people's starting state lies, and a host that runs git for real and gh from its records,
-with its state in the case's own folder."""
+of the people's starting state lies; an environment outside herdr; and a host that runs git for
+real and gh from its records, with its state in the case's own folder."""
 
 from __future__ import annotations
 
@@ -20,6 +20,13 @@ def temp(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> Iterator[str]:
     os.makedirs(folder)
     monkeypatch.setattr(tempfile, "tempdir", folder)
     yield folder
+
+
+@pytest.fixture(autouse=True)
+def outside_herdr(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The case runs outside herdr, whatever the developer runs in, so that only a case that sets
+    `HERDR_ENV` itself takes rn's way inside herdr, and no case reaches the developer's herdr."""
+    monkeypatch.delenv("HERDR_ENV", raising=False)
 
 
 @pytest.fixture
