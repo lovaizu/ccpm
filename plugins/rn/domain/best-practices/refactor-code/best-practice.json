@@ -61,12 +61,12 @@
      {
       "id": "N2",
       "about": "the whole",
-      "what": "Does the code still carry out each decision of the architecture: each component's job, the data model, and each sequence?",
-      "why": "The developers read the architecture to know where a part belongs and what it hands to which, so code that a refactoring moved away from it sends each of them to the wrong place. A change of a component, of the data model, or of a sequence is a change of the architecture, which its own best practice decides before any code follows, as a refactoring changes the code's structure within the design.",
+      "what": "Does the code still carry out each decision of the architecture: each component's job, the concept model, and each sequence?",
+      "why": "The developers read the architecture to know where a part belongs and what it hands to which, so code that a refactoring moved away from it sends each of them to the wrong place. A change of a component, of the concept model, or of a sequence is a change of the architecture, which its own best practice decides before any code follows, as a refactoring changes the code's structure within the design.",
       "items": [
        {
         "at": "decide",
-        "text": "For each change that you plan, ask whether it moves a job from one component to another, adds or removes a component or a data of the data model, or changes what one part hands another in a sequence, by the decisions that you noted from the architecture."
+        "text": "For each change that you plan, ask whether it moves a job from one component to another, adds or removes a component or a concept of the concept model, or changes what one part hands another in a sequence, by the decisions that you noted from the architecture."
        },
        {
         "at": "decide",
@@ -200,7 +200,7 @@
        },
        {
         "at": "decide",
-        "text": "For each thing, keep the word that the architecture's data model or components use for it, else the name that the code uses most, and where one name refers to two things, give the other thing the architecture's word for it, else a word that tells the two apart, such as `session_id`."
+        "text": "For each thing, keep the word that the architecture's concept model or components use for it, else the name that the code uses most, and where one name refers to two things, give the other thing the architecture's word for it, else a word that tells the two apart, such as `session_id`."
        },
        {
         "at": "make",
@@ -265,7 +265,7 @@
    "kind": "architecture",
    "takes": [
     "Components",
-    "Data model",
+    "Concept model",
     "Sequences",
     "Test strategy"
    ]

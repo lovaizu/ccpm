@@ -102,7 +102,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the data model. Take the rules of the place from the architecture's Principles and the rules they build on, such as the one folder a component writes in."
+        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the concept model. Take the rules of the place from the architecture's Principles and the rules they build on, such as the one folder a component writes in."
        },
        {
         "at": "decide",
@@ -308,7 +308,7 @@
        },
        {
         "at": "decide",
-        "text": "Take what comes back from the arrow where the component answers the caller, with the data as the data model names it."
+        "text": "Take what comes back from the arrow where the component answers the caller, with the data as the concept model names it."
        },
        {
         "at": "decide",
@@ -425,7 +425,7 @@
    "takes": [
     "User stories",
     "Components",
-    "Data model",
+    "Concept model",
     "Sequences",
     "Directory structure",
     "Test strategy"

@@ -10,7 +10,7 @@ template of the architecture best practice names them:
 - each story by its `S<n>` in User stories of `dev/<plugin>/architecture.md`
 - each rule by its `P<n>.<m>` in Principles, under Solution strategy
 - each component by its name in Components' list, above its Strategies, under Solution strategy
-- each data by each `<text class="name">` of `dev/<plugin>/images/data-model.svg`
+- each concept by each `<text class="name">` of `dev/<plugin>/images/concept-model.svg`
 - each key result by its `KR<n>.<m>` in `dev/<plugin>/product-vision.md`, none where the plugin
   keeps no product vision
 - each case, a function `test...` of a file `test*.py` under `dev/<plugin>/tests/`, at the top or in
@@ -190,14 +190,14 @@ def elements(plugin: str) -> list[tuple[str, str, str]]:
     strategy = section(lines, "## Solution strategy", path)
     for number, name in components(section(strategy, "### Components", path), path):
         found.append((f"{path}:{number}", "component", name))
-    figure = f"dev/{plugin}/images/data-model.svg"
+    figure = f"dev/{plugin}/images/concept-model.svg"
     try:
         root = ET.fromstring(read(figure))
     except ET.ParseError as error:
         raise Unreadable(f"{figure}: isn't XML: {error}") from None
     for text in root.iter():
         if text.tag.endswith("text") and "name" in text.get("class", "").split():
-            found.append((figure, "data", "".join(text.itertext()).strip()))
+            found.append((figure, "concept", "".join(text.itertext()).strip()))
     return found
 
 
@@ -442,7 +442,7 @@ def name_faults(plugin: str, level_cases: dict[str, list[Case]], named: set[str]
     }
     what = {
         "integration": f"integration case of dev/{plugin}/tests/integration/",
-        "element": f"story, rule, component, or data of dev/{plugin}/architecture.md",
+        "element": f"story, rule, component, or concept of dev/{plugin}/architecture.md",
         "key result": f"key result of dev/{plugin}/product-vision.md",
     }
     return [

@@ -29,11 +29,11 @@
 > - `<decision>`: one decision that carries out the principle, in one sentence, with no name that a
 >   later section decides, such as a component, a data, a tool, or a count.
 
-### Data model
+### Concept model
 
-![The product's data](images/template-data-model.svg)
+![The product's concepts](images/template-concept-model.svg)
 
-- `<Data>`\
+- `<Concept>`\
   `<purpose>`.
 
 Strategies:
@@ -43,11 +43,11 @@ Strategies:
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - The figure: the deliverable's own at images/data-model.svg, the product named in its alt text.
->   It draws the data as a concept model in a class diagram of the Unified Modeling Language. Each
+> - The figure: the deliverable's own at images/concept-model.svg, the product named in its alt text.
+>   It draws the concepts as a concept model in a class diagram of the Unified Modeling Language. Each
 >   data is a class by its name alone. Each relation between two data has its name, and how many of
 >   each it joins at both ends.
-> - `<Data>`, `<purpose>`: each data by its name, and what it's for, in one or two sentences, with
+> - `<Concept>`, `<purpose>`: each concept by its name, and what it's for, in one or two sentences, with
 >   no role's name.
 > - `<strategy>`, `<tag>`, `<intent>`: each decision of the view, in one sentence, a decision that
 >   the implementation spells out item by item stated as its policy; the story or principle item
@@ -71,10 +71,10 @@ Strategies:
 > - The figure: the deliverable's own at images/components.svg, the product named in its alt text.
 >   It draws the roles and how they act on one another and on the data, with no implementation's
 >   name. Each box holds its name and its type. Each arrow says what one does to another, with the
->   data it hands on, named as in Data model. A legend explains every symbol.
+>   data it hands on, named as in Concept model. A legend explains every symbol.
 > - `<component>`, `<type>`, `<role>`: each component, by its name in the figure; its type, such as
 >   prompt or script; and its expected role, what it answers for, not its tasks, in one sentence.
-> - `<strategy>`, `<tag>`, `<intent>`: as in Data model.
+> - `<strategy>`, `<tag>`, `<intent>`: as in Concept model.
 
 ### Sequences
 
@@ -102,7 +102,7 @@ Strategies:
 > - `<action>`, `<Data>`, `<tag>`: one action on each arrow; the data it hands on, in parentheses;
 >   and the story or principle item that it carries out, in brackets, on each arrow and each branch
 >   condition.
-> - `<strategy>`, `<tag>`, `<intent>`: as in Data model.
+> - `<strategy>`, `<tag>`, `<intent>`: as in Concept model.
 
 ### Deployment
 
@@ -122,7 +122,7 @@ Strategies:
 >   it, each store of data, and each service outside the product, with no process or other unit of
 >   the implementation.
 > - `<start>`: how the product starts, in one sentence.
-> - `<strategy>`, `<tag>`, `<intent>`: as in Data model.
+> - `<strategy>`, `<tag>`, `<intent>`: as in Concept model.
 
 ### Directory structure
 
@@ -139,7 +139,7 @@ Strategies:
 > DELETE_TEMPLATE_COMMENT:
 > - `<path>`, `<holds>`: each folder, by its real name, nested as on disk, with only the vital few
 >   files; and beside each top folder, its purpose, such as what Claude Code installs for the user.
-> - `<strategy>`, `<tag>`, `<intent>`: as in Data model.
+> - `<strategy>`, `<tag>`, `<intent>`: as in Concept model.
 
 ## Test strategy
 

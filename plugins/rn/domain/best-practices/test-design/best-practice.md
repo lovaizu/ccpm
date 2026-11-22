@@ -23,7 +23,7 @@
 
 - [product-vision](../product-vision/best-practice.md), taking `Objectives and key results`
 - [readme](../readme/best-practice.md), taking `Walkthrough`
-- [architecture](../architecture/best-practice.md), taking `Solution strategy`, `Components`, `Data model`, `Sequences`, `Test strategy`
+- [architecture](../architecture/best-practice.md), taking `Solution strategy`, `Components`, `Concept model`, `Sequences`, `Test strategy`
 - [software-design](../software-design/best-practice.md), taking `Interface`, `Prompt`
 
 ## Practices
@@ -45,7 +45,7 @@ An element that no case reaches is one whose parts no one has seen fit together,
 
 1. *While making.* For each story's sequence, write a case for each path through it: the main flow, each branch, each step that sends work back, and each question put to the role, until every move from one step to the next lies on some path.
 2. *While making.* For each principle item of Principles, write a case where the parts keep it, which can be run again with the part that holds it taken out, to see it fail, such as by the script that checks the trace.
-3. *While making.* For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Data model names it, until each kind of data lies on some case.
+3. *While making.* For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Concept model names it, until each kind of data lies on some case.
 4. *While making.* Once the cases are written, go through each sequence arrow by arrow and branch by branch, name the case that runs each, and write a case for each arrow or branch that none runs, since the script that checks the trace finds only an element that no case names, not a branch left out.
 
 ### N3
@@ -102,7 +102,7 @@ Does each invariant that the requirements state, each that must hold for every i
 
 A case shows a part right for the inputs its maker foresaw, while a property states what must hold for every input the use can bring, such as each form in which an AI names a file, and a tool then searches for one that breaks it. John Hughes's [How to Specify It!](https://research.chalmers.se/publication/517894) gives five kinds of property: invariant, postcondition, metamorphic, inductive, and model-based. In his trial, model-based and metamorphic properties caught the most faults, and he warns that a test that copies the code keeps the code's faults. So the maker takes each property from the requirements alone, the product vision, the README, and the architecture, before any body is written, and never from the skeleton or the code, since a property exists to check that the requirements hold, not that the code is robust.
 
-1. *While making.* Take each key result, each step of the README's walkthrough, each rule of Data model, each principle item, and each decision of a component. Ask of each whether it must hold for every input that the product's use can bring, and whether its break keeps the people from their aim, such as a design tree that leaves its schema after a change, which stops the run. List each that meets both, with the element it rests on, since a property of an invariant that no person meets finds inputs whose mends bring them nothing.
+1. *While making.* Take each key result, each step of the README's walkthrough, each rule of Concept model, each principle item, and each decision of a component. Ask of each whether it must hold for every input that the product's use can bring, and whether its break keeps the people from their aim, such as a design tree that leaves its schema after a change, which stops the run. List each that meets both, with the element it rests on, since a property of an invariant that no person meets finds inputs whose mends bring them nothing.
 2. *While making.* Write each listed invariant as a property of one kind of Hughes's. Take model-based where a model plainer than the part gives the same result, such as a list of the files a step names in place of the guard. Take metamorphic where related inputs must give related results, such as a file named from the top and named whole, which must give the same rules. Take a postcondition, an invariant, or an inductive property where neither fits.
-3. *While making.* Write for each property a generator of the inputs that the product's use can bring, from the forms that Data model and the walkthrough name: the forms that an AI or a person writes, which no developer foresees, and the refused ones among them. Never shape a generator by the branches of the code, as it then reaches only what the code already treats.
+3. *While making.* Write for each property a generator of the inputs that the product's use can bring, from the concepts and rules of Concept model and the forms that the walkthrough names: the forms that an AI or a person writes, which no developer foresees, and the refused ones among them. Never shape a generator by the branches of the code, as it then reaches only what the code already treats.
 4. *While making.* Write each property as a test in the place that Directory structure names for properties, with `Given any` and its inputs, When, and Then stated, naming the element it rests on, and see it fail at the empty bodies, as N4 says of a case.

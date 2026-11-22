@@ -113,7 +113,7 @@ def test_rules_in_form_are_read_as_written(rules: dict[str, Any]):
     among them, any steps of any rules of each type with any values, and any routes
     When read_rules reads them from the plugin's lane/rules.json
     Then it gives them as written, each rule with its type and values
-    (Postcondition, resting on Data model's Rules and read_rules's Gives.)"""
+    (Postcondition, resting on Concept model's Rules and read_rules's Gives.)"""
     assert read_written(json.dumps(rules)) == rules
 
 

@@ -36,9 +36,9 @@ ARCHITECTURE = """\
 - P1: nothing lost
   - P1.1: the run's state lives in files.
 
-### Data model
+### Concept model
 
-![p's data](images/data-model.svg)
+![p's concepts](images/concept-model.svg)
 
 - Cut\\
   The part of the tree that a role starts with.
@@ -93,7 +93,7 @@ A->>B: not a sequence
 | Lint | Parts | Quality | 0 findings. |
 """
 
-DATA_MODEL = """\
+CONCEPT_MODEL = """\
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
   <text class="frame-name" x="1" y="1">the design tree</text>
   <text class="name" x="1" y="2" text-anchor="middle">Cut</text>
@@ -112,7 +112,7 @@ PRODUCT_VISION = """\
   - KR1.2: the time from the request to the deliverable. Shorter is better.
 """
 
-# Every element of ARCHITECTURE and DATA_MODEL, as an integration case names it.
+# Every element of ARCHITECTURE and CONCEPT_MODEL, as an integration case names it.
 ELEMENTS = ["S1", "S2", "user", "tree.py", "Cut", "Lack's kept", "P1.1"]
 
 
@@ -149,13 +149,13 @@ RULE = "P1.1"
 
 
 class TraceTest(FolderTest):
-    """A plugin `p` whose architecture, product vision, and data model the test may change, and
+    """A plugin `p` whose architecture, product vision, and concept model the test may change, and
     whose cases it writes."""
 
     def setUp(self) -> None:
         super().setUp()
         self.write("dev/p/architecture.md", ARCHITECTURE)
-        self.write("dev/p/images/data-model.svg", DATA_MODEL)
+        self.write("dev/p/images/concept-model.svg", CONCEPT_MODEL)
         self.write("dev/p/product-vision.md", PRODUCT_VISION)
 
     def every_element_named(self) -> None:
@@ -219,13 +219,13 @@ class CommandTest(TraceTest):
         self.write("dev/p/architecture.md", ARCHITECTURE.replace(listed, ""))
         self.fails_with(2, "dev/p/architecture.md", "Components lists no component")
 
-    def test_a_missing_data_model_gives_2(self):
-        os.remove("dev/p/images/data-model.svg")
-        self.fails_with(2, "dev/p/images/data-model.svg")
+    def test_a_missing_concept_model_gives_2(self):
+        os.remove("dev/p/images/concept-model.svg")
+        self.fails_with(2, "dev/p/images/concept-model.svg")
 
-    def test_a_data_model_that_is_not_xml_gives_2(self):
-        self.write("dev/p/images/data-model.svg", "<svg><text class='name'>Cut</svg>")
-        self.fails_with(2, "dev/p/images/data-model.svg")
+    def test_a_concept_model_that_is_not_xml_gives_2(self):
+        self.write("dev/p/images/concept-model.svg", "<svg><text class='name'>Cut</svg>")
+        self.fails_with(2, "dev/p/images/concept-model.svg")
 
     def test_a_plugin_without_a_product_vision_has_no_key_result_and_gives_0(self):
         os.remove("dev/p/product-vision.md")
@@ -246,7 +246,7 @@ class CommandTest(TraceTest):
 
 
 class ElementTest(TraceTest):
-    """Every story, rule, component, and data of the architecture has an integration
+    """Every story, rule, component, and concept of the architecture has an integration
     test that names it, as each architecture's Integration tests set."""
 
     def test_without_any_case_every_element_is_reported(self):
@@ -282,16 +282,16 @@ class ElementTest(TraceTest):
         self.write("dev/p/architecture.md", last)
         self.fails_with(1, "component guard has no integration test")
 
-    def test_a_kind_of_data_that_no_case_names_is_reported(self):
+    def test_a_concept_that_no_case_names_is_reported(self):
         self.every_element_named()
-        added = DATA_MODEL.replace("</svg>", '<text class="name">Place</text></svg>')
-        self.write("dev/p/images/data-model.svg", added)
-        self.fails_with(1, "dev/p/images/data-model.svg: data Place has no integration")
+        added = CONCEPT_MODEL.replace("</svg>", '<text class="name">Place</text></svg>')
+        self.write("dev/p/images/concept-model.svg", added)
+        self.fails_with(1, "dev/p/images/concept-model.svg: concept Place has no integration")
 
     def test_a_frame_label_or_choice_is_no_element(self):
         self.every_element_named()
-        added = DATA_MODEL.replace("</svg>", '<text class="name">Place</text></svg>')
-        self.write("dev/p/images/data-model.svg", added)
+        added = CONCEPT_MODEL.replace("</svg>", '<text class="name">Place</text></svg>')
+        self.write("dev/p/images/concept-model.svg", added)
         stderr = self.fails_with(1, "Place")
         for word in ("the design tree", "cut from", "One generator"):
             self.assertNotIn(word, stderr)

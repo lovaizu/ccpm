@@ -6,23 +6,23 @@
   - **C1** The developers know what each part must do, for the users or for the product's development and operation, and why.
     - **N1** Does Principles state first, in one sentence, the one idea by which the product delivers what its README promises? (Solution strategy, Principles)
     - **N2** Does each user story state a value that it brings its role on its own, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README? (User stories)
-    - **N3** Does each principle item, user story, component, and data trace to what the README promises the users, or to a need of the product's development or operation? (Principles, User stories, Components, Data model, Sequences)
+    - **N3** Does each principle item, user story, component, and concept trace to what the README promises the users, or to a need of the product's development or operation? (Principles, User stories, Components, Concept model, Sequences)
   - **C2** Parts that different developers build fit together.
     - **N4** Does each principle name what it values, and each of its items one decision, with no name that a later section decides, from which two developers decide a case that no line names the same way? (Principles)
     - **N5** Does each component state its expected role, what it answers for toward the users' aim, and does each decision that the stories need belong to exactly one component? (User stories, Components)
     - **N6** Does each component state its type? (Components)
-    - **N7** Does Data model say what each data is for, and show how the data relate, without their fields or any role's name? (Data model)
-    - **N8** Does each user story have a sequence that shows, one action on each arrow, which component hands what to which and where the story branches, with each arrow and each branch condition tagged with the story or principle item that it carries out? (User stories, Components, Data model, Sequences)
+    - **N7** Does Concept model say what each concept is for, and show how the concepts relate, without their fields or any role's name? (Concept model)
+    - **N8** Does each user story have a sequence that shows, one action on each arrow, which component hands what to which and where the story branches, with each arrow and each branch condition tagged with the story or principle item that it carries out? (User stories, Components, Concept model, Sequences)
     - **N9** Do the figures, lists, and sentences agree with one another, and with the architecture that the product builds on, on what each part does? (the whole)
   - **C3** The developers can place, set up, and start every part without asking anyone.
-    - **N10** Does Deployment show each environment the product runs in, what runs in it, each store of data, each service outside the product, and how the product starts? (Components, Data model, Deployment)
-    - **N11** Does Directory structure show the folders, with only the vital few files, and beside each top folder its purpose? (Components, Data model, Directory structure)
+    - **N10** Does Deployment show each environment the product runs in, what runs in it, each store of data, each service outside the product, and how the product starts? (Components, Concept model, Deployment)
+    - **N11** Does Directory structure show the folders, with only the vital few files, and beside each top folder its purpose? (Components, Concept model, Directory structure)
   - **C4** The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document and the product vision say.
     - **N12** Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, when it runs, and for a quality its criterion or for a benchmark what it measures? (Test strategy)
     - **N13** Is each gap that the software design and the test design found from the document mended in it, so that the two designs, made again from it, find none? (the whole)
     - **N14** Does each thing that the document says the product does rest on a part that a unit or integration test can check? (Components, Test strategy)
   - **C5** The developers can change the product without making the document wrong.
-    - **N15** Does each view's Strategies give each decision of the view, tagged with the story or principle item that it carries out, with its intent? (Components, Data model, Sequences, Deployment, Directory structure)
+    - **N15** Does each view's Strategies give each decision of the view, tagged with the story or principle item that it carries out, with its intent? (Components, Concept model, Sequences, Deployment, Directory structure)
     - **N16** Does the document hold only what stays true while the product vision and Principles stay, with no name of the implementation outside Directory structure? (the whole)
 
 ## Template
@@ -62,13 +62,13 @@ The stories are the product's requirements: what each role wants, which the view
 
 ### N3
 
-Does each principle item, user story, component, and data trace to what the README promises the users, or to a need of the product's development or operation?
+Does each principle item, user story, component, and concept trace to what the README promises the users, or to a need of the product's development or operation?
 
 A part that nothing needs costs effort to build and to keep, and gives no one anything.
 
 1. *While deciding.* For each story, ask which activity, doubt, or need it carries, from three sources. The README and the product vision carry what the users get: the objectives and the promises that N2 lists, and the doubts that the README's How it works answers. Development adds what the developers need to build, test, and change the parts. Operation adds what keeps the product working across runs and updates, such as where its work outlives a run.
 2. *While making.* Once you have written Principles, for each principle item, name the doubt of the README's How it works, or the need of development or operation, that it carries.
-3. *While making.* Once you have written the views, for each component and each data, find the strategy or the arrow of a sequence that reaches it.
+3. *While making.* Once you have written the views, for each component and each concept, find the strategy or the arrow of a sequence that reaches it.
 4. *While making.* Remove each story or principle item that carries none, and each component or data that none reaches, from every figure, list, and sentence that names it.
 5. *While making.* Where the product already exists, list each behavior of its code that the users meet, such as how an invoice shows its amounts, and ask whether it serves them as the README promises, from the users' starting state to their aim. Write each that doesn't as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place.
 
@@ -111,15 +111,15 @@ A developer who doesn't know what kind of thing a component is chooses alone, an
 
 ### N7
 
-Does Data model say what each data is for, and show how the data relate, without their fields or any role's name?
+Does Concept model say what each concept is for, and show how the concepts relate, without their fields or any role's name?
 
-Two developers who build the writer and the reader of the same data must join it to the other data in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this. Data model comes before Components, so it names no role, and each later view names only what came before it.
+Two developers who build the writer and the reader of the same concept must join it to the other concepts in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this. Concept model comes before Components, so it names no role, and each later view names only what came before it.
 
-1. *While deciding.* Walk each story and each principle item, and list each data that the product keeps or hands on, by the name the README gives it where it gives one, such as a run's record.
+1. *While deciding.* Walk each story and each principle item, and list each concept that the product keeps or hands on, by the name the README gives it where it gives one, such as a run's record.
 2. *While deciding.* For each pair that relates, name the relation, and give how many of each it joins at both ends, such as a run that holds one or more rounds.
 3. *While making.* Draw each once, as a class by its name alone.
 4. *While making.* Leave the fields to where the developer builds the data.
-5. *While making.* Below the figure, say for each data what it's for, in one or two sentences, with no role's name, such as `holds what to make, why, and how far the run got`.
+5. *While making.* Below the figure, say for each concept what it's for, in one or two sentences, with no role's name, such as `holds what to make, why, and how far the run got`.
 
 ### N8
 
@@ -127,7 +127,7 @@ Does each user story have a sequence that shows, one action on each arrow, which
 
 A developer building a step must know who hands them what, and what they hand on. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's handoffs in order, from the role's first request to what the story gives them, while a step that stays inside one component belongs to its role, as a diagram that draws each such step buries the handoffs.
 
-1. *While making.* For each story, draw each handoff from one component to another as an arrow with one action, the data it hands on in parentheses, named as in Data model, and write each step that stays inside one component in that component's role in place of an arrow.
+1. *While making.* For each story, draw each handoff from one component to another as an arrow with one action, the data it hands on in parentheses, named as in Concept model, and write each step that stays inside one component in that component's role in place of an arrow.
 2. *While making.* At each handoff, ask what can go otherwise there, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering.
 3. *While making.* Draw an input refused as a branch, a check that fails as a step that sends work back to the step it repeats, and a choice of the role as a question put to the role with its answers, since each path of the story, and its integration test, rests on them.
 4. *While making.* Tag each arrow and each branch condition, in brackets at its end, with the story or principle item that it carries out, such as `[P1.2]`, so that a developer sees why the step is there, and each story and principle item is carried out somewhere.
@@ -160,7 +160,7 @@ Does Directory structure show the folders, with only the vital few files, and be
 
 A developer making a change must find the one place it belongs. Simon Brown's package by component, in Robert C. Martin's *Clean Architecture*, lays out the code by the components that the architecture draws.
 
-1. *While deciding.* Lay out the folders by component, so that each component and each data has its own place, such as a folder for the hooks and one for the code they call.
+1. *While deciding.* Lay out the folders by component, so that each component and each concept has its own place, such as a folder for the hooks and one for the code they call.
 2. *While making.* Show each folder by its real name, nested as on disk, with only the files that a developer looks for first, such as the prompt of each component.
 3. *While making.* Beside each top folder, write its purpose, such as what Claude Code installs for the user, and beside another folder or file only where its name doesn't say what it holds.
 4. *While making.* Check that, for any change to a component, a developer can name the one folder it goes in.

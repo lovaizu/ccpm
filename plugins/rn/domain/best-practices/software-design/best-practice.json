@@ -58,7 +58,7 @@
        },
        {
         "at": "decide",
-        "text": "For each interface, write its contract from the sequence and the data model: what it takes, as the kind of data on the arrow; what it gives, as the kind of data on the arrow back or on the next arrow; what else it changes, such as a file it writes; and each way it refuses, from each branch of the sequence that stops or sends work back."
+        "text": "For each interface, write its contract from the sequence and the concept model: what it takes, as the kind of data on the arrow; what it gives, as the kind of data on the arrow back or on the next arrow; what else it changes, such as a file it writes; and each way it refuses, from each branch of the sequence that stops or sends work back."
        },
        {
         "at": "make",
@@ -104,7 +104,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Read the skeleton against the architecture, and list each gap: a decision that no module can hold without another; a module whose first sentence needs `and` for two decisions that change for different reasons; an arrow that no interface can carry, or data on it that Data model lacks; a type that doesn't fit across a handoff; and a component that no arrow reaches."
+        "text": "Read the skeleton against the architecture, and list each gap: a decision that no module can hold without another; a module whose first sentence needs `and` for two decisions that change for different reasons; an arrow that no interface can carry, or data on it that Concept model lacks; a type that doesn't fit across a handoff; and a component that no arrow reaches."
        },
        {
         "at": "make",
@@ -126,7 +126,7 @@
    "kind": "architecture",
    "takes": [
     "Components",
-    "Data model",
+    "Concept model",
     "Sequences",
     "Directory structure",
     "Test strategy"

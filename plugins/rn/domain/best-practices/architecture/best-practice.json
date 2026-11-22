@@ -70,8 +70,8 @@
      },
      {
       "id": "N3",
-      "about": "Principles, User stories, Components, Data model, Sequences",
-      "what": "Does each principle item, user story, component, and data trace to what the README promises the users, or to a need of the product's development or operation?",
+      "about": "Principles, User stories, Components, Concept model, Sequences",
+      "what": "Does each principle item, user story, component, and concept trace to what the README promises the users, or to a need of the product's development or operation?",
       "why": "A part that nothing needs costs effort to build and to keep, and gives no one anything.",
       "items": [
        {
@@ -84,7 +84,7 @@
        },
        {
         "at": "make",
-        "text": "Once you have written the views, for each component and each data, find the strategy or the arrow of a sequence that reaches it."
+        "text": "Once you have written the views, for each component and each concept, find the strategy or the arrow of a sequence that reaches it."
        },
        {
         "at": "make",
@@ -192,13 +192,13 @@
      },
      {
       "id": "N7",
-      "about": "Data model",
-      "what": "Does Data model say what each data is for, and show how the data relate, without their fields or any role's name?",
-      "why": "Two developers who build the writer and the reader of the same data must join it to the other data in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this. Data model comes before Components, so it names no role, and each later view names only what came before it.",
+      "about": "Concept model",
+      "what": "Does Concept model say what each concept is for, and show how the concepts relate, without their fields or any role's name?",
+      "why": "Two developers who build the writer and the reader of the same concept must join it to the other concepts in the same way, while its fields stay free to change. A concept model in a class diagram of the Unified Modeling Language (UML), which most developers read, shows this. Concept model comes before Components, so it names no role, and each later view names only what came before it.",
       "items": [
        {
         "at": "decide",
-        "text": "Walk each story and each principle item, and list each data that the product keeps or hands on, by the name the README gives it where it gives one, such as a run's record."
+        "text": "Walk each story and each principle item, and list each concept that the product keeps or hands on, by the name the README gives it where it gives one, such as a run's record."
        },
        {
         "at": "decide",
@@ -214,19 +214,19 @@
        },
        {
         "at": "make",
-        "text": "Below the figure, say for each data what it's for, in one or two sentences, with no role's name, such as `holds what to make, why, and how far the run got`."
+        "text": "Below the figure, say for each concept what it's for, in one or two sentences, with no role's name, such as `holds what to make, why, and how far the run got`."
        }
       ]
      },
      {
       "id": "N8",
-      "about": "User stories, Components, Data model, Sequences",
+      "about": "User stories, Components, Concept model, Sequences",
       "what": "Does each user story have a sequence that shows, one action on each arrow, which component hands what to which and where the story branches, with each arrow and each branch condition tagged with the story or principle item that it carries out?",
       "why": "A developer building a step must know who hands them what, and what they hand on. A [UML](https://www.omg.org/spec/UML) sequence diagram draws a story's handoffs in order, from the role's first request to what the story gives them, while a step that stays inside one component belongs to its role, as a diagram that draws each such step buries the handoffs.",
       "items": [
        {
         "at": "make",
-        "text": "For each story, draw each handoff from one component to another as an arrow with one action, the data it hands on in parentheses, named as in Data model, and write each step that stays inside one component in that component's role in place of an arrow."
+        "text": "For each story, draw each handoff from one component to another as an arrow with one action, the data it hands on in parentheses, named as in Concept model, and write each step that stays inside one component in that component's role in place of an arrow."
        },
        {
         "at": "make",
@@ -270,7 +270,7 @@
     "necessary_conditions": [
      {
       "id": "N10",
-      "about": "Components, Data model, Deployment",
+      "about": "Components, Concept model, Deployment",
       "what": "Does Deployment show each environment the product runs in, what runs in it, each store of data, each service outside the product, and how the product starts?",
       "why": "A developer setting up the product needs to know where each part runs, what it can reach, and how it starts. A [C4 deployment diagram](https://c4model.com/diagrams/deployment) shows this.",
       "items": [
@@ -298,13 +298,13 @@
      },
      {
       "id": "N11",
-      "about": "Components, Data model, Directory structure",
+      "about": "Components, Concept model, Directory structure",
       "what": "Does Directory structure show the folders, with only the vital few files, and beside each top folder its purpose?",
       "why": "A developer making a change must find the one place it belongs. Simon Brown's package by component, in Robert C. Martin's *Clean Architecture*, lays out the code by the components that the architecture draws.",
       "items": [
        {
         "at": "decide",
-        "text": "Lay out the folders by component, so that each component and each data has its own place, such as a folder for the hooks and one for the code they call."
+        "text": "Lay out the folders by component, so that each component and each concept has its own place, such as a folder for the hooks and one for the code they call."
        },
        {
         "at": "make",
@@ -428,7 +428,7 @@
     "necessary_conditions": [
      {
       "id": "N15",
-      "about": "Components, Data model, Sequences, Deployment, Directory structure",
+      "about": "Components, Concept model, Sequences, Deployment, Directory structure",
       "what": "Does each view's Strategies give each decision of the view, tagged with the story or principle item that it carries out, with its intent?",
       "why": "A developer who doubts a decision and can't see what it was for may undo it and bring back the problem it solved. An [architecture decision record](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), by Michael Nygard, keeps a decision with its context, and its intent is what a developer needs to keep it.",
       "items": [

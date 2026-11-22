@@ -2,7 +2,7 @@
 that the architecture states of the Design tree, which the orchestrator writes as an AI would, with
 any words and any of the forms its schema allows, and on which every review and pick-up rests.
 
-- Each design tree edit is checked before its commit (Data model, P1.1): a change that leaves the
+- Each design tree edit is checked before its commit (Concept model, P1.1): a change that leaves the
   schema always gives a fault at or above its place, and a tree in form none, else the work rests
   on a tree out of form and the run stops.
 - The run's state lives in files (P6.1): a tree written and read back is the tree, key order
@@ -186,7 +186,7 @@ def test_a_change_out_of_the_schema_always_gives_a_fault_at_or_above_its_place(
     """Given any design tree in form, and any copy of it that leaves the schema in one place
     When the checks find its faults, of each
     Then the tree in form has none, and the copy has one whose pointer is the place or above it
-    (Metamorphic, resting on Data model's strategy of each design tree edit checked before its
+    (Metamorphic, resting on Concept model's strategy of each design tree edit checked before its
     commit, P1.1.)"""
     tree, broken, pointer = case
     with tempfile.TemporaryDirectory() as worktree:
@@ -304,7 +304,7 @@ def test_a_signoff_makes_the_deliverable_done_in_its_one_line_and_changes_nothin
     Then the deliverable is done in its one line, with its necessary conditions where it has no
     file, each item of the work that names it is gone, and the goal, each other deliverable, and
     each other item are as they were, in their order
-    (Postcondition, resting on P1.3, P3.3, and Data model's strategy of each sign-off as its
+    (Postcondition, resting on P1.3, P3.3, and Concept model's strategy of each sign-off as its
     deliverable done.)"""
     tree, n = case
     node = tree["deliverables"][n]
@@ -334,7 +334,7 @@ def test_what_waits_for_signoff_is_the_plan_good_else_the_first_whose_rounds_are
     When the deliverable that waits for the user's sign-off is found
     Then it's the plan where it's open with each condition good, else the first open deliverable
     in the tree's order that waits on the sign-off, else none
-    (Model-based, resting on P1.3 and Data model's strategy of the plan kept as the design tree's
+    (Model-based, resting on P1.3 and Concept model's strategy of the plan kept as the design tree's
     own deliverable.)"""
     nexts = {
         each["path"]: Next(data.draw(WAITS), None, False)

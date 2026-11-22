@@ -5,7 +5,7 @@
 - Maintainers, people or AI agents who come to the code at any time, understand each part in one reading and change it in one place, as each refactoring leaves the code simple: passing its tests, saying each decision once, holding the fewest elements, and revealing its intent.
   - **C1** Each behavior and each decision of the architecture holds as before, as the tests show.
     - **N1** Do the tests that passed before the refactoring pass after it, each expecting what it expected before? (the whole)
-    - **N2** Does the code still carry out each decision of the architecture: each component's job, the data model, and each sequence? (the whole)
+    - **N2** Does the code still carry out each decision of the architecture: each component's job, the concept model, and each sequence? (the whole)
   - **C2** The maintainer finds the one place where a change belongs.
     - **N3** Does the code write each rule or design decision once, in the module whose job it is? (the whole)
     - **N4** Does the code do each kind of thing one way throughout, with a reason beside each difference? (the whole)
@@ -19,7 +19,7 @@
 
 ## Inputs
 
-- [architecture](../architecture/best-practice.md), taking `Components`, `Data model`, `Sequences`, `Test strategy`
+- [architecture](../architecture/best-practice.md), taking `Components`, `Concept model`, `Sequences`, `Test strategy`
 
 ## Practices
 
@@ -40,11 +40,11 @@ A refactoring changes how the code does its work and never what it does, so the 
 
 ### N2
 
-Does the code still carry out each decision of the architecture: each component's job, the data model, and each sequence?
+Does the code still carry out each decision of the architecture: each component's job, the concept model, and each sequence?
 
-The developers read the architecture to know where a part belongs and what it hands to which, so code that a refactoring moved away from it sends each of them to the wrong place. A change of a component, of the data model, or of a sequence is a change of the architecture, which its own best practice decides before any code follows, as a refactoring changes the code's structure within the design.
+The developers read the architecture to know where a part belongs and what it hands to which, so code that a refactoring moved away from it sends each of them to the wrong place. A change of a component, of the concept model, or of a sequence is a change of the architecture, which its own best practice decides before any code follows, as a refactoring changes the code's structure within the design.
 
-1. *While deciding.* For each change that you plan, ask whether it moves a job from one component to another, adds or removes a component or a data of the data model, or changes what one part hands another in a sequence, by the decisions that you noted from the architecture.
+1. *While deciding.* For each change that you plan, ask whether it moves a job from one component to another, adds or removes a component or a concept of the concept model, or changes what one part hands another in a sequence, by the decisions that you noted from the architecture.
 2. *While deciding.* Where it does, take the change out of the plan, and name it in the `point` you end with: the smell it mends, the places it reaches, and the decision of the architecture that it changes, since the architecture is to decide it first.
 
 ### N3
@@ -98,7 +98,7 @@ Does each thing have one name, the architecture's word for it, and does each nam
 A maintainer who meets two names takes them for two things, and one name used for two things merges them in their mind, so each change misses a place or reaches a wrong one.
 
 1. *While deciding.* List the things that the code handles, and for each, every name that the code gives it, such as `user`, `account`, and `member` for one record, by reading its types, its parameters, and its variables.
-2. *While deciding.* For each thing, keep the word that the architecture's data model or components use for it, else the name that the code uses most, and where one name refers to two things, give the other thing the architecture's word for it, else a word that tells the two apart, such as `session_id`.
+2. *While deciding.* For each thing, keep the word that the architecture's concept model or components use for it, else the name that the code uses most, and where one name refers to two things, give the other thing the architecture's word for it, else a word that tells the two apart, such as `session_id`.
 3. *While making.* Rename each name that differs from the word you kept at every place, in the code, its tests, and its messages, one name in each step.
 
 ### N8

@@ -1,5 +1,5 @@
 """The integration cases of each component's decisions and of each handoff with its data, as rn's
-architecture draws them under Components and Data model: the orchestrator's steps of each event,
+architecture draws them under Components and Concept model: the orchestrator's steps of each event,
 the generator's and the evaluator's steps and checks, each Cut that the scripts write, the best
 practice each role takes, and the starts due that rn gives Lane. Each runs rn and Lane through the
 double of Claude Code and the double of gh, with a double of each prompt's work."""

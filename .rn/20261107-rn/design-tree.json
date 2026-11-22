@@ -329,7 +329,7 @@
       "status": "done"
     },
     {
-      "name": "Each component of Lane's architecture makes each decision it alone holds, and hands each part the data the data model names",
+      "name": "Each component of Lane's architecture makes each decision it alone holds, and hands each part the data the concept model names",
       "path": "dev/lane/tests/integration/test_lane_components.py",
       "kind": "code",
       "status": "done"
@@ -365,7 +365,7 @@
       "status": "done"
     },
     {
-      "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the data model names",
+      "name": "Each component of rn's architecture makes each decision it alone holds, and hands each part the data the concept model names",
       "path": "dev/rn/tests/integration/test_rn_components.py",
       "kind": "code",
       "status": "done"

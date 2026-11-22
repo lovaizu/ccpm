@@ -34,9 +34,9 @@ Lane gives an AI that leaves its plugin's step the step's own sentence, so that 
   - P2.4: the plugin's order says which subagents start when, and Lane holds the AI to it.
   - P2.5: Lane checks only runs of a plugin that gives it rules, and leaves other work alone.
 
-### Data model
+### Concept model
 
-![Lane's data](images/data-model.svg)
+![Lane's concepts](images/concept-model.svg)
 
 - Rules\
   What a plugin gives Lane: each step's rules, fixed or given per start or turn, and any routes.
@@ -250,7 +250,7 @@ dev/lane/                         what only Lane's developers use
 | Unit testing | Parts | Quality | During the work | Every case passes. |
 | Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
 | Property-based testing | Parts | Quality | During the work | 0 counterexamples in reading the rules, each rule type's check, and the guard's placing of moves. |
-| Integration testing | Architecture | Quality | During the work | Every case passes, each handoff giving the data the data model names. |
+| Integration testing | Architecture | Quality | During the work | Every case passes, each handoff giving the data the concept model names. |
 | Contract testing | Architecture | Quality | Apart from the work | On each new Claude Code, each recorded state gives the double's events. |
 | Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing with its part broken. |
 | Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |

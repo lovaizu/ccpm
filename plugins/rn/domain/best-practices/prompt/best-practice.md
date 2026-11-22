@@ -32,7 +32,7 @@
 
 ## Inputs
 
-- [architecture](../architecture/best-practice.md), taking `User stories`, `Components`, `Data model`, `Sequences`, `Directory structure`, `Test strategy`
+- [architecture](../architecture/best-practice.md), taking `User stories`, `Components`, `Concept model`, `Sequences`, `Directory structure`, `Test strategy`
 - [readme](../readme/best-practice.md), taking `Walkthrough`, `How it works`
 - [test-design](../test-design/best-practice.md), taking `Unit cases`
 - [software-design](../software-design/best-practice.md), taking `Interface`
@@ -79,7 +79,7 @@ Does the prompt give every fact that the AI can't find or know on its own, and s
 
 The AI is able but new to this place, and gets nothing of the conversation that started it, so a fact the prompt leaves out becomes a guess, and a fact the AI would find anyway takes its attention from the rest.
 
-1. *While deciding.* For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the data model. Take the rules of the place from the architecture's Principles and the rules they build on, such as the one folder a component writes in.
+1. *While deciding.* For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the concept model. Take the rules of the place from the architecture's Principles and the rules they build on, such as the one folder a component writes in.
 2. *While deciding.* Add each decision of your cut that the steps turn on and the architecture doesn't hold, such as a limit that the user set on what the prompt may change. Where a step needs a fact that neither the architecture, your cut, nor the repository gives, such as which branch the prompt may push to, end with `point`, naming the fact and your recommendation, since a fact only the user holds becomes a guess when the prompt leaves it out.
 3. *While deciding.* For each fact, ask the two questions of Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#tell-claude-what-it-cant-see): could the AI find it by reading what its run gives it, and would it go and look? Where both answers are yes, leave the fact out. Where it could find it but wouldn't look, say where it lies, such as `The plan takes the form of plan.schema.json`. Where it couldn't find it, give the fact.
 
@@ -171,7 +171,7 @@ Can the caller act on what comes back, in the form that the architecture's seque
 The caller gets only what comes back, so a result that needs a follow-up question costs a round trip, and a result in a form the caller doesn't read stops the sequence there.
 
 1. *While deciding.* Open each sequence that the prompt's component takes part in, and name the caller: the one whose arrow starts the component and who gets its answer. Write what the caller does with the result at its next arrow.
-2. *While deciding.* Take what comes back from the arrow where the component answers the caller, with the data as the data model names it.
+2. *While deciding.* Take what comes back from the arrow where the component answers the caller, with the data as the concept model names it.
 3. *While deciding.* List what the caller needs for its next move: the result, what the AI did, and what it didn't do and why.
 4. *While deciding.* Choose the form by who reads it: a fixed form, such as JSON, where a script reads it, and short plain words where a person does.
 5. *While making.* Check that a step makes each thing that the output names.

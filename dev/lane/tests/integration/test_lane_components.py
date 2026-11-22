@@ -1,11 +1,11 @@
 """The integration cases of each decision that a component of Lane's architecture alone makes, and
-of each handoff between the parts with the data it passes, as the data model names it: the guard's
-finding of the plugin's folder, its choice of the order that answers, its stop where an adapter
-fails or gives out of its form, for a start or for a turn, and the adapters and the check run in
-the conversation's folder; the rule types' order of checking a mark; the reporters' refusal and
-their report for the subagent that ran it; the route adapter's starts due from the routes; and the
-Rules out of form and the Run that keeps two results. Each runs `log` and Lane through the double
-of Claude Code."""
+of each handoff between the parts with the data it passes, as the concept model names it: the
+guard's finding of the plugin's folder, its choice of the order that answers, its stop where an
+adapter fails or gives out of its form, for a start or for a turn, and the adapters and the check
+run in the conversation's folder; the rule types' order of checking a mark; the reporters' refusal
+and their report for the subagent that ran it; the route adapter's starts due from the routes; and
+the Rules out of form and the Run that keeps two results. Each runs `log` and Lane through the
+double of Claude Code."""
 
 from __future__ import annotations
 
