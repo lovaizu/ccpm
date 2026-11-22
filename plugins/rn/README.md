@@ -2,9 +2,6 @@
 
 rn is a Claude Code plugin that makes what you ask for, ready for the people you make it for.
 
-In development: this README describes rn after its rebuild, which isn't done yet, so don't
-install rn for your work.
-
 rn is for you when you have Claude Code make something in a GitHub repository for other people to
 use. With it, you get each deliverable you mean, one its people can use, and you decide only
 what's yours.
@@ -20,7 +17,7 @@ what's yours.
 ## Requirements
 
 - macOS or Linux: `uname` shows it.
-- Claude Code 2.1.319 or later: `claude --version` shows it.
+- Claude Code 2.1.328 or later: `claude --version` shows it.
 - Python 3.9 or later, run as `python3`: `python3 --version` shows it.
 - Git: `git --version` shows it.
 - The GitHub command-line tool `gh`, logged in: `gh auth status` shows `Logged in to github.com`.

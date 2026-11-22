@@ -2,8 +2,6 @@
 
 Lane is a plugin for your Claude Code plugin that gives its AI each step it leaves, as it leaves.
 
-In development: Lane's rebuild as a plugin that others depend on isn't released.
-
 Lane is for you when your plugin's skill and subagents must keep the steps you give them. With it,
 you get an AI that notices at once each step it leaves.
 

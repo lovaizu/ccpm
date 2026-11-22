@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.10.0] - 2026-11-22
 
 ### Changed
 
@@ -8,11 +8,11 @@
 - rn keeps your goal and every decision under it in a design tree, and plans again after each answer and each finished deliverable, so the plan always follows what you decided.
 - rn asks you one decision at a time, each with its recommendation, and only the decisions that change what the people get. rn doesn't ask you what a best practice settles. It lists each such decision in its report. While a question or a sign-off waits for you, rn goes on with the work that doesn't rest on it, so your time goes only to what's yours.
 - Where something only you can mend, such as gh with no login, stops one deliverable, rn tells you what to do and goes on with the others meanwhile.
-- rn makes each deliverable by the best practice of its kind, and makes that best practice first where it has none. Its evaluators, AI subagents, read the deliverable as its people would, given only what those people have, while rn runs the deliverable's commands only in a throwaway copy of your repository with a throwaway home folder. rn makes the deliverable again until the evaluators find each of its aims met for those people, so you get a deliverable they can use.
-- rn takes each shortfall back to the decision it comes from, changes that decision, and makes the deliverable again from the design tree instead of patching it. Before it marks the pull request ready, rn reads the whole of it at once, and takes each clash between deliverables, and each part your goal doesn't need, back to its decision in the same way, so a fix holds and the deliverable doesn't grow with each round.
+- rn makes each deliverable by the best practice of its kind, and makes that best practice first where it has none. Its evaluators, AI subagents, read the deliverable as its people would, given only what those people have, while rn runs the deliverable's commands only in a throwaway copy of your repository. rn makes the deliverable again until the evaluators find each of its aims met for those people, so you get a deliverable they can use.
+- rn takes each shortfall back to the decision it comes from, changes that decision, and makes the deliverable again from the design tree instead of patching it, so a fix holds and the deliverable doesn't grow with each round.
 - You sign off the plan, and each deliverable before the next one rests on it, in place of the Plan, Design, and Deliverable sign-offs. Each deliverable's sign-off shows what the evaluators found its people can do with it, the decisions rn took without asking, and a link to its changes in the pull request, and the last sign-off marks the pull request ready, so only the merge remains for you.
 - `/rn:ty` approves the sign-off waiting, and rn goes on at once. It no longer stops until you say to go on, so one command moves the work forward.
-- `/rn:gm` with what to change, or alone to send every comment you wrote on the pull request since the sign-off, sends the sign-off back, and rn takes it back to the design tree, so a fix changes the decision behind your words.
+- `/rn:gm` with what to change sends the sign-off back, and rn takes it back to the design tree, so a fix changes the decision behind your words.
 - rn works in a git worktree of its own, on its own branch, instead of on the branch you have checked out, so you go on with your own work meanwhile.
 - `/rn:dn` pauses the run at any moment and pushes its work so far, and `/rn:up`, in any conversation, picks up the newest run from its pushed commits where it stopped, even in a fresh clone, and asks which run you mean where it finds none. rn commits each answer and each step's work on its branch, so you never answer a question twice, even after a closed conversation.
 - Installing rn installs Lane with it, in place of writ. Lane holds each part of rn to the steps of its best practice on every run, and stops a call that leaves those steps, so none of them goes missing.
