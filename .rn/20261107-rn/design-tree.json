@@ -476,14 +476,6 @@
               "about": "The rules of dev.md that hold until rn is released, and this design tree, after the merge",
               "decided": "this pull request drops the two rules of dev.md that hold until rn is released, the main conversation keeping this tree and making each document itself, and dev.md's first rule runs the work on ccpm's plugins by rn; this tree stays as the run's record, as each run of rn's does",
               "by": "user"
-            },
-            {
-              "about": "A second refactor Round after a content Round that follows one",
-              "decided": null
-            },
-            {
-              "about": "The recorder's scenarios that a module-wide xfail hides",
-              "decided": null
             }
           ]
         },

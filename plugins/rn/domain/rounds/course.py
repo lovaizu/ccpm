@@ -1,5 +1,6 @@
 """Decides which Round a deliverable takes next: content made and judged until each condition is
-good, at most LIMIT Rounds, then refactored in one Round that no evaluator judges, none while a
+good, at most LIMIT Rounds, then refactored in a Round that no evaluator judges each time the
+content leaves each condition good, none while a
 point waits on the user, and after them none, each finding left kept by the orchestrator as an open
 decision; a send-back after a Round put up for the sign-off starts that course again."""
 
@@ -16,8 +17,8 @@ from rounds import files
 from rounds.files import Mark, Result, Round
 
 # The most Rounds of content that a deliverable takes in a course, as remaking has a limit (the
-# architecture's P3.3). A course takes one Round of refactoring at most, which no evaluator judges
-# (P3.2).
+# architecture's P3.3). A course takes a Round of refactoring, which no evaluator judges, each time
+# its content leaves each condition good (P3.2).
 LIMIT = 2
 
 
