@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "rn",
-      "description": "rn makes what you ask for, such as a document, code, or a plugin, so that the people it's for can use it for what they're after. It asks you one point at a time, only what's yours, and leaves one draft pull request for you to merge.",
+      "description": "rn makes what you ask for, such as a document, code, or a plugin, so that the people it's for can use it for what they're after, and asks you only the points that are yours.",
       "source": "./plugins/rn",
       "category": "development"
     },

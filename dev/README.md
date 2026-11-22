@@ -22,6 +22,10 @@ CI runs these checks on every push:
 - the style of every figure
 - Mermaid's parse of every diagram in the Markdown files
 - Claude Code's check of every manifest
+- that each plugin works from its own folder, uses another plugin only through `dependencies`, and
+  carries its LICENSE, by `dev/scripts/standalone.py`
+- the form of each product vision, README, and architecture against its template, by
+  `plugins/rn/scripts/template.py`
 - the tag of each decision of each architecture's views, by `dev/scripts/trace.py`
 - the trace of each plugin's test cases to its architecture, by `dev/scripts/trace.py`, once
   `dev/<plugin>/tests/` holds them, and the plugin's unit and integration tests

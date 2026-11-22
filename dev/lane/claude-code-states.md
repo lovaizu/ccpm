@@ -34,7 +34,7 @@ what the transcript holds at each event as `transcript_holds`.
   conversation and of a subagent alike, so a plugin's step names a command of Lane's by its name
   alone. `claude-code-2.1.328-base-directory.jsonl:6-7` and `:14-15` show it.
 
-## The states that the main use and rn bring about
+## The states that the main use brings about
 
 | State | Events, in order | What the guard places them by | Records |
 |---|---|---|---|
@@ -79,7 +79,7 @@ In each, Lane does what its line says, and never holds a call to the rules of an
 
 ## What the guard answers in each single behavior
 
-The architecture's S1 and S2 draw the guard's answers on the walkthrough's path. The guard answers
+The architecture's Sequences draw the guard's answers on the walkthrough's path. The guard answers
 the main conversation at the event that the main conversation meets: a start or a call at its
 PreToolUse, a subagent's end at the UserPromptSubmit of its `<task-notification>`, and an end of
 the turn at its Stop. In each state

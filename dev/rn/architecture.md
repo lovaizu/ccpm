@@ -284,7 +284,8 @@ dev/rn/                            what only rn's developers use
 | Property-based testing | Parts | Quality | During the work | 0 counterexamples of each invariant that rn's product vision, README, and this document state. |
 | Integration testing | Architecture | Quality | During the work | Every case passes, with a double of each prompt, and each handoff gives the data the data model names. |
 | Contract testing | Architecture | Quality | Apart from the work | On each new version of gh, each recorded command gives what it recorded. |
-| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each strategy's case failing once the strategy is broken. |
+| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing with its part broken. |
+| Scenario testing | Product | Quality | Apart from the work | A walkthrough run of the README's request reaches its pull request with no stop that a fault caused. |
 | Installation testing | Product | Quality | Apart from the work | Once ccpm's marketplace lists rn, it installs with Lane by the README's commands in a fresh home. |
 | Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |
 | Conformance and compliance testing | Product | Quality | During the work | Claude Code's strict check of the plugin passes. |

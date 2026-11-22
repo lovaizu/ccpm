@@ -535,8 +535,8 @@ gives what the double in its place gives in the integration tests, and a criteri
 fail by chance, as the architecture best practice's test strategy guide says. A hook holds a rule on
 every run, which a prompt's words cannot
 ([best practices](https://code.claude.com/docs/en/best-practices)). A unit test meets only the cases
-that its developer set up, so the plugin's people try it on their own requests once
-its integration tests pass, as a run in which an AI plays them is no ground for a decision. The cost: each
+that its developer set up, so the walkthrough run of the test strategy guide runs the plugin whole
+once its integration tests pass. The cost: each
 change of a prompt waits on several runs of each of its cases on the model.
 
 ### The parts joined in the test's own process
@@ -556,8 +556,8 @@ its own that holds only the plugins under test, with the developer's login:
 `CLAUDE_CODE_OAUTH_TOKEN` where it's set
 ([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)),
 or else a copy of the credentials file of the developer's own Claude Code.
-It runs on Opus, the model the plugins' users run. Where Claude Code
-asks to allow a call, the stand-in answers from what the screen shows, as a person would.
+It runs on Opus, the model the plugins' users run, with each call allowed, as the test tries the
+prompt's judgment and not the permissions.
 
 *Why*: the developer's own settings would change what the test tries. A container or a Linux
 machine keeps the login in the credentials file, so the developer logs in once, as they already do. Another model makes other
