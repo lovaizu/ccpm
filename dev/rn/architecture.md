@@ -286,7 +286,7 @@ dev/rn/                            what only rn's developers use
 | Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
 | Property-based testing | Parts | Quality | During the work | 0 counterexamples of each invariant that rn's product vision, README, and this document state. |
 | Integration testing | Architecture | Quality | During the work | Every case passes, with a double of each prompt, and each handoff gives the data the concept model names. |
-| Contract testing | Architecture | Quality | Apart from the work | On each new version of gh, each recorded command gives what it recorded. |
+| Contract testing | Architecture | Quality | Apart from the work | On each new version of gh and of herdr, each recorded command gives what it recorded. |
 | Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing with its part broken. |
 | Scenario testing | Product | Quality | Apart from the work | A walkthrough run of the README's request reaches its pull request with no stop that a fault caused. |
 | Installation testing | Product | Quality | Apart from the work | Once ccpm's marketplace lists rn, it installs with Lane by the README's commands in a fresh home. |
