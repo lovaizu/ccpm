@@ -353,11 +353,45 @@
    ]
   },
   {
-   "name": "Each part of overnight does what its architecture gives it, as each case of its tests passes",
+   "name": "Each part of overnight does what its architecture gives it, as each of its unit cases passes",
    "path": "plugins/overnight/domain",
    "more_paths": ["plugins/overnight/scripts/", "plugins/overnight/skills/"],
    "kind": "code",
    "inputs": ["dev/overnight/architecture.md", "plugins/overnight", "dev/overnight/tests"],
+   "status": "open",
+   "necessary_conditions": [
+    {"id": "N1", "good": false, "decisions": []},
+    {"id": "N2", "good": false, "decisions": []},
+    {"id": "N3", "good": false, "decisions": []},
+    {"id": "N4", "good": false, "decisions": []},
+    {"id": "N5", "good": false, "decisions": []},
+    {"id": "N6", "good": false, "decisions": []},
+    {"id": "N7", "good": false, "decisions": []},
+    {"id": "N8", "good": false, "decisions": []}
+   ]
+  },
+  {
+   "name": "overnight's parts joined give each key result, as each integration case passes",
+   "path": "dev/overnight/tests/integration",
+   "kind": "code",
+   "inputs": ["dev/overnight/architecture.md", "dev/overnight/tests", "plugins/overnight/domain"],
+   "status": "open",
+   "necessary_conditions": [
+    {"id": "N1", "good": false, "decisions": []},
+    {"id": "N2", "good": false, "decisions": []},
+    {"id": "N3", "good": false, "decisions": []},
+    {"id": "N4", "good": false, "decisions": []},
+    {"id": "N5", "good": false, "decisions": []},
+    {"id": "N6", "good": false, "decisions": []},
+    {"id": "N7", "good": false, "decisions": []},
+    {"id": "N8", "good": false, "decisions": []}
+   ]
+  },
+  {
+   "name": "overnight's skill does what its users ask, as each of its unit cases passes on the model its users run; dropped where the architecture's test strategy gives overnight no prompt",
+   "path": "dev/overnight/tests/prompts",
+   "kind": "code",
+   "inputs": ["dev/overnight/architecture.md", "dev/overnight/tests", "plugins/overnight/domain"],
    "status": "open",
    "necessary_conditions": [
     {"id": "N1", "good": false, "decisions": []},
@@ -376,6 +410,8 @@
    "kind": "light",
    "inputs": [
     "plugins/overnight/domain",
+    "dev/overnight/tests/integration",
+    "dev/overnight/tests/prompts",
     "plugins/overnight/README.md"
    ],
    "status": "open",
@@ -415,6 +451,8 @@
     "plugins/overnight",
     "dev/overnight/tests",
     "plugins/overnight/domain",
+    "dev/overnight/tests/integration",
+    "dev/overnight/tests/prompts",
     ".claude-plugin/marketplace.json"
    ],
    "status": "open",
@@ -441,6 +479,11 @@
       {
        "about": "Event: a plan with a gap",
        "decided": "rn's plan went from the test design straight to the release, with no build; the user: '５テスト設計で６リリース？'",
+       "by": "user"
+      },
+      {
+       "about": "Event: test levels left out of the plan",
+       "decided": "rn's plan named no integration test, leaving each test level to the build; the user: 'インテグレーションテストは不要なの？テスト戦略で不要になったら省けばいいのでは？'",
        "by": "user"
       },
       {
