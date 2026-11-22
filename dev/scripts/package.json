@@ -3,6 +3,6 @@
   "dependencies": {
     "@anthropic-ai/claude-code": "2.1.310",
     "jsdom": "25.0.1",
-    "mermaid": "11.4.1"
+    "mermaid": "11.17.2"
   }
 }
