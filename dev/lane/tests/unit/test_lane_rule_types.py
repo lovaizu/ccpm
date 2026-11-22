@@ -28,6 +28,7 @@ import pytest
 import rule_types
 from lane_events import Event, Events, Subagent
 from place import Move
+from plugin_command import Unchecked
 from record import Entry, Run
 from repo_files import write_files
 from report import Report
@@ -861,6 +862,43 @@ def test_a_rule_of_two_files_names_each_not_read_whole(
     assert said == (expected if unread else None)
 
 
+@pytest.mark.supports(
+    "test_a_step_whose_file_to_read_whole_is_gone_is_marked_saying_what_lane_couldnt_check"
+)
+@pytest.mark.parametrize("given", [None, b"\xff\xfe"], ids=["gone", "not text"])
+def test_a_file_to_read_whole_that_cant_be_read_is_refused_as_unchecked(
+    e: Events, cwd: str, given: bytes | None
+):
+    """Given a step that reads whole GONE.md, which isn't there or isn't UTF-8 text
+    When the writer marks it
+    Then the rule refuses with Unchecked, saying that Lane couldn't check that the step `write` of
+    log:writer reads whole GONE.md, as it can't be read, and why"""
+    if given is not None:
+        with open(os.path.join(cwd, "GONE.md"), "wb") as f:
+            f.write(given)
+    gone: Rule = {"type": "reads_whole", "paths": ["GONE.md"]}
+    step: Step = {"name": "write", "rules": [gone]}
+    with pytest.raises(Unchecked) as raised:
+        reads_whole.judge_mark(gone, step, marking_write(e))
+    opens = "Lane couldn't check that the step `write` of log:writer reads whole GONE.md:"
+    assert str(raised.value).startswith(f"{opens} it can't be read: ")
+
+
+@pytest.mark.supports("test_a_step_marked_done_with_a_file_unread_is_stopped_with_the_file")
+def test_a_file_unread_beside_one_that_cant_be_read_gives_the_steps_sentence(e: Events, cwd: str):
+    """Given a step that reads whole GONE.md, which isn't there, and NOTES.md, which the writer
+    hasn't read
+    When the writer marks it
+    Then the rule gives the step's sentence naming NOTES.md from its line 1, as a file unread
+    stops the mark, though Lane couldn't check GONE.md"""
+    both: Rule = {"type": "reads_whole", "paths": ["GONE.md", "NOTES.md"]}
+    step: Step = {"name": "write", "rules": [both]}
+    assert reads_whole.judge_mark(both, step, marking_write(e)) == (
+        "You're at the step `write` of log:writer, which reads whole GONE.md and NOTES.md.\n"
+        "Read NOTES.md from its line 1 before you mark it done."
+    )
+
+
 @pytest.mark.supports("test_a_step_marked_done_after_a_read_in_part_names_the_lines_not_read")
 @pytest.mark.parametrize("last, first_unread", [(2, None), (1, 2)])
 def test_a_file_with_no_last_newline_counts_its_last_line_alone(
@@ -1119,24 +1157,48 @@ def test_an_end_that_the_check_doesnt_pass_gives_the_steps_sentence_and_what_it_
 @pytest.mark.parametrize(
     "command, said",
     [
-        ("echo 'no entry'; exit 2", "no entry"),
+        ("echo 'no entry'; exit 1", "no entry"),
         ("echo 'no entry' >&2; exit 1", "no entry"),
         ("echo 'no entry'; echo 'no date' >&2; exit 1", "no entry\nno date"),
         ("printf '\\n  no entry  \\n\\n'; exit 1", "no entry"),
-        ("exit 3", ""),
+        ("exit 1", ""),
     ],
 )
-def test_a_check_that_exits_other_than_0_gives_what_it_said_on_either_output(
+def test_a_check_that_exits_1_gives_what_it_said_on_either_output(
     e: Events, command: str, said: str
 ):
-    """Given a check that exits 2 after saying `no entry`, says it on standard error alone, says
-    `no date` on standard error after it, says it among blank lines and spaces, or exits 3 saying
-    nothing
+    """Given a check that exits 1 after saying `no entry`, says it on standard error alone, says
+    `no date` on standard error after it, says it among blank lines and spaces, or says nothing
     When the writer ends
     Then the check gives the step's sentence, closed by what it said, its standard output first,
     with the blank lines and spaces around it left out"""
     end = move("end", e.ended(WRITER), step="report")
     assert check.judge_end(check_rule(command), REPORT, end) == REPORT_FAILS + said
+
+
+@pytest.mark.supports("test_an_end_whose_check_exits_2_goes_through_saying_what_lane_couldnt_check")
+@pytest.mark.parametrize(
+    "command, said",
+    [
+        ("echo 'no tree' >&2; exit 2", "exits 2:\nno tree"),
+        ("echo 'no tree'; exit 3", "exits 3:\nno tree"),
+        ("exit 127", "exits 127"),
+    ],
+)
+def test_a_check_that_exits_other_than_0_or_1_is_refused_as_unchecked(
+    e: Events, command: str, said: str
+):
+    """Given a check that exits 2 saying `no tree` on standard error, exits 3 saying it, or exits
+    127, as the shell does for a command it doesn't find, saying nothing
+    When the writer ends
+    Then the check refuses with Unchecked, saying that Lane couldn't check the step `report` of
+    log:writer by its check, as the command exits with its code, and what it said"""
+    end = move("end", e.ended(WRITER), step="report")
+    with pytest.raises(Unchecked) as raised:
+        check.judge_end(check_rule(command), REPORT, end)
+    assert str(raised.value) == (
+        f"Lane couldn't check the step `report` of log:writer by its check: {command} {said}"
+    )
 
 
 @pytest.mark.supports("test_the_plugins_check_runs_in_the_worktree_the_conversation_works_in")
@@ -1153,15 +1215,19 @@ def test_the_check_runs_in_the_events_folder(e: Events, tmp_path: Any):
     assert said.startswith(f"{REPORT_FAILS}{lane_bench.CHECK_SAYS}\ngrep: CHANGELOG.md")
 
 
-@pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
-def test_a_check_that_cant_be_run_is_refused(e: Events, tmp_path: Any):
+@pytest.mark.supports("test_an_end_whose_check_exits_2_goes_through_saying_what_lane_couldnt_check")
+def test_a_check_that_cant_be_run_is_refused_as_unchecked(e: Events, tmp_path: Any):
     """Given an event whose folder isn't there
     When the writer ends
-    Then the check refuses with OSError"""
+    Then the check refuses with Unchecked, saying that Lane couldn't check the step `report` of
+    log:writer by its check, as it can't be run, and why"""
     gone = Events(os.path.join(str(tmp_path), "gone"), e.transcript)
     end = move("end", gone.ended(WRITER), step="report")
-    with pytest.raises(OSError):
+    with pytest.raises(Unchecked) as raised:
         check.judge_end(rule(REPORT, "check"), REPORT, end)
+    opens = "Lane couldn't check the step `report` of log:writer by its check: it can't be run: "
+    assert str(raised.value).startswith(opens)
+    assert "gone" in str(raised.value), "the folder that isn't there is named"
 
 
 # The order of the rules: a call.
@@ -1688,6 +1754,69 @@ def test_an_end_is_judged_by_the_check_of_each_step_in_their_order(e: Events):
     assert rule_types.judge_end(end) == DRAFT_FAILS
 
 
+def checked_by(*commands: str) -> list[Step]:
+    """THREE, each step marked done by the writer, with the check of each command in turn, from
+    the first step."""
+    steps = copy.deepcopy(THREE)
+    for step, command in zip(steps, commands):
+        step["rules"].append(check_rule(command))
+    return steps
+
+
+@pytest.mark.supports("test_an_end_whose_check_exits_2_goes_through_saying_what_lane_couldnt_check")
+def test_an_end_whose_check_cant_check_is_refused_as_unchecked_once_each_rule_holds(e: Events):
+    """Given a writer of three steps, which marked each and gave `written`, whose first step's
+    check exits 2 saying `no tree`, and whose last step's check passes
+    When it ends
+    Then rule_types refuses with Unchecked, saying that Lane couldn't check `draft` by its
+    check"""
+    entries = (mark("draft"), mark("write"), mark("report"), gave("written"))
+    steps = checked_by("echo 'no tree'; exit 2", "true", "true")
+    with pytest.raises(Unchecked) as raised:
+        rule_types.judge_end(holding(move("end", e.ended(WRITER), *entries), steps))
+    assert str(raised.value) == (
+        "Lane couldn't check the step `draft` of log:writer by its check:"
+        " echo 'no tree'; exit 2 exits 2:\nno tree"
+    )
+
+
+@pytest.mark.supports("test_an_end_that_the_plugins_check_doesnt_pass_is_stopped_with_what_it_said")
+def test_an_end_whose_check_cant_check_is_judged_by_a_later_check_that_fails(e: Events):
+    """Given a writer of three steps, which marked each and gave `written`, whose first step's
+    check exits 2 and whose second step's check exits 1 saying `write fails`
+    When it ends
+    Then the sentence is the check's of `write`, as a rule broken stops the end, though Lane
+    couldn't check `draft`"""
+    entries = (mark("draft"), mark("write"), mark("report"), gave("written"))
+    steps = checked_by("exit 2", "echo 'write fails'; exit 1", "true")
+    end = holding(move("end", e.ended(WRITER), *entries), steps)
+    assert rule_types.judge_end(end) == (
+        "You end the step `write` of log:writer, which its check doesn't pass:\nwrite fails"
+    )
+
+
+@pytest.mark.supports(
+    "test_a_checklist_command_that_fails_lets_the_mark_through_saying_what_lane_couldnt_check"
+)
+def test_a_mark_whose_checklist_cant_be_checked_is_refused_as_unchecked_once_its_reads_hold(
+    e: Events,
+):
+    """Given the writer that read NOTES.md whole, at its step `write`, whose checklist's command
+    exits 1 saying `no changes`
+    When it marks `write`
+    Then rule_types refuses with Unchecked, saying that Lane couldn't check the checklist of
+    `write`"""
+    marking = marking_write(e, read("NOTES.md", 1, 6))
+    write = copy.deepcopy(WRITE)
+    write["rules"] = [each for each in write["rules"] if each["type"] != "checklist"]
+    write["rules"].append(by_command("echo 'no changes'; exit 1"))
+    with pytest.raises(Unchecked) as raised:
+        rule_types.judge_mark(holding(marking, [write, REPORT]))
+    assert str(raised.value).startswith(
+        "Lane couldn't check the checklist of the step `write` of log:writer:"
+    )
+
+
 # The main conversation's turn's end.
 
 
@@ -1781,43 +1910,50 @@ def test_the_command_of_a_checklist_runs_in_the_events_folder(e: Events, cwd: st
 
 
 @pytest.mark.supports(
-    "test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it_printed"
+    "test_a_checklist_command_that_fails_lets_the_mark_through_saying_what_lane_couldnt_check"
 )
 @pytest.mark.parametrize(
-    "command, printed",
+    "command, said",
     [
-        ("echo 'no changes'; exit 1", "no changes"),
-        ("echo 'no changes' >&2; exit 2", "no changes"),
-        ("printf 'dated\\n'; exit 1", "dated"),
-        ("printf 'dated\\nlinked twice\\n'", "dated\nlinked twice"),
+        ("echo 'no changes'; exit 1", "exits 1:\nno changes"),
+        ("echo 'no changes' >&2; exit 2", "exits 2:\nno changes"),
+        ("printf 'dated\\n'; exit 1", "exits 1:\ndated"),
+        (
+            "printf 'dated\\nlinked twice\\n'",
+            "prints a line that isn't one word:\ndated\nlinked twice",
+        ),
     ],
 )
-def test_a_command_that_fails_or_prints_a_line_of_no_one_word_is_refused_with_its_output(
-    e: Events, command: str, printed: str
+def test_a_command_that_fails_or_prints_a_line_of_no_one_word_is_refused_as_unchecked(
+    e: Events, command: str, said: str
 ):
     """Given a checklist whose command exits 1 saying `no changes`, exits 2 saying it on standard
     error, exits 1 after printing an item, or exits 0 printing a line of two words
     When Lane takes the checklist's items at the writer's mark of `write`
-    Then it refuses with ItemsFailed, whose sentence names the step `write` of log:writer, what the
-    command printed, and the command to mend"""
-    with pytest.raises(checklist.ItemsFailed) as raised:
+    Then it refuses with Unchecked, saying that Lane couldn't check the checklist of the step
+    `write` of log:writer, as the command exits with its code or prints such a line, and what it
+    printed"""
+    with pytest.raises(Unchecked) as raised:
         checklist.items(by_command(command), marking_write(e))
     assert str(raised.value) == (
-        f"You're at the step `write` of log:writer, whose checklist command fails:\n{printed}\n"
-        f"Mend {command}, which gives the items one word a line."
+        f"Lane couldn't check the checklist of the step `write` of log:writer: {command} {said}"
     )
 
 
 @pytest.mark.supports(
-    "test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it_printed"
+    "test_a_checklist_command_that_fails_lets_the_mark_through_saying_what_lane_couldnt_check"
 )
-def test_a_command_that_cant_be_run_is_refused_with_os_error(e: Events, tmp_path: Any):
+def test_a_command_that_cant_be_run_is_refused_as_unchecked(e: Events, tmp_path: Any):
     """Given an event whose folder isn't there, and a checklist given by a command
     When Lane takes the checklist's items at the writer's mark of `write`
-    Then it refuses with OSError"""
+    Then it refuses with Unchecked, saying that Lane couldn't check the checklist of the step
+    `write` of log:writer, as the command can't be run, and why"""
     gone = Events(os.path.join(str(tmp_path), "gone"), e.transcript)
-    with pytest.raises(OSError):
+    with pytest.raises(Unchecked) as raised:
         checklist.items(by_command("printf 'dated\\n'"), marking_write(gone))
+    opens = "Lane couldn't check the checklist of the step `write` of log:writer: it can't be run: "
+    assert str(raised.value).startswith(opens)
+    assert "gone" in str(raised.value), "the folder that isn't there is named"
 
 
 @pytest.mark.supports("test_a_checklist_given_by_a_command_takes_the_items_at_the_mark")
@@ -1848,18 +1984,18 @@ def test_a_mark_is_judged_by_the_items_that_the_command_gives(
 
 
 @pytest.mark.supports(
-    "test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it_printed"
+    "test_a_checklist_command_that_fails_lets_the_mark_through_saying_what_lane_couldnt_check"
 )
-def test_a_mark_whose_command_fails_gives_the_step_and_what_it_printed(e: Events):
+def test_a_mark_whose_command_fails_is_refused_as_unchecked(e: Events):
     """Given a checklist whose command exits 1 saying `no changes`
     When the writer marks `write`
-    Then the rule gives the sentence that the step `write` of log:writer has a checklist command
-    that fails, with what the command printed and the command to mend"""
-    said = checklist.judge_mark(by_command("echo 'no changes'; exit 1"), WRITE, marking_write(e))
-    assert said == (
-        "You're at the step `write` of log:writer, whose checklist command fails:\n"
-        "no changes\n"
-        "Mend echo 'no changes'; exit 1, which gives the items one word a line."
+    Then the rule refuses with Unchecked, saying that Lane couldn't check the checklist of the
+    step `write` of log:writer, and what the command printed"""
+    with pytest.raises(Unchecked) as raised:
+        checklist.judge_mark(by_command("echo 'no changes'; exit 1"), WRITE, marking_write(e))
+    assert str(raised.value) == (
+        "Lane couldn't check the checklist of the step `write` of log:writer:"
+        " echo 'no changes'; exit 1 exits 1:\nno changes"
     )
 
 

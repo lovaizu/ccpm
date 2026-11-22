@@ -6,6 +6,12 @@ from __future__ import annotations
 import subprocess
 
 
+class Unchecked(Exception):
+    """A rule that Lane couldn't check, as the plugin's command that it runs couldn't give its
+    answer, said with what Lane couldn't check and why, so that the move goes on and the AI reads
+    it."""
+
+
 def run(command: str, cwd: str) -> subprocess.CompletedProcess[str]:
     """Runs the plugin's command.
 
@@ -15,3 +21,10 @@ def run(command: str, cwd: str) -> subprocess.CompletedProcess[str]:
     Refuses: OSError, where the command can't be run.
     """
     return subprocess.run(command, shell=True, cwd=cwd, capture_output=True, text=True, check=False)
+
+
+def exited(command: str, done: subprocess.CompletedProcess[str]) -> str:
+    """Why a command that couldn't give its answer couldn't: the command, the code it exits with,
+    and what it printed on either output, where it printed anything."""
+    said = (done.stdout + done.stderr).strip()
+    return f"{command} exits {done.returncode}" + (f":\n{said}" if said else "")

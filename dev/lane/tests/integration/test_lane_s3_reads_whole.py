@@ -1,9 +1,12 @@
 """The integration cases of S3, the files a step reads whole: a reporter's mark of the step done
 before each file that the step names is read whole by the start's own Reads stopped with the step's
-sentence and the lines not read, and let through once Reads of the start cover each line. Each runs
+sentence and the lines not read, let through once Reads of the start cover each line, and let
+through saying what Lane couldn't check where a file to read whole can't be read. Each runs
 `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
+
+import os
 
 import pytest
 from lane_bench import Bench, items, opened, started
@@ -68,3 +71,23 @@ def test_a_read_of_the_main_conversation_counts_for_no_subagent(b: Bench):
     items(writer)
     c.read(None, b.at("NOTES.md"))
     assert "NOTES.md" in writer.bash("lane-step write").said
+
+
+@pytest.mark.supports("S3", "rule types")
+def test_a_step_whose_file_to_read_whole_is_gone_is_marked_saying_what_lane_couldnt_check(
+    b: Bench,
+):
+    """Given the writer running, each item of its step `write` done, and NOTES.md gone from the
+    repository
+    When it reports the step `write` done, and then the step `report`
+    Then the first mark goes through, saying that Lane couldn't check that `write` reads whole
+    NOTES.md, as it can't be read; and the second isn't stopped for `write` before it, as `write`
+    counts as done"""
+    os.remove(b.at("NOTES.md"))
+    writer = started(opened(b))
+    items(writer)
+    answer = writer.bash("lane-step write")
+    assert not answer.blocked
+    opens = "Lane couldn't check that the step `write` of log:writer reads whole NOTES.md:"
+    assert answer.said.startswith(f"{opens} it can't be read: ")
+    assert "comes before" not in writer.bash("lane-step report").said

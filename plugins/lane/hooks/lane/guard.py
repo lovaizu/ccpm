@@ -17,6 +17,7 @@ from named_files import of_call
 from order import StartsDue
 from place import Event, Move, SkillCall, Turn
 from plugin import plugin_root
+from plugin_command import Unchecked
 from record import Run
 from report import Report
 from rules import OutOfForm, Rules, read_rules
@@ -247,7 +248,8 @@ def turn_ended(move: Move) -> Answer:
     marks and result those that Move.done gives for the turn; else a stop with the starts
     due, where a start is due and the turn didn't end on a result that a step's `ends` names, as
     rule_types.ended_at_a_step gives it, since that result says the AI can't go on, which no start
-    mends; an empty answer where none is.
+    mends; else an answer that stops nothing, saying what Lane couldn't check and why where
+    rule_types.judge_end refuses with Unchecked, and empty where it doesn't.
     Changes: the run record, by dropping each start still untied; and, where the turn's end goes
     through, by an `ended` entry where adapters.starts_due, asked with the turn ended, says the run
     ends, and, where the role takes its steps at each turn, by a `turn_ended` entry, so that the
@@ -256,7 +258,7 @@ def turn_ended(move: Move) -> Answer:
     of the turn's end with what's wrong.
     """
     run = _untied_dropped(move.run)
-    said = rule_types.judge_end(replace(move, run=run))
+    said, unchecked = _judged(rule_types.judge_end, replace(move, run=run))
     if said is not None:
         return Answer(True, said)
     due = _due(run, move.event)
@@ -265,7 +267,7 @@ def turn_ended(move: Move) -> Answer:
     _end_if(run, move.event, turn_ended=True)
     if asks_adapter(_rules(run), move.role):
         record.add(run.session_id, [{"kind": "turn_ended", "run": run.id}])
-    return Answer()
+    return Answer(said=unchecked)
 
 
 def _untied_dropped(run: Run) -> Run:
@@ -369,7 +371,8 @@ def report_made(move: Move) -> Answer:
     Gives: for a step done, a stop with the sentence that rule_types.judge_mark gives; for a step
     gone back to that its role's steps don't name, or that Move.done gives no mark of, a stop with
     the sentence naming the step at hand and the step gone back to, as no rule names where a step
-    may go back; an empty answer where the report holds.
+    may go back; an empty answer where the report holds, saying what Lane couldn't check and why
+    where rule_types.judge_mark refuses with Unchecked.
     Changes: the run record, by the mark or the result, where it holds; for a step gone back to, by
     a `back` entry with the step and each step after it in its role's steps as `undone`, whose
     marks and items made before it no longer count in Move.done.
@@ -377,8 +380,9 @@ def report_made(move: Move) -> Answer:
     """
     reported = cast(Report, move.report)
     names = [step["name"] for step in move.steps]
+    unchecked = ""
     if reported["kind"] == "step":
-        said = rule_types.judge_mark(move)
+        said, unchecked = _judged(rule_types.judge_mark, move)
         if said is not None:
             return Answer(True, said)
     entry: record.Entry = {**reported, "run": move.run.id, "role": move.role}
@@ -389,7 +393,7 @@ def report_made(move: Move) -> Answer:
             return Answer(True, _not_gone_back(move, back))
         entry["undone"] = names[names.index(back) :]
     record.add(move.run.session_id, [entry])
-    return Answer()
+    return Answer(said=unchecked)
 
 
 # The kind of entry that each kind of report adds, a mark for any other.
@@ -411,13 +415,23 @@ def subagent_ended(move: Move) -> Answer:
 
     Takes: an `end` move at the subagent's SubagentStop, a pass after a message queued to it ending
     the same start.
-    Gives: a stop with the sentence that rule_types.judge_end gives; an empty answer where it gives
-    none.
+    Gives: a stop with the sentence that rule_types.judge_end gives; an answer that stops nothing
+    where it gives none, saying what Lane couldn't check and why where it refuses with Unchecked,
+    and empty where it doesn't.
     Changes: nothing.
     Refuses: nothing.
     """
-    said = rule_types.judge_end(move)
-    return Answer() if said is None else Answer(True, said)
+    said, unchecked = _judged(rule_types.judge_end, move)
+    return Answer(said=unchecked) if said is None else Answer(True, said)
+
+
+def _judged(judge: Callable[[Move], str | None], move: Move) -> tuple[str | None, str]:
+    """The sentence of the rule that the move breaks, by the judge, None for none; and, where none
+    breaks, what Lane couldn't check and why, as Unchecked says it, empty where it checked each."""
+    try:
+        return judge(move), ""
+    except Unchecked as couldnt:
+        return None, str(couldnt)
 
 
 def written(event: Event, answered: Answer) -> str:

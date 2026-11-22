@@ -6,6 +6,7 @@ from __future__ import annotations
 import os
 
 from place import Move
+from plugin_command import Unchecked
 from rules import Rule, Step
 
 from rule_types.words import listed
@@ -19,21 +20,30 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     Gives: the step's sentence and the lines of each file of the rule that no Read of the start or
     the turn has read; None where each file is read whole.
     Changes: nothing.
-    Refuses: nothing.
+    Refuses: Unchecked, where no file that can be read is left unread and a file can't be read, as
+    UTF-8 text in the event's `cwd`, naming each such file and why.
     """
-    unread = [
-        f"{path} from its line {first}"
-        for path in rule["paths"]
-        for first in [_first_unread(move, path)]
-        if first is not None
-    ]
-    if not unread:
-        return None
-    return (
-        f"You're at the step `{step['name']}` of {move.role}, which reads whole"
-        f" {listed(rule['paths'])}.\n"
-        f"Read {listed(unread)} before you mark it done."
-    )
+    unread, unchecked = [], []
+    for path in rule["paths"]:
+        try:
+            first = _first_unread(move, path)
+        except (OSError, UnicodeDecodeError) as error:
+            unchecked.append(
+                f"Lane couldn't check that the step `{step['name']}` of {move.role} reads whole"
+                f" {path}: it can't be read: {error}"
+            )
+            continue
+        if first is not None:
+            unread.append(f"{path} from its line {first}")
+    if unread:
+        return (
+            f"You're at the step `{step['name']}` of {move.role}, which reads whole"
+            f" {listed(rule['paths'])}.\n"
+            f"Read {listed(unread)} before you mark it done."
+        )
+    if unchecked:
+        raise Unchecked("\n".join(unchecked))
+    return None
 
 
 def _first_unread(move: Move, path: str) -> int | None:

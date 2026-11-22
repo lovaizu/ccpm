@@ -7,15 +7,11 @@ from typing import cast
 
 import plugin_command
 from place import Move
+from plugin_command import Unchecked
 from report import Report
 from rules import Rule, Step
 
 from rule_types.words import listed
-
-
-class ItemsFailed(Exception):
-    """The plugin's command of a checklist that exits other than 0, or prints a line that is no one
-    word, said as the step's sentence with the command's output, so that the mark stops with it."""
 
 
 def items(rule: Rule, move: Move) -> list[str]:
@@ -26,20 +22,25 @@ def items(rule: Rule, move: Move) -> list[str]:
     Gives: the rule's `items`, where it names them; else each line of the output of the rule's
     `command`, run in the event's `cwd` at the mark, as one item, none for an empty output.
     Changes: nothing of Lane's; the command may read the conversation's folder.
-    Refuses: ItemsFailed, where the command exits other than 0, with what it printed, or prints a
-    line that is no one word, as lane-item takes an item as one word; OSError, where the command
-    can't be run.
+    Refuses: Unchecked, where the command exits other than 0, with the command, its code, and what
+    it printed, or prints a line that is no one word, as lane-item takes an item as one word, with
+    what it printed; or where it can't be run, with why.
     """
     if "items" in rule:
         return rule["items"]
-    done = plugin_command.run(rule["command"], move.event["cwd"])
+    step = cast(Report, move.report)["step"]
+    unchecked = f"Lane couldn't check the checklist of the step `{step}` of {move.role}"
+    try:
+        done = plugin_command.run(rule["command"], move.event["cwd"])
+    except OSError as error:
+        raise Unchecked(f"{unchecked}: it can't be run: {error}") from None
+    if done.returncode:
+        raise Unchecked(f"{unchecked}: {plugin_command.exited(rule['command'], done)}")
     lines = done.stdout.splitlines()
-    if done.returncode or any(line.split() != [line] for line in lines):
-        step = cast(Report, move.report)["step"]
-        raise ItemsFailed(
-            f"You're at the step `{step}` of {move.role}, whose checklist command fails:\n"
-            f"{(done.stdout + done.stderr).strip()}\n"
-            f"Mend {rule['command']}, which gives the items one word a line."
+    if any(line.split() != [line] for line in lines):
+        raise Unchecked(
+            f"{unchecked}: {rule['command']} prints a line that isn't one word:\n"
+            f"{(done.stdout + done.stderr).strip()}"
         )
     return lines
 
@@ -50,17 +51,13 @@ def judge_mark(rule: Rule, step: Step, move: Move) -> str | None:
     Takes: the rule, with its items or the command that gives them, the step it belongs to, and the
     move: a reporter's mark of the step done, with the marks of items that Move.done gives
     for the move's start or turn.
-    Gives: the step's sentence and each item that items gives not yet marked done; the sentence of
-    ItemsFailed, where the command fails; None where each item is marked done.
+    Gives: the step's sentence and each item that items gives not yet marked done; None where each
+    item is marked done.
     Changes: nothing of Lane's; the rule's command may read the conversation's folder.
-    Refuses: OSError, where the rule's command can't be run.
+    Refuses: Unchecked, as items refuses.
     """
-    try:
-        listed_items = items(rule, move)
-    except ItemsFailed as failed:
-        return str(failed)
     done = move.done.items.get(step["name"], set())
-    left = [item for item in listed_items if item not in done]
+    left = [item for item in items(rule, move) if item not in done]
     if not left:
         return None
     return (

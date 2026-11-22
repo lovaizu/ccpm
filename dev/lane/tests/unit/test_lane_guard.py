@@ -45,7 +45,7 @@ from place import Move, SkillCall, Turn
 from record import Entry, Run, add, runs
 from repo_files import write_files
 from report import read_report, report
-from rules import Step
+from rules import Rule, Step
 
 # An adapter of the starts due that gives none, as it waits for the person's answer.
 WAITS = 'import json\n\nprint(json.dumps({"starts": []}))\n'
@@ -1428,6 +1428,98 @@ def test_subagent_ended_that_holds_answers_nothing_and_adds_nothing(g: Play, log
     recorded_now(log, START, TIE, *marks)
     assert subagent_ended(move("end", g.e.ended(WRITER), WRITER, None)) == Answer()
     assert gained(log) == []
+
+
+# A check that can't check, exiting 2, and a checklist whose command exits 1, and what the guard
+# says of each.
+CANT_CHECK: Rule = {"type": "check", "check": "echo 'no tree'; exit 2"}
+LISTS_NONE: Rule = {"type": "checklist", "command": "exit 1"}
+
+
+def unchecked_check(step: str, role: str) -> str:
+    return (
+        f"Lane couldn't check the step `{step}` of {role} by its check:"
+        " echo 'no tree'; exit 2 exits 2:\nno tree"
+    )
+
+
+def with_rule(steps: list[Step], given: Rule, kind: str | None = None) -> list[Step]:
+    """The steps, the first one's rule of the kind taken out and the rule given added to it."""
+    changed = copy.deepcopy(steps)
+    changed[0]["rules"] = [each for each in changed[0]["rules"] if each["type"] != kind]
+    changed[0]["rules"].append(given)
+    return changed
+
+
+@pytest.mark.supports(
+    "test_a_checklist_command_that_fails_lets_the_mark_through_saying_what_lane_couldnt_check"
+)
+def test_report_made_of_a_step_whose_checklist_cant_be_checked_adds_its_mark_saying_so(
+    g: Play, log: str
+):
+    """Given the writer tied to a1, which read NOTES.md whole, its step `write` holding a checklist
+    whose command exits 1
+    When it reports the step `write` done
+    Then the mark goes through, saying that Lane couldn't check the checklist of `write` and why,
+    and the record gains a1's mark of `write`"""
+    recorded_now(log, START, TIE, lane_entries.read("a1", "NOTES.md", 1, 6))
+    marked = report_move(g, "step", "write")
+    marked = dataclasses.replace(marked, steps=with_rule(marked.steps, LISTS_NONE, "checklist"))
+    assert report_made(marked) == Answer(
+        False, "Lane couldn't check the checklist of the step `write` of log:writer: exit 1 exits 1"
+    )
+    assert gained(log) == [
+        {"kind": "mark", "step": "write", "run": "r1", "role": "log:writer", "agent_id": "a1"}
+    ]
+
+
+@pytest.mark.supports("test_an_end_whose_check_exits_2_goes_through_saying_what_lane_couldnt_check")
+def test_subagent_ended_whose_check_cant_check_goes_through_saying_so(g: Play, log: str):
+    """Given the writer tied to a1, which kept each step and gave `written`, its step `write`
+    holding a check that exits 2 saying `no tree`
+    When it ends
+    Then the end goes through, saying that Lane couldn't check `write` by its check and why, and
+    the record gains nothing"""
+    marks: list[Entry] = [
+        {"kind": "mark", "run": "r1", "agent_id": "a1", "step": "write"},
+        {"kind": "mark", "run": "r1", "agent_id": "a1", "step": "report"},
+        GAVE,
+    ]
+    recorded_now(log, START, TIE, *marks)
+    ended = move("end", g.e.ended(WRITER), WRITER, None)
+    ended = dataclasses.replace(ended, steps=with_rule(ended.steps, CANT_CHECK))
+    assert subagent_ended(ended) == Answer(False, unchecked_check("write", "log:writer"))
+    assert gained(log) == []
+
+
+@pytest.mark.supports("test_an_end_whose_check_exits_2_goes_through_saying_what_lane_couldnt_check")
+@pytest.mark.parametrize(
+    "rules, said, gains",
+    [
+        (
+            NO_ORDER,
+            Answer(False, unchecked_check("lead", "log:up")),
+            [{"kind": "ended", "run": "r1"}],
+        ),
+        (lane_bench.RULES, Answer(True, WRITER_DUE), []),
+    ],
+    ids=["no order", "writer due"],
+)
+def test_turn_ended_whose_check_cant_check_is_held_to_the_starts_due_alone(
+    g: Play, log: str, rules: Any, said: Answer, gains: list[Entry]
+):
+    """Given `log` giving no order, or the writer due, the step `lead` of log:up marked done with a
+    check that exits 2 saying `no tree`
+    When the main conversation ends its turn
+    Then the end goes through, saying that Lane couldn't check `lead` by its check and why, and the
+    record gains the run's `ended`; or the end is stopped with the writer due, and the record gains
+    nothing"""
+    write_files(log, {"lane/rules.json": json.dumps(rules)})
+    recorded_now(log, {"kind": "mark", "run": "r1", "agent_id": None, "step": "lead"})
+    steps = with_rule(NO_ORDER["roles"]["log:up"]["steps"], CANT_CHECK, "check")
+    ended = dataclasses.replace(move("turn_end", g.e.stop()), steps=steps)
+    assert turn_ended(ended) == said
+    assert gained(log) == gains
 
 
 # written, by each event and class of answer.

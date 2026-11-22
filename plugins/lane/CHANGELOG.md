@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Your `check` fails the step only where it exits 1. Any other code, such as 2 where it can't read what it checks, says it couldn't check, so a check tells a step left short apart from one it couldn't judge.
+
+### Fixed
+
+- Where Lane can't check a rule, such as a `check` that couldn't check, a checklist command that fails, or a file to read whole that's gone, it lets the move through and tells the AI what it couldn't check and why, instead of stopping it, so a run never loops on a stop that no one in the conversation can mend.
+
 ## [0.1.0] - 2026-11-22
 
 ### Added

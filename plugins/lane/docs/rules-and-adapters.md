@@ -160,7 +160,8 @@ Give Grep a path outside those files instead of docs.
 The files the step reads whole before it's done. Each path names a file, and Lane holds a rule
 whose path ends with `/` out of form, as a folder has no lines to read. Lane counts each line
 that a Read of the same start reads, including a Read made at an earlier step. It stops a
-`lane-step` mark of the step while a line is unread.
+`lane-step` mark of the step while a line is unread. A file that can't be read, such as one that
+isn't there, is one that Lane [can't check](#when-lane-cant-check-a-rule).
 
 ```json
 { "type": "reads_whole", "paths": ["docs/style.md"] }
@@ -239,17 +240,17 @@ The items done before the step. Lane stops a `lane-step` mark of the step while 
 Where the step's own work decides the items, such as each part that a change reaches, the rule
 names a `command` in place of `items`. Lane runs it at the mark, in the folder that the
 conversation works in, and takes each line of its output as an item, an empty output as none. Each
-item is one word, as `lane-item` takes it. A command that exits other than 0, or prints a line that
-isn't one word, stops the mark with what it printed, as the plugin's author mends the command:
+item is one word, as `lane-item` takes it. A command that exits other than 0, prints a line that
+isn't one word, or can't be run gives no items, so Lane [can't check](#when-lane-cant-check-a-rule)
+the checklist:
 
 ```json
 { "type": "checklist", "command": "python3 scripts/changed.py" }
 ```
 
 ```text
-You're at the step `write` of log:writer, whose checklist command fails:
+Lane couldn't check the checklist of the step `write` of log:writer: python3 scripts/changed.py exits 1:
 scripts/changed.py: no changes file
-Mend python3 scripts/changed.py, which gives the items one word a line.
 ```
 
 ```text
@@ -288,9 +289,9 @@ Lane gives the main conversation the start's latest result, and the run moves on
 
 ### `check`
 
-Your plugin's own check of the step, a shell command that passes on exit 0. Lane runs it at the
-start's end, in the folder that the conversation works in, and stops the end where it fails. The
-sentence ends with what the check printed.
+Your plugin's own check of the step, a shell command that passes on exit 0 and fails on exit 1.
+Lane runs it at the start's end, in the folder that the conversation works in, and stops the end
+where it fails. The sentence ends with what the check printed.
 
 ```json
 { "type": "check", "check": "python3 scripts/check_changelog.py" }
@@ -299,6 +300,15 @@ sentence ends with what the check printed.
 ```text
 You end the step `write` of log:writer, which its check doesn't pass:
 CHANGELOG.md: no entry for 1.2.0
+```
+
+A check that exits with any other code, such as 2 where it can't read what it checks, or 127 where
+the shell doesn't find it, or that can't be run, is one that Lane
+[can't check](#when-lane-cant-check-a-rule):
+
+```text
+Lane couldn't check the step `write` of log:writer by its check: python3 scripts/check_changelog.py exits 2:
+scripts/check_changelog.py: CHANGELOG.md can't be read
 ```
 
 ### When Lane judges each rule
@@ -320,6 +330,13 @@ At an end where the start gave a result that a step's `ends` names, Lane judges 
 The main conversation's turn's end is then held to the starts due: Lane stops it while a start is
 due. A turn that ends on a result that its step's `ends` names goes through, as that result says
 the AI can't go on, which no start mends.
+
+### When Lane can't check a rule
+
+A rule that Lane can't check, as a file or a command that the rule needs gives no answer, stops
+nothing. Lane judges the move by its other rules, stops it at a rule that it breaks, and else lets
+it through. The AI then reads what Lane couldn't check and why, as the examples under each rule
+type show. A mark that goes through counts as done.
 
 ## Adapters
 

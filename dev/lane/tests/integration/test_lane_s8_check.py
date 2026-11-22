@@ -1,12 +1,15 @@
 """The integration cases of S8, the plugin's own check: an end that the check of its role doesn't
 pass stopped with the step's sentence and what the check said, an end that it passes let through,
-and the check run only once the result and each step hold. Each runs `log` and Lane through the
+an end whose check couldn't check let through saying so, and the check run only once the result
+and each step hold. Each runs `log` and Lane through the
 double of Claude Code."""
 
 from __future__ import annotations
 
+import copy
+
 import pytest
-from lane_bench import CHECK_SAYS, Bench, opened, reached, started, written
+from lane_bench import CHECK_SAYS, RULES, Bench, opened, reached, started, written
 
 # An entry of another version, which the check of `log` doesn't pass.
 OLD_ENTRY = "# Changelog\n\n## 1.1.0\n\n- Invoices render.\n"
@@ -59,3 +62,27 @@ def test_an_end_with_a_step_undone_names_the_step_before_the_check(b: Bench):
     answer = writer.end("Done.")[0]
     assert "report" in answer.said
     assert CHECK_SAYS not in answer.said
+
+
+@pytest.mark.supports("S8", "rule types")
+def test_an_end_whose_check_exits_2_goes_through_saying_what_lane_couldnt_check(b: Bench):
+    """Given `log` whose writer's check of `report` exits 2 saying it can't read the changes, and
+    the writer that kept each step
+    When it ends
+    Then its end reaches the main conversation, and the writer read that Lane couldn't check
+    `report` by its check, as the command exits 2, with what it said"""
+    cant = "echo 'the changes cant be read' >&2; exit 2"
+    rules = copy.deepcopy(RULES)
+    report = rules["roles"]["log:writer"]["steps"][1]
+    report["rules"] = [each for each in report["rules"] if each["type"] != "check"]
+    report["rules"].append({"type": "check", "check": cant})
+    b.rules(rules)
+    writer = started(opened(b))
+    written(writer)
+    answer = writer.end("Done.")[0]
+    assert not answer.blocked
+    assert answer.said == (
+        "Lane couldn't check the step `report` of log:writer by its check:"
+        f" {cant} exits 2:\nthe changes cant be read"
+    )
+    assert reached(writer) is not None

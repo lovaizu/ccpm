@@ -5,10 +5,17 @@ then the plugin's own check of each of those steps, the step at which the start 
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+from typing import Callable
+
 from place import Move
-from rules import Step
+from plugin_command import Unchecked
+from rules import Rule, Step
 
 from rule_types import check, checklist, commands, order, reads_none, reads_whole, result, writes
+
+# A rule type's judge of a call, a mark, or an end: the sentence of the rule broken, None for none.
+Judge = Callable[[Rule, Step, Move], "str | None"]
 
 # The rule types that judge a call of each tool, by their names in a rule's `type`, in the order
 # the guard asks them.
@@ -51,18 +58,19 @@ def judge_mark(move: Move) -> str | None:
     Gives: the sentence of the first rule the mark breaks, by order, then reads_whole, then
     checklist; None where it breaks none.
     Changes: nothing.
-    Refuses: nothing.
+    Refuses: Unchecked, where it breaks none and a checklist couldn't be checked, as
+    checklist.items refuses.
     """
     step_marked = move.report["step"] if move.report else None
-    said = (
-        judge(rule, step, move)
+    judged = (
+        (judge, rule, step)
         for kind, judge in _MARKS.items()
         for step in move.steps
         if step["name"] == step_marked
         for rule in step["rules"]
         if rule["type"] == kind
     )
-    return next((each for each in said if each is not None), None)
+    return _first_broken(judged, move)
 
 
 def judge_end(move: Move) -> str | None:
@@ -76,7 +84,8 @@ def judge_end(move: Move) -> str | None:
     result rule names the start's result among those that end it, or for each step where none
     does, then check; None where it breaks none.
     Changes: nothing, though check runs the plugin's check.
-    Refuses: OSError, where the plugin's check can't be run.
+    Refuses: Unchecked, where it breaks none and a check couldn't check, as check.judge_end
+    refuses, with what each such check said, one a line.
     """
     steps = move.steps
     done = move.done.steps
@@ -88,8 +97,8 @@ def judge_end(move: Move) -> str | None:
     due = [step for step in steps if step["name"] not in done][:1]
     ruled = [step for step in due if any(rule["type"] == "result" for rule in step["rules"])]
     ending = (ruled or steps[-1:]) if ends_at is None else []
-    said = (
-        judge(rule, step, move)
+    judged = (
+        (judge, rule, step)
         for kind, judge, held in (
             ("result", result.judge_end, ending),
             ("order", order.judge_end, steps[:ends_at]),
@@ -99,7 +108,25 @@ def judge_end(move: Move) -> str | None:
         for rule in step["rules"]
         if rule["type"] == kind
     )
-    return next((each for each in said if each is not None), None)
+    return _first_broken(judged, move)
+
+
+def _first_broken(judged: Iterable[tuple[Judge, Rule, Step]], move: Move) -> str | None:
+    """The sentence of the first rule that the move breaks, each judged in turn and those after it
+    left unjudged; where none breaks and a rule couldn't be checked, Unchecked with what each such
+    rule said, one a line."""
+    unchecked = []
+    for judge, rule, step in judged:
+        try:
+            said = judge(rule, step, move)
+        except Unchecked as couldnt:
+            unchecked.append(str(couldnt))
+            continue
+        if said is not None:
+            return said
+    if unchecked:
+        raise Unchecked("\n".join(unchecked))
+    return None
 
 
 def ended_at_a_step(move: Move) -> bool:

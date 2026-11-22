@@ -1,7 +1,8 @@
 """The integration cases of S6, a step's checklist: a reporter's mark of the step done before each
 item that the step's rule of the checklist names is done stopped with each item not yet done, and
 let through once each is, the items named in the rule or given at the mark by the plugin's command,
-which runs in the folder that the conversation works in and whose failure stops the mark. Each runs
+which runs in the folder that the conversation works in, and whose failure lets the mark through
+saying what Lane couldn't check. Each runs
 `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
@@ -11,7 +12,8 @@ import os
 
 import pytest
 from claude_code import Agent
-from lane_bench import RULES, Bench, items, opened, started
+from lane_bench import ENTRY, RULES, Bench, items, opened, started
+from repo_files import write_files
 
 
 @pytest.mark.supports("S6", "rule types")
@@ -107,23 +109,27 @@ def test_a_checklist_given_by_a_command_takes_the_items_at_the_mark(b: Bench):
 
 
 @pytest.mark.supports("S6", "guard")
-def test_a_checklist_command_that_exits_other_than_0_stops_the_mark_with_what_it_printed(
+def test_a_checklist_command_that_fails_lets_the_mark_through_saying_what_lane_couldnt_check(
     b: Bench,
 ):
     """Given `log` whose writer's checklist of `write` is given by a command that exits 1 saying no
     changes are written yet, where docs/changes/ isn't there, and the writer running, NOTES.md read
     whole
-    When it reports the step `write` done
-    Then the mark is stopped with the sentence that the step `write` of log:writer has a
-    checklist command that fails, with what the command printed and the command to mend"""
+    When it reports the step `write` done, and then the step `report`
+    Then the first mark goes through, saying that Lane couldn't check the checklist of `write`, as
+    the command exits 1, with what it printed; and the second, CHANGELOG.md unread, reads the
+    sentence of `report` alone, as `write` counts as done"""
     listed_by_command(b)
+    write_files(b.repo, {"CHANGELOG.md": ENTRY})
     writer = started(opened(b))
     wrote(writer)
-    assert writer.bash("lane-step write").said == (
-        "You're at the step `write` of log:writer, whose checklist command fails:\n"
-        f"{NO_CHANGES}\n"
-        f"Mend {LISTED}, which gives the items one word a line."
+    answer = writer.bash("lane-step write")
+    assert not answer.blocked
+    assert answer.said == (
+        "Lane couldn't check the checklist of the step `write` of log:writer:"
+        f" {LISTED} exits 1:\n{NO_CHANGES}"
     )
+    assert "`write`" not in writer.bash("lane-step report").said
 
 
 @pytest.mark.supports("S6", "guard")
