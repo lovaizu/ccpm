@@ -2,17 +2,18 @@
 step marked done, undoing the marks of it and of each step after it, the items of their checklists
 among them, so that the step is at hand again, a later step marked before it is stopped with it as
 the step due, and an end is stopped while it is undone; the reads kept, as the file was read; each
-step taken again in order letting the end through; and a step gone back to that isn't marked done
-stopped with its sentence, undoing nothing. Each runs `log` and Lane through the double of Claude
-Code."""
+step taken again in order letting the end through; a step gone back to that isn't marked done
+stopped with its sentence, undoing nothing; and going back let through at a step whose rule of
+commands doesn't name it. Each runs `log` and Lane through the double of Claude Code."""
 
 from __future__ import annotations
 
+import copy
 import os
 
 import pytest
 from claude_code import Agent
-from lane_bench import Bench, items, opened, reached, started, written
+from lane_bench import RULES, Bench, items, opened, reached, started, written
 
 
 def gone_back(b: Bench) -> Agent:
@@ -86,3 +87,24 @@ def test_a_step_gone_back_to_that_isnt_marked_done_is_stopped_with_its_sentence(
         "Go back only to a step marked done, with lane-back <step>."
     )
     assert writer.bash("lane-step report").said == ""
+
+
+@pytest.mark.supports("S12", "reporters")
+def test_going_back_goes_through_at_a_step_whose_rule_of_commands_doesnt_name_it(b: Bench):
+    """Given `log` whose writer's step `report` runs only `git log`, and the writer that marked
+    `write` done, at its step `report`
+    When it runs `lane-back write`
+    Then the call goes through, and a mark of `report` is stopped naming `write` as the step due"""
+    rules = copy.deepcopy(RULES)
+    rules["roles"]["log:writer"]["steps"][1]["rules"].append(
+        {"type": "commands", "commands": ["git log"]}
+    )
+    b.rules(rules)
+    writer = started(opened(b))
+    written(writer, result=None, report=False)
+    back = writer.bash("lane-back write")
+    assert (back.blocked, back.exit_code, back.said) == (False, 0, ""), back.output
+    assert writer.bash("lane-step report").said == (
+        "You're at the step `write` of log:writer, which comes before `report`.\n"
+        "Do `write` and mark it done with lane-step write first."
+    )

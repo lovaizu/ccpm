@@ -611,6 +611,7 @@ def test_the_sentence_of_several_commands_names_each(e: Events):
         "lane-step write",
         "lane-item write dated",
         "lane-result written",
+        "lane-back write",
         "git log && lane-result written",
     ],
 )
