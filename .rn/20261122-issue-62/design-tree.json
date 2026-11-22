@@ -1,0 +1,65 @@
+{
+ "context": {
+  "rn": "0.10.0",
+  "languages": {
+   "deliverables": "English",
+   "conversation": "Japanese"
+  },
+  "issues": {
+   "closes": [62],
+   "refs": []
+  },
+  "pr": null
+ },
+ "goal": {
+  "decided": "The user gets their queued Claude Code tasks done in the hours nobody answers, through the usage limit, instead of spending the daytime limit on them: in the evening they queue tasks to start at a set time, and in the morning they read which tasks finished and which were given up, and merge the results from their main session.",
+  "by": "reasoning"
+ },
+ "deliverables": [
+  {
+   "name": "The user gets their queued Claude Code tasks done in the hours nobody answers, through the usage limit, instead of spending the daytime limit on them: in the evening they queue tasks to start at a set time, and in the morning they read which tasks finished and which were given up, and merge the results from their main session.",
+   "path": ".rn/20261122-issue-62/design-tree.json",
+   "kind": "design-tree",
+   "inputs": [],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  }
+ ],
+ "work": []
+}
