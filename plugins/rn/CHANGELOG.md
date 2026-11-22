@@ -9,6 +9,7 @@
 
 ### Fixed
 
+- Before rn starts making a deliverable, it reads the best practice of the deliverable's kind and asks you, one at a time, each point that the best practice says to ask you before making, such as a product vision's concept, so the making starts with your answers instead of stopping to ask them.
 - rn ends a turn once each of its steps has made its result, such as the question asked or the plan reviewed by your answer, in place of once it has marked each step done, so rn no longer marks a step done while leaving its work undone.
 - rn asks you one thing at a time, in your language and your own words, so you can decide from its message alone. At a run's start, it first checks in one sentence what your request asks for, beside the request's own words, and asks the languages and the issues only after that, and only where needed. The plan for your sign-off says what rn makes toward your goal, how the work goes, and why that way is good, in place of a list of the deliverables' names. Where rn gives a best practice as a ground, it says it in your language, with only its place beside it.
 - When a role's Cut can't be read, such as after you delete the run's worktree or its folder, the role's check says it couldn't check the role's result, and the role ends, instead of being stopped at each end, so a run you drop never holds the conversation in a loop.

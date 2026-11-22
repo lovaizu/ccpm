@@ -154,6 +154,12 @@ origin names no default branch, as no run stands yet.
      documents give the same language. Ask of an issue only where the user's words name it:
      whether the run completes it or only serves it. Write each answer in the context, by N7.2 and
      N7.3.
+   - Once each input of a deliverable is done, before its Cut, read its kind's best practice whole,
+     `best-practice.md` in `.rn/best-practices/<kind>/` of the run's worktree where it holds one,
+     else in `<rn's folder>/domain/best-practices/<kind>/`, unless you've read it in this
+     conversation. Each point that it says to ask the user before making is the user's: open it as
+     a decision of the condition it serves, so that the Cut carries their answer and the generator
+     doesn't stop to ask it.
    - Settle each point yourself by `reasoning`, but a point whose answers differ in what the people
      get. Leave that point open for the user.
    - Keep at most one point of the user's open at a time, as the next may change by the answer.
