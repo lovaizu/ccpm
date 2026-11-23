@@ -15,7 +15,7 @@
  },
  "goal": {
   "decided": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
-  "by": "reasoning"
+  "by": "user"
  },
  "deliverables": [
   {
@@ -27,7 +27,7 @@
    "necessary_conditions": [
     {
      "id": "N1",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "Whom the goal is for",
@@ -48,6 +48,45 @@
     },
     {
      "id": "N7",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The AI's aim with stacked tasks, and how well it gets there, is set down",
+   "path": "dev/overnight/product-vision.md",
+   "kind": "product-vision",
+   "inputs": [],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
      "good": false,
      "decisions": []
     },
@@ -72,8 +111,371 @@
      "decisions": []
     }
    ]
+  },
+  {
+   "name": "An AI learns from the guide whether the plugin fits its work and how to stack tasks and take their results in",
+   "path": "plugins/overnight/README.md",
+   "kind": "readme",
+   "inputs": [
+    "dev/overnight/product-vision.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The parts that run the stacked tasks, resume them after the limit, and report each task's end are drawn",
+   "path": "dev/overnight/architecture.md",
+   "kind": "architecture",
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N11",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N12",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N13",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N14",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N15",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N16",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The parts' modules and their interfaces show that they fit together",
+   "path": "plugins/overnight",
+   "kind": "software-design",
+   "inputs": [
+    "dev/overnight/architecture.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The cases that check the joined parts reach the AI's aim are written",
+   "path": "dev/overnight/tests",
+   "kind": "test-design",
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md",
+    "dev/overnight/architecture.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The runner stacks tasks, resumes each after the limit lifts, and reports which finished and which were given up",
+   "path": "plugins/overnight/scripts",
+   "kind": "code",
+   "inputs": [
+    "dev/overnight/architecture.md",
+    "plugins/overnight",
+    "dev/overnight/tests"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    }
+   ],
+   "more_paths": [
+    "dev/overnight/tests/"
+   ]
+  },
+  {
+   "name": "The plugin is listed in the marketplace, so Claude Code installs it",
+   "path": ".claude-plugin/marketplace.json",
+   "kind": "light",
+   "inputs": [
+    "plugins/overnight"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": [
+      {
+       "about": "The check",
+       "decided": "claude plugin validate passes on the marketplace, and it lists overnight with the version of plugins/overnight/.claude-plugin/plugin.json",
+       "by": "reasoning"
+      }
+     ]
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    }
+   ]
   }
  ],
- "work": [],
- "steps": []
+ "work": [
+  {
+   "do": "make",
+   "path": "dev/overnight/product-vision.md"
+  }
+ ],
+ "steps": [
+  {
+   "settles": "誰が何のために使うか",
+   "deliverables": [
+    "dev/overnight/product-vision.md"
+   ],
+   "signoff": true
+  },
+  {
+   "settles": "どう使うか",
+   "deliverables": [
+    "plugins/overnight/README.md"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "どんな部品でどう動くか",
+   "deliverables": [
+    "dev/overnight/architecture.md"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "部品がかみ合うか",
+   "deliverables": [
+    "plugins/overnight",
+    "dev/overnight/tests"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "動くものができたか",
+   "deliverables": [
+    "plugins/overnight/scripts",
+    ".claude-plugin/marketplace.json"
+   ],
+   "signoff": false
+  }
+ ]
 }
