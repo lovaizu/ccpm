@@ -114,12 +114,12 @@
     },
     {
      "id": "N3",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N7",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
