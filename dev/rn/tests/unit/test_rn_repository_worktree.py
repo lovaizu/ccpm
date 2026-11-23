@@ -8,10 +8,11 @@ holds no design tree passed over, branches that nearly match a run's left out, a
 branch deciding over origin's, and the refusal of a design tree that isn't JSON; and `found`, with
 the run's worktree there, removed with its local branch kept, its folder deleted, a run that only
 origin holds in a fresh clone, and a worktree that git can't make; `removed`, with a change not
-committed, of a run whose branch GitHub never held, holds, or has deleted since, its ref of
-origin's branch left here, or whose name only nearly matches GitHub's branches, and of no pull
-request, the run's open one, or an earlier run's closed or merged one of the same branch's name;
-with git or gh that can't ask GitHub; and a worktree that git can't remove; and, inside herdr and
+committed, removed here and on GitHub, of a run whose branch GitHub never held, holds, or has
+deleted since, its ref of origin's branch left here, or whose name only nearly matches GitHub's
+branches, and of no pull request, the run's open one, or an earlier run's closed or merged one of
+the same branch's name; with git or gh that can't ask GitHub or can't remove what it holds; and a
+worktree that git can't remove; and, inside herdr and
 outside, `new` and `found` with the worktree gone, and `removed`, each with herdr failing inside
 it."""
 
@@ -29,7 +30,7 @@ from gh import gh_double
 from herdr import herdr_double
 from repo_files import git, write_files
 from repository.place import RunPlace
-from repository.worktree import Left, found, new, newest, removed
+from repository.worktree import Gone, found, new, newest, removed
 from rn_runs import NAME, branch_run, dated_commit, head
 
 GOAL = rn_files.GOAL
@@ -594,6 +595,11 @@ def tracked(repo: str) -> bool:
     return git(repo, "for-each-ref", TRACKED).strip() != ""
 
 
+def branches(repo: str) -> list[str]:
+    """Each branch that origin holds, by its ref and commit."""
+    return git(remote(repo), "for-each-ref", "--format=%(refname) %(objectname)").splitlines()
+
+
 @pytest.mark.supports(
     "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
 )
@@ -612,7 +618,7 @@ def tracked(repo: str) -> bool:
         ("gone", "merged"),
     ],
 )
-def test_a_cancelled_run_loses_its_worktree_and_local_branch_and_names_what_github_holds(
+def test_a_cancelled_run_is_removed_here_and_on_github(
     tmp_path: Any, host: Any, gh_state: str, branch: str, pr: str
 ):
     """Given a run whose worktree holds a change not committed, outside herdr, whose branch GitHub
@@ -621,70 +627,91 @@ def test_a_cancelled_run_loses_its_worktree_and_local_branch_and_names_what_gith
     GitHub holds no pull request of, holds the run's open one of, or holds an earlier run's
     closed or merged one of
     When removed is asked
-    Then it gives, for the user to remove, origin's branch where GitHub holds it, then the open
-    pull request where GitHub holds one, and nothing that it couldn't check; the worktree and the
-    local branch rn-<name> are gone; the ref of origin's branch stays only where GitHub holds the
-    branch; what origin holds is as it was; and the user's branch and files are as they were"""
+    Then it gives as removed on GitHub the open pull request where GitHub held one, then origin's
+    branch where GitHub held it, and nothing that it couldn't remove; the worktree, the local
+    branch rn-<name>, and the ref of origin's branch are gone; origin holds no branch rn-<name>,
+    and each other branch of origin is as it was; no pull request of the branch is open; and the
+    user's branch and files are as they were"""
     repo = a_repository(tmp_path)
     run = cancelled_run(repo, gh_state, branch, pr)
     before = head(repo, "main")
-    held = git(remote(repo), "for-each-ref", "--format=%(refname) %(objectname)")
-    expected = ([f"origin/rn-{NAME}"] if branch == "held" else []) + ([PR] if pr == "open" else [])
-    assert removed(run, host) == Left(expected, [])
+    others = [each for each in branches(repo) if not each.startswith(f"refs/heads/rn-{NAME} ")]
+    expected = ([PR] if pr == "open" else []) + ([f"origin/rn-{NAME}"] if branch == "held" else [])
+    assert removed(run, host) == Gone(expected, [])
     assert not os.path.exists(run.worktree)
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
-    assert tracked(repo) == (branch == "held")
-    assert git(remote(repo), "for-each-ref", "--format=%(refname) %(objectname)") == held
+    assert not tracked(repo)
+    assert branches(repo) == others
+    assert gh_double.state(gh_state)["pull_request"] is None
     assert git(repo, "branch", "--show-current").strip() == "main"
     assert head(repo) == before
+
+
+def git_said(tmp_path: Any) -> str:
+    """The pattern of what git says, as one line, where origin's folder is gone."""
+    gone = re.escape(str(tmp_path / "gone.git"))
+    return (
+        f"fatal: '{gone}' does not appear to be a git repository fatal: Could not read from remote"
+        " repository. .*exists[.]"
+    )
 
 
 @pytest.mark.supports(
     "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
 )
-@pytest.mark.parametrize("failing", ["git", "gh-unreached", "gh-logged-out"])
-def test_a_cancelled_run_says_what_of_github_it_couldnt_check_and_why(
+@pytest.mark.parametrize(
+    "failing", ["git-unreached", "git-refused", "gh-unreached", "gh-logged-out", "gh-close"]
+)
+def test_a_cancelled_run_names_what_it_couldnt_remove_on_github_and_why(
     tmp_path: Any, host: Any, gh_state: str, failing: str
 ):
     """Given a run whose worktree is here, outside herdr, whose branch GitHub holds with its open
-    pull request, and git that can't reach origin, or gh that can't reach GitHub or has no login
+    pull request, and git that can't reach origin, or that origin refuses to delete a branch for,
+    or gh that can't reach GitHub, has no login, or loses GitHub once it read the pull request
     When removed is asked
-    Then it gives what it could check that GitHub holds, and, for what it couldn't, what that is
-    and what git or gh said, as one line; the worktree and the local branch rn-<name> are gone;
-    and the ref of origin's branch stays, as no one knows whether GitHub still holds it"""
+    Then it gives as removed on GitHub what it could remove, and, for what it couldn't, what that
+    is and what git or gh said, as one line; the worktree and the local branch rn-<name> are
+    gone; and the ref of origin's branch stays where git couldn't remove the branch"""
     repo = a_repository(tmp_path)
     run = cancelled_run(repo, gh_state, "held", "open")
-    if failing == "git":
+    if failing == "git-unreached":
         git(repo, "remote", "set-url", "origin", str(tmp_path / "gone.git"))
+    elif failing == "git-refused":
+        git(remote(repo), "config", "receive.denyDeletes", "true")
     elif failing == "gh-unreached":
         gh_double.unreached(gh_state)
-    else:
+    elif failing == "gh-logged-out":
         gh_double.logged_out(gh_state)
-    left = removed(run, host)
-    if failing == "git":
-        assert left.held == [PR]
-        [said] = left.unchecked
-        assert re.fullmatch(
-            f"the branch rn-{NAME} on GitHub, as git can't ask origin: fatal: "
-            f"'{re.escape(str(tmp_path / 'gone.git'))}' does not appear to be a git repository"
-            " fatal: Could not read from remote repository. .*exists[.]",
-            said,
-        ), said
     else:
-        record = gh_double.line(
-            gh_double.PR_VIEW if failing == "gh-unreached" else gh_double.AUTH,
-            "gh pr view can't reach GitHub"
-            if failing == "gh-unreached"
-            else "gh auth status finds no login",
+        gh_double.closes_unreached(gh_state)
+    gone = removed(run, host)
+    branch = f"the branch rn-{NAME} on GitHub, as git can't "
+    if failing.startswith("git"):
+        assert gone.removed == [PR]
+        [said] = gone.kept
+        why = (
+            f"ask origin: {git_said(tmp_path)}"
+            if failing == "git-unreached"
+            else "delete it: .*deletion prohibited.*"
         )
-        said = record["stderr"].strip()
-        assert left == Left(
-            [f"origin/rn-{NAME}"],
-            [f"the pull request of rn-{NAME} on GitHub, as gh can't ask GitHub: {said}"],
+        assert re.fullmatch(re.escape(branch) + why, said), said
+        assert tracked(repo)
+    else:
+        record = {
+            "gh-unreached": (gh_double.PR_VIEW, "gh pr view can't reach GitHub"),
+            "gh-logged-out": (gh_double.AUTH, "gh auth status finds no login"),
+            "gh-close": (gh_double.PR_CLOSE, "gh pr close can't reach GitHub"),
+        }[failing]
+        said = gh_double.line(*record)["stderr"].strip()
+        what = (
+            f"the pull request {PR} on GitHub, as gh can't close it: {said}"
+            if failing == "gh-close"
+            else f"the pull request of rn-{NAME} on GitHub, as gh can't ask GitHub: {said}"
         )
+        assert gone == Gone([f"origin/rn-{NAME}"], [what])
+        assert not tracked(repo)
     assert not os.path.exists(run.worktree)
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
-    assert tracked(repo)
 
 
 @pytest.mark.supports(
@@ -728,7 +755,7 @@ def test_a_cancelled_run_inside_herdr_has_herdr_remove_its_worktree(
     else:
         run = cancelled_run(repo, gh_state)
     before = len(herdr.asked)
-    assert removed(run, herdr) == Left([], [])
+    assert removed(run, herdr) == Gone([], [])
     opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", run.worktree, "--no-focus"]
     workspace = "w1Q" if made_by == "herdr" else "w1J"
     remove = ["herdr", "worktree", "remove", "--workspace", workspace, "--force"]

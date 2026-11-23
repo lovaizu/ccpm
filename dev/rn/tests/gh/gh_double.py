@@ -1,7 +1,7 @@
 """The double of gh that rn's cases run in its place, as rn's Test strategy says under Integration
 testing and Contract testing. It answers each command of gh that rn's code runs from one line of a
 record in recorded/: gh 2.102.1's runs for `gh auth status`, `gh pr view`, with the state of a
-pull request that is open, closed, or merged, and where gh can't reach GitHub, and
+pull request that is open, closed, or merged, and where gh can't reach GitHub, `gh pr close`, and
 `gh pr checks --watch`, and gh's manual for `gh pr create`, as the plugin guide's Each result of a
 double from a record says. A command that no record holds fails with exit 1, naming itself, so
 that a body that runs it shows the gap.
@@ -27,6 +27,7 @@ RECORDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recorded")
 AUTH = "gh-2.102.1-auth.jsonl"
 PR_VIEW = "gh-2.102.1-pr-view.jsonl"
 PR_CHECKS = "gh-2.102.1-pr-checks.jsonl"
+PR_CLOSE = "gh-2.102.1-pr-close.jsonl"
 MANUAL = "gh-manual.jsonl"
 # The file of the double's state in the folder it's given.
 STATE = "gh-state.json"
@@ -45,6 +46,7 @@ def line(record: str, event: str) -> dict[str, Any]:
 
 def state(folder: str) -> dict[str, Any]:
     """The double's state in the folder: `logged_in`, `reached`, whether gh reaches GitHub,
+    `closes`, whether it reaches GitHub to close a pull request once it read it,
     `pull_request` (the URL of the open one, or None), `earlier`, an earlier pull request of the
     branch that isn't open, as its `url` and `state`, `CLOSED` or `MERGED`, or None, `checks`,
     what the CI's checks found, `passed`, `failed`, or `none`, and `asked`, each gh command it was
@@ -54,6 +56,7 @@ def state(folder: str) -> dict[str, Any]:
         return {
             "logged_in": True,
             "reached": True,
+            "closes": True,
             "pull_request": None,
             "earlier": None,
             "checks": "passed",
@@ -81,6 +84,14 @@ def unreached(folder: str) -> None:
     """Sets the double's state to GitHub out of reach, as gh finds where the network is down."""
     kept = state(folder)
     kept["reached"] = False
+    keep(folder, kept)
+
+
+def closes_unreached(folder: str) -> None:
+    """Sets the double's state to GitHub out of reach once gh has read the pull request, so that
+    `gh pr close` fails as where the network goes down."""
+    kept = state(folder)
+    kept["closes"] = False
     keep(folder, kept)
 
 
@@ -116,27 +127,59 @@ def answer(argv: Sequence[str], folder: str) -> tuple[int, str, str]:
         given = line(AUTH, "gh auth status finds no login")
     elif words == ["auth", "status"]:
         given = line(AUTH, "gh auth status finds the login")
-    elif words == ["pr", "view"] and not kept["reached"]:
-        given = line(PR_VIEW, "gh pr view can't reach GitHub")
-    elif words == ["pr", "view"] and "state" in _fields(argv):
-        given = _state(kept, argv)
-    elif words == ["pr", "view"] and kept["pull_request"] is None and kept["earlier"] is None:
-        given = line(PR_VIEW, "gh pr view finds no pull request for the branch")
-        given["stderr"] = given["stderr"].replace("no-such-branch-rn", _branch(argv))
-    elif words == ["pr", "view"]:
-        given = line(PR_VIEW, "gh pr view gives the pull request with its comments")
-        shown = json.loads(given["stdout"])
-        shown.update(url=kept["pull_request"] or kept["earlier"]["url"], comments=[])
-        given["stdout"] = json.dumps(shown) + "\n"
-    elif words == ["pr", "create"] and kept["pull_request"] is None:
-        given = line(MANUAL, "gh pr create prints the URL of the pull request")
-        kept["pull_request"] = given["stdout"].strip()
-    elif words == ["pr", "checks"] and kept["pull_request"] is not None:
-        given = _checked(kept["checks"])
     else:
-        given: dict[str, Any] = {"exit": 1, "stderr": f"gh double: no record of {' '.join(argv)}\n"}
+        given = _ANSWERS.get(" ".join(words), _unrecorded)(kept, argv)
     keep(folder, kept)
     return int(given["exit"]), str(given.get("stdout", "")), str(given.get("stderr", ""))
+
+
+def _unrecorded(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
+    """What the double gives for a command that no record holds: exit 1, naming it."""
+    return {"exit": 1, "stderr": f"gh double: no record of {' '.join(argv)}\n"}
+
+
+def _viewed(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
+    """What `gh pr view` gives, by the fields that `--json` names."""
+    if not kept["reached"]:
+        return line(PR_VIEW, "gh pr view can't reach GitHub")
+    if "state" in _fields(argv):
+        return _state(kept, argv)
+    if kept["pull_request"] is None and kept["earlier"] is None:
+        given = line(PR_VIEW, "gh pr view finds no pull request for the branch")
+        given["stderr"] = given["stderr"].replace("no-such-branch-rn", _branch(argv))
+        return given
+    given = line(PR_VIEW, "gh pr view gives the pull request with its comments")
+    shown = json.loads(given["stdout"])
+    shown.update(url=kept["pull_request"] or kept["earlier"]["url"], comments=[])
+    given["stdout"] = json.dumps(shown) + "\n"
+    return given
+
+
+def _closed(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
+    """What `gh pr close <URL>` gives, closing the open pull request of the URL."""
+    if not (kept["reached"] and kept["closes"]):
+        return line(PR_CLOSE, "gh pr close can't reach GitHub")
+    if kept["pull_request"] not in argv[3:]:
+        return _unrecorded(kept, argv)
+    kept["earlier"] = {"url": kept["pull_request"], "state": "CLOSED"}
+    kept["pull_request"] = None
+    return line(PR_CLOSE, "gh pr close closes the open pull request")
+
+
+def _created(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
+    """What `gh pr create` gives, opening the pull request where none is open."""
+    if kept["pull_request"] is not None:
+        return _unrecorded(kept, argv)
+    given = line(MANUAL, "gh pr create prints the URL of the pull request")
+    kept["pull_request"] = given["stdout"].strip()
+    return given
+
+
+def _checks(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
+    """What `gh pr checks --watch` gives of the open pull request's CI."""
+    if kept["pull_request"] is None:
+        return _unrecorded(kept, argv)
+    return _checked(kept["checks"])
 
 
 def _state(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
@@ -226,3 +269,7 @@ def program(bin_folder: str, state_folder: str) -> str:
         )
     os.chmod(path, 0o755)
     return bin_folder
+
+
+# What the double gives for each command of gh but `gh auth status`, by its two words after `gh`.
+_ANSWERS = {"pr view": _viewed, "pr close": _closed, "pr create": _created, "pr checks": _checks}

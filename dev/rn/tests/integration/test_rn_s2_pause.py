@@ -14,6 +14,7 @@ import os
 import pytest
 import rn_files
 from claude_code import Agent, Conversation
+from gh import gh_double
 from repo_files import git
 from rn_bench import (
     Bench,
@@ -297,7 +298,7 @@ def asked_to_cancel(b: Bench) -> tuple[Conversation, Agent]:
     taken(b, c, ground="The user asks to cancel the run.")
     ended(
         c,
-        "Cancel the run and remove its work on this machine?\n"
+        "Cancel the run and remove its work on this machine and on GitHub?\n"
         "Removing it can't be undone, so I'll check before I do.",
     )
     return c, generator
@@ -309,21 +310,22 @@ def test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its
     orchestrator's question whether to cancel it
     When the user answers yes, and the orchestrator, at `take`, stops the generator, runs
     repository.py cancel, reports `cancelled`, and ends its turn
-    Then cancel prints origin's branch and the pull request, which it leaves to the user; the run's
-    worktree and its local branch are gone, origin's branch stays; and a later turn of another
-    task ends with no step of rn's"""
+    Then cancel prints the pull request and origin's branch, which it removed on GitHub; the run's
+    worktree, its local branch, and origin's branch are gone, the pull request is closed; and a
+    later turn of another task ends with no step of rn's"""
     c, generator = asked_to_cancel(b)
     pr = b.tree()["context"]["pr"]
     c.type("Yes")
     stopped_role = c.task_stop(generator)
     assert not stopped_role.blocked, stopped_role.said
     printed = ran(c, b.script("repository", "cancel", b.run))
-    assert printed.splitlines() == [f"origin/rn-{b.name()}", pr]
+    assert printed.splitlines() == [pr, f"origin/rn-{b.name()}"]
     reported(c, "cancelled")
-    ended(c, f"Cancelled. GitHub still holds its branch and {pr}; remove them if you want.")
+    ended(c, f"Cancelled. Its work here is removed, and on GitHub its branch and {pr}.")
     assert not os.path.exists(b.worktree)
     assert git(b.repo, "branch", "--list", f"rn-{b.name()}").strip() == ""
-    assert f"rn-{b.name()}" in git(b.origin, "branch", "--list")
+    assert f"rn-{b.name()}" not in git(b.origin, "branch", "--list")
+    assert gh_double.state(b.gh)["pull_request"] is None
     free(c)
 
 

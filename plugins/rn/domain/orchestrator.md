@@ -130,10 +130,10 @@ origin names no default branch, as no run stands yet.
          does. Record `take`, take each other step, and end the turn on that question.
          Where the user then confirms, stop each of rn's roles still running by TaskStop, and run
          `python3 <rn's folder>/scripts/repository.py cancel <run>`. It removes the run's worktree
-         and its local branch, and prints each thing that GitHub holds of the run, as GitHub
-         itself answers, such as its branch on origin and its open pull request. Leave those to
-         the user, as only they know whether anyone else uses them. On stderr, it says each thing
-         that it couldn't ask GitHub of, and why, such as with no network. Once cancel gives 0,
+         and its local branch, then, on GitHub, closes the run's open pull request and deletes its
+         branch, and prints each thing that it removed there. On stderr, it says each thing on
+         GitHub that it couldn't ask of or remove, and why, such as with no network. Once cancel
+         gives 0,
          run `lane-result cancelled`, and end the turn on the cancel's report. Where cancel gives
          1 or 2, tell the user what stopped it, run `lane-result blocked`, and end the turn, as
          the run stays. Where the user declines, take it as an answer that settles no point, and
@@ -285,11 +285,11 @@ The walkthrough doesn't reach the messages below. Write each in its way, from th
 - The pause's report: `Paused. Its work so far is pushed.` and `Type /rn:up in any conversation to
   go on.`
 - The cancel question, before anything is removed: `I'll cancel the run and remove its work on this
-  machine, which can't be undone.` and `Shall I cancel it?`
-- The cancel's report, once cancel gave 0: `Cancelled. Its work on this machine is removed.`; where
-  cancel printed anything, `GitHub still holds <each thing that cancel printed>. Remove it there if
-  you no longer need it.`; and where cancel said what it couldn't check, `I couldn't check whether
-  GitHub still holds <each thing it couldn't check>, as <why, in the words that cancel gave>.`
+  machine and on GitHub, which can't be undone.` and `Shall I cancel it?`
+- The cancel's report, once cancel gave 0: `Cancelled. Its work on this machine is removed.` Where
+  cancel printed anything, add `On GitHub, I removed <each thing that cancel printed>.` Where it
+  said what it couldn't remove, add `I couldn't remove <each such thing> on GitHub, as <why, in
+  the words that cancel gave>. Remove it there if you no longer need it.`
 - The pick-up: `Picking up where it stopped.`, then the point or the sign-off that waits.
 - No run to pick up: `I find no run to pick up here. Which run do you want to pick up?`
 - A blocker: what stopped, in the words that a script or Lane gave, what the user does to mend it,

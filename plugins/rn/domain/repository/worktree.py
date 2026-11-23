@@ -1,8 +1,8 @@
 """Decides how a run's worktree comes to be, is found again, and goes: made with its branch from
 the default branch that origin's HEAD names, with its design tree; found from the runs' branches
 whose committed design tree holds work left, its worktree made again where none lies; and removed
-with its local branch where the user cancels the run, leaving to the user what GitHub holds, as
-GitHub itself answers; and, inside herdr, made, opened, and removed through herdr, so that the run
+with its local branch, and on GitHub with its branch and its open pull request, where the user
+cancels the run; and, inside herdr, made, opened, and removed through herdr, so that the run
 shows as a herdr workspace while it lies here."""
 
 from __future__ import annotations
@@ -165,34 +165,38 @@ def found(repository: str, host: Host) -> RunPlace | None:
     return run
 
 
-class Left(NamedTuple):
-    """What of a cancelled run GitHub holds, as GitHub answered: `held`, each thing it holds, and
-    `unchecked`, each thing that rn couldn't ask GitHub of, with why."""
+class Gone(NamedTuple):
+    """What a cancel did of the run on GitHub: `removed`, each thing that it removed there, and
+    `kept`, each thing still there, or that it couldn't ask GitHub of, with why."""
 
-    held: list[str]
-    unchecked: list[str]
+    removed: list[str]
+    kept: list[str]
 
 
-def removed(run: RunPlace, host: Host) -> Left:
-    """Removes a run that the user cancels from this machine, and asks GitHub what it holds of it.
+def removed(run: RunPlace, host: Host) -> Gone:
+    """Removes a run that the user cancels, here and on GitHub.
 
     Takes: the run, and the host.
-    Gives: what of the run GitHub holds, which only the user removes, as GitHub itself answers, as
-    a ref here may outlive the branch it records: in `held`, `origin/rn-<name>` where
-    `git ls-remote` finds origin holding the branch, then the URL of the open pull request where
-    `gh pr view rn-<name>` gives one; in `unchecked`, for each of the two that git or gh couldn't
-    ask, such as with no network or no login, `the branch rn-<name> on GitHub, as git can't ask
-    origin: <what git said>` or `the pull request of rn-<name> on GitHub, as gh can't ask GitHub:
-    <what gh said>`, each one line. A pull request that gh gives closed or merged, such as an
-    earlier run's of the same branch's name, isn't held.
+    Gives: what it did of the run on GitHub, as GitHub itself answers, as a ref here may outlive
+    the branch it records: in `removed`, the URL of the pull request that it closed, where
+    `gh pr view rn-<name>` gives one open, then `origin/rn-<name>`, where `git ls-remote` finds
+    origin holding the branch and it deleted it; in `kept`, for each that git or gh couldn't ask
+    or remove, such as with no network or no login, `the pull request of rn-<name> on GitHub, as
+    gh can't ask GitHub: <what gh said>`, `the pull request <URL> on GitHub, as gh can't close
+    it: <what gh said>`, `the branch rn-<name> on GitHub, as git can't ask origin: <what git
+    said>`, or `the branch rn-<name> on GitHub, as git can't delete it: <what git said>`, each
+    one line. A pull request that gh gives closed or merged, such as an earlier run's of the same
+    branch's name, is left as it is.
     Changes: removes the run's worktree, with each change in it that isn't committed, and then its
-    local branch `rn-<name>`; then, where origin holds no branch `rn-<name>`, deletes the
-    repository's ref of origin's branch, so that no later read meets it; the user's own worktree
-    and branch stay as they were. Inside herdr, has herdr open the worktree's workspace, leaving
-    the focus where it is, and remove the worktree of the workspace it gives, as herdr removes a
-    worktree by its workspace, which it closes.
-    Refuses: CantRun where git or herdr fails to remove the worktree or the branch, with what it
-    said, the branch then kept where the worktree stays.
+    local branch `rn-<name>`; then closes the branch's open pull request, before the branch goes,
+    as GitHub closes it by itself once its branch is deleted; then deletes origin's branch
+    `rn-<name>` and the repository's ref of it, or that ref alone where origin holds no such
+    branch, so that no later read meets it; the user's own worktree and branch stay as they were.
+    Inside herdr, has herdr open the worktree's workspace, leaving the focus where it is, and
+    remove the worktree of the workspace it gives, as herdr removes a worktree by its workspace,
+    which it closes.
+    Refuses: CantRun where git or herdr fails to remove the worktree or the branch here, with what
+    it said, the branch then kept where the worktree stays.
     """
     top = run.repository
     if _inside_herdr():
@@ -205,38 +209,49 @@ def removed(run: RunPlace, host: Host) -> Left:
         remove = ["git", "worktree", "remove", "--force", run.worktree]
         checked(host, remove, top, CantRun, "git can't remove the run's worktree")
     checked(host, ["git", "branch", "-D", run.branch], top, CantRun, "git can't delete the branch")
-    left = Left([], [])
-    _branch_left(run, host, left)
-    _pull_request_left(run, host, left)
-    return left
+    gone = Gone([], [])
+    _pull_request_closed(run, host, gone)
+    _branch_deleted(run, host, gone)
+    return gone
 
 
-def _branch_left(run: RunPlace, host: Host, left: Left) -> None:
-    """Adds to what's left whether origin holds the run's branch, as `git ls-remote` asks it, and
-    deletes the repository's ref of origin's branch where origin holds none."""
+def _pull_request_closed(run: RunPlace, host: Host, gone: Gone) -> None:
+    """Closes the run's branch's open pull request, as `gh pr view` gives it, where there's one;
+    gh takes an open one of the branch before any closed or merged one."""
+    asked = host(["gh", "pr", "view", run.branch, "--json", "state,url"], run.repository)
+    if asked.code != 0 and not asked.err.startswith("no pull requests found"):
+        said = _line(asked.out + asked.err)
+        gone.kept.append(
+            f"the pull request of {run.branch} on GitHub, as gh can't ask GitHub: {said}"
+        )
+        return
+    shown = json.loads(asked.out) if asked.code == 0 else {"state": None}
+    if shown["state"] != "OPEN":
+        return
+    closed = host(["gh", "pr", "close", shown["url"]], run.repository)
+    if closed.code == 0:
+        gone.removed.append(shown["url"])
+    else:
+        said = _line(closed.out + closed.err)
+        gone.kept.append(f"the pull request {shown['url']} on GitHub, as gh can't close it: {said}")
+
+
+def _branch_deleted(run: RunPlace, host: Host, gone: Gone) -> None:
+    """Deletes origin's branch of the run where `git ls-remote` finds it, and the repository's ref
+    of origin's branch where origin holds none."""
     head = f"refs/heads/{run.branch}"
     asked = host(["git", "ls-remote", "--heads", "origin", head], run.repository)
+    what = f"the branch {run.branch} on GitHub, as git can't"
     if asked.code != 0:
-        said = _line(asked.out + asked.err)
-        left.unchecked.append(f"the branch {run.branch} on GitHub, as git can't ask origin: {said}")
+        gone.kept.append(f"{what} ask origin: {_line(asked.out + asked.err)}")
     elif head in [each.partition("\t")[2] for each in asked.out.splitlines()]:
-        left.held.append(f"origin/{run.branch}")
+        deleted = host(["git", "push", "-q", "origin", "--delete", head], run.repository)
+        if deleted.code == 0:
+            gone.removed.append(f"origin/{run.branch}")
+        else:
+            gone.kept.append(f"{what} delete it: {_line(deleted.out + deleted.err)}")
     else:
         host(["git", "update-ref", "-d", f"refs/remotes/origin/{run.branch}"], run.repository)
-
-
-def _pull_request_left(run: RunPlace, host: Host, left: Left) -> None:
-    """Adds to what's left the run's branch's open pull request, as `gh pr view` gives it, where
-    there's one; gh takes an open one of the branch before any closed or merged one."""
-    asked = host(["gh", "pr", "view", run.branch, "--json", "state,url"], run.repository)
-    if asked.code == 0:
-        shown = json.loads(asked.out)
-        if shown["state"] == "OPEN":
-            left.held.append(shown["url"])
-    elif not asked.err.startswith("no pull requests found"):
-        said = _line(asked.out + asked.err)
-        what = f"the pull request of {run.branch} on GitHub, as gh can't ask GitHub: {said}"
-        left.unchecked.append(what)
 
 
 def _line(said: str) -> str:

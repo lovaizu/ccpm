@@ -44,10 +44,10 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `find`: 0 printing the folder from `cwd` of the run that `worktree.found` gives, its
       worktree made again where none lies, as a line, and nothing where there's none.
     - `pause <run>`: 0 printing the hash that `push.pause` gives.
-    - `cancel <run>`: 0 printing each thing of the run that GitHub holds, as `worktree.removed`
-      gives it once it removes the run, a line each, and nothing where there's none; and on
-      stderr `repository.py: can't check <what, and why>` for each thing that it couldn't ask
-      GitHub of, a line each.
+    - `cancel <run>`: 0 printing each thing of the run that `worktree.removed` removed on GitHub
+      once it removes the run here, a line each, and nothing where there's none; and on stderr
+      `repository.py: can't remove <what, and why>` for each thing that it couldn't ask GitHub
+      of or remove there, a line each.
     - `put-up <run> <deliverable>`: 0 printing each link that `push.put_up` gives, a line each,
       and nothing where it gives none, the deliverable's
       last Round then marked as put up with its state, as `rounds.course.held` gives it from the
@@ -102,9 +102,9 @@ def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _cancel(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    left = worktree.removed(place.of_folder(cwd, given[0]), host)
-    said = "".join(f"repository.py: can't check {each}\n" for each in left.unchecked)
-    return 0, "".join(f"{each}\n" for each in left.held), said
+    gone = worktree.removed(place.of_folder(cwd, given[0]), host)
+    said = "".join(f"repository.py: can't remove {each}\n" for each in gone.kept)
+    return 0, "".join(f"{each}\n" for each in gone.removed), said
 
 
 def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
