@@ -6,6 +6,7 @@ developer on the model, as rn's Test strategy says; check.sh never runs them."""
 from __future__ import annotations
 
 import os
+import re
 from datetime import date
 
 import opus
@@ -57,6 +58,35 @@ def questions(printed: str) -> list:
     """Each line of what Claude Code printed that asks, as the README's walkthrough closes each
     question on its one line that asks."""
     return [each for each in printed.splitlines() if each.rstrip().endswith(("?", "？"))]
+
+
+# The most replies that the hearing takes before the goal is the user's: whom it's for, the goal,
+# and their summary, as the README's walkthrough asks them, with room for the languages and the
+# issues, which the orchestrator asks only where needed.
+HEARING = 5
+
+
+def answer(printed: str) -> str:
+    """What the walkthrough's user answers to the question that the reply asks: the first option
+    where it offers lettered options, as where to check, else yes, as each other question of the
+    hearing puts rn's own proposal to confirm."""
+    if re.search(r"^\s*a[.)] ", printed, re.MULTILINE):
+        return "a"
+    return "yes"
+
+
+def heard(room: Room) -> str:
+    """What Claude Code printed once the user answered each question of the hearing by what it
+    asks, until the run's design tree holds the goal by user, in a conversation in which they
+    typed /rn:on, then the walkthrough's words; fails where the goal isn't the user's within
+    HEARING replies."""
+    printed = requested(room)
+    tree = os.path.join(room.folder(name()), "design-tree.json")
+    for _ in range(HEARING):
+        printed = typed(room, answer(printed), more=True)
+        if rn_files.read_json(tree)["goal"]["by"] == "user":
+            return printed
+    raise AssertionError(f"the goal isn't the user's after {HEARING} answers: {printed}")
 
 
 def open_decisions(design_tree: dict) -> list:
@@ -181,11 +211,10 @@ def test_a_put_up_refused_for_gh_leaves_the_changelog_going_on(room: Room, run: 
 @pytest.mark.parametrize("run", RUNS)
 def test_a_goal_the_user_confirms_is_written_by_user(room: Room, run: int):
     """Given a conversation in which the user typed /rn:on, then the walkthrough's words
-    When the user answers yes to whom it's for, to the goal, and to their summary
+    When the user answers each question of the hearing by what it asks, such as yes to whom it's
+    for, to the goal, and to their summary
     Then the run's design tree holds the goal by user"""
-    requested(room)
-    for _ in range(3):
-        typed(room, "yes", more=True)
+    heard(room)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
     assert design_tree["goal"]["by"] == "user"
 
@@ -194,13 +223,10 @@ def test_a_goal_the_user_confirms_is_written_by_user(room: Room, run: int):
 @pytest.mark.parametrize("run", RUNS)
 def test_after_the_goal_the_user_is_asked_at_most_one_point(room: Room, run: int):
     """Given a conversation in which the user typed /rn:on, then the walkthrough's words
-    When the user answers yes to whom it's for, to the goal, and to their summary
-    Then the last reply asks at most one question, and the design tree holds at most one decision
-    open"""
-    requested(room)
-    for _ in range(2):
-        typed(room, "yes", more=True)
-    printed = typed(room, "yes", more=True)
+    When the user answers each question of the hearing by what it asks, until the goal is theirs
+    Then the reply to that answer asks at most one question, and the design tree holds at most one
+    decision open"""
+    printed = heard(room)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
     assert len(questions(printed)) <= 1
     assert len(open_decisions(design_tree)) <= 1
