@@ -32,7 +32,8 @@
      "decisions": [
       {
        "about": "whom the goal is for",
-       "decided": null
+       "decided": "私が指示してaiが段取りする 利用者はai (The user instructs, and an AI arranges the work: the one who uses overnight is an AI.)",
+       "by": "user"
       },
       {
        "about": "what those people can do once it's achieved",
@@ -84,7 +85,7 @@
    "do": "decide",
    "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
    "condition": "N1",
-   "about": "whom the goal is for"
+   "about": "what those people can do once it's achieved"
   }
  ],
  "steps": []
