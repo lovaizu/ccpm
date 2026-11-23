@@ -93,7 +93,8 @@
    "inputs": [
     "dev/overnight/product-vision.md",
     "plugins/overnight/README.md",
-    "dev/overnight/architecture.md"
+    "dev/overnight/architecture.md",
+    "plugins/overnight"
    ],
    "status": "open",
    "necessary_conditions": [
@@ -232,14 +233,14 @@
  "work": [],
  "steps": [
   {
-   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
+   "settles": "誰が何のために使うか",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "\u3069\u3046\u4f7f\u3046\u304b",
+   "settles": "どう使うか",
    "deliverables": [
     "plugins/overnight/README.md",
     "plugins/overnight/CHANGELOG.md"
@@ -247,14 +248,14 @@
    "signoff": false
   },
   {
-   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
+   "settles": "どんな部品でどう動くか",
    "deliverables": [
     "dev/overnight/architecture.md"
    ],
    "signoff": false
   },
   {
-   "settles": "\u90e8\u54c1\u304c\u304b\u307f\u5408\u3046\u304b",
+   "settles": "部品がかみ合うか",
    "deliverables": [
     "plugins/overnight",
     "dev/overnight/tests"
@@ -262,7 +263,7 @@
    "signoff": false
   },
   {
-   "settles": "\u52d5\u304f\u3082\u306e\u304c\u3067\u304d\u305f\u304b",
+   "settles": "動くものができたか",
    "deliverables": [
     "plugins/overnight/scripts",
     ".claude-plugin/marketplace.json"
