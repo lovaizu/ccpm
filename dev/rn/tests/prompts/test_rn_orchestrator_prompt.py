@@ -95,7 +95,7 @@ def test_the_words_after_rn_on_make_the_run_and_ask_whom_its_goal_is_for(room: R
     assert [each["kind"] for each in design_tree["deliverables"]] == ["design-tree"]
     assert not os.path.exists(os.path.join(room.folder(name()), "rounds"))
     assert len(open_decisions(design_tree)) == 1
-    assert printed.count("(I recommend:") == 1
+    assert printed.count("Recommended:") == 1
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
@@ -195,5 +195,5 @@ def test_after_the_goal_the_user_is_asked_at_most_one_point(room: Room, run: int
         typed(room, "yes", more=True)
     printed = typed(room, "yes", more=True)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
-    assert printed.count("(I recommend") <= 1
+    assert printed.count("Recommended:") + printed.count("(I recommend") <= 1
     assert len(open_decisions(design_tree)) <= 1

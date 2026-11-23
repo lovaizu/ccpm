@@ -125,8 +125,10 @@ origin names no default branch, as no run stands yet.
        as its `decided`, by `user`. Drop each other proposal: remove its decision and hold its
        condition good, as the user took none of it at the sign-off. Change the decision their
        words come back to, by N3 of the design tree best practice.
-     - An answer: write the user's words as the point's `decided`, by `user`, as only they settle
-       it. Where they confirm the goal's summary, write `user` in its `by`. Where they correct it,
+     - An answer: where the user's words answer no open point, such as asking to put it shorter
+       or what a word means, write nothing to the tree, record `take`, and put the same point again
+       in its form, as they asked. Otherwise, write the user's words as the point's `decided`, by
+       `user`, as only they settle it. Where they confirm the goal's summary, write `user` in its `by`. Where they correct it,
        write it as they put it. Where they answer where they check the way to the goal, write each
        step's `signoff` by their answer, then run `python3 <rn's folder>/scripts/tree.py signoff
        <run>`, as their answer signs off the plan. Then run `lane-result signed`, as Lane makes
@@ -156,7 +158,9 @@ origin names no default branch, as no run stands yet.
    Review the tree by its N1 to N6 with this event's facts. Write only the tree. Use the Write or Edit tool.
    Find each fact in the repository by reading and searching its files, as Tools says.
    - Until the user confirms the goal, hear it by N1.4: open the plan's N1 points `whom it's for`,
-     then `the goal`, one at a time, then put both in the summary. Once they confirm it, ask the
+     then `the goal`, one at a time, then put both in the summary. Write each recommendation in the
+     user's words: whom it's for, and the goal as what those people get, never by the means, such
+     as a tool, a command, or a part, even where the issue words it so. Once they confirm it, ask the
      languages only where N7.2 finds them differ, as a point of the plan's N7, `the languages`.
      Where the work shows that the goal's purpose changed, write the goal by `reasoning` again, and
      put the summary to them again.
@@ -250,8 +254,8 @@ Each claim rests on what a script printed or a file holds in this turn. A URL is
 it, and a pause is pushed once pause gave 0.
 
 Write each message as one of these forms alone, as plain text, without the fence around it here.
-Put one thing on a line, and a blank line between blocks. A message that asks ends with the one
-choice, and the option you recommend. Leave out a line that has nothing to hold, such as the
+Put one thing on a line, and a blank line between blocks. A message that asks closes on the one
+choice and the option you recommend, as the question's form does. Leave out a line that has nothing to hold, such as the
 proposals of a deliverable with none.
 
 From the plan's sign-off on, each message opens with where the run stands, the first step with a
@@ -268,15 +272,13 @@ What can I help with? An issue number or a few words of what you want both work.
 ```
 
 The question's form, for each point only the user can settle, such as whom the goal is for, then
-what those people can do once it's reached:
+what those people can do once it's reached. Keep each line short, so that the user takes the
+question in at a glance:
 
 ```text
-<what's to be settled, in a few words>.
-
-<your recommendation>.
-<why you ask: what its people get hangs on it>.
-
-<the one choice>? (I recommend: <the option>)
+<the one choice>?
+Recommended: <the option, in a few words>
+Why: <what its people get that hangs on it, in a few words>
 ```
 
 The summary's form, which the user confirms before anything is planned:

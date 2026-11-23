@@ -11,6 +11,7 @@
 - You sign off only the deliverables of the steps you chose to check. Each other deliverable is done once rn's evaluators find it good, or its remakes run out, and what's still short comes to you as proposals in rn's last message.
 - Once each step is done, an AI new to the work checks the pull request whole for rn: that it reaches your goal, agrees with the rest of the repository, such as its README and CHANGELOG, and holds nothing extra, and that CI passes. rn removes a stray file itself, sends each other problem back to be remade, and then proposes the merge with the results.
 - rn no longer marks the pull request ready. It stays a draft until you mark it ready and merge it.
+- rn asks each point in three short lines: the question, what it recommends, and why. Where your reply answers no point, such as asking to put it shorter, rn asks the same point again as you asked. It recommends whom the work is for and the goal in your words, as what those people get, never by the means.
 
 ### Added
 
