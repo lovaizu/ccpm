@@ -14,12 +14,12 @@
   "pr": null
  },
  "goal": {
-  "decided": "The user stacks tasks and has an AI work on them through the night, the work resumes once the usage limit lifts, and in the morning the results are checked and taken in. Once it's achieved, an AI stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in.",
+  "decided": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
   "by": "reasoning"
  },
  "deliverables": [
   {
-   "name": "The user stacks tasks and has an AI work on them through the night, the work resumes once the usage limit lifts, and in the morning the results are checked and taken in. Once it's achieved, an AI stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in.",
+   "name": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
    "path": ".rn/20261124-overnight-claude-p-queue/design-tree.json",
    "kind": "design-tree",
    "inputs": [],
@@ -36,7 +36,7 @@
       },
       {
        "about": "What its people can do once the goal is achieved",
-       "decided": "An AI stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in.",
+       "decided": "An AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
        "by": "user"
       }
      ]
