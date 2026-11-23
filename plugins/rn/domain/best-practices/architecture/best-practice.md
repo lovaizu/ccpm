@@ -172,15 +172,14 @@ Does Test strategy give, in its table alone, only the checks that the product's 
 A failure that no test looks for reaches the users unseen, and a case's pass or fail decides the work only where its criterion is set before anyone writes it. Where a result varies from run to run, as a prompt's does, a criterion passes or fails by chance, so a benchmark measures it and a person decides. A row for every check of the guide decides nothing for most of them, so Test strategy holds only the types the product's purpose needs.
 
 1. *While deciding.* Read [the test strategy guide](test-strategy-guide.md) to its end. The trace: `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/architecture/test-strategy-guide.md` read to its end.
-2. *While deciding.* Take each check's test target from the guide. Unit tests try the parts against their contracts, each prompt among them. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks.
+2. *While deciding.* Take each check's test target from the guide. Unit tests try the parts against their contracts. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks.
 3. *While deciding.* Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write a row for each check picked.
-4. *While deciding.* Make each check a benchmark where its test's path runs a prompt, as the guide's rule says, and each other check as the guide gives it.
-5. *While deciding.* Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that waits on another's schedule, such as a new version of the host, would hold up the work.
-6. *While deciding.* Take each quality's criterion that the guide recommends, or the one that the architecture the product builds on sets. Change it only where the product can't meet it, or a key result needs more, and say why in the row.
-7. *While deciding.* For each benchmark, name what it measures, such as a key result or each case's results over several runs of a prompt. Set no criterion, as a person judges from the results.
-8. *While deciding.* Set how many times a benchmark runs each case by its first runs: add runs until one more no longer changes what the results show, such as the mean of a key result by a step of its measure, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it.
-9. *While deciding.* For the trace of the architecture, set as the criterion that every element of this document, each story, principle item, component, and data, has an integration test, and that every test names an element or a case one level up that exists.
-10. *While making.* Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide or the prompt rule makes it, and when it runs as the guide's rule of timing gives it.
+4. *While deciding.* Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that waits on another's schedule, such as a new version of the host, would hold up the work.
+5. *While deciding.* Take each quality's criterion that the guide recommends, or the one that the architecture the product builds on sets. Change it only where the product can't meet it, or a key result needs more, and say why in the row.
+6. *While deciding.* For each benchmark, name what it measures, such as a key result. Set no criterion, as a person judges from the results.
+7. *While deciding.* Set how many times a benchmark runs each case by its first runs: add runs until one more no longer changes what the results show, such as the mean of a key result by a step of its measure, since the AI's variance shows only across runs. Where the product can't run yet, write this rule in place of the number, for the first run to set it.
+8. *While deciding.* For the trace of the architecture, set as the criterion that every element of this document, each story, principle item, component, and data, has an integration test, and that every test names an element or a case one level up that exists.
+9. *While making.* Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide gives it, and when it runs as the guide's rule of timing gives it.
 
 ### N13
 
@@ -196,11 +195,11 @@ A skeleton of the parts and test cases through it, made from the document before
 
 Does each thing that the document says the product does rest on a part that a unit or integration test can check?
 
-A test that runs the product whole is slow and few, and for a product that holds a prompt it's a walkthrough run that a developer reads, so only the lower levels show what each change does, and a thing that only a prompt holds varies from run to run, where only many runs on the model show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.
+A test that runs the product whole is slow and few, and for a product that holds a prompt it's a walkthrough run that a developer reads, so only the lower levels show what each change does, and a thing that only a prompt holds shows only in that run. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.
 
 1. *While deciding.* For each thing the document says the product does, name the part that holds it.
-2. *While deciding.* Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components.
-3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and measure it by the prompt's unit tests on the model, as N12.8 sets.
+2. *While deciding.* Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a hook, and draw that part in Components.
+3. *While deciding.* Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the walkthrough run of the test strategy guide.
 
 ### N15
 
@@ -210,7 +209,7 @@ A developer who doubts a decision and can't see what it was for may undo it and 
 
 1. *While deciding.* For each view, take each decision that a story or principle item rests on, such as a technology, a tool, or the form of a file that two parts share, and name the story or principle item that it carries out.
 2. *While making.* Write each under its view's Strategies in one sentence, tagged in brackets with that story or principle item, such as `[P1.1]`, then `Intent:` with its purpose alone, with no means and no key result's ID.
-3. *While making.* State a decision that the implementation spells out item by item as its policy, such as Lane applied to every activity of every role's steps that it can hold, since a list goes untrue at the next change.
+3. *While making.* State a decision that the implementation spells out item by item as its policy, such as each step that has one right result done by a script, since a list goes untrue at the next change.
 4. *While making.* Leave out Strategies where the view takes no decision.
 
 ### N16

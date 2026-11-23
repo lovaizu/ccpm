@@ -105,7 +105,7 @@ A sentence that makes one point, with the actor as its subject, reads one way fo
 
 1. *While making.* For each sentence, count the points it makes, and split it into one sentence for each, such as `The script reads the record and, if it's complete, ends the run.` into `The script reads the record. If the record is complete, the script ends the run.`
 2. *While making.* Ask who acts, make the actor the subject, and follow it with a verb that carries the action, such as `The guard checks the record.` in place of `The record is checked.`
-3. *While making.* Where the document's language lets a sentence drop its subject, as Japanese does, write the subject wherever the sentences before it leave the reader more than one actor to take, as 公用文作成の考え方 asks, such as `rn は` before a sentence that follows one about Lane.
+3. *While making.* Where the document's language lets a sentence drop its subject, as Japanese does, write the subject wherever the sentences before it leave the reader more than one actor to take, as 公用文作成の考え方 asks, such as `rn は` before a sentence that follows one about the user.
 4. *While making.* Read the predicate of each sentence against its subject, and where the two don't fit, rewrite the predicate, such as `この設定の目的は速く動かすことです` in place of `この設定の目的は速く動かすためです`.
 5. *While making.* For each pronoun, such as `it`, `they`, or `this`, ask whether it could refer to two nouns, or stands more than five words after its noun, and if so, write the noun.
 6. *While making.* Turn a noun made from a verb back into the verb, such as `make a decision` into `decide`.

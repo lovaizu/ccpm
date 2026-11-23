@@ -96,10 +96,6 @@
        },
        {
         "at": "make",
-        "text": "For a part that holds a prompt, write a case where its description says it acts and one where it says it doesn't, for each kind of request it's for, and decide by code each point of the result that its record shows."
-       },
-       {
-        "at": "make",
         "text": "Once an interface's cases are written, take each condition that its contract states and list the faults likely in a body that meets it: a bound one off, another element of several picked, a comparison turned around, and for or, a field left unread, and a refusal left out. Name for each the case that fails on it, and write a case where none does, with the result that the contract gives, since a fault that no case fails on is found only once the body is built, and a case written then comes from the code."
        }
       ]

@@ -344,15 +344,11 @@
        },
        {
         "at": "decide",
-        "text": "Take each check's test target from the guide. Unit tests try the parts against their contracts, each prompt among them. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks."
+        "text": "Take each check's test target from the guide. Unit tests try the parts against their contracts. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks."
        },
        {
         "at": "decide",
         "text": "Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write a row for each check picked."
-       },
-       {
-        "at": "decide",
-        "text": "Make each check a benchmark where its test's path runs a prompt, as the guide's rule says, and each other check as the guide gives it."
        },
        {
         "at": "decide",
@@ -364,7 +360,7 @@
        },
        {
         "at": "decide",
-        "text": "For each benchmark, name what it measures, such as a key result or each case's results over several runs of a prompt. Set no criterion, as a person judges from the results."
+        "text": "For each benchmark, name what it measures, such as a key result. Set no criterion, as a person judges from the results."
        },
        {
         "at": "decide",
@@ -376,7 +372,7 @@
        },
        {
         "at": "make",
-        "text": "Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide or the prompt rule makes it, and when it runs as the guide's rule of timing gives it."
+        "text": "Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide gives it, and when it runs as the guide's rule of timing gives it."
        }
       ]
      },
@@ -404,7 +400,7 @@
       "id": "N14",
       "about": "Components, Test strategy",
       "what": "Does each thing that the document says the product does rest on a part that a unit or integration test can check?",
-      "why": "A test that runs the product whole is slow and few, and for a product that holds a prompt it's a walkthrough run that a developer reads, so only the lower levels show what each change does, and a thing that only a prompt holds varies from run to run, where only many runs on the model show it. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.",
+      "why": "A test that runs the product whole is slow and few, and for a product that holds a prompt it's a walkthrough run that a developer reads, so only the lower levels show what each change does, and a thing that only a prompt holds shows only in that run. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.",
       "items": [
        {
         "at": "decide",
@@ -412,11 +408,11 @@
        },
        {
         "at": "decide",
-        "text": "Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a guard of the architecture the product builds on, and draw that part in Components."
+        "text": "Where only a prompt holds a rule that must hold on every run, give the rule to a part that a test can run, such as a hook, and draw that part in Components."
        },
        {
         "at": "decide",
-        "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and measure it by the prompt's unit tests on the model, as N12.8 sets."
+        "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the walkthrough run of the test strategy guide."
        }
       ]
      }
@@ -442,7 +438,7 @@
        },
        {
         "at": "make",
-        "text": "State a decision that the implementation spells out item by item as its policy, such as Lane applied to every activity of every role's steps that it can hold, since a list goes untrue at the next change."
+        "text": "State a decision that the implementation spells out item by item as its policy, such as each step that has one right result done by a script, since a list goes untrue at the next change."
        },
        {
         "at": "make",

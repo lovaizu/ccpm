@@ -2,7 +2,7 @@
 
 ## Goal tree
 
-- The developers learn from a test that runs the product whole, such as an E2E test, a performance test, or a benchmark of a prompt, what the product does, as each run ran as they meant and measured what their decision takes.
+- The developers learn from a test that runs the product whole, such as an E2E test or a performance test, what the product does, as each run ran as they meant and measured what their decision takes.
   - **C1** The test is built back from the decision that its report serves.
     - **N1** Does the report state the decision it serves, and give each value for it with the runs it's counted from and the place in each run's records? (Report)
     - **N2** Does each run keep, in a form a program reads, every record that a value of the report is counted or checked from, with what the run took? (Records)

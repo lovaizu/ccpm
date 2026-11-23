@@ -38,10 +38,10 @@ guide links them and copies nothing:
   breaks what worked shows at once. This rerun is what SWEBOK and CTFL call regression testing, so
   it has no row of its own.
 - Prompts\
-  A test that runs a prompt is a benchmark. The model's result varies from run to run, so a
-  criterion would pass or fail by chance. The test runs each case several times, and a person judges
-  from the results. It runs again on each new version of the model, as CT-AI's drift testing does.
   A product that holds a prompt is run whole by a walkthrough run, once its integration tests pass.
+  A test that runs a prompt on fixed scenes meets only the cases that its writer set up, and can't
+  show whether the AI judges each new fact by the prompt's goal, so the walkthrough run alone tries
+  the prompt.
   The developer's main conversation runs the README walkthrough's request on the model, with the
   product as it ships. It types each of the people's words, and reads each reply against the
   product vision. It chooses the next words from what the reply shows, and asks the developer where

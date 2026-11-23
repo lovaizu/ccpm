@@ -23,8 +23,8 @@
     - **N13** Can the caller act on what comes back, in the form that the architecture's sequences hand on, without asking the AI anything further? (Steps, Output)
     - **N14** Can the person decide from the first lines of each message that the AI writes to them? (Output)
     - **N15** Does each claim that the AI reports rest on a check it ran on the real thing, with what it didn't check stated? (Output)
-  - **C6** The writer knows from tests how the prompt does over several runs and in real use.
-    - **N16** Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and does a walkthrough run try the product it's part of once its integration tests pass? (the whole)
+  - **C6** The writer knows from a real run how the prompt does in its product's use.
+    - **N16** Does a walkthrough run try the product that the prompt is part of, once its integration tests pass, with each place where it fails its people taken back to its cause? (the whole)
 
 ## Template
 
@@ -203,11 +203,10 @@ The caller can't tell a claim that the AI checked from one it guessed, and acts 
 
 ### N16
 
-Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and does a walkthrough run try the product it's part of once its integration tests pass?
+Does a walkthrough run try the product that the prompt is part of, once its integration tests pass, with each place where it fails its people taken back to its cause?
 
-The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. The results vary from run to run, so a criterion would pass or fail by chance, and the writer judges from the results of several runs, as the architecture's [test strategy guide](../architecture/test-strategy-guide.md) says of a test that runs a prompt.
+The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. A test that runs the prompt on fixed scenes meets only the cases that its writer set up, and can't show whether the AI judges each new fact by the prompt's goal. A walkthrough run of the product as it ships, by the architecture's [test strategy guide](../architecture/test-strategy-guide.md), meets real facts one after another, so it shows how the AI judges.
 
-1. *While making.* Build and run the prompt's unit tests by [the test-implementation best practice](../test-implementation/best-practice.md), on the model its users run, from one run of each case up to as many runs as Test strategy sets, in the folders that the architecture's Test strategy names for its test cases.
-2. *While making.* Open the record of each run, and see from what the AI did, not from its last message, which runs reached the result.
-3. *While making.* Where a run didn't reach the result, find the cause in its record, as the test-implementation best practice says, and change the prompt only for a cause in the prompt. Run the cases again, and judge from their results whether the change helps.
-4. *While making.* Once the product's integration tests pass, run it whole by the walkthrough run of the [test strategy guide](../architecture/test-strategy-guide.md), and take each place where it fails its people back to its cause, in the prompt or another part, since a unit test meets only the cases that its writer set up.
+1. *While making.* Once the product's integration tests pass, run it whole by the walkthrough run of the [test strategy guide](../architecture/test-strategy-guide.md).
+2. *While making.* Open the run's record, and see from what the AI did, not from its last message, where it fell short of its people's goal.
+3. *While making.* Take each place where the run fails its people back to its cause, in the prompt or another part, and change the prompt only for a cause in the prompt.

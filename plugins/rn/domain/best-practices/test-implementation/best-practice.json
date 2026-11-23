@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "The developers learn from a test that runs the product whole, such as an E2E test, a performance test, or a benchmark of a prompt, what the product does, as each run ran as they meant and measured what their decision takes.",
+  "what": "The developers learn from a test that runs the product whole, such as an E2E test or a performance test, what the product does, as each run ran as they meant and measured what their decision takes.",
   "critical_success_factors": [
    {
     "id": "C1",

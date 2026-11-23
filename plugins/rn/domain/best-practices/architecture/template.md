@@ -152,8 +152,7 @@ Strategies:
 > - `<check>`, `<target>`: each check of [the test strategy guide](test-strategy-guide.md) to pick
 >   always, and each other whose condition the product meets, in its order, with its test target as
 >   the guide gives it. A check left out has no row.
-> - `<kind>`: `Quality` or `Benchmark`, as the guide gives it, or `Benchmark` where the test runs a
->   prompt.
+> - `<kind>`: `Quality` or `Benchmark`, as the guide gives it.
 > - `<when>`: `During the work`, `At stages`, or `Apart from the work`, as the guide's rule of
 >   timing gives it, with why where the row changes it.
 > - `<criterion or measure>`: for a quality, what passes, as a number where it's one, as the guide
