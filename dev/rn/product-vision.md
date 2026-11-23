@@ -13,8 +13,8 @@
   - KR1.2: the time from the user's request to the deliverable, including the user's own time
     answering rn. Shorter is better.
 
-KR1.1 comes first: keep a change that improves a key result only if none before it gets
-worse.
+The first key result of each objective comes first. Keep a change that improves a key result
+only if none before it gets worse.
 Key results have no targets, as a measure made a target stops being a good measure, by Goodhart's
 law. They show whether a change brought its objective closer.
 

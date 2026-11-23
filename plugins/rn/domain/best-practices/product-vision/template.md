@@ -17,8 +17,8 @@
   - `KR<n>.1`: `<key result>`. `<direction>`.
   - `KR<n>.2`: `<key result>`. `<direction>`.
 
-`KR<n>.1` comes first: keep a change that improves a key result only if none before it gets
-worse.
+The first key result of each objective comes first. Keep a change that improves a key result
+only if none before it gets worse.
 Key results have no targets, as a measure made a target stops being a good measure, by Goodhart's
 law. They show whether a change brought its objective closer.
 
