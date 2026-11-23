@@ -37,7 +37,8 @@
       },
       {
        "about": "the goal",
-       "decided": null
+       "decided": "At the user's word, the AI lists the night's tasks with a start time and starts them, and they go on after the conversation closes. A task that hits the usage limit waits until the limit resets and resumes. In the morning, the AI reads the log, tells the user which tasks finished and which were given up, and takes their results into the main session. An AI that runs another plugin calls the wait-and-resume part instead of writing its own.",
+       "by": "user"
       }
      ]
     },
