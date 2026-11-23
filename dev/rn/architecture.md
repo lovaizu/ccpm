@@ -59,7 +59,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   and judging both stand on.
 - Round\
   One making or refactoring of a deliverable, which its maker tries as its people would. Its judge
-  tries content too. What each found good or short decides the next mend.
+  tries content too. What each found goes to the focuser, whose decisions decide the next mend.
 
 Strategies:
 
@@ -83,12 +83,13 @@ Strategies:
 - The pull request opened as a draft, which the user marks ready. [P2.3]\
   Intent: nobody reviews or merges the work before the user has seen it checked whole.
 - A finding that the people would never meet dropped by holding its condition good. [P1.1]\
-  Intent: the next generator gets as given each finding of a condition still short.
+  Intent: the next mend holds only what the people fail without.
 - Each done deliverable kept with its conditions and their decisions. [P7.2]\
   Intent: a later deliverable rests on what a done one decided, and the focuser weighs it again.
 - Each Cut made from the design tree at each start of its role, never kept from an earlier start.
   [P4.1]\
-  Intent: each change to the tree, such as a path added or a point cut, reaches the next maker.
+  Intent: each change to the tree, such as a remedy written or a point cut, reaches the next
+  maker.
 
 ### Components
 
@@ -101,9 +102,9 @@ Strategies:
 - vital few (prompt)\
   Holds the one measure by which rn tells the vital few from the trivial many.
 - generator (prompt)\
-  Makes a deliverable with which its people reach their aim.
+  Makes a deliverable with which its people reach their aim, by the design tree's decisions.
 - evaluator (prompt)\
-  Checks, as the people, whether a deliverable reaches their aim.
+  Checks, as the people, whether a deliverable reaches their aim, for the focuser to weigh.
 - scripts (script)\
   Does each step that has one right result.
 - hook (hook)\
@@ -144,8 +145,8 @@ Strategies:
 - Each role trying the deliverable outside the work's branch, and checking only its own files.
   [P4.3]\
   Intent: the pull request holds only the deliverables and the run's records.
-- The generator taking as given what the last evaluator found good or short. [P2.2]\
-  Intent: the generator mends by the evaluator's own measure.
+- The generator mending by its Cut's decisions alone, never by an evaluator's findings. [P7.3]\
+  Intent: only the remedy that the focuser weighed reaches the deliverable.
 - The last Round's roles resumed within the same conversation, and started from its files in a new
   conversation. [P6.1]\
   Intent: each mend starts from what the last Round learned, wherever the run goes on.
@@ -198,16 +199,13 @@ sequenceDiagram
   O->>O: reads the issue it names and the repository [P1.2]
   O->>S: makes the run's worktree, and its design tree with the languages as the orchestrator puts them, and the issues from the request (Design tree) [P4.3]
   loop each event: the request, the user's words, a sign-off, a role's end, or a refusal [P1.1]
-    opt a sign-off [P1.3]
-      O->>S: records it (Design tree) [P4.3]
-    end
     opt a fact that asks a judgment: the request with its issue, the user's words, a role's end, or a refusal [P7.1]
       O->>F: starts a new one with the design tree, the user's words of the run, and the fact (Design tree, Round) [P4.1]
       F->>F: weighs each element that the fact would add, change, or ask by the shared measure of the vital few [P7.1]
       F->>F: weighs again each element of the tree that one of them rests on, a done deliverable's decisions and the issue's among them [P7.2]
       F->>T: writes the vital few, from the goal and the plan down, cuts the rest, and leaves open each point that only the user can settle (Design tree) [P7.1]
       opt a role's end with a trial's findings [P2.2]
-        F->>T: takes into the decision it comes from what the measure keeps of each finding, and holds good each other condition (Design tree) [P7.1]
+        F->>T: writes the remedy that the measure keeps of each finding into the decision it comes from, and holds good each other condition (Design tree) [P7.1]
         F->>T: keeps each finding past two Rounds as an open decision of its condition (Design tree) [P3.3]
       end
       opt the final check's findings [P2.3]
@@ -221,6 +219,9 @@ sequenceDiagram
       O->>F: starts a new one with the design tree, the user's words of the run, and the nodes listed (Design tree) [P4.1]
       F->>T: rewrites each node that the change made false (Design tree) [P1.1]
       F-->>O: ends, with what it changed [P4.2]
+    end
+    opt a sign-off [P1.3]
+      O->>S: records it (Design tree) [P4.3]
     end
     opt a write to the design tree by any other role [P7.3]
       H->>T: refuses the write, telling its writer to hand the fact to the focuser (Design tree) [P7.3]
@@ -251,7 +252,7 @@ sequenceDiagram
           alt a point it can't settle [P1.2]
             G-->>O: the point, for the focuser to weigh (Round) [P1.2]
           else
-            G->>G: makes the content by its kind's best practice, or by its check alone, taking the last evaluator's findings as given (Best practice, Round) [P3.2]
+            G->>G: makes the content by its kind's best practice, or by its check alone, by the decisions of its Cut (Best practice, Cut) [P3.2]
             G->>G: tries it as its people would, and goes back to its decisions where a condition that they meet falls short [P2.1]
             G->>G: names what's good [P2.1]
             G->>S: runs the repository's checks on its files [P4.3]
