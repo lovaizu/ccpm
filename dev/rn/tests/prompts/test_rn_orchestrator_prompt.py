@@ -43,8 +43,18 @@ COMMAND_TEXT = (
 
 
 def name() -> str:
-    """The name of the walkthrough's run started today."""
+    """The name of the walkthrough's run started today, as a case that makes the run itself names
+    it."""
     return f"{date.today():%Y%m%d}-{rn_files.NAMED}"
+
+
+def made(room: Room) -> str:
+    """The folder of the run that the orchestrator made from the request, the one run here, named
+    by today and the slug that the orchestrator wrote."""
+    worktrees = room.at(".claude/worktrees")
+    runs = [each for each in os.listdir(worktrees) if each.startswith(f"rn-{date.today():%Y%m%d}-")]
+    assert len(runs) == 1, runs
+    return room.folder(runs[0][len("rn-") :])
 
 
 def requested(room: Room) -> str:
@@ -81,7 +91,7 @@ def heard(room: Room) -> str:
     typed /rn:on, then the walkthrough's words; fails where the goal isn't the user's within
     HEARING replies."""
     printed = requested(room)
-    tree = os.path.join(room.folder(name()), "design-tree.json")
+    tree = os.path.join(made(room), "design-tree.json")
     for _ in range(HEARING):
         printed = typed(room, answer(printed), more=True)
         if rn_files.read_json(tree)["goal"]["by"] == "user":
@@ -125,11 +135,11 @@ def test_the_words_after_rn_on_make_the_run_and_ask_whom_its_goal_is_for(room: R
     its one deliverable with one decision open, no Round is made, and the reply asks one question,
     rn's own proposal of whom the goal is for to confirm, with nothing recommended"""
     printed = requested(room)
-    design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
+    design_tree = rn_files.read_json(os.path.join(made(room), "design-tree.json"))
     assert design_tree["goal"]["by"] == "reasoning"
     assert design_tree["goal"]["decided"].strip()
     assert [each["kind"] for each in design_tree["deliverables"]] == ["design-tree"]
-    assert not os.path.exists(os.path.join(room.folder(name()), "rounds"))
+    assert not os.path.exists(os.path.join(made(room), "rounds"))
     assert len(open_decisions(design_tree)) == 1
     assert len(questions(printed)) == 1
     assert "recommend" not in printed.lower()
@@ -215,7 +225,7 @@ def test_a_goal_the_user_confirms_is_written_by_user(room: Room, run: int):
     for, to the goal, and to their summary
     Then the run's design tree holds the goal by user"""
     heard(room)
-    design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
+    design_tree = rn_files.read_json(os.path.join(made(room), "design-tree.json"))
     assert design_tree["goal"]["by"] == "user"
 
 
@@ -227,7 +237,7 @@ def test_after_the_goal_the_user_is_asked_at_most_one_point(room: Room, run: int
     Then the reply to that answer asks at most one question, and the design tree holds at most one
     decision open"""
     printed = heard(room)
-    design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
+    design_tree = rn_files.read_json(os.path.join(made(room), "design-tree.json"))
     assert len(questions(printed)) <= 1
     assert len(open_decisions(design_tree)) <= 1
 

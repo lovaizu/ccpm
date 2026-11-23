@@ -249,7 +249,9 @@ def test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was(b: Bench)
     before = b.tree()
     later = heard(b)
     later.type(WORDS)
-    refused = later.bash(b.script("repository", "new", WORDS, rn_files.GOAL, *rn_files.LANGUAGES))
+    refused = later.bash(
+        b.script("repository", "new", rn_files.NAMED, rn_files.GOAL, *rn_files.LANGUAGES)
+    )
     assert refused.exit_code == 1
     assert b.name() in refused.output
     given = later.bash("lane-result blocked")

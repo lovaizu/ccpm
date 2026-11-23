@@ -39,8 +39,8 @@ GOAL = (
     " spreadsheet, without asking a developer. A colleague from accounting prints an invoice from"
     " the guide alone."
 )
-# The run's name's goal part, as place.named gives it from WORDS: at most five of its words, lower
-# case, joined by `-`.
+# The run's slug that the orchestrator writes from WORDS, as the cases that make the run give it:
+# one to five lower-case English words joined by `-`.
 NAMED = "a-command-with-which-the"
 COMMAND = "invoicer/__main__.py"
 COMMAND_NAME = "A command that prints an invoice from a file of its lines"

@@ -381,6 +381,31 @@ def test_a_put_up_whose_pull_request_is_open_writes_its_url_where_the_tree_has_n
 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.parametrize("held", ["CLOSED", "MERGED"])
+@pytest.mark.parametrize("named", [False, True], ids=["tree-names-none", "tree-names-it"])
+def test_a_put_up_beside_an_earlier_pull_request_not_open_opens_its_own(
+    tmp_path: Any, host: Any, gh_state: str, held: str, named: bool
+):
+    """Given a run whose branch's name GitHub holds an earlier pull request of, closed or merged,
+    as an earlier run of the same name leaves it, and none open, the tree's context naming no pull
+    request, or that earlier one
+    When put_up is given the command
+    Then gh was asked once to open a pull request, and the tree's context holds the new one's URL,
+    committed and pushed"""
+    earlier = "https://github.com/lovaizu/invoicer/pull/80"
+    design_tree = rn_files.walkthrough_tree(NAME)
+    if named:
+        design_tree["context"]["pr"] = earlier
+    run = with_command(made_run(str(tmp_path), design_tree=design_tree))
+    gh_double.earlier(gh_state, earlier, held)
+    put_up(run, rn_files.COMMAND, host)
+    tree = rn_files.read_json(os.path.join(worktree(run), tree_file(run)))
+    assert len(created(gh_state)) == 1
+    assert tree["context"]["pr"] == URL
+    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
 def test_a_goal_of_one_sentence_titles_the_pull_request_whole(
     tmp_path: Any, host: Any, gh_state: str
 ):

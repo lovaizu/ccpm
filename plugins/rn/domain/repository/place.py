@@ -1,6 +1,6 @@
-"""Decides where a run lies and what it's called: its name from the day and the goal, its worktree
-and branch, its folder, the paths of its design tree and its Rounds in that folder, and which run a
-conversation works on."""
+"""Decides where a run lies and what it's called: its name from the day and a slug of the work, its
+worktree and branch, its folder, the paths of its design tree and its Rounds in that folder, and
+which run a conversation works on."""
 
 from __future__ import annotations
 
@@ -12,19 +12,19 @@ from datetime import date
 
 from fault import Wrong
 
-# The most words of the goal that a run's name takes.
-_WORDS = 5
+# A run's slug: one to five words of lower-case English letters and digits, joined by `-`.
+_SLUG = re.compile(r"[a-z0-9]+(-[a-z0-9]+){0,4}")
 # A run's folder, `<repository>/.claude/worktrees/rn-<name>/.rn/<name>`.
 _FOLDER = re.compile(r"(.+)/\.claude/worktrees/rn-([^/]+)/\.rn/([^/]+)")
 _FORM = "<repository>/.claude/worktrees/rn-<name>/.rn/<name>"
-# A run's worktree's folder name, `rn-<yyyymmdd>-<goal>`.
+# A run's worktree's folder name, `rn-<yyyymmdd>-<slug>`.
 _WORKTREE = re.compile(r"rn-(\d{8})-(.+)")
 
 
 @dataclass(frozen=True)
 class RunPlace:
     """One run of rn in the user's repository, by the repository's top and the run's name,
-    `<yyyymmdd>-<goal>`, from which each of its paths follows."""
+    `<yyyymmdd>-<slug>`, from which each of its paths follows."""
 
     repository: str
     name: str
@@ -60,28 +60,24 @@ class RunPlace:
         return within.startswith(os.path.normpath(self.worktree) + os.sep)
 
 
-def named(today: date, goal: str) -> str:
-    """The name of a run started on the day toward the goal.
+def named(today: date, slug: str) -> str:
+    """The name of a run started on the day.
 
-    Takes: the day, and the goal in the user's words, as typed in reply to `/rn:on`.
-    Gives: `<yyyymmdd>-<goal>`, the goal as at most five of its words, lower case, joined by `-`,
-    with each character other than a letter or a digit left out.
+    Takes: the day, and a short English slug of the work, as the orchestrator writes it from the
+    issue's title where the request names an issue, else from the request's words, such as
+    `overnight-claude-p-queue` for issue #62.
+    Gives: `<yyyymmdd>-<slug>`.
     Changes: nothing.
-    Refuses: Wrong where the goal holds no letter or digit, saying that `/rn:on` takes what the
-    user wants in words.
+    Refuses: Wrong where the slug isn't one to five words of lower-case English letters and
+    digits joined by `-`, naming it and that form.
     """
-    return f"{today:%Y%m%d}-{_goal(goal)}"
-
-
-def _goal(words: str) -> str:
-    """The goal's part of a run's name, refused as `named` refuses the words."""
-    if not any(each.isalnum() for each in words):
+    if not _SLUG.fullmatch(slug):
         raise Wrong(
-            f"the goal {words!r} holds no letter or digit;"
-            " /rn:on takes what the user wants in words"
+            f"the slug {slug!r} isn't a run's name; give one to five lower-case English words"
+            " joined by -, from the issue's title or the request's words, such as"
+            " overnight-claude-p-queue"
         )
-    kept = ["".join(each for each in word if each.isalnum()).lower() for word in words.split()]
-    return "-".join(kept[:_WORDS])
+    return f"{today:%Y%m%d}-{slug}"
 
 
 def of_session(repository: str, session: str) -> RunPlace | None:

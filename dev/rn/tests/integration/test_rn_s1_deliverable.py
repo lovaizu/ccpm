@@ -142,7 +142,7 @@ def test_a_new_request_with_no_origin_ends_its_turn_on_blocked(b: Bench):
     git(b.repo, "remote", "remove", "origin")
     c = heard(b)
     c.type(rn_files.WORDS)
-    refused = c.bash(b.script("repository", "new", rn_files.WORDS, GOAL, *rn_files.LANGUAGES))
+    refused = c.bash(b.script("repository", "new", rn_files.NAMED, GOAL, *rn_files.LANGUAGES))
     assert not refused.blocked, refused.said
     assert refused.exit_code == 1
     assert "origin's HEAD names no default branch" in refused.output

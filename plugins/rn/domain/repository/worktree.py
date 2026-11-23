@@ -33,9 +33,9 @@ def new(
 ) -> RunPlace:
     """Makes a run's worktree and its design tree with the goal as put.
 
-    Takes: the run to make, named by `place.named` from the day and the user's words in reply
-    to `/rn:on`; the run's context, as `tree.form.context` gives it; the goal as the orchestrator
-    puts it; the design tree best practice; and the host.
+    Takes: the run to make, named by `place.named` from the day and the slug of the work that the
+    user asked for in reply to `/rn:on`; the run's context, as `tree.form.context` gives it; the
+    goal as the orchestrator puts it; the design tree best practice; and the host.
     Gives: the run, made.
     Changes: adds the branch `rn-<name>` from the head of the default branch that
     `git symbolic-ref refs/remotes/origin/HEAD` names, tracking none, checks

@@ -18,7 +18,7 @@ from repository import commit_checks, place, push, trial, worktree
 from repository.host import Host
 
 USAGE = """\
-usage: repository.py new <words> <goal> <deliverables language> <conversation language>
+usage: repository.py new <slug> <goal> <deliverables language> <conversation language>
        repository.py find
        repository.py pause <run>
        repository.py cancel <run>
@@ -35,11 +35,11 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     `cwd`, the top of the user's repository, with rn's folder at `plugin_root`, and git and gh
     reached through `host`.
 
-    - `new <words> <goal> <deliverables language> <conversation language>`, the user's words, the
-      goal as put, and the languages that the user settled, each one argument: 0 printing the new
-      run's folder from `cwd`, as `worktree.new` makes it, named by `place.named` from today and
-      the words, with the context that `tree.form.context` gives for rn's version, from
-      `.claude-plugin/plugin.json` under `plugin_root`, and the languages, and with rn's design
+    - `new <slug> <goal> <deliverables language> <conversation language>`, a short English slug of
+      the work, the goal as put, and the languages that the user settled, each one argument: 0
+      printing the new run's folder from `cwd`, as `worktree.new` makes it, named by `place.named`
+      from today and the slug, with the context that `tree.form.context` gives for rn's version,
+      from `.claude-plugin/plugin.json` under `plugin_root`, and the languages, and with rn's design
       tree best practice.
     - `find`: 0 printing the folder from `cwd` of the run that `worktree.found` gives, its
       worktree made again where none lies, as a line, and nothing where there's none; and on
@@ -78,8 +78,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    words, goal, deliverables, conversation = given
-    run = place.RunPlace(cwd, place.named(date.today(), words))
+    slug, goal, deliverables, conversation = given
+    run = place.RunPlace(cwd, place.named(date.today(), slug))
     context = form.context(_version(plugin_root), deliverables, conversation, _session())
     design_tree = practice.read(
         os.path.join(plugin_root, "domain", "best-practices", "design-tree")

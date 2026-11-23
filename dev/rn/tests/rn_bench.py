@@ -263,7 +263,7 @@ def requested(b: Bench) -> Conversation:
     shares, and put the goal's summary to the user."""
     c = heard(b)
     c.type(WORDS)
-    ran(c, b.script("repository", "new", WORDS, GOAL, *LANGUAGES))
+    ran(c, b.script("repository", "new", rn_files.NAMED, GOAL, *LANGUAGES))
     marked(c, "start")
     shared_steps(b, c, ground="The goal as put.")
     summary = f"Here is what I'll work toward.\n\nFor: the accounting team\nGoal: {GOAL}"

@@ -103,10 +103,14 @@ origin names no default branch, as no run stands yet.
      `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Read the issue that the
      user's words name, by `gh issue view`, and the repository's files that it bears on, so that
      you ask only what neither gives. Put the goal by its N1.1 to N1.3, with what its people do
-     once it holds. Take the languages by its N7.2. Then run
-     `python3 <rn's folder>/scripts/repository.py new "<the user's words>" "<the goal>"
-     "<the deliverables' language>" "<the conversation's language>"`, the words as typed. It makes
-     the run's worktree and its design tree, with the goal by `reasoning`. Where it refuses the
+     once it holds. Take the languages by its N7.2. Write the run's slug: a short English name of
+     the work, from the issue's title where the user's words name an issue, else from their
+     words, as one to five lower-case English words joined by `-`, such as
+     `overnight-claude-p-queue` for an issue titled "overnight: a queue of claude -p tasks run
+     while nobody answers". Then run `python3 <rn's folder>/scripts/repository.py new "<the slug>"
+     "<the goal>" "<the deliverables' language>" "<the conversation's language>"`. It makes the
+     run's worktree and its design tree, with the goal by `reasoning`, named by today and the
+     slug. Where it refuses the
      run's name as taken, end on blocked, and recommend `/rn:up` to pick it up. In the review,
      write the issues by its N7.3, and open the first point of the hearing, as `review` says.
    - A pick-up, `find`: run `python3 <rn's folder>/scripts/repository.py find`. It prints the folder

@@ -311,10 +311,10 @@ dev/rn/                            what only rn's developers use
 └── tests/                         the test cases, from unit to integration
 
 .claude/worktrees/                 rn's worktree of each run
-└── rn-<yyyymmdd>-<goal>/          one run's worktree, on the work's branch
+└── rn-<yyyymmdd>-<slug>/          one run's worktree, on the work's branch
 
 .rn/                               what rn writes on the work's branch
-├── <yyyymmdd>-<goal>/             one run's folder
+├── <yyyymmdd>-<slug>/             one run's folder
 │   ├── design-tree.json           the design tree
 │   └── rounds/                    each Round
 └── best-practices/                each best practice made on a run

@@ -64,13 +64,14 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> list[str]:
     path percent-encoded, with no `/` closing it, and the repository's page being the pull
     request's URL up to `/pull/`. It gives none for the plan, of the kind `design-tree`, as the
     plan's message shows the plan and its file is rn's own, nor for a node of no file.
-    Changes: runs `gh auth status` first; then commits each change in the run's worktree as
-    `rn: <deliverable's name>`, pushes the work's branch to `origin`, and opens the pull request
-    into the default branch as a draft, where the branch has none open: titled by the first
-    sentence of the design tree's goal, as `template.markdown.sentences` splits it, its body the
-    goal, then a line `Closes #N` for each issue of the tree's `context.issues.closes` and a line
-    `Refs #N` for each of its `refs`, in their order. Where the tree's `context.pr` is null, it
-    then writes the pull request's URL there, commits it as `rn: the pull request of <name>`, and
+    Changes: runs `gh auth status` first; then commits each change in the run's worktree as `rn:
+    <deliverable's name>`, pushes the work's branch to `origin`, and opens the pull request into the
+    default branch as a draft, where the branch has none open, as `gh pr view` gives a closed or
+    merged one of an earlier run of the same branch's name too: titled by the first sentence of the
+    design tree's goal, as `template.markdown.sentences` splits it, its body the goal, then a line
+    `Closes #N` for each issue of the tree's `context.issues.closes` and a line `Refs #N` for each
+    of its `refs`, in their order. Where the tree's `context.pr` isn't the open pull request's URL,
+    such as null, it then writes that URL there, commits it as `rn: the pull request of <name>`, and
     pushes it.
     Refuses: Missing, before any commit or push, where `gh auth status` finds no login, with what
     it said; Wrong where the design tree holds no deliverable of the path; Missing where the
@@ -89,9 +90,10 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> list[str]:
     node = form.deliverable(tree, deliverable)
     _commit_all(run, f"rn: {node['name']}", host)
     pushed = push(run, host)
-    shown = host(["gh", "pr", "view", run.branch, "--json", "url"], run.worktree)
-    if shown.code == 0:
-        url = json.loads(shown.out)["url"]
+    shown = host(["gh", "pr", "view", run.branch, "--json", "url,state"], run.worktree)
+    held = json.loads(shown.out) if shown.code == 0 else {"state": None}
+    if held["state"] == "OPEN":
+        url = held["url"]
     else:
         goal = tree["goal"]["decided"]
         made = checked(
@@ -113,7 +115,7 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> list[str]:
             "gh may not open the pull request",
         )
         url = made.out.strip()
-    if tree["context"]["pr"] is None:
+    if tree["context"]["pr"] != url:
         tree["context"]["pr"] = url
         form.write(run.tree, tree)
         _commit_all(run, f"rn: the pull request of {run.name}", host)

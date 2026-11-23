@@ -1,13 +1,13 @@
 """The unit cases of repository/place.py: RunPlace, one for each path that follows from a run's
-repository and name; `named`, one for each class of the goal's words, the five-word bound on both
-sides, upper case, characters other than letters and digits, a day of one digit, and the refusal of
-words with no letter or digit; and `of_folder`, one for each form in which a script is given a run's
-folder, from the folder it runs in and absolute, and each refusal: a folder of another form, a near
-match of the worktree's prefix, a run's folder whose name differs from its worktree's, and one with
-no design tree; and `of_session`, the run of the session beside another session's newer one, the
-one written last of several of the session, a run of no session and each near match of the
-session, a worktree with no design tree, no worktrees, and the refusal of a design tree that isn't
-JSON."""
+repository and name; `named`, one for each class of the slug, the five-word bound on both sides,
+digits, a day of one digit, and each refusal: empty, upper case, a space, letters other than
+English, a dash out of place, an underscore, and the user's words as typed; and `of_folder`, one for
+each form in which a script is given a run's folder, from the folder it runs in and absolute, and
+each refusal: a folder of another form, a near match of the worktree's prefix, a run's folder whose
+name differs from its worktree's, and one with no design tree; and `of_session`, the run of the
+session beside another session's newer one, the one written last of several of the session, a run of
+no session and each near match of the session, a worktree with no design tree, no worktrees, and the
+refusal of a design tree that isn't JSON."""
 
 from __future__ import annotations
 
@@ -94,75 +94,17 @@ def test_a_runs_rounds_lie_in_its_folder():
 @pytest.mark.supports(
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
-def test_a_name_takes_the_first_five_words_of_more():
-    """Given the walkthrough's words, of more than five words
+@pytest.mark.parametrize(
+    "slug",
+    ["invoices", "overnight-claude-p-queue", "print-invoices-from-their-lines", "v2-readme-typo"],
+    ids=["one-word", "issue-62", "five-words", "digits"],
+)
+def test_a_name_is_the_day_and_the_slug(slug: str):
+    """Given a slug of one word, of four as for issue #62's title, of five, the most, or one with
+    digits
     When a run is named on 2026-11-20
-    Then the name is the day and the first five words, joined by -"""
-    assert named(DAY, rn_files.WORDS) == "20261120-a-command-with-which-the"
-
-
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_a_name_takes_each_of_five_words():
-    """Given words of five words exactly
-    When a run is named
-    Then each word stands in the name"""
-    assert (
-        named(DAY, "print invoices from their lines") == "20261120-print-invoices-from-their-lines"
-    )
-
-
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_a_name_leaves_out_the_sixth_word():
-    """Given words of six words
-    When a run is named
-    Then the sixth word stands nowhere in the name"""
-    assert named(DAY, "print invoices from their lines today") == (
-        "20261120-print-invoices-from-their-lines"
-    )
-
-
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_a_name_of_one_word_is_that_word():
-    """Given words of one word
-    When a run is named
-    Then the name is the day and that word"""
-    assert named(DAY, "invoices") == "20261120-invoices"
-
-
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_a_name_is_lower_case():
-    """Given words in upper and mixed case
-    When a run is named
-    Then the name holds them in lower case"""
-    assert named(DAY, "Print INVOICES") == "20261120-print-invoices"
-
-
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_a_name_leaves_out_each_character_other_than_a_letter_or_a_digit():
-    """Given words with an apostrophe, a comma, a slash, and an exclamation mark, and a digit
-    When a run is named
-    Then each of those characters is left out and the digit kept"""
-    assert named(DAY, "Fix the README's typo, v2/now!") == "20261120-fix-the-readmes-typo-v2now"
-
-
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_a_name_joins_words_split_by_more_than_one_space():
-    """Given words split by tabs, newlines, and several spaces
-    When a run is named
-    Then the words are joined by one - each"""
-    assert named(DAY, "  print\tinvoices \n now ") == "20261120-print-invoices-now"
+    Then the name is the day and the slug, joined by -"""
+    assert named(DAY, slug) == f"20261120-{slug}"
 
 
 @pytest.mark.supports(
@@ -178,13 +120,40 @@ def test_a_name_writes_a_day_of_one_digit_with_two():
 @pytest.mark.supports(
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
-@pytest.mark.parametrize("words", ["", "   ", "!!! ... ?"])
-def test_a_name_of_words_with_no_letter_or_digit_is_refused(words: str):
-    """Given words with no letter or digit
+@pytest.mark.parametrize(
+    "slug",
+    [
+        "",
+        "print-invoices-from-their-lines-today",
+        "Print-Invoices",
+        "print invoices",
+        "経理-invoices",
+        "-invoices",
+        "invoices-",
+        "print--invoices",
+        "print_invoices",
+        rn_files.WORDS,
+    ],
+    ids=[
+        "empty",
+        "six-words",
+        "upper-case",
+        "space",
+        "not-english",
+        "leading-dash",
+        "trailing-dash",
+        "double-dash",
+        "underscore",
+        "the-users-words",
+    ],
+)
+def test_a_name_of_other_than_a_short_english_slug_is_refused(slug: str):
+    """Given an empty slug, one of six words, with upper case, a space, letters other than
+    English, a dash that leads, trails, or doubles, an underscore, or the user's words as typed
     When a run is named
-    Then Wrong is raised, saying that /rn:on takes what the user wants in words"""
-    with pytest.raises(Wrong, match="/rn:on"):
-        named(DAY, words)
+    Then Wrong is raised, naming the slug and the form it takes"""
+    with pytest.raises(Wrong, match="lower-case English words joined by -"):
+        named(DAY, slug)
 
 
 def a_run_folder(tmp_path: Any, name: str = NAME) -> tuple[str, str]:
