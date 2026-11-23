@@ -23,72 +23,7 @@
    "name": "The plan of the overnight plugin",
    "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
    "kind": "design-tree",
-   "inputs": [],
-   "status": "open",
-   "necessary_conditions": [
-    {
-     "id": "N1",
-     "good": true,
-     "decisions": [
-      {
-       "about": "whom it's for",
-       "decided": "The AI that the user instructs: the user tells it what to run overnight, and the AI arranges the queue and its tasks.",
-       "by": "user"
-      },
-      {
-       "about": "the goal",
-       "decided": "At the user's word, the AI lists the night's tasks with a start time and starts them, and they go on after the conversation closes. A task that hits the usage limit waits until the limit resets and resumes. In the morning, the AI reads the log, tells the user which tasks finished and which were given up, and takes their results into the main session. An AI that runs another plugin calls the wait-and-resume part instead of writing its own.",
-       "by": "user"
-      }
-     ]
-    },
-    {
-     "id": "N2",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N7",
-     "good": true,
-     "decisions": [
-      {
-       "about": "the rn that wrote the tree",
-       "decided": "rn 0.10.0",
-       "by": "reasoning"
-      },
-      {
-       "about": "the languages",
-       "decided": "The deliverables are in English, as the repository's documents are, and the conversation is in Japanese, as the user's instructions set.",
-       "by": "reasoning"
-      },
-      {
-       "about": "the issues",
-       "decided": "The run closes #62.",
-       "by": "reasoning"
-      }
-     ]
-    },
-    {
-     "id": "N3",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N4",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N5",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N6",
-     "good": true,
-     "decisions": []
-    }
-   ]
+   "status": "done"
   },
   {
    "name": "The product vision of overnight",
@@ -125,7 +60,12 @@
     {
      "id": "N6",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "the one way and its ideas",
+       "decided": null
+      }
+     ]
     }
    ]
   },
@@ -602,27 +542,29 @@
  ],
  "work": [
   {
-   "do": "make",
-   "path": "dev/overnight/product-vision.md"
+   "do": "decide",
+   "path": "dev/overnight/product-vision.md",
+   "condition": "N6",
+   "about": "the one way and its ideas"
   }
  ],
  "steps": [
   {
-   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
+   "settles": "誰が何のために使うか",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "\u3069\u3046\u4f7f\u3046\u304b",
+   "settles": "どう使うか",
    "deliverables": [
     "plugins/overnight/README.md"
    ],
    "signoff": false
   },
   {
-   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
+   "settles": "どんな部品でどう動くか",
    "deliverables": [
     "dev/overnight/architecture.md",
     "plugins/overnight"
@@ -630,14 +572,14 @@
    "signoff": false
   },
   {
-   "settles": "\u4f55\u3092\u78ba\u304b\u3081\u308b\u304b",
+   "settles": "何を確かめるか",
    "deliverables": [
     "dev/overnight/tests"
    ],
    "signoff": false
   },
   {
-   "settles": "\u52d5\u304f\u3082\u306e",
+   "settles": "動くもの",
    "deliverables": [
     "plugins/overnight/domain",
     "plugins/overnight/domain/overnight.md",
@@ -646,7 +588,7 @@
    "signoff": false
   },
   {
-   "settles": "\u30de\u30fc\u30b1\u30c3\u30c8\u30d7\u30ec\u30a4\u30b9\u3078\u306e\u767b\u9332",
+   "settles": "マーケットプレイスへの登録",
    "deliverables": [
     ".claude-plugin/marketplace.json"
    ],
