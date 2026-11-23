@@ -62,23 +62,17 @@ You type:
 rn reads your repository, then asks whom the work is for:
 
 ```text
-誰のためのものかを確かめさせてください。
-
-経理チームの方々のため、と考えています。
-誰が使うかで、手順の書き方と、何を作れば足りるかが変わるためです。
-
-経理チームのため、でよいですか？（おすすめ：はい）
+誰のためのものか、こう考えています。
+経理チームの方々。
+これで合っていますか？
 ```
 
 You type `はい`. rn asks what the team can do at the goal:
 
 ```text
-ゴールを確かめさせてください。
-
-経理チームの人が、開発者の手を借りずに、ガイドだけを見て、明細ファイルから請求書を印刷できること、と考えています。
-ゴールが決まると、何を作れば届くかが決まるためです。
-
-このゴールでよいですか？（おすすめ：はい）
+完成したら経理チームに何ができればよいか、こう考えています。
+開発者の手を借りずに、ガイドだけを見て、明細ファイルから請求書を印刷できる。
+これで合っていますか？
 ```
 
 You type `はい`. rn sums both up:
@@ -108,9 +102,10 @@ You type `はい`. rn shows the way to the goal:
 変更内容：https://github.com/lovaizu/playground/pull/38/files
 
 どこで確認しますか？
-a) 1 だけ確認して、あとは最後まで進める（おすすめ：残りは 1 から決まるため）
-b) 1 と 2 を確認する
-c) 段ごとに確認する
+a. 1 だけ確認して、あとは最後まで進める
+b. 1 と 2 を確認する
+c. 段ごとに確認する
+残りは 1 から決まるので、a をおすすめします。
 ```
 
 You type `a`. rn makes the first step, and shows it:
@@ -131,11 +126,11 @@ You type `/rn:ty`. While it makes the guide, rn asks what only you know:
 ```text
 いま 2/6：どう使うか（経理チーム向けのガイド）
 
-ひとつ、決めていただきたいことがあります。経理チームの方が使うパソコンの環境です。
-ガイドの手順は環境ごとに違い、リポジトリからは分からないためです。
-会社のパソコンに多い、Windows の PowerShell をおすすめします。
-
-経理チームが使う環境はどれですか？（おすすめ：Windows の PowerShell）
+経理チームの方が使うパソコンの環境はどれですか？
+a. Windows の PowerShell
+b. macOS のターミナル
+c. Linux の端末
+会社のパソコンに多いので、a をおすすめします。
 ```
 
 Your team works on Linux. You type:
