@@ -89,6 +89,26 @@
        "about": "A start hour already past",
        "decided": "A queue stacked anew waits for the next time its start hour comes; a queue stacked again to carry on its unfinished tasks starts them at once.",
        "by": "reasoning"
+      },
+      {
+       "about": "How the runner knows a queue is carried on",
+       "decided": "The stacker hands the runner no start for a queue stacked again to carry on its unfinished tasks, so the runner starts them at once.",
+       "by": "reasoning"
+      },
+      {
+       "about": "A task carried on and its earlier waits",
+       "decided": "A task carried on keeps none of its earlier waits, as its stops at the usage limit count from zero again.",
+       "by": "reasoning"
+      },
+      {
+       "about": "A queue stacked again whose every task finished",
+       "decided": "Stacking again a queue whose every task finished starts no runner and says that every task finished.",
+       "by": "reasoning"
+      },
+      {
+       "about": "A check while tasks still run",
+       "decided": "A check while the runner still carries tasks tells each task not yet ended as still running, beside the ends of the others.",
+       "by": "reasoning"
       }
      ]
     },
@@ -211,14 +231,14 @@
  "work": [],
  "steps": [
   {
-   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
+   "settles": "誰が何のために使うか",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "\u3069\u3046\u4f7f\u3046\u304b",
+   "settles": "どう使うか",
    "deliverables": [
     "plugins/overnight/README.md",
     "plugins/overnight/CHANGELOG.md"
@@ -226,14 +246,14 @@
    "signoff": false
   },
   {
-   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
+   "settles": "どんな部品でどう動くか",
    "deliverables": [
     "dev/overnight/architecture.md"
    ],
    "signoff": false
   },
   {
-   "settles": "\u90e8\u54c1\u304c\u304b\u307f\u5408\u3046\u304b",
+   "settles": "部品がかみ合うか",
    "deliverables": [
     "plugins/overnight",
     "dev/overnight/tests"
@@ -241,7 +261,7 @@
    "signoff": false
   },
   {
-   "settles": "\u52d5\u304f\u3082\u306e\u304c\u3067\u304d\u305f\u304b",
+   "settles": "動くものができたか",
    "deliverables": [
     "plugins/overnight/scripts",
     ".claude-plugin/marketplace.json"
