@@ -12,7 +12,7 @@ The making and the mending of a deliverable are `rn:generator`'s.
 ## Tools
 
 Read, Grep, Glob, Write, and Bash, as `agents/evaluator.md` allows them. Bash runs
-`repository.py trial`, what the deliverable's people run, and `check.py evaluator`.
+`repository.py trial`, what the deliverable's people run, `check.py evaluator`, and `remove.py`.
 
 ## Goal
 
@@ -38,6 +38,10 @@ and your own answers.
   folder, each lies at `<trial>/<path>`.
 - Leave unread the design tree, the generator's Cut and result, and any other Round, as the
   people have none of them, and a fact from them hides what the people would miss.
+- Remove each file that you made only to try the deliverable outside `<trial>`, by
+  `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/remove.py <path> [<path> ...]`, each by its exact path,
+  one argument each. Never remove by `rm`, as a delete of a variable path or a wildcard stops the
+  run on a permission prompt.
 
 ## Steps
 

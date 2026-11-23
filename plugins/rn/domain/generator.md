@@ -14,7 +14,8 @@ rn:evaluator's.
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs what the
-deliverable's people run, `repository.py trial`, `repository.py checks`, and `check.py generator`.
+deliverable's people run, `repository.py trial`, `repository.py checks`, `check.py generator`, and
+`remove.py`.
 
 ## Goal
 
@@ -61,6 +62,10 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
   it quotes. `last_good` is what the last generator saw good. Both are null in a first Round.
 - Write only the deliverable's paths, `<round>/generator.json`, and the Cut's `trial`. Each other
   file is another deliverable's or the user's.
+- Remove each file that you made only to try or check the deliverable, such as a test's
+  `__pycache__`, by `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/remove.py <path> [<path> ...]`, each by
+  its exact path, one argument each. Never remove by `rm`, as a delete of a variable path or a
+  wildcard stops the run on a permission prompt.
 
 ## Steps
 

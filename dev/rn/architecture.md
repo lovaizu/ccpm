@@ -129,6 +129,10 @@ Strategies:
 - Each deliverable's Rounds kept apart from the others', so that each deliverable due starts
   at once. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
+- Each maker's removal done by a script of exact paths, which a hook names to its deletes in Bash.
+  [P4.3]\
+  Intent: a maker's clean-up never waits on a permission prompt, and stays in the work and the
+  temporary folder.
 - Each step written as what it does, never tied to one OS's tools, such as Glob or Bash's
   `find`. [P4.3]\
   Intent: rn runs alike on each OS that Claude Code runs on.
@@ -282,6 +286,7 @@ Strategies:
 plugins/rn/                        what Claude Code installs for the user
 ├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
 ├── agents/                        the generator's and the evaluator's starts
+├── hooks/                         the hook that turns a maker's delete in Bash to remove.py
 ├── domain/
 │   ├── orchestrator.md            the event's own step, then those that every event shares
 │   ├── generator.md               what the generator does
@@ -292,6 +297,8 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── rounds/                    the code that reads and writes the Rounds
 │   ├── template/                  the code that holds a document to its kind's template
 │   ├── repository/                the code that makes a run's worktree and puts a deliverable up
+│   ├── remove/                    the code that removes what a maker made for itself
+│   ├── hook/                      the code of the hook before each Bash command
 │   └── best-practices/            rn's own best practice of each kind
 └── scripts/                       each step with one right result, as a role runs it
 

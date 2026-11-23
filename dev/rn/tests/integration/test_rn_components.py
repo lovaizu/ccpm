@@ -6,6 +6,7 @@ of each prompt's work."""
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 
@@ -192,6 +193,95 @@ def test_the_generators_checks_give_the_repositorys_commit_check_findings(b: Ben
     assert found.code == 1
     assert "invoicer/__main__.py: no tests" in found.out
     assert git(b.repo, "diff", "--cached", "--name-only").strip() == ""
+
+
+def cache_left(b: Bench) -> tuple[str, str]:
+    """The generator wrote the command, and its tests left a cache beside it; gives its Cut, and
+    the cache's folder from the repository's top, as the generator names it."""
+    cut_path = signed_plan(b)
+    wrote(b, {COMMAND: "print('invoice')\n", "invoicer/__pycache__/__main__.pyc": "cache\n"})
+    return cut_path, os.path.relpath(os.path.join(b.worktree, "invoicer", "__pycache__"), b.repo)
+
+
+@pytest.mark.supports("generator", "scripts")
+def test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made(b: Bench):
+    """Given a run whose command's generator wrote the command, left a cache of its tests beside
+    it, and made its folder of the people's starting state by repository.py trial
+    When it runs remove.py on the cache's folder and the trial's, one argument each
+    Then remove.py gives 0, both are gone, and the command stays"""
+    cut_path, cache = cache_left(b)
+    trial = trial_made(b, cut_path)
+    assert b.script("remove", cache, trial).code == 0
+    assert not os.path.lexists(os.path.join(b.repo, cache))
+    assert not os.path.lexists(trial)
+    assert os.path.isfile(os.path.join(b.worktree, COMMAND))
+
+
+@pytest.mark.supports("generator", "scripts")
+def test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py(b: Bench):
+    """Given a run whose command's generator wrote the command and left a cache of its tests
+    beside it
+    When it runs remove.py on `<cache>/*.pyc`, which no shell expanded
+    Then remove.py gives 2 with its usage and the pattern named, and the cache stays"""
+    cache = cache_left(b)[1]
+    refused = b.script("remove", f"{cache}/*.pyc")
+    assert refused.code == 2
+    assert refused.err.startswith("usage: remove.py")
+    assert f"{cache}/*.pyc" in refused.err
+    assert os.path.isfile(os.path.join(b.repo, cache, "__main__.pyc"))
+
+
+def bash_hook(b: Bench) -> str:
+    """The command of rn's hook before each Bash call, as hooks/hooks.json names it."""
+    with open(os.path.join(b.rn, "hooks", "hooks.json"), encoding="utf-8") as f:
+        (before,) = json.load(f)["hooks"]["PreToolUse"]
+    assert before["matcher"] == "Bash"
+    (hook,) = before["hooks"]
+    return hook["command"]
+
+
+def bash_called(b: Bench, command: str, agent: str | None) -> str:
+    """The hook's input of a Bash call of the command by the agent, or by the main conversation
+    where none is named, as Claude Code gives it."""
+    called = {
+        "session_id": "abc123",
+        "cwd": b.repo,
+        "hook_event_name": "PreToolUse",
+        "tool_name": "Bash",
+        "tool_input": {"command": command},
+        "tool_use_id": "toolu_01",
+    }
+    if agent is not None:
+        called.update({"agent_id": "a1", "agent_type": agent})
+    return json.dumps(called)
+
+
+@pytest.mark.supports("generator", "scripts")
+def test_a_makers_delete_by_rm_is_denied_pointing_to_remove_py(b: Bench):
+    """Given rn's hook before each Bash call, and a run whose command's generator left a cache of
+    its tests beside the command
+    When the generator calls Bash with `rm -r "$W/$p/__pycache__"`, and Claude Code runs the hook
+    Then the hook denies the call, its reason giving remove.py's command by its path in rn's
+    folder, and that command removes the cache"""
+    assert "${CLAUDE_PLUGIN_ROOT}/scripts/hook.py" in bash_hook(b)
+    cache = cache_left(b)[1]
+    hooked = b.script("hook", given=bash_called(b, 'rm -r "$W/$p/__pycache__"', "rn:generator"))
+    assert (hooked.code, hooked.err) == (0, "")
+    output = json.loads(hooked.out)["hookSpecificOutput"]
+    assert output["permissionDecision"] == "deny"
+    remove = os.path.join(b.rn, "scripts", "remove.py")
+    assert f"python3 {remove} <exact path>" in output["permissionDecisionReason"]
+    assert b.script("remove", cache).code == 0
+    assert not os.path.lexists(os.path.join(b.repo, cache))
+
+
+@pytest.mark.supports("orchestrator", "scripts")
+def test_a_delete_by_the_main_conversation_passes_the_hook(b: Bench):
+    """Given rn's hook before each Bash call
+    When the main conversation, which names no agent, calls Bash with `rm -r build`
+    Then the hook gives 0 and prints nothing, so that the call goes on as without rn"""
+    hooked = b.script("hook", given=bash_called(b, "rm -r build", None))
+    assert hooked == (0, "", "")
 
 
 # The scripts: the best practice each role takes, and a refusal before any push.

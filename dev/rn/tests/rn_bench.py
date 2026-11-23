@@ -85,12 +85,14 @@ class Bench:
         with open(self.tree_path, "w", encoding="utf-8") as f:
             f.write(json.dumps(design_tree, indent=1) + "\n")
 
-    def script(self, name: str, *args: str) -> Ran:
-        """Runs rn's script with the arguments from the repository's top, as a role runs it."""
+    def script(self, name: str, *args: str, given: str = "") -> Ran:
+        """Runs rn's script with the arguments from the repository's top, as a role runs it, or as
+        Claude Code runs a hook, with what it's given on stdin."""
         done = subprocess.run(
             [sys.executable, os.path.join(self.rn, "scripts", f"{name}.py"), *args],
             cwd=self.repo,
             env=self.env,
+            input=given,
             capture_output=True,
             text=True,
             check=False,
