@@ -28,46 +28,7 @@
    "name": "The AI's aim with stacked tasks, and how well it gets there, is set down",
    "path": "dev/overnight/product-vision.md",
    "kind": "product-vision",
-   "inputs": [],
-   "status": "open",
-   "necessary_conditions": [
-    {
-     "id": "N1",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N2",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N3",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N4",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N5",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N6",
-     "good": true,
-     "decisions": [
-      {
-       "about": "The concept's one way and its ideas",
-       "decided": "Each stacked task is carried to its end on its own, so that the AI lets go once it has stacked them. Two ideas hold it up: a task stopped by the usage limit goes on where it stopped once the limit lifts, and each task ends as finished or as given up with its reason, so that the AI takes in the finished ones.",
-       "by": "reasoning"
-      }
-     ]
-    }
-   ]
+   "status": "done"
   },
   {
    "name": "An AI learns from the guide whether the plugin fits its work and how to stack tasks and take their results in",
@@ -128,6 +89,11 @@
      "good": false,
      "decisions": []
     }
+   ],
+   "more_paths": [
+    "plugins/overnight/images/",
+    "plugins/overnight/LICENSE",
+    "plugins/overnight/CHANGELOG.md"
    ]
   },
   {
@@ -390,12 +356,7 @@
    ]
   }
  ],
- "work": [
-  {
-   "do": "make",
-   "path": "dev/overnight/product-vision.md"
-  }
- ],
+ "work": [],
  "steps": [
   {
    "settles": "誰が何のために使うか",
