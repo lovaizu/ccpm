@@ -259,7 +259,7 @@ sequenceDiagram
   end
   Note over U,O: Later, in any conversation, after a pause
   U->>O: /rn:up [S2]
-  O->>S: finds the run to pick up from the runs' commits (Design tree) [P6.1]
+  O->>S: finds the run to pick up from the runs' commits, here and as GitHub holds them (Design tree) [P6.1]
   opt no run found [S2]
     O->>U: asks which run to pick up [S2]
   end

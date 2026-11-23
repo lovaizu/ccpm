@@ -7,7 +7,9 @@ one, and several, newest by its last commit, a newer run whose every deliverable
 holds no design tree passed over, branches that nearly match a run's left out, a run's newer local
 branch deciding over origin's, and the refusal of a design tree that isn't JSON; and `found`, with
 the run's worktree there, removed with its local branch kept, its folder deleted, a run that only
-origin holds in a fresh clone, and a worktree that git can't make; `removed`, with a change not
+origin holds in a fresh clone, one that another clone pushed since the last fetch, one that GitHub
+no longer holds, whose ref of origin's branch is left here, alone or beside an older local run,
+origin out of reach, and a worktree that git can't make; `removed`, with a change not
 committed, removed here and on GitHub, of a run whose branch GitHub never held, holds, or has
 deleted since, its ref of origin's branch left here, or whose name only nearly matches GitHub's
 branches, and of no pull request, the run's open one, or an earlier run's closed or merged one of
@@ -30,7 +32,7 @@ from gh import gh_double
 from herdr import herdr_double
 from repo_files import git, write_files
 from repository.place import RunPlace
-from repository.worktree import Gone, found, new, newest, removed
+from repository.worktree import Found, Gone, found, new, newest, removed
 from rn_runs import NAME, branch_run, dated_commit, head
 
 GOAL = rn_files.GOAL
@@ -252,7 +254,7 @@ def test_a_repository_with_no_branch_of_rn_has_no_run(tmp_path: Any, host: Any):
     Then each gives None, and found makes no worktree"""
     repo = a_repository(tmp_path)
     assert newest(repo, host) is None
-    assert found(repo, host) is None
+    assert found(repo, host) == Found(None, None)
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
@@ -267,7 +269,7 @@ def test_one_run_with_work_left_is_given_with_its_worktree_as_it_was(tmp_path: A
     note = os.path.join(rn_files.worktree_of(repo, NAME), "NOTES.md")
     write_files(rn_files.worktree_of(repo, NAME), {"NOTES.md": "kept\n"})
     assert newest(repo, host) == RunPlace(repo, NAME)
-    assert found(repo, host) == RunPlace(repo, NAME)
+    assert found(repo, host) == Found(RunPlace(repo, NAME), None)
     with open(note, encoding="utf-8") as f:
         assert f.read() == "kept\n"
 
@@ -344,7 +346,7 @@ def test_a_run_whose_worktree_is_gone_gets_it_again_on_its_local_branch(tmp_path
     worktree = rn_files.worktree_of(repo, NAME)
     assert newest(repo, host) == RunPlace(repo, NAME)
     assert not os.path.exists(worktree)
-    assert found(repo, host) == RunPlace(repo, NAME)
+    assert found(repo, host) == Found(RunPlace(repo, NAME), None)
     assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
     assert head(worktree) == head(repo, f"rn-{NAME}")
     assert rn_files.read_json(RunPlace(repo, NAME).tree) == a_tree(NAME)
@@ -360,7 +362,7 @@ def test_a_run_whose_worktree_folder_was_deleted_gets_it_again(tmp_path: Any, ho
     branch_run(repo, NAME, a_tree(NAME))
     worktree = rn_files.worktree_of(repo, NAME)
     shutil.rmtree(worktree)
-    assert found(repo, host) == RunPlace(repo, NAME)
+    assert found(repo, host) == Found(RunPlace(repo, NAME), None)
     assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
 
 
@@ -377,12 +379,87 @@ def test_a_run_only_origin_holds_gets_its_worktree_on_a_branch_from_origins(
     branch_run(repo, NAME, a_tree(NAME))
     git(repo, "push", "-q", "origin", f"rn-{NAME}")
     clone = cloned(tmp_path, str(tmp_path / "origin.git"))
-    assert found(clone, host) == RunPlace(clone, NAME)
+    assert found(clone, host) == Found(RunPlace(clone, NAME), None)
     worktree = rn_files.worktree_of(clone, NAME)
     assert head(worktree) == head(repo, f"rn-{NAME}")
     upstream = git(worktree, "rev-parse", "--abbrev-ref", "@{upstream}").strip()
     assert upstream == f"origin/rn-{NAME}"
     assert rn_files.read_json(RunPlace(clone, NAME).tree) == a_tree(NAME)
+
+
+def gone_from_github(repo: str, name: str, tree: dict[str, Any], when: str) -> None:
+    """Makes the run of the name, pushed with its design tree at the time given, then cancelled on
+    another machine: its branch deleted on origin and here, its worktree removed, and only the
+    repository's ref of origin's branch left from the push."""
+    branch_run(repo, name, tree, when, worktree=False)
+    git(repo, "push", "-q", "origin", f"rn-{name}")
+    git(str(os.path.dirname(repo)), "--git-dir", "origin.git", "branch", "-q", "-D", f"rn-{name}")
+    git(repo, "branch", "-q", "-D", f"rn-{name}")
+
+
+@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
+@pytest.mark.parametrize("local", [False, True], ids=["alone", "beside-an-older-local-run"])
+def test_a_run_github_no_longer_holds_is_never_picked_up(tmp_path: Any, host: Any, local: bool):
+    """Given a run with work left that was cancelled on another machine, whose only trace here is
+    the ref of origin's branch, newer than any other, alone or beside an older run with work left
+    on this machine
+    When found is asked
+    Then it gives no run, or the older local run, and nothing it couldn't check; and the ref of
+    the cancelled run's branch is gone"""
+    repo = a_repository(tmp_path)
+    if local:
+        branch_run(repo, "20261119-older", a_tree("20261119-older"), "2026-11-19T09:00:00")
+    gone_from_github(repo, NAME, a_tree(NAME), "2026-11-21T09:00:00")
+    expected = RunPlace(repo, "20261119-older") if local else None
+    assert found(repo, host) == Found(expected, None)
+    assert git(repo, "for-each-ref", f"refs/remotes/origin/rn-{NAME}").strip() == ""
+
+
+@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
+def test_a_run_pushed_from_another_machine_since_the_last_fetch_is_picked_up(
+    tmp_path: Any, host: Any
+):
+    """Given a repository, and a run with work left that another clone pushed to origin since
+    the repository last fetched
+    When found is asked in the repository
+    Then it gives that run, its worktree made on a branch from origin's, and nothing it couldn't
+    check"""
+    repo = a_repository(tmp_path)
+    other = cloned(tmp_path, str(tmp_path / "origin.git"))
+    git(other, "checkout", "-q", "main")
+    branch_run(other, NAME, a_tree(NAME))
+    git(other, "push", "-q", "origin", f"rn-{NAME}")
+    assert found(repo, host) == Found(RunPlace(repo, NAME), None)
+    assert head(rn_files.worktree_of(repo, NAME)) == head(other, f"rn-{NAME}")
+
+
+@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
+@pytest.mark.parametrize("local", [False, True], ids=["none-here", "one-here"])
+def test_with_github_out_of_reach_only_this_machines_runs_are_picked_up(
+    tmp_path: Any, host: Any, local: bool
+):
+    """Given a repository whose origin git can't reach, with the ref of origin's branch of a run
+    with work left, newer than any other, and no run, or an older run with work left, on this
+    machine
+    When found is asked
+    Then it gives no run, or the older local run, and that it couldn't check the runs on GitHub,
+    with what git said, as one line"""
+    repo = a_repository(tmp_path)
+    if local:
+        branch_run(repo, "20261119-older", a_tree("20261119-older"), "2026-11-19T09:00:00")
+    branch_run(repo, NAME, a_tree(NAME), "2026-11-21T09:00:00", worktree=False)
+    git(repo, "push", "-q", "origin", f"rn-{NAME}")
+    git(repo, "branch", "-q", "-D", f"rn-{NAME}")
+    git(repo, "remote", "set-url", "origin", str(tmp_path / "gone.git"))
+    given = found(repo, host)
+    assert given.run == (RunPlace(repo, "20261119-older") if local else None)
+    gone = re.escape(str(tmp_path / "gone.git"))
+    assert given.unchecked is not None
+    assert re.fullmatch(
+        f"the runs on GitHub, as git can't ask origin: fatal: '{gone}' does not appear to be a git"
+        " repository fatal: Could not read from remote repository. .*exists[.]",
+        given.unchecked,
+    ), given.unchecked
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
@@ -515,7 +592,7 @@ def test_a_pick_up_inside_herdr_has_git_make_the_worktree_again_and_herdr_open_i
     repo = a_repository(tmp_path)
     branch_run(repo, NAME, a_tree(NAME), worktree=False)
     worktree = rn_files.worktree_of(repo, NAME)
-    assert found(repo, herdr) == RunPlace(repo, NAME)
+    assert found(repo, herdr) == Found(RunPlace(repo, NAME), None)
     assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
     opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", worktree, "--no-focus"]
     assert herdr.asked == [(opened, repo)]
@@ -530,7 +607,7 @@ def test_a_pick_up_outside_herdr_asks_herdr_nothing(tmp_path: Any, host: Any):
     herdr = herdr_double.host(host)
     repo = a_repository(tmp_path)
     branch_run(repo, NAME, a_tree(NAME), worktree=False)
-    assert found(repo, herdr) == RunPlace(repo, NAME)
+    assert found(repo, herdr) == Found(RunPlace(repo, NAME), None)
     assert os.path.isdir(rn_files.worktree_of(repo, NAME))
     assert herdr_commands(herdr) == []
 

@@ -42,7 +42,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       `.claude-plugin/plugin.json` under `plugin_root`, and the languages, and with rn's design
       tree best practice.
     - `find`: 0 printing the folder from `cwd` of the run that `worktree.found` gives, its
-      worktree made again where none lies, as a line, and nothing where there's none.
+      worktree made again where none lies, as a line, and nothing where there's none; and on
+      stderr `repository.py: can't check <what, and why>` where it couldn't ask GitHub for the
+      runs it holds, so that it picked from this machine's alone.
     - `pause <run>`: 0 printing the hash that `push.pause` gives.
     - `cancel <run>`: 0 printing each thing of the run that `worktree.removed` removed on GitHub
       once it removes the run here, a line each, and nothing where there's none; and on stderr
@@ -94,7 +96,9 @@ def _version(plugin_root: str) -> str:
 
 def _find(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     found = worktree.found(cwd, host)
-    return 0, f"{os.path.relpath(found.folder, cwd)}\n" if found else "", ""
+    printed = f"{os.path.relpath(found.run.folder, cwd)}\n" if found.run else ""
+    said = f"repository.py: can't check {found.unchecked}\n" if found.unchecked else ""
+    return 0, printed, said
 
 
 def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:

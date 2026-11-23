@@ -110,8 +110,10 @@ origin names no default branch, as no run stands yet.
      run's name as taken, end on blocked, and recommend `/rn:up` to pick it up. In the review,
      write the issues by its N7.3, and open the first point of the hearing, as `review` says.
    - A pick-up, `find`: run `python3 <rn's folder>/scripts/repository.py find`. It prints the folder
-     of the newest run with work left, from the runs' commits. It makes the run's worktree again
-     where none lies. Where it prints nothing, ask the user which run to pick up, as Output says.
+     of the newest run with work left, from the runs' commits here and on GitHub, as GitHub
+     answers. It makes the run's worktree again where none lies. Where it can't ask GitHub, such
+     as with no network, it picks from this machine's runs alone, and says on stderr what it
+     couldn't check and why; tell the user so in the pick-up. Where it prints nothing, ask the user which run to pick up, as Output says.
      Once you've asked, record `find`, and end the turn. Otherwise, in the review, read
      where the run stopped from its tree and its last Rounds. Report the pick-up as Output says,
      then put the point or sign-off that waits. In the move, start each role the pause stopped
@@ -290,7 +292,9 @@ The walkthrough doesn't reach the messages below. Write each in its way, from th
   cancel printed anything, add `On GitHub, I removed <each thing that cancel printed>.` Where it
   said what it couldn't remove, add `I couldn't remove <each such thing> on GitHub, as <why, in
   the words that cancel gave>. Remove it there if you no longer need it.`
-- The pick-up: `Picking up where it stopped.`, then the point or the sign-off that waits.
+- The pick-up: `Picking up where it stopped.`, then the point or the sign-off that waits. Where find
+  said what it couldn't check, add `I couldn't check GitHub, so I picked from this machine's runs
+  alone, as <why, in the words that find gave>.`
 - No run to pick up: `I find no run to pick up here. Which run do you want to pick up?`
 - A blocker: what stopped, in the words that a script or Lane gave, what the user does to mend it,
   and what goes on meanwhile.

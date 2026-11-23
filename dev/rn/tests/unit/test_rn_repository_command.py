@@ -129,11 +129,27 @@ def test_new_with_no_default_branch_on_origin_says_what_is_missing(tmp_path: Any
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
 def test_find_of_no_run_prints_nothing(tmp_path: Any, host: Any):
-    """Given invoicer's repository with no run
+    """Given invoicer's repository with a remote and no run
     When repository.py find is run
     Then it gives 0 printing nothing"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
+    rn_files.with_origin(repo, str(tmp_path / "origin.git"))
     assert main(["find"], repo, rn_files.RN, host) == (0, "", "")
+
+
+@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+def test_find_with_github_out_of_reach_says_so_on_stderr(tmp_path: Any, host: Any):
+    """Given invoicer's repository with one run with work left, whose origin git can't reach
+    When repository.py find is run
+    Then it gives 0 printing the run's folder as a line, and on stderr `repository.py: can't
+    check the runs on GitHub, as git can't ask origin: ` with what git said, as one line"""
+    repo = rn_files.repository(str(tmp_path / "invoicer"))
+    git(repo, "remote", "add", "origin", str(tmp_path / "gone.git"))
+    branch_run(repo, NAME, rn_files.walkthrough_tree(NAME))
+    code, out, err = main(["find"], repo, rn_files.RN, host)
+    assert (code, out) == (0, f"{RUN}\n")
+    prefix = "repository.py: can't check the runs on GitHub, as git can't ask origin: fatal: "
+    assert err.startswith(prefix) and err.endswith("exists.\n") and err.count("\n") == 1
 
 
 @pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
@@ -144,6 +160,7 @@ def test_find_prints_the_newest_run_and_makes_its_worktree_again(tmp_path: Any, 
     Then it gives 0 printing the newer run with work left, its folder from the top, as one line,
     and that run's worktree lies there again"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
+    rn_files.with_origin(repo, str(tmp_path / "origin.git"))
     for name, when in (
         ("20261120-a", "2026-11-15T09:00:00"),
         ("20261101-z", "2026-11-20T09:00:00"),

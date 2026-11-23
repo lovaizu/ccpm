@@ -21,7 +21,11 @@ from repository.place import RunPlace
 # The line of info/exclude that keeps the runs' worktrees out of the user's untracked files.
 _EXCLUDED = "/.claude/worktrees/"
 # The branches of the runs: the local ones, and origin's as the repository last fetched them.
-_REFS = ("refs/heads/rn-*", "refs/remotes/origin/rn-*")
+_LOCAL = "refs/heads/rn-*"
+_ORIGINS = "refs/remotes/origin/rn-*"
+# What a pick-up fetches of origin: the runs' branches, each ref of one that origin no longer
+# holds pruned.
+_FETCH = ["git", "fetch", "-q", "--prune", "origin", f"+refs/heads/rn-*:{_ORIGINS}"]
 
 
 def new(
@@ -102,20 +106,22 @@ def _exclude(run: RunPlace, host: Host) -> None:
             file.write(f"\n{_EXCLUDED}\n")
 
 
-def newest(repository: str, host: Host) -> RunPlace | None:
+def newest(repository: str, host: Host, origins: bool = True) -> RunPlace | None:
     """The run to pick up, from the runs' commits.
 
-    Takes: the top of the user's repository, and the host.
-    Gives: the run of the newest branch by its last commit, among the local branches `rn-*` and
-    origin's, as the repository last fetched them, whose committed design tree,
+    Takes: the top of the user's repository, the host, and whether origin's branches count.
+    Gives: the run of the newest branch by its last commit, among the local branches `rn-*` and,
+    where `origins` says so, origin's, as the repository last fetched them, whose committed
+    design tree,
     `.rn/<name>/design-tree.json` on the branch, holds a deliverable that isn't done; a run whose
     newest branch holds no such deliverable, or no design tree, is none to pick up. None where
     there's no such run, or the folder isn't a git repository.
     Changes: nothing.
     Refuses: Wrong where a branch's design tree isn't JSON, naming the branch and the path.
     """
+    refs = [_LOCAL, _ORIGINS] if origins else [_LOCAL]
     listed = host(
-        ["git", "for-each-ref", "--sort=-committerdate", "--format=%(refname)", *_REFS], repository
+        ["git", "for-each-ref", "--sort=-committerdate", "--format=%(refname)", *refs], repository
     )
     seen: set[str] = set()
     for ref in listed.out.split() if listed.code == 0 else []:
@@ -136,23 +142,41 @@ def newest(repository: str, host: Host) -> RunPlace | None:
     return None
 
 
-def found(repository: str, host: Host) -> RunPlace | None:
+class Found(NamedTuple):
+    """The run that a pick-up found, or None, and, where it couldn't ask GitHub for the runs it
+    holds, `the runs on GitHub, as git can't ask origin: <what git said>`, as one line, else
+    None."""
+
+    run: RunPlace | None
+    unchecked: str | None
+
+
+def found(repository: str, host: Host) -> Found:
     """The run to pick up, its worktree made again where none lies.
 
     Takes: the top of the user's repository, and the host.
-    Gives: the run that `newest` gives, or None where it gives none.
-    Changes: where the run's worktree is gone, prunes git's record of gone worktrees and adds the
-    worktree again: on the local branch `rn-<name>` where it lies, else on a new local branch
-    `rn-<name>` from origin's, so that a pick-up works in a fresh clone or on another machine;
-    keeps the runs' worktrees out of the user's untracked files, as `new` does. Inside herdr, then
-    has herdr open the worktree's workspace, leaving the focus where it is, as herdr opens only a
-    worktree that lies there.
+    Gives: the run that `newest` gives once origin's branches of the runs are fetched, each that
+    origin no longer holds pruned, so that a run cancelled or deleted on GitHub is never picked
+    up, or None where it gives none; where git can't fetch, such as with no network, the run
+    that `newest` gives of the local branches alone, with what it couldn't check.
+    Changes: fetches origin's branches `rn-*`, and prunes the repository's refs of those that
+    origin no longer holds; where the run's worktree is gone, prunes git's record of gone
+    worktrees and adds the worktree again: on the local branch `rn-<name>` where it lies, else
+    on a new local branch `rn-<name>` from origin's, so that a pick-up works in a fresh clone or
+    on another machine; keeps the runs' worktrees out of the user's untracked files, as `new`
+    does. Inside herdr, then has herdr open the worktree's workspace, leaving the focus where it
+    is, as herdr opens only a worktree that lies there.
     Refuses: Wrong as `newest` refuses; CantRun where git can't make the worktree, or herdr can't
     open it, with what it said.
     """
-    run = newest(repository, host)
+    fetched = host(_FETCH, repository)
+    unchecked = None
+    if fetched.code != 0:
+        said = " ".join((fetched.out + fetched.err).split())
+        unchecked = f"the runs on GitHub, as git can't ask origin: {said}"
+    run = newest(repository, host, origins=unchecked is None)
     if run is None or os.path.isdir(run.worktree):
-        return run
+        return Found(run, unchecked)
     host(["git", "worktree", "prune"], repository)
     # git takes a branch that only origin holds as a new local branch from origin's, tracking it.
     add = ["git", "worktree", "add", "-q", run.worktree, run.branch]
@@ -162,7 +186,7 @@ def found(repository: str, host: Host) -> RunPlace | None:
         opened = ["herdr", "worktree", "open", "--cwd", repository, "--path", run.worktree]
         what = "herdr can't open the run's worktree"
         checked(host, [*opened, "--no-focus"], repository, CantRun, what)
-    return run
+    return Found(run, unchecked)
 
 
 class Gone(NamedTuple):
