@@ -67,89 +67,14 @@
   {
    "name": "The cases that check the joined parts reach the AI's aim are written",
    "path": "dev/overnight/tests",
-   "kind": "test-design",
-   "inputs": [
-    "dev/overnight/product-vision.md",
-    "plugins/overnight/README.md",
-    "dev/overnight/architecture.md",
-    "plugins/overnight"
-   ],
-   "status": "open",
-   "necessary_conditions": [
-    {
-     "id": "N1",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N2",
-     "good": true,
-     "decisions": [
-      {
-       "about": "A start hour already past",
-       "decided": "A queue stacked anew waits for the next time its start hour comes; a queue stacked again to carry on its unfinished tasks starts them at once.",
-       "by": "reasoning"
-      },
-      {
-       "about": "How the runner knows a queue is carried on",
-       "decided": "The stacker hands the runner no start for a queue stacked again to carry on its unfinished tasks, so the runner starts them at once.",
-       "by": "reasoning"
-      },
-      {
-       "about": "A task carried on and its earlier waits",
-       "decided": "A task carried on keeps none of its earlier waits, as its stops at the usage limit count from zero again.",
-       "by": "reasoning"
-      },
-      {
-       "about": "A queue stacked again whose every task finished",
-       "decided": "Stacking again a queue whose every task finished starts no runner and says that every task finished.",
-       "by": "reasoning"
-      },
-      {
-       "about": "A check while tasks still run",
-       "decided": "A check while the runner still carries tasks tells each task not yet ended as still running, beside the ends of the others.",
-       "by": "reasoning"
-      }
-     ]
-    },
-    {
-     "id": "N3",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N7",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N4",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N5",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N6",
-     "good": true,
-     "decisions": [
-      {
-       "about": "The program that stands in for a command",
-       "decided": "The writer of a program that stands in for a command, which the double of Claude Code and that of gh both need, is kept once in dev/tests/, and both doubles call it.",
-       "by": "user"
-      }
-     ]
-    }
-   ],
    "more_paths": [
     "dev/tests/",
     "dev/rn/tests/gh/gh_double.py",
     "dev/rn/tests/conftest.py",
     "dev/scripts/check.sh"
-   ]
+   ],
+   "kind": "test-design",
+   "status": "done"
   },
   {
    "name": "The runner stacks tasks, resumes each after the limit lifts, and reports which finished and which were given up",
@@ -243,14 +168,14 @@
  "work": [],
  "steps": [
   {
-   "settles": "誰が何のために使うか",
+   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "どう使うか",
+   "settles": "\u3069\u3046\u4f7f\u3046\u304b",
    "deliverables": [
     "plugins/overnight/README.md",
     "plugins/overnight/CHANGELOG.md"
@@ -258,14 +183,14 @@
    "signoff": false
   },
   {
-   "settles": "どんな部品でどう動くか",
+   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
    "deliverables": [
     "dev/overnight/architecture.md"
    ],
    "signoff": false
   },
   {
-   "settles": "部品がかみ合うか",
+   "settles": "\u90e8\u54c1\u304c\u304b\u307f\u5408\u3046\u304b",
    "deliverables": [
     "plugins/overnight",
     "dev/overnight/tests"
@@ -273,7 +198,7 @@
    "signoff": false
   },
   {
-   "settles": "動くものができたか",
+   "settles": "\u52d5\u304f\u3082\u306e\u304c\u3067\u304d\u305f\u304b",
    "deliverables": [
     "plugins/overnight/scripts",
     ".claude-plugin/marketplace.json"
