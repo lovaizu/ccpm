@@ -11,7 +11,7 @@
    ],
    "refs": []
   },
-  "pr": null
+  "pr": "https://github.com/lovaizu/ccpm/pull/80"
  },
  "goal": {
   "decided": "An AI that the user instructs finishes the work the user gave overnight while nobody answers, and reports the results in the morning.",
@@ -482,49 +482,49 @@
  ],
  "steps": [
   {
-   "settles": "誰が何を得るか",
+   "settles": "\u8ab0\u304c\u4f55\u3092\u5f97\u308b\u304b",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "どう使うか",
+   "settles": "\u3069\u3046\u4f7f\u3046\u304b",
    "deliverables": [
     "plugins/overnight/README.md"
    ],
    "signoff": false
   },
   {
-   "settles": "どんな部品で作るか",
+   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u4f5c\u308b\u304b",
    "deliverables": [
     "dev/overnight/architecture.md"
    ],
    "signoff": false
   },
   {
-   "settles": "部品のつなぎ目",
+   "settles": "\u90e8\u54c1\u306e\u3064\u306a\u304e\u76ee",
    "deliverables": [
     "plugins/overnight"
    ],
    "signoff": false
   },
   {
-   "settles": "何で確かめるか",
+   "settles": "\u4f55\u3067\u78ba\u304b\u3081\u308b\u304b",
    "deliverables": [
     "dev/overnight/tests"
    ],
    "signoff": false
   },
   {
-   "settles": "動くもの",
+   "settles": "\u52d5\u304f\u3082\u306e",
    "deliverables": [
     "plugins/overnight/domain"
    ],
    "signoff": false
   },
   {
-   "settles": "入手のしかた",
+   "settles": "\u5165\u624b\u306e\u3057\u304b\u305f",
    "deliverables": [
     ".claude-plugin/marketplace.json",
     "README.md"
