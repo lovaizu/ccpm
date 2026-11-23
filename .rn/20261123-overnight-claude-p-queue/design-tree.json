@@ -15,12 +15,12 @@
   "session": "a3474397-ec33-40fc-a2f1-ba0b908940bf"
  },
  "goal": {
-  "decided": "At the user's word, the AI runs many claude -p tasks unattended at night without using up the daytime usage window, and each task finishes past the usage limit or is logged as given up. In the morning, the AI reads from the log which tasks finished and which were given up, tells the user, and takes their results into the main session, and an AI that runs another plugin calls its wait-and-resume part instead of writing its own.",
-  "by": "reasoning"
+  "decided": "At the user's word, the AI that the user instructs lists the night's claude -p tasks with a start time and starts them, and they go on after the conversation closes. A task that hits the usage limit waits until the limit resets and resumes. In the morning, the AI reads the log, tells the user which tasks finished and which were given up, and takes their results into the main session. An AI that runs another plugin calls the wait-and-resume part instead of writing its own.",
+  "by": "user"
  },
  "deliverables": [
   {
-   "name": "At the user's word, the AI runs many claude -p tasks unattended at night without using up the daytime usage window, and each task finishes past the usage limit or is logged as given up. In the morning, the AI reads from the log which tasks finished and which were given up, tells the user, and takes their results into the main session, and an AI that runs another plugin calls its wait-and-resume part instead of writing its own.",
+   "name": "The plan of the overnight plugin",
    "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
    "kind": "design-tree",
    "inputs": [],
@@ -28,7 +28,7 @@
    "necessary_conditions": [
     {
      "id": "N1",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "whom it's for",
@@ -44,12 +44,12 @@
     },
     {
      "id": "N2",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N7",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "the rn that wrote the tree",
@@ -67,6 +67,45 @@
        "by": "reasoning"
       }
      ]
+    },
+    {
+     "id": "N3",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": true,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The product vision of overnight",
+   "path": "dev/overnight/product-vision.md",
+   "kind": "product-vision",
+   "inputs": [],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
     },
     {
      "id": "N3",
@@ -89,15 +128,529 @@
      "decisions": []
     }
    ]
+  },
+  {
+   "name": "The README of overnight",
+   "path": "plugins/overnight/README.md",
+   "kind": "readme",
+   "inputs": [
+    "dev/overnight/product-vision.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The architecture of overnight",
+   "path": "dev/overnight/architecture.md",
+   "kind": "architecture",
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N11",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N12",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N13",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N14",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N15",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N16",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The software design of overnight",
+   "path": "plugins/overnight",
+   "kind": "software-design",
+   "inputs": [
+    "dev/overnight/architecture.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The test cases of overnight",
+   "path": "dev/overnight/tests",
+   "kind": "test-design",
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md",
+    "dev/overnight/architecture.md",
+    "plugins/overnight"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The queue runner and its wait-and-resume part",
+   "path": "plugins/overnight/domain",
+   "kind": "code",
+   "inputs": [
+    "dev/overnight/architecture.md",
+    "plugins/overnight",
+    "dev/overnight/tests"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The instructions by which the AI sets up the night's queue and reads its log in the morning",
+   "path": "plugins/overnight/domain/overnight.md",
+   "kind": "prompt",
+   "inputs": [
+    "dev/overnight/architecture.md",
+    "plugins/overnight/README.md",
+    "dev/overnight/tests",
+    "plugins/overnight"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N11",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N12",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N13",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N14",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N15",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N16",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The integration tests of overnight",
+   "path": "dev/overnight/tests/integration",
+   "kind": "code",
+   "inputs": [
+    "dev/overnight/architecture.md",
+    "plugins/overnight",
+    "dev/overnight/tests"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "overnight listed in the marketplace and in the repository's README",
+   "path": ".claude-plugin/marketplace.json",
+   "kind": "light",
+   "inputs": [
+    "plugins/overnight/README.md",
+    "plugins/overnight/domain",
+    "plugins/overnight/domain/overnight.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": [
+      {
+       "about": "The check",
+       "decided": "claude plugin validate passes on plugins/overnight and on the repository's top, and the marketplace and the repository's README each list overnight.",
+       "by": "reasoning"
+      }
+     ]
+    }
+   ],
+   "more_paths": [
+    "README.md"
+   ]
   }
  ],
  "work": [
   {
-   "do": "decide",
-   "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
-   "condition": "N1",
-   "about": "the goal"
+   "do": "make",
+   "path": "dev/overnight/product-vision.md"
   }
  ],
- "steps": []
+ "steps": [
+  {
+   "settles": "誰が何のために使うか",
+   "deliverables": [
+    "dev/overnight/product-vision.md"
+   ],
+   "signoff": true
+  },
+  {
+   "settles": "どう使うか",
+   "deliverables": [
+    "plugins/overnight/README.md"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "どんな部品でどう動くか",
+   "deliverables": [
+    "dev/overnight/architecture.md",
+    "plugins/overnight"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "何を確かめるか",
+   "deliverables": [
+    "dev/overnight/tests"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "動くもの",
+   "deliverables": [
+    "plugins/overnight/domain",
+    "plugins/overnight/domain/overnight.md",
+    "dev/overnight/tests/integration"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "マーケットプレイスへの登録",
+   "deliverables": [
+    ".claude-plugin/marketplace.json"
+   ],
+   "signoff": false
+  }
+ ]
 }
