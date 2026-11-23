@@ -1,0 +1,47 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/README.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that runs each task you stack to its end, past the usage limit.",
+    "When a task reaches the usage limit, its reply names the time that the limit resets. overnight",
+    "resumes the task's session two minutes after that time to finish the task. The new reply goes after",
+    "No. When the usage limit stops a task the seventh time, overnight gives the task up, with the reason"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "At the end, you have two reviews and a fixed test taken into your work, from tasks that ran with no",
+    "overnight carries each task you stack to its end without you, so you let go once you've stacked"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "You stack the three tasks in a queue file, `/home/dev/overnight/tonight.json`, beside their",
+    "prompts. Each `prompt` is a path from the queue file's folder. Each task works in its `dir`. A task"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "with `writes` set to `true` may write there. Each other task gets only read-only tools:",
+    "overnight runs the first task at `start`, an hour that you set for when no one works. Without",
+    "`start`, overnight runs the first task at once. It runs three tasks at a time.",
+    "passed 20 times. You see what the task wrote in its folder and take it in:"
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "At the end of their day, the person you work for asks for two reviews by morning: the shop's payment",
+    "You hand the person you work for the two reviews and the merged fix."
+   ]
+  }
+ ]
+}

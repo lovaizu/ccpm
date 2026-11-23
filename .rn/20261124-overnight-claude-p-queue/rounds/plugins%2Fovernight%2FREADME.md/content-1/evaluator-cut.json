@@ -1,0 +1,94 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "deliverable": {
+  "name": "An AI learns from the guide whether the plugin fits its work and how to stack tasks and take their results in",
+  "path": "plugins/overnight/README.md",
+  "more_paths": [
+   "plugins/overnight/images/",
+   "plugins/overnight/LICENSE",
+   "plugins/overnight/CHANGELOG.md"
+  ]
+ },
+ "judges_by": {
+  "what": "A newcomer decides from the README alone whether the product fits their work, and if it does, starts using it, as the README holds only what brings them to that decision and that start.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The reader knows whether the product fits their work.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "the opening",
+      "what": "Does the opening say what the product is, who it's for, and what it lets them achieve?"
+     },
+     {
+      "id": "N2",
+      "about": "Non-goals",
+      "what": "Does the README list what readers might expect the product to do but it doesn't?"
+     },
+     {
+      "id": "N3",
+      "about": "the opening",
+      "what": "Does the README say at the top where the product isn't ready for use yet?"
+     },
+     {
+      "id": "N4",
+      "about": "License",
+      "what": "Does the README name the license and link its full text?"
+     },
+     {
+      "id": "N5",
+      "about": "the whole",
+      "what": "Does the README answer each question in the order a reader comes to ask it?"
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The reader learns what they get from the product in work like their own.",
+    "necessary_conditions": [
+     {
+      "id": "N6",
+      "about": "Walkthrough",
+      "what": "Does the walkthrough show a real run on typical work that delivers what the product vision's key results promise, in a form the reader can see?"
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "The reader understands why the product can give it, and trusts that it does.",
+    "necessary_conditions": [
+     {
+      "id": "N7",
+      "about": "How it works",
+      "what": "Does How it works state first, in the reader's words, the one way that the product vision's concept puts first, and build the rest of its explanation from it?"
+     },
+     {
+      "id": "N8",
+      "about": "How it works",
+      "what": "Does How it works answer the problems and doubts that bring readers to the product, each by the part of the product that answers it and how that part follows from the one way?"
+     }
+    ]
+   },
+   {
+    "id": "C4",
+    "what": "The reader installs the product and starts using it without help.",
+    "necessary_conditions": [
+     {
+      "id": "N9",
+      "about": "Requirements, Installation",
+      "what": "Can a reader with nothing set up install the product by the README alone, and see that it works?"
+     },
+     {
+      "id": "N10",
+      "about": "Documentation",
+      "what": "Does the README link where to go for fuller use and for help?"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-plugins%2Fovernight%2FREADME.md-content-1/",
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/plugins%2Fovernight%2FREADME.md/content-1"
+}

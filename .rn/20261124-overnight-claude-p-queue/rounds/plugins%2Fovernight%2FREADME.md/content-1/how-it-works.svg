@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 540">
+  <title>How overnight carries each task you stack to its end: it waits for the start, runs each task in a session of its own, waits for the usage limit to reset and resumes the same session, ends each task as finished or given up with why, and keeps the replies and the log for your session to take in</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1160" height="540"/>
+
+  <!-- Your session -->
+  <rect class="box" x="20" y="60" width="170" height="70" rx="6"/>
+  <text class="name" x="105" y="92">Your session</text>
+  <text class="kind" x="105" y="112">stacks the tasks</text>
+
+  <text class="quote start" x="20" y="170">"Do the tasks stop</text>
+  <text class="quote start" x="20" y="186">when my session ends?"</text>
+  <text class="gets start" x="20" y="206">No: they run apart</text>
+  <text class="gets start" x="20" y="222">from Claude Code.</text>
+
+  <text class="quote start" x="20" y="270">"My plugin would write</text>
+  <text class="quote start" x="20" y="286">the wait again."</text>
+  <text class="gets start" x="20" y="306">It stacks a queue of one,</text>
+  <text class="gets start" x="20" y="322">and gets the same wait.</text>
+
+  <!-- overnight -->
+  <rect class="frame" x="250" y="20" width="890" height="500" rx="8"/>
+  <text class="frame-name start" x="264" y="44">overnight</text>
+
+  <!-- Waits for the start -->
+  <rect class="box" x="290" y="60" width="220" height="70" rx="6"/>
+  <text class="name" x="400" y="92">Waits for the start</text>
+  <text class="kind" x="400" y="112">then runs three tasks at a time</text>
+
+  <text class="quote start" x="290" y="170">"The tasks use up the window</text>
+  <text class="quote start" x="290" y="186">that my person works in."</text>
+  <text class="gets start" x="290" y="206">They start at the hour you set.</text>
+
+  <text class="quote start" x="290" y="250">"Will a task wait for a permission?"</text>
+  <text class="gets start" x="290" y="270">No: its tools are allowed up front,</text>
+  <text class="gets start" x="290" y="286">and it writes only in its own folder.</text>
+
+  <text class="quote start" x="290" y="350">"My tasks stop at the limit,</text>
+  <text class="quote start" x="290" y="366">and wait for someone."</text>
+  <text class="gets start" x="290" y="386">It resumes the same session,</text>
+  <text class="gets start" x="290" y="402">and keeps the whole reply.</text>
+
+  <!-- Each task's own session -->
+  <rect class="box" x="590" y="60" width="220" height="70" rx="6"/>
+  <text class="name" x="700" y="92">Each task's own session</text>
+  <text class="kind" x="700" y="112">its tools allowed up front</text>
+
+  <!-- Waits for the reset -->
+  <rect class="box" x="590" y="300" width="220" height="70" rx="6"/>
+  <text class="name" x="700" y="332">Waits for the reset</text>
+  <text class="kind" x="700" y="352">then resumes the same session</text>
+
+  <!-- Finished -->
+  <rect class="box" x="890" y="60" width="210" height="70" rx="6"/>
+  <text class="name" x="995" y="92">Finished</text>
+  <text class="kind" x="995" y="112">with its whole reply</text>
+
+  <!-- Given up -->
+  <rect class="box" x="890" y="300" width="170" height="70" rx="6"/>
+  <text class="name" x="975" y="332">Given up</text>
+  <text class="kind" x="975" y="352">with why, and its session</text>
+
+  <text class="quote start" x="890" y="170">"Does a task that keeps</text>
+  <text class="quote start" x="890" y="186">reaching the limit</text>
+  <text class="quote start" x="890" y="202">hold up the queue?"</text>
+  <text class="gets start" x="890" y="222">No: its seventh stop</text>
+  <text class="gets start" x="890" y="238">gives it up, and the</text>
+  <text class="gets start" x="890" y="254">others go on.</text>
+
+  <!-- Replies and log -->
+  <rect class="store" x="700" y="430" width="380" height="60" rx="6"/>
+  <text class="name" x="890" y="456">Replies and log</text>
+  <text class="kind" x="890" y="476">one reply for each task, and a line for each event</text>
+
+  <!-- Lines -->
+  <path class="line" d="M190,95 L288,95" marker-end="url(#arrow)"/>
+  <text class="data mid" x="239" y="87">queue</text>
+
+  <path class="line" d="M510,95 L588,95" marker-end="url(#arrow)"/>
+
+  <path class="line" d="M660,130 L660,298" marker-end="url(#arrow)"/>
+  <text class="label small end halo" x="652" y="220">limit reached</text>
+  <path class="line" d="M740,300 L740,132" marker-end="url(#arrow)"/>
+  <text class="label small start halo" x="748" y="220">resumes</text>
+
+  <path class="line" d="M810,95 L888,95" marker-end="url(#arrow)"/>
+  <text class="label small mid halo" x="849" y="87">no limit</text>
+
+  <path class="line" d="M810,335 L888,335" marker-end="url(#arrow)"/>
+  <text class="label small mid halo" x="849" y="327">7th stop</text>
+
+  <path class="line" d="M1100,95 L1120,95 L1120,460 L1082,460" marker-end="url(#arrow)"/>
+  <path class="line" d="M975,370 L975,428" marker-end="url(#arrow)"/>
+
+  <path class="line" d="M700,460 L215,460 L215,115 L192,115" marker-end="url(#arrow)"/>
+  <text class="label small mid halo" x="460" y="452">checks, and takes the results in</text>
+</svg>

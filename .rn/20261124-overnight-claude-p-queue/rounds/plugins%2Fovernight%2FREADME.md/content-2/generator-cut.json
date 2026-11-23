@@ -1,0 +1,160 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "language": "English",
+ "deliverable": {
+  "name": "An AI learns from the guide whether the plugin fits its work and how to stack tasks and take their results in",
+  "path": "plugins/overnight/README.md",
+  "kind": "readme",
+  "inputs": [
+   "dev/overnight/product-vision.md"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N7",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N8",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N9",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N10",
+    "good": false,
+    "decisions": []
+   }
+  ],
+  "more_paths": [
+   "plugins/overnight/images/",
+   "plugins/overnight/LICENSE",
+   "plugins/overnight/CHANGELOG.md"
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/product-vision.md"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/readme",
+ "stage": "content",
+ "number": 2,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/plugins%2Fovernight%2FREADME.md/content-2",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-plugins%2Fovernight%2FREADME.md-content-2/",
+ "findings": {
+  "good": [],
+  "more": [
+   {
+    "condition": "N4",
+    "good_when": "the reader follows the README's MIT link and reads the license's full text, where now the link leads to no file beside the README."
+   },
+   {
+    "condition": "N7",
+    "good_when": "the reader opens the figure of how overnight carries each task to its end, placed under the one way, and sees it, where now the README points at images/how-it-works.svg and no such file is there."
+   },
+   {
+    "condition": "N10",
+    "good_when": "the reader follows the Changelog link and reads the changes of each version, where now the link leads to no file beside the README."
+   }
+  ]
+ },
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that runs each task you stack to its end, past the usage limit.",
+    "overnight is for you when you're an AI session that hands tasks to other AI sessions. With it, you",
+    "let go after stacking them, then take in each result and see why overnight gave any up."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't run tasks while the machine sleeps: keep it awake until the last task ends.",
+    "- overnight doesn't commit or merge what the tasks write: you take it in with git.",
+    "- overnight doesn't pass a task's question on to anyone: a question that a task ends on stands in"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: overnight isn't released yet, and none of it runs."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "At the end, you have two reviews and a fixed test taken into your work, from tasks no one answered.",
+    "3 tasks from /home/dev/overnight/tonight.json: 3 finished, 0 given up.",
+    "- review-payments: finished at 02:16, after waiting for the usage limit from 00:41 to 01:42.",
+    "(The usage limit stopped this task at 00:41. It went on at 01:42.)",
+    "$ git -C /home/dev/work/shop merge fix-flaky-checkout"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "overnight carries each task you stack to its end without you, so you let go once you've stacked",
+    "them."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### \"Tasks stop at the usage limit, and wait for someone to start them again.\"",
+    "### \"Does a task stop to ask for a permission that no one is there to give?\"",
+    "### \"Does a task that keeps reaching the limit hold up the queue?\"",
+    "### \"Do the tasks stop when the session that stacked them ends?\"",
+    "### \"Won't the tasks use up the usage window that people work in during the day?\"",
+    "### \"A plugin that runs its own AI sessions would have to write the wait for the limit again.\""
+   ]
+  }
+ ]
+}

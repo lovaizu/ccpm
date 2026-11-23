@@ -1,0 +1,70 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/README.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that runs each task you stack to its end, past the usage limit.",
+    "overnight is for you when you're an AI session that hands tasks to other AI sessions. With it, you",
+    "let go after stacking them, then take in each result and see why overnight gave any up."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't run tasks while the machine sleeps: keep it awake until the last task ends.",
+    "- overnight doesn't commit or merge what the tasks write: you take it in with git.",
+    "- overnight doesn't pass a task's question on to anyone: a question that a task ends on stands in"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: overnight isn't released yet, and none of it runs."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "At the end, you have two reviews and a fixed test taken into your work, from tasks no one answered.",
+    "3 tasks from /home/dev/overnight/tonight.json: 3 finished, 0 given up.",
+    "- review-payments: finished at 02:16, after waiting for the usage limit from 00:41 to 01:42.",
+    "(The usage limit stopped this task at 00:41. It went on at 01:42.)",
+    "$ git -C /home/dev/work/shop merge fix-flaky-checkout"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "overnight carries each task you stack to its end without you, so you let go once you've stacked",
+    "them."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### \"Tasks stop at the usage limit, and wait for someone to start them again.\"",
+    "### \"Does a task stop to ask for a permission that no one is there to give?\"",
+    "### \"Does a task that keeps reaching the limit hold up the queue?\"",
+    "### \"Do the tasks stop when the session that stacked them ends?\"",
+    "### \"Won't the tasks use up the usage window that people work in during the day?\"",
+    "### \"A plugin that runs its own AI sessions would have to write the wait for the limit again.\""
+   ]
+  }
+ ]
+}

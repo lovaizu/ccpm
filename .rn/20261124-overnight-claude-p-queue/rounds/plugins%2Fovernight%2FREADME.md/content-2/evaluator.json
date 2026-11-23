@@ -1,0 +1,85 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that runs each task you stack to its end, past the usage limit.",
+    "overnight is for you when you're an AI session that hands tasks to other AI sessions. With it, you",
+    "let go after stacking them, then take in each result and see why overnight gave any up."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't run tasks while the machine sleeps: keep it awake until the last task ends.",
+    "- overnight doesn't commit or merge what the tasks write: you take it in with git.",
+    "- overnight doesn't pass a task's question on to anyone: a question that a task ends on stands in",
+    "  its reply."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: overnight isn't released yet, and none of it runs."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "[MIT](LICENSE)"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "overnight carries each task you stack to its end without you, so you let go once you've stacked",
+    "them.",
+    "![How overnight carries each task you stack to its end](images/how-it-works.svg)"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "overnight resumes the task's session two minutes after the reset that its reply names, to finish the",
+    "task. The new reply goes after the earlier one, so you take in the whole result.",
+    "No. Each task starts with its tools allowed and its edits accepted, and writes only in its `dir`.",
+    "No. The seventh stop gives a task up with its reason and session, and the others go on.",
+    "No. overnight runs the tasks apart from Claude Code, so they go on after that session ends.",
+    "overnight runs the first task at `start`, an hour you set when no one works, or at once without it.",
+    "It runs three tasks at a time.",
+    "Have the plugin's AI stack its task as a queue of one, and read its end from `/overnight:check`.",
+    "It gets the same wait and resume as any queue."
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "- [Changelog](CHANGELOG.md): for you after an update, the changes in each version.",
+    "- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N6",
+   "good_when": "The AI reads the walkthrough as the record of a run of overnight that took place, so it trusts that stacking a queue and letting go brings back each reply, the wait at the usage limit, and the folder to take in with git, rather than reading at the walkthrough's start that no run of overnight records it yet."
+  },
+  {
+   "condition": "N9",
+   "good_when": "An AI with only Claude Code and Python runs the README's two install commands, they succeed, and in a new session /overnight:check shows `overnight 0.1.0: name the queue file to check`; in the trial, `claude plugin install overnight@ccpm` printed `Plugin \"overnight\" not found in marketplace \"ccpm\"`."
+  }
+ ]
+}
