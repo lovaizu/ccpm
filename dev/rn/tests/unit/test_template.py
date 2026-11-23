@@ -766,6 +766,39 @@ def test_template_gives_0_and_prints_nothing_for_a_document_that_holds_its_kinds
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_template_holds_a_vision_of_one_key_result_and_no_idea_under_its_one_way(folder: str):
+    """Given a product vision whose objective has one key result, of how well, and whose concept
+    is its one way alone, as the time decides nothing and the way holds without an idea
+    When `template.py product-vision <document>` runs
+    Then it gives 0 and prints nothing"""
+    document = lines(
+        "# Product vision of overnight",
+        "",
+        "## Roles",
+        "",
+        "- user\\",
+        "  One who leaves Claude Code tasks for the night.",
+        "",
+        "## Objectives and key results",
+        "",
+        "- O1: the user finds the night's tasks done in the morning.",
+        "  - KR1.1: the share of the night's tasks left undone in the morning. Lower is better.",
+        "",
+        "The first key result of each objective comes first. Keep a change that improves a key",
+        "result only if none before it gets worse.",
+        "Key results have no targets, as a measure made a target stops being a good measure, by",
+        "Goodhart's law. They show whether a change brought its objective closer.",
+        "",
+        "## Concept",
+        "",
+        "overnight has an AI agent do the work while the user sleeps.",
+    )
+    with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
+        file.write(document)
+    assert main(["product-vision", "vision.md"], folder, RN) == (0, "", "")
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_template_gives_1_with_each_fault_at_the_documents_path_and_line(folder: str):
     """Given a document of a title and a section FAQ
     When `template.py product-vision <document>` runs

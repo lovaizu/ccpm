@@ -87,8 +87,8 @@
      {
       "id": "N4",
       "about": "Objectives and key results",
-      "what": "Does each objective have key results that measure how well and how fast its role achieves it, each with the direction that's better?",
-      "why": "The developers keep a change only if it brings the users closer to their goals, so each objective needs measures that a developer reads after a change. Usability testers judge a change by the [success rate and the time on task](https://www.nngroup.com/articles/usability-metrics/) of each task the users do, and the two key results take these.",
+      "what": "Does each objective have a key result that measures how well its role achieves it, and one of how fast only where the time decides the objective, each with the direction that's better?",
+      "why": "The developers keep a change only if it brings the users closer to their goals, so each objective needs measures that a developer reads after a change. Usability testers judge a change by the [success rate and the time on task](https://www.nngroup.com/articles/usability-metrics/) of each task the users do, and the key results take these, the time only where it decides whether the role reaches the objective, as a measure that decides nothing leans no change.",
       "items": [
        {
         "at": "decide",
@@ -100,7 +100,7 @@
        },
        {
         "at": "decide",
-        "text": "Make the second key result measure how fast: the time from the task's start to its result, the role's own time in it included, such as the time the user spends answering questions. Where that time depends mostly on things outside the product, such as the speed of the machine, count the role's own effort instead, such as the questions they answer."
+        "text": "Where the time decides whether the role reaches the objective, such as a task that's no use once late, make a second key result measure how fast: the time from the task's start to its result, the role's own time in it included, such as the time the user spends answering questions. Where that time depends mostly on things outside the product, such as the speed of the machine, count the role's own effort instead, such as the questions they answer."
        },
        {
         "at": "decide",
@@ -157,7 +157,7 @@
      {
       "id": "N6",
       "about": "Concept",
-      "what": "Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the ideas that keep this way holding at each moment of their use?",
+      "what": "Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then only the ideas without which this way fails at a moment of their use?",
       "why": "The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way, so that the users meet one product and not a set of parts that pull apart.",
       "items": [
        {
@@ -178,7 +178,7 @@
        },
        {
         "at": "decide",
-        "text": "At each moment, ask what keeps the one way holding there. Where no idea answers, propose one."
+        "text": "At each moment, ask whether the one way holds there as it stands. Only where it fails, propose the idea that keeps it holding."
        },
        {
         "at": "decide",

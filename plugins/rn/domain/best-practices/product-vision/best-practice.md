@@ -8,10 +8,10 @@
     - **N2** Does each objective state, in one sentence, what one role is trying to achieve in their own work? (Objectives and key results)
     - **N3** Does the vision describe only what the users do and get, not how the product works inside? (the whole)
   - **C2** The developers can tell whether a change brings the users closer to their goals.
-    - **N4** Does each objective have key results that measure how well and how fast its role achieves it, each with the direction that's better? (Objectives and key results)
+    - **N4** Does each objective have a key result that measures how well its role achieves it, and one of how fast only where the time decides the objective, each with the direction that's better? (Objectives and key results)
     - **N5** Are the objectives distinct, so that each piece of work serves one of them? (Objectives and key results)
   - **C3** The developers know the one way by which the product brings its users to their goals, so that every choice leans toward it.
-    - **N6** Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the ideas that keep this way holding at each moment of their use? (Concept)
+    - **N6** Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then only the ideas without which this way fails at a moment of their use? (Concept)
 
 ## Template
 
@@ -54,13 +54,13 @@ The vision must stay true while the inside of the product changes, so it describ
 
 ### N4
 
-Does each objective have key results that measure how well and how fast its role achieves it, each with the direction that's better?
+Does each objective have a key result that measures how well its role achieves it, and one of how fast only where the time decides the objective, each with the direction that's better?
 
-The developers keep a change only if it brings the users closer to their goals, so each objective needs measures that a developer reads after a change. Usability testers judge a change by the [success rate and the time on task](https://www.nngroup.com/articles/usability-metrics/) of each task the users do, and the two key results take these.
+The developers keep a change only if it brings the users closer to their goals, so each objective needs measures that a developer reads after a change. Usability testers judge a change by the [success rate and the time on task](https://www.nngroup.com/articles/usability-metrics/) of each task the users do, and the key results take these, the time only where it decides whether the role reaches the objective, as a measure that decides nothing leans no change.
 
 1. *While deciding.* For each objective, write the task its role does to reach it, from where they start to the result they keep, such as from the user's request to the deliverable they sign off.
 2. *While deciding.* Make the first key result measure how well: the share of those tasks in which the role reaches the result. Where a run of the task shows the failures rather than the successes, such as a deliverable that its people can't use, measure the share that fails instead, such as `the share of the deliverables rn hands over that the people they're for couldn't use`.
-3. *While deciding.* Make the second key result measure how fast: the time from the task's start to its result, the role's own time in it included, such as the time the user spends answering questions. Where that time depends mostly on things outside the product, such as the speed of the machine, count the role's own effort instead, such as the questions they answer.
+3. *While deciding.* Where the time decides whether the role reaches the objective, such as a task that's no use once late, make a second key result measure how fast: the time from the task's start to its result, the role's own time in it included, such as the time the user spends answering questions. Where that time depends mostly on things outside the product, such as the speed of the machine, count the role's own effort instead, such as the questions they answer.
 4. *While deciding.* Give each key result the direction that's better, such as `Lower is better.`
 5. *While deciding.* Rank the key results, how well before how fast, so that a developer keeps a change that improves one only if none ranked before it gets worse.
 6. *While deciding.* Give each key result its direction alone, since developers who aim at a number improve the number in place of the users' result.
@@ -80,7 +80,7 @@ The developers decide what to build by asking which objective a piece of work se
 
 ### N6
 
-Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the ideas that keep this way holding at each moment of their use?
+Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then only the ideas without which this way fails at a moment of their use?
 
 The developers make many choices that no line of the vision names, and the concept lets each of them lean the same way, so that the users meet one product and not a set of parts that pull apart.
 
@@ -88,7 +88,7 @@ The developers make many choices that no line of the vision names, and the conce
 2. *While deciding.* Write the one way in one sentence as what the users see the product do, such as `rn works only on the vital few, the things that decide whether the people a deliverable is for can use it`.
 3. *While deciding.* Write each idea the user gave, with what it gives the role toward the objective.
 4. *While deciding.* List the moments of the users' use, from the moment they first meet the product to the moment they reach the objective, as a [customer journey map](https://www.nngroup.com/articles/journey-mapping-101/) does, such as the request, the goal confirmed, the questions answered, the plan signed off, and each deliverable signed off.
-5. *While deciding.* At each moment, ask what keeps the one way holding there. Where no idea answers, propose one.
+5. *While deciding.* At each moment, ask whether the one way holds there as it stands. Only where it fails, propose the idea that keeps it holding.
 6. *While deciding.* For each idea you propose, ask the user `Does <idea> keep <the one way> holding at <moment>, as you mean it?`, and keep it only where they say yes.
 7. *While deciding.* Keep only the ideas on which the one way stands, as the developers hold the concept in mind at every choice, and a list too long to hold leans no choice. Move an idea that carries out another, such as how a fix is made, to the README's How it works or the architecture, where its people need it. Drop each idea where taking it out leaves the one way holding at every moment.
 8. *While making.* At each moment, take a design choice that no line of the vision names, such as whether to ask the user about a point the best practice settles, and decide it by the one way and its ideas. Where they don't decide it one way, rewrite the idea for that moment until they do.
