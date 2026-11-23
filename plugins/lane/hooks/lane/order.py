@@ -24,10 +24,12 @@ class OrderMove(TypedDict, total=False):
 
 class OrderRun(TypedDict):
     """The run as the plugin's order sees it: the skill that called it, the words typed after its
-    command, and each of its moves in their order."""
+    command, the session ID of the conversation it runs in, and each of its moves in their
+    order."""
 
     skill: str
     words: str
+    session: str
     moves: list[OrderMove]
 
 
@@ -50,10 +52,10 @@ def order_run(run: Run) -> OrderRun:
     """The run as the plugin's order sees it.
 
     Takes: the run as its record stands.
-    Gives: its skill and words, and each command that called or moved it, each start made, and each
-    result, in their order, each start with its prompt; a start whose Agent call failed, or that
-    ended with no result, such as one stopped by TaskStop, is left out, so that the order gives its
-    role due again.
+    Gives: its skill and words, the conversation's session ID, and each command that called or
+    moved it, each start made, and each result, in their order, each start with its prompt; a
+    start whose Agent call failed, or that ended with no result, such as one stopped by TaskStop,
+    is left out, so that the order gives its role due again.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -67,4 +69,4 @@ def order_run(run: Run) -> OrderRun:
             moves.append(
                 {"kind": "start", "role": move.entry["role"], "prompt": move.entry["prompt"]}
             )
-    return {"skill": run.skill, "words": run.words, "moves": moves}
+    return {"skill": run.skill, "words": run.words, "session": run.session_id, "moves": moves}

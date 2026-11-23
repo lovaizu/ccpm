@@ -12,7 +12,7 @@ import practice
 from fault import Answer, Wrong, answered
 from repository import push
 from repository.host import Host
-from repository.place import RunPlace, of_folder
+from repository.place import RunPlace, of_folder, of_session
 from rounds import course, files
 
 from tree import checks, cut, form, signoff, touched
@@ -25,6 +25,9 @@ _WHO = {
     "orchestrator": "the orchestrator, to keep each finding left as an open decision",
     "sign-off": "the user's sign-off",
 }
+
+# The form of the argument that names a run by its conversation's session ID.
+_SESSION = "--session="
 
 USAGE = """\
 usage: tree.py touched <run> [<pointer>]
@@ -57,7 +60,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       that `tree.signoff.waiting` names, and gives 0 printing its path; 1 where none waits. It
       commits and pushes nothing, as `commit` does once the tree is reviewed.
 
-    `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `tree.py: <what's wrong>`
+    `<run>` is the run's folder, as `place.of_folder` takes it, or `--session=<session ID>`, the run
+    that `place.of_session` gives for the conversation of the session, as Lane runs a checklist's
+    command whose run the turn makes before it's named. 1 with `tree.py: <what's wrong>`
     where the input is Wrong or something is Missing, saying how to mend it; 2 with what stopped it
     where it CantRun, such as a commit check of the repository refusing the design tree's commit,
     with what git said; 2 with the usage where the arguments are other than these.
@@ -69,8 +74,19 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
         return 2, "", USAGE
     return answered(
         "tree.py",
-        lambda: subcommand(of_folder(cwd, argv[1]), list(argv[2:]), cwd, plugin_root, host),
+        lambda: subcommand(_run(cwd, argv[1]), list(argv[2:]), cwd, plugin_root, host),
     )
+
+
+def _run(cwd: str, given: str) -> RunPlace:
+    """The run that the argument names: its folder, or `--session=<session ID>`."""
+    if not given.startswith(_SESSION):
+        return of_folder(cwd, given)
+    session = given[len(_SESSION) :]
+    run = of_session(cwd, session) if session else None
+    if run is None:
+        raise Wrong(f"no run here holds the session {session!r}; give the run's folder")
+    return run
 
 
 def _touched(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:

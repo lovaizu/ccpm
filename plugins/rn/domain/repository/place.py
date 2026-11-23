@@ -1,9 +1,10 @@
 """Decides where a run lies and what it's called: its name from the day and the goal, its worktree
 and branch, its folder, the paths of its design tree and its Rounds in that folder, and which run a
-request's words named."""
+conversation works on."""
 
 from __future__ import annotations
 
+import json
 import os
 import re
 from dataclasses import dataclass
@@ -83,23 +84,33 @@ def _goal(words: str) -> str:
     return "-".join(kept[:_WORDS])
 
 
-def made(repository: str, words: str) -> RunPlace | None:
-    """The run that a request of the words made in the repository, on whichever day it was made.
+def of_session(repository: str, session: str) -> RunPlace | None:
+    """The run that the conversation of the session works on.
 
-    Takes: the top of the user's repository, and the user's words in reply to `/rn:on`.
-    Gives: the run whose name `named` gives from the words on some day, and whose design tree lies
-    in its worktree here, the latest day's where several do, as a request made before midnight
-    and answered after it names its run by the day before; None where none does.
+    Takes: the top of the user's repository, and the conversation's session ID, as Lane gives it to
+    rn's adapters and Claude Code gives it to Bash as `CLAUDE_CODE_SESSION_ID`.
+    Gives: the run whose design tree, in its worktree here, holds the session in its context, as
+    `new` and a pick-up write it; of several, the one whose tree was written last, as the run that
+    the conversation works on now; None where none does.
     Changes: nothing.
-    Refuses: Wrong as `named` refuses the words.
+    Refuses: Wrong where a run's design tree isn't JSON, naming its path.
     """
-    goal = _goal(words)
     worktrees = os.path.join(repository, ".claude", "worktrees")
-    folders = os.listdir(worktrees) if os.path.isdir(worktrees) else []
-    matched = [_WORKTREE.fullmatch(each) for each in folders]
-    days = sorted((each[1] for each in matched if each and each[2] == goal), reverse=True)
-    runs = [RunPlace(repository, f"{day}-{goal}") for day in days]
-    return next((run for run in runs if os.path.isfile(run.tree)), None)
+    folders = sorted(os.listdir(worktrees)) if os.path.isdir(worktrees) else []
+    held: list[tuple[float, RunPlace]] = []
+    for each in folders:
+        matched = _WORKTREE.fullmatch(each)
+        run = RunPlace(repository, f"{matched[1]}-{matched[2]}") if matched else None
+        if run is None or not os.path.isfile(run.tree):
+            continue
+        try:
+            with open(run.tree, encoding="utf-8") as file:
+                tree = json.load(file)
+        except ValueError as error:
+            raise Wrong(f"{run.tree}: isn't JSON: {error}") from None
+        if tree["context"].get("session") == session:
+            held.append((os.path.getmtime(run.tree), run))
+    return max(held, key=lambda each: each[0])[1] if held else None
 
 
 def of_folder(cwd: str, folder: str) -> RunPlace:

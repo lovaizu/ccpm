@@ -182,6 +182,38 @@ def test_touched_of_a_change_since_the_commit_prints_what_it_touches(tmp_path: A
 
 
 @pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+def test_touched_of_the_run_of_a_session_reads_the_run_whose_context_holds_it(
+    tmp_path: Any, host: Any
+):
+    """Given the walkthrough's run of the conversation of session-1, its tree committed, then the
+    user's answer about the tax rate changed in the tree
+    When tree.py touched runs with `--session=session-1` in place of the run's folder, as Lane runs
+    a checklist's command before the run's name is known
+    Then it gives what it gives with the run's folder"""
+    tree = walkthrough()
+    tree["context"]["session"] = "session-1"
+    r = Run(str(tmp_path), tree)
+    changed = r.tree()
+    changed["deliverables"][1]["necessary_conditions"][0]["decisions"][0]["decided"] = "Once."
+    r.write(changed)
+    assert r.main(host, "touched", "--session=session-1") == r.main(host, "touched", r.run)
+
+
+@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.parametrize("given", ["--session=session-2", "--session="], ids=["another", "empty"])
+def test_touched_of_a_session_with_no_run_gives_1_naming_it(tmp_path: Any, host: Any, given: str):
+    """Given the walkthrough's run of the conversation of session-1
+    When tree.py touched runs with another session, or an empty one
+    Then it gives 1 with `tree.py: `, saying that no run here holds the session"""
+    tree = walkthrough()
+    tree["context"]["session"] = "session-1"
+    r = Run(str(tmp_path), tree)
+    code, out, err = r.main(host, "touched", given)
+    assert (code, out) == (1, "")
+    assert err.startswith("tree.py: ") and "no run here" in err
+
+
+@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
 def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
     tmp_path: Any, host: Any
 ):

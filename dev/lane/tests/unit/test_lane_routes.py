@@ -22,7 +22,7 @@ ROUTES: Any = lane_bench.RULES["routes"]
 def run(*moves: OrderMove) -> OrderRun:
     """The run of log:up for 1.2.0 as its order sees it: its command, and the moves after it."""
     head: list[OrderMove] = [{"kind": "command", "command": "log:up"}]
-    return {"skill": "log:up", "words": "1.2.0", "moves": [*head, *moves]}
+    return {"skill": "log:up", "words": "1.2.0", "session": "session-1", "moves": [*head, *moves]}
 
 
 def start(role: str) -> OrderMove:

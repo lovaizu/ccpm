@@ -200,9 +200,9 @@ def test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again(b: Benc
     user then removed, so that only origin's branch holds the run
     When the user types /rn:up in a new conversation, the orchestrator runs repository.py find,
     keeps the shared steps, and writes the generator's Cut
-    Then find prints the run's folder, its worktree lies there again on rn-<name> at origin's head
-    with the design tree that the pause pushed, and the generator starts with a Cut in Round
-    content-1"""
+    Then find prints the run's folder, its worktree lies there again on rn-<name> one commit past
+    origin's head, which writes the new conversation's session in the design tree that the pause
+    pushed, and the generator starts with a Cut in Round content-1"""
     c, generator = mid_command(b)
     paused(b, c, [generator])
     pushed = b.tree()
@@ -210,10 +210,11 @@ def test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again(b: Benc
     git(b.repo, "branch", "-D", f"rn-{b.name()}")
     later = picked_up(b)
     assert (
-        git(b.worktree, "rev-parse", "HEAD").strip()
+        git(b.worktree, "rev-parse", "HEAD~1").strip()
         == git(b.origin, "rev-parse", f"rn-{b.name()}").strip()
     )
-    assert b.tree() == pushed
+    assert git(b.worktree, "log", "-1", "--format=%s").strip() == f"rn: {b.name()}, picked up"
+    assert b.tree() == dict(pushed, context=dict(pushed["context"], session=later.session_id))
     cut_path = shared_steps(
         b, later, ground="Picked up.", moves=[b.script("tree", "cut", b.run, "generator", COMMAND)]
     )[0].strip()

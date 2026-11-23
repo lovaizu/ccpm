@@ -47,7 +47,8 @@ deliverable's people to their aim, and cuts the trivial many.
 
 - Design tree\
   Holds what to make, why, and how far the run got, for each review and each pick-up. It also
-  holds rn's version, the languages, the way to the goal, and the run's issues and pull request. Its form is
+  holds rn's version, the languages, the steps, the issues, the pull request, and the conversation's
+  session. Its form is
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s.
 - Cut\
   A role's part of the design tree, so that each role starts with only the decisions its work needs.
@@ -76,6 +77,9 @@ Strategies:
   Intent: a send-back gets Rounds of its own, so that the user's change is remade.
 - The issues to close and to refer to written from the request, never asked. [P1.2]\
   Intent: the user isn't asked what their request already says.
+- The conversation's own run found by the session in its design tree, which Lane gives rn's
+  adapters. [P6.1]\
+  Intent: no conversation takes another's run as its own.
 - The pull request opened as a draft, which the user marks ready. [P2.3]\
   Intent: nobody reviews or merges the work before the user has seen it checked whole.
 - A finding that the people would never meet dropped by holding its condition good. [P1.1]\

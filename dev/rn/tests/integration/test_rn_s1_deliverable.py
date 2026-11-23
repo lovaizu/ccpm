@@ -77,16 +77,17 @@ def test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_
     When the user types /rn:on, and, asked what they want to make, the walkthrough's words, and the
     orchestrator makes the run by repository.py new with the goal as put and commits it
     Then the run's worktree has the branch rn-<name> checked out from main's head, its design tree
-    holds the goal by reasoning, the plan as its one deliverable, and no work, committed with the
-    ground as its message, and the user's own branch and files are as they were"""
+    holds the goal by reasoning, the plan as its one deliverable, no work, and the conversation's
+    session in its context, committed with the ground as its message, and the user's own branch
+    and files are as they were"""
     head = git(b.repo, "rev-parse", "main").strip()
-    requested(b)
+    c = requested(b)
     branch = f"rn-{b.name()}"
     assert git(b.worktree, "branch", "--show-current").strip() == branch
     assert git(b.repo, "merge-base", "main", branch).strip() == head
-    assert b.tree() == rn_files.tree(
-        [rn_files.plan(b.name(), good=False)], goal=GOAL, by="reasoning"
-    )
+    expected = rn_files.tree([rn_files.plan(b.name(), good=False)], goal=GOAL, by="reasoning")
+    expected["context"]["session"] = c.session_id
+    assert b.tree() == expected
     assert log(b, branch)[0] == "The goal as put."
     assert git(b.repo, "branch", "--show-current").strip() == "main"
     assert git(b.repo, "rev-parse", "main").strip() == head
@@ -100,14 +101,16 @@ def test_an_answer_after_the_request_goes_into_the_run_the_request_made(b: Bench
     When the user types /rn:on, then the walkthrough's words, and the orchestrator makes the run by
     repository.py new and keeps the shared steps; and the user confirms the goal, and the
     orchestrator writes the plan into the run's design tree and keeps the shared steps
-    Then Lane lets each move through, and the run made holds the plan, 20261101-old's tree as it
-    was"""
+    Then Lane lets each move through, and the run made holds the plan and the conversation's
+    session, 20261101-old's tree as it was"""
     old = "20261101-old"
     waiting = rn_files.tree([rn_files.plan(old, good=False)], goal=GOAL, by="reasoning")
     folder = branch_run(b.repo, old, waiting, "2099-01-01T09:00:00")
     c = requested(b)
     confirmed(b, c)
-    assert b.tree() == planned_tree(b, answered=False)
+    expected = planned_tree(b, answered=False)
+    expected["context"]["session"] = c.session_id
+    assert b.tree() == expected
     assert rn_files.read_json(os.path.join(folder, "design-tree.json")) == waiting
 
 
@@ -566,13 +569,30 @@ def test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci(b: Benc
     assert "fail" not in checks
 
 
+def others_run(b: Bench) -> None:
+    """Makes the run 20991231-theirs of another conversation, newer by its last commit than any,
+    its plan done, and its command waiting on its evaluator, as its generator made it with each
+    condition good, its guide resting on the command."""
+    name = "20991231-theirs"
+    tree = rn_files.walkthrough_tree(name)
+    tree["context"]["session"] = "another-conversation"
+    folder = branch_run(b.repo, name, tree, "2099-12-31T09:00:00")
+    good = [("N1", ["x"]), ("N2", ["x"]), ("N3", ["x"])]
+    rn_files.a_round(folder, COMMAND, "content", 1, {"generator": rn_files.made(good)})
+
+
 @pytest.mark.supports("S1", "Design tree")
-def test_an_answer_of_where_the_user_checks_signs_off_the_plan(b: Bench):
+@pytest.mark.parametrize("other", [False, True], ids=["alone", "beside-another-conversations-run"])
+def test_an_answer_of_where_the_user_checks_signs_off_the_plan(b: Bench, other: bool):
     """Given a run whose plan is put up as the way to the goal, a step of the command and one of
-    the guide, the user checking each as recommended
+    the guide, the user checking each as recommended; alone, or beside a run of another
+    conversation, newer by its last commit, whose command waits on its evaluator
     When the user answers `c`, each step, and the orchestrator writes each step's sign-off true,
     runs tree.py signoff at `take`, reports `signed` by lane-result, and writes the command's Cut
-    Then the plan is done, each step's sign-off is true, and the command's generator starts"""
+    Then the plan is done, each step's sign-off is true, the command's generator starts, and the
+    turn's end goes through, as the starts due are this conversation's run's alone"""
+    if other:
+        others_run(b)
     c = to_plan_signoff(b)
     c.type("c")
     design_tree = b.tree()
@@ -595,6 +615,7 @@ def test_an_answer_of_where_the_user_checks_signs_off_the_plan(b: Bench):
     assert tree["deliverables"][0]["status"] == "done"
     assert [each["signoff"] for each in tree["steps"]] == [True, True]
     assert started(c, "rn:generator", cut_path) is not None
+    ended(c, f'Making "{rn_files.COMMAND_NAME}".')
 
 
 @pytest.mark.supports("S1", "Design tree")

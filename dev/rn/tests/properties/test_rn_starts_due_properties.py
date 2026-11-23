@@ -60,12 +60,14 @@ MOVES = st.lists(
 @pytest.mark.supports("test_no_generator_starts_before_the_plan_is_signed_off")
 @given(open_plans(), MOVES)
 def test_no_role_is_due_while_the_plan_is_open(tree: dict[str, Any], moves: list[dict[str, Any]]):
-    """Given any design tree whose plan is open, and any commands of the user but a pause
+    """Given any design tree of the conversation whose plan is open, and any commands of the user
+    but a pause
     When the starts due are found
     Then none is due
     (Invariant, resting on P1.3.)"""
     with tempfile.TemporaryDirectory() as folder:
         cwd = rn_files.repository(os.path.join(folder, "repo"), {"README.md": "invoicer\n"})
-        branch_run(cwd, NAME, tree)
-        out = ADAPTER.due({"run": {"skill": "rn:up", "words": "", "moves": moves}}, cwd)
+        branch_run(cwd, NAME, dict(tree, context=dict(tree["context"], session="session-1")))
+        given = {"skill": "rn:up", "words": "", "session": "session-1", "moves": moves}
+        out = ADAPTER.due({"run": given}, cwd)
     assert out == {"starts": []}

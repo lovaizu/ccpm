@@ -21,13 +21,16 @@ OPEN = ("open", "doing")
 Context = dict[str, Any]
 
 
-def context(version: str, deliverables: str, conversation: str) -> Context:
+def context(
+    version: str, deliverables: str, conversation: str, session: str | None = None
+) -> Context:
     """The context that a run starts with.
 
-    Takes: rn's version, as its plugin.json gives it; and the language of the deliverables and
-    that of the conversation, each as the user settled it, such as English and Japanese.
+    Takes: rn's version, as its plugin.json gives it; the language of the deliverables and that of
+    the conversation, each as the user settled it, such as English and Japanese; and the session
+    ID of the conversation that starts the run, or None outside Claude Code.
     Gives: a context holding the version, the two languages as given, no issue to close or to
-    refer to, and no pull request.
+    refer to, no pull request, and the session.
     Changes: nothing.
     Refuses: Wrong where a language is empty or only spaces, naming which.
     """
@@ -43,6 +46,7 @@ def context(version: str, deliverables: str, conversation: str) -> Context:
         "languages": languages,
         "issues": {"closes": [], "refs": []},
         "pr": None,
+        "session": session,
     }
 
 

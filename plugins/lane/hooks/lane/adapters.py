@@ -87,7 +87,7 @@ def given_steps(plugin_root: str, cwd: str, run: Run, asked: Asked) -> list[Step
             f"Lane couldn't check {what}: they come from the plugin's adapter of the rules,"
             f" lane/adapters/rules.py, which {plugin_root} doesn't hold"
         )
-    given = {"run": {"skill": run.skill, "words": run.words}, **asked}
+    given = {"run": {"skill": run.skill, "words": run.words, "session": run.session_id}, **asked}
     return _ask(plugin_root, cwd, "rules", given, what)["steps"]
 
 

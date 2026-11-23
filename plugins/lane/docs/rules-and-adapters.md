@@ -382,8 +382,11 @@ end of the main conversation's turn.
 
 Its input is the run as it stands, in the form of
 [starts_due.in.schema.json](../hooks/lane/starts_due.in.schema.json): the skill that called the
-run, the words typed after its command, and each command, start with its prompt, and result, in
-their order. Lane leaves out a start whose call failed, or that ended with no result, so its role
+run, the words typed after its command, the session ID of the conversation, and each command, start
+with its prompt, and result, in their order. The session ID is the one that Claude Code gives each
+hook, and each command that Bash runs as `CLAUDE_CODE_SESSION_ID`, so that your plugin can record
+which conversation a piece of its work belongs to, and tell its own from another conversation's
+in the same folder. Lane leaves out a start whose call failed, or that ended with no result, so its role
 is due again.
 
 ```json
@@ -391,6 +394,7 @@ is due again.
   "run": {
     "skill": "log:up",
     "words": "1.2.0",
+    "session": "4344a6c5-dc82-48d7-9cfd-249b08288cea",
     "moves": [
       { "kind": "command", "command": "log:up" },
       { "kind": "start", "role": "log:writer", "prompt": "Write the entry of 1.2.0." },
@@ -440,11 +444,13 @@ Its `turns` holds each earlier turn of the run, oldest first, with its `role`, `
 `command`, so that a turn's steps can turn on the turns before it, such as an answer to the
 question the last turn asked. A start's `turns` is empty.
 
+Its `run` holds the session ID too, as the input of the starts due does.
+
 Its input, in the form of [rules.in.schema.json](../hooks/lane/rules.in.schema.json):
 
 ```json
 {
-  "run": { "skill": "log:up", "words": "1.2.0" },
+  "run": { "skill": "log:up", "words": "1.2.0", "session": "4344a6c5-dc82-48d7-9cfd-249b08288cea" },
   "role": "log:writer",
   "prompt": "Write the entry of 1.2.0 in docs/changes/1.2.0.md.",
   "command": null,

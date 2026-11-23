@@ -56,12 +56,20 @@ def test_new_prints_the_new_runs_folder_from_the_repositorys_top(tmp_path: Any, 
 @pytest.mark.supports(
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
-def test_new_writes_rns_version_and_the_languages_in_the_trees_context(tmp_path: Any, host: Any):
-    """Given invoicer's repository with a remote
+@pytest.mark.parametrize("session", [None, "4344a6c5-dc82-48d7-9cfd-249b08288cea"])
+def test_new_writes_rns_version_the_languages_and_the_session_in_the_trees_context(
+    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch, session: str | None
+):
+    """Given invoicer's repository with a remote, run outside Claude Code, with no
+    CLAUDE_CODE_SESSION_ID, or in a conversation whose CLAUDE_CODE_SESSION_ID Claude Code sets
     When repository.py new is given the walkthrough's words, the goal, English, and Japanese
     Then the run's design tree's context holds rn's version as its plugin.json gives it, English
-    as the deliverables' language and Japanese as the conversation's, no issues, and no pull
-    request"""
+    as the deliverables' language and Japanese as the conversation's, no issues, no pull request,
+    and the session, or null"""
+    if session is None:
+        monkeypatch.delenv("CLAUDE_CODE_SESSION_ID", raising=False)
+    else:
+        monkeypatch.setenv("CLAUDE_CODE_SESSION_ID", session)
     repo = rn_files.repository(str(tmp_path / "invoicer"))
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
     argv = ["new", rn_files.WORDS, rn_files.GOAL, "English", "Japanese"]
@@ -74,6 +82,7 @@ def test_new_writes_rns_version_and_the_languages_in_the_trees_context(tmp_path:
         "languages": {"deliverables": "English", "conversation": "Japanese"},
         "issues": {"closes": [], "refs": []},
         "pr": None,
+        "session": session,
     }
 
 

@@ -87,6 +87,18 @@
        "type": "null"
       }
      ]
+    },
+    "session": {
+     "description": "The session ID of the conversation that works on the run now, as Claude Code gives it, written when the run starts and at each pick-up, so that rn's adapters find the conversation's own run; null where the run started outside Claude Code.",
+     "anyOf": [
+      {
+       "type": "string",
+       "minLength": 1
+      },
+      {
+       "type": "null"
+      }
+     ]
     }
    }
   },

@@ -111,17 +111,19 @@ def test_started_refuses_an_empty_goal():
 @pytest.mark.supports(
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
-def test_context_holds_the_version_and_the_languages_with_no_issue_or_pull_request():
-    """Given rn's version 0.9.0, English as the deliverables' language, and Japanese as the
-    conversation's
+@pytest.mark.parametrize("session", [None, "session-1"], ids=["outside-claude-code", "session"])
+def test_context_holds_the_version_the_languages_and_the_session(session: str | None):
+    """Given rn's version 0.9.0, English as the deliverables' language, Japanese as the
+    conversation's, and no session, or the conversation's session ID
     When the context that a run starts with is made
     Then it holds the version, English and Japanese each in its place, no issue to close or to
-    refer to, and no pull request"""
-    assert context("0.9.0", "English", "Japanese") == {
+    refer to, no pull request, and the session, or null"""
+    assert context("0.9.0", "English", "Japanese", session) == {
         "rn": "0.9.0",
         "languages": {"deliverables": "English", "conversation": "Japanese"},
         "issues": {"closes": [], "refs": []},
         "pr": None,
+        "session": session,
     }
 
 

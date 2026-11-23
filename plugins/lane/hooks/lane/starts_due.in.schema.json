@@ -13,6 +13,7 @@
       "required": [
         "skill",
         "words",
+        "session",
         "moves"
       ],
       "additionalProperties": false,
@@ -25,6 +26,11 @@
         "words": {
           "description": "The words typed after its command.",
           "type": "string"
+        },
+        "session": {
+          "description": "The session ID of the conversation that the run runs in, as Claude Code gives it to each hook, and to each command that Bash runs as CLAUDE_CODE_SESSION_ID, so that a plugin tells its own conversation's work from another's.",
+          "type": "string",
+          "minLength": 1
         },
         "moves": {
           "description": "Each command that called or moved the run, each start made, and each result, in their order; a start whose call failed, or that ended with no result, is left out.",

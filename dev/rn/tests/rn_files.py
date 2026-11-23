@@ -178,13 +178,14 @@ def version() -> str:
 def context(
     closes: Sequence[int] = (), refs: Sequence[int] = (), pr: str | None = None
 ) -> dict[str, Any]:
-    """A design tree's context: rn's version, the walkthrough's languages, the issues, and the
-    pull request."""
+    """A design tree's context: rn's version, the walkthrough's languages, the issues, the pull
+    request, and no session, as a run started outside Claude Code holds."""
     return {
         "rn": version(),
         "languages": {"deliverables": DELIVERABLES_LANGUAGE, "conversation": CONVERSATION_LANGUAGE},
         "issues": {"closes": list(closes), "refs": list(refs)},
         "pr": pr,
+        "session": None,
     }
 
 

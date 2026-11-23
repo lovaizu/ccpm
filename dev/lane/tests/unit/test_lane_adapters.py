@@ -105,8 +105,8 @@ def test_the_plugins_adapter_takes_the_run_as_the_order_sees_it_in_the_conversat
 ):
     """Given an adapter of the starts due that writes what it's given
     When Lane asks it for the starts due of a run with the writer started
-    Then it was given the run's skill, words, and moves, the start with its prompt, as
-    starts_due.in.schema.json says, and ran in the conversation's folder"""
+    Then it was given the run's skill, words, the conversation's session ID, and moves, the start
+    with its prompt, as starts_due.in.schema.json says, and ran in the conversation's folder"""
     adapter(log, "starts_due.py", ECHO.format(printed=json.dumps({"starts": []})))
     start: Entry = lane_entries.start("u1", prompt="Write it.")
     starts_due(log, cwd, run(log, start), RULES, False)
@@ -115,7 +115,9 @@ def test_the_plugins_adapter_takes_the_run_as_the_order_sees_it_in_the_conversat
         {"kind": "start", "role": "log:writer", "prompt": "Write it."},
     ]
     assert given(cwd) == {
-        "input": {"run": {"skill": "log:up", "words": "1.2.0", "moves": moves}},
+        "input": {
+            "run": {"skill": "log:up", "words": "1.2.0", "session": "session-1", "moves": moves}
+        },
         "cwd": os.path.realpath(cwd),
     }
 
@@ -225,13 +227,13 @@ def test_the_adapter_of_the_rules_gives_the_starts_steps_from_its_prompt(log: st
 def test_the_adapter_of_the_rules_takes_the_run_the_role_and_the_prompt(log: str, cwd: str):
     """Given an adapter of the rules that writes what it's given
     When Lane asks it for the steps of a writer's start
-    Then it was given the run's skill and words, the role, the prompt, no command, and no turn, as
-    rules.in.schema.json says, and ran in the conversation's folder"""
+    Then it was given the run's skill, words, and session ID, the role, the prompt, no command, and
+    no turn, as rules.in.schema.json says, and ran in the conversation's folder"""
     adapter(log, "rules.py", ECHO.format(printed=json.dumps({"steps": []})))
     given_steps(log, cwd, run(log), start("log:writer", "Write it."))
     assert given(cwd) == {
         "input": {
-            "run": {"skill": "log:up", "words": "1.2.0"},
+            "run": {"skill": "log:up", "words": "1.2.0", "session": "session-1"},
             "role": "log:writer",
             "prompt": "Write it.",
             "command": None,
@@ -428,15 +430,15 @@ def test_the_adapter_of_the_rules_takes_the_main_conversations_role_the_prompt_a
     When Lane asks it for the steps of a turn of the main conversation in log:up: the run's first,
     with an empty prompt and no earlier turn; one begun by a task-notification after the first; or
     one begun by /log:tag after two
-    Then it was given the run's skill and words, log:up as the role, the turn's prompt and command,
-    and each earlier turn with its role, prompt, and command, oldest first, and ran in the
-    conversation's folder"""
+    Then it was given the run's skill, words, and session ID, log:up as the role, the turn's prompt
+    and command, and each earlier turn with its role, prompt, and command, oldest first, and ran in
+    the conversation's folder"""
     adapter(log, "rules.py", ECHO.format(printed=json.dumps({"steps": []})))
     asked: Asked = {"role": "log:up", "prompt": prompt, "command": command, "turns": turns}
     given_steps(log, cwd, run(log), asked)
     assert given(cwd) == {
         "input": {
-            "run": {"skill": "log:up", "words": "1.2.0"},
+            "run": {"skill": "log:up", "words": "1.2.0", "session": "session-1"},
             "role": "log:up",
             "prompt": prompt,
             "command": command,

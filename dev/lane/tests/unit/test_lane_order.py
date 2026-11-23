@@ -29,7 +29,7 @@ def run(*entries: Entry) -> Run:
 
 def ordered(*moves: OrderMove) -> OrderRun:
     """The run of log:up for 1.2.0 as its order sees it, with its command and the moves after."""
-    return {"skill": "log:up", "words": "1.2.0", "moves": [COMMAND, *moves]}
+    return {"skill": "log:up", "words": "1.2.0", "session": "session-1", "moves": [COMMAND, *moves]}
 
 
 def started(prompt: str, role: str = "log:writer") -> OrderMove:
@@ -116,14 +116,15 @@ def test_reads_marks_and_the_runs_end_are_left_out():
 @pytest.mark.supports(
     "test_the_order_of_a_new_conversation_takes_the_words_typed_after_the_command"
 )
-def test_the_runs_own_skill_and_words_are_given():
-    """Given a run of log:tag with the words `v2 now`
+def test_the_runs_own_skill_words_and_session_are_given():
+    """Given a run of log:tag with the words `v2 now`, in the conversation of session-2
     When Lane gives the run as the order sees it
-    Then it holds log:tag, `v2 now`, and log:tag as the command that called it"""
-    tagged = Run("r1", "session-1", "log:tag", "v2 now", "/plugins/log", [])
+    Then it holds log:tag, `v2 now`, session-2, and log:tag as the command that called it"""
+    tagged = Run("r1", "session-2", "log:tag", "v2 now", "/plugins/log", [])
     assert order_run(tagged) == {
         "skill": "log:tag",
         "words": "v2 now",
+        "session": "session-2",
         "moves": [{"kind": "command", "command": "log:tag"}],
     }
 

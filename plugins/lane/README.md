@@ -135,8 +135,8 @@ conversation, it goes on from the results your plugin keeps, through an
 
 ### "Does it check other work in the same conversation?"
 
-No. Lane checks only the run of your skill, from the skill's call until your plugin's order says
-the run ends.
+No. Lane checks only your skill's run, from its call to its end, and gives your adapters the
+conversation's session.
 
 ## Documentation
 

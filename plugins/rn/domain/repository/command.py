@@ -80,12 +80,18 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     words, goal, deliverables, conversation = given
     run = place.RunPlace(cwd, place.named(date.today(), words))
-    context = form.context(_version(plugin_root), deliverables, conversation)
+    context = form.context(_version(plugin_root), deliverables, conversation, _session())
     design_tree = practice.read(
         os.path.join(plugin_root, "domain", "best-practices", "design-tree")
     )
     made = worktree.new(run, context, goal, design_tree, host)
     return 0, f"{os.path.relpath(made.folder, cwd)}\n", ""
+
+
+def _session() -> str | None:
+    """The session ID of the conversation that runs the command, as Claude Code sets it in each
+    Bash command's environment, or None outside Claude Code."""
+    return os.environ.get("CLAUDE_CODE_SESSION_ID") or None
 
 
 def _version(plugin_root: str) -> str:
@@ -95,7 +101,7 @@ def _version(plugin_root: str) -> str:
 
 
 def _find(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    found = worktree.found(cwd, host)
+    found = worktree.found(cwd, host, _session())
     printed = f"{os.path.relpath(found.run.folder, cwd)}\n" if found.run else ""
     said = f"repository.py: can't check {found.unchecked}\n" if found.unchecked else ""
     return 0, printed, said

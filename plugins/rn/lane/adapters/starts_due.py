@@ -16,9 +16,7 @@ import json
 from collections import Counter
 
 from fault import Answer, Wrong, end
-from repository import host
-from repository.place import RunPlace, of_folder
-from repository.worktree import newest
+from repository.place import RunPlace, of_folder, of_session
 from rounds import course, files
 from tree import form
 
@@ -58,7 +56,8 @@ def due(given: Given, cwd: str) -> Due:
     only the user can mend kept for them, waiting on the answer and on no role, so that the work
     it concerns stops and the rest goes on, less each start of the role whose prompt names a Cut
     of the deliverable and that has no result yet in the moves. The run is the one whose folder
-    the latest start's prompt names; else the one that `repository.worktree.newest` gives.
+    the latest start's prompt names; else the conversation's own, the one that
+    `repository.place.of_session` gives for `run.session`, as rn's rules find it.
     Changes: nothing.
     Refuses: Wrong where the design tree or a Round can't be read, naming the file.
     """
@@ -69,7 +68,7 @@ def due(given: Given, cwd: str) -> Due:
     if commands and commands[-1] == "rn:dn":
         return {"starts": []}
     starts = [each for each in moves if each["kind"] == "start" and each["role"] in _ROLES]
-    run = _run(commands, starts, moves, cwd)
+    run = _run(commands, starts, given["run"], cwd)
     if run is None:
         return {"ends": True} if _lay_here(moves) else {"starts": []}
     tree = form.read(run.tree)
@@ -101,14 +100,14 @@ def _waiting(run: RunPlace, tree: form.Tree, done: set[str]) -> list[tuple[str, 
     return found
 
 
-def _run(commands: list[str], starts: list[Given], moves: list[Given], cwd: str) -> RunPlace | None:
+def _run(commands: list[str], starts: list[Given], given: Given, cwd: str) -> RunPlace | None:
     """The run whose starts are due: the one that the latest start of rn's subagents names by its
     Cut; else none where the run's only command is `rn:on` and the orchestrator reported no
     sign-off of the plan, as the conversation's own run waits on the user until its plan is signed
-    off, and another run of the repository is none of the conversation's; else the one that can be
-    picked up, where its worktree lies here, the conversation's own, newest by its commits once its
-    plan is signed off; else None, as for a run named by its Cut whose folder no longer lies
-    here."""
+    off; else the conversation's own, whose design tree holds its session, as `new` and a pick-up
+    write it, and as rn's rules find it, so that another conversation's run is never this one's;
+    else None, as for a run named by its Cut whose folder no longer lies here."""
+    moves = given["moves"]
     if starts:
         # A Cut lies at <run's folder>/rounds/<deliverable>/<stage>-<n>/<role>-cut.json, <n> the
         # Round's number among the deliverable's Rounds.
@@ -117,8 +116,7 @@ def _run(commands: list[str], starts: list[Given], moves: list[Given], cwd: str)
         return of_folder(cwd, folder) if os.path.isdir(folder) else None
     if set(commands) == {"rn:on"} and not _signed(moves):
         return None
-    found = newest(cwd, host.run)
-    return found if found and os.path.isfile(found.tree) else None
+    return of_session(cwd, given["session"])
 
 
 def _signed(moves: list[Given]) -> bool:

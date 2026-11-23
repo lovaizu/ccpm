@@ -6,7 +6,8 @@ pause stopped before a role's result, a deliverable past its Rounds whose findin
 for its sign-off, an open decision, a blocker kept for the user beside a deliverable that goes on, a
 start with no result yet among the moves, the orchestrator's result blocked, another plugin's start,
 none, one, and two deliverables due at once, and the run named by the latest start's prompt or else
-the newest by its last commit among several; each refusal; and `main`, for each exit it gives.
+the conversation's own among several, after a pick-up and after the plan's sign-off; each refusal;
+and `main`, for each exit it gives.
 
 Each input is in the form of Lane's starts_due.in.schema.json, read from the JSON of its text, and
 the run's files in the forms that the architecture's Directory structure names. The starts are taken
@@ -28,6 +29,8 @@ from rn_files import COMMAND, GUIDE
 from rn_runs import branch_run
 
 ADAPTER = adapter("starts_due")
+# The session ID of the conversation that the run's moves belong to, as Lane gives it.
+SESSION = "4344a6c5-dc82-48d7-9cfd-249b08288cea"
 NAME = "20261120-invoices"
 CHANGELOG = "CHANGELOG.md"
 
@@ -46,8 +49,9 @@ def result(role: str, given: str) -> dict[str, Any]:
 
 def run(*moves: Mapping[str, Any]) -> dict[str, Any]:
     """What Lane gives the adapter, read from the JSON of its text, the run's words empty, as rn's
-    commands take none but /rn:gm's."""
-    text = json.dumps({"run": {"skill": "rn:up", "words": "", "moves": list(moves)}})
+    commands take none but /rn:gm's, in the conversation of SESSION."""
+    held = {"skill": "rn:up", "words": "", "session": SESSION, "moves": list(moves)}
+    text = json.dumps({"run": held})
     return json.loads(text)
 
 
@@ -63,12 +67,20 @@ def due(*roles: tuple[str, int]) -> dict[str, Any]:
     return {"starts": [{"role": r, "count": n} for r, n in sorted(roles)]}
 
 
-def a_run(cwd: str, tree: Mapping[str, Any], name: str = NAME, worktree: bool = True) -> str:
+def a_run(
+    cwd: str,
+    tree: Mapping[str, Any],
+    name: str = NAME,
+    worktree: bool = True,
+    session: str | None = SESSION,
+) -> str:
     """Makes the run as a run leaves it, its branch rn-<name> with its design tree and invoicer's
     lines committed in its worktree on the day its name gives, so that the newer by name is the
-    newer by its last commit; with no worktree here where `worktree` says so. Gives its folder."""
+    newer by its last commit, its context holding the session, the conversation's unless given;
+    with no worktree here where `worktree` says so. Gives its folder."""
     lines = {"invoicer/lines.py": "def parse_lines(text):\n    return []\n"}
-    folder = branch_run(cwd, name, tree, f"{name[:4]}-{name[4:6]}-{name[6:8]}T09:00:00")
+    held = dict(tree, context=dict(tree["context"], session=session))
+    folder = branch_run(cwd, name, held, f"{name[:4]}-{name[4:6]}-{name[6:8]}T09:00:00")
     write_files(rn_files.worktree_of(cwd, name), lines)
     if not worktree:
         git(cwd, "worktree", "remove", "--force", rn_files.worktree_of(cwd, name))
@@ -623,20 +635,26 @@ def test_the_run_is_the_one_the_latest_starts_prompt_names(cwd: str):
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-def test_with_no_start_the_run_is_the_newest_with_work_left(cwd: str):
-    """Given run 20261120-invoices, whose command waits on its evaluator, a newer run
-    20261121-changes whose changelog and command wait on their generators, and a newest run
-    20261122-done whose deliverables are each done, and no start among the moves
+@pytest.mark.parametrize(
+    "moves",
+    [[command("rn:up")], [command("rn:on"), result("rn:on", "signed")]],
+    ids=["picked-up", "plan-signed-off"],
+)
+def test_with_no_start_the_run_is_the_conversations_own(cwd: str, moves: list[dict[str, Any]]):
+    """Given run 20261120-invoices of this conversation, whose command waits on its evaluator; a
+    newer run 20261121-changes of another conversation, whose changelog and command wait on their
+    generators; and a newer run 20261122-theirs of no conversation, made before rn kept the session,
+    whose command waits on its generator; and no start among the moves, after /rn:up, or after
+    /rn:on with the plan signed off
     When the adapter gives the starts due
-    Then the generator is due twice, of 20261121-changes"""
+    Then the evaluator alone is due, of the conversation's own run"""
     folder = a_run(cwd, walkthrough())
     rn_files.a_round(folder, COMMAND, "content", 1, {"generator": rn_files.made(ALL_GOOD)})
     newer = "20261121-changes"
-    a_run(cwd, with_changelog(rn_files.walkthrough_tree(newer)), newer)
-    done = "20261122-done"
-    plan = rn_files.done_node(rn_files.GOAL, rn_files.plan_path(done), "design-tree")
-    a_run(cwd, rn_files.tree([plan]), done)
-    assert starts(ADAPTER.due(run(command("rn:up")), cwd)) == due(("rn:generator", 2))
+    a_run(cwd, with_changelog(rn_files.walkthrough_tree(newer)), newer, session="another")
+    theirs = "20261122-theirs"
+    a_run(cwd, rn_files.walkthrough_tree(theirs), theirs, session=None)
+    assert starts(ADAPTER.due(run(*moves), cwd)) == due(("rn:evaluator", 1))
 
 
 # Refusals, and main.

@@ -19,13 +19,12 @@ sys.path.insert(0, os.path.join(HERE, "..", "..", "domain"))
 
 import json
 from collections.abc import Sequence
-from datetime import date
 
 import practice
 from check import form
 from fault import Answer, Wrong, end
 from repository import host
-from repository.place import RunPlace, made, named
+from repository.place import RunPlace, of_session
 from repository.worktree import newest
 
 # The orchestrator's roles: the skills of rn that a run stands on.
@@ -62,19 +61,20 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     typed:
     - for `rn:on`, the hearing: `hear` alone;
     - for a new request, the user's words in a turn that called no command, right after one that
-      called `rn:on`: `start`, on the run that `place.named` names from today and the words;
+      called `rn:on`: `start`, on the run that it makes;
     - else, on the run that the turn concerns, the event's own step: `find` for `rn:up`; `record`
       for `rn:ty`; for `rn:dn`, `stop`, then `pause`, with the result `paused`, and no step after
       them; and `take` for any other command or none, such as an answer or a role's end, ending
       also on `paused` or `cancelled`, as the user's words may pause or cancel the run. That run
-      is, where the latest turn
-      that called `rn:on` or `rn:up`, the turn's own among them, called `rn:on`, the one that the
-      request made, as
-      `place.made` finds it from the request's words; else the one that
-      `repository.worktree.newest` gives;
+      is the one that `place.of_session` gives for the conversation's session, `run.session`;
+      else, where no turn called `rn:on` or `rn:up`, or the latest that did, the turn's own among
+      them, called `rn:up`, the one that `repository.worktree.newest` gives, as `find` picks it
+      up; else none;
     - after the event's own step, but for a pause: `review`; `touched`, with the checklist of the
-      command `tree.py touched <run>`; `commit`; `move`; and `final`, the check of the work whole
-      once each deliverable is done, which the orchestrator records at once while one isn't.
+      command `tree.py touched --session=<run.session>`, which names the run by the session, as a
+      request's turn makes the run at its `start`; `commit`; `move`; and `final`, the check of
+      the work whole once each deliverable is done, which the orchestrator records at once while
+      one isn't.
     Each step of a turn but its last ends on `blocked`, so that a refusal that only the user can
     mend, such as `repository.py new`'s where origin names no default branch, ends the turn; the
     last keeps no such rule, as Lane judges the last step's result rule at each end with every step
@@ -119,17 +119,16 @@ def _turn(given: Given, cwd: str, plugin_root: str) -> list[Steps]:
     if command == "rn:on":
         return [_step("hear")]
     called = [each["command"] for each in given["turns"]]
+    session = given["run"]["session"]
     if not command and called[-1:] == ["rn:on"]:
-        run = RunPlace(cwd, named(date.today(), given["prompt"].strip()))
-        return [_step("start", _BLOCKED), *_shared(run, cwd, plugin_root)]
-    run = _run_of(given["turns"], [*called, command], cwd)
-    if run is None:
+        return [_step("start", _BLOCKED), *_shared(session, plugin_root)]
+    if _run_of([*called, command], cwd, session) is None:
         return [_step("find")]
     if command == "rn:dn":
         return [_step("stop", _BLOCKED), _step("pause", _PAUSED)]
     own = _own(command)
     rule = _LEFT if own == "take" else _BLOCKED
-    return [_step(own, rule), *_shared(run, cwd, plugin_root)]
+    return [_step(own, rule), *_shared(session, plugin_root)]
 
 
 def _own(command: str | None) -> str:
@@ -138,9 +137,10 @@ def _own(command: str | None) -> str:
     return {"rn:up": "find", "rn:ty": "record"}.get(command or "", "take")
 
 
-def _shared(run: RunPlace, cwd: str, plugin_root: str) -> list[Steps]:
-    """The steps that every event but a pause takes after its own on the run."""
-    touched = f"python3 {plugin_root}/scripts/tree.py touched {_rel(run.folder, cwd)}"
+def _shared(session: str, plugin_root: str) -> list[Steps]:
+    """The steps that every event but a pause takes after its own on the conversation's run, named
+    by its session."""
+    touched = f"python3 {plugin_root}/scripts/tree.py touched --session={session}"
     return [
         _step("review", _BLOCKED),
         _step("touched", {"type": "checklist", "command": touched}, _BLOCKED),
@@ -150,16 +150,16 @@ def _shared(run: RunPlace, cwd: str, plugin_root: str) -> list[Steps]:
     ]
 
 
-def _run_of(turns: list[Given], called: list[str | None], cwd: str) -> RunPlace | None:
+def _run_of(called: list[str | None], cwd: str, session: str) -> RunPlace | None:
     """The run that the turn concerns, from the command that each turn called, the turn's own last:
-    where the latest `rn:on` or `rn:up` is `rn:on`, the run that the request, the turn right after
-    it, made, found by the request's words, or None before the request; else the run that
-    `repository.worktree.newest` gives, as `rn:up` picks it up."""
-    begun = [i for i, each in enumerate(called) if each in ("rn:on", "rn:up")]
-    if not begun or called[begun[-1]] == "rn:up":
-        return newest(cwd, host.run)
-    request = begun[-1] + 1
-    return made(cwd, turns[request]["prompt"]) if request < len(turns) else None
+    the conversation's own, whose design tree holds its session; else, where the latest `rn:on`
+    or `rn:up` is `rn:up`, or none is, the run that `repository.worktree.newest` gives, as `rn:up`
+    picks it up; else None, as a request of `rn:on` makes no run where its `new` refuses."""
+    own = of_session(cwd, session)
+    if own is not None:
+        return own
+    begun = [each for each in called if each in ("rn:on", "rn:up")]
+    return newest(cwd, host.run) if begun[-1:] != ["rn:on"] else None
 
 
 def _cut(prompt: str, cwd: str, role: str) -> Given:

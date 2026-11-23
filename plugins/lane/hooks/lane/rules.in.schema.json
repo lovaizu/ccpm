@@ -8,12 +8,17 @@
   "properties": {
     "run": {
       "type": "object",
-      "required": ["skill", "words"],
+      "required": ["skill", "words", "session"],
       "additionalProperties": false,
-      "description": "The run: the skill that started it and the words typed after its command.",
+      "description": "The run: the skill that started it, the words typed after its command, and the session ID of its conversation.",
       "properties": {
         "skill": { "type": "string", "minLength": 1 },
-        "words": { "type": "string" }
+        "words": { "type": "string" },
+        "session": {
+          "description": "The session ID of the conversation that the run runs in, as Claude Code gives it to each hook, and to each command that Bash runs as CLAUDE_CODE_SESSION_ID, so that a plugin tells its own conversation's work from another's.",
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "role": {

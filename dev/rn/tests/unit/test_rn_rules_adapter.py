@@ -2,8 +2,9 @@
 event of the orchestrator's turn, the hearing of /rn:on, first or typed again, the user's words
 after it beside no run, a run signed off, one whose worktree isn't here, one done, and a newer one
 whose plan waits, the words after /rn:on typed again, an answer, a role's end, and a sign-off in the
-run that a conversation of /rn:on made, though another is newer, made the day before, or not made, a
-turn after /rn:up typed in it, a pick-up of one run among none, one, and several, newest by its last
+run that a conversation of /rn:on made, found by the conversation's session, though another
+conversation's is newer, named from an issue rather than the words, or not made, a turn after
+/rn:up typed in it, a pick-up of one run among none, one, and several, newest by its last
 commit, its worktree there or gone, a sign-off, a pause, a send-back, an answer, another prompt, a
 role's end as Claude Code gives it, and a prompt that nearly names a command, and a turn other than
 the hearing and a new request with no run or outside a git repository; each step of a turn, the last
@@ -38,6 +39,8 @@ from rn_files import COMMAND, GUIDE, RN, WORDS
 from rn_runs import branch_run
 
 ADAPTER = adapter("rules")
+# The session ID of the conversation that each turn belongs to, as Lane gives it.
+SESSION = "4344a6c5-dc82-48d7-9cfd-249b08288cea"
 NAME = f"{date.today():%Y%m%d}-{rn_files.NAMED}"
 # The prompt of a subagent's end in the background, as Claude Code gives the main conversation.
 ENDED = line(RUN, "writer's end reaches the main conversation")["payload"]["prompt"]
@@ -72,7 +75,7 @@ def given(
     """What Lane gives the adapter, read from the JSON of its text, the run's words empty, as rn's
     commands take none but /rn:gm's, with the earlier turns given, none unless given, and the
     command given, else the one that the prompt typed."""
-    run = {"skill": skill, "words": ""}
+    run = {"skill": skill, "words": "", "session": SESSION}
     called = typed(prompt, skill) if command == "" else command
     text = json.dumps(
         {"run": run, "role": role, "prompt": prompt, "command": called, "turns": list(turns)}
@@ -150,9 +153,11 @@ LEFT = {"type": "result", "ends": ["blocked", "paused", "cancelled"]}
 PAUSED = {"type": "result", "results": ["paused"]}
 
 
-def shared(cwd: str, name: str = NAME) -> list[tuple[str, list[str]]]:
-    """The steps that every event but a pause shares, on the run of the name."""
-    run = os.path.relpath(rn_files.folder_of(cwd, name), cwd)
+def shared() -> list[tuple[str, list[str]]]:
+    """The steps that every event but a pause shares, on the run of the conversation's session,
+    which `touched` names by the session, as the turn of a request makes the run only at its
+    `start`."""
+    run = f"--session={SESSION}"
     return [
         step("review", BLOCKED),
         step(
@@ -188,6 +193,16 @@ def a_run(
     design tree, the walkthrough's unless given, its plan done, at the time given; gives its
     folder."""
     return branch_run(repo, name, tree or rn_files.walkthrough_tree(name), when, worktree)
+
+
+def of(session: str | None, tree: Mapping[str, Any]) -> dict[str, Any]:
+    """The design tree with its context holding the session, as `new` or a pick-up writes it in
+    that session's conversation."""
+    return dict(tree, context=dict(tree["context"], session=session))
+
+
+# The walkthrough's design tree of the run 20261101-old.
+WALKED_OLD = rn_files.walkthrough_tree("20261101-old")
 
 
 def unsigned(name: str = NAME) -> dict[str, Any]:
@@ -253,7 +268,7 @@ def test_the_words_after_the_hearing_start_by_repository_py_new_then_the_shared_
     by its last commit, whose plan waits on its sign-off; and a turn of rn:on whose prompt is the
     user's words, after the run's first turn, the hearing
     When the adapter gives the turn's steps
-    Then they are `start` and the shared steps on the run named from today and the words"""
+    Then they are `start` and the shared steps on the conversation's run, which `start` makes"""
     other = "20261101-old"
     if before == "signed":
         a_run(repo, other)
@@ -264,7 +279,7 @@ def test_the_words_after_the_hearing_start_by_repository_py_new_then_the_shared_
     elif before == "waiting":
         a_run(repo, other, unsigned(other), when="2026-11-21T09:00:00")
     steps = ADAPTER.steps(given("rn:on", WORDS, skill="rn:on", turns=HEARD), repo, RN)
-    assert shown(steps) == relative([START, *shared(repo)], repo)
+    assert shown(steps) == relative([START, *shared()], repo)
 
 
 @pytest.mark.supports(
@@ -274,12 +289,11 @@ def test_the_words_after_the_hearing_typed_again_start_a_new_run(repo: str):
     """Given the run that a conversation of /rn:on made, its plan waiting, and a turn of rn:on whose
     prompt is the user's words for another run, after /rn:on typed again
     When the adapter gives the turn's steps
-    Then they are `start` and the shared steps on the run named from today and the new words"""
-    a_run(repo, tree=unsigned())
+    Then they are `start` and the shared steps on the conversation's run, which `start` makes"""
+    a_run(repo, tree=of(SESSION, unsigned()))
     turns = [*ASKED, turn("rn:on", "/rn:on")]
     steps = ADAPTER.steps(given("rn:on", "Receipts", skill="rn:on", turns=turns), repo, RN)
-    other = f"{date.today():%Y%m%d}-receipts"
-    assert shown(steps) == relative([START, *shared(repo, other)], repo)
+    assert shown(steps) == relative([START, *shared()], repo)
 
 
 @pytest.mark.supports(
@@ -290,49 +304,55 @@ def test_the_words_after_the_hearing_typed_again_start_a_new_run(repo: str):
     "prompt", ["yes", "with each invoice", ENDED], ids=["goal", "point", "role-end"]
 )
 def test_an_answer_in_a_conversation_of_rn_on_takes_it_into_the_run_it_made(repo: str, prompt: str):
-    """Given the run that a conversation of /rn:on made from the request's words, its plan waiting,
-    and another paused run, newer by its last commit, whose plan waits too; and a turn of rn:on
-    after the hearing and the request, whose prompt is the user's answer or a role's end
+    """Given the run that a conversation of /rn:on made, its plan waiting, its context holding the
+    conversation's session, and another paused run of another conversation, newer by its last
+    commit, whose plan waits too; and a turn of rn:on after the hearing and the request, whose
+    prompt is the user's answer or a role's end
     When the adapter gives the turn's steps
     Then they are `take` and the shared steps on the run made, not a new request"""
-    a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
-    a_run(repo, "20261101-old", unsigned("20261101-old"), when="2026-11-21T09:00:00")
+    a_run(repo, tree=of(SESSION, unsigned()), when="2026-11-20T09:00:00")
+    old = "20261101-old"
+    a_run(repo, old, of("another-session", unsigned(old)), when="2026-11-21T09:00:00")
     steps = ADAPTER.steps(given("rn:on", prompt, skill="rn:on", turns=ASKED), repo, RN)
-    assert shown(steps) == relative([TAKE, *shared(repo)], repo)
+    assert shown(steps) == relative([TAKE, *shared()], repo)
 
 
 @pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
-def test_an_answer_after_midnight_takes_it_into_the_run_made_the_day_before(repo: str):
-    """Given the run that a conversation of /rn:on made from the request's words the day before,
-    and a turn of rn:on after the hearing and the request, whose prompt is the user's answer
+def test_an_answer_takes_it_into_the_run_of_the_session_whatever_its_name(repo: str):
+    """Given the run that a conversation of /rn:on made the day before, named from an issue's title
+    rather than the request's words, its context holding the conversation's session; and a turn
+    of rn:on after the hearing and the request, whose prompt is the user's answer
     When the adapter gives the turn's steps
-    Then they are `take` and the shared steps on the run made the day before"""
-    name = f"{date.fromordinal(date.today().toordinal() - 1):%Y%m%d}-{rn_files.NAMED}"
-    a_run(repo, name, unsigned(name))
+    Then they are `take` and the shared steps, not `find`"""
+    name = f"{date.fromordinal(date.today().toordinal() - 1):%Y%m%d}-overnight-claude-p-queue"
+    a_run(repo, name, of(SESSION, unsigned(name)))
     steps = ADAPTER.steps(given("rn:on", "yes", skill="rn:on", turns=ASKED), repo, RN)
-    assert shown(steps) == relative([TAKE, *shared(repo, name)], repo)
+    assert shown(steps) == relative([TAKE, *shared()], repo)
 
 
 @pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
 def test_a_signoff_in_a_conversation_of_rn_on_records_it_on_the_run_it_made(repo: str):
-    """Given the run that a conversation of /rn:on made, and another run, newer by its last commit;
-    and a turn of rn:ty, /rn:ty typed after the hearing, the request, and an answer
+    """Given the run that a conversation of /rn:on made, its context holding the conversation's
+    session, and another conversation's run, newer by its last commit; and a turn of rn:ty, /rn:ty
+    typed after the hearing, the request, and an answer
     When the adapter gives the turn's steps
     Then they are `record` and the shared steps on the run made"""
-    a_run(repo, tree=unsigned(), when="2026-11-20T09:00:00")
-    a_run(repo, "20261101-old", when="2026-11-21T09:00:00")
+    a_run(repo, tree=of(SESSION, unsigned()), when="2026-11-20T09:00:00")
+    a_run(repo, "20261101-old", of("another-session", WALKED_OLD), when="2026-11-21T09:00:00")
     turns = [*ASKED, turn("rn:on", "yes")]
     steps = ADAPTER.steps(given("rn:ty", "/rn:ty", skill="rn:on", turns=turns), repo, RN)
-    assert shown(steps) == relative([step("record", BLOCKED), *shared(repo)], repo)
+    assert shown(steps) == relative([step("record", BLOCKED), *shared()], repo)
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
-def test_an_answer_after_a_request_that_made_no_run_takes_find_alone(repo: str):
-    """Given a repository with another run but none of the request's words, as a refused `new`
-    leaves it, and a turn of rn:on after the hearing and the request
+@pytest.mark.parametrize("other", [None, "another-session"], ids=["no-session", "another"])
+def test_an_answer_after_a_request_that_made_no_run_takes_find_alone(repo: str, other: str | None):
+    """Given a repository with another run, of no session or of another conversation, but none of
+    this conversation's, as a refused `new` leaves it, and a turn of rn:on after the hearing and
+    the request
     When the adapter gives the turn's steps
     Then they are `find` alone"""
-    a_run(repo, "20261101-old")
+    a_run(repo, "20261101-old", of(other, WALKED_OLD))
     steps = ADAPTER.steps(given("rn:on", "yes", skill="rn:on", turns=ASKED), repo, RN)
     assert shown(steps) == [step("find")]
 
@@ -347,8 +367,7 @@ def test_a_turn_after_a_pick_up_in_a_conversation_of_rn_on_takes_the_newest_run(
     a_run(repo, "20261101-old", when="2026-11-21T09:00:00")
     turns = [*ASKED, turn("rn:up", "/rn:up")]
     steps = ADAPTER.steps(given("rn:up", "yes", skill="rn:on", turns=turns), repo, RN)
-    old = "20261101-old"
-    assert shown(steps) == relative([TAKE, *shared(repo, old)], repo)
+    assert shown(steps) == relative([TAKE, *shared()], repo)
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
@@ -358,7 +377,7 @@ def test_a_pick_up_finds_the_run_then_keeps_the_shared_steps(repo: str):
     Then they are `find` and the shared steps on that run"""
     a_run(repo)
     steps = ADAPTER.steps(given("rn:up", "", skill="rn:up"), repo, RN)
-    assert shown(steps) == relative([FIND, *shared(repo)], repo)
+    assert shown(steps) == relative([FIND, *shared()], repo)
 
 
 @pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
@@ -370,7 +389,7 @@ def test_a_pick_up_of_a_run_whose_worktree_is_gone_names_its_paths_before_find_m
     Then they are `find` and the shared steps on that run's paths, as find makes its worktree"""
     a_run(repo, worktree=False)
     steps = ADAPTER.steps(given("rn:up", "/rn:up"), repo, RN)
-    assert shown(steps) == relative([FIND, *shared(repo)], repo)
+    assert shown(steps) == relative([FIND, *shared()], repo)
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
@@ -383,7 +402,7 @@ def test_a_pick_up_among_several_runs_takes_the_newest_by_its_last_commit(repo: 
     a_run(repo, "20261101-old", when="2026-11-15T09:00:00")
     a_run(repo, "20261121-done", done_tree("20261121-done"), "2026-11-21T09:00:00")
     steps = ADAPTER.steps(given("rn:up", "/rn:up"), repo, RN)
-    assert shown(steps) == relative([FIND, *shared(repo, "20261101-old")], repo)
+    assert shown(steps) == relative([FIND, *shared()], repo)
 
 
 @pytest.mark.supports(
@@ -395,7 +414,7 @@ def test_a_signoff_records_it_then_keeps_the_shared_steps(repo: str):
     Then they are `record` and the shared steps"""
     a_run(repo)
     steps = ADAPTER.steps(given("rn:ty", "/rn:ty"), repo, RN)
-    assert shown(steps) == relative([step("record", BLOCKED), *shared(repo)], repo)
+    assert shown(steps) == relative([step("record", BLOCKED), *shared()], repo)
 
 
 @pytest.mark.supports(
@@ -427,7 +446,7 @@ def test_a_command_called_by_the_skill_tool_takes_the_steps_of_the_command_typed
     paused = ADAPTER.steps(given("rn:dn", "Go on.", command="rn:dn"), repo, RN)
     assert shown(paused) == [step("stop", BLOCKED), step("pause", PAUSED)]
     found = ADAPTER.steps(given("rn:up", "Go on.", command="rn:up"), repo, RN)
-    assert shown(found) == relative([FIND, *shared(repo)], repo)
+    assert shown(found) == relative([FIND, *shared()], repo)
 
 
 @pytest.mark.supports(
@@ -461,9 +480,7 @@ def test_each_other_event_takes_it_then_keeps_the_shared_steps(repo: str, role: 
     Then they are `take` and the shared steps, on that run, `take` ending the turn on blocked,
     and on paused or cancelled, as the user's words may pause or cancel the run"""
     a_run(repo)
-    assert shown(ADAPTER.steps(given(role, prompt), repo, RN)) == relative(
-        [TAKE, *shared(repo)], repo
-    )
+    assert shown(ADAPTER.steps(given(role, prompt), repo, RN)) == relative([TAKE, *shared()], repo)
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")

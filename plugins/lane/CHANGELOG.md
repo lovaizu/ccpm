@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Your `lane/adapters/starts_due.py` and `lane/adapters/rules.py` get the new field `session` in `run`, the conversation's session ID, the one that Claude Code gives each hook and each Bash command as `CLAUDE_CODE_SESSION_ID`. Your plugin can record which conversation a piece of its work belongs to, and tell its own from another conversation's in the same folder.
+
 ### Changed
 
 - When a turn calls a command of your plugin, typed or by the Skill tool, Lane asks your `lane/adapters/rules.py` for the turn's steps again, and gives it the new field `command`, the command that the turn called, or `null` for none, beside each earlier turn's. An AI that calls a command by the Skill tool then gets the steps that a person who types it gets, where before the turn kept the steps it had.

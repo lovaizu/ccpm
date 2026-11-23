@@ -82,14 +82,18 @@ def deliverable(draw: Any, path: str, before: list[str]) -> dict[str, Any]:
 @st.composite
 def contexts(draw: Any) -> dict[str, Any]:
     """A tree's context: any version, any languages, none, one, or several issues to close and to
-    refer to, and a pull request or none."""
+    refer to, a pull request or none, and a session, none, or no session field, as a tree written
+    before rn kept the session holds."""
     issues = st.lists(st.integers(1, 9999), max_size=3)
-    return {
+    held = {
         "rn": ".".join(str(draw(st.integers(0, 99))) for _ in range(3)),
         "languages": {"deliverables": draw(TEXT), "conversation": draw(TEXT)},
         "issues": {"closes": draw(issues), "refs": draw(issues)},
         "pr": draw(st.none() | TEXT),
     }
+    if draw(st.booleans()):
+        held["session"] = draw(st.none() | TEXT)
+    return held
 
 
 @st.composite

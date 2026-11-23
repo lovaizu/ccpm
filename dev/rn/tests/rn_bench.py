@@ -173,8 +173,14 @@ def touched_items(b: Bench, c: Conversation, agent: Agent | None = None) -> list
 
 
 def written_tree(b: Bench, c: Conversation, design_tree: Mapping[str, Any]) -> Answer:
-    """The orchestrator writes the run's design tree by the Write tool."""
-    return c.write(None, b.tree_path, json.dumps(design_tree, indent=1) + "\n")
+    """The orchestrator writes the run's design tree by the Write tool, keeping the session that
+    the tree's context holds, as it edits the tree in place and leaves its context's session as
+    `new` or a pick-up wrote it."""
+    held = dict(design_tree)
+    if os.path.isfile(b.tree_path) and held["context"].get("session") is None:
+        session = b.tree()["context"].get("session")
+        held["context"] = dict(held["context"], session=session)
+    return c.write(None, b.tree_path, json.dumps(held, indent=1) + "\n")
 
 
 def moved(

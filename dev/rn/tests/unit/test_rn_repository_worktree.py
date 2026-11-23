@@ -387,6 +387,40 @@ def test_a_run_only_origin_holds_gets_its_worktree_on_a_branch_from_origins(
     assert rn_files.read_json(RunPlace(clone, NAME).tree) == a_tree(NAME)
 
 
+@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
+@pytest.mark.parametrize("worktree", [True, False], ids=["worktree-here", "worktree-gone"])
+@pytest.mark.parametrize(
+    "session", [None, "session-1", "session-2"], ids=["outside-claude-code", "same", "another"]
+)
+def test_a_pick_up_writes_the_conversations_session_in_the_runs_context_and_commits_it(
+    tmp_path: Any, host: Any, worktree: bool, session: str | None
+):
+    """Given a run with work left that the conversation of session-1 started, its worktree here or
+    removed
+    When found is asked by a conversation outside Claude Code, of no session, by the conversation
+    of session-1 again, or by the conversation of session-2
+    Then it gives the run; its design tree holds session-2 in its context, committed alone as
+    `rn: <name>, picked up`, or, with no session or the same one, is as it was, with no new
+    commit; and each other part of the tree is as it was"""
+    repo = a_repository(tmp_path)
+    tree = a_tree(NAME)
+    tree["context"]["session"] = "session-1"
+    branch_run(repo, NAME, tree, worktree=worktree)
+    before = head(repo, f"rn-{NAME}")
+    assert found(repo, host, session) == Found(RunPlace(repo, NAME), None)
+    run = RunPlace(repo, NAME)
+    expected = dict(tree, context=dict(tree["context"], session=session or "session-1"))
+    assert rn_files.read_json(run.tree) == expected
+    assert git(run.worktree, "status", "--porcelain").strip() == ""
+    if session in (None, "session-1"):
+        assert head(run.worktree) == before
+    else:
+        assert git(run.worktree, "log", "-1", "--format=%s").strip() == f"rn: {NAME}, picked up"
+        assert git(run.worktree, "rev-parse", "HEAD~1").strip() == before
+        shown = git(run.worktree, "show", "--name-only", "--format=", "HEAD").split()
+        assert shown == [f".rn/{NAME}/design-tree.json"]
+
+
 def gone_from_github(repo: str, name: str, tree: dict[str, Any], when: str) -> None:
     """Makes the run of the name, pushed with its design tree at the time given, then cancelled on
     another machine: its branch deleted on origin and here, its worktree removed, and only the
