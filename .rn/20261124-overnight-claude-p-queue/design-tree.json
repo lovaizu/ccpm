@@ -33,73 +33,12 @@
   {
    "name": "An AI learns from the guide whether the plugin fits its work and how to stack tasks and take their results in",
    "path": "plugins/overnight/README.md",
-   "kind": "readme",
-   "inputs": [
-    "dev/overnight/product-vision.md"
-   ],
-   "status": "open",
-   "necessary_conditions": [
-    {
-     "id": "N1",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N2",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N3",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N4",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N5",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N6",
-     "good": true,
-     "decisions": [
-      {
-       "about": "The walkthrough's record",
-       "decided": "The walkthrough and the install are rewritten from one run of the built plugin, once the runner and the marketplace entry are done.",
-       "by": "reasoning"
-      }
-     ]
-    },
-    {
-     "id": "N7",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N8",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N9",
-     "good": true,
-     "decisions": []
-    },
-    {
-     "id": "N10",
-     "good": true,
-     "decisions": []
-    }
-   ],
    "more_paths": [
     "plugins/overnight/images/",
     "plugins/overnight/LICENSE"
-   ]
+   ],
+   "kind": "readme",
+   "status": "done"
   },
   {
    "name": "The AI learns what changed for it in each version of the plugin",
@@ -399,14 +338,14 @@
  "work": [],
  "steps": [
   {
-   "settles": "誰が何のために使うか",
+   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "どう使うか",
+   "settles": "\u3069\u3046\u4f7f\u3046\u304b",
    "deliverables": [
     "plugins/overnight/README.md",
     "plugins/overnight/CHANGELOG.md"
@@ -414,14 +353,14 @@
    "signoff": false
   },
   {
-   "settles": "どんな部品でどう動くか",
+   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
    "deliverables": [
     "dev/overnight/architecture.md"
    ],
    "signoff": false
   },
   {
-   "settles": "部品がかみ合うか",
+   "settles": "\u90e8\u54c1\u304c\u304b\u307f\u5408\u3046\u304b",
    "deliverables": [
     "plugins/overnight",
     "dev/overnight/tests"
@@ -429,7 +368,7 @@
    "signoff": false
   },
   {
-   "settles": "動くものができたか",
+   "settles": "\u52d5\u304f\u3082\u306e\u304c\u3067\u304d\u305f\u304b",
    "deliverables": [
     "plugins/overnight/scripts",
     ".claude-plugin/marketplace.json"
