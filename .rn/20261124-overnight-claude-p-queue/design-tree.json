@@ -56,7 +56,7 @@
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
@@ -67,11 +67,17 @@
     {
      "id": "N6",
      "good": true,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "The walkthrough's record",
+       "decided": "The walkthrough and the install are rewritten from one run of the built plugin, once the runner and the marketplace entry are done.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N7",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
@@ -86,7 +92,7 @@
     },
     {
      "id": "N10",
-     "good": false,
+     "good": true,
      "decisions": []
     }
    ],
