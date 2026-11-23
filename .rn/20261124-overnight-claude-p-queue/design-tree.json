@@ -135,8 +135,20 @@
     {
      "id": "N6",
      "good": true,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "The program that stands in for a command",
+       "decided": "The writer of a program that stands in for a command, which the double of Claude Code and that of gh both need, is kept once in dev/tests/, and both doubles call it.",
+       "by": "user"
+      }
+     ]
     }
+   ],
+   "more_paths": [
+    "dev/tests/",
+    "dev/rn/tests/gh/gh_double.py",
+    "dev/rn/tests/conftest.py",
+    "dev/scripts/check.sh"
    ]
   },
   {
