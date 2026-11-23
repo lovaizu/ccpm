@@ -59,6 +59,13 @@ from rn_files import COMMAND, GOAL, GUIDE
 from rn_runs import branch_run
 
 
+def linked(b: Bench, path: str) -> str:
+    """The link that put-up prints of the deliverable's file at the path, at the commit that the
+    work's branch holds."""
+    commit = git(b.worktree, "rev-parse", "HEAD").strip()
+    return f"http://github.com/owner/repo/blob/{commit}/{path}"
+
+
 def log(b: Bench, ref: str) -> list[str]:
     """Each commit message's subject on the ref of the user's repository, newest first."""
     return git(b.repo, "log", "--format=%s", ref).splitlines()
@@ -217,13 +224,12 @@ def test_each_node_a_change_touches_is_read_again_before_the_commit(b: Bench):
 def test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request(b: Bench):
     """Given a run whose plan has each condition good
     When the orchestrator puts it up by repository.py put-up
-    Then it prints the pull request's changes, http://github.com/owner/repo/pull/1/files, the
-    remote's branch rn-<name> holds the run's design tree, and gh was asked to open the pull
-    request once"""
+    Then it prints no link, as the plan is the message that shows it, the remote's branch
+    rn-<name> holds the run's design tree, and gh was asked to open the pull request once"""
     c = requested(b)
     confirmed(b, c)
     url = put_up_plan(b, c)
-    assert url == "http://github.com/owner/repo/pull/1/files"
+    assert url == ""
     assert f".rn/{b.name()}/design-tree.json" in b.branch_files(f"rn-{b.name()}")
     assert [each[:3] for each in b.asked_gh()].count(["gh", "pr", "create"]) == 1
 
@@ -353,7 +359,7 @@ def test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_conditi
     Then the command waits for the user's sign-off, and repository.py put-up puts it up"""
     c, _ = judged_command(b, {"N1": "The accountant prints an invoice in Klingon."})
     url = put_up(b, c, COMMAND, rn_files.conditions("light"))
-    assert url == "http://github.com/owner/repo/pull/1/files"
+    assert url == linked(b, COMMAND)
     answer = c.start("rn:generator", "Make the command again.", "Run rn:generator")[0]
     assert "No start of rn's subagents is due now." in answer.said
 
@@ -364,7 +370,7 @@ def test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal(b
     its second evaluator's end reaching the main conversation
     When the orchestrator keeps the finding as an open decision of N1, puts the command up, and
     the user signs it off
-    Then the put-up prints the pull request's changes, the turn ends, Lane stopping no move, and
+    Then the put-up prints the link of the command's file, the turn ends, Lane stopping no move, and
     the command is done once signed off"""
     c = short_twice(b)
     proposal = rn_files.decision("a comma in a line", None)
@@ -375,7 +381,7 @@ def test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal(b
         "Left past its Rounds.",
         [b.script("repository", "put-up", b.run, COMMAND)],
     )[0].strip()
-    assert url == "http://github.com/owner/repo/pull/1/files"
+    assert url == linked(b, COMMAND)
     ended(c, "Fixes I'd still propose:\n  - a comma in a line")
     signed(b, c)
     assert rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light") in b.tree()["deliverables"]
@@ -428,7 +434,7 @@ def test_the_refactoring_generators_made_waits_on_the_signoff_with_no_evaluator(
     assert os.path.isfile(os.path.join(refactor, "generator.json"))
     good = held(b, GUIDE, rn_files.conditions("readme"))
     url = taken(b, c, good, "Refactored.", [b.script("repository", "put-up", b.run, GUIDE)])[0]
-    assert url.strip() == "http://github.com/owner/repo/pull/1/files"
+    assert url.strip() == linked(b, GUIDE)
     refused = c.bash(b.script("tree", "cut", b.run, "evaluator", GUIDE))
     assert refused.exit_code == 1
     assert "waits on the user's sign-off, not on its evaluator" in refused.output

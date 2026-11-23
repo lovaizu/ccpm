@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Sequence
+from urllib.parse import quote
 
 from fault import CantRun, Missing, Wrong
 from template.markdown import sentences
@@ -53,11 +54,16 @@ def pause(run: RunPlace, host: Host) -> str:
     return push(run, host)
 
 
-def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
+def put_up(run: RunPlace, deliverable: str, host: Host) -> list[str]:
     """Puts a deliverable up for the user's sign-off, in the run's one pull request.
 
     Takes: the run, the path of the deliverable in the design tree, and the host.
-    Gives: the URL of the pull request's changes, `<pull request>/files`.
+    Gives: the link of each file or folder that the deliverable is, its path and then each of its
+    `more_paths`, on GitHub at the commit it pushed last: `<repository>/tree/<commit>/<path>` for
+    a folder and `<repository>/blob/<commit>/<path>` for a file, as that commit holds each, its
+    path percent-encoded, with no `/` closing it, and the repository's page being the pull
+    request's URL up to `/pull/`. It gives none for the plan, of the kind `design-tree`, as the
+    plan's message shows the plan and its file is rn's own, nor for a node of no file.
     Changes: runs `gh auth status` first; then commits each change in the run's worktree as
     `rn: <deliverable's name>`, pushes the work's branch to `origin`, and opens the pull request
     into the default branch as a draft, where the branch has none open: titled by the first
@@ -69,7 +75,8 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
     Refuses: Missing, before any commit or push, where `gh auth status` finds no login, with what
     it said; Wrong where the design tree holds no deliverable of the path; Missing where the
     repository has no remote `origin`, or gh may not open a pull request, with what gh said;
-    CantRun where git or gh fails otherwise.
+    Wrong where the commit pushed holds nothing at a path of the deliverable, naming it; CantRun
+    where git or gh fails otherwise.
     """
     checked(
         host,
@@ -81,7 +88,7 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
     tree = form.read(run.tree)
     node = form.deliverable(tree, deliverable)
     _commit_all(run, f"rn: {node['name']}", host)
-    push(run, host)
+    pushed = push(run, host)
     shown = host(["gh", "pr", "view", run.branch, "--json", "url"], run.worktree)
     if shown.code == 0:
         url = json.loads(shown.out)["url"]
@@ -110,8 +117,29 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
         tree["context"]["pr"] = url
         form.write(run.tree, tree)
         _commit_all(run, f"rn: the pull request of {run.name}", host)
-        push(run, host)
-    return f"{url}/files"
+        pushed = push(run, host)
+    if node["kind"] == "design-tree" or node.get("file") is False:
+        return []
+    repository = url.rsplit("/pull/", 1)[0]
+    return [_link(run, repository, pushed, each, host) for each in _paths(node)]
+
+
+def _paths(node: form.Deliverable) -> list[str]:
+    """Each path that the deliverable lies at, with no `/` closing a folder."""
+    return [each.rstrip("/") for each in [node["path"], *node.get("more_paths", [])]]
+
+
+def _link(run: RunPlace, repository: str, commit: str, path: str, host: Host) -> str:
+    """The link on GitHub of the file or folder at the path in the commit, refusing Wrong where the
+    commit holds nothing there."""
+    listed = _git(host, run, "ls-tree", commit, "--", path).out.split()
+    if not listed:
+        raise Wrong(
+            f"{path}: the work's pushed commit holds nothing there; make the deliverable there, or"
+            " mend its path in the design tree"
+        )
+    shown = "tree" if listed[1] == "tree" else "blob"
+    return f"{repository}/{shown}/{commit}/{quote(path)}"
 
 
 def diff(run: RunPlace, host: Host) -> str:

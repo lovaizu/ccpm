@@ -184,7 +184,7 @@ sequenceDiagram
     else a deliverable whose Rounds are over [P1.3]
       O->>S: puts it up, committed and pushed in the pull request, which names the run's issues, and makes it done where its step isn't one the user checks (Design tree) [P4.3]
       opt at a step that the user checks [P1.3]
-        O->>U: puts it up, with each finding left as a proposal [P3.3]
+        O->>U: puts it up, with a link to each of its files as pushed, and each finding left as a proposal [P3.3]
         U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
       end
     else each deliverable whose inputs are done, resting on none still being made [P5.2]

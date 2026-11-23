@@ -1,7 +1,8 @@
 """The unit cases of repository/command.py's `main`, repository.py's command line: each subcommand
 with what it prints and its exit code, `find` of no run, and of the newest of several, its worktree
 made again, `pause`, `cancel` of a run that origin holds nothing of and of one whose branch it
-holds, and of a worktree that can't be removed, `put-up` marking the deliverable's last Round,
+holds, and of a worktree that can't be removed, `put-up` printing a link of each of the
+deliverable's paths and none for the plan, marking the deliverable's last Round,
 and making done one at a step that the user doesn't check, `diff`, `ci` by what the checks found,
 `checks` with findings and with none, and each fault by its exit code: 2 with the usage for
 arguments of another form, 1 with `repository.py: ` for an input that is Wrong and for something
@@ -19,9 +20,17 @@ import rn_files
 from gh import gh_double
 from repo_files import git
 from repository.command import USAGE, main
+from repository.place import RunPlace
 from rn_runs import NAME, branch_run, changed, head, hook, made_run
 
 RUN = f".claude/worktrees/rn-{NAME}/.rn/{NAME}"
+
+
+def command_link(run: RunPlace, ref: str = "HEAD") -> str:
+    """The line that put-up prints of the command's file at the commit of the run's worktree that
+    the ref names."""
+    worktree = rn_files.worktree_of(run.repository, NAME)
+    return f"http://github.com/owner/repo/blob/{head(worktree, ref)}/{rn_files.COMMAND}\n"
 
 
 @pytest.mark.supports(
@@ -206,13 +215,29 @@ def test_cancel_of_a_worktree_git_cant_remove_gives_2(tmp_path: Any, host: Any):
 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
-def test_put_up_prints_the_pull_requests_changes(tmp_path: Any, host: Any):
+def test_put_up_of_the_plan_prints_nothing(tmp_path: Any, host: Any):
     """Given a run whose plan is open
     When repository.py put-up is given the run's folder and the plan's path
-    Then it gives 0 printing http://github.com/owner/repo/pull/1/files as a line"""
+    Then it gives 0 printing nothing, as the plan is the message that shows it"""
     run = made_run(str(tmp_path), design_tree=rn_files.walkthrough_tree(NAME, plan_done=False))
     given = main(["put-up", RUN, rn_files.plan_path(NAME)], run.repository, rn_files.RN, host)
-    assert given == (0, "http://github.com/owner/repo/pull/1/files\n", "")
+    assert given == (0, "", "")
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+def test_put_up_prints_a_link_of_each_path_of_the_deliverable_a_line_each(tmp_path: Any, host: Any):
+    """Given a run whose command lies at invoicer/__main__.py and at the more path docs/
+    When repository.py put-up is given the run's folder and the command's path
+    Then it gives 0 printing the link of the command's file, then of the folder docs, at the
+    commit pushed, each as a line"""
+    design_tree = rn_files.walkthrough_tree(NAME)
+    design_tree["deliverables"][1]["more_paths"] = ["docs/"]
+    run = made_run(str(tmp_path), design_tree=design_tree)
+    changed(run, {rn_files.COMMAND: "print()\n"})
+    given = main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)
+    commit = head(rn_files.worktree_of(run.repository, NAME))
+    docs = f"http://github.com/owner/repo/tree/{commit}/docs\n"
+    assert given == (0, command_link(run) + docs, "")
 
 
 @pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
@@ -220,15 +245,16 @@ def test_put_up_marks_the_deliverables_last_round_as_put_up(tmp_path: Any, host:
     """Given a run whose command has Rounds content-1 and content-2, its node holding N1 not good
     with an open decision of N1, the rest good
     When repository.py put-up is given the run's folder and the command's path
-    Then it gives 0 printing the pull request's changes, and content-2 alone holds put-up.json
-    with N1 not good and its open decision"""
+    Then it gives 0 printing the command's link, and content-2 alone holds put-up.json with N1
+    not good and its open decision"""
     left = {"N1": [rn_files.decision("a comma in a line", None)]}
     design_tree = rn_files.walkthrough_tree(NAME, command_good=["N2", "N3"], command_decisions=left)
     run = made_run(str(tmp_path), design_tree=design_tree)
+    changed(run, {rn_files.COMMAND: "print()\n"})
     folder = rn_files.folder_of(run.repository, NAME)
     first, second = (rn_files.a_round(folder, rn_files.COMMAND, "content", n) for n in (1, 2))
     given = main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)
-    assert given == (0, "http://github.com/owner/repo/pull/1/files\n", "")
+    assert given == (0, command_link(run), "")
     assert not os.path.exists(os.path.join(first, "put-up.json"))
     assert rn_files.read_json(os.path.join(second, "put-up.json")) == {
         "short": ["N1"],
@@ -261,15 +287,17 @@ def test_put_up_at_a_step_the_user_doesnt_check_makes_it_done_marks_its_round_an
     """Given a run whose command, open with each condition good after Round content-1, lies at a
     step that the user doesn't check
     When repository.py put-up is given the run's folder and the command's path
-    Then it gives 0 printing the pull request's changes; the tree holds the command done in its one
-    line, its item of the work gone; content-1 holds put-up.json; the tree, put-up.json among it,
-    is committed as `rn: <command's name>, done at a step that the user doesn't check`; and
-    origin's rn-<name> holds that commit"""
+    Then it gives 0 printing the command's link at the commit before it's done; the tree holds the
+    command done in its one line, its item of the work gone; content-1 holds put-up.json; the
+    tree, put-up.json among it, is committed as
+    `rn: <command's name>, done at a step that the user doesn't check`; and origin's rn-<name>
+    holds that commit"""
     run = made_run(str(tmp_path), design_tree=stepped(False))
+    changed(run, {rn_files.COMMAND: "print()\n"})
     folder = rn_files.folder_of(run.repository, NAME)
     first = rn_files.a_round(folder, rn_files.COMMAND, "content", 1)
     given = main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)
-    assert given == (0, "http://github.com/owner/repo/pull/1/files\n", "")
+    assert given == (0, command_link(run, "HEAD~1"), "")
     design_tree = rn_files.read_json(os.path.join(folder, "design-tree.json"))
     done = rn_files.done_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
     assert design_tree["deliverables"][1] == done
@@ -292,6 +320,7 @@ def test_put_up_at_a_step_the_user_checks_leaves_it_open_for_the_signoff(tmp_pat
     When repository.py put-up is given the run's folder and the command's path
     Then it gives 0, and the tree holds the command open"""
     run = made_run(str(tmp_path), design_tree=stepped(True))
+    changed(run, {rn_files.COMMAND: "print()\n"})
     folder = rn_files.folder_of(run.repository, NAME)
     rn_files.a_round(folder, rn_files.COMMAND, "content", 1)
     assert main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)[0] == 0

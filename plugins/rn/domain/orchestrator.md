@@ -210,9 +210,10 @@ origin names no default branch, as no run stands yet.
    - The plan waiting for sign-off, or a deliverable whose Rounds are over, as `tree.py cut` says
      where it waits on the sign-off: run
      `python3 <rn's folder>/scripts/repository.py put-up <run> <its path>`. Put the plan up as the way to the
-     goal, and a deliverable whose step's `signoff` is true for the user's sign-off, each with the
-     URL it prints. Else put-up makes the deliverable done, which the next
-     message's line of where the run stands shows.
+     goal with no link, as your message is the plan, and put-up prints none for it. Put a
+     deliverable whose step's `signoff` is true up for the user's sign-off, with each link that
+     put-up prints, of the deliverable's own files. Else put-up makes the deliverable done, which
+     the next message's line of where the run stands shows.
    - A deliverable that a `make` of `work` names, its inputs done: run
      `python3 <rn's folder>/scripts/tree.py cut <run> <role> <its path>`, for the role Lane says is
      due. Start the role by Agent in the background, with the path it prints as the prompt. Where

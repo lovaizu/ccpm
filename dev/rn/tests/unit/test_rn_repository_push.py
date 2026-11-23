@@ -6,10 +6,12 @@ and a remote that isn't there; and `put_up`, which asks gh's login first, its fi
 pull request titled by the goal's first sentence, of a goal of two sentences and of one, its body
 naming the issues and naming none, the pull request's URL written into the tree, its second
 opening none, an open pull request's URL written where the tree has none, the pull request opened
-as a draft, and each refusal: gh with no login before any commit or push, a deliverable the tree
-lacks, and no origin; `diff`, which commits and pushes each change and gives the whole diff, after
-a stray file is removed, and with no origin; and `ci`, which waits for the CI's checks, each passed,
-one failed, and none that gh can give."""
+as a draft, the link it gives of each path of the deliverable at the commit it pushed, a file's, a
+folder's, and none for the plan or a node of no file, and each refusal: gh with no login before
+any commit or push, a deliverable the tree lacks, a path of the deliverable that the commit
+doesn't hold, and no origin; `diff`, which commits and pushes each change and gives the whole
+diff, after a stray file is removed, and with no origin; and `ci`, which waits for the CI's
+checks, each passed, one failed, and none that gh can give."""
 
 from __future__ import annotations
 
@@ -28,6 +30,8 @@ from rn_runs import NAME, changed, committed_files, head, hook, made_run, subjec
 from template.markdown import sentences
 
 URL = "http://github.com/owner/repo/pull/1"
+# The repository's page on GitHub, as the pull request's URL gives it.
+REPOSITORY = "http://github.com/owner/repo"
 # The first sentence of the walkthrough's goal, which titles the pull request.
 FIRST = (
     "The accounting team prints each invoice themselves from the lines they keep in a"
@@ -278,6 +282,12 @@ def body(argv: list[str]) -> str | None:
     return None
 
 
+def with_command(run: RunPlace) -> RunPlace:
+    """The run, with the command written in its worktree, as its generator leaves it."""
+    changed(run, {rn_files.COMMAND: "print()\n"})
+    return run
+
+
 def created(gh_state: str) -> list[list[str]]:
     """Each `gh pr create` that the double was asked."""
     return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "create"]]
@@ -290,14 +300,13 @@ def test_a_first_put_up_pushes_and_opens_the_pull_request_titled_by_the_goal(
     """Given a run whose plan is open and whose design tree is changed, with no pull request, its
     goal of two sentences
     When put_up is given the plan
-    Then it gives the pull request's changes, <pull request>/files; gh was asked its login before
-    anything else; the change is committed as `rn: <plan's name>` and pushed to origin's
-    rn-<name>; and gh was asked once to open a pull request, titled by the goal's first sentence
-    alone"""
+    Then it gives no link, as the plan's file is rn's own; gh was asked its login before anything
+    else; the change is committed as `rn: <plan's name>` and pushed to origin's rn-<name>; and gh
+    was asked once to open a pull request, titled by the goal's first sentence alone"""
     design_tree = rn_files.walkthrough_tree(NAME, plan_done=False)
     run = made_run(str(tmp_path), design_tree=design_tree)
     changed(run, {rn_files.GUIDE: "# Guide\n"})
-    assert put_up(run, rn_files.plan_path(NAME), host) == f"{URL}/files"
+    assert put_up(run, rn_files.plan_path(NAME), host) == []
     assert gh_double.state(gh_state)["asked"][0][:3] == ["gh", "auth", "status"]
     assert subject(worktree(run), "HEAD~1") == f"rn: {rn_files.GOAL}"
     assert committed_files(worktree(run), "HEAD~1") == [rn_files.GUIDE]
@@ -316,7 +325,7 @@ def test_a_first_put_ups_body_names_each_issue_it_closes_then_each_it_refers_to(
     `Closes #12`, `Closes #3`, and `Refs #8`, one per line"""
     design_tree = rn_files.walkthrough_tree(NAME)
     design_tree["context"] = rn_files.context(closes=[12, 3], refs=[8])
-    run = made_run(str(tmp_path), design_tree=design_tree)
+    run = with_command(made_run(str(tmp_path), design_tree=design_tree))
     put_up(run, rn_files.COMMAND, host)
     assert [body(each) for each in created(gh_state)] == [
         f"{rn_files.GOAL}\n\nCloses #12\nCloses #3\nRefs #8"
@@ -330,7 +339,7 @@ def test_a_first_put_ups_body_of_a_run_with_no_issue_is_the_goal_alone(
     """Given a run whose tree's context names no issue, with no pull request
     When put_up is given the command
     Then gh was asked once to open a pull request whose body is the goal alone"""
-    run = made_run(str(tmp_path))
+    run = with_command(made_run(str(tmp_path)))
     put_up(run, rn_files.COMMAND, host)
     assert [body(each) for each in created(gh_state)] == [rn_files.GOAL]
 
@@ -344,7 +353,7 @@ def test_a_first_put_up_writes_the_pull_requests_url_into_the_tree_and_pushes_it
     Then the tree's context holds the pull request's URL, committed alone as
     `rn: the pull request of <name>` and pushed to origin's rn-<name>, with nothing left
     uncommitted"""
-    run = made_run(str(tmp_path))
+    run = with_command(made_run(str(tmp_path)))
     put_up(run, rn_files.COMMAND, host)
     tree = rn_files.read_json(os.path.join(worktree(run), tree_file(run)))
     assert tree["context"]["pr"] == URL
@@ -362,7 +371,7 @@ def test_a_put_up_whose_pull_request_is_open_writes_its_url_where_the_tree_has_n
     When put_up is given the command
     Then the tree's context holds the open pull request's URL, committed and pushed, and gh was
     asked to open no pull request"""
-    run = made_run(str(tmp_path))
+    run = with_command(made_run(str(tmp_path)))
     gh_double.keep(gh_state, {**gh_double.state(gh_state), "pull_request": URL})
     put_up(run, rn_files.COMMAND, host)
     tree = rn_files.read_json(os.path.join(worktree(run), tree_file(run)))
@@ -381,7 +390,7 @@ def test_a_goal_of_one_sentence_titles_the_pull_request_whole(
     goal = "The accounting team prints each invoice themselves."
     design_tree = rn_files.walkthrough_tree(NAME)
     design_tree["goal"]["decided"] = goal
-    run = made_run(str(tmp_path), design_tree=design_tree)
+    run = with_command(made_run(str(tmp_path), design_tree=design_tree))
     put_up(run, rn_files.COMMAND, host)
     assert [title(each) for each in created(gh_state)] == [goal]
 
@@ -416,7 +425,7 @@ def test_the_title_is_the_first_sentence_as_markdown_splits_the_goal(
     template.markdown.sentences gives of the goal"""
     design_tree = rn_files.walkthrough_tree(NAME)
     design_tree["goal"]["decided"] = goal
-    run = made_run(str(tmp_path), design_tree=design_tree)
+    run = with_command(made_run(str(tmp_path), design_tree=design_tree))
     put_up(run, rn_files.COMMAND, host)
     assert sentences(goal)[0] == first
     assert [title(each) for each in created(gh_state)] == [first]
@@ -426,12 +435,14 @@ def test_the_title_is_the_first_sentence_as_markdown_splits_the_goal(
 def test_a_second_put_up_opens_no_second_pull_request(tmp_path: Any, host: Any, gh_state: str):
     """Given a run whose plan was put up once, and whose command then changed
     When put_up is given the command
-    Then it gives the same pull request's changes, the change is committed as
+    Then it gives the command's file at the commit pushed,
+    <repository>/blob/<commit>/invoicer/__main__.py, the change is committed as
     `rn: <command's name>` and pushed, and gh was asked to open a pull request once in all"""
     run = made_run(str(tmp_path))
     put_up(run, rn_files.plan_path(NAME), host)
     changed(run, {rn_files.COMMAND: "print()\n"})
-    assert put_up(run, rn_files.COMMAND, host) == f"{URL}/files"
+    links = put_up(run, rn_files.COMMAND, host)
+    assert links == [f"{REPOSITORY}/blob/{head(worktree(run))}/{rn_files.COMMAND}"]
     assert subject(worktree(run)) == f"rn: {rn_files.COMMAND_NAME}"
     assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
     asked = gh_double.state(gh_state)["asked"]
@@ -440,15 +451,17 @@ def test_a_second_put_up_opens_no_second_pull_request(tmp_path: Any, host: Any, 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
 def test_a_put_up_with_no_change_makes_no_commit(tmp_path: Any, host: Any):
-    """Given a run with nothing changed since its last commit, whose tree's context holds its
-    pull request
+    """Given a run with nothing changed since its last commit, the command among it, whose tree's
+    context holds its pull request
     When put_up is given the command
-    Then it gives the pull request's changes, and the branch's head, pushed, is as it was"""
+    Then it gives the command's file at the branch's head, which, pushed, is as it was"""
     design_tree = rn_files.walkthrough_tree(NAME)
     design_tree["context"] = rn_files.context(pr=URL)
-    run = made_run(str(tmp_path), design_tree=design_tree)
+    run = with_command(made_run(str(tmp_path), design_tree=design_tree))
+    git(worktree(run), "add", "-A")
+    git(worktree(run), "commit", "-q", "-m", "The command.")
     before = head(worktree(run))
-    assert put_up(run, rn_files.COMMAND, host) == f"{URL}/files"
+    assert put_up(run, rn_files.COMMAND, host) == [f"{REPOSITORY}/blob/{before}/{rn_files.COMMAND}"]
     assert head(worktree(run)) == before == head(origin(tmp_path), f"rn-{NAME}")
 
 
@@ -468,6 +481,55 @@ def test_a_put_up_of_a_deliverable_the_tree_lacks_is_refused(
     assert head(worktree(run)) == before
     assert git(origin(tmp_path), "branch", "--list", f"rn-{NAME}").strip() == ""
     assert created(gh_state) == []
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+def test_a_put_up_gives_a_link_of_each_path_a_folder_as_a_tree_and_a_file_as_a_blob(
+    tmp_path: Any, host: Any
+):
+    """Given a run whose command lies at the folder invoicer, and at the more paths docs/, a
+    folder, and docs/user guide.md, a file whose name holds a space
+    When put_up is given the command
+    Then it gives a link of each at the commit pushed, in that order: <repository>/tree/<commit>/
+    for each folder, with no `/` closing it, and <repository>/blob/<commit>/ for the file, its
+    space percent-encoded"""
+    design_tree = rn_files.walkthrough_tree(NAME)
+    command = design_tree["deliverables"][1]
+    command["path"] = "invoicer"
+    command["more_paths"] = ["docs/", "docs/user guide.md"]
+    run = made_run(str(tmp_path), design_tree=design_tree)
+    changed(run, {"docs/user guide.md": "# Guide\n"})
+    links = put_up(run, "invoicer", host)
+    commit = head(origin(tmp_path), f"rn-{NAME}")
+    assert links == [
+        f"{REPOSITORY}/tree/{commit}/invoicer",
+        f"{REPOSITORY}/tree/{commit}/docs",
+        f"{REPOSITORY}/blob/{commit}/docs/user%20guide.md",
+    ]
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+def test_a_put_up_of_a_node_of_no_file_gives_no_link(tmp_path: Any, host: Any):
+    """Given a run whose command is a node of no file, its `file` false, with no file at its path
+    When put_up is given the command
+    Then it gives no link, and origin's rn-<name> holds the branch's head"""
+    design_tree = rn_files.walkthrough_tree(NAME)
+    design_tree["deliverables"][1]["file"] = False
+    run = made_run(str(tmp_path), design_tree=design_tree)
+    assert put_up(run, rn_files.COMMAND, host) == []
+    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
+
+
+@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+def test_a_put_up_of_a_path_the_commit_doesnt_hold_is_refused_naming_it(tmp_path: Any, host: Any):
+    """Given a run whose command's file isn't written, and whose guide is
+    When put_up is given the command
+    Then Wrong is raised naming the command's path, saying the commit pushed holds nothing there"""
+    run = made_run(str(tmp_path))
+    changed(run, {rn_files.GUIDE: "# Guide\n"})
+    match = f"{rn_files.COMMAND}: the work's pushed commit holds nothing there"
+    with pytest.raises(Wrong, match=match):
+        put_up(run, rn_files.COMMAND, host)
 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")

@@ -107,7 +107,6 @@ You type `はい`. rn shows the way to the goal:
 6. 作って確かめる（コマンド本体、テストコード）
 
 請求書には決まった書き方（インボイス制度の記載事項）があるので、それをまとめる段を3に入れました。
-変更内容：https://github.com/lovaizu/playground/pull/38/files
 
 どこで確認しますか？
 a. 1だけ確認して、あとは最後まで進める
@@ -132,7 +131,7 @@ Once it's made, rn shows it for you to check:
 プロダクトビジョンができました。ご確認ください。
 これで、経理担当が何のために使い、どこまでできれば足りるかが決まります。
 
-変更内容：https://github.com/lovaizu/playground/pull/38/files
+ファイル：https://github.com/lovaizu/playground/blob/4f1c2a9e8b7d6c5f3a2e1d0c9b8a7f6e5d4c3b2a/docs/product-vision.md
 
 承認する場合は/rn:ty、変えたい点がある場合は/rn:gmに続けてその内容を入力してください。
 ```
@@ -151,7 +150,7 @@ rn makes it again, and shows it:
 プロダクトビジョンを直しました。ご確認ください。
 明細ファイル1つから、その取引先の請求書を1枚印刷する、としました。
 
-変更内容：https://github.com/lovaizu/playground/pull/38/files
+ファイル：https://github.com/lovaizu/playground/blob/4f1c2a9e8b7d6c5f3a2e1d0c9b8a7f6e5d4c3b2a/docs/product-vision.md
 
 承認する場合は/rn:ty、変えたい点がある場合は/rn:gmに続けてその内容を入力してください。
 ```

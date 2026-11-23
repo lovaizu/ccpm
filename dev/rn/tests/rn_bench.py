@@ -293,7 +293,7 @@ def confirmed(b: Bench, c: Conversation) -> None:
 
 def put_up_plan(b: Bench, c: Conversation) -> str:
     """The user answers the point; the orchestrator writes the answer as its decision by user, puts
-    the plan up by `repository.py put-up`, and shows it; gives the URL that put-up printed."""
+    the plan up by `repository.py put-up`, and shows it with no link; gives what put-up printed."""
     c.type(rn_files.TAX_ANSWER)
     plan = rn_files.plan_path(b.name())
     printed = taken(

@@ -47,7 +47,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `cancel <run>`: 0 printing each thing of the run that GitHub still holds, as
       `worktree.removed` gives it once it removes the run, a line each, and nothing where there's
       none.
-    - `put-up <run> <deliverable>`: 0 printing the URL that `push.put_up` gives, the deliverable's
+    - `put-up <run> <deliverable>`: 0 printing each link that `push.put_up` gives, a line each,
+      and nothing where it gives none, the deliverable's
       last Round then marked as put up with its state, as `rounds.course.held` gives it from the
       design tree and `rounds.files.mark` writes it. Where `tree.signoff.checked` gives that the
       user doesn't check the deliverable, it's then done, as `tree.signoff.signed_off` writes it,
@@ -106,7 +107,7 @@ def _cancel(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     run = place.of_folder(cwd, given[0])
-    url = push.put_up(run, given[1], host)
+    links = push.put_up(run, given[1], host)
     tree = form.read(run.tree)
     node = form.deliverable(tree, given[1])
     files.mark(run, given[1], course.held(node))
@@ -116,7 +117,7 @@ def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
         message = f"rn: {node['name']}, done at a step that the user doesn't check"
         push.commit(run, [folder], message, host)
         push.push(run, host)
-    return 0, f"{url}\n", ""
+    return 0, "".join(f"{each}\n" for each in links), ""
 
 
 def _diff(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
