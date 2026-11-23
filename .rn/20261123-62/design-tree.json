@@ -15,7 +15,7 @@
  },
  "goal": {
   "decided": "An AI that the user instructs finishes the work the user gave overnight while nobody answers, and reports the results in the morning.",
-  "by": "reasoning"
+  "by": "user"
  },
  "deliverables": [
   {
@@ -27,7 +27,7 @@
    "necessary_conditions": [
     {
      "id": "N1",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "whom it's for",
@@ -38,26 +38,55 @@
        "about": "the goal",
        "decided": "The AI finishes the work the user instructed overnight while nobody answers, and reports the results in the morning.",
        "by": "user"
-      },
-      {
-       "about": "the summary",
-       "decided": null
       }
      ]
     },
     {
      "id": "N2",
-     "good": false,
-     "decisions": [
-      {
-       "about": "how the work runs",
-       "decided": "A task stopped by the usage limit goes on once the limit resets. Tasks run three at once by default, and the number can be set.",
-       "by": "user"
-      }
-     ]
+     "good": true,
+     "decisions": []
     },
     {
      "id": "N7",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": true,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The developers know whom overnight serves, what each of them is after, and the one way it brings them there.",
+   "path": "dev/overnight/product-vision.md",
+   "kind": "product-vision",
+   "inputs": [],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
      "good": false,
      "decisions": []
     },
@@ -82,15 +111,425 @@
      "decisions": []
     }
    ]
+  },
+  {
+   "name": "A newcomer decides from the README whether overnight fits their work, and starts using it.",
+   "path": "plugins/overnight/README.md",
+   "kind": "readme",
+   "inputs": [
+    "dev/overnight/product-vision.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The developers know each part of overnight and why it is there, so that the parts together deliver what its README promises.",
+   "path": "dev/overnight/architecture.md",
+   "kind": "architecture",
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": [
+      {
+       "about": "how the work runs",
+       "decided": "A task stopped by the usage limit goes on once the limit resets. Tasks run three at once by default, and the number can be set.",
+       "by": "user"
+      }
+     ]
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N11",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N12",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N13",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N14",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N15",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N16",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The developers see, before any body is written, whether the parts of overnight fit together.",
+   "path": "plugins/overnight",
+   "kind": "software-design",
+   "inputs": [
+    "dev/overnight/architecture.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The developers see, before any part is built, whether the parts of overnight joined give each key result.",
+   "path": "dev/overnight/tests",
+   "kind": "test-design",
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md",
+    "dev/overnight/architecture.md",
+    "plugins/overnight"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "The AI runs the queued tasks overnight while nobody answers, and reads in the morning which finished and which were given up.",
+   "path": "plugins/overnight/domain",
+   "kind": "code",
+   "inputs": [
+    "dev/overnight/architecture.md",
+    "plugins/overnight",
+    "dev/overnight/tests"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    }
+   ],
+   "more_paths": [
+    "plugins/overnight/scripts/",
+    "plugins/overnight/.claude-plugin/plugin.json",
+    "plugins/overnight/CHANGELOG.md"
+   ]
+  },
+  {
+   "name": "Claude Code installs overnight from the ccpm marketplace.",
+   "path": ".claude-plugin/marketplace.json",
+   "kind": "light",
+   "inputs": [
+    "plugins/overnight/README.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": [
+      {
+       "about": "The check",
+       "decided": "`claude plugin validate --strict .` passes, and the marketplace lists overnight with the opening of its README as its description.",
+       "by": "reasoning"
+      }
+     ]
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "A newcomer to ccpm finds overnight among its plugins and reaches its README.",
+   "path": "README.md",
+   "kind": "light",
+   "inputs": [
+    "plugins/overnight/README.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": [
+      {
+       "about": "The check",
+       "decided": "The list of plugins in the README names overnight, links its README, and gives the opening of that README.",
+       "by": "reasoning"
+      }
+     ]
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    }
+   ]
   }
  ],
  "work": [
   {
-   "do": "decide",
-   "path": ".rn/20261123-62/design-tree.json",
-   "condition": "N1",
-   "about": "the summary"
+   "do": "make",
+   "path": "dev/overnight/product-vision.md"
   }
  ],
- "steps": []
+ "steps": [
+  {
+   "settles": "誰が何を得るか",
+   "deliverables": [
+    "dev/overnight/product-vision.md"
+   ],
+   "signoff": true
+  },
+  {
+   "settles": "どう使うか",
+   "deliverables": [
+    "plugins/overnight/README.md"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "どんな部品で作るか",
+   "deliverables": [
+    "dev/overnight/architecture.md"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "部品のつなぎ目",
+   "deliverables": [
+    "plugins/overnight"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "何で確かめるか",
+   "deliverables": [
+    "dev/overnight/tests"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "動くもの",
+   "deliverables": [
+    "plugins/overnight/domain"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "入手のしかた",
+   "deliverables": [
+    ".claude-plugin/marketplace.json",
+    "README.md"
+   ],
+   "signoff": false
+  }
+ ]
 }
