@@ -14,7 +14,7 @@ tree. Bash runs `tree.py` and `repository.py` of rn's `scripts/`, Lane's reporte
 the issue that a request names. At `review` and `final`, search the files by Bash's `find` and
 `grep`, or the Glob and Grep tools, as this session gives.
 Agent starts `rn:generator` and `rn:evaluator` in the background, each with its Cut's path as its
-prompt. SendMessage resumes the last Round's role, and TaskStop stops a role. Lane holds each
+prompt, and at `final` one plain subagent, none of rn's roles, in the foreground. SendMessage resumes the last Round's role, and TaskStop stops a role. Lane holds each
 turn to its steps, as `lane/adapters/rules.py` gives them. It stops a step taken out of order, a
 step whose checklist isn't done, and a start that isn't due.
 
@@ -30,7 +30,9 @@ is done, check the work whole, and propose the merge only once it reaches the go
 You've finished the turn once each of its steps has made its result. A step's mark records that
 the step made its result, and is never the aim. Its last message holds one form of Output, or a
 blocker that you can't pass. The generator makes each deliverable and the evaluator judges it, so
-you write no file but the tree, and remove only a stray file at `final`.
+you write no file but the tree, and remove only a stray file at `final`. A subagent checks the
+work whole, so that the diff stays out of this conversation and a reader who didn't make it reads
+it as a newcomer would.
 
 ## Context
 
@@ -127,7 +129,8 @@ origin names no default branch, as no run stands yet.
        it. Where they confirm the goal's summary, write `user` in its `by`. Where they correct it,
        write it as they put it. Where they answer where they check the way to the goal, write each
        step's `signoff` by their answer, then run `python3 <rn's folder>/scripts/tree.py signoff
-       <run>`, as their answer signs off the plan. Where the point was a role's, resume that role
+       <run>`, as their answer signs off the plan. Then run `lane-result signed`, as Lane makes
+       the plan's starts due by it, the answer being no command. Where the point was a role's, resume that role
        with their words in the move. Where the point was a blocker, write what they did, and move
        its work on.
      - A role's end: open the role's result beside its Cut. Take each point from that file, not
@@ -197,27 +200,33 @@ origin names no default branch, as no run stands yet.
    A refusal here that only the user can mend stops only its deliverable. Tell the user, and take
    each other move.
 6. `final`: where a deliverable of the tree isn't done, record the step at once, as nothing is
-   whole yet. Once each is done, check the work whole, as the user merges it on your word:
-   1. Run `python3 <rn's folder>/scripts/repository.py diff <run>`. It pushes the work, and prints
-      the pull request's whole diff against the default branch. Read all of it.
-   2. Check three points against the files themselves:
-      - the goal: the diff as a whole brings its people to what the confirmed goal says;
-      - the fit: it agrees with each file of the repository that it bears on, such as a README's
-        list of the plugins, a marketplace, a CHANGELOG, and the rules of the repository's guides;
-      - nothing extra: it holds no file or change that the goal doesn't need.
-   3. Run `python3 <rn's folder>/scripts/repository.py ci <run>`. It waits for the pull request's
-      CI. It gives 0 where each check passed, and 1 naming each that failed. It gives 2 where it
-      couldn't check, such as where the repository has no CI.
-   4. Remove each file that belongs to no deliverable, such as a stray note, by
+   whole yet. Once each is done, have the work checked whole, as the user merges it on your word:
+   1. Start one plain subagent by Agent in the foreground, of the session's general type, none of
+      rn's roles, as its findings decide this turn. Give it a short brief:
+      - the confirmed goal, the pull request's URL, and its default branch;
+      - to run `python3 <rn's folder>/scripts/repository.py diff <run>`, which pushes the work and
+        prints the pull request's whole diff, and to read all of it;
+      - three points to check against the repository's files: the goal, that the diff as a whole
+        brings its people to what the goal says; the fit, that it agrees with each file it bears
+        on, such as a README's list of the plugins, a marketplace, a CHANGELOG, and the rules of
+        the repository's guides; and nothing extra, that it holds no file or change that the goal
+        doesn't need;
+      - to run `python3 <rn's folder>/scripts/repository.py ci <run>`, which waits for the CI, and
+        gives 0 where each check passed, 1 naming each that failed, and 2 where it couldn't check,
+        such as with no CI;
+      - to change no file, and to give back only its findings, each with its file, and what it
+        couldn't check.
+   2. Read its findings, not the diff, and judge each against the goal.
+   3. Remove each file that belongs to no deliverable, such as a stray note, by
       `git -C <the run's worktree> rm <its path>`. Send each other problem back to the deliverable
       whose file it is, so that its generator mends it and its evaluator judges it. Where the
       deliverable is done, open it again with its kind's conditions. Write the problem as a decision
       by `reasoning` of the condition it concerns, and hold that condition not good. Then go back
       by `lane-back review`, and take each step again.
-   5. Once each mend is done, `final` checks again from 1. Remaking keeps its limit: a problem
+   4. Once each mend is done, `final` checks again from 1. Remaking keeps its limit: a problem
       that comes back after two send-backs goes to the user as a proposal, as does each finding
       left past a deliverable's Rounds.
-   6. Once each point passes, propose the merge in its form of Output, with each result. Give as a
+   5. Once each point passes, propose the merge in its form of Output, with each result. Give as a
       proposal each finding left of a deliverable done at a step that the user doesn't check: each
       open decision that its last Round's `put-up.json` names, with what that Round's
       `evaluator.json` found of its condition.
@@ -307,8 +316,6 @@ The sign-off's form, at a step that the user checks:
 "<the deliverable's name>" is ready for you to check.
 With it, <its people> can <what they do with it>.
 
-Decisions I took without asking you:
-- <each decision of the deliverable that the user didn't settle, and why>
 Fixes I'd still propose:
 - <each finding left, as a proposal, with what its people get by it>
 Changes: <the URL that put-up printed>

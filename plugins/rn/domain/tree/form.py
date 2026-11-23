@@ -55,7 +55,8 @@ def started(context: Context, goal: str, plan: str, practice: Practice) -> Tree:
     Gives: a tree whose context is the one given; whose goal is the sentence, `by` reasoning until
     the user confirms it; whose one deliverable is the plan, named by the goal, of the kind
     `design-tree`, at the plan's path, with no inputs, status open, and each necessary condition
-    of the best practice in its order, good false, with no decision; and whose work is none.
+    of the best practice in its order, good false, with no decision; and whose work and steps are
+    none.
     Changes: nothing.
     Refuses: Wrong where the goal is empty.
     """
@@ -79,6 +80,7 @@ def started(context: Context, goal: str, plan: str, practice: Practice) -> Tree:
             }
         ],
         "work": [],
+        "steps": [],
     }
 
 

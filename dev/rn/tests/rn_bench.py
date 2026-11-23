@@ -22,7 +22,7 @@ from typing import Any
 
 import fresh_imports
 import rn_files
-from claude_code import Agent, Answer, Conversation
+from claude_code import FOREGROUND, Agent, Answer, Conversation
 from gh import gh_double
 from repo_files import environment, git
 from rn_files import GOAL, LANGUAGES, TOP, WORDS
@@ -177,17 +177,17 @@ def written_tree(b: Bench, c: Conversation, design_tree: Mapping[str, Any]) -> A
     return c.write(None, b.tree_path, json.dumps(design_tree, indent=1) + "\n")
 
 
-def shared_steps(
+def moved(
     b: Bench,
     c: Conversation,
     design_tree: Mapping[str, Any] | None = None,
     ground: str = "The run's facts decide it.",
     moves: Sequence[str] = (),
 ) -> list[str]:
-    """The orchestrator keeps the steps that every event shares: `review`, writing the design tree
-    where one is given; `touched`, each node that `tree.py touched` prints reported done; `commit`,
-    by `tree.py commit` with the ground; and `move`, each command given run, such as
-    `repository.py put-up` or `tree.py cut`. Gives what each move printed."""
+    """The orchestrator keeps the steps that every event shares up to `move`: `review`, writing the
+    design tree where one is given; `touched`, each node that `tree.py touched` prints reported
+    done; `commit`, by `tree.py commit` with the ground; and `move`, each command given run, such
+    as `repository.py put-up` or `tree.py cut`. Gives what each move printed."""
     if design_tree is not None:
         answer = written_tree(b, c, design_tree)
         assert not answer.blocked, answer.said
@@ -198,6 +198,20 @@ def shared_steps(
     marked(c, "commit")
     printed = [ran(c, each) for each in moves]
     marked(c, "move")
+    return printed
+
+
+def shared_steps(
+    b: Bench,
+    c: Conversation,
+    design_tree: Mapping[str, Any] | None = None,
+    ground: str = "The run's facts decide it.",
+    moves: Sequence[str] = (),
+) -> list[str]:
+    """The orchestrator keeps the steps that every event shares, as `moved` keeps them, and then
+    `final`, which checks nothing while a deliverable isn't done. Gives what each move printed."""
+    printed = moved(b, c, design_tree, ground, moves)
+    marked(c, "final")
     return printed
 
 
@@ -227,30 +241,27 @@ def ended(c: Conversation, message: str = "Done.") -> Answer:
 
 def heard(b: Bench) -> Conversation:
     """A conversation in which the user typed `/rn:on`, and the orchestrator kept its step `hear`
-    and asked what they want to make."""
+    and asked what it can help with."""
     c = b.converse()
     typed = c.type("/rn:on")
     assert not typed.blocked, typed.said
     marked(c, "hear")
-    ended(c, "What do you want to make?")
+    ended(c, "What can I help with? An issue number or a few words of what you want both work.")
     return c
 
 
 def requested(b: Bench) -> Conversation:
-    """A conversation in which the user typed `/rn:on`, the orchestrator asked what they want to
-    make, the user typed the walkthrough's words, and the orchestrator made the run's worktree and
+    """A conversation in which the user typed `/rn:on`, the orchestrator asked what it can help
+    with, the user typed the walkthrough's words, and the orchestrator made the run's worktree and
     its design tree with the goal as put, by `repository.py new`, kept the steps that every event
-    shares, and put the goal to the user."""
+    shares, and put the goal's summary to the user."""
     c = heard(b)
     c.type(WORDS)
     ran(c, b.script("repository", "new", WORDS, GOAL, *LANGUAGES))
     marked(c, "start")
     shared_steps(b, c, ground="The goal as put.")
-    ended(
-        c,
-        "Before I plan the work, I'd like to check that I have your request right.\n"
-        f"  You asked: {WORDS}\n  As I take it: {GOAL}\nIs that what you're after?",
-    )
+    summary = f"Here is what I'll work toward.\n\nFor: the accounting team\nGoal: {GOAL}"
+    ended(c, f"{summary}\n\nIs that right?")
     return c
 
 
@@ -277,7 +288,7 @@ def confirmed(b: Bench, c: Conversation) -> None:
     and puts the point to the user."""
     c.type("yes")
     taken(b, c, planned_tree(b, answered=False), "The goal, as the user confirms it.")
-    ended(c, f"A question that's yours: the tax rate.\n  {rn_files.TAX_POINT}")
+    ended(c, f"The tax rate.\n\n{rn_files.TAX_POINT}")
 
 
 def put_up_plan(b: Bench, c: Conversation) -> str:
@@ -292,11 +303,7 @@ def put_up_plan(b: Bench, c: Conversation) -> str:
         "The user's answer.",
         [b.script("repository", "put-up", b.run, plan)],
     )
-    ended(
-        c,
-        "The plan is ready for your sign-off. Nothing is made until you approve it.\n"
-        "/rn:ty to approve, or /rn:gm with what to change.",
-    )
+    ended(c, f"The way to the goal:\n\n1. What it does ({rn_files.COMMAND})\n\nWhere do you check?")
     return printed[0].strip()
 
 
@@ -334,7 +341,7 @@ def signed_apart(
     c.type("yes")
     plan = rn_files.plan_path(b.name())
     taken(b, c, design_tree, "The plan.", [b.script("repository", "put-up", b.run, plan)])
-    ended(c, "The plan is ready for your sign-off.")
+    ended(c, "The way to the goal.")
     moves = [b.script("tree", "cut", b.run, "generator", each) for each in made]
     return c, [each.strip() for each in signed(b, c, moves)]
 
@@ -602,13 +609,39 @@ def put_up(b: Bench, c: Conversation, deliverable: str, good: Sequence[str]) -> 
     return url
 
 
-def signed(b: Bench, c: Conversation, moves: Sequence[str] = ()) -> list[str]:
+def checked_whole(b: Bench, c: Conversation) -> list[str]:
+    """At `final`, the orchestrator starts a plain subagent in the foreground, none of rn's roles,
+    with the brief of the final check; it runs `repository.py diff`, then `repository.py ci`, and
+    ends with no finding. Gives what each printed."""
+    answer, checker = c.start(
+        "general-purpose",
+        "Check the work whole: the goal, the fit, nothing extra, and CI.",
+        "Check the work whole",
+        how=FOREGROUND,
+    )
+    assert checker is not None, answer.said
+    printed = []
+    for each in (b.script("repository", "diff", b.run), b.script("repository", "ci", b.run)):
+        given = checker.bash(each)
+        assert not given.blocked and given.exit_code == 0, given.said + given.output
+        printed.append(given.output)
+    ended_answer, _ = checker.end("No findings.")
+    assert not ended_answer.blocked, ended_answer.said
+    return printed
+
+
+def signed(b: Bench, c: Conversation, moves: Sequence[str] = (), whole: bool = False) -> list[str]:
     """The user types `/rn:ty`; the orchestrator records the sign-off by `tree.py signoff`, keeps
-    the shared steps with the moves given, and gives what they printed."""
+    the shared steps with the moves given, and, where `whole`, checks the work whole at `final` by
+    `checked_whole`; gives what the moves and the check printed."""
     c.type("/rn:ty")
     ran(c, b.script("tree", "signoff", b.run))
     marked(c, "record")
-    return shared_steps(b, c, ground="The user signs it off.", moves=moves)
+    printed = moved(b, c, ground="The user signs it off.", moves=moves)
+    if whole:
+        printed += checked_whole(b, c)
+    marked(c, "final")
+    return printed
 
 
 def command_signed(b: Bench) -> tuple[Conversation, Agent]:

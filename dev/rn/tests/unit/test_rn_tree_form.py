@@ -48,7 +48,7 @@ def test_started_holds_the_goal_by_reasoning_and_the_plan_as_its_one_deliverable
     Then its context is the one given; its goal is the sentence by reasoning; its one deliverable
     the plan, named by the goal, of the kind design-tree, at the plan's path, with no inputs,
     open, each condition in the best practice's order, N1, N2, N7, N3 to N6, not good with no
-    decision; and its work none"""
+    decision; and its work and its steps none"""
     got = started(CONTEXT, GOAL, PLAN, rn_files.practice("design-tree"))
     assert got == {
         "context": rn_files.context(),
@@ -67,6 +67,7 @@ def test_started_holds_the_goal_by_reasoning_and_the_plan_as_its_one_deliverable
             }
         ],
         "work": [],
+        "steps": [],
     }
 
 

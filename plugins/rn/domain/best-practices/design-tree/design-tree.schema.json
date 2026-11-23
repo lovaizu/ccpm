@@ -1,13 +1,14 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "design tree",
- "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: its context, the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, and the work order. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
+ "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: its context, the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, the work order, and the way to the goal. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
  "type": "object",
  "required": [
   "context",
   "goal",
   "deliverables",
-  "work"
+  "work",
+  "steps"
  ],
  "additionalProperties": false,
  "properties": {
@@ -129,6 +130,13 @@
    "type": "array",
    "items": {
     "$ref": "#/$defs/work"
+   }
+  },
+  "steps": {
+   "description": "The way to the goal that the user follows the run by, first to last, each deliverable but the plan in one step, after each step whose deliverables it rests on. It stays empty until the plan holds the deliverables.",
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/steps"
    }
   }
  },
@@ -389,6 +397,36 @@
     "about": {
      "description": "With decide: the point's about, as the deliverable holds it.",
      "type": "string"
+    }
+   }
+  },
+  "steps": {
+   "description": "One step of the way to the goal.",
+   "type": "object",
+   "required": [
+    "settles",
+    "deliverables",
+    "signoff"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "settles": {
+     "description": "What the step settles, in the conversation's language and the user's words, such as how it's used, as each message to the user names the step by it.",
+     "type": "string",
+     "minLength": 1
+    },
+    "deliverables": {
+     "description": "The path of each deliverable of the step.",
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "signoff": {
+     "description": "true where the user signs off each deliverable of the step before it's done; false where each is done once its Rounds are over.",
+     "type": "boolean"
     }
    }
   }

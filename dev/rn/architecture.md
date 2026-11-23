@@ -103,9 +103,8 @@ Strategies:
 - Each message to the user opening with where the run stands on the way to the goal. [P1.2]\
   Intent: a user who knows nothing of rn's insides knows at each message what's done and what's
   next.
-- The final check made by the orchestrator over the pull request's whole diff and its CI. [P2.3]\
-  Intent: the merge is proposed only for work that reaches the goal, fits the repository, and
-  holds nothing extra.
+- The final check made by a plain subagent over the pull request's whole diff and its CI. [P2.3]\
+  Intent: the diff stays out of the orchestrator's context, and a newcomer to the work reads it.
 - One generator and one evaluator for each Round, the evaluator judging every condition from one
   trial. [P2.1]\
   Intent: the people's use is one act, so it's tried once and judged whole.
@@ -216,9 +215,10 @@ sequenceDiagram
       end
     end
     opt each deliverable done [P2.3]
-      O->>S: pushes the work, and gives the pull request's whole diff (Design tree) [P4.3]
-      O->>O: checks the goal reached, the diff consistent with the repository's files, and nothing extra [P2.3]
-      O->>S: waits for the pull request's CI, and gives its result [P4.3]
+      O->>O: starts a plain subagent with the goal, the pull request, and the points to check [P2.3]
+      O->>S: pushes the work, and gives the pull request's whole diff, read by the subagent (Design tree) [P4.3]
+      O->>S: waits for the pull request's CI, and gives its result to the subagent [P4.3]
+      O->>O: takes the subagent's findings: the goal reached, the fit with the repository's files, nothing extra, and CI [P2.3]
       O->>T: sends each problem back to the deliverable whose file it is, removing a stray file itself (Design tree) [P2.3]
     end
   end

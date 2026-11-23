@@ -1,15 +1,15 @@
 """The double of gh that rn's cases run in its place, as rn's Test strategy says under Integration
 testing and Contract testing. It answers each command of gh that rn's code runs from one line of a
-record in recorded/: gh 2.102.1's runs for `gh auth status` and `gh pr view`, and gh's manual for
-`gh pr create` and `gh pr ready`, as the plugin guide's Each result of a double from a record
-says. A command that no record holds fails with exit 1, naming itself, so that a body that runs it
-shows the gap.
+record in recorded/: gh 2.102.1's runs for `gh auth status`, `gh pr view`, and
+`gh pr checks --watch`, and gh's manual for `gh pr create`, as the plugin guide's Each result of a
+double from a record says. A command that no record holds fails with exit 1, naming itself, so
+that a body that runs it shows the gap.
 
 It serves two ways in: `host`, a Host of repository.host for the unit cases, which runs git for
 real and gh from the records; and `program`, a `gh` written into a folder for the integration
 cases, put first on the PATH of each command that the double of Claude Code runs. Each keeps its
-state, whether the person is logged in and the pull request it opened, in a JSON file of the folder
-it's given, and each command it was asked in the same file."""
+state, whether the person is logged in, the pull request it opened, and what its CI's checks found,
+in a JSON file of the folder it's given, and each command it was asked in the same file."""
 
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ from typing import Any
 RECORDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recorded")
 AUTH = "gh-2.102.1-auth.jsonl"
 PR_VIEW = "gh-2.102.1-pr-view.jsonl"
+PR_CHECKS = "gh-2.102.1-pr-checks.jsonl"
 MANUAL = "gh-manual.jsonl"
 # The file of the double's state in the folder it's given.
 STATE = "gh-state.json"
@@ -42,10 +43,11 @@ def line(record: str, event: str) -> dict[str, Any]:
 
 def state(folder: str) -> dict[str, Any]:
     """The double's state in the folder: `logged_in`, `pull_request` (the URL it opened, or None),
-    and `asked`, each gh command it was asked, by its words."""
+    `checks`, what the CI's checks found, `passed`, `failed`, or `none`, and `asked`, each gh
+    command it was asked, by its words."""
     path = os.path.join(folder, STATE)
     if not os.path.exists(path):
-        return {"logged_in": True, "pull_request": None, "asked": []}
+        return {"logged_in": True, "pull_request": None, "checks": "passed", "asked": []}
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 
@@ -61,6 +63,13 @@ def logged_out(folder: str) -> None:
     """Sets the double's state to no login, as `gh auth status` finds none."""
     kept = state(folder)
     kept["logged_in"] = False
+    keep(folder, kept)
+
+
+def checks(folder: str, found: str) -> None:
+    """Sets what the CI's checks found: `passed`, `failed`, or `none`, where it has no checks."""
+    kept = state(folder)
+    kept["checks"] = found
     keep(folder, kept)
 
 
@@ -85,12 +94,22 @@ def answer(argv: Sequence[str], folder: str) -> tuple[int, str, str]:
     elif words == ["pr", "create"] and kept["pull_request"] is None:
         given = line(MANUAL, "gh pr create prints the URL of the pull request")
         kept["pull_request"] = given["stdout"].strip()
-    elif words == ["pr", "ready"] and kept["pull_request"] is not None:
-        given = line(MANUAL, "gh pr ready marks the pull request ready")
+    elif words == ["pr", "checks"] and kept["pull_request"] is not None:
+        given = _checked(kept["checks"])
     else:
         given: dict[str, Any] = {"exit": 1, "stderr": f"gh double: no record of {' '.join(argv)}\n"}
     keep(folder, kept)
     return int(given["exit"]), str(given.get("stdout", "")), str(given.get("stderr", ""))
+
+
+def _checked(found: str) -> dict[str, Any]:
+    """What `gh pr checks --watch` gives where the CI's checks found `passed`, `failed`, or
+    `none`."""
+    if found == "failed":
+        return line(PR_CHECKS, "gh pr checks --watch finds a check failed")
+    if found == "none":
+        return line(PR_CHECKS, "gh pr checks --watch finds no checks")
+    return line(PR_CHECKS, "gh pr checks --watch finds each check passed")
 
 
 def _branch(argv: Sequence[str]) -> str:

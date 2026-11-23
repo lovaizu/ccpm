@@ -43,6 +43,7 @@ from rn_bench import (
     refactored,
     requested,
     sent_back,
+    shared_steps,
     short_twice,
     signed,
     signed_apart,
@@ -116,7 +117,7 @@ def test_rn_on_asks_what_to_make_letting_its_commands_through(b: Bench):
     assert not looked.blocked and not stopped(looked.said), looked.said
     assert looked.exit_code == 0, looked.output
     marked(c, "hear")
-    ended(c, "What do you want to make?")
+    ended(c, "What can I help with? An issue number or a few words of what you want both work.")
     assert not os.path.exists(b.at(".claude/worktrees"))
 
 
@@ -261,7 +262,7 @@ def test_a_send_back_of_the_plan_leaves_it_open_and_starts_no_role(b: Bench):
     answer, agent = c.start("rn:generator", "Make the command.", "Run rn:generator")
     assert agent is None
     assert "No start of rn's subagents is due now." in answer.said
-    ended(c, "The plan is ready for your sign-off. Nothing is made until you approve it.")
+    ended(c, "The way to the goal.")
 
 
 @pytest.mark.supports("S1", "Round", "Cut")
@@ -494,17 +495,15 @@ def test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts(b: Be
 def test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch(b: Bench):
     """Given a run whose guide the evaluator judged good in its Round of content, which a new
     generator refactored, and put up
-    When the user signs the guide off
+    When the user signs the guide off, and the orchestrator checks the work whole at `final`
     Then each deliverable of the tree is done, the remote's branch holds the command and the guide,
     and the orchestrator's turn ends with no start due"""
     c = refactored(b)
-    signed(b, c)
+    signed(b, c, whole=True)
     assert all(each["status"] == "done" for each in b.tree()["deliverables"])
     files = b.branch_files(f"rn-{b.name()}")
     assert COMMAND in files and GUIDE in files
-    stopped = c.stop(
-        "Done. The pull request is ready for your merge: http://github.com/owner/repo/pull/1"
-    )
+    stopped = c.stop("2/2 are done, and the final check passed.")
     assert not stopped.blocked, stopped.said
 
 
@@ -526,22 +525,101 @@ def test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open(b: Benc
 
 
 @pytest.mark.supports("S1", "Design tree")
-def test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready(b: Bench):
+def test_the_pull_request_stays_a_draft_after_the_last_signoff(b: Bench):
     """Given a run whose plan and command are done, and whose guide was judged good, refactored,
     and put up
-    When the user signs the guide off, and the orchestrator records it and commits the change
-    Then origin's branch holds the commit of the sign-off, its tree with each deliverable done,
-    and gh was asked once to mark the work's branch's pull request ready, after it opened it"""
+    When the user signs the guide off, and the orchestrator records it, commits the change, and
+    checks the work whole
+    Then gh was asked to open the pull request once, as a draft, and never to mark it ready"""
     c = refactored(b)
-    signed(b, c)
+    signed(b, c, whole=True)
+    asked = b.asked_gh()
+    created = [each for each in asked if each[1:3] == ["pr", "create"]]
+    assert len(created) == 1 and "--draft" in created[0]
+    assert [each for each in asked if each[1:3] == ["pr", "ready"]] == []
+
+
+@pytest.mark.supports("S1", "scripts")
+def test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci(b: Bench):
+    """Given a run whose plan and command are done, and whose guide was judged good, refactored,
+    and put up
+    When the user signs the guide off, and, at `final`, the orchestrator starts a plain subagent,
+    none of rn's roles, which runs repository.py diff, then repository.py ci
+    Then Lane lets the subagent start and run, diff prints the diff of the command and the guide
+    against the default branch, origin's branch holds the worktree's last commit, its tree with
+    each deliverable done, and ci prints that each check passed"""
+    c = refactored(b)
+    printed = signed(b, c, whole=True)
+    whole, checks = printed[-2:]
+    assert f"+++ b/{COMMAND}" in whole and f"+++ b/{GUIDE}" in whole
     branch = f"rn-{b.name()}"
     assert git(b.origin, "rev-parse", branch) == git(b.worktree, "rev-parse", "HEAD")
-    assert git(b.origin, "log", "-1", "--format=%s", branch).strip() == "The user signs it off."
     pushed = json.loads(git(b.origin, "show", f"{branch}:.rn/{b.name()}/design-tree.json"))
     assert [each["status"] for each in pushed["deliverables"]] == ["done", "done", "done"]
-    asked = [each for each in b.asked_gh() if each[1:3] in (["pr", "create"], ["pr", "ready"])]
-    assert [each[2] for each in asked] == ["create", "ready"]
-    assert asked[1] == ["gh", "pr", "ready", branch]
+    assert "tests\tpass" in checks
+    assert "fail" not in checks
+
+
+@pytest.mark.supports("S1", "Design tree")
+def test_an_answer_of_where_the_user_checks_signs_off_the_plan(b: Bench):
+    """Given a run whose plan is put up as the way to the goal, a step of the command and one of
+    the guide, the user checking each as recommended
+    When the user answers `c`, each step, and the orchestrator writes each step's sign-off true,
+    runs tree.py signoff at `take`, reports `signed` by lane-result, and writes the command's Cut
+    Then the plan is done, each step's sign-off is true, and the command's generator starts"""
+    c = to_plan_signoff(b)
+    c.type("c")
+    design_tree = b.tree()
+    design_tree["steps"] = [
+        rn_files.step("what it does", [COMMAND], True),
+        rn_files.step("how it's used", [GUIDE], True),
+    ]
+    written = c.write(None, b.tree_path, json.dumps(design_tree, indent=1) + "\n")
+    assert not written.blocked, written.said
+    ran(c, b.script("tree", "signoff", b.run))
+    assert not c.bash("lane-result signed").blocked
+    marked(c, "take")
+    cut_path = shared_steps(
+        b,
+        c,
+        ground="The user checks each step.",
+        moves=[b.script("tree", "cut", b.run, "generator", COMMAND)],
+    )[0].strip()
+    tree = b.tree()
+    assert tree["deliverables"][0]["status"] == "done"
+    assert [each["signoff"] for each in tree["steps"]] == [True, True]
+    assert started(c, "rn:generator", cut_path) is not None
+
+
+@pytest.mark.supports("S1", "Design tree")
+def test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts(
+    b: Bench,
+):
+    """Given a run whose plan is done with a step of the command, which the user doesn't check,
+    and one of the guide, and whose command the evaluator judged good in Round content-1
+    When the orchestrator holds each condition good, puts the command up by repository.py put-up,
+    and writes the guide's Cut
+    Then the command is done in its one line, the user is asked for no sign-off, as tree.py
+    signoff finds none waiting, and the guide's generator starts"""
+    c, _ = judged_command(b)
+    design_tree = held(b, COMMAND, rn_files.conditions("light"))
+    design_tree["steps"] = [
+        rn_files.step("what it does", [COMMAND], False),
+        rn_files.step("how it's used", [GUIDE], True),
+    ]
+    cut_path = taken(
+        b,
+        c,
+        design_tree,
+        "The Round's findings.",
+        [
+            b.script("repository", "put-up", b.run, COMMAND),
+            b.script("tree", "cut", b.run, "generator", GUIDE),
+        ],
+    )[1].strip()
+    assert rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light") in b.tree()["deliverables"]
+    assert c.bash(b.script("tree", "signoff", b.run)).exit_code == 1
+    assert started(c, "rn:generator", cut_path) is not None
 
 
 @pytest.mark.supports("S1", "Round")
@@ -640,6 +718,7 @@ def test_a_blocker_only_the_user_can_mend_stops_only_its_deliverable(b: Bench):
     assert refused.exit_code == 1
     assert "You are not logged into any GitHub hosts." in refused.output
     marked(c, "move")
+    marked(c, "final")
     ended(c, f"A blocker that's yours: {refused.output}The changelog goes on.")
     notified = generated(b, c, other, {CHANGELOG: "# Changes\n"})
     assert "rn:generator gave made. Due: rn:evaluator." in notified.said

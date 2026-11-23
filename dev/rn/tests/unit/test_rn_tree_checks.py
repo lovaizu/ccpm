@@ -300,3 +300,97 @@ def test_each_fault_of_a_tree_is_given_not_only_the_first(worktree: str):
     assert len(found) == 2, found
     assert any("/deliverables/0/kind" in each for each in found)
     assert any("/work/0" in each for each in found)
+
+
+# The steps of the way to the goal.
+
+ONE_STEP = (
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+
+
+def stepped(*steps: dict[str, Any]) -> dict[str, Any]:
+    """The walkthrough's tree with the steps given."""
+    the = the_tree()
+    the["steps"] = [copy.deepcopy(each) for each in steps]
+    return the
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+def test_steps_holding_each_deliverable_but_the_plan_once_have_no_fault(worktree: str):
+    """Given the walkthrough's tree whose steps hold the command, then the guide, each once
+    When its faults are found
+    Then there is none"""
+    the = stepped(
+        rn_files.step("what it does", [COMMAND], True),
+        rn_files.step("how it's used", [GUIDE], False),
+    )
+    assert faults(the, practices(), worktree) == []
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+def test_a_tree_with_no_steps_has_no_fault_of_them(worktree: str):
+    """Given the walkthrough's tree with no steps, as before the plan holds them
+    When its faults are found
+    Then there is none"""
+    assert faults(stepped(), practices(), worktree) == []
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+@pytest.mark.parametrize(
+    ("steps", "pointer", "words"),
+    [
+        (
+            [rn_files.step("what it does", [COMMAND, "docs/none.md", GUIDE], True)],
+            "/steps/0/deliverables/1",
+            "docs/none.md, which no deliverable but the plan has",
+        ),
+        (
+            [rn_files.step("the plan", [rn_files.plan_path(NAME), COMMAND, GUIDE], True)],
+            "/steps/0/deliverables/0",
+            "which no deliverable but the plan has",
+        ),
+        (
+            [
+                rn_files.step("what it does", [COMMAND, GUIDE], True),
+                rn_files.step("how it's used", [GUIDE], False),
+            ],
+            "/steps/1/deliverables/0",
+            f"{GUIDE}, which /steps/0 holds already",
+        ),
+        (
+            [rn_files.step("what it does", [COMMAND], True)],
+            "/steps",
+            f"{GUIDE}, which no step holds",
+        ),
+    ],
+    ids=["no-deliverable", "the-plan", "two-steps", "no-step"],
+)
+def test_a_fault_of_the_steps_names_its_place(
+    worktree: str, steps: list[dict[str, Any]], pointer: str, words: str
+):
+    """Given the walkthrough's tree whose steps name a path that no deliverable has, the plan, a
+    deliverable twice, or leave a deliverable out
+    When its faults are found
+    Then the one fault names the place and what's wrong there"""
+    found = faults(stepped(*steps), practices(), worktree)
+    one_fault(found, pointer)
+    assert words in found[0]
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+def test_a_step_without_its_signoff_is_out_of_the_schema(worktree: str):
+    """Given the walkthrough's tree whose one step lacks `signoff`
+    When its faults are found
+    Then the one fault names the step"""
+    lacking = rn_files.step("what it does", [COMMAND, GUIDE], True)
+    del lacking["signoff"]
+    one_fault(faults(stepped(lacking), practices(), worktree), "/steps/0")

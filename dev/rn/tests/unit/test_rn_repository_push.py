@@ -7,8 +7,9 @@ pull request titled by the goal's first sentence, of a goal of two sentences and
 naming the issues and naming none, the pull request's URL written into the tree, its second
 opening none, an open pull request's URL written where the tree has none, the pull request opened
 as a draft, and each refusal: gh with no login before any commit or push, a deliverable the tree
-lacks, and no origin; and `ready`, which marks the work's branch's pull request ready, refused with
-what gh said where gh fails."""
+lacks, and no origin; `diff`, which commits and pushes each change and gives the whole diff, after
+a stray file is removed, and with no origin; and `ci`, which waits for the CI's checks, each passed,
+one failed, and none that gh can give."""
 
 from __future__ import annotations
 
@@ -22,7 +23,7 @@ from fault import CantRun, Missing, Wrong
 from gh import gh_double
 from repo_files import git
 from repository.place import RunPlace
-from repository.push import commit, pause, put_up, ready
+from repository.push import ci, commit, diff, pause, put_up
 from rn_runs import NAME, changed, committed_files, head, hook, made_run, subject
 from template.markdown import sentences
 
@@ -508,37 +509,109 @@ def test_a_first_put_up_opens_the_pull_request_as_a_draft(tmp_path: Any, host: A
     assert ["--draft" in each for each in created(gh_state)] == [True]
 
 
-# ready
+# diff
 
 
-@pytest.mark.supports(
-    "test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready"
-)
-def test_ready_marks_the_pull_request_of_the_works_branch_ready(
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+def test_diff_commits_each_change_pushes_it_and_gives_the_whole_diff_against_the_default_branch(
+    tmp_path: Any, host: Any
+):
+    """Given a run whose design tree is committed on its branch, and the guide written but not
+    committed
+    When diff is given the run
+    Then it gives a diff that holds the guide and the design tree, the guide is committed as
+    `rn: the final check of <name>`, and origin's rn-<name> holds that commit"""
+    run = made_run(str(tmp_path))
+    changed(run, {rn_files.GUIDE: "# Guide\n"})
+    given = diff(run, host)
+    assert f"+++ b/{rn_files.GUIDE}" in given
+    assert f"+++ b/{tree_file(run)}" in given
+    assert subject(worktree(run)) == f"rn: the final check of {NAME}"
+    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+def test_diff_after_a_stray_file_is_removed_holds_no_line_of_it(tmp_path: Any, host: Any):
+    """Given a run whose branch holds a stray note, which is then removed from its worktree
+    When diff is given the run
+    Then the diff names no line of the note"""
+    run = made_run(str(tmp_path))
+    changed(run, {"notes.md": "# A note to self\n"})
+    git(worktree(run), "add", "-A")
+    git(worktree(run), "commit", "-q", "-m", "A note.")
+    os.remove(os.path.join(worktree(run), "notes.md"))
+    assert "notes.md" not in diff(run, host)
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+def test_diff_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
+    """Given a run of a repository with no remote origin
+    When diff is given the run
+    Then Missing is raised, naming origin"""
+    run = made_run(str(tmp_path), origin=False)
+    with pytest.raises(Missing, match="origin"):
+        diff(run, host)
+
+
+# ci
+
+
+def checks_asked(gh_state: str) -> list[list[str]]:
+    """Each `gh pr checks` that the double of gh was asked."""
+    return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "checks"]]
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+def test_ci_where_each_check_passed_gives_them_having_waited_for_the_works_branch(
     tmp_path: Any, host: Any, gh_state: str
 ):
-    """Given a run whose plan was put up
-    When ready is given the run
-    Then gh was asked last, in the run's worktree, to mark rn-<name>'s pull request ready"""
+    """Given a run whose plan was put up, and whose CI's checks each passed
+    When ci is given the run
+    Then it gives gh's lines, among them `tests\tpass`, and gh was asked once, in the run's
+    worktree, to wait for rn-<name>'s checks"""
     run = made_run(str(tmp_path))
     put_up(run, rn_files.plan_path(NAME), host)
-    ready(run, host)
-    assert host.ran[-1] == (["gh", "pr", "ready", f"rn-{NAME}"], worktree(run))
+    assert "tests\tpass" in ci(run, host)
+    assert checks_asked(gh_state) == [["gh", "pr", "checks", f"rn-{NAME}", "--watch"]]
+    assert host.ran[-1][1] == worktree(run)
 
 
-@pytest.mark.supports(
-    "test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_ready"
-)
-def test_ready_where_gh_fails_is_missing_with_what_gh_said(tmp_path: Any, host: Any, gh_state: str):
-    """Given a run whose plan was put up, and gh then with no login
-    When ready is given the run
-    Then Missing is raised, saying gh may not mark the pull request ready, with what gh said"""
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+def test_ci_where_a_check_failed_is_wrong_naming_it_once(tmp_path: Any, host: Any, gh_state: str):
+    """Given a run whose plan was put up, and whose CI's check `tests` failed, which gh's lines
+    show twice as it waits
+    When ci is given the run
+    Then Wrong is raised, naming `tests` once, and no check that passed"""
     run = made_run(str(tmp_path))
     put_up(run, rn_files.plan_path(NAME), host)
-    gh_double.logged_out(gh_state)
-    with pytest.raises(Missing) as refused:
-        ready(run, host)
+    gh_double.checks(gh_state, "failed")
+    with pytest.raises(Wrong) as refused:
+        ci(run, host)
     assert str(refused.value) == (
-        "gh may not mark the pull request ready:"
-        " You are not logged into any GitHub hosts. To log in, run: gh auth login"
+        "the pull request's CI fails at tests; mend each in the deliverable whose file it concerns"
     )
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+@pytest.mark.parametrize(
+    ("found", "said"),
+    [
+        ("none", "no checks reported on the 'patch-1' branch"),
+        (None, "gh double: no record of gh pr checks"),
+    ],
+    ids=["no-ci", "no-pull-request"],
+)
+def test_ci_that_gh_cant_give_cant_run_with_what_gh_said(
+    tmp_path: Any, host: Any, gh_state: str, found: str | None, said: str
+):
+    """Given a run whose CI has no checks, or that has no pull request
+    When ci is given the run
+    Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said"""
+    run = made_run(str(tmp_path))
+    if found:
+        put_up(run, rn_files.plan_path(NAME), host)
+        gh_double.checks(gh_state, found)
+    with pytest.raises(CantRun) as refused:
+        ci(run, host)
+    assert str(refused.value).startswith("gh can't give the pull request's CI: ")
+    assert said in str(refused.value)

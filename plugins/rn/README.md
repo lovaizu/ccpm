@@ -121,9 +121,6 @@ You type `a`. rn makes the first step, and shows it:
 プロダクトビジョンができました。ご確認ください。
 これで、経理チームが何のために使い、どこまでできれば足りるかが決まります。
 
-ご相談せずに決めたこと：
-- 経理チームのほかに、使う人は置きませんでした
-- 「早さ」は、明細を受け取ってから請求書を印刷するまでの時間で測ります
 変更内容：https://github.com/lovaizu/playground/pull/38/files
 
 承認する場合は /rn:ty、変えたい点がある場合は /rn:gm に続けてその内容を入力してください。
@@ -148,7 +145,7 @@ Linux のノートPCです。明細は LibreOffice Calc で管理しています
 ```
 
 rn makes the rest with no sign-off, as you chose, and says where it stands at each message. Once
-each step is done, rn checks the pull request whole, and shows:
+each step is done, an AI new to the work checks the pull request whole for rn. rn shows:
 
 ```text
 6/6 すべてできました。最終チェックも通りました。

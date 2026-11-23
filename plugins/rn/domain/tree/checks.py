@@ -30,8 +30,10 @@ def faults(tree: Tree, practices: Mapping[str, Practice], worktree: str) -> list
     kind is no kind of `practices`; where an open deliverable's necessary conditions aren't its
     best practice's, in their order; where an input names neither a deliverable's path nor a file
     of the worktree; where a deliverable rests on itself through its inputs; and where an item of
-    `work` names no deliverable, or a `decide` names no condition or `about` of it. None where the
-    tree holds each.
+    `work` names no deliverable, or a `decide` names no condition or `about` of it; and, where
+    `steps` holds any, where a step names a path that no deliverable but the plan has or that an
+    earlier step holds, and where no step holds a deliverable but the plan. None where the tree
+    holds each.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -54,6 +56,31 @@ def faults(tree: Tree, practices: Mapping[str, Practice], worktree: str) -> list
             found.append(f"{at}: rests on itself through its inputs; take its own path out of them")
     found += [
         fault for place, item in enumerate(tree["work"]) for fault in _work(item, paths, place)
+    ]
+    return found + _steps(tree["steps"], deliverables)
+
+
+def _steps(steps: list[Any], deliverables: list[Deliverable]) -> list[str]:
+    """The faults of the steps of the way to the goal: a path of no deliverable but the plan, one
+    that an earlier step holds, and a deliverable but the plan that no step holds; none where the
+    steps are none yet, as before the plan holds the deliverables."""
+    if not steps:
+        return []
+    named = [each["path"] for each in deliverables if each["kind"] != "design-tree"]
+    found, held = [], {}
+    for index, step in enumerate(steps):
+        for place, path in enumerate(step["deliverables"]):
+            at = f"/steps/{index}/deliverables/{place}"
+            if path not in named:
+                found.append(f"{at}: names {path}, which no deliverable but the plan has; name one")
+            elif path in held:
+                found.append(f"{at}: names {path}, which {held[path]} holds already; name it once")
+            else:
+                held[path] = f"/steps/{index}"
+    found += [
+        f"/steps: leaves out {path}, which no step holds; put it in the step it serves"
+        for path in named
+        if path not in held
     ]
     return found
 

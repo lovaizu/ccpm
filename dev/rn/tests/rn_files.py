@@ -193,15 +193,24 @@ def tree(
     order: Sequence[Mapping[str, Any]] = (),
     goal: str = GOAL,
     by: str = "user",
+    steps: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
-    """A design tree with the context as a run starts it, the goal, the deliverables, and the
-    work."""
+    """A design tree with the context as a run starts it, the goal, the deliverables, the work,
+    and the steps of the way to the goal, none where none is given, as before the plan holds
+    them."""
     return {
         "context": context(),
         "goal": {"decided": goal, "by": by},
         "deliverables": [copy.deepcopy(dict(each)) for each in deliverables],
         "work": [dict(each) for each in order],
+        "steps": [copy.deepcopy(dict(each)) for each in steps],
     }
+
+
+def step(settles: str, deliverables: Sequence[str], signoff: bool) -> dict[str, Any]:
+    """A step of the way to the goal: what it settles, the path of each of its deliverables, and
+    whether the user signs each off."""
+    return {"settles": settles, "deliverables": list(deliverables), "signoff": signoff}
 
 
 def plan_path(name: str) -> str:

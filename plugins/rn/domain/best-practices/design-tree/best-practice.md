@@ -11,7 +11,7 @@
     - **N3** Is each problem found fixed at the decision that caused it? (deliverables)
     - **N4** Does each node agree with each node that a change touches, from the goal down to the work? (deliverables)
   - **C3** The work goes in the order that achieves the goal in the shortest time.
-    - **N5** Is the first item of the work the one, among those that can start, that brings the goal's people closest? (work)
+    - **N5** Is the first item of the work the one, among those that can start, that brings the goal's people closest? (work, steps)
     - **N6** Does the work start together each item that rests on no other item still being made? (work)
 
 ## Template

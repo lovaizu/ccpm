@@ -1,7 +1,7 @@
 """Decides what waits for the user's sign-off, and what a sign-off changes in the design tree: the
-plan once it's open with each condition good, and another deliverable once its Rounds are over,
-wait, and once signed off each is done, the open decisions of the findings left being the
-proposals the user signed off."""
+plan once it's open with each condition good, and another deliverable once its Rounds are over at a
+step that the user checks, wait, and once signed off each is done, the open decisions of the
+findings left being the proposals the user signed off."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def waiting(tree: Tree, nexts: Mapping[str, Next]) -> str | None:
     `rounds.course.next_of` gives it.
     Gives: the path of the plan, the deliverable of the kind `design-tree`, where it's open with
     each condition good; else of the first open deliverable in the tree's order whose `next_of` is
-    the sign-off; None where none does.
+    the sign-off and that `checked` gives as checked; None where none does.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -31,9 +31,25 @@ def waiting(tree: Tree, nexts: Mapping[str, Next]) -> str | None:
         if each["kind"] == "design-tree" and good:
             return each["path"]
     for each in opened:
-        if each["path"] in nexts and nexts[each["path"]].waits_on == "sign-off":
+        due = each["path"] in nexts and nexts[each["path"]].waits_on == "sign-off"
+        if due and checked(tree, each["path"]):
             return each["path"]
     return None
+
+
+def checked(tree: Tree, deliverable: str) -> bool:
+    """Whether the user signs the deliverable off before it's done.
+
+    Takes: the tree, and a deliverable's path.
+    Gives: False where a step of the tree's `steps` holds the path with `signoff` false; else
+    True, as for the plan, which no step holds, and for each deliverable while the tree holds no
+    steps yet, so that the user checks whatever no step says they don't.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    return not any(
+        deliverable in step["deliverables"] and not step["signoff"] for step in tree["steps"]
+    )
 
 
 def signed_off(tree: Tree, deliverable: str) -> Tree:

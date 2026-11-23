@@ -144,7 +144,7 @@
         "necessary_conditions": [
           {
             "id": "N5",
-            "about": "work",
+            "about": "work, steps",
             "what": "Is the first item of the work the one, among those that can start, that brings the goal's people closest?",
             "why": "An item started before what it rests on is done is made again once that arrives, and an item that brings the people little delays the one that brings them most. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method), which lists each activity's predecessors before it orders the activities, and the [critical path method](https://en.wikipedia.org/wiki/Critical_path_method), which puts first what the end waits on.",
             "items": [

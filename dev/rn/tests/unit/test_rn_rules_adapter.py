@@ -157,7 +157,8 @@ def shared(cwd: str, name: str = NAME) -> list[tuple[str, list[str]]]:
             BLOCKED,
         ),
         step("commit", BLOCKED),
-        step("move"),
+        step("move", BLOCKED),
+        step("final"),
     ]
 
 

@@ -12,7 +12,7 @@ from typing import Callable
 import practice
 from fault import Answer, answered
 from rounds import course, files
-from tree import form
+from tree import form, signoff
 
 from repository import commit_checks, place, push, trial, worktree
 from repository.host import Host
@@ -24,6 +24,8 @@ usage: repository.py new <words> <goal> <deliverables language> <conversation la
        repository.py put-up <run> <deliverable>
        repository.py checks <run> <file>...
        repository.py trial <run> <round>
+       repository.py diff <run>
+       repository.py ci <run>
 """
 
 
@@ -43,11 +45,16 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `pause <run>`: 0 printing the hash that `push.pause` gives.
     - `put-up <run> <deliverable>`: 0 printing the URL that `push.put_up` gives, the deliverable's
       last Round then marked as put up with its state, as `rounds.course.held` gives it from the
-      design tree and `rounds.files.mark` writes it.
+      design tree and `rounds.files.mark` writes it. Where `tree.signoff.checked` gives that the
+      user doesn't check the deliverable, it's then done, as `tree.signoff.signed_off` writes it,
+      and the run's folder is committed as `rn: <its name>, done at a step that the user doesn't
+      check`, as `push.commit` does, and pushed, as `push.push` does.
     - `checks <run> <file>...`: 0 printing nothing where `commit_checks.findings` gives none, and 1
       with each finding a line.
     - `trial <run> <round>`, the Round's folder from `cwd`: 0 printing the folder that
       `trial.starting_state` makes.
+    - `diff <run>`: 0 printing the diff that `push.diff` gives.
+    - `ci <run>`: 0 printing what `push.ci` gives.
 
     `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `repository.py: <what's
     wrong>` where the input is Wrong or something is Missing, saying how to mend it; 2 with what
@@ -91,8 +98,24 @@ def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     run = place.of_folder(cwd, given[0])
     url = push.put_up(run, given[1], host)
-    files.mark(run, given[1], course.held(form.deliverable(form.read(run.tree), given[1])))
+    tree = form.read(run.tree)
+    node = form.deliverable(tree, given[1])
+    files.mark(run, given[1], course.held(node))
+    if not signoff.checked(tree, given[1]):
+        form.write(run.tree, signoff.signed_off(tree, given[1]))
+        folder = os.path.relpath(run.folder, run.worktree)
+        message = f"rn: {node['name']}, done at a step that the user doesn't check"
+        push.commit(run, [folder], message, host)
+        push.push(run, host)
     return 0, f"{url}\n", ""
+
+
+def _diff(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
+    return 0, push.diff(place.of_folder(cwd, given[0]), host), ""
+
+
+def _ci(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
+    return 0, push.ci(place.of_folder(cwd, given[0]), host), ""
 
 
 def _checks(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
@@ -116,4 +139,6 @@ _SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int | None]] = {
     "put-up": (_put_up, 2, 2),
     "checks": (_checks, 1, None),
     "trial": (_trial, 2, 2),
+    "diff": (_diff, 1, 1),
+    "ci": (_ci, 1, 1),
 }

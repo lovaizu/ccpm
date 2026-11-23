@@ -188,6 +188,24 @@ def test_a_run_of_rn_on_signed_off_by_rn_ty_starts_its_due_work(cwd: str):
     assert starts(out) == due(("rn:generator", 1))
 
 
+@pytest.mark.supports("test_an_answer_of_where_the_user_checks_signs_off_the_plan")
+@pytest.mark.parametrize(
+    "given", ["signed", "signed-by-another"], ids=["orchestrator", "generator"]
+)
+def test_a_run_of_rn_on_whose_plan_the_users_answer_signed_off_starts_its_due_work(
+    cwd: str, given: str
+):
+    """Given run 20261120-invoices, whose command waits on its generator, and the move /rn:on with
+    the orchestrator's result `signed` after it, or `signed` given by another role
+    When the adapter gives the starts due
+    Then the command's generator is due once after the orchestrator's `signed`, and none after the
+    other's"""
+    a_run(cwd, walkthrough())
+    role = "rn:on" if given == "signed" else "rn:generator"
+    out = ADAPTER.due(run(command("rn:on"), result(role, "signed")), cwd)
+    assert starts(out) == (due(("rn:generator", 1)) if role == "rn:on" else due())
+
+
 # No start while the run waits.
 
 

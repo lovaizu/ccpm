@@ -66,7 +66,8 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
       `place.made` finds it from the request's words; else the one that
       `repository.worktree.newest` gives;
     - after the event's own step, but for a pause: `review`; `touched`, with the checklist of the
-      command `tree.py touched <run>`; `commit`; and `move`.
+      command `tree.py touched <run>`; `commit`; `move`; and `final`, the check of the work whole
+      once each deliverable is done, which the orchestrator records at once while one isn't.
     Each step of a turn but its last ends on `blocked`, so that a refusal that only the user can
     mend, such as `repository.py new`'s where origin names no default branch, ends the turn; the
     last keeps no such rule, as Lane judges the last step's result rule at each end with every step
@@ -134,7 +135,8 @@ def _shared(run: RunPlace, cwd: str, plugin_root: str) -> list[Steps]:
         _step("review", _BLOCKED),
         _step("touched", {"type": "checklist", "command": touched}, _BLOCKED),
         _step("commit", _BLOCKED),
-        _step("move"),
+        _step("move", _BLOCKED),
+        _step("final"),
     ]
 
 

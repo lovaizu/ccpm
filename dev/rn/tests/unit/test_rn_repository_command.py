@@ -1,6 +1,7 @@
 """The unit cases of repository/command.py's `main`, repository.py's command line: each subcommand
 with what it prints and its exit code, `find` of no run, and of the newest of several, its worktree
-made again, `put-up` marking the deliverable's last Round, `checks` with findings and with none,
+made again, `put-up` marking the deliverable's last Round, and making done one at a step that the
+user doesn't check, `diff`, `ci` by what the checks found, `checks` with findings and with none,
 and each fault by its exit code: 2 with the usage for arguments of another form, 1 with
 `repository.py: ` for an input that is Wrong and for something Missing, origin's HEAD naming no
 branch and gh with no login among them, and 2 for what CantRun."""
@@ -198,6 +199,107 @@ def test_put_up_marks_the_deliverables_last_round_as_put_up(tmp_path: Any, host:
     }
 
 
+ONE_STEP = (
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+
+
+def stepped(command: bool) -> dict:
+    """The walkthrough's tree whose command is open with each condition good, at a step whose
+    sign-off is as given, and whose guide's step the user checks."""
+    design_tree = rn_files.walkthrough_tree(NAME, command_good=True)
+    design_tree["steps"] = [
+        rn_files.step("what it does", [rn_files.COMMAND], command),
+        rn_files.step("how it's used", [rn_files.GUIDE], True),
+    ]
+    return design_tree
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+def test_put_up_at_a_step_the_user_doesnt_check_makes_it_done_marks_its_round_and_pushes(
+    tmp_path: Any, host: Any
+):
+    """Given a run whose command, open with each condition good after Round content-1, lies at a
+    step that the user doesn't check
+    When repository.py put-up is given the run's folder and the command's path
+    Then it gives 0 printing the pull request's changes; the tree holds the command done in its one
+    line, its item of the work gone; content-1 holds put-up.json; the tree, put-up.json among it,
+    is committed as `rn: <command's name>, done at a step that the user doesn't check`; and
+    origin's rn-<name> holds that commit"""
+    run = made_run(str(tmp_path), design_tree=stepped(False))
+    folder = rn_files.folder_of(run.repository, NAME)
+    first = rn_files.a_round(folder, rn_files.COMMAND, "content", 1)
+    given = main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)
+    assert given == (0, "http://github.com/owner/repo/pull/1/files\n", "")
+    design_tree = rn_files.read_json(os.path.join(folder, "design-tree.json"))
+    done = rn_files.done_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
+    assert design_tree["deliverables"][1] == done
+    assert design_tree["work"] == [rn_files.work("make", rn_files.GUIDE)]
+    assert os.path.isfile(os.path.join(first, "put-up.json"))
+    worktree = rn_files.worktree_of(run.repository, NAME)
+    assert git(worktree, "status", "--porcelain") == ""
+    assert git(worktree, "log", "-1", "--format=%s").strip() == (
+        f"rn: {rn_files.COMMAND_NAME}, done at a step that the user doesn't check"
+    )
+    assert head(str(tmp_path / "origin.git"), f"rn-{NAME}") == head(worktree)
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+def test_put_up_at_a_step_the_user_checks_leaves_it_open_for_the_signoff(tmp_path: Any, host: Any):
+    """Given a run whose command, open with each condition good after Round content-1, lies at a
+    step that the user checks
+    When repository.py put-up is given the run's folder and the command's path
+    Then it gives 0, and the tree holds the command open"""
+    run = made_run(str(tmp_path), design_tree=stepped(True))
+    folder = rn_files.folder_of(run.repository, NAME)
+    rn_files.a_round(folder, rn_files.COMMAND, "content", 1)
+    assert main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)[0] == 0
+    design_tree = rn_files.read_json(os.path.join(folder, "design-tree.json"))
+    assert design_tree["deliverables"][1]["status"] == "open"
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+def test_diff_prints_the_pull_requests_whole_diff(tmp_path: Any, host: Any):
+    """Given a run whose guide is written but not committed
+    When repository.py diff is given the run's folder
+    Then it gives 0 printing a diff that holds the guide"""
+    run = made_run(str(tmp_path))
+    changed(run, {rn_files.GUIDE: "# Guide\n"})
+    code, out, err = main(["diff", RUN], run.repository, rn_files.RN, host)
+    assert (code, err) == (0, "")
+    assert f"+++ b/{rn_files.GUIDE}" in out
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+@pytest.mark.parametrize(
+    ("found", "expected"),
+    [
+        ("passed", (0, "tests\tpass")),
+        ("failed", (1, "repository.py: the pull request's CI fails at tests")),
+        ("none", (2, "no checks reported")),
+    ],
+    ids=["passed", "failed", "no-ci"],
+)
+def test_ci_gives_0_1_or_2_by_what_the_checks_found(
+    tmp_path: Any, host: Any, gh_state: str, found: str, expected: tuple[int, str]
+):
+    """Given a run whose plan was put up, and whose CI's checks each passed, one failed, or are
+    none
+    When repository.py ci is given the run's folder
+    Then it gives 0 printing the checks, 1 naming the one that failed, or 2 saying gh can't give
+    the CI"""
+    run = made_run(str(tmp_path), design_tree=rn_files.walkthrough_tree(NAME, plan_done=False))
+    main(["put-up", RUN, rn_files.plan_path(NAME)], run.repository, rn_files.RN, host)
+    gh_double.checks(gh_state, found)
+    code, out, err = main(["ci", RUN], run.repository, rn_files.RN, host)
+    assert code == expected[0]
+    assert expected[1] in out + err
+
+
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
 def test_put_up_with_gh_logged_out_says_what_is_missing_and_commits_nothing(
     tmp_path: Any, host: Any, gh_state: str
@@ -284,13 +386,14 @@ def test_trial_where_the_folder_cant_be_made_gives_2(tmp_path: Any, host: Any, t
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-@pytest.mark.parametrize("sub", ["pause", "put-up", "checks", "trial"])
+@pytest.mark.parametrize("sub", ["pause", "put-up", "checks", "trial", "diff", "ci"])
 def test_a_folder_that_isnt_a_runs_is_wrong(tmp_path: Any, host: Any, sub: str):
     """Given invoicer's repository with no run
     When the subcommand is given a folder that isn't a run's, with what else it takes
     Then it gives 1 with `repository.py: ` naming the folder on stderr"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
-    rest = {"pause": [], "put-up": [rn_files.COMMAND], "checks": [rn_files.COMMAND]}
+    rest = {"pause": [], "put-up": [rn_files.COMMAND], "checks": [rn_files.COMMAND], "diff": []}
+    rest["ci"] = []
     argv = [sub, "docs", *rest.get(sub, ["docs"])]
     code, out, err = main(argv, repo, rn_files.RN, host)
     assert (code, out) == (1, "")
@@ -313,6 +416,10 @@ def test_a_folder_that_isnt_a_runs_is_wrong(tmp_path: Any, host: Any, sub: str):
         ["checks"],
         ["trial", RUN],
         ["trial", RUN, "a", "b"],
+        ["diff"],
+        ["diff", RUN, "more"],
+        ["ci"],
+        ["ci", RUN, "more"],
     ],
 )
 def test_arguments_of_another_form_give_the_usage(tmp_path: Any, host: Any, argv: list[str]):

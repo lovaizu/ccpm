@@ -2,7 +2,9 @@
 changes: `waiting`, for the plan open with each condition good, before a deliverable earlier in the
 tree, and with a condition short, for a deliverable whose course is the sign-off with each
 condition good or with a finding left past its Rounds, one with each condition good whose course
-is another, and for one of several, none, and only those done; and `signed_off`, of the plan, of a
+is another, and for one of several, none, and only those done, and for one whose step the user
+checks and one whose step they don't; `checked`, of a deliverable in no step, in a step the user
+checks, and in one they don't; and `signed_off`, of the plan, of a
 deliverable with more paths, of a node with no file, of one with findings left as its open
 decisions, with the work that names it and other work, and each refusal."""
 
@@ -17,7 +19,7 @@ import rn_files
 from fault import Wrong
 from rn_files import COMMAND, GOAL, GUIDE
 from rounds.course import Next
-from tree.signoff import signed_off, waiting
+from tree.signoff import checked, signed_off, waiting
 
 NAME = "20261120-a-command-with-which-the"
 PLAN = rn_files.plan_path(NAME)
@@ -269,3 +271,68 @@ def test_a_node_with_no_file_signed_off_with_a_finding_left_keeps_it_among_its_c
     got = signed_off(the, "docs/people.md")
     assert got["deliverables"][1]["status"] == "done"
     assert got["deliverables"][1]["necessary_conditions"] == node["necessary_conditions"]
+
+
+# The steps that the user checks.
+
+ONE_STEP = (
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+
+
+def with_steps(the: dict[str, Any], command: bool, guide: bool) -> dict[str, Any]:
+    """The tree with a step of the command and one of the guide, each with the sign-off given."""
+    the["steps"] = [
+        rn_files.step("what it does", [COMMAND], command),
+        rn_files.step("how it's used", [GUIDE], guide),
+    ]
+    return the
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+def test_a_deliverable_past_its_rounds_at_a_step_the_user_doesnt_check_doesnt_wait():
+    """Given a tree whose command waits on the sign-off with each condition good, at a step whose
+    sign-off is false
+    When what waits for the sign-off is found
+    Then none does"""
+    the = with_steps(walkthrough(command_good=True), False, True)
+    assert waiting(the, {COMMAND: SIGN_OFF, GUIDE: Next("generator", "content", False)}) is None
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+def test_a_deliverable_past_its_rounds_at_a_step_the_user_checks_waits():
+    """Given a tree whose command waits on the sign-off with each condition good, at a step whose
+    sign-off is true, and the guide's step's false
+    When what waits for the sign-off is found
+    Then it is the command's path"""
+    the = with_steps(walkthrough(command_good=True), True, False)
+    assert waiting(the, {COMMAND: SIGN_OFF, GUIDE: Next("generator", "content", False)}) == COMMAND
+
+
+@pytest.mark.supports(
+    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
+)
+@pytest.mark.parametrize(
+    ("steps", "path", "expected"),
+    [
+        (None, COMMAND, True),
+        ((True, False), COMMAND, True),
+        ((True, False), GUIDE, False),
+        ((True, False), PLAN, True),
+    ],
+    ids=["no-steps", "checked", "not-checked", "the-plan"],
+)
+def test_checked_is_false_only_at_a_step_whose_signoff_is_false(
+    steps: tuple[bool, bool] | None, path: str, expected: bool
+):
+    """Given a tree with no steps, or with the command's step checked and the guide's not
+    When whether the user checks the command, the guide, or the plan is found
+    Then it is false only for the guide at its step not checked, the plan lying in no step"""
+    the = walkthrough(plan_done=False)
+    if steps is not None:
+        the = with_steps(the, *steps)
+    assert checked(the, path) is expected

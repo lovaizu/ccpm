@@ -1,5 +1,6 @@
 """Decides how the run's work reaches GitHub: what each commit holds and says, the push of the
-work's branch, and the run's one pull request, a draft until it's marked ready."""
+work's branch, the run's one pull request, a draft until the user marks it ready, and what the
+final check reads of it: its whole diff and its CI."""
 
 from __future__ import annotations
 
@@ -113,21 +114,43 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> str:
     return f"{url}/files"
 
 
-def ready(run: RunPlace, host: Host) -> None:
-    """Marks the run's pull request ready, out of its draft.
+def diff(run: RunPlace, host: Host) -> str:
+    """The pull request's whole diff, as the final check reads it.
 
     Takes: the run, and the host.
-    Gives: nothing.
-    Changes: runs `gh pr ready <the work's branch>` in the run's worktree.
-    Refuses: Missing where gh may not mark it ready, such as with no login, with what gh said.
+    Gives: the diff of the work's branch from where it parts from the default branch that origin's
+    HEAD names, as the pull request shows it.
+    Changes: commits each change in the run's worktree as `rn: the final check of <name>`, where
+    there's one, such as a stray file removed, and pushes the work's branch, as `push` does.
+    Refuses: as `push` refuses; CantRun where git fails otherwise.
     """
-    checked(
-        host,
-        ["gh", "pr", "ready", run.branch],
-        run.worktree,
-        Missing,
-        "gh may not mark the pull request ready",
-    )
+    _commit_all(run, f"rn: the final check of {run.name}", host)
+    push(run, host)
+    return _git(host, run, "diff", "refs/remotes/origin/HEAD...HEAD").out
+
+
+def ci(run: RunPlace, host: Host) -> str:
+    """What the pull request's CI found, once it's done.
+
+    Takes: the run, and the host.
+    Gives: each check with its result, as gh gives them, where each passed.
+    Changes: runs `gh pr checks <the work's branch> --watch` in the run's worktree, which waits
+    until each check is done.
+    Refuses: Wrong where a check failed, naming each once; CantRun where gh can't give the checks,
+    such as where the repository has no CI or the branch no pull request, with what gh said.
+    """
+    ran = host(["gh", "pr", "checks", run.branch, "--watch"], run.worktree)
+    if ran.code == 0:
+        return ran.out
+    failed = [
+        line.split("\t")[0] for line in ran.out.splitlines() if line.split("\t")[1:2] == ["fail"]
+    ]
+    if failed:
+        raise Wrong(
+            f"the pull request's CI fails at {', '.join(dict.fromkeys(failed))}; mend each in the"
+            " deliverable whose file it concerns"
+        )
+    raise CantRun(f"gh can't give the pull request's CI: {ran.err.strip()}")
 
 
 def _body(goal: str, issues: dict[str, list[int]]) -> str:

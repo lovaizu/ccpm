@@ -47,10 +47,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `commit <run> <ground>`: where `tree.checks.faults` finds none, commits the design tree as
       `push.commit` does with `<ground>` as the message, and gives 0 printing the hash; else 1
       with the first fault, git left as it was; 0 printing the last commit's hash, committing
-      nothing, where the tree has no change since it. Where the tree holds each deliverable done,
-      it then pushes the work's branch, as `push.push` does, and marks the pull request ready, as
-      `push.ready` does, even where it committed nothing, so that where git or gh refuses, as
-      those two say, the commit kept, a run again once the cause is mended pushes and marks it.
+      nothing, where the tree has no change since it. It pushes nothing and asks gh nothing, as the
+      final check pushes the work and the user marks the pull request ready.
     - `cut <run> <role> <deliverable>`, `<role>` `generator` or `evaluator`: writes the role's Cut
       in the Round that `rounds.course.next_of` gives the deliverable, made anew where the
       generator starts a new Round, and gives 0 printing the Cut's path from `cwd`; 1 where the
@@ -100,11 +98,6 @@ def _commit(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: H
         made = push.commit(run, [path], given[0], host)
     else:
         made = host(["git", "rev-parse", "HEAD"], run.worktree).out.strip()
-    # Pushed and marked ready even where nothing was new to commit, so that a run again after a
-    # refusal of git or gh pushes and marks it ready.
-    if all(node["status"] == "done" for node in tree["deliverables"]):
-        push.push(run, host)
-        push.ready(run, host)
     return 0, f"{made}\n", ""
 
 

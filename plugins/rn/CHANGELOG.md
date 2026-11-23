@@ -8,6 +8,9 @@
 - Once you confirm the goal, rn shows the way to it, step by step, each step named by what it settles in your words, with its deliverables beside it, and asks where you want to check: the first step alone, the first two, or each step. Your answer signs off the plan.
 - Each message during a run opens with where the run stands, such as `Now 3/5: how it's built (architecture, test strategy)`, and speaks of your goal and the way to it, never of rn's insides.
 - rn closes the issue that your request names, and refers to each other issue you name, without asking you. It asks the languages only where your words, your instructions, and the repository's documents disagree.
+- You sign off only the deliverables of the steps you chose to check. Each other deliverable is done once rn's evaluators find it good, or its remakes run out, and what's still short comes to you as proposals in rn's last message.
+- Once each step is done, an AI new to the work checks the pull request whole for rn: that it reaches your goal, agrees with the rest of the repository, such as its README and CHANGELOG, and holds nothing extra, and that CI passes. rn removes a stray file itself, sends each other problem back to be remade, and then proposes the merge with the results.
+- rn no longer marks the pull request ready. It stays a draft until you mark it ready and merge it.
 
 ### Added
 

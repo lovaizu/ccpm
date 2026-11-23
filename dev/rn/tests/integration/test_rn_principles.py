@@ -453,7 +453,6 @@ def test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped(b: Bench, b
 
 
 @pytest.mark.supports("P2.3", "orchestrator")
-@pytest.mark.xfail(strict=True, reason="rules.py gives the orchestrator's turn no step final yet")
 def test_a_turn_that_leaves_each_deliverable_done_ended_before_its_final_check_is_stopped(
     b: Bench, broken: None
 ):
