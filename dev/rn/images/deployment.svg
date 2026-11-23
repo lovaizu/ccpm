@@ -63,8 +63,8 @@
   <text class="name" x="535.0" y="136.0">evaluator</text>
   <text class="kind" x="535.0" y="156.0">[subagent]</text>
   <rect class="box" x="40" y="250" width="280" height="90" rx="6"/>
-  <text class="name" x="180.0" y="291.0">rn and Lane</text>
-  <text class="kind" x="180.0" y="311.0">[plugins: prompts, scripts, best practices]</text>
+  <text class="name" x="180.0" y="291.0">rn</text>
+  <text class="kind" x="180.0" y="311.0">[plugin: prompts, scripts, best practices]</text>
   <rect class="store" x="340" y="250" width="300" height="140" rx="6"/>
   <text class="name" x="490.0" y="316.0">the run&#x27;s worktree</text>
   <text class="kind" x="490.0" y="336.0">[design tree, rounds, deliverables]</text>

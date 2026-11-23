@@ -1,4 +1,4 @@
-"""How the plugins' cases make and read the files of a bench: git run in a repository, files written
+"""How rn's cases make and read the files of a bench: git run in a repository, files written
 under a folder, and the environment of each command a bench runs."""
 
 from __future__ import annotations

@@ -54,11 +54,9 @@
   <rect class="box" x="20" y="85" width="150" height="60" rx="6"/>
   <text class="name" x="95" y="120">You</text>
 
-  <!-- rn, held by Lane -->
+  <!-- rn -->
   <rect class="frame" x="250" y="20" width="890" height="500" rx="8"/>
   <text class="frame-name start" x="264" y="44">rn</text>
-  <text class="quote end" x="1126" y="44">“Does it skip a step when no one watches?”</text>
-  <text class="gets end" x="1126" y="61">Lane, installed with rn, holds each part to its steps.</text>
 
   <!-- Design tree -->
   <path class="store" d="M310,80 A110,9 0 0 1 530,80 V150 A110,9 0 0 1 310,150 Z"/>
