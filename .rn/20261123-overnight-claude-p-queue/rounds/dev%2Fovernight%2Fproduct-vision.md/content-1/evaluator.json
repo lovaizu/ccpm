@@ -1,0 +1,53 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- task owner\\",
+    "  One who has the AI they instruct run `claude -p` tasks overnight, and takes their results in the",
+    "- plugin developer\\",
+    "  One who has the AI running their plugin wait out the usage limit, without writing that wait"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the task owner goes on in the morning with the result of each task left for the night.",
+    "- O2: the plugin developer has each run of their plugin go on past the usage limit to its end."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "overnight lets each task go on to its end, even on a night that nobody watches, without losing it",
+    "  In the morning, the log alone tells the task owner which tasks finished and which were given up."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the night's tasks whose result the task owner lacks the next morning.",
+    "  - KR1.2: the task owner's own time on the night's tasks, from listing them to taking in their",
+    "  - KR2.1: the share of the plugin's runs that hit the usage limit and don't go on to their end.",
+    "  - KR2.2: the plugin developer's own time to make their plugin wait out the usage limit and",
+    "    Lower is better.",
+    "    results. Shorter is better.",
+    "    resume. Shorter is better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the task owner goes on in the morning with the result of each task left for the night.",
+    "- O2: the plugin developer has each run of their plugin go on past the usage limit to its end."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N6",
+   "good_when": "A developer deciding any moment of use finds in the concept the idea to lean on: in the evening, the task owner lists the night's tasks with a start time and closes the conversation, and the tasks still start and go on; in the morning, the task owner takes each finished task's result into the main session, not only learns which finished; and the plugin developer gets the wait-and-resume by calling it rather than writing it, as KR2.2 measures. Today the concept's three ideas cover only a stopped task, the usage limit, and reading the log."
+  }
+ ]
+}

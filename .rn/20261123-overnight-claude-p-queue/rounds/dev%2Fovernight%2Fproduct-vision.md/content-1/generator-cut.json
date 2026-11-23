@@ -1,0 +1,58 @@
+{
+ "goal": "At the user's word, the AI that the user instructs lists the night's claude -p tasks with a start time and starts them, and they go on after the conversation closes. A task that hits the usage limit waits until the limit resets and resumes. In the morning, the AI reads the log, tells the user which tasks finished and which were given up, and takes their results into the main session. An AI that runs another plugin calls the wait-and-resume part instead of writing its own.",
+ "language": "English",
+ "deliverable": {
+  "name": "The product vision of overnight",
+  "path": "dev/overnight/product-vision.md",
+  "kind": "product-vision",
+  "inputs": [],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": [
+     {
+      "about": "the one way and its ideas",
+      "decided": "The one way: even on a night that nobody watches, each task goes on to its end without being lost partway. Its ideas: a task that stops resumes from where it stopped in the same task; a task that hits the usage limit waits until the limit resets, then resumes; in the morning, reading the log alone shows which tasks finished and which were given up.",
+      "by": "user"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261123-overnight-claude-p-queue",
+ "inputs": [],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/product-vision",
+ "stage": "content",
+ "number": 1,
+ "round": ".claude/worktrees/rn-20261123-overnight-claude-p-queue/.rn/20261123-overnight-claude-p-queue/rounds/dev%2Fovernight%2Fproduct-vision.md/content-1",
+ "trial": "/tmp/rn-trial-20261123-overnight-claude-p-queue-dev%2Fovernight%2Fproduct-vision.md-content-1/",
+ "findings": null,
+ "last_good": null
+}
