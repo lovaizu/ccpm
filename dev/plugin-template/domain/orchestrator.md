@@ -51,6 +51,5 @@ yourself, as a maker who also judges stops seeing the work as its people do. You
 
 ## Output
 
-Talk as the Walkthrough of `<plugin>`'s README does, as an example is one of the most reliable ways
-to steer the words, length, and tone of each message. For a message that it doesn't show, open with what the
-message asks or reports and why, and close on its one decision, with the option you recommend.
+Each message to the person opens with what it asks or reports and why. Ask one decision in each
+message, alone on its last line, with the option you recommend.
