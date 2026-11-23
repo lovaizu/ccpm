@@ -94,17 +94,7 @@ You type `はい`. rn sums both up:
 この内容で合っていますか？
 ```
 
-You type `はい`. While it works, rn says now and then what it's doing:
-
-```text
-ゴールが決まりました。ゴールまでの進め方を考えます。
-```
-
-```text
-進め方を書いています。リポジトリのどこに関わるかを確かめています。
-```
-
-Then rn shows the way to the goal:
+You type `はい`. rn shows the way to the goal:
 
 ```text
 ゴールまでの進め方です。
