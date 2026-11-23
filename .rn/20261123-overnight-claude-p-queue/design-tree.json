@@ -15,12 +15,12 @@
   "session": "a3474397-ec33-40fc-a2f1-ba0b908940bf"
  },
  "goal": {
-  "decided": "The user runs many claude -p tasks unattended at night without using up the daytime usage window, and each task finishes past the usage limit or is logged as given up. In the morning, the user reads from the log which tasks finished and which were given up, and takes their results into the main session, and other plugins call its wait-and-resume part instead of writing their own.",
+  "decided": "At the user's word, the AI runs many claude -p tasks unattended at night without using up the daytime usage window, and each task finishes past the usage limit or is logged as given up. In the morning, the AI reads from the log which tasks finished and which were given up, tells the user, and takes their results into the main session, and an AI that runs another plugin calls its wait-and-resume part instead of writing its own.",
   "by": "reasoning"
  },
  "deliverables": [
   {
-   "name": "The user runs many claude -p tasks unattended at night without using up the daytime usage window, and each task finishes past the usage limit or is logged as given up. In the morning, the user reads from the log which tasks finished and which were given up, and takes their results into the main session, and other plugins call its wait-and-resume part instead of writing their own.",
+   "name": "At the user's word, the AI runs many claude -p tasks unattended at night without using up the daytime usage window, and each task finishes past the usage limit or is logged as given up. In the morning, the AI reads from the log which tasks finished and which were given up, tells the user, and takes their results into the main session, and an AI that runs another plugin calls its wait-and-resume part instead of writing its own.",
    "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
    "kind": "design-tree",
    "inputs": [],
@@ -32,7 +32,8 @@
      "decisions": [
       {
        "about": "whom it's for",
-       "decided": null
+       "decided": "The AI that the user instructs: the user tells it what to run overnight, and the AI arranges the queue and its tasks.",
+       "by": "user"
       },
       {
        "about": "the goal",
@@ -94,7 +95,7 @@
    "do": "decide",
    "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
    "condition": "N1",
-   "about": "whom it's for"
+   "about": "the goal"
   }
  ],
  "steps": []
