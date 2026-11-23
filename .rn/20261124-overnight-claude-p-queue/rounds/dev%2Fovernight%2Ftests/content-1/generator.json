@@ -1,4 +1,104 @@
 {
- "result": "point",
- "point": "Should overnight's skeleton, the modules and interfaces of its parts with empty bodies, be made first, before these test cases, or should the cases be written now against interfaces picked for them? I recommend making the skeleton first, as the architecture best practice orders it (plugins/rn/domain/best-practices/architecture/best-practice.md:190: \"have the skeleton made from the document by the software design best practice, and then the test cases\"), and the worktree holds no part of overnight's code yet, not even plugins/overnight/scripts/queue.py or a plugin.json. Without the skeleton, the unit cases (N3) have no interface to cover, no case can fail on an empty body (N4), and the integration cases would have to invent how a test puts in a double of Claude Code and of the clock, which fixes interfaces that the architecture never drew before its maker decides them."
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/README.md",
+  "dev/overnight/tests/claude/claude_double.py",
+  "dev/overnight/tests/claude/recorded/claude-2.1.331-print.jsonl",
+  "dev/overnight/tests/claude/recorded/claude-documentation.jsonl",
+  "dev/overnight/tests/conftest.py",
+  "dev/overnight/tests/integration/conftest.py",
+  "dev/overnight/tests/integration/test_overnight_components.py",
+  "dev/overnight/tests/integration/test_overnight_principles.py",
+  "dev/overnight/tests/integration/test_overnight_s1_stacked.py",
+  "dev/overnight/tests/integration/test_overnight_s2_checked.py",
+  "dev/overnight/tests/overnight_bench.py",
+  "dev/overnight/tests/properties/conftest.py",
+  "dev/overnight/tests/properties/overnight_generators.py",
+  "dev/overnight/tests/properties/test_overnight_checker_properties.py",
+  "dev/overnight/tests/properties/test_overnight_queue_properties.py",
+  "dev/overnight/tests/properties/test_overnight_record_properties.py",
+  "dev/overnight/tests/properties/test_overnight_runner_properties.py",
+  "dev/overnight/tests/properties/test_overnight_session_properties.py",
+  "dev/overnight/tests/unit/test_overnight_checker_command.py",
+  "dev/overnight/tests/unit/test_overnight_checker_report.py",
+  "dev/overnight/tests/unit/test_overnight_queue_script.py",
+  "dev/overnight/tests/unit/test_overnight_record_lock.py",
+  "dev/overnight/tests/unit/test_overnight_record_place.py",
+  "dev/overnight/tests/unit/test_overnight_record_replies.py",
+  "dev/overnight/tests/unit/test_overnight_record_runs.py",
+  "dev/overnight/tests/unit/test_overnight_record_stopped.py",
+  "dev/overnight/tests/unit/test_overnight_record_store.py",
+  "dev/overnight/tests/unit/test_overnight_runner_clock.py",
+  "dev/overnight/tests/unit/test_overnight_runner_command.py",
+  "dev/overnight/tests/unit/test_overnight_runner_handoff.py",
+  "dev/overnight/tests/unit/test_overnight_runner_limit.py",
+  "dev/overnight/tests/unit/test_overnight_runner_schedule.py",
+  "dev/overnight/tests/unit/test_overnight_runner_task.py",
+  "dev/overnight/tests/unit/test_overnight_session_claude.py",
+  "dev/overnight/tests/unit/test_overnight_session_ending.py",
+  "dev/overnight/tests/unit/test_overnight_session_permissions.py",
+  "dev/overnight/tests/unit/test_overnight_session_sandbox.py",
+  "dev/overnight/tests/unit/test_overnight_session_session.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_admission.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_command.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_detach.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_queue_file.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_stack.py"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight holds prompts, so no E2E test is written. The walkthrough run of the README's queue tries"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def test_the_walkthroughs_queue_is_stacked_and_each_task_finishes_past_the_limit(b: Bench):",
+    "def test_a_queue_with_a_prompt_and_a_dir_not_there_is_refused_with_each_fault(b: Bench):",
+    "@pytest.mark.supports(\"S2\", \"checker\", \"record\", \"Task\", \"Run\", \"Reply\")",
+    "@pytest.mark.supports(\"P2.2\", \"runner\", \"Run\")",
+    "@pytest.mark.supports(\"record\", \"runner\", \"Run\")",
+    "def test_a_queue_whose_every_task_finished_stacked_again_starts_no_runner(b: Bench):"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_a_start_passed_that_day_is_waited_for_the_next_day(tmp_path: Any, monkeypatch: Any):",
+    "def test_tasks_are_carried_three_at_a_time_in_the_queues_order(",
+    "def test_a_task_goes_on_after_its_sixth_stop_and_is_given_up_at_its_seventh(",
+    "def test_a_session_the_session_limit_stopped_reads_limited_until_its_reset(",
+    "def test_a_run_that_printed_no_stream_reads_failed_with_no_session(given: Output):"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "def test_any_runs_read_back_as_they_were_written(kept: list[tuple[Task, Run]]):",
+    "def test_a_queue_has_no_fault_exactly_where_each_task_can_start(",
+    "    \"\"\"Given any queue file, any start or none, and any tasks, each anew or in its session"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's parts are not built yet\")",
+    "    When the user stacks it, and its runner carries it"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository. Then run"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- session: no contract names the output form of `claude`, so the cases take `stream-json`, which"
+   ]
+  }
+ ]
 }

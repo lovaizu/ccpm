@@ -1,0 +1,127 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "language": "English",
+ "deliverable": {
+  "name": "The cases that check the joined parts reach the AI's aim are written",
+  "path": "dev/overnight/tests",
+  "kind": "test-design",
+  "inputs": [
+   "dev/overnight/product-vision.md",
+   "plugins/overnight/README.md",
+   "dev/overnight/architecture.md",
+   "plugins/overnight"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": [
+     {
+      "about": "A start hour already past",
+      "decided": "A queue stacked anew waits for the next time its start hour comes; a queue stacked again to carry on its unfinished tasks starts them at once.",
+      "by": "reasoning"
+     },
+     {
+      "about": "How the runner knows a queue is carried on",
+      "decided": "The stacker hands the runner no start for a queue stacked again to carry on its unfinished tasks, so the runner starts them at once.",
+      "by": "reasoning"
+     },
+     {
+      "about": "A task carried on and its earlier waits",
+      "decided": "A task carried on keeps none of its earlier waits, as its stops at the usage limit count from zero again.",
+      "by": "reasoning"
+     },
+     {
+      "about": "A queue stacked again whose every task finished",
+      "decided": "Stacking again a queue whose every task finished starts no runner and says that every task finished.",
+      "by": "reasoning"
+     },
+     {
+      "about": "A check while tasks still run",
+      "decided": "A check while the runner still carries tasks tells each task not yet ended as still running, beside the ends of the others.",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N7",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": true,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/product-vision.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight/README.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/refactor-code",
+ "stage": "refactor",
+ "number": 3,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Ftests/refactor-3",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Ftests-refactor-3/",
+ "findings": {
+  "good": [],
+  "more": []
+ },
+ "last_good": [
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_a_task_that_stays_at_work_leaves_the_others_to_go_on_beside_it(",
+    "    Then the fourth and fifth start while the first is still at work, each is carried once, at",
+    "    assert carried.saw"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "def test_any_queue_runs_three_at_a_time_and_each_task_ends_however_the_others_end(",
+    "    \"\"\"Given any queue of tasks with no start, each whose sessions end in any order of finishing,",
+    "    Then the first three are at work at once, each end of a task starts the next in the queue's",
+    "    \"test_a_task_given_up_stops_no_other_task\","
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's parts are not built yet\")",
+    "    When its runner carries it"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository. Then run"
+   ]
+  }
+ ]
+}

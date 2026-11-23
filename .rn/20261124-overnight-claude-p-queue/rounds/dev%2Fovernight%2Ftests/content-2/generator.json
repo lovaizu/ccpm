@@ -1,0 +1,39 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/unit/test_overnight_runner_schedule.py",
+  "dev/overnight/tests/properties/test_overnight_runner_properties.py"
+ ],
+ "good": [
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_a_task_that_stays_at_work_leaves_the_others_to_go_on_beside_it(",
+    "    Then the fourth and fifth start while the first is still at work, each is carried once, at",
+    "    assert carried.saw"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "def test_any_queue_runs_three_at_a_time_and_each_task_ends_however_the_others_end(",
+    "    \"\"\"Given any queue of tasks with no start, each whose sessions end in any order of finishing,",
+    "    Then the first three are at work at once, each end of a task starts the next in the queue's",
+    "    \"test_a_task_given_up_stops_no_other_task\","
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's parts are not built yet\")",
+    "    When its runner carries it"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository. Then run"
+   ]
+  }
+ ]
+}

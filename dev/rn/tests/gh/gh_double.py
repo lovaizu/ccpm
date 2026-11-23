@@ -24,6 +24,8 @@ import subprocess
 from collections.abc import Sequence
 from typing import Any
 
+import stand_in
+
 RECORDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recorded")
 AUTH = "gh-2.102.1-auth.jsonl"
 PR_VIEW = "gh-2.102.1-pr-view.jsonl"
@@ -333,24 +335,8 @@ def host(folder: str) -> Any:
 def program(bin_folder: str, state_folder: str) -> str:
     """Writes `gh` into the bin folder, a program that answers as `answer` does with its state in
     the state folder, and gives the bin folder."""
-    os.makedirs(bin_folder, exist_ok=True)
-    path = os.path.join(bin_folder, "gh")
-    here = os.path.dirname(os.path.abspath(__file__))
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(
-            "#!/usr/bin/env python3\n"
-            "import os\n"
-            "import sys\n"
-            f"sys.path.insert(0, {here!r})\n"
-            "import gh_double\n"
-            f"given = gh_double.answer(['gh', *sys.argv[1:]], {state_folder!r}, os.getcwd())\n"
-            "code, out, err = given\n"
-            "sys.stdout.write(out)\n"
-            "sys.stderr.write(err)\n"
-            "sys.exit(code)\n"
-        )
-    os.chmod(path, 0o755)
-    return bin_folder
+    call = f"gh_double.answer(['gh', *sys.argv[1:]], {state_folder!r}, os.getcwd())"
+    return stand_in.program(bin_folder, "gh", os.path.abspath(__file__), call)
 
 
 # What the double gives for each command of gh but `gh auth status`, by its two words after `gh`.

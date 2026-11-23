@@ -1,0 +1,71 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/overnight_bench.py",
+  "dev/overnight/tests/claude/claude_double.py",
+  "dev/overnight/tests/integration/test_overnight_s1_stacked.py",
+  "dev/overnight/tests/integration/test_overnight_s2_checked.py",
+  "dev/overnight/tests/integration/test_overnight_components.py",
+  "dev/overnight/tests/integration/test_overnight_principles.py",
+  "dev/overnight/tests/unit/conftest.py",
+  "dev/overnight/tests/unit/test_overnight_checker_command.py",
+  "dev/overnight/tests/unit/test_overnight_checker_report.py",
+  "dev/overnight/tests/unit/test_overnight_record_lock.py",
+  "dev/overnight/tests/unit/test_overnight_record_store.py",
+  "dev/overnight/tests/unit/test_overnight_runner_task.py",
+  "dev/overnight/tests/unit/test_overnight_session_session.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_admission.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_command.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_detach.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_queue_file.py",
+  "dev/overnight/tests/unit/test_overnight_stacker_stack.py",
+  "dev/overnight/tests/conftest.py",
+  "dev/tests/stand_in.py",
+  "dev/rn/tests/gh/gh_double.py",
+  "dev/rn/tests/conftest.py",
+  "dev/scripts/check.sh"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's parts are not built yet\")"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "PAYMENTS_SESSION = \"1b4e28ba-2fa1-4d3b-a3f5-ef19ae0f1a01\"",
+    "UNNAMED = f\"overnight {VERSION}: name the queue file to check\"",
+    "def left_by_a_stop(b: Bench, session: str = PAYMENTS_SESSION) -> None:",
+    "def walkthrough_queue(b: Bench) -> Queue:",
+    "def held_by_another(hold: str) -> Generator[subprocess.Popen[str], None, None]:",
+    "def stacked_review(d: Detached, seconds: float) -> Handoff:",
+    "    return stand_in.program(bin_folder, \"claude\", os.path.abspath(__file__), call)"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "class Bench(Home):",
+    "class Detached(Home):",
+    "    d.queue({\"tasks\": tasks})",
+    "    assert d.reply(\"review-refunds\").rstrip(\"\\n\") == REFUNDS_REPLY"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "def parsed(arguments: Sequence[str]) -> tuple[dict[str, list[str]], str, str | None]:",
+    "def b(b: Bench) -> Bench:",
+    "class _Permissions:"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "def left_by_a_stop_after_a_wait(b: Bench) -> None:"
+   ]
+  }
+ ]
+}

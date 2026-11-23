@@ -1,0 +1,53 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight holds prompts, so no E2E test is written. The walkthrough run of the README's queue tries",
+    "it whole, as Scenario testing says."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "[integration/](integration/) holds a test for each path, principle item, component's decision, and",
+    "handoff. Each runs the scripts' parts as the skills and the runner run them. The doubles of Claude",
+    "@pytest.mark.supports(\"P3.2\", \"runner\")",
+    "@pytest.mark.supports(\"S1\", \"runner\", \"record\", \"Task\", \"Run\")"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's parts are not built yet\")",
+    "    \"\"\"Given a reset at 01:40, at the seventh stop",
+    "    When when the task goes on is found",
+    "    Then it is None\"\"\""
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository. Then run"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- session: no contract names the output form of `claude`, so the cases take `stream-json`, which",
+    "  P5.1 needs."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N3",
+   "good_when": "The developer who builds runner/schedule.py's `carry` sees a case fail where a body starts the next tasks only once all three running ones have ended, as a night whose one task waits hours at the usage limit then leaves the other tasks idle. Today every task in the three-at-a-time cases takes the same time, so such a body still passes them."
+  },
+  {
+   "condition": "N7",
+   "good_when": "The developer sees, for any queue and any mix of how its tasks end (finished, stopped at the limit, failed, at any time), that at most three run at once, a fourth starts as soon as one ends, and every task still ends, as P4.1 and P3.2 hold for every queue. Today these hold only for the queues of one, three, and five equal tasks that the cases pick."
+  }
+ ]
+}

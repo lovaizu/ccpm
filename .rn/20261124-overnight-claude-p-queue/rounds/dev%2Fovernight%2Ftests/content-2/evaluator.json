@@ -1,0 +1,59 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight holds prompts, so no E2E test is written. The walkthrough run of the README's queue tries",
+    "it whole, as Scenario testing says."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def test_the_walkthroughs_queue_is_stacked_and_each_task_finishes_past_the_limit(b: Bench):",
+    "def test_a_task_stopped_the_seventh_time_is_given_up_with_why_and_its_session(b: Bench):",
+    "def test_a_failed_session_gives_up_its_task_and_the_others_go_on(b: Bench):",
+    "def test_a_check_naming_no_queue_shows_the_version_and_what_to_name(b: Bench):",
+    "def test_a_task_given_up_stops_no_other_task(b: Bench, broken: None):"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_a_task_that_stays_at_work_leaves_the_others_to_go_on_beside_it(",
+    "    Then after six stops it is finished, with six stops; at the seventh it is given up with why and",
+    "    \"\"\"Given a lock that another program held when it was killed with no time to let it go",
+    "        (Use(\"Edit\", os.path.join(HOME, \"work\", \"shop\", \"checkout.py\")), False),"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's parts are not built yet\")",
+    "    \"\"\"Given a queue of one task with no start, whose lock another runner holds",
+    "    When it is carried",
+    "    Then it refuses with Held, and carries none\"\"\""
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository. Then run"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- session: no contract names the output form of `claude`, so the cases take `stream-json`, which",
+    "  P5.1 needs."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N7",
+   "good_when": "The developer who builds session/permissions.py sees a counterexample whenever any task, read-only or writing, in any folder that a user could name, is given a session that asks a permission (P1.2) or that may write outside its dir and its temporary files (P1.3), not only for the few fixed folders that the unit cases name."
+  }
+ ]
+}

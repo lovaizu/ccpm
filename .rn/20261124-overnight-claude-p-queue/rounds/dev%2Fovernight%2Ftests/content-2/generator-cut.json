@@ -1,0 +1,160 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "language": "English",
+ "deliverable": {
+  "name": "The cases that check the joined parts reach the AI's aim are written",
+  "path": "dev/overnight/tests",
+  "kind": "test-design",
+  "inputs": [
+   "dev/overnight/product-vision.md",
+   "plugins/overnight/README.md",
+   "dev/overnight/architecture.md",
+   "plugins/overnight"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": [
+     {
+      "about": "A start hour already past",
+      "decided": "A queue stacked anew waits for the next time its start hour comes; a queue stacked again to carry on its unfinished tasks starts them at once.",
+      "by": "reasoning"
+     },
+     {
+      "about": "How the runner knows a queue is carried on",
+      "decided": "The stacker hands the runner no start for a queue stacked again to carry on its unfinished tasks, so the runner starts them at once.",
+      "by": "reasoning"
+     },
+     {
+      "about": "A task carried on and its earlier waits",
+      "decided": "A task carried on keeps none of its earlier waits, as its stops at the usage limit count from zero again.",
+      "by": "reasoning"
+     },
+     {
+      "about": "A queue stacked again whose every task finished",
+      "decided": "Stacking again a queue whose every task finished starts no runner and says that every task finished.",
+      "by": "reasoning"
+     },
+     {
+      "about": "A check while tasks still run",
+      "decided": "A check while the runner still carries tasks tells each task not yet ended as still running, beside the ends of the others.",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N7",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": true,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/product-vision.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight/README.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/test-design",
+ "stage": "content",
+ "number": 2,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Ftests/content-2",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Ftests-content-2/",
+ "findings": {
+  "good": [],
+  "more": [
+   {
+    "condition": "N3",
+    "good_when": "The developer who builds runner/schedule.py's `carry` sees a case fail where a body starts the next tasks only once all three running ones have ended, as a night whose one task waits hours at the usage limit then leaves the other tasks idle. Today every task in the three-at-a-time cases takes the same time, so such a body still passes them."
+   },
+   {
+    "condition": "N7",
+    "good_when": "The developer sees, for any queue and any mix of how its tasks end (finished, stopped at the limit, failed, at any time), that at most three run at once, a fourth starts as soon as one ends, and every task still ends, as P4.1 and P3.2 hold for every queue. Today these hold only for the queues of one, three, and five equal tasks that the cases pick."
+   }
+  ]
+ },
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight holds prompts, so no E2E test is written. The walkthrough run of the README's queue tries"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def test_the_walkthroughs_queue_is_stacked_and_each_task_finishes_past_the_limit(b: Bench):",
+    "def test_a_queue_with_a_prompt_and_a_dir_not_there_is_refused_with_each_fault(b: Bench):",
+    "@pytest.mark.supports(\"S2\", \"checker\", \"record\", \"Task\", \"Run\", \"Reply\")",
+    "@pytest.mark.supports(\"P2.2\", \"runner\", \"Run\")",
+    "@pytest.mark.supports(\"record\", \"runner\", \"Run\")",
+    "def test_a_queue_whose_every_task_finished_stacked_again_starts_no_runner(b: Bench):"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_a_start_passed_that_day_is_waited_for_the_next_day(tmp_path: Any, monkeypatch: Any):",
+    "def test_tasks_are_carried_three_at_a_time_in_the_queues_order(",
+    "def test_a_task_goes_on_after_its_sixth_stop_and_is_given_up_at_its_seventh(",
+    "def test_a_session_the_session_limit_stopped_reads_limited_until_its_reset(",
+    "def test_a_run_that_printed_no_stream_reads_failed_with_no_session(given: Output):"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "def test_any_runs_read_back_as_they_were_written(kept: list[tuple[Task, Run]]):",
+    "def test_a_queue_has_no_fault_exactly_where_each_task_can_start(",
+    "    \"\"\"Given any queue file, any start or none, and any tasks, each anew or in its session"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's parts are not built yet\")",
+    "    When the user stacks it, and its runner carries it"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository. Then run"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- session: no contract names the output form of `claude`, so the cases take `stream-json`, which"
+   ]
+  }
+ ]
+}

@@ -68,8 +68,19 @@ held design pyrefly check --search-path dev/scripts --search-path dev/scripts/te
 # plugins/rn/scripts stays off the search path, as its template.py shares its name with the code of
 # plugins/rn/domain it runs.
 held design pyrefly check $properties --search-path plugins/rn/domain --search-path dev/rn/tests \
+  --search-path dev/tests \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
-  dev/rn/tests/*.py dev/rn/tests/*/*.py
+  dev/rn/tests/*.py dev/rn/tests/*/*.py dev/tests/*.py
+
+# overnight's code and its tests, with the bench and the double of Claude Code they call, on the
+# paths that dev/overnight/tests/conftest.py puts them on.
+# plugins/overnight/scripts stays off the search path, as its queue.py shares its name with the
+# standard library's `queue`.
+held design pyrefly check $properties --search-path plugins/overnight/domain \
+  --search-path dev/overnight/tests --search-path dev/overnight/tests/claude \
+  --search-path dev/overnight/tests/properties --search-path dev/tests \
+  plugins/overnight/domain/*/*.py plugins/overnight/scripts/*.py \
+  dev/overnight/tests/*.py dev/overnight/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:

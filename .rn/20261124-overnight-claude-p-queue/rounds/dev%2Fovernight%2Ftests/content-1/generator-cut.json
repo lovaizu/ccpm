@@ -8,7 +8,8 @@
   "inputs": [
    "dev/overnight/product-vision.md",
    "plugins/overnight/README.md",
-   "dev/overnight/architecture.md"
+   "dev/overnight/architecture.md",
+   "plugins/overnight"
   ],
   "status": "open",
   "necessary_conditions": [
@@ -59,7 +60,8 @@
  "inputs": [
   ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/product-vision.md",
   ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight/README.md",
-  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md"
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight"
  ],
  "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/test-design",
  "stage": "content",
