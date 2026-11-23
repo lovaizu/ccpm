@@ -63,7 +63,8 @@
      "decisions": [
       {
        "about": "the one way and its ideas",
-       "decided": null
+       "decided": "The one way: even on a night that nobody watches, each task goes on to its end without being lost partway. Its ideas: a task that stops resumes from where it stopped in the same task; a task that hits the usage limit waits until the limit resets, then resumes; in the morning, reading the log alone shows which tasks finished and which were given up.",
+       "by": "user"
       }
      ]
     }
@@ -542,10 +543,8 @@
  ],
  "work": [
   {
-   "do": "decide",
-   "path": "dev/overnight/product-vision.md",
-   "condition": "N6",
-   "about": "the one way and its ideas"
+   "do": "make",
+   "path": "dev/overnight/product-vision.md"
   }
  ],
  "steps": [
