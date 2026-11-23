@@ -325,16 +325,16 @@ class NameTest(TraceTest):
 
     def test_a_unit_case_naming_an_integration_case_passes(self):
         self.every_element_named()
-        for level in ("unit", "properties", "prompts"):
+        for level in ("unit", "properties"):
             self.write(f"dev/p/tests/{level}/test_x.py", cases_file(case("test_x", "test_0")))
         self.assertEqual(self.trace().returncode, 0, self.trace().stderr)
 
     def test_a_unit_case_naming_an_element_is_reported(self):
         self.every_element_named()
-        for level in ("unit", "properties", "prompts"):
+        for level in ("unit", "properties"):
             self.write(f"dev/p/tests/{level}/test_x.py", cases_file(case("test_x", "S1")))
         stderr = self.fails_with(1, "names S1, which is no integration case")
-        for level in ("unit", "properties", "prompts"):
+        for level in ("unit", "properties"):
             self.assertIn(f"dev/p/tests/{level}/test_x.py:4", stderr)
 
     def test_an_e2e_case_naming_a_key_result_passes(self):
@@ -585,13 +585,13 @@ class RecordedTest(TraceTest):
 
     def setUp(self) -> None:
         super().setUp()
-        self.write("dev/tests/claude_code.py", DOUBLE)
+        self.write("dev/p/tests/t/thing.py", DOUBLE)
         self.record("thing-1.0.jsonl", *RUN_RECORD)
         self.record("thing-reference.jsonl", REFERENCE_LINE)
 
     def record(self, name: str, *found: dict) -> None:
-        """Writes the lines as the record of the name in dev/tests/recorded/."""
-        self.write(f"dev/tests/recorded/{name}", "".join(json.dumps(r) + "\n" for r in found))
+        """Writes the lines as the record of the name in dev/p/tests/t/recorded/."""
+        self.write(f"dev/p/tests/t/recorded/{name}", "".join(json.dumps(r) + "\n" for r in found))
 
 
 class DoublesTest(RecordedTest):
@@ -611,29 +611,27 @@ class DoublesTest(RecordedTest):
         self.assertEqual(self.doubles(0), "")
 
     def test_an_event_that_the_record_lacks_is_reported(self):
-        self.write("dev/tests/claude_code.py", DOUBLE.replace('(RUN, "it starts")', '(RUN, "x")'))
-        self.doubles(1, "dev/tests/claude_code.py:13: names 'x', which", "holds no line of")
+        self.write("dev/p/tests/t/thing.py", DOUBLE.replace('(RUN, "it starts")', '(RUN, "x")'))
+        self.doubles(1, "dev/p/tests/t/thing.py:13: names 'x', which", "holds no line of")
 
     def test_each_event_of_a_run_of_lines_is_checked(self):
-        self.write("dev/tests/claude_code.py", DOUBLE.replace('"it ends")', '"it stops")'))
-        self.doubles(1, "claude_code.py:14: names 'it stops'")
+        self.write("dev/p/tests/t/thing.py", DOUBLE.replace('"it ends")', '"it stops")'))
+        self.doubles(1, "thing.py:14: names 'it stops'")
 
     def test_a_record_that_is_not_there_is_reported(self):
-        self.write(
-            "dev/tests/claude_code.py", DOUBLE.replace('RUN = "thing-1.0', 'RUN = "thing-2.0')
-        )
-        self.doubles(1, "claude_code.py:13: names dev/tests/recorded/thing-2.0.jsonl, which isn't")
+        self.write("dev/p/tests/t/thing.py", DOUBLE.replace('RUN = "thing-1.0', 'RUN = "thing-2.0'))
+        self.doubles(1, "thing.py:13: names dev/p/tests/t/recorded/thing-2.0.jsonl, which isn't")
 
     def test_a_name_not_written_out_is_reported(self):
-        self.write("dev/tests/claude_code.py", DOUBLE.replace('(RUN, "it starts")', "(RUN, act)"))
-        self.doubles(1, "claude_code.py:13: names a record or an event that isn't written out")
+        self.write("dev/p/tests/t/thing.py", DOUBLE.replace('(RUN, "it starts")', "(RUN, act)"))
+        self.doubles(1, "thing.py:13: names a record or an event that isn't written out")
 
     def test_a_call_with_the_wrong_number_of_names_is_reported(self):
-        self.write("dev/tests/claude_code.py", DOUBLE.replace('(RUN, "it starts")', "(RUN)"))
-        self.doubles(1, "claude_code.py:13: line takes a record and an event")
+        self.write("dev/p/tests/t/thing.py", DOUBLE.replace('(RUN, "it starts")', "(RUN)"))
+        self.doubles(1, "thing.py:13: line takes a record and an event")
 
     def test_a_test_file_beside_the_records_is_no_double(self):
-        self.write("dev/tests/test_claude_code.py", 'line("thing-1.0.jsonl", "x")\n')
+        self.write("dev/p/tests/t/test_thing.py", 'line("thing-1.0.jsonl", "x")\n')
         self.assertEqual(self.doubles(0), "")
 
     def test_a_double_of_a_plugins_own_tests_is_read(self):
@@ -642,8 +640,8 @@ class DoublesTest(RecordedTest):
         self.doubles(1, "dev/p/tests/integration/gh.py:1: names 'x'")
 
     def test_a_line_that_is_not_a_json_object_is_reported(self):
-        self.write("dev/tests/recorded/thing-1.0.jsonl", '{"event": "it starts"}\n[1]\n{\n')
-        stderr = self.doubles(1, "dev/tests/recorded/thing-1.0.jsonl:2: isn't a JSON object")
+        self.write("dev/p/tests/t/recorded/thing-1.0.jsonl", '{"event": "it starts"}\n[1]\n{\n')
+        stderr = self.doubles(1, "dev/p/tests/t/recorded/thing-1.0.jsonl:2: isn't a JSON object")
         self.assertIn("thing-1.0.jsonl:3: isn't a JSON object", stderr)
 
     def test_a_line_without_an_event_is_reported(self):

@@ -150,14 +150,14 @@ def test_a_numbered_heading_may_name_several_numbers():
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
 def test_a_heading_reworded_leaves_the_form():
     """Given a template whose title is Product vision of `<Product>`, and a document whose title is
-    Lane product vision
+    Invoicer product vision
     When the document is checked
     Then the fault names the title by the template's words"""
     template = lines("# Product vision of `<Product>`")
-    assert faults(template, lines("# Lane product vision")) == (
+    assert faults(template, lines("# Invoicer product vision")) == (
         Fault(
             1,
-            '"# Lane product vision" leaves the form of the template\'s'
+            '"# Invoicer product vision" leaves the form of the template\'s'
             ' "# Product vision of `<Product>`" at its line 1',
         ),
     )

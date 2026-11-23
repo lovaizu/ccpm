@@ -391,8 +391,8 @@ def item_faults(data: dict[str, Any]) -> list[str]:
 
 def trace_faults(data: dict[str, Any]) -> list[str]:
     """Each fault of an item's trace, in words: a trace on an item that holds only in its case,
-    which a run outside the case never makes, so Lane would stop that run's end, and an empty text
-    taken, which no call matches."""
+    which a run outside the case never makes, so the item would show undone there, and an empty
+    text taken, which no call matches."""
     found = []
     for c in conditions(data):
         for n, item in enumerate(c["items"], 1):

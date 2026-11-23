@@ -71,32 +71,21 @@ addopts = ["-p", "no:cacheprovider"]
 # dev/scripts/trace.py reads, as the plugin guide's Test says.
 markers = ["supports(name): the key result, element, or integration case one level up"]
 
-# How much of the trace script, of the double of Claude Code, and of rn's code
-# the tests run, as N7 of plugins/rn/domain/best-practices/code/best-practice.md says: every
-# line and branch.
+# How much of the trace script and of rn's code the tests run, as N7 of
+# plugins/rn/domain/best-practices/code/best-practice.md says: every line and branch.
 [tool.coverage.run]
 branch = true
 parallel = true
-# The integration cases import the guard's code afresh at each hook and script that the
-# double runs, and sys.monitoring, coverage's default core on Python 3.12 and later, keeps every
-# code object it has seen, so one of rn's cases grows past 3 GB and the workers run out of memory.
-# The C tracer holds none of them.
-core = "ctrace"
 include = [
   "*/dev/scripts/trace.py",
-  "*/dev/tests/claude_code.py",
   "*/rn/domain/*.py",
   "*/rn/domain/**/*.py",
   "*/rn/scripts/*.py",
-  "*/lane/hooks/lane/*.py",
-  "*/lane/hooks/lane/rule_types/*.py",
 ]
 
-# rn's and Lane's cases run a bench's copy of plugins/rn/ and plugins/lane/, which counts as its
-# file there.
+# rn's integration cases run a bench's copy of plugins/rn/, which counts as its file there.
 [tool.coverage.paths]
 rn = ["plugins/rn/", "*/rn/"]
-lane = ["plugins/lane/hooks/lane/", "*/lane/hooks/lane/"]
 
 [tool.coverage.report]
 fail_under = 100

@@ -9,7 +9,6 @@ for, and starts from [the plugin template](plugin-template/).
 guide and rn's architecture.
 
 - [Rn](./rn/)
-- [Lane](./lane/)
 
 ## The checks on every push
 
@@ -32,8 +31,7 @@ CI runs these checks on every push:
 - the records that each double of the plugins' tests takes its results from, and each line it
   names in them
 - each plugin's property-based tests
-- the tests of the trace script and of the double of Claude Code, and that they run every line and
-  branch of each
+- the tests of the checks' own code, and that they run every line and branch of it
 
 Each night, CI runs the checks again on the oldest Python and the newest, of `main` and of each
 branch an open pull request comes from, and checks that each page of the documentation that a

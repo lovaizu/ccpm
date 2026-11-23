@@ -16,8 +16,8 @@ template of the architecture best practice names them:
 - each case, a function `test...` of a file `test*.py` under `dev/<plugin>/tests/`, at the top or in
   a class, with each name that its `@pytest.mark.supports(...)` gives
 
-A case in `e2e/` names a key result, one in `integration/` an element, and one in `unit/`,
-`properties/`, or `prompts/`, the unit tests, an integration case by its function's name. Each
+A case in `e2e/` names a key result, one in `integration/` an element, and one in `unit/` or
+`properties/` an integration case by its function's name. Each
 integration case that names a rule takes the fixture `broken`, and trace.py runs it alone by
 pytest with `TRACE_BROKEN=1` and `--runxfail`, under which the fixture takes out the part that holds
 the rule, as the guide's A principle's test seen to fail says, and a case marked xfail runs as
@@ -35,7 +35,7 @@ rule that exists, as does each branch condition, and each story and each rule is
 once. It exits as `check` does,
 and needs no case, so that an architecture is checked before its cases are written.
 
-`doubles` reads each folder `recorded/` under dev/tests/ and each plugin's tests, as the guide's
+`doubles` reads each folder `recorded/` under each plugin's tests, as the guide's
 Each result of a double from a record says: each line of each record names its event once, and,
 where the file's name holds no version of a recorded run, its `source` and `shows`; and each call
 `line(...)` or `lines(...)` of each double beside the folder, a Python file but a test, names a
@@ -63,7 +63,6 @@ USAGE = "usage: trace.py check <plugin> | tags <plugin> | doubles | sources"
 LEVELS = {
     "unit": "integration",
     "properties": "integration",
-    "prompts": "integration",
     "integration": "element",
     "e2e": "key result",
 }
@@ -281,8 +280,8 @@ def tag_faults(plugin: str) -> list[str]:
 
 def key_results(plugin: str) -> set[str]:
     """The ID of each key result of the plugin's product vision, none where the plugin keeps no
-    product vision, as a library that other plugins depend on, such as Lane, serves their key
-    results and has none of its own."""
+    product vision, as a library that other plugins depend on serves their key results and has
+    none of its own."""
     path = f"dev/{plugin}/product-vision.md"
     if not os.path.exists(path):
         return set()
@@ -479,10 +478,10 @@ def faults(plugin: str) -> list[str]:
 
 
 def records(plugins: list[str]) -> list[str]:
-    """Each folder `recorded/` of the doubles that the plugins' tests run: of dev/tests/, which the
-    plugins share, and of each plugin's own tests."""
+    """Each folder `recorded/` of the doubles that the plugins' tests run, under each plugin's own
+    tests."""
     found = []
-    for top in ["dev/tests"] + [f"dev/{plugin}/tests" for plugin in plugins]:
+    for top in [f"dev/{plugin}/tests" for plugin in plugins]:
         for folder, subfolders, _ in os.walk(top):
             subfolders.sort()
             if os.path.basename(folder) == "recorded":

@@ -59,29 +59,17 @@ else
     "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
-# The checks' own Python, and the double of Claude Code with its tests.
+# The checks' own Python, with its tests.
 held design pyrefly check --search-path dev/scripts --search-path dev/scripts/tests \
-  --search-path dev/tests dev/scripts/*.py dev/scripts/tests/*.py dev/tests/*.py
+  dev/scripts/*.py dev/scripts/tests/*.py
 
 # rn's code and its tests, with the bench they call, as a type that doesn't fit across a call is a
 # fault no test may reach.
 # plugins/rn/scripts stays off the search path, as its template.py shares its name with the code of
 # plugins/rn/domain it runs.
-held design pyrefly check $properties --search-path plugins/rn/domain \
-  --search-path dev/tests --search-path dev/rn/tests \
+held design pyrefly check $properties --search-path plugins/rn/domain --search-path dev/rn/tests \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
   dev/rn/tests/*.py dev/rn/tests/*/*.py
-
-# Lane's guard, its rule types, and its reporters, as a type that doesn't fit across a handoff is a
-# fault that no test may reach, as Lane's architecture says under Test strategy. The reporters have
-# no .py suffix, as the AI runs them by name, so the check names them.
-held design pyrefly check --search-path plugins/lane/hooks/lane \
-  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/rule_types/*.py plugins/lane/bin/lane-*
-
-# Lane's cases, with the double of Claude Code they run, as a case that calls an interface with a
-# type it doesn't take fails at the call, not at the body it waits for.
-held design pyrefly check $properties --search-path plugins/lane/hooks/lane --search-path dev/tests \
-  --search-path dev/lane/tests dev/lane/tests/*.py dev/lane/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
@@ -153,19 +141,18 @@ done
 # CI checks the documentation's pages each night, as a page changes apart from any push.
 python3 dev/scripts/trace.py doubles
 
-# A behavior that no test checks can break unseen, so the tests of the checks' own code, the double
-# of Claude Code among them, run every line and branch of what pyproject.toml has coverage count,
-# as the code best practice's N7 asks.
+# A behavior that no test checks can break unseen, so the tests run every line and branch of what
+# pyproject.toml has coverage count, as the code best practice's N7 asks.
 if command -v coverage >/dev/null 2>&1; then
   # The tests run once, on each core, as coverage's own .pth starts it in each worker where
   # COVERAGE_PROCESS_START names its settings.
   COVERAGE_FILE="$scratch/.coverage" COVERAGE_PROCESS_START="$PWD/pyproject.toml" \
     coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider \
-    dev/scripts/tests dev/tests $plugin_tests
+    dev/scripts/tests $plugin_tests
   COVERAGE_FILE="$scratch/.coverage" coverage combine -q
   COVERAGE_FILE="$scratch/.coverage" held tests coverage report
 else
-  pytest -q -n auto dev/scripts/tests dev/tests $plugin_tests
+  pytest -q -n auto dev/scripts/tests $plugin_tests
   echo "check.sh: which lines of the checks' own code the tests run goes unchecked, as"\
     "coverage isn't installed. It comes with pyproject.toml's test-quality group, on Python 3.11"\
     "or later"

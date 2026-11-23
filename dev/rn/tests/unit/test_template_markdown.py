@@ -297,7 +297,7 @@ def test_words_count_no_mark_without_a_letter_or_a_digit():
     """Given a sentence of two words joined by a dash between spaces
     When its words are counted
     Then they're two"""
-    assert words("rn - Lane") == 2
+    assert words("rn - invoicer") == 2
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
