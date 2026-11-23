@@ -15,12 +15,12 @@
   "session": "0fd9d0c6-4ca5-44a7-9ab8-1bc6c610d110"
  },
  "goal": {
-  "decided": "The user gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: in the morning they read which tasks finished and which were given up, and take the results in from the main session.",
+  "decided": "At the user's instruction, an AI gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: it queues the tasks with a start time and starts the queue detached; overnight three run at once, each stopped by the usage limit resuming in its own session once the limit resets, and one stopped seven times given up and logged; in the morning it tells the user which finished and which were given up, and takes the results in from the main session; and the AI of another plugin that runs claude -p unattended calls the wait-and-resume part instead of writing its own.",
   "by": "reasoning"
  },
  "deliverables": [
   {
-   "name": "The user gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: in the morning they read which tasks finished and which were given up, and take the results in from the main session.",
+   "name": "At the user's instruction, an AI gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: it queues the tasks with a start time and starts the queue detached; overnight three run at once, each stopped by the usage limit resuming in its own session once the limit resets, and one stopped seven times given up and logged; in the morning it tells the user which finished and which were given up, and takes the results in from the main session; and the AI of another plugin that runs claude -p unattended calls the wait-and-resume part instead of writing its own.",
    "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
    "kind": "design-tree",
    "inputs": [],
@@ -37,7 +37,8 @@
       },
       {
        "about": "what those people can do once it's achieved",
-       "decided": null
+       "decided": "k (Four things: 1. At the user's instruction, the AI queues claude -p tasks with a start time and starts the queue detached, so that it runs after the conversation closes. 2. Overnight, three tasks run at once with nobody answering; a task stopped by the usage limit waits until the limit resets and goes on in the same session, and one stopped seven times is given up and logged. 3. In the morning, the AI reads the log, tells the user which tasks finished and which were given up, and takes the results in from the main session, where git is done. 4. The AI of another plugin that runs claude -p unattended calls the wait-and-resume part instead of writing its own.)",
+       "by": "user"
       }
      ]
     },
@@ -85,7 +86,7 @@
    "do": "decide",
    "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
    "condition": "N1",
-   "about": "what those people can do once it's achieved"
+   "about": "whom the goal is for"
   }
  ],
  "steps": []
