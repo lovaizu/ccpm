@@ -74,7 +74,13 @@
     {
      "id": "N4",
      "good": true,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "A start hour already past",
+       "decided": "A queue stacked anew waits for the next time its start hour comes; a queue stacked again to carry on its unfinished tasks starts them at once.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N5",
@@ -118,7 +124,7 @@
     },
     {
      "id": "N13",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "Writing only in its dir",
