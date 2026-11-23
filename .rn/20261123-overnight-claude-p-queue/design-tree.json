@@ -59,7 +59,7 @@
     },
     {
      "id": "N6",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "the concept",
