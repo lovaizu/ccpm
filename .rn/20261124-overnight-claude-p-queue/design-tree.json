@@ -92,8 +92,39 @@
    ],
    "more_paths": [
     "plugins/overnight/images/",
-    "plugins/overnight/LICENSE",
-    "plugins/overnight/CHANGELOG.md"
+    "plugins/overnight/LICENSE"
+   ]
+  },
+  {
+   "name": "The AI learns what changed for it in each version of the plugin",
+   "path": "plugins/overnight/CHANGELOG.md",
+   "kind": "light",
+   "inputs": [
+    "plugins/overnight/README.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": [
+      {
+       "about": "The check",
+       "decided": "The file has the form of Keep a Changelog, as dev/plugin-development-guide.md:500 says, and its Unreleased section lists each thing the README promises the user can do.",
+       "by": "reasoning"
+      }
+     ]
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    }
    ]
   },
   {
@@ -368,7 +399,8 @@
   {
    "settles": "どう使うか",
    "deliverables": [
-    "plugins/overnight/README.md"
+    "plugins/overnight/README.md",
+    "plugins/overnight/CHANGELOG.md"
    ],
    "signoff": false
   },
