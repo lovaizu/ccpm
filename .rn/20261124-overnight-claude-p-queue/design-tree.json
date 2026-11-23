@@ -14,12 +14,12 @@
   "pr": null
  },
  "goal": {
-  "decided": "The user stacks tasks and has an AI work on them through the night, the work resumes once the usage limit lifts, and in the morning the results are checked and taken in. Once it's achieved, the AI of the main session stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in; the AI of another plugin has its own work, stopped by the limit, resume once the limit lifts.",
+  "decided": "The user stacks tasks and has an AI work on them through the night, the work resumes once the usage limit lifts, and in the morning the results are checked and taken in. Once it's achieved, an AI stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in.",
   "by": "reasoning"
  },
  "deliverables": [
   {
-   "name": "The user stacks tasks and has an AI work on them through the night, the work resumes once the usage limit lifts, and in the morning the results are checked and taken in. Once it's achieved, the AI of the main session stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in; the AI of another plugin has its own work, stopped by the limit, resume once the limit lifts.",
+   "name": "The user stacks tasks and has an AI work on them through the night, the work resumes once the usage limit lifts, and in the morning the results are checked and taken in. Once it's achieved, an AI stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in.",
    "path": ".rn/20261124-overnight-claude-p-queue/design-tree.json",
    "kind": "design-tree",
    "inputs": [],
@@ -36,7 +36,7 @@
       },
       {
        "about": "What its people can do once the goal is achieved",
-       "decided": "The AI of the main session stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in. The AI of another plugin has its own work, stopped by the limit, resume once the limit lifts.",
+       "decided": "An AI stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in.",
        "by": "user"
       }
      ]
