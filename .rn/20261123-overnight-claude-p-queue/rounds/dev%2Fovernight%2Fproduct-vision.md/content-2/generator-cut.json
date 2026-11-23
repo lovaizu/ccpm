@@ -1,0 +1,116 @@
+{
+ "goal": "At the user's instruction, an AI gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: it queues the tasks with a start time and starts the queue detached; overnight three run at once, each stopped by the usage limit resuming in its own session once the limit resets, and one stopped seven times given up and logged; in the morning it tells the user which finished and which were given up, and takes the results in from the main session; and the AI of another plugin that runs claude -p unattended calls the wait-and-resume part instead of writing its own.",
+ "language": "English",
+ "deliverable": {
+  "name": "The developers know whom overnight serves, the AI that arranges the work at the user's instruction and the AI of another plugin that runs claude -p unattended, and what each is after",
+  "path": "dev/overnight/product-vision.md",
+  "kind": "product-vision",
+  "inputs": [],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": [
+     {
+      "about": "the concept",
+      "decided": "The one way: overnight carries each claude -p task to its end on its own while nobody answers, whether the arranging AI queued it or another plugin handed it over, waiting out each usage limit and resuming the task in its own session. The ideas, as issue #62 gives them under How it works: a session id fixed before the start, so a task stopped at any point resumes with --resume in the same conversation after the caller has gone; the limit read from the reply, its reset time taken from the line that says so, and no such line meaning the task is done; wait, then resume, two minutes after the reset (the next day if the time has passed, thirty minutes if it can't be read), with the new reply appended to the earlier one; a queue with a start time, one line per task (name, session id, prompt file, the one directory it may write in, new or resume), three at a time, each waiting on its own; nobody to answer a prompt, so every tool a task needs is allowed up front, edits accepted, its one directory given with --add-dir, and a task that only checks given read-only tools; detached from Claude Code by setsid nohup, so it keeps running after the conversation is closed; a log to read in the morning, one line per start, wait, finish, and give-up, with the time; and a task stopped by the limit seven times given up and logged. In the morning, the arranging AI reads the log, tells the user which tasks finished and which were given up, and takes the results in from the main session, where git is done.",
+      "by": "reasoning"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261123-overnight-claude-p-queue",
+ "inputs": [],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/product-vision",
+ "stage": "content",
+ "number": 2,
+ "round": ".claude/worktrees/rn-20261123-overnight-claude-p-queue/.rn/20261123-overnight-claude-p-queue/rounds/dev%2Fovernight%2Fproduct-vision.md/content-2",
+ "trial": "/tmp/rn-trial-20261123-overnight-claude-p-queue-dev%2Fovernight%2Fproduct-vision.md-content-2/",
+ "findings": {
+  "good": [],
+  "more": [
+   {
+    "condition": "N6",
+    "good_when": "The developers read one way that holds for the calling plugin's own unattended tasks as well as for the queued ones, and an idea for each moment of use, including the morning when the arranging AI takes the results in from the main session."
+   }
+  ]
+ },
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- arranging AI\\",
+    "  The AI that queues the user's `claude -p` tasks overnight at their instruction, and takes the",
+    "- calling plugin's AI\\",
+    "  The AI of another plugin that runs `claude -p` unattended, and has overnight resume its stopped"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the arranging AI gets the user's `claude -p` work done by morning, outside the daytime usage",
+    "- O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "overnight carries each queued `claude -p` task to its end while nobody answers, resuming it after",
+    "  A stopped task goes on in the same conversation, even after its caller has gone."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the queued tasks that are given up or still running in the morning. Lower",
+    "  - KR1.2: the commands the arranging AI runs to start the queue and take the results in. Fewer is",
+    "  - KR2.1: the share of its limit-stopped tasks that lack their full result, such as one never",
+    "  - KR2.2: the lines the calling plugin's AI writes to have its tasks waited out and resumed. Fewer",
+    "KR1.1 and KR2.1 come first: keep a change that improves a key result only if none before it"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the arranging AI gets the user's `claude -p` work done by morning, outside the daytime usage",
+    "- O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight carries each queued `claude -p` task to its end while nobody answers, resuming it after",
+    "- The stop read from the reply, for O2\\",
+    "- A queue with a start time, for O1\\",
+    "- Given up after seven stops, for O1\\"
+   ]
+  }
+ ]
+}

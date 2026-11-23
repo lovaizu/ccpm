@@ -1,0 +1,57 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/product-vision.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- arranging AI\\",
+    "  The AI that queues the user's `claude -p` tasks overnight at their instruction, and takes the",
+    "- calling plugin's AI\\",
+    "  The AI of another plugin that runs `claude -p` unattended, and has overnight resume its stopped"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the arranging AI gets the user's `claude -p` work done by morning, outside the daytime usage",
+    "- O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "overnight carries each queued `claude -p` task to its end while nobody answers, resuming it after",
+    "  A stopped task goes on in the same conversation, even after its caller has gone."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the queued tasks that are given up or still running in the morning. Lower",
+    "  - KR1.2: the commands the arranging AI runs to start the queue and take the results in. Fewer is",
+    "  - KR2.1: the share of its limit-stopped tasks that lack their full result, such as one never",
+    "  - KR2.2: the lines the calling plugin's AI writes to have its tasks waited out and resumed. Fewer",
+    "KR1.1 and KR2.1 come first: keep a change that improves a key result only if none before it"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the arranging AI gets the user's `claude -p` work done by morning, outside the daytime usage",
+    "- O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight carries each queued `claude -p` task to its end while nobody answers, resuming it after",
+    "- The stop read from the reply, for O2\\",
+    "- A queue with a start time, for O1\\",
+    "- Given up after seven stops, for O1\\"
+   ]
+  }
+ ]
+}

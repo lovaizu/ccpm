@@ -1,0 +1,13 @@
+{
+ "result": "judged",
+ "good": [
+  {"condition": "N1", "lines": ["- arranging AI\\", "  The AI that queues the user's `claude -p` tasks overnight at their instruction, and takes the", "- calling plugin's AI\\", "  The AI of another plugin that runs `claude -p` unattended, and has overnight resume its stopped"]},
+  {"condition": "N2", "lines": ["- O1: the arranging AI gets the user's `claude -p` work done by morning, outside the daytime usage", "- O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every"]},
+  {"condition": "N3", "lines": ["  A stopped task goes on in the same conversation, even after its caller has gone.", "  Tasks run three at a time from the start time, and each waits out the limit alone.", "  The queue keeps running after the user closes the conversation that started it.", "  In the morning, the arranging AI reports how each task ended and brings the results into the"]},
+  {"condition": "N5", "lines": ["- O1: the arranging AI gets the user's `claude -p` work done by morning, outside the daytime usage", "- O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every"]},
+  {"condition": "N6", "lines": ["overnight carries each `claude -p` task, queued or handed over, to its end past every usage limit", "while nobody answers.", "- A queue with a start time, for O1\\", "- Wait, then go on, for O2\\"]}
+ ],
+ "more": [
+  {"condition": "N4", "good_when": "the developers can tell from O2's key results whether a change gets the calling plugin's stopped task to its full result sooner or later after the limit resets, as KR2.1 counts only whether it gets there and KR2.2 only the lines the caller writes"}
+ ]
+}

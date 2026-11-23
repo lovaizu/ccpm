@@ -1,0 +1,52 @@
+{
+ "goal": "At the user's instruction, an AI gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: it queues the tasks with a start time and starts the queue detached; overnight three run at once, each stopped by the usage limit resuming in its own session once the limit resets, and one stopped seven times given up and logged; in the morning it tells the user which finished and which were given up, and takes the results in from the main session; and the AI of another plugin that runs claude -p unattended calls the wait-and-resume part instead of writing its own.",
+ "language": "English",
+ "deliverable": {
+  "name": "The developers know whom overnight serves, the AI that arranges the work at the user's instruction and the AI of another plugin that runs claude -p unattended, and what each is after",
+  "path": "dev/overnight/product-vision.md",
+  "kind": "product-vision",
+  "inputs": [],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261123-overnight-claude-p-queue",
+ "inputs": [],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/product-vision",
+ "stage": "content",
+ "number": 1,
+ "round": ".claude/worktrees/rn-20261123-overnight-claude-p-queue/.rn/20261123-overnight-claude-p-queue/rounds/dev%2Fovernight%2Fproduct-vision.md/content-1",
+ "trial": "/tmp/rn-trial-20261123-overnight-claude-p-queue-dev%2Fovernight%2Fproduct-vision.md-content-1/",
+ "findings": null,
+ "last_good": null
+}

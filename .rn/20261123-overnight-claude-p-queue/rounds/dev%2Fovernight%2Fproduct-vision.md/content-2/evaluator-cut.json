@@ -1,0 +1,63 @@
+{
+ "goal": "At the user's instruction, an AI gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: it queues the tasks with a start time and starts the queue detached; overnight three run at once, each stopped by the usage limit resuming in its own session once the limit resets, and one stopped seven times given up and logged; in the morning it tells the user which finished and which were given up, and takes the results in from the main session; and the AI of another plugin that runs claude -p unattended calls the wait-and-resume part instead of writing its own.",
+ "deliverable": {
+  "name": "The developers know whom overnight serves, the AI that arranges the work at the user's instruction and the AI of another plugin that runs claude -p unattended, and what each is after",
+  "path": "dev/overnight/product-vision.md"
+ },
+ "judges_by": {
+  "what": "The developers build a product with which its users achieve their goals, each choice leaning on the few things that the vision names.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The developers know whom the product serves and what each of them is trying to achieve.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "Roles",
+      "what": "Does Roles list every kind of person who comes to the product with a goal of their own?"
+     },
+     {
+      "id": "N2",
+      "about": "Objectives and key results",
+      "what": "Does each objective state, in one sentence, what one role is trying to achieve in their own work?"
+     },
+     {
+      "id": "N3",
+      "about": "the whole",
+      "what": "Does the vision describe only what the users do and get, not how the product works inside?"
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "The developers can tell whether a change brings the users closer to their goals.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "Objectives and key results",
+      "what": "Does each objective have key results that measure how well and how fast its role achieves it, each with the direction that's better?"
+     },
+     {
+      "id": "N5",
+      "about": "Objectives and key results",
+      "what": "Are the objectives distinct, so that each piece of work serves one of them?"
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "The developers know the one way by which the product brings its users to their goals, so that every choice leans toward it.",
+    "necessary_conditions": [
+     {
+      "id": "N6",
+      "about": "Concept",
+      "what": "Does the concept state first the one way, as its maker means it, by which the product brings the users to their objectives, and then the ideas that keep this way holding at each moment of their use?"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261123-overnight-claude-p-queue",
+ "trial": "/tmp/rn-trial-20261123-overnight-claude-p-queue-dev%2Fovernight%2Fproduct-vision.md-content-2/",
+ "round": ".claude/worktrees/rn-20261123-overnight-claude-p-queue/.rn/20261123-overnight-claude-p-queue/rounds/dev%2Fovernight%2Fproduct-vision.md/content-2"
+}

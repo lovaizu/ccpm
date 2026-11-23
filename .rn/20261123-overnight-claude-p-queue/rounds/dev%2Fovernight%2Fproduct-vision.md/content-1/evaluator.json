@@ -1,0 +1,48 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- arranging AI\\",
+    "  The AI that queues the user's `claude -p` tasks overnight at their instruction, and takes the",
+    "  results in.",
+    "- calling plugin's AI\\",
+    "  The AI of another plugin that runs `claude -p` unattended, and has overnight resume its stopped",
+    "  tasks."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the arranging AI gets the user's `claude -p` work done by morning, outside the daytime usage",
+    "  window.",
+    "- O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every",
+    "  usage limit."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the arranging AI gets the user's `claude -p` work done by morning, outside the daytime usage",
+    "  window.",
+    "- O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every",
+    "  usage limit."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N3",
+   "good_when": "The developers read in the vision only what the arranging AI and the calling plugin's AI see and get, such as a stopped task going on soon after the limit resets and any other failure ending it, and they choose for themselves how a limit stop is detected and how long after the reset a task waits."
+  },
+  {
+   "condition": "N4",
+   "good_when": "The developers can tell from a key result whether a change makes the calling plugin's AI get the full result of each limit-stopped task sooner after the limit resets."
+  },
+  {
+   "condition": "N6",
+   "good_when": "The developers read one way that holds for the calling plugin's own unattended tasks as well as for the queued ones, and an idea for each moment of use, including the morning when the arranging AI takes the results in from the main session."
+  }
+ ]
+}
