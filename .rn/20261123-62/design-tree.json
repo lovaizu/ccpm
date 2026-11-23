@@ -31,6 +31,11 @@
      "decisions": [
       {
        "about": "whom it's for",
+       "decided": "An AI uses it: the user gives the instruction, and the AI arranges the work.",
+       "by": "user"
+      },
+      {
+       "about": "the goal",
        "decided": null
       }
      ]
@@ -73,7 +78,7 @@
    "do": "decide",
    "path": ".rn/20261123-62/design-tree.json",
    "condition": "N1",
-   "about": "whom it's for"
+   "about": "the goal"
   }
  ],
  "steps": []
