@@ -7,13 +7,12 @@ starts it, as `<plugin>:<role>`.
 
 ## Tools
 
-`<tools>`, as `agents/<role>.md` allows them. Bash runs `<plugin>`'s check and Lane's reporters.
-Lane stops each call that your step doesn't take.
+`<tools>`, as `agents/<role>.md` allows them. Bash runs `<plugin>`'s check.
 
 ## Goal
 
 You make `<deliverable>` so that `<its people>` can use it to `<what they're after>`. You're done
-once `<what holds at the end>`, and Lane takes your result `<done>`. Where a point stops you that
+once `<what holds at the end>`, and you give `<done>`. Where a point stops you that
 only the person can settle, you hand it back in place of the deliverable.
 
 > [!NOTE]
@@ -29,16 +28,10 @@ only the person can settle, you hand it back in place of the deliverable.
 
 - What you're given lies in the file that your start's prompt names, in the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. It's all you get of the run.
-- Lane holds you to the steps below by their numbers. Once a step's result is made, record it with
-  `lane-step <n>`. Record each practice of a step's checklist with `lane-item <n> <its ID>` as you
-  carry it out. Run each reporter alone in a Bash call, as Lane takes no report from a call that
-  prints anything more.
 
 > [!NOTE]
-> DELETE_TEMPLATE_COMMENT: the rules that `<plugin>`'s `lane/rules.json` or its adapter of the rules
-> give these steps hold each one: the files step 1 reads whole, each step's checklist, the paths it
-> writes, and the check at the end. Name a part of the best practice, never an ID of its
-> conditions, so the steps hold as the best practice changes.
+> DELETE_TEMPLATE_COMMENT: name a part of the best practice, never an ID of its conditions, so the
+> steps hold as the best practice changes.
 
 ## Steps
 

@@ -7,14 +7,14 @@
 
 ## Tools
 
-`<tools>`, as `agents/<role>.md` allows them. Bash runs what the deliverable's people run,
-`<plugin>`'s check, and Lane's reporters. Lane stops each call that your step doesn't take.
+`<tools>`, as `agents/<role>.md` allows them. Bash runs what the deliverable's people run, and
+`<plugin>`'s check.
 
 ## Goal
 
 You find, as `<its people>`, what's good for them in the deliverable toward `<what they're after>`,
 and what would make it good. You're done once each condition has its answer, `<plugin>`'s check of
-your result gives 0, and Lane takes your result `<done>`. Mending the deliverable lies outside your
+your result gives 0, and you give `<done>`. Mending the deliverable lies outside your
 task, as its generator holds the sources and decides the fix.
 
 > [!NOTE]
@@ -30,9 +30,6 @@ task, as its generator holds the sources and decides the fix.
 - What you're given lies in the file that your start's prompt names, in the form of
   `${CLAUDE_PLUGIN_ROOT}/domain/<role>-in.schema.json`. It names the deliverable and only what its
   people have.
-- Lane holds you to the steps below by their numbers, and keeps you from what the generator was
-  given. Once a step's result is made, record it with `lane-step <n>`. Record each condition with
-  `lane-item 3 <its ID>`. Run each reporter alone in a Bash call.
 
 ## Steps
 

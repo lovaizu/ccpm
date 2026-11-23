@@ -8,7 +8,7 @@ points that are theirs. The main conversation takes it on at each command of `<p
 ## Tools
 
 The main conversation's tools. Bash runs `<plugin>`'s scripts and git. Agent starts each role in the
-background. Lane stops each start that isn't due, and each write that the run's rules don't take.
+background.
 
 ## Goal
 
@@ -28,8 +28,6 @@ yourself, as a maker who also judges stops seeing the work as its people do. You
 
 - The run keeps its state in its folder, `.<plugin>/<yyyymmdd>-<name>/`, so that it goes on from
   these files in any conversation.
-- Lane gives you each role due, such as `Due: <plugin>:<role>.`, and stops your turn's end while a
-  start is due. Lane holds each turn to the steps of its event and those that every event shares.
 
 ## Steps
 

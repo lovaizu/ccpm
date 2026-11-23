@@ -9,7 +9,7 @@
   "additionalProperties": false,
   "properties": {
     "result": {
-      "description": "The fixed word the role gives as it ends, also by running lane-result <result>, such as asks for a point to the person, with the point in point, and done. The order goes on by this word, never by what the role's last message says.",
+      "description": "The fixed word the role gives as it ends, such as asks for a point to the person, with the point in point, and done. The order goes on by this word, never by what the role's last message says.",
       "enum": [
         "<result>"
       ]

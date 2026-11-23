@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "<role>'s in",
-  "description": "What the orchestrator gives the role <role> as it starts, in a file that the start's prompt names: all the role gets of the run. The role's part names this file, and the plugin's adapter of the rules reads it for the rules of the start.",
+  "description": "What the orchestrator gives the role <role> as it starts, in a file that the start's prompt names: all the role gets of the run. The role's part names this file.",
   "type": "object",
   "required": [
     "<value>"
