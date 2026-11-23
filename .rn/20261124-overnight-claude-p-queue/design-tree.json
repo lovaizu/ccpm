@@ -14,12 +14,12 @@
   "pr": null
  },
  "goal": {
-  "decided": "The user leaves a queue of claude -p tasks to run overnight while nobody answers, and in the morning takes in each finished task's result. Once it's achieved, the user reads in the morning which tasks finished and which were given up after the usage limit stopped them, and the author of another plugin calls its wait-and-resume part instead of writing their own.",
+  "decided": "The user has an AI run a queue of claude -p tasks overnight while nobody answers, and take in each finished task's result in the morning. Once it's achieved, the AI of the main session hands over a queue at night and lets go, reads in the morning from the log which tasks finished and which were given up after the usage limit stopped them, and takes their results in; the AI of another plugin calls its wait-and-resume part instead of writing its own.",
   "by": "reasoning"
  },
  "deliverables": [
   {
-   "name": "The user leaves a queue of claude -p tasks to run overnight while nobody answers, and in the morning takes in each finished task's result. Once it's achieved, the user reads in the morning which tasks finished and which were given up after the usage limit stopped them, and the author of another plugin calls its wait-and-resume part instead of writing their own.",
+   "name": "The user has an AI run a queue of claude -p tasks overnight while nobody answers, and take in each finished task's result in the morning. Once it's achieved, the AI of the main session hands over a queue at night and lets go, reads in the morning from the log which tasks finished and which were given up after the usage limit stopped them, and takes their results in; the AI of another plugin calls its wait-and-resume part instead of writing its own.",
    "path": ".rn/20261124-overnight-claude-p-queue/design-tree.json",
    "kind": "design-tree",
    "inputs": [],
@@ -36,7 +36,8 @@
       },
       {
        "about": "What its people can do once the goal is achieved",
-       "decided": null
+       "decided": "The AI of the main session hands over a queue of tasks at night and lets go. The next morning, it reads from the log which tasks finished and which were given up, and takes their results into the main session. The AI of another plugin calls the wait-and-resume part instead of writing its own.",
+       "by": "user"
       }
      ]
     },
