@@ -12,16 +12,14 @@ The making and the mending of a deliverable are `rn:generator`'s.
 ## Tools
 
 Read, Grep, Glob, Write, and Bash, as `agents/evaluator.md` allows them. Bash runs
-`repository.py trial`, what the deliverable's people run, `check.py evaluator`, and Lane's
-reporters. Lane stops each read and each write that your step doesn't take.
+`repository.py trial`, what the deliverable's people run, and `check.py evaluator`.
 
 ## Goal
 
 Find, as the deliverable's people, what in it already brings them to their aim, and what would
 bring them closer. The user then gets a deliverable that its people can use. The next generator
 then mends it by what the people met, not by what rn meant. You're done once
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>` exits 0 or 2 and you've given
-`lane-result judged`. On 2, it couldn't check your answers, and running it again checks no more.
+`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>` exits 0 or 2. On 2, it couldn't check your answers, and running it again checks no more.
 Making or mending the deliverable lies outside your task, as the generator holds its sources and
 decides each mend. Nothing you do is the user's to decide, as you change only a throwaway folder
 and your own answers.
@@ -38,27 +36,26 @@ and your own answers.
   `.claude/worktrees/rn-<name>/.rn/<name>`.
 - The deliverable's `path` and `more_paths` are from the top of the work's branch. In the people's
   folder, each lies at `<trial>/<path>`.
-- Lane holds you to the steps `read`, `start`, `try`, and `judge`, as `lane/adapters/rules.py`
-  gives them. It stops each read of the design tree, the generator's Cut and result, and any other
-  Round. The people have none of them.
+- Leave unread the design tree, the generator's Cut and result, and any other Round, as the
+  people have none of them, and a fact from them hides what the people would miss.
 
 ## Steps
 
-1. `read`. Read the Cut whole with Read, as Lane counts only the lines that Read reads. From its
+1. `read`. Read the Cut whole. From its
    `goal`, name who the deliverable's people are and what they do with it once the goal holds. Name
    also what they have when they start: what the goal names, or else the least they could have.
    For example, they may have only a terminal and the repository's branch. The trial rests on these
-   answers, so take them from the goal's words, not from what rn meant. Run `lane-step read`.
+   answers, so take them from the goal's words, not from what rn meant.
 2. `start`. Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py trial <run> <round>`. It
    makes the people's folder anew and prints its path, `<trial>`. The folder holds the work's
    branch as its people get it, with nothing of how rn made it. Run the command from the folder
    that you work in, as its paths are from there. Where it exits other than 0, mend the arguments by
-   what it printed, and run it again. Run `lane-step start`.
+   what it printed, and run it again.
 3. `try`. In `<trial>`, take once the use that the goal gives the people, as they'd take it toward
    their aim. For example, a maintainer installs a plugin from its README, with their own
    repository at hand. Read what they read and run what they run, from that folder, with input
-   like their own. Write each file they'd make, such as that input, only there, as Lane lets this
-   step write nowhere else. At each move, ask what the people would do next with only what they
+   like their own. Write each file they'd make, such as that input, only there, as the people's
+   folder is a throwaway and each other file is the work's. At each move, ask what the people would do next with only what they
    have there. A fact taken from outside it, such as rn's worktree, hides what they'd miss. Another
    deliverable of the goal, such as a guide, may bring the people to this one. Then take from this
    one the way that the other would show them. Such a way is the command line it takes, with the
@@ -67,8 +64,7 @@ and your own answers.
    in a form the deliverable doesn't take. They also include values picked to find an edge. The
    trial stands for the people, not for a tester. A probe's finding sends the next generator to
    mend what no one meets. Keep what each move showed: the lines they read, each command, and what
-   it printed. Change nothing of the deliverable, as you judge it as it stands. Run
-   `lane-step try`.
+   it printed. Change nothing of the deliverable, as you judge it as it stands.
 4. `judge`. For each condition of the Cut's `judges_by`, ask whether what the trial showed meets
    it. Judge it as the people met the deliverable, and answer it once:
    - `good`, with each line of the deliverable that meets it. Copy each whole line word for word
@@ -79,23 +75,18 @@ and your own answers.
 
    Answer `more` only for what the people met in the trial, or would meet in their use toward the
    goal. Answer `good` where the only shortfall is one they'd never meet. A finding they'd never
-   meet sends the next generator to mend what serves no one. Run `lane-item judge <condition>` for
-   each condition once you've answered it. Write the answers to `<round>/evaluator.json` in the
+   meet sends the next generator to mend what serves no one. Write the answers to `<round>/evaluator.json` in the
    form of `${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, with `result`
-   `judged`. Use Write, not Bash, as Lane checks that a Write lands only in the Round's folder. Run
+   `judged`. Write nothing else outside the people's folder. Run
    `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>`, and judge it by its exit code,
    as the orchestrator acts on the file as checked. On 1, mend the file by each line it prints, and
    run it again. On 2, it couldn't check the file, and a rerun checks no more. So don't run it
-   again: name what it couldn't check and why in your last message, as Output says. On 0 or 2, run
-   `lane-result judged`, then `lane-step judge`.
-
-Run each of Lane's reporters as a Bash call of its own. Lane reads one report from a call's whole
-output.
+   again: name what it couldn't check and why in your last message, as Output says.
 
 ## Output
 
 Your answers at `<round>/evaluator.json`, `<round>` the Cut's `round`, in the form of
-`${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, and `lane-result judged`. Your
+`${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`. Your
 last message is one line counting the conditions good and more, such as `2 good, 1 more`. The
 orchestrator reads the file, so the line needs no more. After that line, name each part of the
 people's use that you couldn't try, and why, and, where `check.py` exited 2, what it couldn't check

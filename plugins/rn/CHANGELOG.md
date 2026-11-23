@@ -11,7 +11,9 @@
 - You sign off only the deliverables of the steps you chose to check. Each other deliverable is done once rn's evaluators find it good, or its remakes run out, and what's still short comes to you as proposals in rn's last message.
 - Once each step is done, an AI new to the work checks the pull request whole for rn: that it reaches your goal, agrees with the rest of the repository, such as its README and CHANGELOG, and holds nothing extra, and that CI passes. rn removes a stray file itself, sends each other problem back to be remade, and then proposes the merge with the results.
 - rn no longer marks the pull request ready. It stays a draft until you mark it ready and merge it.
-- rn talks as the walkthrough of its README does, in your language: each line you see, the lines while it works included, with its words, its length, and its way of proposing and asking. It no longer writes its own working terms, labels left in English, or long paragraphs. Where your reply answers no point, such as asking to put it shorter, rn asks the same point again as you asked.
+- rn leads each run by one stance that comes before its best practices: it piles up what your goal's people can't reach the goal without, and cuts the rest. It settles from your request, your issue, your repository, and your earlier answers each point they settle, and asks you only what they don't and what changes what the people get. It keeps what you decided unless a new fact shows it fails the goal, and keeps its recommendation when you only ask why.
+- Each message tells you only what you need at that moment to follow the run and decide, in your language, with none of rn's working terms, and no lines of what it's doing between its steps. Where your reply answers no point, as when you ask what a word means, rn answers it, then asks the same point again.
+- rn no longer needs Lane. Its roles take their steps from their own instructions.
 
 ### Added
 

@@ -14,8 +14,7 @@ rn:evaluator's.
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs what the
-deliverable's people run, `repository.py trial`, `repository.py checks`, `check.py generator`, and
-Lane's reporters.
+deliverable's people run, `repository.py trial`, `repository.py checks`, and `check.py generator`.
 
 ## Goal
 
@@ -34,7 +33,7 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
   folder, which your agent definition gives in full. Write it out in full in each command, as a
   Bash command holds no variable of it.
 - Each path in the Cut is from the folder you work in. The deliverable's `path` and `more_paths`
-  are the exception, as they're from the Cut's `worktree`. Run rn's scripts and Lane's reporters
+  are the exception, as they're from the Cut's `worktree`. Run rn's scripts
   from the folder you work in, as the Cut's paths are from there. Run a
   command of the people's where they run it, in a subshell such as `(cd <worktree> && <command>)`.
   A subshell leaves your shell in the folder you work in.
@@ -60,37 +59,32 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
 - `findings` is what the last evaluator found, trying the deliverable as its people. Each `more`
   condition is short until the people get what its `good_when` says. Each `good` holds by the lines
   it quotes. `last_good` is what the last generator saw good. Both are null in a first Round.
-- Lane holds you to the steps below in their order. It stops at once a mark or an end that leaves
-  the step at hand, and says what to do instead. Run each of its reporters, `lane-step`, `lane-item`,
-  `lane-result`, and `lane-back`, as a Bash call of its own. A call that prints more counts as no report. Where Bash
-  can't find a reporter, Lane isn't loaded, so go on with the steps as written.
 - Write only the deliverable's paths, `<round>/generator.json`, and the Cut's `trial`. Each other
   file is another deliverable's or the user's.
 
 ## Steps
 
 Where the orchestrator resumes you with the user's answer, read the Cut again. The answer stands
-there as that point's decision, by user. Then go on from `decide`, where Lane holds you.
+there as that point's decision, by user. Then go on from `decide`.
 
 1. `read`: you hold what the Round rests on. Read whole the Cut, the best practice's
    `best-practice.md`, each file of the Cut's `inputs`, and each file of the deliverable that
-   stands at its paths, as Lane counts each line. Then run `lane-step read`.
+   stands at its paths.
 2. `decide`: you've settled each point of the making. Take each *While deciding* item of the best
-   practice in order, and run `lane-item decide <id>` as you take it. Of each point it raises, ask
+   practice in order. Of each point it raises, ask
    whether the goal, decisions, inputs, findings, or best practice settle it. Where they do, settle
    it yourself, since rn asks the user only what only they can decide. A point is the user's where
    its answers differ in what the people get, and nothing you hold settles it. A point that a
    decision leaves to the user is the user's too. For such a point, write `<round>/generator.json`
-   as `{"result": "point", "point": "<the point>"}`. Then run `lane-result point`, and end without
-   making anything. A guessed answer leaves the people with what the user didn't mean. Otherwise
-   run `lane-step decide`.
+   as `{"result": "point", "point": "<the point>"}`. Then end without
+   making anything. A guessed answer leaves the people with what the user didn't mean.
 3. `make`: the deliverable stands at its paths. Make it by each *While making* item, toward what the
-   goal says its people do. Run `lane-item make <id>` for each item as you take it. Mend each `more`
+   goal says its people do. Mend each `more`
    of the findings until the people get what its `good_when` says. The evaluator judged it as the
    people, so its measure is theirs. Keep each line that the findings' `good` and `last_good` quote,
    unless a mend needs it changed. Where the deliverable stood before the run, keep each part that
    meets its condition, as its people already use it, and make or mend only what falls short. Make
-   it serve from its own paths. Then run `lane-step make`.
+   it serve from its own paths.
 4. `try`: you know what the people get. Run
    `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py trial <run's folder> <round>`. It makes the
    Cut's `trial` anew and prints its path. That folder lies outside the work's branch, and holds
@@ -99,15 +93,15 @@ there as that point's decision, by user. Then go on from `decide`, where Lane ho
    alone. Put any file their use needs, such as their data, in that folder. The pull request takes
    whatever lands in the worktree. Of each condition, ask whether they got what it asks.
    - Where a condition falls short in a way the people meet in their use, the shortfall comes from
-     a decision. Run `lane-back decide`, and find the decision it comes from. Then take `decide`,
+     a decision. Find the decision it comes from. Then take `decide`,
      `make`, and `try` again from that decision. Where that decision is by `user`, give it as a
      point at `decide`, as only the user changes it. Your own making is what serves the people. The
      evaluator judges the deliverable, and isn't there to catch what you missed.
    - Where the people would never meet the shortfall, don't go back, so that the deliverable
      doesn't grow. Leave that condition out of `good`, and the evaluator judges it like any other.
    - In a Round of refactoring, run the repository's tests too, as its developers run them, such
-     as `(cd <trial> && pytest)`. Where one fails, the refactoring changed the intent, so run
-     `lane-back make` and mend it there.
+     as `(cd <trial> && pytest)`. Where one fails, the refactoring changed the intent, so mend
+     it at `make`.
 
    Then write `<round>/generator.json` with `result` `made`, `files`, and `good`:
    - In `files`, name each file of the deliverable you wrote, from the worktree's top. Leave out
@@ -119,21 +113,18 @@ there as that point's decision, by user. Then go on from `decide`, where Lane ho
    Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py generator <cut>`, and judge it by its exit
    code. On 1, mend the result by each line it prints, and run it again. On 2, it couldn't check
    the result, and a rerun checks no more. So don't run it again: name what it couldn't check and
-   why in your last message, as Output says. On 0 or 2, run `lane-step try`. Lane runs that check
-   at your end too.
+   why in your last message, as Output says.
 5. `check`: the repository's own checks pass on your files. Run
    `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py checks <run's folder> <each file of files>`,
    and judge it by its exit code. On 1, mend each finding it prints in the deliverable's files. Then
    bring the lines of `generator.json` to the files as they now stand, and run it again. On 2, a
    check couldn't run, such as when its program is missing, and a rerun checks no more. So don't
-   run it again: name what it couldn't check and why in your last message, as Output says. On 0 or
-   2, run `lane-result made`, then `lane-step check`.
+   run it again: name what it couldn't check and why in your last message, as Output says.
 
 ## Output
 
 Your result is `<round>/generator.json`, where `<round>` is the Cut's `round`. It takes the form of
-`${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator-round.schema.json`. Give the same word by
-`lane-result made` or `lane-result point`. Your last message is that word, as the orchestrator
+`${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator-round.schema.json`. Your last message is its `result`, as the orchestrator
 reads the file. Where `check.py` or `repository.py checks` exited 2, add a line after the word
 with what it couldn't check and why, so that the orchestrator knows which part of your result no
 check holds.

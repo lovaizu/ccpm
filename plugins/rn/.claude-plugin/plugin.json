@@ -6,8 +6,5 @@
     "name": "lovaizu"
   },
   "homepage": "https://github.com/lovaizu/ccpm/blob/main/plugins/rn/README.md",
-  "repository": "https://github.com/lovaizu/ccpm",
-  "dependencies": [
-    "lane"
-  ]
+  "repository": "https://github.com/lovaizu/ccpm"
 }

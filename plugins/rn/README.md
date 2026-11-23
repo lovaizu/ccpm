@@ -254,11 +254,6 @@ grow with each remake.
 No. Each turn, rn reviews the plan by what its work showed, and works next where the
 people gain most.
 
-### "Does it skip a step when no one watches?"
-
-No. Lane, a plugin installed with rn, stops each part of rn that leaves a step and shows it that
-step.
-
 ### "Does it change the repository's files, or merge on its own?"
 
 No. rn works in its own worktree and a throwaway copy, and leaves the ready mark and the merge to
@@ -267,8 +262,6 @@ you.
 ## Documentation
 
 - [Changelog](CHANGELOG.md): for you after an update, the changes in each version.
-- [Lane](https://github.com/lovaizu/ccpm/blob/main/plugins/lane/README.md): for you if you want to
-  know what Lane does, or use it in a plugin of your own.
 - [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 
 ## License
