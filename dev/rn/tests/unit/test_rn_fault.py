@@ -32,14 +32,14 @@ def test_end_exits_with_the_code_printing_each_stream(
 
 
 @pytest.mark.supports(
-    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+    "test_a_generators_check_whose_runs_folder_is_gone_gives_2_saying_what_it_couldnt_check"
 )
 def test_end_of_a_main_that_raises_an_unexpected_error_exits_2_with_its_traceback(
     capsys: pytest.CaptureFixture[str],
 ):
     """Given a command's main that raises an error that no fault names, a KeyError
     When the command ends with it
-    Then it raises SystemExit with 2, as Lane reads 2 as a check that couldn't check, having
+    Then it raises SystemExit with 2, as a role reads 2 as a check that couldn't check, having
     written nothing on stdout and the error's traceback on stderr"""
 
     def main() -> Answer:

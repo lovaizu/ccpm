@@ -32,7 +32,9 @@ def same(path: str, expected: str) -> bool:
     return os.path.normpath(path) == os.path.normpath(expected)
 
 
-@pytest.mark.supports("test_the_evaluators_try_writes_only_in_the_peoples_folder")
+@pytest.mark.supports(
+    "test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work"
+)
 def test_a_rounds_folder_lies_in_the_temporary_folder_by_run_and_round(temp: str):
     """Given the run 20261120-invoices, and the command's Round content-1
     When folder is asked
@@ -45,7 +47,9 @@ def test_a_rounds_folder_lies_in_the_temporary_folder_by_run_and_round(temp: str
     assert os.listdir(temp) == []
 
 
-@pytest.mark.supports("test_the_evaluators_try_writes_only_in_the_peoples_folder")
+@pytest.mark.supports(
+    "test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work"
+)
 def test_a_later_rounds_folder_names_its_stage_and_number(temp: str):
     """Given the run 20261120-invoices, and the guide's Round content-2
     When folder is asked
@@ -55,7 +59,9 @@ def test_a_later_rounds_folder_names_its_stage_and_number(temp: str):
     assert same(given, os.path.join(temp, f"rn-trial-{NAME}-docs%2Fguide.md-content-2"))
 
 
-@pytest.mark.supports("test_the_evaluators_try_writes_only_in_the_peoples_folder")
+@pytest.mark.supports(
+    "test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work"
+)
 def test_a_rounds_folder_is_the_same_at_each_call_and_apart_for_each_round_and_run(temp: str):
     """Given two runs, and two Rounds of one deliverable: content-1 and content-2
     When folder is asked twice of each Round of each run
@@ -72,7 +78,9 @@ def test_a_rounds_folder_is_the_same_at_each_call_and_apart_for_each_round_and_r
     assert len(set(given.values())) == len(runs) * len(rounds)
 
 
-@pytest.mark.supports("test_the_evaluators_try_writes_only_in_the_peoples_folder")
+@pytest.mark.supports(
+    "test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work"
+)
 def test_two_paths_alike_but_for_a_slash_get_folders_apart(temp: str):
     """Given the run 20261120-invoices, and Round content-1 of docs/guide.md and of docs-guide.md
     When folder is asked of each

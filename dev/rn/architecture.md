@@ -35,7 +35,6 @@ deliverable's people to their aim, and cuts the trivial many.
   - P4.3: a step that has one right result is done the same way each time, without a role's
     judgment.
 - P5: the shortest path
-  - P5.1: a role that leaves its steps is told at once and goes back.
   - P5.2: deliverables that rest on none still being made are made at the same time.
   - P5.3: work that a stop leaves alone goes on.
 - P6: nothing lost on a stop
@@ -47,8 +46,7 @@ deliverable's people to their aim, and cuts the trivial many.
 
 - Design tree\
   Holds what to make, why, and how far the run got, for each review and each pick-up. It also
-  holds rn's version, the languages, the steps, the issues, the pull request, and the conversation's
-  session. Its form is
+  holds rn's version, the languages, the steps, the issues, and the pull request. Its form is
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s.
 - Cut\
   A role's part of the design tree, so that each role starts with only the decisions its work needs.
@@ -77,9 +75,6 @@ Strategies:
   Intent: a send-back gets Rounds of its own, so that the user's change is remade.
 - The issues to close and to refer to written from the request, never asked. [P1.2]\
   Intent: the user isn't asked what their request already says.
-- The conversation's own run found by the session in its design tree, which Lane gives rn's
-  adapters. [P6.1]\
-  Intent: no conversation takes another's run as its own.
 - The pull request opened as a draft, which the user marks ready. [P2.3]\
   Intent: nobody reviews or merges the work before the user has seen it checked whole.
 - A finding that the people would never meet dropped by holding its condition good. [P1.1]\
@@ -131,20 +126,16 @@ Strategies:
   Intent: the user answers the role's own question, and the role gets the user's own words.
 - Each step that has one right result done by a script that the role runs. [P4.3]\
   Intent: each role spends its judgment and its context only where a step needs them.
-- rn's order given to Lane as the starts due from the design tree, each deliverable's Rounds
-  beside the others'. [P5.2]\
+- Each deliverable's Rounds kept apart from the others', so that each deliverable due starts
+  at once. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
-- Lane applied to each role's steps in order, and to its reads or writes only where its purpose
-  bars them. [P5.1]\
-  Intent: a role that leaves its steps goes back at once, with no needless bind to look round.
 - Each step written as what it does, never tied to one OS's tools, such as Glob or Bash's
-  `find`. [P5.1]\
+  `find`. [P4.3]\
   Intent: rn runs alike on each OS that Claude Code runs on.
 - A script's refusal that only the user can mend stopping only the work it concerns. [P5.3]\
   Intent: the user mends one blocker while every other deliverable goes on.
-- A pause or a cancel taken from the user's words, and reported to Lane as its run's end. [S2]\
-  Intent: the user stops a run without learning a command, and the conversation then goes on free
-  of rn's steps.
+- A pause or a cancel taken from the user's words. [S2]\
+  Intent: the user stops a run without learning a command.
 - A cancel confirmed once, removing the run here and its branch and pull request on GitHub. [S2]\
   Intent: nothing that can't be undone happens on one misread sentence, and no run is left to
   collide with.
@@ -277,8 +268,8 @@ sequenceDiagram
 
 ![rn's deployment](images/deployment.svg)
 
-The user installs rn as [the README](../../plugins/rn/README.md#installation) says, which installs
-Lane, and types `/rn:on` at their repository's root.
+The user installs rn as [the README](../../plugins/rn/README.md#installation) says, and types
+`/rn:on` at their repository's root.
 
 Strategies:
 
@@ -302,10 +293,7 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── template/                  the code that holds a document to its kind's template
 │   ├── repository/                the code that makes a run's worktree and puts a deliverable up
 │   └── best-practices/            rn's own best practice of each kind
-├── scripts/                       each step with one right result, as a role runs it
-└── lane/                          what rn gives Lane
-    ├── rules.json                 the rules of each role's steps
-    └── adapters/                  the starts due from the design tree, and a step's practices
+└── scripts/                       each step with one right result, as a role runs it
 
 dev/rn/                            what only rn's developers use
 └── tests/                         the test cases, from unit to integration
@@ -328,13 +316,12 @@ dev/rn/                            what only rn's developers use
 | Static analysis | Parts | Quality | During the work | 0 findings of mismatched types, copied code, or import cycles. |
 | Complexity analysis | Parts | Quality | During the work | Per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Unit testing | Parts | Quality | During the work | Every case passes. |
-| Unit testing | Parts that hold a prompt | Benchmark | During the work | Each case's results over 3 runs. |
 | Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
 | Property-based testing | Parts | Quality | During the work | 0 counterexamples of each invariant that rn's product vision, README, and this document state. |
 | Integration testing | Architecture | Quality | During the work | Every case passes, with a double of each prompt, and each handoff gives the data the concept model names. |
 | Contract testing | Architecture | Quality | Apart from the work | On each new version of gh, each recorded command gives what it recorded. |
 | Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing with its part broken. |
 | Scenario testing | Product | Quality | Apart from the work | A walkthrough run of the README's request reaches its pull request with no stop that a fault caused. |
-| Installation testing | Product | Quality | Apart from the work | Once ccpm's marketplace lists rn, it installs with Lane by the README's commands in a fresh home. |
+| Installation testing | Product | Quality | Apart from the work | Once ccpm's marketplace lists rn, it installs alone by the README's commands in a fresh home. |
 | Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |
 | Conformance and compliance testing | Product | Quality | During the work | Claude Code's strict check of the plugin passes. |

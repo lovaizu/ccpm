@@ -56,20 +56,12 @@ def test_new_prints_the_new_runs_folder_from_the_repositorys_top(tmp_path: Any, 
 @pytest.mark.supports(
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
-@pytest.mark.parametrize("session", [None, "4344a6c5-dc82-48d7-9cfd-249b08288cea"])
-def test_new_writes_rns_version_the_languages_and_the_session_in_the_trees_context(
-    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch, session: str | None
-):
-    """Given invoicer's repository with a remote, run outside Claude Code, with no
-    CLAUDE_CODE_SESSION_ID, or in a conversation whose CLAUDE_CODE_SESSION_ID Claude Code sets
+def test_new_writes_rns_version_and_the_languages_in_the_trees_context(tmp_path: Any, host: Any):
+    """Given invoicer's repository with a remote
     When repository.py new is given the walkthrough's slug, the goal, English, and Japanese
     Then the run's design tree's context holds rn's version as its plugin.json gives it, English
-    as the deliverables' language and Japanese as the conversation's, no issues, no pull request,
-    and the session, or null"""
-    if session is None:
-        monkeypatch.delenv("CLAUDE_CODE_SESSION_ID", raising=False)
-    else:
-        monkeypatch.setenv("CLAUDE_CODE_SESSION_ID", session)
+    as the deliverables' language and Japanese as the conversation's, no issues, and no pull
+    request"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
     argv = ["new", rn_files.NAMED, rn_files.GOAL, "English", "Japanese"]
@@ -82,7 +74,6 @@ def test_new_writes_rns_version_the_languages_and_the_session_in_the_trees_conte
         "languages": {"deliverables": "English", "conversation": "Japanese"},
         "issues": {"closes": [], "refs": []},
         "pr": None,
-        "session": session,
     }
 
 
@@ -139,7 +130,7 @@ def test_new_with_no_default_branch_on_origin_says_what_is_missing(tmp_path: Any
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_finds_none_and_makes_no_worktree")
 def test_find_of_no_run_prints_nothing(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote and no run
     When repository.py find is run
@@ -149,7 +140,7 @@ def test_find_of_no_run_prints_nothing(tmp_path: Any, host: Any):
     assert main(["find"], repo, rn_files.RN, host) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_finds_none_and_makes_no_worktree")
 def test_find_with_github_out_of_reach_says_so_on_stderr(tmp_path: Any, host: Any):
     """Given invoicer's repository with one run with work left, whose origin git can't reach
     When repository.py find is run
@@ -187,7 +178,7 @@ def test_find_prints_the_newest_run_and_makes_its_worktree_again(tmp_path: Any, 
     assert os.path.isfile(os.path.join(repo, printed.strip(), "design-tree.json"))
 
 
-@pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
+@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_pause_prints_the_hash_the_remote_holds(tmp_path: Any, host: Any):
     """Given a run whose design tree is changed
     When repository.py pause is given the run's folder
@@ -198,7 +189,7 @@ def test_pause_prints_the_hash_the_remote_holds(tmp_path: Any, host: Any):
     assert (code, out, err) == (0, head(str(tmp_path / "origin.git"), f"rn-{NAME}") + "\n", "")
 
 
-@pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
+@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_pause_with_no_origin_says_what_is_missing(tmp_path: Any, host: Any):
     """Given a run whose repository has no remote
     When repository.py pause is given the run's folder
@@ -209,9 +200,7 @@ def test_pause_with_no_origin_says_what_is_missing(tmp_path: Any, host: Any):
     assert err.startswith("repository.py: ")
 
 
-@pytest.mark.supports(
-    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
-)
+@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 @pytest.mark.parametrize("pushed", [False, True], ids=["local-only", "pushed"])
 def test_cancel_removes_the_run_and_prints_what_it_removed_on_github(
     tmp_path: Any, host: Any, gh_state: str, pushed: bool
@@ -233,9 +222,7 @@ def test_cancel_removes_the_run_and_prints_what_it_removed_on_github(
     assert git(run.repository, "ls-remote", "--heads", "origin", f"rn-{NAME}") == ""
 
 
-@pytest.mark.supports(
-    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
-)
+@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 def test_cancel_that_cant_remove_on_github_says_so_on_stderr_and_still_gives_0(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -261,9 +248,7 @@ def test_cancel_that_cant_remove_on_github_says_so_on_stderr_and_still_gives_0(
     assert git(run.repository, "branch", "--list", f"rn-{NAME}").strip() == ""
 
 
-@pytest.mark.supports(
-    "test_a_cancel_whose_worktree_cant_be_removed_ends_on_blocked_and_keeps_the_run"
-)
+@pytest.mark.supports("test_a_cancel_whose_worktree_cant_be_removed_gives_2_and_keeps_the_run")
 def test_cancel_of_a_worktree_git_cant_remove_gives_2(tmp_path: Any, host: Any):
     """Given a run whose worktree is locked
     When repository.py cancel is given the run's folder

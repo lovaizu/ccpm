@@ -4,10 +4,7 @@ digits, a day of one digit, and each refusal: empty, upper case, a space, letter
 English, a dash out of place, an underscore, and the user's words as typed; and `of_folder`, one for
 each form in which a script is given a run's folder, from the folder it runs in and absolute, and
 each refusal: a folder of another form, a near match of the worktree's prefix, a run's folder whose
-name differs from its worktree's, and one with no design tree; and `of_session`, the run of the
-session beside another session's newer one, the one written last of several of the session, a run of
-no session and each near match of the session, a worktree with no design tree, no worktrees, and the
-refusal of a design tree that isn't JSON."""
+name differs from its worktree's, and one with no design tree."""
 
 from __future__ import annotations
 
@@ -18,7 +15,7 @@ from typing import Any
 import pytest
 import rn_files
 from fault import Wrong
-from repository.place import RunPlace, named, of_folder, of_session
+from repository.place import RunPlace, named, of_folder
 
 NAME = "20261120-invoices"
 DAY = date(2026, 11, 20)
@@ -228,93 +225,3 @@ def test_a_folder_of_another_form_is_refused_naming_the_form_it_takes(tmp_path: 
     with pytest.raises(Wrong) as raised:
         of_folder(repo, given)
     assert given in str(raised.value)
-
-
-# of_session: the run of the conversation of a session.
-
-SESSION = "4344a6c5-dc82-48d7-9cfd-249b08288cea"
-
-
-def a_session_run(tmp_path: Any, name: str, session: str | None, when: float = 0) -> str:
-    """Writes the run of the name with its design tree, whose context holds the session, or no
-    session where it's None, the tree last written at the time given, in seconds after another;
-    gives the repository's top."""
-    repo, folder = a_run_folder(tmp_path, name)
-    tree = os.path.join(folder, "design-tree.json")
-    held = rn_files.read_json(tree)
-    if session is not None:
-        held["context"]["session"] = session
-    rn_files.write_json(tree, held)
-    os.utime(tree, (1_800_000_000 + when, 1_800_000_000 + when))
-    return repo
-
-
-@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
-def test_the_run_whose_context_holds_the_session_is_the_conversations(tmp_path: Any):
-    """Given a repository with the run 20261120-invoices of the session, and 20261121-receipts of
-    another session, its tree written later
-    When of_session is asked for the session
-    Then it gives 20261120-invoices"""
-    repo = a_session_run(tmp_path, NAME, SESSION)
-    a_session_run(tmp_path, "20261121-receipts", "another-session", when=60)
-    assert of_session(repo, SESSION) == RunPlace(repo, NAME)
-
-
-@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
-def test_of_runs_of_the_session_the_one_written_last_is_the_conversations(tmp_path: Any):
-    """Given a repository with three runs of the session, as a conversation that started a run,
-    then another, then picked up a third leaves them, 20261121-receipts's tree written last
-    When of_session is asked for the session
-    Then it gives 20261121-receipts, the run it works on now"""
-    repo = a_session_run(tmp_path, "20261101-first", SESSION, when=0)
-    a_session_run(tmp_path, "20261121-receipts", SESSION, when=120)
-    a_session_run(tmp_path, NAME, SESSION, when=60)
-    assert of_session(repo, SESSION) == RunPlace(repo, "20261121-receipts")
-
-
-@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
-@pytest.mark.parametrize(
-    "held",
-    [None, "another-session", SESSION[:-1], SESSION + "0", SESSION.upper()],
-    ids=["no-session", "another", "shorter", "longer", "upper-case"],
-)
-def test_a_run_of_no_session_or_one_that_nearly_matches_isnt_the_conversations(
-    tmp_path: Any, held: str | None
-):
-    """Given a repository whose only run's context holds no session, as a run started before rn
-    kept it, another session, or one that nearly matches the session
-    When of_session is asked for the session
-    Then it gives None"""
-    repo = a_session_run(tmp_path, NAME, held)
-    assert of_session(repo, SESSION) is None
-
-
-@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
-def test_a_worktree_with_no_design_tree_isnt_the_conversations_run(tmp_path: Any):
-    """Given a repository holding the worktree of 20261120-invoices with no design tree, as a
-    refused `new` may leave it, and no other run
-    When of_session is asked for the session
-    Then it gives None"""
-    repo = os.path.realpath(str(tmp_path))
-    os.makedirs(rn_files.worktree_of(repo, NAME))
-    assert of_session(repo, SESSION) is None
-
-
-@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
-def test_a_repository_with_no_worktrees_has_no_run_of_the_session(tmp_path: Any):
-    """Given a repository with no .claude/worktrees/
-    When of_session is asked for the session
-    Then it gives None"""
-    assert of_session(os.path.realpath(str(tmp_path)), SESSION) is None
-
-
-@pytest.mark.supports("test_an_answer_after_the_request_goes_into_the_run_the_request_made")
-def test_a_design_tree_that_isnt_json_is_refused_naming_it(tmp_path: Any):
-    """Given a repository whose run's design tree isn't JSON
-    When of_session is asked for the session
-    Then Wrong is raised, naming the tree's path"""
-    repo, folder = a_run_folder(tmp_path)
-    with open(os.path.join(folder, "design-tree.json"), "w", encoding="utf-8") as f:
-        f.write("{")
-    with pytest.raises(Wrong, match="design-tree.json: isn't JSON"):
-        of_session(repo, SESSION)

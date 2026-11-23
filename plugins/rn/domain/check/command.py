@@ -1,5 +1,5 @@
-"""Decides check.py's command line: what it takes, what it prints, and the exit code by which Lane
-reads its result."""
+"""Decides check.py's command line: what it takes, what it prints, and the exit code by which the
+role that runs it reads its result."""
 
 from __future__ import annotations
 
@@ -29,8 +29,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str) -> Answer:
     `check.py: <what's wrong>` where the role's result is Wrong, as one that can't be read as JSON,
     saying how to mend it. 2 with `check.py: <what it couldn't check and why>` where it CantRun: a
     role of neither, a Cut that can't be read as JSON or leaves its schema, or a schema that can't
-    be read, as Lane reads 2 as a check that couldn't check; 2 with the usage where the arguments
-    are other than a role and a Cut.
+    be read, as the role reads 2 as a check that couldn't check; 2 with the usage where the
+    arguments are other than a role and a Cut.
     """
     if len(argv) != 2:
         return 2, "", USAGE

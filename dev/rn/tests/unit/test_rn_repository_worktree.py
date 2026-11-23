@@ -239,7 +239,7 @@ def cloned(tmp_path: Any, origin: str) -> str:
     return clone
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_finds_none_and_makes_no_worktree")
 def test_a_folder_that_isnt_a_repository_has_no_run(tmp_path: Any, host: Any):
     """Given a folder that isn't a git repository
     When newest is asked
@@ -247,7 +247,7 @@ def test_a_folder_that_isnt_a_repository_has_no_run(tmp_path: Any, host: Any):
     assert newest(os.path.realpath(str(tmp_path)), host) is None
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
+@pytest.mark.supports("test_a_pick_up_with_no_run_finds_none_and_makes_no_worktree")
 def test_a_repository_with_no_branch_of_rn_has_no_run(tmp_path: Any, host: Any):
     """Given a repository with a remote and no branch rn-*
     When newest and found are asked
@@ -385,40 +385,6 @@ def test_a_run_only_origin_holds_gets_its_worktree_on_a_branch_from_origins(
     upstream = git(worktree, "rev-parse", "--abbrev-ref", "@{upstream}").strip()
     assert upstream == f"origin/rn-{NAME}"
     assert rn_files.read_json(RunPlace(clone, NAME).tree) == a_tree(NAME)
-
-
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-@pytest.mark.parametrize("worktree", [True, False], ids=["worktree-here", "worktree-gone"])
-@pytest.mark.parametrize(
-    "session", [None, "session-1", "session-2"], ids=["outside-claude-code", "same", "another"]
-)
-def test_a_pick_up_writes_the_conversations_session_in_the_runs_context_and_commits_it(
-    tmp_path: Any, host: Any, worktree: bool, session: str | None
-):
-    """Given a run with work left that the conversation of session-1 started, its worktree here or
-    removed
-    When found is asked by a conversation outside Claude Code, of no session, by the conversation
-    of session-1 again, or by the conversation of session-2
-    Then it gives the run; its design tree holds session-2 in its context, committed alone as
-    `rn: <name>, picked up`, or, with no session or the same one, is as it was, with no new
-    commit; and each other part of the tree is as it was"""
-    repo = a_repository(tmp_path)
-    tree = a_tree(NAME)
-    tree["context"]["session"] = "session-1"
-    branch_run(repo, NAME, tree, worktree=worktree)
-    before = head(repo, f"rn-{NAME}")
-    assert found(repo, host, session) == Found(RunPlace(repo, NAME), None)
-    run = RunPlace(repo, NAME)
-    expected = dict(tree, context=dict(tree["context"], session=session or "session-1"))
-    assert rn_files.read_json(run.tree) == expected
-    assert git(run.worktree, "status", "--porcelain").strip() == ""
-    if session in (None, "session-1"):
-        assert head(run.worktree) == before
-    else:
-        assert git(run.worktree, "log", "-1", "--format=%s").strip() == f"rn: {NAME}, picked up"
-        assert git(run.worktree, "rev-parse", "HEAD~1").strip() == before
-        shown = git(run.worktree, "show", "--name-only", "--format=", "HEAD").split()
-        assert shown == [f".rn/{NAME}/design-tree.json"]
 
 
 def gone_from_github(repo: str, name: str, tree: dict[str, Any], when: str) -> None:
@@ -713,9 +679,7 @@ def branches(repo: str) -> list[str]:
     return git(remote(repo), "for-each-ref", "--format=%(refname) %(objectname)").splitlines()
 
 
-@pytest.mark.supports(
-    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
-)
+@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 @pytest.mark.parametrize(
     ("branch", "pr"),
     [
@@ -769,9 +733,7 @@ def git_said(tmp_path: Any) -> str:
     )
 
 
-@pytest.mark.supports(
-    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
-)
+@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 @pytest.mark.parametrize(
     "failing", ["git-unreached", "git-refused", "gh-unreached", "gh-logged-out", "gh-close"]
 )
@@ -827,9 +789,7 @@ def test_a_cancelled_run_names_what_it_couldnt_remove_on_github_and_why(
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
 
 
-@pytest.mark.supports(
-    "test_a_cancel_whose_worktree_cant_be_removed_ends_on_blocked_and_keeps_the_run"
-)
+@pytest.mark.supports("test_a_cancel_whose_worktree_cant_be_removed_gives_2_and_keeps_the_run")
 def test_a_worktree_git_cant_remove_is_cantrun_and_keeps_the_branch(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -845,9 +805,7 @@ def test_a_worktree_git_cant_remove_is_cantrun_and_keeps_the_branch(
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() != ""
 
 
-@pytest.mark.supports(
-    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
-)
+@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 @pytest.mark.parametrize("made_by", ["git", "herdr"])
 def test_a_cancelled_run_inside_herdr_has_herdr_remove_its_worktree(
     tmp_path: Any, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch, made_by: str
@@ -878,9 +836,7 @@ def test_a_cancelled_run_inside_herdr_has_herdr_remove_its_worktree(
     assert not [argv for argv, _ in host.ran if argv[:3] == ["git", "worktree", "remove"]]
 
 
-@pytest.mark.supports(
-    "test_a_cancel_whose_worktree_cant_be_removed_ends_on_blocked_and_keeps_the_run"
-)
+@pytest.mark.supports("test_a_cancel_whose_worktree_cant_be_removed_gives_2_and_keeps_the_run")
 def test_a_cancelled_run_inside_herdr_that_herdr_fails_is_cantrun_and_keeps_the_run(
     tmp_path: Any, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
 ):

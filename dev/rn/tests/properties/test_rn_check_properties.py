@@ -56,7 +56,7 @@ def answers(draw: Any) -> tuple[str, dict[str, Any], bool]:
     return kind, {"result": "judged", "good": good, "more": more}, whole
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 @given(answers())
 def test_an_evaluators_result_passes_exactly_where_each_condition_is_answered_once(
     case: tuple[str, dict[str, Any], bool],

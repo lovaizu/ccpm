@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "evaluator's Cut",
- "description": "What the orchestrator gives the evaluator for one Round, at <round>/evaluator-cut.json, which the start's prompt names by its path: only what the deliverable's people have, and what it judges by. Lane's adapter of the rules reads it for the start's steps.",
+ "description": "What the orchestrator gives the evaluator for one Round, at <round>/evaluator-cut.json, which the start's prompt names by its path: only what the deliverable's people have, and what it judges by.",
  "type": "object",
  "required": [
   "goal",

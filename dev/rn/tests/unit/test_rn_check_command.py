@@ -1,11 +1,10 @@
-"""The unit cases of check/command.py, check.py's command line as Lane's check at a role's end runs
-it: for each role, a result that holds, one with faults, and none written; a generator's guide off
-its kind's template, each place on a line, the worktree and the folder taken from the Cut and from
+"""The unit cases of check/command.py, check.py's command line as a role runs it before it ends:
+for each role, a result that holds, one with faults, and none written; a generator's guide off its
+kind's template, each place on a line, the worktree and the folder taken from the Cut and from
 `cwd`, not from the process's own folder; a result that isn't JSON; a Cut out of its schema or
 missing, a schema that can't be read, and a role of neither, each of which check.py couldn't check
-by; and each count of arguments other than two. Each runs from the
-user's repository's top, with the Cut's path from there, as Lane runs a check in the folder that the
-conversation works in."""
+by; and each count of arguments other than two. Each runs from the user's repository's top, with
+the Cut's path from there, as a role runs rn's scripts from there."""
 
 from __future__ import annotations
 
@@ -91,7 +90,7 @@ GOOD = {
 }
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
+@pytest.mark.supports("test_a_generators_result_unwritten_is_refused")
 @pytest.mark.parametrize("role", ["generator", "evaluator"])
 def test_a_result_that_holds_its_cut_gives_0_printing_nothing(run: Run, role: str):
     """Given the role's Cut and a result that holds it beside it
@@ -102,7 +101,7 @@ def test_a_result_that_holds_its_cut_gives_0_printing_nothing(run: Run, role: st
     assert main([role, cut], run.repository, rn_files.RN) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
+@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_refused")
 def test_a_generators_result_with_a_fault_gives_1_with_the_fault(run: Run):
     """Given the generator's Cut and its made naming N9 good, which light doesn't hold
     When check.py runs on it
@@ -114,7 +113,7 @@ def test_a_generators_result_with_a_fault_gives_1_with_the_fault(run: Run):
     assert any("N9" in each for each in (out + err).splitlines())
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run):
     """Given the evaluator's Cut and its judged answering N1 alone
     When check.py runs on it
@@ -128,7 +127,7 @@ def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run)
     assert any("N3" in each and "N2" not in each for each in lines)
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
+@pytest.mark.supports("test_a_generators_result_unwritten_is_refused")
 @pytest.mark.parametrize("role", ["generator", "evaluator"])
 def test_a_role_that_wrote_no_result_gives_1_with_where_it_writes_one(run: Run, role: str):
     """Given the role's Cut, and no result beside it
@@ -140,7 +139,7 @@ def test_a_role_that_wrote_no_result_gives_1_with_where_it_writes_one(run: Run, 
     assert os.path.join(run.round, f"{role}.json") in out + err
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
+@pytest.mark.supports("test_a_generators_result_unwritten_is_refused")
 def test_a_result_that_isnt_json_gives_1_naming_it(run: Run):
     """Given the generator's Cut, and a result beside it that isn't JSON
     When check.py runs on it
@@ -155,7 +154,7 @@ def test_a_result_that_isnt_json_gives_1_naming_it(run: Run):
 
 
 @pytest.mark.supports(
-    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+    "test_a_generators_check_whose_runs_folder_is_gone_gives_2_saying_what_it_couldnt_check"
 )
 def test_a_cut_out_of_its_schema_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given a generator's Cut with no goal, and a result that would hold it
@@ -177,7 +176,7 @@ def test_a_cut_out_of_its_schema_gives_2_saying_what_check_py_couldnt_check(run:
 
 
 @pytest.mark.supports(
-    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+    "test_a_generators_check_whose_runs_folder_is_gone_gives_2_saying_what_it_couldnt_check"
 )
 def test_a_cut_that_isnt_there_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given no Cut at the path given
@@ -194,7 +193,7 @@ def test_a_cut_that_isnt_there_gives_2_saying_what_check_py_couldnt_check(run: R
 
 
 @pytest.mark.supports(
-    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+    "test_a_generators_check_whose_runs_folder_is_gone_gives_2_saying_what_it_couldnt_check"
 )
 def test_a_schema_that_cant_be_read_gives_2_saying_what_check_py_couldnt_check(
     run: Run, tmp_path: Any
@@ -213,7 +212,7 @@ def test_a_schema_that_cant_be_read_gives_2_saying_what_check_py_couldnt_check(
 
 
 @pytest.mark.supports(
-    "test_a_generators_end_whose_runs_folder_is_gone_goes_through_saying_what_check_py_couldnt_check"
+    "test_a_generators_check_whose_runs_folder_is_gone_gives_2_saying_what_it_couldnt_check"
 )
 @pytest.mark.parametrize("role", ["orchestrator", "Generator"])
 def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run, role: str):
@@ -231,7 +230,7 @@ def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run, 
     )
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
+@pytest.mark.supports("test_a_generators_result_unwritten_is_refused")
 @pytest.mark.parametrize("argv", [[], ["generator"], ["generator", "a.json", "b.json"]])
 def test_arguments_other_than_a_role_and_a_cut_give_2_with_the_usage(run: Run, argv: list[str]):
     """Given the run

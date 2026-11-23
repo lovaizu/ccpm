@@ -1,7 +1,7 @@
 """The integration cases of S1, a deliverable made in rounds: each path through its sequence, from
-the user's request to the last sign-off, on the bench's own request for invoicer. Each runs rn
-and Lane through the double of Claude Code and the double of gh, with a double of each prompt's
-work, as rn's Test strategy says under Integration testing."""
+the user's request to the last sign-off, on the bench's own request for invoicer. Each runs rn's
+scripts as the orchestrator and each role run them, with the double of gh, and a double of each
+prompt's work, as rn's Test strategy says under Integration testing."""
 
 from __future__ import annotations
 
@@ -14,46 +14,32 @@ from gh import gh_double
 from repo_files import git
 from rn_bench import (
     CHANGELOG,
-    COMMAND_TEXT,
     Bench,
     apart_tree,
+    checked_whole,
     command_signed,
     confirmed,
-    cut,
+    cut_move,
     cut_of,
-    decided_command,
-    ended,
     evaluated,
-    evaluator_started,
+    evaluator_cut,
     generated,
-    heard,
     held,
-    items,
     judged_command,
-    listed,
-    made_command,
-    marked,
     next_round,
     planned_tree,
     pointed,
     put_up,
     put_up_plan,
-    ran,
-    reached,
     refactored,
     requested,
+    reviewed,
     sent_back,
-    shared_steps,
     short_twice,
     signed,
     signed_apart,
     signed_plan,
-    started,
-    stopped,
-    taken,
     to_plan_signoff,
-    touched_items,
-    written_tree,
 )
 from rn_files import COMMAND, GOAL, GUIDE
 from rn_runs import branch_run
@@ -71,22 +57,26 @@ def log(b: Bench, ref: str) -> list[str]:
     return git(b.repo, "log", "--format=%s", ref).splitlines()
 
 
+def committed_tree(b: Bench) -> dict:
+    """The design tree as the work's branch's last commit holds it."""
+    branch = f"rn-{b.name()}"
+    return json.loads(git(b.worktree, "show", f"{branch}:.rn/{b.name()}/design-tree.json"))
+
+
 @pytest.mark.supports("S1", "Design tree")
 def test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put(b: Bench):
     """Given invoicer's repository on main, with a remote
-    When the user types /rn:on, and, asked what they want to make, the walkthrough's words, and the
-    orchestrator makes the run by repository.py new with the goal as put and commits it
+    When the orchestrator makes the run of the walkthrough's words by repository.py new with the
+    goal as put, and commits it
     Then the run's worktree has the branch rn-<name> checked out from main's head, its design tree
-    holds the goal by reasoning, the plan as its one deliverable, no work, and the conversation's
-    session in its context, committed with the ground as its message, and the user's own branch
-    and files are as they were"""
+    holds the goal by reasoning, the plan as its one deliverable, and no work, committed with the
+    ground as its message, and the user's own branch and files are as they were"""
     head = git(b.repo, "rev-parse", "main").strip()
-    c = requested(b)
+    requested(b)
     branch = f"rn-{b.name()}"
     assert git(b.worktree, "branch", "--show-current").strip() == branch
     assert git(b.repo, "merge-base", "main", branch).strip() == head
     expected = rn_files.tree([rn_files.plan(b.name(), good=False)], goal=GOAL, by="reasoning")
-    expected["context"]["session"] = c.session_id
     assert b.tree() == expected
     assert log(b, branch)[0] == "The goal as put."
     assert git(b.repo, "branch", "--show-current").strip() == "main"
@@ -98,69 +88,31 @@ def test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_
 def test_an_answer_after_the_request_goes_into_the_run_the_request_made(b: Bench):
     """Given invoicer's repository with a paused run 20261101-old, newest by its last commit, whose
     plan waits on its sign-off
-    When the user types /rn:on, then the walkthrough's words, and the orchestrator makes the run by
-    repository.py new and keeps the shared steps; and the user confirms the goal, and the
-    orchestrator writes the plan into the run's design tree and keeps the shared steps
-    Then Lane lets each move through, and the run made holds the plan and the conversation's
-    session, 20261101-old's tree as it was"""
+    When the orchestrator makes the run of the walkthrough's words by repository.py new, and, at
+    the user's confirmation, writes the plan into the folder that new printed and commits it
+    Then the run made holds the plan, and 20261101-old's tree is as it was"""
     old = "20261101-old"
     waiting = rn_files.tree([rn_files.plan(old, good=False)], goal=GOAL, by="reasoning")
     folder = branch_run(b.repo, old, waiting, "2099-01-01T09:00:00")
-    c = requested(b)
-    confirmed(b, c)
-    expected = planned_tree(b, answered=False)
-    expected["context"]["session"] = c.session_id
-    assert b.tree() == expected
+    made = b.ran("repository", "new", rn_files.NAMED, GOAL, *rn_files.LANGUAGES).strip()
+    assert made == b.run
+    reviewed(b, ground="The goal as put.")
+    confirmed(b)
+    assert b.tree() == planned_tree(b, answered=False)
     assert rn_files.read_json(os.path.join(folder, "design-tree.json")) == waiting
 
 
 @pytest.mark.supports("S1")
-def test_rn_on_asks_what_to_make_letting_its_commands_through(b: Bench):
-    """Given invoicer's repository with no run of rn
-    When the user types /rn:on, and the orchestrator reads the repository's history by git log,
-    marks `hear` done, and ends its turn asking what they want to make
-    Then Lane lets the command and the end through, and the repository has no worktree of rn"""
-    c = b.converse()
-    typed = c.type("/rn:on")
-    assert "domain/orchestrator.md" in typed.output
-    looked = c.bash("git log --oneline")
-    assert not looked.blocked and not stopped(looked.said), looked.said
-    assert looked.exit_code == 0, looked.output
-    marked(c, "hear")
-    ended(c, "What can I help with? An issue number or a few words of what you want both work.")
-    assert not os.path.exists(b.at(".claude/worktrees"))
-
-
-@pytest.mark.supports("S1")
-def test_a_new_request_with_no_origin_ends_its_turn_on_blocked(b: Bench):
+def test_a_new_request_with_no_origin_is_refused_with_no_worktree_made(b: Bench):
     """Given invoicer's repository with no remote origin
-    When the user types /rn:on, then the walkthrough's words, the orchestrator runs repository.py
-    new, gives blocked by lane-result, as nothing else can move, and ends its turn with the
-    refusal
-    Then repository.py new gives 1 saying that origin's HEAD names no default branch, the turn
-    ends, Lane stopping no move, and the repository has no worktree of rn"""
+    When the orchestrator runs repository.py new for the walkthrough's words
+    Then it gives 1 saying that origin's HEAD names no default branch, and the repository has no
+    worktree of rn"""
     git(b.repo, "remote", "remove", "origin")
-    c = heard(b)
-    c.type(rn_files.WORDS)
-    refused = c.bash(b.script("repository", "new", rn_files.NAMED, GOAL, *rn_files.LANGUAGES))
-    assert not refused.blocked, refused.said
-    assert refused.exit_code == 1
-    assert "origin's HEAD names no default branch" in refused.output
-    given = c.bash("lane-result blocked")
-    assert not given.blocked, given.said
-    ended(c, refused.output)
+    refused = b.script("repository", "new", rn_files.NAMED, GOAL, *rn_files.LANGUAGES)
+    assert refused.code == 1
+    assert "origin's HEAD names no default branch" in refused.err
     assert not os.path.exists(b.at(".claude/worktrees"))
-
-
-@pytest.mark.supports("S1")
-def test_a_turn_with_the_plan_open_starts_no_role(b: Bench):
-    """Given a run whose goal the orchestrator put to the user, the plan open
-    When the orchestrator starts rn:generator
-    Then Lane stops the start, as no start of rn's subagents is due"""
-    c = requested(b)
-    answer, agent = c.start("rn:generator", "Make the command.", "Run rn:generator")
-    assert agent is None
-    assert "No start of rn's subagents is due now." in answer.said
 
 
 @pytest.mark.supports("S1", "Design tree")
@@ -169,15 +121,12 @@ def test_a_point_only_the_user_can_settle_is_kept_open_and_their_answer_written_
     When the orchestrator keeps the tax rate's point as an open decision of the command's N1 and
     commits it, and the user answers it
     Then the committed tree holds the point open, and then the answer as its decision by user"""
-    c = requested(b)
-    confirmed(b, c)
-    branch = f"rn-{b.name()}"
-    committed = json.loads(git(b.worktree, "show", f"{branch}:.rn/{b.name()}/design-tree.json"))
-    asked = committed["deliverables"][1]["necessary_conditions"][0]["decisions"]
+    requested(b)
+    confirmed(b)
+    asked = committed_tree(b)["deliverables"][1]["necessary_conditions"][0]["decisions"]
     assert asked == [rn_files.decision(rn_files.TAX_ABOUT, None)]
-    put_up_plan(b, c)
-    committed = json.loads(git(b.worktree, "show", f"{branch}:.rn/{b.name()}/design-tree.json"))
-    answered = committed["deliverables"][1]["necessary_conditions"][0]["decisions"]
+    put_up_plan(b)
+    answered = committed_tree(b)["deliverables"][1]["necessary_conditions"][0]["decisions"]
     assert answered == [rn_files.decision(rn_files.TAX_ABOUT, rn_files.TAX_ANSWER, "user")]
 
 
@@ -188,39 +137,25 @@ def test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_me
     it with its ground
     Then the work's branch's last commit holds the decision, its message the ground word for
     word"""
-    c = requested(b)
-    confirmed(b, c)
-    c.type("The guide is for the accounting team.")
+    requested(b)
+    confirmed(b)
     settled = rn_files.decision("its people", "The accounting team, at a terminal.", "reasoning")
-    taken(b, c, held(b, GUIDE, [], {"N1": [settled]}), "The README names its people.")
-    branch = f"rn-{b.name()}"
-    assert log(b, branch)[0] == "The README names its people."
-    committed = json.loads(git(b.worktree, "show", f"{branch}:.rn/{b.name()}/design-tree.json"))
-    assert settled in committed["deliverables"][2]["necessary_conditions"][0]["decisions"]
+    reviewed(b, held(b, GUIDE, [], {"N1": [settled]}), "The README names its people.")
+    assert log(b, f"rn-{b.name()}")[0] == "The README names its people."
+    assert settled in committed_tree(b)["deliverables"][2]["necessary_conditions"][0]["decisions"]
 
 
 @pytest.mark.supports("S1", "Design tree")
 def test_each_node_a_change_touches_is_read_again_before_the_commit(b: Bench):
-    """Given a run whose goal the user confirmed, and the orchestrator's change to the command's
-    path written in its review
-    When it reports the step `touched` done before any of the nodes that tree.py touched prints
-    Then Lane stops the mark, naming the guide, whose inputs name the command, among the items"""
-    c = requested(b)
-    confirmed(b, c)
-    c.type("Name the command invoicer/cli.py.")
+    """Given a run whose goal the user confirmed
+    When the orchestrator changes the command's path in its review, and runs tree.py touched
+    Then it prints the guide, whose inputs name the command, among the nodes to read again"""
+    requested(b)
+    confirmed(b)
     changed = b.tree()
     changed["deliverables"][1]["path"] = "invoicer/cli.py"
-    answer = written_tree(b, c, changed)
-    assert not answer.blocked, answer.said
-    marked(c, "take")
-    marked(c, "review")
-    nodes = ran(c, b.script("tree", "touched", b.run)).split()
-    answer = c.bash("lane-step touched")
-    assert "/deliverables/2" in nodes
-    assert answer.said == (
-        f"You're at the step `touched` of rn:on, whose checklist isn't done: {listed(nodes)}.\n"
-        "Take each, then record it with lane-item touched <item>."
-    )
+    b.write_tree(changed)
+    assert "/deliverables/2" in b.ran("tree", "touched", b.run).split()
 
 
 @pytest.mark.supports("S1", "Design tree")
@@ -229,10 +164,9 @@ def test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request(b: Benc
     When the orchestrator puts it up by repository.py put-up
     Then it prints no link, as the plan is the message that shows it, the remote's branch
     rn-<name> holds the run's design tree, and gh was asked to open the pull request once"""
-    c = requested(b)
-    confirmed(b, c)
-    url = put_up_plan(b, c)
-    assert url == ""
+    requested(b)
+    confirmed(b)
+    assert put_up_plan(b) == ""
     assert f".rn/{b.name()}/design-tree.json" in b.branch_files(f"rn-{b.name()}")
     assert [each[:3] for each in b.asked_gh()].count(["gh", "pr", "create"]) == 1
 
@@ -243,89 +177,55 @@ def test_a_signoff_of_the_plan_makes_it_done_and_starts_the_generator_of_each_de
 ):
     """Given a run whose plan is put up
     When the user types /rn:ty, the orchestrator records it, and writes the command's Cut
-    Then the plan is done in its one line, the Cut lies in the command's Round content-1, Lane lets
-    the command's generator start, and a second generator, for the guide that rests on the command,
-    is stopped as not due"""
-    c, _ = signed_plan(b)
+    Then the plan is done in its one line, and the Cut lies in the command's Round content-1"""
+    cut_path = signed_plan(b)
     assert b.tree()["deliverables"][0] == rn_files.done_node(
         GOAL, rn_files.plan_path(b.name()), "design-tree"
     )
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
-    assert os.path.isfile(os.path.join(first, "generator-cut.json"))
-    answer, agent = c.start("rn:generator", "Make the guide.", "Run rn:generator")
-    assert agent is None
-    assert "No start of rn's subagents is due now." in answer.said
+    assert os.path.join(b.repo, cut_path) == os.path.join(first, "generator-cut.json")
 
 
 @pytest.mark.supports("S1", "Design tree")
-def test_a_send_back_of_the_plan_leaves_it_open_and_starts_no_role(b: Bench):
+def test_a_send_back_of_the_plan_leaves_it_open_waiting_for_signoff(b: Bench):
     """Given a run whose plan is put up
-    When the user types /rn:gm with what to change, and the orchestrator keeps the shared steps
-    and ends its turn
-    Then the plan stays open, a start of rn:generator is stopped as not due, and the turn ends,
-    Lane stopping no move but the start"""
-    c = to_plan_signoff(b)
-    c.type("/rn:gm the guide is for the accounting team alone")
-    taken(b, c, ground="The user sends the plan back.")
+    When the user types /rn:gm with what to change, and the orchestrator commits its review
+    Then the plan stays open, and the commit holds it so"""
+    to_plan_signoff(b)
+    reviewed(b, ground="The user sends the plan back.")
     assert b.tree()["deliverables"][0]["status"] == "open"
-    answer, agent = c.start("rn:generator", "Make the command.", "Run rn:generator")
-    assert agent is None
-    assert "No start of rn's subagents is due now." in answer.said
-    ended(c, "The way to the goal.")
+    assert committed_tree(b)["deliverables"][0]["status"] == "open"
 
 
 @pytest.mark.supports("S1", "Round", "Cut")
 def test_a_generators_point_reaches_the_user_and_their_answer_resumes_it(b: Bench):
-    """Given a run whose command's generator runs
+    """Given a run whose command's generator has its Cut
     When it ends with a point, the orchestrator keeps the point as an open decision of N1, the user
     answers, and the orchestrator writes the answer as its decision by user and writes the Cut
-    Then the generator's end reads `rn:generator gave point.`, the Cut is the same Round's,
-    content-1, holding the answer by user in the deliverable's N1, SendMessage resumes the
-    generator, and each turn ends, Lane stopping no move"""
-    c, generator = signed_plan(b)
-    notified = pointed(b, c, generator, "Should a line's quantity default to 1?")
-    assert "rn:generator gave point." in notified.said
+    Then check.py takes the point, and the Cut is the same Round's, content-1, holding the answer
+    by user in the deliverable's N1"""
+    first_cut = signed_plan(b)
+    pointed(b, first_cut, "Should a line's quantity default to 1?")
     about = "a line's quantity"
-    taken(
-        b,
-        c,
-        held(b, COMMAND, [], {"N1": [rn_files.decision(about, None)]}),
-        "The generator's point.",
-    )
-    ended(
-        c,
-        "A question that's yours: whether a line's quantity defaults to 1.\n"
-        "  I recommend 1, as the team types each line.",
-    )
-    c.type("yes, 1")
+    reviewed(b, held(b, COMMAND, [], {"N1": [rn_files.decision(about, None)]}), "The point.")
     answer = rn_files.decision(about, "yes, 1", "user")
     tree = b.tree()
     tree["deliverables"][1]["necessary_conditions"][0]["decisions"][-1] = answer
-    cut_path = taken(
-        b, c, tree, "The user's answer.", [b.script("tree", "cut", b.run, "generator", COMMAND)]
-    )[0].strip()
-    first = rn_files.round_of(b.folder, COMMAND, "content", 1)
-    assert os.path.join(b.repo, cut_path) == os.path.join(first, "generator-cut.json")
-    given = rn_files.read_json(os.path.join(b.repo, cut_path))
+    cut_path = reviewed(b, tree, "The user's answer.", [cut_move(b, "generator", COMMAND)])[0]
+    assert cut_path.strip() == first_cut
+    given = cut_of(b, cut_path.strip())
     assert answer in given["deliverable"]["necessary_conditions"][0]["decisions"]
-    resumed = c.resume(generator, "yes, 1")
-    assert not resumed.blocked, resumed.said
-    ended(c, f'Making "{rn_files.COMMAND_NAME}".')
 
 
 @pytest.mark.supports("S1", "Round", "Cut")
 def test_a_generators_made_makes_the_evaluator_due_in_the_same_round(b: Bench):
-    """Given a run whose command's generator runs
-    When it keeps its steps and ends with made, and the orchestrator writes the evaluator's Cut
-    Then the end reads `rn:generator gave made. Due: rn:evaluator.`, and the evaluator's Cut lies in
-    Round content-1 beside the generator's result"""
-    c, notified = made_command(b)
-    assert "rn:generator gave made. Due: rn:evaluator." in notified.said
-    cut_path = taken(b, c, moves=[b.script("tree", "cut", b.run, "evaluator", COMMAND)])[0].strip()
+    """Given a run whose command's generator made its Round, check.py taking its result
+    When the orchestrator writes the evaluator's Cut
+    Then the Cut lies in Round content-1 beside the generator's result"""
+    cut_path = evaluator_cut(b)
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
     assert os.path.join(b.repo, cut_path) == os.path.join(first, "evaluator-cut.json")
     assert os.path.isfile(os.path.join(first, "generator.json"))
-    assert started(c, "rn:evaluator", cut_path) is not None
 
 
 @pytest.mark.supports("S1", "Round", "Cut")
@@ -335,21 +235,17 @@ def test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given(b: Benc
     Then the Cut lies in Round content-2, its findings the evaluator's good and more of content-1
     of N1 alone, the one condition the tree still holds not good, word for word, and its
     last_good the generator's good of content-1"""
-    c, notified = judged_command(
-        b, {"N1": "The accountant prints an invoice with a comma in a line."}
-    )
-    assert "rn:evaluator gave judged. Due: rn:generator." in notified.said
-    cut_path, _ = next_round(b, c, COMMAND, ["N2", "N3"])
+    judged_command(b, {"N1": "The accountant prints an invoice with a comma in a line."})
+    cut_path = next_round(b, COMMAND, ["N2", "N3"])
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
     second = rn_files.round_of(b.folder, COMMAND, "content", 2)
     assert os.path.join(b.repo, cut_path) == os.path.join(second, "generator-cut.json")
-    given = rn_files.read_json(os.path.join(b.repo, cut_path))
+    given = cut_of(b, cut_path)
     judged = rn_files.read_json(os.path.join(first, "evaluator.json"))
     made = rn_files.read_json(os.path.join(first, "generator.json"))
-    short = {"N1"}
     assert given["findings"] == {
-        "good": [each for each in judged["good"] if each["condition"] in short],
-        "more": [each for each in judged["more"] if each["condition"] in short],
+        "good": [each for each in judged["good"] if each["condition"] == "N1"],
+        "more": [each for each in judged["more"] if each["condition"] == "N1"],
     }
     assert given["last_good"] == made["good"]
     assert (given["stage"], given["number"]) == ("content", 2)
@@ -358,35 +254,33 @@ def test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given(b: Benc
 @pytest.mark.supports("S1", "Design tree", "Cut")
 def test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_condition_good(b: Bench):
     """Given a run whose command's evaluator judged Round content-1, N1 with more
-    When the orchestrator holds every condition good, N1 among them, and commits
-    Then the command waits for the user's sign-off, and repository.py put-up puts it up"""
-    c, _ = judged_command(b, {"N1": "The accountant prints an invoice in Klingon."})
-    url = put_up(b, c, COMMAND, rn_files.conditions("light"))
-    assert url == linked(b, COMMAND)
-    answer = c.start("rn:generator", "Make the command again.", "Run rn:generator")[0]
-    assert "No start of rn's subagents is due now." in answer.said
+    When the orchestrator holds every condition good, N1 among them, and puts the command up
+    Then repository.py put-up prints the link of the command's file, and tree.py cut of its
+    generator gives 1, as it waits for the user's sign-off"""
+    judged_command(b, {"N1": "The accountant prints an invoice in Klingon."})
+    assert put_up(b, COMMAND, rn_files.conditions("light")) == linked(b, COMMAND)
+    refused = b.script(*cut_move(b, "generator", COMMAND))
+    assert refused.code == 1
+    assert "sign-off" in refused.err
 
 
 @pytest.mark.supports("S1", "Design tree", "Round")
 def test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal(b: Bench):
-    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2,
-    its second evaluator's end reaching the main conversation
+    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2
     When the orchestrator keeps the finding as an open decision of N1, puts the command up, and
     the user signs it off
-    Then the put-up prints the link of the command's file, the turn ends, Lane stopping no move, and
-    the command is done once signed off"""
-    c = short_twice(b)
+    Then the put-up prints the link of the command's file, and the command is done once signed
+    off"""
+    short_twice(b)
     proposal = rn_files.decision("a comma in a line", None)
-    url = taken(
+    url = reviewed(
         b,
-        c,
         held(b, COMMAND, ["N2", "N3"], {"N1": [proposal]}),
         "Left past its Rounds.",
-        [b.script("repository", "put-up", b.run, COMMAND)],
+        [("repository", "put-up", b.run, COMMAND)],
     )[0].strip()
     assert url == linked(b, COMMAND)
-    ended(c, "Fixes I'd still propose:\n  - a comma in a line")
-    signed(b, c)
+    signed(b)
     assert rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light") in b.tree()["deliverables"]
 
 
@@ -399,14 +293,12 @@ def test_a_deliverable_with_each_condition_good_is_refactored_by_its_refactor_be
     When the orchestrator holds each condition good and writes the generator's Cut
     Then the Cut lies in Round refactor-2, its stage refactor, number 2, the guide's second Round,
     and its best practice rn's refactor-doc"""
-    c, generator = command_signed(b)
-    generated(b, c, generator)
-    _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
-    evaluated(b, c, evaluator)
-    cut_path, _ = next_round(b, c, GUIDE, rn_files.conditions("readme"))
+    generated(b, command_signed(b))
+    evaluated(b, next_round(b, GUIDE, [], "evaluator"))
+    cut_path = next_round(b, GUIDE, rn_files.conditions("readme"))
     refactor = rn_files.round_of(b.folder, GUIDE, "refactor", 2)
     assert os.path.join(b.repo, cut_path) == os.path.join(refactor, "generator-cut.json")
-    given = rn_files.read_json(os.path.join(b.repo, cut_path))
+    given = cut_of(b, cut_path)
     assert (given["stage"], given["number"]) == ("refactor", 2)
     assert os.path.normpath(os.path.join(b.repo, given["best_practice"])) == os.path.join(
         b.rn, "domain", "best-practices", "refactor-doc"
@@ -415,34 +307,24 @@ def test_a_deliverable_with_each_condition_good_is_refactored_by_its_refactor_be
 
 @pytest.mark.supports("S1", "Round", "Cut")
 def test_the_refactoring_generators_made_waits_on_the_signoff_with_no_evaluator(b: Bench):
-    """Given a run whose guide, of the kind readme, the evaluator judged good on each condition in
-    Round content-1, and whose orchestrator started a new generator with the Cut of Round
-    refactor-2
-    When that generator refactors the guide by rn's refactor-doc, runs the repository's tests as
-    its developers run them, runs repository.py checks on its files, and ends with made, and the
-    orchestrator holds each condition good, puts the guide up, and writes the evaluator's Cut
-    Then Lane lets the tests through, the end reads `rn:generator gave made.` with no role due, its
-    result lies in Round refactor-2, repository.py put-up puts the guide up, and tree.py cut gives
-    1 saying the guide waits on the user's sign-off, writing no evaluator's Cut"""
-    c, generator = command_signed(b)
-    generated(b, c, generator)
-    _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
-    evaluated(b, c, evaluator)
-    _, refactoring = next_round(b, c, GUIDE, rn_files.conditions("readme"))
-    assert refactoring is not generator
-    notified = generated(b, c, refactoring)
-    assert "rn:generator gave made." in notified.said
-    assert "Due:" not in notified.said
+    """Given a run whose guide was judged good on each condition in Round content-1, and whose new
+    generator refactored it in Round refactor-2, running the repository's tests as its developers
+    run them, and ended with made
+    When the orchestrator holds each condition good, puts the guide up, and writes the evaluator's
+    Cut
+    Then the generator's result lies in Round refactor-2, repository.py put-up puts the guide up,
+    and tree.py cut gives 1 saying the guide waits on the user's sign-off, writing no evaluator's
+    Cut"""
+    generated(b, command_signed(b))
+    evaluated(b, next_round(b, GUIDE, [], "evaluator"))
+    generated(b, next_round(b, GUIDE, rn_files.conditions("readme")))
     refactor = rn_files.round_of(b.folder, GUIDE, "refactor", 2)
     assert os.path.isfile(os.path.join(refactor, "generator.json"))
-    good = held(b, GUIDE, rn_files.conditions("readme"))
-    url = taken(b, c, good, "Refactored.", [b.script("repository", "put-up", b.run, GUIDE)])[0]
-    assert url.strip() == linked(b, GUIDE)
-    refused = c.bash(b.script("tree", "cut", b.run, "evaluator", GUIDE))
-    assert refused.exit_code == 1
-    assert "waits on the user's sign-off, not on its evaluator" in refused.output
+    assert put_up(b, GUIDE, rn_files.conditions("readme")) == linked(b, GUIDE)
+    refused = b.script(*cut_move(b, "evaluator", GUIDE))
+    assert refused.code == 1
+    assert "waits on the user's sign-off, not on its evaluator" in refused.err
     assert not os.path.exists(os.path.join(refactor, "evaluator-cut.json"))
-    ended(c, f"For your sign-off. Changes: {url.strip()}")
 
 
 @pytest.mark.supports("S1", "Design tree", "Round")
@@ -452,18 +334,17 @@ def test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round(b
     When the user types /rn:gm with what to change, and the orchestrator writes it as a decision
     by user of N1, holds N1 not good, and writes the generator's Cut
     Then the Cut lies in Round content-3, the last Round, its stage content, its deliverable holding
-    the user's words, and the generator starts"""
-    c = refactored(b)
+    the user's words"""
+    refactored(b)
     words = "the guide is for the accounting team alone"
-    cut_path = sent_back(b, c, GUIDE, rn_files.conditions("readme"), words)
+    cut_path = sent_back(b, GUIDE, rn_files.conditions("readme"), words)
     content = rn_files.round_of(b.folder, GUIDE, "content", 3)
     assert os.path.join(b.repo, cut_path) == os.path.join(content, "generator-cut.json")
-    given = rn_files.read_json(os.path.join(b.repo, cut_path))
+    given = cut_of(b, cut_path)
     assert (given["stage"], given["number"]) == ("content", 3)
     n1 = given["deliverable"]["necessary_conditions"][0]
     assert (n1["id"], n1["good"]) == ("N1", False)
     assert rn_files.decision(words, words, "user") in n1["decisions"]
-    assert started(c, "rn:generator", cut_path) is not None
 
 
 @pytest.mark.supports("S1", "Design tree", "Round")
@@ -472,29 +353,27 @@ def test_a_send_back_after_the_contents_last_round_is_remade_in_a_new_content_ro
     good in Round content-1, put up for the user's sign-off
     When the user types /rn:gm with what to change, and the orchestrator writes it as a decision
     by user of N1, holds N1 not good, and writes the generator's Cut
-    Then the Cut lies in Round content-2, its stage content, and the generator starts"""
-    c, _ = judged_command(b)
-    put_up(b, c, COMMAND, rn_files.conditions("light"))
+    Then the Cut lies in Round content-2, its stage content"""
+    judged_command(b)
+    put_up(b, COMMAND, rn_files.conditions("light"))
     words = "print the total on its own last line"
-    cut_path = sent_back(b, c, COMMAND, rn_files.conditions("light"), words)
+    cut_path = sent_back(b, COMMAND, rn_files.conditions("light"), words)
     content = rn_files.round_of(b.folder, COMMAND, "content", 2)
     assert os.path.join(b.repo, cut_path) == os.path.join(content, "generator-cut.json")
-    given = rn_files.read_json(os.path.join(b.repo, cut_path))
-    assert (given["stage"], given["number"]) == ("content", 2)
-    assert started(c, "rn:generator", cut_path) is not None
+    assert (cut_of(b, cut_path)["stage"], cut_of(b, cut_path)["number"]) == ("content", 2)
 
 
 @pytest.mark.supports("S1", "Design tree")
 def test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts(b: Bench):
     """Given a run whose command the evaluator judged good in Round content-1, put up
     When the user signs it off, and the orchestrator writes the guide's Cut
-    Then the command is done in its one line, its item of the work gone, and the guide's generator
-    starts with a Cut whose inputs name the command's path in the run's worktree"""
-    c, generator = command_signed(b)
+    Then the command is done in its one line, its item of the work gone, and the guide's Cut's
+    inputs name the command's path in the run's worktree"""
+    cut_path = command_signed(b)
     tree = b.tree()
     assert rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light") in tree["deliverables"]
     assert tree["work"] == [rn_files.work("make", GUIDE)]
-    given = rn_files.read_json(os.path.join(c.cwd, generator.start_use["tool_input"]["prompt"]))
+    given = cut_of(b, cut_path)
     assert [os.path.normpath(os.path.join(b.repo, each)) for each in given["inputs"]] == [
         os.path.join(b.worktree, COMMAND)
     ]
@@ -502,24 +381,22 @@ def test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts(b: Be
 
 @pytest.mark.supports("S1")
 def test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_requests_branch(b: Bench):
-    """Given a run whose guide the evaluator judged good in its Round of content, which a new
-    generator refactored, and put up
-    When the user signs the guide off, and the orchestrator checks the work whole at `final`
-    Then each deliverable of the tree is done, the remote's branch holds the command and the guide,
-    and the orchestrator's turn ends with no start due"""
-    c = refactored(b)
-    signed(b, c, whole=True)
+    """Given a run whose guide was judged good, refactored, and put up
+    When the user signs the guide off, and the orchestrator has the work checked whole
+    Then each deliverable of the tree is done, and the remote's branch holds the command and the
+    guide"""
+    refactored(b)
+    signed(b)
+    checked_whole(b)
     assert all(each["status"] == "done" for each in b.tree()["deliverables"])
     files = b.branch_files(f"rn-{b.name()}")
     assert COMMAND in files and GUIDE in files
-    stopped = c.stop("2/2 are done, and the final check passed.")
-    assert not stopped.blocked, stopped.said
 
 
 @pytest.mark.supports("S1", "Design tree")
 def test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open(b: Bench):
     """Given a run whose plan and command were put up and signed off, the guide still open
-    When the guide's generator starts
+    When the orchestrator writes the guide's Cut
     Then the commit of the command's sign-off is the branch's last, origin's branch doesn't hold
     it, and gh was asked to open the pull request once, as a draft, and never to mark it ready"""
     command_signed(b)
@@ -533,33 +410,18 @@ def test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open(b: Benc
     assert [each for each in asked if each[1:3] == ["pr", "ready"]] == []
 
 
-@pytest.mark.supports("S1", "Design tree")
-def test_the_pull_request_stays_a_draft_after_the_last_signoff(b: Bench):
-    """Given a run whose plan and command are done, and whose guide was judged good, refactored,
-    and put up
-    When the user signs the guide off, and the orchestrator records it, commits the change, and
-    checks the work whole
-    Then gh was asked to open the pull request once, as a draft, and never to mark it ready"""
-    c = refactored(b)
-    signed(b, c, whole=True)
-    asked = b.asked_gh()
-    created = [each for each in asked if each[1:3] == ["pr", "create"]]
-    assert len(created) == 1 and "--draft" in created[0]
-    assert [each for each in asked if each[1:3] == ["pr", "ready"]] == []
-
-
 @pytest.mark.supports("S1", "scripts")
 def test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci(b: Bench):
     """Given a run whose plan and command are done, and whose guide was judged good, refactored,
     and put up
-    When the user signs the guide off, and, at `final`, the orchestrator starts a plain subagent,
-    none of rn's roles, which runs repository.py diff, then repository.py ci
-    Then Lane lets the subagent start and run, diff prints the diff of the command and the guide
-    against the default branch, origin's branch holds the worktree's last commit, its tree with
-    each deliverable done, and ci prints that each check passed"""
-    c = refactored(b)
-    printed = signed(b, c, whole=True)
-    whole, checks = printed[-2:]
+    When the user signs the guide off, and the final check's subagent runs repository.py diff, then
+    repository.py ci
+    Then diff prints the diff of the command and the guide against the default branch, origin's
+    branch holds the worktree's last commit, its tree with each deliverable done, and ci prints
+    that each check passed"""
+    refactored(b)
+    signed(b)
+    whole, checks = checked_whole(b)
     assert f"+++ b/{COMMAND}" in whole and f"+++ b/{GUIDE}" in whole
     branch = f"rn-{b.name()}"
     assert git(b.origin, "rev-parse", branch) == git(b.worktree, "rev-parse", "HEAD")
@@ -569,53 +431,28 @@ def test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci(b: Benc
     assert "fail" not in checks
 
 
-def others_run(b: Bench) -> None:
-    """Makes the run 20991231-theirs of another conversation, newer by its last commit than any,
-    its plan done, and its command waiting on its evaluator, as its generator made it with each
-    condition good, its guide resting on the command."""
-    name = "20991231-theirs"
-    tree = rn_files.walkthrough_tree(name)
-    tree["context"]["session"] = "another-conversation"
-    folder = branch_run(b.repo, name, tree, "2099-12-31T09:00:00")
-    good = [("N1", ["x"]), ("N2", ["x"]), ("N3", ["x"])]
-    rn_files.a_round(folder, COMMAND, "content", 1, {"generator": rn_files.made(good)})
-
-
 @pytest.mark.supports("S1", "Design tree")
-@pytest.mark.parametrize("other", [False, True], ids=["alone", "beside-another-conversations-run"])
-def test_an_answer_of_where_the_user_checks_signs_off_the_plan(b: Bench, other: bool):
+def test_an_answer_of_where_the_user_checks_signs_off_the_plan(b: Bench):
     """Given a run whose plan is put up as the way to the goal, a step of the command and one of
-    the guide, the user checking each as recommended; alone, or beside a run of another
-    conversation, newer by its last commit, whose command waits on its evaluator
-    When the user answers `c`, each step, and the orchestrator writes each step's sign-off true,
-    runs tree.py signoff at `take`, reports `signed` by lane-result, and writes the command's Cut
-    Then the plan is done, each step's sign-off is true, the command's generator starts, and the
-    turn's end goes through, as the starts due are this conversation's run's alone"""
-    if other:
-        others_run(b)
-    c = to_plan_signoff(b)
-    c.type("c")
+    the guide
+    When the user answers that they check each step, and the orchestrator writes each step's
+    sign-off true, runs tree.py signoff, commits, and writes the command's Cut
+    Then the plan is done, each step's sign-off is true, and the command's Cut is written"""
+    to_plan_signoff(b)
     design_tree = b.tree()
     design_tree["steps"] = [
         rn_files.step("what it does", [COMMAND], True),
         rn_files.step("how it's used", [GUIDE], True),
     ]
-    written = c.write(None, b.tree_path, json.dumps(design_tree, indent=1) + "\n")
-    assert not written.blocked, written.said
-    ran(c, b.script("tree", "signoff", b.run))
-    assert not c.bash("lane-result signed").blocked
-    marked(c, "take")
-    cut_path = shared_steps(
-        b,
-        c,
-        ground="The user checks each step.",
-        moves=[b.script("tree", "cut", b.run, "generator", COMMAND)],
+    b.write_tree(design_tree)
+    b.ran("tree", "signoff", b.run)
+    cut_path = reviewed(
+        b, ground="The user checks each step.", moves=[cut_move(b, "generator", COMMAND)]
     )[0].strip()
     tree = b.tree()
     assert tree["deliverables"][0]["status"] == "done"
     assert [each["signoff"] for each in tree["steps"]] == [True, True]
-    assert started(c, "rn:generator", cut_path) is not None
-    ended(c, f'Making "{rn_files.COMMAND_NAME}".')
+    assert os.path.isfile(os.path.join(b.repo, cut_path))
 
 
 @pytest.mark.supports("S1", "Design tree")
@@ -626,138 +463,79 @@ def test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_t
     and one of the guide, and whose command the evaluator judged good in Round content-1
     When the orchestrator holds each condition good, puts the command up by repository.py put-up,
     and writes the guide's Cut
-    Then the command is done in its one line, the user is asked for no sign-off, as tree.py
-    signoff finds none waiting, and the guide's generator starts"""
-    c, _ = judged_command(b)
+    Then the command is done in its one line, tree.py signoff finds none waiting, and the guide's
+    Cut is written"""
+    judged_command(b)
     design_tree = held(b, COMMAND, rn_files.conditions("light"))
     design_tree["steps"] = [
         rn_files.step("what it does", [COMMAND], False),
         rn_files.step("how it's used", [GUIDE], True),
     ]
-    cut_path = taken(
+    cut_path = reviewed(
         b,
-        c,
         design_tree,
         "The Round's findings.",
-        [
-            b.script("repository", "put-up", b.run, COMMAND),
-            b.script("tree", "cut", b.run, "generator", GUIDE),
-        ],
+        [("repository", "put-up", b.run, COMMAND), cut_move(b, "generator", GUIDE)],
     )[1].strip()
     assert rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light") in b.tree()["deliverables"]
-    assert c.bash(b.script("tree", "signoff", b.run)).exit_code == 1
-    assert started(c, "rn:generator", cut_path) is not None
+    assert b.script("tree", "signoff", b.run).code == 1
+    assert os.path.isfile(os.path.join(b.repo, cut_path))
 
 
 @pytest.mark.supports("S1", "Round")
 def test_a_resumed_generator_after_its_answer_ends_with_made_and_the_evaluator_is_due(b: Bench):
-    """Given a run whose command's generator gave a point that the user answered, and that the
-    orchestrator resumed with the answer
-    When the generator keeps its steps and ends with made
-    Then its end reads `rn:generator gave made. Due: rn:evaluator.`"""
-    c, generator = signed_plan(b)
-    pointed(b, c, generator, "Should a line's quantity default to 1?")
-    about = "a line's quantity"
-    taken(
-        b,
-        c,
-        held(b, COMMAND, [], {"N1": [rn_files.decision(about, "yes, 1", "user")]}),
-        "Answered.",
-    )
-    cut(b, c, "generator", COMMAND)
-    c.resume(generator, "yes, 1")
-    notified = generated(b, c, generator)
-    assert "rn:generator gave made. Due: rn:evaluator." in notified.said
+    """Given a run whose command's generator gave a point that the user answered, and whose Cut
+    the orchestrator wrote again with the answer
+    When the generator makes the command and ends with made
+    Then check.py takes its result, and tree.py cut writes the evaluator's Cut in Round
+    content-1"""
+    cut_path = signed_plan(b)
+    pointed(b, cut_path, "Should a line's quantity default to 1?")
+    answered = {"N1": [rn_files.decision("a line's quantity", "yes, 1", "user")]}
+    reviewed(b, held(b, COMMAND, [], answered), "Answered.", [cut_move(b, "generator", COMMAND)])
+    generated(b, cut_path)
+    evaluator = b.ran(*cut_move(b, "evaluator", COMMAND)).strip()
+    first = rn_files.round_of(b.folder, COMMAND, "content", 1)
+    assert os.path.join(b.repo, evaluator) == os.path.join(first, "evaluator-cut.json")
 
 
 @pytest.mark.supports("S1", "Round")
-def test_an_evaluator_started_reads_only_its_cut_and_tries_in_the_peoples_folder(b: Bench):
-    """Given a run whose command's evaluator started with its Cut
-    When it keeps its steps and ends with judged
-    Then its end reads `rn:evaluator gave judged.`, and its answers lie in Round content-1"""
-    c, evaluator = evaluator_started(b)
-    notified = evaluated(b, c, evaluator)
-    assert "rn:evaluator gave judged." in notified.said
+def test_an_evaluators_answers_lie_in_its_round_and_hold_its_check(b: Bench):
+    """Given a run whose command's evaluator has its Cut
+    When it tries the command in the people's folder and ends with judged
+    Then check.py takes its answers, which lie in Round content-1"""
+    evaluated(b, evaluator_cut(b))
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
     assert rn_files.read_json(os.path.join(first, "evaluator.json"))["result"] == "judged"
-
-
-@pytest.mark.supports("S1", "Round")
-def test_a_generator_whose_trial_falls_short_goes_back_to_decide_and_makes_it_again(b: Bench):
-    """Given a run whose command's generator decided, wrote the command at make, and tried it as
-    its people would, a condition that they meet falling short
-    When it goes back to decide by lane-back, marks make before deciding again, then reports each
-    decide item, writes the command again, tries it, runs the checks, and ends with made
-    Then the lane-back goes through, Lane stops the early mark naming `decide`, and the end reads
-    `rn:generator gave made. Due: rn:evaluator.`"""
-    c, generator = decided_command(b)
-    given = cut_of(c, generator)
-    command = os.path.join(b.worktree, COMMAND)
-    generator.write(command, "print('invoice')\n")
-    items(c, generator, "make", rn_files.items_at("light", "make"))
-    marked(c, "make", generator)
-    back = generator.bash("lane-back decide")
-    assert not back.blocked and not stopped(back.said), back.said
-    early = generator.bash("lane-step make")
-    assert stopped(early.said) and "`decide`" in early.said
-    items(c, generator, "decide", rn_files.items_at("light", "decide"))
-    marked(c, "decide", generator)
-    generator.write(command, COMMAND_TEXT)
-    items(c, generator, "make", rn_files.items_at("light", "make"))
-    marked(c, "make", generator)
-    made = rn_files.made([(each, ["import sys"]) for each in rn_files.conditions("light")])
-    generator.write(os.path.join(c.cwd, given["round"], "generator.json"), json.dumps(made))
-    marked(c, "try", generator)
-    ran(c, b.script("repository", "checks", b.run, COMMAND), generator)
-    generator.bash("lane-result made")
-    marked(c, "check", generator)
-    assert "rn:generator gave made. Due: rn:evaluator." in reached(generator).said
 
 
 @pytest.mark.supports("S1", "Design tree")
 def test_a_blocker_only_the_user_can_mend_stops_only_its_deliverable(b: Bench):
     """Given a run whose plan holds the command and a changelog, each resting on none, signed off,
-    both generators started, the command made and judged good, and gh with no login
-    When the orchestrator puts the command up at the step move, which repository.py put-up
-    refuses, tells the user the blocker, and ends its turn; and then, at the changelog's
-    generator's end, keeps the blocker as an open decision of the command's N1 and starts the
-    changelog's evaluator
-    Then the put-up gives 1 saying gh has no login, the first turn ends with no blocked while the
-    changelog's generator runs, Lane stopping no move, the changelog's evaluator starts, and a start
-    of the command's generator is stopped as not due"""
-    c, cuts = signed_apart(b, apart_tree(b), [COMMAND, CHANGELOG])
-    generator = started(c, "rn:generator", cuts[0])
-    other = started(c, "rn:generator", cuts[1])
-    ended(c, "Making both.")
-    generated(b, c, generator)
-    evaluator = next_round(b, c, COMMAND, [], "evaluator")[1]
-    evaluated(b, c, evaluator)
+    the command made and judged good, the changelog's generator still making it, and gh with no
+    login
+    When the orchestrator puts the command up, which repository.py put-up refuses, keeps the
+    blocker as an open decision of the command's N1, and, at the changelog's generator's end,
+    writes the changelog's evaluator's Cut
+    Then the put-up gives 1 saying gh has no login, the changelog's evaluator's Cut is written,
+    and tree.py cut of the command's generator gives 1, as it waits on the user's answer"""
+    command, changelog = signed_apart(b, apart_tree(b), [COMMAND, CHANGELOG])
+    generated(b, command)
+    evaluated(b, next_round(b, COMMAND, [], "evaluator"))
     gh_double.logged_out(b.gh)
-    held_good = held(b, COMMAND, rn_files.conditions("light"))
-    written_tree(b, c, held_good)
-    for step in ("take", "review"):
-        marked(c, step)
-    touched_items(b, c)
-    marked(c, "touched")
-    ran(c, b.script("tree", "commit", b.run, "The Round's findings."))
-    marked(c, "commit")
-    refused = c.bash(b.script("repository", "put-up", b.run, COMMAND))
-    assert refused.exit_code == 1
-    assert "You are not logged into any GitHub hosts." in refused.output
-    marked(c, "move")
-    marked(c, "final")
-    ended(c, f"A blocker that's yours: {refused.output}The changelog goes on.")
-    notified = generated(b, c, other, {CHANGELOG: "# Changes\n"})
-    assert "rn:generator gave made. Due: rn:evaluator." in notified.said
+    reviewed(b, held(b, COMMAND, rn_files.conditions("light")), "The Round's findings.")
+    refused = b.script("repository", "put-up", b.run, COMMAND)
+    assert refused.code == 1
+    assert "You are not logged into any GitHub hosts." in refused.err
+    generated(b, changelog, {CHANGELOG: "# Changes\n"})
     blocker = rn_files.decision("gh's login", None)
-    cut_path = taken(
+    cut_path = reviewed(
         b,
-        c,
         held(b, COMMAND, rn_files.conditions("light"), {"N1": [blocker]}),
         "The put-up waits on gh's login.",
-        [b.script("tree", "cut", b.run, "evaluator", CHANGELOG)],
+        [cut_move(b, "evaluator", CHANGELOG)],
     )[0].strip()
-    assert started(c, "rn:evaluator", cut_path) is not None
-    answer, agent = c.start("rn:generator", "Make the command again.", "Run rn:generator")
-    assert agent is None
-    assert "No start of rn's subagents is due now." in answer.said
+    assert os.path.isfile(os.path.join(b.repo, cut_path))
+    again = b.script(*cut_move(b, "generator", COMMAND))
+    assert again.code == 1
+    assert "the user's answer" in again.err

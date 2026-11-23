@@ -1,7 +1,6 @@
 """Decides where the best practice of each kind lies and what of it each role gets: the run's own
 best practices in `.rn/best-practices/<kind>/` before rn's, each read from its
-`best-practice.json`, the items a maker takes at each stage, and the goal and conditions alone
-that an evaluator judges by."""
+`best-practice.json`, and the goal and conditions alone that an evaluator judges by."""
 
 from __future__ import annotations
 
@@ -74,25 +73,6 @@ def read(folder: str) -> Practice:
     if found:
         raise Wrong(f"{path}: leaves rn's form of a best practice at {found[0]}")
     return practice
-
-
-def items(practice: Practice, at: str) -> list[str]:
-    """The IDs of the items that a maker takes at a stage of the work.
-
-    Takes: the best practice, and `decide` or `make`.
-    Gives: each item's ID marked so, its condition's ID and its place from 1, such as `N1.2`, in
-    the best practice's order.
-    Changes: nothing.
-    Refuses: Wrong where `at` is neither `decide` nor `make`.
-    """
-    if at not in ("decide", "make"):
-        raise Wrong(f"a maker takes items at decide or make, not {at!r}")
-    return [
-        f"{condition['id']}.{place}"
-        for condition in conditions(practice["goal"])
-        for place, item in enumerate(condition["items"], 1)
-        if item["at"] == at
-    ]
 
 
 def judged(practice: Practice) -> dict[str, Any]:

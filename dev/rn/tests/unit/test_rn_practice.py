@@ -1,8 +1,7 @@
 """The unit cases of practice.py, where each kind's best practice lies and what of it each role
 gets: `kinds` of rn's own best practices, and of a run's own beside them, before them, and a folder
 of neither; `read` of a best practice that holds its form, one missing, one that isn't JSON, and one
-out of its form; `items` at each stage, of kinds whose conditions lie out of their IDs' order, and
-of a stage of neither; `judged` without any practice; and `refactoring` of each of rn's kinds and
+out of its form; `judged` without any practice; and `refactoring` of each of rn's kinds and
 of a kind near one named. `read` holds a best practice to rn's own form,
 domain/schemas/best-practice.schema.json, which rn installs."""
 
@@ -16,7 +15,7 @@ from typing import Any
 import pytest
 import rn_files
 from fault import Wrong
-from practice import items, judged, kinds, read, refactoring
+from practice import judged, kinds, read, refactoring
 
 
 def rns_kinds() -> dict[str, str]:
@@ -136,52 +135,6 @@ def test_read_of_a_best_practice_out_of_its_form_is_refused_naming_its_first_fau
     with pytest.raises(Wrong, match="best-practice.json") as raised:
         read(str(tmp_path))
     assert "inputs" in str(raised.value)
-
-
-@pytest.mark.supports("test_the_generators_make_is_held_to_its_best_practices_make_items")
-def test_items_of_light_at_each_stage_are_its_ids_in_order():
-    """Given rn's light best practice, read from JSON
-    When its items at decide, and at make, are asked
-    Then decide gives N1.1, N1.2, N1.3, and make N1.4, N1.5, N2.1, N3.1, each its condition's ID
-    and its place among the condition's items"""
-    practice = rn_files.practice("light")
-    assert items(practice, "decide") == ["N1.1", "N1.2", "N1.3"]
-    assert items(practice, "make") == ["N1.4", "N1.5", "N2.1", "N3.1"]
-
-
-@pytest.mark.supports("test_the_generators_make_is_held_to_its_best_practices_make_items")
-@pytest.mark.parametrize("kind", ["readme", "test-design", "meta", "design-tree"])
-@pytest.mark.parametrize("at", ["decide", "make"])
-def test_items_keep_the_best_practices_order_whatever_its_ids(kind: str, at: str):
-    """Given rn's best practice of the kind, read from JSON, test-design's and meta's conditions
-    lying out of their IDs' order, and design-tree's with no make item under N1
-    When its items at the stage are asked
-    Then each item of the stage is given in the best practice's order, by its condition's ID and
-    its place among the condition's items"""
-    assert items(rn_files.practice(kind), at) == rn_files.items_at(kind, at)
-
-
-@pytest.mark.supports("test_the_generators_make_is_held_to_its_best_practices_make_items")
-def test_items_of_a_best_practice_with_none_at_the_stage_are_none():
-    """Given light's best practice with each item marked make
-    When its items at decide are asked
-    Then there are none"""
-    practice = rn_files.practice("light")
-    for factor in practice["goal"]["critical_success_factors"]:
-        for each in factor["necessary_conditions"]:
-            for item in each["items"]:
-                item["at"] = "make"
-    assert items(practice, "decide") == []
-
-
-@pytest.mark.supports("test_the_generators_make_is_held_to_its_best_practices_make_items")
-@pytest.mark.parametrize("at", ["Make", "deciding", "", "try"])
-def test_items_at_a_stage_of_neither_are_refused(at: str):
-    """Given rn's light best practice
-    When its items at a stage that is neither decide nor make are asked
-    Then it raises Wrong"""
-    with pytest.raises(Wrong):
-        items(rn_files.practice("light"), at)
 
 
 @pytest.mark.supports("test_the_evaluators_cut_holds_only_what_the_people_have")

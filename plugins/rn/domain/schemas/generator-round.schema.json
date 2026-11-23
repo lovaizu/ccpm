@@ -9,7 +9,7 @@
  "additionalProperties": false,
  "properties": {
   "result": {
-   "description": "The word it gives as it ends, also by lane-result: made, once the deliverable is made and tried; point, where a point that only the user can settle stops it.",
+   "description": "The word it gives as it ends: made, once the deliverable is made and tried; point, where a point that only the user can settle stops it.",
    "enum": [
     "made",
     "point"

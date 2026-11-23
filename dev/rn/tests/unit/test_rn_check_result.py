@@ -132,7 +132,7 @@ def evaluator(run: Run, result: Any) -> list[str]:
 # The generator.
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
+@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_refused")
 def test_a_generators_made_that_holds_its_cut_has_no_fault(run: Run):
     """Given a generator's made naming the command, its test, and a note in the Round's folder,
     with N1 good by the command's line and N2 by the test's
@@ -143,7 +143,7 @@ def test_a_generators_made_that_holds_its_cut_has_no_fault(run: Run):
     assert generator(run, result) == []
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
+@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_refused")
 def test_a_generators_made_with_no_good_and_no_file_has_no_fault(run: Run):
     """Given a generator's made with no good and no file, as its schema lets it
     When its faults are asked
@@ -151,7 +151,7 @@ def test_a_generators_made_with_no_good_and_no_file_has_no_fault(run: Run):
     assert generator(run, {"result": "made"}) == []
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
+@pytest.mark.supports("test_a_generators_result_unwritten_is_refused")
 def test_a_generators_point_with_its_words_has_no_fault(run: Run):
     """Given a generator's point with the point's words
     When its faults are asked
@@ -159,7 +159,7 @@ def test_a_generators_point_with_its_words_has_no_fault(run: Run):
     assert generator(run, rn_files.point()) == []
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
+@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_refused")
 def test_a_generators_result_out_of_its_schema_is_a_fault_at_its_place(run: Run):
     """Given a generator's result `done`
     When its faults are asked
@@ -168,7 +168,7 @@ def test_a_generators_result_out_of_its_schema_is_a_fault_at_its_place(run: Run)
     assert any(each.startswith("/result") for each in found)
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
+@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_refused")
 def test_a_generators_good_of_a_condition_the_deliverable_lacks_is_a_fault_naming_it(run: Run):
     """Given a generator's made with N1 good and N9, which light's command doesn't hold, good
     When its faults are asked
@@ -178,7 +178,7 @@ def test_a_generators_good_of_a_condition_the_deliverable_lacks_is_a_fault_namin
     assert "N9" in found[0]
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
+@pytest.mark.supports("test_a_generators_result_unwritten_is_refused")
 def test_a_generators_point_with_no_words_is_a_fault(run: Run):
     """Given a generator's result `point` with no `point`
     When its faults are asked
@@ -188,7 +188,7 @@ def test_a_generators_point_with_no_words_is_a_fault(run: Run):
     assert "point" in found[0]
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
+@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_refused")
 @pytest.mark.parametrize(
     "outside", ["README.md", "tests-old/test_command.py", "invoicer/__main__.py.bak", "../notes.md"]
 )
@@ -202,7 +202,7 @@ def test_a_generators_file_outside_its_paths_and_round_is_a_fault_naming_it(run:
     assert outside in found[0]
 
 
-@pytest.mark.supports("test_a_generators_good_quoting_a_line_no_file_holds_is_stopped")
+@pytest.mark.supports("test_a_generators_good_quoting_a_line_no_file_holds_is_refused")
 def test_a_generators_line_that_no_file_of_the_deliverable_holds_is_a_fault_naming_it(run: Run):
     """Given a generator's made whose N1 quotes the command's line and `# invoicer`, a line that
     only the README, outside the deliverable, holds
@@ -213,7 +213,7 @@ def test_a_generators_line_that_no_file_of_the_deliverable_holds_is_a_fault_nami
     assert "# invoicer" in found[0]
 
 
-@pytest.mark.supports("test_a_generators_good_quoting_a_line_no_file_holds_is_stopped")
+@pytest.mark.supports("test_a_generators_good_quoting_a_line_no_file_holds_is_refused")
 def test_a_generators_line_changed_since_it_quoted_it_is_a_fault(run: Run):
     """Given a generator's made whose N1 quotes the command's line, and the command changed after
     so that it no longer holds it
@@ -235,7 +235,7 @@ def answers(good: list[str], more: list[str]) -> Any:
     return rn_files.judged([(c, [LINE]) for c in good], [(c, "They print it.") for c in more])
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_an_evaluators_answer_of_each_condition_once_has_no_fault(run: Run):
     """Given an evaluator's judged with N1 and N3 good and N2 more
     When its faults are asked
@@ -243,7 +243,7 @@ def test_an_evaluators_answer_of_each_condition_once_has_no_fault(run: Run):
     assert evaluator(run, answers(["N1", "N3"], ["N2"])) == []
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_an_evaluators_condition_unanswered_is_a_fault_naming_it(run: Run):
     """Given an evaluator's judged with N1 and N2 good, N3 unanswered
     When its faults are asked
@@ -253,7 +253,7 @@ def test_an_evaluators_condition_unanswered_is_a_fault_naming_it(run: Run):
     assert "N3" in found[0]
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_an_evaluators_conditions_each_unanswered_are_each_a_fault(run: Run):
     """Given an evaluator's judged with no answer at all
     When its faults are asked
@@ -263,7 +263,7 @@ def test_an_evaluators_conditions_each_unanswered_are_each_a_fault(run: Run):
     assert all(any(c in each for each in found) for c in ("N1", "N2", "N3"))
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_an_evaluators_condition_answered_good_and_more_is_a_fault_naming_it(run: Run):
     """Given an evaluator's judged with N1, N2, and N3 good, and N2 more as well
     When its faults are asked
@@ -273,7 +273,7 @@ def test_an_evaluators_condition_answered_good_and_more_is_a_fault_naming_it(run
     assert "N2" in found[0]
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 @pytest.mark.parametrize(
     ("good", "more"), [(["N1", "N1", "N2", "N3"], []), (["N2", "N3"], ["N1", "N1"])]
 )
@@ -288,7 +288,7 @@ def test_an_evaluators_condition_answered_twice_is_a_fault_naming_it(
     assert "N1" in found[0]
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 @pytest.mark.parametrize("unknown", ["N4", "N10", "n1", "C1"])
 def test_an_evaluators_id_the_cut_doesnt_hold_is_a_fault_naming_it(run: Run, unknown: str):
     """Given an evaluator's judged answering N1 to N3 once, and an ID the Cut doesn't hold among
@@ -300,7 +300,7 @@ def test_an_evaluators_id_the_cut_doesnt_hold_is_a_fault_naming_it(run: Run, unk
     assert unknown in found[0]
 
 
-@pytest.mark.supports("test_a_generators_good_quoting_a_line_no_file_holds_is_stopped")
+@pytest.mark.supports("test_a_generators_good_quoting_a_line_no_file_holds_is_refused")
 def test_an_evaluators_line_in_the_deliverables_more_paths_holds(run: Run):
     """Given an evaluator's judged whose N2 quotes the line of the command's test under tests/
     When its faults are asked
@@ -309,7 +309,7 @@ def test_an_evaluators_line_in_the_deliverables_more_paths_holds(run: Run):
     assert evaluator(run, result) == []
 
 
-@pytest.mark.supports("test_a_generators_good_quoting_a_line_no_file_holds_is_stopped")
+@pytest.mark.supports("test_a_generators_good_quoting_a_line_no_file_holds_is_refused")
 def test_an_evaluators_line_that_no_file_of_the_deliverable_holds_is_a_fault(run: Run):
     """Given an evaluator's judged whose N1 quotes `print('receipt')`, which no file holds
     When its faults are asked
@@ -320,7 +320,7 @@ def test_an_evaluators_line_that_no_file_of_the_deliverable_holds_is_a_fault(run
     assert "print('receipt')" in found[0]
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_an_evaluators_result_out_of_its_schema_is_a_fault(run: Run):
     """Given an evaluator's judged whose N1's good_when is empty
     When its faults are asked
@@ -331,7 +331,7 @@ def test_an_evaluators_result_out_of_its_schema_is_a_fault(run: Run):
     assert any(each.startswith("/more/0/good_when") for each in found)
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 @pytest.mark.parametrize("role", ["orchestrator", "Evaluator", ""])
 def test_a_role_of_neither_is_refused(run: Run, role: str):
     """Given the evaluator's Cut and its judged

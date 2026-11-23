@@ -11,7 +11,7 @@
  "additionalProperties": false,
  "properties": {
   "result": {
-   "description": "The word it gives as it ends, also by lane-result: judged, once each condition has its answer.",
+   "description": "The word it gives as it ends: judged, once each condition has its answer.",
    "enum": [
     "judged"
    ]

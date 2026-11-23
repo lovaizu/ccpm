@@ -164,7 +164,7 @@ def test_a_commit_that_a_commit_check_refuses_cant_run(tmp_path: Any, host: Any)
 # pause
 
 
-@pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
+@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_commits_each_change_and_pushes_the_branch_with_its_upstream(
     tmp_path: Any, host: Any
 ):
@@ -184,7 +184,7 @@ def test_a_pause_commits_each_change_and_pushes_the_branch_with_its_upstream(
     assert git(worktree(run), "status", "--porcelain").strip() == ""
 
 
-@pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
+@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_with_no_change_pushes_the_last_commit_alone(tmp_path: Any, host: Any):
     """Given a run with nothing changed since its last commit
     When pause is given the run
@@ -216,7 +216,7 @@ def test_a_pause_leaves_the_users_branch_and_change_as_they_were(tmp_path: Any, 
     ]
 
 
-@pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
+@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
     """Given a run whose repository has no remote
     When pause is given the run
@@ -227,7 +227,7 @@ def test_a_pause_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
         pause(run, host)
 
 
-@pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
+@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
     tmp_path: Any, host: Any
 ):
@@ -247,7 +247,7 @@ def test_a_pause_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
             os.chmod(folder, os.stat(folder).st_mode | stat.S_IWUSR)
 
 
-@pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
+@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_to_a_remote_that_isnt_there_cant_run(tmp_path: Any, host: Any):
     """Given a run whose remote origin names a folder that doesn't exist
     When pause is given the run

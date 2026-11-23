@@ -151,11 +151,10 @@ class Found(NamedTuple):
     unchecked: str | None
 
 
-def found(repository: str, host: Host, session: str | None = None) -> Found:
+def found(repository: str, host: Host) -> Found:
     """The run to pick up, its worktree made again where none lies.
 
-    Takes: the top of the user's repository, the host, and the session ID of the conversation that
-    picks it up, or None outside Claude Code.
+    Takes: the top of the user's repository, and the host.
     Gives: the run that `newest` gives once origin's branches of the runs are fetched, each that
     origin no longer holds pruned, so that a run cancelled or deleted on GitHub is never picked
     up, or None where it gives none; where git can't fetch, such as with no network, the run
@@ -166,9 +165,7 @@ def found(repository: str, host: Host, session: str | None = None) -> Found:
     on a new local branch `rn-<name>` from origin's, so that a pick-up works in a fresh clone or
     on another machine; keeps the runs' worktrees out of the user's untracked files, as `new`
     does. Inside herdr, then has herdr open the worktree's workspace, leaving the focus where it
-    is, as herdr opens only a worktree that lies there. Where a session is given and the run's
-    design tree holds another, writes it in the tree's context, so that rn's adapters find the
-    run as the conversation's own, and commits the tree alone as `rn: <name>, picked up`.
+    is, as herdr opens only a worktree that lies there.
     Refuses: Wrong as `newest` refuses; CantRun where git can't make the worktree, or herdr can't
     open it, with what it said.
     """
@@ -182,8 +179,6 @@ def found(repository: str, host: Host, session: str | None = None) -> Found:
         return Found(run, unchecked)
     if not os.path.isdir(run.worktree):
         _made_again(run, host)
-    if session is not None:
-        _claimed(run, session, host)
     return Found(run, unchecked)
 
 
@@ -200,22 +195,6 @@ def _made_again(run: RunPlace, host: Host) -> None:
         opened = ["herdr", "worktree", "open", "--cwd", repository, "--path", run.worktree]
         what = "herdr can't open the run's worktree"
         checked(host, [*opened, "--no-focus"], repository, CantRun, what)
-
-
-def _claimed(run: RunPlace, session: str, host: Host) -> None:
-    """Writes the session in the run's design tree's context, where it holds another, and commits
-    the tree alone."""
-    tree = form.read(run.tree)
-    if tree["context"].get("session") == session:
-        return
-    tree["context"]["session"] = session
-    form.write(run.tree, tree)
-    path = os.path.relpath(run.tree, run.worktree)
-    for each in (
-        ["add", "--", path],
-        ["commit", "-q", "-m", f"rn: {run.name}, picked up", "--", path],
-    ):
-        checked(host, ["git", *each], run.worktree, CantRun, "git can't commit the pick-up")
 
 
 class Gone(NamedTuple):

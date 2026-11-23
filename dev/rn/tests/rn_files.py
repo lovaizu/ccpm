@@ -77,19 +77,6 @@ def conditions(kind: str) -> list[str]:
     ]
 
 
-def items_at(kind: str, at: str) -> list[str]:
-    """The ID of each item of rn's best practice of the kind that a maker takes at the stage, its
-    condition's ID and its place among the condition's items from 1, such as `N1.2`, in the best
-    practice's order, as practice.items' contract names them."""
-    found = []
-    for factor in practice(kind)["goal"]["critical_success_factors"]:
-        for each in factor["necessary_conditions"]:
-            for place, item in enumerate(each["items"], 1):
-                if item["at"] == at:
-                    found.append(f"{each['id']}.{place}")
-    return found
-
-
 def judged_by(kind: str) -> dict[str, Any]:
     """What an evaluator judges by, of rn's best practice of the kind, as practice.judged's
     contract names it: the goal's `what` and its factors, each condition with its id, about, and
@@ -179,13 +166,12 @@ def context(
     closes: Sequence[int] = (), refs: Sequence[int] = (), pr: str | None = None
 ) -> dict[str, Any]:
     """A design tree's context: rn's version, the walkthrough's languages, the issues, the pull
-    request, and no session, as a run started outside Claude Code holds."""
+    request."""
     return {
         "rn": version(),
         "languages": {"deliverables": DELIVERABLES_LANGUAGE, "conversation": CONVERSATION_LANGUAGE},
         "issues": {"closes": list(closes), "refs": list(refs)},
         "pr": pr,
-        "session": None,
     }
 
 

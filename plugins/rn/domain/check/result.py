@@ -1,6 +1,6 @@
-"""Decides whether a role's result holds what its Cut gave it, beyond what a rule of Lane's holds:
-its form, each condition answered once by its ID, each line it quotes standing in the deliverable,
-and each Markdown file of the deliverable holding its kind's template."""
+"""Decides whether a role's result holds what its Cut gave it: its form, each condition answered
+once by its ID, each line it quotes standing in the deliverable, and each Markdown file of the
+deliverable holding its kind's template."""
 
 from __future__ import annotations
 

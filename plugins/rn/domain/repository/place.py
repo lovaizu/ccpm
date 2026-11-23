@@ -4,7 +4,6 @@ which run a conversation works on."""
 
 from __future__ import annotations
 
-import json
 import os
 import re
 from dataclasses import dataclass
@@ -78,35 +77,6 @@ def named(today: date, slug: str) -> str:
             " overnight-claude-p-queue"
         )
     return f"{today:%Y%m%d}-{slug}"
-
-
-def of_session(repository: str, session: str) -> RunPlace | None:
-    """The run that the conversation of the session works on.
-
-    Takes: the top of the user's repository, and the conversation's session ID, as Lane gives it to
-    rn's adapters and Claude Code gives it to Bash as `CLAUDE_CODE_SESSION_ID`.
-    Gives: the run whose design tree, in its worktree here, holds the session in its context, as
-    `new` and a pick-up write it; of several, the one whose tree was written last, as the run that
-    the conversation works on now; None where none does.
-    Changes: nothing.
-    Refuses: Wrong where a run's design tree isn't JSON, naming its path.
-    """
-    worktrees = os.path.join(repository, ".claude", "worktrees")
-    folders = sorted(os.listdir(worktrees)) if os.path.isdir(worktrees) else []
-    held: list[tuple[float, RunPlace]] = []
-    for each in folders:
-        matched = _WORKTREE.fullmatch(each)
-        run = RunPlace(repository, f"{matched[1]}-{matched[2]}") if matched else None
-        if run is None or not os.path.isfile(run.tree):
-            continue
-        try:
-            with open(run.tree, encoding="utf-8") as file:
-                tree = json.load(file)
-        except ValueError as error:
-            raise Wrong(f"{run.tree}: isn't JSON: {error}") from None
-        if tree["context"].get("session") == session:
-            held.append((os.path.getmtime(run.tree), run))
-    return max(held, key=lambda each: each[0])[1] if held else None
 
 
 def of_folder(cwd: str, folder: str) -> RunPlace:

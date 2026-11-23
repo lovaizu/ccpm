@@ -21,8 +21,7 @@ def folder(run: RunPlace, round_: Round) -> str:
 
     Takes: the run, and the Round.
     Gives: the absolute path `<tempfile.gettempdir()>/rn-trial-<run's name>-<Round's folder's
-    name within the run's Rounds, each `/` as `-`>/`, the same for each call, so that Lane's
-    rules of the evaluator's start name it before it's made.
+    name within the run's Rounds, each `/` as `-`>/`, the same for each call.
     Changes: nothing.
     Refuses: nothing.
     """

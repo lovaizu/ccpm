@@ -1,4 +1,4 @@
-"""check.py, as Lane's check at a role's end runs it to hold the role's result to its Cut:
+"""check.py, as a role runs it before it ends, to hold its result to its Cut:
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py <role> <cut>`. It runs the code of check.py in
 `domain/check/`, whose `command` module says what it takes and gives."""
 

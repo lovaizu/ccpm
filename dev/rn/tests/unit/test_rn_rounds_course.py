@@ -165,7 +165,7 @@ def test_a_round_made_with_no_evaluator_yet_waits_on_the_evaluator(results: str)
     assert next_of(node(folder=results), done, False) == Next("evaluator", "content", False)
 
 
-@pytest.mark.supports("test_no_evaluator_starts_after_a_refactor_round")
+@pytest.mark.supports("test_no_evaluator_is_due_after_a_refactor_round")
 def test_a_refactor_round_made_waits_on_no_evaluator(results: str):
     """Given the command judged good in content-1 and made in refactor-2, no evaluator's result in
     it
@@ -175,7 +175,7 @@ def test_a_refactor_round_made_waits_on_no_evaluator(results: str):
     assert next_of(node(True, folder=results), done, True) == Next("sign-off", None, False)
 
 
-@pytest.mark.supports("test_a_pause_stops_the_evaluator_too")
+@pytest.mark.supports("test_a_pause_while_the_evaluator_tries_pushes_its_cut")
 def test_a_round_made_after_an_earlier_one_judged_waits_on_its_evaluator(results: str):
     """Given the command judged short in content-1 and made in content-2, its evaluator stopped by
     a pause with no result

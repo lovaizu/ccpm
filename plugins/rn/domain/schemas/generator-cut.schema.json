@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "generator's Cut",
- "description": "What the orchestrator gives the generator for one Round, at <round>/generator-cut.json, which the start's prompt names by its path: all the generator gets of the run. Lane's adapter of the rules reads it for the start's steps.",
+ "description": "What the orchestrator gives the generator for one Round, at <round>/generator-cut.json, which the start's prompt names by its path: all the generator gets of the run.",
  "type": "object",
  "required": [
   "goal",

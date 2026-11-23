@@ -171,7 +171,7 @@ def test_no_new_round_of_a_stage_that_holds_its_most(
         assert sum(1 for each in held if each.round.stage == found.stage) < MOST[found.stage]
 
 
-@pytest.mark.supports("test_no_evaluator_starts_after_a_refactor_round")
+@pytest.mark.supports("test_no_evaluator_is_due_after_a_refactor_round")
 @given(courses())
 def test_no_evaluator_in_a_refactor_round(course: tuple[dict[str, Any], list[Any], bool]):
     """Given any deliverable's node, any course of its Rounds, and whether its kind is refactored

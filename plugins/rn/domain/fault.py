@@ -1,6 +1,6 @@
-"""Decides how each of rn's commands, and each adapter that Lane runs, says what stopped it: a fault
-of the input that whoever ran it can mend, a thing outside the work that's missing, or a check that
-couldn't run; and how each ends, with what it prints and the exit code it gives."""
+"""Decides how each of rn's commands says what stopped it: a fault of the input that whoever ran it
+can mend, a thing outside the work that's missing, or a check that couldn't run; and how each ends,
+with what it prints and the exit code it gives."""
 
 from __future__ import annotations
 
@@ -43,8 +43,8 @@ def answered(script: str, call: Callable[[], Answer]) -> Answer:
 def end(main: Callable[[], Answer]) -> NoReturn:
     """Ends the command with what its `main` gave: the exit code, what goes to stdout, and what
     goes to stderr. Where `main` raises an error that no fault names, it ends with 2 and the
-    error's traceback on stderr, as Lane reads 1 as a problem that stops the move and 2 as a
-    check that couldn't check, which lets it through."""
+    error's traceback on stderr, as the role that ran it reads 1 as a fault of its input to mend
+    and 2 as a check that couldn't check, which a rerun checks no more."""
     try:
         code, printed, said = main()
     except Exception:  # noqa: BLE001 - the entry of each command, where any error ends it.

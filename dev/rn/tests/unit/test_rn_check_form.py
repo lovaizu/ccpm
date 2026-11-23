@@ -102,7 +102,7 @@ def test_each_item_of_an_array_is_held_to_items_by_its_index(schema):
     assert pointers(faults(value('["x", 2, "y", 3]'), path)) == ["/1", "/3"]
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_min_items_holds_at_its_limit_and_refuses_one_less(schema):
     """Given a schema whose property `lines` takes at least 1 item
     When [] and ["x"] are held to it
@@ -112,7 +112,7 @@ def test_min_items_holds_at_its_limit_and_refuses_one_less(schema):
     assert faults(value('{"lines": ["x"]}'), path) == []
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_min_length_holds_at_its_limit_and_refuses_one_less(schema):
     """Given a schema whose property `good_when` takes at least 1 character
     When "" and "x" are held to it
@@ -236,7 +236,7 @@ def test_a_fault_under_a_key_with_a_slash_or_a_tilde_is_escaped_in_its_pointer(
     assert pointers(faults({key: 1}, path)) == [pointer]
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
+@pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_several_faults_are_each_given(schema):
     """Given a schema of an object requiring `result`, with `good` an array of strings and no
     additional property
@@ -281,7 +281,7 @@ def test_a_decision_stating_its_date_leaves_the_design_tree_schema():
     assert all(each.startswith("/deliverables/1/") for each in found)
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
+@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_refused")
 @pytest.mark.parametrize(
     ("name", "written"),
     [
@@ -298,7 +298,7 @@ def test_each_roles_result_holds_its_schema(name: str, written: Any):
     assert faults(json.loads(json.dumps(written)), path) == []
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
+@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_refused")
 def test_a_generators_result_of_another_word_leaves_its_schema():
     """Given a generator's result `done`, read from JSON
     When it is held to generator-round.schema.json
