@@ -1,0 +1,68 @@
+{
+ "context": {
+  "rn": "0.10.0",
+  "languages": {
+   "deliverables": "English",
+   "conversation": "Japanese"
+  },
+  "issues": {
+   "closes": [
+    62
+   ],
+   "refs": []
+  },
+  "pr": null
+ },
+ "goal": {
+  "decided": "The user leaves a queue of claude -p tasks to run overnight while nobody answers, and in the morning takes in each finished task's result. Once it's achieved, the user reads in the morning which tasks finished and which were given up after the usage limit stopped them, and the author of another plugin calls its wait-and-resume part instead of writing their own.",
+  "by": "reasoning"
+ },
+ "deliverables": [
+  {
+   "name": "The user leaves a queue of claude -p tasks to run overnight while nobody answers, and in the morning takes in each finished task's result. Once it's achieved, the user reads in the morning which tasks finished and which were given up after the usage limit stopped them, and the author of another plugin calls its wait-and-resume part instead of writing their own.",
+   "path": ".rn/20261124-overnight-claude-p-queue/design-tree.json",
+   "kind": "design-tree",
+   "inputs": [],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  }
+ ],
+ "work": [],
+ "steps": []
+}
