@@ -62,8 +62,8 @@ You type:
 rn reads your repository, then asks whom the work is for:
 
 ```text
-利用者を確認させてください。
-経理チームの方々で合っていますか？
+利用者は、経理チームの方々と考えています。
+この認識でよろしいでしょうか？
 ```
 
 Only some of the team send invoices, so you type:
@@ -77,8 +77,8 @@ rn takes your words, and asks what they can do at the goal:
 ```text
 わかりました。利用者は、月末に請求書を出す経理担当の方々とします。
 
-ゴールを確認させてください。
-開発者の手を借りずに、ガイドだけを見て、明細ファイルから請求書を印刷できる、で合っていますか？
+ゴールは、開発者の手を借りずに、ガイドだけを見て明細ファイルから請求書を印刷できること、と考えています。
+この認識でよろしいでしょうか？
 ```
 
 You type `はい`. rn sums both up:
