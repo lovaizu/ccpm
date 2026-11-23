@@ -1,0 +1,101 @@
+{
+ "context": {
+  "rn": "0.10.0",
+  "languages": {
+   "deliverables": "English",
+   "conversation": "Japanese"
+  },
+  "issues": {
+   "closes": [
+    62
+   ],
+   "refs": []
+  },
+  "pr": null,
+  "session": "a3474397-ec33-40fc-a2f1-ba0b908940bf"
+ },
+ "goal": {
+  "decided": "The user runs many claude -p tasks unattended at night without using up the daytime usage window, and each task finishes past the usage limit or is logged as given up. In the morning, the user reads from the log which tasks finished and which were given up, and takes their results into the main session, and other plugins call its wait-and-resume part instead of writing their own.",
+  "by": "reasoning"
+ },
+ "deliverables": [
+  {
+   "name": "The user runs many claude -p tasks unattended at night without using up the daytime usage window, and each task finishes past the usage limit or is logged as given up. In the morning, the user reads from the log which tasks finished and which were given up, and takes their results into the main session, and other plugins call its wait-and-resume part instead of writing their own.",
+   "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
+   "kind": "design-tree",
+   "inputs": [],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": [
+      {
+       "about": "whom it's for",
+       "decided": null
+      },
+      {
+       "about": "the goal",
+       "decided": null
+      }
+     ]
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": [
+      {
+       "about": "the rn that wrote the tree",
+       "decided": "rn 0.10.0",
+       "by": "reasoning"
+      },
+      {
+       "about": "the languages",
+       "decided": "The deliverables are in English, as the repository's documents are, and the conversation is in Japanese, as the user's instructions set.",
+       "by": "reasoning"
+      },
+      {
+       "about": "the issues",
+       "decided": "The run closes #62.",
+       "by": "reasoning"
+      }
+     ]
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  }
+ ],
+ "work": [
+  {
+   "do": "decide",
+   "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
+   "condition": "N1",
+   "about": "whom it's for"
+  }
+ ],
+ "steps": []
+}
