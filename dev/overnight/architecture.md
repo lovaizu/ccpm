@@ -16,7 +16,8 @@ stacking.
 - P1: no one there while the tasks run
   - P1.1: the tasks run apart from Claude Code, so they go on after the stacking session ends.
   - P1.2: each task starts with its tools allowed and its edits accepted, so it asks no permission.
-  - P1.3: a task writes only in its `dir`, and only where the queue lets it write.
+  - P1.3: a task writes only if the queue lets it, and then only in its `dir` and its temporary
+    files.
   - P1.4: a queue is taken only once each task can start, so mistakes show while the user is there.
   - P1.5: a plugin's own AI stacks its task as a queue of one, which waits and ends as any queue.
 - P2: past the usage limit
@@ -25,8 +26,13 @@ stacking.
 - P3: every task ends, and says how
   - P3.1: each task ends as finished, or as given up with its reason and its session.
   - P3.2: a task given up for any reason stops no other task.
+  - P3.3: a task left unended when overnight stops, such as at a restart, ends as given up with
+    that reason.
+  - P3.4: stacking a queue again carries on each unfinished task in its session, and leaves finished
+    ones as they ended.
 - P4: the people's working day left free
-  - P4.1: the first task runs at the queue's `start`, or at once without one, three at a time.
+  - P4.1: the queue's first tasks start at its `start`, or at once without one, and three run at a
+    time.
 - P5: the whole result, taken in afterward
   - P5.1: a resumed task's reply follows its earlier one, saying when the limit stopped it and when
     it went on.
@@ -82,18 +88,43 @@ Strategies:
 - Every task checked before any runs, and the queue refused whole with each fault and how to mend
   it. [P1.4]\
   Intent: the user mends the queue while still there, and no task runs from a queue half taken.
-- A queue stacked again before its tasks end refused with where they stand. [P1.4]\
+- A queue stacked again while its runner still carries its tasks is refused, with where they
+  stand. [P1.4]\
   Intent: no task runs twice at once, writing over its own work.
+- A queue stacked again after its runner stopped carries on each unfinished task in its session.
+  [P3.4]\
+  Intent: the user finishes what a stop left, and no finished task runs twice.
+- A task carried on that way counts its stops at the usage limit from zero again. [P2.2, P3.4]\
+  Intent: a task carried on gets the same waits as a task newly stacked.
 - One runner for each queue, started by the stacker as a program apart from Claude Code. [P1.1]\
   Intent: the tasks go on after the stacking session ends, and each queue moves on by itself.
 - Each session run with its task's tools allowed and every other tool refused, so nothing waits.
   [P1.2, P1.3]\
   Intent: no task stops for a permission, and none writes where the queue doesn't let it.
-- How a session's end shows the usage limit and its reset read by the session alone. [P2.1]\
+- A task that may only read is given Claude Code's tools that only read, and no shell. [P1.3]\
+  Intent: a task that the queue doesn't let write has no way to write.
+- A task that may write is given its edits in its `dir`, and its shell commands in Claude Code's
+  sandbox. [P1.3]\
+  Intent: a task that runs commands, such as its tests, writes nowhere but its `dir` and its
+  temporary files.
+- The sandbox letting commands write only in the task's `dir` and its own temporary folder, with no
+  retry outside it. [P1.3]\
+  Intent: Claude Code itself holds each command to the folders that the queue gives the task.
+- A writing task refused at stacking where Claude Code's sandbox can't run, such as on Windows
+  outside WSL2. [P1.3, P1.4]\
+  Intent: no task writes where nothing holds it to its `dir`, and the user learns it while there.
+- The session script alone reads how a Claude Code session's end shows the usage limit and its
+  reset. [P2.1]\
   Intent: a change in what Claude Code says at the limit changes one part.
 - Each run and reply written only by the record, which the stacker, the runner, and the checker
   go through. [P5.2]\
   Intent: the form of a run changes in one place, and no part reads a run half written.
+- A runner's stop known by a lock on its queue, which the OS releases however the runner ends.
+  [P3.3]\
+  Intent: a stop shows even where the runner had no time to mark it.
+- The record gives up each task that a stopped runner left unended, when the stacker or the
+  checker asks. [P3.3]\
+  Intent: a task left by a stop ends and says why, with no one watching the runner.
 - Each task carried apart from the others, so that whatever ends one gives up only that one.
   [P3.2]\
   Intent: the queue moves on whatever one task meets.
@@ -116,21 +147,26 @@ sequenceDiagram
   participant M as Claude Code
   U->>C: /overnight:stack with the queue file (Queue) [S1]
   C->>K: runs it with the queue file (Queue) [S1]
-  alt a task that can't start, such as a prompt that isn't there, or a queue still running [P1.4]
+  K->>N: asks whether a task that writes can be held to its dir here [P1.3]
+  N-->>K: whether Claude Code's sandbox can run on this computer [P1.3]
+  K->>D: asks where the queue's tasks stand (Task, Run) [P1.4]
+  D-->>K: each task's run, after it gives up each task that a stopped runner left unended (Run) [P3.3]
+  alt a task that can't start, such as a prompt that isn't there, a writing task that can't be held to its dir, or a queue whose runner still carries it [P1.3, P1.4]
     K-->>C: each fault, and how to mend the queue [P1.4]
     C-->>U: the faults, as printed [P1.4]
   else each task can start [P1.4]
-    K->>D: writes each task, with its run waiting for the start (Task, Run) [P5.2]
+    K->>D: writes each task that didn't finish, with its run waiting for the start and its session kept (Task, Run) [P5.2, P3.4]
     K->>R: starts it apart from Claude Code, with the queue's tasks (Task) [P1.1]
     K-->>C: the tasks stacked, when they start, and how to check them [S1]
     C-->>U: that, as printed [S1]
   end
   Note over U,C: The user may end the session, and the runner goes on.
+  R->>D: takes the queue's lock, kept while it runs (Queue) [P3.3]
   loop each task, in the queue's order, three at a time from the queue's start [P4.1]
     R->>D: marks the task running (Run) [P5.2]
-    R->>N: starts the task's session in its folder (Task) [P1.2]
+    R->>N: starts the task's session in its folder, or goes on in the one it had (Task, Run) [P1.2, P3.4]
     loop until the task ends [P3.1]
-      N->>M: runs the prompt, or goes on in the same session, with the task's tools allowed (Task) [P1.2, P1.3]
+      N->>M: runs the prompt, or goes on in the same session, with the task's tools allowed, and a writing task's shell in the sandbox (Task) [P1.2, P1.3]
       M-->>N: the reply, and how the session ended (Reply) [S1]
       N-->>R: finished, stopped by the limit until a reset time, or failed with why (Reply) [P3.1]
       R->>D: adds the reply after the task's earlier one, with when the limit stopped it (Reply) [P5.1]
@@ -167,8 +203,8 @@ sequenceDiagram
     H-->>C: overnight's version, and what to name [S2]
   else a queue that was stacked [S2]
     H->>D: asks for each task, with its run and reply (Task, Run, Reply) [P5.2]
-    D-->>H: each task and its run, and where each reply lies (Task, Run, Reply) [P5.2]
-    H-->>C: how many finished and how many were given up, and each task's end, wait, reply, folder written in, and why given up (Task, Run) [S2]
+    D-->>H: each task and its run, after it gives up each task that a stopped runner left unended, and where each reply lies (Task, Run, Reply) [P5.2, P3.3]
+    H-->>C: how many finished and how many were given up, and each task's end, wait, reply, folder written in, and why given up, with how to carry on the tasks left by a stop (Task, Run) [S2, P3.4]
   end
   C-->>U: that, as printed [S2]
   U->>U: reads each reply, and takes in with git what each task wrote [P5.3]
@@ -229,7 +265,7 @@ Strategies:
 | Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
 | Property-based testing | Parts | Quality | During the work | 0 counterexamples of each invariant that overnight's product vision, README, and this document state. |
 | Integration testing | Architecture | Quality | During the work | Every case passes, with a double of Claude Code, and each handoff gives the data that the concept model names. |
-| Security testing | Architecture | Quality | During the work | Each write outside a task's folder, and each write by a task that the queue doesn't let write, is refused. |
+| Security testing | Architecture | Quality | During the work | Each write by a task that the queue doesn't let write, or outside its folder and temporary files, is refused. |
 | Contract testing | Architecture | Quality | Apart from the work | On each new Claude Code version, each recorded session repeats its record: finished, stopped, resumed, failed, or a write refused. |
 | Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing with its part broken. |
 | Scenario testing | Product | Quality | At stages | A walkthrough run of the README's queue, past one usage limit, reaches the walkthrough's result, stopped by no fault. |

@@ -1,0 +1,53 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/architecture.md",
+  "dev/overnight/images/components.svg"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "  - P1.3: a task writes only if the queue lets it, and then only in its `dir` and its temporary",
+    "- A queue stacked again after its runner stopped carries on each unfinished task in its session.",
+    "- The record gives up each task that a stopped runner left unended, when the stacker or the"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "## User stories",
+    "### Principles",
+    "overnight carries each stacked task to its end without the user, so the user lets go after"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "  - P3.3: a task left unended when overnight stops, such as at a restart, ends as given up with",
+    "- A task carried on that way counts its stops at the usage limit from zero again. [P2.2, P3.4]\\"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "  loop each task, in the queue's order, three at a time from the queue's start [P4.1]",
+    "| Check | Test target | Kind | When | Exit criteria or measure |"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- A runner's stop known by a lock on its queue, which the OS releases however the runner ends.",
+    "  R->>D: takes the queue's lock, kept while it runs (Queue) [P3.3]"
+   ]
+  },
+  {
+   "condition": "N11",
+   "lines": [
+    "- runner (script)\\",
+    "  Carries each stacked task to its end without anyone."
+   ]
+  }
+ ]
+}

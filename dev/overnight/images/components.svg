@@ -91,13 +91,15 @@
   <path class="line" d="M610,290 L610,400" marker-end="url(#arrow)"/>
   <text class="data halo start" x="618" y="350">starts, apart from Claude Code</text>
   <path class="line" d="M520,280 L280,410" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="400" y="340">writes each task (Task, Run)</text>
+  <text class="data halo mid" x="400" y="340">asks, writes each task (Task, Run)</text>
   <path class="line" d="M190,290 L190,400" marker-end="url(#arrow)"/>
   <text class="data halo end" x="182" y="350">asks each task (Task, Run)</text>
   <path class="line" d="M520,435 L280,435" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="400" y="426">writes (Run, Reply)</text>
+  <text class="data halo mid" x="400" y="426">locks the queue, writes (Run, Reply)</text>
   <path class="line" d="M190,470 L190,550" marker-end="url(#arrow)"/>
   <text class="data halo start" x="198" y="515">keeps</text>
+  <path class="line" d="M700,275 L860,400" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="800" y="338">asks if writes can be held</text>
   <path class="line" d="M700,420 L830,420" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="765" y="411">starts, resumes</text>
   <path class="line dashed" d="M830,455 L700,455" marker-end="url(#arrow)"/>

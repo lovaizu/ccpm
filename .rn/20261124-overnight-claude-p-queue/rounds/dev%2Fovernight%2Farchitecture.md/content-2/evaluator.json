@@ -1,0 +1,169 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight carries each stacked task to its end without the user, so the user lets go after",
+    "stacking."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- S1: the user wants each task they stack done in the hours they set, with no one there.",
+    "- S2: the user wants each finished task's whole result afterward, and why each other task ended",
+    "  unfinished."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- P1: no one there while the tasks run",
+    "  - P2.1: a task stopped by the usage limit goes on in its session two minutes after the reset.",
+    "  - P2.2: the usage limit stopping a task the seventh time gives the task up, with that reason.",
+    "- runner (script)\\",
+    "  Carries each stacked task to its end without anyone.",
+    "- checker (script)\\",
+    "  Tells the user which tasks finished, with each result, and why the others were given up."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- commands (skill)\\",
+    "  Brings the user's call to overnight, and overnight's answer back as it stands.",
+    "- stacker (script)\\",
+    "  Takes in a queue only where each of its tasks can start, and sets the tasks going.",
+    "- session (script)\\",
+    "  Runs a task's Claude Code session, and tells how it ended.",
+    "- record (script)\\",
+    "  Keeps each stacked task with its run and reply, so that any later session reads where it stands.",
+    "- How a session's end shows the usage limit and its reset read by the session alone. [P2.1]\\",
+    "- Each run and reply written only by the record, which the stacker, the runner, and the checker"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- commands (skill)\\",
+    "- stacker (script)\\",
+    "- runner (script)\\",
+    "- session (script)\\",
+    "- record (script)\\",
+    "- checker (script)\\"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "  U->>C: /overnight:stack with the queue file (Queue) [S1]",
+    "  alt a task that can't start, such as a prompt that isn't there, a writing task that can't be held to its dir, or a queue whose runner still carries it [P1.3, P1.4]",
+    "  else each task can start [P1.4]",
+    "  loop each task, in the queue's order, three at a time from the queue's start [P4.1]",
+    "      alt finished [P3.1]",
+    "      else stopped by the limit the seventh time [P2.2]",
+    "      else stopped by the limit an earlier time [P2.1]",
+    "      else failed [P3.2]",
+    "  U->>C: /overnight:check with the queue file (Queue) [S2]",
+    "  alt no queue file named, or one that was never stacked [S2]",
+    "  else a queue that was stacked [S2]"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- One runner for each queue, started by the stacker as a program apart from Claude Code. [P1.1]\\",
+    "  Intent: the tasks go on after the stacking session ends, and each queue moves on by itself.",
+    "  R->>D: takes the queue's hold, kept while it runs (Queue) [P3.3]",
+    "The user installs overnight as [the README](../../plugins/overnight/README.md#installation) says,",
+    "and calls `/overnight:stack` with a queue file, which starts the queue's runner."
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "![overnight's deployment](images/deployment.svg)",
+    "The user installs overnight as [the README](../../plugins/overnight/README.md#installation) says,",
+    "and calls `/overnight:stack` with a queue file, which starts the queue's runner.",
+    "- The runner kept apart from Claude Code by each OS's own way to outlive what started it. [P1.1]\\"
+   ]
+  },
+  {
+   "condition": "N11",
+   "lines": [
+    "plugins/overnight/                 what Claude Code installs for the user",
+    "├── skills/                        /overnight:stack and /overnight:check, each running its script",
+    "│   └── queue.py                   queue stack, queue check, and queue run, which the stacker starts",
+    "dev/overnight/                     what only overnight's developers use",
+    "<queue's folder>/                  the user's own folder, where they write the queue",
+    "└── <queue>/                       what overnight writes for the queue"
+   ]
+  },
+  {
+   "condition": "N12",
+   "lines": [
+    "| Check | Test target | Kind | When | Exit criteria or measure |",
+    "| Integration testing | Architecture | Quality | During the work | Every case passes, with a double of Claude Code, and each handoff gives the data that the concept model names. |",
+    "| Security testing | Architecture | Quality | During the work | Each write by a task that the queue doesn't let write, or outside its folder and temporary files, is refused. |",
+    "| Contract testing | Architecture | Quality | Apart from the work | On each new Claude Code version, each recorded session repeats its record: finished, stopped, resumed, failed, or a write refused. |",
+    "| Scenario testing | Product | Quality | At stages | A walkthrough run of the README's queue, past one usage limit, reaches the walkthrough's result, stopped by no fault. |",
+    "| Long-run testing | Product | Benchmark | At stages | The runner's memory and open files over a night's queue. Each case runs until one more run no longer changes the mean. |"
+   ]
+  },
+  {
+   "condition": "N13",
+   "lines": [
+    "- A queue stacked again while its runner still carries its tasks refused with where they stand.",
+    "- A queue stacked again after its runner stopped carrying on each unfinished task, in its session.",
+    "- A task carried on that way counting its stops at the usage limit anew. [P2.2, P3.4]\\",
+    "- Each task left unended by a stopped runner given up by the record, when the stacker or checker",
+    "  asks. [P3.3]\\"
+   ]
+  },
+  {
+   "condition": "N14",
+   "lines": [
+    "- How a session's end shows the usage limit and its reset read by the session alone. [P2.1]\\",
+    "  Intent: a change in what Claude Code says at the limit changes one part.",
+    "| Contract testing | Architecture | Quality | Apart from the work | On each new Claude Code version, each recorded session repeats its record: finished, stopped, resumed, failed, or a write refused. |"
+   ]
+  },
+  {
+   "condition": "N15",
+   "lines": [
+    "- Each task's run kept apart from the queue, with all that tells where the task stands. [P5.2]\\",
+    "  Intent: a session that knows only the queue file's path learns where each task stands.",
+    "- Every task checked before any runs, and the queue refused whole with each fault and how to mend",
+    "  it. [P1.4]\\",
+    "- Tasks started in the order that the queue lists them. [P4.1]\\",
+    "  Intent: the user decides which task goes first by where they put it.",
+    "- The runner kept apart from Claude Code by each OS's own way to outlive what started it. [P1.1]\\",
+    "  Intent: the tasks go on after the stacking session ends, on each OS that Claude Code runs on.",
+    "- Each queue's runs and replies beside the queue file, in place of the plugin guide's run folder.",
+    "  [P5.2]\\",
+    "  Intent: the user finds each result beside their queue, as one queue's tasks work in many folders."
+   ]
+  },
+  {
+   "condition": "N16",
+   "lines": [
+    "overnight carries each stacked task to its end without the user, so the user lets go after",
+    "- P1: no one there while the tasks run",
+    "- P2: past the usage limit",
+    "- P3: every task ends, and says how",
+    "plugins/overnight/                 what Claude Code installs for the user"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N4",
+   "good_when": "A developer building the runner knows from the principles alone when a queue stacked after its start hour begins, such as one stacked at 23:10 with start 23:00, or one stacked again at 08:00 after a stop, so that two developers start its first task at the same time."
+  },
+  {
+   "condition": "N7",
+   "good_when": "A developer who changes what a run or a queue keeps, such as adding a start time to a run, finds the concept model still true, as each concept says what it is for and names no role, such as the user."
+  }
+ ]
+}
