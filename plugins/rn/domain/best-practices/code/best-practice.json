@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does."
        },
        {
         "at": "decide",
@@ -88,13 +82,7 @@
        },
        {
         "at": "make",
-        "text": "Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{tests}"
-         ]
-        }
+        "text": "Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on."
        },
        {
         "at": "make",
@@ -176,13 +164,7 @@
        },
        {
         "at": "make",
-        "text": "Run each test before you write the code it tests, and see it fail for the reason its Then names, not for a fault of the test itself, such as a misspelled name.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{tests}"
-         ]
-        }
+        "text": "Run each test before you write the code it tests, and see it fail for the reason its Then names, not for a fault of the test itself, such as a misspelled name."
        }
       ]
      },
@@ -218,13 +200,7 @@
        },
        {
         "at": "make",
-        "text": "Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{coverage}"
-         ]
-        }
+        "text": "Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs."
        },
        {
         "at": "make",

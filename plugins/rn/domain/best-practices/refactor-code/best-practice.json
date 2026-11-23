@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the inputs of your cut, and note from the architecture each decision that the code carries out, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open the inputs of your cut, and note from the architecture each decision that the code carries out, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second."
        },
        {
         "at": "decide",
@@ -28,13 +22,7 @@
        },
        {
         "at": "decide",
-        "text": "Run the command. If a test fails, change nothing, and end with `point`, naming the test and its failure, since a test that already fails can't tell you whether a step broke something.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{tests}"
-         ]
-        }
+        "text": "Run the command. If a test fails, change nothing, and end with `point`, naming the test and its failure, since a test that already fails can't tell you whether a step broke something."
        },
        {
         "at": "make",

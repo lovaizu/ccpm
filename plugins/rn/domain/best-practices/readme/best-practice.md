@@ -34,10 +34,10 @@ Does the opening say what the product is, who it's for, and what it lets them ac
 
 Most readers decide from the opening alone whether to read on, so it lets a newcomer tell within a few sentences whether the product is for them.
 
-1. *While deciding.* Open the product vision and take from Roles the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open the product vision and take from Roles the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`.
 2. *While deciding.* Take from that role's objective what they achieve with the product, as an end they reach in their own work, not a feature, such as `release without breaking the code of those who use your library` in place of `checks for semantic versioning`.
 3. *While deciding.* Take from the concept's one way the one thing the product gives the reader, in words the reader already uses, such as `finds each change in a release that breaks code that calls it`.
-4. *While deciding.* Open the product's manifest, such as plugin.json or pyproject.toml, which N3 and N9 take from too. The trace: `{manifest}` read to its end.
+4. *While deciding.* Open the product's manifest, such as plugin.json or pyproject.toml, which N3 and N9 take from too.
 5. *While deciding.* Name the kind of thing the reader installs, as the manifest shows it, by the word they already use for things of that kind, such as a command-line tool or a Claude Code plugin, so that they have something to compare it with.
 6. *While making.* Write the opening by the template from these, each sentence on the reader's work and what the product gives them in it, as the reader decides from these and How it works holds the parts.
 7. *While making.* Take out each sentence of the opening in turn, and ask whether the rest still says what the product is, who it's for, what they achieve with it, and, where the product isn't ready, what works now. Where it does, delete that sentence.
@@ -77,11 +77,11 @@ Does the README name the license and link its full text?
 
 Some readers rule a product in or out by its license alone, so they find it at once and recognize it.
 
-1. *While deciding.* Open the product's license file, such as LICENSE in the product's folder, and read which license it holds. The trace: `{license}` read to its end.
+1. *While deciding.* Open the product's license file, such as LICENSE in the product's folder, and read which license it holds.
 2. *While deciding.* Name the license by its identifier in the [Software Package Data Exchange (SPDX) License List](https://spdx.org/licenses/), which readers and their tools recognize, such as MIT or Apache-2.0. Where the text matches no license on the list, ask the user.
 3. *While deciding.* Search the product's folder for the license files and notices of others' work, such as a copied library's own LICENSE, and list each work with its license's identifier and the path of its file.
 4. *While making.* Write the License section by the template: the product's license, linked by its file's path from the README's folder, and below it each work of others with its license.
-5. *While making.* Follow each link from the README's folder, and check that it opens the license file that the README names beside it. The trace: `{license}` read to its end.
+5. *While making.* Follow each link from the README's folder, and check that it opens the license file that the README names beside it.
 
 ### N5
 
@@ -91,7 +91,7 @@ Readers come with questions in a typical order and leave when the next answer is
 
 1. *While making.* Keep the sections in the template's order, which answers the questions in the order readers ask them: what the product is and whether it's for them, what it doesn't do, how to install it, what it gives in work like theirs, how it gives it, and where to go next.
 2. *While making.* Within each section, put first what every reader of it needs, and after it what only some need, such as the one install command before the steps for another platform.
-3. *While making.* Read the README from the top as a newcomer in the product vision's role, and after each section, write down the question you have next. The trace: `{deliverable}` read to its end.
+3. *While making.* Read the README from the top as a newcomer in the product vision's role, and after each section, write down the question you have next.
 4. *While making.* Where a section answers a question that a newcomer asks only later, move that answer to the section of that question.
 5. *While making.* Where the next section doesn't answer the question you wrote, add the answer at its start, or, where a newcomer needs it neither to decide nor to start, link the document that holds it from Documentation.
 
@@ -152,7 +152,7 @@ A reader who can't install the product never gets to use it, and the author's ow
 3. *While deciding.* For each requirement, choose a command whose output shows the reader they have it, such as `git --version`.
 4. *While making.* Write each install step as a command the reader can copy.
 5. *While making.* End the steps with a sign the reader can see that the product works, such as the version it prints or its first command answering.
-6. *While making.* Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again. Where the product isn't released yet, write the steps that its release takes, and run them once it's out. The trace: `{install}` run.
+6. *While making.* Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again. Where the product isn't released yet, write the steps that its release takes, and run them once it's out.
 
 ### N10
 

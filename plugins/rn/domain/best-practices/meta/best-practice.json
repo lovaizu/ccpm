@@ -124,13 +124,7 @@
        },
        {
         "at": "decide",
-        "text": "Run `git ls-files '*.schema.json'`, and read the title and description of each JSON Schema that it lists.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "git ls-files '*.schema.json'"
-         ]
-        }
+        "text": "Run `git ls-files '*.schema.json'`, and read the title and description of each JSON Schema that it lists."
        },
        {
         "at": "decide",
@@ -215,10 +209,6 @@
        {
         "at": "make",
         "text": "Ask of each item whether the maker of this kind takes it while making a deliverable of the kind, with what that deliverable's inputs give it. Where another kind's maker takes it, such as an item on trusting a test's judge in the best practice of an architecture, whose maker has no run to judge, move it to that kind's best practice, since a maker opens no best practice of another kind."
-       },
-       {
-        "at": "make",
-        "text": "Give a trace to each item that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. An item with a trace takes its place by its call, among the decisions or steps whose content it supplies, such as the read of an input just before the decision that takes from it, since the calls then show each item done in their order, and the evaluator checks what the judgments made."
        },
        {
         "at": "make",

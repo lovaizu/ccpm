@@ -42,7 +42,7 @@ Does Principles state first, in one sentence, the one idea by which the product 
 
 Each view carries out one idea, and a developer who knows the idea builds a part that serves it. The [solution strategy](https://docs.arc42.org/section-4/) of arc42 sums up first the few decisions that shape the whole.
 
-1. *While deciding.* Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end.
 2. *While deciding.* Take the sentence that opens the product vision's Concept, the one idea by which the product brings its users to their objectives, such as piling up the vital few that bring a deliverable's people to their aim.
 3. *While making.* Write it in one sentence that a developer can hold in mind while building any part, and put it first in Principles, before the principles that follow from it.
 4. *While making.* After writing the rest, read each component's line as a developer who knows only the idea, and check that they can see which piece of the idea it carries out. Change the idea or the component where they can't.
@@ -171,7 +171,7 @@ Does Test strategy give, in its table alone, only the checks that the product's 
 
 A failure that no test looks for reaches the users unseen, and a case's pass or fail decides the work only where its criterion is set before anyone writes it. Where a result varies from run to run, as a prompt's does, a criterion passes or fails by chance, so a benchmark measures it and a person decides. A row for every check of the guide decides nothing for most of them, so Test strategy holds only the types the product's purpose needs.
 
-1. *While deciding.* Read [the test strategy guide](test-strategy-guide.md) to its end. The trace: `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/architecture/test-strategy-guide.md` read to its end.
+1. *While deciding.* Read [the test strategy guide](test-strategy-guide.md) to its end.
 2. *While deciding.* Take each check's test target from the guide. Unit tests try the parts against their contracts. Integration tests try the parts joined against each element of this document. End-to-end (E2E) tests try the product in real use against each key result of the product vision. Use no other name for a test, so that each case's level tells which target it checks.
 3. *While deciding.* Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write a row for each check picked.
 4. *While deciding.* Set when each check runs, as the guide's rule of timing gives it: during the work, at the stages of a test that runs the product whole, or apart from the work. Change it only where the product needs another, and say why in the row, since a check that the work waits on decides whether a part is done, and one that waits on another's schedule, such as a new version of the host, would hold up the work.

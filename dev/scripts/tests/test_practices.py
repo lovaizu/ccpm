@@ -43,11 +43,7 @@ DATA: dict[str, Any] = {
                         "what": "Does it?",
                         "why": "Think.",
                         "items": [
-                            {
-                                "at": "decide",
-                                "text": "Choose.",
-                                "trace": {"action": "run", "takes": ["make", "make all"]},
-                            },
+                            {"at": "decide", "text": "Choose."},
                             {"at": "make", "text": "Where it fails, mend it."},
                         ],
                     }
@@ -171,68 +167,6 @@ class Faults(unittest.TestCase):
             d["goal"]["level"] = 3
 
         self.assertEqual(changed(number), [])
-
-    def test_a_step_of_a_case_that_carries_a_trace(self):
-        # Given: a step that holds only where its case does, opening with Where or If, with a trace
-        expected = (
-            "N1.2 holds only in its case, so it carries no trace, as a run outside the case never"
-            " makes it"
-        )
-        for opening in ("Where it fails", "If it fails"):
-
-            def traced(d, opening=opening):
-                condition(d, 1)["items"][1] = {
-                    "at": "make",
-                    "text": f"{opening}, mend it.",
-                    "trace": {"action": "write", "takes": ["a.md"]},
-                }
-
-            # Then: the trace is a fault, as not every run makes it
-            with self.subTest(opening=opening):
-                self.assertEqual(changed(traced), [expected])
-
-    def test_a_step_with_a_fault_after_one_with_no_trace(self):
-        # Given: a step with no trace, then one of a case with a trace, under the second factor
-        def traced(d):
-            condition(d, 2)["items"] = [
-                {"at": "make", "text": "Do."},
-                {
-                    "at": "make",
-                    "text": "If it fails, mend it.",
-                    "trace": {"action": "run", "takes": ["make"]},
-                },
-            ]
-
-        # Then: the later step's trace is still named
-        expected = (
-            "N2.2 holds only in its case, so it carries no trace, as a run outside the case never"
-            " makes it"
-        )
-        self.assertEqual(changed(traced), [expected])
-
-    def test_a_step_that_opens_with_a_word_holding_where_or_if_is_no_case(self):
-        def traced(d):
-            condition(d, 1)["items"][0]["text"] = "Wherever it runs, Iffy, do it."
-
-        self.assertEqual(changed(traced), [])
-
-    def test_a_trace_that_takes_an_empty_text(self):
-        for empty in ("", " "):
-
-            def traced(d, empty=empty):
-                condition(d, 2)["items"] = [
-                    {
-                        "at": "make",
-                        "text": "Do.",
-                        "trace": {"action": "read", "takes": ["a.md", empty]},
-                    }
-                ]
-
-            with self.subTest(empty=empty):
-                self.assertEqual(
-                    changed(traced),
-                    ["N2.1 takes an empty text in its trace, which no call matches"],
-                )
 
     def test_a_decide_item_after_a_make_item(self):
         # Given: a practice whose item taken while deciding comes after one taken while making
@@ -702,7 +636,7 @@ class Markdown(unittest.TestCase):
             text.endswith(
                 "## Practices\n\n"
                 "### N1\n\nDoes it?\n\nThink.\n\n"
-                "1. *While deciding.* Choose. The trace: `make` or `make all` run.\n"
+                "1. *While deciding.* Choose.\n"
                 "2. *While making.* Where it fails, mend it.\n\n"
                 "### N2\n\nAfter N1, does all?\n\nThen.\n\n"
                 "1. *While making.* Do.\n"
@@ -726,31 +660,6 @@ class Markdown(unittest.TestCase):
         condition(data, 1)["id"], condition(data, 2)["id"] = "N10", "N9"
         text = practices.markdown_of(PATH, data)
         self.assertLess(text.index("### N9"), text.index("### N10"))
-
-    def test_names_each_trace_by_its_call(self):
-        # Given: a step of each action, one taking three calls
-        items = [
-            {"at": "make", "text": "Run.", "trace": {"action": "run", "takes": ["make"]}},
-            {
-                "at": "make",
-                "text": "Read.",
-                "trace": {"action": "read", "takes": ["a.md", "b.md", "c.md"]},
-            },
-            {
-                "at": "make",
-                "text": "Make.",
-                "trace": {"action": "write", "takes": ["{deliverable}"]},
-            },
-        ]
-        data = copy.deepcopy(DATA)
-        condition(data, 2)["items"] = items
-        # Then: each names its calls, the last after or, and what the call does
-        self.assertIn(
-            "1. *While making.* Run. The trace: `make` run.\n"
-            "2. *While making.* Read. The trace: `a.md`, `b.md` or `c.md` read to its end.\n"
-            "3. *While making.* Make. The trace: `{deliverable}` made.\n",
-            practices.markdown_of(PATH, data),
-        )
 
 
 class Practices(helpers.FolderTest):

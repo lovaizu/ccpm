@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end."
        },
        {
         "at": "decide",
@@ -334,13 +328,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Read [the test strategy guide](test-strategy-guide.md) to its end.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "${CLAUDE_PLUGIN_ROOT}/domain/best-practices/architecture/test-strategy-guide.md"
-         ]
-        }
+        "text": "Read [the test strategy guide](test-strategy-guide.md) to its end."
        },
        {
         "at": "decide",

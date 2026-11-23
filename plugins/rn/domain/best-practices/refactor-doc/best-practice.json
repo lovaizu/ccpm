@@ -14,23 +14,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it, and note in a line what each section is for, and note the language that the document is written in, which picks the rules that the items on sentences, punctuation, and words take.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it, and note in a line what each section is for, and note the language that the document is written in, which picks the rules that the items on sentences, punctuation, and words take."
        },
        {
         "at": "make",
-        "text": "After your last change, read the document to its end, and check each line of the list against it: put back each fact, decision, or step that it no longer states, and take out each that the refactoring added. Check a fact that you moved to another document in its new place, and leave out one that the person who owns the document said to cut.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "After your last change, read the document to its end, and check each line of the list against it: put back each fact, decision, or step that it no longer states, and take out each that the refactoring added. Check a fact that you moved to another document in its new place, and leave out one that the person who owns the document said to cut."
        }
       ]
      }
@@ -120,13 +108,7 @@
        },
        {
         "at": "make",
-        "text": "After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it."
        }
       ]
      },
@@ -192,13 +174,7 @@
        },
        {
         "at": "make",
-        "text": "Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it."
        }
       ]
      },
@@ -262,13 +238,7 @@
        },
        {
         "at": "make",
-        "text": "Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it."
        }
       ]
      },

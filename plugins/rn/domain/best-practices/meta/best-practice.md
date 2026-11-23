@@ -67,7 +67,7 @@ The template makes every deliverable of the kind hold each condition in the same
 
 1. *While deciding.* Open three or more deliverables of the kind made for different products, from the repository or from a search of the web, such as the READMEs of popular plugins on GitHub.
 2. *While deciding.* Take the format that those deliverables share as the deliverable's format, such as Markdown for a README. Where they differ, take the format that the tool or code that reads the deliverable takes, such as JSON for a file that a program loads.
-3. *While deciding.* Run `git ls-files '*.schema.json'`, and read the title and description of each JSON Schema that it lists. The trace: `git ls-files '*.schema.json'` run.
+3. *While deciding.* Run `git ls-files '*.schema.json'`, and read the title and description of each JSON Schema that it lists.
 4. *While deciding.* Where one of those schemas describes the deliverable, as design-tree.schema.json describes the design tree, take it as the template: its fields are the sections, and the description of each field is its note, since a second template would state each field's form twice. Elsewhere, write the template in the deliverable's format, where each heading, or in JSON each key that holds content at any depth, is a section.
 5. *While deciding.* Order the sections as the users look for them, from the first thing to the last, such as a README's statement of what the product is before its install steps.
 6. *While deciding.* Place each condition in the section where the users need it, and name that section in the condition's `about`.
@@ -94,11 +94,10 @@ A practice is where the maker learns how to bring the people to a condition's st
 7. *While making.* Give an example from the deliverable's kind only where the act alone would leave the generator unsure what to open or what to write, such as the form of a sentence it must write, since an example beside a plain act is one more line to read past.
 8. *While making.* Make each item one thing to take, since a role names each item it took by its ID, its condition's ID and its place, such as N6.2, and a check finds one left out.
 9. *While making.* Ask of each item whether the maker of this kind takes it while making a deliverable of the kind, with what that deliverable's inputs give it. Where another kind's maker takes it, such as an item on trusting a test's judge in the best practice of an architecture, whose maker has no run to judge, move it to that kind's best practice, since a maker opens no best practice of another kind.
-10. *While making.* Give a trace to each item that every run takes and a tool call shows: a command it runs, a file it reads in full, or a file it writes. An item with a trace takes its place by its call, among the decisions or steps whose content it supplies, such as the read of an input just before the decision that takes from it, since the calls then show each item done in their order, and the evaluator checks what the judgments made.
-11. *While making.* Mark each item `decide` where the maker takes it while it settles the work's decisions, and `make` where it takes it while it makes the deliverable. No `decide` item follows a `make` item, since the maker settles the decisions before it makes the deliverable.
-12. *While making.* Where the generator must find the content before it writes it, such as the users of a product vision, say what the content serves, how to derive it from that, and when to ask the user.
-13. *While making.* Write each reason and each way to find the content in the item that uses it, and the form of each slot in the template's note, so that each fact stands in one place.
-14. *While making.* Name a language or a tool only as an example, so that each deliverable's plan chooses its own.
+10. *While making.* Mark each item `decide` where the maker takes it while it settles the work's decisions, and `make` where it takes it while it makes the deliverable. No `decide` item follows a `make` item, since the maker settles the decisions before it makes the deliverable.
+11. *While making.* Where the generator must find the content before it writes it, such as the users of a product vision, say what the content serves, how to derive it from that, and when to ask the user.
+12. *While making.* Write each reason and each way to find the content in the item that uses it, and the form of each slot in the template's note, so that each fact stands in one place.
+13. *While making.* Name a language or a tool only as an example, so that each deliverable's plan chooses its own.
 
 ### N6
 

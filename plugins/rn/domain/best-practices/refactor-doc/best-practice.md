@@ -27,8 +27,8 @@ Does the document still state each fact, decision, and step that it stated befor
 
 The document's content passed its evaluation before the refactoring, so a refactoring changes how the document says its content and never what it says, as a fact changed while editing reaches its readers unjudged. Editors keep this apart by the levels of editing, in which a structural edit, a line edit, and a copyedit each change the form of what the writer wrote.
 
-1. *While deciding.* Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it, and note in a line what each section is for, and note the language that the document is written in, which picks the rules that the items on sentences, punctuation, and words take. The trace: `{deliverable}` read to its end.
-2. *While making.* After your last change, read the document to its end, and check each line of the list against it: put back each fact, decision, or step that it no longer states, and take out each that the refactoring added. Check a fact that you moved to another document in its new place, and leave out one that the person who owns the document said to cut. The trace: `{deliverable}` read to its end.
+1. *While deciding.* Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it, and note in a line what each section is for, and note the language that the document is written in, which picks the rules that the items on sentences, punctuation, and words take.
+2. *While making.* After your last change, read the document to its end, and check each line of the list against it: put back each fact, decision, or step that it no longer states, and take out each that the refactoring added. Check a fact that you moved to another document in its new place, and leave out one that the person who owns the document said to cut.
 
 ### N2
 
@@ -59,7 +59,7 @@ Every sentence costs the reader time, and one that carries nothing they need sti
 5. *While making.* Cut each other sentence you marked, since another place states its fact, or it states none, such as `As noted above, this matters.`
 6. *While making.* Within each sentence you keep, ask the same of each word, and cut each word that no reader needs, such as `in order to` for `to`, or `basically`.
 7. *While making.* Keep the small words that show how a sentence is built, such as articles, `that`, and `then`, as the [Google developer documentation style guide](https://developers.google.com/style/translation) lists them, since without them both a reader and a machine translator parse the sentence with more effort.
-8. *While making.* After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it. The trace: `{deliverable}` read to its end.
+8. *While making.* After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it.
 
 ### N4
 
@@ -84,7 +84,7 @@ A reader who has to turn back or read ahead to understand a sentence loses the t
 3. *While making.* Within a sentence, start with what the reader already knows and end with what's new. For example, after `The plugin keeps its state in .rn/.`, write `.rn/ holds one folder for each run.` in place of `One folder for each run lies in .rn/.`
 4. *While making.* Put a short condition before its instruction, such as `If you use a proxy, set HTTPS_PROXY.`, so that a reader it doesn't apply to can skip the instruction.
 5. *While making.* Put each exception to a rule in the sentence right after the rule, such as `Write each name in lowercase. Write the plugin's own name as its manifest does.`
-6. *While making.* Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it. The trace: `{deliverable}` read to its end.
+6. *While making.* Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it.
 
 ### N6
 
@@ -110,7 +110,7 @@ A sentence that makes one point, with the actor as its subject, reads one way fo
 5. *While making.* For each pronoun, such as `it`, `they`, or `this`, ask whether it could refer to two nouns, or stands more than five words after its noun, and if so, write the noun.
 6. *While making.* Turn a noun made from a verb back into the verb, such as `make a decision` into `decide`.
 7. *While making.* Keep the object next to its verb, such as `Set the timeout before the first run.` in place of `Set, before the first run, the timeout.`
-8. *While making.* Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it. The trace: `{deliverable}` read to its end.
+8. *While making.* Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it.
 
 ### N8
 

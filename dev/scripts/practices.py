@@ -48,10 +48,6 @@ NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
 QUESTION = re.compile(r"\bN\d+\b")
 # An item named in a text, by its condition's ID and its place, such as N6.2.
 ITEM = re.compile(r"\b(N\d+)\.(\d+)\b")
-# An item that holds only in a case opens with Where or If and its case, as the template writes one.
-CASE = re.compile(r"^(?:Where|If) ")
-# What each action of a trace has its calls do, as the Markdown names them.
-DONE = {"run": "run", "read": "read to its end", "write": "made"}
 # When the maker takes each item, as the Markdown names it.
 AT = {"decide": "*While deciding.*", "make": "*While making.*"}
 # A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
@@ -293,15 +289,14 @@ def texts(value: Any) -> list[str]:
 def faults(data: dict[str, Any], template: list[Section] | list[str] | None = None) -> list[str]:
     """Each fault of the best practice's form that its schema can't name, in words: factors
     numbered in their order from C1, conditions numbered from N1 each once, each about a section of
-    its template, where it names one, or the whole, every section asked of, each item's trace one
-    that every run makes and a call can match, each practice's items taken while deciding before
-    those taken while making, and each condition and item named in the text one that's there."""
+    its template, where it names one, or the whole, every section asked of, each practice's items
+    taken while deciding before those taken while making, and each condition and item named in the
+    text one that's there."""
     sections = [s if isinstance(s, tuple) else (s,) for s in template or []]
     return [
         *section_faults(data, sections),
         *number_faults(data),
         *about_faults(data, sections),
-        *trace_faults(data),
         *order_faults(data),
         *condition_faults(data),
         *item_faults(data),
@@ -389,40 +384,9 @@ def item_faults(data: dict[str, Any]) -> list[str]:
     ]
 
 
-def trace_faults(data: dict[str, Any]) -> list[str]:
-    """Each fault of an item's trace, in words: a trace on an item that holds only in its case,
-    which a run outside the case never makes, so the item would show undone there, and an empty
-    text taken, which no call matches."""
-    found = []
-    for c in conditions(data):
-        for n, item in enumerate(c["items"], 1):
-            if "trace" not in item:
-                continue
-            where = f"{c['id']}.{n}"
-            if CASE.match(item["text"]):
-                found.append(
-                    f"{where} holds only in its case, so it carries no trace, as a run outside the"
-                    " case never makes it"
-                )
-            if any(not take.strip() for take in item["trace"]["takes"]):
-                found.append(f"{where} takes an empty text in its trace, which no call matches")
-    return found
-
-
-def listed(takes: list[str]) -> str:
-    """The texts in code, joined by commas, and by the word or before the last one."""
-    *rest, last = [f"`{t}`" for t in takes]
-    return f"{', '.join(rest)} or {last}" if rest else last
-
-
 def item_line(n: int, item: dict[str, Any]) -> str:
-    """The item as a line of a numbered list, with when the maker takes it, and the calls its trace
-    takes and what they do."""
-    line = f"{n}. {AT[item['at']]} {item['text']}"
-    if "trace" in item:
-        trace = item["trace"]
-        line += f" The trace: {listed(trace['takes'])} {DONE[trace['action']]}."
-    return line
+    """The item as a line of a numbered list, with when the maker takes it."""
+    return f"{n}. {AT[item['at']]} {item['text']}"
 
 
 def tree(data: dict[str, Any]) -> list[str]:

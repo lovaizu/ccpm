@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the architecture and read the sections that `inputs` takes from it: what each component decides, the kinds of data, each step of each sequence, where each component's files lie, and the language and the tools.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open the architecture and read the sections that `inputs` takes from it: what each component decides, the kinds of data, each step of each sequence, where each component's files lie, and the language and the tools."
        },
        {
         "at": "decide",

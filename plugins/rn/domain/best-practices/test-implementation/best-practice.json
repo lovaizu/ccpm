@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision, the architecture, and the test cases, and read the sections that `inputs` takes from each: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open the product vision, the architecture, and the test cases, and read the sections that `inputs` takes from each: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then."
        },
        {
         "at": "decide",

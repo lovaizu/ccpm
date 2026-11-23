@@ -33,7 +33,7 @@ Does each module say, where the maintainer first meets it, the one thing it alon
 
 A maintainer with one behavior to change finds the one module to open from what the modules say at their top, without reading a body, and changes the code in that one place.
 
-1. *While deciding.* Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does.
 2. *While deciding.* List the decisions that the specification leaves to the code: for each unit case, ask what the code could do in more than one way while the case still passes, such as the layout of a file that only the part reads, or the order in which it tries two sources. Each such choice is a decision left to the code, and a choice that a case, a principle, or the skeleton's interface already fixes isn't.
 3. *While deciding.* Give each decision to one module. Keep the skeleton's modules, where one exists, which hold the decisions that the architecture gave the part, and add a module inside the part only for a decision that could change while the rest of the part stays, such as a file's layout that may change apart from the rules that read it. Keep two decisions in one module where a change of one always changes the other.
 4. *While deciding.* Where a decision has variants that the cases call for now, such as two remotes that each take their own commands, give each variant its own module behind one interface, and name that shape by its design pattern, such as Adapter, in the module that chooses among them, since the name tells the maintainer where a new variant goes. Make a variant only where a case calls for it, as N3 says.
@@ -60,7 +60,7 @@ Every behavior that no case asks for is code the maintainer must carry and keep 
 1. *While deciding.* For each option, mode, parameter, and branch that you plan for a module, name the unit case that calls for it, and drop it from the plan where none does, such as a `--dry-run` flag that no case runs, or a second file format that no case reads.
 2. *While making.* Write the body one test at a time, once you see the test fail as N5.9 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case.
 3. *While making.* Before you write a branch, a comparison, or a pick of one of several, name the case that fails where it's wrong, such as the case of two starts for a pick of the latest, and write none that no case fails on.
-4. *While making.* Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on. The trace: `{tests}` run.
+4. *While making.* Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on.
 5. *While making.* Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses.
 
 ### N4
@@ -89,7 +89,7 @@ A maintainer whose test fails knows from its name which case of the specificatio
 6. *While making.* Keep in each test's own body the values that its case turns on, and put in a shared helper only the setup that many tests share, such as building the object under test, so that a reader grasps the test without opening another.
 7. *While making.* Keep loops and branches out of each test, since a test that loops over inputs hides which one failed: write one test for each input instead, or a parametrized test that names each.
 8. *While making.* Give an assertion a failure message that names the part of the case it checks, wherever the test's name and the values compared don't already say it, such as `the refused line is named`.
-9. *While making.* Run each test before you write the code it tests, and see it fail for the reason its Then names, not for a fault of the test itself, such as a misspelled name. The trace: `{tests}` run.
+9. *While making.* Run each test before you write the code it tests, and see it fail for the reason its Then names, not for a fault of the test itself, such as a misspelled name.
 
 ### N6
 
@@ -108,7 +108,7 @@ Does each test assert the whole result of its case, with coverage leaving no lin
 The maintainer knows that every behavior still holds only where breaking any of them makes a test fail. The cases, designed before the code, catch each break where each test asserts its whole Then, and coverage shows each line that no test runs, which either lacks its case or does what no case asks.
 
 1. *While making.* Have each test assert the whole result that its case's Then names, such as the full list that a call gives, not only that the call returned or that the list isn't empty.
-2. *While making.* Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs. The trace: `{coverage}` run.
+2. *While making.* Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs.
 3. *While making.* For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `point`, and write its test once they add it.
 
 ### N8

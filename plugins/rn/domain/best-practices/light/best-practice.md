@@ -16,7 +16,7 @@ Does the deliverable give its people what its name says as they meet it?
 
 A light deliverable has no best practice behind it, so its people get what they're after only where a concrete check, written before it's made, shows it: acceptance test-driven development writes the acceptance test before the work, and Gojko Adzic's [Specification by Example](https://gojko.net/books/specification-by-example/) states it as the key examples its people would check.
 
-1. *While deciding.* Open the decisions of your cut and each deliverable that its inputs name, and read each to its end. The trace: `{inputs}` read to its end.
+1. *While deciding.* Open the decisions of your cut and each deliverable that its inputs name, and read each to its end.
 2. *While deciding.* Read the check, the decision about `The check`, and name who meets the deliverable and what they do with it, such as a person who installs two plugins from one pull request.
 3. *While deciding.* Name the command to run or the record to read that shows the check met, such as `claude plugin validate` on each plugin's folder. Where the check names none and its people's use gives none, end with the point, naming the one you'd take, since a check that shows nothing, such as `it works`, holds the deliverable to nothing.
 4. *While making.* Make the deliverable in the format that the program or the person who reads it takes, such as the JSON that a tool loads or the Markdown that a person reads.
