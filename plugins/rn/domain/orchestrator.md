@@ -243,7 +243,8 @@ origin names no default branch, as no run stands yet.
         the repository's guides; and nothing extra, that it holds no file or change that the goal
         doesn't need;
       - to run `python3 <rn's folder>/scripts/repository.py ci <run>`, which waits for the CI, and
-        gives 0 where each check passed, 1 naming each that failed, and 2 where it couldn't check,
+        gives 0 printing each check with how it ended where none failed, 1 naming each that
+        failed, then each that ended neither passing nor failing, and 2 where it couldn't check,
         such as with no CI;
       - to change no file, and to give back only its findings, each with its file, and what it
         couldn't check.
@@ -257,7 +258,9 @@ origin names no default branch, as no run stands yet.
    4. Once each mend is done, `final` checks again from 1. Remaking keeps its limit: a problem
       that comes back after two send-backs goes to the user as a proposal, as does each finding
       left past a deliverable's Rounds.
-   5. Once each point passes, propose the merge, with each result. Give as a
+   5. Once each point passes, propose the merge, with each result. Name each check that ended
+      neither passing nor failing, such as cancelled or timed out, for the user to run again, as
+      neither you nor a mend can settle it. Give as a
       proposal each finding left of a deliverable done at a step that the user doesn't check: each
       open decision that its last Round's `put-up.json` names, with what that Round's
       `evaluator.json` found of its condition.

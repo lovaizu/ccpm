@@ -163,24 +163,54 @@ def ci(run: RunPlace, host: Host) -> str:
     """What the pull request's CI found, once it's done.
 
     Takes: the run, and the host.
-    Gives: each check with its result, as gh gives them, where each passed.
+    Gives: each check of the pull request's head, by its name, once each, in gh's order, with how
+    it ended: `passed`, `skipped`, `cancelled`, as GitHub Actions ends a job past its time limit
+    too, `timed out`, or `still running`, where gh's watch stopped before it ended, each a line
+    `<name>\t<end>`, where none failed. A check cancelled, timed out, or still running neither
+    passed nor failed, and only the user runs it again.
     Changes: runs `gh pr checks <the work's branch> --watch` in the run's worktree, which waits
-    until each check is done.
-    Refuses: Wrong where a check failed, naming each once; CantRun where gh can't give the checks,
-    such as where the repository has no CI or the branch no pull request, with what gh said.
+    until each check is done, then reads each check's end by
+    `gh pr checks <the work's branch> --json name,state,bucket,link`, as gh's watch prints a
+    cancelled check as `fail` and ends 0 where no other failed.
+    Refuses: Wrong where a check failed, naming each once, then each that ended neither passing
+    nor failing, with how; CantRun where gh can't give the checks, such as where the repository
+    has no CI, the branch no pull request, or gh can't reach GitHub, with what gh said.
     """
-    ran = host(["gh", "pr", "checks", run.branch, "--watch"], run.worktree)
-    if ran.code == 0:
-        return ran.out
-    failed = [
-        line.split("\t")[0] for line in ran.out.splitlines() if line.split("\t")[1:2] == ["fail"]
-    ]
+    host(["gh", "pr", "checks", run.branch, "--watch"], run.worktree)
+    read = ["gh", "pr", "checks", run.branch, "--json", "name,state,bucket,link"]
+    given = host(read, run.worktree)
+    if given.code != 0:
+        raise CantRun(f"gh can't give the pull request's CI: {(given.out + given.err).strip()}")
+    ends = {each["name"]: _end(each) for each in json.loads(given.out)}
+    failed = [name for name, end in ends.items() if end == "failed"]
+    others = [f"{name} {end}" for name, end in ends.items() if end not in _SETTLED]
     if failed:
-        raise Wrong(
-            f"the pull request's CI fails at {', '.join(dict.fromkeys(failed))}; mend each in the"
-            " deliverable whose file it concerns"
-        )
-    raise CantRun(f"gh can't give the pull request's CI: {ran.err.strip()}")
+        what = f"the pull request's CI fails at {', '.join(failed)}; mend each in the deliverable"
+        what += " whose file it concerns"
+        if others:
+            what += "; these ended neither passing nor failing, for the user to run again: "
+            what += ", ".join(others)
+        raise Wrong(what)
+    return "".join(f"{name}\t{end}\n" for name, end in ends.items())
+
+
+# The ends of a check that settle it, as passing or failing, with no one to run it again.
+_SETTLED = ("passed", "skipped", "failed")
+# How a check ended, by gh's bucket of it, but for one that timed out, which gh buckets as failed.
+_ENDS = {
+    "pass": "passed",
+    "skipping": "skipped",
+    "fail": "failed",
+    "cancel": "cancelled",
+    "pending": "still running",
+}
+
+
+def _end(check: dict[str, str]) -> str:
+    """How a check ended, from its `state` and gh's `bucket` of it: `passed`, `skipped`,
+    `failed`, `cancelled`, `timed out`, or `still running`, where gh's watch stopped before it
+    ended."""
+    return "timed out" if check["state"] == "TIMED_OUT" else _ENDS[check["bucket"]]
 
 
 def _body(goal: str, issues: dict[str, list[int]]) -> str:

@@ -1,10 +1,11 @@
 """The double of gh that rn's cases run in its place, as rn's Test strategy says under Integration
 testing and Contract testing. It answers each command of gh that rn's code runs from one line of a
-record in recorded/: gh 2.102.1's runs for `gh auth status`, `gh pr view`, with the state of a
-pull request that is open, closed, or merged, and where gh can't reach GitHub, `gh pr close`, and
-`gh pr checks --watch`, and gh's manual for `gh pr create`, as the plugin guide's Each result of a
-double from a record says. A command that no record holds fails with exit 1, naming itself, so
-that a body that runs it shows the gap.
+record in recorded/: gh 2.102.1's runs for `gh auth status`, `gh pr view`, with the state of a pull
+request that is open, closed, or merged, and where gh can't reach GitHub, `gh pr close`, and
+`gh pr checks`, by `--watch` and by `--json`, with checks that passed, failed, or were cancelled;
+and, of gh's manual and code, `gh pr create` and a check that timed out, as the plugin guide's Each
+result of a double from a record says. A command that no record holds fails with exit 1, naming
+itself, so that a body that runs it shows the gap.
 
 It serves two ways in: `host`, a Host of repository.host for the unit cases, which runs git for
 real and gh from the records; and `program`, a `gh` written into a folder for the integration
@@ -111,7 +112,9 @@ def earlier(folder: str, url: str, held: str) -> None:
 
 
 def checks(folder: str, found: str) -> None:
-    """Sets what the CI's checks found: `passed`, `failed`, or `none`, where it has no checks."""
+    """Sets what the CI's checks found: `passed`, `failed`, `cancelled`, `ended` each way, as one
+    passed, one failed, and others were cancelled, `timed-out`, or `none`, where it has no
+    checks."""
     kept = state(folder)
     kept["checks"] = found
     keep(folder, kept)
@@ -176,10 +179,32 @@ def _created(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
 
 
 def _checks(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
-    """What `gh pr checks --watch` gives of the open pull request's CI."""
+    """What `gh pr checks --watch`, or `gh pr checks --json`, gives of the open pull request's
+    CI."""
+    json_asked = "--json" in argv
+    if not kept["reached"] and json_asked:
+        return line(PR_CHECKS, "gh pr checks --json can't reach GitHub")
+    if not kept["reached"]:
+        return line(PR_CHECKS, "gh pr checks --watch can't reach GitHub")
     if kept["pull_request"] is None:
         return _unrecorded(kept, argv)
-    return _checked(kept["checks"])
+    return _ends(kept["checks"]) if json_asked else _checked(kept["checks"])
+
+
+def _ends(found: str) -> dict[str, Any]:
+    """What `gh pr checks --json name,state,bucket,link` gives where the CI's checks found
+    `passed`, `failed`, `cancelled`, `ended` each way, `timed-out`, or `none`."""
+    if found == "failed":
+        return line(PR_CHECKS, "gh pr checks --json gives a check failed and the rest passed")
+    if found == "cancelled":
+        return line(PR_CHECKS, "gh pr checks --json gives a check cancelled and the rest passed")
+    if found == "ended":
+        return line(PR_CHECKS, "gh pr checks --json gives checks that ended each way")
+    if found == "timed-out":
+        return line(MANUAL, "gh pr checks --json gives a check that timed out")
+    if found == "none":
+        return line(PR_CHECKS, "gh pr checks --json finds no checks")
+    return line(PR_CHECKS, "gh pr checks --json gives each check passed")
 
 
 def _state(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
@@ -213,10 +238,15 @@ def _fields(argv: Sequence[str]) -> list[str]:
 
 
 def _checked(found: str) -> dict[str, Any]:
-    """What `gh pr checks --watch` gives where the CI's checks found `passed`, `failed`, or
-    `none`."""
-    if found == "failed":
+    """What `gh pr checks --watch` gives where the CI's checks found `passed`, `failed`,
+    `cancelled`, `ended` each way, `timed-out`, or `none`; a check that timed out fails gh's watch
+    as one that failed does, as gh 2.102.1 counts it."""
+    if found in ("failed", "timed-out"):
         return line(PR_CHECKS, "gh pr checks --watch finds a check failed")
+    if found == "cancelled":
+        return line(PR_CHECKS, "gh pr checks --watch finds a check cancelled and the rest passed")
+    if found == "ended":
+        return line(PR_CHECKS, "gh pr checks --watch finds checks that ended each way")
     if found == "none":
         return line(PR_CHECKS, "gh pr checks --watch finds no checks")
     return line(PR_CHECKS, "gh pr checks --watch finds each check passed")

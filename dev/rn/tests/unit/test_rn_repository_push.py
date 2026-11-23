@@ -15,6 +15,7 @@ checks, each passed, one failed, and none that gh can give."""
 
 from __future__ import annotations
 
+import json
 import os
 import stat
 from typing import Any
@@ -648,35 +649,92 @@ def checks_asked(gh_state: str) -> list[list[str]]:
     return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "checks"]]
 
 
+# What ci says of the checks that failed, and of three that the CI cancelled.
+MEND = "; mend each in the deliverable whose file it concerns"
+AGAIN = (
+    "; these ended neither passing nor failing, for the user to run again: times-out cancelled,"
+    " cancels cancelled, cancelled cancelled"
+)
+
+
+def ended(found: str) -> list[dict[str, str]]:
+    """Each check of the record that the double of gh gives for what the CI's checks found, as
+    `gh pr checks --json name,state,bucket,link` gives them."""
+    return json.loads(gh_double._ends(found)["stdout"])
+
+
+def lines(checks: list[tuple[str, str]]) -> str:
+    """The lines that ci gives of the checks, each by its name and how it ended."""
+    return "".join(f"{name}\t{end}\n" for name, end in checks)
+
+
 @pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 def test_ci_where_each_check_passed_gives_them_having_waited_for_the_works_branch(
     tmp_path: Any, host: Any, gh_state: str
 ):
     """Given a run whose plan was put up, and whose CI's checks each passed
     When ci is given the run
-    Then it gives gh's lines, among them `tests\tpass`, and gh was asked once, in the run's
-    worktree, to wait for rn-<name>'s checks"""
+    Then it gives each check by its name, once each, in gh's order, as passed; and gh was asked,
+    in the run's worktree, to wait for rn-<name>'s checks, then to give each check's end"""
     run = made_run(str(tmp_path))
     put_up(run, rn_files.plan_path(NAME), host)
-    assert "tests\tpass" in ci(run, host)
-    assert checks_asked(gh_state) == [["gh", "pr", "checks", f"rn-{NAME}", "--watch"]]
+    names = list(dict.fromkeys(each["name"] for each in ended("passed")))
+    assert ci(run, host) == lines([(name, "passed") for name in names])
+    branch = f"rn-{NAME}"
+    assert checks_asked(gh_state) == [
+        ["gh", "pr", "checks", branch, "--watch"],
+        ["gh", "pr", "checks", branch, "--json", "name,state,bucket,link"],
+    ]
     assert host.ran[-1][1] == worktree(run)
 
 
 @pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
-def test_ci_where_a_check_failed_is_wrong_naming_it_once(tmp_path: Any, host: Any, gh_state: str):
-    """Given a run whose plan was put up, and whose CI's check `tests` failed, which gh's lines
-    show twice as it waits
+@pytest.mark.parametrize(
+    "case",
+    [("cancelled", "cancels", "cancelled"), ("timed-out", "deploy", "timed out")],
+    ids=["cancelled", "timed-out"],
+)
+def test_ci_where_a_check_ended_neither_passing_nor_failing_names_how_it_ended(
+    tmp_path: Any, host: Any, gh_state: str, case: tuple[str, str, str]
+):
+    """Given a run whose plan was put up, and whose CI's check was cancelled, as GitHub Actions ends
+    a job past its time limit too, or timed out, as another check's app may end it, each other
+    check passed, and gh's watch ending 0 or 1
     When ci is given the run
-    Then Wrong is raised, naming `tests` once, and no check that passed"""
+    Then it gives each check by its name in gh's order, that one as cancelled or timed out and
+    each other as passed, as neither passing nor failing, for the user to run again"""
+    found, other, end = case
     run = made_run(str(tmp_path))
     put_up(run, rn_files.plan_path(NAME), host)
-    gh_double.checks(gh_state, "failed")
+    gh_double.checks(gh_state, found)
+    names = list(dict.fromkeys(each["name"] for each in ended(found)))
+    assert other in names
+    assert ci(run, host) == lines([(name, end if name == other else "passed") for name in names])
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+@pytest.mark.parametrize(
+    ("found", "expected"),
+    [
+        ("failed", f"the pull request's CI fails at tests{MEND}"),
+        ("ended", f"the pull request's CI fails at fails{MEND}{AGAIN}"),
+    ],
+    ids=["failed", "failed-and-cancelled"],
+)
+def test_ci_where_a_check_failed_is_wrong_naming_it_once(
+    tmp_path: Any, host: Any, gh_state: str, found: str, expected: str
+):
+    """Given a run whose plan was put up, and whose CI's check `tests` failed, which gh's lines
+    show twice as it waits, or whose check `fails` failed while three others were cancelled
+    When ci is given the run
+    Then Wrong is raised, naming each check that failed once, and no check that passed, then each
+    that was cancelled, for the user to run again"""
+    run = made_run(str(tmp_path))
+    put_up(run, rn_files.plan_path(NAME), host)
+    gh_double.checks(gh_state, found)
     with pytest.raises(Wrong) as refused:
         ci(run, host)
-    assert str(refused.value) == (
-        "the pull request's CI fails at tests; mend each in the deliverable whose file it concerns"
-    )
+    assert str(refused.value) == expected
 
 
 @pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
@@ -684,19 +742,23 @@ def test_ci_where_a_check_failed_is_wrong_naming_it_once(tmp_path: Any, host: An
     ("found", "said"),
     [
         ("none", "no checks reported on the 'patch-1' branch"),
+        ("unreached", 'Post "https://api.github.com/graphql": proxyconnect tcp'),
         (None, "gh double: no record of gh pr checks"),
     ],
-    ids=["no-ci", "no-pull-request"],
+    ids=["no-ci", "no-network", "no-pull-request"],
 )
 def test_ci_that_gh_cant_give_cant_run_with_what_gh_said(
     tmp_path: Any, host: Any, gh_state: str, found: str | None, said: str
 ):
-    """Given a run whose CI has no checks, or that has no pull request
+    """Given a run whose CI has no checks, whose gh can't reach GitHub, or that has no pull request
     When ci is given the run
     Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said"""
     run = made_run(str(tmp_path))
     if found:
         put_up(run, rn_files.plan_path(NAME), host)
+    if found == "unreached":
+        gh_double.unreached(gh_state)
+    elif found:
         gh_double.checks(gh_state, found)
     with pytest.raises(CantRun) as refused:
         ci(run, host)
