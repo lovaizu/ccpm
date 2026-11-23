@@ -11,7 +11,7 @@
    ],
    "refs": []
   },
-  "pr": null
+  "pr": "https://github.com/lovaizu/ccpm/pull/84"
  },
  "goal": {
   "decided": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
@@ -31,7 +31,7 @@
      "decisions": [
       {
        "about": "Whom the goal is for",
-       "decided": "利用者はai",
+       "decided": "\u5229\u7528\u8005\u306fai",
        "by": "user"
       },
       {
@@ -441,28 +441,28 @@
  ],
  "steps": [
   {
-   "settles": "誰が何のために使うか",
+   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "どう使うか",
+   "settles": "\u3069\u3046\u4f7f\u3046\u304b",
    "deliverables": [
     "plugins/overnight/README.md"
    ],
    "signoff": false
   },
   {
-   "settles": "どんな部品でどう動くか",
+   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
    "deliverables": [
     "dev/overnight/architecture.md"
    ],
    "signoff": false
   },
   {
-   "settles": "部品がかみ合うか",
+   "settles": "\u90e8\u54c1\u304c\u304b\u307f\u5408\u3046\u304b",
    "deliverables": [
     "plugins/overnight",
     "dev/overnight/tests"
@@ -470,7 +470,7 @@
    "signoff": false
   },
   {
-   "settles": "動くものができたか",
+   "settles": "\u52d5\u304f\u3082\u306e\u304c\u3067\u304d\u305f\u304b",
    "deliverables": [
     "plugins/overnight/scripts",
     ".claude-plugin/marketplace.json"
