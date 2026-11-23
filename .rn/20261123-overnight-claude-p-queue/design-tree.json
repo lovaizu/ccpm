@@ -11,7 +11,7 @@
    ],
    "refs": []
   },
-  "pr": null,
+  "pr": "https://github.com/lovaizu/ccpm/pull/82",
   "session": "a3474397-ec33-40fc-a2f1-ba0b908940bf"
  },
  "goal": {
@@ -608,21 +608,21 @@
  ],
  "steps": [
   {
-   "settles": "誰が何のために使うか",
+   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "どう使うか",
+   "settles": "\u3069\u3046\u4f7f\u3046\u304b",
    "deliverables": [
     "plugins/overnight/README.md"
    ],
    "signoff": false
   },
   {
-   "settles": "どんな部品でどう動くか",
+   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
    "deliverables": [
     "dev/overnight/architecture.md",
     "plugins/overnight"
@@ -630,14 +630,14 @@
    "signoff": false
   },
   {
-   "settles": "何を確かめるか",
+   "settles": "\u4f55\u3092\u78ba\u304b\u3081\u308b\u304b",
    "deliverables": [
     "dev/overnight/tests"
    ],
    "signoff": false
   },
   {
-   "settles": "動くもの",
+   "settles": "\u52d5\u304f\u3082\u306e",
    "deliverables": [
     "plugins/overnight/domain",
     "plugins/overnight/domain/overnight.md",
@@ -646,7 +646,7 @@
    "signoff": false
   },
   {
-   "settles": "マーケットプレイスへの登録",
+   "settles": "\u30de\u30fc\u30b1\u30c3\u30c8\u30d7\u30ec\u30a4\u30b9\u3078\u306e\u767b\u9332",
    "deliverables": [
     ".claude-plugin/marketplace.json"
    ],
