@@ -1,0 +1,47 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "language": "English",
+ "deliverable": {
+  "name": "The AI learns what changed for it in each version of the plugin",
+  "path": "plugins/overnight/CHANGELOG.md",
+  "kind": "light",
+  "inputs": [
+   "plugins/overnight/README.md"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": false,
+    "decisions": [
+     {
+      "about": "The check",
+      "decided": "The file has the form of Keep a Changelog, as dev/plugin-development-guide.md:500 says, and its Unreleased section lists each thing the README promises the user can do.",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight/README.md"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/light",
+ "stage": "content",
+ "number": 1,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/plugins%2Fovernight%2FCHANGELOG.md/content-1",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-plugins%2Fovernight%2FCHANGELOG.md-content-1/",
+ "findings": null,
+ "last_good": null
+}

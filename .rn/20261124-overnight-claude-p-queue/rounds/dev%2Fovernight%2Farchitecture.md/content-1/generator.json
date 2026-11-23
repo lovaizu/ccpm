@@ -1,0 +1,116 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/architecture.md",
+  "dev/overnight/images/components.svg",
+  "dev/overnight/images/concept-model.svg",
+  "dev/overnight/images/deployment.svg"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight carries each stacked task to its end without the user, so the user lets go after"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- S1: the user wants each task they stack done in the hours they set, with no one there.",
+    "- S2: the user wants each finished task's whole result afterward, and why each other task ended"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "  - P1.4: a queue is taken only once each task can start, so mistakes show while the user is there.",
+    "- Each run and reply written only by the record, which the stacker, the runner, and the checker"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "- P1: no one there while the tasks run",
+    "  - P1.1: the tasks run apart from Claude Code, so they go on after the stacking session ends.",
+    "  - P2.1: a task stopped by the usage limit goes on in its session two minutes after the reset.",
+    "  - P3.2: a task given up for any reason stops no other task."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- runner (script)\\",
+    "  Carries each stacked task to its end without anyone.",
+    "- session (script)\\",
+    "  Runs a task's Claude Code session, and tells how it ended."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- commands (skill)\\",
+    "- stacker (script)\\"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "- Run\\",
+    "  Holds how far a task got: its session, its stops at the usage limit, and its end."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "  alt a task that can't start, such as a prompt that isn't there, or a queue still running [P1.4]",
+    "      else stopped by the limit the seventh time [P2.2]",
+    "      else stopped by the limit an earlier time [P2.1]"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- Each queue's runs and replies beside the queue file, in place of the plugin guide's run folder."
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "The user installs overnight as [the README](../../plugins/overnight/README.md#installation) says,"
+   ]
+  },
+  {
+   "condition": "N11",
+   "lines": [
+    "plugins/overnight/                 what Claude Code installs for the user",
+    "<queue's folder>/                  the user's own folder, where they write the queue"
+   ]
+  },
+  {
+   "condition": "N12",
+   "lines": [
+    "| Contract testing | Architecture | Quality | Apart from the work | On each new Claude Code version, each recorded session repeats its record: finished, stopped, resumed, failed, or a write refused. |",
+    "| Long-run testing | Product | Benchmark | At stages | The runner's memory and open files over a night's queue. Each case runs until one more run no longer changes the mean. |"
+   ]
+  },
+  {
+   "condition": "N14",
+   "lines": [
+    "- How a session's end shows the usage limit and its reset read by the session alone. [P2.1]\\"
+   ]
+  },
+  {
+   "condition": "N15",
+   "lines": [
+    "- One runner for each queue, started by the stacker as a program apart from Claude Code. [P1.1]\\",
+    "  Intent: the tasks go on after the stacking session ends, and each queue moves on by itself."
+   ]
+  },
+  {
+   "condition": "N16",
+   "lines": [
+    "│   └── queue.py                   queue stack, queue check, and queue run, which the stacker starts"
+   ]
+  }
+ ]
+}

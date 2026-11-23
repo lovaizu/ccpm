@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640">
+  <title>overnight&#x27;s components</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1000" height="640"/>
+  <rect class="box" x="40" y="40" width="180" height="70" rx="6"/>
+  <text class="name" x="130.0" y="71.0">user</text>
+  <text class="kind" x="130.0" y="91.0">[an AI session]</text>
+  <rect class="box" x="340" y="40" width="200" height="70" rx="6"/>
+  <text class="name" x="440.0" y="71.0">commands</text>
+  <text class="kind" x="440.0" y="91.0">[skill]</text>
+  <rect class="store" x="760" y="40" width="200" height="70" rx="6"/>
+  <text class="name" x="860.0" y="80.0">queue file</text>
+  <rect class="box" x="100" y="220" width="180" height="70" rx="6"/>
+  <text class="name" x="190.0" y="251.0">checker</text>
+  <text class="kind" x="190.0" y="271.0">[script]</text>
+  <rect class="box" x="520" y="220" width="180" height="70" rx="6"/>
+  <text class="name" x="610.0" y="251.0">stacker</text>
+  <text class="kind" x="610.0" y="271.0">[script]</text>
+  <rect class="box" x="100" y="400" width="180" height="70" rx="6"/>
+  <text class="name" x="190.0" y="431.0">record</text>
+  <text class="kind" x="190.0" y="451.0">[script]</text>
+  <rect class="box" x="520" y="400" width="180" height="70" rx="6"/>
+  <text class="name" x="610.0" y="431.0">runner</text>
+  <text class="kind" x="610.0" y="451.0">[script]</text>
+  <rect class="box" x="830" y="400" width="150" height="70" rx="6"/>
+  <text class="name" x="905.0" y="431.0">session</text>
+  <text class="kind" x="905.0" y="451.0">[script]</text>
+  <rect class="store" x="100" y="550" width="180" height="60" rx="6"/>
+  <text class="name" x="190.0" y="585.0">runs and replies</text>
+  <rect class="store" x="520" y="550" width="180" height="60" rx="6"/>
+  <text class="name" x="610.0" y="585.0">each task&#x27;s folder</text>
+  <rect class="ext" x="830" y="550" width="150" height="60" rx="6"/>
+  <text class="name" x="905.0" y="585.0">Claude Code</text>
+  <path class="line" d="M220,65 L340,65" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="280" y="56">calls, with a queue</text>
+  <path class="line dashed" d="M340,95 L220,95" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="280" y="124">the answer, as printed</text>
+  <path class="line" d="M400,110 L230,220" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="306" y="166">runs</text>
+  <path class="line" d="M480,110 L580,220" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="538" y="166">runs</text>
+  <path class="line" d="M700,240 L800,110" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="760" y="180">reads (Queue)</text>
+  <path class="line" d="M610,290 L610,400" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="618" y="350">starts, apart from Claude Code</text>
+  <path class="line" d="M520,280 L280,410" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="400" y="340">writes each task (Task, Run)</text>
+  <path class="line" d="M190,290 L190,400" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="182" y="350">asks each task (Task, Run)</text>
+  <path class="line" d="M520,435 L280,435" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="400" y="426">writes (Run, Reply)</text>
+  <path class="line" d="M190,470 L190,550" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="198" y="515">keeps</text>
+  <path class="line" d="M700,420 L830,420" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="765" y="411">starts, resumes</text>
+  <path class="line dashed" d="M830,455 L700,455" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="765" y="486">how it ended (Reply)</text>
+  <path class="line" d="M905,470 L905,550" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="897" y="515">runs the task (Task)</text>
+  <path class="line" d="M830,580 L700,580" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="765" y="571">writes, if let</text>
+  <text class="label" x="790" y="210">Legend</text>
+  <rect class="box" x="790" y="222" width="22" height="16" rx="3"/>
+  <text class="label small" x="822" y="235">a component</text>
+  <rect class="store" x="790" y="248" width="22" height="16" rx="3"/>
+  <text class="label small" x="822" y="261">a store of data</text>
+  <rect class="ext" x="790" y="274" width="22" height="16" rx="3"/>
+  <text class="label small" x="822" y="287">outside overnight</text>
+  <path class="line dashed" d="M790,308 L812,308" marker-end="url(#arrow)"/>
+  <text class="label small" x="822" y="312">a result handed back</text>
+</svg>

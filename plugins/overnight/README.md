@@ -30,13 +30,12 @@ In a new session, `/overnight:check` shows `overnight 0.1.0: name the queue file
 
 ## Walkthrough
 
-At the end, you have two reviews and a fixed test taken into your work, from tasks that ran with no
-one there to answer them.
+At the end, you have two reviews and a fixed test taken into your work, from unattended tasks.
 
 This run is the one that overnight's design builds toward. No run of overnight records it yet.
-At the end of their day, the person you work for asks for two reviews by morning: the shop's payment
-and refund modules. They also ask for a fix of the flaky checkout test. You give the fix a folder of
-its own:
+At day's end, the person you work for asks for two reviews by morning: the shop's payment and
+refund modules. They also ask for a fix of the flaky checkout test. You give the fix a folder of its
+own:
 
 ```console
 $ git worktree add /home/dev/work/shop-fix-flaky-checkout -b fix-flaky-checkout
@@ -129,9 +128,8 @@ them.
 
 ### "Tasks stop at the usage limit, and wait for someone to start them again."
 
-When a task reaches the usage limit, its reply names the time that the limit resets. overnight
-resumes the task's session two minutes after that time to finish the task. The new reply goes after
-the earlier one, so you take in the whole result.
+overnight resumes the task's session to finish it, two minutes after the reset time in its reply.
+The new reply goes after the earlier one, so you take in the whole result.
 
 ### "Does a task stop to ask for a permission that no one is there to give?"
 
@@ -139,8 +137,8 @@ No. Each task starts with its tools allowed and its edits accepted, and writes o
 
 ### "Does a task that keeps reaching the limit hold up the queue?"
 
-No. When the usage limit stops a task the seventh time, overnight gives the task up, with the reason
-and the task's session. The other tasks go on.
+No. overnight gives up a task at its seventh stop, with the reason and session, and the others go
+on.
 
 ### "Do the tasks stop when the session that stacked them ends?"
 
@@ -148,8 +146,8 @@ No. overnight runs the tasks apart from Claude Code, so they go on after that se
 
 ### "Won't the tasks use up the usage window that people work in during the day?"
 
-overnight runs the first task at `start`, an hour that you set for when no one works. Without
-`start`, overnight runs the first task at once. It runs three tasks at a time.
+overnight runs the first task at `start`, an hour you set when no one works, or at once without
+`start`. It runs three tasks at a time.
 
 ### "A plugin that runs its own AI sessions would have to write the wait for the limit again."
 

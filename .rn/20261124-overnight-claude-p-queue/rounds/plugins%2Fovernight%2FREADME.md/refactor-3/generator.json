@@ -8,15 +8,14 @@
    "condition": "N1",
    "lines": [
     "overnight is a Claude Code plugin that runs each task you stack to its end, past the usage limit.",
-    "When a task reaches the usage limit, its reply names the time that the limit resets. overnight",
-    "resumes the task's session two minutes after that time to finish the task. The new reply goes after",
-    "No. When the usage limit stops a task the seventh time, overnight gives the task up, with the reason"
+    "overnight resumes the task's session to finish it, two minutes after the reset time in its reply.",
+    "No. overnight gives up a task at its seventh stop, with the reason and session, and the others go"
    ]
   },
   {
    "condition": "N2",
    "lines": [
-    "At the end, you have two reviews and a fixed test taken into your work, from tasks that ran with no",
+    "At the end, you have two reviews and a fixed test taken into your work, from unattended tasks.",
     "overnight carries each task you stack to its end without you, so you let go once you've stacked"
    ]
   },
@@ -31,15 +30,13 @@
    "condition": "N7",
    "lines": [
     "with `writes` set to `true` may write there. Each other task gets only read-only tools:",
-    "overnight runs the first task at `start`, an hour that you set for when no one works. Without",
-    "`start`, overnight runs the first task at once. It runs three tasks at a time.",
     "passed 20 times. You see what the task wrote in its folder and take it in:"
    ]
   },
   {
    "condition": "N10",
    "lines": [
-    "At the end of their day, the person you work for asks for two reviews by morning: the shop's payment",
+    "At day's end, the person you work for asks for two reviews by morning: the shop's payment and",
     "You hand the person you work for the two reviews and the merged fix."
    ]
   }
