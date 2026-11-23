@@ -7,8 +7,10 @@ one, and several, newest by its last commit, a newer run whose every deliverable
 holds no design tree passed over, branches that nearly match a run's left out, a run's newer local
 branch deciding over origin's, and the refusal of a design tree that isn't JSON; and `found`, with
 the run's worktree there, removed with its local branch kept, its folder deleted, a run that only
-origin holds in a fresh clone, and a worktree that git can't make; and, inside herdr and outside,
-`new` and `found` with the worktree gone, each with herdr failing inside it."""
+origin holds in a fresh clone, and a worktree that git can't make; `removed`, of a run that origin
+holds nothing of, and of one whose branch and pull request origin holds, with a change not
+committed, and a worktree that git can't remove; and, inside herdr and outside, `new` and `found`
+with the worktree gone, and `removed`, each with herdr failing inside it."""
 
 from __future__ import annotations
 
@@ -22,7 +24,7 @@ from fault import CantRun, Missing, Wrong
 from herdr import herdr_double
 from repo_files import git, write_files
 from repository.place import RunPlace
-from repository.worktree import found, new, newest
+from repository.worktree import found, new, newest, removed
 from rn_runs import NAME, branch_run, dated_commit, head
 
 GOAL = rn_files.GOAL
@@ -540,3 +542,114 @@ def test_a_pick_up_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said
     branch_run(repo, NAME, a_tree(NAME), worktree=False)
     with pytest.raises(CantRun, match="herdr can't open the run's worktree: .*server_not_running"):
         found(repo, herdr_double.host(host, running=False))
+
+
+# A run cancelled
+
+PR = "https://github.com/lovaizu/invoicer/pull/38"
+
+
+def cancelled_run(repo: str, pushed: bool) -> RunPlace:
+    """The run of the repository with its worktree here, a change in it not committed, and, where
+    `pushed` says so, its branch pushed to origin and its pull request in the design tree."""
+    tree = a_tree(NAME)
+    if pushed:
+        tree["context"]["pr"] = PR
+    branch_run(repo, NAME, tree)
+    worktree = rn_files.worktree_of(repo, NAME)
+    write_files(worktree, {"invoicer/lines.py": "def parse_lines(text):\n    return []\n"})
+    if pushed:
+        git(worktree, "push", "-q", "-u", "origin", f"rn-{NAME}")
+    return RunPlace(repo, NAME)
+
+
+@pytest.mark.supports(
+    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
+)
+@pytest.mark.parametrize("pushed", [False, True], ids=["local-only", "pushed"])
+def test_a_cancelled_run_loses_its_worktree_and_local_branch_and_names_what_origin_keeps(
+    tmp_path: Any, host: Any, pushed: bool
+):
+    """Given a run whose worktree holds a change not committed, its branch kept on this machine
+    alone, or pushed to origin with its pull request named in the design tree, outside herdr
+    When removed is asked
+    Then it gives nothing, or origin's branch and the pull request, for the user to remove; the
+    worktree and the local branch rn-<name> are gone; origin's branch is as it was; and the user's
+    branch and files are as they were"""
+    repo = a_repository(tmp_path)
+    run = cancelled_run(repo, pushed)
+    before = head(repo, "main")
+    assert removed(run, host) == ([f"origin/rn-{NAME}", PR] if pushed else [])
+    assert not os.path.exists(run.worktree)
+    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
+    remote = git(repo, "ls-remote", "--heads", "origin", f"rn-{NAME}").strip()
+    assert bool(remote) == pushed
+    assert git(repo, "branch", "--show-current").strip() == "main"
+    assert head(repo) == before
+
+
+@pytest.mark.supports(
+    "test_a_cancel_whose_worktree_cant_be_removed_ends_on_blocked_and_keeps_the_run"
+)
+def test_a_worktree_git_cant_remove_is_cantrun_and_keeps_the_branch(tmp_path: Any, host: Any):
+    """Given a run whose worktree is locked, outside herdr
+    When removed is asked
+    Then CantRun is raised with what git said, and the worktree and the branch rn-<name> stay"""
+    repo = a_repository(tmp_path)
+    run = cancelled_run(repo, False)
+    git(repo, "worktree", "lock", run.worktree)
+    with pytest.raises(CantRun, match="git can't remove the run's worktree: .*locked"):
+        removed(run, host)
+    assert os.path.isdir(run.worktree)
+    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() != ""
+
+
+@pytest.mark.supports(
+    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
+)
+@pytest.mark.parametrize("made_by", ["git", "herdr"])
+def test_a_cancelled_run_inside_herdr_has_herdr_remove_its_worktree(
+    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch, made_by: str
+):
+    """Given a run whose worktree holds a change not committed, made by git, or by herdr with its
+    workspace open, inside herdr
+    When removed is asked
+    Then herdr was asked, in the repository, to open the worktree, keeping the focus where it is,
+    then to remove the worktree of the workspace it gave, with its change; the worktree and the
+    local branch rn-<name> are gone; and git removed no worktree itself"""
+    monkeypatch.setenv("HERDR_ENV", "1")
+    herdr = herdr_double.host(host)
+    repo = a_repository(tmp_path)
+    if made_by == "herdr":
+        new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, herdr)
+        run = RunPlace(repo, NAME)
+        write_files(run.worktree, {"invoicer/lines.py": "def parse_lines(text):\n    return []\n"})
+    else:
+        run = cancelled_run(repo, False)
+    before = len(herdr.asked)
+    assert removed(run, herdr) == []
+    opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", run.worktree, "--no-focus"]
+    workspace = "w1Q" if made_by == "herdr" else "w1J"
+    remove = ["herdr", "worktree", "remove", "--workspace", workspace, "--force"]
+    assert herdr.asked[before:] == [(opened, repo), (remove, repo)]
+    assert not os.path.exists(run.worktree)
+    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
+    assert not [argv for argv, _ in host.ran if argv[:3] == ["git", "worktree", "remove"]]
+
+
+@pytest.mark.supports(
+    "test_a_cancel_whose_worktree_cant_be_removed_ends_on_blocked_and_keeps_the_run"
+)
+def test_a_cancelled_run_inside_herdr_that_herdr_fails_is_cantrun_and_keeps_the_run(
+    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
+):
+    """Given a run whose worktree is here, inside herdr, whose server isn't running
+    When removed is asked
+    Then CantRun is raised with what herdr said, and the worktree and the branch rn-<name> stay"""
+    monkeypatch.setenv("HERDR_ENV", "1")
+    repo = a_repository(tmp_path)
+    run = cancelled_run(repo, False)
+    with pytest.raises(CantRun, match="herdr can't open the run's worktree: .*server_not_running"):
+        removed(run, herdr_double.host(host, running=False))
+    assert os.path.isdir(run.worktree)
+    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() != ""

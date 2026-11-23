@@ -34,6 +34,11 @@ Rule = dict[str, Any]
 # The rule of each step of the orchestrator's turn but its last: the turn ends there on a refusal
 # that only the user can mend, where nothing else can move.
 _BLOCKED: Rule = {"type": "result", "ends": ["blocked"]}
+# The rule of the step `take`: the turn ends there too where the user's words pause or cancel the
+# run, as the orchestrator then reports by `paused` or `cancelled`, so that rn's order ends the run.
+_LEFT: Rule = {"type": "result", "ends": ["blocked", "paused", "cancelled"]}
+# The rule of a pause's last step: the turn gives `paused`, by which rn's order ends the run.
+_PAUSED: Rule = {"type": "result", "results": ["paused"]}
 
 # A start as Lane gives it, in the form of Lane's rules.in.schema.json, and its steps that rn
 # gives back, in the form of its rules.out.schema.json.
@@ -59,8 +64,10 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     - for a new request, the user's words in a turn that called no command, right after one that
       called `rn:on`: `start`, on the run that `place.named` names from today and the words;
     - else, on the run that the turn concerns, the event's own step: `find` for `rn:up`; `record`
-      for `rn:ty`; for `rn:dn`, `stop`, then `pause`, and no step after them; and `take` for any
-      other command or none, such as an answer or a role's end. That run is, where the latest turn
+      for `rn:ty`; for `rn:dn`, `stop`, then `pause`, with the result `paused`, and no step after
+      them; and `take` for any other command or none, such as an answer or a role's end, ending
+      also on `paused` or `cancelled`, as the user's words may pause or cancel the run. That run
+      is, where the latest turn
       that called `rn:on` or `rn:up`, the turn's own among them, called `rn:on`, the one that the
       request made, as
       `place.made` finds it from the request's words; else the one that
@@ -71,8 +78,9 @@ def steps(given: Given, cwd: str, plugin_root: str) -> Steps:
     Each step of a turn but its last ends on `blocked`, so that a refusal that only the user can
     mend, such as `repository.py new`'s where origin names no default branch, ends the turn; the
     last keeps no such rule, as Lane judges the last step's result rule at each end with every step
-    done. Where no run is found, past the hearing and a new request, the turn takes `find` alone,
-    so that the orchestrator asks which run to pick up.
+    done, and only a pause's last gives a result, `paused`. Where no run is found, past the
+    hearing and a new request, the turn takes `find` alone, so that the orchestrator asks which
+    run to pick up.
     For `rn:generator`, whose prompt is the path of its Cut from `cwd`: `read`, reading whole the
     Cut, the best practice's `best-practice.md`, so that a folder without one holds the step, each
     input that is a file, and each of the deliverable's paths that is a file; `decide`, with the
@@ -118,8 +126,10 @@ def _turn(given: Given, cwd: str, plugin_root: str) -> list[Steps]:
     if run is None:
         return [_step("find")]
     if command == "rn:dn":
-        return [_step("stop", _BLOCKED), _step("pause")]
-    return [_step(_own(command), _BLOCKED), *_shared(run, cwd, plugin_root)]
+        return [_step("stop", _BLOCKED), _step("pause", _PAUSED)]
+    own = _own(command)
+    rule = _LEFT if own == "take" else _BLOCKED
+    return [_step(own, rule), *_shared(run, cwd, plugin_root)]
 
 
 def _own(command: str | None) -> str:

@@ -1,8 +1,11 @@
-"""The integration cases of S2, a pause and a pick-up: each path through its sequence, the pause
-while a generator runs, while an evaluator runs, and while a point waits, and the pick-up from the
-runs' commits in a new conversation of each, of a run whose worktree and local branch are gone, and
-of none, where the orchestrator asks which run to pick up. Each runs rn and Lane through the double
-of Claude Code and the double of gh, with a double of each prompt's work."""
+"""The integration cases of S2, a pause, a cancel, and a pick-up: each path through its sequence,
+the pause by /rn:dn while a generator runs, while an evaluator runs, and while a point waits, and
+by the user's words, each ending Lane's run so that the conversation goes on free; the cancel by the
+user's words, asked once, then done, declined, or failing where the worktree can't be removed; and
+the pick-up from the runs' commits in a new conversation of each, of a run whose worktree and local
+branch are gone, and of none, where the orchestrator asks which run to pick up. Each runs rn and
+Lane through the double of Claude Code and the double of gh, with a double of each prompt's
+work."""
 
 from __future__ import annotations
 
@@ -32,8 +35,8 @@ from rn_files import COMMAND, WORDS
 
 def paused(b: Bench, c: Conversation, agents: list[Agent]) -> str:
     """The user types /rn:dn; the orchestrator stops each role given by TaskStop at the step
-    `stop`, commits and pushes the run by repository.py pause at the step `pause`, and ends its
-    turn; gives the hash that pause printed."""
+    `stop`, commits and pushes the run by repository.py pause at the step `pause`, reports
+    `paused`, and ends its turn; gives the hash that pause printed."""
     c.type("/rn:dn")
     for agent in agents:
         answer = c.task_stop(agent)
@@ -41,8 +44,24 @@ def paused(b: Bench, c: Conversation, agents: list[Agent]) -> str:
     marked(c, "stop")
     printed = ran(c, b.script("repository", "pause", b.run)).strip()
     marked(c, "pause")
+    reported(c, "paused")
     ended(c, f'Paused "{rn_files.GOAL}".\nIts work so far is pushed.')
     return printed
+
+
+def reported(c: Conversation, result: str) -> None:
+    """The orchestrator reports the result to Lane by lane-result; the report must go through."""
+    given = c.bash(f"lane-result {result}")
+    assert not given.blocked, given.said
+    assert given.exit_code == 0, given.output
+
+
+def free(c: Conversation) -> None:
+    """The user types words of another task, and the main conversation ends its turn with no step
+    of rn's: Lane holds the turn to no step, as the run has ended."""
+    typed = c.type("Thanks. What does git stash do?")
+    assert not typed.blocked, typed.said
+    ended(c, "It sets your changes aside.")
 
 
 def picked_up(b: Bench) -> Conversation:
@@ -235,3 +254,113 @@ def test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was(b: Bench)
     assert not given.blocked, given.said
     ended(later, refused.output)
     assert b.tree() == before
+
+
+@pytest.mark.supports("S2")
+def test_a_pause_by_rn_dn_lets_the_conversation_go(b: Bench):
+    """Given a run whose command's generator runs
+    When the user types /rn:dn, the orchestrator pauses the run and reports `paused`, and the user
+    then asks about another task in the same conversation
+    Then the later turn ends with no step of rn's, Lane stopping no move"""
+    c, generator = mid_command(b)
+    paused(b, c, [generator])
+    free(c)
+
+
+@pytest.mark.supports("S2", "scripts", "Design tree")
+def test_a_pause_in_the_users_words_pushes_the_work_and_lets_the_conversation_go(b: Bench):
+    """Given a run whose command's generator runs, the command written but not committed
+    When the user asks in their own words to stop for now, and the orchestrator, at `take`, stops
+    the generator, runs repository.py pause, reports `paused`, and ends its turn
+    Then the turn ends with `take` alone done, pause prints the head of the remote's branch, which
+    holds the command, and a later turn of another task ends with no step of rn's"""
+    c, generator = mid_command(b)
+    typed = c.type("Let's stop here for today; I'll pick it up tomorrow.")
+    assert not typed.blocked, typed.said
+    stopped_role = c.task_stop(generator)
+    assert not stopped_role.blocked, stopped_role.said
+    printed = ran(c, b.script("repository", "pause", b.run)).strip()
+    reported(c, "paused")
+    ended(c, f'Paused "{rn_files.GOAL}".\nIts work so far is pushed.')
+    assert printed == git(b.origin, "rev-parse", f"rn-{b.name()}").strip()
+    assert COMMAND in b.branch_files(f"rn-{b.name()}")
+    free(c)
+
+
+def asked_to_cancel(b: Bench) -> tuple[Conversation, Agent]:
+    """A conversation whose command's generator runs, in which the user asked in their own words
+    to cancel the run, and the orchestrator, at `take`, wrote nothing, kept the shared steps, and
+    asked once whether to cancel, as removing can't be undone; gives the generator."""
+    c, generator = mid_command(b)
+    typed = c.type("Cancel this; we don't need the command any more.")
+    assert not typed.blocked, typed.said
+    taken(b, c, ground="The user asks to cancel the run.")
+    ended(
+        c,
+        "Cancel the run and remove its work on this machine?\n"
+        "Removing it can't be undone, so I'll check before I do.",
+    )
+    return c, generator
+
+
+@pytest.mark.supports("S2", "scripts")
+def test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch(b: Bench):
+    """Given a run whose plan's pull request is open and whose command's generator runs, and the
+    orchestrator's question whether to cancel it
+    When the user answers yes, and the orchestrator, at `take`, stops the generator, runs
+    repository.py cancel, reports `cancelled`, and ends its turn
+    Then cancel prints origin's branch and the pull request, which it leaves to the user; the run's
+    worktree and its local branch are gone, origin's branch stays; and a later turn of another
+    task ends with no step of rn's"""
+    c, generator = asked_to_cancel(b)
+    pr = b.tree()["context"]["pr"]
+    c.type("Yes")
+    stopped_role = c.task_stop(generator)
+    assert not stopped_role.blocked, stopped_role.said
+    printed = ran(c, b.script("repository", "cancel", b.run))
+    assert printed.splitlines() == [f"origin/rn-{b.name()}", pr]
+    reported(c, "cancelled")
+    ended(c, f"Cancelled. GitHub still holds its branch and {pr}; remove them if you want.")
+    assert not os.path.exists(b.worktree)
+    assert git(b.repo, "branch", "--list", f"rn-{b.name()}").strip() == ""
+    assert f"rn-{b.name()}" in git(b.origin, "branch", "--list")
+    free(c)
+
+
+@pytest.mark.supports("S2", "Design tree")
+def test_a_cancel_declined_leaves_the_run_going_on(b: Bench):
+    """Given a run whose command's generator runs, and the orchestrator's question whether to
+    cancel it
+    When the user answers no, and the orchestrator takes it, writing nothing, and keeps the shared
+    steps
+    Then the turn ends, Lane stopping no move, the worktree and its design tree stay as they were,
+    and the generator still runs"""
+    c, generator = asked_to_cancel(b)
+    before = b.tree()
+    c.type("No, keep going.")
+    taken(b, c, ground="The user keeps the run.")
+    ended(c, f'Making "{rn_files.COMMAND_NAME}".')
+    assert b.tree() == before
+    assert generator.running
+
+
+@pytest.mark.supports("S2", "scripts")
+def test_a_cancel_whose_worktree_cant_be_removed_ends_on_blocked_and_keeps_the_run(b: Bench):
+    """Given a run whose command's generator runs, whose worktree is locked, and the
+    orchestrator's question whether to cancel it
+    When the user answers yes, the orchestrator stops the generator and runs repository.py cancel,
+    which gives 2, reports `blocked`, and ends its turn
+    Then the turn ends, the worktree and its branch stay, and Lane still holds the next turn to
+    rn's steps, as the run goes on"""
+    c, generator = asked_to_cancel(b)
+    git(b.repo, "worktree", "lock", b.worktree)
+    c.type("Yes")
+    c.task_stop(generator)
+    refused = c.bash(b.script("repository", "cancel", b.run))
+    assert refused.exit_code == 2
+    reported(c, "blocked")
+    ended(c, refused.output)
+    assert os.path.isdir(b.worktree)
+    assert git(b.repo, "branch", "--list", f"rn-{b.name()}").strip() != ""
+    c.type("Is it cancelled?")
+    assert c.stop("Not yet.").blocked

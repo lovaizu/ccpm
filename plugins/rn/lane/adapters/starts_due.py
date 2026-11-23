@@ -24,6 +24,10 @@ from tree import form
 
 # rn's subagents, whose starts Lane counts.
 _ROLES = {"rn:generator": "generator", "rn:evaluator": "evaluator"}
+# The orchestrator's roles, the skills of rn's commands, whose results move the run.
+_ORCHESTRATOR = ("rn:on", "rn:up", "rn:dn", "rn:ty", "rn:gm")
+# The orchestrator's results that leave the run: the user paused it or cancelled it.
+_LEFT = ("paused", "cancelled")
 
 # The run as Lane gives it, in the form of Lane's starts_due.in.schema.json, and the starts due
 # that rn gives back, in the form of its starts_due.out.schema.json.
@@ -36,12 +40,17 @@ def due(given: Given, cwd: str) -> Due:
 
     Takes: the run as Lane gives it, and the folder that the conversation works in, the top of the
     user's repository.
-    Gives: `{"ends": true}` where each deliverable of its design tree is done; `{"starts": []}`
-    where the run's latest command is `rn:dn`, so that Lane holds the pause's turn to its steps and
-    the run waits for `/rn:up`, where its only command is `rn:on` and the orchestrator reported no
-    `signed`, as the run that the conversation makes waits on the user's goal and their sign-off
-    of its plan, which their answer gives, where the run has
-    no worktree here, or where its plan, the deliverable of the kind `design-tree`, isn't done;
+    Gives: `{"ends": true}` where the orchestrator reported `paused` or `cancelled`, as the user
+    paused or cancelled the run, so that Lane holds no later turn of the conversation, and
+    `/rn:up` picks a paused run up in a new run of Lane; where the run's worktree no longer lies
+    here, as a role started on it, or the orchestrator reported `signed`, since the latest `rn:up`,
+    since a run that isn't here has nothing to hold; and where each deliverable of its design tree
+    is done; `{"starts": []}` where the run's latest command is `rn:dn` and the orchestrator
+    reported no `paused`, so that Lane holds the pause's turn to its steps, where its only command
+    is `rn:on` and the orchestrator reported no `signed`, as the run that the conversation makes
+    waits on the user's goal and their sign-off of its plan, which their answer gives, where the
+    run has no worktree here otherwise, as `repository.py find` makes it again at a pick-up, or
+    where its plan, the deliverable of the kind `design-tree`, isn't done;
     else `{"starts": [...]}`, for `rn:generator` and `rn:evaluator`, the count of each: one for
     each deliverable that an item `make` of `work` names, whose inputs are each done, that rests
     through its inputs on no deliverable still being made, and that waits on the role, as
@@ -54,13 +63,15 @@ def due(given: Given, cwd: str) -> Due:
     Refuses: Wrong where the design tree or a Round can't be read, naming the file.
     """
     moves = given["run"]["moves"]
+    if any(_reported(each, _LEFT) for each in moves):
+        return {"ends": True}
     commands = [each["command"] for each in moves if each["kind"] == "command"]
     if commands and commands[-1] == "rn:dn":
         return {"starts": []}
     starts = [each for each in moves if each["kind"] == "start" and each["role"] in _ROLES]
     run = _run(commands, starts, moves, cwd)
     if run is None:
-        return {"starts": []}
+        return {"ends": True} if _lay_here(moves) else {"starts": []}
     tree = form.read(run.tree)
     deliverables = tree["deliverables"]
     if all(each["status"] == "done" for each in deliverables):
@@ -96,12 +107,14 @@ def _run(commands: list[str], starts: list[Given], moves: list[Given], cwd: str)
     sign-off of the plan, as the conversation's own run waits on the user until its plan is signed
     off, and another run of the repository is none of the conversation's; else the one that can be
     picked up, where its worktree lies here, the conversation's own, newest by its commits once its
-    plan is signed off; else None."""
+    plan is signed off; else None, as for a run named by its Cut whose folder no longer lies
+    here."""
     if starts:
         # A Cut lies at <run's folder>/rounds/<deliverable>/<stage>-<n>/<role>-cut.json, <n> the
         # Round's number among the deliverable's Rounds.
         cut = os.path.join(cwd, starts[-1]["prompt"])
-        return of_folder(cwd, os.path.normpath(os.path.join(cut, *[os.pardir] * 4)))
+        folder = os.path.normpath(os.path.join(cut, *[os.pardir] * 4))
+        return of_folder(cwd, folder) if os.path.isdir(folder) else None
     if set(commands) == {"rn:on"} and not _signed(moves):
         return None
     found = newest(cwd, host.run)
@@ -114,6 +127,24 @@ def _signed(moves: list[Given]) -> bool:
     return any(
         each["kind"] == "result" and each["role"] == "rn:on" and each["result"] == "signed"
         for each in moves
+    )
+
+
+def _reported(move: Given, results: tuple[str, ...]) -> bool:
+    """Whether the move is a result of the orchestrator's among the results, which no other role
+    gives the run."""
+    return move["kind"] == "result" and move["role"] in _ORCHESTRATOR and move["result"] in results
+
+
+def _lay_here(moves: list[Given]) -> bool:
+    """Whether the run's worktree lay here since the run was last picked up: a role started on it,
+    or the orchestrator reported `signed`, after the latest command `rn:up`, which makes the
+    worktree again where none lies."""
+    picked = [i for i, each in enumerate(moves) if each.get("command") == "rn:up"]
+    since = moves[picked[-1] + 1 :] if picked else moves
+    return any(
+        (each["kind"] == "start" and each["role"] in _ROLES) or _reported(each, ("signed",))
+        for each in since
     )
 
 

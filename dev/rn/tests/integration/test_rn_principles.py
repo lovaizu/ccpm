@@ -677,6 +677,8 @@ def test_a_new_conversation_picks_up_the_run_from_its_files(b: Bench, broken: No
     marked(c, "stop")
     ran(c, b.script("repository", "pause", b.run))
     marked(c, "pause")
+    reported = c.bash("lane-result paused")
+    assert not reported.blocked, reported.said
     ended(c, "Paused.")
     later = b.converse()
     later.type("/rn:up")

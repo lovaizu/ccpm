@@ -109,13 +109,93 @@ def cwd(tmp_path: Any) -> str:
 
 
 @pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
-def test_a_run_whose_latest_command_is_a_pause_starts_none_and_goes_on(cwd: str):
-    """Given a run whose command is due, and the moves /rn:up then /rn:dn
+@pytest.mark.parametrize("given_result", [False, True], ids=["not-yet", "blocked"])
+def test_a_run_whose_latest_command_is_a_pause_starts_none_and_goes_on(
+    cwd: str, given_result: bool
+):
+    """Given a run whose command is due, and the moves /rn:up then /rn:dn, with no result yet, or
+    with the orchestrator's blocked, as where the pause couldn't push
     When the adapter gives the starts due
     Then no start is due, and the run doesn't end, so that Lane holds the pause's turn to its
-    steps"""
+    steps, and a pause that didn't push leaves the run to go on"""
     a_run(cwd, walkthrough())
-    assert ADAPTER.due(run(command("rn:up"), command("rn:dn")), cwd) == {"starts": []}
+    moves = [command("rn:up"), command("rn:dn")]
+    moves += [result("rn:dn", "blocked")] if given_result else []
+    assert ADAPTER.due(run(*moves), cwd) == {"starts": []}
+
+
+@pytest.mark.supports("test_a_pause_by_rn_dn_lets_the_conversation_go")
+def test_a_pause_reported_after_rn_dn_ends_the_run(cwd: str):
+    """Given a run whose command is due, and the moves /rn:up, /rn:dn, then the orchestrator's
+    result paused
+    When the adapter gives the starts due
+    Then the run ends, so that Lane holds no later turn of the conversation, and /rn:up picks it
+    up in a new run of Lane"""
+    a_run(cwd, walkthrough())
+    moves = run(command("rn:up"), command("rn:dn"), result("rn:dn", "paused"))
+    assert ADAPTER.due(moves, cwd) == {"ends": True}
+
+
+@pytest.mark.supports(
+    "test_a_pause_in_the_users_words_pushes_the_work_and_lets_the_conversation_go",
+    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch",
+)
+@pytest.mark.parametrize("left", ["paused", "cancelled"])
+@pytest.mark.parametrize("role", ["rn:up", "rn:on", "rn:generator"])
+def test_a_pause_or_a_cancel_in_the_users_words_ends_the_run(cwd: str, left: str, role: str):
+    """Given a run whose command's generator started and gave made, and its worktree gone where
+    the run was cancelled, and the result paused or cancelled after it, given by the orchestrator,
+    in a turn of rn:up or of rn:on, or by the generator
+    When the adapter gives the starts due
+    Then the run ends after the orchestrator's, the design tree unread, and after the generator's
+    its evaluator is due, as only the orchestrator pauses or cancels the run"""
+    folder = a_run(cwd, walkthrough())
+    prompt = cut_prompt(cwd, folder, COMMAND)
+    rn_files.a_round(folder, COMMAND, "content", 1, {"generator": rn_files.made(ALL_GOOD)})
+    if left == "cancelled" and role != "rn:generator":
+        git(cwd, "worktree", "remove", "--force", rn_files.worktree_of(cwd, NAME))
+    moves = run(
+        command("rn:up"),
+        start("rn:generator", prompt),
+        result("rn:generator", "made"),
+        result(role, left),
+    )
+    out = ADAPTER.due(moves, cwd)
+    assert starts(out) == ({"ends": True} if role != "rn:generator" else due(("rn:evaluator", 1)))
+
+
+@pytest.mark.supports(
+    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
+)
+@pytest.mark.parametrize("since", ["start", "signed"])
+def test_a_run_whose_worktree_no_longer_lies_here_ends(cwd: str, since: str):
+    """Given a run whose worktree lay here in the conversation, as a role started on it, or as
+    the orchestrator reported the plan signed in a conversation of /rn:on, and whose worktree and
+    branch were then removed by hand
+    When the adapter gives the starts due
+    Then the run ends, so that Lane holds no later turn to a run that isn't here"""
+    folder = a_run(cwd, walkthrough())
+    prompt = cut_prompt(cwd, folder, COMMAND)
+    git(cwd, "worktree", "remove", "--force", rn_files.worktree_of(cwd, NAME))
+    git(cwd, "branch", "-D", f"rn-{NAME}")
+    if since == "start":
+        moves = run(command("rn:up"), start("rn:generator", prompt))
+    else:
+        moves = run(command("rn:on"), result("rn:on", "signed"))
+    assert ADAPTER.due(moves, cwd) == {"ends": True}
+
+
+@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
+def test_a_pick_up_of_a_run_whose_worktree_is_gone_starts_none_and_goes_on(cwd: str):
+    """Given a run whose command's generator started earlier in the conversation, whose worktree
+    is gone, and /rn:up typed after that start
+    When the adapter gives the starts due
+    Then none is due, and the run doesn't end, as repository.py find makes the worktree again"""
+    folder = a_run(cwd, walkthrough())
+    prompt = cut_prompt(cwd, folder, COMMAND)
+    git(cwd, "worktree", "remove", "--force", rn_files.worktree_of(cwd, NAME))
+    moves = run(command("rn:up"), start("rn:generator", prompt), command("rn:up"))
+    assert ADAPTER.due(moves, cwd) == {"starts": []}
 
 
 @pytest.mark.supports(

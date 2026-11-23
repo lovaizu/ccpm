@@ -1,10 +1,12 @@
 """The unit cases of repository/command.py's `main`, repository.py's command line: each subcommand
 with what it prints and its exit code, `find` of no run, and of the newest of several, its worktree
-made again, `put-up` marking the deliverable's last Round, and making done one at a step that the
-user doesn't check, `diff`, `ci` by what the checks found, `checks` with findings and with none,
-and each fault by its exit code: 2 with the usage for arguments of another form, 1 with
-`repository.py: ` for an input that is Wrong and for something Missing, origin's HEAD naming no
-branch and gh with no login among them, and 2 for what CantRun."""
+made again, `pause`, `cancel` of a run that origin holds nothing of and of one whose branch it
+holds, and of a worktree that can't be removed, `put-up` marking the deliverable's last Round,
+and making done one at a step that the user doesn't check, `diff`, `ci` by what the checks found,
+`checks` with findings and with none, and each fault by its exit code: 2 with the usage for
+arguments of another form, 1 with `repository.py: ` for an input that is Wrong and for something
+Missing, origin's HEAD naming no branch and gh with no login among them, and 2 for what
+CantRun."""
 
 from __future__ import annotations
 
@@ -166,6 +168,41 @@ def test_pause_with_no_origin_says_what_is_missing(tmp_path: Any, host: Any):
     code, out, err = main(["pause", RUN], run.repository, rn_files.RN, host)
     assert (code, out) == (1, "")
     assert err.startswith("repository.py: ")
+
+
+@pytest.mark.supports(
+    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
+)
+@pytest.mark.parametrize("pushed", [False, True], ids=["local-only", "pushed"])
+def test_cancel_removes_the_run_and_prints_what_origin_keeps(
+    tmp_path: Any, host: Any, pushed: bool
+):
+    """Given a run whose branch is on this machine alone, or pushed to origin
+    When repository.py cancel is given the run's folder
+    Then it gives 0 printing nothing, or origin/rn-<name> as a line, and the run's worktree and its
+    local branch are gone"""
+    run = made_run(str(tmp_path))
+    if pushed:
+        git(run.worktree, "push", "-q", "-u", "origin", f"rn-{NAME}")
+    printed = f"origin/rn-{NAME}\n" if pushed else ""
+    assert main(["cancel", RUN], run.repository, rn_files.RN, host) == (0, printed, "")
+    assert not os.path.exists(run.worktree)
+    assert git(run.repository, "branch", "--list", f"rn-{NAME}").strip() == ""
+
+
+@pytest.mark.supports(
+    "test_a_cancel_whose_worktree_cant_be_removed_ends_on_blocked_and_keeps_the_run"
+)
+def test_cancel_of_a_worktree_git_cant_remove_gives_2(tmp_path: Any, host: Any):
+    """Given a run whose worktree is locked
+    When repository.py cancel is given the run's folder
+    Then it gives 2 with `repository.py: ` and what git said on stderr, and the worktree stays"""
+    run = made_run(str(tmp_path))
+    git(run.repository, "worktree", "lock", run.worktree)
+    code, out, err = main(["cancel", RUN], run.repository, rn_files.RN, host)
+    assert (code, out) == (2, "")
+    assert err.startswith("repository.py: ") and "locked" in err
+    assert os.path.isdir(run.worktree)
 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
@@ -386,14 +423,14 @@ def test_trial_where_the_folder_cant_be_made_gives_2(tmp_path: Any, host: Any, t
 
 
 @pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
-@pytest.mark.parametrize("sub", ["pause", "put-up", "checks", "trial", "diff", "ci"])
+@pytest.mark.parametrize("sub", ["pause", "cancel", "put-up", "checks", "trial", "diff", "ci"])
 def test_a_folder_that_isnt_a_runs_is_wrong(tmp_path: Any, host: Any, sub: str):
     """Given invoicer's repository with no run
     When the subcommand is given a folder that isn't a run's, with what else it takes
     Then it gives 1 with `repository.py: ` naming the folder on stderr"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
     rest = {"pause": [], "put-up": [rn_files.COMMAND], "checks": [rn_files.COMMAND], "diff": []}
-    rest["ci"] = []
+    rest.update(ci=[], cancel=[])
     argv = [sub, "docs", *rest.get(sub, ["docs"])]
     code, out, err = main(argv, repo, rn_files.RN, host)
     assert (code, out) == (1, "")
@@ -412,6 +449,8 @@ def test_a_folder_that_isnt_a_runs_is_wrong(tmp_path: Any, host: Any, sub: str):
         ["new", rn_files.WORDS, rn_files.GOAL, *rn_files.LANGUAGES, "more"],
         ["find", "more"],
         ["pause"],
+        ["cancel"],
+        ["cancel", RUN, "more"],
         ["put-up", RUN],
         ["checks"],
         ["trial", RUN],

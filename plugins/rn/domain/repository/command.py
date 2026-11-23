@@ -21,6 +21,7 @@ USAGE = """\
 usage: repository.py new <words> <goal> <deliverables language> <conversation language>
        repository.py find
        repository.py pause <run>
+       repository.py cancel <run>
        repository.py put-up <run> <deliverable>
        repository.py checks <run> <file>...
        repository.py trial <run> <round>
@@ -43,6 +44,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `find`: 0 printing the folder from `cwd` of the run that `worktree.found` gives, its
       worktree made again where none lies, as a line, and nothing where there's none.
     - `pause <run>`: 0 printing the hash that `push.pause` gives.
+    - `cancel <run>`: 0 printing each thing of the run that GitHub still holds, as
+      `worktree.removed` gives it once it removes the run, a line each, and nothing where there's
+      none.
     - `put-up <run> <deliverable>`: 0 printing the URL that `push.put_up` gives, the deliverable's
       last Round then marked as put up with its state, as `rounds.course.held` gives it from the
       design tree and `rounds.files.mark` writes it. Where `tree.signoff.checked` gives that the
@@ -95,6 +99,11 @@ def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     return 0, f"{push.pause(place.of_folder(cwd, given[0]), host)}\n", ""
 
 
+def _cancel(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
+    left = worktree.removed(place.of_folder(cwd, given[0]), host)
+    return 0, "".join(f"{each}\n" for each in left), ""
+
+
 def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     run = place.of_folder(cwd, given[0])
     url = push.put_up(run, given[1], host)
@@ -136,6 +145,7 @@ _SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int | None]] = {
     "new": (_new, 4, 4),
     "find": (_find, 0, 0),
     "pause": (_pause, 1, 1),
+    "cancel": (_cancel, 1, 1),
     "put-up": (_put_up, 2, 2),
     "checks": (_checks, 1, None),
     "trial": (_trial, 2, 2),

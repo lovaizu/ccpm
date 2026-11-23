@@ -48,7 +48,8 @@ it as a newcomer would.
   - a send-back: the words after `/rn:gm`;
   - a sign-off: `/rn:ty`;
   - a pause: `/rn:dn`;
-  - an answer: the user's words in reply to a point;
+  - an answer: the user's words in reply to a point, or any other words they type in the run,
+    such as asking to pause or to cancel it;
   - a role's end: Lane's line, such as `rn:generator gave made. Due: rn:evaluator.`
 - The run's folder, `<run>` below, is the path that `repository.py new` or `find` prints, such as
   `.claude/worktrees/rn-<name>/.rn/<name>`. It holds the design tree, `design-tree.json`, in the
@@ -81,8 +82,9 @@ it as a newcomer would.
 
 ## Steps
 
-Take step 1 for the event, then steps 2 to 6 in order, but after the hearing and a pause. With no
-run here, each event but the hearing and a new request takes `find` alone, as a pick-up does.
+Take step 1 for the event, then steps 2 to 6 in order, but after the hearing, a pause, and a
+cancel. With no run here, each event but the hearing and a new request takes `find` alone, as a
+pick-up does.
 Once a step's result is made, record it with `lane-step <step>`. Run each reporter in a Bash call
 alone, as Lane takes a call that prints more as no report.
 
@@ -119,6 +121,24 @@ origin names no default branch, as no run stands yet.
      the plan or the deliverable that waits for sign-off. Signing off the plan by `/rn:ty` keeps
      the checks as you recommended them. In the move, start each role it made due.
    - A send-back, an answer, or a role's end, `take`: write what the event gives into the tree.
+     - A pause or a cancel: judge by what the user means, not by a word they use. Where they want
+       the run to stop for now and go on later, it's a pause. Where they want to drop the run for
+       good, it's a cancel. Words that settle the open point, or ask about it, are an answer,
+       whichever words they use. Write nothing to the tree for a pause or a cancel.
+       - A pause: stop each role and pause the run as `stop` and `pause` of a pause say. Once
+         pause gives 0, run `lane-result paused`, and end the turn in the pause's form of Output.
+       - A cancel: removing the run can't be undone, so first ask once, in the cancel question's
+         form of Output. Record `take`, take each other step, and end the turn on that question.
+         Where the user then confirms, stop each of rn's roles still running by TaskStop, and run
+         `python3 <rn's folder>/scripts/repository.py cancel <run>`. It removes the run's worktree
+         and its local branch, and prints each thing that GitHub still holds of the run, such as
+         its branch on origin and its pull request. Leave those to the user, as only they know
+         whether anyone else uses them. Once cancel gives 0, run `lane-result cancelled`, and end
+         the turn in the cancel's form. Where cancel gives 1 or 2, tell the user what stopped it,
+         run `lane-result blocked`, and end the turn, as the run stays. Where the user declines,
+         take it as an answer that settles no point, and the run goes on.
+       Either result tells Lane that its run of rn ends, so that Lane holds no later turn of this
+       conversation to rn's steps. `/rn:up` picks a paused run up in a new run of Lane.
      - A send-back: write the user's words, word for word, as a decision by `user` of the condition
        they concern. Hold that condition not good, so that the next Round makes what they asked.
        Settle each proposal left past its Rounds: their words settle the one they name, written
@@ -152,8 +172,10 @@ origin names no default branch, as no run stands yet.
    - A pause, `stop` then `pause`: stop each of rn's roles still running by TaskStop. That way,
      no role writes after the push. Where this conversation doesn't hold the run's folder, find it
      under `.claude/worktrees/`. Then run `python3 <rn's folder>/scripts/repository.py pause <run>`.
-     It commits the run's work so far and pushes it. Report the pause only once it gives 0. A pause
-     takes no other step, as it changes no decision.
+     It commits the run's work so far and pushes it. Once it gives 0, record `pause`, run
+     `lane-result paused`, as Lane then ends its run of rn, and report the pause. Where it gives 1
+     or 2, run `lane-result blocked`, as the run stays. A pause takes no other step, as it changes
+     no decision.
 2. `review`: read the design tree best practice whole, unless you've read it in this conversation.
    Review the tree by its N1 to N6 with this event's facts. Write only the tree. Use the Write or Edit tool.
    Find each fact in the repository by reading and searching its files, as Tools says.
@@ -251,15 +273,15 @@ Write the forms below in that language, and keep each command, such as `/rn:ty`,
 says, give it in that language, with only its place beside it, such as `#62`.
 
 Each claim rests on what a script printed or a file holds in this turn. A URL is as put-up printed
-it, and a pause is pushed once pause gave 0.
+it, a pause is pushed once pause gave 0, and a run is cancelled once cancel gave 0.
 
 Write each message as one of these forms alone, as plain text, without the fence around it here.
 Put one thing on a line, and a blank line between blocks. A message that asks closes on the one
 choice and the option you recommend, as the question's form does. Leave out a line that has nothing to hold, such as the
 proposals of a deliverable with none.
 
-From the plan's sign-off on, each message opens with where the run stands, the first step with a
-deliverable not done, then a blank line:
+From the plan's sign-off on, each message but the cancel's opens with where the run stands, the
+first step with a deliverable not done, then a blank line:
 
 ```text
 Now <its number>/<the count of steps>: <what the step settles> (<its deliverables>)
@@ -355,6 +377,22 @@ Pull request: <its URL, without /files> (<merging it closes each issue that the 
 
 Paused. Its work so far is pushed.
 Type /rn:up in any conversation to go on.
+```
+
+The cancel question, before anything is removed:
+
+```text
+<where the run stands>
+
+I'll cancel the run and remove its work on this machine, which can't be undone.
+Shall I cancel it?
+```
+
+The cancel's report, once cancel gave 0, with each thing that it printed:
+
+```text
+Cancelled. Its work on this machine is removed.
+GitHub still holds <each thing that cancel printed>. Remove it there if you no longer need it.
 ```
 
 ```text

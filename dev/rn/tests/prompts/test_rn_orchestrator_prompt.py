@@ -197,3 +197,80 @@ def test_after_the_goal_the_user_is_asked_at_most_one_point(room: Room, run: int
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
     assert printed.count("Recommended:") + printed.count("(I recommend") <= 1
     assert len(open_decisions(design_tree)) <= 1
+
+
+def tax_waiting(room: Room) -> str:
+    """Makes a run in its worktree, its plan done and the command open, whose decision about the
+    tax rate waits on the user; gives its folder."""
+    tax = rn_files.decision(rn_files.TAX_ABOUT, None)
+    node = rn_files.decided(
+        rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"]),
+        {"N1": [tax]},
+    )
+    return run_of(room, name(), node)
+
+
+@pytest.mark.supports(
+    "test_a_pause_in_the_users_words_pushes_the_work_and_lets_the_conversation_go"
+)
+@pytest.mark.parametrize("run", RUNS)
+def test_a_pause_in_the_users_words_pauses_the_run_and_ends_it(room: Room, run: int):
+    """Given a run picked up by /rn:up, whose decision about the tax rate waits on the user
+    When the user asks in their own words to stop for today
+    Then in that turn, repository.py pause ran, then lane-result paused, cancel didn't run, and
+    origin holds the run's branch"""
+    tax_waiting(room)
+    typed(room, "/rn:up")
+    typed(room, "Let's stop here for today. I'll come back to it tomorrow.", more=True)
+    ran = commands_of(room)
+    paused = [i for i, each in enumerate(ran) if "repository.py pause" in each]
+    reported = [i for i, each in enumerate(ran) if "lane-result paused" in each]
+    assert paused and reported and paused[-1] < reported[-1]
+    assert not any("repository.py cancel" in each for each in ran)
+    assert git(room.repo, "ls-remote", "--heads", "origin", f"rn-{name()}").strip()
+
+
+@pytest.mark.supports(
+    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
+)
+@pytest.mark.parametrize("run", RUNS)
+def test_a_cancel_in_the_users_words_asks_once_then_removes_the_run(room: Room, run: int):
+    """Given a run picked up by /rn:up, whose decision about the tax rate waits on the user
+    When the user asks in their own words to drop the run, then answers yes to the question
+    Then the first reply asks, with the worktree still there and no cancel run; after yes,
+    repository.py cancel ran, then lane-result cancelled, and the worktree and the local branch
+    rn-<name> are gone"""
+    tax_waiting(room)
+    typed(room, "/rn:up")
+    asked = typed(room, "Cancel this run. We don't need the command after all.", more=True)
+    assert "?" in asked
+    assert os.path.isdir(room.worktree(name()))
+    assert not any("repository.py cancel" in each for each in commands_of(room))
+    typed(room, "yes", more=True)
+    ran = commands_of(room)
+    cancelled = [i for i, each in enumerate(ran) if "repository.py cancel" in each]
+    reported = [i for i, each in enumerate(ran) if "lane-result cancelled" in each]
+    assert cancelled and reported and cancelled[-1] < reported[-1]
+    assert not os.path.exists(room.worktree(name()))
+    assert git(room.repo, "branch", "--list", f"rn-{name()}").strip() == ""
+
+
+@pytest.mark.supports("test_a_cancel_declined_leaves_the_run_going_on")
+@pytest.mark.parametrize("run", RUNS)
+def test_an_answer_that_says_stop_is_taken_as_the_answer(room: Room, run: int):
+    """Given a run picked up by /rn:up, whose decision about the tax rate waits on the user
+    When the user answers the point in words that hold "stop"
+    Then neither pause nor cancel ran, no result paused or cancelled was given, the worktree
+    stays, and the tax rate's decision is no longer open"""
+    folder = tax_waiting(room)
+    typed(room, "/rn:up")
+    typed(room, "Stop asking for the rate each time; it's 10%, set once.", more=True)
+    ran = commands_of(room)
+    assert not any(
+        word in each
+        for each in ran
+        for word in ("repository.py pause", "repository.py cancel", "paused", "cancelled")
+    )
+    assert os.path.isdir(room.worktree(name()))
+    design_tree = rn_files.read_json(os.path.join(folder, "design-tree.json"))
+    assert not open_decisions(design_tree)

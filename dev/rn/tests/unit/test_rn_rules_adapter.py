@@ -144,6 +144,10 @@ def writes(*paths: str) -> dict[str, Any]:
 
 # The rule of each step of the orchestrator's turn but its last.
 BLOCKED = {"type": "result", "ends": ["blocked"]}
+# The rule of `take`, which ends the turn too where the user's words pause or cancel the run.
+LEFT = {"type": "result", "ends": ["blocked", "paused", "cancelled"]}
+# The rule of a pause's last step, which gives `paused`.
+PAUSED = {"type": "result", "results": ["paused"]}
 
 
 def shared(cwd: str, name: str = NAME) -> list[tuple[str, list[str]]]:
@@ -217,7 +221,7 @@ def repo(tmp_path: Any) -> str:
 HEAR = step("hear")
 START = step("start", BLOCKED)
 FIND = step("find", BLOCKED)
-TAKE = step("take", BLOCKED)
+TAKE = step("take", LEFT)
 
 
 @pytest.mark.supports("test_rn_on_asks_what_to_make_letting_its_commands_through")
@@ -394,16 +398,20 @@ def test_a_signoff_records_it_then_keeps_the_shared_steps(repo: str):
     assert shown(steps) == relative([step("record", BLOCKED), *shared(repo)], repo)
 
 
-@pytest.mark.supports("test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far")
+@pytest.mark.supports(
+    "test_a_pause_stops_the_generator_and_pushes_the_runs_work_so_far",
+    "test_a_pause_by_rn_dn_lets_the_conversation_go",
+)
 def test_a_pause_stops_the_roles_then_pauses_with_no_shared_step(repo: str):
     """Given a repository with one run, and a turn of rn:dn whose prompt is /rn:dn
     When the adapter gives the turn's steps
-    Then they are `stop` and `pause` alone"""
+    Then they are `stop` and `pause` alone, `pause` giving the result `paused`, by which rn's order
+    ends the run"""
     a_run(repo)
     steps = ADAPTER.steps(given("rn:dn", "/rn:dn"), repo, RN)
     assert shown(steps) == [
         step("stop", BLOCKED),
-        step("pause"),
+        step("pause", PAUSED),
     ]
 
 
@@ -417,12 +425,16 @@ def test_a_command_called_by_the_skill_tool_takes_the_steps_of_the_command_typed
     Then they are those of the typed command: `stop` and `pause`, or `find` and the shared steps"""
     a_run(repo)
     paused = ADAPTER.steps(given("rn:dn", "Go on.", command="rn:dn"), repo, RN)
-    assert shown(paused) == [step("stop", BLOCKED), step("pause")]
+    assert shown(paused) == [step("stop", BLOCKED), step("pause", PAUSED)]
     found = ADAPTER.steps(given("rn:up", "Go on.", command="rn:up"), repo, RN)
     assert shown(found) == relative([FIND, *shared(repo)], repo)
 
 
-@pytest.mark.supports("test_an_orchestrators_turn_ended_before_its_review_is_stopped")
+@pytest.mark.supports(
+    "test_an_orchestrators_turn_ended_before_its_review_is_stopped",
+    "test_a_pause_in_the_users_words_pushes_the_work_and_lets_the_conversation_go",
+    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch",
+)
 @pytest.mark.parametrize(
     ("role", "prompt"),
     [
@@ -446,7 +458,8 @@ def test_each_other_event_takes_it_then_keeps_the_shared_steps(repo: str, role: 
     """Given a repository with one run, and a turn of a send-back, an answer, another prompt, a
     role's end as Claude Code's task-notification, or a prompt that nearly names a command
     When the adapter gives the turn's steps
-    Then they are `take` and the shared steps, on that run"""
+    Then they are `take` and the shared steps, on that run, `take` ending the turn on blocked,
+    and on paused or cancelled, as the user's words may pause or cancel the run"""
     a_run(repo)
     assert shown(ADAPTER.steps(given(role, prompt), repo, RN)) == relative(
         [TAKE, *shared(repo)], repo
@@ -492,13 +505,16 @@ TURNS = {
 def test_each_step_of_a_turn_but_its_last_ends_on_blocked(repo: str, event: str):
     """Given a repository with one run whose plan is signed off, and a turn of each event
     When the adapter gives the turn's steps
-    Then each step but the last holds the rule that ends the turn on blocked, and the last holds
-    no rule of results, as Lane judges it at each end with every step done"""
+    Then each step but the last holds a rule that ends the turn on blocked, and the last holds
+    no rule of results, as Lane judges it at each end with every step done, but a pause's, which
+    gives `paused`"""
     a_run(repo)
     role, prompt, skill, turns = TURNS[event]
     each = ADAPTER.steps(given(role, prompt, skill=skill, turns=turns), repo, RN)["steps"]
-    assert [BLOCKED in s["rules"] for s in each] == [True] * (len(each) - 1) + [False]
-    assert not [r for r in each[-1]["rules"] if r["type"] == "result"]
+    ends = [[e for r in s["rules"] for e in r.get("ends", [])] for s in each]
+    assert ["blocked" in e for e in ends] == [True] * (len(each) - 1) + [False]
+    last = [r for r in each[-1]["rules"] if r["type"] == "result"]
+    assert last == ([PAUSED] if event == "pause" else [])
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")

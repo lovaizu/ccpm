@@ -4,8 +4,8 @@
 
 - S1: the user wants the deliverable they're after, asking in their own words, checking only the
   steps they choose.
-- S2: the user wants to pause a run and resume it later in any conversation, losing neither time
-  nor work.
+- S2: the user wants to pause a run and resume it in any conversation losing nothing, or to
+  cancel it.
 
 ## Solution strategy
 
@@ -138,6 +138,12 @@ Strategies:
   Intent: rn runs alike on each OS that Claude Code runs on.
 - A script's refusal that only the user can mend stopping only the work it concerns. [P5.3]\
   Intent: the user mends one blocker while every other deliverable goes on.
+- A pause or a cancel taken from the user's words, and reported to Lane as its run's end. [S2]\
+  Intent: the user stops a run without learning a command, and the conversation then goes on free
+  of rn's steps.
+- A cancel confirmed once, removing the worktree and local branch, leaving GitHub's copies to the
+  user. [S2]\
+  Intent: nothing that can't be undone happens on one misread sentence, or to what others may use.
 
 ### Sequences
 
@@ -226,7 +232,7 @@ sequenceDiagram
   U->>U: marks the pull request ready, and merges [P2.3]
 ```
 
-#### S2: a pause and a pick-up
+#### S2: a pause, a cancel, and a pick-up
 
 ```mermaid
 sequenceDiagram
@@ -236,12 +242,22 @@ sequenceDiagram
   participant S as scripts
   participant G as generator
   participant E as evaluator
-  U->>O: /rn:dn [S2]
-  O->>G: stops it [S2]
-  O->>E: stops it [S2]
-  O->>S: commits and pushes the run's folder (Design tree) [P6.1]
-  O->>U: where it stopped, and the point or sign-off waiting [S2]
-  Note over U,O: Later, in any conversation
+  alt a cancel, in the user's words [S2]
+    U->>O: asks to drop the run [S2]
+    O->>U: asks once to confirm, as removing can't be undone [S2]
+    U->>O: confirms [S2]
+    O->>G: stops it [S2]
+    O->>E: stops it [S2]
+    O->>S: removes the run's worktree and its local branch (Design tree) [S2]
+    O->>U: the run cancelled, and what GitHub still holds of it, left to the user [S2]
+  else a pause, by /rn:dn or in the user's words [S2]
+    U->>O: /rn:dn, or asks to stop for now [S2]
+    O->>G: stops it [S2]
+    O->>E: stops it [S2]
+    O->>S: commits and pushes the run's folder (Design tree) [P6.1]
+    O->>U: where it stopped, and the point or sign-off waiting [S2]
+  end
+  Note over U,O: Later, in any conversation, after a pause
   U->>O: /rn:up [S2]
   O->>S: finds the run to pick up from the runs' commits (Design tree) [P6.1]
   opt no run found [S2]

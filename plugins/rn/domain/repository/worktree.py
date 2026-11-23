@@ -1,7 +1,9 @@
-"""Decides how a run's worktree comes to be and is found again: made with its branch from the
-default branch that origin's HEAD names, with its design tree, and found from the runs' branches
-whose committed design tree holds work left, its worktree made again where none lies; and, inside
-herdr, made and opened through herdr, so that the run shows as a herdr workspace."""
+"""Decides how a run's worktree comes to be, is found again, and goes: made with its branch from
+the default branch that origin's HEAD names, with its design tree; found from the runs' branches
+whose committed design tree holds work left, its worktree made again where none lies; and removed
+with its local branch where the user cancels the run, leaving to the user what origin holds; and,
+inside herdr, made, opened, and removed through herdr, so that the run shows as a herdr workspace
+while it lies here."""
 
 from __future__ import annotations
 
@@ -160,3 +162,36 @@ def found(repository: str, host: Host) -> RunPlace | None:
         what = "herdr can't open the run's worktree"
         checked(host, [*opened, "--no-focus"], repository, CantRun, what)
     return run
+
+
+def removed(run: RunPlace, host: Host) -> list[str]:
+    """Removes a run that the user cancels from this machine.
+
+    Takes: the run, and the host.
+    Gives: what of the run GitHub still holds, which only the user removes: `origin/rn-<name>`
+    where the repository's ref of origin's branch, as its last fetch or push left it, is there,
+    then the pull request that the design tree's `context.pr` names, where it names one.
+    Changes: removes the run's worktree, with each change in it that isn't committed, and then its
+    local branch `rn-<name>`; the user's own worktree and branch stay as they were. Inside herdr,
+    has herdr open the worktree's workspace, leaving the focus where it is, and remove the
+    worktree of the workspace it gives, as herdr removes a worktree by its workspace, which it
+    closes.
+    Refuses: CantRun where git or herdr fails, with what it said, the branch then kept where the
+    worktree stays.
+    """
+    pr = form.read(run.tree)["context"]["pr"]
+    top = run.repository
+    if _inside_herdr():
+        opened = ["herdr", "worktree", "open", "--cwd", top, "--path", run.worktree, "--no-focus"]
+        given = checked(host, opened, top, CantRun, "herdr can't open the run's worktree")
+        workspace = json.loads(given.out)["result"]["workspace"]["workspace_id"]
+        remove = ["herdr", "worktree", "remove", "--workspace", workspace, "--force"]
+        checked(host, remove, top, CantRun, "herdr can't remove the run's worktree")
+    else:
+        remove = ["git", "worktree", "remove", "--force", run.worktree]
+        checked(host, remove, top, CantRun, "git can't remove the run's worktree")
+    checked(host, ["git", "branch", "-D", run.branch], top, CantRun, "git can't delete the branch")
+    origin = f"refs/remotes/origin/{run.branch}"
+    kept = host(["git", "rev-parse", "--verify", "--quiet", origin], top).code == 0
+    left = [f"origin/{run.branch}"] if kept else []
+    return left + ([pr] if pr else [])
