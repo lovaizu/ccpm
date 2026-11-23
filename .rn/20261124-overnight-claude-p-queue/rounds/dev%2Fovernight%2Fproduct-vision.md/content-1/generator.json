@@ -1,0 +1,44 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/product-vision.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- user\\",
+    "  An AI, such as a Claude Code session, that stacks tasks for an AI and takes in their results."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user gets each task they stack done and its result taken in, with no watch over it."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of stacked tasks whose result the user takes in without stepping in while",
+    "    they run. Higher is better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user gets each task they stack done and its result taken in, with no watch over it."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight carries each stacked task to its end on its own, so the user lets go after stacking.",
+    "- Going on where the usage limit stopped it, for O1\\",
+    "  The user restarts no task once the limit lifts.",
+    "- Ending as finished, or as given up with its reason, for O1\\",
+    "  The user takes in the finished tasks and knows why the others ended."
+   ]
+  }
+ ]
+}

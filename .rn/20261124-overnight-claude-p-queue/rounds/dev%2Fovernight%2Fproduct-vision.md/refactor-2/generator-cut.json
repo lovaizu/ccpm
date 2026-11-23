@@ -1,0 +1,98 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "language": "English",
+ "deliverable": {
+  "name": "The AI's aim with stacked tasks, and how well it gets there, is set down",
+  "path": "dev/overnight/product-vision.md",
+  "kind": "product-vision",
+  "inputs": [],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": true,
+    "decisions": [
+     {
+      "about": "The concept's one way and its ideas",
+      "decided": "Each stacked task is carried to its end on its own, so that the AI lets go once it has stacked them. Two ideas hold it up: a task stopped by the usage limit goes on where it stopped once the limit lifts, and each task ends as finished or as given up with its reason, so that the AI takes in the finished ones.",
+      "by": "reasoning"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/refactor-doc",
+ "stage": "refactor",
+ "number": 2,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Fproduct-vision.md/refactor-2",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Fproduct-vision.md-refactor-2/",
+ "findings": {
+  "good": [],
+  "more": []
+ },
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- user\\",
+    "  An AI, such as a Claude Code session, that stacks tasks for an AI and takes in their results."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user gets each task they stack done and its result taken in, with no watch over it."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of stacked tasks whose result the user takes in without stepping in while",
+    "    they run. Higher is better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user gets each task they stack done and its result taken in, with no watch over it."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight carries each stacked task to its end on its own, so the user lets go after stacking.",
+    "- Going on where the usage limit stopped it, for O1\\",
+    "  The user restarts no task once the limit lifts.",
+    "- Ending as finished, or as given up with its reason, for O1\\",
+    "  The user takes in the finished tasks and knows why the others ended."
+   ]
+  }
+ ]
+}
