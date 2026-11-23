@@ -28,7 +28,17 @@
     {
      "id": "N1",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "Whom the goal is for",
+       "decided": "利用者はai",
+       "by": "user"
+      },
+      {
+       "about": "What its people can do once the goal is achieved",
+       "decided": null
+      }
+     ]
     },
     {
      "id": "N2",
