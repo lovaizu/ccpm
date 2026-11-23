@@ -739,28 +739,101 @@ def test_ci_where_a_check_failed_is_wrong_naming_it_once(
 
 @pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 @pytest.mark.parametrize(
-    ("found", "said"),
+    "case",
     [
-        ("none", "no checks reported on the 'patch-1' branch"),
         ("unreached", 'Post "https://api.github.com/graphql": proxyconnect tcp'),
-        (None, "gh double: no record of gh pr checks"),
+        ("logged-out", "You are not logged into any GitHub hosts"),
+        (None, 'no pull requests found for branch "rn-'),
     ],
-    ids=["no-ci", "no-network", "no-pull-request"],
+    ids=["no-network", "no-login", "no-pull-request"],
 )
 def test_ci_that_gh_cant_give_cant_run_with_what_gh_said(
-    tmp_path: Any, host: Any, gh_state: str, found: str | None, said: str
+    tmp_path: Any, host: Any, gh_state: str, clock: Any, case: tuple[str | None, str]
 ):
-    """Given a run whose CI has no checks, whose gh can't reach GitHub, or that has no pull request
+    """Given a run whose gh can't reach GitHub, or has no login, or that has no pull request
     When ci is given the run
-    Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said"""
+    Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said, with no
+    wait"""
+    found, said = case
     run = made_run(str(tmp_path))
     if found:
         put_up(run, rn_files.plan_path(NAME), host)
     if found == "unreached":
         gh_double.unreached(gh_state)
     elif found:
-        gh_double.checks(gh_state, found)
+        gh_double.logged_out(gh_state)
     with pytest.raises(CantRun) as refused:
         ci(run, host)
     assert str(refused.value).startswith("gh can't give the pull request's CI: ")
     assert said in str(refused.value)
+    assert clock.slept == []
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+def test_ci_whose_checks_gh_cant_read_once_they_started_cant_run_with_what_gh_said(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given a run whose plan was put up, whose pushed head's checks started, and whose gh then
+    can't reach GitHub
+    When ci is given the run
+    Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said"""
+    run = made_run(str(tmp_path))
+    put_up(run, rn_files.plan_path(NAME), host)
+    gh_double.checks_unreached(gh_state)
+    said = gh_double.line(gh_double.PR_CHECKS, "gh pr checks --json can't reach GitHub")["stderr"]
+    with pytest.raises(CantRun) as refused:
+        ci(run, host)
+    assert str(refused.value) == f"gh can't give the pull request's CI: {said.strip()}"
+
+
+def views(gh_state: str) -> int:
+    """How many times the double of gh was asked for the pull request's head and its checks."""
+    asked = gh_double.state(gh_state)["asked"]
+    return sum(1 for each in asked if each[1:3] == ["pr", "view"] and "headRefOid" in each[-1])
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+@pytest.mark.parametrize(
+    "waits",
+    [(0, 0), (1, 0), (0, 1), (2, 3), (0, 24)],
+    ids=["at-once", "head-moves-late", "checks-start-late", "both-late", "start-at-the-bound"],
+)
+def test_ci_waits_until_the_pushed_heads_checks_start_then_reads_their_ends(
+    tmp_path: Any, host: Any, gh_state: str, clock: Any, waits: tuple[int, int]
+):
+    """Given a run whose plan was put up, whose CI's checks each passed, and whose pull request
+    gives the head before the push, then the pushed head with no check started, for none, one,
+    or several views each, its checks starting at most 120 seconds after the first view
+    When ci is given the run
+    Then it views the head every 5 seconds until the pushed head's checks show, then gives each
+    check as passed, as it gives with no wait"""
+    stale, unstarted = waits
+    run = made_run(str(tmp_path))
+    put_up(run, rn_files.plan_path(NAME), host)
+    gh_double.started(gh_state, stale, unstarted)
+    names = list(dict.fromkeys(each["name"] for each in ended("passed")))
+    assert ci(run, host) == lines([(name, "passed") for name in names])
+    assert clock.slept == [5] * (stale + unstarted)
+    assert views(gh_state) == stale + unstarted + 1
+
+
+@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
+@pytest.mark.parametrize("unstarted", [25, None], ids=["start-past-the-bound", "no-ci"])
+def test_ci_whose_checks_dont_start_within_120_seconds_says_no_ci_started(
+    tmp_path: Any, host: Any, gh_state: str, clock: Any, unstarted: int | None
+):
+    """Given a run whose plan was put up, and whose pushed head's checks start only past 120
+    seconds after the first view, or never, as with no CI
+    When ci is given the run
+    Then it gives that no CI started within 120 seconds of the push, having viewed the head at
+    each 5 seconds up to 120, and asked gh for no check"""
+    run = made_run(str(tmp_path))
+    put_up(run, rn_files.plan_path(NAME), host)
+    if unstarted is None:
+        gh_double.checks(gh_state, "none")
+    else:
+        gh_double.started(gh_state, 0, unstarted)
+    assert ci(run, host) == "no CI started within 120 seconds of the push\n"
+    assert clock.slept == [5] * 24
+    assert views(gh_state) == 25
+    assert checks_asked(gh_state) == []

@@ -409,18 +409,18 @@ def test_diff_prints_the_pull_requests_whole_diff(tmp_path: Any, host: Any):
         ("passed", (0, "tests\tpassed")),
         ("cancelled", (0, "cancels\tcancelled")),
         ("failed", (1, "repository.py: the pull request's CI fails at tests")),
-        ("none", (2, "no checks reported")),
+        ("none", (0, "no CI started within 120 seconds of the push")),
     ],
     ids=["passed", "cancelled", "failed", "no-ci"],
 )
-def test_ci_gives_0_1_or_2_by_what_the_checks_found(
+def test_ci_gives_0_or_1_by_what_the_checks_found(
     tmp_path: Any, host: Any, gh_state: str, found: str, expected: tuple[int, str]
 ):
     """Given a run whose plan was put up, and whose CI's checks each passed, one was cancelled,
     one failed, or are none
     When repository.py ci is given the run's folder
-    Then it gives 0 printing each check with how it ended, 1 naming the one that failed, or 2
-    saying gh can't give the CI"""
+    Then it gives 0 printing each check with how it ended, 1 naming the one that failed, or 0
+    saying that no CI started within 120 seconds of the push"""
     run = made_run(str(tmp_path), design_tree=rn_files.walkthrough_tree(NAME, plan_done=False))
     main(["put-up", RUN, rn_files.plan_path(NAME)], run.repository, rn_files.RN, host)
     gh_double.checks(gh_state, found)

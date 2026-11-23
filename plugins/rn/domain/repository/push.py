@@ -5,6 +5,7 @@ final check reads of it: its whole diff and its CI."""
 from __future__ import annotations
 
 import json
+import time
 from collections.abc import Sequence
 from urllib.parse import quote
 
@@ -15,6 +16,9 @@ from tree import form
 from repository.host import Host, Ran, checked
 from repository.place import RunPlace
 
+# How long ci waits for the pushed head's checks to start, and how often it looks, in seconds.
+_WAIT = 120
+_EVERY = 5
 # What git says where origin refuses a push for want of a login or a permission, in lower case:
 # a remote that rejects the refs, as a folder that may not be written does, among them.
 _REFUSED = ("permission", "could not read username", "authentication failed", "remote rejected")
@@ -163,19 +167,28 @@ def ci(run: RunPlace, host: Host) -> str:
     """What the pull request's CI found, once it's done.
 
     Takes: the run, and the host.
-    Gives: each check of the pull request's head, by its name, once each, in gh's order, with how
-    it ended: `passed`, `skipped`, `cancelled`, as GitHub Actions ends a job past its time limit
-    too, `timed out`, or `still running`, where gh's watch stopped before it ended, each a line
-    `<name>\t<end>`, where none failed. A check cancelled, timed out, or still running neither
-    passed nor failed, and only the user runs it again.
-    Changes: runs `gh pr checks <the work's branch> --watch` in the run's worktree, which waits
-    until each check is done, then reads each check's end by
+    Gives: `no CI started within 120 seconds of the push` as a line, where the pushed head's
+    checks don't start within it, as with no CI; else each check of the pull request's head, by
+    its name, once each, in gh's order, with how it ended: `passed`, `skipped`, `cancelled`, as
+    GitHub Actions ends a job past its time limit too, `timed out`, or `still running`, where gh's
+    watch stopped before it ended, each a line `<name>\t<end>`, where none failed. A check
+    cancelled, timed out, or still running neither passed nor failed, and only the user runs it
+    again.
+    Changes: views `gh pr view <the work's branch> --json headRefOid,statusCheckRollup` in the
+    run's worktree every 5 seconds until the pull request's head is the run's HEAD, as pushed, and
+    holds a check, at most 120 seconds, as GitHub takes a moment after a push to move the head and
+    to start its checks, while gh's watch reads the head before the push or finds no check; then
+    runs `gh pr checks <the work's branch> --watch`, which waits until each check is done, then
+    reads each check's end by
     `gh pr checks <the work's branch> --json name,state,bucket,link`, as gh's watch prints a
     cancelled check as `fail` and ends 0 where no other failed.
     Refuses: Wrong where a check failed, naming each once, then each that ended neither passing
-    nor failing, with how; CantRun where gh can't give the checks, such as where the repository
-    has no CI, the branch no pull request, or gh can't reach GitHub, with what gh said.
+    nor failing, with how; CantRun where gh can't give the pull request or its checks, such as
+    where the branch has no pull request, or gh has no login or can't reach GitHub, with what gh
+    said.
     """
+    if not _started(run, host):
+        return f"no CI started within {_WAIT} seconds of the push\n"
     host(["gh", "pr", "checks", run.branch, "--watch"], run.worktree)
     read = ["gh", "pr", "checks", run.branch, "--json", "name,state,bucket,link"]
     given = host(read, run.worktree)
@@ -192,6 +205,24 @@ def ci(run: RunPlace, host: Host) -> str:
             what += ", ".join(others)
         raise Wrong(what)
     return "".join(f"{name}\t{end}\n" for name, end in ends.items())
+
+
+def _started(run: RunPlace, host: Host) -> bool:
+    """Whether the pull request's head is the run's HEAD with a check, within the wait, looking
+    again at each interval."""
+    pushed = _git(host, run, "rev-parse", "HEAD").out.strip()
+    view = ["gh", "pr", "view", run.branch, "--json", "headRefOid,statusCheckRollup"]
+    until = time.monotonic() + _WAIT
+    while True:
+        shown = host(view, run.worktree)
+        if shown.code != 0:
+            raise CantRun(f"gh can't give the pull request's CI: {(shown.out + shown.err).strip()}")
+        head = json.loads(shown.out)
+        if head["headRefOid"] == pushed and head["statusCheckRollup"]:
+            return True
+        if time.monotonic() + _EVERY > until:
+            return False
+        time.sleep(_EVERY)
 
 
 # The ends of a check that settle it, as passing or failing, with no one to run it again.

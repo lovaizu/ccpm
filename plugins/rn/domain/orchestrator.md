@@ -242,10 +242,11 @@ origin names no default branch, as no run stands yet.
         on, such as a README's list of the plugins, a marketplace, a CHANGELOG, and the rules of
         the repository's guides; and nothing extra, that it holds no file or change that the goal
         doesn't need;
-      - to run `python3 <rn's folder>/scripts/repository.py ci <run>`, which waits for the CI, and
-        gives 0 printing each check with how it ended where none failed, 1 naming each that
-        failed, then each that ended neither passing nor failing, and 2 where it couldn't check,
-        such as with no CI;
+      - to run `python3 <rn's folder>/scripts/repository.py ci <run>`, which waits up to 120
+        seconds for the pushed head's checks to start, then for them to end, and gives 0 printing
+        each check with how it ended where none failed, or that no CI started within the wait; 1
+        naming each that failed, then each that ended neither passing nor failing; and 2 where it
+        couldn't check, such as with no login;
       - to change no file, and to give back only its findings, each with its file, and what it
         couldn't check.
    2. Read its findings, not the diff, and judge each against the goal.
@@ -260,7 +261,8 @@ origin names no default branch, as no run stands yet.
       left past a deliverable's Rounds.
    5. Once each point passes, propose the merge, with each result. Name each check that ended
       neither passing nor failing, such as cancelled or timed out, for the user to run again, as
-      neither you nor a mend can settle it. Give as a
+      neither you nor a mend can settle it. Where ci printed that no CI started, say so, such as
+      `No CI started after 120 seconds of waiting.` Give as a
       proposal each finding left of a deliverable done at a step that the user doesn't check: each
       open decision that its last Round's `put-up.json` names, with what that Round's
       `evaluator.json` found of its condition.

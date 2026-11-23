@@ -47,10 +47,13 @@ def line(record: str, event: str) -> dict[str, Any]:
 
 def state(folder: str) -> dict[str, Any]:
     """The double's state in the folder: `logged_in`, `reached`, whether gh reaches GitHub,
-    `closes`, whether it reaches GitHub to close a pull request once it read it,
+    `closes`, whether it reaches GitHub to close a pull request once it read it, `reads_checks`,
+    whether it reaches GitHub to read the checks once it read the pull request's head,
     `pull_request` (the URL of the open one, or None), `earlier`, an earlier pull request of the
     branch that isn't open, as its `url` and `state`, `CLOSED` or `MERGED`, or None, `checks`,
-    what the CI's checks found, `passed`, `failed`, or `none`, and `asked`, each gh command it was
+    what the CI's checks found, `passed`, `failed`, or `none`, `started`, how many views of the
+    pull request's head after a push give the head before it, `stale`, then the pushed head with
+    no check started, `unstarted`, before its checks show, and `asked`, each gh command it was
     asked, by its words."""
     path = os.path.join(folder, STATE)
     if not os.path.exists(path):
@@ -58,9 +61,11 @@ def state(folder: str) -> dict[str, Any]:
             "logged_in": True,
             "reached": True,
             "closes": True,
+            "reads_checks": True,
             "pull_request": None,
             "earlier": None,
             "checks": "passed",
+            "started": {"stale": 0, "unstarted": 0},
             "asked": [],
         }
     with open(path, encoding="utf-8") as f:
@@ -96,6 +101,14 @@ def closes_unreached(folder: str) -> None:
     keep(folder, kept)
 
 
+def checks_unreached(folder: str) -> None:
+    """Sets the double's state to GitHub out of reach once gh has read the pull request's head, so
+    that `gh pr checks` fails as where the network goes down."""
+    kept = state(folder)
+    kept["reads_checks"] = False
+    keep(folder, kept)
+
+
 def opened(folder: str, url: str) -> None:
     """Sets the pull request of the URL as open, as `gh pr create` leaves it."""
     kept = state(folder)
@@ -111,6 +124,15 @@ def earlier(folder: str, url: str, held: str) -> None:
     keep(folder, kept)
 
 
+def started(folder: str, stale: int, unstarted: int) -> None:
+    """Sets how many views of the pull request's head give the head before the push, then the
+    pushed head with no check started, before its checks show, as GitHub takes a moment after a
+    push to move the head and to start its checks."""
+    kept = state(folder)
+    kept["started"] = {"stale": stale, "unstarted": unstarted}
+    keep(folder, kept)
+
+
 def checks(folder: str, found: str) -> None:
     """Sets what the CI's checks found: `passed`, `failed`, `cancelled`, `ended` each way, as one
     passed, one failed, and others were cancelled, `timed-out`, or `none`, where it has no
@@ -120,10 +142,11 @@ def checks(folder: str, found: str) -> None:
     keep(folder, kept)
 
 
-def answer(argv: Sequence[str], folder: str) -> tuple[int, str, str]:
-    """What gh gives for the command's words, from `gh` on, as the records show, with the state
-    in the folder kept."""
+def answer(argv: Sequence[str], folder: str, cwd: str = ".") -> tuple[int, str, str]:
+    """What gh gives for the command's words, from `gh` on, run in the folder `cwd`, as the records
+    show, with the state in the folder kept."""
     kept = state(folder)
+    kept["cwd"] = cwd
     kept["asked"].append(list(argv))
     words = list(argv[1:3])
     if not kept["logged_in"]:
@@ -132,6 +155,7 @@ def answer(argv: Sequence[str], folder: str) -> tuple[int, str, str]:
         given = line(AUTH, "gh auth status finds the login")
     else:
         given = _ANSWERS.get(" ".join(words), _unrecorded)(kept, argv)
+    del kept["cwd"]
     keep(folder, kept)
     return int(given["exit"]), str(given.get("stdout", "")), str(given.get("stderr", ""))
 
@@ -147,6 +171,8 @@ def _viewed(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
         return line(PR_VIEW, "gh pr view can't reach GitHub")
     if "state" in _fields(argv):
         return _state(kept, argv)
+    if "headRefOid" in _fields(argv) and kept["pull_request"] is not None:
+        return _head(kept)
     if kept["pull_request"] is None and kept["earlier"] is None:
         given = line(PR_VIEW, "gh pr view finds no pull request for the branch")
         given["stderr"] = given["stderr"].replace("no-such-branch-rn", _branch(argv))
@@ -155,6 +181,29 @@ def _viewed(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
     shown = json.loads(given["stdout"])
     shown.update(url=kept["pull_request"] or kept["earlier"]["url"], comments=[])
     given["stdout"] = json.dumps(shown) + "\n"
+    return given
+
+
+def _head(kept: dict[str, Any]) -> dict[str, Any]:
+    """What `gh pr view <branch> --json headRefOid,statusCheckRollup` gives of the open pull
+    request: the head before the push while `started` says so, then the pushed head, the commit
+    that HEAD names in the folder gh runs in, with no check, then with its checks started, or
+    with none where the CI has no checks."""
+    waits = kept["started"]
+    if waits["stale"] > 0:
+        waits["stale"] -= 1
+        return line(PR_VIEW, "gh pr view gives the head before the push's, right after the push")
+    if waits["unstarted"] > 0 or kept["checks"] == "none":
+        waits["unstarted"] = max(waits["unstarted"] - 1, 0)
+        given = line(PR_VIEW, "gh pr view gives the pushed head before its checks start")
+    else:
+        given = line(PR_VIEW, "gh pr view gives the pushed head with its checks started")
+    shown = json.loads(given["stdout"])
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=kept["cwd"], capture_output=True, text=True, check=True
+    )
+    shown["headRefOid"] = head.stdout.strip()
+    given["stdout"] = json.dumps(shown, separators=(",", ":")) + "\n"
     return given
 
 
@@ -182,9 +231,10 @@ def _checks(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
     """What `gh pr checks --watch`, or `gh pr checks --json`, gives of the open pull request's
     CI."""
     json_asked = "--json" in argv
-    if not kept["reached"] and json_asked:
+    reached = kept["reached"] and kept["reads_checks"]
+    if not reached and json_asked:
         return line(PR_CHECKS, "gh pr checks --json can't reach GitHub")
-    if not kept["reached"]:
+    if not reached:
         return line(PR_CHECKS, "gh pr checks --watch can't reach GitHub")
     if kept["pull_request"] is None:
         return _unrecorded(kept, argv)
@@ -269,7 +319,7 @@ def host(folder: str) -> Any:
     def run(argv: Sequence[str], cwd: str, env: Any = None) -> HostRan:
         ran.append((list(argv), cwd))
         if argv[0] == "gh":
-            return HostRan(*answer(argv, folder))
+            return HostRan(*answer(argv, folder, cwd))
         whole = {**os.environ, **env} if env else None
         done = subprocess.run(
             list(argv), cwd=cwd, env=whole, capture_output=True, text=True, check=False
@@ -289,10 +339,12 @@ def program(bin_folder: str, state_folder: str) -> str:
     with open(path, "w", encoding="utf-8") as f:
         f.write(
             "#!/usr/bin/env python3\n"
+            "import os\n"
             "import sys\n"
             f"sys.path.insert(0, {here!r})\n"
             "import gh_double\n"
-            f"code, out, err = gh_double.answer(['gh', *sys.argv[1:]], {state_folder!r})\n"
+            f"given = gh_double.answer(['gh', *sys.argv[1:]], {state_folder!r}, os.getcwd())\n"
+            "code, out, err = given\n"
             "sys.stdout.write(out)\n"
             "sys.stderr.write(err)\n"
             "sys.exit(code)\n"
