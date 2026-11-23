@@ -1,0 +1,30 @@
+{
+ "result": "made",
+ "files": [
+  ".claude-plugin/marketplace.json"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "      \"name\": \"overnight\",",
+    "      \"source\": \"./plugins/overnight\""
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "      \"name\": \"overnight\",",
+    "      \"description\": \"overnight runs each task you stack to its end, past the usage limit, so that you let go after stacking them and take in each result afterward.\",",
+    "      \"source\": \"./plugins/overnight\""
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "      \"description\": \"overnight runs each task you stack to its end, past the usage limit, so that you let go after stacking them and take in each result afterward.\",",
+    "      \"source\": \"./plugins/overnight\""
+   ]
+  }
+ ]
+}

@@ -1,0 +1,74 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "language": "English",
+ "deliverable": {
+  "name": "The runner stacks tasks, resumes each after the limit lifts, and reports which finished and which were given up",
+  "path": "plugins/overnight/scripts",
+  "kind": "code",
+  "inputs": [
+   "dev/overnight/architecture.md",
+   "plugins/overnight",
+   "dev/overnight/tests"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N7",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N8",
+    "good": false,
+    "decisions": []
+   }
+  ],
+  "more_paths": [
+   "plugins/overnight/domain/",
+   "dev/overnight/tests/"
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/tests"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/code",
+ "stage": "content",
+ "number": 1,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/plugins%2Fovernight%2Fscripts/content-1",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-plugins%2Fovernight%2Fscripts-content-1/",
+ "findings": null,
+ "last_good": null
+}
