@@ -71,7 +71,7 @@
     },
     {
      "id": "N2",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "What the runner is handed",
@@ -87,7 +87,7 @@
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": []
     }
    ],
