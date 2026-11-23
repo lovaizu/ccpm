@@ -49,8 +49,14 @@
     },
     {
      "id": "N4",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "how many key results",
+       "decided": "kr何であんなに多いの？些末な多数に向かわない？ (Keep only the vital few key results, as more of them lead the developers to the trivial many.)",
+       "by": "user"
+      }
+     ]
     },
     {
      "id": "N5",
@@ -59,12 +65,12 @@
     },
     {
      "id": "N6",
-     "good": true,
+     "good": false,
      "decisions": [
       {
        "about": "the concept",
-       "decided": "The one way: overnight carries each claude -p task to its end on its own while nobody answers, whether the arranging AI queued it or another plugin handed it over, waiting out each usage limit and resuming the task in its own session. The ideas, as issue #62 gives them under How it works: a session id fixed before the start, so a task stopped at any point resumes with --resume in the same conversation after the caller has gone; the limit read from the reply, its reset time taken from the line that says so, and no such line meaning the task is done; wait, then resume, two minutes after the reset (the next day if the time has passed, thirty minutes if it can't be read), with the new reply appended to the earlier one; a queue with a start time, one line per task (name, session id, prompt file, the one directory it may write in, new or resume), three at a time, each waiting on its own; nobody to answer a prompt, so every tool a task needs is allowed up front, edits accepted, its one directory given with --add-dir, and a task that only checks given read-only tools; detached from Claude Code by setsid nohup, so it keeps running after the conversation is closed; a log to read in the morning, one line per start, wait, finish, and give-up, with the time; and a task stopped by the limit seven times given up and logged. In the morning, the arranging AI reads the log, tells the user which tasks finished and which were given up, and takes the results in from the main session, where git is done.",
-       "by": "reasoning"
+       "decided": "これはコンセプトなの？ オーバーナイトってユーザーが寝てる間にaiエージェントが作業する、だけでは？ (The concept is only that AI agents do the work while the user sleeps; the mechanisms listed before are not the concept.)",
+       "by": "user"
       }
      ]
     }
