@@ -1,0 +1,122 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "runs",
+ "description": "Each task of a queue as it was stacked, with its run: how far it got, in <queue>/runs.json beside the queue file.",
+ "type": "object",
+ "required": [
+  "tasks"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "tasks": {
+   "description": "Each stacked task with its run, in the queue's order.",
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "task",
+     "run"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "task": {
+      "description": "The task as it was stacked.",
+      "type": "object",
+      "required": [
+       "name",
+       "prompt",
+       "dir",
+       "writes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "name": {
+        "type": "string",
+        "minLength": 1
+       },
+       "prompt": {
+        "description": "The absolute path of the prompt's file.",
+        "type": "string",
+        "minLength": 1
+       },
+       "dir": {
+        "type": "string",
+        "minLength": 1
+       },
+       "writes": {
+        "type": "boolean"
+       }
+      }
+     },
+     "run": {
+      "description": "How far the task got.",
+      "type": "object",
+      "required": [
+       "state",
+       "stops",
+       "waits"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "state": {
+        "enum": [
+         "waiting for the start",
+         "running",
+         "waiting for the limit",
+         "finished",
+         "given up"
+        ]
+       },
+       "session": {
+        "description": "The ID of the task's Claude Code session, from its first start.",
+        "type": "string",
+        "minLength": 1
+       },
+       "stops": {
+        "description": "How many times the usage limit stopped the task since it was last stacked.",
+        "type": "integer",
+        "minimum": 0
+       },
+       "waits": {
+        "description": "Each wait for the usage limit, as ISO 8601 moments.",
+        "type": "array",
+        "items": {
+         "type": "object",
+         "required": [
+          "stopped"
+         ],
+         "additionalProperties": false,
+         "properties": {
+          "stopped": {
+           "type": "string",
+           "format": "date-time"
+          },
+          "went_on": {
+           "type": "string",
+           "format": "date-time"
+          }
+         }
+        }
+       },
+       "until": {
+        "description": "While the task waits for the limit, the moment it goes on.",
+        "type": "string",
+        "format": "date-time"
+       },
+       "ended": {
+        "description": "Once the task is finished or given up, the moment it ended.",
+        "type": "string",
+        "format": "date-time"
+       },
+       "why": {
+        "description": "Once the task is given up, why.",
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

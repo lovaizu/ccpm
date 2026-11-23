@@ -1,0 +1,56 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "deliverable": {
+  "name": "The parts' modules and their interfaces show that they fit together",
+  "path": "plugins/overnight",
+  "more_paths": [
+   "dev/overnight/skeleton-gaps.md"
+  ]
+ },
+ "judges_by": {
+  "what": "The developers see, before anyone writes a body, whether the parts that the architecture draws fit together, and the architecture's maker mends each place where they don't.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "Each decision that the architecture gives a part has one place in the code.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "Module opening",
+      "what": "Does each module state at its top the one decision that it alone hides, and does each decision that the architecture gives a component lie in exactly one module?"
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "Each handoff between the parts has an interface that both sides build to.",
+    "necessary_conditions": [
+     {
+      "id": "N2",
+      "about": "Interface",
+      "what": "Does each arrow of Sequences that reaches a part have an interface that states what it takes, what it gives, and each way it refuses, with its body left empty?"
+     },
+     {
+      "id": "N3",
+      "about": "Prompt",
+      "what": "Does each part that holds a prompt have a file that states when to use the prompt, what it gives, and the form of what it takes and gives, with its steps left empty?"
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "Each place where the architecture can't be built reaches its maker before anyone builds around it.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "Gaps",
+      "what": "Does the list of gaps name each place where the skeleton can't follow the architecture, each with the element of the architecture that it bears on?"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-plugins%2Fovernight-content-1/",
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/plugins%2Fovernight/content-1"
+}

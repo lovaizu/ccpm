@@ -1,0 +1,53 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"Decides how a Claude Code session's end reads: finished, stopped by the usage limit until its",
+    "\"\"\"Decides how a task waits at the usage limit: when it goes on after the reset, and at which stop",
+    "\"\"\"Decides when each task of a queue starts: in the queue's order, three at a time, from the",
+    "\"\"\"Decides how a runner's stop shows: a lock on its queue that the OS releases however the runner",
+    "\"\"\"Decides how a queue's runner outlives the session that starts it, on each OS that Claude Code",
+    "\"\"\"Decides what a task's session may do: the tools it's allowed and refused, and the sandbox that",
+    "\"\"\"Decides which queue can be taken in: each fault that keeps one of its tasks from starting, and",
+    "\"\"\"Decides how each part reads and writes a queue's runs and replies: each write made whole before"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def can_hold() -> bool:",
+    "def standing(queue_file: str) -> Standing:",
+    "def stack(queue: Queue) -> tuple[Kept, ...]:",
+    "def start_runner(handoff: Handoff) -> None:",
+    "def mark(queue_file: str, task: str, run: Run) -> None:",
+    "def run(task: Task, session: str | None) -> Ended:",
+    "def add_reply(queue_file: str, task: str, reply: Reply) -> None:",
+    "def tell(queue_file: str, standing: Standing) -> str:",
+    "    Refuses: NotStacked where overnight keeps nothing for the queue; ValueError where its runs'",
+    "    raise NotImplementedError(\"record.store.standing\")"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "description: Stacks the tasks of a queue file to run to their ends apart from this session, past the usage limit, and shows when they start and how to check them, or each fault of the queue and how to mend it. Use when the user, or an AI that hands out tasks, asks overnight to run a queue of tasks, or when a plugin's AI hands its own task to overnight as a queue of one.",
+    "Takes: the path of a queue file, in the form of `${CLAUDE_PLUGIN_ROOT}/domain/stacker/queue.schema.json`:",
+    "Gives: what `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/queue.py stack <the queue file>` prints, as it stands, by `stacker.command.main` in `${CLAUDE_PLUGIN_ROOT}/domain/stacker/command.py`.",
+    "description: Shows where the tasks of a stacked queue stand, which finished, with each reply and the folder each wrote in, and why each other was given up, or overnight's version where no stacked queue is named. Use when the user, or an AI that handed out tasks, asks overnight how a queue's tasks ended, or to take their results in.",
+    "Steps: not yet written."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "- S1: the arrow by which the stacker starts the runner names only the queue's tasks (Task). The",
+    "  runner also needs the queue's start hour (Queue) and each carried-on task's session (Run). So",
+    "- Directory structure: `<queue>/` holds only `runs.json` and each `<task>.md`. The runner's lock on",
+    "  the queue needs a file, which has no place there. So `record.place.Place.lock` puts it in"
+   ]
+  }
+ ],
+ "more": []
+}

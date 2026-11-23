@@ -1,0 +1,100 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "language": "English",
+ "deliverable": {
+  "name": "The parts' modules and their interfaces show that they fit together",
+  "path": "plugins/overnight",
+  "kind": "software-design",
+  "inputs": [
+   "dev/overnight/architecture.md"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": [
+     {
+      "about": "What the runner is handed",
+      "decided": "The stacker's handoff to the runner carries the queue's start hour and, for each task carried on, the session it had, so the runner needs no read of the record to start.",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   }
+  ],
+  "more_paths": [
+   "dev/overnight/skeleton-gaps.md"
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/software-design",
+ "stage": "content",
+ "number": 2,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/plugins%2Fovernight/content-2",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-plugins%2Fovernight-content-2/",
+ "findings": {
+  "good": [],
+  "more": [
+   {
+    "condition": "N2",
+    "good_when": "The developer who writes the runner follows S1 from the stacker's start of the runner to the first task's start, and finds the queue's start hour in what the runner's interfaces take, so the runner can wait until 23:00 as the README's walkthrough says. Today the handoff and `runner.schedule.carry` carry only the queue file's path and the tasks, and `runs.json` keeps no start. The developer who writes `queue.py stack` also finds each way `stacker.stack.stack` refuses, so they can map each one to its exit code. Today `stacker.command.main` gives 2 where the runner can't start, but `stack` names only `Refused`."
+   },
+   {
+    "condition": "N4",
+    "good_when": "The architecture's maker opens the branch and finds the skeleton's list of gaps, with each gap tied to the element it bears on, such as S1's arrow by which the stacker starts the runner with only the queue's tasks and not its start hour. Today the branch holds no `dev/overnight/skeleton-gaps.md`, nor any other list of the skeleton's gaps."
+   }
+  ]
+ },
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"Decides how a Claude Code session's end reads: finished, stopped by the usage limit until its",
+    "\"\"\"Decides how a task waits at the usage limit: when it goes on after the reset, and at which stop",
+    "\"\"\"Decides when each task of a queue starts: in the queue's order, three at a time, from the",
+    "\"\"\"Decides how a runner's stop shows: a lock on its queue that the OS releases however the runner",
+    "\"\"\"Decides how a queue's runs lie on disk: the layout of `runs.json`, by `runs.schema.json` beside",
+    "\"\"\"Decides how a queue's runner outlives the session that starts it, on each OS that Claude Code"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def standing(queue_file: str) -> Standing:",
+    "def stack(queue: Queue) -> tuple[Task, ...]:",
+    "def run(task: Task, session: str | None) -> Ended:",
+    "def claude(arguments: Sequence[str], cwd: str) -> Output:",
+    "def add_reply(queue_file: str, task: str, reply: Reply) -> None:",
+    "def tell(queue_file: str, standing: Standing) -> str:",
+    "    Refuses: NotStacked where overnight keeps nothing for the queue; ValueError where its runs'",
+    "    raise NotImplementedError(\"record.store.standing\")"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "Takes: the path of a queue file, in the form of `${CLAUDE_PLUGIN_ROOT}/domain/stacker/queue.schema.json`:",
+    "Gives: what `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/queue.py stack <the queue file>` prints, as it stands, by `stacker.command.main` in `${CLAUDE_PLUGIN_ROOT}/domain/stacker/command.py`.",
+    "Steps: not yet written."
+   ]
+  }
+ ]
+}

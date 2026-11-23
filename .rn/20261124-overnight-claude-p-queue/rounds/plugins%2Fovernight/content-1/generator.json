@@ -1,0 +1,69 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/.claude-plugin/plugin.json",
+  "plugins/overnight/scripts/queue.py",
+  "plugins/overnight/skills/stack/SKILL.md",
+  "plugins/overnight/skills/check/SKILL.md",
+  "plugins/overnight/domain/stacker/queue.schema.json",
+  "plugins/overnight/domain/stacker/queue_file.py",
+  "plugins/overnight/domain/stacker/admission.py",
+  "plugins/overnight/domain/stacker/stack.py",
+  "plugins/overnight/domain/stacker/detach.py",
+  "plugins/overnight/domain/stacker/command.py",
+  "plugins/overnight/domain/record/place.py",
+  "plugins/overnight/domain/record/runs.schema.json",
+  "plugins/overnight/domain/record/runs.py",
+  "plugins/overnight/domain/record/replies.py",
+  "plugins/overnight/domain/record/lock.py",
+  "plugins/overnight/domain/record/standing.py",
+  "plugins/overnight/domain/record/store.py",
+  "plugins/overnight/domain/session/claude.py",
+  "plugins/overnight/domain/session/permissions.py",
+  "plugins/overnight/domain/session/ending.py",
+  "plugins/overnight/domain/session/session.py",
+  "plugins/overnight/domain/session/sandbox.py",
+  "plugins/overnight/domain/runner/handoff.py",
+  "plugins/overnight/domain/runner/clock.py",
+  "plugins/overnight/domain/runner/limit.py",
+  "plugins/overnight/domain/runner/task.py",
+  "plugins/overnight/domain/runner/schedule.py",
+  "plugins/overnight/domain/runner/command.py",
+  "plugins/overnight/domain/checker/report.py",
+  "plugins/overnight/domain/checker/command.py"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"Decides how a Claude Code session's end reads: finished, stopped by the usage limit until its",
+    "\"\"\"Decides how a task waits at the usage limit: when it goes on after the reset, and at which stop",
+    "\"\"\"Decides when each task of a queue starts: in the queue's order, three at a time, from the",
+    "\"\"\"Decides how a runner's stop shows: a lock on its queue that the OS releases however the runner",
+    "\"\"\"Decides how a queue's runs lie on disk: the layout of `runs.json`, by `runs.schema.json` beside",
+    "\"\"\"Decides how a queue's runner outlives the session that starts it, on each OS that Claude Code"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def standing(queue_file: str) -> Standing:",
+    "def stack(queue: Queue) -> tuple[Task, ...]:",
+    "def run(task: Task, session: str | None) -> Ended:",
+    "def claude(arguments: Sequence[str], cwd: str) -> Output:",
+    "def add_reply(queue_file: str, task: str, reply: Reply) -> None:",
+    "def tell(queue_file: str, standing: Standing) -> str:",
+    "    Refuses: NotStacked where overnight keeps nothing for the queue; ValueError where its runs'",
+    "    raise NotImplementedError(\"record.store.standing\")"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "Takes: the path of a queue file, in the form of `${CLAUDE_PLUGIN_ROOT}/domain/stacker/queue.schema.json`:",
+    "Gives: what `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/queue.py stack <the queue file>` prints, as it stands, by `stacker.command.main` in `${CLAUDE_PLUGIN_ROOT}/domain/stacker/command.py`.",
+    "Steps: not yet written."
+   ]
+  }
+ ]
+}

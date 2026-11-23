@@ -1,0 +1,100 @@
+{
+ "goal": "The user stacks tasks and has an AI work on them, the work resumes once the usage limit lifts, and the results are checked and taken in afterward. Once it's achieved, an AI stacks tasks and lets go, and afterward checks which tasks finished and which were given up, and takes their results in.",
+ "language": "English",
+ "deliverable": {
+  "name": "The parts' modules and their interfaces show that they fit together",
+  "path": "plugins/overnight",
+  "kind": "software-design",
+  "inputs": [
+   "dev/overnight/architecture.md"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": [
+     {
+      "about": "What the runner is handed",
+      "decided": "The stacker's handoff to the runner carries the queue's start hour and, for each task carried on, the session it had, so the runner needs no read of the record to start.",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": true,
+    "decisions": []
+   }
+  ],
+  "more_paths": [
+   "dev/overnight/skeleton-gaps.md"
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/refactor-code",
+ "stage": "refactor",
+ "number": 3,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/plugins%2Fovernight/refactor-3",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-plugins%2Fovernight-refactor-3/",
+ "findings": {
+  "good": [],
+  "more": []
+ },
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"Decides the form in which a stacked queue reaches its runner's program, on its standard input.\"\"\"",
+    "\"\"\"Decides when each task of a queue starts: in the queue's order, three at a time, from the",
+    "\"\"\"Decides how a runner's stop shows: a lock on its queue that the OS releases however the runner",
+    "\"\"\"Decides how a queue's runs lie on disk: the layout of `runs.json`, by `runs.schema.json` beside",
+    "\"\"\"Decides how a queue's runner outlives the session that starts it, on each OS that Claude Code"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "    queue_file: str",
+    "    start: str | None",
+    "    tasks: tuple[Carried, ...]",
+    "def start_runner(handoff: Handoff) -> None:",
+    "def carry(handoff: Handoff) -> None:",
+    "def carry(queue_file: str, carried: Carried) -> None:",
+    "def stack(queue: Queue) -> tuple[Kept, ...]:",
+    "    - stacker.detach.CantStart, with what the OS said, where the OS doesn't start the runner, the",
+    "    fault of the queue and how to mend it, on Refused; 1 with what's wrong, on ValueError; 2 with",
+    "    what the OS said, on OSError or stacker.detach.CantStart. 2 with the usage where the arguments",
+    "def run(task: Task, session: str | None) -> Ended:"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "Takes: the path of a queue file, in the form of `${CLAUDE_PLUGIN_ROOT}/domain/stacker/queue.schema.json`:",
+    "Gives: what `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/queue.py stack <the queue file>` prints, as it stands, by `stacker.command.main` in `${CLAUDE_PLUGIN_ROOT}/domain/stacker/command.py`.",
+    "Steps: not yet written."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "- S1: the arrow by which the stacker starts the runner names only the queue's tasks (Task). The",
+    "- Directory structure: `<queue>/` holds only `runs.json` and each `<task>.md`. The runner's lock on"
+   ]
+  }
+ ]
+}

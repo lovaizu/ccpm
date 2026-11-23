@@ -1,0 +1,61 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/domain/record/stopped.py",
+  "plugins/overnight/domain/record/store.py",
+  "plugins/overnight/domain/record/replies.py",
+  "plugins/overnight/domain/stacker/queue_file.py",
+  "plugins/overnight/domain/stacker/stack.py",
+  "plugins/overnight/domain/stacker/command.py",
+  "plugins/overnight/domain/checker/command.py",
+  "plugins/overnight/domain/runner/command.py"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"Decides what a run becomes once the runner that carried it stopped: given up, where the run",
+    "\"\"\"Decides the form in which a stacked queue reaches its runner's program, on its standard input.\"\"\"",
+    "\"\"\"Decides when each task of a queue starts: in the queue's order, three at a time, from the",
+    "\"\"\"Decides how a runner's stop shows: a lock on its queue that the OS releases however the runner",
+    "\"\"\"Decides how a queue's runs lie on disk: the layout of `runs.json`, by `runs.schema.json` beside",
+    "\"\"\"Decides how a queue's runner outlives the session that starts it, on each OS that Claude Code"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def stack(path: str) -> Handoff:",
+    "    Gives: what the runner was handed: the queue file's path, the queue's start, and the tasks that",
+    "    queue_file: str",
+    "    start: str | None",
+    "    tasks: tuple[Carried, ...]",
+    "def start_runner(handoff: Handoff) -> None:",
+    "def carry(handoff: Handoff) -> None:",
+    "def carry(queue_file: str, carried: Carried) -> None:",
+    "def stack(queue: Queue) -> tuple[Kept, ...]:",
+    "class Refused(Exception):",
+    "    1 with each fault of the queue and how to mend it, on stacker.queue_file.Refused; 1 with what's",
+    "    Changes: what `stacker.stack.stack` changes.",
+    "    Refuses: nothing, as each refusal of `stacker.stack.stack` gives its exit code.",
+    "    Changes: what `runner.schedule.carry` changes.",
+    "def run(task: Task, session: str | None) -> Ended:"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "Takes: the path of a queue file, in the form of `${CLAUDE_PLUGIN_ROOT}/domain/stacker/queue.schema.json`:",
+    "Gives: what `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/queue.py stack <the queue file>` prints, as it stands, by `stacker.command.main` in `${CLAUDE_PLUGIN_ROOT}/domain/stacker/command.py`.",
+    "Steps: not yet written."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "- S1: the arrow by which the stacker starts the runner names only the queue's tasks (Task). The",
+    "- Directory structure: `<queue>/` holds only `runs.json` and each `<task>.md`. The runner's lock on"
+   ]
+  }
+ ]
+}

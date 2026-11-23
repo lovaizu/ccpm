@@ -1,0 +1,4 @@
+{
+ "result": "point",
+ "point": "Should overnight's skeleton, the modules and interfaces of its parts with empty bodies, be made first, before these test cases, or should the cases be written now against interfaces picked for them? I recommend making the skeleton first, as the architecture best practice orders it (plugins/rn/domain/best-practices/architecture/best-practice.md:190: \"have the skeleton made from the document by the software design best practice, and then the test cases\"), and the worktree holds no part of overnight's code yet, not even plugins/overnight/scripts/queue.py or a plugin.json. Without the skeleton, the unit cases (N3) have no interface to cover, no case can fail on an empty body (N4), and the integration cases would have to invent how a test puts in a double of Claude Code and of the clock, which fixes interfaces that the architecture never drew before its maker decides them."
+}

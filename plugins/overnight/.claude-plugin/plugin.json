@@ -1,0 +1,10 @@
+{
+  "name": "overnight",
+  "description": "overnight runs each task you stack to its end, past the usage limit, so that you let go after stacking them and take in each result afterward.",
+  "version": "0.1.0",
+  "author": {
+    "name": "lovaizu"
+  },
+  "homepage": "https://github.com/lovaizu/ccpm/blob/main/plugins/overnight/README.md",
+  "repository": "https://github.com/lovaizu/ccpm"
+}
