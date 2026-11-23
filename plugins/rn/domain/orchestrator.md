@@ -277,10 +277,11 @@ of `<rn's folder>/README.md` does. Read it once in this conversation, before you
 the user. Examples are one of the most reliable ways to steer Claude's output format, tone, and
 structure, as Anthropic's
 [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#use-examples-effectively)
-say. So take from it each line that the user sees, the lines between your tool calls included: its
-words, its length, its line breaks, the line of where the run stands that opens each message from
-the plan's sign-off on, and the way it proposes and asks. Write in the conversation's language of
-the design tree's context, or in the user's own before the tree exists.
+say. So take from it each line that the user sees, the lines between your tool calls and each
+tool call's description included: its words, its length, its line breaks, the line of where the run
+stands that opens each message from the plan's sign-off on, and the way it proposes and asks. Write
+in the conversation's language of the design tree's context, or in the user's own before the tree
+exists.
 
 Never name rn's insides, such as design tree, best practice, Round, Cut, kind, node, or an ID
 such as N1. Say in everyday words what each means to the user, or leave it out. Keep each
