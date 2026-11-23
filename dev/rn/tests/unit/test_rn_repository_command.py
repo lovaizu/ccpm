@@ -1,13 +1,13 @@
 """The unit cases of repository/command.py's `main`, repository.py's command line: each subcommand
 with what it prints and its exit code, `find` of no run, and of the newest of several, its worktree
-made again, `pause`, `cancel` of a run that origin holds nothing of and of one whose branch it
-holds, and of a worktree that can't be removed, `put-up` printing a link of each of the
-deliverable's paths and none for the plan, marking the deliverable's last Round,
-and making done one at a step that the user doesn't check, `diff`, `ci` by what the checks found,
-`checks` with findings and with none, and each fault by its exit code: 2 with the usage for
-arguments of another form, 1 with `repository.py: ` for an input that is Wrong and for something
-Missing, origin's HEAD naming no branch and gh with no login among them, and 2 for what
-CantRun."""
+made again, `pause`, `cancel` of a run that GitHub holds nothing of, of one whose branch and pull
+request it holds, of one where gh can't ask GitHub, and of a worktree that can't be removed,
+`put-up` printing a link of each of the deliverable's paths and none for the plan, marking the
+deliverable's last Round, and making done one at a step that the user doesn't check, `diff`,
+`ci` by what the checks found, `checks` with findings and with none, and each fault by its exit
+code: 2 with the usage for arguments of another form, 1 with `repository.py: ` for an input that
+is Wrong and for something Missing, origin's HEAD naming no branch and gh with no login among
+them, and 2 for what CantRun."""
 
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ from repository.place import RunPlace
 from rn_runs import NAME, branch_run, changed, head, hook, made_run
 
 RUN = f".claude/worktrees/rn-{NAME}/.rn/{NAME}"
+PR = "http://github.com/owner/repo/pull/1"
 
 
 def command_link(run: RunPlace, ref: str = "HEAD") -> str:
@@ -183,18 +184,48 @@ def test_pause_with_no_origin_says_what_is_missing(tmp_path: Any, host: Any):
     "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
 )
 @pytest.mark.parametrize("pushed", [False, True], ids=["local-only", "pushed"])
-def test_cancel_removes_the_run_and_prints_what_origin_keeps(
-    tmp_path: Any, host: Any, pushed: bool
+def test_cancel_removes_the_run_and_prints_what_github_holds(
+    tmp_path: Any, host: Any, gh_state: str, pushed: bool
 ):
-    """Given a run whose branch is on this machine alone, or pushed to origin
+    """Given a run whose branch is on this machine alone, or pushed to origin with its pull
+    request open
     When repository.py cancel is given the run's folder
-    Then it gives 0 printing nothing, or origin/rn-<name> as a line, and the run's worktree and its
-    local branch are gone"""
+    Then it gives 0 printing nothing, or origin/rn-<name> and the pull request, a line each, with
+    nothing on stderr, and the run's worktree and its local branch are gone"""
     run = made_run(str(tmp_path))
     if pushed:
         git(run.worktree, "push", "-q", "-u", "origin", f"rn-{NAME}")
-    printed = f"origin/rn-{NAME}\n" if pushed else ""
+        gh_double.opened(gh_state, PR)
+    printed = f"origin/rn-{NAME}\n{PR}\n" if pushed else ""
     assert main(["cancel", RUN], run.repository, rn_files.RN, host) == (0, printed, "")
+    assert not os.path.exists(run.worktree)
+    assert git(run.repository, "branch", "--list", f"rn-{NAME}").strip() == ""
+
+
+@pytest.mark.supports(
+    "test_a_cancel_in_the_users_words_asks_once_then_removes_the_worktree_and_its_branch"
+)
+def test_cancel_that_cant_ask_github_says_so_on_stderr_and_still_gives_0(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given a run whose branch is pushed to origin, and gh that can't reach GitHub
+    When repository.py cancel is given the run's folder
+    Then it gives 0 printing origin/rn-<name> as a line, and on stderr `repository.py: can't
+    check ` with what it couldn't check and what gh said, as a line; and the run's worktree and
+    its local branch are gone"""
+    run = made_run(str(tmp_path))
+    git(run.worktree, "push", "-q", "-u", "origin", f"rn-{NAME}")
+    gh_double.unreached(gh_state)
+    said = gh_double.line(gh_double.PR_VIEW, "gh pr view can't reach GitHub")["stderr"].strip()
+    unchecked = (
+        f"repository.py: can't check the pull request of rn-{NAME} on GitHub, as gh can't ask"
+        f" GitHub: {said}\n"
+    )
+    assert main(["cancel", RUN], run.repository, rn_files.RN, host) == (
+        0,
+        f"origin/rn-{NAME}\n",
+        unchecked,
+    )
     assert not os.path.exists(run.worktree)
     assert git(run.repository, "branch", "--list", f"rn-{NAME}").strip() == ""
 

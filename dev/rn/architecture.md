@@ -141,8 +141,8 @@ Strategies:
 - A pause or a cancel taken from the user's words, and reported to Lane as its run's end. [S2]\
   Intent: the user stops a run without learning a command, and the conversation then goes on free
   of rn's steps.
-- A cancel confirmed once, removing the worktree and local branch, leaving GitHub's copies to the
-  user. [S2]\
+- A cancel confirmed once, removing the worktree and local branch, leaving to the user what GitHub
+  says it holds. [S2]\
   Intent: nothing that can't be undone happens on one misread sentence, or to what others may use.
 
 ### Sequences
@@ -249,7 +249,7 @@ sequenceDiagram
     O->>G: stops it [S2]
     O->>E: stops it [S2]
     O->>S: removes the run's worktree and its local branch (Design tree) [S2]
-    O->>U: the run cancelled, and what GitHub still holds of it, left to the user [S2]
+    O->>U: the run cancelled, and what GitHub holds of it, as GitHub answers, left to the user [S2]
   else a pause, by /rn:dn or in the user's words [S2]
     U->>O: /rn:dn, or asks to stop for now [S2]
     O->>G: stops it [S2]

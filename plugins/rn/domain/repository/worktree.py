@@ -1,14 +1,15 @@
 """Decides how a run's worktree comes to be, is found again, and goes: made with its branch from
 the default branch that origin's HEAD names, with its design tree; found from the runs' branches
 whose committed design tree holds work left, its worktree made again where none lies; and removed
-with its local branch where the user cancels the run, leaving to the user what origin holds; and,
-inside herdr, made, opened, and removed through herdr, so that the run shows as a herdr workspace
-while it lies here."""
+with its local branch where the user cancels the run, leaving to the user what GitHub holds, as
+GitHub itself answers; and, inside herdr, made, opened, and removed through herdr, so that the run
+shows as a herdr workspace while it lies here."""
 
 from __future__ import annotations
 
 import json
 import os
+from typing import NamedTuple
 
 from fault import CantRun, Missing, Wrong
 from practice import Practice
@@ -164,22 +165,35 @@ def found(repository: str, host: Host) -> RunPlace | None:
     return run
 
 
-def removed(run: RunPlace, host: Host) -> list[str]:
-    """Removes a run that the user cancels from this machine.
+class Left(NamedTuple):
+    """What of a cancelled run GitHub holds, as GitHub answered: `held`, each thing it holds, and
+    `unchecked`, each thing that rn couldn't ask GitHub of, with why."""
+
+    held: list[str]
+    unchecked: list[str]
+
+
+def removed(run: RunPlace, host: Host) -> Left:
+    """Removes a run that the user cancels from this machine, and asks GitHub what it holds of it.
 
     Takes: the run, and the host.
-    Gives: what of the run GitHub still holds, which only the user removes: `origin/rn-<name>`
-    where the repository's ref of origin's branch, as its last fetch or push left it, is there,
-    then the pull request that the design tree's `context.pr` names, where it names one.
+    Gives: what of the run GitHub holds, which only the user removes, as GitHub itself answers, as
+    a ref here may outlive the branch it records: in `held`, `origin/rn-<name>` where
+    `git ls-remote` finds origin holding the branch, then the URL of the open pull request where
+    `gh pr view rn-<name>` gives one; in `unchecked`, for each of the two that git or gh couldn't
+    ask, such as with no network or no login, `the branch rn-<name> on GitHub, as git can't ask
+    origin: <what git said>` or `the pull request of rn-<name> on GitHub, as gh can't ask GitHub:
+    <what gh said>`, each one line. A pull request that gh gives closed or merged, such as an
+    earlier run's of the same branch's name, isn't held.
     Changes: removes the run's worktree, with each change in it that isn't committed, and then its
-    local branch `rn-<name>`; the user's own worktree and branch stay as they were. Inside herdr,
-    has herdr open the worktree's workspace, leaving the focus where it is, and remove the
-    worktree of the workspace it gives, as herdr removes a worktree by its workspace, which it
-    closes.
-    Refuses: CantRun where git or herdr fails, with what it said, the branch then kept where the
-    worktree stays.
+    local branch `rn-<name>`; then, where origin holds no branch `rn-<name>`, deletes the
+    repository's ref of origin's branch, so that no later read meets it; the user's own worktree
+    and branch stay as they were. Inside herdr, has herdr open the worktree's workspace, leaving
+    the focus where it is, and remove the worktree of the workspace it gives, as herdr removes a
+    worktree by its workspace, which it closes.
+    Refuses: CantRun where git or herdr fails to remove the worktree or the branch, with what it
+    said, the branch then kept where the worktree stays.
     """
-    pr = form.read(run.tree)["context"]["pr"]
     top = run.repository
     if _inside_herdr():
         opened = ["herdr", "worktree", "open", "--cwd", top, "--path", run.worktree, "--no-focus"]
@@ -191,7 +205,40 @@ def removed(run: RunPlace, host: Host) -> list[str]:
         remove = ["git", "worktree", "remove", "--force", run.worktree]
         checked(host, remove, top, CantRun, "git can't remove the run's worktree")
     checked(host, ["git", "branch", "-D", run.branch], top, CantRun, "git can't delete the branch")
-    origin = f"refs/remotes/origin/{run.branch}"
-    kept = host(["git", "rev-parse", "--verify", "--quiet", origin], top).code == 0
-    left = [f"origin/{run.branch}"] if kept else []
-    return left + ([pr] if pr else [])
+    left = Left([], [])
+    _branch_left(run, host, left)
+    _pull_request_left(run, host, left)
+    return left
+
+
+def _branch_left(run: RunPlace, host: Host, left: Left) -> None:
+    """Adds to what's left whether origin holds the run's branch, as `git ls-remote` asks it, and
+    deletes the repository's ref of origin's branch where origin holds none."""
+    head = f"refs/heads/{run.branch}"
+    asked = host(["git", "ls-remote", "--heads", "origin", head], run.repository)
+    if asked.code != 0:
+        said = _line(asked.out + asked.err)
+        left.unchecked.append(f"the branch {run.branch} on GitHub, as git can't ask origin: {said}")
+    elif head in [each.partition("\t")[2] for each in asked.out.splitlines()]:
+        left.held.append(f"origin/{run.branch}")
+    else:
+        host(["git", "update-ref", "-d", f"refs/remotes/origin/{run.branch}"], run.repository)
+
+
+def _pull_request_left(run: RunPlace, host: Host, left: Left) -> None:
+    """Adds to what's left the run's branch's open pull request, as `gh pr view` gives it, where
+    there's one; gh takes an open one of the branch before any closed or merged one."""
+    asked = host(["gh", "pr", "view", run.branch, "--json", "state,url"], run.repository)
+    if asked.code == 0:
+        shown = json.loads(asked.out)
+        if shown["state"] == "OPEN":
+            left.held.append(shown["url"])
+    elif not asked.err.startswith("no pull requests found"):
+        said = _line(asked.out + asked.err)
+        what = f"the pull request of {run.branch} on GitHub, as gh can't ask GitHub: {said}"
+        left.unchecked.append(what)
+
+
+def _line(said: str) -> str:
+    """What a program said, as one line."""
+    return " ".join(said.split())
