@@ -57,7 +57,7 @@
   <text class="name" x="137.5" y="136.0">orchestrator</text>
   <text class="kind" x="137.5" y="156.0">[the main conversation]</text>
   <rect class="box" x="230" y="100" width="165" height="80" rx="6"/>
-  <text class="name" x="312.5" y="136.0">focuser</text>
+  <text class="name" x="312.5" y="136.0">pruner</text>
   <text class="kind" x="312.5" y="156.0">[subagent]</text>
   <rect class="box" x="405" y="100" width="165" height="80" rx="6"/>
   <text class="name" x="487.5" y="136.0">generator</text>

@@ -59,7 +59,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   and judging both stand on.
 - Round\
   One making or refactoring of a deliverable, which its maker tries as its people would. Its judge
-  tries content too. What each found goes to the focuser, whose decisions decide the next mend.
+  tries content too. What each found goes to the pruner, whose decisions decide the next mend.
 
 Strategies:
 
@@ -85,7 +85,7 @@ Strategies:
 - A finding that the people would never meet dropped by holding its condition good. [P1.1]\
   Intent: the next mend holds only what the people fail without.
 - Each done deliverable kept with its conditions and their decisions. [P7.2]\
-  Intent: a later deliverable rests on what a done one decided, and the focuser weighs it again.
+  Intent: a later deliverable rests on what a done one decided, and the pruner weighs it again.
 - Each Cut made from the design tree at each start of its role, never kept from an earlier start.
   [P4.1]\
   Intent: each change to the tree, such as a remedy written or a point cut, reaches the next
@@ -97,14 +97,14 @@ Strategies:
 
 - orchestrator (prompt)\
   Moves the run along its plan to the people's aim, as the user's one contact.
-- focuser (prompt)\
+- pruner (prompt)\
   Keeps the plan to the vital few that bring the people to their aim.
 - vital few (prompt)\
   Holds the one measure by which rn tells the vital few from the trivial many.
 - generator (prompt)\
   Makes a deliverable with which its people reach their aim, by the design tree's decisions.
 - evaluator (prompt)\
-  Checks, as the people, whether a deliverable reaches their aim, for the focuser to weigh.
+  Checks, as the people, whether a deliverable reaches their aim, for the pruner to weigh.
 - scripts (script)\
   Does each step that has one right result.
 - hook (hook)\
@@ -117,14 +117,14 @@ Strategies:
 - The main conversation as the orchestrator, which starts and stops each other role. [P3.1]\
   Intent: the user talks with one role through the run, and each judgment of the plan starts
   apart.
-- Each fact that asks a judgment, and no other, handed to the focuser before it enters the
+- Each fact that asks a judgment, and no other, handed to the pruner before it enters the
   design tree. [P7.1]\
   Intent: one role holding the stance alone weighs all the plan takes in, and no step waits on
   needless judgment.
-- One shared prompt of the measure, read by the orchestrator and the focuser, each role's prompt
+- One shared prompt of the measure, read by the orchestrator and the pruner, each role's prompt
   holding only its part. [P7.1]\
   Intent: the two roles weigh by one measure, which changes in one place.
-- A new focuser for each fact, given only the design tree, the user's words of the run, and the
+- A new pruner for each fact, given only the design tree, the user's words of the run, and the
   fact. [P4.1]\
   Intent: each fact is weighed as an observer outside the run would, by the goal and the user's
   words.
@@ -146,11 +146,11 @@ Strategies:
   [P4.3]\
   Intent: the pull request holds only the deliverables and the run's records.
 - The generator mending by its Cut's decisions alone, never by an evaluator's findings. [P7.3]\
-  Intent: only the remedy that the focuser weighed reaches the deliverable.
+  Intent: only the remedy that the pruner weighed reaches the deliverable.
 - The last Round's roles resumed within the same conversation, and started from its files in a new
   conversation. [P6.1]\
   Intent: each mend starts from what the last Round learned, wherever the run goes on.
-- A point that the focuser leaves open taken to the user as given, and the answer taken back as
+- A point that the pruner leaves open taken to the user as given, and the answer taken back as
   given. [P1.2]\
   Intent: the user answers the role's own question, and the role gets the user's own words.
 - Each step that has one right result done by a script that the role runs. [P4.3]\
@@ -162,9 +162,9 @@ Strategies:
   [P4.3]\
   Intent: a maker's clean-up never waits on a permission prompt, and stays in the work and the
   temporary folder.
-- Each write to a run's design tree refused by the same hook, but the focuser's and rn's
+- Each write to a run's design tree refused by the same hook, but the pruner's and rn's
   scripts'. [P7.3]\
-  Intent: the plan holds only what the focuser weighed, on every run, whatever a prompt forgets.
+  Intent: the plan holds only what the pruner weighed, on every run, whatever a prompt forgets.
 - Each step written as what it does, never tied to one OS's tools, such as Glob or Bash's
   `find`. [P4.3]\
   Intent: rn runs alike on each OS that Claude Code runs on.
@@ -172,8 +172,8 @@ Strategies:
   Intent: the user mends one blocker while every other deliverable goes on.
 - A pause or a cancel taken from the user's words. [S2]\
   Intent: the user stops a run without learning a command.
-- A pause letting a focuser at work end before it stops the rest. [P6.1]\
-  Intent: a pick-up reads a whole design tree, as the focuser's fact may live only in the
+- A pause letting a pruner at work end before it stops the rest. [P6.1]\
+  Intent: a pick-up reads a whole design tree, as the pruner's fact may live only in the
   conversation.
 - A cancel confirmed once, removing the run here and its branch and pull request on GitHub. [S2]\
   Intent: nothing that can't be undone happens on one misread sentence, and no run is left to
@@ -187,7 +187,7 @@ Strategies:
 sequenceDiagram
   actor U as user
   participant O as orchestrator
-  participant F as focuser
+  participant P as pruner
   participant H as hook
   participant T as design tree
   participant S as scripts
@@ -200,31 +200,31 @@ sequenceDiagram
   O->>S: makes the run's worktree, and its design tree with the languages as the orchestrator puts them, and the issues from the request (Design tree) [P4.3]
   loop each event: the request, the user's words, a sign-off, a role's end, or a refusal [P1.1]
     opt a fact that asks a judgment: the request with its issue, the user's words, a role's end, or a refusal [P7.1]
-      O->>F: starts a new one with the design tree, the user's words of the run, and the fact (Design tree, Round) [P4.1]
-      F->>F: weighs each element that the fact would add, change, or ask by the shared measure of the vital few [P7.1]
-      F->>F: weighs again each element of the tree that one of them rests on, a done deliverable's decisions and the issue's among them [P7.2]
-      F->>T: writes the vital few, from the goal and the plan down, cuts the rest, and leaves open each point that only the user can settle (Design tree) [P7.1]
+      O->>P: starts a new one with the design tree, the user's words of the run, and the fact (Design tree, Round) [P4.1]
+      P->>P: weighs each element that the fact would add, change, or ask by the shared measure of the vital few [P7.1]
+      P->>P: weighs again each element of the tree that one of them rests on, a done deliverable's decisions and the issue's among them [P7.2]
+      P->>T: writes the vital few, from the goal and the plan down, cuts the rest, and leaves open each point that only the user can settle (Design tree) [P7.1]
       opt a role's end with a trial's findings [P2.2]
-        F->>T: writes the remedy that the measure keeps of each finding into the decision it comes from, and holds good each other condition (Design tree) [P7.1]
-        F->>T: keeps each finding past two Rounds as an open decision of its condition (Design tree) [P3.3]
+        P->>T: writes the remedy that the measure keeps of each finding into the decision it comes from, and holds good each other condition (Design tree) [P7.1]
+        P->>T: keeps each finding past two Rounds as an open decision of its condition (Design tree) [P3.3]
       end
       opt the final check's findings [P2.3]
-        F->>T: sends each problem that the people fail without back to the deliverable whose file it is (Design tree) [P2.3]
+        P->>T: sends each problem that the people fail without back to the deliverable whose file it is (Design tree) [P2.3]
       end
-      F-->>O: ends, with what it changed, each point it left open, and each stray file [P4.2]
+      P-->>O: ends, with what it changed, each point it left open, and each stray file [P4.2]
       opt a stray file [P2.3]
         O->>O: removes it [P2.3]
       end
       O->>S: lists each node that the change touches, to read again (Design tree) [P1.1]
-      O->>F: starts a new one with the design tree, the user's words of the run, and the nodes listed (Design tree) [P4.1]
-      F->>T: rewrites each node that the change made false (Design tree) [P1.1]
-      F-->>O: ends, with what it changed [P4.2]
+      O->>P: starts a new one with the design tree, the user's words of the run, and the nodes listed (Design tree) [P4.1]
+      P->>T: rewrites each node that the change made false (Design tree) [P1.1]
+      P-->>O: ends, with what it changed [P4.2]
     end
     opt a sign-off [P1.3]
       O->>S: records it (Design tree) [P4.3]
     end
     opt a write to the design tree by any other role [P7.3]
-      H->>T: refuses the write, telling its writer to hand the fact to the focuser (Design tree) [P7.3]
+      H->>T: refuses the write, telling its writer to hand the fact to the pruner (Design tree) [P7.3]
     end
     O->>S: checks and commits the change (Design tree) [P6.1]
     opt a refusal that only the user can mend [P5.3]
@@ -250,26 +250,26 @@ sequenceDiagram
         alt its Round of content, to make [P3.2]
           O->>G: starts it with its Cut, or resumes the last Round's with the user's words, as given (Cut) [P4.1]
           alt a point it can't settle [P1.2]
-            G-->>O: the point, for the focuser to weigh (Round) [P1.2]
+            G-->>O: the point, for the pruner to weigh (Round) [P1.2]
           else
             G->>G: makes the content by its kind's best practice, or by its check alone, by the decisions of its Cut (Best practice, Cut) [P3.2]
             G->>G: tries it as its people would, and goes back to its decisions where a condition that they meet falls short [P2.1]
             G->>G: names what's good [P2.1]
             G->>S: runs the repository's checks on its files [P4.3]
-            G-->>O: ends, with the Round written, for the focuser to weigh (Round) [P4.2]
+            G-->>O: ends, with the Round written, for the pruner to weigh (Round) [P4.2]
           end
         else its Round of content, made, to judge [P2.1]
           O->>E: starts it with its Cut, or resumes the last Round's (Cut) [P4.1]
           E->>S: makes a folder of the people's starting state [P2.1]
           E->>E: tries it there as its people would [P2.1]
           E->>E: names, for each condition, what's good or what would make it good [P2.2]
-          E-->>O: ends, with the Round written, for the focuser to weigh (Round) [P4.2]
+          E-->>O: ends, with the Round written, for the pruner to weigh (Round) [P4.2]
         else each condition good, for a kind with a best practice [P3.2]
           O->>G: starts a new one with a Cut of the refactor best practice of code or of a document (Cut) [P3.2]
           G->>G: refactors it by that best practice, keeping its intent (Best practice) [P3.2]
           G->>G: runs the repository's tests as its developers run them [P3.2]
           G->>S: runs the repository's checks on its files [P4.3]
-          G-->>O: ends, with the Round written, for the focuser to weigh (Round) [P4.2]
+          G-->>O: ends, with the Round written, for the pruner to weigh (Round) [P4.2]
         end
       end
     end
@@ -277,7 +277,7 @@ sequenceDiagram
       O->>O: starts a plain subagent with the goal, the pull request, and the points to check [P2.3]
       O->>S: pushes the work, and gives the pull request's whole diff, read by the subagent (Design tree) [P4.3]
       O->>S: waits for the pull request's CI, and gives its result to the subagent [P4.3]
-      O->>O: takes the subagent's findings, the goal reached, the fit with the repository's files, nothing extra, and CI, as the next fact for the focuser [P2.3]
+      O->>O: takes the subagent's findings, the goal reached, the fit with the repository's files, nothing extra, and CI, as the next fact for the pruner [P2.3]
     end
   end
   O->>U: the final check's results, each finding left as a proposal, and the merge proposed [P2.3]
@@ -304,7 +304,7 @@ sequenceDiagram
     O->>U: the run cancelled, and what it couldn't remove on GitHub, with why [S2]
   else a pause, by /rn:dn or in the user's words [S2]
     U->>O: /rn:dn, or asks to stop for now [S2]
-    O->>O: waits for a focuser at work to end, as its write stays whole [P6.1]
+    O->>O: waits for a pruner at work to end, as its write stays whole [P6.1]
     O->>G: stops it [S2]
     O->>E: stops it [S2]
     O->>S: commits and pushes the run's folder (Design tree) [P6.1]
@@ -339,12 +339,12 @@ Strategies:
 ```text
 plugins/rn/                        what Claude Code installs for the user
 ├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
-├── agents/                        the focuser's, the generator's, and the evaluator's starts
-├── hooks/                         the hook that turns a maker's delete to remove.py, and keeps the design tree to the focuser and the scripts
+├── agents/                        the pruner's, the generator's, and the evaluator's starts
+├── hooks/                         the hook that turns a maker's delete to remove.py, and keeps the design tree to the pruner and the scripts
 ├── domain/
 │   ├── orchestrator.md            the event's own step, then those that every event shares
-│   ├── vital-few.md               the measure of the vital few, which the orchestrator and the focuser read
-│   ├── focuser.md                 what the focuser does
+│   ├── vital-few.md               the measure of the vital few, which the orchestrator and the pruner read
+│   ├── pruner.md                  what the pruner does
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
 │   ├── schemas/                   the form of each Cut and result

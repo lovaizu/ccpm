@@ -65,7 +65,7 @@
   <text class="name" x="460.0" y="76.0">orchestrator</text>
   <text class="kind" x="460.0" y="96.0">[prompt]</text>
   <rect class="box" x="800" y="40" width="180" height="80" rx="6"/>
-  <text class="name" x="890.0" y="76.0">focuser</text>
+  <text class="name" x="890.0" y="76.0">pruner</text>
   <text class="kind" x="890.0" y="96.0">[prompt]</text>
   <rect class="store" x="800" y="220" width="180" height="80" rx="6"/>
   <text class="name" x="890.0" y="265.0">design tree</text>
