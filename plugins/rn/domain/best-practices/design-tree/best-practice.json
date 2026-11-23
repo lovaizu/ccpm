@@ -26,7 +26,7 @@
               },
               {
                 "at": "decide",
-                "text": "Put the goal to the user beside the words of the request it came from, write it as they confirm it, and write `user` in `by`, since only the user knows what they're after."
+                "text": "Ask the user, one at a time, as points of the plan's N1, whom the goal is for, then what those people can do once it's achieved, each with your recommendation from the request and the repository, since only the user knows what they're after. Then put both to them in one summary, write the goal as they confirm it, and write `user` in `by`. Put the summary to them again only where the work shows the purpose changed."
               }
             ]
           },
@@ -42,7 +42,7 @@
               },
               {
                 "at": "decide",
-                "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/` and of `.rn/best-practices/`, and give each deliverable as its kind the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a guide. Where no folder fits, ask the user whether to make a best practice of that kind first, and recommend it where the field has an established way of making the kind, such as for an invoice. Making it first adds a deliverable of kind `meta` at `.rn/best-practices/<kind>/`, which this one rests on. Otherwise give it the kind `light`, and write the check that judges it, such as a test that passes once it exists, as its decision about `The check`."
+                "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/` and of `.rn/best-practices/`, and give each deliverable as its kind the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a guide. Where no folder fits and the field has an established way of making the kind, such as for an invoice, make a best practice of that kind first, as a step of the way to the goal before the step it serves, which the user sees and may change when they sign off the plan. Making it first adds a deliverable of kind `meta` at `.rn/best-practices/<kind>/`, which this one rests on. Otherwise give it the kind `light`, and write the check that judges it, such as a test that passes once it exists, as its decision about `The check`."
               },
               {
                 "at": "decide",
@@ -70,11 +70,11 @@
               },
               {
                 "at": "decide",
-                "text": "Propose the language of the deliverables from what the repository's documents and the user's instructions set, or else English, and the language of the conversation from the user's instructions and words. Write each as the user settles it."
+                "text": "Write the language of the deliverables from what the repository's documents and the user's instructions set, or else English, and the language of the conversation from the user's instructions and words. Ask the user only where these give different languages for the same one."
               },
               {
                 "at": "decide",
-                "text": "Ask the user which issues the run completes and which it only serves, and write their numbers in `closes` and `refs`."
+                "text": "Write in `closes` the number of each issue that the user's words name as the request, as the run completes it, and in `refs` each other issue they name, as the run only serves it. Don't ask the user, as their request says it."
               },
               {
                 "at": "make",
@@ -155,6 +155,10 @@
               {
                 "at": "decide",
                 "text": "Among the deliverables and points whose inputs are done, choose the one that brings the people closest to the goal's state by what the facts show, and write it first in `work`: a deliverable to make by its path, or a point to decide by its deliverable's path, its condition, and its `about`."
+              },
+              {
+                "at": "decide",
+                "text": "Write in `steps` the way to the goal, first to last, each deliverable in one step after each step whose deliverables it rests on. Give each step one thing it settles in `settles`, such as `how it's used`, in the conversation's language and the user's words, taken from the goal of its deliverables' best practices, since the user follows the run by these alone. Write `signoff` true for each step whose deliverables the user signs off, and false for each other, whose deliverables are done once their Rounds are over: as the user answers when they sign off the plan, and until then true for the first step alone, as the rest follows from it."
               }
             ]
           },

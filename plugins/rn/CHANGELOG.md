@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Changed
+
+- `/rn:on` asks what rn can help with, and takes an issue's number or a few words alike. rn reads the issue and your repository first, then asks you whom the work is for and what they can do at the goal, one at a time, each with why it asks and what it recommends, and sums both up for you to confirm.
+- Once you confirm the goal, rn shows the way to it, step by step, each step named by what it settles in your words, with its deliverables beside it, and asks where you want to check: the first step alone, the first two, or each step. Your answer signs off the plan.
+- Each message during a run opens with where the run stands, such as `Now 3/5: how it's built (architecture, test strategy)`, and speaks of your goal and the way to it, never of rn's insides.
+- rn closes the issue that your request names, and refers to each other issue you name, without asking you. It asks the languages only where your words, your instructions, and the repository's documents disagree.
+
 ### Added
 
 - When you run rn inside herdr, it makes each run's worktree through herdr, and opens it in herdr again when it picks up a run whose worktree is gone, so each run shows as a herdr workspace that you can switch to. Outside herdr, rn makes the worktree with git as before.

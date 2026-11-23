@@ -66,13 +66,13 @@ def open_decisions(design_tree: dict) -> list:
 
 @pytest.mark.supports("test_rn_on_asks_what_to_make_letting_its_commands_through")
 @pytest.mark.parametrize("run", RUNS)
-def test_rn_on_asks_what_to_make_and_makes_nothing(room: Room, run: int):
+def test_rn_on_asks_what_it_can_help_with_and_makes_nothing(room: Room, run: int):
     """Given invoicer's repository with no run of rn
     When the user types /rn:on alone
-    Then the reply asks what they want to make, no worktree of rn is made, the repository's files
+    Then the reply asks what rn can help with, no worktree of rn is made, the repository's files
     are as they were, and no command of rn's scripts ran"""
     printed = typed(room, "/rn:on")
-    assert "What do you want to make?" in printed
+    assert "What can I help with?" in printed
     assert not os.path.exists(room.at(".claude/worktrees"))
     assert git(room.repo, "status", "--porcelain") == ""
     assert not [each for each in commands_of(room) if "/scripts/" in each]
@@ -82,19 +82,20 @@ def test_rn_on_asks_what_to_make_and_makes_nothing(room: Room, run: int):
     "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
 )
 @pytest.mark.parametrize("run", RUNS)
-def test_the_words_after_rn_on_make_the_run_and_put_its_goal_to_the_user(room: Room, run: int):
+def test_the_words_after_rn_on_make_the_run_and_ask_whom_its_goal_is_for(room: Room, run: int):
     """Given a conversation in which the user typed /rn:on
     When the user types the walkthrough's words
     Then the run's design tree holds a goal of one sentence or more by reasoning and the plan as
-    its one deliverable, no Round is made, and the reply asks whether the goal is what they're
-    after"""
+    its one deliverable with one decision open, no Round is made, and the reply asks one question
+    with a recommendation"""
     printed = requested(room)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
     assert design_tree["goal"]["by"] == "reasoning"
     assert design_tree["goal"]["decided"].strip()
     assert [each["kind"] for each in design_tree["deliverables"]] == ["design-tree"]
     assert not os.path.exists(os.path.join(room.folder(name()), "rounds"))
-    assert "Is that what you're after?" in printed
+    assert len(open_decisions(design_tree)) == 1
+    assert printed.count("(I recommend:") == 1
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
@@ -173,10 +174,11 @@ def test_a_put_up_refused_for_gh_leaves_the_changelog_going_on(room: Room, run: 
 @pytest.mark.parametrize("run", RUNS)
 def test_a_goal_the_user_confirms_is_written_by_user(room: Room, run: int):
     """Given a conversation in which the user typed /rn:on, then the walkthrough's words
-    When the user answers yes
+    When the user answers yes to whom it's for, to the goal, and to their summary
     Then the run's design tree holds the goal by user"""
     requested(room)
-    typed(room, "yes", more=True)
+    for _ in range(3):
+        typed(room, "yes", more=True)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
     assert design_tree["goal"]["by"] == "user"
 
@@ -185,11 +187,13 @@ def test_a_goal_the_user_confirms_is_written_by_user(room: Room, run: int):
 @pytest.mark.parametrize("run", RUNS)
 def test_after_the_goal_the_user_is_asked_at_most_one_point(room: Room, run: int):
     """Given a conversation in which the user typed /rn:on, then the walkthrough's words
-    When the user answers yes
-    Then the reply holds at most one question that's theirs, and the design tree at most one
+    When the user answers yes to whom it's for, to the goal, and to their summary
+    Then the last reply holds at most one recommendation, and the design tree at most one
     decision open"""
     requested(room)
+    for _ in range(2):
+        typed(room, "yes", more=True)
     printed = typed(room, "yes", more=True)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
-    assert printed.count("A question that's yours:") <= 1
+    assert printed.count("(I recommend") <= 1
     assert len(open_decisions(design_tree)) <= 1
