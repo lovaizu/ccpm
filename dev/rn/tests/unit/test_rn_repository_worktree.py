@@ -461,6 +461,8 @@ def test_a_run_pushed_from_another_machine_since_the_last_fetch_is_picked_up(
     repo = a_repository(tmp_path)
     other = cloned(tmp_path, str(tmp_path / "origin.git"))
     git(other, "checkout", "-q", "main")
+    git(other, "config", "user.email", "rn@example.com")
+    git(other, "config", "user.name", "rn")
     branch_run(other, NAME, a_tree(NAME))
     git(other, "push", "-q", "origin", f"rn-{NAME}")
     assert found(repo, host) == Found(RunPlace(repo, NAME), None)
