@@ -14,12 +14,12 @@
   "pr": null
  },
  "goal": {
-  "decided": "The user has an AI run a queue of claude -p tasks overnight while nobody answers, and take in each finished task's result in the morning. Once it's achieved, the AI of the main session hands over a queue at night and lets go, reads in the morning from the log which tasks finished and which were given up after the usage limit stopped them, and takes their results in; the AI of another plugin calls its wait-and-resume part instead of writing its own.",
+  "decided": "The user stacks tasks and has an AI work on them through the night, the work resumes once the usage limit lifts, and in the morning the results are checked and taken in. Once it's achieved, the AI of the main session stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in; the AI of another plugin has its own work, stopped by the limit, resume once the limit lifts.",
   "by": "reasoning"
  },
  "deliverables": [
   {
-   "name": "The user has an AI run a queue of claude -p tasks overnight while nobody answers, and take in each finished task's result in the morning. Once it's achieved, the AI of the main session hands over a queue at night and lets go, reads in the morning from the log which tasks finished and which were given up after the usage limit stopped them, and takes their results in; the AI of another plugin calls its wait-and-resume part instead of writing its own.",
+   "name": "The user stacks tasks and has an AI work on them through the night, the work resumes once the usage limit lifts, and in the morning the results are checked and taken in. Once it's achieved, the AI of the main session stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in; the AI of another plugin has its own work, stopped by the limit, resume once the limit lifts.",
    "path": ".rn/20261124-overnight-claude-p-queue/design-tree.json",
    "kind": "design-tree",
    "inputs": [],
@@ -36,7 +36,7 @@
       },
       {
        "about": "What its people can do once the goal is achieved",
-       "decided": "The AI of the main session hands over a queue of tasks at night and lets go. The next morning, it reads from the log which tasks finished and which were given up, and takes their results into the main session. The AI of another plugin calls the wait-and-resume part instead of writing its own.",
+       "decided": "The AI of the main session stacks tasks at night and lets go, and in the morning checks which tasks finished and which were given up, and takes their results in. The AI of another plugin has its own work, stopped by the limit, resume once the limit lifts.",
        "by": "user"
       }
      ]
