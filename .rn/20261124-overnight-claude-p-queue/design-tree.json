@@ -72,7 +72,13 @@
     {
      "id": "N2",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "What the runner is handed",
+       "decided": "The stacker's handoff to the runner carries the queue's start hour and, for each task carried on, the session it had, so the runner needs no read of the record to start.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N3",
@@ -84,6 +90,9 @@
      "good": false,
      "decisions": []
     }
+   ],
+   "more_paths": [
+    "dev/overnight/skeleton-gaps.md"
    ]
   },
   {
