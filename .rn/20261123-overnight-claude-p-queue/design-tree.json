@@ -32,7 +32,7 @@
      "decisions": [
       {
        "about": "whom the goal is for",
-       "decided": "\u79c1\u304c\u6307\u793a\u3057\u3066ai\u304c\u6bb5\u53d6\u308a\u3059\u308b \u5229\u7528\u8005\u306fai (The user instructs, and an AI arranges the work: the one who uses overnight is an AI.)",
+       "decided": "私が指示してaiが段取りする 利用者はai (The user instructs, and an AI arranges the work: the one who uses overnight is an AI.)",
        "by": "user"
       },
       {
@@ -71,7 +71,13 @@
     {
      "id": "N5",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "the steps the user checks",
+       "decided": "b (The user checks step 1 alone, whom overnight serves and what for.)",
+       "by": "user"
+      }
+     ]
     },
     {
      "id": "N6",
@@ -602,28 +608,28 @@
  ],
  "steps": [
   {
-   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
+   "settles": "誰が何のために使うか",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "\u3069\u3046\u4f7f\u3044\u59cb\u3081\u308b\u304b",
+   "settles": "どう使い始めるか",
    "deliverables": [
     "plugins/overnight/README.md"
    ],
    "signoff": false
   },
   {
-   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
+   "settles": "どんな部品でどう動くか",
    "deliverables": [
     "dev/overnight/architecture.md"
    ],
    "signoff": false
   },
   {
-   "settles": "\u90e8\u54c1\u306e\u3064\u306a\u304e\u76ee\u3068\u78ba\u304b\u3081\u65b9",
+   "settles": "部品のつなぎ目と確かめ方",
    "deliverables": [
     "plugins/overnight",
     "dev/overnight/tests"
@@ -631,7 +637,7 @@
    "signoff": false
   },
   {
-   "settles": "\u52d5\u304f\u3082\u306e\u3068\u3001\u305d\u306e\u78ba\u304b\u3081",
+   "settles": "動くものと、その確かめ",
    "deliverables": [
     "dev/overnight/tests/integration",
     "plugins/overnight/skills"
@@ -639,7 +645,7 @@
    "signoff": false
   },
   {
-   "settles": "\u6574\u3048\u3066\u4e00\u89a7\u306b\u8f09\u305b\u308b",
+   "settles": "整えて一覧に載せる",
    "deliverables": [
     "plugins/overnight/scripts",
     ".claude-plugin/marketplace.json"
