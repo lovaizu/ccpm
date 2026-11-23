@@ -86,8 +86,8 @@ def test_the_words_after_rn_on_make_the_run_and_ask_whom_its_goal_is_for(room: R
     """Given a conversation in which the user typed /rn:on
     When the user types the walkthrough's words
     Then the run's design tree holds a goal of one sentence or more by reasoning and the plan as
-    its one deliverable with one decision open, no Round is made, and the reply asks one question
-    with a recommendation"""
+    its one deliverable with one decision open, no Round is made, and the reply asks one question,
+    rn's own proposal of whom the goal is for to confirm, with no label and nothing recommended"""
     printed = requested(room)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
     assert design_tree["goal"]["by"] == "reasoning"
@@ -95,7 +95,8 @@ def test_the_words_after_rn_on_make_the_run_and_ask_whom_its_goal_is_for(room: R
     assert [each["kind"] for each in design_tree["deliverables"]] == ["design-tree"]
     assert not os.path.exists(os.path.join(room.folder(name()), "rounds"))
     assert len(open_decisions(design_tree)) == 1
-    assert printed.count("Recommended:") == 1
+    assert printed.count("Is that right?") == 1
+    assert "Recommended:" not in printed and "recommend" not in printed.lower()
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
@@ -188,14 +189,15 @@ def test_a_goal_the_user_confirms_is_written_by_user(room: Room, run: int):
 def test_after_the_goal_the_user_is_asked_at_most_one_point(room: Room, run: int):
     """Given a conversation in which the user typed /rn:on, then the walkthrough's words
     When the user answers yes to whom it's for, to the goal, and to their summary
-    Then the last reply holds at most one recommendation, and the design tree at most one
-    decision open"""
+    Then the last reply asks at most one question, a proposal to confirm or options with one
+    recommended, and the design tree at most one decision open"""
     requested(room)
     for _ in range(2):
         typed(room, "yes", more=True)
     printed = typed(room, "yes", more=True)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
-    assert printed.count("Recommended:") + printed.count("(I recommend") <= 1
+    assert printed.count("Is that right?") + printed.count("so I recommend") <= 1
+    assert "Recommended:" not in printed
     assert len(open_decisions(design_tree)) <= 1
 
 

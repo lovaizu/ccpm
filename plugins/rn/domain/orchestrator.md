@@ -158,7 +158,7 @@ origin names no default branch, as no run stands yet.
      - A role's end: open the role's result beside its Cut. Take each point from that file, not
        the role's message.
        On `point`, keep the point as an open decision of its condition, its `about` a few words.
-       Put it to the user in the question's form of Output, from what the role gave. On `made` in a
+       Put it to the user in a question's form of Output, from what the role gave. On `made` in a
        Round of content, the evaluator of the same Round is due. On `made` in a Round of
        refactoring, the deliverable's Rounds are over. Change the tree only where the
        result shows a decision false. On `judged`, hold good each condition under `good`. For each
@@ -180,7 +180,7 @@ origin names no default branch, as no run stands yet.
    Review the tree by its N1 to N6 with this event's facts. Write only the tree. Use the Write or Edit tool.
    Find each fact in the repository by reading and searching its files, as Tools says.
    - Until the user confirms the goal, hear it by N1.4: open the plan's N1 points `whom it's for`,
-     then `the goal`, one at a time, then put both in the summary. Write each recommendation in the
+     then `the goal`, one at a time, then put both in the summary. Write each proposal in the
      user's words: whom it's for, and the goal as what those people get, never by the means, such
      as a tool, a command, or a part, even where the issue words it so. Once they confirm it, ask the
      languages only where N7.2 finds them differ, as a point of the plan's N7, `the languages`.
@@ -209,8 +209,8 @@ origin names no default branch, as no run stands yet.
    again, since each role reads the tree. Its result is made once it gives 0, as `move` writes
    nothing, so record the step then.
 5. `move`: move the run on from the tree as committed, taking each of these that holds.
-   - A point only the user can settle: put it to them in the question's form of Output, with your
-     recommendation, or in the summary's form for the goal.
+   - A point only the user can settle: put it to them in a question's form of Output, with your
+     proposal or the option you recommend, or in the summary's form for the goal.
    - The plan waiting for sign-off, or a deliverable whose Rounds are over, as `tree.py cut` says
      where it waits on the sign-off: run
      `python3 <rn's folder>/scripts/repository.py put-up <run> <its path>`. Put the plan up in the
@@ -276,9 +276,9 @@ Each claim rests on what a script printed or a file holds in this turn. A URL is
 it, a pause is pushed once pause gave 0, and a run is cancelled once cancel gave 0.
 
 Write each message as one of these forms alone, as plain text, without the fence around it here.
-Put one thing on a line, and a blank line between blocks. A message that asks closes on the one
-choice and the option you recommend, as the question's form does. Leave out a line that has nothing to hold, such as the
-proposals of a deliverable with none.
+Put one thing on a line, and a blank line between blocks. A message that asks closes on its one
+question, in a question's form. Leave out a line that has nothing to hold, such as the proposals
+of a deliverable with none.
 
 From the plan's sign-off on, each message but the cancel's opens with where the run stands, the
 first step with a deliverable not done, then a blank line:
@@ -293,14 +293,24 @@ The request's question, at `/rn:on`:
 What can I help with? An issue number or a few words of what you want both work.
 ```
 
-The question's form, for each point only the user can settle, such as whom the goal is for, then
-what those people can do once it's reached. Keep each line short, so that the user takes the
-question in at a glance:
+The question's forms, for each point only the user can settle. Keep each line short and plain,
+with no label, so that the user takes the question in at a glance. Where the point has no options
+to pick from, such as whom the goal is for, or what those people can do once it's reached, give
+your own proposal for the user to confirm, as nothing is there to recommend over another:
+
+```text
+Here's how I see <what the point settles>.
+<your proposal, in a few words>
+Is that right?
+```
+
+Where the point has options, give each, then one line with the option you recommend and why:
 
 ```text
 <the one choice>?
-Recommended: <the option, in a few words>
-Why: <what its people get that hangs on it, in a few words>
+a. <the first option>
+b. <the next option>
+<what its people get that hangs on it, in a few words>, so I recommend <its letter>.
 ```
 
 The summary's form, which the user confirms before anything is planned:
@@ -327,9 +337,10 @@ The way to the goal:
 Changes: <the URL that put-up printed>
 
 Where do you want to check?
-a) Step 1 only, then on to the end (I recommend this, as the rest follows from step 1)
-b) Steps 1 and 2
-c) Each step
+a. Step 1 only, then on to the end
+b. Steps 1 and 2
+c. Each step
+The rest follows from step 1, so I recommend a.
 ```
 
 The sign-off's form, at a step that the user checks:
