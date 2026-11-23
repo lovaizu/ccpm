@@ -19,13 +19,13 @@
     better.
 - O2: the calling plugin's AI gets each unattended `claude -p` task to its full result, past every
   usage limit.
-  - KR2.1: the share of its tasks stopped by a usage limit that lack their full result, such as
-    one never resumed. Lower is better.
+  - KR2.1: the share of its tasks stopped by the limit that lack their full result, such as one
+    never resumed. Lower is better.
   - KR2.2: the lines the calling plugin's AI writes to have its tasks waited out and resumed. Fewer
     is better.
 
-KR1.1 and KR2.1 come first: keep a change that improves a key result only if none before it
-gets worse.
+The first key result of each objective comes first. Keep a change that improves a key result
+only if none before it gets worse.
 Key results have no targets, as a measure made a target stops being a good measure, by Goodhart's
 law. They show whether a change brought its objective closer.
 
