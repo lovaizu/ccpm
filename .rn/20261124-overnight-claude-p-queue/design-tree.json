@@ -66,11 +66,16 @@
     },
     {
      "id": "N6",
-     "good": true,
+     "good": false,
      "decisions": [
       {
        "about": "The walkthrough's record",
        "decided": "The walkthrough and the install are rewritten from one run of the built plugin, once the runner and the marketplace entry are done.",
+       "by": "reasoning"
+      },
+      {
+       "about": "Sentence length",
+       "decided": "Each sentence of the walkthrough's opening holds 20 words or fewer, as the template's check asks at README lines 33 and 36.",
        "by": "reasoning"
       }
      ]
@@ -82,8 +87,14 @@
     },
     {
      "id": "N8",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "The form of each answer",
+       "decided": "Each answer under How it works holds one or two sentences of 20 words or fewer, as the template's check asks at README lines 132, 142, and 151.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N9",
