@@ -53,6 +53,12 @@ def requested(room: Room) -> str:
     return typed(room, WORDS, more=True)
 
 
+def questions(printed: str) -> list:
+    """Each line of what Claude Code printed that asks, as the README's walkthrough closes each
+    question on its one line that asks."""
+    return [each for each in printed.splitlines() if each.rstrip().endswith(("?", "？"))]
+
+
 def open_decisions(design_tree: dict) -> list:
     """Each decision of the design tree still open."""
     return [
@@ -72,7 +78,7 @@ def test_rn_on_asks_what_it_can_help_with_and_makes_nothing(room: Room, run: int
     Then the reply asks what rn can help with, no worktree of rn is made, the repository's files
     are as they were, and no command of rn's scripts ran"""
     printed = typed(room, "/rn:on")
-    assert "What can I help with?" in printed
+    assert "help" in printed.lower() and questions(printed)
     assert not os.path.exists(room.at(".claude/worktrees"))
     assert git(room.repo, "status", "--porcelain") == ""
     assert not [each for each in commands_of(room) if "/scripts/" in each]
@@ -87,7 +93,7 @@ def test_the_words_after_rn_on_make_the_run_and_ask_whom_its_goal_is_for(room: R
     When the user types the walkthrough's words
     Then the run's design tree holds a goal of one sentence or more by reasoning and the plan as
     its one deliverable with one decision open, no Round is made, and the reply asks one question,
-    rn's own proposal of whom the goal is for to confirm, with no label and nothing recommended"""
+    rn's own proposal of whom the goal is for to confirm, with nothing recommended"""
     printed = requested(room)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
     assert design_tree["goal"]["by"] == "reasoning"
@@ -95,8 +101,8 @@ def test_the_words_after_rn_on_make_the_run_and_ask_whom_its_goal_is_for(room: R
     assert [each["kind"] for each in design_tree["deliverables"]] == ["design-tree"]
     assert not os.path.exists(os.path.join(room.folder(name()), "rounds"))
     assert len(open_decisions(design_tree)) == 1
-    assert printed.count("Is that right?") == 1
-    assert "Recommended:" not in printed and "recommend" not in printed.lower()
+    assert len(questions(printed)) == 1
+    assert "recommend" not in printed.lower()
 
 
 @pytest.mark.supports("test_a_pick_up_with_no_run_asks_which_run_to_pick_up")
@@ -189,15 +195,14 @@ def test_a_goal_the_user_confirms_is_written_by_user(room: Room, run: int):
 def test_after_the_goal_the_user_is_asked_at_most_one_point(room: Room, run: int):
     """Given a conversation in which the user typed /rn:on, then the walkthrough's words
     When the user answers yes to whom it's for, to the goal, and to their summary
-    Then the last reply asks at most one question, a proposal to confirm or options with one
-    recommended, and the design tree at most one decision open"""
+    Then the last reply asks at most one question, and the design tree holds at most one decision
+    open"""
     requested(room)
     for _ in range(2):
         typed(room, "yes", more=True)
     printed = typed(room, "yes", more=True)
     design_tree = rn_files.read_json(os.path.join(room.folder(name()), "design-tree.json"))
-    assert printed.count("Is that right?") + printed.count("so I recommend") <= 1
-    assert "Recommended:" not in printed
+    assert len(questions(printed)) <= 1
     assert len(open_decisions(design_tree)) <= 1
 
 

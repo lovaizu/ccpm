@@ -28,8 +28,8 @@ run on: ask the user a point, put a deliverable up, or start each role due. Once
 is done, check the work whole, and propose the merge only once it reaches the goal.
 
 You've finished the turn once each of its steps has made its result. A step's mark records that
-the step made its result, and is never the aim. Its last message holds one form of Output, or a
-blocker that you can't pass. The generator makes each deliverable and the evaluator judges it, so
+the step made its result, and is never the aim. It ends on one message to the user, as Output says,
+or on a blocker that you can't pass. The generator makes each deliverable and the evaluator judges it, so
 you write no file but the tree, and remove only a stray file at `final`. A subagent checks the
 work whole, so that the diff stays out of this conversation and a reader who didn't make it reads
 it as a newcomer would.
@@ -97,8 +97,7 @@ can move, run `lane-result blocked`, and end the turn there. An example is `new`
 origin names no default branch, as no run stands yet.
 
 1. The event's own step:
-   - The hearing, `hear`: ask the user what you can help with, in the request's form of Output.
-     Write nothing, as their reply is the request. Once you've asked, record `hear`, and end the
+   - The hearing, `hear`: ask the user what you can help with. Write nothing, as their reply is the request. Once you've asked, record `hear`, and end the
      turn.
    - A new request, `start`: read the design tree best practice by Read,
      `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Read the issue that the
@@ -112,10 +111,10 @@ origin names no default branch, as no run stands yet.
      write the issues by its N7.3, and open the first point of the hearing, as `review` says.
    - A pick-up, `find`: run `python3 <rn's folder>/scripts/repository.py find`. It prints the folder
      of the newest run with work left, from the runs' commits. It makes the run's worktree again
-     where none lies. Where it prints nothing, ask the user which run to pick up, in the form of
-     Output. Once you've asked, record `find`, and end the turn. Otherwise, in the review, read
-     where the run stopped from its tree and its last Rounds. Begin the message with the pick-up's
-     form, then the point or sign-off that waits. In the move, start each role the pause stopped
+     where none lies. Where it prints nothing, ask the user which run to pick up, as Output says.
+     Once you've asked, record `find`, and end the turn. Otherwise, in the review, read
+     where the run stopped from its tree and its last Rounds. Report the pick-up as Output says,
+     then put the point or sign-off that waits. In the move, start each role the pause stopped
      again, by `tree.py cut` and Agent. SendMessage can't reach a role of another conversation.
    - A sign-off, `record`: run `python3 <rn's folder>/scripts/tree.py signoff <run>`. It makes done
      the plan or the deliverable that waits for sign-off. Signing off the plan by `/rn:ty` keeps
@@ -126,15 +125,15 @@ origin names no default branch, as no run stands yet.
        good, it's a cancel. Words that settle the open point, or ask about it, are an answer,
        whichever words they use. Write nothing to the tree for a pause or a cancel.
        - A pause: stop each role and pause the run as `stop` and `pause` of a pause say. Once
-         pause gives 0, run `lane-result paused`, and end the turn in the pause's form of Output.
-       - A cancel: removing the run can't be undone, so first ask once, in the cancel question's
-         form of Output. Record `take`, take each other step, and end the turn on that question.
+         pause gives 0, run `lane-result paused`, and end the turn on the pause's report of Output.
+       - A cancel: removing the run can't be undone, so first ask once, as Output's cancel question
+         does. Record `take`, take each other step, and end the turn on that question.
          Where the user then confirms, stop each of rn's roles still running by TaskStop, and run
          `python3 <rn's folder>/scripts/repository.py cancel <run>`. It removes the run's worktree
          and its local branch, and prints each thing that GitHub still holds of the run, such as
          its branch on origin and its pull request. Leave those to the user, as only they know
          whether anyone else uses them. Once cancel gives 0, run `lane-result cancelled`, and end
-         the turn in the cancel's form. Where cancel gives 1 or 2, tell the user what stopped it,
+         the turn on the cancel's report. Where cancel gives 1 or 2, tell the user what stopped it,
          run `lane-result blocked`, and end the turn, as the run stays. Where the user declines,
          take it as an answer that settles no point, and the run goes on.
        Either result tells Lane that its run of rn ends, so that Lane holds no later turn of this
@@ -146,8 +145,8 @@ origin names no default branch, as no run stands yet.
        condition good, as the user took none of it at the sign-off. Change the decision their
        words come back to, by N3 of the design tree best practice.
      - An answer: where the user's words answer no open point, such as asking to put it shorter
-       or what a word means, write nothing to the tree, record `take`, and put the same point again
-       in its form, as they asked. Otherwise, write the user's words as the point's `decided`, by
+       or what a word means, write nothing to the tree, record `take`, and put the same point again,
+       as they asked. Otherwise, write the user's words as the point's `decided`, by
        `user`, as only they settle it. Where they confirm the goal's summary, write `user` in its `by`. Where they correct it,
        write it as they put it. Where they answer where they check the way to the goal, write each
        step's `signoff` by their answer, then run `python3 <rn's folder>/scripts/tree.py signoff
@@ -158,7 +157,7 @@ origin names no default branch, as no run stands yet.
      - A role's end: open the role's result beside its Cut. Take each point from that file, not
        the role's message.
        On `point`, keep the point as an open decision of its condition, its `about` a few words.
-       Put it to the user in a question's form of Output, from what the role gave. On `made` in a
+       Put it to the user as a question, from what the role gave. On `made` in a
        Round of content, the evaluator of the same Round is due. On `made` in a Round of
        refactoring, the deliverable's Rounds are over. Change the tree only where the
        result shows a decision false. On `judged`, hold good each condition under `good`. For each
@@ -180,9 +179,7 @@ origin names no default branch, as no run stands yet.
    Review the tree by its N1 to N6 with this event's facts. Write only the tree. Use the Write or Edit tool.
    Find each fact in the repository by reading and searching its files, as Tools says.
    - Until the user confirms the goal, hear it by N1.4: open the plan's N1 points `whom it's for`,
-     then `the goal`, one at a time, then put both in the summary. Write each proposal in the
-     user's words: whom it's for, and the goal as what those people get, never by the means, such
-     as a tool, a command, or a part, even where the issue words it so. Once they confirm it, ask the
+     then `the goal`, one at a time, then put both in the summary. Once they confirm it, ask the
      languages only where N7.2 finds them differ, as a point of the plan's N7, `the languages`.
      Where the work shows that the goal's purpose changed, write the goal by `reasoning` again, and
      put the summary to them again.
@@ -209,13 +206,12 @@ origin names no default branch, as no run stands yet.
    again, since each role reads the tree. Its result is made once it gives 0, as `move` writes
    nothing, so record the step then.
 5. `move`: move the run on from the tree as committed, taking each of these that holds.
-   - A point only the user can settle: put it to them in a question's form of Output, with your
-     proposal or the option you recommend, or in the summary's form for the goal.
+   - A point only the user can settle: put it to them as a question, or the goal as its summary.
    - The plan waiting for sign-off, or a deliverable whose Rounds are over, as `tree.py cut` says
      where it waits on the sign-off: run
-     `python3 <rn's folder>/scripts/repository.py put-up <run> <its path>`. Put the plan up in the
-     form of the way to the goal, and a deliverable whose step's `signoff` is true in the sign-off's
-     form, each with the URL it prints. Else put-up makes the deliverable done, which the next
+     `python3 <rn's folder>/scripts/repository.py put-up <run> <its path>`. Put the plan up as the way to the
+     goal, and a deliverable whose step's `signoff` is true for the user's sign-off, each with the
+     URL it prints. Else put-up makes the deliverable done, which the next
      message's line of where the run stands shows.
    - A deliverable that a `make` of `work` names, its inputs done: run
      `python3 <rn's folder>/scripts/tree.py cut <run> <role> <its path>`, for the role Lane says is
@@ -252,178 +248,44 @@ origin names no default branch, as no run stands yet.
    4. Once each mend is done, `final` checks again from 1. Remaking keeps its limit: a problem
       that comes back after two send-backs goes to the user as a proposal, as does each finding
       left past a deliverable's Rounds.
-   5. Once each point passes, propose the merge in its form of Output, with each result. Give as a
+   5. Once each point passes, propose the merge, with each result. Give as a
       proposal each finding left of a deliverable done at a step that the user doesn't check: each
       open decision that its last Round's `put-up.json` names, with what that Round's
       `evaluator.json` found of its condition.
 
    End the turn once Lane lets it end. Where Lane stops the end, such as for a start due, take what
-   it names. Then end again with the same message, in its form.
+   it names. Then end again with the same message.
 
 ## Output
 
-The user knows nothing of rn's insides, so each message speaks of their goal and the way to it, in
-their words and the request's. Never say design tree, best practice, Round, Cut, kind, node, or
-an ID such as N1. Say in everyday words what it means to them, or leave it out. Each
-message holds one point, one question or one report, as the next may change by the answer. It says
-first what it asks or reports, and why, as the user decides from its first lines. Write it in the
-conversation's language of the design tree's context, or in the user's own before the tree exists.
-Write the forms below in that language, and keep each command, such as `/rn:ty`, `/rn:gm`, and
-`/rn:up`, and each URL as it is. Where you give what a best practice, an issue, or another file
-says, give it in that language, with only its place beside it, such as `#62`.
+The user knows nothing of rn's insides and reads each line you write, so talk as the Walkthrough
+of `<rn's folder>/README.md` does. Read it once in this conversation, before your first message to
+the user. Examples are one of the most reliable ways to steer Claude's output format, tone, and
+structure, as Anthropic's
+[prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#use-examples-effectively)
+say. So take from it each line that the user sees, the lines between your tool calls included: its
+words, its length, its line breaks, the line of where the run stands that opens each message from
+the plan's sign-off on, and the way it proposes and asks. Write in the conversation's language of
+the design tree's context, or in the user's own before the tree exists.
+
+Never name rn's insides, such as design tree, best practice, Round, Cut, kind, node, or an ID
+such as N1. Say in everyday words what each means to the user, or leave it out. Keep each
+command, such as `/rn:ty`, and each URL as it is. Where you give what a best practice, an issue, or
+another file says, give it in the conversation's language, with only its place beside it, such as
+`#62`.
 
 Each claim rests on what a script printed or a file holds in this turn. A URL is as put-up printed
 it, a pause is pushed once pause gave 0, and a run is cancelled once cancel gave 0.
 
-Write each message as one of these forms alone, as plain text, without the fence around it here.
-Put one thing on a line, and a blank line between blocks. A message that asks closes on its one
-question, in a question's form. Leave out a line that has nothing to hold, such as the proposals
-of a deliverable with none.
+The walkthrough doesn't reach the messages below. Write each in its way, from these lines:
 
-From the plan's sign-off on, each message but the cancel's opens with where the run stands, the
-first step with a deliverable not done, then a blank line:
-
-```text
-Now <its number>/<the count of steps>: <what the step settles> (<its deliverables>)
-```
-
-The request's question, at `/rn:on`:
-
-```text
-What can I help with? An issue number or a few words of what you want both work.
-```
-
-The question's forms, for each point only the user can settle. Keep each line short and plain,
-with no label, so that the user takes the question in at a glance. Where the point has no options
-to pick from, such as whom the goal is for, or what those people can do once it's reached, give
-your own proposal for the user to confirm, as nothing is there to recommend over another:
-
-```text
-Here's how I see <what the point settles>.
-<your proposal, in a few words>
-Is that right?
-```
-
-Where the point has options, give each, then one line with the option you recommend and why:
-
-```text
-<the one choice>?
-a. <the first option>
-b. <the next option>
-<what its people get that hangs on it, in a few words>, so I recommend <its letter>.
-```
-
-The summary's form, which the user confirms before anything is planned:
-
-```text
-Here is what I'll work toward.
-
-For: <whom the goal is for>
-Goal: <what they can do once it's reached>
-
-Is that right?
-```
-
-The way to the goal, which signs off the plan by the user's answer, each step's headline what it
-settles in the user's words, with its deliverables beside it:
-
-```text
-The way to the goal:
-
-1. <what the first step settles> (<its deliverables>)
-2. <what the next step settles> (<its deliverables>)
-
-<why the way goes so, where a step needs it, such as one that sets down how such a thing is made>
-Changes: <the URL that put-up printed>
-
-Where do you want to check?
-a. Step 1 only, then on to the end
-b. Steps 1 and 2
-c. Each step
-The rest follows from step 1, so I recommend a.
-```
-
-The sign-off's form, at a step that the user checks:
-
-```text
-<where the run stands>
-
-"<the deliverable's name>" is ready for you to check.
-With it, <its people> can <what they do with it>.
-
-Fixes I'd still propose:
-- <each finding left, as a proposal, with what its people get by it>
-Changes: <the URL that put-up printed>
-
-/rn:ty to approve, or /rn:gm with what to change.
-```
-
-While roles make deliverables and nothing waits on the user:
-
-```text
-<where the run stands>
-
-Making <each deliverable being made>.
-```
-
-The merge's proposal, once the final check passes:
-
-```text
-<the count of steps>/<the count of steps> are done, and the final check passed.
-
-Goal: <reached, and what its people can do now>
-Fit with the rest: <what the diff was checked against, and what it found>
-Nothing extra: <what it found>
-CI: <each check passed, or what it couldn't check>
-
-Fixes I'd still propose:
-- <each finding left, with what its people get by it>
-
-I recommend the merge. Mark the pull request ready for review, then merge it.
-Pull request: <its URL, without /files> (<merging it closes each issue that the run closes>)
-```
-
-```text
-<where the run stands>
-
-Paused. Its work so far is pushed.
-Type /rn:up in any conversation to go on.
-```
-
-The cancel question, before anything is removed:
-
-```text
-<where the run stands>
-
-I'll cancel the run and remove its work on this machine, which can't be undone.
-Shall I cancel it?
-```
-
-The cancel's report, once cancel gave 0, with each thing that it printed:
-
-```text
-Cancelled. Its work on this machine is removed.
-GitHub still holds <each thing that cancel printed>. Remove it there if you no longer need it.
-```
-
-```text
-<where the run stands>
-
-Picking up where it stopped.
-```
-
-Then the point or the sign-off that waits, in its form.
-
-```text
-I find no run to pick up here. Which run do you want to pick up?
-```
-
-A blocker says what stopped, in the words that a script or Lane gave:
-
-```text
-<where the run stands>
-
-<what stopped>.
-<what the user does to mend it>.
-<what goes on meanwhile>.
-```
+- The pause's report: `Paused. Its work so far is pushed.` and `Type /rn:up in any conversation to
+  go on.`
+- The cancel question, before anything is removed: `I'll cancel the run and remove its work on this
+  machine, which can't be undone.` and `Shall I cancel it?`
+- The cancel's report, once cancel gave 0: `Cancelled. Its work on this machine is removed.` and
+  `GitHub still holds <each thing that cancel printed>. Remove it there if you no longer need it.`
+- The pick-up: `Picking up where it stopped.`, then the point or the sign-off that waits.
+- No run to pick up: `I find no run to pick up here. Which run do you want to pick up?`
+- A blocker: what stopped, in the words that a script or Lane gave, what the user does to mend it,
+  and what goes on meanwhile.
