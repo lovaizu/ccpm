@@ -12,6 +12,7 @@
 - Once each step is done, an AI new to the work checks the pull request whole for rn: that it reaches your goal, agrees with the rest of the repository, such as its README and CHANGELOG, and holds nothing extra, and that CI passes. rn removes a stray file itself, sends each other problem back to be remade, and then proposes the merge with the results.
 - rn no longer marks the pull request ready. It stays a draft until you mark it ready and merge it.
 - rn talks as the walkthrough of its README does, in your language: each line you see, the lines while it works included, with its words, its length, and its way of proposing and asking. It no longer writes its own working terms, labels left in English, or long paragraphs. Where your reply answers no point, such as asking to put it shorter, rn asks the same point again as you asked.
+- A prompt that rn makes for a product with a README walkthrough of its conversation now names that walkthrough as the model of each message, and writes lines only for the messages that the walkthrough doesn't show, so the prompt's AI talks as the README shows instead of translating its own terms.
 
 ### Added
 

@@ -328,27 +328,27 @@
       "id": "N14",
       "about": "Output",
       "what": "Can the person decide from the first lines of each message that the AI writes to them?",
-      "why": "The person approves from the conclusion and its grounds, and reads further only where these leave them unsure. The [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts the conclusion first.",
+      "why": "The person approves from the conclusion and its grounds, and reads further only where these leave them unsure. The [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts the conclusion first. An AI given forms written in the prompt's own terms thinks in those terms and translates them for the person, so its messages read as a translation of its machinery. A worked conversation steers it better. Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#use-examples-effectively) call examples one of the most reliable ways to steer Claude's output format, tone, and structure. The README's walkthrough already holds one, written for the product's readers.",
       "items": [
        {
         "at": "decide",
         "text": "From N7.1 and N13.4, list each message that the prompt has its AI write to a person: each of the user's choices that it asks in the main conversation, and each result that a person reads. Where it writes none, such as a subagent whose result a script reads, leave the prompt as it is."
        },
        {
-        "at": "make",
-        "text": "In the prompt's Output section, write the order of each message, with its reason: first the context and the conclusion, what the message asks or reports and why, then the grounds, then the purpose and what it should be, and the rest only once the person asks, since the person decides from the first lines."
+        "at": "decide",
+        "text": "Where the README's walkthrough shows the conversation that the prompt holds, take it as the model of each message, and mark each message of N14.1's list that it doesn't show, such as the report of a pause that the walkthrough's run never takes."
        },
        {
         "at": "make",
-        "text": "In the Output section, write the form of each message: a few plain sentences with no headings or labels, in short paragraphs of one point each."
+        "text": "In the prompt's Output section, name that walkthrough by its path as the model of each line the person sees, the lines between tool calls included: its words, its length, its line breaks, and the way it proposes and asks, in the person's language. Write no form or rule that the walkthrough shows, since a form beside the example draws the AI back to the prompt's terms."
        },
        {
         "at": "make",
-        "text": "In the Output section, write the terms that the person uses, taken from the user stories and the README, and that the AI says a term of its own in everyday words or leaves it out."
+        "text": "For each message that no walkthrough shows, write in the Output section its lines, in the order that the person decides by: first what it asks or reports and why, then the grounds, and the rest only once the person asks. Have each message that asks close on its one decision, with one recommendation where the decision has options."
        },
        {
         "at": "make",
-        "text": "In the Output section, write that each message asks for one decision, alone on its last line, with one recommendation, such as `End with the one choice you need, and the option you recommend.`"
+        "text": "In the Output section, write that the AI says each term of its own in everyday words or leaves it out, since the person knows only the terms of the user stories and the README."
        }
       ]
      },
