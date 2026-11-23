@@ -14,12 +14,12 @@
   "pr": null
  },
  "goal": {
-  "decided": "An AI that the user instructs finishes the work the user gave overnight while nobody answers, and reports the results in the morning: a task stopped by the usage limit goes on once the limit resets, and the tasks run three at once unless the AI sets another number.",
+  "decided": "An AI that the user instructs finishes the work the user gave overnight while nobody answers, and reports the results in the morning.",
   "by": "reasoning"
  },
  "deliverables": [
   {
-   "name": "An AI that the user instructs finishes the work the user gave overnight while nobody answers, and reports the results in the morning: a task stopped by the usage limit goes on once the limit resets, and the tasks run three at once unless the AI sets another number.",
+   "name": "An AI that the user instructs finishes the work the user gave overnight while nobody answers, and reports the results in the morning.",
    "path": ".rn/20261123-62/design-tree.json",
    "kind": "design-tree",
    "inputs": [],
@@ -36,7 +36,7 @@
       },
       {
        "about": "the goal",
-       "decided": "The AI finishes the work the user instructed overnight while nobody answers, and reports the results in the morning. A task stopped by the usage limit goes on once the limit resets. Tasks run three at once by default, and the number can be set.",
+       "decided": "The AI finishes the work the user instructed overnight while nobody answers, and reports the results in the morning.",
        "by": "user"
       },
       {
@@ -48,7 +48,13 @@
     {
      "id": "N2",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "how the work runs",
+       "decided": "A task stopped by the usage limit goes on once the limit resets. Tasks run three at once by default, and the number can be set.",
+       "by": "user"
+      }
+     ]
     },
     {
      "id": "N7",
