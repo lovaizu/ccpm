@@ -1,0 +1,91 @@
+{
+ "context": {
+  "rn": "0.10.0",
+  "languages": {
+   "deliverables": "English",
+   "conversation": "Japanese"
+  },
+  "issues": {
+   "closes": [
+    62
+   ],
+   "refs": []
+  },
+  "pr": null,
+  "session": "0fd9d0c6-4ca5-44a7-9ab8-1bc6c610d110"
+ },
+ "goal": {
+  "decided": "The user gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: in the morning they read which tasks finished and which were given up, and take the results in from the main session.",
+  "by": "reasoning"
+ },
+ "deliverables": [
+  {
+   "name": "The user gets the day's claude -p work done overnight while nobody answers, so that it doesn't use up the daytime usage window: in the morning they read which tasks finished and which were given up, and take the results in from the main session.",
+   "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
+   "kind": "design-tree",
+   "inputs": [],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": [
+      {
+       "about": "whom the goal is for",
+       "decided": null
+      },
+      {
+       "about": "what those people can do once it's achieved",
+       "decided": null
+      }
+     ]
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": [
+      {
+       "about": "the languages",
+       "decided": "Deliverables in English, as the repository's documents are; the conversation in Japanese, as the user's instructions set.",
+       "by": "reasoning"
+      }
+     ]
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  }
+ ],
+ "work": [
+  {
+   "do": "decide",
+   "path": ".rn/20261123-overnight-claude-p-queue/design-tree.json",
+   "condition": "N1",
+   "about": "whom the goal is for"
+  }
+ ],
+ "steps": []
+}
