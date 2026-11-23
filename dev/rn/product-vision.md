@@ -3,7 +3,7 @@
 ## Roles
 
 - user\
-  One who asks rn for a deliverable, such as a document, code or a plugin, for the people it's for.
+  One who asks rn for a deliverable, such as a report, code, or a plugin, for the people it's for.
 
 ## Objectives and key results
 
@@ -32,3 +32,5 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
 - Good found and made good, for O1\
   rn finds what serves the people and what would serve them better, and makes only those
   changes.
+- In the user's own terms, for O1\
+  rn speaks only of the user's goal and the way to it, and says in each message where it stands.

@@ -2,8 +2,8 @@
 
 ## User stories
 
-- S1: the user wants the deliverable they're after, asking in their own words with no
-  specification.
+- S1: the user wants the deliverable they're after, asking in their own words, checking only the
+  steps they choose.
 - S2: the user wants to pause a run and resume it later in any conversation, losing neither time
   nor work.
 
@@ -16,11 +16,14 @@ deliverable's people to their aim, and cuts the trivial many.
 
 - P1: toward the people's aim
   - P1.1: the run reviews its course at each event by what it has done and learned.
-  - P1.2: the user is asked only what only they can decide, one point at a time.
-  - P1.3: work that rests on a plan or a deliverable starts once the user signs it off.
+  - P1.2: the user is asked only what only they can decide, one point at a time, in their own
+    terms.
+  - P1.3: work that rests on the plan or on a deliverable that the user checks starts at their
+    sign-off.
 - P2: judged by the people's aim
   - P2.1: a deliverable is tried as its people would, with only what they have.
   - P2.2: a trial names only what's good and what would make it good.
+  - P2.3: the work is checked whole before its merge is proposed.
 - P3: made the field's established way
   - P3.1: running, making, and judging are separate roles.
   - P3.2: content is made by its kind's best practice and refactored, or, as the user picks, by
@@ -44,7 +47,7 @@ deliverable's people to their aim, and cuts the trivial many.
 
 - Design tree\
   Holds what to make, why, and how far the run got, for each review and each pick-up. It also
-  holds rn's version, the languages, and the run's issues and pull request. Its form is
+  holds rn's version, the languages, the way to the goal, and the run's issues and pull request. Its form is
   [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s.
 - Cut\
   A role's part of the design tree, so that each role starts with only the decisions its work needs.
@@ -66,11 +69,15 @@ Strategies:
 - Each point that the user settles kept as an open decision of its condition, and their answer
   as its decision. [P6.1]\
   Intent: a point and its answer outlive the conversation that asked it.
-- The pull request opened as a draft, and marked ready once the commit that leaves each
-  deliverable done is pushed. [P1.3]\
-  Intent: nobody merges or reviews the work before the user signs off all of it.
-- Each Round put up for sign-off marked as the end of its deliverable's Rounds. [P1.3]\
+- The way to the goal kept as the design tree's steps, each saying whether the user checks it.
+  [P1.3]\
+  Intent: the run's files alone say which deliverables wait for the user, and where the run stands.
+- Each deliverable's last Round marked as the end of its Rounds once it's put up. [P1.3]\
   Intent: a send-back gets Rounds of its own, so that the user's change is remade.
+- The issues to close and to refer to written from the request, never asked. [P1.2]\
+  Intent: the user isn't asked what their request already says.
+- The pull request opened as a draft, which the user marks ready. [P2.3]\
+  Intent: nobody reviews or merges the work before the user has seen it checked whole.
 - A finding that the people would never meet dropped by holding its condition good. [P1.1]\
   Intent: the next generator gets as given each finding of a condition still short.
 
@@ -93,6 +100,12 @@ Strategies:
   Intent: every event reaches the one place that reviews the run, as no command checks its input.
 - The main conversation as the orchestrator, which starts and stops each other role. [P3.1]\
   Intent: the talk with the user and the review of the design tree share one context.
+- Each message to the user opening with where the run stands on the way to the goal. [P1.2]\
+  Intent: a user who knows nothing of rn's insides knows at each message what's done and what's
+  next.
+- The final check made by the orchestrator over the pull request's whole diff and its CI. [P2.3]\
+  Intent: the merge is proposed only for work that reaches the goal, fits the repository, and
+  holds nothing extra.
 - One generator and one evaluator for each Round, the evaluator judging every condition from one
   trial. [P2.1]\
   Intent: the people's use is one act, so it's tried once and judged whole.
@@ -140,29 +153,36 @@ sequenceDiagram
   participant G as generator
   participant E as evaluator
   U->>O: /rn:on [S1]
-  O->>U: asks what they want [S1]
+  O->>U: asks what it can help with: an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
-  O->>S: makes the run's worktree, and its design tree with the goal and the languages as the orchestrator puts them (Design tree) [P4.3]
+  O->>O: reads the issue it names and the repository [P1.2]
+  O->>S: makes the run's worktree, and its design tree with the goal and the languages as the orchestrator puts them, and the issues from the request (Design tree) [P4.3]
+  O->>U: asks whom it's for, then what they can do at the goal, one at a time, each with a recommendation [P1.2]
+  O->>U: both in one summary, to confirm [P1.2]
+  O->>U: the way to the goal, step by step, and which steps the user checks [P1.3]
+  U->>O: the steps they check, which signs off the plan [P1.3]
   loop each event: a request, an answer, a sign-off, a send-back, or a role ended [P1.1]
     opt a sign-off [P1.3]
       O->>S: records it (Design tree) [P4.3]
     end
     O->>T: reviews it by what the run has done and learned, and the user's words (Design tree) [P1.1]
     O->>S: lists each node that the change touches, to read again (Design tree) [P1.1]
-    O->>S: checks and commits the change, and once each deliverable is done, pushes it and marks the pull request ready (Design tree) [P6.1]
+    O->>S: checks and commits the change (Design tree) [P6.1]
     opt a refusal that only the user can mend [P5.3]
       O->>U: the blocker, and what the user does, the other work going on [P5.3]
     end
     alt a point the orchestrator can settle [P1.2]
       O->>T: settles it, with its ground (Design tree) [P1.2]
     else a point only the user can settle [P1.2]
-      O->>U: one point, with a recommendation [P1.2]
+      O->>U: where the run stands, and one point, with why and a recommendation [P1.2]
       U->>O: answers [P1.2]
-    else a plan or a deliverable waiting for sign-off [P1.3]
-      O->>S: puts it up, committed and pushed in the pull request, which names the run's issues (Design tree) [P4.3]
-      O->>U: puts it up, with each finding left as a proposal [P3.3]
-      U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
-    else each deliverable whose inputs are signed off, resting on none still being made [P5.2]
+    else a deliverable whose Rounds are over [P1.3]
+      O->>S: puts it up, committed and pushed in the pull request, which names the run's issues, and makes it done where its step isn't one the user checks (Design tree) [P4.3]
+      opt at a step that the user checks [P1.3]
+        O->>U: puts it up, with each finding left as a proposal [P3.3]
+        U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
+      end
+    else each deliverable whose inputs are done, resting on none still being made [P5.2]
       par one for each such deliverable [P5.2]
         O->>G: starts it with its Cut, or resumes the last Round's (Cut) [P4.1]
         alt a point it can't settle [P1.2]
@@ -195,9 +215,15 @@ sequenceDiagram
         end
       end
     end
+    opt each deliverable done [P2.3]
+      O->>S: pushes the work, and gives the pull request's whole diff (Design tree) [P4.3]
+      O->>O: checks the goal reached, the diff consistent with the repository's files, and nothing extra [P2.3]
+      O->>S: waits for the pull request's CI, and gives its result [P4.3]
+      O->>T: sends each problem back to the deliverable whose file it is, removing a stray file itself (Design tree) [P2.3]
+    end
   end
-  O->>U: the pull request, with each decision taken without asking [S1]
-  U->>O: /rn:ty, and merges [P1.3]
+  O->>U: the final check's results, each finding left as a proposal, and the merge proposed [P2.3]
+  U->>U: marks the pull request ready, and merges [P2.3]
 ```
 
 #### S2: a pause and a pick-up

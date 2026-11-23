@@ -10,7 +10,6 @@ import os
 
 import pytest
 import rn_files
-from claude_code import Conversation
 from gh import gh_double
 from repo_files import git
 from rn_bench import (
@@ -41,6 +40,7 @@ from rn_bench import (
     put_up_plan,
     ran,
     reached,
+    refactored,
     requested,
     sent_back,
     short_twice,
@@ -435,19 +435,6 @@ def test_the_refactoring_generators_made_waits_on_the_signoff_with_no_evaluator(
     ended(c, f"For your sign-off. Changes: {url.strip()}")
 
 
-def refactored(b: Bench) -> Conversation:
-    """A conversation whose guide the evaluator judged good in Round content-1, a new generator
-    refactored in Round refactor-2, and the orchestrator put up for the user's sign-off."""
-    c, generator = command_signed(b)
-    generated(b, c, generator)
-    _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
-    evaluated(b, c, evaluator)
-    _, refactoring = next_round(b, c, GUIDE, rn_files.conditions("readme"))
-    generated(b, c, refactoring)
-    put_up(b, c, GUIDE, rn_files.conditions("readme"))
-    return c
-
-
 @pytest.mark.supports("S1", "Design tree", "Round")
 def test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round(b: Bench):
     """Given a run whose guide was judged good in Round content-1, refactored in refactor-2, and
@@ -510,13 +497,7 @@ def test_the_last_signoff_ends_the_run_with_each_deliverable_on_the_pull_request
     When the user signs the guide off
     Then each deliverable of the tree is done, the remote's branch holds the command and the guide,
     and the orchestrator's turn ends with no start due"""
-    c, generator = command_signed(b)
-    generated(b, c, generator)
-    _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
-    evaluated(b, c, evaluator)
-    _, generator = next_round(b, c, GUIDE, rn_files.conditions("readme"))
-    generated(b, c, generator)
-    put_up(b, c, GUIDE, rn_files.conditions("readme"))
+    c = refactored(b)
     signed(b, c)
     assert all(each["status"] == "done" for each in b.tree()["deliverables"])
     files = b.branch_files(f"rn-{b.name()}")
@@ -551,13 +532,7 @@ def test_the_last_signoffs_commit_is_pushed_before_the_pull_request_is_marked_re
     When the user signs the guide off, and the orchestrator records it and commits the change
     Then origin's branch holds the commit of the sign-off, its tree with each deliverable done,
     and gh was asked once to mark the work's branch's pull request ready, after it opened it"""
-    c, generator = command_signed(b)
-    generated(b, c, generator)
-    _, evaluator = next_round(b, c, GUIDE, [], "evaluator")
-    evaluated(b, c, evaluator)
-    _, generator = next_round(b, c, GUIDE, rn_files.conditions("readme"))
-    generated(b, c, generator)
-    put_up(b, c, GUIDE, rn_files.conditions("readme"))
+    c = refactored(b)
     signed(b, c)
     branch = f"rn-{b.name()}"
     assert git(b.origin, "rev-parse", branch) == git(b.worktree, "rev-parse", "HEAD")

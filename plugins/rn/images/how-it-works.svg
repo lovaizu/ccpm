@@ -116,7 +116,7 @@
   <text class="label halo end" x="1060" y="432">each aim met</text>
   <rect class="box" x="880" y="450" width="200" height="54" rx="6"/>
   <text class="name" x="980" y="474">Pull request</text>
-  <text class="kind" x="980" y="492">draft until your last sign-off</text>
+  <text class="kind" x="980" y="492">draft until you mark it ready</text>
   <path class="line" d="M880,477 H95 V149" marker-end="url(#arrow)"/>
-  <text class="label halo mid" x="560" y="481">each deliverable, for your /rn:ty or /rn:gm, then your merge</text>
+  <text class="label halo mid" x="560" y="481">the steps you check, for your /rn:ty or /rn:gm; checked whole, then your merge</text>
 </svg>

@@ -624,6 +624,26 @@ def command_signed(b: Bench) -> tuple[Conversation, Agent]:
     return c, generator
 
 
+def refactor_made(b: Bench) -> Conversation:
+    """A conversation whose guide the evaluator judged good in Round content-1, and a new
+    generator refactored in Round refactor-2, its end reaching the main conversation."""
+    c, generator = command_signed(b)
+    generated(b, c, generator)
+    _, evaluator = next_round(b, c, rn_files.GUIDE, [], "evaluator")
+    evaluated(b, c, evaluator)
+    _, refactoring = next_round(b, c, rn_files.GUIDE, rn_files.conditions("readme"))
+    generated(b, c, refactoring)
+    return c
+
+
+def refactored(b: Bench) -> Conversation:
+    """A conversation whose guide `refactor_made` gives, which the orchestrator then put up for the
+    user's sign-off."""
+    c = refactor_made(b)
+    put_up(b, c, rn_files.GUIDE, rn_files.conditions("readme"))
+    return c
+
+
 def decided_command(b: Bench) -> tuple[Conversation, Agent]:
     """A conversation whose command's generator read its inputs and kept its step `decide`, each
     decide item reported done."""

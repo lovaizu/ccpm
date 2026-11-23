@@ -18,7 +18,6 @@ from rn_bench import (
     CHANGELOG,
     Bench,
     apart_tree,
-    command_signed,
     cut_of,
     decided_command,
     ended,
@@ -35,6 +34,8 @@ from rn_bench import (
     put_up,
     ran,
     read_step,
+    refactor_made,
+    refactored,
     requested,
     sent_back,
     shared_steps,
@@ -241,6 +242,19 @@ def checks_in_place(b: Bench) -> None:
     )
 
 
+def no_final_step(b: Bench) -> None:
+    """The orchestrator's turn takes no final check."""
+    given_again(
+        b,
+        "lane/adapters/rules.py",
+        "_given_steps = steps\n\n\n"
+        "def steps(given, cwd, plugin_root):\n"
+        "    out = _given_steps(given, cwd, plugin_root)\n"
+        "    out['steps'] = [s for s in out['steps'] if s['name'] != 'final']\n"
+        "    return out\n",
+    )
+
+
 def checks_unasked(b: Bench) -> None:
     """A change of the design tree is committed whatever its form."""
     given_again(
@@ -273,6 +287,9 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     ),
     "test_two_deliverables_resting_on_none_start_together": no_parallel,
     "test_a_new_conversation_picks_up_the_run_from_its_files": no_run_found,
+    "test_a_turn_that_leaves_each_deliverable_done_ended_before_its_final_check_is_stopped": (
+        no_final_step
+    ),
     "test_a_blocker_kept_for_the_user_leaves_the_other_deliverables_work_going_on": (
         blocker_stops_all
     ),
@@ -435,6 +452,31 @@ def test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped(b: Bench, b
     assert "N3" in stopped.said
 
 
+@pytest.mark.supports("P2.3", "orchestrator")
+@pytest.mark.xfail(strict=True, reason="rules.py gives the orchestrator's turn no step final yet")
+def test_a_turn_that_leaves_each_deliverable_done_ended_before_its_final_check_is_stopped(
+    b: Bench, broken: None
+):
+    """Given a run whose command is done, and whose guide was judged good, refactored, and put up
+    for the user's sign-off
+    When the user signs the guide off, and the orchestrator records it, keeps review, touched,
+    commit, and move, and ends its turn
+    Then Lane stops the end, naming the step `final`"""
+    c = refactored(b)
+    c.type("/rn:ty")
+    ran(c, b.script("tree", "signoff", b.run))
+    marked(c, "record")
+    marked(c, "review")
+    touched_items(b, c)
+    marked(c, "touched")
+    ran(c, b.script("tree", "commit", b.run, "The user signs it off."))
+    marked(c, "commit")
+    marked(c, "move")
+    answer = c.stop("Each step is done.")
+    assert answer.blocked
+    assert "`final`" in answer.said
+
+
 # P3: made the field's established way.
 
 
@@ -479,12 +521,7 @@ def test_no_evaluator_starts_after_a_refactor_round(b: Bench, broken: None):
     Cut of the guide, and starts rn:evaluator with the path of an evaluator's Cut in refactor-2
     Then tree.py cut gives 1 saying the guide waits on the user's sign-off, and Lane stops the
     start, as no start of rn's subagents is due"""
-    c, generator = command_signed(b)
-    generated(b, c, generator)
-    _, evaluator = next_round(b, c, rn_files.GUIDE, [], "evaluator")
-    evaluated(b, c, evaluator)
-    _, refactoring = next_round(b, c, rn_files.GUIDE, rn_files.conditions("readme"))
-    generated(b, c, refactoring)
+    c = refactor_made(b)
     taken(b, c, held(b, rn_files.GUIDE, rn_files.conditions("readme")), "Refactored.")
     refused = c.bash(b.script("tree", "cut", b.run, "evaluator", rn_files.GUIDE))
     assert refused.exit_code == 1

@@ -12,7 +12,8 @@ what's yours.
 - rn doesn't finish alone where your goal leaves a question open: it asks you, and other work goes
   on.
 - rn doesn't make a small change faster than Claude Code alone: for a one-line fix, ask Claude Code.
-- rn doesn't merge: it leaves one pull request, ready once you sign off the last deliverable.
+- rn doesn't mark its pull request ready or merge it: it proposes the merge, and leaves both to
+  you.
 
 ## Requirements
 
@@ -31,15 +32,16 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install rn@ccpm
 ```
 
-At your repository's root in Claude Code, `/rn:on` asks what you want to make.
+At your repository's root in Claude Code, `/rn:on` asks what it can help with.
 
 ## Walkthrough
 
-At the end, you have a pull request that adds a command and a guide for your accounting team.
+At the end, you have a checked pull request that adds a command and a guide for your accounting
+team.
 
-This run comes from an end-to-end test of rn, with its talk in Japanese. Your accounting team asks
-a developer for each invoice, and you want them to print it themselves. At your repository's root
-in Claude Code, you type:
+This run is the one that rn's architecture draws, with its talk in Japanese. No end-to-end run of
+this version records it yet. Your accounting team asks a developer for each invoice, and you
+want them to print it themselves. At your repository's root in Claude Code, you type:
 
 ```text
 /rn:on
@@ -48,7 +50,7 @@ in Claude Code, you type:
 rn shows:
 
 ```text
-What do you want to make?
+何をお手伝いしましょう？ issue の番号でも、やりたいことの一言でも大丈夫です。
 ```
 
 You type:
@@ -57,117 +59,110 @@ You type:
 経理チームが、Python を書かずに、明細から請求書を印刷できるコマンドがほしい
 ```
 
-rn puts the goal in its words, and proposes Japanese for the deliverables and for its talk:
+rn reads your repository, then asks whom the work is for:
 
 ```text
-目標の確認です。私なりにまとめると次のとおりです。
+誰のためのものかを確かめさせてください。
 
-目標:
-  経理チームが、開発者の手を借りずに、明細から請求書を自分たちで印刷できるようにする。経理チームの人は、ガイドだけを見ながら、明細ファイルからコマンド一つで請求書を印刷する。
-  (コマンドとガイドは日本語で作り、このやり取りも日本語で進めます)
-この理解で合っていますか?
+経理チームの方々のため、と考えています。
+誰が使うかで、手順の書き方と、何を作れば足りるかが変わるためです。
+
+経理チームのため、でよいですか？（おすすめ：はい）
 ```
 
-You type `はい`. rn asks whether to set down the rules of an invoice first, such as the issuer's
-registration number:
+You type `はい`. rn asks what the team can do at the goal:
 
 ```text
-ひとつ、決めていただきたいことがあります。
-  請求書のレイアウトを作る前に、請求書の書き方の決まりごと(インボイス制度で必要な記載事項、たとえば登録番号、税率ごとの合計と消費税額、交付先の名前など)を先にまとめるべきかどうかです。まとめておけば、印刷した請求書がそのまま取引先に出せることを確かめながら作れます。まとめなければ、その分早く着手できますが、記載事項の抜けは印刷されるまで気づきにくくなります。
-  先にまとめることをおすすめします。請求書には決まった書き方があり、記載事項が欠けた請求書は経理チームが使えないからです。
+ゴールを確かめさせてください。
 
-請求書の決まりごとを先にまとめますか?(おすすめ:はい)
+経理チームの人が、開発者の手を借りずに、ガイドだけを見て、明細ファイルから請求書を印刷できること、と考えています。
+ゴールが決まると、何を作れば届くかが決まるためです。
+
+このゴールでよいですか？（おすすめ：はい）
 ```
 
-You type `はい`. rn shows its plan:
+You type `はい`. rn sums both up:
 
 ```text
-計画ができました。ご承認ください。
-  1. 経理チームが明細から請求書を印刷できるまでの計画
-  2. 請求書の決まりごと(インボイス制度の記載事項など)をまとめたもの
-  3. 経理チームが何のために、どこまでできれば足りるかの整理
-  4. 経理チーム向けのガイド(ガイドだけを見て準備から印刷までできるもの)
-  5. 明細の読み込みから請求書の印刷までの全体の組み立て
-  6. コマンドの各部品の役割と呼び出し方
-  7. 守るべき振る舞いを確かめるテストケースの一覧
-  8. 明細ファイルを渡すだけで請求書を印刷できるコマンド本体
-  請求書のレイアウトそのものは、2 の決まりごとができてから計画に加えます。
-  変更内容: https://github.com/lovaizu/playground/pull/38/files
+この内容で進めます。
+
+誰のため：経理チームの方々
+ゴール：経理チームの人が、開発者の手を借りずに、ガイドだけを見て、明細ファイルから請求書を印刷できる
+
+この内容で合っていますか？
+```
+
+You type `はい`. rn shows the way to the goal:
+
+```text
+ゴールまでの進め方です。
+
+1. 誰の何のためか（プロダクトビジョン）
+2. どう使うか（経理チーム向けのガイド）
+3. 請求書に何を載せるか（請求書の書き方の決まり）
+4. どう実現するか（ソリューション設計、テスト戦略）
+5. 部品ごとにどう作るか（モジュール設計、テストケース）
+6. 作って確かめる（コマンド本体、テストコード）
+
+請求書には決まった書き方（インボイス制度の記載事項）があるので、それをまとめる段を 3 に入れました。
+変更内容：https://github.com/lovaizu/playground/pull/38/files
+
+どこで確認しますか？
+a) 1 だけ確認して、あとは最後まで進める（おすすめ：残りは 1 から決まるため）
+b) 1 と 2 を確認する
+c) 段ごとに確認する
+```
+
+You type `a`. rn makes the first step, and shows it:
+
+```text
+いま 1/6：誰の何のためか（プロダクトビジョン）
+
+プロダクトビジョンができました。ご確認ください。
+これで、経理チームが何のために使い、どこまでできれば足りるかが決まります。
+
+ご相談せずに決めたこと：
+- 経理チームのほかに、使う人は置きませんでした
+- 「早さ」は、明細を受け取ってから請求書を印刷するまでの時間で測ります
+変更内容：https://github.com/lovaizu/playground/pull/38/files
+
 承認する場合は /rn:ty、変えたい点がある場合は /rn:gm に続けてその内容を入力してください。
 ```
 
-You type `/rn:ty`. rn makes the deliverables, and you sign off the rules of an invoice and the
-team's aim, each with `/rn:ty`. While it makes the guide, rn asks you three questions in the same
-form as the first. To printing the registration number and the tax of each rate, you answer
-`載せる`. To a license, you answer `社内だけで使うので付けない`. To where the team asks for help,
-you answer `このリポジトリの Issues にしてください`.
-
-rn shows the guide:
+You type `/rn:ty`. While it makes the guide, rn asks what only you know:
 
 ```text
-「経理チーム向けのガイド」ができました。ご承認ください。
-  これでできること:経理チームのメンバーが、このガイドだけを見て次のことを確かめられます。invoice が自分たちの仕事に合うか、準備に何が要るか、どんな請求書が出てくるか、つまずいたらどうするか。ただし、まだ開発中なので、いまはインストールも印刷もできません。
-  ご相談せずに決めたこと:
-  - 使う環境は Windows の PowerShell にしました
-  - インストールは、配布ファイル(invoice 0.1.0)を uv というツールで入れる3行の手順にしました。配布ファイルはまだありません
-  - 発行者の名称・登録番号・振込先などは、初回の実行で一度だけ尋ねます
-  - 消費税の端数は、税率ごとに一度だけ切り捨てます
-  - 明細の CSV に必要な7つの列と、単価の税抜・税込の示し方を書きました
-  - 「できないこと」には「明細を作ったり直したりはしない」を挙げました
-  - 「ほかの資料」には、経理チームが開けるページと Issues だけを載せました
-  ほかに直せる点の提案:
-  - 冒頭に「いまはインストールのコマンドもまだ通らない」と書き添える。いまは、試した人が見慣れないエラー(404)に出会い、開発者に尋ねてしまいます
-  - インストールの3行がエラーなく通り、最後に「invoice 0.1.0」と出るのを確かめる。コマンド本体の配布ができてからでないと確かめられません
-  変更内容: https://github.com/lovaizu/playground/pull/38/files
-承認する場合は /rn:ty、変えたい点がある場合は /rn:gm に続けてその内容を入力してください。
+いま 2/6：どう使うか（経理チーム向けのガイド）
+
+ひとつ、決めていただきたいことがあります。経理チームの方が使うパソコンの環境です。
+ガイドの手順は環境ごとに違い、リポジトリからは分からないためです。
+会社のパソコンに多い、Windows の PowerShell をおすすめします。
+
+経理チームが使う環境はどれですか？（おすすめ：Windows の PowerShell）
 ```
 
-Your team works on Linux, which rn didn't know. You type:
+Your team works on Linux. You type:
 
 ```text
-/rn:gm 経理チームは Linux のノートPCを使っていて、明細は LibreOffice Calc で管理しています。Windows の PowerShell ではなく、Linux の端末で動く手順にしてください
+Linux のノートPCです。明細は LibreOffice Calc で管理しています
 ```
 
-rn shows:
+rn makes the rest with no sign-off, as you chose, and says where it stands at each message. Once
+each step is done, rn checks the pull request whole, and shows:
 
 ```text
-ご指摘のとおり、ガイドを Linux の端末向けに作り直しています。直すのは次の2つで、明細は LibreOffice Calc から CSV で書き出す前提にします。
-- インストール手順
-- 「使ってみる」の実行例
+6/6 すべてできました。最終チェックも通りました。
 
-ほかに直せる点として出した2つの提案は、今回のご指示に含まれていなかったので取り下げました。
-```
+ゴール：届いています。経理チームの人が、ガイドだけを見て、明細ファイルから請求書を印刷できます
+全体との整合：リポジトリの README に、コマンドとガイドを載せました
+余分なもの：ありません
+CI：すべて通っています
 
-rn shows the guide again, made for the Linux terminal, and you type `/rn:ty`. In the same form,
-you then sign off the architecture, the invoice's layout, the command's parts, and their tests. For the parts, you take one of rn's proposals with `/rn:gm`.
+ほかに直せる点の提案：
+- インストール手順の3行目は、v0.1.0 のリリースを公開するまで 404 で止まります。公開してから経理チームに知らせてください
 
-Once rn has made the command, it asks:
-
-```text
-ひとつ、決めていただきたいことがあります。
-  承認済みの「部品の役割」と「テストケースの一覧」を、いまのコマンド本体の振る舞いに合わせて直し直すかどうかです。
-  コマンド本体には、あとから決めた点が入っています。
-  - 全角の数字・英字・記号は半角に、半角カナは全角に読み替える
-  - 取引日は「2026/11/20」の形も受け付ける
-  - 明細の行は取引日の順に並べる
-  - 宛先の敬称を会社の形から決める
-  ところが、承認済みの2つの文書は、まだ「明細の順に並べる」と書いていたり、これらを「決まっていない」としていたりします。このままだと、あとでコマンドを直す人は、文書とコードのどちらが正しいのか分かりません。
-  - 直す場合:「部品の役割」と「テストケースの一覧」をもう一度作り直します。コマンド本体はそのあとで手直しし、テストを文書のケースと一対一に合わせます。
-  - 直さない場合:文書と食い違ったまま、コマンド本体の残りの手直し(依存の版の固定と、テストで結果をまるごと確かめること)だけ進めます。
-  直すことをおすすめします。コマンドを守っていく人が、文書だけを頼りに正しい振る舞いを確かめられるようにするためです。
-
-承認済みの2つの文書を、コマンド本体の振る舞いに合わせて作り直しますか?(おすすめ:作り直す)
-```
-
-You type `作り直してください`, and sign off the two remade documents and the command, each with
-`/rn:ty`. rn shows:
-
-```text
-完了しました。プルリクエストはマージできる状態です: https://github.com/lovaizu/playground/pull/38
-
-マージする前に、2点確認してください。
-- 古いテスト `invoice/tests/unit/test_width.py` と `test_sheet.py` の削除が、このプルリクエストに含まれているかを、私はまだ確かめていません。残っていると、テストが走らなくなるおそれがあります。
-- インストール手順の3行目は、v0.1.0 のリリースを公開するまで 404 で止まります。経理チームがガイドどおりに invoice を入れられるのは、公開したあとです。
+マージをおすすめします。PR を「レビュー可」にしてから、マージしてください。
+PR：https://github.com/lovaizu/playground/pull/38
 ```
 
 A colleague from accounting follows the guide alone. They save the month's lines from LibreOffice
@@ -189,29 +184,28 @@ $ invoice 2026年11月分明細.csv
 既定のプリンター「経理室プリンター」で 1 枚を印刷しました。
 ```
 
-The next month, the command prints without a question. You then merge the pull request.
+The next month, the command prints without a question. You mark the pull request ready for
+review, and merge it.
 
 ## How it works
 
 rn works only on the few things that decide whether a deliverable's people can use it.
 
-![How rn works, from your decisions to the pull request you sign off](images/how-it-works.svg)
+![How rn works, from your decisions to the pull request you merge](images/how-it-works.svg)
 
 ### "I can't spell out every detail up front, so it builds the wrong thing."
 
-rn asks only the decisions that change what the people get, one at a time, each with a
-recommendation. You sign off the plan and each deliverable, so you get what you mean without a
-specification.
+rn asks only the decisions that change what the people get, one at a time, with why. You check
+the steps you choose of its way to the goal, and get what you mean with no specification.
 
 ### "Does it work in a language other than English?"
 
-Yes. rn proposes a language for the deliverables and one for its talk, and you settle both with
-the goal.
+Yes. rn talks in your language and writes in your repository's, asking only where they disagree.
 
 ### "Its output misses what this kind of work needs."
 
 rn plans and makes each deliverable by the best practice of its kind, such as one for a README.
-For a kind it has none for, it asks you first whether to make one.
+For a kind it has none for, such as an invoice, its way to the goal makes one first.
 
 ### "It looks done, but the people it's for can't use it."
 
@@ -236,8 +230,8 @@ step.
 
 ### "Does it change the repository's files, or merge on its own?"
 
-No. rn works in its own worktree and branch, runs commands in a throwaway copy, and leaves
-the merge to you.
+No. rn works in its own worktree and a throwaway copy, and leaves the ready mark and the merge to
+you.
 
 ## Documentation
 
