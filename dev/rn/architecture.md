@@ -40,12 +40,9 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
 - P6: nothing lost on a stop
   - P6.1: the run's state lives in files, so that it goes on from any conversation.
 - P7: only what the people can't reach their aim without
-  - P7.1: a fact enters the plan only where the people fail their aim without it, and in its
-    least form.
-  - P7.2: only the goal and the user's own words settle a point, and all else, the issue
-    included, only proposes.
-  - P7.3: each part of the plan that a new one rests on is weighed again with it.
-  - P7.4: the plan changes only by that weighing, or by a step that has one right result.
+  - P7.1: each fact is weighed by one shared measure of the vital few, which alone states it.
+  - P7.2: each part of the plan that a new one rests on is weighed again with it.
+  - P7.3: the plan changes only by that weighing, or by a step that has one right result.
 
 ### Concept model
 
@@ -87,6 +84,11 @@ Strategies:
   Intent: nobody reviews or merges the work before the user has seen it checked whole.
 - A finding that the people would never meet dropped by holding its condition good. [P1.1]\
   Intent: the next generator gets as given each finding of a condition still short.
+- Each done deliverable kept with its conditions and their decisions. [P7.2]\
+  Intent: a later deliverable rests on what a done one decided, and the focuser weighs it again.
+- Each Cut made from the design tree at each start of its role, never kept from an earlier start.
+  [P4.1]\
+  Intent: each change to the tree, such as a path added or a point cut, reaches the next maker.
 
 ### Components
 
@@ -96,6 +98,8 @@ Strategies:
   Moves the run along its plan to the people's aim, as the user's one contact.
 - focuser (prompt)\
   Keeps the plan to the vital few that bring the people to their aim.
+- vital few (prompt)\
+  Holds the one measure by which rn tells the vital few from the trivial many.
 - generator (prompt)\
   Makes a deliverable with which its people reach their aim.
 - evaluator (prompt)\
@@ -116,6 +120,9 @@ Strategies:
   design tree. [P7.1]\
   Intent: one role holding the stance alone weighs all the plan takes in, and no step waits on
   needless judgment.
+- One shared prompt of the measure, read by the orchestrator and the focuser, each role's prompt
+  holding only its part. [P7.1]\
+  Intent: the two roles weigh by one measure, which changes in one place.
 - A new focuser for each fact, given only the design tree, the user's words of the run, and the
   fact. [P4.1]\
   Intent: each fact is weighed as an observer outside the run would, by the goal and the user's
@@ -155,7 +162,7 @@ Strategies:
   Intent: a maker's clean-up never waits on a permission prompt, and stays in the work and the
   temporary folder.
 - Each write to a run's design tree refused by the same hook, but the focuser's and rn's
-  scripts'. [P7.4]\
+  scripts'. [P7.3]\
   Intent: the plan holds only what the focuser weighed, on every run, whatever a prompt forgets.
 - Each step written as what it does, never tied to one OS's tools, such as Glob or Bash's
   `find`. [P4.3]\
@@ -196,12 +203,11 @@ sequenceDiagram
     end
     opt a fact that asks a judgment: the request with its issue, the user's words, a role's end, or a refusal [P7.1]
       O->>F: starts a new one with the design tree, the user's words of the run, and the fact (Design tree, Round) [P4.1]
-      F->>F: takes the goal and the user's words as settled, and the issue, a best practice, a finding, and a maker's work as proposals [P7.2]
-      F->>F: weighs each element that the fact would add, change, or ask: whether the people fail to reach the goal without it, and whether it is the least that keeps them reaching it [P7.1]
-      F->>F: weighs again each element of the tree that one of them rests on, those from the issue among them [P7.3]
+      F->>F: weighs each element that the fact would add, change, or ask by the shared measure of the vital few [P7.1]
+      F->>F: weighs again each element of the tree that one of them rests on, a done deliverable's decisions and the issue's among them [P7.2]
       F->>T: writes the vital few, from the goal and the plan down, cuts the rest, and leaves open each point that only the user can settle (Design tree) [P7.1]
       opt a role's end with a trial's findings [P2.2]
-        F->>T: takes into the decision it comes from the least remedy of each finding that the people fail without, and holds good each other condition (Design tree) [P7.1]
+        F->>T: takes into the decision it comes from what the measure keeps of each finding, and holds good each other condition (Design tree) [P7.1]
         F->>T: keeps each finding past two Rounds as an open decision of its condition (Design tree) [P3.3]
       end
       opt the final check's findings [P2.3]
@@ -216,8 +222,8 @@ sequenceDiagram
       F->>T: rewrites each node that the change made false (Design tree) [P1.1]
       F-->>O: ends, with what it changed [P4.2]
     end
-    opt a write to the design tree by any other role [P7.4]
-      H->>T: refuses the write, telling its writer to hand the fact to the focuser (Design tree) [P7.4]
+    opt a write to the design tree by any other role [P7.3]
+      H->>T: refuses the write, telling its writer to hand the fact to the focuser (Design tree) [P7.3]
     end
     O->>S: checks and commits the change (Design tree) [P6.1]
     opt a refusal that only the user can mend [P5.3]
@@ -239,6 +245,7 @@ sequenceDiagram
       end
     else each deliverable whose inputs are done, resting on none still being made [P5.2]
       par one for each such deliverable [P5.2]
+        O->>S: writes the due role's Cut from the design tree as it stands (Cut) [P4.1]
         alt its Round of content, to make [P3.2]
           O->>G: starts it with its Cut, or resumes the last Round's with the user's words, as given (Cut) [P4.1]
           alt a point it can't settle [P1.2]
@@ -335,6 +342,7 @@ plugins/rn/                        what Claude Code installs for the user
 ├── hooks/                         the hook that turns a maker's delete to remove.py, and keeps the design tree to the focuser and the scripts
 ├── domain/
 │   ├── orchestrator.md            the event's own step, then those that every event shares
+│   ├── vital-few.md               the measure of the vital few, which the orchestrator and the focuser read
 │   ├── focuser.md                 what the focuser does
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
