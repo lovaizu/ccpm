@@ -11,7 +11,7 @@
    ],
    "refs": []
   },
-  "pr": null,
+  "pr": "https://github.com/lovaizu/ccpm/pull/83",
   "session": "0fd9d0c6-4ca5-44a7-9ab8-1bc6c610d110"
  },
  "goal": {
@@ -32,7 +32,7 @@
      "decisions": [
       {
        "about": "whom the goal is for",
-       "decided": "私が指示してaiが段取りする 利用者はai (The user instructs, and an AI arranges the work: the one who uses overnight is an AI.)",
+       "decided": "\u79c1\u304c\u6307\u793a\u3057\u3066ai\u304c\u6bb5\u53d6\u308a\u3059\u308b \u5229\u7528\u8005\u306fai (The user instructs, and an AI arranges the work: the one who uses overnight is an AI.)",
        "by": "user"
       },
       {
@@ -602,28 +602,28 @@
  ],
  "steps": [
   {
-   "settles": "誰が何のために使うか",
+   "settles": "\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
    "deliverables": [
     "dev/overnight/product-vision.md"
    ],
    "signoff": true
   },
   {
-   "settles": "どう使い始めるか",
+   "settles": "\u3069\u3046\u4f7f\u3044\u59cb\u3081\u308b\u304b",
    "deliverables": [
     "plugins/overnight/README.md"
    ],
    "signoff": false
   },
   {
-   "settles": "どんな部品でどう動くか",
+   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
    "deliverables": [
     "dev/overnight/architecture.md"
    ],
    "signoff": false
   },
   {
-   "settles": "部品のつなぎ目と確かめ方",
+   "settles": "\u90e8\u54c1\u306e\u3064\u306a\u304e\u76ee\u3068\u78ba\u304b\u3081\u65b9",
    "deliverables": [
     "plugins/overnight",
     "dev/overnight/tests"
@@ -631,7 +631,7 @@
    "signoff": false
   },
   {
-   "settles": "動くものと、その確かめ",
+   "settles": "\u52d5\u304f\u3082\u306e\u3068\u3001\u305d\u306e\u78ba\u304b\u3081",
    "deliverables": [
     "dev/overnight/tests/integration",
     "plugins/overnight/skills"
@@ -639,7 +639,7 @@
    "signoff": false
   },
   {
-   "settles": "整えて一覧に載せる",
+   "settles": "\u6574\u3048\u3066\u4e00\u89a7\u306b\u8f09\u305b\u308b",
    "deliverables": [
     "plugins/overnight/scripts",
     ".claude-plugin/marketplace.json"
