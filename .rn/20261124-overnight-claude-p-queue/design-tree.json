@@ -309,8 +309,14 @@
     },
     {
      "id": "N9",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "each tool refused, in the status",
+       "decided": "S2 shows pieces handing status, for a piece stopped by a wait for an answer, each tool refused, as S1 records them and the Components strategy intends, so that the user names the missing tool at the next hand-over.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N10",
@@ -330,7 +336,7 @@
     },
     {
      "id": "N12",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "Test strategy",
