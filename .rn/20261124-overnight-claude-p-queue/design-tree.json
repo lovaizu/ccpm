@@ -433,36 +433,42 @@
     {
      "id": "N1",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "the key result that the walkthrough run checks",
+       "decided": "The E2E cases section names KR1.1 as the key result that the walkthrough run of the README's request checks, and the line of its status that shows it, the share of pieces stopped by the usage limit, a wait for an answer, or the session closing, such as `0 of 3 pieces stopped by the usage limit, a wait for an answer, or the session closing.`",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N2",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N3",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N7",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N5",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N6",
-     "good": false,
+     "good": true,
      "decisions": []
     }
    ]
