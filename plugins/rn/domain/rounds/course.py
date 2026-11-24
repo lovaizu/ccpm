@@ -2,7 +2,8 @@
 good, at most LIMIT Rounds, then refactored in a Round that no evaluator judges each time the
 content leaves each condition good, none while a
 point waits on the user, and after them none, each finding left kept by the pruner as an open
-decision; a send-back after a Round put up for the sign-off starts that course again."""
+decision; a send-back after a Round put up for the sign-off starts that course again, and so does
+the user's answer, as the limit stops a remake asked by findings, not one asked by the user."""
 
 from __future__ import annotations
 
@@ -24,12 +25,15 @@ LIMIT = 2
 
 class Done(NamedTuple):
     """A Round so far, with the generator's result and the evaluator's in it, None where the role
-    wrote none yet, and the state it was put up with for the sign-off, None where it wasn't."""
+    wrote none yet, the state it was put up with for the sign-off, None where it wasn't, and each
+    decision by the user that its generator's Cut held, by its condition's id and its about, None
+    where the Round holds no generator's Cut."""
 
     round: Round
     generator: Result | None
     evaluator: Result | None
     put_up: Mark | None = None
+    given: frozenset[tuple[str, str]] | None = None
 
 
 class Next(NamedTuple):
@@ -50,7 +54,8 @@ def next_of(deliverable: Deliverable, rounds: Sequence[Done], refactors: bool) -
     Takes: the deliverable's open node, each of its Rounds in the order they were made with their
     results, and whether its kind is refactored, as `practice.refactoring` gives a kind. Its
     course is its Rounds of content since its last Round put up for the sign-off, or since the
-    first.
+    first, and since the last Round whose generator wasn't given each decision by the user that
+    the node holds now, as the user answered after it.
     Gives, the first that holds:
     - the sign-off, where the last Round is put up with the state that `held` gives the node, as
       nothing changed since;
@@ -75,14 +80,15 @@ def next_of(deliverable: Deliverable, rounds: Sequence[Done], refactors: bool) -
     opened = {each["condition"] for each in state["open"]}
     if rounds and rounds[-1].put_up == state:
         return _SIGN_OFF
-    past = _past(rounds)
+    content = _course(rounds, answers(deliverable))
+    past = _past(rounds, content)
     if past and short and opened == short:
         return _SIGN_OFF
     if opened and not (past and opened <= short):
         return Next("answer", None, False)
     if not rounds:
         return Next("generator", "content", False)
-    return _after(rounds, short, refactors)
+    return _after(rounds, content, short, refactors)
 
 
 def held(deliverable: Deliverable) -> Mark:
@@ -102,19 +108,35 @@ def held(deliverable: Deliverable) -> Mark:
     }
 
 
+def answers(deliverable: Deliverable) -> frozenset[tuple[str, str]]:
+    """Each decision of the deliverable's node settled by the user, by its condition's id and its
+    about."""
+    return frozenset(
+        (each["id"], decision["about"])
+        for each in deliverable["necessary_conditions"]
+        for decision in each["decisions"]
+        if decision["decided"] is not None and decision.get("by") == "user"
+    )
+
+
 def so_far(run: RunPlace, deliverable: str) -> list[Done]:
     """Each Round of the deliverable so far, as `rounds.files.of` gives them, with each role's
-    result in it, as `rounds.files.result` gives it, and the state it was put up with, as
-    `rounds.files.marked` gives it, refused as they refuse."""
-    return [
-        Done(
-            each,
-            files.result(each, "generator"),
-            files.result(each, "evaluator"),
-            files.marked(each),
+    result in it, as `rounds.files.result` gives it, the state it was put up with, as
+    `rounds.files.marked` gives it, and the user's decisions in the node its generator's Cut
+    held, as `rounds.files.given` gives the node, refused as they refuse."""
+    found: list[Done] = []
+    for each in files.of(run, deliverable):
+        node = files.given(each)
+        found.append(
+            Done(
+                each,
+                files.result(each, "generator"),
+                files.result(each, "evaluator"),
+                files.marked(each),
+                None if node is None else answers(node),
+            )
         )
-        for each in files.of(run, deliverable)
-    ]
+    return found
 
 
 def next_in(run: RunPlace, deliverable: Deliverable) -> Next:
@@ -129,10 +151,14 @@ def next_in(run: RunPlace, deliverable: Deliverable) -> Next:
 _SIGN_OFF = Next("sign-off", None, False)
 
 
-def _course(rounds: Sequence[Done]) -> list[Done]:
-    """The Rounds of content since the last Round put up for the sign-off."""
+def _course(rounds: Sequence[Done], answers: frozenset[tuple[str, str]]) -> list[Done]:
+    """The Rounds of content since the last Round put up for the sign-off, and since the last
+    Round that the user answered after."""
     found: list[Done] = []
     for each in rounds:
+        if _answered(each, answers):
+            found = []
+            continue
         if each.round.stage == "content":
             found.append(each)
         if each.put_up is not None:
@@ -140,15 +166,22 @@ def _course(rounds: Sequence[Done]) -> list[Done]:
     return found
 
 
-def _past(rounds: Sequence[Done]) -> bool:
+def _answered(round_: Done, answers: frozenset[tuple[str, str]]) -> bool:
+    """Whether the user answered after the Round: its generator's Cut lacks one of the answers,
+    where it has a Cut at all."""
+    return round_.given is not None and not answers <= round_.given
+
+
+def _past(rounds: Sequence[Done], content: Sequence[Done]) -> bool:
     """Whether the last Round is the course's LIMIT-th, of content, each with both results."""
-    content = _course(rounds)
     if len(content) < LIMIT or rounds[-1].round.stage != "content":
         return False
     return all(each.generator and each.evaluator for each in content)
 
 
-def _after(rounds: Sequence[Done], short: set[str], refactors: bool) -> Next:
+def _after(
+    rounds: Sequence[Done], content: Sequence[Done], short: set[str], refactors: bool
+) -> Next:
     """What the deliverable waits on from its last Round, no point of it waiting on the user."""
     last = rounds[-1]
     stage, made = last.round.stage, last.generator
@@ -157,7 +190,7 @@ def _after(rounds: Sequence[Done], short: set[str], refactors: bool) -> Next:
     if stage == "content" and last.evaluator is None:
         return Next("evaluator", stage, False)
     if short:
-        more = len(_course(rounds)) < LIMIT
+        more = len(content) < LIMIT
         return Next("generator", "content", False) if more else Next("pruner", None, False)
     if refactors and stage == "content":
         return Next("generator", "refactor", False)

@@ -7,7 +7,8 @@ by the deliverable's path percent-encoded whole, paths holding `-` and `%` among
 absolute and a relative folder, and from a folder outside the run's Rounds; `new` past the
 deliverable's last Round of either stage, a gap among them included, and a stage of neither;
 `mark` of the last of several Rounds with a state, again, and of a deliverable with none, and
-`marked` of a Round marked, of one not, and of a mark that isn't JSON; and `result` written, not
+`marked` of a Round marked, of one not, and of a mark that isn't JSON; `given` of a Round whose
+generator's Cut holds the deliverable's node, and of one with no Cut; and `result` written, not
 written, and not JSON."""
 
 from __future__ import annotations
@@ -19,7 +20,7 @@ import pytest
 import rn_files
 from fault import Wrong
 from repository.place import RunPlace
-from rounds.files import Round, at, mark, marked, new, of, result
+from rounds.files import Round, at, given, mark, marked, new, of, result
 
 NAME = "20261120-a-command-with-which-the"
 GUIDE = rn_files.GUIDE
@@ -388,3 +389,23 @@ def test_marked_refuses_a_mark_that_isnt_json(run: RunPlace):
         file.write("{")
     with pytest.raises(Wrong, match="put-up.json"):
         marked(of(run, GUIDE)[0])
+
+
+@pytest.mark.supports("test_a_users_answer_after_two_content_rounds_gets_a_new_content_round")
+def test_given_is_the_node_that_the_generators_cut_held(run: RunPlace):
+    """Given a run whose guide's Round content-1 holds a generator's Cut with the guide's node
+    When the node its generator was given is asked
+    Then it's that node"""
+    place = rn_files.a_round(folder(run), GUIDE, "content", 1)
+    node = rn_files.open_node("The guide", GUIDE, "readme")
+    rn_files.write_json(os.path.join(place, "generator-cut.json"), {"deliverable": node})
+    assert given(of(run, GUIDE)[0]) == node
+
+
+@pytest.mark.supports("test_a_users_answer_after_two_content_rounds_gets_a_new_content_round")
+def test_given_of_a_round_with_no_generators_cut_is_none(run: RunPlace):
+    """Given a run whose guide's Round content-1 holds no generator's Cut
+    When the node its generator was given is asked
+    Then it's None"""
+    rn_files.a_round(folder(run), GUIDE, "content", 1)
+    assert given(of(run, GUIDE)[0]) is None

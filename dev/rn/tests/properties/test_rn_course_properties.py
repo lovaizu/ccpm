@@ -4,7 +4,8 @@ node of the design tree and any course of Rounds that a run brings, each Round b
 made and judged, and the last at any point of its course.
 
 - Remaking has a limit (P3.3), twice at most as the README says: since the deliverable's last
-  Round put up for its sign-off, as a send-back there starts its course again, no new Round of
+  Round put up for its sign-off, as a send-back there starts its course again, as the user's answer
+  does too where a Round's Cut shows it came after, no new Round of
   content once it holds two, and none of refactoring once it holds one, as a new
   generator refactors once each condition is good (P3.2), else the deliverable grows with each
   round and the user waits on it.

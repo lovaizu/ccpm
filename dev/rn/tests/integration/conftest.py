@@ -144,6 +144,18 @@ def no_limit(b: Bench) -> None:
     given_again(b, "domain/rounds/course.py", "LIMIT = 99\n")
 
 
+def answers_spend_the_limit(b: Bench) -> None:
+    """A user's answer starts no course again, so a remake it asks counts toward the limit."""
+    given_again(b, "domain/rounds/course.py", "def _answered(round_, answers):\n    return False\n")
+
+
+def sent_back_unseen(b: Bench) -> None:
+    """A send-back starts no course again, as neither the Round put up nor the user's words in it
+    restart the count."""
+    put_up_unmarked(b)
+    answers_spend_the_limit(b)
+
+
 def cut_of_the_whole_node(b: Bench) -> None:
     """The evaluator's Cut holds the deliverable's whole node, its decisions among it."""
     given_again(
@@ -280,13 +292,16 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_a_tree_change_out_of_form_is_refused_at_its_commit": checks_unasked,
     "test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut": open_decisions_unread,
     "test_a_signoff_of_the_plan_makes_its_deliverables_generator_due": signoff_unrecorded,
-    "test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own": put_up_unmarked,
+    "test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own": sent_back_unseen,
     "test_the_people_start_from_the_branch_without_rns_folder": trial_of_the_worktree,
     "test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused": result_unchecked,
     "test_the_pull_request_stays_a_draft_after_the_last_signoff": opened_ready,
     "test_the_evaluator_waits_on_its_generators_result": judged_before_made,
     "test_no_evaluator_is_due_after_a_refactor_round": refactoring_judged,
     "test_a_deliverable_short_after_two_content_rounds_gets_no_third": no_limit,
+    "test_a_users_answer_after_two_content_rounds_gets_a_new_content_round": (
+        answers_spend_the_limit
+    ),
     "test_the_evaluators_cut_holds_only_what_the_people_have": cut_of_the_whole_node,
     "test_a_generators_result_unwritten_is_refused": any_end_passes,
     "test_the_generators_checks_judge_its_files_alone_beside_another_staged": checks_in_place,

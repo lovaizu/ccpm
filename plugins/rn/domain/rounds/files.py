@@ -158,6 +158,13 @@ def marked(round_: Round) -> Mark | None:
     return _read(os.path.join(round_.folder, _PUT_UP))
 
 
+def given(round_: Round) -> Any:
+    """The deliverable's node that the Round's generator's Cut held; None where the Round holds no
+    generator's Cut. Refuses Wrong where the file isn't JSON, naming it."""
+    cut = _read(round_.cut("generator"))
+    return None if cut is None else cut.get("deliverable")
+
+
 def _read(path: str) -> Any:
     """The JSON of the file, None where there's none, refused as Wrong where it isn't JSON."""
     try:

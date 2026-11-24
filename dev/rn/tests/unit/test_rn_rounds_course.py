@@ -226,6 +226,55 @@ def test_a_condition_short_after_limit_content_rounds_waits_on_the_pruner(result
     assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
 
 
+# The user's decisions that a Round's generator was given in its Cut: none, as before the user
+# answered, and the tax rate, the answer that node() holds.
+BEFORE_ANSWER: frozenset[tuple[str, str]] = frozenset()
+WITH_ANSWER = frozenset({("N1", "the tax rate")})
+
+
+@pytest.mark.supports("test_a_users_answer_after_two_content_rounds_gets_a_new_content_round")
+def test_a_users_answer_after_limit_content_rounds_starts_the_course_again(results: str):
+    """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds, neither
+    generator given the user's answer on N1 that the node holds now
+    When what it waits on is asked
+    Then the generator in a new content Round, as the limit stops a remake asked by findings, and
+    the user's answer starts the course again"""
+    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, SHORT))
+    done = [each._replace(given=BEFORE_ANSWER) for each in done]
+    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next(
+        "generator", "content", False
+    )
+
+
+@pytest.mark.supports("test_a_users_answer_after_two_content_rounds_gets_a_new_content_round")
+def test_limit_content_rounds_after_a_users_answer_wait_on_the_pruner(results: str):
+    """Given the command judged short on N1 in content-1 and content-2, neither generator given the
+    user's answer on N1, then short in content-3 and content-4, each generator given it
+    When what it waits on is asked
+    Then the pruner, as the course since the answer has LIMIT Rounds"""
+    done = rounds(
+        results,
+        ("content", 1, MADE_ALL, SHORT),
+        ("content", 2, MADE_ALL, SHORT),
+        ("content", 3, MADE_ALL, SHORT),
+        ("content", 4, MADE_ALL, SHORT),
+    )
+    given = [BEFORE_ANSWER, BEFORE_ANSWER, WITH_ANSWER, WITH_ANSWER]
+    done = [each._replace(given=g) for each, g in zip(done, given)]
+    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
+
+
+@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
+def test_limit_content_rounds_each_given_the_users_answer_wait_on_the_pruner(results: str):
+    """Given the command judged short on N1 in content-1 and content-2, each generator given the
+    user's answer on N1 that the node holds
+    When what it waits on is asked
+    Then the pruner, as no answer came since the Rounds"""
+    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, SHORT))
+    done = [each._replace(given=WITH_ANSWER) for each in done]
+    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
+
+
 @pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
 @pytest.mark.parametrize("content", sorted({1, LIMIT}))
 def test_a_condition_short_after_the_refactor_round_gets_a_new_content_round(

@@ -200,6 +200,24 @@ def test_a_deliverable_short_after_two_content_rounds_gets_no_third(b: Bench, br
     assert "waits on the pruner, to keep each finding left as an open decision" in refused.err
 
 
+@pytest.mark.supports("P3.3", "Round")
+def test_a_users_answer_after_two_content_rounds_gets_a_new_content_round(b: Bench, broken: None):
+    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2
+    When the user settles a decision of N1, one pruner writes it, and the orchestrator writes the
+    generator's Cut
+    Then tree.py cut gives 0 and writes the Cut in Round content-3 holding the user's decision, as
+    the limit stops a remake asked by findings, not one asked by the user's answer"""
+    short_twice(b)
+    answer = rn_files.decision("when the check runs", "after the tests pass", "user")
+    reviewed(b, held(b, COMMAND, ["N2", "N3"], {"N1": [answer]}), "The user's answer.")
+    made = b.script(*cut_move(b, "generator", COMMAND))
+    assert made.code == 0, made.err
+    third = rn_files.round_of(b.folder, COMMAND, "content", 3)
+    given = cut_of(b, os.path.join(third, "generator-cut.json"))
+    n1 = given["deliverable"]["necessary_conditions"][0]
+    assert answer in n1["decisions"]
+
+
 # P4: each role on its own work.
 
 
