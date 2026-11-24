@@ -394,7 +394,10 @@
    "name": "overnight's developers see, before any body is written, that its parts fit together",
    "path": "plugins/overnight",
    "kind": "software-design",
-   "status": "done",
+   "inputs": [
+    "dev/overnight/architecture.md"
+   ],
+   "status": "open",
    "necessary_conditions": [
     {
      "id": "N1",
@@ -403,8 +406,14 @@
     },
     {
      "id": "N2",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "what `runner.claude.run` promises where Claude Code can't be started",
+       "decided": "`runner.claude.run` promises nothing for a Claude Code that can't be started, such as where `claude` isn't found: its contract drops that clause, as the AI that hands work to overnight runs inside Claude Code, and dev/overnight/tests keeps no case of it.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N3",
@@ -413,8 +422,14 @@
     },
     {
      "id": "N4",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "the gap of a runner whose conversation ends at once",
+       "decided": "`handover.hand.hand_over` names no gap of a runner whose conversation ends at once, such as where `claude` isn't found, as that case is off the people's main path.",
+       "by": "reasoning"
+      }
+     ]
     }
    ]
   },
@@ -443,8 +458,14 @@
     },
     {
      "id": "N2",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "the case of a piece whose Claude Code can't start",
+       "decided": "No case checks a piece whose Claude Code can't start, as the AI that hands work to overnight runs inside Claude Code. The integration case `test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_systems_words` goes, with each unit case, helper, and stand-in that only it uses, such as a PATH without `claude`. A unit case that it names and that checks a refusal of its interface stays, naming an integration case that remains: \u300c\u3055\u3063\u3055\u3068\u6d88\u3057\u306a\u3088 \u4e9b\u672b\u306a\u591a\u6570\u3092\u5fb9\u5e95\u7684\u306b\u6392\u9664\u3060\u3088\u306d\uff1f\u300d",
+       "by": "user"
+      }
+     ]
     },
     {
      "id": "N3",
@@ -474,8 +495,14 @@
     },
     {
      "id": "N6",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "the gap of a runner whose conversation ends at once",
+       "decided": "Gaps names no gap of a runner whose conversation ends at once, such as where `claude` isn't found, as no case checks a piece whose Claude Code can't start.",
+       "by": "reasoning"
+      }
+     ]
     }
    ]
   },
@@ -533,7 +560,16 @@
    ]
   }
  ],
- "work": [],
+ "work": [
+  {
+   "do": "make",
+   "path": "plugins/overnight"
+  },
+  {
+   "do": "make",
+   "path": "dev/overnight/tests"
+  }
+ ],
  "steps": [
   {
    "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
