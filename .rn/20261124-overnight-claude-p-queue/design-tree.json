@@ -394,10 +394,7 @@
    "name": "overnight's developers see, before any body is written, that its parts fit together",
    "path": "plugins/overnight",
    "kind": "software-design",
-   "inputs": [
-    "dev/overnight/architecture.md"
-   ],
-   "status": "open",
+   "status": "done",
    "necessary_conditions": [
     {
      "id": "N1",
