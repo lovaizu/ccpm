@@ -11,9 +11,9 @@ The orchestrator reads this once in a conversation. Each fact here serves the me
   the shell splits them otherwise.
 - Each script runs as `python3 <rn's folder>/scripts/<script> ...`, and exits 0 with its result. On
   1, it says what's wrong and how to mend it, so mend it and run it again, or, where the mend
-changes the design tree, hand it to a new pruner. On 2, it says what it
-  couldn't do or check, and why, and a rerun does no more: tell the user what stopped and what they
-  do, and move each other deliverable on meanwhile.
+  changes the design tree, hand it to a new pruner. On 2, it says what it couldn't do or check, and
+  why, and a rerun does no more: tell the user what stopped and what they do, and move each other
+  deliverable on meanwhile.
 
 ## The run
 
@@ -41,10 +41,10 @@ changes the design tree, hand it to a new pruner. On 2, it says what it
   `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Write the run's slug, one to
   five lower-case English words joined by `-`, from the issue's title or the request's words, such
   as `overnight-claude-p-queue`. Run
-  `repository.py new "<slug>" "<the request>" "<deliverables' language>" "<conversation's language>"`,
-  with the request word for word as the goal that the pruner then writes. It makes the run's
-  worktree and its design tree. Where it refuses the name as taken, recommend `/rn:up`, and end the
-  turn. Else hand the request, with the text of each issue it names, to a new pruner.
+  `repository.py new "<slug>" "<deliverables' language>" "<conversation's language>"`. It makes the
+  run's worktree, and its design tree with the goal open. Where it refuses the name as taken,
+  recommend `/rn:up`, and end the turn. Else hand the request, with the text of each issue it names,
+  to a new pruner, which writes the goal from it.
 - `/rn:up`: run `repository.py find`. It prints the folder of the newest run with work left, here
   or on GitHub, and makes its worktree again where none lies, or nothing where no run is left, and
   then ask which run to pick up. Where it can't ask GitHub, it says why on stderr: tell the user.
@@ -78,9 +78,9 @@ changes the design tree, hand it to a new pruner. On 2, it says what it
   decides. Where it gives 1, hand the fault it printed to a new pruner, as a mend of the tree is a
   judgment.
 - A role due: run `tree.py cut <run> <role> <deliverable>`. It writes the role's Cut and prints its
-  path, or gives 1 naming what the deliverable waits on. Where that is the orchestrator, to keep
-  each finding left as an open decision, hand that to a new pruner. Else start the role by Agent in
-  the background with the Cut's path as its prompt.
+  path, or gives 1 naming what the deliverable waits on. Where that is the pruner, to keep each
+  finding left as an open decision, hand what it printed to a new pruner. Else start the role by
+  Agent in the background with the Cut's path as its prompt.
 - The plan, or a deliverable whose Rounds are over: run `repository.py put-up <run> <deliverable>`.
   It commits and pushes it in the run's pull request. For a step the user checks, it prints a link
   to each of the deliverable's files, for you to give them. For another step, it makes the
