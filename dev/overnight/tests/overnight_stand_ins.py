@@ -99,8 +99,3 @@ def handed_over(
     handed = overnight_files.handed(1, tools)
     begin(repo, handed, os.getpid())
     return Piece(repo, 1, folder, prompt, tools), handed
-
-
-def path_without_claude(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Sets the PATH that `overnight_files.path_without_claude` gives."""
-    monkeypatch.setenv("PATH", overnight_files.path_without_claude())

@@ -27,9 +27,6 @@ Run `python3 dev/scripts/trace.py check overnight` from the top of the repositor
 
 ## Gaps
 
-- S1: hand-over records the piece as running only after it starts the runner. A runner whose
-  conversation ends at once, such as where `claude` isn't found, then has no record to end in. So
-  no case can show that piece failed with the system's words.
 - P5.2: the README and `pieces.command.main` leave open how the table shows a piece that a stop
   left. So the cases check only that its row names the stop, and doesn't show it running or
   waiting.

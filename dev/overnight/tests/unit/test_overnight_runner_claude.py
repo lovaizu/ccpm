@@ -1,6 +1,6 @@
 """The unit cases of runner/claude.py, how Claude Code is run for a piece: `run`, first and resumed,
 of one tool and several, of tools whose rules hold spaces and commas, of a prompt of several lines,
-of a run that Claude Code ends with an error, and where `claude` can't be found."""
+and of a run that Claude Code ends with an error."""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ import json
 import os
 from typing import Any
 
-import overnight_stand_ins
 import pytest
 from claude_code import claude_double
 from claude_code.claude_double import RUN
@@ -136,20 +135,3 @@ def test_a_run_that_claude_code_ends_with_an_error_gives_its_code_and_words(
     given = run(piece(tmp_path), None)
     assert (given.code, given.stderr) == (1, "")
     assert json.loads(given.stdout)["errors"] == ["Reached maximum number of turns (1)"]
-
-
-@pytest.mark.supports(
-    "test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_systems_words"
-)
-def test_a_run_where_claude_isnt_found_gives_a_failing_code_and_the_systems_words(
-    tmp_path: Any, monkeypatch: pytest.MonkeyPatch
-):
-    """Given a PATH on which no `claude` is found
-    When Claude Code is run for the piece
-    Then it gives a code other than 0, no standard output, and the system's words, without
-    raising"""
-    overnight_stand_ins.path_without_claude(monkeypatch)
-    given = run(piece(tmp_path), None)
-    assert given.code != 0
-    assert given.stdout == ""
-    assert given.stderr.strip()

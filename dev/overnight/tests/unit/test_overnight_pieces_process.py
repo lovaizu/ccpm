@@ -47,7 +47,7 @@ def test_identify_tells_two_processes_apart_by_their_start_times():
 
 
 @pytest.mark.supports(
-    "test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_systems_words"
+    "test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing"
 )
 @pytest.mark.parametrize(
     "pid",

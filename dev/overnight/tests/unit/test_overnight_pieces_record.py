@@ -164,7 +164,7 @@ def test_begin_of_a_number_recorded_on_an_earlier_day_is_refused(repo: str):
 
 
 @pytest.mark.supports(
-    "test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_systems_words"
+    "test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing"
 )
 def test_begin_with_a_runner_that_no_longer_runs_is_refused(repo: str):
     """Given the ID of a process that ran and has ended

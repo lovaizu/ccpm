@@ -5,14 +5,12 @@ its piece's folder and branch among them."""
 from __future__ import annotations
 
 import os
-import shutil
 import signal
 import subprocess
 import sys
 import time
 from collections.abc import Callable, Iterable
 
-import pytest
 from pieces.record import Handed
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -163,16 +161,6 @@ def ended_process() -> int:
     child = subprocess.Popen([sys.executable, "-c", "pass"])
     child.wait()
     return child.pid
-
-
-def path_without_claude() -> str:
-    """A PATH that holds git and Python but no `claude`, or skips the case where the machine keeps
-    Claude Code beside them."""
-    folders = {os.path.dirname(shutil.which("git") or ""), os.path.dirname(sys.executable)}
-    path = os.pathsep.join(sorted(folders))
-    if shutil.which("claude", path=path):
-        pytest.skip("Claude Code lies beside git or Python here, so no PATH leaves it out")
-    return path
 
 
 def piece_folder(repo: str, number: int) -> str:

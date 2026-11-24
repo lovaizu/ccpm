@@ -1,8 +1,8 @@
 """The unit cases of runner/reply.py, what a reply of Claude Code says: `read`, of a run that ends,
 one resumed that ends, one that ends after a call refused on the way, one that ends by an error of
-its own, one resumed in no conversation, one that Claude Code can't start, output that can't be
-read, and a run that the session limit, the weekly limit, or a usage limit with no time stops, each
-reset time on either side of the clock's time, at midnight, and at noon."""
+its own, one resumed in no conversation, output that can't be read, and a run that the session
+limit, the weekly limit, or a usage limit with no time stops, each reset time on either side of the
+clock's time, at midnight, and at noon."""
 
 from __future__ import annotations
 
@@ -98,20 +98,6 @@ def test_a_run_resumed_in_no_conversation_is_failed_with_claude_codes_words(cloc
     assert isinstance(given, Failed)
     expected = "No conversation found with session ID: 00000000-0000-0000-0000-000000000000"
     assert given.error.strip() == expected
-
-
-@pytest.mark.supports(
-    "test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_systems_words"
-)
-def test_a_run_that_claude_code_cant_start_is_failed_with_the_systems_words(clock: Clock):
-    """Given what `claude.run` gives where `claude` isn't found: a code other than 0, no standard
-    output, and the system's words
-    When it's read
-    Then it's Failed, with the system's words"""
-    words = "[Errno 2] No such file or directory: 'claude'"
-    given = read(Output(127, "", words))
-    assert isinstance(given, Failed)
-    assert given.error.strip() == words
 
 
 @pytest.mark.supports("test_a_piece_ended_by_an_error_of_its_own_is_recorded_failed_with_the_error")

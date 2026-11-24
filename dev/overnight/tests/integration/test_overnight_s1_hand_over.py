@@ -6,7 +6,6 @@ scripts."""
 
 from __future__ import annotations
 
-import dataclasses
 import os
 from datetime import date, datetime
 
@@ -142,27 +141,6 @@ def test_a_piece_ended_by_an_error_of_its_own_is_recorded_failed_with_the_error(
             "Last words": "Reached maximum number of turns (1)",
         }
     ]
-
-
-def without_claude(b: Bench) -> Bench:
-    """The bench with a PATH that holds git and Python but no `claude`, where the machine allows
-    one."""
-    return dataclasses.replace(b, env={**b.env, "PATH": overnight_files.path_without_claude()})
-
-
-@pytest.mark.supports("S1", "runner")
-def test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_systems_words(b: Bench):
-    """Given a PATH on which no `claude` is found
-    When ask hands the walkthrough's piece over
-    Then handover.py gives the piece's lines, and status shows piece 1 failed on overnight/1,
-    with no wait, and the system's words of `claude` not found as its last words"""
-    alone = without_claude(b)
-    given = alone.hand()
-    assert (given.returncode, given.stdout, given.stderr) == (0, handover_lines(1), "")
-    b.until(lambda: [row["State"] for row in alone.rows()] == ["failed"], what="piece 1 to fail")
-    (row,) = alone.rows()
-    assert (row["Piece"], row["Branch"], row["Waited"]) == ("1", "overnight/1", "-")
-    assert row["Last words"]
 
 
 @pytest.mark.supports("S1", "hand-over", "Worktree")

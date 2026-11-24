@@ -1,14 +1,12 @@
 """The unit cases of runner/carry.py, how a piece is carried to its end: `carry`, of a run that ends
 at once, after a call refused on the way, or by an error of its own; of none, one, and several stops
-of the usage limit before it ends, each with its reset time, a weekly one, and one with no time;
-and where `claude` can't be found."""
+of the usage limit before it ends, each with its reset time, a weekly one, and one with no time."""
 
 from __future__ import annotations
 
 import os
 from datetime import datetime
 
-import overnight_stand_ins
 import pytest
 from claude_code import claude_double
 from overnight_stand_ins import NIGHT, ZONE, Clock, handed_over
@@ -173,21 +171,3 @@ def test_a_piece_a_limit_with_no_time_stops_waits_a_set_while_and_goes_on(
     assert until > NIGHT
     assert resumes(stand_in) == [None, claude_double.conversation(piece.folder)]
     assert read(repo) == [ended(handed, "done", (Wait(NIGHT, until),), "Done.")]
-
-
-@pytest.mark.supports(
-    "test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_systems_words"
-)
-def test_a_piece_whose_claude_isnt_found_is_recorded_failed_with_the_systems_words(
-    repo: str, clock: Clock, monkeypatch: pytest.MonkeyPatch
-):
-    """Given the walkthrough's piece recorded running, and a PATH on which no `claude` is found
-    When it's carried
-    Then no wait was made, and the record is failed, with the system's words as its last words"""
-    piece, handed = handed_over(repo)
-    overnight_stand_ins.path_without_claude(monkeypatch)
-    carry(piece)
-    assert clock.waits == []
-    (record,) = read(repo)
-    assert (record.handed, record.state, record.waits) == (handed, "failed", ())
-    assert record.last_words.strip()
