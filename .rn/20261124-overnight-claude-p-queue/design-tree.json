@@ -165,10 +165,14 @@
    "name": "An AI that the user instructs learns from the guide alone whether overnight fits its work, and how to ask it for work so that the work runs as much as it can",
    "path": "plugins/overnight/README.md",
    "more_paths": [
-    "plugins/overnight/images/how-it-works.svg"
+    "plugins/overnight/images/how-it-works.svg",
+    "plugins/overnight/LICENSE"
    ],
    "kind": "readme",
-   "status": "done",
+   "inputs": [
+    "dev/overnight/product-vision.md"
+   ],
+   "status": "open",
    "necessary_conditions": [
     {
      "id": "N1",
@@ -193,8 +197,14 @@
     },
     {
      "id": "N4",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "where the license's full text lies",
+       "decided": "The plugin's folder holds its own LICENSE, the repository's LICENSE copied unchanged, and the License section links it as `LICENSE`, as the plugin development guide puts a copy in each plugin's folder and the repository's standalone check refuses the push of a plugin without it or with a link out of its folder. The rest of the README says what it says now.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N5",
@@ -517,7 +527,12 @@
    ]
   }
  ],
- "work": [],
+ "work": [
+  {
+   "do": "make",
+   "path": "plugins/overnight/README.md"
+  }
+ ],
  "steps": [
   {
    "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
