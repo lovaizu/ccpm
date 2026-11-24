@@ -312,13 +312,9 @@
      "good": false,
      "decisions": [
       {
-       "about": "each tool refused, in the status",
-       "decided": "S2 shows pieces handing status, for a piece stopped by a wait for an answer, each tool refused, as S1 records them and the Components strategy intends, so that the user names the missing tool at the next hand-over.",
-       "by": "reasoning"
-      },
-      {
        "about": "a piece with a call refused that went on to its end",
-       "decided": null
+       "decided": "A piece whose conversation reached its end counts by how it ended, whatever happened on the way: done where it ended, and failed where it ended by an error of its own. A call refused along the way is no stop and no wait for an answer, and nothing of it is recorded, as a refused call waits on no one and the one key result counts only the pieces that the usage limit, a wait for an answer, or the session closing stopped: \u300c\u610f\u5473\u304c\u308f\u304b\u3089\u306a\u3044\u300d\u300c\u805e\u3044\u3066\u308b\u610f\u56f3\u306f\uff1f\u76ee\u7684\u306f\uff1f\u300d\u300c\u76ee\u7684\u304b\u3089\u5224\u65ad\u3057\u305f\u3089\u805e\u304f\u5fc5\u8981\u306a\u3044\u3088\u306d PV\u304c\u4e9b\u672b\u306a\u591a\u6570\u306b\u306a\u3063\u3066\u306a\u3051\u308c\u3070\u3042\u306a\u305f\u304c\u5224\u65ad\u3067\u304d\u308b\u306f\u305a\u306a\u3093\u3060\u3051\u3069\u300d",
+       "by": "user"
       }
      ]
     },
@@ -518,10 +514,8 @@
  ],
  "work": [
   {
-   "do": "decide",
-   "path": "dev/overnight/architecture.md",
-   "condition": "N9",
-   "about": "a piece with a call refused that went on to its end"
+   "do": "make",
+   "path": "dev/overnight/architecture.md"
   }
  ],
  "steps": [
