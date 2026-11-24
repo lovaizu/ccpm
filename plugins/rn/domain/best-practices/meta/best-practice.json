@@ -171,8 +171,8 @@
      {
       "id": "N5",
       "about": "why, items",
-      "what": "Does each practice lead its maker toward its condition's state from what the people are after, by the steps that practitioners of the kind take on site, each an act on something at hand with the question to think through, and, where there are options, the criterion that picks the one bringing the people closer?",
-      "why": "A practice is where the maker learns how to bring the people to a condition's state. A maker who sees that state thinks each step toward it, while a list of acts, rules, or a standard alone gets carried out in full and piles up the trivial many. So a practice writes the acts that practitioners of the kind take, in the way the procedures page of the Google developer documentation style guide writes a procedure: one action for each step, and the step's place and goal stated before its action.",
+      "what": "Does each practice lead its maker toward its condition's state from what the people are after, by the steps that practitioners of the kind take on site, each stating what it's for before its act on something at hand, with the question to think through, and, where there are options, the criterion that picks the one bringing the people closer?",
+      "why": "A practice is where the maker learns how to bring the people to a condition's state. A maker who sees that state thinks each step toward it, while a list of acts, rules, or a standard alone gets carried out in full and piles up the trivial many. So a practice writes the acts that practitioners of the kind take, in the way the procedures page of the Google developer documentation style guide writes a procedure: one action for each step, and the step's place and goal stated before its action. A form that the schema of a best practice or its check holds, such as the order of `decide` and `make` items, stays with that check, out of the items.",
       "items": [
        {
         "at": "decide",
@@ -188,7 +188,7 @@
        },
        {
         "at": "make",
-        "text": "List the items in the order the generator takes them on site: each decision, then each step, and last, only where the condition's own question doesn't already say how to check it, how to check the result from the users' side, such as asking whether a newcomer can say the point back."
+        "text": "List the items in the order the generator takes them on site: each decision, since the maker settles the work's decisions before it makes the deliverable, then each step, and last, only where the condition's own question doesn't already say how to check it, how to check the result from the users' side, such as asking whether a newcomer can say the point back."
        },
        {
         "at": "make",
@@ -196,15 +196,11 @@
        },
        {
         "at": "make",
-        "text": "Write each item as an act on something that the generator has, such as a file, a list, or a command, with the question to think through toward the condition's state and, where there are options, the criterion that picks the one bringing the people closer, such as `Open the product vision and list its key results` in place of `Consider the quality characteristics`."
+        "text": "Write each item as what it's for, then an act on something that the generator has, such as a file, a list, or a command, with the question to think through toward the condition's state and, where there are options, the criterion that picks the one bringing the people closer, such as `To name what the readers come for, open the product vision and list its key results` in place of `Consider the quality characteristics`, since a maker who knows what an act is for judges a case that the act doesn't name."
        },
        {
         "at": "make",
-        "text": "Give an example from the deliverable's kind only where the act alone would leave the generator unsure what to open or what to write, such as the form of a sentence it must write, since an example beside a plain act is one more line to read past."
-       },
-       {
-        "at": "make",
-        "text": "Make each item one thing to take, since a role names each item it took by its ID, its condition's ID and its place, such as N6.2, and a check finds one left out."
+        "text": "Give an example from the deliverable's kind only where the act alone would leave the generator unsure what to open or what to write, such as the form of a sentence it must write, since an example beside a plain act is one more line to read past. Name a language or a tool only as such an example, so that each deliverable's plan chooses its own."
        },
        {
         "at": "make",
@@ -212,19 +208,7 @@
        },
        {
         "at": "make",
-        "text": "Mark each item `decide` where the maker takes it while it settles the work's decisions, and `make` where it takes it while it makes the deliverable. No `decide` item follows a `make` item, since the maker settles the decisions before it makes the deliverable."
-       },
-       {
-        "at": "make",
-        "text": "Where the generator must find the content before it writes it, such as the users of a product vision, say what the content serves, how to derive it from that, and when to ask the user."
-       },
-       {
-        "at": "make",
-        "text": "Write each reason and each way to find the content in the item that uses it, and the form of each slot in the template's note, so that each fact stands in one place."
-       },
-       {
-        "at": "make",
-        "text": "Name a language or a tool only as an example, so that each deliverable's plan chooses its own."
+        "text": "Where the generator must find the content before it writes it, such as the users of a product vision, say in the item that uses the content what it serves, how to derive it from that, and when to ask the user, so that each way to find the content stands in one place."
        }
       ]
      },
@@ -286,19 +270,11 @@
        },
        {
         "at": "make",
-        "text": "List each input in `inputs` by the folder name of its best practice, with in `takes` each section of its template that a condition here carries, by its heading, such as `Walkthrough` of a README. A kind that this one only runs takes none."
+        "text": "List in `inputs` each kind that N6.1 found, by the folder name of its best practice, with in `takes` each section of its template that a condition here carries, by its heading, such as `Walkthrough` of a README, and none for a kind that this one only runs. List the kinds alone, since the kinds built on this kind name it in their own `inputs`, and the plan holds the paths of each deliverable's inputs and orders the deliverable after them."
        },
        {
         "at": "make",
         "text": "Have the first practice read the sections that `inputs` takes, and say what it gets from each without naming the sections again, since a section named in two places drifts apart."
-       },
-       {
-        "at": "make",
-        "text": "Leave out the kinds built on this kind, since their best practices name it in `inputs`, and listing them here as well would write the same fact twice."
-       },
-       {
-        "at": "make",
-        "text": "Leave out the paths of the inputs, since the plan holds the paths of each deliverable's inputs and orders the deliverable after them."
        },
        {
         "at": "make",

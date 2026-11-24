@@ -11,8 +11,8 @@
     - **N4** Does the prompt give every fact that the AI can't find or know on its own, and say where the rest lies? (Context)
   - **C3** The AI's steps lead to the task's purpose, also in cases that the writer didn't foresee.
     - **N5** Does each step lead toward what the goal says the task is for, with the question the AI thinks through there from the facts at hand, and the last step reaching it? (Goal, Steps)
-    - **N6** Does each rule give the reason from which the AI decides a case that the rule doesn't name? (Steps)
-    - **N7** Does the prompt name the choices that are the user's, and how the AI hands them to the user? (Goal)
+    - **N6** Does the prompt hold a rule only where its steps' purpose and intent can't hold it, with the reason from which the AI decides a case that the rule doesn't name? (Steps)
+    - **N7** Does the prompt convey that the user gives the purpose and intent and decides, that the AI judges all that follows from them, and how the AI hands back what's the user's? (Goal)
     - **N8** Does every line change what the AI does toward the task? (the whole)
   - **C4** What must hold holds on every run, whatever the AI's variance.
     - **N9** Does a program do each step that has one right result? (Steps)
@@ -98,24 +98,28 @@ An AI that knows what each step's result is for, and thinks there from the facts
 
 ### N6
 
-Does each rule give the reason from which the AI decides a case that the rule doesn't name?
+Does the prompt hold a rule only where its steps' purpose and intent can't hold it, with the reason from which the AI decides a case that the rule doesn't name?
 
-A rule that says what it's for lets the AI apply it where the writer meant it, and judge a case that no rule names, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#add-context-to-improve-performance) say: the AI generalizes from the reason.
+An AI that holds what each step is for judges each case from it, while a rule makes its move turn on whether a case is on the rule or not, so it acts by what the rule names instead of judging, and the rules pile up the trivial many. So a prompt carries purpose and intent, and holds a rule only where intent alone can't. A rule that a program or a hook can hold goes to the program of N9 or the hook of N12. A rule that stays says what it's for, so that the AI applies it where the writer meant it, and judges a case that no rule names, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#add-context-to-improve-performance) say: the AI generalizes from the reason.
 
-1. *While making.* Write each rule as what to do, in plain words, with its reason, such as `Your response is read aloud by a text-to-speech engine, so never use ellipses, which it can't pronounce` in place of `NEVER use ellipses`.
-2. *While making.* Where a rule says always or never, say what the AI does when it can't keep the rule, such as `Never push to main. Where a push is needed, hand it back as a question.`
-3. *While making.* In place of a list of edge cases, give the way of judging and a few examples that are like the real requests and unlike one another.
-4. *While making.* Write each rule in plain case and calm words, since capitals and warnings for emphasis make the AI apply the rule too widely.
-5. *While making.* Think of a case that the rule doesn't name, read only the rule and its reason, and check that they lead where the writer would go. Where they don't, fix the reason.
+1. *While deciding.* To keep the prompt to intent, go through each thing that the AI must do or keep in each step, and ask whether an AI that holds the step's result and what it's for, as N5.2 gives them, would do it on its own. Where it would, leave it to that intent.
+2. *While deciding.* To hold what must hold on every run, ask of each thing left whether a program or a hook can hold it, such as `state changes go through the scripts` or `the result's form is checked by its schema`. Where one can, give it to the program of N9 or the hook of N12, and write in the step only what the program or the hook is for.
+3. *While making.* Write each rule that's left as what to do, in plain words, with its reason, such as `Your response is read aloud by a text-to-speech engine, so never use ellipses, which it can't pronounce` in place of `NEVER use ellipses`.
+4. *While making.* Where a rule says always or never, say what the AI does when it can't keep the rule, such as `Never push to main. Where a push is needed, hand it back as a question.`
+5. *While making.* In place of a list of edge cases, give the way of judging and a few examples that are like the real requests and unlike one another, since a list makes the AI act on whether a case is on it.
+6. *While making.* Write each rule in plain case and calm words, since capitals and warnings for emphasis make the AI apply the rule too widely.
+7. *While making.* Think of a case that the rule doesn't name, read only the rule and its reason, and check that they lead where the writer would go. Where they don't, fix the reason.
 
 ### N7
 
-Does the prompt name the choices that are the user's, and how the AI hands them to the user?
+Does the prompt convey that the user gives the purpose and intent and decides, that the AI judges all that follows from them, and how the AI hands back what's the user's?
 
-The user's purpose and intent stay the user's only if the AI hands them the choices that are theirs.
+The user's purpose and intent stay the user's only if the AI hands them what's theirs, and the user isn't asked what their purpose already settles only if the AI judges the rest. A list of the user's choices makes the AI ask at each branch on the list and decide at each other, so the prompt conveys the intent, from which the AI tells a choice of the user's at a branch that the writer didn't foresee, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#balancing-autonomy-and-safety) have the AI act on its own and stop before an action that's hard to undo or touches what others share.
 
-1. *While deciding.* Go through the steps, and each branch and each question put to the story's role in the architecture's Sequences, and mark each choice that's the user's: each action that's hard to undo, touches what others share, or destroys something, as the list in Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#balancing-autonomy-and-safety) gives, such as a force push, a comment on a pull request, or deleting a branch, and each choice between options that serve the purpose equally, where the AI has no ground to pick one. Leave every other choice to the AI.
-2. *While making.* Name each of the user's choices in the step where it comes, with how it reaches the user. A prompt that runs as a subagent can't talk to the person, so it ends with the result that Sequences give for a question to its caller, with the point, the options, and its recommendation, such as `End with asks, naming the branch to push and your recommendation.` A prompt that runs in the main conversation asks the person in a message, as N14 says, one choice at a time.
+1. *While deciding.* To find what the task takes from the user, read the user stories whose sequences the prompt's component takes part in, and each question put to the story's role in the architecture's Sequences, and write what the story's role gives the task, its purpose and intent, and what the AI judges from them, such as `The developer says what the change is for, and the AI chooses how to reach it`.
+2. *While deciding.* To know what the AI hands back, decide from that intent what the purpose leaves open, such as options that serve it equally where the AI has no ground to pick one, and which actions of the task are hard to undo, touch what others share, or destroy something, as Anthropic's prompting best practices list them, such as a force push, a comment on a pull request, or deleting a branch.
+3. *While making.* Write in the Goal that intent with its reason, in place of a list of the user's choices, such as `The developer gives what the work is for, and decides it. Judge what follows from that yourself, and hand back only what it leaves open, or an action that's hard to undo or touches what others share, since the developer wants the work done without being asked what their purpose already says.`
+4. *While making.* Write how what's the user's reaches them. A prompt that runs as a subagent can't talk to the person, so it ends with the result that Sequences give for a question to its caller, with the point, the options, and its recommendation. A prompt that runs in the main conversation asks the person in a message, as N14 says, one choice at a time, so that the person decides each from its first lines.
 
 ### N8
 
@@ -182,11 +186,10 @@ Can the person decide from the first lines of each message that the AI writes to
 
 The person approves from the conclusion and its grounds, and reads further only where these leave them unsure. The [inverted pyramid](https://www.nngroup.com/articles/inverted-pyramid/) puts the conclusion first.
 
-1. *While deciding.* From N7.1 and N13.4, list each message that the prompt has its AI write to a person: each of the user's choices that it asks in the main conversation, and each result that a person reads. Where it writes none, such as a subagent whose result a script reads, leave the prompt as it is.
-2. *While making.* In the prompt's Output section, write the order of each message, with its reason: first the context and the conclusion, what the message asks or reports and why, then the grounds, then the purpose and what it should be, and the rest only once the person asks, since the person decides from the first lines.
-3. *While making.* In the Output section, write the form of each message: a few plain sentences with no headings or labels, in short paragraphs of one point each.
-4. *While making.* In the Output section, write the terms that the person uses, taken from the user stories and the README, and that the AI says a term of its own in everyday words or leaves it out.
-5. *While making.* In the Output section, write that each message asks for one decision, alone on its last line, with one recommendation, such as `End with the one choice you need, and the option you recommend.`
+1. *While deciding.* From N7.2 and N13.4, list each message that the prompt has its AI write to a person: each of the user's choices that it asks in the main conversation, and each result that a person reads. Where it writes none, such as a subagent whose result a script reads, leave the prompt as it is.
+2. *While making.* In the prompt's Output section, write what each message is for and the intent from which the AI shapes it, such as `The developer decides from your first lines, so open with what you ask or report and why, then its grounds, in a few plain sentences, and give the rest once they ask.`
+3. *While making.* In the Output section, give the terms that the person uses, from the user stories and the README, since the AI can't know them on its own, as N4 says.
+4. *While making.* Read the Output section as the AI would at a message that the writer didn't foresee, such as a blocker with two ways past it, and ask whether the intent alone leads to a message that the person decides from its first lines. Where it doesn't, fix the intent, and add a rule with its reason only where no wording of the intent leads there, as N6 says.
 
 ### N15
 
@@ -195,11 +198,9 @@ Does each claim that the AI reports rest on a check it ran on the real thing, wi
 The caller can't tell a claim that the AI checked from one it guessed, and acts on both alike, so Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#minimizing-hallucinations-in-agentic-coding) have the AI open what a claim rests on before it makes the claim.
 
 1. *While deciding.* From N13.3's list, take each claim that the AI reports, and name the check on the real thing that it rests on: the file to read, the command to run, or the record to open, a command that comes back pass or fail where the product has one, such as check.sh's exit code for `the checks pass`.
-2. *While making.* In the step that makes each claim, write its check from N15.1 for the AI to run before it reports the claim, with the reason, such as `Run check.sh before you report that the checks pass, since the caller acts on the report as checked.` Write that no claim rests on memory, a guess, or another agent's summary.
-3. *While making.* Where a check is a command, write that the AI judges it by its pass or fail result, such as the exit code, not by a few lines of its output.
-4. *While making.* Where the AI reports on another agent's work, write that it opens the records and files that the agent names, and judges them against the task's purpose, not from the agent's summary.
-5. *While making.* Where a claim names several items, such as every file changed, write that the AI checks each one, not a sample.
-6. *While making.* In the Output section, write that the AI states what it checked, what it didn't, and why, so that the report never reads as covering more than it did.
+2. *While making.* In the step that makes each claim, write its check from N15.1 for the AI to run before it reports the claim, with what the check is for, such as `Run check.sh before you report that the checks pass, since the caller acts on the report as checked.`
+3. *While making.* In the Output section, write the intent from which the AI tells what it may claim, such as `The caller acts on each claim as checked, so claim only what you saw on the real thing in this run, such as a command's pass or fail, a file you opened, or a record you read, and say what you didn't check and why.`
+4. *While making.* Read the step and the Output section as the AI would where a report could go beyond its checks, such as a command judged by a few lines of its output, another agent's work judged by its summary, or many files judged by a sample, and ask whether the intent alone leads the AI to check the real thing. Where it doesn't, fix the intent, and add a rule with its reason only where no wording of the intent leads there, as N6 says.
 
 ### N16
 

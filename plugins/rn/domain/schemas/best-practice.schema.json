@@ -110,7 +110,7 @@
           "minLength": 1
         },
         "items": {
-          "description": "Each decision with its question and criterion, each step, and the check from the users' side, in the order the maker takes them. An item's ID is its condition's ID and its place, such as N6.2, which a role names in its result once it has taken the item.",
+          "description": "Each decision with its question and criterion, each step, and the check from the users' side, each with what it's for, in the order the maker takes them. An item's ID is its condition's ID and its place, such as N6.2, by which another item names it.",
           "type": "array",
           "minItems": 1,
           "items": {
