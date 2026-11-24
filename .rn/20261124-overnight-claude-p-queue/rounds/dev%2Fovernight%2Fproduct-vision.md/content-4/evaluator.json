@@ -1,0 +1,13 @@
+{
+ "result": "judged",
+ "good": [
+  {"condition": "N1", "lines": ["- user\\", "  An AI that a person instructs, such as Claude Code, which leaves work to overnight directly or", "  through a plugin."]},
+  {"condition": "N2", "lines": ["- O1: the user has the work it left run as far as it can overnight, while nobody answers."]},
+  {"condition": "N3", "lines": ["- Waiting out the usage limit, for O1\\", "  A piece that the limit stops goes on after each reset, however often the limit comes back.", "  The user reads how far each piece ran and what stopped it, and takes in what it made."]},
+  {"condition": "N4", "lines": ["  - KR1.1: the share of the night's pieces stopped by morning for a reason other than their own", "    content. Lower is better."]},
+  {"condition": "N6", "lines": ["overnight keeps each piece left to it running until only its own content stops it, with nobody", "there.", "- Running past the session, for O1\\", "  Each piece goes on after the session that left it closes."]}
+ ],
+ "more": [
+  {"condition": "N5", "good_when": "A developer working on the morning record finds the objective that work serves and a key result that tells whether their change helps the user take in, in the morning, what came of the night, as the goal's second half asks; now O1 and KR1.1 cover only how far the pieces run, so a change to the morning record can't be judged by any of them."}
+ ]
+}

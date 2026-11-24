@@ -8,11 +8,9 @@
 
 ## Objectives and key results
 
-- O1: the user gets the work it left before night done by morning, while nobody answers.
-  - KR1.1: the share of the night's pieces whose whole result the user can't take in by morning.
-    Lower is better.
-  - KR1.2: the steps the user takes to leave the night's work and to take in its results. Fewer is
-    better.
+- O1: the user has the work it left run as far as the work's own content lets it.
+  - KR1.1: the share of the pieces of work left to overnight that stop for a reason other than
+    their content. Lower is better.
 
 The first key result of each objective comes first. Keep a change that improves a key result
 only if none before it gets worse.
@@ -21,13 +19,12 @@ law. They show whether a change brought its objective closer.
 
 ## Concept
 
-overnight carries each piece left to it to its end, waiting out the usage limit, with nobody there.
+overnight keeps each piece left to it running until only the piece's own content stops it, with
+nobody there.
 
-- A start at the set time, for O1\
-  The night's work uses the usage window only after the person's session with the user ends.
+- Waiting out the usage limit, for O1\
+  A piece that the limit stops goes on after each reset, however often the limit comes back.
 - Nothing to answer, for O1\
-  Each piece gets its tools and a folder of its own up front and outlives that session.
-- Several pieces at once, each waiting on its own, for O1\
-  A piece stopped by the limit holds back no other, so the user gets more work done by morning.
-- A morning record of each piece, for O1\
-  The user reads which pieces finished, and takes in each whole result.
+  Each piece gets its tools and a folder of its own up front, so no prompt waits for an answer.
+- Running past the session, for O1\
+  Each piece goes on after the session that left it closes.

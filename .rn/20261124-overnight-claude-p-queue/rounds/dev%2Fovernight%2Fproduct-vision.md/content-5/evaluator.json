@@ -1,0 +1,51 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- user\\",
+    "  An AI that a person instructs, such as Claude Code, which leaves work to overnight directly or",
+    "  through a plugin."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user has the work it left run as far as its own content lets it."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "overnight keeps each piece left to it running until only its own content stops it, with nobody",
+    "  A piece that the limit stops goes on after each reset, however often the limit comes back.",
+    "  Each piece gets its tools and a folder of its own up front, so no prompt waits for an answer.",
+    "  Each piece goes on after the session that left it closes."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the pieces left to overnight that stop for a reason other than their",
+    "    content. Lower is better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user has the work it left run as far as its own content lets it."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight keeps each piece left to it running until only its own content stops it, with nobody",
+    "- Waiting out the usage limit, for O1\\",
+    "- Nothing to answer, for O1\\",
+    "- Running past the session, for O1\\"
+   ]
+  }
+ ],
+ "more": []
+}

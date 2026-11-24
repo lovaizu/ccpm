@@ -1,0 +1,136 @@
+{
+ "goal": "The user has the AI they instruct run work overnight and receive its results in the morning: \u300cAI \u304c\u4f5c\u696d\u3092\u591c\u306b\u6d41\u3057\u3066\u304a\u304d\u3001\u671d\u306b\u7d50\u679c\u3092\u53d7\u3051\u53d6\u308c\u308b\u3002\u300d Once it holds, that AI, whether it calls overnight itself or through another plugin, leaves the work to run through the night while nobody answers, and in the morning takes in what came of it, where before the same work ran in the daytime.",
+ "language": "English",
+ "deliverable": {
+  "name": "overnight's developers know whom overnight serves and the one way it brings them the night's results in the morning",
+  "path": "dev/overnight/product-vision.md",
+  "kind": "product-vision",
+  "inputs": [],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": [
+     {
+      "about": "Roles",
+      "decided": "One role: the AI that the user instructs, whether it calls overnight itself or through another plugin. A plugin that calls overnight is that AI's way of calling it, and has no objective or key result of its own: \u300c\u30e6\u30fc\u30b6\u30fc\u304cAI\u306b\u6307\u793a\u3057\u3066\u3001AI\u304c\u6bb5\u53d6\u308b\u3001\u306a\u306e\u3067\u5229\u7528\u8005\u306fAI\u300d\u300cA\u3092\u30d7\u30e9\u30b0\u30a4\u30f3\u3067\u547c\u3073\u51fa\u3057\u305f\u3089\u540c\u3058\u3060\u3088\u306d\uff1f\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": [
+     {
+      "about": "the objective",
+      "decided": "The objective is that the work the user left runs as far as it can through the night, not that it gets done, as whether a piece gets done depends on its content: \u300c\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u3053\u3068\u3001\u306a\u306e\u3067\u306f\uff1f\u300d\u300c\u6700\u5f8c\u307e\u3067\u304b\u3069\u3046\u304b\u306f\u4f5c\u696d\u6b21\u7b2c\u3060\u3088\u306d\u3001\u3001\u3001\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": [
+     {
+      "about": "Key results",
+      "decided": "One key result alone: the share of the pieces left for the night that reach the morning stopped for a reason other than their own content, such as the usage limit, waiting for an answer to a prompt, or the session being closed. Lower is better. No key result counts the steps the user takes, and none counts whether a piece succeeds or reaches its end, as that depends on its content: \u300c\u826f\u3057\u60aa\u3057\u306e\u6e2c\u308a\u65b9 \u9055\u3046\u306e\u3067\u306f\uff1f \u4e2d\u8eab\u6b21\u7b2c\u306e\u5185\u5bb9\u3092\u7701\u304f\u3068\uff1f \u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u3053\u3068\u3001\u306a\u306e\u3067\u306f\uff1f \u610f\u56f3\u306e\u5185\u5bb9\u3063\u3066\u305d\u3046\u3044\u3046\u3053\u3068\u3067\u306f\uff1f\u300d\u300c\u6700\u5f8c\u307e\u3067\u304b\u3069\u3046\u304b\u306f\u4f5c\u696d\u6b21\u7b2c\u3060\u3088\u306d\u3001\u3001\u3001\u300d\u300cA \u306a\u306e\u3067\u30ed\u30b8\u30c3\u30af\u3060\u3088\u306d\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": [
+     {
+      "about": "who decides the one way and its ideas",
+      "decided": "The maker decides the one way and each idea that carries it from the goal and the run's records, and asks the user none of them, as the user confirms only the purpose and the intent: \u300c\u76ee\u7684\u306f\u3059\u3067\u306b\u4f1d\u3048\u3066\u308b\u3088\u306d\uff1f \u305d\u308c\u624b\u6bb5\u3060\u3088\u306d\uff1f\u300d \u300c\u79c1\u306f\u76ee\u7684\u3068\u610f\u56f3\u3060\u3051\u78ba\u8a8d\u3057\u305f\u3044\u3001\u4f7f\u3044\u65b9\u3084\u5b9f\u88c5\u306b\u8208\u5473\u306a\u3044\u3001\u5b9f\u73fe\u3057\u3066\u6b32\u3057\u3044\u300d",
+      "by": "user"
+     },
+     {
+      "about": "what the one way and its ideas serve",
+      "decided": "The one way and each idea of the concept serve the key result, keeping pieces from stopping for a reason other than their content, and the one way promises no piece its end: \u300c\u610f\u56f3\u306e\u5185\u5bb9\u3063\u3066\u305d\u3046\u3044\u3046\u3053\u3068\u3067\u306f\uff1f\u300d\u300c\u6700\u5f8c\u307e\u3067\u304b\u3069\u3046\u304b\u306f\u4f5c\u696d\u6b21\u7b2c\u3060\u3088\u306d\u3001\u3001\u3001\u300d",
+      "by": "user"
+     },
+     {
+      "about": "a piece that the usage limit stops again and again",
+      "decided": "The concept holds no idea of giving a piece up: such a piece waits out each reset like any other piece.",
+      "by": "reasoning"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/product-vision",
+ "stage": "content",
+ "number": 4,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Fproduct-vision.md/content-4",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Fproduct-vision.md-content-4/",
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- user\\",
+    "  An AI that a person instructs, such as Claude Code, which leaves work to overnight directly or",
+    "  through a plugin."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers.",
+    "overnight carries each piece left to it to its end, waiting out the usage limit, with nobody there."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the night's pieces whose whole result the user can't take in by morning.",
+    "    Lower is better.",
+    "  - KR1.2: the steps the user takes to leave the night's work and to take in its results. Fewer is",
+    "    better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight carries each piece left to it to its end, waiting out the usage limit, with nobody there.",
+    "- A start at the set time, for O1\\",
+    "  The night's work uses the usage window only after the person's session with the user ends.",
+    "- Nothing to answer, for O1\\",
+    "  Each piece gets its tools and a folder of its own up front and outlives that session.",
+    "- Several pieces at once, each waiting on its own, for O1\\",
+    "  A piece stopped by the limit holds back no other, so the user gets more work done by morning.",
+    "- A morning record of each piece, for O1\\",
+    "  The user reads which pieces finished, and takes in each whole result."
+   ]
+  }
+ ]
+}

@@ -1,0 +1,60 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/product-vision.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- user\\",
+    "  An AI that a person instructs, such as Claude Code, which leaves work to overnight directly or",
+    "  through a plugin."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user has the work it left run as far as it can overnight, while nobody answers."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- O1: the user has the work it left run as far as it can overnight, while nobody answers.",
+    "overnight keeps each piece left to it running until only its own content stops it, with nobody",
+    "there."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the night's pieces stopped by morning for a reason other than their own",
+    "    content. Lower is better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user has the work it left run as far as it can overnight, while nobody answers."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight keeps each piece left to it running until only its own content stops it, with nobody",
+    "there.",
+    "- Waiting out the usage limit, for O1\\",
+    "  A piece that the limit stops goes on after each reset, however often the limit comes back.",
+    "- Nothing to answer, for O1\\",
+    "  Each piece gets its tools and a folder of its own up front, so no prompt waits for an answer.",
+    "- Running past the session, for O1\\",
+    "  Each piece goes on after the session that left it closes.",
+    "- Several pieces at once, each on its own, for O1\\",
+    "  A piece that waits holds back no other, so each piece starts that night.",
+    "- A morning record of each piece, for O1\\",
+    "  The user reads how far each piece ran and what stopped it, and takes in what it made."
+   ]
+  }
+ ]
+}
