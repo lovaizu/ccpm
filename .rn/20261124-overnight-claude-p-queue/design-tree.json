@@ -363,6 +363,10 @@
        "about": "how the next piece gets its number",
        "decided": "The document says from what the hand-over takes the next piece's number, so that on each later night, with earlier pieces' branches, worktrees, and records kept or some of them removed, each new piece gets a folder and a branch that no earlier piece holds, and its record's folder carries the same number.",
        "by": "reasoning"
+      },
+      {
+       "about": "which part looks at the earlier branches and worktrees for the next number",
+       "decided": null
       }
      ]
     },
@@ -519,8 +523,10 @@
  ],
  "work": [
   {
-   "do": "make",
-   "path": "dev/overnight/architecture.md"
+   "do": "decide",
+   "path": "dev/overnight/architecture.md",
+   "condition": "N13",
+   "about": "which part looks at the earlier branches and worktrees for the next number"
   }
  ],
  "steps": [
