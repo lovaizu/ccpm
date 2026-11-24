@@ -46,7 +46,7 @@ a Python app's repository, the person types:
 Fix issues #12, #15, and #18 while I sleep. Each has a failing test. I'll review the branches in the morning.
 ```
 
-You read the issues, and settle each question in each piece's prompt, as no one answers while the
+You read the issues and settle each question in each piece's prompt, as no one answers while the
 pieces run. For #12, you invoke the skill `overnight:ask` with:
 
 ```text
@@ -63,7 +63,7 @@ Tools: Read, Edit, Bash(pytest:*), Bash(git add:*), Bash(git commit:*)
 /overnight:status shows how it goes.
 ```
 
-You hand over #15 and #18 the same way, and tell the person:
+You hand over #15 and #18 the same way and tell the person:
 
 ```text
 Three pieces run in the background, each on its own branch. They go on after you close this session, and wait out the usage limit if it comes.
@@ -117,4 +117,4 @@ No. A piece runs with only the tools you named, and its changes stay on its bran
 
 ## License
 
-[MIT](../../LICENSE)
+[MIT](LICENSE)

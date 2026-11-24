@@ -1,0 +1,100 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that keeps work from stopping by usage limits, unanswered prompts,",
+    "or closed sessions.",
+    "overnight is for you when you're an AI, such as Claude Code, given work that outlasts the person's",
+    "stay. With it, you have that work run on in pieces through the usage limit, unanswered prompts, and",
+    "your session's end."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't get past the usage limit sooner, such as by another account: it waits for each",
+    "  reset.",
+    "- overnight doesn't let a piece ask anyone anything while it runs: settle each question in its",
+    "  prompt.",
+    "- overnight doesn't run while the computer is off or asleep: the person leaves it on and awake."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: overnight has no release yet, so nothing here runs, and this README draws what it",
+    "builds toward."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "[MIT](LICENSE)"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "At the end, you have three issues fixed on their own branches, though the limit came and your",
+    "Fix issues #12, #15, and #18 while I sleep. Each has a failing test. I'll review the branches in the morning.",
+    "Fix issue #12: parse_date raises on \"2026-02-29 00:00\". Make tests/test_dates.py::test_leap_day pass, and change no other test. Run pytest to check, then commit on this branch.",
+    "Tools: Read, Edit, Bash(pytest:*), Bash(git add:*), Bash(git commit:*)",
+    "0 of 3 pieces stopped by the usage limit, a wait for an answer, or the session closing."
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or your session",
+    "closing."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### Does the work go on once the usage limit stops it at 01:00?",
+    "A piece that the limit stops goes on in its conversation after each reset, however often the limit",
+    "### Does the work sit all night at a prompt that no one answers?",
+    "Each piece gets the tools you name and a Git worktree of its own up front, so no prompt waits.",
+    "Without asking anyone, overnight refuses each call to a tool you didn't name, so name each tool the",
+    "### Does the work end when your session closes?",
+    "Each piece runs as a process apart from your session, so closing the session leaves it running. In",
+    "### Can a piece do more than you let it?",
+    "No. A piece runs with only the tools you named, and its changes stay on its branch until merged."
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- Claude Code: `claude --version` shows it.",
+    "- Python 3.9 or later, run as `python3`: `python3 --version` shows it.",
+    "- A Git repository that holds the work: at its root, `git rev-parse --show-toplevel` shows its",
+    "claude plugin marketplace add lovaizu/ccpm",
+    "claude plugin install overnight@ccpm",
+    "In the person's next session, the skill `overnight:status` shows `No pieces yet`."
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "- [Issues](https://github.com/lovaizu/ccpm/issues): where you or the person ask for help or report a",
+    "  fault."
+   ]
+  }
+ ],
+ "more": []
+}

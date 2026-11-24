@@ -1,0 +1,83 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/README.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that keeps work from stopping by usage limits, unanswered prompts,",
+    "or closed sessions.",
+    "overnight is for you when you're an AI, such as Claude Code, given work that outlasts the person's",
+    "stay. With it, you have that work run on in pieces through the usage limit, unanswered prompts, and",
+    "your session's end."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't get past the usage limit sooner, such as by another account: it waits for each",
+    "- overnight doesn't let a piece ask anyone anything while it runs: settle each question in its",
+    "- overnight doesn't run while the computer is off or asleep: the person leaves it on and awake."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: overnight has no release yet, so nothing here runs, and this README draws what it",
+    "builds toward."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "[MIT](LICENSE)"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "At the end, you have three issues fixed on their own branches, though the limit came and your",
+    "0 of 3 pieces stopped by the usage limit, a wait for an answer, or the session closing."
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or your session",
+    "closing.",
+    "![How overnight keeps each piece from stopping by the usage limit, a wait for an answer, or the session closing](images/how-it-works.svg)"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### Does the work go on once the usage limit stops it at 01:00?",
+    "### Does the work sit all night at a prompt that no one answers?",
+    "Each piece gets the tools you name and a Git worktree of its own up front, so no prompt waits.",
+    "Without asking anyone, overnight refuses each call to a tool you didn't name, so name each tool the",
+    "### Does the work end when your session closes?",
+    "### Can a piece do more than you let it?"
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "- [Issues](https://github.com/lovaizu/ccpm/issues): where you or the person ask for help or report a"
+   ]
+  }
+ ]
+}
