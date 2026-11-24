@@ -4,6 +4,7 @@ part that holds the item out of the bench's copy of rn where TRACE_BROKEN is 1."
 
 from __future__ import annotations
 
+import json
 import os
 
 import pytest
@@ -13,8 +14,10 @@ from rn_bench import (
     CHANGELOG,
     Bench,
     apart_tree,
+    command_signed,
     cut_move,
     cut_of,
+    denial,
     evaluated,
     evaluator_cut,
     generated,
@@ -22,6 +25,7 @@ from rn_bench import (
     judged_command,
     next_round,
     pointed,
+    pruned,
     put_up,
     refactor_made,
     refactored,
@@ -34,6 +38,7 @@ from rn_bench import (
     signed_apart,
     signed_plan,
     to_plan_signoff,
+    tree_written,
     trial_made,
     wrote,
 )
@@ -63,8 +68,8 @@ def test_a_tree_change_out_of_form_is_refused_at_its_commit(b: Bench, broken: No
 
 @pytest.mark.supports("P1.2", "Round")
 def test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut(b: Bench, broken: None):
-    """Given a run whose command's generator ended with a point, kept by the orchestrator as an
-    open decision of N1
+    """Given a run whose command's generator ended with a point, kept by the pruner as an open
+    decision of N1
     When the orchestrator writes the generator's Cut
     Then tree.py cut gives 1 saying the command waits on the user"""
     pointed(b, signed_plan(b), "Should a line's quantity default to 1?")
@@ -186,13 +191,14 @@ def test_no_evaluator_is_due_after_a_refactor_round(b: Bench, broken: None):
 @pytest.mark.supports("P3.3", "Round")
 def test_a_deliverable_short_after_two_content_rounds_gets_no_third(b: Bench, broken: None):
     """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2
-    When the orchestrator holds N2 and N3 good, and writes the generator's Cut
-    Then tree.py cut gives 1 saying the command waits on the orchestrator"""
+    When the pruner holds N2 and N3 good, and the orchestrator writes the generator's Cut
+    Then tree.py cut gives 1 saying the command waits on the pruner, to keep each finding left as
+    an open decision"""
     short_twice(b)
     reviewed(b, held(b, COMMAND, ["N2", "N3"]), "The Round's findings.")
     refused = b.script(*cut_move(b, "generator", COMMAND))
     assert refused.code == 1
-    assert "orchestrator" in refused.err
+    assert "waits on the pruner, to keep each finding left as an open decision" in refused.err
 
 
 # P4: each role on its own work.
@@ -300,3 +306,91 @@ def test_a_new_conversation_picks_up_the_run_from_its_files(b: Bench, broken: No
     to_plan_signoff(b)
     b.ran("repository", "pause", b.run)
     assert b.ran("repository", "find").split() == [b.run]
+
+
+# P7: only what the people can't reach their aim without.
+
+
+@pytest.mark.supports("P7.1", "hook", "orchestrator", "Design tree")
+@pytest.mark.parametrize("tool", ["Write", "Edit"])
+def test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner(
+    b: Bench, broken: None, tool: str
+):
+    """Given a run whose goal the pruner wrote and the orchestrator committed
+    When the orchestrator, the main conversation, which names no agent, calls Write or Edit on the
+    run's design tree, and Claude Code runs the hook
+    Then the hook denies the call, its reason naming the tree and telling the writer to hand the
+    fact to a new pruner, so that no fact enters the tree unweighed"""
+    requested(b)
+    reason = denial(b.script("hook", given=tree_written(b, None, tool)))
+    assert reason is not None, "the orchestrator's write is denied"
+    assert b.tree_path in reason
+    assert "hand the fact you'd write to a new pruner" in reason
+
+
+@pytest.mark.supports("P7.2", "pruner", "Design tree")
+def test_a_done_deliverable_keeps_its_decisions_and_is_read_again_with_one_resting_on_it(
+    b: Bench, broken: None
+):
+    """Given a run whose command, holding the user's answer about the tax rate in its N1, was
+    judged good, put up, and signed off
+    When a new pruner adds a changelog that rests on the command, and the orchestrator runs
+    tree.py touched
+    Then the command is done keeping its conditions, its N1 holding the user's answer, and
+    tree.py touched lists the command among the nodes to weigh again"""
+    command_signed(b)
+    design_tree = b.tree()
+    command = design_tree["deliverables"][1]
+    tax = rn_files.decision(rn_files.TAX_ABOUT, rn_files.TAX_ANSWER, "user")
+    assert command == rn_files.done_node(
+        rn_files.COMMAND_NAME, COMMAND, "light", decisions={"N1": [tax]}
+    )
+    changelog = rn_files.open_node("The changes", CHANGELOG, "light", [COMMAND])
+    design_tree["deliverables"].append(changelog)
+    pruned(b, design_tree)
+    assert "/deliverables/1" in b.ran("tree", "touched", b.run).split()
+
+
+@pytest.mark.supports("P7.3", "hook", "scripts", "Design tree")
+def test_a_makers_write_to_the_design_tree_is_denied_while_the_scripts_write_it(
+    b: Bench, broken: None
+):
+    """Given a run whose plan is put up for the user's sign-off
+    When rn's generator calls Write on the run's design tree, and Claude Code runs the hook; and
+    then the user types /rn:ty, and the orchestrator records it by tree.py signoff
+    Then the hook denies the generator's write, telling it to hand the fact on, and tree.py signoff
+    writes the tree by Python, through no tool that the hook sees, the plan done"""
+    to_plan_signoff(b)
+    reason = denial(b.script("hook", given=tree_written(b, "rn:generator")))
+    assert reason is not None, "the generator's write is denied"
+    assert "hand the fact you'd write to a new pruner" in reason
+    b.ran("tree", "signoff", b.run)
+    assert b.tree()["deliverables"][0]["status"] == "done"
+
+
+@pytest.mark.supports("P7.3", "S1", "generator", "Cut", "Round")
+def test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding(
+    b: Bench, broken: None
+):
+    """Given a run whose command's evaluator judged Round content-1, N1 with more
+    When the pruner writes the remedy that it keeps of the finding as a decision of N1, holds N2
+    and N3 good and N1 not, and the orchestrator writes the generator's Cut
+    Then the Cut lies in Round content-2, its deliverable holding the remedy in N1, its last_good
+    the generator's good of content-1, and nothing of the evaluator's findings, so that the
+    generator mends by the remedy that the pruner weighed alone"""
+    finding = "The accountant prints an invoice with a comma in a line."
+    judged_command(b, {"N1": finding})
+    remedy = rn_files.decision("a comma in a line", "A line's comma is read as a decimal.", "maker")
+    design_tree = held(b, COMMAND, ["N2", "N3"], {"N1": [remedy]})
+    cut_path = reviewed(
+        b, design_tree, "The Round's findings.", [cut_move(b, "generator", COMMAND)]
+    )[0].strip()
+    first = rn_files.round_of(b.folder, COMMAND, "content", 1)
+    second = rn_files.round_of(b.folder, COMMAND, "content", 2)
+    assert os.path.join(b.repo, cut_path) == os.path.join(second, "generator-cut.json")
+    given = cut_of(b, cut_path)
+    assert remedy in given["deliverable"]["necessary_conditions"][0]["decisions"]
+    made = rn_files.read_json(os.path.join(first, "generator.json"))
+    assert given["last_good"] == made["good"]
+    assert "findings" not in given
+    assert finding not in json.dumps(given)

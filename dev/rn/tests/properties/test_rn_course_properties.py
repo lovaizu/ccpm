@@ -36,7 +36,7 @@ from rounds.files import Round
 # The most Rounds of each stage: of content, as the README's How it works says, "twice at most";
 # of refactoring, one, as the architecture's strategy of a new generator for it says.
 MOST = {"content": 2, "refactor": 1}
-ROLES = {"generator", "evaluator", "answer", "orchestrator", "sign-off"}
+ROLES = {"generator", "evaluator", "answer", "pruner", "sign-off"}
 LAST = st.sampled_from(["none", "point", "made", "judged"])
 
 
@@ -158,7 +158,7 @@ def test_no_new_round_of_a_stage_that_holds_its_most(
 ):
     """Given any deliverable's node, any course of its Rounds, and whether its kind is refactored
     When what it waits on next is found
-    Then it's one of the generator, the evaluator, the answer, the orchestrator, or the sign-off,
+    Then it's one of the generator, the evaluator, the answer, the pruner, or the sign-off,
     and a generator in a new Round is of a stage that holds fewer than its most since the last
     sign-off, two of content and one of refactoring
     (Invariant, resting on P3.3 and P3.2.)"""

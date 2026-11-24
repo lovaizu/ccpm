@@ -1,22 +1,21 @@
 """The unit cases of repository/worktree.py: `new`, from the default branch that origin's HEAD
 names: main, trunk with the user on another branch with work of their own, and trunk while the user
-is on main, whose head differs; with each refusal: an empty goal, a run of the name already there, a
-folder that isn't a repository, a repository with no commit, and one whose origin's HEAD names no
-branch, with a remote or with none; `newest`, from the runs' branches, with no repository, no run,
-one, and several, newest by its last commit, a newer run whose every deliverable is done or that
-holds no design tree passed over, branches that nearly match a run's left out, a run's newer local
-branch deciding over origin's, and the refusal of a design tree that isn't JSON; and `found`, with
-the run's worktree there, removed with its local branch kept, its folder deleted, a run that only
-origin holds in a fresh clone, one that another clone pushed since the last fetch, one that GitHub
-no longer holds, whose ref of origin's branch is left here, alone or beside an older local run,
-origin out of reach, and a worktree that git can't make; `removed`, with a change not
+is on main, whose head differs, each with the goal open; with each refusal: a run of the name
+already there, a folder that isn't a repository, a repository with no commit, and one whose origin's
+HEAD names no branch, with a remote or with none; `newest`, from the runs' branches, with no
+repository, no run, one, and several, newest by its last commit, a newer run whose every deliverable
+is done or that holds no design tree passed over, branches that nearly match a run's left out, a
+run's newer local branch deciding over origin's, and the refusal of a design tree that isn't JSON;
+and `found`, with the run's worktree there, removed with its local branch kept, its folder deleted,
+a run that only origin holds in a fresh clone, one that another clone pushed since the last fetch,
+one that GitHub no longer holds, whose ref of origin's branch is left here, alone or beside an older
+local run, origin out of reach, and a worktree that git can't make; `removed`, with a change not
 committed, removed here and on GitHub, of a run whose branch GitHub never held, holds, or has
 deleted since, its ref of origin's branch left here, or whose name only nearly matches GitHub's
 branches, and of no pull request, the run's open one, or an earlier run's closed or merged one of
 the same branch's name; with git or gh that can't ask GitHub or can't remove what it holds; and a
-worktree that git can't remove; and, inside herdr and
-outside, `new` and `found` with the worktree gone, and `removed`, each with herdr failing inside
-it."""
+worktree that git can't remove; and, inside herdr and outside, `new` and `found` with the worktree
+gone, and `removed`, each with herdr failing inside it."""
 
 from __future__ import annotations
 
@@ -40,10 +39,10 @@ PRACTICE = rn_files.practice("design-tree")
 CONTEXT = rn_files.context()
 
 
-def started_tree(name: str, goal: str = GOAL) -> dict[str, Any]:
-    """The tree that a run starts from, as tree.form.started's contract names it: the goal by
-    reasoning, the plan as its one deliverable, open, each condition not good, and no work."""
-    return rn_files.tree([rn_files.plan(name, good=False, goal=goal)], goal=goal, by="reasoning")
+def started_tree(name: str) -> dict[str, Any]:
+    """The tree that a run starts from, as tree.form.started's contract names it: the goal open,
+    the plan as its one deliverable, unnamed, open, each condition not good, and no work."""
+    return rn_files.started(name)
 
 
 def a_repository(tmp_path: Any, branch: str = "main") -> str:
@@ -54,20 +53,20 @@ def a_repository(tmp_path: Any, branch: str = "main") -> str:
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_new_run_has_its_branch_from_main_checked_out_with_the_tree_uncommitted(
     tmp_path: Any, host: Any
 ):
     """Given invoicer's repository on main with a remote, the user on main
-    When new makes the run 20261120-invoices with the goal
+    When new makes the run 20261120-invoices
     Then it gives the run; the worktree has rn-20261120-invoices checked out at main's head,
     holding the started tree at .rn/20261120-invoices/design-tree.json, uncommitted; and the
     user's branch, head, and files are as they were"""
     repo = a_repository(tmp_path)
     before = head(repo, "main")
     run = RunPlace(repo, NAME)
-    assert new(run, CONTEXT, GOAL, PRACTICE, host) == run
+    assert new(run, CONTEXT, PRACTICE, host) == run
     worktree = rn_files.worktree_of(repo, NAME)
     assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
     assert head(worktree) == before
@@ -80,7 +79,7 @@ def test_a_new_run_has_its_branch_from_main_checked_out_with_the_tree_uncommitte
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_new_run_branches_from_the_default_branch_while_the_user_is_on_another(
     tmp_path: Any, host: Any
@@ -98,7 +97,7 @@ def test_a_new_run_branches_from_the_default_branch_while_the_user_is_on_another
     git(repo, "commit", "-q", "-m", "Mine.")
     mine = head(repo)
     write_files(repo, {"NOTES.md": "mine, still\n"})
-    new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, host)
+    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, host)
     assert head(rn_files.worktree_of(repo, NAME)) == trunk
     assert git(repo, "branch", "--show-current").strip() == "mine"
     assert head(repo) == mine
@@ -106,7 +105,7 @@ def test_a_new_run_branches_from_the_default_branch_while_the_user_is_on_another
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_new_run_branches_from_what_origins_head_names_not_the_branch_checked_out(
     tmp_path: Any, host: Any
@@ -125,14 +124,14 @@ def test_a_new_run_branches_from_what_origins_head_names_not_the_branch_checked_
     trunk = head(repo, "trunk")
     git(repo, "checkout", "-q", "main")
     git(repo, "remote", "set-head", "origin", "trunk")
-    new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, host)
+    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, host)
     assert head(rn_files.worktree_of(repo, NAME)) == trunk
     assert head(repo, "main") == main
     assert git(repo, "branch", "--show-current").strip() == "main"
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @pytest.mark.parametrize("remote", [True, False])
 def test_a_repository_whose_origin_head_names_no_branch_is_missing_its_default(
@@ -147,22 +146,7 @@ def test_a_repository_whose_origin_head_names_no_branch_is_missing_its_default(
         rn_files.with_origin(repo, str(tmp_path / "origin.git"))
         git(repo, "remote", "set-head", "origin", "--delete")
     with pytest.raises(Missing):
-        new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, host)
-    assert not os.path.exists(rn_files.worktree_of(repo, NAME))
-    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
-
-
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-@pytest.mark.parametrize("goal", ["", "   "])
-def test_an_empty_goal_is_refused_with_nothing_made(tmp_path: Any, host: Any, goal: str):
-    """Given invoicer's repository
-    When new is given an empty goal
-    Then Wrong is raised, and no branch or worktree of the run is made"""
-    repo = a_repository(tmp_path)
-    with pytest.raises(Wrong):
-        new(RunPlace(repo, NAME), CONTEXT, goal, PRACTICE, host)
+        new(RunPlace(repo, NAME), CONTEXT, PRACTICE, host)
     assert not os.path.exists(rn_files.worktree_of(repo, NAME))
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
 
@@ -170,20 +154,20 @@ def test_an_empty_goal_is_refused_with_nothing_made(tmp_path: Any, host: Any, go
 @pytest.mark.supports("test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was")
 def test_a_run_of_the_name_already_there_is_refused_and_left_as_it_was(tmp_path: Any, host: Any):
     """Given invoicer's repository whose run 20261120-invoices was made
-    When new makes a run of the same name with another goal
+    When new makes a run of the same name again
     Then Wrong is raised naming the run, and its design tree is as it was"""
     repo = a_repository(tmp_path)
     run = RunPlace(repo, NAME)
-    new(run, CONTEXT, GOAL, PRACTICE, host)
+    new(run, CONTEXT, PRACTICE, host)
     tree_path = os.path.join(rn_files.folder_of(repo, NAME), "design-tree.json")
     before = rn_files.read_json(tree_path)
     with pytest.raises(Wrong, match=NAME):
-        new(run, CONTEXT, "The user gets another thing.", PRACTICE, host)
+        new(run, CONTEXT, PRACTICE, host)
     assert rn_files.read_json(tree_path) == before
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_folder_that_isnt_a_git_repository_is_missing_one(tmp_path: Any, host: Any):
     """Given a folder of invoicer's files with no git
@@ -192,12 +176,12 @@ def test_a_folder_that_isnt_a_git_repository_is_missing_one(tmp_path: Any, host:
     folder = os.path.realpath(str(tmp_path / "plain"))
     write_files(folder, {"README.md": "# plain\n"})
     with pytest.raises(Missing):
-        new(RunPlace(folder, NAME), CONTEXT, GOAL, PRACTICE, host)
+        new(RunPlace(folder, NAME), CONTEXT, PRACTICE, host)
     assert not os.path.exists(rn_files.worktree_of(folder, NAME))
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_folder_inside_a_repository_but_not_its_top_is_missing_one(tmp_path: Any, host: Any):
     """Given invoicer's repository, and its folder invoicer/
@@ -205,11 +189,11 @@ def test_a_folder_inside_a_repository_but_not_its_top_is_missing_one(tmp_path: A
     Then Missing is raised"""
     repo = a_repository(tmp_path)
     with pytest.raises(Missing):
-        new(RunPlace(os.path.join(repo, "invoicer"), NAME), CONTEXT, GOAL, PRACTICE, host)
+        new(RunPlace(os.path.join(repo, "invoicer"), NAME), CONTEXT, PRACTICE, host)
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_repository_with_no_commit_is_missing_one(tmp_path: Any, host: Any):
     """Given a git repository with no commit
@@ -219,7 +203,7 @@ def test_a_repository_with_no_commit_is_missing_one(tmp_path: Any, host: Any):
     os.makedirs(repo)
     git(repo, "init", "-q", "-b", "main")
     with pytest.raises(Missing):
-        new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, host)
+        new(RunPlace(repo, NAME), CONTEXT, PRACTICE, host)
 
 
 # newest and found
@@ -516,7 +500,7 @@ def herdr_commands(host: Any) -> list[list[str]]:
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_new_run_inside_herdr_has_its_worktree_made_by_herdr_from_mains_commit(
     tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
@@ -531,7 +515,7 @@ def test_a_new_run_inside_herdr_has_its_worktree_made_by_herdr_from_mains_commit
     herdr = herdr_double.host(host)
     repo = a_repository(tmp_path)
     worktree = rn_files.worktree_of(repo, NAME)
-    new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, herdr)
+    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, herdr)
     create = ["herdr", "worktree", "create", "--cwd", repo, "--branch", f"rn-{NAME}"]
     rest = ["--base", head(repo, "main"), "--path", worktree, "--no-focus"]
     assert herdr.asked == [([*create, *rest], repo)]
@@ -543,7 +527,7 @@ def test_a_new_run_inside_herdr_has_its_worktree_made_by_herdr_from_mains_commit
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @pytest.mark.parametrize("value", [None, "0", ""])
 def test_a_new_run_outside_herdr_has_its_worktree_made_by_git(
@@ -557,14 +541,14 @@ def test_a_new_run_outside_herdr_has_its_worktree_made_by_git(
         monkeypatch.setenv("HERDR_ENV", value)
     herdr = herdr_double.host(host)
     repo = a_repository(tmp_path)
-    new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, herdr)
+    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, herdr)
     assert herdr_commands(herdr) == []
     worktree = rn_files.worktree_of(repo, NAME)
     assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_new_run_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said(
     tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
@@ -575,7 +559,7 @@ def test_a_new_run_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said
     monkeypatch.setenv("HERDR_ENV", "1")
     repo = a_repository(tmp_path)
     with pytest.raises(CantRun, match="herdr can't make the run's worktree: .*server_not_running"):
-        new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, herdr_double.host(host, running=False))
+        new(RunPlace(repo, NAME), CONTEXT, PRACTICE, herdr_double.host(host, running=False))
     assert not os.path.exists(rn_files.worktree_of(repo, NAME))
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
 
@@ -820,7 +804,7 @@ def test_a_cancelled_run_inside_herdr_has_herdr_remove_its_worktree(
     herdr = herdr_double.host(host)
     repo = a_repository(tmp_path)
     if made_by == "herdr":
-        new(RunPlace(repo, NAME), CONTEXT, GOAL, PRACTICE, herdr)
+        new(RunPlace(repo, NAME), CONTEXT, PRACTICE, herdr)
         run = RunPlace(repo, NAME)
         write_files(run.worktree, {"invoicer/lines.py": "def parse_lines(text):\n    return []\n"})
     else:

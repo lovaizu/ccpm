@@ -1,4 +1,4 @@
-"""tree.py, as the orchestrator runs it to change the run's design tree:
+"""tree.py, as the orchestrator runs it to change the run's design tree, and the pruner to check it:
 `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py <subcommand> <run> ...`. It runs the code of
 tree.py in `domain/tree/`, whose `command` module says what each subcommand takes and gives."""
 

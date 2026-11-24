@@ -16,7 +16,7 @@ from repository.host import Ran, run
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_git_runs_in_the_folder_given_and_gives_its_output(tmp_path: Any):
     """Given a git repository
@@ -27,7 +27,7 @@ def test_git_runs_in_the_folder_given_and_gives_its_output(tmp_path: Any):
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_git_that_fails_gives_its_code_and_stderr_whole(tmp_path: Any):
     """Given a folder that isn't a git repository
@@ -40,7 +40,7 @@ def test_git_that_fails_gives_its_code_and_stderr_whole(tmp_path: Any):
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_git_changes_what_its_command_changes(tmp_path: Any):
     """Given an empty folder
@@ -79,7 +79,7 @@ def test_gh_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.M
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_herdr_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
     """Given a program herdr first on the PATH that prints its arguments and gives 1
@@ -97,7 +97,7 @@ def test_herdr_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytes
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @pytest.mark.parametrize("program", ["ls", "gitk", "git2", "ghx", "herdrx", "/usr/bin/git", ""])
 def test_a_program_other_than_git_or_gh_is_refused(tmp_path: Any, program: str):

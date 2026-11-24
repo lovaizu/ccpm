@@ -1,8 +1,9 @@
 """The integration cases of each component's decisions and of each handoff with its data, as rn's
 architecture draws them under Components and Concept model: each command an entry to the
-orchestrator, the Cut and the checks of the generator, and the best practice each role takes. Each
-runs rn's scripts as the orchestrator and each role run them, with the double of gh, and a double
-of each prompt's work."""
+orchestrator, the pruner as the one role that writes the design tree, by the measure of the vital
+few that it and the orchestrator read, the hook that keeps the tree to it, the Cut and the checks of
+the generator, and the best practice each role takes. Each runs rn's scripts as the orchestrator and
+each role run them, with the double of gh, and a double of each prompt's work."""
 
 from __future__ import annotations
 
@@ -20,6 +21,9 @@ from rn_bench import (
     confirmed,
     cut_move,
     cut_of,
+    denial,
+    goal_tree,
+    new_run,
     planned_tree,
     requested,
     resulted,
@@ -27,6 +31,7 @@ from rn_bench import (
     signed,
     signed_plan,
     to_plan_signoff,
+    tree_written,
     trial_made,
     wrote,
 )
@@ -77,7 +82,8 @@ def test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice
     When the orchestrator writes the command's Cut
     Then the Cut holds the goal, the deliverables' language, the command's node as the tree holds
     it, the run's worktree, the path of invoicer's lines in the worktree as its one input, rn's
-    light best practice, Round content-1, and no findings or good of an earlier Round"""
+    light best practice, Round content-1, no good of an earlier Round, and no findings, as the
+    generator mends by its Cut's decisions alone"""
     given = cut_of(b, signed_plan(b))
     node = next(each for each in b.tree()["deliverables"] if each["path"] == COMMAND)
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
@@ -93,7 +99,8 @@ def test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice
     )
     assert (given["stage"], given["number"]) == ("content", 1)
     assert os.path.normpath(os.path.join(b.repo, given["round"])) == first
-    assert (given["findings"], given["last_good"]) == (None, None)
+    assert given["last_good"] is None
+    assert "findings" not in given
     assert os.path.isabs(given["trial"])
 
 
@@ -231,39 +238,30 @@ def test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py(b:
     assert os.path.isfile(os.path.join(b.repo, cache, "__main__.pyc"))
 
 
-def bash_hook(b: Bench) -> str:
-    """The command of rn's hook before each Bash call, as hooks/hooks.json names it."""
+def hook_of(b: Bench, matcher: str) -> str:
+    """The command of rn's hook before each call of the tools that the matcher names, as
+    hooks/hooks.json names it."""
     with open(os.path.join(b.rn, "hooks", "hooks.json"), encoding="utf-8") as f:
-        (before,) = json.load(f)["hooks"]["PreToolUse"]
-    assert before["matcher"] == "Bash"
-    (hook,) = before["hooks"]
+        before = json.load(f)["hooks"]["PreToolUse"]
+    (entry,) = [each for each in before if each["matcher"] == matcher]
+    (hook,) = entry["hooks"]
     return hook["command"]
 
 
 def bash_called(b: Bench, command: str, agent: str | None) -> str:
     """The hook's input of a Bash call of the command by the agent, or by the main conversation
     where none is named, as Claude Code gives it."""
-    called = {
-        "session_id": "abc123",
-        "cwd": b.repo,
-        "hook_event_name": "PreToolUse",
-        "tool_name": "Bash",
-        "tool_input": {"command": command},
-        "tool_use_id": "toolu_01",
-    }
-    if agent is not None:
-        called.update({"agent_id": "a1", "agent_type": agent})
-    return json.dumps(called)
+    return rn_files.hook_input(b.repo, "Bash", {"command": command}, agent)
 
 
-@pytest.mark.supports("generator", "scripts")
+@pytest.mark.supports("generator", "scripts", "hook")
 def test_a_makers_delete_by_rm_is_denied_pointing_to_remove_py(b: Bench):
     """Given rn's hook before each Bash call, and a run whose command's generator left a cache of
     its tests beside the command
     When the generator calls Bash with `rm -r "$W/$p/__pycache__"`, and Claude Code runs the hook
     Then the hook denies the call, its reason giving remove.py's command by its path in rn's
     folder, and that command removes the cache"""
-    assert "${CLAUDE_PLUGIN_ROOT}/scripts/hook.py" in bash_hook(b)
+    assert "${CLAUDE_PLUGIN_ROOT}/scripts/hook.py" in hook_of(b, "Bash")
     cache = cache_left(b)[1]
     hooked = b.script("hook", given=bash_called(b, 'rm -r "$W/$p/__pycache__"', "rn:generator"))
     assert (hooked.code, hooked.err) == (0, "")
@@ -275,13 +273,78 @@ def test_a_makers_delete_by_rm_is_denied_pointing_to_remove_py(b: Bench):
     assert not os.path.lexists(os.path.join(b.repo, cache))
 
 
-@pytest.mark.supports("orchestrator", "scripts")
+@pytest.mark.supports("orchestrator", "scripts", "hook")
 def test_a_delete_by_the_main_conversation_passes_the_hook(b: Bench):
     """Given rn's hook before each Bash call
     When the main conversation, which names no agent, calls Bash with `rm -r build`
     Then the hook gives 0 and prints nothing, so that the call goes on as without rn"""
     hooked = b.script("hook", given=bash_called(b, "rm -r build", None))
     assert hooked == (0, "", "")
+
+
+# The pruner and the measure of the vital few: the one role that writes the design tree, and
+# the one place that states the measure it weighs by.
+
+
+@pytest.mark.supports("pruner", "hook", "scripts", "Design tree")
+@pytest.mark.parametrize("tool", ["Write", "Edit"])
+def test_the_pruners_write_passes_the_hook_and_tree_py_check_takes_it(b: Bench, tool: str):
+    """Given rn's hook before each Write and Edit, and a run that repository.py new made, its
+    goal open
+    When the orchestrator hands the request to a new pruner, which calls Write or Edit on the
+    run's design tree, Claude Code runs the hook, the pruner writes the goal from the request, and
+    runs tree.py check before it ends
+    Then the hook gives 0 printing nothing, so that the write goes on, and tree.py check gives 0
+    printing nothing, the tree holding the goal by reasoning and the plan named by it"""
+    assert "${CLAUDE_PLUGIN_ROOT}/scripts/hook.py" in hook_of(b, "Write|Edit")
+    new_run(b)
+    assert denial(b.script("hook", given=tree_written(b, "rn:pruner", tool))) is None
+    b.write_tree(goal_tree(b))
+    assert b.script("tree", "check", b.run) == (0, "", "")
+    assert b.tree()["goal"] == {"decided": GOAL, "by": "reasoning"}
+    assert b.tree()["deliverables"][0]["name"] == GOAL
+
+
+@pytest.mark.supports("pruner", "scripts", "Design tree")
+def test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_nothing(b: Bench):
+    """Given a run whose goal the pruner wrote and the orchestrator committed
+    When a new pruner writes the plan with the command of a kind of no best practice and the
+    guide resting on a file the worktree lacks, and runs tree.py check before it ends
+    Then tree.py check gives 1 printing two lines, the first naming /deliverables/1/kind and the
+    second /deliverables/2/inputs/0, so that the pruner mends each before it ends; and the tree
+    and the work's branch are as it left them"""
+    requested(b)
+    design_tree = rn_files.walkthrough_tree(b.name(), plan_done=False)
+    design_tree["deliverables"][1]["kind"] = "no-such-kind"
+    design_tree["deliverables"][2]["inputs"] = ["docs/missing.md"]
+    b.write_tree(design_tree)
+    branch = f"rn-{b.name()}"
+    before = git(b.repo, "rev-parse", branch).strip()
+    code, out, err = b.script("tree", "check", b.run)
+    assert (code, err) == (1, "")
+    lines = out.splitlines()
+    assert [each.split(":")[0] for each in lines] == [
+        "/deliverables/1/kind",
+        "/deliverables/2/inputs/0",
+    ]
+    assert b.tree() == design_tree
+    assert git(b.repo, "rev-parse", branch).strip() == before
+
+
+@pytest.mark.supports("vital few", "orchestrator", "pruner")
+def test_the_orchestrator_and_the_pruner_each_point_to_the_one_measure_of_the_vital_few(b: Bench):
+    """Given rn's prompts as Claude Code installs them
+    When the orchestrator's steps and the pruner's part are read, the pruner started from its
+    agent definition
+    Then each names domain/vital-few.md, which the bench's copy holds, and the pruner's agent
+    definition points to its part, domain/pruner.md"""
+    measure = os.path.join(b.rn, "domain", "vital-few.md")
+    assert os.path.isfile(measure)
+    for part in ("orchestrator.md", "pruner.md"):
+        with open(os.path.join(b.rn, "domain", part), encoding="utf-8") as f:
+            assert "/domain/vital-few.md" in f.read(), part
+    with open(os.path.join(b.rn, "agents", "pruner.md"), encoding="utf-8") as f:
+        assert "${CLAUDE_PLUGIN_ROOT}/domain/pruner.md" in f.read()
 
 
 # The scripts: the best practice each role takes, and a refusal before any push.

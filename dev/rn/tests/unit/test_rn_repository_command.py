@@ -35,36 +35,36 @@ def command_link(run: RunPlace, ref: str = "HEAD") -> str:
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_new_prints_the_new_runs_folder_from_the_repositorys_top(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote
-    When repository.py new is given the walkthrough's slug and the goal
+    When repository.py new is given the walkthrough's slug and its languages
     Then it gives 0 printing the run's folder, named by today and the slug, from the top, as a
-    line, and the run's design tree holds the goal by reasoning"""
+    line, and the run's design tree holds the goal open, for the pruner to write"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
     name = f"{date.today():%Y%m%d}-{rn_files.NAMED}"
     folder = f".claude/worktrees/rn-{name}/.rn/{name}"
-    argv = ["new", rn_files.NAMED, rn_files.GOAL, *rn_files.LANGUAGES]
+    argv = ["new", rn_files.NAMED, *rn_files.LANGUAGES]
     given = main(argv, repo, rn_files.RN, host)
     assert given == (0, folder + "\n", "")
     tree = rn_files.read_json(os.path.join(repo, folder, "design-tree.json"))
-    assert tree["goal"] == {"decided": rn_files.GOAL, "by": "reasoning"}
+    assert tree["goal"] == {"decided": None}
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_new_writes_rns_version_and_the_languages_in_the_trees_context(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote
-    When repository.py new is given the walkthrough's slug, the goal, English, and Japanese
+    When repository.py new is given the walkthrough's slug, English, and Japanese
     Then the run's design tree's context holds rn's version as its plugin.json gives it, English
     as the deliverables' language and Japanese as the conversation's, no issues, and no pull
     request"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
-    argv = ["new", rn_files.NAMED, rn_files.GOAL, "English", "Japanese"]
+    argv = ["new", rn_files.NAMED, "English", "Japanese"]
     code, out, _ = main(argv, repo, rn_files.RN, host)
     assert code == 0
     tree = rn_files.read_json(os.path.join(repo, out.strip(), "design-tree.json"))
@@ -78,17 +78,17 @@ def test_new_writes_rns_version_and_the_languages_in_the_trees_context(tmp_path:
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_new_of_an_empty_language_says_which_to_give(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote
-    When repository.py new is given the walkthrough's slug, the goal, an empty deliverables'
+    When repository.py new is given the walkthrough's slug, an empty deliverables'
     language, and Japanese
     Then it gives 1 with `repository.py: ` and which language is empty on stderr, and makes no
     worktree"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
-    argv = ["new", rn_files.NAMED, rn_files.GOAL, "", "Japanese"]
+    argv = ["new", rn_files.NAMED, "", "Japanese"]
     code, out, err = main(argv, repo, rn_files.RN, host)
     assert (code, out) == (1, "")
     assert err.startswith("repository.py: the deliverables language is empty")
@@ -96,7 +96,7 @@ def test_new_of_an_empty_language_says_which_to_give(tmp_path: Any, host: Any):
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @pytest.mark.parametrize("given", ["?!", rn_files.WORDS], ids=["no-letter", "the-users-words"])
 def test_new_of_other_than_a_slug_says_the_form_it_takes(tmp_path: Any, host: Any, given: str):
@@ -107,23 +107,21 @@ def test_new_of_other_than_a_slug_says_the_form_it_takes(tmp_path: Any, host: An
     worktree"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
     rn_files.with_origin(repo, str(tmp_path / "origin.git"))
-    code, out, err = main(
-        ["new", given, rn_files.GOAL, *rn_files.LANGUAGES], repo, rn_files.RN, host
-    )
+    code, out, err = main(["new", given, *rn_files.LANGUAGES], repo, rn_files.RN, host)
     assert (code, out) == (1, "")
     assert err.startswith("repository.py: ") and "lower-case English words joined by -" in err
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_new_with_no_default_branch_on_origin_says_what_is_missing(tmp_path: Any, host: Any):
     """Given invoicer's repository with no remote, so that origin's HEAD names no branch
-    When repository.py new is given the walkthrough's slug and the goal
+    When repository.py new is given the walkthrough's slug and its languages
     Then it gives 1 with `repository.py: ` and what's missing on stderr, and makes no worktree"""
     repo = rn_files.repository(str(tmp_path / "invoicer"))
-    argv = ["new", rn_files.NAMED, rn_files.GOAL, *rn_files.LANGUAGES]
+    argv = ["new", rn_files.NAMED, *rn_files.LANGUAGES]
     code, out, err = main(argv, repo, rn_files.RN, host)
     assert (code, out) == (1, "")
     assert err.startswith("repository.py: ")
@@ -515,15 +513,15 @@ def test_a_folder_that_isnt_a_runs_is_wrong(tmp_path: Any, host: Any, sub: str):
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @pytest.mark.parametrize(
     "argv",
     [
         [],
         ["start"],
-        ["new", rn_files.NAMED, rn_files.GOAL],
-        ["new", rn_files.NAMED, rn_files.GOAL, *rn_files.LANGUAGES, "more"],
+        ["new", rn_files.NAMED, "English"],
+        ["new", rn_files.NAMED, *rn_files.LANGUAGES, "more"],
         ["find", "more"],
         ["pause"],
         ["cancel"],

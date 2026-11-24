@@ -1,7 +1,7 @@
 """Decides which Round a deliverable takes next: content made and judged until each condition is
 good, at most LIMIT Rounds, then refactored in a Round that no evaluator judges each time the
 content leaves each condition good, none while a
-point waits on the user, and after them none, each finding left kept by the orchestrator as an open
+point waits on the user, and after them none, each finding left kept by the pruner as an open
 decision; a send-back after a Round put up for the sign-off starts that course again."""
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ class Next(NamedTuple):
     """What a deliverable waits on, with the stage, `content` or `refactor`, of the Round where a
     role is to start: `generator`, in a new Round or, where `resumes`, the last Round again;
     `evaluator`, in the last Round, one of content; `answer`, the user's answer to an open
-    decision; `orchestrator`, to keep each finding left past the limit as an open decision; or
+    decision; `pruner`, to keep each finding left past the limit as an open decision; or
     `sign-off`."""
 
     waits_on: str
@@ -57,14 +57,14 @@ def next_of(deliverable: Deliverable, rounds: Sequence[Done], refactors: bool) -
     - the sign-off, where the last Round is the course's LIMIT-th, of content, each with both
       results, and each condition not good keeps an open decision, a finding left as a proposal;
     - the answer, where a decision is open, but where the last Round is that LIMIT-th one and
-      each open decision is of a condition not good, a proposal or one the orchestrator keeps;
+      each open decision is of a condition not good, a proposal or one the pruner keeps;
     - the generator resuming the last Round, where the last generator's result is `point`, as
       the decision that held its point is answered now, or where the last Round holds no
       generator's result, as a pause stopped it, spending no Round of the limit;
     - the evaluator in the last Round, where it's of content, made, with no evaluator's result;
     - the generator in a new content Round, where there's no Round yet;
     - where a condition isn't good: the generator in a new content Round, where the course has
-      fewer than LIMIT Rounds, else the orchestrator, to keep each finding left;
+      fewer than LIMIT Rounds, else the pruner, to keep each finding left;
     - where each is good: the generator in a new refactor Round, where the kind is refactored and
       the last Round is of content; else the sign-off.
     Changes: nothing.
@@ -158,7 +158,7 @@ def _after(rounds: Sequence[Done], short: set[str], refactors: bool) -> Next:
         return Next("evaluator", stage, False)
     if short:
         more = len(_course(rounds)) < LIMIT
-        return Next("generator", "content", False) if more else Next("orchestrator", None, False)
+        return Next("generator", "content", False) if more else Next("pruner", None, False)
     if refactors and stage == "content":
         return Next("generator", "refactor", False)
     return _SIGN_OFF

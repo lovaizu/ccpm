@@ -1,10 +1,10 @@
 """The unit cases of check/form.py, which holds a JSON value to one of rn's JSON Schemas: one value
 that holds and one that leaves it for each keyword of draft-07 that rn's schemas and the design
-tree's use, `type` of each JSON type, `required`, `properties`, `additionalProperties`, `items`,
-`minItems`, `minLength`, `minimum`, `pattern`, `enum`, `const`, `oneOf`, `anyOf`, and `$ref` into
-`$defs`, each limit on both sides; a key that JSON Pointer escapes; no, one, and several faults;
-rn's own schemas on the values its parts write; and CantRun for a schema it can't read or a keyword
-it doesn't check."""
+tree's use, `type` of each JSON type, `required`, `properties`, `additionalProperties`, the last
+three on a value that isn't an object too, `items`, `minItems`, `minLength`, `minimum`, `pattern`,
+`enum`, `const`, `oneOf`, `anyOf`, and `$ref` into `$defs`, each limit on both sides; a key that
+JSON Pointer escapes; no, one, and several faults; rn's own schemas on the values its parts write;
+and CantRun for a schema it can't read or a keyword it doesn't check."""
 
 from __future__ import annotations
 
@@ -90,6 +90,26 @@ def test_a_property_no_schema_names_is_a_fault_where_additional_ones_are_refused
     found = faults(value('{"a": 1, "b": 2}'), path)
     assert len(found) == 1
     assert "b" in found[0]
+
+
+@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
+@pytest.mark.parametrize("given", ['"The goal."', "[]", "null"])
+def test_a_value_not_an_object_where_one_is_taken_has_the_types_fault_alone(schema, given: str):
+    """Given a schema whose property `goal` takes an object that requires `decided`, holds it as a
+    string, and takes no other property, as the design tree's goal does
+    When a value whose `goal` is a string, an array, or null is held to it
+    Then it has one fault, at /goal, of its type, as `required`, `properties`, and
+    `additionalProperties` hold only of an object"""
+    goal = {
+        "type": "object",
+        "required": ["decided"],
+        "additionalProperties": False,
+        "properties": {"decided": {"type": "string"}},
+    }
+    path = schema({"type": "object", "properties": {"goal": goal}})
+    assert faults(value(f'{{"goal": {given}}}'), path) == [
+        "/goal: takes a value of the type object"
+    ]
 
 
 @pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")

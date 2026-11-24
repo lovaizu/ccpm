@@ -1,7 +1,7 @@
 """Decides how the design tree is kept as a file: read and written as JSON in the form of the
 design tree best practice's `design-tree.schema.json`, each node named by its JSON Pointer, and the
-tree that a run starts from, with its context, the goal as put, and the plan as its own
-deliverable."""
+tree that a run starts from, with its context, the goal open for the pruner to write from the
+request, and the plan as its own deliverable."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from practice import Practice, conditions
 
 # A design tree, in the form of domain/best-practices/design-tree/design-tree.schema.json.
 Tree = dict[str, Any]
-# A deliverable of the design tree: one of `done`, `done_no_file`, or `open` of its schema.
+# A deliverable of the design tree: one of `done` or `open` of its schema.
 Deliverable = dict[str, Any]
 # The statuses of a deliverable not yet done.
 OPEN = ("open", "doing")
@@ -46,32 +46,29 @@ def context(version: str, deliverables: str, conversation: str) -> Context:
     }
 
 
-def started(context: Context, goal: str, plan: str, practice: Practice) -> Tree:
-    """The design tree that a run starts from.
+def started(context: Context, plan: str, practice: Practice) -> Tree:
+    """The design tree that a run starts from, before the pruner writes the goal from the request.
 
-    Takes: the context that `context` gives; the goal as the orchestrator puts it, one sentence
-    with the user as its subject; the plan's path from the run's worktree,
+    Takes: the context that `context` gives; the plan's path from the run's worktree,
     `.rn/<name>/design-tree.json`, the tree's own; and the design tree best practice.
-    Gives: a tree whose context is the one given; whose goal is the sentence, `by` reasoning until
-    the user confirms it; whose one deliverable is the plan, named by the goal, of the kind
-    `design-tree`, at the plan's path, with no inputs, status open, and each necessary condition
-    of the best practice in its order, good false, with no decision; and whose work and steps are
-    none.
+    Gives: a tree whose context is the one given; whose goal is open, `{"decided": null}`, as an
+    open decision is; whose one deliverable is the plan, its name empty until the pruner names it
+    by the goal, of the kind `design-tree`, at the plan's path, with no inputs, status open, and
+    each necessary condition of the best practice in its order, good false, with no decision; and
+    whose work and steps are none.
     Changes: nothing.
-    Refuses: Wrong where the goal is empty.
+    Refuses: nothing.
     """
-    if not goal:
-        raise Wrong("the goal is empty; the tree starts from the goal as one sentence")
     held = [
         {"id": condition["id"], "good": False, "decisions": []}
         for condition in conditions(practice["goal"])
     ]
     return {
         "context": context,
-        "goal": {"decided": goal, "by": "reasoning"},
+        "goal": {"decided": None},
         "deliverables": [
             {
-                "name": goal,
+                "name": "",
                 "path": plan,
                 "kind": "design-tree",
                 "inputs": [],
@@ -82,6 +79,24 @@ def started(context: Context, goal: str, plan: str, practice: Practice) -> Tree:
         "work": [],
         "steps": [],
     }
+
+
+def goal(tree: Tree) -> str:
+    """The tree's goal, as each step that needs it takes it, such as a Cut or the pull request.
+
+    Takes: the tree.
+    Gives: the goal's `decided`.
+    Changes: nothing.
+    Refuses: Wrong where the goal is open, its `decided` null, saying that a new pruner writes it
+    from the request first.
+    """
+    decided = tree["goal"]["decided"]
+    if decided is None:
+        raise Wrong(
+            "the design tree's goal is open; hand the request to a new pruner, which writes the"
+            " goal from it, and run this again once the tree holds it"
+        )
+    return decided
 
 
 def read(path: str) -> Tree:

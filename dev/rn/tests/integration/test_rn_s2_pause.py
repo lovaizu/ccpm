@@ -180,7 +180,7 @@ def test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was(b: Bench)
     mid_command(b)
     paused(b)
     before = b.tree()
-    refused = b.script("repository", "new", rn_files.NAMED, rn_files.GOAL, *rn_files.LANGUAGES)
+    refused = b.script("repository", "new", rn_files.NAMED, *rn_files.LANGUAGES)
     assert refused.code == 1
     assert b.name() in refused.err
     assert b.tree() == before

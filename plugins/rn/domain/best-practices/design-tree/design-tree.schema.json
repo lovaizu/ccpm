@@ -91,22 +91,15 @@
    }
   },
   "goal": {
-   "description": "The one end the user is after, which every deliverable serves.",
-   "type": "object",
-   "required": [
-    "decided",
-    "by"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "decided": {
-     "description": "The end, as one sentence with the user as its subject, followed by the state its people are in once it holds: what they do then that they couldn't before.",
-     "type": "string"
+   "description": "The one end the user is after, which every deliverable serves, open until the pruner writes it from the request.",
+   "anyOf": [
+    {
+     "$ref": "#/$defs/goal_settled"
     },
-    "by": {
-     "$ref": "#/$defs/by"
+    {
+     "$ref": "#/$defs/goal_open"
     }
-   }
+   ]
   },
   "deliverables": {
    "description": "Every deliverable the goal needs, and a node of each kind that one takes with no file of it in the product. A meta deliverable makes the best practice of a kind that later deliverables have. The list holds no order of the work, which `work` holds.",
@@ -115,9 +108,6 @@
     "anyOf": [
      {
       "$ref": "#/$defs/done"
-     },
-     {
-      "$ref": "#/$defs/done_no_file"
      },
      {
       "$ref": "#/$defs/open"
@@ -171,14 +161,47 @@
    "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme, or `light` for a deliverable made by its check alone, where a best practice of its own would cost more than it gives, or the user wants it at once.",
    "type": "string"
   },
+  "goal_settled": {
+   "description": "The goal, written.",
+   "type": "object",
+   "required": [
+    "decided",
+    "by"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "decided": {
+     "description": "The end, as one sentence with the user as its subject, followed by the state its people are in once it holds: what they do then that they couldn't before.",
+     "type": "string"
+    },
+    "by": {
+     "$ref": "#/$defs/by"
+    }
+   }
+  },
+  "goal_open": {
+   "description": "The goal while still open, as a run starts before the pruner writes it from the request.",
+   "type": "object",
+   "required": [
+    "decided"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "decided": {
+     "description": "null while the goal is open.",
+     "type": "null"
+    }
+   }
+  },
   "done": {
-   "description": "A deliverable that meets every necessary condition of its best practice. It keeps one line: its name, path, more_paths where it has them, kind, and status, as its files hold what its decisions made.",
+   "description": "A deliverable that meets every necessary condition of its best practice, or that the user signed off with its findings left as proposals. It keeps its necessary conditions and their decisions, as a later deliverable rests on what it decided, and the pruner weighs them again with it.",
    "type": "object",
    "required": [
     "name",
     "path",
     "kind",
-    "status"
+    "status",
+    "necessary_conditions"
    ],
    "additionalProperties": false,
    "properties": {
@@ -197,37 +220,9 @@
     "status": {
      "description": "done: the deliverable meets every necessary condition of its best practice, or passes its check.",
      "const": "done"
-    }
-   }
-  },
-  "done_no_file": {
-   "description": "A node with no file that meets every necessary condition of its best practice. It keeps its necessary conditions and their decisions, as the deliverables built on it read them there.",
-   "type": "object",
-   "required": [
-    "name",
-    "path",
-    "kind",
-    "status",
-    "file",
-    "necessary_conditions"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "name": {
-     "$ref": "#/$defs/name"
-    },
-    "path": {
-     "$ref": "#/$defs/path"
-    },
-    "kind": {
-     "$ref": "#/$defs/kind"
-    },
-    "status": {
-     "description": "done: the deliverable meets every necessary condition of its best practice, or passes its check.",
-     "const": "done"
     },
     "file": {
-     "description": "false: no file of the node is made; true is never written.",
+     "description": "false for a node with no file of it in the product: no file of the node is made. Left out for a deliverable whose file the work makes; true is never written.",
      "type": "boolean"
     },
     "necessary_conditions": {

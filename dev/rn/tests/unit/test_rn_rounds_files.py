@@ -81,7 +81,7 @@ def test_a_rounds_paths_of_a_role_of_neither_are_refused(role: str):
         round_.result(role)
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_of_a_deliverable_with_no_round_gives_none(run: RunPlace):
     """Given a run with no Round
     When the guide's Rounds are asked
@@ -89,7 +89,7 @@ def test_of_a_deliverable_with_no_round_gives_none(run: RunPlace):
     assert of(run, GUIDE) == []
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_of_a_deliverable_with_one_round_gives_it(run: RunPlace):
     """Given a run whose guide has Round content-1
     When the guide's Rounds are asked
@@ -115,7 +115,7 @@ def test_of_gives_the_rounds_in_the_order_they_were_made_by_their_numbers(run: R
     ]
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_of_leaves_out_another_deliverables_rounds(run: RunPlace):
     """Given a run whose guide has Round content-1, and whose command, and a deliverable
     docs/guide.md.old beside the guide, each have Rounds content-1 and content-2
@@ -128,7 +128,7 @@ def test_of_leaves_out_another_deliverables_rounds(run: RunPlace):
     assert seen(of(run, GUIDE)) == [expected(run, GUIDE, "content", 1)]
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 @pytest.mark.parametrize("name", ["content-x", "draft-1", "content-0", "content1"])
 def test_of_refuses_a_folder_of_another_form(run: RunPlace, name: str):
     """Given a run whose guide's Rounds folder holds content-1 and a folder of another form
@@ -203,7 +203,7 @@ def test_at_the_rounds_folder_of_a_deliverable_is_refused(run: RunPlace):
         at(run, os.path.dirname(place))
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_new_with_no_round_of_the_stage_makes_its_first(run: RunPlace):
     """Given a run with no Round
     When a new content Round of the guide is made
@@ -229,7 +229,7 @@ def test_new_makes_the_round_one_past_the_deliverables_last(run: RunPlace):
     assert os.path.isdir(content.folder) and os.path.isdir(refactor.folder)
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_new_counts_only_the_deliverables_own_rounds(run: RunPlace):
     """Given a run whose command has Rounds content-1 and content-2
     When a new content Round of the guide is made
@@ -239,7 +239,7 @@ def test_new_counts_only_the_deliverables_own_rounds(run: RunPlace):
     assert seen([new(run, GUIDE, "content")]) == [expected(run, GUIDE, "content", 1)]
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 @pytest.mark.parametrize("stage", ["Content", "refactoring", ""])
 def test_new_of_a_stage_of_neither_is_refused(run: RunPlace, stage: str):
     """Given a run with no Round
@@ -293,7 +293,7 @@ def test_result_that_isnt_json_is_refused_naming_it(run: RunPlace):
         result(Round(place, GUIDE, "content", 1), "generator")
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 @pytest.mark.parametrize(
     ("deliverable", "named"),
     [
@@ -316,7 +316,7 @@ def test_new_names_the_folder_by_the_deliverables_path_percent_encoded_whole(
     assert os.path.isdir(place)
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_paths_that_differ_only_by_slash_and_dash_keep_their_rounds_apart(run: RunPlace):
     """Given a run whose deliverable docs/guide.md has Round content-1, and another docs-guide.md
     has Rounds content-1 and content-2

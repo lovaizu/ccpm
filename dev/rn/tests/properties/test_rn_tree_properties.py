@@ -196,9 +196,7 @@ def test_a_change_out_of_the_schema_always_gives_a_fault_at_or_above_its_place(
     assert any(pointer.startswith(fault.split(":", 1)[0]) for fault in found)
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 @given(trees())
 def test_a_tree_written_and_read_back_is_the_tree(tree: dict[str, Any]):
     """Given any design tree, its words in any characters
@@ -295,24 +293,30 @@ def signed(draw: Any) -> tuple[dict[str, Any], int]:
 
 
 @pytest.mark.supports("test_a_signoff_of_the_plan_makes_its_deliverables_generator_due")
+@pytest.mark.supports(
+    "test_a_done_deliverable_keeps_its_decisions_and_is_read_again_with_one_resting_on_it"
+)
 @given(signed())
-def test_a_signoff_makes_the_deliverable_done_in_its_one_line_and_changes_nothing_else(
+def test_a_signoff_makes_the_deliverable_done_with_its_conditions_and_changes_nothing_else(
     case: tuple[dict[str, Any], int],
 ):
     """Given any design tree with an open deliverable, each of its conditions good or not
     When the user signs it off
-    Then the deliverable is done in its one line, with its necessary conditions where it has no
-    file, each item of the work that names it is gone, and the goal, each other deliverable, and
-    each other item are as they were, in their order
-    (Postcondition, resting on P1.3, P3.3, and Concept model's strategy of each sign-off as its
-    deliverable done.)"""
+    Then the deliverable is done, keeping its name, path, more paths, kind, that it has no file
+    where it has none, and its necessary conditions with their decisions as they were, each item
+    of the work that names it is gone, and the goal, each other deliverable, and each other item
+    are as they were, in their order
+    (Postcondition, resting on P1.3, P3.3, P7.2, Concept model's strategy of each sign-off as its
+    deliverable done, and its strategy of each done deliverable kept with its conditions and their
+    decisions.)"""
     tree, n = case
     node = tree["deliverables"][n]
     after = signoff.signed_off(copy.deepcopy(tree), node["path"])
     line = {key: node[key] for key in ("name", "path", "more_paths", "kind") if key in node}
     line["status"] = "done"
     if node.get("file") is False:
-        line.update(file=False, necessary_conditions=node["necessary_conditions"])
+        line["file"] = False
+    line["necessary_conditions"] = node["necessary_conditions"]
     assert after["deliverables"][n] == line
     assert after["goal"] == tree["goal"]
     assert [d for m, d in enumerate(after["deliverables"]) if m != n] == [
@@ -321,7 +325,7 @@ def test_a_signoff_makes_the_deliverable_done_in_its_one_line_and_changes_nothin
     assert after["work"] == [each for each in tree["work"] if each["path"] != node["path"]]
 
 
-WAITS = st.sampled_from(["generator", "evaluator", "answer", "orchestrator", "sign-off"])
+WAITS = st.sampled_from(["generator", "evaluator", "answer", "pruner", "sign-off"])
 
 
 @pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")

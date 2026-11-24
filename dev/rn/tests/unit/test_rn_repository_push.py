@@ -4,14 +4,14 @@ worktree, no change, and a commit check that refuses; `pause`, with changes and 
 pushed with its upstream set, and each refusal: no origin, a push refused for want of a permission,
 and a remote that isn't there; and `put_up`, which asks gh's login first, its first time opening the
 pull request titled by the goal's first sentence, of a goal of two sentences and of one, its body
-naming the issues and naming none, the pull request's URL written into the tree, its second
-opening none, an open pull request's URL written where the tree has none, the pull request opened
-as a draft, the link it gives of each path of the deliverable at the commit it pushed, a file's, a
-folder's, and none for the plan or a node of no file, and each refusal: gh with no login before
-any commit or push, a deliverable the tree lacks, a path of the deliverable that the commit
-doesn't hold, and no origin; `diff`, which commits and pushes each change and gives the whole
-diff, after a stray file is removed, and with no origin; and `ci`, which waits for the CI's
-checks, each passed, one failed, and none that gh can give."""
+naming the issues and naming none, the pull request's URL written into the tree, its second opening
+none, an open pull request's URL written where the tree has none, the pull request opened as a
+draft, the link it gives of each path of the deliverable at the commit it pushed, a file's, a
+folder's, and none for the plan or a node of no file, and each refusal: gh with no login before any
+commit or push, the goal open before any commit or push, a deliverable the tree lacks, a path of the
+deliverable that the commit doesn't hold, and no origin; `diff`, which commits and pushes each
+change and gives the whole diff, after a stray file is removed, and with no origin; and `ci`, which
+waits for the CI's checks, each passed, one failed, and none that gh can give."""
 
 from __future__ import annotations
 
@@ -58,9 +58,7 @@ def origin(tmp_path: Any) -> str:
 # commit
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_commit_of_one_path_holds_it_alone_with_the_message(tmp_path: Any, host: Any):
     """Given a run whose design tree and the command are changed, neither staged
     When commit is given the design tree with a message of two lines
@@ -76,9 +74,7 @@ def test_a_commit_of_one_path_holds_it_alone_with_the_message(tmp_path: Any, hos
     assert git(worktree(run), "status", "--porcelain").split() == ["??", "invoicer/__main__.py"]
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_commit_of_several_paths_and_a_folder_holds_each(tmp_path: Any, host: Any):
     """Given a run whose design tree, a Round's file, and the guide are changed
     When commit is given the design tree, the run's folder of Rounds, and the guide
@@ -92,9 +88,7 @@ def test_a_commit_of_several_paths_and_a_folder_holds_each(tmp_path: Any, host: 
     )
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_commit_takes_a_path_with_no_change_beside_one_with_one(tmp_path: Any, host: Any):
     """Given a run whose design tree is changed and whose docs/product-vision.md isn't
     When commit is given both
@@ -105,9 +99,7 @@ def test_a_commit_takes_a_path_with_no_change_beside_one_with_one(tmp_path: Any,
     assert committed_files(worktree(run)) == [tree_file(run)]
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_commit_leaves_the_rest_of_the_index_as_it_was(tmp_path: Any, host: Any):
     """Given a run whose guide is changed and staged, and whose design tree is changed
     When commit is given the design tree
@@ -583,6 +575,31 @@ def test_a_put_up_with_gh_logged_out_is_missing_its_login(tmp_path: Any, host: A
         put_up(run, rn_files.COMMAND, host)
     assert head(worktree(run)) == before
     assert git(worktree(run), "status", "--porcelain").split() == ["M", "invoicer/lines.py"]
+    assert git(origin(tmp_path), "branch", "--list", f"rn-{NAME}").strip() == ""
+    assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]
+
+
+@pytest.mark.supports("test_a_put_up_while_the_goal_is_open_is_refused_before_any_push")
+def test_a_put_up_while_the_goal_is_open_is_wrong_before_any_commit_or_push(
+    tmp_path: Any, host: Any, gh_state: str
+):
+    """Given a run whose design tree's goal is open, its decided null, and whose guide is written
+    When put_up is given the plan
+    Then Wrong is raised saying the goal is open, before any commit or push: the guide stays
+    uncommitted, the branch's head is as it was, the remote holds no rn-<name>, and gh was asked
+    `gh auth status` alone"""
+    design_tree = rn_files.walkthrough_tree(NAME, plan_done=False)
+    design_tree["goal"] = {"decided": None}
+    run = made_run(str(tmp_path), design_tree=design_tree)
+    changed(run, {rn_files.GUIDE: "# Guide\n"})
+    before = head(worktree(run))
+    with pytest.raises(Wrong, match="goal is open"):
+        put_up(run, rn_files.plan_path(NAME), host)
+    assert head(worktree(run)) == before
+    assert git(worktree(run), "status", "--porcelain", "--", rn_files.GUIDE).split() == [
+        "??",
+        rn_files.GUIDE,
+    ]
     assert git(origin(tmp_path), "branch", "--list", f"rn-{NAME}").strip() == ""
     assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]
 

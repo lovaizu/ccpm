@@ -28,27 +28,23 @@ _ORIGINS = "refs/remotes/origin/rn-*"
 _FETCH = ["git", "fetch", "-q", "--prune", "origin", f"+refs/heads/rn-*:{_ORIGINS}"]
 
 
-def new(
-    run: RunPlace, context: form.Context, goal: str, practice: Practice, host: Host
-) -> RunPlace:
-    """Makes a run's worktree and its design tree with the goal as put.
+def new(run: RunPlace, context: form.Context, practice: Practice, host: Host) -> RunPlace:
+    """Makes a run's worktree and its design tree, its goal open for the pruner to write.
 
     Takes: the run to make, named by `place.named` from the day and the slug of the work that the
     user asked for in reply to `/rn:on`; the run's context, as `tree.form.context` gives it; the
-    goal as the orchestrator puts it; the design tree best practice; and the host.
+    design tree best practice; and the host.
     Gives: the run, made.
     Changes: adds the branch `rn-<name>` from the head of the default branch that
     `git symbolic-ref refs/remotes/origin/HEAD` names, tracking none, checks
     it out in the run's worktree, and writes there the design tree that `tree.form.started` gives
-    for the context and the goal, uncommitted; the user's own worktree and branch stay as they
+    for the context, uncommitted; the user's own worktree and branch stay as they
     were. Inside herdr, herdr makes the branch and the worktree and opens its workspace, leaving
     the focus where it is.
     Refuses: Missing where the run's repository isn't the top of a git repository with a commit, or
-    `refs/remotes/origin/HEAD` names no default branch; Wrong where the goal is empty, or a run of
-    the name already lies there; CantRun where git or herdr fails, with what it said.
+    `refs/remotes/origin/HEAD` names no default branch; Wrong where a run of the name already lies
+    there; CantRun where git or herdr fails, with what it said.
     """
-    if not goal.strip():
-        raise Wrong("the goal is empty; give the goal as one sentence with the user as its subject")
     top = host(["git", "rev-parse", "--show-toplevel"], run.repository)
     if top.code != 0 or os.path.realpath(top.out.strip()) != os.path.realpath(run.repository):
         raise Missing(f"{run.repository} isn't the top of a git repository; run /rn:on at its top")
@@ -74,7 +70,7 @@ def new(
     _exclude(run, host)
     plan = os.path.relpath(run.tree, run.worktree)
     os.makedirs(run.folder)
-    form.write(run.tree, form.started(context, goal, plan, practice))
+    form.write(run.tree, form.started(context, plan, practice))
     return run
 
 

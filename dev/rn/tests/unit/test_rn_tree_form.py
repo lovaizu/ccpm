@@ -1,6 +1,7 @@
 """The unit cases of tree/form.py, how the design tree is kept as a file: `context`, the context
-a run starts with, and its refusal of an empty language; `started`, the tree a run starts from, for
-a goal and for none, by a best practice of each order of conditions; `read` and `write`, of a file
+a run starts with, and its refusal of an empty language; `started`, the tree a run starts from, its
+goal open, by a best practice of each order of conditions; `goal`, of a goal written, of one
+character, and of one open; `read` and `write`, of a file
 in form, out of it, missing, not JSON, and one that can't be written; `at`, of each kind of node
 and of each pointer that names none; and `deliverable`, of one path among several, a near match,
 and none."""
@@ -15,7 +16,7 @@ import pytest
 import rn_files
 from fault import CantRun, Wrong
 from rn_files import COMMAND, GOAL, GUIDE
-from tree.form import at, context, deliverable, read, started, write
+from tree.form import at, context, deliverable, goal, read, started, write
 
 NAME = "20261120-a-command-with-which-the"
 PLAN = rn_files.plan_path(NAME)
@@ -40,22 +41,22 @@ def the_tree() -> dict[str, Any]:
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
-def test_started_holds_the_goal_by_reasoning_and_the_plan_as_its_one_deliverable():
-    """Given the walkthrough's context, goal, the plan's path, and the design tree best practice
+def test_started_holds_the_goal_open_and_the_plan_as_its_one_deliverable():
+    """Given the walkthrough's context, the plan's path, and the design tree best practice
     When the tree a run starts from is made
-    Then its context is the one given; its goal is the sentence by reasoning; its one deliverable
-    the plan, named by the goal, of the kind design-tree, at the plan's path, with no inputs,
-    open, each condition in the best practice's order, N1, N2, N7, N3 to N6, not good with no
-    decision; and its work and its steps none"""
-    got = started(CONTEXT, GOAL, PLAN, rn_files.practice("design-tree"))
+    Then its context is the one given; its goal is open, its decided null with no by; its one
+    deliverable the plan, its name empty until the pruner names it, of the kind design-tree, at
+    the plan's path, with no inputs, open, each condition in the best practice's order, N1, N2,
+    N7, N3 to N6, not good with no decision; and its work and its steps none"""
+    got = started(CONTEXT, PLAN, rn_files.practice("design-tree"))
     assert got == {
         "context": rn_files.context(),
-        "goal": {"decided": GOAL, "by": "reasoning"},
+        "goal": {"decided": None},
         "deliverables": [
             {
-                "name": GOAL,
+                "name": "",
                 "path": PLAN,
                 "kind": "design-tree",
                 "inputs": [],
@@ -72,44 +73,56 @@ def test_started_holds_the_goal_by_reasoning_and_the_plan_as_its_one_deliverable
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_started_takes_the_conditions_in_the_best_practices_order_not_by_their_ids():
     """Given a best practice whose conditions stand as N1, N2, N3, N7, N4, N5, N6, test-design's
     When the tree a run starts from is made by it
     Then the plan's conditions stand in that order"""
-    got = started(CONTEXT, GOAL, PLAN, rn_files.practice("test-design"))
+    got = started(CONTEXT, PLAN, rn_files.practice("test-design"))
     ids = [each["id"] for each in got["deliverables"][0]["necessary_conditions"]]
     assert ids == ["N1", "N2", "N3", "N7", "N4", "N5", "N6"]
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_started_of_a_goal_of_one_character_holds_it():
-    """Given a goal of one character
-    When the tree a run starts from is made
-    Then the goal and the plan's name are that character"""
-    got = started(CONTEXT, "x", PLAN, rn_files.practice("design-tree"))
-    assert (got["goal"]["decided"], got["deliverables"][0]["name"]) == ("x", "x")
+# goal
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_started_refuses_an_empty_goal():
-    """Given an empty goal
-    When the tree a run starts from is made
-    Then it refuses with Wrong"""
-    with pytest.raises(Wrong):
-        started(CONTEXT, "", PLAN, rn_files.practice("design-tree"))
+@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
+def test_goal_gives_the_goals_sentence_once_written():
+    """Given the walkthrough's tree, its goal written by user
+    When its goal is taken
+    Then it is the goal's sentence"""
+    assert goal(the_tree()) == GOAL
+
+
+@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
+def test_goal_of_a_goal_of_one_character_gives_it():
+    """Given a tree whose goal is one character, x
+    When its goal is taken
+    Then it is x, as an empty goal is the schema's to judge"""
+    the = the_tree()
+    the["goal"] = {"decided": "x", "by": "reasoning"}
+    assert goal(the) == "x"
+
+
+@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
+def test_goal_refuses_an_open_goal_saying_a_new_pruner_writes_it():
+    """Given the tree that a run starts from, its goal open
+    When its goal is taken
+    Then it refuses with Wrong saying that the goal is open, and to hand the request to a new
+    pruner"""
+    with pytest.raises(Wrong) as refused:
+        goal(started(CONTEXT, PLAN, rn_files.practice("design-tree")))
+    assert str(refused.value).startswith(
+        "the design tree's goal is open; hand the request to a new pruner, which writes the goal"
+    )
 
 
 # context
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_context_holds_the_version_and_the_languages():
     """Given rn's version 0.9.0, English as the deliverables' language, and Japanese as the
@@ -126,7 +139,7 @@ def test_context_holds_the_version_and_the_languages():
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @pytest.mark.parametrize(
     ("deliverables", "conversation", "named"),

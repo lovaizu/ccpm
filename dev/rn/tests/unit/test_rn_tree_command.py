@@ -1,6 +1,8 @@
 """The unit cases of tree/command.py, tree.py's command line, through `main`: `touched` with a
-pointer and without, of none, one, and two changes; `commit` of a change in form, of one out of it,
-and of none; `cut` for each role and each thing a deliverable waits on, a new Round and the last
+pointer and without, of none, one, and two changes; `check` of a tree in form, as committed,
+changed, or as a run starts, of one with faults, out of its schema, and of none; `commit` of a
+change in form, of one out of it, and of none; `cut` while the goal is open, and for each role and
+each thing a deliverable waits on, a new Round and the last
 one again, the Round that a pause stopped, and a stage at its limit with its findings kept;
 `signoff` of the plan, of a deliverable with its findings left, of the last, asking gh nothing,
 and of none waiting; `commit` of a tree leaving a deliverable open, and of each deliverable done,
@@ -11,6 +13,7 @@ git for real."""
 
 from __future__ import annotations
 
+import json
 import os
 from typing import Any
 
@@ -93,6 +96,8 @@ def refused(result: tuple[int, str, str], *words: str) -> None:
         ["nothing", "x"],
         ["touched"],
         ["touched", "x", "/goal", "more"],
+        ["check"],
+        ["check", "x", "more"],
         ["commit", "x"],
         ["cut", "x", "generator"],
         ["signoff"],
@@ -221,12 +226,97 @@ def test_touched_of_no_change_since_the_commit_prints_nothing(tmp_path: Any, hos
     assert r.main(host, "touched", r.run) == (0, "", "")
 
 
-# commit
+# check
+
+
+@pytest.mark.supports("test_the_pruners_write_passes_the_hook_and_tree_py_check_takes_it")
+@pytest.mark.parametrize("committed", [True, False], ids=["committed", "changed"])
+def test_check_of_a_tree_in_form_gives_0_printing_nothing(
+    tmp_path: Any, host: Any, committed: bool
+):
+    """Given the walkthrough's run whose tree is as committed, or changed by a decision settled in
+    the guide's N1 and not committed
+    When tree.py check runs
+    Then it gives 0 printing nothing, the tree and the branch's last commit as they were"""
+    r = Run(str(tmp_path), walkthrough())
+    if not committed:
+        changed = r.tree()
+        changed["deliverables"][2]["necessary_conditions"][0]["decisions"].append(
+            rn_files.decision("its people", "The accounting team.", "reasoning")
+        )
+        r.write(changed)
+    before, tree = r.head(), r.tree()
+    assert r.main(host, "check", r.run) == (0, "", "")
+    assert (r.head(), r.tree()) == (before, tree)
+
+
+@pytest.mark.supports("test_the_pruners_write_passes_the_hook_and_tree_py_check_takes_it")
+def test_check_of_the_tree_a_run_starts_from_gives_0(tmp_path: Any, host: Any):
+    """Given a run's worktree whose design tree is as the run starts, its goal open, never
+    committed
+    When tree.py check runs
+    Then it gives 0 printing nothing, as the tree's checks take the goal open"""
+    r = Run(str(tmp_path), rn_files.started(NAME), committed=False)
+    assert r.main(host, "check", r.run) == (0, "", "")
 
 
 @pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
+    "test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_nothing"
 )
+def test_check_of_a_tree_with_two_faults_gives_1_with_each_on_a_line(tmp_path: Any, host: Any):
+    """Given the walkthrough's run, its tree changed so that the command's kind is `lights` and the
+    guide's input names a file that the worktree doesn't hold
+    When tree.py check runs
+    Then it gives 1 printing two lines, the first naming /deliverables/1/kind and the second
+    /deliverables/2/inputs/0, nothing on stderr, and the tree and the branch's last commit as they
+    were"""
+    r = Run(str(tmp_path), walkthrough())
+    changed = r.tree()
+    changed["deliverables"][1]["kind"] = "lights"
+    changed["deliverables"][2]["inputs"] = ["docs/missing.md"]
+    r.write(changed)
+    before = r.head()
+    code, out, err = r.main(host, "check", r.run)
+    assert (code, err) == (1, "")
+    lines = out.splitlines()
+    assert len(lines) == 2 and out.endswith("\n")
+    assert lines[0].startswith("/deliverables/1/kind: ")
+    assert lines[1].startswith("/deliverables/2/inputs/0: names docs/missing.md")
+    assert (r.head(), r.tree()) == (before, changed)
+
+
+@pytest.mark.supports(
+    "test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_nothing"
+)
+def test_check_of_a_tree_out_of_its_schema_gives_1_with_its_place(tmp_path: Any, host: Any):
+    """Given the walkthrough's run, its tree changed so that the goal holds no `by`
+    When tree.py check runs
+    Then it gives 1 with a line naming /goal"""
+    r = Run(str(tmp_path), walkthrough())
+    changed = r.tree()
+    del changed["goal"]["by"]
+    r.write(changed)
+    code, out, _ = r.main(host, "check", r.run)
+    assert code == 1
+    assert "/goal" in out
+
+
+@pytest.mark.supports(
+    "test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_nothing"
+)
+def test_check_of_a_run_with_no_design_tree_gives_1_naming_it(tmp_path: Any, host: Any):
+    """Given the walkthrough's run whose design tree was deleted
+    When tree.py check runs
+    Then it gives 1 with `tree.py: ` and that the run's folder holds no design tree on stderr"""
+    r = Run(str(tmp_path), walkthrough())
+    os.remove(r.tree_path)
+    refused(r.main(host, "check", r.run), "holds no design tree")
+
+
+# commit
+
+
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_commit_of_a_change_in_form_commits_the_tree_alone_with_the_ground(
     tmp_path: Any, host: Any
 ):
@@ -274,9 +364,7 @@ def test_commit_of_a_tree_out_of_form_gives_1_with_its_first_fault_leaving_git(
     )
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_commit_of_no_change_prints_the_last_commit_committing_nothing(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree as committed
     When tree.py commit runs
@@ -287,15 +375,14 @@ def test_commit_of_no_change_prints_the_last_commit_committing_nothing(tmp_path:
     assert r.head() == before
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_commit_of_the_tree_a_run_starts_from_commits_it_first(tmp_path: Any, host: Any):
-    """Given a run's worktree whose design tree, as the run starts, was never committed
+    """Given a run's worktree whose design tree, as the run starts with its goal open, was never
+    committed
     When tree.py commit runs with the ground
-    Then it gives 0 printing a new commit's hash, whose message is the ground"""
-    started = rn_files.tree([rn_files.plan(NAME, good=False)], by="reasoning")
-    r = Run(str(tmp_path), started, committed=False)
+    Then it gives 0 printing a new commit's hash, whose message is the ground, as the tree's checks
+    take the goal open"""
+    r = Run(str(tmp_path), rn_files.started(NAME), committed=False)
     before = r.head()
     code, out, _ = r.main(host, "commit", r.run, "The goal as put.")
     assert code == 0
@@ -303,9 +390,7 @@ def test_commit_of_the_tree_a_run_starts_from_commits_it_first(tmp_path: Any, ho
     assert git(r.worktree, "log", "-1", "--format=%B").strip() == "The goal as put."
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_commit_that_a_commit_check_refuses_gives_2_with_what_git_said(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree committed, then a decision settled in the guide's N1,
     in a repository whose pre-commit hook refuses each commit saying `tree: no`
@@ -329,6 +414,19 @@ def test_commit_that_a_commit_check_refuses_gives_2_with_what_git_said(tmp_path:
 # cut
 
 
+@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
+@pytest.mark.parametrize("role", ["generator", "evaluator"])
+def test_cut_while_the_goal_is_open_gives_1_making_no_round(tmp_path: Any, host: Any, role: str):
+    """Given the walkthrough's run whose goal is open, its decided null
+    When tree.py cut runs for the command's generator or evaluator
+    Then it gives 1 saying that the goal is open and a new pruner writes it, and makes no Round"""
+    the = walkthrough()
+    the["goal"] = {"decided": None}
+    r = Run(str(tmp_path), the)
+    refused(r.main(host, "cut", r.run, role, COMMAND), "goal is open", "a new pruner")
+    assert not os.path.exists(os.path.join(r.folder, "rounds"))
+
+
 @pytest.mark.supports(
     "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
 )
@@ -349,12 +447,8 @@ def test_cut_of_the_first_generator_writes_its_cut_in_round_content_1(tmp_path: 
     assert os.path.normpath(os.path.join(r.repo, given["best_practice"])) == os.path.join(
         RN, "domain", "best-practices", "light"
     )
-    assert (given["stage"], given["number"], given["findings"], given["last_good"]) == (
-        "content",
-        1,
-        None,
-        None,
-    )
+    assert (given["stage"], given["number"], given["last_good"]) == ("content", 1, None)
+    assert "findings" not in given
 
 
 @pytest.mark.supports("test_a_generators_made_makes_the_evaluator_due_in_the_same_round")
@@ -407,13 +501,12 @@ def test_cut_of_a_deliverable_with_an_open_point_gives_1_naming_the_user(tmp_pat
 
 
 @pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
-def test_cut_after_two_content_rounds_short_gives_1_naming_the_orchestrator(
-    tmp_path: Any, host: Any
-):
+def test_cut_after_two_content_rounds_short_gives_1_naming_the_pruner(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's evaluators found N1 short in Rounds content-1 and
     content-2, its tree holding N2 and N3 good
     When tree.py cut runs for the command's generator
-    Then it gives 1 saying it waits on the orchestrator, and makes no Round content-3"""
+    Then it gives 1 saying it waits on the pruner, to keep each finding left as an open decision,
+    and makes no Round content-3"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
     results = {
         "generator": rn_files.made([], [COMMAND]),
@@ -425,7 +518,11 @@ def test_cut_after_two_content_rounds_short_gives_1_naming_the_orchestrator(
         rn_files.a_round(r.folder, COMMAND, "content", number, results)
     code, out, err = r.main(host, "cut", r.run, "generator", COMMAND)
     assert code == 1
-    assert "orchestrator" in out + err
+    assert err == (
+        f"tree.py: {COMMAND} waits on the pruner, to keep each finding left as an open decision,"
+        " not on its generator\n"
+    )
+    assert out == ""
     assert not os.path.exists(r.round(COMMAND, "content", 3))
 
 
@@ -446,12 +543,13 @@ def test_cut_after_a_point_answered_writes_the_same_rounds_cut_again(tmp_path: A
     assert not os.path.exists(r.round(COMMAND, "content", 2))
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_cut_after_a_round_judged_short_makes_the_next_round(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's evaluator found N1 short in Round content-1, its
     tree holding N2 and N3 good
     When tree.py cut runs for the command's generator
-    Then it gives 0 printing Round content-2's generator-cut.json, its findings the evaluator's"""
+    Then it gives 0 printing Round content-2's generator-cut.json, which holds none of the
+    evaluator's findings, and the generator's good of content-1 as its last good"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
     judged = rn_files.judged([("N2", ["a"]), ("N3", ["b"])], [("N1", "It prints a comma.")])
     rn_files.a_round(
@@ -467,7 +565,9 @@ def test_cut_after_a_round_judged_short_makes_the_next_round(tmp_path: Any, host
     assert os.path.normpath(os.path.join(r.repo, out.strip())) == path
     given = rn_files.read_json(path)
     assert (given["stage"], given["number"]) == ("content", 2)
-    assert given["findings"] == {"good": [], "more": judged["more"]}
+    assert "findings" not in given
+    assert "It prints a comma." not in json.dumps(given)
+    assert given["last_good"] == []
 
 
 @pytest.mark.supports(
@@ -588,13 +688,14 @@ def test_signoff_of_a_deliverable_past_its_rounds_writes_it_done(tmp_path: Any, 
     """Given the walkthrough's run whose command is past its two content Rounds, its finding kept
     as an open decision
     When tree.py signoff runs
-    Then it gives 0 printing the design tree's path, whose command is now done in its one line"""
+    Then it gives 0 printing the design tree's path, whose command is now done, keeping N1 not
+    good with the user's answer and the finding left as its decisions, and N2 and N3 good"""
     r = left_past(str(tmp_path))
     code, out, err = r.main(host, "signoff", r.run)
     assert (code, err) == (0, "")
     assert os.path.normpath(os.path.join(r.repo, out.strip())) == r.tree_path
     assert r.tree()["deliverables"][1] == rn_files.done_node(
-        rn_files.COMMAND_NAME, COMMAND, "light"
+        rn_files.COMMAND_NAME, COMMAND, "light", ["N2", "N3"], {"N1": [TAX, LEFT]}
     )
 
 

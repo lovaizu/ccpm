@@ -1,9 +1,12 @@
-"""The unit cases of hook/command.py, the hook that Claude Code runs before each Bash command: a
-command of rn's maker that deletes, by rm, rmdir, unlink, or find's -delete, at the start or
-further on in a chain or a pipeline, denied with how to use remove.py; and each call that passes,
-printing nothing: a maker's command that doesn't delete, a delete by the main conversation or by
-another plugin's subagent, another tool, stdin that isn't the hook's JSON, a command that can't be
-read, and a fault of the hook's own."""
+"""The unit cases of hook/command.py, the hook that Claude Code runs before each Bash command and
+each Write or Edit: a command of rn's maker that deletes, by rm, rmdir, unlink, or find's -delete,
+at the start or further on in a chain or a pipeline, denied with how to use remove.py; a Write or
+Edit of a run's design tree by the main conversation or by any agent but rn's pruner, its path
+written with / or \\, denied pointing to a new pruner; and each call that passes, printing nothing:
+a maker's command that doesn't delete, a delete by the main conversation or by another plugin's
+subagent, another tool, the pruner's write of the tree, a write of a file near a run's tree, a
+write whose path can't be read, stdin that isn't the hook's JSON, a command that can't be read,
+and a fault of the hook's own."""
 
 from __future__ import annotations
 
@@ -12,6 +15,7 @@ import os
 from typing import Any
 
 import pytest
+import rn_files
 from hook import command
 from hook.command import main
 
@@ -21,17 +25,8 @@ REMOVE = os.path.join(ROOT, "scripts", "remove.py")
 
 def given(cmd: Any, agent: Any = "rn:generator", tool: str = "Bash") -> bytes:
     """The hook's stdin for the Bash command, as Claude Code gives it in the agent's call."""
-    called: dict[str, Any] = {
-        "session_id": "abc123",
-        "cwd": "/work/invoicer",
-        "hook_event_name": "PreToolUse",
-        "tool_name": tool,
-        "tool_input": {"command": cmd, "description": "Clean up"},
-        "tool_use_id": "toolu_01",
-    }
-    if agent is not None:
-        called.update({"agent_id": "a1", "agent_type": agent})
-    return json.dumps(called).encode("utf-8")
+    tool_input = {"command": cmd, "description": "Clean up"}
+    return rn_files.hook_input("/work/invoicer", tool, tool_input, agent).encode("utf-8")
 
 
 def denied(answer: tuple[int, str, str]) -> str:
@@ -166,3 +161,120 @@ def test_a_fault_of_the_hooks_own_passes(monkeypatch: pytest.MonkeyPatch):
 
     monkeypatch.setattr(command, "decided", broken)
     assert main(given("rm -r build"), ROOT) == (0, "", "")
+
+
+# A write to a run's design tree.
+
+TREE = (
+    "/work/invoicer/.claude/worktrees/rn-20261120-invoices/.rn/20261120-invoices/design-tree.json"
+)
+WINDOWS_TREE = (
+    "C:\\work\\invoicer\\.claude\\worktrees\\rn-20261120-invoices\\.rn\\20261120-invoices"
+    "\\design-tree.json"
+)
+
+
+def written(path: Any, agent: Any = None, tool: str = "Write") -> bytes:
+    """The hook's stdin for a Write or Edit of the file, as Claude Code gives it in the agent's
+    call, or in the main conversation's where the agent is None."""
+    if tool == "Edit":
+        tool_input = {"file_path": path, "old_string": "a", "new_string": "b", "replace_all": False}
+    else:
+        tool_input = {"file_path": path, "content": "{}\n"}
+    return rn_files.hook_input("/work/invoicer", tool, tool_input, agent).encode("utf-8")
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner"
+)
+@pytest.mark.parametrize("tool", ["Write", "Edit"])
+def test_the_main_conversations_write_to_a_runs_tree_is_denied_pointing_to_a_new_pruner(
+    tool: str,
+):
+    """Given the main conversation, the orchestrator, which names no agent, calling Write or Edit
+    on a run's design-tree.json
+    When the hook runs
+    Then it denies the call, its reason naming the file and telling the writer to hand the fact
+    to a new pruner"""
+    reason = denied(main(written(TREE, tool=tool), ROOT))
+    assert f"Leave {TREE} as it is" in reason
+    assert "hand the fact you'd write to a new pruner" in reason
+
+
+@pytest.mark.supports("test_a_makers_write_to_the_design_tree_is_denied_while_the_scripts_write_it")
+@pytest.mark.parametrize(
+    "agent",
+    ["rn:generator", "rn:evaluator", "Explore", "general-purpose", "pruner", "rn:pruner2", 7],
+)
+def test_a_write_to_a_runs_tree_by_any_agent_but_the_pruner_is_denied(agent: Any):
+    """Given rn's generator or evaluator, another plugin's or Claude Code's own agent, an agent
+    named nearly as the pruner, or an agent_type that isn't text, calling Write on a run's
+    design-tree.json
+    When the hook runs
+    Then it denies the call"""
+    denied(main(written(TREE, agent=agent), ROOT))
+
+
+@pytest.mark.supports("test_a_makers_write_to_the_design_tree_is_denied_while_the_scripts_write_it")
+def test_a_write_to_a_runs_tree_given_with_backslashes_is_denied():
+    """Given the main conversation calling Write on a run's design-tree.json, its path written
+    with backslashes, as Claude Code gives it on Windows
+    When the hook runs
+    Then it denies the call"""
+    denied(main(written(WINDOWS_TREE), ROOT))
+
+
+@pytest.mark.supports("test_the_pruners_write_passes_the_hook_and_tree_py_check_takes_it")
+@pytest.mark.parametrize("tool", ["Write", "Edit"])
+def test_the_pruners_write_to_a_runs_tree_passes(tool: str):
+    """Given rn's pruner calling Write or Edit on a run's design-tree.json
+    When the hook runs
+    Then it gives 0 and prints nothing, so that the write goes on"""
+    assert main(written(TREE, agent="rn:pruner", tool=tool), ROOT) == (0, "", "")
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner"
+)
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/work/invoicer/docs/guide.md",
+        "/work/invoicer/docs/design-tree.json",
+        "/work/invoicer/rn/20261120-invoices/design-tree.json",
+        "/work/invoicer/.rn/20261120-invoices/design-tree.json.bak",
+        "/work/invoicer/.rn/20261120-invoices/rounds/design-tree.json",
+        "/work/invoicer/.rn/design-tree.json",
+    ],
+)
+def test_the_main_conversations_write_to_another_file_passes(path: str):
+    """Given the main conversation calling Write on a file that isn't a run's design tree, its
+    name, its folder, or its depth under .rn near one's
+    When the hook runs
+    Then it gives 0 and prints nothing"""
+    assert main(written(path), ROOT) == (0, "", "")
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner"
+)
+@pytest.mark.parametrize("tool", ["Read", "NotebookEdit"])
+def test_another_tool_on_a_runs_tree_passes(tool: str):
+    """Given the main conversation calling Read, or a tool that writes no JSON file, on a run's
+    design-tree.json
+    When the hook runs
+    Then it gives 0 and prints nothing"""
+    assert main(written(TREE, tool=tool), ROOT) == (0, "", "")
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner"
+)
+@pytest.mark.parametrize("given_input", [{"content": "{}"}, {"file_path": 7}, TREE])
+def test_a_write_whose_path_cant_be_read_passes(given_input: Any):
+    """Given the main conversation calling Write with no file_path, one that isn't text, or an
+    input that isn't an object
+    When the hook runs
+    Then it gives 0 and prints nothing, as the hook never stops a call on its own fault"""
+    called = {"tool_name": "Write", "tool_input": given_input}
+    assert main(json.dumps(called).encode(), ROOT) == (0, "", "")

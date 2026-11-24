@@ -1,7 +1,8 @@
 """How rn's cases make the files that rn reads, each in the form that its use reads it: a best
 practice as its best-practice.json holds it, a design tree of design-tree.schema.json, a run's
 folder at the place that the architecture's Directory structure names, a Round's folder with its
-Cuts and results, and a git repository with a commit, as the user's repository is.
+Cuts and results, a git repository with a commit, as the user's repository is, and the input that
+Claude Code gives rn's hook before a tool call.
 
 Each helper writes or gives what the documents name, and nothing of how rn's code reads it, so
 that a case calls rn's parts only through their interfaces."""
@@ -142,9 +143,24 @@ def decided(
     return given
 
 
-def done_node(name: str, path: str, kind: str) -> dict[str, Any]:
-    """A deliverable that's done, in its one line."""
-    return {"name": name, "path": path, "kind": kind, "status": "done"}
+def done_node(
+    name: str,
+    path: str,
+    kind: str,
+    good: bool | Iterable[str] = True,
+    decisions: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
+) -> dict[str, Any]:
+    """A deliverable that's done, keeping each necessary condition of its best practice in order,
+    good where `good` is True or names it, with each decision given added to its condition by its
+    ID."""
+    held = decided(open_node(name, path, kind, good=good), decisions or {})
+    return {
+        "name": name,
+        "path": path,
+        "kind": kind,
+        "status": "done",
+        "necessary_conditions": held["necessary_conditions"],
+    }
 
 
 def work(do: str, path: str, condition_id: str | None = None, about: str | None = None) -> dict:
@@ -208,6 +224,15 @@ def plan_path(name: str) -> str:
 def plan(name: str, good: bool | Iterable[str] = True, goal: str = GOAL) -> dict[str, Any]:
     """The plan, the tree's own deliverable of the kind `design-tree`, named by the goal."""
     return open_node(goal, plan_path(name), "design-tree", good=good)
+
+
+def started(name: str) -> dict[str, Any]:
+    """The design tree that a run starts from, before the pruner writes the goal: the context, the
+    goal open as an open decision is, `decided` null, and the plan as its one deliverable, its name
+    empty until the pruner names it by the goal, each condition not good, with no work or steps."""
+    design_tree = tree([plan(name, good=False, goal="")])
+    design_tree["goal"] = {"decided": None}
+    return design_tree
 
 
 def walkthrough_tree(
@@ -342,3 +367,23 @@ def with_origin(repo: str, origin: str) -> str:
     git(repo, "push", "-q", "-u", "origin", branch)
     git(repo, "remote", "set-head", "origin", branch)
     return origin
+
+
+# The hook's input.
+
+
+def hook_input(cwd: str, tool: str, tool_input: Any, agent: Any = None) -> str:
+    """The JSON that Claude Code gives a PreToolUse hook on stdin for a call of the tool with its
+    input, made in the folder, by the agent, as `agent_type` names it, or by the main
+    conversation, which names none, where the agent is None."""
+    called: dict[str, Any] = {
+        "session_id": "abc123",
+        "cwd": cwd,
+        "hook_event_name": "PreToolUse",
+        "tool_name": tool,
+        "tool_input": tool_input,
+        "tool_use_id": "toolu_01",
+    }
+    if agent is not None:
+        called.update({"agent_id": "a1", "agent_type": agent})
+    return json.dumps(called)

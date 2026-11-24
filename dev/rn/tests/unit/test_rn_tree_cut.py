@@ -1,9 +1,10 @@
 """The unit cases of tree/cut.py, what each role's Cut holds: the generator's, before the first
-Round, after one with findings, of a condition held good and of one still short, with the user's
-answer among its decisions, with none, one, and several inputs, for a refactor Round, and each
-refusal; and the evaluator's, with only what the deliverable's people have, of a deliverable with
-more paths, and each refusal. Each path of a Cut is from the folder the conversation works in, the
-top of the user's repository."""
+Round, after one judged, holding the tree's decisions and the last good but no evaluator's
+findings, with the user's answer among its decisions, with none, one, and several inputs, for a
+refactor Round, and each refusal; and the evaluator's, with only what the deliverable's people
+have, of a deliverable with more paths, and each refusal; each refusal a tree whose goal is open
+among them. Each path of a Cut is from the folder the conversation works in, the top of the
+user's repository."""
 
 from __future__ import annotations
 
@@ -77,15 +78,15 @@ def in_worktree(repo: str, path: str) -> str:
 @pytest.mark.supports(
     "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
 )
-def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str):
+def test_the_first_rounds_cut_holds_the_node_its_input_and_no_last_good(repo: str):
     """Given the walkthrough's tree, the command resting on invoicer's lines, and no Round before
     When the generator's Cut of the command's Round content-1 is made by the light best practice
     Then it holds the goal, the deliverables' language, the command's node as the tree holds it,
     the run's worktree, invoicer's lines in the worktree, light's folder, content, 1, the Round's
     folder, the people's folder in the system's temporary folder, named by the run and the Round,
-    and no findings or last good"""
+    and no last good, and no findings, as the generator mends by its decisions alone"""
     the = walkthrough()
-    got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), (None, None))
+    got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), None)
     assert sorted(got) == sorted(
         [
             "goal",
@@ -98,7 +99,6 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str
             "number",
             "round",
             "trial",
-            "findings",
             "last_good",
         ]
     )
@@ -113,7 +113,7 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_findings(repo: str
     assert (got["stage"], got["number"]) == ("content", 1)
     assert from_top(repo, got["round"]) == round_at(repo, COMMAND).folder
     assert os.path.normpath(got["trial"]) == trial_of(COMMAND, "content", 1)
-    assert (got["findings"], got["last_good"]) == (None, None)
+    assert got["last_good"] is None
 
 
 @pytest.mark.supports(
@@ -126,35 +126,27 @@ def test_the_cut_holds_the_deliverables_language_not_the_conversations(repo: str
     Then its language is Japanese"""
     the = walkthrough()
     the["context"]["languages"] = {"deliverables": "Japanese", "conversation": "English"}
-    got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), (None, None))
+    got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), None)
     assert got["language"] == "Japanese"
 
 
-@pytest.mark.supports("test_an_evaluators_findings_go_to_the_next_rounds_generator_as_given")
-def test_the_next_rounds_cut_takes_the_findings_of_each_condition_not_good_as_given(repo: str):
-    """Given the command's Round content-1, its generator good on N1, N2, and N3, its evaluator good
-    on N2 and more on N1 and N3, and the tree holding N1 good and N2 and N3 not
+@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
+def test_the_next_rounds_cut_holds_the_trees_decisions_and_the_last_good_alone(repo: str):
+    """Given the command's Round content-1, its generator good on N1, N2, and N3, and the tree
+    holding N1 good and, in N3, the remedy that the pruner kept of the evaluator's finding
     When the generator's Cut of Round content-2 is made
-    Then its findings hold N2's good and N3's more word for word, none of N1, held good, and its
-    last good the generator's good of content-1 as it gave it"""
+    Then its deliverable is the command's node as the tree holds it, the remedy among N3's
+    decisions, it holds no findings, and its last good is the generator's good of content-1 as it
+    gave it"""
     made = rn_files.made(
         [("N1", ["import sys"]), ("N2", ["print(1)"]), ("N3", ["x = 1"])], [COMMAND]
     )
-    judged = rn_files.judged(
-        [("N2", ["print(1)"])],
-        [("N1", "The accountant reads the total."), ("N3", "The accountant reads the tax.")],
-    )
-    got = generator(
-        walkthrough(command_good=["N1"]),
-        run_of(repo),
-        round_at(repo, COMMAND, number=2),
-        found("light"),
-        (made, judged),
-    )
-    assert got["findings"] == {
-        "good": [{"condition": "N2", "lines": ["print(1)"]}],
-        "more": [{"condition": "N3", "good_when": "The accountant reads the tax."}],
-    }
+    remedy = rn_files.decision("the tax", "The invoice shows the tax on its own line.", "reasoning")
+    the = walkthrough(command_good=["N1"], command_decisions={"N3": [remedy]})
+    got = generator(the, run_of(repo), round_at(repo, COMMAND, number=2), found("light"), made)
+    assert "findings" not in got
+    assert got["deliverable"] == the["deliverables"][1]
+    assert got["deliverable"]["necessary_conditions"][2]["decisions"] == [remedy]
     assert got["last_good"] == made["good"]
     assert (got["stage"], got["number"]) == ("content", 2)
 
@@ -162,20 +154,18 @@ def test_the_next_rounds_cut_takes_the_findings_of_each_condition_not_good_as_gi
 @pytest.mark.supports(
     "test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_condition_good"
 )
-def test_findings_of_conditions_each_held_good_leave_none(repo: str):
-    """Given the guide's evaluator whose more names N1, and a tree that holds each of the guide's
-    conditions good
+def test_a_last_generator_that_named_nothing_good_gives_an_empty_last_good(repo: str):
+    """Given the guide's last generator, which named no condition good, and a tree that holds each
+    of the guide's conditions good
     When the generator's Cut of its Round refactor-2 is made
-    Then its findings hold no good and no more"""
-    judged = rn_files.judged([("N2", ["a"]), ("N3", ["b"])], [("N1", "The accountant prints.")])
+    Then its last good is empty, not none"""
     got = generator(
         walkthrough(guide_good=True),
         run_of(repo),
         round_at(repo, GUIDE, "refactor", 2),
         found("refactor-doc"),
-        (rn_files.made([], [GUIDE]), judged),
+        rn_files.made([], [GUIDE]),
     )
-    assert got["findings"] == {"good": [], "more": []}
     assert got["last_good"] == []
 
 
@@ -184,7 +174,8 @@ def test_the_cut_holds_the_users_answer_as_its_decision_by_user(repo: str):
     """Given a tree whose command's N1 holds the user's answer about the tax rate, and the
     generator's last result a point
     When the generator's Cut of the same Round, content-1, is made
-    Then its deliverable holds the answer in N1 by user, and its findings none"""
+    Then its deliverable holds the answer in N1 by user, and its last good none, as a point names
+    nothing good"""
     tax = rn_files.decision(rn_files.TAX_ABOUT, rn_files.TAX_ANSWER, "user")
     the = walkthrough(command_decisions={"N1": [tax]})
     got = generator(
@@ -192,10 +183,10 @@ def test_the_cut_holds_the_users_answer_as_its_decision_by_user(repo: str):
         run_of(repo),
         round_at(repo, COMMAND),
         found("light"),
-        (rn_files.point(), None),
+        rn_files.point(),
     )
     assert got["deliverable"]["necessary_conditions"][0]["decisions"] == [tax]
-    assert got["findings"] is None
+    assert got["last_good"] is None
 
 
 @pytest.mark.supports(
@@ -212,7 +203,7 @@ def test_the_cut_names_each_input_in_the_worktree_in_its_order(repo: str, inputs
     Then its inputs name each of them in the run's worktree, in the order the guide names them"""
     the = walkthrough()
     the["deliverables"][2]["inputs"] = inputs
-    got = generator(the, run_of(repo), round_at(repo, GUIDE), found("readme"), (None, None))
+    got = generator(the, run_of(repo), round_at(repo, GUIDE), found("readme"), None)
     assert [from_top(repo, each) for each in got["inputs"]] == [
         in_worktree(repo, each) for each in inputs
     ]
@@ -231,7 +222,7 @@ def test_a_refactor_rounds_cut_names_the_refactor_best_practice(repo: str):
         run_of(repo),
         round_at(repo, GUIDE, "refactor", 2),
         found("refactor-doc"),
-        (None, None),
+        None,
     )
     assert from_top(repo, got["best_practice"]) == os.path.join(rn_files.PRACTICES, "refactor-doc")
     assert (got["stage"], got["number"]) == ("refactor", 2)
@@ -253,8 +244,19 @@ def test_the_generators_cut_refuses_a_round_of_no_open_deliverable(repo: str, pa
             run_of(repo),
             round_at(repo, path),
             found("light"),
-            (None, None),
+            None,
         )
+
+
+@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
+def test_the_generators_cut_refuses_a_tree_whose_goal_is_open(repo: str):
+    """Given the walkthrough's tree whose goal is open, its decided null
+    When the generator's Cut of the command's Round content-1 is made
+    Then it refuses with Wrong saying that the goal is open and a new pruner writes it"""
+    the = walkthrough()
+    the["goal"] = {"decided": None}
+    with pytest.raises(Wrong, match="goal is open; hand the request to a new pruner"):
+        generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), None)
 
 
 # evaluator
@@ -312,3 +314,14 @@ def test_the_evaluators_cut_refuses_a_round_of_a_deliverable_done(repo: str):
             round_at(repo, rn_files.plan_path(NAME)),
             found("design-tree"),
         )
+
+
+@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
+def test_the_evaluators_cut_refuses_a_tree_whose_goal_is_open(repo: str):
+    """Given the walkthrough's tree whose goal is open, its decided null
+    When the evaluator's Cut of the command's Round content-1 is made
+    Then it refuses with Wrong saying that the goal is open"""
+    the = walkthrough()
+    the["goal"] = {"decided": None}
+    with pytest.raises(Wrong, match="goal is open"):
+        evaluator(the, run_of(repo), round_at(repo, COMMAND), found("light"))

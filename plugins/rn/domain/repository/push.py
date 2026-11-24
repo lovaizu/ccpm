@@ -78,7 +78,8 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> list[str]:
     such as null, it then writes that URL there, commits it as `rn: the pull request of <name>`, and
     pushes it.
     Refuses: Missing, before any commit or push, where `gh auth status` finds no login, with what
-    it said; Wrong where the design tree holds no deliverable of the path; Missing where the
+    it said; Wrong, before any commit or push, where the design tree's goal is open, as
+    `tree.form.goal` refuses it, or the tree holds no deliverable of the path; Missing where the
     repository has no remote `origin`, or gh may not open a pull request, with what gh said;
     Wrong where the commit pushed holds nothing at a path of the deliverable, naming it; CantRun
     where git or gh fails otherwise.
@@ -91,6 +92,7 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> list[str]:
         "gh has no login to open the pull request",
     )
     tree = form.read(run.tree)
+    goal = form.goal(tree)
     node = form.deliverable(tree, deliverable)
     _commit_all(run, f"rn: {node['name']}", host)
     pushed = push(run, host)
@@ -99,7 +101,6 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> list[str]:
     if held["state"] == "OPEN":
         url = held["url"]
     else:
-        goal = tree["goal"]["decided"]
         made = checked(
             host,
             [

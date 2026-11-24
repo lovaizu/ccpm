@@ -1,6 +1,9 @@
-"""Decides hook.py's input and output, as Claude Code runs it before each Bash command: it denies
-a command of rn's makers that deletes, with how to use remove.py, and lets every other call pass,
-as only remove.py removes without a permission prompt that stops the run."""
+"""Decides hook.py's input and output, as Claude Code runs it before each Bash command and each
+write by Write or Edit: it denies a command of rn's makers that deletes, with how to use remove.py,
+as only remove.py removes without a permission prompt that stops the run; it denies each write to a
+run's design tree but the pruner's, telling its writer to hand the fact to a new pruner, as the plan
+holds only what the pruner weighed, and rn's scripts write it by Python, through no tool; and it
+lets every other call pass."""
 
 from __future__ import annotations
 
@@ -11,6 +14,7 @@ from typing import Any
 from fault import Answer
 
 from hook.bash import deletes
+from hook.write import is_tree
 
 # What the hook gives to let a call pass: 0, with nothing printed.
 PASS: Answer = (0, "", "")
@@ -18,6 +22,10 @@ PASS: Answer = (0, "", "")
 # The start of each `agent_type` of rn's subagents, as Claude Code names a plugin's agent
 # `<plugin>:<agent>`, such as `rn:generator`.
 RN_AGENT = "rn:"
+# The `agent_type` of rn's pruner, the one role whose writes the design tree takes.
+PRUNER = "rn:pruner"
+# The tools that write a file, each giving its path as `tool_input.file_path`.
+WRITERS = ("Write", "Edit")
 
 _REASON = (
     "rn's makers remove files only through remove.py, which asks no permission:"
@@ -27,6 +35,13 @@ _REASON = (
     " temporary folder."
 )
 
+_TREE_REASON = (
+    "A run's design tree takes only the pruner's writes, as the plan holds only what the pruner"
+    " weighed. Leave {tree} as it is, and hand the fact you'd write to a new pruner: the"
+    " orchestrator starts rn:pruner with the run's folder and the fact, and each other role ends"
+    " with the fact in its result, for the orchestrator to hand on."
+)
+
 
 def main(stdin: bytes, plugin_root: str) -> Answer:
     """The exit code, stdout, and stderr of `hook.py` on the hook's input, with rn's folder at
@@ -34,9 +49,12 @@ def main(stdin: bytes, plugin_root: str) -> Answer:
 
     0 with the JSON that denies the call, its reason giving remove.py's command by its absolute
     path, where the input is a Bash call of one of rn's agents whose command deletes, as
-    `hook.bash.deletes` holds it. 0 with nothing printed for every other input, one that isn't the
-    hook's JSON and a fault of the hook's own among them, as the hook never stops a call on a
-    fault of its own."""
+    `hook.bash.deletes` holds it. 0 with the JSON that denies the call, its reason naming the file
+    and telling the writer to hand the fact to a new pruner, where the input is a Write or Edit
+    call whose `file_path` is a run's design tree, as `hook.write.is_tree` holds it, and whose
+    `agent_type` isn't `rn:pruner`, the main conversation's, which names none, among them. 0 with
+    nothing printed for every other input, one that isn't the hook's JSON and a fault of the
+    hook's own among them, as the hook never stops a call on a fault of its own."""
     try:
         return decided(stdin, plugin_root)
     except Exception:  # noqa: BLE001 - the hook's own fault lets the call pass.
@@ -49,9 +67,18 @@ def decided(stdin: bytes, plugin_root: str) -> Answer:
         called = json.loads(stdin.decode("utf-8"))
     except ValueError:
         return PASS
-    if not (isinstance(called, dict) and _rn_deletes(called)):
+    if not isinstance(called, dict):
         return PASS
-    reason = _REASON.format(remove=os.path.join(plugin_root, "scripts", "remove.py"))
+    if _rn_deletes(called):
+        return _denied(_REASON.format(remove=os.path.join(plugin_root, "scripts", "remove.py")))
+    tree = _tree_written(called)
+    if tree is not None:
+        return _denied(_TREE_REASON.format(tree=tree))
+    return PASS
+
+
+def _denied(reason: str) -> Answer:
+    """What the hook gives to deny the call, with the reason."""
     output = {
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
@@ -60,6 +87,21 @@ def decided(stdin: bytes, plugin_root: str) -> Answer:
         }
     }
     return 0, json.dumps(output) + "\n", ""
+
+
+def _tree_written(called: dict[str, Any]) -> str | None:
+    """The design tree that the call writes, where it's a Write or Edit call of a run's design
+    tree by any but the pruner; else None."""
+    given = called.get("tool_input")
+    path = given.get("file_path") if isinstance(given, dict) else None
+    if (
+        called.get("tool_name") in WRITERS
+        and isinstance(path, str)
+        and is_tree(path)
+        and called.get("agent_type") != PRUNER
+    ):
+        return path
+    return None
 
 
 def _rn_deletes(called: dict[str, Any]) -> bool:

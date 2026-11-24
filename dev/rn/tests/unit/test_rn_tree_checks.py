@@ -1,8 +1,10 @@
 """The unit cases of tree/checks.py, the faults that keep a change of the design tree from its
-commit: a tree in form, and each fault the contract names, one at a time and two at once: a place
-out of the schema, a kind with no best practice, an open deliverable's conditions out of its best
-practice's set or order, an input that names neither a deliverable nor a file of the worktree, a
-deliverable resting on itself directly or through another, and an item of the work that names no
+commit: a tree in form, the tree a run starts from with its goal open, a done deliverable with its
+conditions, and each fault the contract names, one at a time and two at once: a place out of the
+schema, a goal with `by` but no sentence or a sentence but no `by`, a done deliverable in one line
+without its conditions, a kind with no best practice, an open deliverable's conditions out of its
+best practice's set or order, an input that names neither a deliverable nor a file of the worktree,
+a deliverable resting on itself directly or through another, and an item of the work that names no
 deliverable, or a decide naming no condition or about of it; with a near match beside each."""
 
 from __future__ import annotations
@@ -59,11 +61,11 @@ def test_a_tree_in_form_has_no_fault(worktree: str):
 
 @pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_the_plan_open_with_its_conditions_in_order_has_no_fault(worktree: str):
-    """Given the tree a run starts from, the plan open with design-tree's conditions in order
+    """Given the tree a run starts from, its goal open and the plan open, unnamed, with
+    design-tree's conditions in order
     When its faults are found
-    Then there is none"""
-    the = rn_files.tree([rn_files.plan(NAME, good=False)], by="reasoning")
-    assert faults(the, practices(), worktree) == []
+    Then there is none, as the goal waits open for the pruner to write it"""
+    assert faults(rn_files.started(NAME), practices(), worktree) == []
 
 
 @pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
@@ -72,6 +74,12 @@ def test_the_plan_open_with_its_conditions_in_order_has_no_fault(worktree: str):
     [
         (lambda t: t["work"][0].update(do="build"), "/work/0/do"),
         (lambda t: t["goal"].update(by="nobody"), "/goal/by"),
+        (lambda t: t["goal"].pop("by"), "/goal"),
+        (lambda t: t["goal"].update(decided=None), "/goal"),
+        (
+            lambda t: t["deliverables"][0].pop("necessary_conditions"),
+            "/deliverables/0/necessary_conditions",
+        ),
         (lambda t: t["deliverables"][1].pop("inputs"), "/deliverables/1"),
         (lambda t: t["deliverables"][1].update(status="done"), "/deliverables/1"),
         (
@@ -272,9 +280,7 @@ def test_an_item_of_the_work_naming_no_deliverable_condition_or_about_of_it_is_a
     one_fault(faults(the, practices(), worktree), pointer)
 
 
-@pytest.mark.supports(
-    "test_a_point_the_orchestrator_settles_is_committed_with_its_ground_as_the_message"
-)
+@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_decide_of_an_open_point_of_its_condition_holds(worktree: str):
     """Given the walkthrough's tree whose command's N1 holds the tax rate's point open, and whose
     work decides it

@@ -31,7 +31,7 @@ def slug(text: str) -> bool:
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @given(DAYS, SLUGS | TEXT)
 def test_a_runs_name_is_the_day_and_the_slug_or_refused(day: date, given_slug: str):

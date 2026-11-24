@@ -27,7 +27,7 @@ def same(path: str, expected: str) -> bool:
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_runs_worktree_lies_under_the_repositorys_claude_worktrees():
     """Given the run 20261120-invoices of the repository /work/invoicer
@@ -38,7 +38,7 @@ def test_a_runs_worktree_lies_under_the_repositorys_claude_worktrees():
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_runs_branch_is_rn_and_its_name():
     """Given the run 20261120-invoices
@@ -48,7 +48,7 @@ def test_a_runs_branch_is_rn_and_its_name():
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_runs_folder_lies_in_its_worktrees_rn_folder():
     """Given the run 20261120-invoices of /work/invoicer
@@ -61,7 +61,7 @@ def test_a_runs_folder_lies_in_its_worktrees_rn_folder():
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_runs_design_tree_lies_in_its_folder():
     """Given the run 20261120-invoices of /work/invoicer
@@ -75,7 +75,7 @@ def test_a_runs_design_tree_lies_in_its_folder():
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_runs_rounds_lie_in_its_folder():
     """Given the run 20261120-invoices of /work/invoicer
@@ -89,7 +89,7 @@ def test_a_runs_rounds_lie_in_its_folder():
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @pytest.mark.parametrize(
     "slug",
@@ -105,7 +105,7 @@ def test_a_name_is_the_day_and_the_slug(slug: str):
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 def test_a_name_writes_a_day_of_one_digit_with_two():
     """Given the day 2026-01-05
@@ -115,7 +115,7 @@ def test_a_name_writes_a_day_of_one_digit_with_two():
 
 
 @pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
+    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
 )
 @pytest.mark.parametrize(
     "slug",

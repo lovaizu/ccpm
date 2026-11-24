@@ -173,8 +173,8 @@ def checks_in_place(b: Bench) -> None:
 
 
 def one_at_a_time(b: Bench) -> None:
-    """A deliverable waits on the orchestrator while another's Round waits on its generator, so
-    that one deliverable is made at a time."""
+    """A deliverable waits on the pruner while another's Round waits on its generator, so that one
+    deliverable is made at a time."""
     given_again(
         b,
         "domain/rounds/course.py",
@@ -185,7 +185,7 @@ def one_at_a_time(b: Bench) -> None:
         "        if node['path'] == deliverable['path']:\n"
         "            continue\n"
         "        if any(each.generator is None for each in so_far(run, node['path'])):\n"
-        "            return Next('orchestrator', None, False)\n"
+        "            return Next('pruner', None, False)\n"
         "    return _given_next_in(run, deliverable)\n",
     )
 
@@ -216,6 +216,42 @@ def no_run_found(b: Bench) -> None:
     )
 
 
+def tree_writes_pass(b: Bench) -> None:
+    """The hook lets each write to a run's design tree pass, whoever writes it."""
+    given_again(b, "domain/hook/command.py", "def _tree_written(called):\n    return None\n")
+
+
+def done_in_one_line(b: Bench) -> None:
+    """A deliverable signed off is done in one line, its name, path, kind, and status, without
+    its conditions and their decisions."""
+    given_again(
+        b,
+        "domain/tree/signoff.py",
+        "def _done(node):\n"
+        "    kept = ('name', 'path', 'more_paths', 'kind')\n"
+        "    done = {key: node[key] for key in kept if key in node}\n"
+        "    done['status'] = 'done'\n"
+        "    return done\n",
+    )
+
+
+def findings_to_the_generator(b: Bench) -> None:
+    """The generator's Cut holds the last evaluator's findings beside its deliverable's
+    decisions."""
+    given_again(
+        b,
+        "domain/tree/cut.py",
+        "_given_generator = generator\n\n\n"
+        "def generator(tree, run, round_, practice, last):\n"
+        "    from rounds import files\n"
+        "    given = _given_generator(tree, run, round_, practice, last)\n"
+        "    rounds = files.of(run, round_.deliverable)\n"
+        "    judged = [files.result(each, 'evaluator') for each in rounds]\n"
+        "    given['findings'] = [each for each in judged if each is not None][-1:]\n"
+        "    return given\n",
+    )
+
+
 BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_a_tree_change_out_of_form_is_refused_at_its_commit": checks_unasked,
     "test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut": open_decisions_unread,
@@ -235,6 +271,18 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
         blocker_stops_all
     ),
     "test_a_new_conversation_picks_up_the_run_from_its_files": no_run_found,
+    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner": (
+        tree_writes_pass
+    ),
+    "test_a_done_deliverable_keeps_its_decisions_and_is_read_again_with_one_resting_on_it": (
+        done_in_one_line
+    ),
+    "test_a_makers_write_to_the_design_tree_is_denied_while_the_scripts_write_it": (
+        tree_writes_pass
+    ),
+    "test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding": (
+        findings_to_the_generator
+    ),
 }
 
 

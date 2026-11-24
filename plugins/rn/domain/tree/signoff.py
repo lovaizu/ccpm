@@ -1,7 +1,8 @@
 """Decides what waits for the user's sign-off, and what a sign-off changes in the design tree: the
 plan once it's open with each condition good, and another deliverable once its Rounds are over at a
-step that the user checks, wait, and once signed off each is done, the open decisions of the
-findings left being the proposals the user signed off."""
+step that the user checks, wait, and once signed off each is done, keeping its conditions and
+their decisions, as a later deliverable rests on them and the pruner weighs them again, the open
+decisions of the findings left being the proposals the user signed off."""
 
 from __future__ import annotations
 
@@ -57,8 +58,8 @@ def signed_off(tree: Tree, deliverable: str) -> Tree:
 
     Takes: the tree, and the path of the deliverable that `waiting` names.
     Gives: the tree with the deliverable done, whatever its conditions, keeping its name, path,
-    more_paths, and kind, or, for a node with no file, its necessary conditions too; and without
-    each item of `work` that names it.
+    more_paths, kind, `file` where the node has it, and its necessary conditions with their
+    decisions, as they stood; and without each item of `work` that names it.
     Changes: nothing.
     Refuses: Wrong where no open deliverable has the path.
     """
@@ -73,11 +74,11 @@ def signed_off(tree: Tree, deliverable: str) -> Tree:
 
 
 def _done(node: Tree) -> Tree:
-    """The deliverable done: its one line, or, for a node with no file, with its conditions."""
+    """The deliverable done, with its conditions and their decisions."""
     kept = ("name", "path", "more_paths", "kind")
     done = {key: node[key] for key in kept if key in node}
     done["status"] = "done"
     if "file" in node:
         done["file"] = False
-        done["necessary_conditions"] = node["necessary_conditions"]
+    done["necessary_conditions"] = node["necessary_conditions"]
     return done

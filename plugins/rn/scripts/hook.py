@@ -1,6 +1,7 @@
-"""hook.py, as Claude Code runs it before each Bash command, by rn's `hooks/hooks.json`:
-`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/hook.py"`, with the hook's input on stdin. It runs the
-code of hook.py in `domain/hook/`, whose `command` module says what it takes and gives."""
+"""hook.py, as Claude Code runs it before each Bash command and each Write or Edit, by rn's
+`hooks/hooks.json`: `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/hook.py"`, with the hook's input on
+stdin. It runs the code of hook.py in `domain/hook/`, whose `command` module says what it takes and
+gives."""
 
 from __future__ import annotations
 

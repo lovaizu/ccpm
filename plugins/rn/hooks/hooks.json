@@ -1,9 +1,18 @@
 {
-  "description": "Denies each delete by rn's makers in Bash, pointing them to remove.py, which removes without a permission prompt.",
+  "description": "Denies each delete by rn's makers in Bash, pointing them to remove.py, which removes without a permission prompt, and each write to a run's design tree but the pruner's, pointing its writer to the pruner.",
   "hooks": {
     "PreToolUse": [
       {
         "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
