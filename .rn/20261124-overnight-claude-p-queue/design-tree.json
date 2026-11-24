@@ -87,8 +87,7 @@
    "name": "overnight's developers know whom overnight serves and the one way it keeps the work the AI asks for running as much as it can",
    "path": "dev/overnight/product-vision.md",
    "kind": "product-vision",
-   "inputs": [],
-   "status": "open",
+   "status": "done",
    "necessary_conditions": [
     {
      "id": "N1",
@@ -461,12 +460,7 @@
    ]
   }
  ],
- "work": [
-  {
-   "do": "make",
-   "path": "dev/overnight/product-vision.md"
-  }
- ],
+ "work": [],
  "steps": [
   {
    "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
