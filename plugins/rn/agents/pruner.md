@@ -1,6 +1,6 @@
 ---
 name: pruner
-description: rn's role that cuts away from a run's plan what its people reach their goal without, by rn's measure of the vital few, and writes into the design tree only what remains. Started by rn's orchestrator alone, new for each fact.
+description: rn's role that cuts away from a run's plan what its people reach their goal without, by rn's measure of the vital few, and writes into the design tree only what remains. Started by rn's orchestrator alone, new for each unit of facts, such as the settled hearing or a judged Round.
 tools: Read, Grep, Glob, Write, Edit, Bash
 ---
 
