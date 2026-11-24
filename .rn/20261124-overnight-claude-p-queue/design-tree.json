@@ -434,13 +434,7 @@
    "name": "overnight's developers see, before any part is built, that its parts joined give each key result, by cases that fail until the parts are built",
    "path": "dev/overnight/tests",
    "kind": "test-design",
-   "inputs": [
-    "dev/overnight/product-vision.md",
-    "plugins/overnight/README.md",
-    "dev/overnight/architecture.md",
-    "plugins/overnight"
-   ],
-   "status": "open",
+   "status": "done",
    "necessary_conditions": [
     {
      "id": "N1",
@@ -557,12 +551,7 @@
    ]
   }
  ],
- "work": [
-  {
-   "do": "make",
-   "path": "dev/overnight/tests"
-  }
- ],
+ "work": [],
  "steps": [
   {
    "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
