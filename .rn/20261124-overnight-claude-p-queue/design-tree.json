@@ -164,6 +164,9 @@
   {
    "name": "An AI that the user instructs learns from the guide alone whether overnight fits its work, and how to ask it for work so that the work runs as much as it can",
    "path": "plugins/overnight/README.md",
+   "more_paths": [
+    "plugins/overnight/images/how-it-works.svg"
+   ],
    "kind": "readme",
    "inputs": [
     "dev/overnight/product-vision.md"
@@ -172,52 +175,58 @@
    "necessary_conditions": [
     {
      "id": "N1",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N2",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N3",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N5",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N6",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N7",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "the one way",
+       "decided": "Wherever the README states the one way, the opening's first sentence and the figure's alt text included, it says what the concept says: overnight keeps each piece from stopping by the usage limit, a wait for an answer, or the session closing. It promises no piece its end, as whether a piece gets done depends on the work itself: \u300c\u6700\u5f8c\u307e\u3067\u304b\u3069\u3046\u304b\u306f\u4f5c\u696d\u6b21\u7b2c\u3060\u3088\u306d\u3001\u3001\u3001\u300d",
+       "by": "user"
+      }
+     ]
     },
     {
      "id": "N8",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N9",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N10",
-     "good": false,
+     "good": true,
      "decisions": []
     }
    ]
@@ -460,7 +469,12 @@
    ]
   }
  ],
- "work": [],
+ "work": [
+  {
+   "do": "make",
+   "path": "plugins/overnight/README.md"
+  }
+ ],
  "steps": [
   {
    "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
