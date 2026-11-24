@@ -39,7 +39,9 @@ def walkthrough(**given: Any) -> dict[str, Any]:
 # waiting
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_hearing_settled_is_written_by_one_pruner_and_the_plans_signoff_recorded"
+)
 def test_the_plan_open_with_each_condition_good_waits_before_a_deliverable_earlier_in_the_tree():
     """Given a tree whose command, first in the tree, is open with each condition good and waits on
     the sign-off, and whose plan, after it, is open with each condition good
@@ -50,7 +52,9 @@ def test_the_plan_open_with_each_condition_good_waits_before_a_deliverable_earli
     assert waiting(the, {COMMAND: SIGN_OFF, GUIDE: Next("generator", "content", False)}) == PLAN
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_hearing_settled_is_written_by_one_pruner_and_the_plans_signoff_recorded"
+)
 def test_the_plan_open_with_a_condition_short_doesnt_wait():
     """Given a tree whose plan is open with N2 not good, and whose deliverables wait on the
     generator

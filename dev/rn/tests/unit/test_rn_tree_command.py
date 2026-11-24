@@ -88,7 +88,7 @@ def refused(result: tuple[int, str, str], *words: str) -> None:
 # The usage
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     "argv",
     [
@@ -119,7 +119,7 @@ def test_arguments_other_than_the_usages_give_2_with_it(tmp_path: Any, host: Any
 # touched
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_with_a_pointer_prints_each_node_it_touches_a_line(tmp_path: Any, host: Any):
     """Given the walkthrough's run
     When tree.py touched runs with the pointer of the command's N1's decision
@@ -137,7 +137,7 @@ def test_touched_with_a_pointer_prints_each_node_it_touches_a_line(tmp_path: Any
     assert got == (0, "".join(f"{each}\n" for each in lines), "")
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_with_a_pointer_of_a_path_changed_since_the_commit_follows_the_old_path(
     tmp_path: Any, host: Any
 ):
@@ -155,7 +155,7 @@ def test_touched_with_a_pointer_of_a_path_changed_since_the_commit_follows_the_o
     assert got == (0, "".join(f"{each}\n" for each in lines), "")
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_with_a_pointer_of_no_node_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run, of three deliverables
     When tree.py touched runs with the pointer of a fourth
@@ -164,7 +164,7 @@ def test_touched_with_a_pointer_of_no_node_gives_1_naming_it(tmp_path: Any, host
     refused(r.main(host, "touched", r.run, "/deliverables/3"), "/deliverables/3")
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_of_a_change_since_the_commit_prints_what_it_touches(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree committed, then the user's answer about the tax rate
     changed in the tree
@@ -186,7 +186,7 @@ def test_touched_of_a_change_since_the_commit_prints_what_it_touches(tmp_path: A
     assert r.main(host, "touched", r.run) == (0, "".join(f"{each}\n" for each in lines), "")
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
     tmp_path: Any, host: Any
 ):
@@ -217,7 +217,7 @@ def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
     )
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_of_no_change_since_the_commit_prints_nothing(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree as committed
     When tree.py touched runs with no pointer
@@ -805,7 +805,7 @@ def test_commit_that_leaves_each_deliverable_done_commits_it_pushing_nothing_and
 # The run's folder
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     "folder", ["invoicer", ".claude/worktrees/rn-x/.rn/y", f".claude/worktrees/{BRANCH}/.rn"]
 )
@@ -818,7 +818,7 @@ def test_a_folder_that_isnt_a_runs_gives_1(tmp_path: Any, host: Any, folder: str
     refused(r.main(host, "touched", folder, "/goal"), folder)
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_runs_folder_with_no_design_tree_gives_1(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose design tree is taken away
     When tree.py touched runs on its folder
@@ -828,7 +828,7 @@ def test_a_runs_folder_with_no_design_tree_gives_1(tmp_path: Any, host: Any):
     refused(r.main(host, "touched", r.run, "/goal"), r.run)
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_runs_folder_given_whole_is_the_same_run(tmp_path: Any, host: Any):
     """Given the walkthrough's run
     When tree.py touched runs on its folder given as an absolute path

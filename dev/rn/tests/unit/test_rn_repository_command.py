@@ -259,7 +259,9 @@ def test_cancel_of_a_worktree_git_cant_remove_gives_2(tmp_path: Any, host: Any):
     assert os.path.isdir(run.worktree)
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_put_up_of_the_plan_prints_nothing(tmp_path: Any, host: Any):
     """Given a run whose plan is open
     When repository.py put-up is given the run's folder and the plan's path
@@ -269,7 +271,9 @@ def test_put_up_of_the_plan_prints_nothing(tmp_path: Any, host: Any):
     assert given == (0, "", "")
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_put_up_prints_a_link_of_each_path_of_the_deliverable_a_line_each(tmp_path: Any, host: Any):
     """Given a run whose command lies at invoicer/__main__.py and at the more path docs/
     When repository.py put-up is given the run's folder and the command's path
@@ -412,7 +416,9 @@ def test_ci_gives_0_or_1_by_what_the_checks_found(
     assert expected[1] in out + err
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_put_up_with_gh_logged_out_says_what_is_missing_and_commits_nothing(
     tmp_path: Any, host: Any, gh_state: str
 ):

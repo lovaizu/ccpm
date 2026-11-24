@@ -5,8 +5,9 @@ of a run as rn's architecture draws them under Sequences, each a handoff between
 Each move runs rn's scripts as a role runs them, from the repository's top, each in a process of its
 own, and feeds what one prints to the next, as the orchestrator and each role do. A double stands in
 for each prompt's work, as rn's Test strategy says under Integration testing: the pruner's writes
-the design tree and checks it by `tree.py check`, the generator's writes a deliverable's files, and
-each role's writes its result where the prompt's result form says. Each helper plays one move, and
+the design tree, rewrites the nodes that `tree.py touched` lists, and checks it by `tree.py check`,
+the generator's writes a deliverable's files, and each role's writes its result where the prompt's
+result form says. Each helper plays one move, and
 says nothing of how rn's parts carry it."""
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ from typing import Any, NamedTuple
 import rn_files
 from gh import gh_double
 from repo_files import environment, git
-from rn_files import GOAL, LANGUAGES, TOP, WORDS
+from rn_files import LANGUAGES, TOP, WORDS
 
 RN = os.path.join(TOP, "plugins", "rn")
 
@@ -86,12 +87,12 @@ class Bench:
         with open(self.tree_path, "w", encoding="utf-8") as f:
             f.write(json.dumps(design_tree, indent=1) + "\n")
 
-    def script(self, name: str, *args: str, given: str = "") -> Ran:
-        """Runs rn's script with the arguments from the repository's top, as a role runs it, or as
-        Claude Code runs a hook, with what it's given on stdin."""
+    def script(self, name: str, *args: str, given: str = "", cwd: str | None = None) -> Ran:
+        """Runs rn's script with the arguments from the repository's top, or from the folder
+        given, as a role runs it, or as Claude Code runs a hook, with what it's given on stdin."""
         done = subprocess.run(
             [sys.executable, os.path.join(self.rn, "scripts", f"{name}.py"), *args],
-            cwd=self.repo,
+            cwd=cwd or self.repo,
             env=self.env,
             input=given,
             capture_output=True,
@@ -102,7 +103,12 @@ class Bench:
 
     def ran(self, name: str, *args: str) -> str:
         """Runs rn's script, which must give 0, and gives what it printed."""
-        done = self.script(name, *args)
+        return self.ran_in(self.repo, name, *args)
+
+    def ran_in(self, cwd: str, name: str, *args: str) -> str:
+        """Runs rn's script from the folder, as a role that starts there runs it, which must give
+        0, and gives what it printed."""
+        done = self.script(name, *args, cwd=cwd)
         assert done.code == 0, done.err + done.out
         return done.out
 
@@ -130,14 +136,40 @@ def bench(tmp: str) -> Bench:
     return Bench(rn, repo, origin, gh, env)
 
 
-# The moves of the orchestrator, and of the pruner that it starts for each fact.
+# The moves of the orchestrator, and of the pruner that it starts for each unit.
 
 
-def pruned(b: Bench, design_tree: Mapping[str, Any]) -> None:
-    """A new pruner weighs a fact: it writes the design tree given, and checks its write by
-    `tree.py check`, which must give 0, before it ends."""
+def pruned(
+    b: Bench, design_tree: Mapping[str, Any], rewritten: Mapping[str, Any] | None = None
+) -> list[str]:
+    """A new pruner weighs a unit, given the run's folder by its absolute path, from a folder of
+    its own, the run's worktree: it writes the design tree given; runs `tree.py touched`, which
+    lists each node that its change touches; rewrites itself each node of `rewritten`, by its
+    pointer, which must be among those listed, to the value given, as the change made it false;
+    and checks its write by `tree.py check`, which must give 0, before it ends. Gives the nodes
+    that `tree.py touched` listed."""
     b.write_tree(design_tree)
-    b.ran("tree", "check", b.run)
+    listed = b.ran_in(b.worktree, "tree", "touched", b.folder).split()
+    if rewritten:
+        mended = b.tree()
+        for pointer, value in rewritten.items():
+            assert pointer in listed, f"{pointer} is a node that the change touches"
+            _set_at(mended, pointer, value)
+        b.write_tree(mended)
+    b.ran_in(b.worktree, "tree", "check", b.folder)
+    return listed
+
+
+def _set_at(design_tree: dict[str, Any], pointer: str, value: Any) -> None:
+    """Sets the node of the design tree at the JSON Pointer to the value."""
+    *up, last = pointer[1:].split("/")
+    node: Any = design_tree
+    for name in up:
+        node = node[int(name)] if isinstance(node, list) else node[name]
+    if isinstance(node, list):
+        node[int(last)] = value
+    else:
+        node[last] = value
 
 
 def reviewed(
@@ -145,16 +177,14 @@ def reviewed(
     design_tree: Mapping[str, Any] | None = None,
     ground: str = "The run's facts decide it.",
     moves: Sequence[Sequence[str]] = (),
+    rewritten: Mapping[str, Any] | None = None,
 ) -> list[str]:
-    """The moves after each event: where a tree is given, the fact asked a judgment, and the
-    pruner writes the tree as `pruned` does; then the orchestrator runs `tree.py touched` and
-    reads each node it prints, commits by `tree.py commit` with the ground, and runs each move
-    given, a script's name and its arguments, such as `("repository", "put-up", ...)`. Gives what
-    each move printed."""
+    """The moves after each event: where a tree is given, a unit is settled, and one pruner weighs
+    it as `pruned` does, rewriting each node of `rewritten`; then the orchestrator commits by
+    `tree.py commit` with the ground, and runs each move given, a script's name and its arguments,
+    such as `("repository", "put-up", ...)`. Gives what each move printed."""
     if design_tree is not None:
-        pruned(b, design_tree)
-    for node in b.ran("tree", "touched", b.run).split():
-        assert node.startswith("/"), node
+        pruned(b, design_tree, rewritten)
     b.ran("tree", "commit", b.run, ground)
     return [b.ran(*each) for each in moves]
 
@@ -165,65 +195,46 @@ def new_run(b: Bench) -> str:
     return b.ran("repository", "new", rn_files.NAMED, *LANGUAGES)
 
 
-def goal_tree(b: Bench) -> dict[str, Any]:
-    """The design tree once the pruner writes the goal from the request: the tree as it stands,
-    its goal the walkthrough's by reasoning, until the user confirms it, and the plan named by
-    it."""
-    design_tree = b.tree()
-    design_tree["goal"] = {"decided": GOAL, "by": "reasoning"}
-    design_tree["deliverables"][0]["name"] = GOAL
-    return design_tree
+# The steps of the walkthrough's way to the goal, as the user settles them in the hearing: they
+# check the command, and the guide.
+STEPS = (
+    rn_files.step("what it does", [rn_files.COMMAND], True),
+    rn_files.step("how it's used", [rn_files.GUIDE], True),
+)
 
 
-def requested(b: Bench) -> None:
-    """The user asked for the walkthrough's words; the orchestrator made the run by `new_run`,
-    handed the request to a new pruner, which wrote the goal from it, and committed the tree."""
-    new_run(b)
-    reviewed(b, goal_tree(b), "The goal from the request.")
-
-
-def planned_tree(b: Bench, answered: bool) -> dict[str, Any]:
-    """The design tree once the user confirms the goal: the goal by user, the plan's conditions
-    good but N2's while the tax rate's point is open, the command and the guide, and the point
-    about the tax rate an open decision of the command's N1, or the user's answer once given."""
+def heard_tree(b: Bench, answered: bool = True) -> dict[str, Any]:
+    """The design tree as one pruner writes the hearing that the user settled: the goal by user,
+    the plan named by it, open with each condition good, the command and the guide, the steps,
+    and the tax rate's point a decision by user of the command's N1. Where `answered` is false,
+    the pruner leaves the point open, for only the user can settle it, the plan's N2 not good, and
+    the work deciding it first."""
     name = b.name()
     tax = rn_files.decision(rn_files.TAX_ABOUT, rn_files.TAX_ANSWER if answered else None, "user")
     design_tree = rn_files.walkthrough_tree(name, plan_done=False, command_decisions={"N1": [tax]})
-    held_good = rn_files.conditions("design-tree")
+    design_tree["steps"] = [dict(each) for each in STEPS]
     if not answered:
+        held_good = rn_files.conditions("design-tree")
         held_good.remove("N2")
-    design_tree["deliverables"][0] = rn_files.plan(name, good=held_good)
-    if not answered:
+        design_tree["deliverables"][0] = rn_files.plan(name, good=held_good)
         design_tree["work"].insert(
             0, rn_files.work("decide", rn_files.COMMAND, "N1", rn_files.TAX_ABOUT)
         )
     return design_tree
 
 
-def confirmed(b: Bench) -> None:
-    """The user confirms the goal; the pruner writes the plan with the tax rate's point open, for
-    the orchestrator to put it to the user."""
-    reviewed(b, planned_tree(b, answered=False), "The goal, as the user confirms it.")
-
-
-def put_up_plan(b: Bench) -> str:
-    """The user answers the point; the pruner writes the answer as its decision by user, and the
-    orchestrator puts the plan up by `repository.py put-up`; gives what put-up printed."""
-    plan = rn_files.plan_path(b.name())
-    moves = [("repository", "put-up", b.run, plan)]
-    return reviewed(b, planned_tree(b, answered=True), "The user's answer.", moves)[0].strip()
-
-
-def to_plan_signoff(b: Bench) -> None:
-    """A run whose plan waits for the user's sign-off."""
-    requested(b)
-    confirmed(b)
-    put_up_plan(b)
+def heard(b: Bench, answered: bool = True) -> None:
+    """The user asked for the walkthrough's words; the orchestrator made the run by `new_run`,
+    held the hearing with the user until the way to the goal was settled, handed it to one pruner,
+    which wrote `heard_tree`, and committed the tree."""
+    new_run(b)
+    reviewed(b, heard_tree(b, answered), "The way to the goal, as the user settled it.")
 
 
 def signed(b: Bench, moves: Sequence[Sequence[str]] = ()) -> list[str]:
-    """The user types `/rn:ty`; the orchestrator records the sign-off by `tree.py signoff`, and
-    commits it with the moves given; gives what the moves printed."""
+    """The orchestrator records a sign-off by `tree.py signoff`, the plan's once the hearing is
+    written or a deliverable's at the user's `/rn:ty`, and commits it with the moves given; gives
+    what the moves printed."""
     b.ran("tree", "signoff", b.run)
     return reviewed(b, ground="The user signs it off.", moves=moves)
 
@@ -234,9 +245,10 @@ def cut_move(b: Bench, role: str, deliverable: str) -> tuple[str, ...]:
 
 
 def signed_plan(b: Bench) -> str:
-    """A run whose plan the user signed off, and whose command's Cut the orchestrator wrote for its
-    generator, the one deliverable whose inputs are done; gives the Cut's path."""
-    to_plan_signoff(b)
+    """A run whose hearing one pruner wrote, whose plan's sign-off the orchestrator recorded, and
+    whose command's Cut it wrote for its generator, the one deliverable whose inputs are done;
+    gives the Cut's path."""
+    heard(b)
     return signed(b, [cut_move(b, "generator", rn_files.COMMAND)])[0].strip()
 
 
@@ -244,7 +256,7 @@ CHANGELOG = "CHANGELOG.md"
 
 
 def apart_tree(b: Bench, decisions: Sequence[Mapping[str, Any]] = ()) -> dict[str, Any]:
-    """The plan once the user confirms the goal, each of its conditions good: the command and a
+    """The plan as one pruner writes the hearing, each of its conditions good: the command and a
     changelog, each resting on none, each in the work, the command's N1 holding each decision
     given."""
     command = rn_files.open_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
@@ -257,11 +269,11 @@ def apart_tree(b: Bench, decisions: Sequence[Mapping[str, Any]] = ()) -> dict[st
 
 
 def signed_apart(b: Bench, design_tree: Mapping[str, Any], made: Sequence[str]) -> list[str]:
-    """A run whose plan given the orchestrator put up, and the user signed off, the orchestrator
-    writing the generator's Cut of each deliverable given; gives each Cut's path."""
-    requested(b)
-    plan = rn_files.plan_path(b.name())
-    reviewed(b, design_tree, "The plan.", [("repository", "put-up", b.run, plan)])
+    """A run whose hearing one pruner wrote as the plan given, whose plan's sign-off the
+    orchestrator recorded, writing the generator's Cut of each deliverable given; gives each Cut's
+    path."""
+    new_run(b)
+    reviewed(b, design_tree, "The way to the goal, as the user settled it.")
     moves = [cut_move(b, "generator", each) for each in made]
     return [each.strip() for each in signed(b, moves)]
 
@@ -462,11 +474,19 @@ def refactor_made(b: Bench) -> None:
     generated(b, next_round(b, rn_files.GUIDE, rn_files.conditions("readme")))
 
 
-def refactored(b: Bench) -> None:
-    """A run whose guide `refactor_made` gives, which the orchestrator then put up for the user's
-    sign-off."""
+def refactoring_put_up(b: Bench) -> str:
+    """The guide's refactoring Round ended its Rounds, and the orchestrator, starting no pruner,
+    commits and puts the guide up for the user's sign-off by `repository.py put-up`; gives the URL
+    that put-up printed."""
+    moves = [("repository", "put-up", b.run, rn_files.GUIDE)]
+    return reviewed(b, ground="The refactoring ends the guide's Rounds.", moves=moves)[0].strip()
+
+
+def refactored(b: Bench) -> str:
+    """A run whose guide `refactor_made` gives, then put up by `refactoring_put_up`; gives the URL
+    that put-up printed."""
     refactor_made(b)
-    put_up(b, rn_files.GUIDE, rn_files.conditions("readme"))
+    return refactoring_put_up(b)
 
 
 def short_twice(b: Bench) -> None:
@@ -494,6 +514,12 @@ def tree_written(b: Bench, agent: str | None, tool: str = "Write") -> str:
     else:
         tool_input = {"file_path": b.tree_path, "content": json.dumps(b.tree(), indent=1) + "\n"}
     return rn_files.hook_input(b.repo, tool, tool_input, agent)
+
+
+def bash_called(b: Bench, command: str, agent: str | None) -> str:
+    """The hook's input of a Bash call of the command by the agent, or by the main conversation
+    where none is named, made in the repository's top, as Claude Code gives it."""
+    return rn_files.hook_input(b.repo, "Bash", {"command": command}, agent)
 
 
 def denial(ran: Ran) -> str | None:

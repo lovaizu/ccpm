@@ -1,9 +1,9 @@
 """Decides hook.py's input and output, as Claude Code runs it before each Bash command and each
 write by Write or Edit: it denies a command of rn's makers that deletes, with how to use remove.py,
 as only remove.py removes without a permission prompt that stops the run; it denies each write to a
-run's design tree but the pruner's, telling its writer to hand the fact to a new pruner, as the plan
-holds only what the pruner weighed, and rn's scripts write it by Python, through no tool; and it
-lets every other call pass."""
+run's design tree but the pruner's, by Write, Edit, or Bash, telling its writer to hand the fact to
+a new pruner, as the plan holds only what the pruner weighed, and rn's scripts write it, each run
+by Python; and it lets every other call pass."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from fault import Answer
 
 from hook.bash import deletes
 from hook.write import is_tree
+from hook.written import Written, written
 
 # What the hook gives to let a call pass: 0, with nothing printed.
 PASS: Answer = (0, "", "")
@@ -42,6 +43,12 @@ _TREE_REASON = (
     " with the fact in its result, for the orchestrator to hand on."
 )
 
+_UNSURE = (
+    " The hook can't tell that the command only reads {tree}, so it takes the command as a write."
+    " Read the tree by the Read tool, or by a command that only reads it, such as cat or jq with"
+    " no redirection."
+)
+
 
 def main(stdin: bytes, plugin_root: str) -> Answer:
     """The exit code, stdout, and stderr of `hook.py` on the hook's input, with rn's folder at
@@ -52,8 +59,12 @@ def main(stdin: bytes, plugin_root: str) -> Answer:
     `hook.bash.deletes` holds it. 0 with the JSON that denies the call, its reason naming the file
     and telling the writer to hand the fact to a new pruner, where the input is a Write or Edit
     call whose `file_path` is a run's design tree, as `hook.write.is_tree` holds it, and whose
-    `agent_type` isn't `rn:pruner`, the main conversation's, which names none, among them. 0 with
-    nothing printed for every other input, one that isn't the hook's JSON and a fault of the
+    `agent_type` isn't `rn:pruner`, the main conversation's, which names none, among them. The
+    same where the input is a Bash call of any but the pruner whose command writes a run's design
+    tree, as `hook.written.written` holds it from the call's `cwd` and `plugin_root`, naming the
+    tree as the command names it, the reason saying too that the hook can't tell that the command
+    only reads the tree where it isn't sure of the write. 0 with nothing printed for every other
+    input, a run of rn's own scripts among them, one that isn't the hook's JSON and a fault of the
     hook's own among them, as the hook never stops a call on a fault of its own."""
     try:
         return decided(stdin, plugin_root)
@@ -74,6 +85,10 @@ def decided(stdin: bytes, plugin_root: str) -> Answer:
     tree = _tree_written(called)
     if tree is not None:
         return _denied(_TREE_REASON.format(tree=tree))
+    by_bash = _bash_written(called, plugin_root)
+    if by_bash is not None:
+        doubt = "" if by_bash.sure else _UNSURE.format(tree=by_bash.tree)
+        return _denied(_TREE_REASON.format(tree=by_bash.tree) + doubt)
     return PASS
 
 
@@ -102,6 +117,21 @@ def _tree_written(called: dict[str, Any]) -> str | None:
     ):
         return path
     return None
+
+
+def _bash_written(called: dict[str, Any], plugin_root: str) -> Written | None:
+    """The write to a run's design tree that the call makes, where it's a Bash call by any but
+    the pruner; else None."""
+    given = called.get("tool_input")
+    command = given.get("command") if isinstance(given, dict) else None
+    cwd = called.get("cwd")
+    if (
+        called.get("tool_name") != "Bash"
+        or not isinstance(command, str)
+        or called.get("agent_type") == PRUNER
+    ):
+        return None
+    return written(command, cwd if isinstance(cwd, str) else "", plugin_root)
 
 
 def _rn_deletes(called: dict[str, Any]) -> bool:

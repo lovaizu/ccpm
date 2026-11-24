@@ -91,7 +91,7 @@ NEW = "invoicer/cli.py"
 # touched
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_changed_decision_touches_what_holds_it_its_later_decisions_and_each_link():
     """Given the six deliverables' tree
     When the command's N1's second decision changes
@@ -111,7 +111,7 @@ def test_a_changed_decision_touches_what_holds_it_its_later_decisions_and_each_l
     ]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_the_last_decision_of_a_deliverable_touches_none_of_its_earlier_decisions():
     """Given the six deliverables' tree
     When the command's N2's one decision, its last, changes
@@ -129,7 +129,7 @@ def test_the_last_decision_of_a_deliverable_touches_none_of_its_earlier_decision
     ]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_change_of_a_deliverable_that_one_names_touches_the_one_that_names_it():
     """Given the six deliverables' tree
     When the spec's N1's decision changes
@@ -144,7 +144,7 @@ def test_a_change_of_a_deliverable_that_one_names_touches_the_one_that_names_it(
     ]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_change_of_a_deliverable_that_none_names_touches_the_goal_and_itself():
     """Given the six deliverables' tree
     When the done plan's status changes
@@ -152,7 +152,7 @@ def test_a_change_of_a_deliverable_that_none_names_touches_the_goal_and_itself()
     assert touched_by("/deliverables/0/status", "doing") == ["/goal", "/deliverables/0"]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_change_of_the_goal_touches_nothing_above_it():
     """Given the six deliverables' tree
     When the goal changes, and when its sentence changes
@@ -161,7 +161,7 @@ def test_a_change_of_the_goal_touches_nothing_above_it():
     assert touched_by("/goal/decided") == ["/goal"]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_node_reached_by_two_links_is_touched_once():
     """Given the six deliverables' tree whose spec rests on the command too
     When the command's N2's decision changes
@@ -174,7 +174,7 @@ def test_a_node_reached_by_two_links_is_touched_once():
     assert got.count("/deliverables/3") == 1
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     "pointer", ["/deliverables/6", "/deliverables/1/necessary_conditions/0/decisions/2", "/work/4"]
 )
@@ -186,7 +186,7 @@ def test_touched_refuses_a_pointer_of_no_node(pointer: str):
         touched(the_tree(), the_tree(), pointer)
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_pointer_of_a_node_taken_away_since_the_commit_is_refused():
     """Given the six deliverables' tree as committed, and as it stands without its notes
     When a change at the notes, /deliverables/5, is asked
@@ -198,7 +198,7 @@ def test_a_pointer_of_a_node_taken_away_since_the_commit_is_refused():
         touched(the_tree(), after, "/deliverables/5")
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_changed_path_touches_each_deliverable_and_item_that_still_names_the_old_one():
     """Given the six deliverables' tree as committed, and as it stands with the command's path
     invoicer/cli.py, the guide and the changelog still naming invoicer/__main__.py
@@ -217,7 +217,7 @@ def test_a_changed_path_touches_each_deliverable_and_item_that_still_names_the_o
     ]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_changed_path_touches_one_that_names_the_new_path_and_one_that_names_the_old():
     """Given the six deliverables' tree as committed, and as it stands with the command's path
     invoicer/cli.py, the guide's input and the work's first item renamed to it, the changelog and
@@ -240,7 +240,7 @@ def test_a_changed_path_touches_one_that_names_the_new_path_and_one_that_names_t
     ]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_changed_path_of_a_deliverable_that_none_names_touches_no_other_deliverable():
     """Given the six deliverables' tree as committed, and as it stands with the notes' path
     NOTES.txt
@@ -253,7 +253,7 @@ def test_a_changed_path_of_a_deliverable_that_none_names_touches_no_other_delive
 # changed
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_trees_equal_have_no_change():
     """Given the six deliverables' tree, and a copy of it
     When the change between them is found
@@ -261,7 +261,7 @@ def test_trees_equal_have_no_change():
     assert changed(the_tree(), the_tree()) == []
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_value_changed_is_its_deepest_node():
     """Given the six deliverables' tree, and one whose guide's N1 is good
     When the change between them is found
@@ -271,7 +271,7 @@ def test_a_value_changed_is_its_deepest_node():
     assert changed(the_tree(), after) == ["/deliverables/2/necessary_conditions/0/good"]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_decision_answered_changes_its_decided_and_adds_its_by():
     """Given a tree whose command's N1 holds a point open, and one where the user answered it
     When the change between them is found
@@ -288,7 +288,7 @@ def test_a_decision_answered_changes_its_decided_and_adds_its_by():
     ]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_node_added_or_taken_away_is_the_node_itself():
     """Given the six deliverables' tree, one with a third decision of the command's N1, and one
     without the work's last item
@@ -302,7 +302,7 @@ def test_a_node_added_or_taken_away_is_the_node_itself():
     assert changed(the_tree(), taken) == ["/work/3"]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_two_changes_are_given_from_the_goal_down():
     """Given the six deliverables' tree, and one whose work's first item makes the guide and whose
     goal is by reasoning

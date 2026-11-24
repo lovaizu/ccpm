@@ -221,6 +221,30 @@ def tree_writes_pass(b: Bench) -> None:
     given_again(b, "domain/hook/command.py", "def _tree_written(called):\n    return None\n")
 
 
+def bash_tree_writes_pass(b: Bench) -> None:
+    """The hook lets each Bash command that writes a run's design tree pass, whoever runs it."""
+    given_again(
+        b, "domain/hook/command.py", "def _bash_written(called, plugin_root):\n    return None\n"
+    )
+
+
+def touched_by_the_first_change(b: Bench) -> None:
+    """tree.py touched lists only the nodes that the first change since the last commit touches,
+    as if each fact of a unit were weighed alone."""
+    given_again(
+        b,
+        "domain/tree/command.py",
+        "def _touched(run, given, cwd, plugin_root, host):\n"
+        "    before, after = _committed(run, host), form.read(run.tree)\n"
+        "    made = touched.changed(before, after)[:1]\n"
+        "    found = []\n"
+        "    for each in made:\n"
+        "        found += touched.touched(before, after, _held(after, each))\n"
+        "    return 0, _lines(list(dict.fromkeys(n for n in found if n not in made))), ''\n\n\n"
+        "_SUBCOMMANDS['touched'] = (_touched, 1, 2)\n",
+    )
+
+
 def done_in_one_line(b: Bench) -> None:
     """A deliverable signed off is done in one line, its name, path, kind, and status, without
     its conditions and their decisions."""
@@ -282,6 +306,12 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     ),
     "test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding": (
         findings_to_the_generator
+    ),
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run": (
+        bash_tree_writes_pass
+    ),
+    "test_a_judged_rounds_result_is_weighed_whole_by_one_pruner_with_each_node_it_touches": (
+        touched_by_the_first_change
     ),
 }
 

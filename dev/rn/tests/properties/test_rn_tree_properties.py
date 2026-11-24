@@ -214,7 +214,7 @@ def test_a_tree_written_and_read_back_is_the_tree(tree: dict[str, Any]):
     assert text.endswith("\n")
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @given(trees(), st.data())
 def test_the_nodes_changed_are_none_between_equal_trees_and_the_one_changed_either_way(
     tree: dict[str, Any], data: Any
@@ -231,7 +231,7 @@ def test_the_nodes_changed_are_none_between_equal_trees_and_the_one_changed_eith
     assert touched.changed(changed, tree) == [pointer]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @given(trees(), TEXT)
 def test_a_decision_added_is_the_one_node_changed(tree: dict[str, Any], about: str):
     """Given any design tree with an open deliverable, and a copy with a decision added to its
@@ -251,7 +251,7 @@ def test_a_decision_added_is_the_one_node_changed(tree: dict[str, Any], about: s
     assert touched.changed(tree, changed) == [added]
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @given(trees(), st.data())
 def test_a_path_changed_touches_each_node_that_names_its_old_path_or_its_new(
     tree: dict[str, Any], data: Any
@@ -328,7 +328,9 @@ def test_a_signoff_makes_the_deliverable_done_with_its_conditions_and_changes_no
 WAITS = st.sampled_from(["generator", "evaluator", "answer", "pruner", "sign-off"])
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_hearing_settled_is_written_by_one_pruner_and_the_plans_signoff_recorded"
+)
 @given(trees(), st.data())
 def test_what_waits_for_signoff_is_the_plan_good_else_the_first_whose_rounds_are_over(
     tree: dict[str, Any], data: Any

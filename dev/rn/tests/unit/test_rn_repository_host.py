@@ -64,7 +64,9 @@ def test_git_runs_with_the_variables_given_beside_rns_own(tmp_path: Any):
     assert os.environ.get("GIT_AUTHOR_NAME") == before
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_gh_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
     """Given a program gh first on the PATH that prints its arguments and gives 3
     When run is given `gh pr view 12`
@@ -109,7 +111,9 @@ def test_a_program_other_than_git_or_gh_is_refused(tmp_path: Any, program: str):
         run([program, "--version"], str(tmp_path))
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_program_not_found_cant_run(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
     """Given a PATH that holds no gh
     When run is given `gh auth status`

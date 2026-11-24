@@ -286,7 +286,9 @@ def created(gh_state: str) -> list[list[str]]:
     return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "create"]]
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_first_put_up_pushes_and_opens_the_pull_request_titled_by_the_goal(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -307,7 +309,9 @@ def test_a_first_put_up_pushes_and_opens_the_pull_request_titled_by_the_goal(
     assert [title(each) for each in created(gh_state)] == [FIRST]
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_first_put_ups_body_names_each_issue_it_closes_then_each_it_refers_to(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -325,7 +329,9 @@ def test_a_first_put_ups_body_names_each_issue_it_closes_then_each_it_refers_to(
     ]
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_first_put_ups_body_of_a_run_with_no_issue_is_the_goal_alone(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -337,7 +343,9 @@ def test_a_first_put_ups_body_of_a_run_with_no_issue_is_the_goal_alone(
     assert [body(each) for each in created(gh_state)] == [rn_files.GOAL]
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_first_put_up_writes_the_pull_requests_url_into_the_tree_and_pushes_it(
     tmp_path: Any, host: Any
 ):
@@ -356,7 +364,9 @@ def test_a_first_put_up_writes_the_pull_requests_url_into_the_tree_and_pushes_it
     assert git(worktree(run), "status", "--porcelain") == ""
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_put_up_whose_pull_request_is_open_writes_its_url_where_the_tree_has_none(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -373,7 +383,9 @@ def test_a_put_up_whose_pull_request_is_open_writes_its_url_where_the_tree_has_n
     assert created(gh_state) == []
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 @pytest.mark.parametrize("held", ["CLOSED", "MERGED"])
 @pytest.mark.parametrize("named", [False, True], ids=["tree-names-none", "tree-names-it"])
 def test_a_put_up_beside_an_earlier_pull_request_not_open_opens_its_own(
@@ -398,7 +410,9 @@ def test_a_put_up_beside_an_earlier_pull_request_not_open_opens_its_own(
     assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_goal_of_one_sentence_titles_the_pull_request_whole(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -413,7 +427,9 @@ def test_a_goal_of_one_sentence_titles_the_pull_request_whole(
     assert [title(each) for each in created(gh_state)] == [goal]
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 @pytest.mark.parametrize(
     ("goal", "first"),
     [
@@ -449,7 +465,9 @@ def test_the_title_is_the_first_sentence_as_markdown_splits_the_goal(
     assert [title(each) for each in created(gh_state)] == [first]
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_second_put_up_opens_no_second_pull_request(tmp_path: Any, host: Any, gh_state: str):
     """Given a run whose plan was put up once, and whose command then changed
     When put_up is given the command
@@ -467,7 +485,9 @@ def test_a_second_put_up_opens_no_second_pull_request(tmp_path: Any, host: Any, 
     assert [each[1:3] for each in asked].count(["pr", "create"]) == 1
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_put_up_with_no_change_makes_no_commit(tmp_path: Any, host: Any):
     """Given a run with nothing changed since its last commit, the command among it, whose tree's
     context holds its pull request
@@ -483,7 +503,9 @@ def test_a_put_up_with_no_change_makes_no_commit(tmp_path: Any, host: Any):
     assert head(worktree(run)) == before == head(origin(tmp_path), f"rn-{NAME}")
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 @pytest.mark.parametrize("deliverable", ["docs/other.md", "docs/guide", "invoicer"])
 def test_a_put_up_of_a_deliverable_the_tree_lacks_is_refused(
     tmp_path: Any, host: Any, gh_state: str, deliverable: str
@@ -501,7 +523,9 @@ def test_a_put_up_of_a_deliverable_the_tree_lacks_is_refused(
     assert created(gh_state) == []
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_put_up_gives_a_link_of_each_path_a_folder_as_a_tree_and_a_file_as_a_blob(
     tmp_path: Any, host: Any
 ):
@@ -526,7 +550,9 @@ def test_a_put_up_gives_a_link_of_each_path_a_folder_as_a_tree_and_a_file_as_a_b
     ]
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_put_up_of_a_node_of_no_file_gives_no_link(tmp_path: Any, host: Any):
     """Given a run whose command is a node of no file, its `file` false, with no file at its path
     When put_up is given the command
@@ -538,7 +564,9 @@ def test_a_put_up_of_a_node_of_no_file_gives_no_link(tmp_path: Any, host: Any):
     assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_put_up_of_a_path_the_commit_doesnt_hold_is_refused_naming_it(tmp_path: Any, host: Any):
     """Given a run whose command's file isn't written, and whose guide is
     When put_up is given the command
@@ -550,7 +578,9 @@ def test_a_put_up_of_a_path_the_commit_doesnt_hold_is_refused_naming_it(tmp_path
         put_up(run, rn_files.COMMAND, host)
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_put_up_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
     """Given a run whose repository has no remote
     When put_up is given the command
@@ -560,7 +590,9 @@ def test_a_put_up_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
         put_up(run, rn_files.COMMAND, host)
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
+@pytest.mark.supports(
+    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
+)
 def test_a_put_up_with_gh_logged_out_is_missing_its_login(tmp_path: Any, host: Any, gh_state: str):
     """Given a run, and gh with no login
     When put_up is given the command

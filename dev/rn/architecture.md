@@ -44,7 +44,6 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P7.1: each fact is weighed by one shared measure of the vital few, which alone states it.
   - P7.2: each part of the plan that a new one rests on is weighed again with it.
   - P7.3: the plan changes only by that weighing, or by a step that has one right result.
-  - P7.4: the user hears only what the design tree and their own words hold.
 
 ### Concept model
 
@@ -144,7 +143,7 @@ Strategies:
   settled. [P5.1]\
   Intent: the hearing's only wait is the one weighing of all it settled.
 - The orchestrator speaking only from the design tree and the user's words, the request among
-  them. [P7.4]\
+  them. [P1.2]\
   Intent: the talk brings back nothing the pruner cut, such as an issue's means.
 - Each message to the user opening with where the run stands on the way to the goal. [P1.2]\
   Intent: a user who knows nothing of rn's insides knows at each message what's done and what's
@@ -216,7 +215,7 @@ sequenceDiagram
   O->>U: asks what it can help with: an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
   O->>O: reads the issue it names and the repository [P1.2]
-  O->>S: makes the run's worktree, and its design tree with the goal open, the languages as the orchestrator puts them, and the issues from the request (Design tree) [P4.3]
+  O->>S: makes the run's worktree, and its design tree with the goal open, and the languages as the orchestrator puts them (Design tree) [P4.3]
   loop the hearing, until the way to the goal is settled [P5.1]
     O->>U: one point, whom the goal is for, then what they can do at it, then the goal in one summary, then its deliverables and steps and which steps the user checks, with why and a recommendation [P1.2]
     U->>O: answers [P1.2]
@@ -253,7 +252,7 @@ sequenceDiagram
     end
     alt a point that only the user can settle: left open in the tree, brought by a generator, or a change asked by /rn:gm [P1.2]
       loop until the user settles it [P1.2]
-        O->>U: where the run stands, and the point, from the design tree and the user's words, with why and a recommendation [P7.4]
+        O->>U: where the run stands, and the point, from the design tree and the user's words, with why and a recommendation [P1.2]
         U->>O: answers [P1.2]
       end
       O->>O: takes what the user settled, in their words, as the next unit for one pruner [P1.2]

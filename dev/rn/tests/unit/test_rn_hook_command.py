@@ -2,11 +2,13 @@
 each Write or Edit: a command of rn's maker that deletes, by rm, rmdir, unlink, or find's -delete,
 at the start or further on in a chain or a pipeline, denied with how to use remove.py; a Write or
 Edit of a run's design tree by the main conversation or by any agent but rn's pruner, its path
-written with / or \\, denied pointing to a new pruner; and each call that passes, printing nothing:
-a maker's command that doesn't delete, a delete by the main conversation or by another plugin's
-subagent, another tool, the pruner's write of the tree, a write of a file near a run's tree, a
-write whose path can't be read, stdin that isn't the hook's JSON, a command that can't be read,
-and a fault of the hook's own."""
+written with / or \\, denied pointing to a new pruner; a Bash command of any but the pruner that
+writes a run's design tree, or that names it where the hook can't tell that it only reads it,
+denied the same way; and each call that passes, printing nothing: a maker's command that doesn't
+delete, a delete by the main conversation or by another plugin's subagent, another tool, the
+pruner's write of the tree, a run of rn's own scripts, a Bash command that only reads the tree, a
+write of a file near a run's tree, a write whose path can't be read, stdin that isn't the hook's
+JSON, a command that can't be read, and a fault of the hook's own."""
 
 from __future__ import annotations
 
@@ -278,3 +280,282 @@ def test_a_write_whose_path_cant_be_read_passes(given_input: Any):
     Then it gives 0 and prints nothing, as the hook never stops a call on its own fault"""
     called = {"tool_name": "Write", "tool_input": given_input}
     assert main(json.dumps(called).encode(), ROOT) == (0, "", "")
+
+
+# A write to a run's design tree by Bash.
+
+# A run's design tree whose folders hold words that code that writes holds, such as popen.
+WORDY_TREE = "/tmp/popen-gw1/rewrite/.rn/20261120-invoices/design-tree.json"
+RUN = "/work/invoicer/.claude/worktrees/rn-20261120-invoices/.rn/20261120-invoices"
+RELATIVE_TREE = ".claude/worktrees/rn-20261120-invoices/.rn/20261120-invoices/design-tree.json"
+
+
+def bash_of(cmd: Any, agent: Any = None, cwd: str = "/work/invoicer") -> bytes:
+    """The hook's stdin for a Bash call of the command, as Claude Code gives it in the agent's
+    call, or in the main conversation's where the agent is None, made in the folder."""
+    tool_input = {"command": cmd, "description": "Change the plan"}
+    return rn_files.hook_input(cwd, "Bash", tool_input, agent).encode("utf-8")
+
+
+def tree_denied(answer: tuple[int, str, str], named: str) -> str:
+    """The reason of a denial of a write to the design tree: the reason of the Write and Edit
+    refusal, naming what the command writes, and telling the writer to hand the fact on."""
+    reason = denied(answer)
+    assert f"Leave {named} as it is" in reason, "the tree written is named"
+    assert "hand the fact you'd write to a new pruner" in reason
+    return reason
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
+)
+@pytest.mark.parametrize(
+    "cmd",
+    [
+        f"echo '{{}}' > {TREE}",
+        f"jq '.work = []' {TREE} >> {TREE}",
+        f"python3 -m json.tool --sort-keys < {TREE} >| {TREE}",
+        f"printf '{{}}' 1> {TREE}",
+        f"echo '{{}}' &> {TREE}",
+        f"echo '{{}}' | tee {TREE}",
+        f"echo '{{}}' | tee -a {TREE}",
+        f"sed -i 's/reasoning/user/' {TREE}",
+        f"sed -i.bak 's/reasoning/user/' {TREE}",
+        f"sed -Ei 's/reasoning/user/' {TREE}",
+        f"sed --in-place 's/reasoning/user/' {TREE}",
+        f"perl -pi -e 's/reasoning/user/' {TREE}",
+        f"awk -i inplace '{{print}}' {TREE}",
+        f"sort -o {TREE} {TREE}",
+        f"cp /tmp/plan.json {TREE}",
+        f"mv /tmp/plan.json {TREE}",
+        f"install -m 644 /tmp/plan.json {TREE}",
+        f"dd if=/tmp/plan.json of={TREE}",
+        f"truncate -s 0 {TREE}",
+        f"git -C /work/invoicer checkout -- {TREE}",
+        f"cd /tmp && cp plan.json {TREE}",
+        f"LC_ALL=C sed -i 's/a/b/' {TREE}",
+        f"sudo tee {TREE} < /tmp/plan.json",
+        f"git add -A; echo '{{}}' > {TREE}",
+        f"echo '{{}}' > '{WINDOWS_TREE}'",
+    ],
+)
+def test_a_bash_command_that_writes_a_runs_tree_is_denied_pointing_to_a_new_pruner(cmd: str):
+    """Given the main conversation, the orchestrator, calling Bash with a command that writes a
+    run's design-tree.json by its path: a redirection or tee onto it, an in-place edit, a copy or
+    a move onto it, or a command that sets it back, alone or in a chain
+    When the hook runs
+    Then it denies the call, its reason the Write and Edit refusal's, naming the tree"""
+    tree_denied(main(bash_of(cmd), ROOT), WINDOWS_TREE if WINDOWS_TREE in cmd else TREE)
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
+)
+def test_a_bash_write_by_a_path_from_the_current_folder_is_denied():
+    """Given the main conversation calling Bash, in the repository's top, with a redirection onto
+    the run's design-tree.json by its path from there
+    When the hook runs
+    Then it denies the call, naming the tree by the path the command gives"""
+    tree_denied(main(bash_of(f"echo '{{}}' > {RELATIVE_TREE}"), ROOT), RELATIVE_TREE)
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
+)
+def test_a_bash_write_by_the_trees_name_in_the_runs_folder_is_denied():
+    """Given the main conversation calling Bash in the run's folder, with a redirection onto
+    design-tree.json by its name alone
+    When the hook runs
+    Then it denies the call"""
+    tree_denied(main(bash_of("echo '{}' > design-tree.json", cwd=RUN), ROOT), "design-tree.json")
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
+)
+@pytest.mark.parametrize(
+    "cmd",
+    [
+        f"python3 -c \"import json; json.dump({{}}, open('{TREE}', 'w'))\"",
+        f"python3 -c \"open('{TREE}', 'a').write('x')\"",
+        f"python3 -c \"import pathlib; pathlib.Path('{TREE}').write_text('{{}}')\"",
+        f"python3 -c \"import os; os.replace('/tmp/plan.json', '{TREE}')\"",
+        f"python3 - <<'EOF'\nimport json\nwith open('{TREE}', 'w') as f:\n    f.write('{{}}')\nEOF",
+        f"python3 <<< \"open('{TREE}', 'w').write('{{}}')\"",
+        f"node -e \"require('fs').writeFileSync('{TREE}', '{{}}')\"",
+        f"bash -c \"echo '{{}}' > {TREE}\"",
+        f"sh <<'EOF'\nsed -i 's/a/b/' {TREE}\nEOF",
+    ],
+)
+def test_an_interpreter_whose_code_names_a_runs_tree_and_may_write_it_is_denied(cmd: str):
+    """Given the main conversation calling Bash with an interpreter, by -c, -e, a heredoc, or a
+    here-string, whose code names a run's design-tree.json and may write it, or a shell whose
+    command writes it
+    When the hook runs
+    Then it denies the call, its reason the Write and Edit refusal's"""
+    reason = denied(main(bash_of(cmd), ROOT))
+    assert "hand the fact you'd write to a new pruner" in reason
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
+)
+@pytest.mark.parametrize(
+    "cmd",
+    [
+        f"python3 -c \"import json; p = '{TREE}'; m = 'w'; open(p, m)\"",
+        f"python3 /tmp/fix.py {TREE}",
+        f"vim {TREE}",
+        f"yq -i '.work = []' {TREE}",
+        f"git stash push -- {TREE}",
+        f"T={TREE}; echo '{{}}' > \"$T\"",
+        f"cd {RUN} && echo '{{}}' > design-tree.json",
+        "find .claude -name design-tree.json -exec sed -i 's/a/b/' {} +",
+        f"ls {TREE} | xargs sed -i 's/a/b/'",
+        f"cat {TREE} 'unclosed",
+        f"bash /tmp/fix.sh {TREE}",
+        f"find {TREE} -exec sed -i 's/a/b/' {{}} +",
+    ],
+)
+def test_a_command_naming_a_runs_tree_that_the_hook_cant_tell_only_reads_is_denied_saying_so(
+    cmd: str,
+):
+    """Given the main conversation calling Bash with a command that names a run's
+    design-tree.json, by its path or its name, where the hook can't tell that it only reads it: a
+    program the hook doesn't know, a mode or a path held in a variable, a folder changed first,
+    the tree found by find or fed through xargs, or a command the shell can't read
+    When the hook runs
+    Then it denies the call, its reason the Write and Edit refusal's, saying that the hook can't
+    tell that the command only reads the tree, and how to read it"""
+    reason = denied(main(bash_of(cmd), ROOT))
+    assert "hand the fact you'd write to a new pruner" in reason
+    assert "can't tell that the command only reads" in reason, "the doubt is said"
+    assert "the Read tool" in reason, "how to read the tree is said"
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
+)
+@pytest.mark.parametrize("agent", ["rn:generator", "rn:evaluator", "general-purpose", "pruner"])
+def test_a_bash_write_to_a_runs_tree_by_any_agent_but_the_pruner_is_denied(agent: str):
+    """Given rn's generator or evaluator, another agent, or one named nearly as the pruner,
+    calling Bash with a redirection onto a run's design-tree.json
+    When the hook runs
+    Then it denies the call"""
+    tree_denied(main(bash_of(f"echo '{{}}' > {TREE}", agent), ROOT), TREE)
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
+)
+@pytest.mark.parametrize(
+    "cmd",
+    [
+        f"python3 {ROOT}/scripts/tree.py signoff {TREE}",
+        f"python3 {ROOT}/scripts/template.py design-tree {TREE}",
+        f"python3 -B {ROOT}/scripts/tree.py check {TREE}",
+        f"python {ROOT}/scripts/tree.py signoff {TREE} && git -C {RUN} status",
+        f"cd /tmp && python3 {ROOT}/scripts/tree.py signoff {TREE}",
+    ],
+)
+def test_a_run_of_rns_own_scripts_on_a_runs_tree_passes(cmd: str):
+    """Given the main conversation calling Bash with a run of one of rn's own scripts, by its path
+    in rn's folder, given a run's design-tree.json, alone, after a change of folder, or before a
+    command that only reads
+    When the hook runs
+    Then it gives 0 and prints nothing, as the scripts write the tree by design"""
+    assert main(bash_of(cmd), ROOT) == (0, "", "")
+
+
+@pytest.mark.supports(
+    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
+)
+@pytest.mark.parametrize(
+    "cmd",
+    [
+        f"python3 {ROOT}/scripts/tree.py touched {RUN} > {TREE}",
+        f"python3 /elsewhere/rn/scripts/tree.py signoff {RUN} {TREE}",
+        f"python3 {ROOT}/hooks/fix.py {TREE}",
+    ],
+)
+def test_a_script_named_as_rns_but_not_its_own_run_or_its_output_onto_the_tree_is_denied(
+    cmd: str,
+):
+    """Given the main conversation calling Bash with rn's script whose output is redirected onto a
+    run's design-tree.json, or a script named as rn's that lies outside rn's scripts folder, given
+    the tree
+    When the hook runs
+    Then it denies the call"""
+    reason = denied(main(bash_of(cmd), ROOT))
+    assert "hand the fact you'd write to a new pruner" in reason
+
+
+@pytest.mark.supports("test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook")
+@pytest.mark.parametrize(
+    "cmd",
+    [
+        f"cat {TREE}",
+        f"jq '.goal' {TREE}",
+        f"jq '.work' < {TREE}",
+        f"head -n 20 {TREE} | grep decided",
+        f"python3 -c \"import json; print(json.load(open('{TREE}'))['goal'])\"",
+        f"python3 -c \"import json; print(json.load(open('{TREE}', 'r')))\"",
+        f"python3 -c \"import json; print(json.load(open('{WORDY_TREE}')))\"",
+        f"python3 - <<'EOF'\nimport json\nprint(json.load(open('{TREE}'))['work'])\nEOF",
+        f"sed -n '1,20p' {TREE}",
+        f"awk '/decided/' {TREE}",
+        f"sort {TREE}",
+        f"cp {TREE} /tmp/plan.json",
+        f"diff {TREE} /tmp/plan.json",
+        f"git -C /work/invoicer show HEAD:{RELATIVE_TREE}",
+        f"git diff -- {TREE}",
+        f"wc -l {TREE} > /tmp/count.txt",
+        f"echo {TREE}",
+        f"find {TREE} -newer /tmp/plan.json",
+        f'bash -c "jq .goal {TREE}"',
+        f"ls {RUN} && cat {TREE} 2>/dev/null",
+    ],
+)
+def test_a_bash_command_that_only_reads_a_runs_tree_passes(cmd: str):
+    """Given the main conversation calling Bash with a command that only reads a run's
+    design-tree.json: a reader, a stream editor or a sort with no in-place or output option, a
+    copy from it, git's reading, or an interpreter whose code only loads it, its path holding words
+    that writing code holds, such as popen
+    When the hook runs
+    Then it gives 0 and prints nothing"""
+    assert main(bash_of(cmd), ROOT) == (0, "", "")
+
+
+@pytest.mark.supports("test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook")
+@pytest.mark.parametrize(
+    "cmd",
+    [
+        "echo '{}' > /work/invoicer/docs/design-tree.json.bak",
+        "echo '{}' > /work/invoicer/.rn/design-tree.json",
+        "sed -i 's/a/b/' /work/invoicer/.rn/20261120-invoices/rounds/design-tree.json",
+        "cp /tmp/a.json /work/invoicer/rn/20261120-invoices/design-tree.json",
+        "echo '{}' > design-tree.json",
+        "sed -i 's/a/b/' README.md",
+    ],
+)
+def test_a_bash_write_near_a_runs_tree_passes(cmd: str):
+    """Given the main conversation calling Bash, in the repository's top, with a write to a file
+    that isn't a run's design tree, its name, its folder, or its depth under .rn near one's
+    When the hook runs
+    Then it gives 0 and prints nothing"""
+    assert main(bash_of(cmd), ROOT) == (0, "", "")
+
+
+@pytest.mark.supports("test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook")
+@pytest.mark.parametrize(
+    "cmd",
+    [
+        f"echo '{{}}' > {TREE}",
+        f"python3 -c \"open('{TREE}', 'w').write('{{}}')\"",
+    ],
+)
+def test_the_pruners_bash_write_to_a_runs_tree_passes(cmd: str):
+    """Given rn's pruner calling Bash with a command that writes a run's design-tree.json
+    When the hook runs
+    Then it gives 0 and prints nothing, as the tree takes the pruner's writes"""
+    assert main(bash_of(cmd, "rn:pruner"), ROOT) == (0, "", "")

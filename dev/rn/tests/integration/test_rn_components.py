@@ -9,7 +9,10 @@ from __future__ import annotations
 
 import json
 import os
+import shlex
 import shutil
+import subprocess
+import sys
 
 import pytest
 import rn_files
@@ -17,20 +20,20 @@ from gh import gh_double
 from repo_files import git
 from rn_bench import (
     Bench,
+    bash_called,
     command_signed,
-    confirmed,
     cut_move,
     cut_of,
     denial,
-    goal_tree,
+    heard,
+    heard_tree,
+    held,
+    judged_command,
     new_run,
-    planned_tree,
-    requested,
     resulted,
     reviewed,
     signed,
     signed_plan,
-    to_plan_signoff,
     tree_written,
     trial_made,
     wrote,
@@ -248,12 +251,6 @@ def hook_of(b: Bench, matcher: str) -> str:
     return hook["command"]
 
 
-def bash_called(b: Bench, command: str, agent: str | None) -> str:
-    """The hook's input of a Bash call of the command by the agent, or by the main conversation
-    where none is named, as Claude Code gives it."""
-    return rn_files.hook_input(b.repo, "Bash", {"command": command}, agent)
-
-
 @pytest.mark.supports("generator", "scripts", "hook")
 def test_a_makers_delete_by_rm_is_denied_pointing_to_remove_py(b: Bench):
     """Given rn's hook before each Bash call, and a run whose command's generator left a cache of
@@ -282,8 +279,49 @@ def test_a_delete_by_the_main_conversation_passes_the_hook(b: Bench):
     assert hooked == (0, "", "")
 
 
+@pytest.mark.supports("orchestrator", "hook", "Design tree")
+def test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook(b: Bench):
+    """Given rn's hook before each Bash call, and a run whose hearing one pruner wrote
+    When the orchestrator, the main conversation, calls Bash with jq on the run's design tree, and
+    with python3 -c whose code only loads it, and Claude Code runs the hook before each
+    Then the hook gives 0 printing nothing for each, and each prints the goal"""
+    heard(b)
+    reads = [
+        ["jq", "-r", ".goal.decided", b.tree_path],
+        [
+            sys.executable,
+            "-c",
+            f"import json; print(json.load(open({b.tree_path!r}))['goal']['decided'])",
+        ],
+    ]
+    for argv in reads:
+        assert denial(b.script("hook", given=bash_called(b, shlex.join(argv), None))) is None
+    loaded = subprocess.run(reads[1], capture_output=True, text=True, check=True)
+    assert loaded.stdout.strip() == GOAL
+
+
 # The pruner and the measure of the vital few: the one role that writes the design tree, and
 # the one place that states the measure it weighs by.
+
+
+@pytest.mark.supports("pruner", "scripts", "Design tree")
+def test_a_pruner_given_the_runs_folder_by_its_absolute_path_reaches_its_tree_from_elsewhere(
+    b: Bench,
+):
+    """Given a run whose hearing one pruner wrote, and a new pruner started in a folder outside
+    the user's repository
+    When it settles a point of the guide's N1, and runs tree.py touched and tree.py check from
+    there, given the run's folder by its absolute path
+    Then tree.py touched gives 0 listing the guide among the nodes its change touches, and
+    tree.py check gives 0 printing nothing"""
+    heard(b)
+    elsewhere = os.path.dirname(b.repo)
+    settled = rn_files.decision("its people", "The accounting team, at a terminal.", "reasoning")
+    b.write_tree(held(b, GUIDE, [], {"N1": [settled]}))
+    touched = b.script("tree", "touched", b.folder, cwd=elsewhere)
+    assert (touched.code, touched.err) == (0, "")
+    assert "/deliverables/2" in touched.out.split()
+    assert b.script("tree", "check", b.folder, cwd=elsewhere) == (0, "", "")
 
 
 @pytest.mark.supports("pruner", "hook", "scripts", "Design tree")
@@ -291,29 +329,29 @@ def test_a_delete_by_the_main_conversation_passes_the_hook(b: Bench):
 def test_the_pruners_write_passes_the_hook_and_tree_py_check_takes_it(b: Bench, tool: str):
     """Given rn's hook before each Write and Edit, and a run that repository.py new made, its
     goal open
-    When the orchestrator hands the request to a new pruner, which calls Write or Edit on the
-    run's design tree, Claude Code runs the hook, the pruner writes the goal from the request, and
-    runs tree.py check before it ends
+    When the orchestrator hands the settled hearing to a new pruner, which calls Write or Edit on
+    the run's design tree, Claude Code runs the hook, the pruner writes the hearing, and runs
+    tree.py check before it ends
     Then the hook gives 0 printing nothing, so that the write goes on, and tree.py check gives 0
-    printing nothing, the tree holding the goal by reasoning and the plan named by it"""
+    printing nothing, the tree holding the goal by user and the plan named by it"""
     assert "${CLAUDE_PLUGIN_ROOT}/scripts/hook.py" in hook_of(b, "Write|Edit")
     new_run(b)
     assert denial(b.script("hook", given=tree_written(b, "rn:pruner", tool))) is None
-    b.write_tree(goal_tree(b))
+    b.write_tree(heard_tree(b))
     assert b.script("tree", "check", b.run) == (0, "", "")
-    assert b.tree()["goal"] == {"decided": GOAL, "by": "reasoning"}
+    assert b.tree()["goal"] == {"decided": GOAL, "by": "user"}
     assert b.tree()["deliverables"][0]["name"] == GOAL
 
 
 @pytest.mark.supports("pruner", "scripts", "Design tree")
 def test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_nothing(b: Bench):
-    """Given a run whose goal the pruner wrote and the orchestrator committed
-    When a new pruner writes the plan with the command of a kind of no best practice and the
-    guide resting on a file the worktree lacks, and runs tree.py check before it ends
+    """Given a run that repository.py new made
+    When the hearing's pruner writes the plan with the command of a kind of no best practice and
+    the guide resting on a file the worktree lacks, and runs tree.py check before it ends
     Then tree.py check gives 1 printing two lines, the first naming /deliverables/1/kind and the
     second /deliverables/2/inputs/0, so that the pruner mends each before it ends; and the tree
     and the work's branch are as it left them"""
-    requested(b)
+    new_run(b)
     design_tree = rn_files.walkthrough_tree(b.name(), plan_done=False)
     design_tree["deliverables"][1]["kind"] = "no-such-kind"
     design_tree["deliverables"][2]["inputs"] = ["docs/missing.md"]
@@ -353,10 +391,10 @@ def test_the_orchestrator_and_the_pruner_each_point_to_the_one_measure_of_the_vi
 @pytest.mark.supports("scripts", "Best practice")
 def test_a_runs_own_best_practice_is_taken_before_rns(b: Bench):
     """Given a run whose worktree holds its own best practice of the kind light, at
-    .rn/best-practices/light/, and whose plan the user signed off
-    When the orchestrator writes the command's Cut
+    .rn/best-practices/light/, and whose hearing one pruner wrote
+    When the orchestrator records the plan's sign-off and writes the command's Cut
     Then the Cut's best practice is the run's own folder"""
-    to_plan_signoff(b)
+    heard(b)
     own = os.path.join(b.worktree, ".rn", "best-practices", "light")
     shutil.copytree(os.path.join(b.rn, "domain", "best-practices", "light"), own)
     cut_path = signed(b, [cut_move(b, "generator", COMMAND)])[0].strip()
@@ -365,16 +403,17 @@ def test_a_runs_own_best_practice_is_taken_before_rns(b: Bench):
 
 @pytest.mark.supports("scripts", "Design tree")
 def test_a_put_up_without_a_login_of_gh_is_refused_before_any_push(b: Bench):
-    """Given a run whose plan has each condition good, and gh with no login
-    When the orchestrator puts the plan up by repository.py put-up
+    """Given a run whose command the evaluator judged good in Round content-1, held good by the
+    pruner, and gh with no login
+    When the orchestrator puts the command up by repository.py put-up
     Then it gives 1 with what gh auth status said, gh was asked nothing after it, and the remote
     holds no branch of the run"""
-    requested(b)
-    confirmed(b)
-    reviewed(b, planned_tree(b, answered=True), "The user's answer.")
+    judged_command(b)
+    reviewed(b, held(b, COMMAND, rn_files.conditions("light")), "The Round's result.")
     gh_double.logged_out(b.gh)
-    refused = b.script("repository", "put-up", b.run, rn_files.plan_path(b.name()))
+    asked = len(b.asked_gh())
+    refused = b.script("repository", "put-up", b.run, COMMAND)
     assert refused.code == 1
     assert "You are not logged into any GitHub hosts." in refused.err
-    assert [each[:3] for each in b.asked_gh()] == [["gh", "auth", "status"]]
+    assert [each[:3] for each in b.asked_gh()[asked:]] == [["gh", "auth", "status"]]
     assert f"rn-{b.name()}" not in git(b.origin, "branch", "--list").split()

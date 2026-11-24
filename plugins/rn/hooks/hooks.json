@@ -1,5 +1,5 @@
 {
-  "description": "Denies each delete by rn's makers in Bash, pointing them to remove.py, which removes without a permission prompt, and each write to a run's design tree but the pruner's, pointing its writer to the pruner.",
+  "description": "Denies each delete by rn's makers in Bash, pointing them to remove.py, which removes without a permission prompt, and each write to a run's design tree but the pruner's and rn's scripts', by Write, Edit, or Bash, pointing its writer to the pruner.",
   "hooks": {
     "PreToolUse": [
       {

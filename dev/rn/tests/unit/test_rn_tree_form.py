@@ -162,7 +162,7 @@ def test_context_refuses_an_empty_language_naming_which(
 # read and write
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_read_gives_the_tree_that_the_file_holds(tmp_path: Any):
     """Given a run's design-tree.json holding the walkthrough's tree
     When it's read
@@ -199,7 +199,7 @@ def test_read_refuses_a_missing_file_naming_it(tmp_path: Any):
         read(os.path.join(str(tmp_path), "design-tree.json"))
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_write_keeps_the_tree_indented_by_one_space_in_its_key_order_with_a_newline(
     tmp_path: Any,
 ):
@@ -216,7 +216,7 @@ def test_write_keeps_the_tree_indented_by_one_space_in_its_key_order_with_a_newl
     assert read(path) == the
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_write_refuses_a_file_that_cant_be_written_naming_it(tmp_path: Any):
     """Given a path whose folder is a file
     When a tree is written there
@@ -231,7 +231,7 @@ def test_write_refuses_a_file_that_cant_be_written_naming_it(tmp_path: Any):
 # at
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     ("pointer", "node"),
     [
@@ -258,7 +258,7 @@ def test_at_gives_the_node_that_the_pointer_names(pointer: str, node: Any):
     assert at(the, pointer) == node(the)
 
 
-@pytest.mark.supports("test_each_node_a_change_touches_is_read_again_before_the_commit")
+@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     "pointer",
     [

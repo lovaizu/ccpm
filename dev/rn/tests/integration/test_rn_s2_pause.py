@@ -6,6 +6,7 @@ orchestrator and each role run them, with the double of gh, and a double of each
 
 from __future__ import annotations
 
+import json
 import os
 
 import pytest
@@ -14,15 +15,17 @@ from gh import gh_double
 from repo_files import git
 from rn_bench import (
     Bench,
+    command_signed,
     cut_move,
     evaluator_cut,
     held,
-    pointed,
+    judged_command,
+    new_run,
     reviewed,
     signed_plan,
     wrote,
 )
-from rn_files import COMMAND
+from rn_files import COMMAND, GOAL, GUIDE
 
 
 def paused(b: Bench) -> str:
@@ -61,6 +64,28 @@ def test_a_pause_pushes_the_runs_work_so_far(b: Bench):
     assert f"{cut}/generator-cut.json" in files
     assert COMMAND in files
     assert git(b.worktree, "status", "--porcelain").strip() == ""
+
+
+@pytest.mark.supports("S2", "pruner", "Design tree")
+def test_a_pause_in_the_hearing_hands_what_the_user_settled_to_one_pruner_and_pushes_it(b: Bench):
+    """Given a run that repository.py new made, its hearing under way, the user having settled
+    the goal, whom it's for and what they can do at it
+    When the user types /rn:dn, and the orchestrator hands what they settled to one pruner, which
+    writes the goal by user and names the plan by it, then runs repository.py pause; and the user
+    types /rn:up in a new conversation
+    Then the remote's branch rn-<name> holds the design tree with the goal by user, and find picks
+    the run up, its tree holding the goal"""
+    new_run(b)
+    so_far = b.tree()
+    so_far["goal"] = {"decided": GOAL, "by": "user"}
+    so_far["deliverables"][0]["name"] = GOAL
+    reviewed(b, so_far, "The goal, as the user settled it so far.")
+    paused(b)
+    branch = f"rn-{b.name()}"
+    pushed = git(b.origin, "show", f"{branch}:{os.path.relpath(b.tree_path, b.worktree)}")
+    assert json.loads(pushed)["goal"] == {"decided": GOAL, "by": "user"}
+    picked_up(b)
+    assert b.tree()["goal"] == {"decided": GOAL, "by": "user"}
 
 
 @pytest.mark.supports("S2", "Round")
@@ -120,14 +145,14 @@ def test_a_pick_up_starts_the_stopped_evaluator_again_in_its_round(b: Bench):
 
 @pytest.mark.supports("S2", "Design tree")
 def test_a_pick_up_with_a_point_waiting_keeps_it_open_and_starts_no_role(b: Bench):
-    """Given a run paused while the generator's point waits on the user, kept as an open
-    decision of the command's N1
+    """Given a run paused while a point waits on the user, which the pruner of the command's
+    judged Round left open as a decision of its N1
     When the user picks it up in a new conversation
     Then the design tree still holds the point open, and tree.py cut of the generator gives 1, as
     the command waits on the user's answer"""
-    pointed(b, signed_plan(b), "Should a line's quantity default to 1?")
+    judged_command(b, {"N1": "The accountant prints an invoice with no quantity in a line."})
     point = rn_files.decision("a line's quantity", None)
-    reviewed(b, held(b, COMMAND, [], {"N1": [point]}), "The generator's point.")
+    reviewed(b, held(b, COMMAND, ["N2", "N3"], {"N1": [point]}), "The Round's result.")
     paused(b)
     picked_up(b)
     assert point in b.tree()["deliverables"][1]["necessary_conditions"][0]["decisions"]
@@ -188,12 +213,14 @@ def test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was(b: Bench)
 
 @pytest.mark.supports("S2", "scripts")
 def test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request(b: Bench):
-    """Given a run whose plan's pull request is open and whose command's generator makes it
+    """Given a run whose command was put up in the run's pull request, open, and signed off, and
+    whose guide's generator makes it
     When the user confirms the cancel, and the orchestrator, with the generator stopped, runs
     repository.py cancel
     Then cancel prints the pull request and origin's branch, which it removed on GitHub; the run's
     worktree, its local branch, and origin's branch are gone, and the pull request is closed"""
-    mid_command(b)
+    command_signed(b)
+    wrote(b, {GUIDE: "# Print an invoice\n"})
     pr = b.tree()["context"]["pr"]
     printed = b.ran("repository", "cancel", b.run)
     assert printed.splitlines() == [pr, f"origin/rn-{b.name()}"]
