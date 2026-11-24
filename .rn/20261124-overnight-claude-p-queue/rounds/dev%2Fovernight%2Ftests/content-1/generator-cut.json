@@ -1,0 +1,66 @@
+{
+ "goal": "The user has the work that the AI they instruct asks for run as much as it can, stopped neither by the usage limit, by waiting for an answer, nor by the session closing: \u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d Once it holds, the work that AI asks for goes on through the usage limit, with no prompt waiting for an answer, and after the session that asked for it closes, where before each of these stopped it.",
+ "language": "English",
+ "deliverable": {
+  "name": "overnight's developers see, before any part is built, that its parts joined give each key result, by cases that fail until the parts are built",
+  "path": "dev/overnight/tests",
+  "kind": "test-design",
+  "inputs": [
+   "dev/overnight/product-vision.md",
+   "plugins/overnight/README.md",
+   "dev/overnight/architecture.md",
+   "plugins/overnight"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N7",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/product-vision.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight/README.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/test-design",
+ "stage": "content",
+ "number": 1,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Ftests/content-1",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Ftests-content-1/",
+ "last_good": null
+}

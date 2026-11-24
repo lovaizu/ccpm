@@ -1,0 +1,53 @@
+{
+ "goal": "The user has the work that the AI they instruct asks for run as much as it can, stopped neither by the usage limit, by waiting for an answer, nor by the session closing: \u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d Once it holds, the work that AI asks for goes on through the usage limit, with no prompt waiting for an answer, and after the session that asked for it closes, where before each of these stopped it.",
+ "deliverable": {
+  "name": "overnight's developers see, before any body is written, that its parts fit together",
+  "path": "plugins/overnight"
+ },
+ "judges_by": {
+  "what": "The developers see, before anyone writes a body, whether the parts that the architecture draws fit together, and the architecture's maker mends each place where they don't.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "Each decision that the architecture gives a part has one place in the code.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "Module opening",
+      "what": "Does each module state at its top the one decision that it alone hides, and does each decision that the architecture gives a component lie in exactly one module?"
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "Each handoff between the parts has an interface that both sides build to.",
+    "necessary_conditions": [
+     {
+      "id": "N2",
+      "about": "Interface",
+      "what": "Does each arrow of Sequences that reaches a part have an interface that states what it takes, what it gives, and each way it refuses, with its body left empty?"
+     },
+     {
+      "id": "N3",
+      "about": "Prompt",
+      "what": "Does each part that holds a prompt have a file that states when to use the prompt, what it gives, and the form of what it takes and gives, with its steps left empty?"
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "Each place where the architecture can't be built reaches its maker before anyone builds around it.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "Gaps",
+      "what": "Does the list of gaps name each place where the skeleton can't follow the architecture, each with the element of the architecture that it bears on?"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-plugins%2Fovernight-content-1/",
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/plugins%2Fovernight/content-1"
+}

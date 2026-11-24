@@ -1,0 +1,44 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"Which number a new piece takes: the one after the highest that any record, branch, or",
+    "\"\"\"The layout of each piece's record on disk, a JSON file that each change writes whole, in",
+    "\"\"\"How the OS tells a runner's process apart from any later process with the same ID: by its ID",
+    "\"\"\"How each piece stands once its record is read against its runner's process, the count of the",
+    "\"\"\"How Claude Code is run for a piece: its command line, in its mode that asks no one, with only",
+    "\"\"\"How a runner is started as a process of its own, apart from the session, by each OS's own",
+    "\"\"\"What a reply of Claude Code says: how its run ended, the ID of its conversation, and when a",
+    "\"\"\"How a piece is carried to its end: run, then resumed in its conversation after each reset of",
+    "\"\"\"Where a piece's worktree lies and which branch it's on, as git keeps them:"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "overnight's ask hands one piece of work over. The piece then runs apart from the session, through",
+    "- It takes the words after the skill's name. They hold the piece's prompt, with each question",
+    "- It gives the lines that `handover.py` prints, as given. They show the piece handed over and how",
+    "overnight's status shows how each piece handed over went. It gives each piece's state, branch,",
+    "- It takes nothing: it shows each piece recorded in the repository that the session works in.",
+    "- It gives the lines that `pieces.py report` prints, as given: a table of each piece and the share"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "    Gap, for the architecture's maker: S1 records the piece as running only after the runner",
+    "    starts, so a runner whose conversation ends at once, such as where `claude` isn't found, meets",
+    "    no record to write its end in, and the piece shows as stopped by the session closing."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N2",
+   "good_when": "The developer who writes hand_over's body knows from its interface, and from handover.py's, what the person sees when the step that records the piece as running refuses: record.begin refuses LookupError where the runner's process no longer runs, as it does in the gap's own case of `claude` not found, and FileExistsError where a record of the number exists, yet hand_over lists only worktree.Refused and OSError, and handover.command.main names no exit or words for either."
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "overnight",
+  "description": "overnight keeps work from stopping by usage limits, unanswered prompts, or closed sessions.",
+  "version": "0.1.0",
+  "author": { "name": "lovaizu" },
+  "homepage": "https://github.com/lovaizu/ccpm/blob/main/plugins/overnight/README.md",
+  "repository": "https://github.com/lovaizu/ccpm"
+}
