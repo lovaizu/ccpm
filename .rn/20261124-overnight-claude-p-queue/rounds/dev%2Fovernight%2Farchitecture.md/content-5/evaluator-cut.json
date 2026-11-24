@@ -1,0 +1,130 @@
+{
+ "goal": "The user has the work that the AI they instruct asks for run as much as it can, stopped neither by the usage limit, by waiting for an answer, nor by the session closing: \u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d Once it holds, the work that AI asks for goes on through the usage limit, with no prompt waiting for an answer, and after the session that asked for it closes, where before each of these stopped it.",
+ "deliverable": {
+  "name": "overnight's developers build its parts so that together they give what its README promises",
+  "path": "dev/overnight/architecture.md",
+  "more_paths": [
+   "dev/overnight/images/concept-model.svg",
+   "dev/overnight/images/components.svg",
+   "dev/overnight/images/deployment.svg"
+  ]
+ },
+ "judges_by": {
+  "what": "The developers build and change the parts of the product so that together they deliver what the README promises the users, each part putting its work on what brings the users there.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "The developers know what each part must do, for the users or for the product's development and operation, and why.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "Solution strategy, Principles",
+      "what": "Does Principles state first, in one sentence, the one idea by which the product delivers what its README promises?"
+     },
+     {
+      "id": "N2",
+      "about": "User stories",
+      "what": "Does each user story state a value that it brings its role on its own, in the role's words and without the product's means, and do the stories together cover each objective of the product vision and each promise of the README?"
+     },
+     {
+      "id": "N3",
+      "about": "Principles, User stories, Components, Concept model, Sequences",
+      "what": "Does each principle item, user story, component, and concept trace to what the README promises the users, or to a need of the product's development or operation?"
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "Parts that different developers build fit together.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "Principles",
+      "what": "Does each principle name what it values, and each of its items one decision, with no name that a later section decides, from which two developers decide a case that no line names the same way?"
+     },
+     {
+      "id": "N5",
+      "about": "User stories, Components",
+      "what": "Does each component state its expected role, what it answers for toward the users' aim, and does each decision that the stories need belong to exactly one component?"
+     },
+     {
+      "id": "N6",
+      "about": "Components",
+      "what": "Does each component state its type?"
+     },
+     {
+      "id": "N7",
+      "about": "Concept model",
+      "what": "Does Concept model say what each concept is for, and show how the concepts relate, without their fields or any role's name?"
+     },
+     {
+      "id": "N8",
+      "about": "User stories, Components, Concept model, Sequences",
+      "what": "Does each user story have a sequence that shows, one action on each arrow, which component hands what to which and where the story branches, with each arrow and each branch condition tagged with the story or principle item that it carries out?"
+     },
+     {
+      "id": "N9",
+      "about": "the whole",
+      "what": "Do the figures, lists, and sentences agree with one another, and with the architecture that the product builds on, on what each part does?"
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "The developers can place, set up, and start every part without asking anyone.",
+    "necessary_conditions": [
+     {
+      "id": "N10",
+      "about": "Components, Concept model, Deployment",
+      "what": "Does Deployment show each environment the product runs in, what runs in it, each store of data, each service outside the product, and how the product starts?"
+     },
+     {
+      "id": "N11",
+      "about": "Components, Concept model, Directory structure",
+      "what": "Does Directory structure show the folders, with only the vital few files, and beside each top folder its purpose?"
+     }
+    ]
+   },
+   {
+    "id": "C4",
+    "what": "The developers find each gap between the parts before they build any part, and know, as they build, that the product does what the document and the product vision say.",
+    "necessary_conditions": [
+     {
+      "id": "N12",
+      "about": "Test strategy",
+      "what": "Does Test strategy give, in its table alone, only the checks that the product's purpose needs, picked from the test strategy guide, each with its test target, its kind, when it runs, and for a quality its criterion or for a benchmark what it measures?"
+     },
+     {
+      "id": "N13",
+      "about": "the whole",
+      "what": "Is each gap that the software design and the test design found from the document mended in it, so that the two designs, made again from it, find none?"
+     },
+     {
+      "id": "N14",
+      "about": "Components, Test strategy",
+      "what": "Does each thing that the document says the product does rest on a part that a unit or integration test can check?"
+     }
+    ]
+   },
+   {
+    "id": "C5",
+    "what": "The developers can change the product without making the document wrong.",
+    "necessary_conditions": [
+     {
+      "id": "N15",
+      "about": "Components, Concept model, Sequences, Deployment, Directory structure",
+      "what": "Does each view's Strategies give each decision of the view, tagged with the story or principle item that it carries out, with its intent?"
+     },
+     {
+      "id": "N16",
+      "about": "the whole",
+      "what": "Does the document hold only what stays true while the product vision and Principles stay, with no name of the implementation outside Directory structure?"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Farchitecture.md-content-5/",
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Farchitecture.md/content-5"
+}

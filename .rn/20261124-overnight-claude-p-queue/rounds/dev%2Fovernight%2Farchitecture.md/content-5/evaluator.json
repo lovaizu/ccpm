@@ -1,0 +1,201 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or the session",
+    "closing."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- S1: the user wants its work run to its end through usage limits, unanswered prompts, and closed",
+    "  sessions.",
+    "- S2: the user wants to learn how each piece went and what held or stopped it, from any later",
+    "  session."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- P1: waiting out the usage limit",
+    "  - P1.1: a piece that the usage limit stops goes on in its conversation at each reset, however",
+    "- P2: nothing to answer",
+    "  - P2.1: each piece gets the tools that the user names and a Git worktree of its own before it",
+    "- P3: running past the session",
+    "  - P3.1: each piece runs as a process apart from the session that handed it over.",
+    "- P4: no more than the user let it",
+    "  - P4.1: a piece's changes stay on its own branch until someone merges them.",
+    "- P5: how the night went, seen at a glance",
+    "  - P5.1: each piece's state, each wait that held it, and its last words are recorded as they",
+    "- ask (skill)\\",
+    "  Hands a piece over as the user words it, so that it runs with nothing left to ask.",
+    "- status (skill)\\",
+    "  Shows the user how each piece went."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "- P1: waiting out the usage limit",
+    "  - P1.1: a piece that the usage limit stops goes on in its conversation at each reset, however",
+    "    often it stops.",
+    "- P2: nothing to answer",
+    "  - P2.1: each piece gets the tools that the user names and a Git worktree of its own before it",
+    "    starts.",
+    "  - P2.2: each call to a tool that the user didn't name is refused at once, with no one asked.",
+    "- The reset time read from the stop's reply, or a set while waited where none can be read. [P1.1]\\",
+    "  Intent: the piece starts again once the limit lets it, and an unreadable reply never ends it."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- ask (skill)\\",
+    "  Hands a piece over as the user words it, so that it runs with nothing left to ask.",
+    "- status (skill)\\",
+    "  Shows the user how each piece went.",
+    "- hand-over (script)\\",
+    "  Sets each piece up apart from the person's work and from the session, and starts it.",
+    "- runner (script)\\",
+    "  Carries one piece through the usage limit to its end.",
+    "- pieces (script)\\",
+    "  Keeps each piece's record, and reports where each piece stands.",
+    "- The record's form, and the share of pieces stopped, held by pieces alone, which the others ask.",
+    "  [P5.3]\\"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- ask (skill)\\",
+    "- status (skill)\\",
+    "- hand-over (script)\\",
+    "- runner (script)\\",
+    "- pieces (script)\\"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "- Piece\\",
+    "  One piece of work handed over: its prompt, with each question settled in it, and the tools it",
+    "  may use.",
+    "- Worktree\\",
+    "  The folder and the branch where a piece works, apart from the person's own and from each other",
+    "  piece's.",
+    "- Conversation\\",
+    "  The talk with the model in which a piece works. It goes on after each reset with all the piece",
+    "  has done.",
+    "- Record\\",
+    "  Where a piece stands, its waits, and its last words, for any later session to read.",
+    "- Wait\\",
+    "  One stretch in which the usage limit held a piece, from its stop to the reset."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "#### S1: a piece handed over and carried to its end",
+    "  U->>A: invokes it with the prompt, each question settled in it, and each tool it needs (Piece) [S1]",
+    "  alt no prompt, or no tool named [P2.1]",
+    "  Note over U,C: The user's session may close from here on [P3.1]",
+    "  loop until the piece ends [P1.1]",
+    "    alt stopped by the usage limit [P1.1]",
+    "    else ended by an error of its own [S1]",
+    "    else ended [S1]",
+    "#### S2: how each piece went",
+    "  U->>S: invokes it, in any later session [S2]",
+    "  opt a piece still recorded as running or waiting, whose runner's process no longer runs [P5.2]",
+    "  alt no piece recorded [S2]"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "    H->>P: asks the next number (Record) [S1]",
+    "    H->>H: makes the piece's folder from the current commit, on a branch of its own (Worktree) [P4.1]",
+    "    H->>P: records the piece as running (Record) [P5.1]",
+    "    H->>N: starts it apart from the session (Piece) [P3.1]",
+    "    N->>P: records itself as the piece's runner, by its process (Record) [P5.2]",
+    "    H-->>A: the piece's number, folder, branch, and tools (Piece) [S1]",
+    "  <text class=\"data halo end\" x=\"552\" y=\"250\">asks the next number, records the piece (Record)</text>"
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "The user installs overnight as [the README](../../plugins/overnight/README.md#installation) says,",
+    "and invokes the skill `overnight:ask` in the repository that holds the work.",
+    "  <text class=\"frame-name\" x=\"36\" y=\"42\">the person&#x27;s computer [an OS that Claude Code runs on, left on and awake]</text>",
+    "  <text class=\"kind\" x=\"120.0\" y=\"316.0\">[Git: each Record]</text>",
+    "  <text class=\"kind\" x=\"990.0\" y=\"321.0\">[the model, its usage limit]</text>",
+    "  <text class=\"kind\" x=\"990.0\" y=\"451.0\">[on GitHub]</text>"
+   ]
+  },
+  {
+   "condition": "N11",
+   "lines": [
+    "plugins/overnight/                 what Claude Code installs for the user",
+    "├── skills/                        overnight:ask and overnight:status, each pointing to its part",
+    "└── scripts/                       each command that a skill or the runner runs",
+    "dev/overnight/                     what only overnight's developers use",
+    "└── tests/                         the test cases, with the stand-in of Claude Code",
+    ".overnight/                        what overnight writes in the person's repository",
+    "└── <yyyymmdd>-<n>/                one piece's folder, holding its record",
+    "../<repository>-overnight-<n>/     one piece's worktree, on the branch overnight/<n>"
+   ]
+  },
+  {
+   "condition": "N14",
+   "lines": [
+    "| Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |",
+    "| Integration testing | Architecture | Quality | During the work | Every case passes with a stand-in of Claude Code. The cases check the resume after each reset, the hand-over, pieces run at once, and each record. No case waits a night or spends the usage limit. |",
+    "| Contract testing | Architecture | Quality | Apart from the work | On each new version of Claude Code, each recorded step gives what it recorded. No step spends the usage limit on purpose. |"
+   ]
+  },
+  {
+   "condition": "N15",
+   "lines": [
+    "Strategies:",
+    "- Each piece numbered next after the highest that the repository holds, which names its worktree",
+    "  and its branch. [S1]\\",
+    "  Intent: the user tells the pieces apart by one number in the folder, the branch, and the status.",
+    "- ask's steps tell the user to settle each question in the prompt and to name each tool the piece",
+    "  needs. [P2.1]\\",
+    "  Intent: a piece meets no question that it can't settle alone.",
+    "Strategies:",
+    "- The prompt handed to Claude Code on its standard input. [P2.1]\\",
+    "  Intent: the prompt reaches Claude Code whole, whatever options stand before it.",
+    "- Each piece's folder made beside the repository, as a Git worktree on a branch of its own. [P4.1]\\",
+    "  Intent: the person's folder and branch stay as they were, and each piece's changes wait for",
+    "Strategies:",
+    "- Each record in `.overnight/` at the repository's root. [P3.2]\\",
+    "  Intent: the person chooses with one line of `.gitignore` whether git keeps the records."
+   ]
+  },
+  {
+   "condition": "N16",
+   "lines": [
+    "- Claude Code started in its mode that asks no one, with only the named tools allowed. [P2.2]\\",
+    "  Intent: a call outside them ends at once, and never waits on a prompt.",
+    "- The runner started as a process of its own, detached from the session, by each OS's own means.",
+    "  [P3.1]\\",
+    "```text",
+    "../<repository>-overnight-<n>/     one piece's worktree, on the branch overnight/<n>"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N12",
+   "good_when": "The developers read from each row alone when its check runs and how they tell that it passed: no row names one time in its When and another in its criterion, as the walkthrough run's row does, and no criterion asks them to break each part by hand on each change to see a case fail, as the traceability row does."
+  },
+  {
+   "condition": "N13",
+   "good_when": "Two developers who build how the next piece gets its number decide it the same way from the document, so that on the person's second night, with the first night's branches, worktrees, and records kept or some of them removed, each new piece gets a folder and a branch that no earlier piece holds, and its record's folder name agrees with that number."
+  }
+ ]
+}

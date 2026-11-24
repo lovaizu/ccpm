@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 510">
+  <title>overnight&#x27;s deployment</title>
+  <style>
+    svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .store { fill: #fff8c5; stroke: #9a6700; stroke-width: 1.5; }
+    .ext { fill: #eaeef2; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .unit { fill: #ddf4ff; fill-opacity: 0.35; stroke: #0969da; stroke-width: 1.2; }
+    .frame { fill: none; stroke: #0969da; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .frame-name { fill: #0969da; font-size: 13px; font-weight: 600; }
+    .name { fill: #1f2328; font-size: 15px; font-weight: 600; text-anchor: middle; }
+    .kind { fill: #59636e; font-size: 12px; text-anchor: middle; }
+    .label { fill: #1f2328; font-size: 13px; }
+    .small { font-size: 12px; }
+    .data { fill: #8250df; font-size: 12px; font-style: italic; }
+    .quote { fill: #8250df; font-size: 12px; font-style: italic; }
+    .gets { fill: #1a7f37; font-size: 12px; font-weight: 600; }
+    .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
+    .dashed { stroke-dasharray: 5 4; }
+    .head { fill: #59636e; }
+    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
+    .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
+    .mid { text-anchor: middle; }
+    .start { text-anchor: start; }
+    .end { text-anchor: end; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #161b22; stroke: #3d444d; }
+      .store { fill: #2e2a1a; stroke: #d29922; }
+      .ext { fill: #21262d; stroke: #3d444d; }
+      .unit { fill: #0c2d6b; stroke: #4493f8; }
+      .frame { stroke: #4493f8; }
+      .frame-name { fill: #4493f8; }
+      .name, .label { fill: #f0f6fc; }
+      .kind { fill: #9198a1; }
+      .data { fill: #c297ff; }
+      .quote { fill: #c297ff; }
+      .gets { fill: #3fb950; }
+      .line { stroke: #9198a1; }
+      .head { fill: #9198a1; }
+      .hole { fill: #0d1117; stroke: #9198a1; }
+      .halo { stroke: #0d1117; }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="head" d="M0,0 L10,5 L0,10 z"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1120" height="510"/>
+  <rect class="frame" x="20" y="20" width="820" height="470" rx="10"/>
+  <text class="frame-name" x="36" y="42">the person&#x27;s computer [an OS that Claude Code runs on, left on and awake]</text>
+  <rect class="unit" x="40" y="60" width="340" height="130" rx="8"/>
+  <text class="frame-name" x="56" y="82">Claude Code [the user&#x27;s session]</text>
+  <rect class="box" x="55" y="100" width="150" height="70" rx="6"/>
+  <text class="name" x="130.0" y="131.0">ask</text>
+  <text class="kind" x="130.0" y="151.0">[skill]</text>
+  <rect class="box" x="215" y="100" width="150" height="70" rx="6"/>
+  <text class="name" x="290.0" y="131.0">status</text>
+  <text class="kind" x="290.0" y="151.0">[skill]</text>
+  <rect class="unit" x="440" y="60" width="380" height="130" rx="8"/>
+  <text class="frame-name" x="456" y="82">Python 3.9 or later</text>
+  <rect class="box" x="455" y="100" width="115" height="70" rx="6"/>
+  <text class="name" x="512.5" y="131.0">pieces</text>
+  <text class="kind" x="512.5" y="151.0">[script]</text>
+  <rect class="box" x="580" y="100" width="115" height="70" rx="6"/>
+  <text class="name" x="637.5" y="131.0">hand-over</text>
+  <text class="kind" x="637.5" y="151.0">[script]</text>
+  <rect class="box" x="705" y="100" width="100" height="70" rx="6"/>
+  <text class="name" x="755.0" y="131.0">runner</text>
+  <text class="kind" x="755.0" y="151.0">[each piece]</text>
+  <rect class="unit" x="440" y="250" width="380" height="110" rx="8"/>
+  <text class="frame-name" x="456" y="272">Claude Code [asking no one]</text>
+  <rect class="box" x="455" y="285" width="350" height="60" rx="6"/>
+  <text class="name" x="630.0" y="312.0">Conversation</text>
+  <text class="kind" x="630.0" y="332.0">[one for each piece, with only its named tools]</text>
+  <rect class="store" x="40" y="250" width="160" height="110" rx="6"/>
+  <text class="name" x="120.0" y="296.0">the repository</text>
+  <text class="kind" x="120.0" y="316.0">[Git: each Record]</text>
+  <rect class="store" x="220" y="250" width="160" height="110" rx="6"/>
+  <text class="name" x="300.0" y="296.0">each Worktree</text>
+  <text class="kind" x="300.0" y="316.0">[Git, beside it]</text>
+  <rect class="ext" x="880" y="265" width="220" height="80" rx="6"/>
+  <text class="name" x="990.0" y="301.0">Claude</text>
+  <text class="kind" x="990.0" y="321.0">[the model, its usage limit]</text>
+  <rect class="ext" x="880" y="400" width="220" height="70" rx="6"/>
+  <text class="name" x="990.0" y="431.0">ccpm marketplace</text>
+  <text class="kind" x="990.0" y="451.0">[on GitHub]</text>
+  <path class="line" d="M380,135 L440,135" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="410" y="127">run</text>
+  <path class="line" d="M500,170 L200,270" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="300" y="226">reads and writes</text>
+  <path class="line" d="M620,170 L380,250" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="476" y="222">makes</text>
+  <path class="line" d="M755,170 L755,285" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="763" y="230">starts, resumes</text>
+  <path class="line" d="M455,325 L380,325" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="418" y="317">works in</text>
+  <path class="line" d="M805,305 L880,305" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="842" y="297">each call</text>
+  <path class="line" d="M880,435 L210,435 L210,190" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="560" y="427">installs</text>
+</svg>

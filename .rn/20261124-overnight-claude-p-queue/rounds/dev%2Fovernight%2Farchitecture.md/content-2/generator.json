@@ -1,0 +1,141 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/architecture.md",
+  "dev/overnight/images/components.svg"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or the session"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- S1: the user wants its work run to its end through usage limits, unanswered prompts, and closed",
+    "  sessions.",
+    "- S2: the user wants to learn how each piece went and what held or stopped it, from any later",
+    "  session."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "  - P2.1: each piece gets the tools that the user names and a Git worktree of its own before it",
+    "- hand-over (script)\\",
+    "- Each piece started at its hand-over, at once with each piece already running. [S1]\\",
+    "    H->>N: starts it apart from the session (Piece) [P3.1]"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "- P1: waiting out the usage limit",
+    "  - P1.1: a piece that the usage limit stops goes on in its conversation at each reset, however",
+    "- P2: nothing to answer",
+    "  - P2.2: each call to a tool that the user didn't name is refused at once, with no one asked.",
+    "- P5: how the night went, seen at a glance",
+    "  - P5.2: each piece that ends short of its work is shown with what stopped it."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- runner (script)\\",
+    "  Carries one piece through the usage limit to its end.",
+    "- pieces (script)\\",
+    "  Keeps each piece's record, and reports where each piece stands.",
+    "- The record's form, and the share of pieces stopped, held by pieces alone, which the others ask."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "![overnight's components](images/components.svg)",
+    "- ask (skill)\\",
+    "- hand-over (script)\\"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "![overnight's concepts](images/concept-model.svg)",
+    "- Wait\\",
+    "  One stretch in which the usage limit held a piece, from its stop to the reset."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "    alt stopped by the usage limit [P1.1]",
+    "      N->>N: waits until the reset, or a set while where the stop gives no time [P1.1]",
+    "  opt a piece still recorded as running or waiting, whose runner's process no longer runs [P5.2]",
+    "    N->>P: records itself as the piece's runner, by its process (Record) [P5.2]",
+    "      N->>P: records the piece as running again (Record) [P5.1]"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "├── skills/                        overnight:ask and overnight:status, each pointing to its part",
+    "└── <yyyymmdd>-<n>/                one piece's folder, holding its record"
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "![overnight's deployment](images/deployment.svg)",
+    "The user installs overnight as [the README](../../plugins/overnight/README.md#installation) says,",
+    "- The prompt handed to Claude Code on its standard input. [P2.1]\\"
+   ]
+  },
+  {
+   "condition": "N11",
+   "lines": [
+    "plugins/overnight/                 what Claude Code installs for the user",
+    "dev/overnight/                     what only overnight's developers use",
+    ".overnight/                        what overnight writes in the person's repository"
+   ]
+  },
+  {
+   "condition": "N12",
+   "lines": [
+    "| Integration testing | Architecture | Quality | During the work | Every case passes with a stand-in of Claude Code. The cases check the resume after each reset, the hand-over, pieces run at once, and each record. No case waits a night or spends the usage limit. |",
+    "| Contract testing | Architecture | Quality | Apart from the work | On each new version of Claude Code, each recorded step gives what it recorded. No step spends the usage limit on purpose. |",
+    "| Scenario testing | Product | Quality | Apart from the work | A walkthrough run of the README's request hands its pieces over and shows them with no stop a fault caused. It waits no night and spends no usage limit on purpose, as the integration tests check the waits. |"
+   ]
+  },
+  {
+   "condition": "N13",
+   "lines": [
+    "    N->>P: records itself as the piece's runner, by its process (Record) [P5.2]",
+    "- A runner taken as ended once the process that it recorded no longer runs, as each OS tells it.",
+    "  Intent: the status tells which pieces nothing carries any more, whatever ended their runners.",
+    "  opt a piece still recorded as running or waiting, whose runner's process no longer runs [P5.2]"
+   ]
+  },
+  {
+   "condition": "N14",
+   "lines": [
+    "- Claude Code started in its mode that asks no one, with only the named tools allowed. [P2.2]\\",
+    "| Integration testing | Architecture | Quality | During the work | Every case passes with a stand-in of Claude Code. The cases check the resume after each reset, the hand-over, pieces run at once, and each record. No case waits a night or spends the usage limit. |"
+   ]
+  },
+  {
+   "condition": "N15",
+   "lines": [
+    "- The conversation's ID kept from its first reply, and the piece resumed in that conversation after",
+    "  Intent: the piece goes on with all it had done and learned."
+   ]
+  },
+  {
+   "condition": "N16",
+   "lines": [
+    "- Each record written whole at each change, never in part. [P3.2]\\",
+    "  Intent: a session that reads a record while its piece runs reads a whole one."
+   ]
+  }
+ ]
+}

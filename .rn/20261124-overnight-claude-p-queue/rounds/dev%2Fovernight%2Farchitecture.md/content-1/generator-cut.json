@@ -1,0 +1,119 @@
+{
+ "goal": "The user has the work that the AI they instruct asks for run as much as it can, stopped neither by the usage limit, by waiting for an answer, nor by the session closing: \u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d Once it holds, the work that AI asks for goes on through the usage limit, with no prompt waiting for an answer, and after the session that asked for it closes, where before each of these stopped it.",
+ "language": "English",
+ "deliverable": {
+  "name": "overnight's developers build its parts so that together they give what its README promises",
+  "path": "dev/overnight/architecture.md",
+  "kind": "architecture",
+  "inputs": [
+   "dev/overnight/product-vision.md",
+   "plugins/overnight/README.md"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N7",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N8",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N9",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N10",
+    "good": false,
+    "decisions": [
+     {
+      "about": "how `claude -p` behaves where a stand-in hides it",
+      "decided": "A `claude -p` stopped by the usage limit ends, and its reply holds a line with the time the limit resets, such as `You've hit your session limit \u00b7 resets 1:40pm`. Given `--add-dir`, it takes the arguments after it as directories, so the prompt goes on stdin.",
+      "by": "research"
+     }
+    ]
+   },
+   {
+    "id": "N11",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N12",
+    "good": false,
+    "decisions": [
+     {
+      "about": "Test strategy",
+      "decided": "No check runs the work through a real night or spends the usage limit on purpose. The resume after the usage limit resets, the start at the set time, the number of tasks run at once, and the record of each result are logic, each checked by tests with a stand-in in place of `claude`: \u300c\uff15\u3067\u5b9f\u969b\u306b\u591c\u6d41\u3059\u3053\u3068\u306b\u610f\u5473\u3042\u308b\u306e\uff1f\u4e0a\u9650\u6765\u308b\u3088\u3046\u306b\u7121\u99c4\u306a\u4f5c\u696d\u3059\u308b\u306e\uff1f \u30dd\u30a4\u30f3\u30c8\u306f\uff1f\u4e0a\u9650\u89e3\u9664\u5f8c\u306e\u518d\u958b\u30ed\u30b8\u30c3\u30af\u3001\u6642\u523b\u958b\u59cb\u3001\u4e26\u884c\u6570\u3001\u4f5c\u696d\u7d50\u679c\u306e\u8a18\u9332\u3001\u3050\u3089\u3044\u3058\u3083\u306a\u3044\u306e\uff1f\u5168\u90e8\u30ed\u30b8\u30c3\u30af\u3060\u3088\u306d\uff1f\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N13",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N14",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N15",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N16",
+    "good": false,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/product-vision.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight/README.md"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/architecture",
+ "stage": "content",
+ "number": 1,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Farchitecture.md/content-1",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Farchitecture.md-content-1/",
+ "last_good": null
+}

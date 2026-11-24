@@ -1,0 +1,288 @@
+{
+ "goal": "The user has the work that the AI they instruct asks for run as much as it can, stopped neither by the usage limit, by waiting for an answer, nor by the session closing: \u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d Once it holds, the work that AI asks for goes on through the usage limit, with no prompt waiting for an answer, and after the session that asked for it closes, where before each of these stopped it.",
+ "language": "English",
+ "deliverable": {
+  "name": "overnight's developers build its parts so that together they give what its README promises",
+  "path": "dev/overnight/architecture.md",
+  "more_paths": [
+   "dev/overnight/images/concept-model.svg",
+   "dev/overnight/images/components.svg",
+   "dev/overnight/images/deployment.svg"
+  ],
+  "kind": "architecture",
+  "inputs": [
+   "dev/overnight/product-vision.md",
+   "plugins/overnight/README.md"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": [
+     {
+      "about": "a start at a set time",
+      "decided": "overnight builds no start at a set time: each piece starts at its hand-over, as the README promises, and the test strategy checks no such start.",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N4",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N7",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N8",
+    "good": true,
+    "decisions": [
+     {
+      "about": "the record through a reset",
+      "decided": "S1's sequence shows the runner recording the piece as running again when it goes on in its conversation after a reset, so that the status shows a resumed piece as running, and a runner that ends after the resume counts as stopped by the session closing, not by the usage limit.",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N9",
+    "good": false,
+    "decisions": [
+     {
+      "about": "a piece with a call refused that went on to its end",
+      "decided": "A piece whose conversation reached its end counts by how it ended, whatever happened on the way: done where it ended, and failed where it ended by an error of its own. A call refused along the way is no stop and no wait for an answer, and nothing of it is recorded, as a refused call waits on no one and the one key result counts only the pieces that the usage limit, a wait for an answer, or the session closing stopped: \u300c\u610f\u5473\u304c\u308f\u304b\u3089\u306a\u3044\u300d\u300c\u805e\u3044\u3066\u308b\u610f\u56f3\u306f\uff1f\u76ee\u7684\u306f\uff1f\u300d\u300c\u76ee\u7684\u304b\u3089\u5224\u65ad\u3057\u305f\u3089\u805e\u304f\u5fc5\u8981\u306a\u3044\u3088\u306d PV\u304c\u4e9b\u672b\u306a\u591a\u6570\u306b\u306a\u3063\u3066\u306a\u3051\u308c\u3070\u3042\u306a\u305f\u304c\u5224\u65ad\u3067\u304d\u308b\u306f\u305a\u306a\u3093\u3060\u3051\u3069\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N10",
+    "good": true,
+    "decisions": [
+     {
+      "about": "how `claude -p` behaves where a stand-in hides it",
+      "decided": "A `claude -p` stopped by the usage limit ends, and its reply holds a line with the time the limit resets, such as `You've hit your session limit \u00b7 resets 1:40pm`. Given `--add-dir`, it takes the arguments after it as directories, so the prompt goes on stdin.",
+      "by": "research"
+     }
+    ]
+   },
+   {
+    "id": "N11",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N12",
+    "good": true,
+    "decisions": [
+     {
+      "about": "Test strategy",
+      "decided": "No check runs the work through a real night or spends the usage limit on purpose. Each piece of logic that overnight builds, such as the resume after the usage limit resets, the pieces run at once, and the record of each result, is checked by tests with a stand-in in place of `claude`: \u300c\uff15\u3067\u5b9f\u969b\u306b\u591c\u6d41\u3059\u3053\u3068\u306b\u610f\u5473\u3042\u308b\u306e\uff1f\u4e0a\u9650\u6765\u308b\u3088\u3046\u306b\u7121\u99c4\u306a\u4f5c\u696d\u3059\u308b\u306e\uff1f \u30dd\u30a4\u30f3\u30c8\u306f\uff1f\u4e0a\u9650\u89e3\u9664\u5f8c\u306e\u518d\u958b\u30ed\u30b8\u30c3\u30af\u3001\u6642\u523b\u958b\u59cb\u3001\u4e26\u884c\u6570\u3001\u4f5c\u696d\u7d50\u679c\u306e\u8a18\u9332\u3001\u3050\u3089\u3044\u3058\u3083\u306a\u3044\u306e\uff1f\u5168\u90e8\u30ed\u30b8\u30c3\u30af\u3060\u3088\u306d\uff1f\u300d",
+      "by": "user"
+     },
+     {
+      "about": "when the walkthrough run runs",
+      "decided": "overnight is done only once the integration tests with the stand-in pass and then a walkthrough run of the README's request tries `ask` and `status` once, briefly, on the real Claude, as the tests with the stand-in can't show that these two run on it. The run waits for no night and spends no usage limit on purpose: \u300cA\uff08\u63a8\u5968\uff09\u81ea\u52d5\u30c6\u30b9\u30c8\u304c\u901a\u3063\u305f\u5f8c\u3001\u672c\u7269\u306e Claude \u3067\u4e00\u5ea6\u3060\u3051\u77ed\u304f\u52d5\u304b\u3057\u3066\u78ba\u8a8d\u3057\u3066\u304b\u3089\u5b8c\u6210\u3068\u3059\u308b\u3002\u591c\u307e\u3067\u5f85\u3064\u5fc5\u8981\u3082\u3001\u4e0a\u9650\u306b\u5f53\u3066\u308b\u5fc5\u8981\u3082\u3042\u308a\u307e\u305b\u3093\u3002\u300d\u300cA\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N13",
+    "good": true,
+    "decisions": [
+     {
+      "about": "how pieces tells that a runner has ended",
+      "decided": "The document says how pieces tells that a piece's runner has ended, and which part hands it what it needs to tell so, as an arrow of S1, so that the status counts each piece whose runner is gone as stopped in the share it shows.",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N14",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N15",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N16",
+    "good": true,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/product-vision.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight/README.md"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/architecture",
+ "stage": "content",
+ "number": 5,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Farchitecture.md/content-5",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Farchitecture.md-content-5/",
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or the session"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- S1: the user wants its work run to its end through usage limits, unanswered prompts, and closed",
+    "  sessions.",
+    "- S2: the user wants to learn how each piece went and what held or stopped it, from any later",
+    "  session."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "  - P2.1: each piece gets the tools that the user names and a Git worktree of its own before it",
+    "- hand-over (script)\\",
+    "- Each piece started at its hand-over, at once with each piece already running. [S1]\\",
+    "    H->>N: starts it apart from the session (Piece) [P3.1]"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "- P1: waiting out the usage limit",
+    "  - P1.1: a piece that the usage limit stops goes on in its conversation at each reset, however",
+    "- P2: nothing to answer",
+    "  - P2.2: each call to a tool that the user didn't name is refused at once, with no one asked.",
+    "- P5: how the night went, seen at a glance",
+    "  - P5.2: each piece that ends short of its work is shown with what stopped it."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- runner (script)\\",
+    "  Carries one piece through the usage limit to its end.",
+    "- pieces (script)\\",
+    "  Keeps each piece's record, and reports where each piece stands.",
+    "- The record's form, and the share of pieces stopped, held by pieces alone, which the others ask."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "![overnight's components](images/components.svg)",
+    "- ask (skill)\\",
+    "- hand-over (script)\\"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "![overnight's concepts](images/concept-model.svg)",
+    "- Wait\\",
+    "  One stretch in which the usage limit held a piece, from its stop to the reset."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "    alt stopped by the usage limit [P1.1]",
+    "      N->>N: waits until the reset, or a set while where the stop gives no time [P1.1]",
+    "  opt a piece still recorded as running or waiting, whose runner's process no longer runs [P5.2]",
+    "    N->>P: records itself as the piece's runner, by its process (Record) [P5.2]",
+    "      N->>P: records the piece as running again (Record) [P5.1]"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- A piece ending with a call refused counted as stopped by a wait for an answer, with each tool",
+    "      N->>P: records the piece stopped by a wait for an answer, with each tool refused and its last words (Record) [P5.2]",
+    "    P-->>S: each piece's state, branch, waits, and last words, each tool refused where a wait for an answer stopped it, and the share stopped (Record) [P5.2, P5.3]",
+    "\u251c\u2500\u2500 skills/                        overnight:ask and overnight:status, each pointing to its part"
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "![overnight's deployment](images/deployment.svg)",
+    "The user installs overnight as [the README](../../plugins/overnight/README.md#installation) says,",
+    "- The prompt handed to Claude Code on its standard input. [P2.1]\\"
+   ]
+  },
+  {
+   "condition": "N11",
+   "lines": [
+    "plugins/overnight/                 what Claude Code installs for the user",
+    "dev/overnight/                     what only overnight's developers use",
+    ".overnight/                        what overnight writes in the person's repository"
+   ]
+  },
+  {
+   "condition": "N12",
+   "lines": [
+    "| Integration testing | Architecture | Quality | During the work | Every case passes with a stand-in of Claude Code. The cases check the resume after each reset, the hand-over, pieces run at once, and each record. No case waits a night or spends the usage limit. |",
+    "| Contract testing | Architecture | Quality | Apart from the work | On each new version of Claude Code, each recorded step gives what it recorded. No step spends the usage limit on purpose. |",
+    "| Scenario testing | Product | Quality | During the work | Once the integration tests pass, one brief walkthrough run of the README's request runs on the real Claude Code. Its ask hands the pieces over, and its status shows them, with no stop a fault caused. overnight is done only once it passes, as the stand-in can't show ask and status on Claude Code. It waits no night and spends no usage limit on purpose, as the integration tests check the waits. |"
+   ]
+  },
+  {
+   "condition": "N13",
+   "lines": [
+    "    N->>P: records itself as the piece's runner, by its process (Record) [P5.2]",
+    "- A runner taken as ended once the process that it recorded no longer runs, as each OS tells it.",
+    "  Intent: the status tells which pieces nothing carries any more, whatever ended their runners.",
+    "  opt a piece still recorded as running or waiting, whose runner's process no longer runs [P5.2]"
+   ]
+  },
+  {
+   "condition": "N14",
+   "lines": [
+    "- Claude Code started in its mode that asks no one, with only the named tools allowed. [P2.2]\\",
+    "| Integration testing | Architecture | Quality | During the work | Every case passes with a stand-in of Claude Code. The cases check the resume after each reset, the hand-over, pieces run at once, and each record. No case waits a night or spends the usage limit. |"
+   ]
+  },
+  {
+   "condition": "N15",
+   "lines": [
+    "- The conversation's ID kept from its first reply, and the piece resumed in that conversation after",
+    "  Intent: the piece goes on with all it had done and learned."
+   ]
+  },
+  {
+   "condition": "N16",
+   "lines": [
+    "- Each record written whole at each change, never in part. [P3.2]\\",
+    "  Intent: a session that reads a record while its piece runs reads a whole one."
+   ]
+  }
+ ]
+}

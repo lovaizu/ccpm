@@ -1,0 +1,190 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or the session",
+    "closing."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- S1: the user wants its work run to its end through usage limits, unanswered prompts, and closed",
+    "  sessions.",
+    "- S2: the user wants to learn how each piece went and what held or stopped it, from any later",
+    "  session."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- P1: waiting out the usage limit",
+    "- P2: nothing to answer",
+    "- P3: running past the session",
+    "- P4: no more than the user let it",
+    "- P5: how the night went, seen at a glance",
+    "- ask (skill)\\",
+    "- status (skill)\\",
+    "- hand-over (script)\\",
+    "- runner (script)\\",
+    "- pieces (script)\\",
+    "- Piece\\",
+    "- Worktree\\",
+    "- Conversation\\",
+    "- Record\\",
+    "- Wait\\"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - P1.1: a piece that the usage limit stops goes on in its conversation at each reset, however",
+    "    often it stops.",
+    "  - P2.1: each piece gets the tools that the user names and a Git worktree of its own before it",
+    "    starts.",
+    "  - P2.2: each call to a tool that the user didn't name is refused at once, with no one asked.",
+    "  - P3.1: each piece runs as a process apart from the session that handed it over.",
+    "  - P3.2: where each piece stands is kept apart from any session, so that any later session reads",
+    "    it.",
+    "  - P4.1: a piece's changes stay on its own branch until someone merges them."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "  Hands a piece over as the user words it, so that it runs with nothing left to ask.",
+    "  Shows the user how each piece went.",
+    "  Sets each piece up apart from the person's work and from the session, and starts it.",
+    "  Carries one piece through the usage limit to its end.",
+    "  Keeps each piece's record, and reports where each piece stands.",
+    "- The record's form, and the share of pieces stopped, held by pieces alone, which the others ask.",
+    "  [P5.3]\\",
+    "  Intent: the writers and the reader of a record never drift apart."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- ask (skill)\\",
+    "- status (skill)\\",
+    "- hand-over (script)\\",
+    "- runner (script)\\",
+    "- pieces (script)\\"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "![overnight's concepts](images/concept-model.svg)",
+    "- Piece\\",
+    "  One piece of work handed over: its prompt, with each question settled in it, and the tools it",
+    "- Worktree\\",
+    "  The folder and the branch where a piece works, apart from the person's own and from each other",
+    "- Conversation\\",
+    "  The talk with the model in which a piece works. It goes on after each reset with all the piece",
+    "- Record\\",
+    "  Where a piece stands, its waits, and its last words, for any later session to read.",
+    "- Wait\\",
+    "  One stretch in which the usage limit held a piece, from its stop to the reset."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "#### S1: a piece handed over and carried to its end",
+    "  U->>A: invokes it with the prompt, each question settled in it, and each tool it needs (Piece) [S1]",
+    "  alt no prompt, or no tool named [P2.1]",
+    "    H->>P: asks the next number (Record) [S1]",
+    "    alt stopped by the usage limit [P1.1]",
+    "    else ended, with a call refused [P5.2]",
+    "    else ended by an error of its own [S1]",
+    "    else ended [S1]",
+    "#### S2: how each piece went",
+    "  opt a piece still recorded as running or waiting, whose runner's process no longer runs [P5.2]",
+    "  alt no piece recorded [S2]"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- The record's form, and the share of pieces stopped, held by pieces alone, which the others ask.",
+    "  [P5.3]\\",
+    "  Intent: the writers and the reader of a record never drift apart.",
+    "The user installs overnight as [the README](../../plugins/overnight/README.md#installation) says,",
+    "and invokes the skill `overnight:ask` in the repository that holds the work.",
+    "└── <yyyymmdd>-<n>/                one piece's folder, holding its record",
+    "../<repository>-overnight-<n>/     one piece's worktree, on the branch overnight/<n>"
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "![overnight's deployment](images/deployment.svg)",
+    "The user installs overnight as [the README](../../plugins/overnight/README.md#installation) says,",
+    "and invokes the skill `overnight:ask` in the repository that holds the work.",
+    "- Each piece's folder made beside the repository, as a Git worktree on a branch of its own. [P4.1]\\"
+   ]
+  },
+  {
+   "condition": "N11",
+   "lines": [
+    "plugins/overnight/                 what Claude Code installs for the user",
+    "dev/overnight/                     what only overnight's developers use",
+    ".overnight/                        what overnight writes in the person's repository",
+    "../<repository>-overnight-<n>/     one piece's worktree, on the branch overnight/<n>"
+   ]
+  },
+  {
+   "condition": "N13",
+   "lines": [
+    "- The reset time read from the stop's reply, or a set while waited where none can be read. [P1.1]\\",
+    "  Intent: the piece starts again once the limit lets it, and an unreadable reply never ends it.",
+    "- A runner taken as ended once the process that it recorded no longer runs, as each OS tells it.",
+    "  [P5.2]\\",
+    "  Intent: the status tells which pieces nothing carries any more, whatever ended their runners."
+   ]
+  },
+  {
+   "condition": "N14",
+   "lines": [
+    "- hand-over (script)\\",
+    "- runner (script)\\",
+    "- pieces (script)\\",
+    "| Integration testing | Architecture | Quality | During the work | Every case passes with a stand-in of Claude Code. The cases check the resume after each reset, the hand-over, pieces run at once, and each record. No case waits a night or spends the usage limit. |"
+   ]
+  },
+  {
+   "condition": "N15",
+   "lines": [
+    "- Each piece numbered next after the highest that the repository holds, which names its worktree",
+    "  and its branch. [S1]\\",
+    "  Intent: the user tells the pieces apart by one number in the folder, the branch, and the status.",
+    "- ask's steps tell the user to settle each question in the prompt and to name each tool the piece",
+    "  needs. [P2.1]\\",
+    "  Intent: a piece meets no question that it can't settle alone.",
+    "- The prompt handed to Claude Code on its standard input. [P2.1]\\",
+    "  Intent: the prompt reaches Claude Code whole, whatever options stand before it.",
+    "- Each record in `.overnight/` at the repository's root. [P3.2]\\",
+    "  Intent: the person chooses with one line of `.gitignore` whether git keeps the records."
+   ]
+  },
+  {
+   "condition": "N16",
+   "lines": [
+    "- Claude Code started in its mode that asks no one, with only the named tools allowed. [P2.2]\\",
+    "  Intent: a call outside them ends at once, and never waits on a prompt.",
+    "- The runner started as a process of its own, detached from the session, by each OS's own means.",
+    "- The conversation's ID kept from its first reply, and the piece resumed in that conversation after",
+    "  each reset. [P1.1]\\"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N12",
+   "good_when": "The developers know from the Scenario testing row that the work waits on the walkthrough run of the README's request, which tries ask and status on the real model once the integration tests pass, so that overnight never ships with its prompts untried. Today the row times that run Apart from the work, the time that the test strategy guide keeps for checks that wait on another's schedule, and it gives no reason, though the row itself says that the run waits on no night and no usage limit."
+  }
+ ]
+}
