@@ -257,17 +257,17 @@
    "necessary_conditions": [
     {
      "id": "N1",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N2",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N3",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "a start at a set time",
@@ -278,37 +278,43 @@
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N5",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N6",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N7",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N8",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "the record through a reset",
+       "decided": "S1's sequence shows the runner recording the piece as running again when it goes on in its conversation after a reset, so that the status shows a resumed piece as running, and a runner that ends after the resume counts as stopped by the session closing, not by the usage limit.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N9",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N10",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "how `claude -p` behaves where a stand-in hides it",
@@ -319,12 +325,12 @@
     },
     {
      "id": "N11",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N12",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "Test strategy",
@@ -336,21 +342,27 @@
     {
      "id": "N13",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "how pieces tells that a runner has ended",
+       "decided": "The document says how pieces tells that a piece's runner has ended, and which part hands it what it needs to tell so, as an arrow of S1, so that the status counts each piece whose runner is gone as stopped in the share it shows.",
+       "by": "reasoning"
+      }
+     ]
     },
     {
      "id": "N14",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N15",
-     "good": false,
+     "good": true,
      "decisions": []
     },
     {
      "id": "N16",
-     "good": false,
+     "good": true,
      "decisions": []
     }
    ]
