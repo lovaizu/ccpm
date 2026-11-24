@@ -8,19 +8,40 @@ absolute and a relative folder, and from a folder outside the run's Rounds; `new
 deliverable's last Round of either stage, a gap among them included, and a stage of neither;
 `mark` of the last of several Rounds with a state, again, and of a deliverable with none, and
 `marked` of a Round marked, of one not, and of a mark that isn't JSON; `given` of a Round whose
-generator's Cut holds the deliverable's node, and of one with no Cut; and `result` written, not
+generator's Cut holds the deliverable's node, and of one with no Cut; `result` written, not
+written, and not JSON; and the Fixes: Fix's paths; `fixes` with none, and several among Rounds,
+`of` leaving them out; a Round and a Fix that share a number; `at` of a Fix's folder; `new` and
+`new_fix` numbered past each Round and Fix; `problem` of each source, and of a source of none and
+words empty or only spaces; and `problem_of`, `fixer_result`, and `fixer_given` written, not
 written, and not JSON."""
 
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from typing import Any
 
 import pytest
 import rn_files
 from fault import Wrong
 from repository.place import RunPlace
-from rounds.files import Round, at, given, mark, marked, new, of, result
+from rounds.files import (
+    Fix,
+    Round,
+    at,
+    fixer_given,
+    fixer_result,
+    fixes,
+    given,
+    mark,
+    marked,
+    new,
+    new_fix,
+    of,
+    problem,
+    problem_of,
+    result,
+)
 
 NAME = "20261120-a-command-with-which-the"
 GUIDE = rn_files.GUIDE
@@ -409,3 +430,228 @@ def test_given_of_a_round_with_no_generators_cut_is_none(run: RunPlace):
     Then it's None"""
     rn_files.a_round(folder(run), GUIDE, "content", 1)
     assert given(of(run, GUIDE)[0]) is None
+
+
+# The Fixes.
+
+# A problem of a put-up that the repository's checks refused, in the words they printed.
+REFUSED = {"source": "put-up", "words": "lint: docs/guide.md:3: a line ends in a space\n"}
+
+
+def a_fix(run: RunPlace, number: int, written: dict[str, Any] | None = None) -> str:
+    """Writes the guide's Fix folder fix-<number> with each file given, by its name, as JSON,
+    and gives the folder."""
+    place = rn_files.round_of(folder(run), GUIDE, "fix", number)
+    os.makedirs(place, exist_ok=True)
+    for name, value in (written or {}).items():
+        rn_files.write_json(os.path.join(place, name), value)
+    return place
+
+
+def seen_fixes(found: list[Fix]) -> list[tuple[str, str, int]]:
+    """Each Fix as its folder, normalized, its deliverable, and its number."""
+    return [(os.path.normpath(f.folder), f.deliverable, f.number) for f in found]
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_a_fixs_problem_cut_and_result_lie_in_its_folder():
+    """Given a Fix whose folder is /r/rounds/docs%2Fguide.md/fix-3
+    When its problem's, its fixer's Cut's, and its fixer's result's paths are asked
+    Then they are <folder>/problem.json, <folder>/fixer-cut.json, and <folder>/fixer.json"""
+    fix = Fix("/r/rounds/docs%2Fguide.md/fix-3", GUIDE, 3)
+    assert (fix.problem, fix.cut, fix.result) == (
+        os.path.join(fix.folder, "problem.json"),
+        os.path.join(fix.folder, "fixer-cut.json"),
+        os.path.join(fix.folder, "fixer.json"),
+    )
+
+
+@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
+def test_fixes_of_a_deliverable_with_none_gives_none(run: RunPlace):
+    """Given a run whose guide has Round content-1 and no Fix
+    When the guide's Fixes are asked
+    Then there are none"""
+    rn_files.a_round(folder(run), GUIDE, "content", 1)
+    assert fixes(run, GUIDE) == []
+
+
+@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
+def test_fixes_and_rounds_are_each_given_apart_in_the_order_they_were_made(run: RunPlace):
+    """Given a run whose guide has content-1, fix-12, refactor-2, fix-3, and content-4, their
+    folders made in that order
+    When the guide's Fixes, then its Rounds, are asked
+    Then the Fixes are fix-3, then fix-12, by their numbers as numbers, and the Rounds content-1,
+    refactor-2, and content-4, none of the Fixes among them"""
+    rn_files.a_round(folder(run), GUIDE, "content", 1)
+    a_fix(run, 12)
+    rn_files.a_round(folder(run), GUIDE, "refactor", 2)
+    a_fix(run, 3)
+    rn_files.a_round(folder(run), GUIDE, "content", 4)
+    assert seen_fixes(fixes(run, GUIDE)) == [
+        (rn_files.round_of(folder(run), GUIDE, "fix", 3), GUIDE, 3),
+        (rn_files.round_of(folder(run), GUIDE, "fix", 12), GUIDE, 12),
+    ]
+    assert seen(of(run, GUIDE)) == [
+        expected(run, GUIDE, "content", 1),
+        expected(run, GUIDE, "refactor", 2),
+        expected(run, GUIDE, "content", 4),
+    ]
+
+
+@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
+@pytest.mark.parametrize("ask", [of, fixes], ids=["of", "fixes"])
+def test_a_round_and_a_fix_that_share_a_number_are_refused(
+    run: RunPlace, ask: Callable[[RunPlace, str], list[Any]]
+):
+    """Given a run whose guide has content-1, content-2, and fix-2
+    When the guide's Rounds, or its Fixes, are asked
+    Then it raises Wrong naming both folders that share the number 2"""
+    for number in (1, 2):
+        rn_files.a_round(folder(run), GUIDE, "content", number)
+    a_fix(run, 2)
+    with pytest.raises(Wrong, match="content-2.*fix-2|fix-2.*content-2"):
+        ask(run, GUIDE)
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_at_a_fixs_folder_is_refused(run: RunPlace):
+    """Given a run whose guide has Round content-1 and Fix fix-2
+    When the Round of the Fix's folder is asked, as repository.py trial takes a Round's
+    Then it raises Wrong naming the folder, as a Fix is no Round"""
+    rn_files.a_round(folder(run), GUIDE, "content", 1)
+    place = a_fix(run, 2)
+    with pytest.raises(Wrong, match="fix-2: isn't a Round's folder of the run"):
+        at(run, place)
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+def test_new_makes_the_round_one_past_the_deliverables_last_fix(run: RunPlace):
+    """Given a run whose guide has Round content-1 and Fix fix-2
+    When a new content Round of the guide is made
+    Then it is content-3, numbered with the Fix"""
+    rn_files.a_round(folder(run), GUIDE, "content", 1)
+    a_fix(run, 2)
+    assert seen([new(run, GUIDE, "content")]) == [expected(run, GUIDE, "content", 3)]
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_new_fix_makes_the_fix_one_past_the_last_round_holding_its_problem(run: RunPlace):
+    """Given a run whose guide has Rounds content-1 and refactor-2
+    When a new Fix of the guide is made with a problem of put-up
+    Then it is fix-3, its folder made, holding problem.json with the problem as given"""
+    for stage, number in (("content", 1), ("refactor", 2)):
+        rn_files.a_round(folder(run), GUIDE, stage, number)
+    made = new_fix(run, GUIDE, REFUSED)
+    place = rn_files.round_of(folder(run), GUIDE, "fix", 3)
+    assert seen_fixes([made]) == [(place, GUIDE, 3)]
+    assert rn_files.read_json(os.path.join(place, "problem.json")) == REFUSED
+
+
+@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
+def test_new_fix_after_a_fix_makes_the_next(run: RunPlace):
+    """Given a run whose guide has Round content-1 and Fix fix-2
+    When a new Fix of the guide is made
+    Then it is fix-3, and fix-2 is as it was"""
+    rn_files.a_round(folder(run), GUIDE, "content", 1)
+    a_fix(run, 2, {"problem.json": REFUSED, "fixer.json": {"result": "fixed", "files": []}})
+    made = new_fix(run, GUIDE, {"source": "send-back", "words": "Name the command's flag."})
+    assert made.number == 3
+    assert fixer_result(fixes(run, GUIDE)[0]) == {"result": "fixed", "files": []}
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+@pytest.mark.parametrize("source", ["put-up", "final-check", "send-back"])
+def test_problem_of_each_source_holds_it_and_the_words_as_given(source: str):
+    """Given a source of the problem and its words, with a new line at their end
+    When the problem is asked
+    Then it holds the source and the words as given, the new line kept"""
+    words = "lint: docs/guide.md:3: a line ends in a space\n"
+    assert problem(source, words) == {"source": source, "words": words}
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+@pytest.mark.parametrize("source", ["put_up", "push", "", "Send-back"])
+def test_problem_of_a_source_of_none_is_refused_naming_each(source: str):
+    """Given a source that is none of put-up, final-check, and send-back, one that nearly matches
+    among them
+    When the problem is asked
+    Then it raises Wrong naming each source it takes"""
+    with pytest.raises(Wrong, match="put-up, final-check, send-back"):
+        problem(source, "the words")
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+@pytest.mark.parametrize("words", ["", " \n\t"], ids=["empty", "only spaces"])
+def test_problem_with_no_words_is_refused_saying_to_give_them_on_stdin(words: str):
+    """Given the source put-up, and words empty or only spaces
+    When the problem is asked
+    Then it raises Wrong saying to give the words on stdin"""
+    with pytest.raises(Wrong, match="give them on stdin"):
+        problem("put-up", words)
+
+
+@pytest.mark.supports(
+    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
+)
+def test_problem_of_a_fix_is_the_problem_it_holds_or_none(run: RunPlace):
+    """Given a run whose guide has fix-1 holding its problem, and fix-2 holding none
+    When each Fix's problem is asked
+    Then it's the problem of fix-1, and None for fix-2"""
+    a_fix(run, 1, {"problem.json": REFUSED})
+    a_fix(run, 2)
+    assert [problem_of(each) for each in fixes(run, GUIDE)] == [REFUSED, None]
+
+
+@pytest.mark.supports("test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut")
+def test_a_fixs_result_and_node_are_none_before_its_fixer_writes_them(run: RunPlace):
+    """Given a run whose guide has fix-1 holding its problem alone
+    When the fixer's result and the node its Cut held are asked
+    Then each is None"""
+    a_fix(run, 1, {"problem.json": REFUSED})
+    (fix,) = fixes(run, GUIDE)
+    assert (fixer_result(fix), fixer_given(fix)) == (None, None)
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+def test_a_fixs_result_and_node_are_those_its_fixer_was_given_and_wrote(run: RunPlace):
+    """Given a run whose guide has fix-1 holding its problem, a fixer's Cut with the guide's
+    node, and the fixer's decision
+    When the fixer's result and the node its Cut held are asked
+    Then they are the decision and the node"""
+    node = rn_files.open_node("The guide", GUIDE, "readme")
+    decided = {"result": "decision", "decision": "N1 decides the guide's order."}
+    written = {"problem.json": REFUSED, "fixer-cut.json": {"deliverable": node}}
+    a_fix(run, 1, {**written, "fixer.json": decided})
+    (fix,) = fixes(run, GUIDE)
+    assert (fixer_result(fix), fixer_given(fix)) == (decided, node)
+
+
+@pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")
+@pytest.mark.parametrize("name", ["problem.json", "fixer-cut.json", "fixer.json"])
+def test_a_fixs_file_that_isnt_json_is_refused_naming_it(run: RunPlace, name: str):
+    """Given a run whose guide's fix-1 holds the file, which isn't JSON
+    When its problem, the node its fixer's Cut held, and the fixer's result are asked
+    Then the one that reads the file raises Wrong naming it"""
+    place = a_fix(run, 1)
+    with open(os.path.join(place, name), "w", encoding="utf-8") as file:
+        file.write("{")
+    (fix,) = fixes(run, GUIDE)
+    read = {"problem.json": problem_of, "fixer-cut.json": fixer_given, "fixer.json": fixer_result}
+    with pytest.raises(Wrong, match=name):
+        read[name](fix)

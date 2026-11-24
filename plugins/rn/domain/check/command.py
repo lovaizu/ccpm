@@ -9,7 +9,6 @@ from collections.abc import Sequence
 from typing import Any
 
 from fault import Answer, CantRun, Wrong
-from rounds.files import ROLES
 
 from check import form, result
 
@@ -22,9 +21,10 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str) -> Answer:
     """The exit code, stdout, and stderr of `check.py` with the arguments, from the folder `cwd`,
     with rn's folder at `plugin_root`.
 
-    `<role> <cut>`, the role's Cut by its path from `cwd`: 0 printing nothing where the Cut holds
-    its schema and `check.result.faults` finds no fault in the role's result beside it, with the
-    run's worktree that the Cut's paths give and `cwd`; 1 with each
+    `<role> <cut>`, `<role>` one of `check.result.FORMS`, the role's Cut by its path from `cwd`: 0
+    printing nothing where the Cut holds its schema and `check.result.faults` finds no fault in
+    the role's result, `<role>.json` in the Round's folder that the Cut names, or in the Fix's
+    for the fixer, with the run's worktree that the Cut's paths give and `cwd`; 1 with each
     fault a line, or, where the role wrote no result, the path where it writes one. 1 with
     `check.py: <what's wrong>` where the role's result is Wrong, as one that can't be read as JSON,
     saying how to mend it. 2 with `check.py: <what it couldn't check and why>` where it CantRun: a
@@ -45,10 +45,10 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str) -> Answer:
 
 def _faults(role: str, cut_path: str, cwd: str, plugin_root: str) -> list[str]:
     """Each fault of the role's result against its Cut, or the path where it writes one."""
-    if role not in ROLES:
+    if role not in result.FORMS:
         raise CantRun(
-            f"couldn't check a result of {role!r}, as it checks only the generator's and the"
-            " evaluator's"
+            f"couldn't check a result of {role!r}, as it checks only the generator's, the"
+            " evaluator's, and the fixer's"
         )
     unchecked = f"couldn't check the {role}'s result, as its Cut {cut_path}"
     try:
@@ -59,7 +59,7 @@ def _faults(role: str, cut_path: str, cwd: str, plugin_root: str) -> list[str]:
     found = form.faults(cut, schema)
     if found:
         raise CantRun(f"{unchecked} leaves the form of a {role}'s Cut at {found[0]}")
-    written = os.path.join(cut["round"], f"{role}.json")
+    written = os.path.join(result.folder(role, cut), f"{role}.json")
     if not os.path.isfile(os.path.join(cwd, written)):
         return [f"{written}: no result is written there; write it before you end"]
     try:

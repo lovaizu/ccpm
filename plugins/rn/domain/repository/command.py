@@ -13,6 +13,7 @@ import practice
 from fault import Answer, answered
 from rounds import course, files
 from tree import form, signoff
+from tree.form import OPEN
 
 from repository import commit_checks, place, push, trial, worktree
 from repository.host import Host
@@ -53,10 +54,14 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `put-up <run> <deliverable>`: 0 printing each link that `push.put_up` gives, a line each,
       and nothing where it gives none, the deliverable's
       last Round then marked as put up with its state, as `rounds.course.held` gives it from the
-      design tree and `rounds.files.mark` writes it. Where `tree.signoff.checked` gives that the
-      user doesn't check the deliverable, it's then done, as `tree.signoff.signed_off` writes it,
-      and the run's folder is committed as `rn: <its name>, done at a step that the user doesn't
-      check`, as `push.commit` does, and pushed, as `push.push` does.
+      design tree and `rounds.files.mark` writes it. Where the deliverable is open and
+      `tree.signoff.checked` gives that the user doesn't check it, it's then done, as
+      `tree.signoff.signed_off` writes it, and the run's folder is committed as `rn: <its name>,
+      done at a step that the user doesn't check`, as `push.commit` does, and pushed, as
+      `push.push` does. A deliverable done already, put up again once a Fix mended it, stays
+      done as it is. Where `push.put_up` refuses, as where the repository's checks refuse the
+      push, it marks nothing and changes no design tree, so that a Fix of the deliverable
+      starts from the run as it stands.
     - `checks <run> <file>...`: 0 printing nothing where `commit_checks.findings` gives none, and 1
       with each finding a line.
     - `trial <run> <round>`, the Round's folder from `cwd`: 0 printing the folder that
@@ -117,7 +122,7 @@ def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     tree = form.read(run.tree)
     node = form.deliverable(tree, given[1])
     files.mark(run, given[1], course.held(node))
-    if not signoff.checked(tree, given[1]):
+    if node["status"] in OPEN and not signoff.checked(tree, given[1]):
         form.write(run.tree, signoff.signed_off(tree, given[1]))
         folder = os.path.relpath(run.folder, run.worktree)
         message = f"rn: {node['name']}, done at a step that the user doesn't check"

@@ -25,11 +25,14 @@ from rn_bench import (
     cut_move,
     cut_of,
     denial,
+    fix_written,
+    fixer_resulted,
     heard,
     heard_tree,
     held,
     judged_command,
     new_run,
+    push_refused,
     resulted,
     reviewed,
     signed,
@@ -417,3 +420,92 @@ def test_a_put_up_without_a_login_of_gh_is_refused_before_any_push(b: Bench):
     assert "You are not logged into any GitHub hosts." in refused.err
     assert [each[:3] for each in b.asked_gh()[asked:]] == [["gh", "auth", "status"]]
     assert f"rn-{b.name()}" not in git(b.origin, "branch", "--list").split()
+
+
+# The fixer: its Cut, and the check before its end.
+
+
+def fixer_cut(b: Bench) -> str:
+    """A run whose command's put-up the repository's push check refused, written as the command's
+    Fix, whose fixer's Cut the orchestrator wrote; gives the Cut's path."""
+    refused = push_refused(b)
+    fix_written(b, COMMAND, "put-up", refused.err)
+    return b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+
+
+@pytest.mark.supports("fixer", "Cut", "Fix")
+def test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes(
+    b: Bench,
+):
+    """Given a run whose command's put-up the repository's push check refused, written as the Fix
+    fix-2 with the words that put-up printed
+    When the orchestrator writes the fixer's Cut
+    Then the Cut holds the command's node as the tree holds it, the run's worktree, the command's
+    path in it, the problem as the Fix holds it, the run's folder, and the Fix's folder, where the
+    fixer writes its result, and nothing else, no goal, best practice, or Round among it"""
+    refused = push_refused(b)
+    fix = fix_written(b, COMMAND, "put-up", refused.err)
+    given = cut_of(b, b.ran(*cut_move(b, "fixer", COMMAND)).strip())
+    node = next(each for each in b.tree()["deliverables"] if each["path"] == COMMAND)
+
+    def at(path: str) -> str:
+        return os.path.normpath(os.path.join(b.repo, path))
+
+    assert sorted(given) == ["deliverable", "fix", "paths", "problem", "run", "worktree"]
+    assert given["deliverable"] == node
+    assert at(given["worktree"]) == b.worktree
+    assert [at(each) for each in given["paths"]] == [os.path.join(b.worktree, COMMAND)]
+    assert given["problem"] == {"source": "put-up", "words": refused.err}
+    assert at(given["run"]) == b.folder
+    assert at(given["fix"]) == fix
+
+
+@pytest.mark.supports("fixer", "Fix", "scripts")
+def test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py(b: Bench):
+    """Given a run whose command's fixer has its Cut
+    When it ends with fixed, naming invoicer's README beside the command, and runs check.py fixer
+    Then check.py gives 1 naming the README as outside the deliverable's paths and the Fix's
+    folder"""
+    cut_path = fixer_cut(b)
+    fixer_resulted(b, cut_path, {"result": "fixed", "files": [COMMAND, "README.md"]})
+    done = b.script("check", "fixer", cut_path)
+    assert done.code == 1
+    assert "README.md: lies outside the deliverable's paths and the Fix's folder" in done.out
+
+
+@pytest.mark.supports("fixer", "Fix", "scripts")
+def test_a_fixers_result_unwritten_is_refused_with_where_it_writes_one(b: Bench):
+    """Given a run whose command's fixer has its Cut
+    When it runs check.py fixer before it writes its result
+    Then check.py gives 1 naming fixer.json in the Fix's folder"""
+    cut_path = fixer_cut(b)
+    done = b.script("check", "fixer", cut_path)
+    assert done.code == 1
+    assert f"{cut_of(b, cut_path)['fix']}/fixer.json: no result is written there" in done.out
+
+
+@pytest.mark.supports("fixer", "scripts", "hook")
+def test_a_fixers_delete_by_rm_is_denied_pointing_to_remove_py(b: Bench):
+    """Given rn's hook before each Bash call, and a run whose command's fixer has its Cut
+    When the fixer calls Bash with `rm -r invoicer/__pycache__`, and Claude Code runs the hook
+    Then the hook denies the call, its reason giving remove.py's command by its path in rn's
+    folder"""
+    fixer_cut(b)
+    reason = denial(
+        b.script("hook", given=bash_called(b, "rm -r invoicer/__pycache__", "rn:fixer"))
+    )
+    assert reason is not None, "the fixer's delete is denied"
+    assert f"python3 {os.path.join(b.rn, 'scripts', 'remove.py')} <exact path>" in reason
+
+
+@pytest.mark.supports("fixer", "hook", "Design tree")
+def test_a_fixers_write_to_the_design_tree_by_bash_is_denied(b: Bench):
+    """Given rn's hook before each Bash call, and a run whose command's fixer has its Cut
+    When the fixer calls Bash with `sed -i` on the run's design tree, and Claude Code runs the hook
+    Then the hook denies the call, naming the tree and telling the fixer to hand the fact to a new
+    pruner"""
+    fixer_cut(b)
+    edit = f'sed -i \'s/"good": false/"good": true/\' {b.tree_path}'
+    reason = denial(b.script("hook", given=bash_called(b, edit, "rn:fixer")))
+    assert reason is not None, "the fixer's write by Bash is denied"
+    assert f"Leave {b.tree_path} as it is" in reason

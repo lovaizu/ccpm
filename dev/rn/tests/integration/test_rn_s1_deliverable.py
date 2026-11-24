@@ -14,6 +14,9 @@ from gh import gh_double
 from repo_files import git
 from rn_bench import (
     CHANGELOG,
+    COMMAND_TEXT,
+    GUIDE_TEXT,
+    PUSH_REFUSAL,
     STEPS,
     Bench,
     apart_tree,
@@ -21,8 +24,11 @@ from rn_bench import (
     command_signed,
     cut_move,
     cut_of,
+    decision_named,
     evaluated,
     evaluator_cut,
+    fix_written,
+    fixed,
     generated,
     heard,
     heard_tree,
@@ -32,6 +38,7 @@ from rn_bench import (
     next_round,
     pointed,
     pruned,
+    push_refused,
     put_up,
     refactor_made,
     refactored,
@@ -599,3 +606,103 @@ def test_the_final_checks_findings_go_whole_to_one_pruner_which_sends_a_problem_
     third = rn_files.round_of(b.folder, GUIDE, "content", 3)
     assert os.path.join(b.repo, cut_path) == os.path.join(third, "generator-cut.json")
     assert remedy in cut_of(b, cut_path)["deliverable"]["necessary_conditions"][0]["decisions"]
+
+
+@pytest.mark.supports("S1", "fixer", "scripts", "Fix")
+def test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again(
+    b: Bench,
+):
+    """Given a run whose repository checks each push, and whose command, with a line that ends in a
+    space, the evaluator judged good in Round content-1
+    When the orchestrator puts the command up, which the check refuses; judges that the mend keeps
+    each decision, and writes the Fix by tree.py fix with the words that put-up printed; writes
+    the fixer's Cut; the fixer strips the space and ends with fixed; and the orchestrator puts the
+    command up again, and the user signs it off
+    Then the first put-up gives non-zero with the check's words, and origin holds no branch of the
+    run; the Fix lies in the command's fix-2, numbered with its Rounds, holding the problem as the
+    source put-up and put-up's words; the fixer's Cut lies there; the second put-up prints the
+    link of the command's file, origin's branch holding the command mended and the Fix; and the
+    command is done"""
+    refused = push_refused(b)
+    assert refused.code != 0
+    assert PUSH_REFUSAL in refused.err
+    assert f"rn-{b.name()}" not in git(b.origin, "branch", "--list").split()
+    fix = fix_written(b, COMMAND, "put-up", refused.err)
+    assert fix == rn_files.round_of(b.folder, COMMAND, "fix", 2)
+    problem = rn_files.read_json(os.path.join(fix, "problem.json"))
+    assert problem == {"source": "put-up", "words": refused.err}
+    cut_path = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    assert os.path.join(b.repo, cut_path) == os.path.join(fix, "fixer-cut.json")
+    fixed(b, cut_path, {COMMAND: COMMAND_TEXT})
+    assert b.ran("repository", "put-up", b.run, COMMAND).strip() == linked(b, COMMAND)
+    branch = f"rn-{b.name()}"
+    assert git(b.origin, "show", f"{branch}:{COMMAND}") == COMMAND_TEXT
+    pushed = os.path.relpath(os.path.join(fix, "fixer.json"), b.worktree)
+    assert pushed in b.branch_files(branch)
+    signed(b)
+    assert command_done() in b.tree()["deliverables"]
+
+
+@pytest.mark.supports("S1", "fixer", "pruner", "Fix", "Round")
+def test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again(
+    b: Bench,
+):
+    """Given a run whose command's put-up the repository's push check refused, written as the
+    command's Fix fix-2, whose fixer's Cut the orchestrator wrote
+    When the fixer finds that its mend would change a decision of N1, mends nothing, and ends with
+    decision; the orchestrator writes the generator's Cut and another Fix; then hands the decision
+    to one pruner, which writes it as a decision of N1 and holds N1 not good, commits it, and
+    writes the generator's Cut
+    Then check.py takes the fixer's result; the first Cut and the Fix are each refused, as the
+    command waits on the pruner, to weigh the decision its fixer named; and the Cut after the
+    pruner lies in Round content-3, its stage content, its deliverable holding the decision"""
+    refused = push_refused(b)
+    fix_written(b, COMMAND, "put-up", refused.err)
+    cut_path = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    words = (
+        "The check wants no trailing space, but N1 decides the command's lines as the user wrote"
+    )
+    decision_named(b, cut_path, words)
+    waiting = "waits on the pruner, to weigh the decision its fixer named"
+    early = b.script(*cut_move(b, "generator", COMMAND))
+    assert early.code == 1
+    assert waiting in early.err
+    again = b.script("tree", "fix", b.run, COMMAND, "put-up", given=refused.err)
+    assert again.code == 1
+    assert waiting in again.err
+    weighed = rn_files.decision("a line's trailing space", "Strip it, as the check asks.", "maker")
+    design_tree = held(b, COMMAND, ["N2", "N3"], {"N1": [weighed]})
+    generator = reviewed(
+        b, design_tree, "The fixer's decision.", [cut_move(b, "generator", COMMAND)]
+    )[0].strip()
+    third = rn_files.round_of(b.folder, COMMAND, "content", 3)
+    assert os.path.join(b.repo, generator) == os.path.join(third, "generator-cut.json")
+    given = cut_of(b, generator)
+    assert (given["stage"], given["number"]) == ("content", 3)
+    assert weighed in given["deliverable"]["necessary_conditions"][0]["decisions"]
+
+
+@pytest.mark.supports("S1", "fixer", "Fix")
+def test_a_final_checks_finding_within_the_decisions_is_mended_by_a_fix_of_the_done_deliverable(
+    b: Bench,
+):
+    """Given a run whose plan and command are done, and whose guide was refactored, put up, signed
+    off, and checked whole by the final check's subagent
+    When the orchestrator judges that a finding of the guide keeps each of its decisions, writes
+    the guide's Fix by tree.py fix with the finding's words, and writes the fixer's Cut; the fixer
+    mends the guide and ends with fixed; and the orchestrator puts the guide up again
+    Then the Fix lies in the guide's fix-3, after its two Rounds, the fixer's Cut holding the
+    guide's done node with its decisions; the put-up gives 0; and the guide is done still, its
+    node as the sign-off left it"""
+    refactored(b)
+    signed(b)
+    checked_whole(b)
+    done = next(each for each in b.tree()["deliverables"] if each["path"] == GUIDE)
+    words = "The guide's walkthrough names the command by its old path."
+    fix = fix_written(b, GUIDE, "final-check", words)
+    assert fix == rn_files.round_of(b.folder, GUIDE, "fix", 3)
+    cut_path = b.ran(*cut_move(b, "fixer", GUIDE)).strip()
+    assert cut_of(b, cut_path)["deliverable"] == done
+    fixed(b, cut_path, {GUIDE: GUIDE_TEXT + "\nThe command lies at invoicer/__main__.py.\n"})
+    assert b.script("repository", "put-up", b.run, GUIDE).code == 0
+    assert done in b.tree()["deliverables"]

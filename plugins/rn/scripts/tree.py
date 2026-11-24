@@ -17,4 +17,4 @@ from repository.host import run
 from tree.command import main
 
 if __name__ == "__main__":
-    end(lambda: main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE), run))
+    end(lambda: main(sys.argv[1:], os.getcwd(), os.path.dirname(HERE), run, sys.stdin.read))

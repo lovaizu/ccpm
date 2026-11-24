@@ -14,13 +14,17 @@ import rn_files
 from gh import gh_double
 from repo_files import git
 from rn_bench import (
+    COMMAND_TEXT,
     Bench,
     command_signed,
     cut_move,
+    cut_of,
     evaluator_cut,
+    fix_written,
     held,
     judged_command,
     new_run,
+    push_refused,
     reviewed,
     signed_plan,
     wrote,
@@ -141,6 +145,31 @@ def test_a_pick_up_starts_the_stopped_evaluator_again_in_its_round(b: Bench):
     cut_path = b.ran(*cut_move(b, "evaluator", COMMAND)).strip()
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
     assert os.path.join(b.repo, cut_path) == os.path.join(first, "evaluator-cut.json")
+
+
+@pytest.mark.supports("S2", "fixer", "Fix", "Cut")
+def test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut(b: Bench):
+    """Given a run whose command's put-up the repository's push check refused, written as the Fix
+    fix-2, whose fixer stripped the space from the command's line but wrote no result
+    When the user pauses the run, picks it up in a new conversation, and the orchestrator writes
+    the fixer's Cut
+    Then the remote's branch holds the Fix's problem and the fixer's Cut; the Cut lies in fix-2
+    again, holding the same problem, and no new Fix is made"""
+    refused = push_refused(b)
+    fix = fix_written(b, COMMAND, "put-up", refused.err)
+    first = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    wrote(b, {COMMAND: COMMAND_TEXT})
+    paused(b)
+    pushed = b.branch_files(f"rn-{b.name()}")
+    within = os.path.relpath(fix, b.worktree)
+    assert f"{within}/problem.json" in pushed
+    assert f"{within}/fixer-cut.json" in pushed
+    picked_up(b)
+    again = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    assert again == first
+    assert cut_of(b, again)["problem"] == {"source": "put-up", "words": refused.err}
+    folders = os.listdir(os.path.dirname(fix))
+    assert sorted(folders) == ["content-1", "fix-2"]
 
 
 @pytest.mark.supports("S2", "Design tree")

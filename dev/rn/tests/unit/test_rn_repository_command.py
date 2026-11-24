@@ -3,7 +3,9 @@ with what it prints and its exit code, `find` of no run, and of the newest of se
 made again, `pause`, `cancel` of a run that GitHub holds nothing of, of one whose branch and pull
 request it removes there, of one where gh can't ask GitHub, and of a worktree that can't be removed,
 `put-up` printing a link of each of the deliverable's paths and none for the plan, marking the
-deliverable's last Round, and making done one at a step that the user doesn't check, `diff`,
+deliverable's last Round, making done one at a step that the user doesn't check, leaving one done
+already, put up again after a Fix, as it is, and leaving the run as it stood where the push is
+refused, `diff`,
 `ci` by what the checks found, `checks` with findings and with none, and each fault by its exit
 code: 2 with the usage for arguments of another form, 1 with `repository.py: ` for an input that
 is Wrong and for something Missing, origin's HEAD naming no branch and gh with no login among
@@ -375,6 +377,63 @@ def test_put_up_at_a_step_the_user_checks_leaves_it_open_for_the_signoff(tmp_pat
     assert main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)[0] == 0
     design_tree = rn_files.read_json(os.path.join(folder, "design-tree.json"))
     assert design_tree["deliverables"][1]["status"] == "open"
+
+
+@pytest.mark.supports(
+    "test_a_final_checks_finding_within_the_decisions_is_mended_by_a_fix_of_the_done_deliverable"
+)
+def test_put_up_of_a_deliverable_done_at_a_step_the_user_doesnt_check_leaves_it_as_it_is(
+    tmp_path: Any, host: Any
+):
+    """Given a run whose command, done at a step that the user doesn't check, its Round content-1
+    put up, was mended by a Fix fix-2 that its fixer fixed
+    When repository.py put-up is given the run's folder and the command's path
+    Then it gives 0 printing the command's link; the tree holds the command done as it was, and
+    the work as it was, beside the pull request put-up wrote; and no commit makes a deliverable
+    done"""
+    design_tree = stepped(False)
+    done = rn_files.done_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
+    design_tree["deliverables"][1] = done
+    design_tree["work"] = [rn_files.work("make", rn_files.GUIDE)]
+    run = made_run(str(tmp_path), design_tree=design_tree)
+    changed(run, {rn_files.COMMAND: "print()\n"})
+    folder = rn_files.folder_of(run.repository, NAME)
+    rn_files.a_round(folder, rn_files.COMMAND, "content", 1)
+    fix = rn_files.round_of(folder, rn_files.COMMAND, "fix", 2)
+    rn_files.write_json(os.path.join(fix, "fixer.json"), {"result": "fixed", "files": []})
+    given = main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)
+    assert given == (0, command_link(run), "")
+    design_tree["context"]["pr"] = PR
+    assert rn_files.read_json(os.path.join(folder, "design-tree.json")) == design_tree
+    worktree = rn_files.worktree_of(run.repository, NAME)
+    assert "done at a step" not in git(worktree, "log", "-3", "--format=%s")
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_put_up_whose_push_the_repositorys_check_refuses_leaves_the_run_to_a_fix(
+    tmp_path: Any, host: Any
+):
+    """Given a run whose command, at a step that the user doesn't check, open with each condition
+    good after Round content-1, and a pre-push hook that refuses each push, saying so
+    When repository.py put-up is given the run's folder and the command's path
+    Then it gives 2 with the hook's words; content-1 holds no put-up.json; the tree holds the
+    command open as it was; and origin holds no branch of the run"""
+    run = made_run(str(tmp_path), design_tree=stepped(False))
+    pre_push = os.path.join(run.repository, ".git", "hooks", "pre-push")
+    with open(pre_push, "w", encoding="utf-8") as f:
+        f.write("#!/bin/sh\necho 'lint: a line ends in a space' >&2\nexit 1\n")
+    os.chmod(pre_push, 0o755)
+    changed(run, {rn_files.COMMAND: "print() \n"})
+    folder = rn_files.folder_of(run.repository, NAME)
+    first = rn_files.a_round(folder, rn_files.COMMAND, "content", 1)
+    code, out, err = main(["put-up", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host)
+    assert (code, out) == (2, "")
+    assert "lint: a line ends in a space" in err
+    assert not os.path.exists(os.path.join(first, "put-up.json"))
+    assert rn_files.read_json(os.path.join(folder, "design-tree.json")) == stepped(False)
+    assert f"rn-{NAME}" not in git(str(tmp_path / "origin.git"), "branch", "--list")
 
 
 @pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")

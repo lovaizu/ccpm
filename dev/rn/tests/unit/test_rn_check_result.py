@@ -5,7 +5,10 @@ inside them and one that nearly matches, and a line that no file of the delivera
 evaluator, each condition answered once, and one unanswered, answered in both, answered twice, and
 an ID the Cut doesn't hold; for the generator of a kind whose best practice holds a template.md,
 each Markdown file of the deliverable off it, one on it, and a file that isn't Markdown, and the
-same Markdown of a kind with no template.md, and of the evaluator; and a role of neither. Each Cut
+same Markdown of a kind with no template.md, and of the evaluator; for the fixer, a fixed whose
+files lie in the deliverable's paths or the Fix's folder, one with a file outside them beside one
+that nearly matches, a decision with its words, each out of its schema, and a guide off its
+template, which the fixer isn't held to; and a role of none of them. Each Cut
 and result is read from the JSON of its file. The conversation's folder, from which the Cut's paths
 are given, is the user's repository's top, given as `cwd`, while the case's process runs in
 another folder, so that a body that reads the Cut's paths from its own folder fails."""
@@ -46,6 +49,8 @@ class Run:
         self.worktree = rn_files.worktree_of(repository, NAME)
         folder = rn_files.folder_of(repository, NAME)
         self.round = os.path.relpath(rn_files.round_of(folder, COMMAND, "content", 1), repository)
+        self.fix = os.path.relpath(rn_files.round_of(folder, COMMAND, "fix", 2), repository)
+        self.folder = os.path.relpath(folder, repository)
         # The Round's folder from the worktree's top, as a generator's result names its files.
         self.round_in_worktree = os.path.relpath(
             os.path.join(repository, self.round), self.worktree
@@ -127,6 +132,35 @@ def evaluator(run: Run, result: Any) -> list[str]:
     return faults(
         "evaluator", cut, from_json(run, "evaluator.json", result), run.worktree, run.repository
     )
+
+
+def fixer_cut(run: Run, node: Any = None) -> Any:
+    """The fixer's Cut, of fixer-cut.schema.json, of the node, else the command's with its tests
+    at tests/, read from JSON in the Fix's folder."""
+    if node is None:
+        node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"])
+        node["more_paths"] = ["tests/"]
+    paths = [node["path"], *node.get("more_paths", [])]
+    cut = {
+        "deliverable": node,
+        "worktree": os.path.relpath(run.worktree, run.repository),
+        "paths": [os.path.relpath(os.path.join(run.worktree, p), run.repository) for p in paths],
+        "problem": {"source": "put-up", "words": "lint: a line ends in a space"},
+        "run": run.folder,
+        "fix": run.fix,
+    }
+    path = os.path.join(run.repository, run.fix, "fixer-cut.json")
+    rn_files.write_json(path, cut)
+    return rn_files.read_json(path)
+
+
+def fixer(run: Run, result: Any, node: Any = None) -> list[str]:
+    """The faults of the fixer's result, read from JSON in the Fix's folder, against its Cut of the
+    node, else the command's."""
+    cut = fixer_cut(run, node)
+    path = os.path.join(run.repository, run.fix, "fixer.json")
+    rn_files.write_json(path, result)
+    return faults("fixer", cut, rn_files.read_json(path), run.worktree, run.repository)
 
 
 # The generator.
@@ -224,6 +258,105 @@ def test_a_generators_line_changed_since_it_quoted_it_is_a_fault(run: Run):
     found = generator(run, result)
     assert len(found) == 1
     assert LINE in found[0]
+
+
+# The fixer.
+
+
+@pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")
+@pytest.mark.parametrize(
+    "files",
+    [[COMMAND], [COMMAND, "tests/test_command.py"], []],
+    ids=["the command", "a file of its more paths", "none"],
+)
+def test_a_fixers_fixed_naming_files_of_its_deliverable_has_no_fault(run: Run, files: list[str]):
+    """Given a fixer's fixed naming the command, a file under its more path tests/, or none
+    When its faults are asked
+    Then there is none"""
+    assert fixer(run, {"result": "fixed", "files": files}) == []
+
+
+@pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")
+def test_a_fixers_file_in_its_fix_has_no_fault(run: Run):
+    """Given a fixer's fixed naming the command and a file in the Fix's folder, by its path from
+    the worktree's top
+    When its faults are asked
+    Then there is none"""
+    inside = os.path.relpath(os.path.join(run.repository, run.fix, "notes.txt"), run.worktree)
+    assert fixer(run, {"result": "fixed", "files": [COMMAND, inside]}) == []
+
+
+@pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")
+@pytest.mark.parametrize(
+    "outside",
+    [
+        "README.md",
+        "tests-old/test_command.py",
+        "invoicer/__main__.py.bak",
+        "../notes.md",
+        os.path.join(".rn", NAME, "design-tree.json"),
+    ],
+)
+def test_a_fixers_file_outside_its_paths_and_fix_is_a_fault_naming_it(run: Run, outside: str):
+    """Given a fixer's fixed naming the command and a file outside the deliverable's paths and the
+    Fix's folder, one that nearly matches them among them, and the run's design tree, beside the
+    Fix's folder
+    When its faults are asked
+    Then there is one, naming that file, the deliverable's paths, and the Fix's folder"""
+    found = fixer(run, {"result": "fixed", "files": [COMMAND, outside]})
+    assert found == [
+        f"{outside}: lies outside the deliverable's paths and the Fix's folder; write only there"
+    ]
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+def test_a_fixers_decision_with_its_words_has_no_fault(run: Run):
+    """Given a fixer's decision naming the decision its mend would change
+    When its faults are asked
+    Then there is none"""
+    words = "N1 decides the lines as the user wrote them, which the mend would change."
+    assert fixer(run, {"result": "decision", "decision": words}) == []
+
+
+@pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")
+@pytest.mark.parametrize(
+    "result",
+    [
+        {"result": "decision"},
+        {"result": "decision", "decision": ""},
+        {"result": "fixed"},
+        {"result": "fixed", "files": [COMMAND], "decision": "x"},
+        {"result": "made", "files": [COMMAND]},
+        {"files": [COMMAND]},
+    ],
+    ids=[
+        "a decision with no words",
+        "a decision with empty words",
+        "a fixed with no files",
+        "a fixed with a decision",
+        "a generator's result",
+        "no result",
+    ],
+)
+def test_a_fixers_result_out_of_its_schema_is_a_fault(run: Run, result: Any):
+    """Given a fixer's result out of fixer-fix.schema.json
+    When its faults are asked
+    Then there is at least one, the result left unchecked by its files"""
+    assert fixer(run, result) != []
+
+
+@pytest.mark.supports(
+    "test_a_final_checks_finding_within_the_decisions_is_mended_by_a_fix_of_the_done_deliverable"
+)
+def test_a_fixers_markdown_off_its_kinds_template_isnt_held(run: Run):
+    """Given the guide, of the kind readme, off its template, and a fixer's fixed naming it
+    When its faults are asked
+    Then there is none, as the fixer mends within the decisions, by no best practice"""
+    write_files(run.worktree, {GUIDE: OFF})
+    node = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
+    assert fixer(run, {"result": "fixed", "files": [GUIDE]}, node) == []
 
 
 # The evaluator.

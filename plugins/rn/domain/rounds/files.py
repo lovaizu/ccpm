@@ -1,11 +1,15 @@
-"""Decides where each Round of a deliverable lies in the run's folder and what files it holds:
-`rounds/<deliverable>/<stage>-<n>/`, the deliverable's path percent-encoded whole, as
-`urllib.parse.quote(path, safe="")` gives it, so that no two paths share a folder, `<n>` its number
-among the deliverable's Rounds in the order they were made, holding each role's Cut and each role's
-result, and, once the deliverable is put up for its sign-off after it, the mark `put-up.json`, the
-state put up: `{"short": [<the id of each condition not good>], "open": [{"condition": <its id>,
-"about": <its about>}, ...]}` for each open decision, each list in order, which `rounds.course`
-reads as what the user signs off."""
+"""Decides where each Round and each Fix of a deliverable lies in the run's folder and what files
+it holds: `rounds/<deliverable>/<stage>-<n>/`, the deliverable's path percent-encoded whole, as
+`urllib.parse.quote(path, safe="")` gives it, so that no two paths share a folder, `<stage>`
+`content` or `refactor` for a Round and `fix` for a Fix, and `<n>` its number among the
+deliverable's Rounds and Fixes together in the order they were made. A Round holds each role's Cut
+and each role's result, and, once the deliverable is put up for its sign-off after it, the mark
+`put-up.json`, the state put up: `{"short": [<the id of each condition not good>], "open":
+[{"condition": <its id>, "about": <its about>}, ...]}` for each open decision, each list in order,
+which `rounds.course` reads as what the user signs off. A Fix holds the problem that raised it,
+`problem.json`, `{"source": <put-up, final-check, or send-back>, "words": <the problem in the
+words that raised it>}`, the fixer's Cut, `fixer-cut.json`, and the fixer's result,
+`fixer.json`."""
 
 from __future__ import annotations
 
@@ -19,18 +23,30 @@ from urllib.parse import quote, unquote
 from fault import Wrong
 from repository.place import RunPlace
 
-# The name of a Round's folder: its stage and its number among the deliverable's Rounds from 1.
-_NAME = re.compile(r"(content|refactor)-([1-9][0-9]*)")
+# The name of a Round's or a Fix's folder: its stage and its number among the deliverable's Rounds
+# and Fixes from 1.
+_NAME = re.compile(r"(content|refactor|fix)-([1-9][0-9]*)")
 _STAGES = ("content", "refactor")
+# The stage of a Fix's folder.
+FIX = "fix"
 # The roles whose files a Round holds.
 ROLES = ("generator", "evaluator")
+# The role whose files a Fix holds.
+FIXER = "fixer"
+# What raised a Fix's problem: a put-up that the repository's checks refused, a finding of the
+# final check, or the user's send-back.
+SOURCES = ("put-up", "final-check", "send-back")
 # The file that marks a Round as put up for the sign-off, with the state put up.
 _PUT_UP = "put-up.json"
+# The file of a Fix's problem.
+_PROBLEM = "problem.json"
 
 # A role's result, as it writes it in the form of domain/schemas/<role>-round.schema.json.
 Result = dict[str, Any]
 # The state of a deliverable put up for its sign-off, as the mark `put-up.json` holds it.
 Mark = dict[str, Any]
+# A Fix's problem, as `problem.json` holds it.
+Problem = dict[str, str]
 
 
 @dataclass(frozen=True)
@@ -55,16 +71,68 @@ class Round:
         return os.path.join(self.folder, f"{_role(role)}.json")
 
 
+@dataclass(frozen=True)
+class Fix:
+    """One Fix of a deliverable: its folder, the deliverable's path, and its number among the
+    deliverable's Rounds and Fixes from 1, in the order they were made."""
+
+    folder: str
+    deliverable: str
+    number: int
+
+    @property
+    def problem(self) -> str:
+        """The path of the Fix's problem, `<folder>/problem.json`."""
+        return os.path.join(self.folder, _PROBLEM)
+
+    @property
+    def cut(self) -> str:
+        """The path of the fixer's Cut, `<folder>/fixer-cut.json`."""
+        return os.path.join(self.folder, f"{FIXER}-cut.json")
+
+    @property
+    def result(self) -> str:
+        """The path of the fixer's result, `<folder>/fixer.json`."""
+        return os.path.join(self.folder, f"{FIXER}.json")
+
+
 def of(run: RunPlace, deliverable: str) -> list[Round]:
     """Each Round of the deliverable so far.
 
     Takes: the run, and the deliverable's path.
     Gives: each Round whose folder lies in the run's Rounds, in the order they were made, by
-    their numbers; none before the first.
+    their numbers, and none of its Fixes; none before the first.
     Changes: nothing.
-    Refuses: Wrong where a folder of the deliverable's Rounds has a name of another form, or two
-    share a number, naming them.
+    Refuses: Wrong where a folder of the deliverable's Rounds and Fixes has a name of another form,
+    or two share a number, naming them.
     """
+    return [
+        Round(folder, deliverable, stage, number)
+        for stage, number, folder in _listed(run, deliverable)
+        if stage != FIX
+    ]
+
+
+def fixes(run: RunPlace, deliverable: str) -> list[Fix]:
+    """Each Fix of the deliverable so far.
+
+    Takes: the run, and the deliverable's path.
+    Gives: each Fix whose folder lies in the run's Rounds, in the order they were made, by their
+    numbers, and none of its Rounds; none before the first.
+    Changes: nothing.
+    Refuses: Wrong where a folder of the deliverable's Rounds and Fixes has a name of another form,
+    or two share a number, naming them.
+    """
+    return [
+        Fix(folder, deliverable, number)
+        for stage, number, folder in _listed(run, deliverable)
+        if stage == FIX
+    ]
+
+
+def _listed(run: RunPlace, deliverable: str) -> list[tuple[str, int, str]]:
+    """Each Round and Fix of the deliverable, as its stage, its number, and its folder, by their
+    numbers, refused as Wrong where a folder has a name of another form or two share a number."""
     top = _folder_of(run, deliverable)
     if not os.path.isdir(top):
         return []
@@ -72,14 +140,16 @@ def of(run: RunPlace, deliverable: str) -> list[Round]:
     for name in os.listdir(top):
         named = _NAME.fullmatch(name)
         if not named:
-            raise Wrong(f"{os.path.join(top, name)}: isn't a Round's folder, <stage>-<n>")
-        found.append(Round(os.path.join(top, name), deliverable, named[1], int(named[2])))
-    found.sort(key=lambda each: each.number)
-    for before, after in zip(found, found[1:]):
-        if before.number == after.number:
             raise Wrong(
-                f"{before.folder}, {after.folder}: two Rounds share the number {after.number},"
-                " which gives each Round of a deliverable once, in the order they were made"
+                f"{os.path.join(top, name)}: isn't a Round's or a Fix's folder, <stage>-<n>"
+            )
+        found.append((named[1], int(named[2]), os.path.join(top, name)))
+    found.sort(key=lambda each: each[1])
+    for before, after in zip(found, found[1:]):
+        if before[1] == after[1]:
+            raise Wrong(
+                f"{before[2]}, {after[2]}: two folders share the number {after[1]}, which gives"
+                " each Round and each Fix of a deliverable once, in the order they were made"
             )
     return found
 
@@ -98,7 +168,7 @@ def at(run: RunPlace, folder: str) -> Round:
     top, name = os.path.split(path)
     rounds, encoded = os.path.split(top)
     named = _NAME.fullmatch(name)
-    if not named or rounds != os.path.normpath(run.rounds):
+    if not named or named[1] == FIX or rounds != os.path.normpath(run.rounds):
         raise Wrong(
             f"{folder}: isn't a Round's folder of the run, which takes the form"
             f" {run.rounds}/<deliverable>/<stage>-<n>"
@@ -110,19 +180,75 @@ def new(run: RunPlace, deliverable: str, stage: str) -> Round:
     """The deliverable's next Round of the stage.
 
     Takes: the run, the deliverable's path, and `content` or `refactor`.
-    Gives: the Round of the stage numbered one past the deliverable's last Round, its folder made.
+    Gives: the Round of the stage numbered one past the deliverable's last Round or Fix, its folder
+    made.
     Changes: makes the Round's folder.
-    Refuses: Wrong where the stage is neither `content` nor `refactor`.
+    Refuses: Wrong where the stage is neither `content` nor `refactor`; as `fixes` refuses.
     """
     if stage not in _STAGES:
         raise Wrong(f"a Round's stage is content or refactor, not {stage!r}")
-    numbers = [each.number for each in of(run, deliverable)]
-    number = max(numbers, default=0) + 1
+    number = _next_number(run, deliverable)
     made = Round(
         os.path.join(_folder_of(run, deliverable), f"{stage}-{number}"), deliverable, stage, number
     )
     os.makedirs(made.folder)
     return made
+
+
+def problem(source: str, words: str) -> Problem:
+    """A Fix's problem.
+
+    Takes: what raised it, one of SOURCES, and the problem in the words that raised it, as they
+    were printed or said.
+    Gives: the problem as `problem.json` holds it, the words as given.
+    Changes: nothing.
+    Refuses: Wrong where the source isn't one of SOURCES, or the words are empty or only spaces,
+    saying what it takes.
+    """
+    if source not in SOURCES:
+        raise Wrong(f"a Fix's problem comes from one of {', '.join(SOURCES)}, not {source!r}")
+    if not words.strip():
+        raise Wrong(
+            "the problem's words are empty; give them on stdin, as the refusal printed them or"
+            " the user or the final check said them"
+        )
+    return {"source": source, "words": words}
+
+
+def new_fix(run: RunPlace, deliverable: str, given: Problem) -> Fix:
+    """The deliverable's next Fix.
+
+    Takes: the run, the deliverable's path, and the problem, as `problem` gives it.
+    Gives: the Fix numbered one past the deliverable's last Round or Fix, its folder made.
+    Changes: makes the Fix's folder, holding the problem as `problem.json`.
+    Refuses: Wrong as `fixes` refuses.
+    """
+    number = _next_number(run, deliverable)
+    made = Fix(os.path.join(_folder_of(run, deliverable), f"{FIX}-{number}"), deliverable, number)
+    os.makedirs(made.folder)
+    with open(made.problem, "w", encoding="utf-8") as file:
+        file.write(json.dumps(given) + "\n")
+    return made
+
+
+def problem_of(fix: Fix) -> Problem | None:
+    """The Fix's problem, as `new_fix` wrote it; None where there's none. Refuses Wrong where the
+    file isn't JSON, naming it."""
+    return _read(fix.problem)
+
+
+def fixer_result(fix: Fix) -> Result | None:
+    """The fixer's result in the Fix, as it wrote it in the form of
+    domain/schemas/fixer-fix.schema.json; None where it wrote none yet. Refuses Wrong where the
+    file isn't JSON, naming it, as check.result holds its form."""
+    return _read(fix.result)
+
+
+def fixer_given(fix: Fix) -> Any:
+    """The deliverable's node that the Fix's fixer's Cut held; None where the Fix holds no fixer's
+    Cut. Refuses Wrong where the file isn't JSON, naming it."""
+    cut = _read(fix.cut)
+    return None if cut is None else cut.get("deliverable")
 
 
 def result(round_: Round, role: str) -> Result | None:
@@ -174,6 +300,11 @@ def _read(path: str) -> Any:
         return None
     except ValueError as error:
         raise Wrong(f"{path}: isn't JSON: {error}; write it as JSON") from None
+
+
+def _next_number(run: RunPlace, deliverable: str) -> int:
+    """The number one past the deliverable's last Round or Fix, 1 before the first."""
+    return max((each[1] for each in _listed(run, deliverable)), default=0) + 1
 
 
 def _folder_of(run: RunPlace, deliverable: str) -> str:

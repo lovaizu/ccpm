@@ -3,7 +3,10 @@ good, at most LIMIT Rounds, then refactored in a Round that no evaluator judges 
 content leaves each condition good, none while a
 point waits on the user, and after them none, each finding left kept by the pruner as an open
 decision; a send-back after a Round put up for the sign-off starts that course again, and so does
-the user's answer, as the limit stops a remake asked by findings, not one asked by the user."""
+the user's answer, as the limit stops a remake asked by findings, not one asked by the user. A Fix
+after the Rounds, which counts toward no limit, waits on its fixer, then on the put-up where the
+fixer fixed it, or on the pruner where it named a decision; once the deliverable's decisions
+change after a Fix, the deliverable takes a course of Rounds anew."""
 
 from __future__ import annotations
 
@@ -15,7 +18,7 @@ from repository.place import RunPlace
 from tree.form import Deliverable
 
 from rounds import files
-from rounds.files import Mark, Result, Round
+from rounds.files import Fix, Mark, Result, Round
 
 # The most Rounds of content that a deliverable takes in a course, as remaking has a limit (the
 # architecture's P3.3). A course takes a Round of refactoring, which no evaluator judges, each time
@@ -36,12 +39,24 @@ class Done(NamedTuple):
     given: frozenset[tuple[str, str]] | None = None
 
 
+class Mend(NamedTuple):
+    """A Fix so far, with the fixer's result in it, None where it wrote none yet, and the
+    deliverable's node that its fixer's Cut held, None where the Fix holds no fixer's Cut."""
+
+    fix: Fix
+    fixer: Result | None
+    given: Deliverable | None
+
+
 class Next(NamedTuple):
     """What a deliverable waits on, with the stage, `content` or `refactor`, of the Round where a
-    role is to start: `generator`, in a new Round or, where `resumes`, the last Round again;
-    `evaluator`, in the last Round, one of content; `answer`, the user's answer to an open
-    decision; `pruner`, to keep each finding left past the limit as an open decision; or
-    `sign-off`."""
+    role is to start, or `fix` for a Fix: `generator`, in a new Round or, where `resumes`, the
+    last Round again; `evaluator`, in the last Round, one of content; `fixer`, in the last Fix,
+    resuming where its fixer's Cut is written already; `answer`, the user's answer to an open
+    decision; `pruner`, to keep each finding left past the limit as an open decision, or, of the
+    stage `fix`, to weigh the decision that the last Fix's fixer named; or `sign-off`, which a
+    deliverable whose Rounds are over, or whose last Fix is fixed, waits on, to be put up and
+    signed off."""
 
     waits_on: str
     stage: str | None
@@ -89,6 +104,40 @@ def next_of(deliverable: Deliverable, rounds: Sequence[Done], refactors: bool) -
     if not rounds:
         return Next("generator", "content", False)
     return _after(rounds, content, short, refactors)
+
+
+def next_with_fixes(
+    deliverable: Deliverable, rounds: Sequence[Done], fixes: Sequence[Mend], refactors: bool
+) -> Next:
+    """What the deliverable waits on, from its node, its Rounds so far, and its Fixes so far.
+
+    Takes: as `next_of` takes, and each of the deliverable's Fixes in the order they were made,
+    with the fixer's result and the node its Cut held, numbered with the Rounds.
+    Gives, where the deliverable's last folder is a Fix, the first that holds:
+    - the fixer in the Fix, resuming where its Cut is written, where the fixer wrote no result;
+    - where the node's necessary conditions differ from those its fixer's Cut held, as a pruner
+      changed them since: what `next_of` gives with no Round, a course of Rounds anew;
+    - the sign-off, where the fixer's result is `fixed`, for the deliverable to be put up again;
+    - the pruner, of the stage `fix`, where it's `decision`.
+    Else what `next_of` gives from the Rounds after the last Fix, or from each Round where there's
+    no Fix, as a Fix ends a course and counts toward no limit.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    last = fixes[-1] if fixes else None
+    after = [each for each in rounds if last is None or each.round.number > last.fix.number]
+    if last is None or after:
+        return next_of(deliverable, after, refactors)
+    if last.fixer is None:
+        return Next("fixer", FIX, last.given is not None)
+    changed = last.given is not None and (
+        last.given["necessary_conditions"] != deliverable["necessary_conditions"]
+    )
+    if changed:
+        return next_of(deliverable, [], refactors)
+    if last.fixer["result"] == "fixed":
+        return _SIGN_OFF
+    return Next("pruner", FIX, False)
 
 
 def held(deliverable: Deliverable) -> Mark:
@@ -139,14 +188,27 @@ def so_far(run: RunPlace, deliverable: str) -> list[Done]:
     return found
 
 
+def mended(run: RunPlace, deliverable: str) -> list[Mend]:
+    """Each Fix of the deliverable so far, as `rounds.files.fixes` gives them, with the fixer's
+    result in it, as `rounds.files.fixer_result` gives it, and the node its fixer's Cut held, as
+    `rounds.files.fixer_given` gives it, refused as they refuse."""
+    return [
+        Mend(each, files.fixer_result(each), files.fixer_given(each))
+        for each in files.fixes(run, deliverable)
+    ]
+
+
 def next_in(run: RunPlace, deliverable: Deliverable) -> Next:
-    """What the deliverable waits on, as `next_of` gives it from its Rounds so far in the run, its
-    kind refactored where `practice.refactoring` names a refactoring kind, refused as `so_far`
-    refuses."""
+    """What the deliverable waits on, as `next_with_fixes` gives it from its Rounds and its Fixes
+    so far in the run, its kind refactored where `practice.refactoring` names a refactoring kind,
+    refused as `so_far` and `mended` refuse."""
     refactors = practice.refactoring(deliverable["kind"]) is not None
-    return next_of(deliverable, so_far(run, deliverable["path"]), refactors)
+    path = deliverable["path"]
+    return next_with_fixes(deliverable, so_far(run, path), mended(run, path), refactors)
 
 
+# The stage of a Fix, which a fixer starts in.
+FIX = files.FIX
 # The sign-off, which a deliverable waits on with no Round to start.
 _SIGN_OFF = Next("sign-off", None, False)
 

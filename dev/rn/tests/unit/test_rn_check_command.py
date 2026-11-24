@@ -1,5 +1,6 @@
 """The unit cases of check/command.py, check.py's command line as a role runs it before it ends:
-for each role, a result that holds, one with faults, and none written; a generator's guide off its
+for each role, the fixer's in its Fix among them, a result that holds, one with faults, and none
+written; a generator's guide off its
 kind's template, each place on a line, the worktree and the folder taken from the Cut and from
 `cwd`, not from the process's own folder; a result that isn't JSON; a Cut out of its schema or
 missing, a schema that can't be read, and a role of neither, each of which check.py couldn't check
@@ -22,22 +23,36 @@ LINE = "from invoicer.lines import parse_lines"
 
 
 class Run:
-    """The repository's top, the run's worktree holding the command, and the command's Round
-    content-1 from the repository's top."""
+    """The repository's top, the run's worktree holding the command, the command's Round
+    content-1, and its Fix fix-2, each from the repository's top."""
 
     def __init__(self, repository: str):
         self.repository = repository
         self.worktree = rn_files.worktree_of(repository, NAME)
         folder = rn_files.run_folder(repository, NAME, rn_files.walkthrough_tree(NAME))
         self.round = os.path.relpath(rn_files.round_of(folder, COMMAND, "content", 1), repository)
+        self.fix = os.path.relpath(rn_files.round_of(folder, COMMAND, "fix", 2), repository)
+        self.folder = os.path.relpath(folder, repository)
         write_files(self.worktree, {COMMAND: f"{LINE}\n"})
 
     def cut(self, role: str, node: Any = None, kind: str = "light") -> str:
-        """Writes the role's Cut in the Round, of the node and its kind for the generator, else
-        the command's, and gives its path from the repository's top."""
+        """Writes the role's Cut in the Round, or the fixer's in the Fix, of the node and its kind
+        for the generator, else the command's, and gives its path from the repository's top."""
+        if role == "fixer":
+            cut: dict[str, Any] = {
+                "deliverable": rn_files.walkthrough_tree(NAME)["deliverables"][1],
+                "worktree": os.path.relpath(self.worktree, self.repository),
+                "paths": [os.path.relpath(os.path.join(self.worktree, COMMAND), self.repository)],
+                "problem": {"source": "put-up", "words": "lint: a line ends in a space"},
+                "run": self.folder,
+                "fix": self.fix,
+            }
+            path = os.path.join(self.fix, "fixer-cut.json")
+            rn_files.write_json(os.path.join(self.repository, path), cut)
+            return path
         if role == "generator":
             node = node or rn_files.walkthrough_tree(NAME)["deliverables"][1]
-            cut: dict[str, Any] = {
+            cut = {
                 "goal": rn_files.GOAL,
                 "language": rn_files.DELIVERABLES_LANGUAGE,
                 "deliverable": node,
@@ -66,8 +81,9 @@ class Run:
         return path
 
     def result(self, role: str, value: Any) -> str:
-        """Writes the role's result in the Round, and gives its path from the repository's top."""
-        path = os.path.join(self.round, f"{role}.json")
+        """Writes the role's result in the Round, or the fixer's in the Fix, and gives its path
+        from the repository's top."""
+        path = os.path.join(self.fix if role == "fixer" else self.round, f"{role}.json")
         rn_files.write_json(os.path.join(self.repository, path), value)
         return path
 
@@ -86,11 +102,12 @@ def run(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> Run:
 GOOD = {
     "generator": rn_files.made([("N1", [LINE])], [COMMAND]),
     "evaluator": rn_files.judged([("N1", [LINE]), ("N2", [LINE])], [("N3", "They print it.")]),
+    "fixer": {"result": "fixed", "files": [COMMAND]},
 }
 
 
 @pytest.mark.supports("test_a_generators_result_unwritten_is_refused")
-@pytest.mark.parametrize("role", ["generator", "evaluator"])
+@pytest.mark.parametrize("role", ["generator", "evaluator", "fixer"])
 def test_a_result_that_holds_its_cut_gives_0_printing_nothing(run: Run, role: str):
     """Given the role's Cut and a result that holds it beside it
     When check.py runs on the role and the Cut
@@ -112,6 +129,18 @@ def test_a_generators_result_with_a_fault_gives_1_with_the_fault(run: Run):
     assert any("N9" in each for each in (out + err).splitlines())
 
 
+@pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")
+def test_a_fixers_result_with_a_fault_gives_1_with_the_fault(run: Run):
+    """Given the fixer's Cut and its fixed naming invoicer's README beside the command
+    When check.py runs on it
+    Then it gives 1, its output naming README.md on a line"""
+    cut = run.cut("fixer")
+    run.result("fixer", {"result": "fixed", "files": [COMMAND, "README.md"]})
+    code, out, err = main(["fixer", cut], run.repository, rn_files.RN)
+    assert code == 1
+    assert [each for each in (out + err).splitlines() if "README.md" in each] != []
+
+
 @pytest.mark.supports("test_an_evaluators_answers_leaving_a_condition_unanswered_are_refused")
 def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run):
     """Given the evaluator's Cut and its judged answering N1 alone
@@ -124,6 +153,20 @@ def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run)
     assert code == 1
     assert any("N2" in each and "N3" not in each for each in lines)
     assert any("N3" in each and "N2" not in each for each in lines)
+
+
+@pytest.mark.supports("test_a_fixers_result_unwritten_is_refused_with_where_it_writes_one")
+def test_a_fixer_that_wrote_no_result_gives_1_with_where_it_writes_one_in_its_fix(run: Run):
+    """Given the fixer's Cut, and no result beside it
+    When check.py runs on it
+    Then it gives 1, naming the path of <fix>/fixer.json"""
+    cut = run.cut("fixer")
+    written = os.path.join(run.fix, "fixer.json")
+    assert main(["fixer", cut], run.repository, rn_files.RN) == (
+        1,
+        f"{written}: no result is written there; write it before you end\n",
+        "",
+    )
 
 
 @pytest.mark.supports("test_a_generators_result_unwritten_is_refused")
@@ -216,16 +259,16 @@ def test_a_schema_that_cant_be_read_gives_2_saying_what_check_py_couldnt_check(
 @pytest.mark.parametrize("role", ["orchestrator", "Generator"])
 def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run, role: str):
     """Given the generator's Cut and its result
-    When check.py runs on a role that is neither generator nor evaluator
+    When check.py runs on a role that is none of generator, evaluator, and fixer
     Then it gives 2, saying that it couldn't check a result of the role, as it checks only the
-    generator's and the evaluator's"""
+    generator's, the evaluator's, and the fixer's"""
     cut = run.cut("generator")
     run.result("generator", GOOD["generator"])
     code, out, err = main([role, cut], run.repository, rn_files.RN)
     assert code == 2
     assert out + err == (
-        f"check.py: couldn't check a result of {role!r}, as it checks only the generator's and"
-        " the evaluator's\n"
+        f"check.py: couldn't check a result of {role!r}, as it checks only the generator's, the"
+        " evaluator's, and the fixer's\n"
     )
 
 

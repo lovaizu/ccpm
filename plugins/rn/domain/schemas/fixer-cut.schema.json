@@ -1,0 +1,69 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "fixer's Cut",
+ "description": "What the orchestrator gives the fixer for one Fix, at <fix>/fixer-cut.json, which the start's prompt names by its path: all the fixer gets of the run.",
+ "type": "object",
+ "required": [
+  "deliverable",
+  "worktree",
+  "paths",
+  "problem",
+  "run",
+  "fix"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "deliverable": {
+   "description": "The deliverable's node of the design tree as it stands, open or done, of design-tree.schema.json: its name, paths, kind, and each necessary condition with its decisions. The fixer mends within these decisions alone, and names one that its mend would change or add.",
+   "type": "object"
+  },
+  "worktree": {
+   "description": "The run's worktree, from the folder that the conversation works in, from whose top the deliverable's paths, and the files that the fixer names, are given.",
+   "type": "string",
+   "minLength": 1
+  },
+  "paths": {
+   "description": "The path of each file or folder of the deliverable, its path then each of its more paths, from the folder that the conversation works in.",
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "string",
+    "minLength": 1
+   }
+  },
+  "problem": {
+   "description": "The problem that the Fix mends, as tree.py fix wrote it.",
+   "type": "object",
+   "required": [
+    "source",
+    "words"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "source": {
+     "description": "What raised it: put-up, a put-up that the repository's checks refused; final-check, a finding of the final check; send-back, the user's /rn:gm.",
+     "enum": [
+      "put-up",
+      "final-check",
+      "send-back"
+     ]
+    },
+    "words": {
+     "description": "The problem in the words that raised it, as they were printed or said.",
+     "type": "string",
+     "minLength": 1
+    }
+   }
+  },
+  "run": {
+   "description": "The run's folder, from the folder that the conversation works in, which repository.py checks takes.",
+   "type": "string",
+   "minLength": 1
+  },
+  "fix": {
+   "description": "The Fix's folder, from the folder that the conversation works in, where the fixer writes its result.",
+   "type": "string",
+   "minLength": 1
+  }
+ }
+}

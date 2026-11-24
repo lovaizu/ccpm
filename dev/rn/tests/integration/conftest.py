@@ -288,6 +288,35 @@ def findings_to_the_generator(b: Bench) -> None:
     )
 
 
+def fix_weighed_first(b: Bench) -> None:
+    """A Fix waits on the pruner before its fixer starts, as a mend weighed before it starts."""
+    given_again(
+        b,
+        "domain/rounds/course.py",
+        "_given_next_with_fixes = next_with_fixes\n\n\n"
+        "def next_with_fixes(deliverable, rounds, fixes, refactors):\n"
+        "    given = _given_next_with_fixes(deliverable, rounds, fixes, refactors)\n"
+        "    if given.waits_on == 'fixer':\n"
+        "        return Next('pruner', None, False)\n"
+        "    return given\n",
+    )
+
+
+def fixes_spend_the_limit(b: Bench) -> None:
+    """Each Fix counts toward the limit of a deliverable's Rounds of content, as one more Round
+    does, so that a Fix past the limit waits on the pruner."""
+    given_again(
+        b,
+        "domain/rounds/course.py",
+        "_given_next_with_fixes = next_with_fixes\n\n\n"
+        "def next_with_fixes(deliverable, rounds, fixes, refactors):\n"
+        "    content = [each for each in rounds if each.round.stage == 'content']\n"
+        "    if fixes and len(content) + len(fixes) > LIMIT:\n"
+        "        return Next('pruner', None, False)\n"
+        "    return _given_next_with_fixes(deliverable, rounds, fixes, refactors)\n",
+    )
+
+
 BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_a_tree_change_out_of_form_is_refused_at_its_commit": checks_unasked,
     "test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut": open_decisions_unread,
@@ -327,6 +356,11 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     ),
     "test_a_judged_rounds_result_is_weighed_whole_by_one_pruner_with_each_node_it_touches": (
         touched_by_the_first_change
+    ),
+    "test_a_fix_counts_toward_no_limit_of_the_rounds": fixes_spend_the_limit,
+    "test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner": fix_weighed_first,
+    "test_a_fixers_write_to_the_design_tree_is_denied_while_its_deliverables_file_passes": (
+        tree_writes_pass
     ),
 }
 

@@ -4,6 +4,10 @@ changed, or as a run starts, of one with faults, out of its schema, and of none;
 change in form, of one out of it, and of none; `cut` while the goal is open, and for each role and
 each thing a deliverable waits on, a new Round and the last
 one again, the Round that a pause stopped, and a stage at its limit with its findings kept;
+`fix` of a deliverable whose Rounds are over, a Fix after a Fix fixed, and refused where its Rounds
+aren't over, a Fix waits on its fixer or on the pruner, the source or the words are wrong, or the
+path is of no deliverable; `cut` of the fixer in the last Fix, after a pause, and refused with no
+Fix or once it ended, and of the generator while a Fix waits;
 `signoff` of the plan, of a deliverable with its findings left, of the last, asking gh nothing,
 and of none waiting; `commit` of a tree leaving a deliverable open, and of each deliverable done,
 each pushing nothing and asking gh nothing; a run's folder out of its form or with no
@@ -66,9 +70,9 @@ class Run:
         """The Round's folder."""
         return rn_files.round_of(self.folder, deliverable, stage, number)
 
-    def main(self, host: Any, *argv: str) -> tuple[int, str, str]:
-        """tree.py with the arguments, from the repository's top."""
-        return main(list(argv), self.repo, RN, host)
+    def main(self, host: Any, *argv: str, stdin: str = "") -> tuple[int, str, str]:
+        """tree.py with the arguments, from the repository's top, given stdin."""
+        return main(list(argv), self.repo, RN, host, lambda: stdin)
 
 
 def walkthrough(**given: Any) -> dict[str, Any]:
@@ -100,6 +104,8 @@ def refused(result: tuple[int, str, str], *words: str) -> None:
         ["check", "x", "more"],
         ["commit", "x"],
         ["cut", "x", "generator"],
+        ["fix", "x", COMMAND],
+        ["fix", "x", COMMAND, "put-up", "more"],
         ["signoff"],
     ],
 )
@@ -643,6 +649,235 @@ def test_cut_of_a_deliverable_past_its_rounds_with_its_findings_kept_gives_1_nam
     code, out, err = r.main(host, "cut", r.run, "generator", COMMAND)
     assert code == 1
     assert "sign-off" in out + err
+    assert not os.path.exists(r.round(COMMAND, "content", 3))
+
+
+# fix, and the fixer's cut
+
+# The words that a put-up refused by the repository's push check printed.
+REFUSAL = "repository.py: git can't push the run's work: lint: a line ends in a space\n"
+JUDGED_GOOD = {
+    "generator": rn_files.made([], [COMMAND]),
+    "evaluator": rn_files.judged([("N1", ["x"]), ("N2", ["x"]), ("N3", ["x"])]),
+}
+
+
+def over(tmp: str) -> Run:
+    """The walkthrough's run whose command, each condition good, was made and judged good in Round
+    content-1, its Rounds over."""
+    r = Run(tmp, walkthrough(command_good=True))
+    rn_files.a_round(r.folder, COMMAND, "content", 1, JUDGED_GOOD)
+    return r
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_fix_of_a_deliverable_whose_rounds_are_over_writes_its_fix_and_prints_its_folder(
+    tmp_path: Any, host: Any
+):
+    """Given the walkthrough's run whose command's Rounds are over
+    When tree.py fix runs for the command, from put-up, with the refusal's words on stdin
+    Then it gives 0 printing fix-2's folder, absolute, which holds the problem with the words as
+    given, and the design tree is as it was"""
+    r = over(str(tmp_path))
+    before = r.tree()
+    code, out, err = r.main(host, "fix", r.run, COMMAND, "put-up", stdin=REFUSAL)
+    fix = r.round(COMMAND, "fix", 2)
+    assert (code, out, err) == (0, f"{fix}\n", "")
+    assert rn_files.read_json(os.path.join(fix, "problem.json")) == {
+        "source": "put-up",
+        "words": REFUSAL,
+    }
+    assert r.tree() == before
+
+
+@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
+def test_fix_after_a_fix_fixed_writes_the_next(tmp_path: Any, host: Any):
+    """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 its fixer
+    fixed, its Cut holding the command's node as it stands
+    When tree.py fix runs for the command, from send-back, with the user's words
+    Then it gives 0 printing fix-3's folder"""
+    r = over(str(tmp_path))
+    fix = r.round(COMMAND, "fix", 2)
+    rn_files.write_json(
+        os.path.join(fix, "fixer-cut.json"), {"deliverable": r.tree()["deliverables"][1]}
+    )
+    rn_files.write_json(os.path.join(fix, "fixer.json"), {"result": "fixed", "files": [COMMAND]})
+    code, out, err = r.main(host, "fix", r.run, COMMAND, "send-back", stdin="Name the flag.")
+    assert (code, out, err) == (0, f"{r.round(COMMAND, 'fix', 3)}\n", "")
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_fix_of_a_deliverable_whose_rounds_arent_over_gives_1_writing_no_fix(
+    tmp_path: Any, host: Any
+):
+    """Given the walkthrough's run whose command's generator made Round content-1, the evaluator
+    still due
+    When tree.py fix runs for the command
+    Then it gives 1 saying it waits on its evaluator, as its Rounds aren't over yet, and writes no
+    Fix"""
+    r = Run(str(tmp_path), walkthrough())
+    rn_files.a_round(r.folder, COMMAND, "content", 1, {"generator": rn_files.made([], [COMMAND])})
+    refused(
+        r.main(host, "fix", r.run, COMMAND, "put-up", stdin=REFUSAL),
+        f"{COMMAND} waits on its evaluator, as its Rounds aren't over yet",
+    )
+    assert not os.path.exists(r.round(COMMAND, "fix", 2))
+
+
+@pytest.mark.supports("test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner")
+def test_fix_while_a_fix_waits_on_its_fixer_gives_1_writing_no_fix(tmp_path: Any, host: Any):
+    """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 holds its
+    problem alone
+    When tree.py fix runs for the command
+    Then it gives 1 saying it waits on its fixer, as a Fix of it is unfinished, and writes no
+    fix-3"""
+    r = over(str(tmp_path))
+    r.main(host, "fix", r.run, COMMAND, "put-up", stdin=REFUSAL)
+    refused(
+        r.main(host, "fix", r.run, COMMAND, "put-up", stdin=REFUSAL),
+        f"{COMMAND} waits on its fixer, as a Fix of it is unfinished",
+    )
+    assert not os.path.exists(r.round(COMMAND, "fix", 3))
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+def test_fix_and_cut_while_a_fixs_decision_waits_on_the_pruner_give_1(tmp_path: Any, host: Any):
+    """Given the walkthrough's run whose command's fix-2 its fixer ended with decision, its Cut
+    holding the command's node as it stands
+    When tree.py fix, then tree.py cut of the generator, run for the command
+    Then each gives 1 saying it waits on the pruner, to weigh the decision its fixer named, and
+    neither writes a folder"""
+    r = over(str(tmp_path))
+    fix = r.round(COMMAND, "fix", 2)
+    rn_files.write_json(
+        os.path.join(fix, "fixer-cut.json"), {"deliverable": r.tree()["deliverables"][1]}
+    )
+    rn_files.write_json(os.path.join(fix, "fixer.json"), {"result": "decision", "decision": "x"})
+    waits = f"{COMMAND} waits on the pruner, to weigh the decision its fixer named"
+    refused(r.main(host, "fix", r.run, COMMAND, "put-up", stdin=REFUSAL), waits)
+    refused(r.main(host, "cut", r.run, "generator", COMMAND), waits)
+    assert sorted(os.listdir(os.path.dirname(fix))) == ["content-1", "fix-2"]
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+@pytest.mark.parametrize(
+    ("source", "words", "said"),
+    [
+        ("pushed", REFUSAL, "put-up, final-check, send-back"),
+        ("put-up", "", "give them on stdin"),
+        ("final-check", "  \n", "give them on stdin"),
+    ],
+    ids=["a source of none", "no words", "only spaces"],
+)
+def test_fix_with_a_wrong_source_or_no_words_gives_1_writing_no_fix(
+    tmp_path: Any, host: Any, source: str, words: str, said: str
+):
+    """Given the walkthrough's run whose command's Rounds are over
+    When tree.py fix runs for the command with a source of none, or with no words on stdin
+    Then it gives 1 saying what it takes, and writes no Fix"""
+    r = over(str(tmp_path))
+    refused(r.main(host, "fix", r.run, COMMAND, source, stdin=words), said)
+    assert not os.path.exists(r.round(COMMAND, "fix", 2))
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_fix_of_a_path_of_no_deliverable_gives_1_naming_it(tmp_path: Any, host: Any):
+    """Given the walkthrough's run
+    When tree.py fix runs for invoicer/cli.py, no deliverable's path
+    Then it gives 1 naming the path"""
+    r = over(str(tmp_path))
+    refused(
+        r.main(host, "fix", r.run, "invoicer/cli.py", "put-up", stdin=REFUSAL), "invoicer/cli.py"
+    )
+
+
+@pytest.mark.supports(
+    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
+)
+def test_cut_of_the_fixer_writes_its_cut_in_the_last_fix(tmp_path: Any, host: Any):
+    """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 tree.py fix
+    wrote
+    When tree.py cut runs for the command's fixer
+    Then it gives 0 printing the path of fix-2's fixer-cut.json from the repository's top, which
+    holds the command's node and the Fix's problem"""
+    r = over(str(tmp_path))
+    r.main(host, "fix", r.run, COMMAND, "put-up", stdin=REFUSAL)
+    code, out, err = r.main(host, "cut", r.run, "fixer", COMMAND)
+    path = os.path.join(r.round(COMMAND, "fix", 2), "fixer-cut.json")
+    assert (code, out, err) == (0, f"{os.path.relpath(path, r.repo)}\n", "")
+    given = rn_files.read_json(path)
+    assert given["deliverable"] == r.tree()["deliverables"][1]
+    assert given["problem"] == {"source": "put-up", "words": REFUSAL}
+
+
+@pytest.mark.supports("test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut")
+def test_cut_of_a_fixer_a_pause_stopped_writes_a_fresh_cut_in_its_fix(tmp_path: Any, host: Any):
+    """Given the walkthrough's run whose command's fix-2 holds a fixer's Cut of an older node and
+    no result, as a pause stopped its fixer
+    When tree.py cut runs for the command's fixer
+    Then it gives 0, fix-2's Cut holding the node as the tree holds it now, and no fix-3 made"""
+    r = over(str(tmp_path))
+    r.main(host, "fix", r.run, COMMAND, "put-up", stdin=REFUSAL)
+    path = os.path.join(r.round(COMMAND, "fix", 2), "fixer-cut.json")
+    rn_files.write_json(path, {"deliverable": {"name": "older"}})
+    assert r.main(host, "cut", r.run, "fixer", COMMAND)[0] == 0
+    assert rn_files.read_json(path)["deliverable"] == r.tree()["deliverables"][1]
+    assert not os.path.exists(r.round(COMMAND, "fix", 3))
+
+
+@pytest.mark.supports("test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner")
+def test_cut_of_the_fixer_with_no_fix_gives_1_naming_the_signoff(tmp_path: Any, host: Any):
+    """Given the walkthrough's run whose command's Rounds are over, with no Fix
+    When tree.py cut runs for the command's fixer
+    Then it gives 1 saying the command waits on the user's sign-off, not on its fixer"""
+    r = over(str(tmp_path))
+    refused(
+        r.main(host, "cut", r.run, "fixer", COMMAND),
+        f"{COMMAND} waits on the user's sign-off, not on its fixer",
+    )
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_cut_of_the_fixer_once_its_fix_is_fixed_gives_1_naming_the_signoff(
+    tmp_path: Any, host: Any
+):
+    """Given the walkthrough's run whose command's fix-2 its fixer fixed
+    When tree.py cut runs for the command's fixer
+    Then it gives 1 saying the command waits on the user's sign-off, not on its fixer"""
+    r = over(str(tmp_path))
+    fix = r.round(COMMAND, "fix", 2)
+    rn_files.write_json(os.path.join(fix, "fixer.json"), {"result": "fixed", "files": []})
+    refused(
+        r.main(host, "cut", r.run, "fixer", COMMAND),
+        f"{COMMAND} waits on the user's sign-off, not on its fixer",
+    )
+
+
+@pytest.mark.supports("test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner")
+def test_cut_of_the_generator_while_a_fix_waits_on_its_fixer_gives_1_naming_it(
+    tmp_path: Any, host: Any
+):
+    """Given the walkthrough's run whose command's fix-2 holds its problem alone
+    When tree.py cut runs for the command's generator
+    Then it gives 1 saying the command waits on its fixer, and makes no Round"""
+    r = over(str(tmp_path))
+    r.main(host, "fix", r.run, COMMAND, "put-up", stdin=REFUSAL)
+    refused(
+        r.main(host, "cut", r.run, "generator", COMMAND),
+        f"{COMMAND} waits on its fixer, not on its generator",
+    )
     assert not os.path.exists(r.round(COMMAND, "content", 3))
 
 

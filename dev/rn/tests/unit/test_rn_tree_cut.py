@@ -3,7 +3,9 @@ Round, after one judged, holding the tree's decisions and the last good but no e
 findings, with the user's answer among its decisions, with none, one, and several inputs, for a
 refactor Round, and each refusal; and the evaluator's, with only what the deliverable's people
 have, of a deliverable with more paths, and each refusal; each refusal a tree whose goal is open
-among them. Each path of a Cut is from the folder the conversation works in, the top of the
+among them; and the fixer's, of an open deliverable and of a done one with more paths, holding
+only its node, paths, problem, and folders, and refused for a path of no deliverable and a Fix
+with no problem. Each path of a Cut is from the folder the conversation works in, the top of the
 user's repository."""
 
 from __future__ import annotations
@@ -20,8 +22,8 @@ from fault import Wrong
 from practice import Found
 from repository.place import RunPlace
 from rn_files import COMMAND, GOAL, GUIDE
-from rounds.files import Round
-from tree.cut import evaluator, generator
+from rounds.files import Fix, Round
+from tree.cut import evaluator, fixer, generator
 
 NAME = "20261120-a-command-with-which-the"
 LIGHT = os.path.join(rn_files.PRACTICES, "light")
@@ -325,3 +327,82 @@ def test_the_evaluators_cut_refuses_a_tree_whose_goal_is_open(repo: str):
     the["goal"] = {"decided": None}
     with pytest.raises(Wrong, match="goal is open"):
         evaluator(the, run_of(repo), round_at(repo, COMMAND), found("light"))
+
+
+# fixer
+
+PROBLEM = {"source": "final-check", "words": "The guide names the command by its old path."}
+
+
+def fix_at(repo: str, deliverable: str, number: int, problem: Any = PROBLEM) -> Fix:
+    """The deliverable's Fix of the number in the walkthrough's run, holding the problem, none
+    where it's None."""
+    folder = rn_files.round_of(rn_files.folder_of(repo, NAME), deliverable, "fix", number)
+    os.makedirs(folder)
+    if problem is not None:
+        rn_files.write_json(os.path.join(folder, "problem.json"), problem)
+    return Fix(folder, deliverable, number)
+
+
+@pytest.mark.supports(
+    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
+)
+def test_the_fixers_cut_holds_its_node_paths_problem_and_folders_alone(repo: str):
+    """Given the walkthrough's tree, and the command's fix-2 holding its problem
+    When the fixer's Cut of fix-2 is made
+    Then it holds the command's node as the tree holds it, the run's worktree, the command's path
+    in it, the problem, the run's folder, and fix-2's folder, each path from the repository's top,
+    and nothing else"""
+    the = walkthrough()
+    fix = fix_at(repo, COMMAND, 2)
+    got = fixer(the, run_of(repo), fix)
+    assert sorted(got) == ["deliverable", "fix", "paths", "problem", "run", "worktree"]
+    assert got["deliverable"] == the["deliverables"][1]
+    assert from_top(repo, got["worktree"]) == rn_files.worktree_of(repo, NAME)
+    assert [from_top(repo, each) for each in got["paths"]] == [in_worktree(repo, COMMAND)]
+    assert got["problem"] == PROBLEM
+    assert from_top(repo, got["run"]) == rn_files.folder_of(repo, NAME)
+    assert from_top(repo, got["fix"]) == fix.folder
+
+
+@pytest.mark.supports(
+    "test_a_final_checks_finding_within_the_decisions_is_mended_by_a_fix_of_the_done_deliverable"
+)
+def test_the_fixers_cut_of_a_done_deliverable_holds_its_node_and_each_more_path(repo: str):
+    """Given the walkthrough's tree whose guide is done, keeping its conditions, with a more path
+    docs/images/, and the guide's fix-3
+    When the fixer's Cut of fix-3 is made
+    Then it holds the guide's done node, and the guide's path then docs/images/ in the worktree"""
+    the = walkthrough()
+    done = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
+    done["more_paths"] = ["docs/images/"]
+    the["deliverables"][2] = done
+    got = fixer(the, run_of(repo), fix_at(repo, GUIDE, 3))
+    assert got["deliverable"] == done
+    assert [from_top(repo, each) for each in got["paths"]] == [
+        in_worktree(repo, GUIDE),
+        in_worktree(repo, "docs/images"),
+    ]
+
+
+@pytest.mark.supports(
+    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
+)
+def test_the_fixers_cut_refuses_a_fix_of_no_deliverable(repo: str):
+    """Given the walkthrough's tree, and a Fix of invoicer/cli.py, no deliverable's path
+    When the fixer's Cut is made
+    Then it refuses with Wrong naming the path"""
+    with pytest.raises(Wrong, match="invoicer/cli.py"):
+        fixer(walkthrough(), run_of(repo), fix_at(repo, "invoicer/cli.py", 1))
+
+
+@pytest.mark.supports(
+    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
+)
+def test_the_fixers_cut_refuses_a_fix_with_no_problem(repo: str):
+    """Given the walkthrough's tree, and the command's fix-2 holding no problem
+    When the fixer's Cut is made
+    Then it refuses with Wrong naming the Fix's folder and saying to write it by tree.py fix"""
+    fix = fix_at(repo, COMMAND, 2, problem=None)
+    with pytest.raises(Wrong, match="holds no problem; write the Fix by tree.py fix"):
+        fixer(walkthrough(), run_of(repo), fix)

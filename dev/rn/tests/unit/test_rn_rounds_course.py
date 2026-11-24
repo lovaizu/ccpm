@@ -7,7 +7,11 @@ evaluator's findings, the content at LIMIT whose findings left the pruner keeps 
 decisions, which then waits on the sign-off before the answer, a refactor Round made, which no
 evaluator judges, a Round put up and a send-back after it, and a pause that leaves a Round with its
 Cut and no result, of the generator or of the evaluator, at Round 1 and at LIMIT, which spends no
-Round."""
+Round. Then next_with_fixes, with the Fixes after the Rounds: none, as next_of; a Fix whose fixer
+wrote nothing, its Cut written or not; a Fix fixed or naming a decision, the node as its fixer's Cut
+held it, changed since, or with no Cut; Rounds after a Fix, which count alone toward the limit; and
+Fixes past LIMIT Rounds, which spend no Round; and mended and next_in, reading the Fixes from a
+run's files."""
 
 from __future__ import annotations
 
@@ -17,8 +21,9 @@ from typing import Any
 
 import pytest
 import rn_files
-from rounds.course import LIMIT, Done, Next, next_of
-from rounds.files import Round
+from repository.place import RunPlace
+from rounds.course import LIMIT, Done, Mend, Next, mended, next_in, next_of, next_with_fixes
+from rounds.files import Fix, Round
 
 COMMAND = rn_files.COMMAND
 
@@ -714,3 +719,227 @@ def test_an_open_decision_of_a_condition_not_good_below_limit_is_a_point(results
     assert next_of(with_open(["N2", "N3"], ["N1"], results), done, False) == Next(
         "answer", None, False
     )
+
+
+# The Fixes after the Rounds.
+
+FIXED = {"result": "fixed", "files": [COMMAND]}
+DECISION = {"result": "decision", "decision": "N1 decides the lines as the user wrote them."}
+
+
+def a_fix(folder: str, number: int, fixer: Any = None, given: Any = None) -> Mend:
+    """The command's Fix fix-<number>, with the fixer's result, None where it wrote none, and the
+    node its Cut held, None where it holds no Cut, each read back from JSON."""
+    place = rn_files.round_of(os.path.join(folder, "run"), COMMAND, "fix", number)
+    result = None if fixer is None else read_back(folder, f"f-{number}", fixer)
+    node_given = None if given is None else read_back(folder, f"n-{number}", given)
+    return Mend(Fix(place, COMMAND, number), result, node_given)
+
+
+def judged_good(folder: str) -> list[Done]:
+    """The command judged good in content-1, put up with each condition good."""
+    return rounds(folder, ("content", 1, MADE_ALL, GOOD, GOOD_PUT_UP))
+
+
+@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
+def test_with_no_fix_it_waits_on_what_next_of_gives(results: str):
+    """Given the command made in content-1 with no evaluator yet, and no Fix
+    When what it waits on is asked with its Fixes
+    Then the evaluator in content-1, as next_of gives it"""
+    done = rounds(results, ("content", 1, MADE_ALL, None))
+    assert next_with_fixes(node(folder=results), done, [], False) == Next(
+        "evaluator", "content", False
+    )
+
+
+@pytest.mark.supports("test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner")
+def test_a_fix_with_no_cut_waits_on_a_new_fixer(results: str):
+    """Given the command judged good in content-1 and put up, and fix-2 holding its problem alone
+    When what it waits on is asked
+    Then the fixer, of the stage fix, a new one"""
+    assert next_with_fixes(
+        node(True, folder=results), judged_good(results), [a_fix(results, 2)], False
+    ) == Next("fixer", "fix", False)
+
+
+@pytest.mark.supports("test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut")
+def test_a_fix_whose_fixer_was_stopped_resumes_it(results: str):
+    """Given the command judged good in content-1, and fix-2 whose fixer's Cut holds the node, and
+    no fixer's result, as a pause stopped it
+    When what it waits on is asked
+    Then the fixer, of the stage fix, resuming"""
+    held_node = node(True, folder=results)
+    fixes = [a_fix(results, 2, given=held_node)]
+    assert next_with_fixes(held_node, judged_good(results), fixes, False) == Next(
+        "fixer", "fix", True
+    )
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+@pytest.mark.parametrize("cut", [True, False], ids=["the node its Cut held", "no Cut"])
+def test_a_fix_fixed_waits_on_the_signoff(results: str, cut: bool):
+    """Given the command judged good in content-1, and fix-2 fixed, its fixer's Cut holding the
+    node as it stands, or no Cut
+    When what it waits on is asked
+    Then the sign-off, for the command to be put up again"""
+    held_node = node(True, folder=results)
+    fixes = [a_fix(results, 2, FIXED, held_node if cut else None)]
+    assert next_with_fixes(held_node, judged_good(results), fixes, False) == Next(
+        "sign-off", None, False
+    )
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+def test_a_fixs_decision_waits_on_the_pruner_to_weigh_it(results: str):
+    """Given the command judged good in content-1, and fix-2 whose fixer named a decision, its Cut
+    holding the node as it stands
+    When what it waits on is asked
+    Then the pruner, of the stage fix"""
+    held_node = node(True, folder=results)
+    fixes = [a_fix(results, 2, DECISION, held_node)]
+    assert next_with_fixes(held_node, judged_good(results), fixes, False) == Next(
+        "pruner", "fix", False
+    )
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+@pytest.mark.parametrize("fixer", [DECISION, FIXED], ids=["decision", "fixed"])
+def test_a_fix_whose_node_changed_since_takes_a_new_content_round(results: str, fixer: Any):
+    """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds, then good,
+    and fix-3, its fixer's Cut holding the node with each condition good, and the node now holding
+    N1 not good, as a pruner wrote a decision since
+    When what it waits on is asked
+    Then the generator in a new content Round, as a course anew, the Rounds before the Fix
+    counting toward no limit"""
+    done = rounds(
+        results,
+        ("content", 1, MADE_ALL, SHORT),
+        ("content", 2, MADE_ALL, GOOD, GOOD_PUT_UP),
+    )
+    fixes = [a_fix(results, 3, fixer, node(True, folder=results))]
+    assert next_with_fixes(node(["N2", "N3"], folder=results), done, fixes, False) == Next(
+        "generator", "content", False
+    )
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+def test_a_fix_whose_node_changed_to_an_open_decision_waits_on_the_answer(results: str):
+    """Given the command judged good in content-1, and fix-2 whose fixer named a decision, its
+    Cut holding the node with each condition good, and the node now holding an open decision of
+    N1, a point that the pruner left for the user
+    When what it waits on is asked
+    Then the answer"""
+    fixes = [a_fix(results, 2, DECISION, node(True, folder=results))]
+    assert next_with_fixes(
+        node(["N2", "N3"], open_decision=True, folder=results), judged_good(results), fixes, False
+    ) == Next("answer", None, False)
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+def test_rounds_after_a_fix_count_alone_toward_the_limit(results: str):
+    """Given the command judged short in content-1 and content-2, fix-3 whose fixer named a
+    decision, and content-4 judged short
+    When what it waits on is asked
+    Then the generator in a new content Round, as content-4 alone counts toward the limit"""
+    done = rounds(
+        results,
+        ("content", 1, MADE_ALL, SHORT),
+        ("content", 2, MADE_ALL, SHORT),
+        ("content", 4, MADE_ALL, SHORT),
+    )
+    fixes = [a_fix(results, 3, DECISION, node(True, folder=results))]
+    assert next_with_fixes(node(["N2", "N3"], folder=results), done, fixes, False) == Next(
+        "generator", "content", False
+    )
+
+
+@pytest.mark.supports(
+    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
+)
+def test_limit_rounds_after_a_fix_wait_on_the_pruner(results: str):
+    """Given the command judged good in content-1, fix-2 whose fixer named a decision, and
+    content-3 and content-4 judged short, LIMIT Rounds after the Fix
+    When what it waits on is asked
+    Then the pruner, to keep each finding left"""
+    done = rounds(
+        results,
+        ("content", 1, MADE_ALL, GOOD, GOOD_PUT_UP),
+        ("content", 3, MADE_ALL, SHORT),
+        ("content", 4, MADE_ALL, SHORT),
+    )
+    fixes = [a_fix(results, 2, DECISION, node(True, folder=results))]
+    assert next_with_fixes(node(["N2", "N3"], folder=results), done, fixes, False) == Next(
+        "pruner", None, False
+    )
+
+
+@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
+def test_fixes_past_limit_rounds_each_wait_on_their_fixer(results: str):
+    """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds, the finding
+    kept as an open decision and put up, then fix-3 fixed and fix-4 holding its problem alone
+    When what it waits on is asked
+    Then the fixer, as no Fix spends a Round of the limit"""
+    left = with_open(["N2", "N3"], ["N1"], results)
+    done = rounds(
+        results,
+        ("content", 1, MADE_ALL, SHORT),
+        ("content", 2, MADE_ALL, SHORT, LEFT_PUT_UP),
+    )
+    fixes = [a_fix(results, 3, FIXED, left), a_fix(results, 4)]
+    assert next_with_fixes(left, done, fixes, False) == Next("fixer", "fix", False)
+
+
+# Reading the Fixes from a run's files.
+
+NAME = "20261120-a-command-with-which-the"
+
+
+@pytest.fixture
+def run(tmp_path: Any) -> RunPlace:
+    """The walkthrough's run in a repository of the case, its design tree written."""
+    repository = os.path.realpath(str(tmp_path))
+    rn_files.run_folder(repository, NAME, rn_files.walkthrough_tree(NAME))
+    return RunPlace(repository, NAME)
+
+
+@pytest.mark.supports("test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut")
+def test_mended_gives_each_fix_with_its_result_and_the_node_its_cut_held(run: RunPlace):
+    """Given a run whose command has content-1, fix-2 fixed with its fixer's Cut, and fix-3
+    holding its problem alone
+    When the command's Fixes are asked
+    Then they are fix-2 with its result and node, and fix-3 with neither"""
+    folder = rn_files.folder_of(run.repository, NAME)
+    rn_files.a_round(folder, COMMAND, "content", 1)
+    held_node = node(True)
+    second = rn_files.round_of(folder, COMMAND, "fix", 2)
+    rn_files.write_json(os.path.join(second, "fixer-cut.json"), {"deliverable": held_node})
+    rn_files.write_json(os.path.join(second, "fixer.json"), FIXED)
+    third = rn_files.round_of(folder, COMMAND, "fix", 3)
+    rn_files.write_json(os.path.join(third, "problem.json"), {"source": "put-up", "words": "x"})
+    assert mended(run, COMMAND) == [
+        Mend(Fix(second, COMMAND, 2), FIXED, held_node),
+        Mend(Fix(third, COMMAND, 3), None, None),
+    ]
+
+
+@pytest.mark.supports("test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner")
+def test_next_in_reads_the_fixes_of_the_run(run: RunPlace):
+    """Given a run whose command has content-1 made and judged good, and fix-2 holding its problem
+    alone
+    When what the command waits on in the run is asked
+    Then the fixer, of the stage fix, a new one"""
+    folder = rn_files.folder_of(run.repository, NAME)
+    rn_files.a_round(folder, COMMAND, "content", 1, {"generator": MADE_ALL, "evaluator": GOOD})
+    fix = rn_files.round_of(folder, COMMAND, "fix", 2)
+    rn_files.write_json(os.path.join(fix, "problem.json"), {"source": "put-up", "words": "x"})
+    assert next_in(run, node(True)) == Next("fixer", "fix", False)

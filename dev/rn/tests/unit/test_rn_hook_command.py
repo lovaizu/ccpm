@@ -79,6 +79,15 @@ def test_the_evaluators_delete_is_denied():
     denied(main(given("rm -r /tmp/rn-trial/build", agent="rn:evaluator"), ROOT))
 
 
+@pytest.mark.supports("test_a_fixers_delete_by_rm_is_denied_pointing_to_remove_py")
+def test_the_fixers_delete_is_denied_with_how_to_use_remove_py():
+    """Given rn's fixer calling Bash with rm
+    When the hook runs
+    Then it denies the call, its reason giving remove.py's command by its absolute path"""
+    reason = denied(main(given("rm -r invoicer/__pycache__", agent="rn:fixer"), ROOT))
+    assert f"python3 {REMOVE} <exact path> [<exact path> ...]" in reason
+
+
 @pytest.mark.supports("test_a_delete_by_the_main_conversation_passes_the_hook")
 @pytest.mark.parametrize(
     "cmd",
@@ -206,11 +215,20 @@ def test_the_main_conversations_write_to_a_runs_tree_is_denied_pointing_to_a_new
 @pytest.mark.supports("test_a_makers_write_to_the_design_tree_is_denied_while_the_scripts_write_it")
 @pytest.mark.parametrize(
     "agent",
-    ["rn:generator", "rn:evaluator", "Explore", "general-purpose", "pruner", "rn:pruner2", 7],
+    [
+        "rn:generator",
+        "rn:evaluator",
+        "rn:fixer",
+        "Explore",
+        "general-purpose",
+        "pruner",
+        "rn:pruner2",
+        7,
+    ],
 )
 def test_a_write_to_a_runs_tree_by_any_agent_but_the_pruner_is_denied(agent: Any):
-    """Given rn's generator or evaluator, another plugin's or Claude Code's own agent, an agent
-    named nearly as the pruner, or an agent_type that isn't text, calling Write on a run's
+    """Given rn's generator, evaluator, or fixer, another plugin's or Claude Code's own agent, an
+    agent named nearly as the pruner, or an agent_type that isn't text, calling Write on a run's
     design-tree.json
     When the hook runs
     Then it denies the call"""
@@ -233,6 +251,26 @@ def test_the_pruners_write_to_a_runs_tree_passes(tool: str):
     When the hook runs
     Then it gives 0 and prints nothing, so that the write goes on"""
     assert main(written(TREE, agent="rn:pruner", tool=tool), ROOT) == (0, "", "")
+
+
+@pytest.mark.supports(
+    "test_a_fixers_write_to_the_design_tree_is_denied_while_its_deliverables_file_passes"
+)
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/work/invoicer/invoicer/__main__.py",
+        "/work/invoicer/.rn/20261120-invoices/rounds/invoicer%2F__main__.py/fix-2/fixer.json",
+    ],
+    ids=["its deliverable's file", "its result"],
+)
+@pytest.mark.parametrize("tool", ["Write", "Edit"])
+def test_the_fixers_write_to_its_deliverable_or_its_result_passes(path: str, tool: str):
+    """Given rn's fixer calling Write or Edit on its deliverable's file, or on its result in its
+    Fix's folder
+    When the hook runs
+    Then it gives 0 and prints nothing"""
+    assert main(written(path, agent="rn:fixer", tool=tool), ROOT) == (0, "", "")
 
 
 @pytest.mark.supports(
@@ -436,9 +474,11 @@ def test_a_command_naming_a_runs_tree_that_the_hook_cant_tell_only_reads_is_deni
 @pytest.mark.supports(
     "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
 )
-@pytest.mark.parametrize("agent", ["rn:generator", "rn:evaluator", "general-purpose", "pruner"])
+@pytest.mark.parametrize(
+    "agent", ["rn:generator", "rn:evaluator", "rn:fixer", "general-purpose", "pruner"]
+)
 def test_a_bash_write_to_a_runs_tree_by_any_agent_but_the_pruner_is_denied(agent: str):
-    """Given rn's generator or evaluator, another agent, or one named nearly as the pruner,
+    """Given rn's generator, evaluator, or fixer, another agent, or one named nearly as the pruner,
     calling Bash with a redirection onto a run's design-tree.json
     When the hook runs
     Then it denies the call"""

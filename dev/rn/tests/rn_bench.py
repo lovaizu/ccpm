@@ -6,8 +6,8 @@ Each move runs rn's scripts as a role runs them, from the repository's top, each
 own, and feeds what one prints to the next, as the orchestrator and each role do. A double stands in
 for each prompt's work, as rn's Test strategy says under Integration testing: the pruner's writes
 the design tree, rewrites the nodes that `tree.py touched` lists, and checks it by `tree.py check`,
-the generator's writes a deliverable's files, and each role's writes its result where the prompt's
-result form says. Each helper plays one move, and
+the generator's writes a deliverable's files, the fixer's mends them or names a decision, and each
+role's writes its result where the prompt's result form says. Each helper plays one move, and
 says nothing of how rn's parts carry it."""
 
 from __future__ import annotations
@@ -489,6 +489,81 @@ def short_twice(b: Bench) -> None:
     judged_command(b, more)
     generated(b, next_round(b, rn_files.COMMAND, ["N2", "N3"]))
     evaluated(b, next_round(b, rn_files.COMMAND, ["N2", "N3"], "evaluator"), more)
+
+
+# The repository's own check before a push, and the moves of a Fix: the orchestrator's, and the
+# fixer's, the double of its prompt's work.
+
+
+# What the repository's check before a push prints where a line of the command ends in a space.
+PUSH_REFUSAL = "lint: invoicer/__main__.py: a line ends in a space; strip it"
+# The command with a line that ends in a space, which the check before a push refuses.
+SPACED_TEXT = COMMAND_TEXT.replace("import sys\n", "import sys \n")
+
+
+def push_checked(b: Bench) -> None:
+    """The user's repository checks each push by a pre-push hook of git, which every worktree of
+    it runs: it refuses the push, printing PUSH_REFUSAL, where a line of the command ends in a
+    space."""
+    hook = os.path.join(b.repo, ".git", "hooks", "pre-push")
+    with open(hook, "w", encoding="utf-8") as f:
+        f.write(
+            "#!/bin/sh\n"
+            "if grep -q ' $' invoicer/__main__.py; then\n"
+            f"  echo '{PUSH_REFUSAL}' >&2\n"
+            "  exit 1\n"
+            "fi\n"
+        )
+    os.chmod(hook, 0o755)
+
+
+def push_refused(b: Bench) -> Ran:
+    """A run whose repository checks each push, as `push_checked` sets, and whose command's
+    generator made it with a line that ends in a space, judged good in Round content-1; one pruner
+    holds each condition good, and the orchestrator puts the command up by `repository.py put-up`;
+    gives what put-up gave."""
+    push_checked(b)
+    generated(b, signed_plan(b), {rn_files.COMMAND: SPACED_TEXT})
+    evaluated(b, next_round(b, rn_files.COMMAND, [], "evaluator"))
+    reviewed(b, held(b, rn_files.COMMAND, rn_files.conditions("light")), "The Round's findings.")
+    return b.script("repository", "put-up", b.run, rn_files.COMMAND)
+
+
+def fix_written(b: Bench, deliverable: str, source: str, words: str) -> str:
+    """The orchestrator judges, from the design tree, that the problem's mend keeps each decision
+    of the deliverable, and writes the Fix by `tree.py fix` with the problem's words on stdin,
+    which must give 0; gives the Fix's folder that it printed."""
+    done = b.script("tree", "fix", b.run, deliverable, source, given=words)
+    assert done.code == 0, done.err + done.out
+    return done.out.strip()
+
+
+def fixer_resulted(b: Bench, cut_path: str, result: Mapping[str, Any]) -> None:
+    """Writes the fixer's result in the Fix's folder that its Cut names."""
+    path = os.path.join(b.repo, cut_of(b, cut_path)["fix"], "fixer.json")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(result))
+
+
+def fixed(b: Bench, cut_path: str, files: Mapping[str, str]) -> None:
+    """The fixer mends its deliverable from its Cut within its decisions and ends with `fixed`: it
+    writes each file given, by its path from the worktree's top; runs `repository.py checks` on
+    them, which must give 0; runs the repository's tests as its developers run them, in the run's
+    worktree; writes its result with the files; and runs `check.py fixer`, which must give 0."""
+    wrote(b, files)
+    b.ran("repository", "checks", b.run, *files)
+    tests = subprocess.run(DEVELOPERS_TESTS, cwd=b.worktree, capture_output=True, check=False)
+    assert tests.returncode == 0, tests.stderr
+    fixer_resulted(b, cut_path, {"result": "fixed", "files": list(files)})
+    b.ran("check", "fixer", cut_path)
+
+
+def decision_named(b: Bench, cut_path: str, words: str) -> None:
+    """The fixer finds that its mend would change a decision of its deliverable, mends nothing,
+    ends with `decision`, naming it in the words given, and runs `check.py fixer`, which must
+    give 0."""
+    fixer_resulted(b, cut_path, {"result": "decision", "decision": words})
+    b.ran("check", "fixer", cut_path)
 
 
 # The hook, as Claude Code runs it before a tool call.

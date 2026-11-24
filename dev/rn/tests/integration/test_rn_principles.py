@@ -12,6 +12,7 @@ import rn_files
 from repo_files import git
 from rn_bench import (
     CHANGELOG,
+    COMMAND_TEXT,
     Bench,
     apart_tree,
     bash_called,
@@ -21,6 +22,8 @@ from rn_bench import (
     denial,
     evaluated,
     evaluator_cut,
+    fix_written,
+    fixed,
     generated,
     heard,
     held,
@@ -28,6 +31,7 @@ from rn_bench import (
     new_run,
     next_round,
     pruned,
+    push_refused,
     put_up,
     refactor_made,
     refactored,
@@ -218,6 +222,36 @@ def test_a_users_answer_after_two_content_rounds_gets_a_new_content_round(b: Ben
     assert answer in n1["decisions"]
 
 
+@pytest.mark.supports("P3.4", "fixer", "Fix")
+def test_a_fix_counts_toward_no_limit_of_the_rounds(b: Bench, broken: None):
+    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2,
+    LIMIT Rounds, the finding kept as an open decision and the command put up
+    When the user sends it back with words whose mend keeps each decision, and the orchestrator
+    writes the Fix and the fixer's Cut; the fixer ends with fixed, and the orchestrator puts the
+    command up again; and the user sends it back once more, and the orchestrator writes a Fix and
+    the fixer's Cut again
+    Then each fixer's Cut is written, in fix-3 and then in fix-4, as no Fix spends a Round of the
+    limit"""
+    short_twice(b)
+    proposal = rn_files.decision("a comma in a line", None)
+    reviewed(
+        b,
+        held(b, COMMAND, ["N2", "N3"], {"N1": [proposal]}),
+        "Left past its Rounds.",
+        [("repository", "put-up", b.run, COMMAND)],
+    )
+    fix_written(b, COMMAND, "send-back", "The usage line names the script, not the module.")
+    first = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    third = rn_files.round_of(b.folder, COMMAND, "fix", 3)
+    assert os.path.join(b.repo, first) == os.path.join(third, "fixer-cut.json")
+    fixed(b, first, {COMMAND: COMMAND_TEXT + "# usage: python -m invoicer <lines>\n"})
+    b.ran("repository", "put-up", b.run, COMMAND)
+    fix_written(b, COMMAND, "send-back", "The usage line ends without a full stop.")
+    second = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    fourth = rn_files.round_of(b.folder, COMMAND, "fix", 4)
+    assert os.path.join(b.repo, second) == os.path.join(fourth, "fixer-cut.json")
+
+
 # P4: each role on its own work.
 
 
@@ -346,6 +380,24 @@ def test_a_blocker_kept_for_the_user_leaves_the_other_deliverables_work_going_on
     assert "the user's answer" in refused.err
 
 
+@pytest.mark.supports("P5.4", "fixer", "Fix", "Cut")
+def test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner(
+    b: Bench, broken: None
+):
+    """Given a run whose command's put-up the repository's push check refused
+    When the orchestrator judges that the mend keeps each decision, writes the Fix by tree.py fix,
+    and, starting no pruner, writes the fixer's Cut
+    Then tree.py cut gives 0, the Cut lying in the command's fix-2, and the design tree is as the
+    put-up left it, unweighed"""
+    refused = push_refused(b)
+    before = b.tree()
+    fix = fix_written(b, COMMAND, "put-up", refused.err)
+    cut_path = b.script(*cut_move(b, "fixer", COMMAND))
+    assert cut_path.code == 0, cut_path.err
+    assert os.path.join(b.repo, cut_path.out.strip()) == os.path.join(fix, "fixer-cut.json")
+    assert b.tree() == before
+
+
 # P6: nothing lost on a stop.
 
 
@@ -469,3 +521,23 @@ def test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding(
     assert given["last_good"] == made["good"]
     assert "findings" not in given
     assert finding not in json.dumps(given)
+
+
+@pytest.mark.supports("P7.3", "fixer", "hook", "Design tree")
+@pytest.mark.parametrize("tool", ["Write", "Edit"])
+def test_a_fixers_write_to_the_design_tree_is_denied_while_its_deliverables_file_passes(
+    b: Bench, broken: None, tool: str
+):
+    """Given rn's hook before each Write or Edit, and a run whose hearing one pruner wrote
+    When rn's fixer calls Write or Edit on the run's design tree, and then Write on the command's
+    file in the run's worktree, and Claude Code runs the hook before each
+    Then the hook denies the write of the tree, naming it and telling the fixer to hand the fact
+    to a new pruner, and lets the write of the command pass, printing nothing"""
+    heard(b)
+    reason = denial(b.script("hook", given=tree_written(b, "rn:fixer", tool)))
+    assert reason is not None, "the fixer's write of the tree is denied"
+    assert b.tree_path in reason
+    assert "hand the fact you'd write to a new pruner" in reason
+    command = {"file_path": os.path.join(b.worktree, COMMAND), "content": COMMAND_TEXT}
+    given = rn_files.hook_input(b.repo, "Write", command, "rn:fixer")
+    assert denial(b.script("hook", given=given)) is None

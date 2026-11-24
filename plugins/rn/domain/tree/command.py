@@ -17,13 +17,15 @@ from rounds import course, files
 
 from tree import checks, cut, form, signoff, touched
 
-# Whom a deliverable waits on, as a refused cut says it.
+# Whom a deliverable waits on, as a refused cut says it, by what it waits on and the stage.
 _WHO = {
-    "generator": "its generator",
-    "evaluator": "its evaluator",
-    "answer": "the user's answer to its open decision",
-    "pruner": "the pruner, to keep each finding left as an open decision",
-    "sign-off": "the user's sign-off",
+    ("generator", None): "its generator",
+    ("evaluator", None): "its evaluator",
+    ("fixer", None): "its fixer",
+    ("answer", None): "the user's answer to its open decision",
+    ("pruner", None): "the pruner, to keep each finding left as an open decision",
+    ("pruner", course.FIX): "the pruner, to weigh the decision its fixer named",
+    ("sign-off", None): "the user's sign-off",
 }
 
 USAGE = """\
@@ -31,13 +33,17 @@ usage: tree.py touched <run> [<pointer>]
        tree.py check <run>
        tree.py commit <run> <ground>
        tree.py cut <run> <role> <deliverable>
+       tree.py fix <run> <deliverable> <source>   (the problem's words on stdin)
        tree.py signoff <run>
 """
 
 
-def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
+def main(
+    argv: Sequence[str], cwd: str, plugin_root: str, host: Host, stdin: Callable[[], str] = str
+) -> Answer:
     """The exit code, stdout, and stderr of `tree.py` with the arguments, from the folder `cwd`,
-    with rn's folder at `plugin_root`, and git reached through `host`.
+    with rn's folder at `plugin_root`, git reached through `host`, and what it's given on stdin
+    read by `stdin`, which only `fix` reads.
 
     - `touched <run> <pointer>`: 0 printing each node that `tree.touched.touched` gives for the
       tree in the work branch's last commit and the tree as it stands, its pointer a line.
@@ -52,11 +58,19 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       with the first fault, git left as it was; 0 printing the last commit's hash, committing
       nothing, where the tree has no change since it. It pushes nothing and asks gh nothing, as the
       final check pushes the work and the user marks the pull request ready.
-    - `cut <run> <role> <deliverable>`, `<role>` `generator` or `evaluator`: writes the role's Cut
-      in the Round that `rounds.course.next_of` gives the deliverable, made anew where the
-      generator starts a new Round, and gives 0 printing the Cut's path from `cwd`; 1 where the
-      deliverable waits on another role, the user, or the pruner, saying which, and where the
-      tree's goal is open, saying that a new pruner writes it, each writing nothing.
+    - `cut <run> <role> <deliverable>`, `<role>` `generator`, `evaluator`, or `fixer`: writes the
+      role's Cut in the Round that `rounds.course.next_in` gives the deliverable, made anew where
+      the generator starts a new Round, or, for the fixer, in its last Fix, and gives 0 printing
+      the Cut's path from `cwd`; 1 where the deliverable waits on another role, the user, or the
+      pruner, saying which, and where the tree's goal is open, saying that a new pruner writes it,
+      each writing nothing.
+    - `fix <run> <deliverable> <source>`, `<source>` one of `rounds.files.SOURCES`, with the
+      problem's words on stdin, as they were printed or said: writes the deliverable's next Fix
+      as `rounds.files.new_fix` does, with the problem that `rounds.files.problem` gives, and
+      gives 0 printing the Fix's folder, absolute; 1 writing nothing where the source or the
+      words are Wrong, or where the deliverable waits on other than the sign-off, saying on what:
+      where its Rounds aren't over yet, or a Fix of it waits unfinished, on its fixer or on the
+      pruner that weighs the decision its fixer named.
     - `signoff <run>`: writes the tree that `tree.signoff.signed_off` gives for the deliverable
       that `tree.signoff.waiting` names, and gives 0 printing its path; 1 where none waits. It
       commits and pushes nothing, as `commit` does once the tree is reviewed.
@@ -71,9 +85,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     subcommand, least, most = _SUBCOMMANDS[argv[0]]
     if not least <= len(argv) - 1 <= most:
         return 2, "", USAGE
+    given = list(argv[2:]) + ([stdin()] if argv[0] in _READS_STDIN else [])
     return answered(
-        "tree.py",
-        lambda: subcommand(of_folder(cwd, argv[1]), list(argv[2:]), cwd, plugin_root, host),
+        "tree.py", lambda: subcommand(of_folder(cwd, argv[1]), given, cwd, plugin_root, host)
     )
 
 
@@ -110,11 +124,13 @@ def _cut(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
     tree = form.read(run.tree)
     form.goal(tree)
     node = form.deliverable(tree, path)
-    kinds = practice.kinds(plugin_root, run.worktree)
-    done = course.so_far(run, path)
     next_ = course.next_in(run, node)
     if next_.waits_on != role:
-        return 1, "", f"tree.py: {path} waits on {_WHO[next_.waits_on]}, not on its {role}\n"
+        return 1, "", f"tree.py: {path} waits on {_who(next_)}, not on its {role}\n"
+    if role == "fixer":
+        fix = course.mended(run, path)[-1].fix
+        return _written(fix.cut, cut.fixer(tree, run, fix), cwd)
+    done = course.so_far(run, path)
     if role == "generator" and not next_.resumes:
         round_ = files.new(run, path, str(next_.stage))
     else:
@@ -122,14 +138,46 @@ def _cut(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
     kind = node["kind"]
     if role == "generator" and round_.stage == "refactor":
         kind = str(practice.refactoring(kind))
+    kinds = practice.kinds(plugin_root, run.worktree)
     found = practice.Found(kinds[kind], practice.read(kinds[kind]))
     if role == "generator":
         written = cut.generator(tree, run, round_, found, _last([each.generator for each in done]))
     else:
         written = cut.evaluator(tree, run, round_, found)
-    with open(round_.cut(role), "w", encoding="utf-8") as file:
+    return _written(round_.cut(role), written, cwd)
+
+
+def _fix(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
+    path, source, words = given
+    problem = files.problem(source, words)
+    node = form.deliverable(form.read(run.tree), path)
+    next_ = course.next_in(run, node)
+    if next_.waits_on != "sign-off":
+        return 1, "", f"tree.py: {path} waits on {_who(next_)}, {_unfinished(next_)}\n"
+    return 0, f"{files.new_fix(run, path, problem).folder}\n", ""
+
+
+def _written(path: str, written: cut.Cut, cwd: str) -> Answer:
+    """Writes the Cut at its path, and gives 0 printing the path from `cwd`."""
+    with open(path, "w", encoding="utf-8") as file:
         file.write(json.dumps(written, indent=1) + "\n")
-    return 0, f"{os.path.relpath(round_.cut(role), cwd)}\n", ""
+    return 0, f"{os.path.relpath(path, cwd)}\n", ""
+
+
+def _who(next_: course.Next) -> str:
+    """Whom the deliverable waits on, in words."""
+    return _WHO.get((next_.waits_on, next_.stage), _WHO[(next_.waits_on, None)])
+
+
+def _unfinished(next_: course.Next) -> str:
+    """Why a deliverable that doesn't wait on the sign-off takes no Fix, and what to do, in
+    words."""
+    if next_.waits_on == "fixer" or next_.stage == course.FIX:
+        return "as a Fix of it is unfinished; end that Fix before another"
+    return (
+        "as its Rounds aren't over yet; a Fix mends a deliverable whose Rounds are over, and its"
+        " Rounds mend it till then"
+    )
 
 
 def _signoff(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
@@ -192,5 +240,8 @@ _SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int]] = {
     "check": (_check, 1, 1),
     "commit": (_commit, 2, 2),
     "cut": (_cut, 3, 3),
+    "fix": (_fix, 3, 3),
     "signoff": (_signoff, 1, 1),
 }
+# The subcommands that take what they're given on stdin, after their arguments.
+_READS_STDIN = ("fix",)

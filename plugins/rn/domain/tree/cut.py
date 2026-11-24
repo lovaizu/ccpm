@@ -1,8 +1,10 @@
 """Decides what each role's Cut holds of the design tree and the Rounds, so that each role starts
 with only what its work needs: the generator the language it writes in, its deliverable's
 decisions, the user's answers and the pruner's remedies among them, and its own last good, but no
-evaluator's findings, as it mends by its Cut's decisions alone; and the evaluator only what the
-deliverable's people have. A Cut waits while the tree's goal is open, as each Cut holds it."""
+evaluator's findings, as it mends by its Cut's decisions alone; the evaluator only what the
+deliverable's people have; and the fixer its deliverable's decisions and files, and the problem in
+its own words, with nothing that would pull it past them. A Cut waits while the tree's goal is
+open, as the generator's and the evaluator's hold it."""
 
 from __future__ import annotations
 
@@ -13,9 +15,10 @@ from fault import Wrong
 from practice import Found, judged
 from repository import trial
 from repository.place import RunPlace
-from rounds.files import Result, Round
+from rounds import files
+from rounds.files import Fix, Result, Round
 
-from tree.form import OPEN, Deliverable, Tree, goal
+from tree.form import OPEN, Deliverable, Tree, deliverable, goal
 
 # A role's Cut, in the form of domain/schemas/<role>-cut.schema.json.
 Cut = dict[str, Any]
@@ -81,6 +84,35 @@ def evaluator(tree: Tree, run: RunPlace, round_: Round, practice: Found) -> Cut:
         "worktree": _from(run, run.worktree),
         "trial": trial.folder(run, round_),
         "round": _from(run, round_.folder),
+    }
+
+
+def fixer(tree: Tree, run: RunPlace, fix: Fix) -> Cut:
+    """The fixer's Cut for the Fix.
+
+    Takes: the tree, the run, and the Fix to mend, its problem written.
+    Gives: the Cut of `fixer-cut.schema.json`: the deliverable's node as the tree holds it, open
+    or done, with its necessary conditions and their decisions; the run's worktree; the path of
+    each file or folder of the deliverable in it, its path then each of its more paths; the Fix's
+    problem; the run's folder; and the Fix's folder, where the fixer writes its result; each path
+    from the folder that the conversation works in. It holds no goal, best practice, or Round,
+    as the fixer mends within the decisions alone.
+    Changes: nothing.
+    Refuses: Wrong where the tree holds no deliverable of the Fix's path, or the Fix holds no
+    problem.
+    """
+    node = deliverable(tree, fix.deliverable)
+    problem = files.problem_of(fix)
+    if problem is None:
+        raise Wrong(f"{fix.folder}: holds no problem; write the Fix by tree.py fix")
+    paths = [node["path"], *node.get("more_paths", [])]
+    return {
+        "deliverable": node,
+        "worktree": _from(run, run.worktree),
+        "paths": [_from(run, os.path.join(run.worktree, each)) for each in paths],
+        "problem": problem,
+        "run": _from(run, run.folder),
+        "fix": _from(run, fix.folder),
     }
 
 
