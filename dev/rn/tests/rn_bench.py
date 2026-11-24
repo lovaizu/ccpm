@@ -20,22 +20,15 @@ import sys
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
-from typing import Any, NamedTuple
+from typing import Any
 
 import rn_files
 from gh import gh_double
 from repo_files import environment, git
+from repository.host import Ran
 from rn_files import LANGUAGES, TOP, WORDS
 
 RN = os.path.join(TOP, "plugins", "rn")
-
-
-class Ran(NamedTuple):
-    """What a script gave: its exit code, its stdout, and its stderr."""
-
-    code: int
-    out: str
-    err: str
 
 
 @dataclass(frozen=True)
