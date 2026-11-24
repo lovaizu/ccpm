@@ -88,11 +88,13 @@
   <path class="line" d="M340,95 L220,95" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="280" y="114">points, sign-offs</text>
   <path class="line" d="M580,60 L800,60" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="690" y="51">starts, with each fact</text>
+  <text class="data halo mid" x="690" y="51">starts, with each unit settled</text>
   <path class="line dashed" d="M800,90 L580,90" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="690" y="109">done, with points to ask</text>
   <path class="line" d="M890,120 L890,220" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="882" y="174">writes the vital few</text>
+  <text class="data halo start" x="898" y="174">writes the vital few</text>
+  <path class="line" d="M815,120 L728,220" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="781" y="152">runs</text>
   <path class="line" d="M580,112 L800,232" marker-end="url(#arrow)"/>
   <text class="data halo start" x="716" y="168">reads</text>
   <path class="line" d="M545,120 L620,220" marker-end="url(#arrow)"/>

@@ -35,6 +35,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P4.3: a step that has one right result is done the same way each time, without a role's
     judgment.
 - P5: the shortest path
+  - P5.1: the plan takes in each settled set of points, and each trial's result, as a whole.
   - P5.2: deliverables that rest on none still being made are made at the same time.
   - P5.3: work that a stop leaves alone goes on.
 - P6: nothing lost on a stop
@@ -43,6 +44,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P7.1: each fact is weighed by one shared measure of the vital few, which alone states it.
   - P7.2: each part of the plan that a new one rests on is weighed again with it.
   - P7.3: the plan changes only by that weighing, or by a step that has one right result.
+  - P7.4: the user hears only what the design tree and their own words hold.
 
 ### Concept model
 
@@ -59,7 +61,8 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   and judging both stand on.
 - Round\
   One making or refactoring of a deliverable, which its maker tries as its people would. Its judge
-  tries content too. What each found goes to the pruner, whose decisions decide the next mend.
+  tries content too. Its result, what each found, is weighed whole into the plan, whose decisions
+  decide the next mend.
 
 Strategies:
 
@@ -117,17 +120,32 @@ Strategies:
 - The main conversation as the orchestrator, which starts and stops each other role. [P3.1]\
   Intent: the user talks with one role through the run, and each judgment of the plan starts
   apart.
-- Each fact that asks a judgment, and no other, handed to the pruner before it enters the
+- Each fact that asks a judgment, and no other, handed to a pruner before it enters the
   design tree. [P7.1]\
   Intent: one role holding the stance alone weighs all the plan takes in, and no step waits on
   needless judgment.
 - One shared prompt of the measure, read by the orchestrator and the pruner, each role's prompt
   holding only its part. [P7.1]\
   Intent: the two roles weigh by one measure, which changes in one place.
-- A new pruner for each fact, given only the design tree, the user's words of the run, and the
-  fact. [P4.1]\
-  Intent: each fact is weighed as an observer outside the run would, by the goal and the user's
-  words.
+- Facts handed to a pruner a unit at a time: a settled set of decisions, or a judged Round.
+  [P5.1]\
+  Intent: the user waits on a weighing only once a set is settled, and linked facts are weighed
+  together.
+- A new pruner for each unit, given only the run's folder by absolute path, the user's words, and
+  the unit. [P4.1]\
+  Intent: each unit is weighed as an outsider would, and reaches the run's tree wherever the pruner
+  starts.
+- The pruner itself rewriting each node that its change touches, as a script lists them. [P5.1]\
+  Intent: each unit costs one wait, and the role that made the change mends what it made false.
+- The run's worktree and its design tree, with the goal open, made by a script at the request.
+  [P4.3]\
+  Intent: the run starts at once, as nothing is yet settled to weigh.
+- The hearing held by the orchestrator with the user, handed to one pruner once the way is
+  settled. [P5.1]\
+  Intent: the hearing's only wait is the one weighing of all it settled.
+- The orchestrator speaking only from the design tree and the user's words, the request among
+  them. [P7.4]\
+  Intent: the talk brings back nothing the pruner cut, such as an issue's means.
 - Each message to the user opening with where the run stands on the way to the goal. [P1.2]\
   Intent: a user who knows nothing of rn's insides knows at each message what's done and what's
   next.
@@ -150,9 +168,10 @@ Strategies:
 - The last Round's roles resumed within the same conversation, and started from its files in a new
   conversation. [P6.1]\
   Intent: each mend starts from what the last Round learned, wherever the run goes on.
-- A point that the pruner leaves open taken to the user as given, and the answer taken back as
-  given. [P1.2]\
-  Intent: the user answers the role's own question, and the role gets the user's own words.
+- A point for the user, from the pruner or a generator, discussed until settled, then handed to
+  one pruner. [P1.2]\
+  Intent: the user settles the point in one talk, and the plan takes their own words in one
+  weighing.
 - Each step that has one right result done by a script that the role runs. [P4.3]\
   Intent: each role spends its judgment and its context only where a step needs them.
 - Each deliverable's Rounds kept apart from the others', so that each deliverable due starts
@@ -162,7 +181,7 @@ Strategies:
   [P4.3]\
   Intent: a maker's clean-up never waits on a permission prompt, and stays in the work and the
   temporary folder.
-- Each write to a run's design tree refused by the same hook, but the pruner's and rn's
+- Each design tree write by Write, Edit, or Bash refused by the hook, but the pruner's and
   scripts'. [P7.3]\
   Intent: the plan holds only what the pruner weighed, on every run, whatever a prompt forgets.
 - Each step written as what it does, never tied to one OS's tools, such as Glob or Bash's
@@ -172,9 +191,9 @@ Strategies:
   Intent: the user mends one blocker while every other deliverable goes on.
 - A pause or a cancel taken from the user's words. [S2]\
   Intent: the user stops a run without learning a command.
-- A pause letting a pruner at work end before it stops the rest. [P6.1]\
-  Intent: a pick-up reads a whole design tree, as the pruner's fact may live only in the
-  conversation.
+- A pause handing one pruner what the user settled unwritten, and stopping the rest once each
+  pruner ends. [P6.1]\
+  Intent: a pick-up reads a whole design tree, as a unit may live only in the conversation.
 - A cancel confirmed once, removing the run here and its branch and pull request on GitHub. [S2]\
   Intent: nothing that can't be undone happens on one misread sentence, and no run is left to
   collide with.
@@ -197,47 +216,49 @@ sequenceDiagram
   O->>U: asks what it can help with: an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
   O->>O: reads the issue it names and the repository [P1.2]
-  O->>S: makes the run's worktree, and its design tree with the languages as the orchestrator puts them, and the issues from the request (Design tree) [P4.3]
-  loop each event: the request, the user's words, a sign-off, a role's end, or a refusal [P1.1]
-    opt a fact that asks a judgment: the request with its issue, the user's words, a role's end, or a refusal [P7.1]
-      O->>P: starts a new one with the design tree, the user's words of the run, and the fact (Design tree, Round) [P4.1]
-      P->>P: weighs each element that the fact would add, change, or ask by the shared measure of the vital few [P7.1]
+  O->>S: makes the run's worktree, and its design tree with the goal open, the languages as the orchestrator puts them, and the issues from the request (Design tree) [P4.3]
+  loop the hearing, until the way to the goal is settled [P5.1]
+    O->>U: one point, whom the goal is for, then what they can do at it, then the goal in one summary, then its deliverables and steps and which steps the user checks, with why and a recommendation [P1.2]
+    U->>O: answers [P1.2]
+  end
+  loop each event: the hearing's end, a point settled, a sign-off, a role's end, or a refusal [P1.1]
+    opt a unit settled: the hearing's, a point the user settled, a judged Round, or the final check's findings [P5.1]
+      O->>P: starts a new one with the run's folder as an absolute path, the user's words of the run, the request among them, and the unit (Design tree, Round) [P4.1]
+      P->>P: weighs each element that the unit would add, change, or ask by the shared measure of the vital few [P7.1]
       P->>P: weighs again each element of the tree that one of them rests on, a done deliverable's decisions and the issue's among them [P7.2]
       P->>T: writes the vital few, from the goal and the plan down, cuts the rest, and leaves open each point that only the user can settle (Design tree) [P7.1]
-      opt a role's end with a trial's findings [P2.2]
+      opt a Round's result with a trial's findings [P2.2]
         P->>T: writes the remedy that the measure keeps of each finding into the decision it comes from, and holds good each other condition (Design tree) [P7.1]
         P->>T: keeps each finding past two Rounds as an open decision of its condition (Design tree) [P3.3]
       end
       opt the final check's findings [P2.3]
         P->>T: sends each problem that the people fail without back to the deliverable whose file it is (Design tree) [P2.3]
       end
+      P->>S: lists each node that its change touches (Design tree) [P5.1]
+      P->>T: rewrites each node listed that the change made false (Design tree) [P1.1]
       P-->>O: ends, with what it changed, each point it left open, and each stray file [P4.2]
       opt a stray file [P2.3]
         O->>O: removes it [P2.3]
       end
-      O->>S: lists each node that the change touches, to read again (Design tree) [P1.1]
-      O->>P: starts a new one with the design tree, the user's words of the run, and the nodes listed (Design tree) [P4.1]
-      P->>T: rewrites each node that the change made false (Design tree) [P1.1]
-      P-->>O: ends, with what it changed [P4.2]
     end
-    opt a sign-off [P1.3]
+    opt a sign-off by /rn:ty [P1.3]
       O->>S: records it (Design tree) [P4.3]
     end
-    opt a write to the design tree by any other role [P7.3]
+    opt a write to the design tree by any other role, by Write, Edit, or Bash [P7.3]
       H->>T: refuses the write, telling its writer to hand the fact to the pruner (Design tree) [P7.3]
     end
     O->>S: checks and commits the change (Design tree) [P6.1]
     opt a refusal that only the user can mend [P5.3]
       O->>U: the blocker, and what the user does, the other work going on [P5.3]
     end
-    alt a point that only the user can settle, left open in the tree [P1.2]
-      O->>U: where the run stands, and one point, the goal's own first, whom it's for and then what they can do at it, with why and a recommendation [P1.2]
-      U->>O: answers [P1.2]
-    else the goal written whole, not yet confirmed [P1.2]
-      O->>U: whom it's for and what they can do at the goal, in one summary, to confirm [P1.2]
-    else the plan written, once the user confirms the goal [P1.3]
-      O->>U: the way to the goal, step by step, and which steps the user checks [P1.3]
-      U->>O: the steps they check, which signs off the plan [P1.3]
+    alt a point that only the user can settle: left open in the tree, brought by a generator, or a change asked by /rn:gm [P1.2]
+      loop until the user settles it [P1.2]
+        O->>U: where the run stands, and the point, from the design tree and the user's words, with why and a recommendation [P7.4]
+        U->>O: answers [P1.2]
+      end
+      O->>O: takes what the user settled, in their words, as the next unit for one pruner [P1.2]
+    else the plan written from the hearing, with no point open [P1.3]
+      O->>S: records the plan's sign-off, with the steps that the user checks as they settled them (Design tree) [P1.3]
     else a deliverable whose Rounds are over [P1.3]
       O->>S: puts it up, committed and pushed in the pull request, which names the run's issues, and makes it done where its step isn't one the user checks (Design tree) [P4.3]
       opt at a step that the user checks [P1.3]
@@ -250,26 +271,26 @@ sequenceDiagram
         alt its Round of content, to make [P3.2]
           O->>G: starts it with its Cut, or resumes the last Round's with the user's words, as given (Cut) [P4.1]
           alt a point it can't settle [P1.2]
-            G-->>O: the point, for the pruner to weigh (Round) [P1.2]
+            G-->>O: the point, for the user to settle (Round) [P1.2]
           else
             G->>G: makes the content by its kind's best practice, or by its check alone, by the decisions of its Cut (Best practice, Cut) [P3.2]
             G->>G: tries it as its people would, and goes back to its decisions where a condition that they meet falls short [P2.1]
             G->>G: names what's good [P2.1]
             G->>S: runs the repository's checks on its files [P4.3]
-            G-->>O: ends, with the Round written, for the pruner to weigh (Round) [P4.2]
+            G-->>O: ends, with the Round written, for the evaluator to judge (Round) [P4.2]
           end
         else its Round of content, made, to judge [P2.1]
           O->>E: starts it with its Cut, or resumes the last Round's (Cut) [P4.1]
           E->>S: makes a folder of the people's starting state [P2.1]
           E->>E: tries it there as its people would [P2.1]
           E->>E: names, for each condition, what's good or what would make it good [P2.2]
-          E-->>O: ends, with the Round written, for the pruner to weigh (Round) [P4.2]
+          E-->>O: ends, with the Round written, its result for one pruner to weigh (Round) [P4.2]
         else each condition good, for a kind with a best practice [P3.2]
           O->>G: starts a new one with a Cut of the refactor best practice of code or of a document (Cut) [P3.2]
           G->>G: refactors it by that best practice, keeping its intent (Best practice) [P3.2]
           G->>G: runs the repository's tests as its developers run them [P3.2]
           G->>S: runs the repository's checks on its files [P4.3]
-          G-->>O: ends, with the Round written, for the pruner to weigh (Round) [P4.2]
+          G-->>O: ends, with the Round written, which ends the deliverable's Rounds (Round) [P4.2]
         end
       end
     end
@@ -277,7 +298,7 @@ sequenceDiagram
       O->>O: starts a plain subagent with the goal, the pull request, and the points to check [P2.3]
       O->>S: pushes the work, and gives the pull request's whole diff, read by the subagent (Design tree) [P4.3]
       O->>S: waits for the pull request's CI, and gives its result to the subagent [P4.3]
-      O->>O: takes the subagent's findings, the goal reached, the fit with the repository's files, nothing extra, and CI, as the next fact for the pruner [P2.3]
+      O->>O: takes the subagent's findings, the goal reached, the fit with the repository's files, nothing extra, and CI, as one unit for one pruner [P2.3]
     end
   end
   O->>U: the final check's results, each finding left as a proposal, and the merge proposed [P2.3]
@@ -290,6 +311,7 @@ sequenceDiagram
 sequenceDiagram
   actor U as user
   participant O as orchestrator
+  participant P as pruner
   participant T as design tree
   participant S as scripts
   participant G as generator
@@ -304,7 +326,10 @@ sequenceDiagram
     O->>U: the run cancelled, and what it couldn't remove on GitHub, with why [S2]
   else a pause, by /rn:dn or in the user's words [S2]
     U->>O: /rn:dn, or asks to stop for now [S2]
-    O->>O: waits for a pruner at work to end, as its write stays whole [P6.1]
+    opt what the user has settled that no pruner holds yet, such as the hearing's so far [P6.1]
+      O->>P: starts one with the run's folder as an absolute path, the user's words of the run, and that unit (Design tree) [P6.1]
+    end
+    O->>O: waits for each pruner at work to end, as its write stays whole [P6.1]
     O->>G: stops it [S2]
     O->>E: stops it [S2]
     O->>S: commits and pushes the run's folder (Design tree) [P6.1]
