@@ -92,7 +92,7 @@
    "necessary_conditions": [
     {
      "id": "N1",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "Roles",
@@ -103,7 +103,7 @@
     },
     {
      "id": "N2",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "the objective",
@@ -119,7 +119,7 @@
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "Key results",
@@ -141,7 +141,7 @@
     },
     {
      "id": "N6",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "who decides the one way and its ideas",
