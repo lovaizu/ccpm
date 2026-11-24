@@ -1,14 +1,19 @@
 """What overnight's cases make and read around its code: the person's repository, git run in it, the
-environment of each command, whether a process still runs, and the walkthrough's words."""
+environment of each command, a process that runs and one that ended, and the walkthrough's words,
+its piece's folder and branch among them."""
 
 from __future__ import annotations
 
 import os
+import shutil
 import signal
 import subprocess
 import sys
 import time
 from collections.abc import Callable, Iterable
+
+import pytest
+from pieces.record import Handed
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TOP = os.path.dirname(os.path.dirname(os.path.dirname(HERE)))
@@ -25,6 +30,12 @@ PROMPT = (
 TOOLS = ("Read", "Edit", "Bash(pytest:*)", "Bash(git add:*)", "Bash(git commit:*)")
 # The tools as ask hands them on, from the prompt's last line, `Tools: <tool>, <tool>`.
 TOOLS_LINE = ", ".join(TOOLS)
+# A prompt of several lines that starts with an option of Claude Code's, and holds quotes, a line
+# `Tools:`, words beyond ASCII, and a blank line, which reaches Claude Code whole only on its
+# standard input.
+PROMPT_AS_OPTIONS = (
+    "--resume 1234 \"quoted\" and 'single'\nTools: Bash\n日付の解析を直す。\n\nThen commit.\n"
+)
 # The last words of each of the walkthrough's three pieces.
 LAST_WORDS = (
     "Fixed parse_date for leap days. 214 tests pass.",
@@ -33,6 +44,15 @@ LAST_WORDS = (
 )
 # The share line of a night, as the README's walkthrough shows it.
 SHARE = "{} of {} pieces stopped by the usage limit, a wait for an answer, or the session closing."
+# The table that status shows of the walkthrough's night, as the README gives it.
+WALKTHROUGH_TABLE = (
+    "Piece  State  Branch       Waited                       Last words\n"
+    f"1      done   overnight/1  -                            {LAST_WORDS[0]}\n"
+    f"2      done   overnight/2  usage limit, 01:12 to 04:00  {LAST_WORDS[1]}\n"
+    f"3      done   overnight/3  usage limit, 01:12 to 04:00  {LAST_WORDS[2]}\n"
+    "\n"
+    f"{SHARE.format(0, 3)}\n"
+)
 
 # Who commits in each repository that a case makes, as git asks for a name and an email.
 IDENTITY = {
@@ -126,8 +146,54 @@ def until(check: Callable[[], bool], timeout: float = 30.0, what: str = "the con
         time.sleep(0.05)
 
 
+def running_process() -> subprocess.Popen:
+    """A child process that runs until the case ends it, as a runner that carries a piece."""
+    return subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+
+
+def shut_down(child: subprocess.Popen) -> None:
+    """Ends the child process at once, as the OS shuts a runner down, and waits until it has, so
+    that no process with its ID is left."""
+    child.kill()
+    child.wait()
+
+
 def ended_process() -> int:
     """The ID of a process that ran and has ended."""
     child = subprocess.Popen([sys.executable, "-c", "pass"])
     child.wait()
     return child.pid
+
+
+def path_without_claude() -> str:
+    """A PATH that holds git and Python but no `claude`, or skips the case where the machine keeps
+    Claude Code beside them."""
+    folders = {os.path.dirname(shutil.which("git") or ""), os.path.dirname(sys.executable)}
+    path = os.pathsep.join(sorted(folders))
+    if shutil.which("claude", path=path):
+        pytest.skip("Claude Code lies beside git or Python here, so no PATH leaves it out")
+    return path
+
+
+def piece_folder(repo: str, number: int) -> str:
+    """Where the piece of the number works: `../<repository>-overnight-<n>/` beside the
+    repository."""
+    return os.path.join(os.path.dirname(repo), f"{os.path.basename(repo)}-overnight-{number}")
+
+
+def handed(number: int = 1, tools: tuple[str, ...] = TOOLS) -> Handed:
+    """The walkthrough's piece of the number with the tools, as hand-over hands it on: in
+    `../myapp-overnight-<n>` on the branch `overnight/<n>`."""
+    return Handed(number, f"../{REPOSITORY}-overnight-{number}", f"overnight/{number}", tools)
+
+
+def handover_lines(number: int, tools: str = TOOLS_LINE) -> str:
+    """The lines that handover.py gives for the walkthrough's piece of the number, as the README's
+    walkthrough shows them."""
+    piece = handed(number)
+    return (
+        f"Piece {number} runs in the background, apart from this session.\n"
+        f"Folder: {piece.folder}, on the branch {piece.branch}\n"
+        f"Tools: {tools}\n"
+        "/overnight:status shows how it goes.\n"
+    )

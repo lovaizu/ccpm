@@ -1,0 +1,60 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "None in code, as overnight holds the prompts of ask and status. The walkthrough run of the README's",
+    "request tries it whole, as Test strategy says under Scenario testing. That run checks KR1.1. The",
+    "last line of its status shows the share that KR1.1 measures, such as"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "@pytest.mark.supports(\"P1.1\", \"Conversation\", \"Wait\")",
+    "@pytest.mark.supports(\"S1\", \"S2\", \"ask\", \"status\", \"Piece\")",
+    "def test_a_hand_over_with_no_prompt_is_refused_saying_what_to_add(b: Bench):",
+    "def test_a_piece_whose_runner_ended_while_it_waited_is_counted_stopped_by_the_usage_limit(",
+    "def test_a_new_piece_takes_the_number_after_the_highest_of_records_branches_and_worktrees("
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_begin_of_a_number_recorded_today_is_refused(repo: str):",
+    "def test_resume_of_a_waiting_piece_records_it_running_with_its_wait_kept(repo: str):",
+    "def test_runs_of_a_runner_whose_id_now_names_a_later_process_is_false():",
+    "@pytest.mark.supports(\"test_a_weekly_limit_is_waited_until_its_day_and_time\")"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "- Each record written whole at each change (Concept model's strategy, P3.2, P5.1): after any course",
+    "- A piece that the usage limit stops goes on in its conversation at each reset, however often it",
+    "- How the night went, seen at a glance (P5.1, P5.3, S2): for any night of pieces in any states,"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's bodies aren't built yet\")",
+    "    \"\"\"Given the walkthrough's repository at 23:00, and Claude Code ending #12's piece at once,",
+    "from pieces.record import Handed, Record, Wait, begin, end, highest, read, resume, wait"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N6",
+   "good_when": "The developers and the architecture's maker read one account of a piece whose `claude` isn't found: the gap of S1 says no case can show that piece failed with the system's words, while the integration case test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_systems_words checks exactly that. Once it's good, they know from the cases and the gap alike whether that case is to pass once the parts are built as S1 draws them, or to wait for the maker's mend of S1."
+  }
+ ]
+}

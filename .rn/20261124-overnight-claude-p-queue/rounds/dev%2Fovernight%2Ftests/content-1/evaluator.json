@@ -1,0 +1,63 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N2",
+   "lines": [
+    "@pytest.mark.supports(\"P1.1\", \"Conversation\", \"Wait\")",
+    "@pytest.mark.supports(\"P5.2\", \"pieces\")",
+    "@pytest.mark.supports(\"S2\", \"pieces\", \"Wait\")",
+    "@pytest.mark.supports(\"S1\", \"hand-over\")",
+    "@pytest.mark.supports(\"S1\", \"Piece\")",
+    "@pytest.mark.supports(\"Record\", \"pieces\")"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_runs_of_a_runner_whose_id_now_names_a_later_process_is_false():",
+    "def test_resume_of_a_waiting_piece_records_it_running_with_its_wait_kept(repo: str):",
+    "def test_begin_of_a_number_recorded_today_is_refused(repo: str):",
+    "def test_taken_leaves_out_each_branch_and_folder_that_only_nearly_matches(repo: str):",
+    "def test_a_reply_that_names_a_limit_only_in_its_last_words_is_ended(clock: Clock):"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's bodies aren't built yet\")",
+    "    \"\"\"Given the walkthrough's repository, where no piece was handed over",
+    "    When status runs in a later session",
+    "    Then pieces.py gives 0 with `No pieces yet`\"\"\""
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- S1: hand-over records the piece as running only after it starts the runner. A runner whose",
+    "- P5.2: the README and `pieces.command.main` leave open how the table shows a piece that a stop",
+    "- P5.1: the README and `pieces.command.main` leave open how a row shows several waits. They leave"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "- Each record written whole at each change (Concept model's strategy, P3.2, P5.1): after any course",
+    "- The reset time read from the stop's reply, or a set while where none can be read (P1.1): for",
+    "- How the night went, seen at a glance (P5.1, P5.3, S2): for any night of pieces in any states,"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N1",
+   "good_when": "A developer reading the E2E cases learns that the walkthrough run of the README's three-issue request checks KR1.1, and which of its results shows the share of pieces stopped by the usage limit, a wait for an answer, or the session closing, so they can tell from that one run whether the product whole gives the key result."
+  }
+ ]
+}

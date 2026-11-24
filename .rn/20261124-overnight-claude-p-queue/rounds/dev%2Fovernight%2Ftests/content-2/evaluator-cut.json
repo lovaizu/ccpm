@@ -1,0 +1,74 @@
+{
+ "goal": "The user has the work that the AI they instruct asks for run as much as it can, stopped neither by the usage limit, by waiting for an answer, nor by the session closing: \u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d Once it holds, the work that AI asks for goes on through the usage limit, with no prompt waiting for an answer, and after the session that asked for it closes, where before each of these stopped it.",
+ "deliverable": {
+  "name": "overnight's developers see, before any part is built, that its parts joined give each key result, by cases that fail until the parts are built",
+  "path": "dev/overnight/tests"
+ },
+ "judges_by": {
+  "what": "The developers see, before anyone builds a part, whether the parts joined as the architecture draws give each key result, and the architecture's maker mends each place where they can't.",
+  "critical_success_factors": [
+   {
+    "id": "C1",
+    "what": "Each level that Test strategy names has the cases that check what its target promises.",
+    "necessary_conditions": [
+     {
+      "id": "N1",
+      "about": "E2E cases",
+      "what": "Where Test strategy runs the product whole, does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?"
+     },
+     {
+      "id": "N2",
+      "about": "Integration cases",
+      "what": "Does each element of the architecture, each path through each sequence, each principle item of Principles, each decision of a component, and each handoff with its data, have an integration case that names it?"
+     },
+     {
+      "id": "N3",
+      "about": "Unit cases",
+      "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals, its edges, and the collections inside it included, and, where its result depends on what came before, for each transition that the product's use can bring about, so that each fault likely in its body fails a case, each naming the integration case it supports?"
+     },
+     {
+      "id": "N7",
+      "about": "Properties",
+      "what": "Does each invariant that the requirements state, each that must hold for every input the product's use can bring, have a property that names the element it rests on?"
+     }
+    ]
+   },
+   {
+    "id": "C2",
+    "what": "Each case checks the parts through their interfaces, and fails until the parts are built.",
+    "necessary_conditions": [
+     {
+      "id": "N4",
+      "about": "E2E cases, Integration cases, Unit cases, Properties",
+      "what": "Is each case a test in the test code, with its Given, When, and Then stated, that calls the skeleton only through its interfaces and fails on the empty bodies?"
+     }
+    ]
+   },
+   {
+    "id": "C3",
+    "what": "No element and no case is left without the other.",
+    "necessary_conditions": [
+     {
+      "id": "N5",
+      "about": "Trace",
+      "what": "Does the script that checks the trace give 0, finding that every element of the architecture has an integration case and every case names something one level up that exists?"
+     }
+    ]
+   },
+   {
+    "id": "C4",
+    "what": "Each place where the cases show the architecture can't give a key result reaches its maker before anyone builds around it.",
+    "necessary_conditions": [
+     {
+      "id": "N6",
+      "about": "Gaps",
+      "what": "Does the list of gaps name each place where the cases can't follow the architecture, each with the element of the architecture that it bears on?"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Ftests-content-2/",
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Ftests/content-2"
+}

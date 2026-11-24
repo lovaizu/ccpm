@@ -8,24 +8,16 @@ numbers, and each record out of its layout."""
 from __future__ import annotations
 
 import os
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, timedelta
 
 import overnight_files
 import pytest
-from overnight_files import TOOLS
+from overnight_files import TOOLS, handed
+from overnight_stand_ins import RESET, STOP
 from pieces.process import identify
-from pieces.record import Handed, Record, Wait, begin, end, highest, read, resume, wait
+from pieces.record import Record, Wait, begin, end, highest, read, resume, wait
 
 pytestmark = pytest.mark.xfail(strict=True, reason="pieces.record isn't built yet")
-
-ZONE = timezone(timedelta(hours=9))
-STOP = datetime(2026, 11, 25, 1, 12, tzinfo=ZONE)
-RESET = datetime(2026, 11, 25, 4, 0, tzinfo=ZONE)
-
-
-def handed(number: int = 1, tools: tuple[str, ...] = TOOLS) -> Handed:
-    """The walkthrough's piece of the number, as hand-over hands it on."""
-    return Handed(number, f"../myapp-overnight-{number}", f"overnight/{number}", tools)
 
 
 def folder(repo: str, number: int, day: str | None = None) -> str:
@@ -36,11 +28,6 @@ def folder(repo: str, number: int, day: str | None = None) -> str:
 def running(number: int = 1, tools: tuple[str, ...] = TOOLS) -> Record:
     """The record that `begin` gives of the piece of the number, carried by this process."""
     return Record(handed(number, tools), "running", identify(os.getpid()), (), "")
-
-
-def made(path: str) -> None:
-    """Makes the folder."""
-    os.makedirs(path)
 
 
 # highest
@@ -64,7 +51,7 @@ def test_highest_of_an_empty_overnight_folder_is_0(repo: str):
     """Given a repository whose `.overnight/` holds nothing
     When the highest number of its records is asked
     Then it is 0"""
-    made(os.path.join(repo, ".overnight"))
+    os.makedirs(os.path.join(repo, ".overnight"))
     assert highest(repo) == 0
 
 
@@ -75,7 +62,7 @@ def test_highest_of_one_pieces_folder_is_its_number(repo: str):
     """Given a repository whose `.overnight/` holds the one folder `20261124-3`
     When the highest number of its records is asked
     Then it is 3"""
-    made(folder(repo, 3, "20261124"))
+    os.makedirs(folder(repo, 3, "20261124"))
     assert highest(repo) == 3
 
 
@@ -88,7 +75,7 @@ def test_highest_of_several_is_the_greatest_number_whatever_its_day_or_order(rep
     When the highest number of its records is asked
     Then it is 12"""
     for number, day in ((12, "20261120"), (3, "20261124"), (9, "20261124")):
-        made(folder(repo, number, day))
+        os.makedirs(folder(repo, number, day))
     assert highest(repo) == 12
 
 
@@ -100,9 +87,9 @@ def test_highest_leaves_out_each_folder_and_file_that_isnt_a_pieces_folder(repo:
     `20261124-`, `20261124-7x`, `x20261124-98`, and a file `20261124-50`
     When the highest number of its records is asked
     Then it is 2"""
-    made(folder(repo, 2, "20261124"))
+    os.makedirs(folder(repo, 2, "20261124"))
     for name in ("notes-99", "20261124-", "20261124-7x", "x20261124-98"):
-        made(os.path.join(repo, ".overnight", name))
+        os.makedirs(os.path.join(repo, ".overnight", name))
     with open(os.path.join(repo, ".overnight", "20261124-50"), "w", encoding="utf-8") as f:
         f.write("")
     assert highest(repo) == 2
@@ -126,7 +113,9 @@ def test_begin_records_the_piece_running_with_its_runner_no_wait_and_no_last_wor
     assert read(repo) == [running()]
 
 
-@pytest.mark.supports("test_a_piece_runs_with_the_named_tools_in_a_worktree_of_its_own_made_before_it_starts")
+@pytest.mark.supports(
+    "test_a_piece_runs_with_the_named_tools_in_a_worktree_of_its_own_made_before_it_starts"
+)
 def test_begin_keeps_a_piece_of_one_tool(repo: str):
     """Given the piece 1 with the one tool `Read`
     When it's recorded as begun
@@ -212,7 +201,9 @@ def test_resume_of_a_waiting_piece_records_it_running_with_its_wait_kept(repo: s
     assert read(repo) == [expected]
 
 
-@pytest.mark.supports("test_a_piece_the_limit_stops_twice_goes_on_in_its_conversation_after_each_reset")
+@pytest.mark.supports(
+    "test_a_piece_the_limit_stops_twice_goes_on_in_its_conversation_after_each_reset"
+)
 def test_waits_of_several_stops_are_kept_in_order_the_latest_last(repo: str):
     """Given piece 1 that waited from 01:12 to 04:00 and ran again
     When its wait from 05:00 to 09:00 is recorded, and it runs again
@@ -243,15 +234,13 @@ def test_end_done_records_the_piece_done_with_its_last_words_and_its_waits(repo:
     assert read(repo) == [expected]
 
 
-@pytest.mark.supports(
-    "test_a_piece_ended_by_an_error_of_its_own_is_recorded_failed_with_the_error"
-)
+@pytest.mark.supports("test_a_piece_ended_by_an_error_of_its_own_is_recorded_failed_with_the_error")
 def test_end_failed_records_the_piece_failed_with_its_error_as_its_last_words(repo: str):
     """Given piece 1 recorded running, with no wait
     When it's recorded as ended failed, with an error of two lines and words beyond ASCII
     Then the record, as given and as read, is failed with that error whole as its last words"""
     begin(repo, handed(), os.getpid())
-    error = "Reached maximum number of turns (1)\n日付: \"2026-02-29\""
+    error = 'Reached maximum number of turns (1)\n日付: "2026-02-29"'
     expected = Record(handed(), "failed", identify(os.getpid()), (), error)
     assert end(repo, 1, "failed", error) == expected
     assert read(repo) == [expected]

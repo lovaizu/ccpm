@@ -1,0 +1,58 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/test-cases.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "None in code, as overnight holds the prompts of ask and status. The walkthrough run of the README's",
+    "request tries it whole, as Test strategy says under Scenario testing. That run checks KR1.1. The",
+    "last line of its status shows the share that KR1.1 measures, such as",
+    "`0 of 3 pieces stopped by the usage limit, a wait for an answer, or the session closing.`"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def test_a_hand_over_in_a_repository_with_no_commit_is_refused_with_gits_words(b: Bench, tmp_path):"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_a_session_limit_resets_at_its_next_time_after_now(",
+    "def test_a_piece_the_limit_stops_three_times_waits_each_and_keeps_each_wait_in_order(",
+    "def test_taken_leaves_out_each_branch_and_folder_that_only_nearly_matches(repo: str):"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "def test_each_record_read_is_the_one_its_last_change_gave(",
+    "def test_a_piece_goes_on_in_its_conversation_after_each_stop_however_often_it_stops("
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's bodies aren't built yet\")"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- S1: hand-over records the piece as running only after it starts the runner. A runner whose",
+    "- P5.2: the README and `pieces.command.main` leave open how the table shows a piece that a stop",
+    "- P5.1: the README and `pieces.command.main` leave open how a row shows several waits. They leave"
+   ]
+  }
+ ]
+}

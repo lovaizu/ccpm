@@ -18,7 +18,9 @@ pytestmark = pytest.mark.xfail(strict=True, reason="pieces.process isn't built y
 NO_SUCH_ID = 2**31 - 2
 
 
-@pytest.mark.supports("test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing")
+@pytest.mark.supports(
+    "test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing"
+)
 def test_identify_of_a_process_that_runs_gives_its_id_and_start_time_the_same_each_time():
     """Given this process, which runs
     When it's identified twice
@@ -29,18 +31,19 @@ def test_identify_of_a_process_that_runs_gives_its_id_and_start_time_the_same_ea
     assert first.started.strip()
 
 
-@pytest.mark.supports("test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing")
+@pytest.mark.supports(
+    "test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing"
+)
 def test_identify_tells_two_processes_apart_by_their_start_times():
     """Given this process and a child of it that runs
     When each is identified
     Then each gives its own ID, and the two differ"""
-    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    child = overnight_files.running_process()
     try:
         assert identify(child.pid) != identify(os.getpid())
         assert identify(child.pid).pid == child.pid
     finally:
-        child.kill()
-        child.wait()
+        overnight_files.shut_down(child)
 
 
 @pytest.mark.supports(
@@ -60,7 +63,9 @@ def test_identify_of_an_id_that_no_process_runs_by_is_refused_naming_it(pid):
         identify(given)
 
 
-@pytest.mark.supports("test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing")
+@pytest.mark.supports(
+    "test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing"
+)
 def test_runs_of_a_runner_that_runs_is_true():
     """Given this process, as identify gives it
     When whether it runs is asked
@@ -68,19 +73,24 @@ def test_runs_of_a_runner_that_runs_is_true():
     assert runs(identify(os.getpid())) is True
 
 
-@pytest.mark.supports("test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing")
+@pytest.mark.supports(
+    "test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing"
+)
 def test_runs_of_a_runner_that_ended_is_false():
     """Given a child process as identify gave it, which then ended
     When whether it runs is asked
     Then it is False"""
-    child = subprocess.Popen([sys.executable, "-c", "import sys; sys.stdin.read()"],
-                             stdin=subprocess.PIPE)
+    child = subprocess.Popen(
+        [sys.executable, "-c", "import sys; sys.stdin.read()"], stdin=subprocess.PIPE
+    )
     runner = identify(child.pid)
     child.communicate(b"")
     assert runs(runner) is False
 
 
-@pytest.mark.supports("test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing")
+@pytest.mark.supports(
+    "test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session_closing"
+)
 def test_runs_of_a_runner_whose_id_now_names_a_later_process_is_false():
     """Given a runner of this process's ID with a start time other than its own, as when the ID
     now names a later process

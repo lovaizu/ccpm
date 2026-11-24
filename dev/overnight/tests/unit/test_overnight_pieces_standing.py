@@ -6,43 +6,32 @@ from __future__ import annotations
 
 import os
 import subprocess
-import sys
 from collections.abc import Iterator
-from datetime import datetime, timedelta, timezone
 
 import pytest
-from pieces.record import Handed, Record, begin, end, read, wait
-from pieces.standing import Night, Standing, stand
+from overnight_files import handed, running_process, shut_down
+from overnight_stand_ins import RESET, STOP
+from pieces.record import Record, begin, end, read, wait
+from pieces.standing import Night, Standing, Stop, stand
 
 pytestmark = pytest.mark.xfail(strict=True, reason="pieces.standing isn't built yet")
-
-ZONE = timezone(timedelta(hours=9))
-STOP = datetime(2026, 11, 25, 1, 12, tzinfo=ZONE)
-RESET = datetime(2026, 11, 25, 4, 0, tzinfo=ZONE)
 
 
 @pytest.fixture
 def child() -> Iterator[subprocess.Popen]:
     """A child process that runs until the case ends it."""
-    started = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+    started = running_process()
     yield started
-    started.kill()
-    started.wait()
+    shut_down(started)
 
 
 def recorded(repo: str, number: int, state: str, pid: int) -> None:
     """Records piece of the number in the state, carried by the process of the ID."""
-    begin(repo, Handed(number, f"../myapp-overnight-{number}", f"overnight/{number}", ("Read",)), pid)
+    begin(repo, handed(number, ("Read",)), pid)
     if state == "waiting":
         wait(repo, number, STOP, RESET)
     elif state in ("done", "failed"):
         end(repo, number, state, "Done." if state == "done" else "an error")
-
-
-def ended(child: subprocess.Popen) -> None:
-    """Ends the child process, as the OS shuts a runner down."""
-    child.kill()
-    child.wait()
 
 
 @pytest.mark.supports("test_status_with_no_piece_handed_over_shows_no_pieces_yet")
@@ -78,7 +67,7 @@ def test_a_piece_running_whose_runner_ended_is_stopped_by_the_session_closing(re
     When how it stands is asked
     Then it stands stopped by the session closing, and 1 is stopped"""
     recorded(repo, 1, "running", child.pid)
-    ended(child)
+    shut_down(child)
     records = read(repo)
     night = stand(records)
     assert night == Night((Standing(records[0], "session closing"),))
@@ -93,7 +82,7 @@ def test_a_piece_waiting_whose_runner_ended_is_stopped_by_the_usage_limit(repo: 
     When how it stands is asked
     Then it stands stopped by the usage limit, and 1 is stopped"""
     recorded(repo, 1, "waiting", child.pid)
-    ended(child)
+    shut_down(child)
     records = read(repo)
     night = stand(records)
     assert night == Night((Standing(records[0], "usage limit"),))
@@ -110,7 +99,7 @@ def test_a_piece_done_or_failed_whose_runner_ended_is_stopped_by_nothing(repo: s
     When how it stands is asked
     Then it stands as its record says, stopped by nothing, and 0 are stopped"""
     recorded(repo, 1, state, child.pid)
-    ended(child)
+    shut_down(child)
     records = read(repo)
     night = stand(records)
     assert night == Night((Standing(records[0], None),))
@@ -129,9 +118,9 @@ def test_several_pieces_stand_in_their_order_with_each_stopped_counted(repo: str
     for number, state in ((1, "done"), (2, "running"), (3, "waiting"), (4, "failed")):
         recorded(repo, number, state, child.pid)
     recorded(repo, 10, "running", os.getpid())
-    ended(child)
+    shut_down(child)
     records: list[Record] = read(repo)
     night = stand(records)
-    stops = (None, "session closing", "usage limit", None, None)
+    stops: tuple[Stop | None, ...] = (None, "session closing", "usage limit", None, None)
     assert night == Night(tuple(Standing(r, s) for r, s in zip(records, stops)))
     assert night.stopped == 2

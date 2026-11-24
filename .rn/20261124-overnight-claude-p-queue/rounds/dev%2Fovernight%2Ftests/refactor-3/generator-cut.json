@@ -1,0 +1,123 @@
+{
+ "goal": "The user has the work that the AI they instruct asks for run as much as it can, stopped neither by the usage limit, by waiting for an answer, nor by the session closing: \u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d Once it holds, the work that AI asks for goes on through the usage limit, with no prompt waiting for an answer, and after the session that asked for it closes, where before each of these stopped it.",
+ "language": "English",
+ "deliverable": {
+  "name": "overnight's developers see, before any part is built, that its parts joined give each key result, by cases that fail until the parts are built",
+  "path": "dev/overnight/tests",
+  "kind": "test-design",
+  "inputs": [
+   "dev/overnight/product-vision.md",
+   "plugins/overnight/README.md",
+   "dev/overnight/architecture.md",
+   "plugins/overnight"
+  ],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": [
+     {
+      "about": "the key result that the walkthrough run checks",
+      "decided": "The E2E cases section names KR1.1 as the key result that the walkthrough run of the README's request checks, and the line of its status that shows it, the share of pieces stopped by the usage limit, a wait for an answer, or the session closing, such as `0 of 3 pieces stopped by the usage limit, a wait for an answer, or the session closing.`",
+      "by": "reasoning"
+     }
+    ]
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N7",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": true,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/product-vision.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight/README.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/dev/overnight/architecture.md",
+  ".claude/worktrees/rn-20261124-overnight-claude-p-queue/plugins/overnight"
+ ],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/refactor-code",
+ "stage": "refactor",
+ "number": 3,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Ftests/refactor-3",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Ftests-refactor-3/",
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "None in code, as overnight holds the prompts of ask and status. The walkthrough run of the README's",
+    "request tries it whole, as Test strategy says under Scenario testing. That run checks KR1.1. The",
+    "last line of its status shows the share that KR1.1 measures, such as",
+    "`0 of 3 pieces stopped by the usage limit, a wait for an answer, or the session closing.`"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def test_a_hand_over_in_a_repository_with_no_commit_is_refused_with_gits_words(b: Bench, tmp_path):"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_a_session_limit_resets_at_its_next_time_after_now(",
+    "def test_a_piece_the_limit_stops_three_times_waits_each_and_keeps_each_wait_in_order(",
+    "def test_taken_leaves_out_each_branch_and_folder_that_only_nearly_matches(repo: str):"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "def test_each_record_read_is_the_one_its_last_change_gave(",
+    "def test_a_piece_goes_on_in_its_conversation_after_each_stop_however_often_it_stops("
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "pytestmark = pytest.mark.xfail(strict=True, reason=\"overnight's bodies aren't built yet\")"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- S1: hand-over records the piece as running only after it starts the runner. A runner whose",
+    "- P5.2: the README and `pieces.command.main` leave open how the table shows a piece that a stop",
+    "- P5.1: the README and `pieces.command.main` leave open how a row shows several waits. They leave"
+   ]
+  }
+ ]
+}

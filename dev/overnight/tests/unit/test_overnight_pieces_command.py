@@ -5,15 +5,13 @@ record out of its layout; and each set of arguments other than `report`."""
 from __future__ import annotations
 
 import os
-import subprocess
-import sys
 from datetime import datetime
 
 import pytest
-from overnight_bench import rows_of
-from overnight_files import LAST_WORDS, SHARE
+from overnight_bench import COLUMNS, rows_of
+from overnight_files import LAST_WORDS, SHARE, WALKTHROUGH_TABLE, handed, running_process, shut_down
 from pieces.command import main
-from pieces.record import Handed, begin, end, resume, wait
+from pieces.record import begin, end, resume, wait
 
 pytestmark = pytest.mark.xfail(strict=True, reason="pieces.command isn't built yet")
 
@@ -27,7 +25,7 @@ def table(rows: list[tuple[str, str, str, str, str]], stopped: int) -> str:
     """The table that status shows of the rows, in the README's form: each column as wide as its
     widest cell and two spaces more, the last as its cells are, then a blank line and the share
     line."""
-    lines = [("Piece", "State", "Branch", "Waited", "Last words"), *rows]
+    lines = [COLUMNS, *rows]
     widths = [max(len(line[at]) for line in lines) + 2 for at in range(4)]
     shown = ["".join(c.ljust(w) for c, w in zip(line, widths)) + line[4] for line in lines]
     return "\n".join([*shown, "", SHARE.format(stopped, len(rows))]) + "\n"
@@ -36,18 +34,7 @@ def table(rows: list[tuple[str, str, str, str, str]], stopped: int) -> str:
 def recorded(repo: str, number: int, pid: int | None = None) -> None:
     """Records the walkthrough's piece of the number as begun, carried by the process of the ID,
     this one where none is given."""
-    piece = Handed(number, f"../myapp-overnight-{number}", f"overnight/{number}", ("Read",))
-    begin(repo, piece, pid or os.getpid())
-
-
-def runner_ended() -> subprocess.Popen:
-    """A child process that runs until the case ends it."""
-    return subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
-
-
-def ends(child: subprocess.Popen) -> None:
-    child.kill()
-    child.wait()
+    begin(repo, handed(number, ("Read",)), pid or os.getpid())
 
 
 @pytest.mark.supports("test_status_with_no_piece_handed_over_shows_no_pieces_yet")
@@ -76,14 +63,7 @@ def test_report_of_the_walkthroughs_night_shows_the_readmes_table(repo: str):
     shown = main(["report"], repo)
     assert shown == (
         0,
-        (
-            "Piece  State  Branch       Waited                       Last words\n"
-            f"1      done   overnight/1  -                            {LAST_WORDS[0]}\n"
-            f"2      done   overnight/2  usage limit, 01:12 to 04:00  {LAST_WORDS[1]}\n"
-            f"3      done   overnight/3  usage limit, 01:12 to 04:00  {LAST_WORDS[2]}\n"
-            "\n"
-            f"{SHARE.format(0, 3)}\n"
-        ),
+        WALKTHROUGH_TABLE,
         "",
     )
     assert shown[1] == table(
@@ -96,9 +76,7 @@ def test_report_of_the_walkthroughs_night_shows_the_readmes_table(repo: str):
     )
 
 
-@pytest.mark.supports(
-    "test_a_piece_ended_by_an_error_of_its_own_is_recorded_failed_with_the_error"
-)
+@pytest.mark.supports("test_a_piece_ended_by_an_error_of_its_own_is_recorded_failed_with_the_error")
 def test_report_of_a_piece_failed_and_one_done_shows_the_error_as_last_words_and_none_stopped(
     repo: str,
 ):
@@ -147,13 +125,13 @@ def test_report_of_pieces_whose_runners_ended_names_what_stopped_each_and_counts
     When pieces.py report runs
     Then it gives 0, with neither 1 shown running nor 2 waiting, 1's line naming the session
     closing and 2's the usage limit, and 2 of 3 pieces stopped"""
-    child = runner_ended()
+    child = running_process()
     recorded(repo, 1, child.pid)
     recorded(repo, 2, child.pid)
     recorded(repo, 3)
     wait(repo, 2, STOP, RESET)
     end(repo, 3, "done", "Done.")
-    ends(child)
+    shut_down(child)
     code, out, err = main(["report"], repo)
     lines = out.splitlines()
     rows = rows_of(out)

@@ -1,20 +1,28 @@
 """The integration cases of S1, a piece handed over and carried to its end: the walkthrough's night,
-each refusal of a hand-over, each way a piece's conversation ends, each stop of the usage limit, the
-number a new piece takes, pieces run at once, the prompt handed on whole, and where the records
-lie, each as ask and the runner run overnight's scripts."""
+each refusal of a hand-over, a repository with no commit yet among them, each way a piece's
+conversation ends, each stop of the usage limit, the number a new piece takes, pieces run at once,
+the prompt handed on whole, and where the records lie, each as ask and the runner run overnight's
+scripts."""
 
 from __future__ import annotations
 
 import dataclasses
 import os
-import shutil
-import sys
 from datetime import date, datetime
 
+import overnight_files
 import pytest
 from claude_code import claude_double
-from overnight_bench import Bench
-from overnight_files import LAST_WORDS, PROMPT, SHARE, TOOLS_LINE, git
+from overnight_bench import Bench, stopped_at_night
+from overnight_files import (
+    LAST_WORDS,
+    PROMPT,
+    PROMPT_AS_OPTIONS,
+    TOOLS_LINE,
+    WALKTHROUGH_TABLE,
+    git,
+    handover_lines,
+)
 
 pytestmark = pytest.mark.xfail(strict=True, reason="overnight's bodies aren't built yet")
 
@@ -26,25 +34,6 @@ PROMPT_18 = (
     "Fix issue #18: add a --dry-run flag that prints each change and writes none. Add"
     " tests/test_cli.py::test_dry_run, run pytest to check, then commit on this branch.\n"
 )
-
-
-def handed(number: int) -> str:
-    """The lines that handover.py gives for the walkthrough's piece of the number."""
-    return (
-        f"Piece {number} runs in the background, apart from this session.\n"
-        f"Folder: ../myapp-overnight-{number}, on the branch overnight/{number}\n"
-        f"Tools: {TOOLS_LINE}\n"
-        "/overnight:status shows how it goes.\n"
-    )
-
-
-def stopped_at_night(last_words: str, hold: str | None = None) -> list[dict[str, str]]:
-    """A piece's runs that the session limit stops at 01:12, which resets at 04:00, and that then
-    end with the last words."""
-    first = {"kind": "session limit", "at": "2026-11-25T01:12:00", "resets": "4:00am"}
-    if hold:
-        first["hold"] = hold
-    return [first, {"kind": "ends", "last_words": last_words}]
 
 
 @pytest.mark.supports("S1", "S2", "ask", "status", "Piece")
@@ -69,17 +58,10 @@ def test_the_walkthroughs_three_pieces_go_on_through_the_limit_and_show_done_in_
     b.until(lambda: len(b.calls(2)) == 2, what="piece 2 to go on after the reset")
     b.release("third")
     b.settle(3)
-    assert given == [(0, handed(n), "") for n in (1, 2, 3)]
+    assert given == [(0, handover_lines(n), "") for n in (1, 2, 3)]
     assert b.status() == (
         0,
-        (
-            "Piece  State  Branch       Waited                       Last words\n"
-            f"1      done   overnight/1  -                            {LAST_WORDS[0]}\n"
-            f"2      done   overnight/2  usage limit, 01:12 to 04:00  {LAST_WORDS[1]}\n"
-            f"3      done   overnight/3  usage limit, 01:12 to 04:00  {LAST_WORDS[2]}\n"
-            "\n"
-            f"{SHARE.format(0, 3)}\n"
-        ),
+        WALKTHROUGH_TABLE,
         "",
     )
 
@@ -126,6 +108,21 @@ def test_a_hand_over_outside_a_git_repository_is_refused_with_gits_words(b: Benc
     assert b.calls() == []
 
 
+@pytest.mark.supports("hand-over", "Worktree")
+def test_a_hand_over_in_a_repository_with_no_commit_is_refused_with_gits_words(b: Bench, tmp_path):
+    """Given a repository made with `git init`, with no commit yet
+    When ask hands the walkthrough's piece over from its root
+    Then handover.py gives 2, printing nothing, with git's words; no record is written, Claude
+    Code never runs, and status there shows no pieces yet"""
+    fresh = overnight_files.repository(os.path.join(str(tmp_path), "fresh"), commit=False)
+    refused = b.script("handover", TOOLS_LINE, stdin=PROMPT, cwd=fresh)
+    assert (refused.code, refused.out) == (2, "")
+    assert refused.err.strip()
+    assert not os.path.exists(os.path.join(fresh, ".overnight"))
+    assert b.calls() == []
+    assert b.script("pieces", "report", cwd=fresh) == (0, "No pieces yet\n", "")
+
+
 @pytest.mark.supports("S1", "runner", "Record")
 def test_a_piece_ended_by_an_error_of_its_own_is_recorded_failed_with_the_error(b: Bench):
     """Given Claude Code ending the piece's run by an error of its own, its turns run out
@@ -148,11 +145,7 @@ def test_a_piece_ended_by_an_error_of_its_own_is_recorded_failed_with_the_error(
 def without_claude(b: Bench) -> Bench:
     """The bench with a PATH that holds git and Python but no `claude`, where the machine allows
     one."""
-    folders = {os.path.dirname(shutil.which("git") or ""), os.path.dirname(sys.executable)}
-    path = os.pathsep.join(sorted(folders))
-    if shutil.which("claude", path=path):
-        pytest.skip("Claude Code lies beside git or Python here, so no PATH leaves it out")
-    return dataclasses.replace(b, env={**b.env, "PATH": path})
+    return dataclasses.replace(b, env={**b.env, "PATH": overnight_files.path_without_claude()})
 
 
 @pytest.mark.supports("S1", "runner")
@@ -162,7 +155,7 @@ def test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_system
     Then handover.py gives the piece's lines, and status shows piece 1 failed on overnight/1,
     with no wait, and the system's words of `claude` not found as its last words"""
     alone = without_claude(b)
-    assert alone.hand() == (0, handed(1), "")
+    assert alone.hand() == (0, handover_lines(1), "")
     b.until(lambda: [row["State"] for row in alone.rows()] == ["failed"], what="piece 1 to fail")
     (row,) = alone.rows()
     assert (row["Piece"], row["Branch"], row["Waited"]) == ("1", "overnight/1", "-")
@@ -185,7 +178,7 @@ def test_a_new_piece_takes_the_number_after_the_highest_of_records_branches_and_
     os.rename(b.at(f".overnight/{record}"), b.at(".overnight/20261120-9"))
     git(b.repo, "branch", "overnight/5")
     os.makedirs(b.piece_folder(7))
-    assert b.hand() == (0, handed(10), "")
+    assert b.hand() == (0, handover_lines(10), "")
     b.settle(2)
     assert [each["cwd"] for each in b.calls(10)] == [os.path.realpath(b.piece_folder(10))]
 
@@ -212,13 +205,10 @@ def test_the_prompt_reaches_claude_code_whole_on_its_standard_input(b: Bench):
     quotes, a line `Tools:`, and words beyond ASCII
     When ask hands it over with the walkthrough's tools
     Then Claude Code's one run takes the prompt on its standard input as written"""
-    prompt = (
-        "--resume 1234 \"quoted\" and 'single'\nTools: Bash\n日付の解析を直す。\n\nThen commit.\n"
-    )
     b.plays({"1": [{"kind": "ends"}]})
-    b.hand(prompt)
+    b.hand(PROMPT_AS_OPTIONS)
     b.settle(1)
-    assert [each["stdin"] for each in b.calls(1)] == [prompt]
+    assert [each["stdin"] for each in b.calls(1)] == [PROMPT_AS_OPTIONS]
 
 
 @pytest.mark.supports("Wait", "runner")

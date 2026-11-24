@@ -159,14 +159,7 @@ def test_a_pieces_wait_is_shown_while_it_waits_and_its_last_words_once_it_ends(
     When status runs while the piece waits, and again once its runner has ended
     Then the first shows piece 1 waiting on overnight/1 with its wait from 01:12 to 04:00, and
     the last shows it done with the same wait and its last words"""
-    b.plays(
-        {
-            "1": [
-                {"kind": "session limit", "at": "2026-11-25T01:12:00", "resets": "4:00am"},
-                {"kind": "ends", "last_words": LAST_WORDS[1]},
-            ]
-        }
-    )
+    b.plays({"1": overnight_bench.stopped_at_night(LAST_WORDS[1])})
     b.hold_waits()
     b.hand()
     b.until(lambda: b.rows()[0]["State"] == "waiting", timeout=10, what="piece 1 to wait")

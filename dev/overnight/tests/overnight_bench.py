@@ -26,7 +26,7 @@ from typing import Any, NamedTuple
 
 import overnight_files
 from claude_code import claude_double
-from overnight_files import PLUGIN, PROMPT, REPOSITORY, TOOLS_LINE
+from overnight_files import PLUGIN, PROMPT, TOOLS_LINE
 
 # The heading of the table that status shows, by which each row's fields are read.
 COLUMNS = ("Piece", "State", "Branch", "Waited", "Last words")
@@ -61,7 +61,7 @@ class Bench:
 
     def piece_folder(self, number: int) -> str:
         """Where the piece of the number works: `../<repository>-overnight-<n>/`."""
-        return os.path.join(os.path.dirname(self.repo), f"{REPOSITORY}-overnight-{number}")
+        return overnight_files.piece_folder(self.repo, number)
 
     def script(self, name: str, *args: str, stdin: str = "", cwd: str | None = None) -> Ran:
         """Runs one of overnight's scripts from the repository's root, or the folder given, as a
@@ -175,6 +175,15 @@ class Bench:
         except AssertionError:
             for pid in self.runners():
                 overnight_files.kill(pid)
+
+
+def stopped_at_night(last_words: str, hold: str | None = None) -> list[dict[str, str]]:
+    """A piece's runs that the session limit stops at 01:12, which resets at 04:00, as the
+    README's walkthrough shows the wait, and that then end with the last words."""
+    first = {"kind": "session limit", "at": "2026-11-25T01:12:00", "resets": "4:00am"}
+    if hold:
+        first["hold"] = hold
+    return [first, {"kind": "ends", "last_words": last_words}]
 
 
 def rows_of(table: str) -> list[dict[str, str]]:
