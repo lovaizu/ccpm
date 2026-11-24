@@ -406,7 +406,7 @@
     },
     {
      "id": "N2",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "what `runner.claude.run` promises where Claude Code can't be started",
@@ -422,7 +422,7 @@
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "the gap of a runner whose conversation ends at once",
