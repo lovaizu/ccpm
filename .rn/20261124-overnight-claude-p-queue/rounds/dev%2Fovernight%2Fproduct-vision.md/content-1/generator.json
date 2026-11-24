@@ -1,0 +1,53 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/product-vision.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- AI\\",
+    "  An AI that a person instructs, such as Claude Code, which leaves work to overnight before night.",
+    "- plugin maker\\",
+    "  One who makes another plugin, such as rn, and lets overnight carry its unattended work."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the AI gets the work it left before night done by morning, while nobody answers.",
+    "- O2: the plugin maker's plugin carries each piece of its unattended work past the usage limit."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the night's pieces whose whole result the AI can't take in by morning.",
+    "    Lower is better.",
+    "  - KR1.2: the steps the AI takes to leave the night's work and to take in its results. Fewer is",
+    "    better.",
+    "  - KR2.1: the share of the plugin's pieces stopped by the usage limit that never reach their end."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the AI gets the work it left before night done by morning, while nobody answers.",
+    "- O2: the plugin maker's plugin carries each piece of its unattended work past the usage limit."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight carries each piece left to it to its end, waiting out the usage limit, with nobody there.",
+    "- A start at the set time, for O1\\",
+    "- Nothing to answer, for O1\\",
+    "- Several pieces at once, each waiting on its own, for O1\\",
+    "- A piece that can't finish given up, for O1\\",
+    "- A morning record of each piece, for O1\\",
+    "- The same waiting for other plugins, for O2\\"
+   ]
+  }
+ ]
+}

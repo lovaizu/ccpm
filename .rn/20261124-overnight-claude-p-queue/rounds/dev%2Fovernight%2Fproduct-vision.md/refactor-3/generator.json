@@ -1,0 +1,58 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/product-vision.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- user\\",
+    "  An AI that a person instructs, such as Claude Code, which leaves work to overnight directly or",
+    "  through a plugin."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers.",
+    "overnight carries each piece left to it to its end, waiting out the usage limit, with nobody there."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the night's pieces whose whole result the user can't take in by morning.",
+    "    Lower is better.",
+    "  - KR1.2: the steps the user takes to leave the night's work and to take in its results. Fewer is",
+    "    better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight carries each piece left to it to its end, waiting out the usage limit, with nobody there.",
+    "- A start at the set time, for O1\\",
+    "  The night's work uses the usage window only after the person's session with the user ends.",
+    "- Nothing to answer, for O1\\",
+    "  Each piece gets its tools and a folder of its own up front and outlives that session.",
+    "- Several pieces at once, each waiting on its own, for O1\\",
+    "  A piece stopped by the limit holds back no other, so the user gets more work done by morning.",
+    "- A morning record of each piece, for O1\\",
+    "  The user reads which pieces finished, and takes in each whole result."
+   ]
+  }
+ ]
+}

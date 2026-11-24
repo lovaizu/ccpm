@@ -1,0 +1,51 @@
+{
+ "goal": "The user has the AI they instruct run work overnight and receive its results in the morning: \u300cAI \u304c\u4f5c\u696d\u3092\u591c\u306b\u6d41\u3057\u3066\u304a\u304d\u3001\u671d\u306b\u7d50\u679c\u3092\u53d7\u3051\u53d6\u308c\u308b\u3002\u300d Once it holds, that AI, whether it calls overnight itself or through another plugin, leaves the work to run through the night while nobody answers, and in the morning takes in what came of it, where before the same work ran in the daytime.",
+ "language": "English",
+ "deliverable": {
+  "name": "overnight's developers know whom overnight serves and the one way it brings them the night's results in the morning",
+  "path": "dev/overnight/product-vision.md",
+  "kind": "product-vision",
+  "inputs": [],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N2",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N3",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N5",
+    "good": false,
+    "decisions": []
+   },
+   {
+    "id": "N6",
+    "good": false,
+    "decisions": []
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/product-vision",
+ "stage": "content",
+ "number": 1,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Fproduct-vision.md/content-1",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Fproduct-vision.md-content-1/",
+ "last_good": null
+}

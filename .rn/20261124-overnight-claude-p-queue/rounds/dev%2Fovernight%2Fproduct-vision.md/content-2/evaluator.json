@@ -1,0 +1,52 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- user\\",
+    "  An AI that a person instructs, such as Claude Code, which leaves work to overnight directly or",
+    "  through a plugin."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers.",
+    "  - KR1.1: the share of the night's pieces whose whole result the user can't take in by morning.",
+    "overnight carries each piece left to it to its end, waiting out the usage limit, with nobody there.",
+    "  The night's work uses the usage window only after the user's talk with its person ends.",
+    "  Each piece gets its tools and its one folder up front, and outlives the user's conversation.",
+    "  A piece stopped by the limit holds back no other, so more work is done by morning.",
+    "  The user reads which pieces finished, and takes in each whole result."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of the night's pieces whose whole result the user can't take in by morning.",
+    "    Lower is better.",
+    "  - KR1.2: the steps the user takes to leave the night's work and to take in its results. Fewer is",
+    "    better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user gets the work it left before night done by morning, while nobody answers."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N6",
+   "good_when": "The developers, deciding whether overnight runs the night's pieces one after another or several at once, read at which moment of the user's night carrying each piece to its end fails without several at once, as they already read for the set start, nothing to answer, and the morning record; now they read only that more work is done by morning, which tells them it improves the key result, not that the one way needs it."
+  }
+ ]
+}
