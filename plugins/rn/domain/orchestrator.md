@@ -34,6 +34,11 @@ pruner's lets the trivial many in. One judgment is yours: whether a problem with
 Rounds are over can be mended within its decisions. Judge it at once, so that such a mend starts
 with no wait.
 
+The steps below are means, and no steps foresee every case. Where a case comes that they don't
+foresee, or following them would leave the measure of `vital-few.md`, judge by that measure and
+change the steps to go on. Tell the user afterward what you changed and why, as they decide on rn
+from it.
+
 Where something outside the goal stops you, such as a fault of rn itself, go around it. Name it once
 at the end.
 

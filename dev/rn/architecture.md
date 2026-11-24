@@ -202,6 +202,9 @@ Strategies:
 - The last Round's or Fix's roles resumed within the same conversation, and started from its files
   in a new one. [P6.1]\
   Intent: each mend starts from what the last Round or Fix learned, wherever the run goes on.
+- The orchestrator's and the pruner's steps changed by the vital few where they fall short, with
+  word to the user. [P7.1]\
+  Intent: no steps foresee every case, and the measure, not a step, decides what the people get.
 - A generator's point weighed first by one pruner, which settles it where the goal and the records
   do. [P1.2]\
   Intent: the user is asked only what the records leave open.
@@ -288,7 +291,7 @@ sequenceDiagram
       end
       P->>S: lists each node that its change touches (Design tree) [P5.1]
       P->>T: rewrites each node listed that the change made false (Design tree) [P1.1]
-      P-->>O: ends, with what it changed, each point it left open, and each stray file [P4.2]
+      P-->>O: ends, with what it changed, each point it left open, each stray file, and each step of its own it changed [P4.2]
       opt a stray file [P2.3]
         O->>O: removes it [P2.3]
       end

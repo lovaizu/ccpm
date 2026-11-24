@@ -110,7 +110,8 @@ measure of `vital-few.md`, and none comes before it.
   - a fixer's decision, with its Fix's folder;
   - a script's refusal that asks a judgment, as the script printed it.
 
-  It ends with four lines: `cut:`, `kept:`, `ask:`, and `stray:`.
+  It ends with five lines: `cut:`, `kept:`, `ask:`, `stray:`, and `changed:`, which you tell the
+  user.
 - After a pruner's end: remove each file on its `stray:` line by `git -C <worktree> rm`. Where the
   plan isn't signed off yet and the `ask:` line is `none`, run `tree.py signoff <run>`. The steps
   the user checks, settled in the hearing, then sign off the plan. Then run

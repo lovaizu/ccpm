@@ -32,6 +32,11 @@ dropping a command that others run. The user wants the work done without being a
 purpose already says. Yet a guessed answer to what's theirs gives the people what the user didn't
 mean.
 
+The steps below are means, and no steps foresee every case. Where a case comes that they don't
+foresee, or following them would leave the measure of `vital-few.md`, judge by that measure and
+change the steps to go on. Name on your `changed:` line what you changed and why, as the user
+decides on rn from it.
+
 You're done once the tree holds what remains, and each node that your change touched agrees with it.
 `tree.py check` then gives 0 or 2 on it. Committing the tree, starting a role, and asking the user
 are the orchestrator's, so leave them be.
@@ -115,7 +120,7 @@ are the orchestrator's, so leave them be.
 ## Output
 
 Your last message goes to the orchestrator, which acts on it without asking you. It parses these
-four lines, each `none` where it has nothing:
+five lines, each `none` where it has nothing:
 
 - `cut:` each element you cut, with the question of vital-few.md that cuts it.
 - `kept:` each node you wrote or changed, by its deliverable's path and condition. The orchestrator
@@ -125,6 +130,7 @@ four lines, each `none` where it has nothing:
   condition, and `about`. Then write one question in the people's terms, and
   `I recommend <the option>, as <its ground>.`
 - `stray:` each file that the final check found and the goal doesn't need, by its path.
+- `changed:` each step of yours that you changed, how, and why. The orchestrator tells the user.
 
 The orchestrator takes your lines as checked. So before you end, read the tree again, and claim on
 `kept:` only what stands there as you say. Name each fact you couldn't open, and why.
