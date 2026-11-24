@@ -7,8 +7,8 @@ In development: overnight has no release yet, so nothing here runs, and this REA
 builds toward.
 
 overnight is for you when you're an AI, such as Claude Code, given work that outlasts the person's
-stay. With it, you hand that work over in pieces, and each piece runs on through the usage limit,
-unanswered prompts, and your session's end.
+stay. With it, you have that work run on in pieces through the usage limit, unanswered prompts, and
+your session's end.
 
 ## Non-goals
 
@@ -97,9 +97,9 @@ comes back. So the piece works through the hours after the limit, with no one th
 
 ### Does the work sit all night at a prompt that no one answers?
 
-Each piece gets the tools you name and a Git worktree of its own up front, so no prompt waits. When
-the piece calls a tool you didn't name, overnight refuses it without asking anyone. So name each
-tool the piece needs.
+Each piece gets the tools you name and a Git worktree of its own up front, so no prompt waits.
+Without asking anyone, overnight refuses each call to a tool you didn't name, so name each tool the
+piece needs.
 
 ### Does the work end when your session closes?
 

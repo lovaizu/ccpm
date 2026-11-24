@@ -16,7 +16,13 @@
    {
     "id": "N1",
     "good": true,
-    "decisions": []
+    "decisions": [
+     {
+      "about": "the length of the opening's sentence of what the AI achieves",
+      "decided": "The opening's sentence that starts `With it, you` holds 20 words or fewer, as the readme template's form takes it and the repository's template check refuses the push of a longer one. It says what it says now.",
+      "by": "reasoning"
+     }
+    ]
    },
    {
     "id": "N2",
@@ -57,7 +63,13 @@
    {
     "id": "N8",
     "good": true,
-    "decisions": []
+    "decisions": [
+     {
+      "about": "the length of each answer under How it works",
+      "decided": "Each answer under a question of How it works holds one or two sentences, as the readme template's form takes it and the repository's template check refuses the push of a longer one. Each says what it says now.",
+      "by": "reasoning"
+     }
+    ]
    },
    {
     "id": "N9",
