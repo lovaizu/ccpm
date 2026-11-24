@@ -205,7 +205,7 @@
     },
     {
      "id": "N7",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "the one way",
