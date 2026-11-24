@@ -118,7 +118,13 @@
     {
      "id": "N6",
      "good": false,
-     "decisions": []
+     "decisions": [
+      {
+       "about": "who decides the one way and its ideas",
+       "decided": "The maker decides the one way and each idea that carries it from the goal and the run's records, and asks the user none of them, as the user confirms only the purpose and the intent: \u300c\u76ee\u7684\u306f\u3059\u3067\u306b\u4f1d\u3048\u3066\u308b\u3088\u306d\uff1f \u305d\u308c\u624b\u6bb5\u3060\u3088\u306d\uff1f\u300d \u300c\u79c1\u306f\u76ee\u7684\u3068\u610f\u56f3\u3060\u3051\u78ba\u8a8d\u3057\u305f\u3044\u3001\u4f7f\u3044\u65b9\u3084\u5b9f\u88c5\u306b\u8208\u5473\u306a\u3044\u3001\u5b9f\u73fe\u3057\u3066\u6b32\u3057\u3044\u300d",
+       "by": "user"
+      }
+     ]
     }
    ]
   },
