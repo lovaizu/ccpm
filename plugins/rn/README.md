@@ -246,8 +246,8 @@ only what they find that the people fail without, twice at most, then shows you 
 ### "Each fix breaks something else."
 
 rn takes each shortfall back to the decision it comes from, and makes the deliverable again from
-the decisions. A shortfall the people would never meet changes nothing, so the deliverable doesn't
-grow with each remake.
+the decisions. A later problem, such as a refused push, is mended within them, and checked by your
+repository's checks and tests.
 
 ### "Does it keep working on what no one needs?"
 
