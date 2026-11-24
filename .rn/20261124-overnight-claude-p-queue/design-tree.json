@@ -11,7 +11,7 @@
    ],
    "refs": []
   },
-  "pr": null
+  "pr": "https://github.com/lovaizu/ccpm/pull/85"
  },
  "goal": {
   "decided": "The user has the AI they instruct run work overnight and receive its results in the morning: \u300cAI \u304c\u4f5c\u696d\u3092\u591c\u306b\u6d41\u3057\u3066\u304a\u304d\u3001\u671d\u306b\u7d50\u679c\u3092\u53d7\u3051\u53d6\u308c\u308b\u3002\u300d Once it holds, that AI, whether it calls overnight itself or through another plugin, leaves the work to run through the night while nobody answers, and in the morning takes in what came of it, where before the same work ran in the daytime.",
