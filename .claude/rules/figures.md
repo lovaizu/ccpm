@@ -9,7 +9,7 @@ paths:
 
 These rules make every figure of the repository look alike in light and dark themes, and in both
 English and Japanese.
-[The refactor-doc best practice](../../plugins/rn/domain/best-practices/refactor-doc/best-practice.md)
+[The refactor-doc best practice](../../plugins/rn/domain/best-practices/refactor-doc/best-practice.json)
 says which form a figure takes, in its practice on lists, tables, and diagrams. These rules say only how an SVG figure looks.
 
 - **Take a figure's whole look from `dev/images/figures.css`: its colors in light and dark, its

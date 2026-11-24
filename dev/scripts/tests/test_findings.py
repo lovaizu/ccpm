@@ -37,7 +37,7 @@ class HeldTest(unittest.TestCase):
         # held gives the check's exit code.
         self.assertEqual(done.returncode, 3, "the check's exit code")
         before, finding, after = done.stdout.split("\n\n")
-        self.assertIn("refactor-code/best-practice.md", before, "the design text first")
+        self.assertIn("refactor-code/best-practice.json", before, "the design text first")
         self.assertEqual(finding, "a.py:1: too complex")
         self.assertEqual(
             after,
@@ -51,7 +51,7 @@ class HeldTest(unittest.TestCase):
         # Then: the finding stands after what the check is for and before its short form.
         self.assertEqual(done.returncode, 2, "the check's exit code")
         before, finding, after = done.stdout.split("\n\n")
-        self.assertIn("code/best-practice.md", before, "the tests text first")
+        self.assertIn("code/best-practice.json", before, "the tests text first")
         self.assertEqual(finding, "dev/scripts/files.py 30 1 97% 36")
         self.assertEqual(
             after, "Mend the design or the code. Don't add a test only to clear a finding.\n"

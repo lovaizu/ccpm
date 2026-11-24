@@ -54,9 +54,9 @@ are the orchestrator's, so leave them be.
   - `<run>/design-tree.json`, in the form of
     `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/design-tree/design-tree.schema.json`.
   - The design tree best practice,
-    `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/design-tree/best-practice.md`, which says how each
-    part of the tree is written. Its item that runs `tree.py commit` is the orchestrator's, which
-    commits the tree once you end.
+    `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/design-tree/best-practice.json`, which says how
+    each part of the tree is written. Its item that runs `tree.py commit` is the orchestrator's,
+    which commits the tree once you end.
 - The tree keeps the user's words word for word, in each decision `by` `user`. Write the request as
   the plan's decision of N1 about `the request`. Write each later word of the user the same way, as
   the decision it settles. A later pruner reads them nowhere else.

@@ -1,11 +1,9 @@
-"""What a person or CI runs on rn's best practices, as `python3 dev/scripts/practices.py
-form|markdown` with the JSON of one best practice or more: `form` names each fault of a best
-practice's form, its Markdown, made from its JSON for a person to read, left behind it, its
+"""What a person or CI runs on rn's best practices, as `python3 dev/scripts/practices.py form`
+with the JSON of one best practice or more: it names each fault of a best practice's form, its
 template where it's a JSON Schema that schema.py doesn't read whole, and each file in its folder
-that neither it nor its template holds. `markdown` writes its Markdown beside
-it. Each gives 0, or 1 where it names any fault, and 2 with its usage where it gets no command it
-takes. It's ccpm's own tooling, kept out of rn's folder, as no run of rn checks a best practice's
-Markdown. It holds each best practice to its form, rn's
+that neither it nor its template holds. It gives 0, or 1 where it names any fault, and 2 with its
+usage where it gets no command it takes. It's ccpm's own tooling, kept out of rn's folder, as no
+run of rn checks the form of rn's own best practices. It holds each best practice to its form, rn's
 `plugins/rn/domain/schemas/best-practice.schema.json`."""
 
 from __future__ import annotations
@@ -28,7 +26,7 @@ RN = os.path.join(
 import files
 import schema
 
-USAGE = "usage: python3 dev/scripts/practices.py form|markdown <best practice json>..."
+USAGE = "usage: python3 dev/scripts/practices.py form <best practice json>..."
 
 # What the about of a question may name beside the parts or sections: the whole deliverable.
 WHOLE = "the whole"
@@ -48,8 +46,6 @@ NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
 QUESTION = re.compile(r"\bN\d+\b")
 # An item named in a text, by its condition's ID and its place, such as N6.2.
 ITEM = re.compile(r"\b(N\d+)\.(\d+)\b")
-# When the maker takes each item, as the Markdown names it.
-AT = {"decide": "*While deciding.*", "make": "*While making.*"}
 # A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
 # that names no file: another site, or a place in the same page.
 LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
@@ -70,12 +66,6 @@ def conditions(data: dict[str, Any]) -> list[dict[str, Any]]:
     """Each necessary condition of the best practice, with its practice, in the order of the tree:
     the conditions of each factor in turn."""
     return [c for factor in factors(data) for c in factor["necessary_conditions"]]
-
-
-def by_id(found: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """The conditions in the order of their IDs, N9 before N10, as a reader looks a practice up by
-    the ID that a role cites."""
-    return sorted(found, key=lambda c: (len(c["id"]), c["id"]))
 
 
 def sections(template: str) -> list[str]:
@@ -137,11 +127,6 @@ def keys(template: str) -> list[Section]:
 def beside(path: str, name: str) -> str:
     """The path of the file of the name beside the best practice at the path."""
     return os.path.join(os.path.dirname(path), name)
-
-
-def kind_of(path: str) -> str:
-    """The kind of the best practice at the path: the name of the folder it lies in."""
-    return os.path.basename(os.path.dirname(os.path.abspath(path)))
 
 
 def entries(folder: str) -> list[str]:
@@ -245,14 +230,12 @@ def shown(text: str, figures_only: bool = True) -> list[str]:
 
 
 def kept(path: str, data: dict[str, Any]) -> set[str]:
-    """The files the folder of the best practice at the path holds by right: the best practice, its
-    Markdown and each file the Markdown links, and its template, each file in it where it's a
-    folder, else the figures it shows."""
-    markdown = os.path.splitext(path)[0] + ".md"
-    files = {path, markdown}
-    if os.path.isfile(markdown):
-        with open(markdown, encoding="utf-8") as f:
-            files.update(beside(markdown, linked) for linked in shown(f.read(), figures_only=False))
+    """The files the folder of the best practice at the path holds by right: the best practice and
+    each file that a text of it links, and its template, each file in it where it's a folder, else
+    the figures it shows."""
+    files = {path}
+    for text in texts(data):
+        files.update(beside(path, linked) for linked in shown(text, figures_only=False))
     if "template" in data:
         named = os.path.normpath(beside(path, data["template"]))
         files.add(named)
@@ -384,55 +367,6 @@ def item_faults(data: dict[str, Any]) -> list[str]:
     ]
 
 
-def item_line(n: int, item: dict[str, Any]) -> str:
-    """The item as a line of a numbered list, with when the maker takes it."""
-    return f"{n}. {AT[item['at']]} {item['text']}"
-
-
-def tree(data: dict[str, Any]) -> list[str]:
-    """The goal tree as a nested list: the goal, each factor under it, and each condition under its
-    factor with the sections that hold it, each ID in bold before its sentence, as the prose check
-    reads a capital after a colon as a fault."""
-    lines = [f"- {data['goal']['what']}"]
-    for factor in factors(data):
-        lines.append(f"  - **{factor['id']}** {factor['what']}")
-        held = factor["necessary_conditions"]
-        lines += [f"    - **{c['id']}** {c['what']} ({c['about']})" for c in held]
-    return lines
-
-
-def link_of(path: str, kind: str) -> str:
-    """The link from the Markdown of the best practice at the path to that of the kind it takes."""
-    found = os.path.splitext(practice_of(path, kind))[0] + ".md"
-    return os.path.relpath(found, os.path.dirname(os.path.abspath(path))).replace(os.sep, "/")
-
-
-def line_of(path: str, taken: dict[str, Any]) -> str:
-    """The input's line in the Markdown of the best practice at the path: a link to its kind, then
-    the sections it takes, each in backticks as its template heads it, or that the kind is run
-    whole where it takes none."""
-    link = f"- [{taken['kind']}]({link_of(path, taken['kind'])})"
-    takes = ", ".join(f"`{name}`" for name in taken["takes"])
-    return f"{link}, taking {takes}" if takes else f"{link}, run whole"
-
-
-def markdown_of(path: str, data: dict[str, Any]) -> str:
-    """The best practice at the path as Markdown: its goal tree, a link to its template, and a link
-    to each kind it takes where it takes any, to where its best practice lies, then each
-    condition's practice, in the order of the IDs, under the question it meets."""
-    out = [f"# `{kind_of(path)}`", "", "## Goal tree", "", *tree(data)]
-    if "template" in data:
-        out += ["", "## Template", "", f"[{data['template']}]({data['template']})"]
-    if data["inputs"]:
-        out += ["", "## Inputs", ""]
-        out += [line_of(path, taken) for taken in data["inputs"]]
-    out += ["", "## Practices"]
-    for c in by_id(conditions(data)):
-        out += ["", f"### {c['id']}", "", c["what"], "", c["why"], ""]
-        out += [item_line(n, s) for n, s in enumerate(c["items"], 1)]
-    return "\n".join(out) + "\n"
-
-
 def strays(path: str, data: dict) -> list[str]:
     """Each file in the best practice's folder that neither it nor its template holds, in words."""
     return [
@@ -443,8 +377,7 @@ def strays(path: str, data: dict) -> list[str]:
 
 def form(path: str) -> list[str]:
     """Each fault of the best practice's form, its template where it's a schema that schema.py
-    doesn't read whole, its Markdown left behind it, and each file in its folder that neither it
-    nor its template holds."""
+    doesn't read whole, and each file in its folder that neither it nor its template holds."""
     try:
         data = files.load(path, "best-practice")
     except files.Unreadable as why:
@@ -453,31 +386,11 @@ def form(path: str) -> list[str]:
     found = missing(path, data)
     if found:
         return found + late
-    found = unread(path, data) + faults(data, template(path, data))
-    target = os.path.splitext(path)[0] + ".md"
-    try:
-        with open(target, encoding="utf-8") as f:
-            if f.read() != markdown_of(path, data):
-                found.append(f"{target} is not as its JSON makes it; run practices.py markdown")
-    except FileNotFoundError:
-        found.append(f"{target} is missing; run practices.py markdown")
-    return found + late
-
-
-def markdown(path: str) -> list[str]:
-    """Writes the best practice's Markdown beside it, where a person can read it."""
-    try:
-        data = files.load(path, "best-practice")
-    except files.Unreadable as why:
-        return [str(why)]
-    with open(os.path.splitext(path)[0] + ".md", "w", encoding="utf-8") as f:
-        f.write(markdown_of(path, data))
-    return []
+    return unread(path, data) + faults(data, template(path, data)) + late
 
 
 PRACTICES: dict[str, Callable[[str], list[str]]] = {
     "form": form,
-    "markdown": markdown,
 }
 
 

@@ -27,7 +27,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   Each part of rn starts from what the people are after, and makes what brings them there.
 - Reviewed each turn by what was learned, for O1\
   Each turn, rn reviews the
-  [design tree](../../plugins/rn/domain/best-practices/design-tree/best-practice.md) by what the
+  [design tree](../../plugins/rn/domain/best-practices/design-tree/best-practice.json) by what the
   run has done and learned, keeping to the vital few.
 - Good found and made good, for O1\
   rn finds what serves the people and what would serve them better, and makes only those

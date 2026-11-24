@@ -53,9 +53,10 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
 - The Cut's `deliverable` is its node of the design tree. It holds each necessary condition with
   `good` and its `decisions`. A decision whose `decided` is null is a point still open. A decision
   `by` `user` is the user's own answer.
-- The Cut's `best_practice` is the folder of the best practice you make by. Its `best-practice.md`
-  gives each necessary condition of the kind, by its ID, such as N2. Under each, its practice gives
-  the field's established way to meet it.
+- The Cut's `best_practice` is the folder of the best practice you make by. Its `best-practice.json`
+  holds the kind's goal tree: the goal, each critical success factor of it, and each necessary
+  condition of a factor, by its ID, such as N2. Each condition's `why` and `items` give the field's
+  established way to meet it.
 - The Cut's `template`, where it isn't null, is the form of the deliverable's kind. The deliverable's
   path, where it's a Markdown file, keeps that form in a Round of either stage, as `check.py` holds
   it.
@@ -83,7 +84,7 @@ Where the orchestrator resumes you with the user's answer, read the Cut again. T
 there as that point's decision, by user. Then go on from `decide`.
 
 1. `read`: you hold what the Round rests on. Read whole the Cut, the best practice's
-   `best-practice.md`, and each file of the Cut's `inputs`. Read whole too each file of the
+   `best-practice.json`, and each file of the Cut's `inputs`. Read whole too each file of the
    deliverable that stands at its paths.
 2. `decide`: you know how the deliverable meets each condition for its people. Stand on the best
    practice's way to each condition. Ask what that way needs of this deliverable for the goal's

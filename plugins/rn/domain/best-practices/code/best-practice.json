@@ -132,7 +132,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports, by the techniques with which [the test design best practice](../test-design/best-practice.md) designs unit cases: each class of input, refusals among them, each end of a class on an ordered scale, none, one, and several of each collection, a value that nearly matches beside the one that matches, and a case that fails on each fault likely in its body. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
+        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports, by the techniques with which [the test design best practice](../test-design/best-practice.json) designs unit cases: each class of input, refusals among them, each end of a class on an ordered scale, none, one, and several of each collection, a value that nearly matches beside the one that matches, and a case that fails on each fault likely in its body. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
        },
        {
         "at": "decide",

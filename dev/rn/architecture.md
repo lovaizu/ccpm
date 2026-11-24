@@ -55,7 +55,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
 - Design tree\
   Holds what to make, why, and how far the run got, for each review and each pick-up. It also
   holds rn's version, the languages, the steps, the issues, and the pull request. Its form is
-  [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.md)'s.
+  [the design tree best practice](../../plugins/rn/domain/best-practices/design-tree/best-practice.json)'s.
 - Cut\
   A role's part of the design tree, so that each role starts with only the decisions its work needs.
 - Best practice\

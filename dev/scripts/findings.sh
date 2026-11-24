@@ -23,7 +23,7 @@ held() {
 The checks found code that its maintainer may find hard to change. Each finding
 marks a design to rethink, not a number to lower. Find the decision held in the
 wrong place, or the function that does more than one thing, as
-plugins/rn/domain/best-practices/refactor-code/best-practice.md asks, and change
+plugins/rn/domain/best-practices/refactor-code/best-practice.json asks, and change
 the design there. Keep every behavior. Don't split a function, pack arguments,
 add noqa or a type ignore, or raise a limit only to clear a finding: code that
 clears it and reads worse is worse than the finding.
@@ -35,7 +35,7 @@ EOF
 The checks found code that the tests may let break unseen. Each finding marks a
 design to rethink, not a test to add. First ask whether the part needs the code,
 and remove what no case of the tests calls for, as
-plugins/rn/domain/best-practices/code/best-practice.md says of the faults that
+plugins/rn/domain/best-practices/code/best-practice.json says of the faults that
 the tests catch. Tighten a test only for a case that the tests already name. A
 new case goes back to the design of the test cases, never into a test written
 to clear a finding.

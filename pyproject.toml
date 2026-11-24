@@ -42,7 +42,7 @@ line-length = 100
 # The rules ruff checks by default, lines past that width, and a function with more paths, returns,
 # branches, parameters, or statements than its maintainer can follow in one reading, each a sign
 # of a function that does more than one thing, as N5 of
-# plugins/rn/domain/best-practices/refactor-code/best-practice.md asks.
+# plugins/rn/domain/best-practices/refactor-code/best-practice.json asks.
 extend-select = ["E501", "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915"]
 
 [tool.ruff.lint.mccabe]
@@ -72,7 +72,7 @@ addopts = ["-p", "no:cacheprovider"]
 markers = ["supports(name): the key result, element, or integration case one level up"]
 
 # How much of the trace script and of rn's code the tests run, as N7 of
-# plugins/rn/domain/best-practices/code/best-practice.md says: every line and branch.
+# plugins/rn/domain/best-practices/code/best-practice.json says: every line and branch.
 [tool.coverage.run]
 branch = true
 parallel = true

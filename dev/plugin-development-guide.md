@@ -279,7 +279,7 @@ A file that a plugin reads is JSON with a schema, and a script checks its form. 
 how its parts relate: a part that belongs to one other sits inside it, and a part that several
 others rest on is named by its path or ID, as a design tree names each deliverable's inputs. After
 the AI changes a part, a script lists the parts that the change touches, and the AI reads each, as
-[the design tree best practice](../plugins/rn/domain/best-practices/design-tree/best-practice.md)
+[the design tree best practice](../plugins/rn/domain/best-practices/design-tree/best-practice.json)
 asks after a change to a node. A file that shows the form of a deliverable, such as a template, is
 in the deliverable's own format.
 
@@ -393,14 +393,14 @@ that depend on each other can't change or install alone.
 ## Test
 
 A plugin is tested at the test levels of
-[the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md):
+[the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.json):
 unit and integration tests, and end-to-end (E2E) tests, which for a plugin that holds a prompt are
 the walkthrough run of
 [the test strategy guide](../plugins/rn/domain/best-practices/architecture/test-strategy-guide.md).
 The unit tests of its code follow
-[the code best practice](../plugins/rn/domain/best-practices/code/best-practice.md). Its prompts are
-checked by the walkthrough run alone, as
-[the prompt best practice](../plugins/rn/domain/best-practices/prompt/best-practice.md) says.
+[the code best practice](../plugins/rn/domain/best-practices/code/best-practice.json).
+Its prompts are checked by the walkthrough run alone, as
+[the prompt best practice](../plugins/rn/domain/best-practices/prompt/best-practice.json) says.
 Its architecture's Test strategy sets the tools and the criteria. This section holds only what
 every plugin adds to them.
 

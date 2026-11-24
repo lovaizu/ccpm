@@ -1,7 +1,6 @@
 """dev/scripts/practices.py, what a person or CI runs on rn's best practices: faults names each
-fault of a best practice's form, and markdown_of makes the Markdown a person reads. form names those
-faults, its Markdown left behind, and each file in its folder that neither it nor its template
-holds. markdown writes its Markdown beside it."""
+fault of a best practice's form. form names those faults, and each file in its folder that neither
+it nor its template holds."""
 
 from __future__ import annotations
 
@@ -414,25 +413,6 @@ class Beside(helpers.FolderTest):
             os.path.join(self.base, "gone", "best-practice.json"),
         )
 
-    def test_the_markdown_links_each_kind_it_takes_where_its_best_practice_lies(self):
-        self.write(os.path.join(self.base, "late", "best-practice.json"), "{}")
-        named = dict(
-            DATA,
-            inputs=[
-                {"kind": "late", "takes": []},
-                {"kind": "readme", "takes": ["Walkthrough", "How it works"]},
-                {"kind": "gone", "takes": []},
-            ],
-        )
-        own = os.path.relpath(os.path.join(practices.OWN, "readme"), self.folder)
-        own = own.replace(os.sep, "/")
-        self.assertIn(
-            "## Inputs\n\n- [late](../late/best-practice.md), run whole\n"
-            f"- [readme]({own}/best-practice.md), taking `Walkthrough`, `How it works`\n"
-            "- [gone](../gone/best-practice.md), run whole\n",
-            practices.markdown_of(self.path, named),
-        )
-
     def test_the_entries_at_the_top_of_a_template_that_is_a_folder(self):
         for entry in (".claude-plugin/plugin.json", "skills/up/SKILL.md", "README.md", ".DS_Store"):
             self.write(os.path.join(self.folder, "template", entry), "x")
@@ -447,9 +427,6 @@ class Beside(helpers.FolderTest):
         self.assertEqual(
             practices.missing(self.path, named), ["its template template is not beside it"]
         )
-
-    def test_the_kind_is_the_name_of_its_folder(self):
-        self.assertEqual(practices.kind_of(self.path), "kind")
 
 
 class Shown(unittest.TestCase):
@@ -475,7 +452,6 @@ class Leftovers(helpers.FolderTest):
         self.path = os.path.join(self.folder, "best-practice.json")
         self.data = dict(DATA, template="template.md")
         self.write(self.at("best-practice.json"), "{}")
-        self.write(self.at("best-practice.md"), "# kind\n")
         self.write(
             self.at("template.md"),
             "![The product](images/template-a.svg)\n```text\n![Q](images/q.svg)\n```\n",
@@ -496,15 +472,27 @@ class Leftovers(helpers.FolderTest):
             [self.at("images", "old.svg"), self.at("notes.md")],
         )
 
-    def test_a_file_its_markdown_links_is_held(self):
-        self.write(self.at("best-practice.md"), "# kind\n\nList from [the types](test-types.md).\n")
-        self.write(self.at("test-types.md"), "t")
-        self.assertEqual(practices.leftovers(self.path, self.data), [])
+    def linking(self, text: str) -> dict[str, Any]:
+        """The data, whose first item of N1 says the text."""
+        data = copy.deepcopy(self.data)
+        condition(data, 1)["items"][0]["text"] = text
+        return data
 
-    def test_a_file_its_markdown_links_only_in_a_code_block_is_not_held(self):
-        self.write(self.at("best-practice.md"), "# kind\n```text\n[t](test-types.md)\n```\n")
+    def test_a_file_that_a_text_of_it_links_is_held(self):
+        # Given: an item of the JSON that links a file beside it
+        data = self.linking("List from [the types](test-types.md).")
         self.write(self.at("test-types.md"), "t")
-        self.assertEqual(practices.leftovers(self.path, self.data), [self.at("test-types.md")])
+        # Then: the file is no leftover
+        self.assertEqual(practices.leftovers(self.path, data), [])
+
+    def test_a_file_that_a_text_of_it_links_only_in_a_code_block_is_not_held(self):
+        data = self.linking("See:\n```text\n[t](test-types.md)\n```\n")
+        self.write(self.at("test-types.md"), "t")
+        self.assertEqual(practices.leftovers(self.path, data), [self.at("test-types.md")])
+
+    def test_a_markdown_beside_it_that_no_text_links_is_a_leftover(self):
+        self.write(self.at("best-practice.md"), "# kind\n")
+        self.assertEqual(practices.leftovers(self.path, self.data), [self.at("best-practice.md")])
 
     def test_a_hidden_file_is_no_leftover(self):
         self.write(self.at("images", ".DS_Store"), "")
@@ -597,73 +585,8 @@ class FaultsByNestedTemplate(unittest.TestCase):
         )
 
 
-class Markdown(unittest.TestCase):
-    def test_links_the_template_it_names(self):
-        named = dict(BY_TEMPLATE, template="template.md")
-        text = practices.markdown_of(PATH, named)
-        self.assertIn("## Template\n\n[template.md](template.md)\n", text)
-        self.assertNotIn("## Template", practices.markdown_of(PATH, DATA))
-
-    def test_links_each_kind_it_takes_after_the_template(self):
-        named = dict(DATA, template="template.md", inputs=[{"kind": "a", "takes": ["X"]}])
-        text = practices.markdown_of(PATH, named)
-        self.assertIn(
-            "[template.md](template.md)\n\n## Inputs\n\n"
-            "- [a](../a/best-practice.md), taking `X`\n\n## Practices\n",
-            text,
-        )
-
-    def test_leaves_out_a_list_of_kinds_that_is_empty(self):
-        self.assertNotIn("## Inputs", practices.markdown_of(PATH, DATA))
-
-    def test_lists_the_goal_each_factor_under_it_and_each_condition_under_its_factor(self):
-        # Given: a best practice whose conditions lie under two factors, with a template's sections
-        # Then: the goal tree opens the page, each condition with the sections that hold it
-        self.assertTrue(
-            practices.markdown_of(PATH, BY_TEMPLATE).startswith(
-                "# `kind`\n\n## Goal tree\n\n"
-                "- The reader gets it.\n"
-                "  - **C1** A.\n"
-                "    - **N1** Does it? (the opening, Roles)\n"
-                "  - **C2** B.\n"
-                "    - **N2** After N1, does all? (OKRs, the whole)\n\n"
-            )
-        )
-
-    def test_holds_each_practice_under_its_question(self):
-        text = practices.markdown_of(PATH, DATA)
-        self.assertTrue(
-            text.endswith(
-                "## Practices\n\n"
-                "### N1\n\nDoes it?\n\nThink.\n\n"
-                "1. *While deciding.* Choose.\n"
-                "2. *While making.* Where it fails, mend it.\n\n"
-                "### N2\n\nAfter N1, does all?\n\nThen.\n\n"
-                "1. *While making.* Do.\n"
-            ),
-            text,
-        )
-
-    def test_the_practices_go_in_the_order_of_their_ids_whatever_factor_holds_each(self):
-        # Given: N2 under the first factor and N1 under the second
-        data = copy.deepcopy(DATA)
-        condition(data, 1)["id"], condition(data, 2)["id"] = "N2", "N1"
-        text = practices.markdown_of(PATH, data)
-        # Then: the tree keeps each under its factor, and the practices go N1, then N2
-        self.assertIn("  - **C1** A.\n    - **N2** Does it? (the whole)\n", text)
-        self.assertIn("## Practices\n\n### N1\n\nAfter N1, does all?\n", text)
-        self.assertIn("### N2\n\nDoes it?\n", text)
-        self.assertLess(text.index("### N1"), text.index("### N2"))
-
-    def test_the_practices_go_in_number_order_past_nine(self):
-        data = copy.deepcopy(DATA)
-        condition(data, 1)["id"], condition(data, 2)["id"] = "N10", "N9"
-        text = practices.markdown_of(PATH, data)
-        self.assertLess(text.index("### N9"), text.index("### N10"))
-
-
 class Practices(helpers.FolderTest):
-    """form and markdown, on a best practice of the kind `kind`."""
+    """form, on a best practice of the kind `kind`."""
 
     def setUp(self) -> None:
         super().setUp()
@@ -671,20 +594,13 @@ class Practices(helpers.FolderTest):
         self.path = os.path.join(self.folder, "best-practice.json")
         self.write_json(self.path, DATA)
 
-    def test_form_fails_until_markdown_writes_it(self):
-        self.assertEqual(ran("form", self.path)[0], 1)
-        self.assertEqual(ran("markdown", self.path), (0, "", ""))
-        self.assertEqual(
-            self.read(os.path.join(self.folder, "best-practice.md")),
-            practices.markdown_of(self.path, DATA),
-        )
+    def test_form_passes_a_sound_best_practice(self):
         self.assertEqual(ran("form", self.path), (0, "", ""))
 
     def test_form_fails_on_a_fault_of_the_form(self):
         data = copy.deepcopy(DATA)
         condition(data, 2)["id"] = "N1"
         self.write_json(self.path, data)
-        ran("markdown", self.path)
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
         self.assertIn(f"practices.py: {self.path}: {practices.faults(data)[0]}", err)
@@ -735,20 +651,15 @@ class Practices(helpers.FolderTest):
         data["template"] = "template.md"
         self.write_json(self.path, data)
         self.write(os.path.join(self.folder, "template.md"), "# <P>\n\n## Use\n")
-        ran("markdown", self.path)
         code, _, err = ran("form", self.path)
         self.assertEqual(code, 1)
         self.assertIn(f"practices.py: {self.path}: section Use has no condition about it", err)
-        self.assertIn(
-            "[template.md](template.md)", self.read(os.path.join(self.folder, "best-practice.md"))
-        )
 
     def test_form_holds_the_questions_to_a_template_that_is_a_folder_and_keeps_its_files(self):
         data = copy.deepcopy(DATA)
         data["template"] = "template"
         self.write_json(self.path, data)
         self.write(os.path.join(self.folder, "template", "skills", "up", "SKILL.md"), "# up\n")
-        ran("markdown", self.path)
         self.assertEqual(
             ran("form", self.path),
             (1, "", f"practices.py: {self.path}: section skills has no condition about it\n"),
@@ -784,19 +695,7 @@ class Practices(helpers.FolderTest):
             err,
         )
 
-    def test_form_fails_on_a_markdown_changed_by_hand(self):
-        made = practices.markdown_of(self.path, DATA)
-        for changed in (made + "More.\n", made[:-1]):
-            with self.subTest(changed=changed[-6:]):
-                self.write(os.path.join(self.folder, "best-practice.md"), changed)
-                code, _, err = ran("form", self.path)
-                self.assertEqual(code, 1)
-                self.assertIn(
-                    "best-practice.md is not as its JSON makes it; run practices.py markdown", err
-                )
-
     def test_form_says_to_remove_a_leftover(self):
-        ran("markdown", self.path)
         stray = os.path.join(self.folder, "notes.md")
         self.write(stray, "n")
         code, _, err = ran("form", self.path)
@@ -807,14 +706,11 @@ class Practices(helpers.FolderTest):
             err,
         )
 
-    def test_each_command_names_a_json_it_cannot_read(self):
+    def test_form_names_a_json_it_cannot_read(self):
         self.write(self.path, "{")
-        for command in ("form", "markdown"):
-            with self.subTest(command=command):
-                code, _, err = ran(command, self.path)
-                self.assertEqual(code, 1)
-                self.assertIn(f"practices.py: {self.path}: {self.path} is not JSON", err)
-        self.assertFalse(os.path.exists(os.path.join(self.folder, "best-practice.md")))
+        code, _, err = ran("form", self.path)
+        self.assertEqual(code, 1)
+        self.assertIn(f"practices.py: {self.path}: {self.path} is not JSON", err)
 
     def test_form_names_a_best_practice_that_is_not_there(self):
         # Given: a path where no file lies.
@@ -826,7 +722,7 @@ class Practices(helpers.FolderTest):
         self.assertIn(f"practices.py: {gone}: there is no file {gone}", err)
 
     def test_a_command_it_does_not_take_gives_2_with_its_usage(self):
-        # When: practices.py gets a command that is neither form nor markdown.
+        # When: practices.py gets a command that is not form.
         code, _, err = ran("check", self.path)
         # Then: it gives 2, and says what it takes.
         self.assertEqual((code, err), (2, practices.USAGE + "\n"))

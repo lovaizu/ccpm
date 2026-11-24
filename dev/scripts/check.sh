@@ -74,8 +74,6 @@ held design pyrefly check $properties --search-path plugins/rn/domain --search-p
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
 # - a fault in a best practice's form
-# - a best practice's Markdown that lags behind its JSON, from which practices.py makes it for a
-#   person to read
 # - a template that is a JSON Schema in a form that schema.py doesn't read whole
 # - a file in the folder that neither uses, such as a figure that the template dropped
 # Each of these would make the folder say what rn doesn't hold.

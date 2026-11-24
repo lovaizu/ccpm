@@ -45,7 +45,7 @@ measure of `vital-few.md`, and none comes before it.
   turn. Their reply is the request.
 - The request: read the issue that it names, by `gh issue view`, and the repository's files that it
   bears on. Take the languages by N7.2 of the design tree best practice,
-  `<rn's folder>/domain/best-practices/design-tree/best-practice.md`. Write the run's slug, one to
+  `<rn's folder>/domain/best-practices/design-tree/best-practice.json`. Write the run's slug, one to
   five lower-case English words joined by `-`, such as `overnight-claude-p-queue`. Take it from the
   issue's title or the request's words. Then run
   `repository.py new "<slug>" "<deliverables' language>" "<conversation's language>"`. It makes the

@@ -1,6 +1,6 @@
 # Test strategy guide
 
-This guide is the base of the Test strategy of [the architecture best practice](best-practice.md).
+This guide is the base of the Test strategy of [the architecture best practice](best-practice.json).
 It lists the checks that teams run, grouped by the test target they test. An architecture picks
 only the checks that its product's purpose needs, since a row for every check decides nothing.
 
@@ -57,7 +57,7 @@ guide links them and copies nothing:
     and traceability. It runs on each change, and the work waits on it.
   - At stages, each test that runs the product whole, such as a scenario test of a product that
     holds no prompt. It grows from one pilot run as
-    [the test implementation best practice](../test-implementation/best-practice.md) says, since a
+    [the test implementation best practice](../test-implementation/best-practice.json) says, since a
     run takes minutes and a person decides from its results.
   - Apart from the work, each check that waits on something outside the product's schedule, such
     as contract testing on each new version of the host. It runs in CI apart from the work, and its

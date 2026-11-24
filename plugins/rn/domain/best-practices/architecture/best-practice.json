@@ -372,7 +372,7 @@
       "items": [
        {
         "at": "make",
-        "text": "Once Test strategy is written, have the skeleton made from the document by [the software design best practice](../software-design/best-practice.md), and then the test cases by [the test design best practice](../test-design/best-practice.md), each with its list of gaps."
+        "text": "Once Test strategy is written, have the skeleton made from the document by [the software design best practice](../software-design/best-practice.json), and then the test cases by [the test design best practice](../test-design/best-practice.json), each with its list of gaps."
        },
        {
         "at": "make",
