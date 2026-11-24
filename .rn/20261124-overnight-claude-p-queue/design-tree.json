@@ -315,6 +315,10 @@
        "about": "each tool refused, in the status",
        "decided": "S2 shows pieces handing status, for a piece stopped by a wait for an answer, each tool refused, as S1 records them and the Components strategy intends, so that the user names the missing tool at the next hand-over.",
        "by": "reasoning"
+      },
+      {
+       "about": "a piece with a call refused that went on to its end",
+       "decided": null
       }
      ]
     },
@@ -514,8 +518,10 @@
  ],
  "work": [
   {
-   "do": "make",
-   "path": "dev/overnight/architecture.md"
+   "do": "decide",
+   "path": "dev/overnight/architecture.md",
+   "condition": "N9",
+   "about": "a piece with a call refused that went on to its end"
   }
  ],
  "steps": [
