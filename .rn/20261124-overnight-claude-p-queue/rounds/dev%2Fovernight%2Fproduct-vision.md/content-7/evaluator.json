@@ -1,0 +1,43 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user has the work it asks for run as much as it can."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- O1: the user has the work it asks for run as much as it can.",
+    "  - KR1.1: the share of pieces stopped by the usage limit, a wait for an answer, or the session",
+    "  A piece that the limit stops goes on after each reset, however often the limit comes back.",
+    "  Each piece goes on after the session that asked for it closes."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of pieces stopped by the usage limit, a wait for an answer, or the session",
+    "    closing. Lower is better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user has the work it asks for run as much as it can."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N1",
+   "good_when": "the developers find in Roles the person who instructs the AI and wants its work done, whom the goal names as the user, so that a choice about what happens to a piece after the AI's session has closed, such as who learns how it ended, has someone in Roles to serve; now Roles names only the AI, which is gone by then"
+  },
+  {
+   "condition": "N6",
+   "good_when": "the developers read, in the concept's first sentence, the one way overnight keeps the work running, as its maker means it, and can lean a choice such as where and how a piece runs toward it; now that sentence repeats the key result's three stops and names no way, as rn's vision does with 'piles up the vital few'"
+  }
+ ]
+}
