@@ -339,7 +339,8 @@
       },
       {
        "about": "when the walkthrough run runs",
-       "decided": null
+       "decided": "overnight is done only once the integration tests with the stand-in pass and then a walkthrough run of the README's request tries `ask` and `status` once, briefly, on the real Claude, as the tests with the stand-in can't show that these two run on it. The run waits for no night and spends no usage limit on purpose: \u300cA\uff08\u63a8\u5968\uff09\u81ea\u52d5\u30c6\u30b9\u30c8\u304c\u901a\u3063\u305f\u5f8c\u3001\u672c\u7269\u306e Claude \u3067\u4e00\u5ea6\u3060\u3051\u77ed\u304f\u52d5\u304b\u3057\u3066\u78ba\u8a8d\u3057\u3066\u304b\u3089\u5b8c\u6210\u3068\u3059\u308b\u3002\u591c\u307e\u3067\u5f85\u3064\u5fc5\u8981\u3082\u3001\u4e0a\u9650\u306b\u5f53\u3066\u308b\u5fc5\u8981\u3082\u3042\u308a\u307e\u305b\u3093\u3002\u300d\u300cA\u300d",
+       "by": "user"
       }
      ]
     },
@@ -505,7 +506,12 @@
    ]
   }
  ],
- "work": [],
+ "work": [
+  {
+   "do": "make",
+   "path": "dev/overnight/architecture.md"
+  }
+ ],
  "steps": [
   {
    "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
