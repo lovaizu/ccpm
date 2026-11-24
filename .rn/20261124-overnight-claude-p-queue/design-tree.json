@@ -458,8 +458,13 @@
     },
     {
      "id": "N4",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "the copy that the duplicate-code check finds between overnight's bench and rn's",
+       "decided": null
+      }
+     ]
     },
     {
      "id": "N5",
@@ -527,7 +532,14 @@
    ]
   }
  ],
- "work": [],
+ "work": [
+  {
+   "do": "decide",
+   "path": "dev/overnight/tests",
+   "condition": "N4",
+   "about": "the copy that the duplicate-code check finds between overnight's bench and rn's"
+  }
+ ],
  "steps": [
   {
    "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
