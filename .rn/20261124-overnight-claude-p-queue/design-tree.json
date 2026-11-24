@@ -309,7 +309,7 @@
     },
     {
      "id": "N9",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "a piece with a call refused that went on to its end",
@@ -352,11 +352,16 @@
     },
     {
      "id": "N13",
-     "good": true,
+     "good": false,
      "decisions": [
       {
        "about": "how pieces tells that a runner has ended",
        "decided": "The document says how pieces tells that a piece's runner has ended, and which part hands it what it needs to tell so, as an arrow of S1, so that the status counts each piece whose runner is gone as stopped in the share it shows.",
+       "by": "reasoning"
+      },
+      {
+       "about": "how the next piece gets its number",
+       "decided": "The document says from what the hand-over takes the next piece's number, so that on each later night, with earlier pieces' branches, worktrees, and records kept or some of them removed, each new piece gets a folder and a branch that no earlier piece holds, and its record's folder carries the same number.",
        "by": "reasoning"
       }
      ]
