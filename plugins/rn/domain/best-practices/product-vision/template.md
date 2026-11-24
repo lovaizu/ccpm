@@ -39,9 +39,9 @@ law. They show whether a change brought its objective closer.
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<the one way>`: how the product brings its users to their objectives, as its maker means it,
->   said as what the users see the product do, in one sentence that goes on from the product's
->   name.
+> - `<the one way>`: how the product brings its users to their objectives, as the purpose and
+>   intent that its maker gave lead to, said as what the users see the product do, in one sentence
+>   that goes on from the product's name.
 > - `<idea>`: each idea without which the one way fails at a moment of the users' use, in a few
 >   words. Leave out the ideas where the one way holds without any.
 > - `<what it gives>`: what the idea gives the role toward the objective, in one short sentence.
