@@ -202,8 +202,11 @@ Strategies:
 - The last Round's or Fix's roles resumed within the same conversation, and started from its files
   in a new one. [P6.1]\
   Intent: each mend starts from what the last Round or Fix learned, wherever the run goes on.
-- A point for the user, from the pruner or a generator, discussed until settled, then handed to
-  one pruner. [P1.2]\
+- A generator's point weighed first by one pruner, which settles it where the goal and the records
+  do. [P1.2]\
+  Intent: the user is asked only what the records leave open.
+- A point for the user, left open by the pruner, discussed until settled, then handed to one
+  pruner. [P1.2]\
   Intent: the user settles the point in one talk, and the plan takes their own words in one
   weighing.
 - Each step that has one right result done by a script that the role runs. [P4.3]\
@@ -268,7 +271,7 @@ sequenceDiagram
         O->>O: takes it, with the rest of its event's, as one unit for one pruner [P5.1]
       end
     end
-    opt a unit settled: the hearing's, a point the user settled, a judged Round, the final check's findings that no Fix takes, or a decision that a fixer named [P5.1]
+    opt a unit settled: the hearing's, a point the user settled, a generator's point, a judged Round, the final check's findings that no Fix takes, or a decision that a fixer named [P5.1]
       O->>P: starts a new one with the run's folder as an absolute path, the user's words of the run, the request among them, and the unit (Design tree, Round) [P4.1]
       P->>P: weighs each element that the unit would add, change, or ask by the shared measure of the vital few [P7.1]
       P->>P: weighs again each element of the tree that one of them rests on, a done deliverable's decisions and the issue's among them [P7.2]
@@ -300,7 +303,7 @@ sequenceDiagram
     opt a refusal that only the user can mend [P5.3]
       O->>U: the blocker, and what the user does, the other work going on [P5.3]
     end
-    alt a point that only the user can settle: left open in the tree, brought by a generator, or a send-back that changes a decision [P1.2]
+    alt a point that only the user can settle: left open in the tree, or a send-back that changes a decision [P1.2]
       loop until the user settles it [P1.2]
         O->>U: where the run stands, and the point, from the design tree and the user's words, with why and a recommendation [P1.2]
         U->>O: answers [P1.2]
@@ -324,7 +327,7 @@ sequenceDiagram
         alt its Round of content, to make [P3.2]
           O->>G: starts it with its Cut, or resumes the last Round's with the user's words, as given (Cut) [P4.1]
           alt a point it can't settle [P1.2]
-            G-->>O: the point, for the user to settle (Round) [P1.2]
+            G-->>O: the point, as a unit for one pruner (Round) [P1.2]
           else
             G->>G: makes the content by its kind's best practice, or by its check alone, by the decisions of its Cut (Best practice, Cut) [P3.2]
             G->>G: tries it as its people would, and goes back to its decisions where a condition that they meet falls short [P2.1]

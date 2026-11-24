@@ -81,9 +81,10 @@ measure of `vital-few.md`, and none comes before it.
     `repository.py cancel <run>`. It removes the run's worktree and branch, closes its open pull
     request, and deletes its branch on GitHub. It says on stderr what it couldn't remove. Hand a
     cancel to no pruner, and end the turn on the script's report.
-- A generator's end: read `result` in `<round>/generator.json`. On `point`, talk its point through
-  with the user, as any point of theirs. On `made` in a Round of content, start the evaluator at
-  once, as nothing of it is judged yet. On `made` in a Round of refactoring, its Rounds are over:
+- A generator's end: read `result` in `<round>/generator.json`. On `point`, hand the path of the
+  result to a new pruner, as the point asks a judgment. Resume that generator once the pruner has
+  settled it, or talk through with the user the point that the pruner leaves open. On `made` in a
+  Round of content, start the evaluator at once, as nothing of it is judged yet. On `made` in a Round of refactoring, its Rounds are over:
   put the deliverable up.
 - An evaluator's end: hand the path of its result, `<round>/evaluator.json`, to a new pruner, as a
   judged Round asks a judgment. Read nothing of it yourself.

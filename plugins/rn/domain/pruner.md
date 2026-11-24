@@ -60,6 +60,9 @@ are the orchestrator's, so leave them be.
     is whom the goal is for, what they can do at it, and the goal in one summary. It holds too the
     deliverables, the steps, and which steps the user checks. The tree has its `context` written and
     its `goal` open. Once you end with nothing to ask, the orchestrator signs off the plan.
+  - A generator's point comes by the path of its result, `<round>/generator.json`. Settle it where
+    the goal and the records do, the deliverable's paths among what you write, and else leave it
+    open for the user.
   - A point that the user settled is an open point, a generator's point, or a send-back of a put-up.
     A send-back's deliverable takes its Rounds again once its condition is held not good.
   - A judged Round comes by the path of its evaluator's result, `<round>/evaluator.json`. Beside it,

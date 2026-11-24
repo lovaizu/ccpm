@@ -140,8 +140,9 @@ Your result is `<round>/generator.json`, where `<round>` is the Cut's `round`. I
 add a line after the word with what it couldn't check and why. The orchestrator then knows which
 part of your result no check holds.
 
-The orchestrator puts a `point` to the user in their language, from what you wrote. The user decides
-from its first line. So write it as one question in the people's terms. Then write
+A new pruner weighs your `point` first, and settles it where the goal and the records do. What they
+leave open, the orchestrator puts to the user in their language, from what you wrote. The user
+decides from its first line. So write it as one question in the people's terms. Then write
 `I recommend <the option>, as <its ground>.` The option is one of the question's own, the one you'd
 take from what you hold. That way, the user settles it with a yes. For example: `Should the tax rate
 be given with each invoice, or set once? I recommend setting it once, as the rate rarely changes.`
