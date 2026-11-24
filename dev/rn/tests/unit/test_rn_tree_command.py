@@ -765,6 +765,54 @@ def test_fix_and_cut_while_a_fixs_decision_waits_on_the_pruner_give_1(tmp_path: 
     assert sorted(os.listdir(os.path.dirname(fix))) == ["content-1", "fix-2"]
 
 
+def fixer_ended(r: Run, result: Any) -> str:
+    """Writes the command's fix-2 with a fixer's Cut holding the command's node as it stands, and
+    the fixer's result, None for none; gives the Fix's folder."""
+    fix = r.round(COMMAND, "fix", 2)
+    rn_files.write_json(os.path.join(fix, "problem.json"), {"source": "put-up", "words": "x"})
+    rn_files.write_json(
+        os.path.join(fix, "fixer-cut.json"), {"deliverable": r.tree()["deliverables"][1]}
+    )
+    if result is not None:
+        rn_files.write_json(os.path.join(fix, "fixer.json"), result)
+    return fix
+
+
+@pytest.mark.supports("test_a_fixers_decision_that_the_pruner_cuts_ends_the_fix")
+def test_commit_after_a_fixs_decision_marks_it_weighed_and_the_command_waits_on_its_signoff(
+    tmp_path: Any, host: Any
+):
+    """Given the walkthrough's run whose command's fix-2 its fixer ended with decision, and the
+    tree as committed, as the pruner cut the decision and changed nothing
+    When tree.py commit runs, and then tree.py cut of the generator
+    Then the commit gives 0 printing the last commit's hash, which fix-2's weighed.json holds; and
+    the cut gives 1 saying the command waits on the user's sign-off, as the Fix is over"""
+    r = over(str(tmp_path))
+    fix = fixer_ended(r, {"result": "decision", "decision": "x"})
+    assert r.main(host, "commit", r.run, "The decision is trivial.") == (0, f"{r.head()}\n", "")
+    assert rn_files.read_json(os.path.join(fix, "weighed.json")) == {"commit": r.head()}
+    refused(
+        r.main(host, "cut", r.run, "generator", COMMAND),
+        f"{COMMAND} waits on the user's sign-off, not on its generator",
+    )
+
+
+@pytest.mark.supports("test_a_fixers_decision_that_the_pruner_cuts_ends_the_fix")
+@pytest.mark.parametrize(
+    "result", [{"result": "fixed", "files": [COMMAND]}, None], ids=["fixed", "no result"]
+)
+def test_commit_leaves_a_fix_that_waits_on_no_pruner_unmarked(
+    tmp_path: Any, host: Any, result: Any
+):
+    """Given the walkthrough's run whose command's fix-2 its fixer fixed, or holds no result yet
+    When tree.py commit runs
+    Then it gives 0, and fix-2 holds no weighed.json, as no pruner weighs it"""
+    r = over(str(tmp_path))
+    fix = fixer_ended(r, result)
+    assert r.main(host, "commit", r.run, "Nothing.")[0] == 0
+    assert not os.path.exists(os.path.join(fix, "weighed.json"))
+
+
 @pytest.mark.supports(
     "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
 )

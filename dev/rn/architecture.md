@@ -28,7 +28,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P3.1: running, weighing the plan, making, and judging are separate roles.
   - P3.2: content is first made by its best practice and refactored, or, as the user picks, by
     its check alone.
-  - P3.3: remaking has a limit, and each finding left goes to the user as a proposal.
+  - P3.3: a remake with no remedy has a limit, and each finding left goes to the user as a proposal.
   - P3.4: a mend within the plan's decisions is checked by the repository's own checks and tests,
     with no limit.
 - P4: each role on its own work
@@ -93,6 +93,10 @@ Strategies:
 - A Fix counted toward no limit of the Rounds. [P3.4]\
   Intent: each problem after the making is mended, however many come, and a changed decision
   still takes full Rounds.
+- A Round of content past the limit taken only where the pruner wrote a remedy since the last
+  Round's Cut. [P3.3]\
+  Intent: each vital gap is mended before the limit ends the remaking, as each remedy kept is
+  vital.
 - The issues to close and to refer to written from the request, never asked. [P1.2]\
   Intent: the user isn't asked what their request already says.
 - The pull request opened as a draft, which the user marks ready. [P2.3]\
@@ -271,13 +275,13 @@ sequenceDiagram
       P->>T: writes the vital few, from the goal and the plan down, cuts the rest, and leaves open each point that only the user can settle (Design tree) [P7.1]
       opt a Round's result with a trial's findings [P2.2]
         P->>T: writes the remedy that the measure keeps of each finding into the decision it comes from, and holds good each other condition (Design tree) [P7.1]
-        P->>T: keeps each finding past two Rounds as an open decision of its condition (Design tree) [P3.3]
+        P->>T: keeps each finding past two Rounds that it writes no remedy for as an open decision of its condition, a remedy taking another Round (Design tree) [P3.3]
       end
       opt the final check's findings [P2.3]
         P->>T: sends each problem that the people fail without back to the deliverable whose file it is (Design tree) [P2.3]
       end
       opt a decision that a fixer named [P7.3]
-        P->>T: writes it as the measure keeps it, and holds its condition not good, so that the deliverable takes Rounds again (Design tree) [P7.3]
+        P->>T: writes it as the measure keeps it, and holds its condition not good, so that the deliverable takes Rounds again, or cuts it, which ends the Fix (Design tree) [P7.3]
       end
       P->>S: lists each node that its change touches (Design tree) [P5.1]
       P->>T: rewrites each node listed that the change made false (Design tree) [P1.1]
@@ -304,10 +308,12 @@ sequenceDiagram
       O->>O: takes what the user settled, in their words, as the next unit for one pruner [P1.2]
     else the plan written from the hearing, with no point open [P1.3]
       O->>S: records the plan's sign-off, with the steps that the user checks as they settled them (Design tree) [P1.3]
-    else a deliverable whose Rounds are over, or whose Fix ended fixed [P1.3]
+    else a deliverable whose Rounds are over, or whose Fix ended fixed or had its decision cut [P1.3]
       O->>S: puts it up, committed and pushed in the pull request, which names the run's issues, and makes it done where its step isn't one the user checks (Design tree) [P4.3]
       alt the repository's checks refuse the push [P3.4]
         O->>O: takes the refusal, in the words that the checks printed, as a problem with the deliverable [P3.4]
+      else a deliverable done, whose Fix ended fixed [P3.4]
+        O->>O: asks no sign-off again, as the mend kept each decision that the user signed off [P3.4]
       else at a step that the user checks [P1.3]
         O->>U: puts it up, with a link to each of its files as pushed, and each finding left as a proposal [P3.3]
         U->>O: /rn:ty, or /rn:gm with what to change [P1.3]

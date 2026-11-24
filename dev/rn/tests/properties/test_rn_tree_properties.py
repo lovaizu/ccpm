@@ -190,8 +190,8 @@ def test_a_change_out_of_the_schema_always_gives_a_fault_at_or_above_its_place(
     commit, P1.1.)"""
     tree, broken, pointer = case
     with tempfile.TemporaryDirectory() as worktree:
-        assert checks.faults(tree, PRACTICES, worktree) == []
-        found = checks.faults(broken, PRACTICES, worktree)
+        assert checks.faults(tree, PRACTICES, worktree, {}) == []
+        found = checks.faults(broken, PRACTICES, worktree, {})
     assert found
     assert any(pointer.startswith(fault.split(":", 1)[0]) for fault in found)
 

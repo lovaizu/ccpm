@@ -4,8 +4,9 @@ a point with no words, a file outside the deliverable's paths and the Round's fo
 inside them and one that nearly matches, and a line that no file of the deliverable holds; for the
 evaluator, each condition answered once, and one unanswered, answered in both, answered twice, and
 an ID the Cut doesn't hold; for the generator of a kind whose best practice holds a template.md,
-each Markdown file of the deliverable off it, one on it, and a file that isn't Markdown, and the
-same Markdown of a kind with no template.md, and of the evaluator; for the fixer, a fixed whose
+the deliverable's Markdown path off it, one on it, a file that isn't Markdown, a Markdown more
+path, Markdown files inside a folder deliverable, and the guide off it by a refactoring Round, and
+the same Markdown of a kind with no template.md, and of the evaluator; for the fixer, a fixed whose
 files lie in the deliverable's paths or the Fix's folder, one with a file outside them beside one
 that nearly matches, a decision with its words, each out of its schema, and a guide off its
 template, which the fixer isn't held to; and a role of none of them. Each Cut
@@ -81,9 +82,13 @@ def from_json(run: Run, name: str, value: Any) -> Any:
     return rn_files.read_json(path)
 
 
-def generator_cut(run: Run, node: Any = None, kind: str = "light") -> Any:
+def generator_cut(
+    run: Run, node: Any = None, kind: str = "light", made_by: str | None = None
+) -> Any:
     """The generator's Cut, of generator-cut.schema.json, of the node, else the command's of the
-    kind light with its tests at tests/, by the best practice of the kind, read from JSON."""
+    kind light with its tests at tests/, by the best practice made_by, else the kind's, with the
+    kind's template where its folder holds one, read from JSON."""
+    template = os.path.join(rn_files.PRACTICES, kind, "template.md")
     if node is None:
         node = rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"])
         node["more_paths"] = ["tests/"]
@@ -95,11 +100,16 @@ def generator_cut(run: Run, node: Any = None, kind: str = "light") -> Any:
         "inputs": [
             os.path.relpath(os.path.join(run.worktree, "invoicer/lines.py"), run.repository)
         ],
-        "best_practice": os.path.relpath(os.path.join(rn_files.PRACTICES, kind), run.repository),
-        "stage": "content",
+        "best_practice": os.path.relpath(
+            os.path.join(rn_files.PRACTICES, made_by or kind), run.repository
+        ),
+        "template": (
+            os.path.relpath(template, run.repository) if os.path.isfile(template) else None
+        ),
+        "stage": "content" if made_by is None else "refactor",
         "number": 1,
         "round": run.round,
-        "findings": None,
+        "trial": "/tmp/rn-trial-x",
         "last_good": None,
     }
     return from_json(run, "generator-cut.json", cut)
@@ -487,11 +497,13 @@ def guide_node(kind: str, more: list[str] | None = None) -> Any:
     return node
 
 
-def guide_faults(run: Run, kind: str, text: str, more: list[str] | None = None) -> list[str]:
+def guide_faults(
+    run: Run, kind: str, text: str, more: list[str] | None = None, made_by: str | None = None
+) -> list[str]:
     """The faults of a generator's made of the guide of the kind, its text as given, with no
-    good, against its Cut."""
+    good, against its Cut by the best practice made_by, else the kind's."""
     write_files(run.worktree, {GUIDE: text})
-    cut = generator_cut(run, guide_node(kind, more), kind)
+    cut = generator_cut(run, guide_node(kind, more), kind, made_by)
     result = from_json(run, "generator.json", rn_files.made([], [GUIDE, *(more or [])]))
     return faults("generator", cut, result, run.worktree, run.repository)
 
@@ -612,22 +624,53 @@ def test_a_generators_good_and_template_faults_come_together(run: Run):
 
 
 @pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
-def test_each_markdown_file_is_named_from_the_worktrees_top_not_the_conversations_folder(
-    run: Run,
-):
-    """Given a generator's made of the guide, of the kind readme, off the template, with a more
-    path docs/print/steps.md off it too, the conversation working at the repository's top, apart
-    from the worktree
+def test_the_guide_is_named_from_the_worktrees_top_not_the_conversations_folder(run: Run):
+    """Given a generator's made of the guide, of the kind readme, off the template, the
+    conversation working at the repository's top, apart from the worktree
     When its faults are asked
-    Then they are each place of each file, the guide's as `docs/guide.md:<line>: <what>` and the
-    steps' as `docs/print/steps.md:<line>: <what>`, and none names a file by its path from the
-    conversation's folder"""
+    Then each place names the guide as `docs/guide.md:<line>: <what>`, and none names it by its
+    path from the conversation's folder"""
+    found = guide_faults(run, "readme", OFF)
+    assert run.worktree != run.repository
+    assert sorted(found) == sorted(template_places(OFF))
+    assert not any(each.startswith(".claude/") for each in found)
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_a_markdown_more_path_isnt_held_to_the_template(run: Run):
+    """Given a generator's made of the guide, of the kind readme, on the template, with a more
+    path docs/print/steps.md off it
+    When its faults are asked
+    Then there are none, as the template holds only the document that the kind makes, at the
+    deliverable's path"""
     steps = "docs/print/steps.md"
     write_files(run.worktree, {steps: OFF})
-    found = guide_faults(run, "readme", OFF, [steps])
-    expected = template_places(OFF) + [
-        each.replace(f"{GUIDE}:", f"{steps}:", 1) for each in template_places(OFF)
-    ]
-    assert run.worktree != run.repository
-    assert sorted(found) == sorted(expected)
-    assert not any(each.startswith(".claude/") for each in found)
+    assert guide_faults(run, "readme", ON, [steps]) == []
+
+
+@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
+def test_markdown_inside_a_folder_deliverable_isnt_held_to_the_template(run: Run):
+    """Given a generator's made of a skeleton, of the kind readme, whose path is the folder
+    skeleton/, holding a README.md and a skills/on/SKILL.md, each off the readme template
+    When its faults are asked
+    Then there are none, as no file found in a folder is the document that the kind makes"""
+    inside = {"skeleton/README.md": OFF, "skeleton/skills/on/SKILL.md": OFF}
+    write_files(run.worktree, inside)
+    node = rn_files.open_node("rn's skeleton", "skeleton/", "readme", [])
+    cut = generator_cut(run, node, "readme")
+    result = from_json(run, "generator.json", rn_files.made([], ["skeleton/"]))
+    assert faults("generator", cut, result, run.worktree, run.repository) == []
+
+
+@pytest.mark.supports(
+    "test_a_refactoring_generators_end_with_its_deliverable_off_its_kinds_template_is_held"
+)
+def test_a_refactoring_generators_markdown_off_its_kinds_template_gives_each_place(run: Run):
+    """Given a refactoring generator's made of the guide, of the kind readme, its Cut by the
+    refactor-doc best practice, which holds no template.md, the guide a heading and a paragraph
+    alone
+    When its faults are asked
+    Then they are each place that the readme template's check finds, as the guide keeps its
+    kind's form while it's refactored"""
+    assert not os.path.exists(os.path.join(rn_files.PRACTICES, "refactor-doc", "template.md"))
+    assert guide_faults(run, "readme", OFF, made_by="refactor-doc") == template_places(OFF)

@@ -41,6 +41,8 @@ from rounds.files import (
     problem,
     problem_of,
     result,
+    weigh,
+    weighed,
 )
 
 NAME = "20261120-a-command-with-which-the"
@@ -640,6 +642,19 @@ def test_a_fixs_result_and_node_are_those_its_fixer_was_given_and_wrote(run: Run
     a_fix(run, 1, {**written, "fixer.json": decided})
     (fix,) = fixes(run, GUIDE)
     assert (fixer_result(fix), fixer_given(fix)) == (decided, node)
+
+
+@pytest.mark.supports("test_a_fixers_decision_that_the_pruner_cuts_ends_the_fix")
+def test_a_fix_is_weighed_once_weigh_marks_it_with_the_commit(run: RunPlace):
+    """Given a run whose guide has fix-1 holding its problem and a fixer's decision
+    When weighed is asked, then weigh marks it with a commit's hash, and weighed is asked again
+    Then it's None first, then the hash, held in fix-1's weighed.json"""
+    a_fix(run, 1, {"problem.json": REFUSED, "fixer.json": {"result": "decision", "decision": "x"}})
+    (fix,) = fixes(run, GUIDE)
+    assert weighed(fix) is None
+    weigh(fix, "5de44e4")
+    assert weighed(fix) == "5de44e4"
+    assert rn_files.read_json(os.path.join(fix.folder, "weighed.json")) == {"commit": "5de44e4"}
 
 
 @pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")

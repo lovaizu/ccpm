@@ -8,8 +8,10 @@ and each role's result, and, once the deliverable is put up for its sign-off aft
 [{"condition": <its id>, "about": <its about>}, ...]}` for each open decision, each list in order,
 which `rounds.course` reads as what the user signs off. A Fix holds the problem that raised it,
 `problem.json`, `{"source": <put-up, final-check, or send-back>, "words": <the problem in the
-words that raised it>}`, the fixer's Cut, `fixer-cut.json`, and the fixer's result,
-`fixer.json`."""
+words that raised it>}`, the fixer's Cut, `fixer-cut.json`, the fixer's result, `fixer.json`, and,
+once the tree is committed after the fixer named a decision, the mark `weighed.json`,
+`{"commit": <the hash of the tree's commit>}`, which `rounds.course` reads as the decision
+weighed."""
 
 from __future__ import annotations
 
@@ -40,6 +42,8 @@ SOURCES = ("put-up", "final-check", "send-back")
 _PUT_UP = "put-up.json"
 # The file of a Fix's problem.
 _PROBLEM = "problem.json"
+# The file that marks a Fix whose fixer named a decision as weighed, with the tree's commit.
+_WEIGHED = "weighed.json"
 
 # A role's result, as it writes it in the form of domain/schemas/<role>-round.schema.json.
 Result = dict[str, Any]
@@ -249,6 +253,20 @@ def fixer_given(fix: Fix) -> Any:
     Cut. Refuses Wrong where the file isn't JSON, naming it."""
     cut = _read(fix.cut)
     return None if cut is None else cut.get("deliverable")
+
+
+def weigh(fix: Fix, commit: str) -> None:
+    """Marks the Fix as weighed by the tree's commit of the hash, writing `<folder>/weighed.json`
+    over one there."""
+    with open(os.path.join(fix.folder, _WEIGHED), "w", encoding="utf-8") as file:
+        file.write(json.dumps({"commit": commit}) + "\n")
+
+
+def weighed(fix: Fix) -> str | None:
+    """The hash of the tree's commit that `weigh` marked the Fix with; None where it isn't marked.
+    Refuses Wrong where the file isn't JSON, naming it."""
+    mark = _read(os.path.join(fix.folder, _WEIGHED))
+    return None if mark is None else mark["commit"]
 
 
 def result(round_: Round, role: str) -> Result | None:

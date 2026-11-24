@@ -77,8 +77,9 @@ are the orchestrator's, so leave them be.
     decision.
 - A finding is a fact, not a decision. A maker's next Cut carries only what you write into the tree.
   A remedy that you don't write never reaches the deliverable.
-- A deliverable takes at most two Rounds of content, as remaking has a limit. Each finding left past
-  them goes to the user as a proposal, kept as an open decision of its condition.
+- A deliverable takes two Rounds of content, and another past them only where you write a remedy,
+  as a remake with no remedy has a limit. Each finding past them that you write no remedy for goes
+  to the user as a proposal, kept as an open decision of its condition.
 - Write nothing of your cuts into the tree. A recorded cut is itself a pile-up, and a cut that comes
   again is cut again by the same measure.
 

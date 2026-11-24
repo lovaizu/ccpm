@@ -52,6 +52,7 @@ class Run:
             return path
         if role == "generator":
             node = node or rn_files.walkthrough_tree(NAME)["deliverables"][1]
+            template = os.path.join(rn_files.PRACTICES, kind, "template.md")
             cut = {
                 "goal": rn_files.GOAL,
                 "language": rn_files.DELIVERABLES_LANGUAGE,
@@ -60,6 +61,9 @@ class Run:
                 "inputs": [],
                 "best_practice": os.path.relpath(
                     os.path.join(rn_files.PRACTICES, kind), self.repository
+                ),
+                "template": (
+                    os.path.relpath(template, self.repository) if os.path.isfile(template) else None
                 ),
                 "stage": "content",
                 "number": 1,

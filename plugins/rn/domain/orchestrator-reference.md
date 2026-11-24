@@ -34,9 +34,10 @@ measure of `vital-few.md`, and none comes before it.
   role's Cut and its result `<role>.json`, in the form of
   `<rn's folder>/domain/schemas/<role>-round.schema.json`. A Fix holds its problem, `problem.json`,
   the fixer's Cut, and the fixer's result, `fixer.json`.
-- A deliverable takes at most two Rounds of content, each a generator then an evaluator. Then a kind
-  that has a refactor best practice takes one Round of refactoring, a generator alone. That ends its
-  Rounds, and the deliverable is put up. A Fix counts toward no limit.
+- A deliverable takes two Rounds of content, each a generator then an evaluator, and another past
+  them only where the pruner wrote a remedy. Then a kind that has a refactor best practice takes one
+  Round of refactoring, a generator alone. That ends its Rounds, and the deliverable is put up. A
+  Fix counts toward no limit.
 
 ## Each event
 
@@ -87,8 +88,9 @@ measure of `vital-few.md`, and none comes before it.
 - An evaluator's end: hand the path of its result, `<round>/evaluator.json`, to a new pruner, as a
   judged Round asks a judgment. Read nothing of it yourself.
 - A fixer's end: read `result` in `<fix>/fixer.json`. On `fixed`, put the deliverable up again. On
-  `decision`, hand its `decision` and the Fix's folder to a new pruner. Until that pruner ends,
-  `tree.py cut` and `tree.py fix` refuse the deliverable, as it waits on the weighing.
+  `decision`, hand its `decision` and the Fix's folder to a new pruner. Until its weighing is
+  committed, `tree.py cut` and `tree.py fix` refuse the deliverable, as it waits on the weighing.
+  Where the pruner cut the decision, the Fix is over, and the deliverable is put up again.
 - A put-up refused: `repository.py put-up` exits 2 with what git said. Where a check of the
   repository refused the deliverable's files, it's a problem with the deliverable, its source
   `put-up`, in the words printed. Where only the user can mend it, such as a push with no network,

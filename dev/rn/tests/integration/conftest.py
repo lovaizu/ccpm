@@ -149,6 +149,14 @@ def answers_spend_the_limit(b: Bench) -> None:
     given_again(b, "domain/rounds/course.py", "def _answered(round_, answers):\n    return False\n")
 
 
+def remedies_spend_the_limit(b: Bench) -> None:
+    """A remedy that the pruner wrote past the limit gets no new Round, as the limit stops every
+    remake asked by findings."""
+    given_again(
+        b, "domain/rounds/course.py", "def _remedied(deliverable, rounds):\n    return False\n"
+    )
+
+
 def sent_back_unseen(b: Bench) -> None:
     """A send-back starts no course again, as neither the Round put up nor the user's words in it
     restart the count."""
@@ -235,9 +243,7 @@ def tree_writes_pass(b: Bench) -> None:
 
 def bash_tree_writes_pass(b: Bench) -> None:
     """The hook lets each Bash command that writes a run's design tree pass, whoever runs it."""
-    given_again(
-        b, "domain/hook/command.py", "def _bash_written(called, plugin_root):\n    return None\n"
-    )
+    given_again(b, "domain/hook/command.py", "def _bash_written(called):\n    return None\n")
 
 
 def touched_by_the_first_change(b: Bench) -> None:
@@ -328,6 +334,9 @@ BREAKS: dict[str, Callable[[Bench], None]] = {
     "test_the_evaluator_waits_on_its_generators_result": judged_before_made,
     "test_no_evaluator_is_due_after_a_refactor_round": refactoring_judged,
     "test_a_deliverable_short_after_two_content_rounds_gets_no_third": no_limit,
+    "test_a_pruners_remedy_after_two_content_rounds_gets_a_new_content_round": (
+        remedies_spend_the_limit
+    ),
     "test_a_users_answer_after_two_content_rounds_gets_a_new_content_round": (
         answers_spend_the_limit
     ),

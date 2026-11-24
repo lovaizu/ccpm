@@ -382,7 +382,7 @@ def test_the_refactoring_generators_made_waits_on_the_signoff_with_no_evaluator(
     refactor = rn_files.round_of(b.folder, GUIDE, "refactor", 2)
     assert os.path.isfile(os.path.join(refactor, "generator.json"))
     before = committed_tree(b)
-    assert refactoring_put_up(b) == linked(b, GUIDE)
+    assert refactoring_put_up(b) == "\n".join([linked(b, GUIDE), linked(b, rn_files.GUIDE_FIGURE)])
     assert committed_tree(b) == before
     refused = b.script(*cut_move(b, "evaluator", GUIDE))
     assert refused.code == 1
@@ -597,7 +597,7 @@ def test_the_final_checks_findings_go_whole_to_one_pruner_which_sends_a_problem_
     checked_whole(b)
     remedy = rn_files.decision("a line's format", "The guide shows a line's columns.", "maker")
     design_tree = b.tree()
-    guide = rn_files.open_node(rn_files.GUIDE_NAME, GUIDE, "readme", [COMMAND], ["N2", "N3"])
+    guide = rn_files.guide_node(["N2", "N3"])
     design_tree["deliverables"][2] = rn_files.decided(guide, {"N1": [remedy]})
     design_tree["work"] = [rn_files.work("make", GUIDE)]
     cut_path = reviewed(
@@ -680,6 +680,26 @@ def test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_
     given = cut_of(b, generator)
     assert (given["stage"], given["number"]) == ("content", 3)
     assert weighed in given["deliverable"]["necessary_conditions"][0]["decisions"]
+
+
+@pytest.mark.supports("S1", "fixer", "pruner", "Fix")
+def test_a_fixers_decision_that_the_pruner_cuts_ends_the_fix(b: Bench):
+    """Given a run whose command's put-up the repository's push check refused, written as the
+    command's Fix fix-2, whose fixer ended with decision, naming a decision of N1
+    When the orchestrator hands the decision to one pruner, which cuts it as trivial and writes
+    nothing, and commits by tree.py commit; and then writes the generator's Cut
+    Then the commit gives 0, and the Cut is refused, saying the command waits on the user's
+    sign-off, as the Fix is over and the command is back where its Rounds were over, waiting on
+    no pruner"""
+    refused = push_refused(b)
+    fix_written(b, COMMAND, "put-up", refused.err)
+    cut_path = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    decision_named(b, cut_path, "N1 could hold that a line keeps no trailing space.")
+    reviewed(b, b.tree(), "The fixer's decision is trivial.")
+    after = b.script(*cut_move(b, "generator", COMMAND))
+    assert after.code == 1
+    assert "waits on the user's sign-off" in after.err
+    assert "waits on the pruner" not in after.err
 
 
 @pytest.mark.supports("S1", "fixer", "Fix")

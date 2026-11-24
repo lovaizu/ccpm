@@ -24,6 +24,9 @@
 
 ### Fixed
 
+- A command of rn's own that only reads the plan, such as one that prints a part of it, is no longer refused as a write, which stopped the run.
+- A fix that the people of your goal can't do without is made past two remakes, where rn used to stop and hand it to you unmade. The limit now stops only a remake that brings them nothing new.
+- The way to the goal puts each deliverable after those it rests on, such as a README before the architecture that takes it in, where rn used to order the steps from memory.
 - Each message of rn reads at once in your own terms and language. rn no longer coins words in your language for its own workings, and no longer writes English in a conversation in another language, the description of each command it runs included.
 - A part of a deliverable that its people don't need, such as a test that checks nothing they rely on, is now cut out of it, where rn used to leave it in as good enough. rn's roles judge each step by what it's for, and no longer carry out a best practice as a list of items, or ask you a point because it's on a list.
 - The way to the goal that rn shows for your sign-off no longer links to the pull request's changes, which held only rn's own records: the message itself is the plan. Each deliverable that you check links to its own files as pushed, in place of the pull request's changes, which mixed rn's records with the deliverable.

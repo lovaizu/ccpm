@@ -1,7 +1,7 @@
 """Decides whether a role's result holds what its Cut gave it: its form, each condition answered
 once by its ID, each line it quotes standing in the deliverable, each file it names in its
-deliverable or its own folder, and each Markdown file of the deliverable holding its kind's
-template."""
+deliverable or its own folder, and the document that the deliverable's kind makes holding its
+kind's template."""
 
 from __future__ import annotations
 
@@ -49,10 +49,11 @@ def faults(role: str, cut: Cut, result: Result, worktree: str, cwd: str) -> list
     folder; for the fixer, each file it names outside the deliverable's paths and the Fix's
     folder; for the evaluator, each condition of the Cut answered in neither `good` nor `more`, or
     in both, or twice, and each ID the Cut doesn't hold; for both, each line of a `good` that no
-    file of the deliverable holds as it stands; and, for the generator, where the folder of the
-    best practice that the Cut names holds a `template.md`, each fault that `template.check.faults`
-    finds in each Markdown file among the deliverable's paths in the Cut's language, as
-    `<file>:<line>: <what>`, `<file>` from the worktree's top. None where the result holds each.
+    file of the deliverable holds as it stands; and, for the generator, where the Cut names its
+    kind's `template`, each fault that `template.check.faults` finds in the Cut's language in the
+    deliverable's path where that is a Markdown file, the document that the kind makes, as
+    `<file>:<line>: <what>`, `<file>` from the worktree's top, and in no more path or file found
+    in a folder. None where the result holds each.
     Changes: nothing.
     Refuses: Wrong where the role is none of FORMS.
     """
@@ -136,18 +137,15 @@ def _evaluator(cut: Cut, result: Result) -> list[str]:
 
 
 def _template(cut: Cut, files: dict[str, str], cwd: str) -> list[str]:
-    """Each place where a Markdown file of the deliverable leaves its kind's template in the Cut's
-    language, where the best practice holds one."""
-    form = os.path.join(cwd, cut["best_practice"], check.TEMPLATE)
-    if not os.path.isfile(form):
+    """Each place where the deliverable's path, a Markdown file, leaves its kind's template in the
+    Cut's language, where the Cut names one."""
+    name = os.path.normpath(cut["deliverable"]["path"])
+    if cut["template"] is None or not name.endswith(".md") or name not in files:
         return []
-    with open(form, encoding="utf-8") as file:
-        template = file.read()
+    template = _text(os.path.join(cwd, cut["template"]))
     return [
         f"{name}:{each.line}: {each.what}"
-        for name, text in files.items()
-        if name.endswith(".md")
-        for each in check.faults(template, text, cut["language"])
+        for each in check.faults(template, files[name], cut["language"])
     ]
 
 

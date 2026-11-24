@@ -1,11 +1,13 @@
 """Decides whether a document made by a best practice holds its kind's template and nothing beside
 it: each part of the template's form in its order and no other, each in its words, where the
 document's language keeps them, and its number of sentences, no note or placeholder of the template
-left, and no sentence longer than its language takes; and where the template of each kind lies."""
+left, and no sentence longer than its language takes; where the template of each kind lies; and
+which figures a document of a template keeps of its own."""
 
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass
 from enum import Enum
 
@@ -32,6 +34,8 @@ from template.markdown import (
 
 # The file of a kind's template, in the folder of its best practice.
 TEMPLATE = "template.md"
+# The file of a figure, as a template's note names it, such as images/how-it-works.svg.
+_FIGURE_FILE = re.compile(r"[\w./-]+\.(?:svg|png|jpe?g|gif|webp)\b")
 
 
 @dataclass(frozen=True)
@@ -56,6 +60,24 @@ def of_kind(plugin_root: str, kind: str) -> str:
     raise Wrong(
         f"no kind {kind!r} has a Markdown template; the kinds that have one are {', '.join(kinds)}"
     )
+
+
+def figures(template: str) -> list[str]:
+    """The figures that a document of the Markdown text `template` keeps of its own, by their
+    paths from the document's folder, in the order the template names them, each once: each file
+    of a figure that a note of the template names, as the meta best practice has each note say
+    where the deliverable keeps its own figure, but the template's own figures. [] where the notes
+    name none."""
+    blocks = read(template)
+    own = form(blocks).figures
+    named = [
+        found
+        for block in flat(blocks)
+        if is_note(block)
+        for found in _FIGURE_FILE.findall(block.text)
+        if found not in own
+    ]
+    return list(dict.fromkeys(named))
 
 
 def faults(template: str, document: str, language: str = ENGLISH) -> tuple[Fault, ...]:

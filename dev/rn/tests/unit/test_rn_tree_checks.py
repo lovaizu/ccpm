@@ -4,8 +4,10 @@ conditions, and each fault the contract names, one at a time and two at once: a 
 schema, a goal with `by` but no sentence or a sentence but no `by`, a done deliverable in one line
 without its conditions, a kind with no best practice, an open deliverable's conditions out of its
 best practice's set or order, an input that names neither a deliverable nor a file of the worktree,
-a deliverable resting on itself directly or through another, and an item of the work that names no
-deliverable, or a decide naming no condition or about of it; with a near match beside each."""
+a deliverable resting on itself directly or through another, an item of the work that names no
+deliverable, or a decide naming no condition or about of it, an open Markdown deliverable lacking a
+figure that its kind's template has it keep, and steps that put a deliverable before one of a kind
+that its kind's best practice takes as an input; with a near match beside each."""
 
 from __future__ import annotations
 
@@ -17,15 +19,35 @@ import pytest
 import rn_files
 from repo_files import write_files
 from rn_files import COMMAND, GUIDE
-from tree.checks import faults
+from tree.checks import faults as tree_faults
 
 NAME = "20261120-a-command-with-which-the"
-KINDS = ("design-tree", "light", "readme", "code")
+KINDS = ("design-tree", "light", "readme", "code", "product-vision", "architecture")
+# The figure that the readme template has a guide keep of its own, from the guide's folder.
+HOW_IT_WORKS = "images/how-it-works.svg"
 
 
 def practices() -> dict[str, Any]:
     """The best practice of each kind the cases use, by its name, read from its JSON."""
     return {kind: rn_files.practice(kind) for kind in KINDS}
+
+
+def figures() -> dict[str, list[str]]:
+    """The figures that the template of each kind the cases use has a document keep of its own,
+    as rn's templates name them: the readme's one and the architecture's three."""
+    return {
+        "readme": [HOW_IT_WORKS],
+        "architecture": [
+            "images/concept-model.svg",
+            "images/components.svg",
+            "images/deployment.svg",
+        ],
+    }
+
+
+def faults(tree: Any, given: Any, worktree: str) -> list[str]:
+    """The tree's faults, by the best practices given and the figures of their templates."""
+    return tree_faults(tree, given, worktree, figures())
 
 
 @pytest.fixture
@@ -400,3 +422,143 @@ def test_a_step_without_its_signoff_is_out_of_the_schema(worktree: str):
     lacking = rn_files.step("what it does", [COMMAND, GUIDE], True)
     del lacking["signoff"]
     one_fault(faults(stepped(lacking), practices(), worktree), "/steps/0")
+
+
+# The figures that a deliverable's kind's template has it keep of its own.
+
+GUIDE_FIGURE = f"docs/{HOW_IT_WORKS}"
+
+
+def guide_with(more: list[str] | None, status: str = "open") -> dict[str, Any]:
+    """The walkthrough's tree whose guide holds the more paths given, open or done."""
+    the = the_tree()
+    guide = the["deliverables"][2]
+    guide.pop("more_paths", None)
+    if more is not None:
+        guide["more_paths"] = more
+    if status == "done":
+        the["deliverables"][2] = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
+        the["work"] = the["work"][:1]
+    return the
+
+
+@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
+@pytest.mark.parametrize(
+    "more", [[GUIDE_FIGURE], ["docs/images/"], ["docs/images"], ["tests/", GUIDE_FIGURE]]
+)
+def test_a_guide_holding_its_templates_figure_has_no_fault(worktree: str, more: list[str]):
+    """Given the walkthrough's tree whose guide, of the kind readme, holds in its more paths the
+    figure that the readme template has it keep, docs/images/how-it-works.svg, by its path or by
+    its folder's
+    When its faults are found
+    Then there is none"""
+    assert faults(guide_with(more), practices(), worktree) == []
+
+
+@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
+@pytest.mark.parametrize(
+    "more", [None, ["docs/how-it-works.svg"], ["docs/images/how-it-works.png"], ["docs/imag/"]]
+)
+def test_a_guide_lacking_its_templates_figure_is_a_fault_naming_it(
+    worktree: str, more: list[str] | None
+):
+    """Given the walkthrough's tree whose guide, of the kind readme, holds no more paths, or only
+    a path near the figure that the readme template has it keep
+    When its faults are found
+    Then the one fault names the guide's more paths and the figure's path from the worktree's top,
+    so that the pruner writes it in the same weighing"""
+    found = faults(guide_with(more), practices(), worktree)
+    one_fault(found, "/deliverables/2/more_paths")
+    assert f"leaves out {GUIDE_FIGURE}" in found[0], "the figure is named"
+    assert "readme" in found[0], "the kind whose template asks it is named"
+
+
+@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
+def test_an_architecture_lacking_two_of_its_figures_is_a_fault_for_each(worktree: str):
+    """Given the walkthrough's tree with an open architecture at dev/architecture.md, of the kind
+    architecture, holding only dev/images/components.svg of its template's three figures
+    When its faults are found
+    Then they are two lines, each naming one figure it lacks"""
+    the = guide_with([GUIDE_FIGURE])
+    node = rn_files.open_node("the architecture", "dev/architecture.md", "architecture")
+    node["more_paths"] = ["dev/images/components.svg"]
+    the["deliverables"].append(node)
+    the["steps"] = []
+    found = faults(the, practices(), worktree)
+    assert sorted(found) == sorted(
+        f"/deliverables/3/more_paths: leaves out dev/images/{name}.svg, a figure that the"
+        " template of its kind architecture has dev/architecture.md keep of its own; add it"
+        for name in ("concept-model", "deployment")
+    )
+
+
+@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
+def test_a_done_guide_lacking_its_templates_figure_has_no_fault(worktree: str):
+    """Given the walkthrough's tree whose guide is done, holding no more paths
+    When its faults are found
+    Then there is none, as a done deliverable keeps what its Rounds made"""
+    assert faults(guide_with(None, "done"), practices(), worktree) == []
+
+
+@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
+def test_a_deliverable_that_isnt_markdown_is_asked_no_figure(worktree: str):
+    """Given the walkthrough's tree whose guide, of the kind readme, lies at docs/guide.txt, with
+    no more paths
+    When its faults are found
+    Then there is none, as only a Markdown document holds its template"""
+    the = guide_with(None)
+    the["deliverables"][2]["path"] = "docs/guide.txt"
+    the["work"][1]["path"] = "docs/guide.txt"
+    assert faults(the, practices(), worktree) == []
+
+
+# The order of the steps by what each kind's best practice takes as an input.
+
+VISION = "docs/product-vision.md"
+
+
+def with_vision(*steps: list[str]) -> dict[str, Any]:
+    """The walkthrough's tree, its guide holding its figure, with an open product vision, which
+    the readme best practice takes as an input, and a step for each list of paths given."""
+    the = guide_with([GUIDE_FIGURE])
+    the["deliverables"].append(rn_files.open_node("the product vision", VISION, "product-vision"))
+    the["steps"] = [rn_files.step(f"step {n}", each, n == 0) for n, each in enumerate(steps)]
+    return the
+
+
+@pytest.mark.supports("test_a_plan_putting_a_deliverable_before_its_kinds_input_is_refused")
+@pytest.mark.parametrize(
+    "steps",
+    [
+        [[VISION], [COMMAND], [GUIDE]],
+        [[VISION, COMMAND], [GUIDE]],
+        [[COMMAND, VISION, GUIDE]],
+    ],
+    ids=["before", "before-with-another", "same-step"],
+)
+def test_steps_putting_each_input_of_a_kind_no_later_have_no_fault(
+    worktree: str, steps: list[list[str]]
+):
+    """Given the walkthrough's tree with a product vision, which the readme best practice takes
+    as an input, in a step before the guide's or in the guide's own
+    When its faults are found
+    Then there is none"""
+    assert faults(with_vision(*steps), practices(), worktree) == []
+
+
+@pytest.mark.supports("test_a_plan_putting_a_deliverable_before_its_kinds_input_is_refused")
+def test_steps_putting_the_guide_before_the_product_vision_is_a_fault_naming_the_pair(
+    worktree: str,
+):
+    """Given the walkthrough's tree with a product vision, which the readme best practice takes
+    as an input, in a step after the guide's
+    When its faults are found
+    Then the one fault names the guide's place in the steps, the guide, the product vision, and
+    the kind that takes it, so that the pruner reorders the steps in the same weighing"""
+    found = faults(with_vision([COMMAND], [GUIDE], [VISION]), practices(), worktree)
+    assert found == [
+        (
+            f"/steps/1/deliverables/0: puts {GUIDE} before {VISION}, which the best practice of"
+            f" its kind readme takes as an input; put {VISION} in a step no later than {GUIDE}'s"
+        )
+    ]

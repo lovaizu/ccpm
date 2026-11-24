@@ -235,6 +235,18 @@ def started(name: str) -> dict[str, Any]:
     return design_tree
 
 
+# The figure that the readme template has the guide keep of its own, from the worktree's top.
+GUIDE_FIGURE = "docs/images/how-it-works.svg"
+
+
+def guide_node(good: bool | Iterable[str] = False) -> dict[str, Any]:
+    """The walkthrough's guide, open, of the kind `readme`, resting on the command, with the figure
+    that its template has it keep as its more path."""
+    node = open_node(GUIDE_NAME, GUIDE, "readme", [COMMAND], good)
+    node["more_paths"] = [GUIDE_FIGURE]
+    return node
+
+
 def walkthrough_tree(
     name: str,
     plan_done: bool = True,
@@ -244,7 +256,8 @@ def walkthrough_tree(
 ) -> dict[str, Any]:
     """The design tree of the walkthrough's run: the plan, done or open with each condition good,
     the command, of the kind `light`, resting on invoicer's lines, and the guide, of the kind
-    `readme`, resting on the command; the work makes the command, then the guide."""
+    `readme`, resting on the command, with its figure; the work makes the command, then the
+    guide."""
     head = done_node(GOAL, plan_path(name), "design-tree") if plan_done else plan(name, good=True)
     return tree(
         [
@@ -253,7 +266,7 @@ def walkthrough_tree(
                 open_node(COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"], command_good),
                 command_decisions or {},
             ),
-            open_node(GUIDE_NAME, GUIDE, "readme", [COMMAND], guide_good),
+            guide_node(guide_good),
         ],
         [work("make", COMMAND), work("make", GUIDE)],
     )

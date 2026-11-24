@@ -55,8 +55,10 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
   `by` `user` is the user's own answer.
 - The Cut's `best_practice` is the folder of the best practice you make by. Its `best-practice.md`
   gives each necessary condition of the kind, by its ID, such as N2. Under each, its practice gives
-  the field's established way to meet it. Where the folder holds a `template.md`, each Markdown file
-  of the deliverable keeps its form, as `check.py` holds it.
+  the field's established way to meet it.
+- The Cut's `template`, where it isn't null, is the form of the deliverable's kind. The deliverable's
+  path, where it's a Markdown file, keeps that form in a Round of either stage, as `check.py` holds
+  it.
 - The Cut's `stage` is `content` or `refactor`. A Round of `refactor` comes once each condition is
   good. Its `best_practice` is the refactor best practice of code or of a document. There, refactor
   the deliverable by it, and keep its intent: its people get what the Rounds of content made. No

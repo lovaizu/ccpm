@@ -131,10 +131,13 @@ def test_a_generators_markdown_gives_exactly_the_template_checks_places(text: st
             "worktree": worktree,
             "inputs": [],
             "best_practice": os.path.join(rn_files.PRACTICES, kind),
+            "template": os.path.join(rn_files.PRACTICES, kind, "template.md")
+            if kind == "readme"
+            else None,
             "stage": "content",
             "number": 1,
             "round": round_,
-            "findings": None,
+            "trial": os.path.join(worktree, "trial"),
             "last_good": None,
         }
         result = rn_files.made([("N1", [first])], [rn_files.GUIDE])

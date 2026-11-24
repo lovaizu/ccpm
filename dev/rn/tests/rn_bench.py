@@ -337,6 +337,9 @@ COMMAND_TEXT = (
 with open(os.path.join(RN, "README.md"), encoding="utf-8") as _readme:
     GUIDE_TEXT = _readme.read()
 
+# A figure of the guide's, as its template has it keep one of its own.
+FIGURE_TEXT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"></svg>\n'
+
 # The repository's tests as invoicer's developers run them, writing no file.
 DEVELOPERS_TESTS = [sys.executable, "-B", "-c", "import invoicer.lines"]
 
@@ -369,7 +372,8 @@ def generated(
     good: Sequence[str] | None = None,
 ) -> None:
     """The generator makes its deliverable from its Cut and ends with `made`: it writes each file
-    given, by its path from the worktree's top, or else the deliverable's own text; in a refactor
+    given, by its path from the worktree's top, or else the deliverable's own text and a figure at
+    each of its more paths; in a refactor
     Round runs the repository's tests as its developers run them, in its folder of the people's
     starting state that `repository.py trial` makes; writes its result, good each condition given
     or else every one; and runs `check.py generator` and `repository.py checks` on its files, each
@@ -377,7 +381,9 @@ def generated(
     given = cut_of(b, cut_path)
     node = given["deliverable"]
     text = COMMAND_TEXT if node["path"].endswith(".py") else GUIDE_TEXT
-    made_files = dict(files or {node["path"]: text})
+    made_files = dict(
+        files or {node["path"]: text, **dict.fromkeys(node.get("more_paths", []), FIGURE_TEXT)}
+    )
     wrote(b, made_files)
     # A generator names in `good` the conditions of its deliverable, as rn checks them, which in a
     # refactor Round are its content kind's, not those of the refactoring kind it makes by.

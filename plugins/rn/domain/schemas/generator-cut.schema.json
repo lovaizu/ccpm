@@ -10,6 +10,7 @@
   "worktree",
   "inputs",
   "best_practice",
+  "template",
   "stage",
   "number",
   "round",
@@ -49,6 +50,18 @@
    "description": "The folder of the best practice that the Round makes by: the deliverable's kind's for content, and the refactoring kind's for refactor.",
    "type": "string",
    "minLength": 1
+  },
+  "template": {
+   "description": "The template.md of the best practice of the deliverable's kind, from the folder that the conversation works in, whatever best practice the Round makes by, as a refactoring keeps the kind's form; null where that best practice holds none. The deliverable's path, where it's a Markdown file, holds its form, as check.py holds it.",
+   "oneOf": [
+    {
+     "type": "null"
+    },
+    {
+     "type": "string",
+     "minLength": 1
+    }
+   ]
   },
   "stage": {
    "description": "content: the Round makes the content, which an evaluator judges. refactor: it refactors it, keeping its intent, once each condition is good, with no evaluator after it.",

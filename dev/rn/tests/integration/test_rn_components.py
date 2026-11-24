@@ -25,13 +25,16 @@ from rn_bench import (
     cut_move,
     cut_of,
     denial,
+    evaluated,
     fix_written,
     fixer_resulted,
+    generated,
     heard,
     heard_tree,
     held,
     judged_command,
     new_run,
+    next_round,
     push_refused,
     resulted,
     reviewed,
@@ -185,6 +188,26 @@ def test_a_generators_end_with_its_deliverable_off_its_template_is_held(b: Bench
     assert f"{GUIDE}:" in said
 
 
+@pytest.mark.supports("generator", "Best practice", "Round")
+def test_a_refactoring_generators_end_with_its_deliverable_off_its_kinds_template_is_held(
+    b: Bench,
+):
+    """Given a run whose guide, of the kind readme, the evaluator judged good on each condition in
+    Round content-1, and whose refactoring generator has its Cut of Round refactor-2, by the
+    refactor-doc best practice, which holds no template
+    When it leaves the guide holding none of the readme template's sections, and runs check.py
+    Then check.py gives 1 with the readme template check's places, each `docs/guide.md:<line>:
+    ...`, as the guide keeps its kind's form while it's refactored"""
+    generated(b, command_signed(b))
+    evaluated(b, next_round(b, GUIDE, [], "evaluator"))
+    cut_path = next_round(b, GUIDE, rn_files.conditions("readme"))
+    assert cut_of(b, cut_path)["stage"] == "refactor"
+    text = "# Print an invoice\n\nSave the lines as lines.csv, and type the command.\n"
+    code, said = checked(b, cut_path, {GUIDE: text}, rn_files.made([], [GUIDE]))
+    assert code == 1
+    assert f"{GUIDE}:" in said
+
+
 @pytest.mark.supports("generator", "scripts")
 def test_the_generators_checks_give_the_repositorys_commit_check_findings(b: Bench):
     """Given invoicer's repository with a pre-commit hook that refuses each commit of the command,
@@ -285,22 +308,26 @@ def test_a_delete_by_the_main_conversation_passes_the_hook(b: Bench):
 @pytest.mark.supports("orchestrator", "hook", "Design tree")
 def test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook(b: Bench):
     """Given rn's hook before each Bash call, and a run whose hearing one pruner wrote
-    When the orchestrator, the main conversation, calls Bash with jq on the run's design tree, and
-    with python3 -c whose code only loads it, and Claude Code runs the hook before each
-    Then the hook gives 0 printing nothing for each, and each prints the goal"""
+    When the orchestrator, the main conversation, calls Bash with jq on the run's design tree;
+    with python3 -c whose code loads it and prints it by json.dumps; and with that code followed
+    by rn's tree.py cut by a path held in a variable, as on a real run; and Claude Code runs the
+    hook before each
+    Then the hook gives 0 printing nothing for each, and the code prints the goal"""
     heard(b)
-    reads = [
-        ["jq", "-r", ".goal.decided", b.tree_path],
-        [
-            sys.executable,
-            "-c",
-            f"import json; print(json.load(open({b.tree_path!r}))['goal']['decided'])",
-        ],
+    code = [
+        sys.executable,
+        "-c",
+        f"import json; print(json.dumps(json.load(open({b.tree_path!r}))['goal']['decided']))",
     ]
-    for argv in reads:
-        assert denial(b.script("hook", given=bash_called(b, shlex.join(argv), None))) is None
-    loaded = subprocess.run(reads[1], capture_output=True, text=True, check=True)
-    assert loaded.stdout.strip() == GOAL
+    reads = [
+        shlex.join(["jq", "-r", ".goal.decided", b.tree_path]),
+        shlex.join(code),
+        f'{shlex.join(code)} && R={shlex.quote(b.rn)}; python3 "$R/scripts/tree.py" cut {b.run}',
+    ]
+    for each in reads:
+        assert denial(b.script("hook", given=bash_called(b, each, None))) is None, each
+    loaded = subprocess.run(code, capture_output=True, text=True, check=True)
+    assert json.loads(loaded.stdout) == GOAL
 
 
 # The pruner and the measure of the vital few: the one role that writes the design tree, and
@@ -370,6 +397,68 @@ def test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_not
     ]
     assert b.tree() == design_tree
     assert git(b.repo, "rev-parse", branch).strip() == before
+
+
+@pytest.mark.supports("pruner", "scripts", "Design tree")
+def test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit(b: Bench):
+    """Given a run that repository.py new made
+    When the hearing's pruner writes the plan with the guide, of the kind readme, holding no more
+    paths, and runs tree.py check and then tree.py commit; and then writes the figure that the
+    readme template has the guide keep, docs/images/how-it-works.svg, as its more path, and runs
+    tree.py commit again
+    Then tree.py check and the first commit each give 1 naming /deliverables/2/more_paths and the
+    figure, the work's branch holding no new commit; and the second commit gives 0, so that the
+    guide's first generator finds the figure among its paths"""
+    new_run(b)
+    design_tree = rn_files.walkthrough_tree(b.name(), plan_done=False)
+    del design_tree["deliverables"][2]["more_paths"]
+    b.write_tree(design_tree)
+    branch = f"rn-{b.name()}"
+    before = git(b.repo, "rev-parse", branch).strip()
+    for refused in (b.script("tree", "check", b.run), b.script("tree", "commit", b.run, "Plan.")):
+        assert refused.code == 1
+        assert "/deliverables/2/more_paths: leaves out docs/images/how-it-works.svg" in (
+            refused.out + refused.err
+        )
+    assert git(b.repo, "rev-parse", branch).strip() == before
+    design_tree["deliverables"][2]["more_paths"] = [rn_files.GUIDE_FIGURE]
+    b.write_tree(design_tree)
+    assert b.script("tree", "commit", b.run, "The plan.").code == 0
+
+
+@pytest.mark.supports("pruner", "scripts", "Design tree")
+def test_a_plan_putting_a_deliverable_before_its_kinds_input_is_refused(b: Bench):
+    """Given a run that repository.py new made
+    When the hearing's pruner writes the plan with a product vision, which the readme best
+    practice takes as an input, in a step after the guide's, and runs tree.py check
+    Then tree.py check gives 1 with one line naming the guide's place in the steps, the guide, and
+    the product vision, so that the pruner puts the product vision first in the same weighing;
+    and once it does, tree.py check gives 0"""
+    new_run(b)
+    vision = "docs/product-vision.md"
+    design_tree = rn_files.walkthrough_tree(b.name(), plan_done=False)
+    design_tree["deliverables"].append(
+        rn_files.open_node("the product vision", vision, "product-vision")
+    )
+    design_tree["work"].append(rn_files.work("make", vision))
+    design_tree["steps"] = [
+        rn_files.step("what it does", [COMMAND], True),
+        rn_files.step("how it's used", [GUIDE], False),
+        rn_files.step("what it's for", [vision], False),
+    ]
+    b.write_tree(design_tree)
+    code, out, err = b.script("tree", "check", b.run)
+    assert (code, err) == (1, "")
+    assert out.splitlines() == [
+        (
+            f"/steps/1/deliverables/0: puts {GUIDE} before {vision}, which the best practice of"
+            f" its kind readme takes as an input; put {vision} in a step no later than {GUIDE}'s"
+        )
+    ]
+    design_tree["steps"] = [design_tree["steps"][i] for i in (2, 0, 1)]
+    design_tree["steps"][0]["signoff"] = True
+    b.write_tree(design_tree)
+    assert b.script("tree", "check", b.run) == (0, "", "")
 
 
 @pytest.mark.supports("vital few", "orchestrator", "pruner")

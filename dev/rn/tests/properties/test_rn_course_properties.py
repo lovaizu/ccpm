@@ -3,12 +3,12 @@ them: each invariant that the architecture's principles state of a deliverable's
 node of the design tree and any course of Rounds that a run brings, each Round before the last
 made and judged, and the last at any point of its course.
 
-- Remaking has a limit (P3.3), twice at most as the README says: since the deliverable's last
-  Round put up for its sign-off, as a send-back there starts its course again, as the user's answer
-  does too where a Round's Cut shows it came after, no new Round of
-  content once it holds two, and none of refactoring once it holds one, as a new
-  generator refactors once each condition is good (P3.2), else the deliverable grows with each
-  round and the user waits on it.
+- A remake with no remedy has a limit (P3.3), two tries as the README says: since the deliverable's
+  last Round put up for its sign-off, as a send-back there starts its course again, as the user's
+  answer does too where a Round's Cut shows it came after, no new Round of content once it holds
+  two, where no Round's Cut shows a remedy written since, and none of refactoring once it holds one,
+  as a new generator refactors once each condition is good (P3.2), else the deliverable grows with
+  each round and the user waits on it.
 - No evaluator judges the refactoring (P3.2): the evaluator is never due in a refactor Round, as
   the refactoring keeps the intent that the content's Rounds judged.
 - The user is asked only what only they can decide, one point at a time (P1.2): while a decision
@@ -34,8 +34,9 @@ from hypothesis import strategies as st
 from rounds.course import Done, Next, next_of
 from rounds.files import Round
 
-# The most Rounds of each stage: of content, as the README's How it works says, "twice at most";
-# of refactoring, one, as the architecture's strategy of a new generator for it says.
+# The most Rounds of each stage: of content with no remedy, as the README's How it works says,
+# "past two tries only for a vital fix"; of refactoring, one, as the architecture's strategy of a
+# new generator for it says.
 MOST = {"content": 2, "refactor": 1}
 ROLES = {"generator", "evaluator", "answer", "pruner", "sign-off"}
 LAST = st.sampled_from(["none", "point", "made", "judged"])

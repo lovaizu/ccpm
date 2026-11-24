@@ -77,7 +77,7 @@ at the end.
    - Do each step that has one right result by its script, such as a commit or a put-up.
    - Start each due role from a Cut written fresh from the tree. Start together each deliverable
      that rests on none still being made, so the user waits only for the slowest.
-   - Put up each deliverable whose Rounds are over, or whose Fix ended fixed.
+   - Put up each deliverable whose Rounds are over, or whose Fix is over.
    - Once each deliverable is done, have the work checked whole.
 6. The user knows where the run stands and what's theirs to decide. Write them one message, as
    Output says.

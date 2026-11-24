@@ -4,7 +4,7 @@ each condition of the design tree best practice that code can check."""
 from __future__ import annotations
 
 import os
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 from check.form import faults as form_faults
@@ -21,19 +21,29 @@ _SCHEMA = os.path.join(
 )
 
 
-def faults(tree: Tree, practices: Mapping[str, Practice], worktree: str) -> list[str]:
+def faults(
+    tree: Tree,
+    practices: Mapping[str, Practice],
+    worktree: str,
+    figures: Mapping[str, Sequence[str]],
+) -> list[str]:
     """Each fault of the design tree, in a line that says where and how to mend it.
 
     Takes: the tree, the best practice of each kind by its name, as `practice.kinds` finds them,
-    and the run's worktree.
+    the run's worktree, and the figures that the template of each kind has a document keep of
+    its own, by the kind's name, each by its path from the document's folder, as
+    `template.check.figures` gives them.
     Gives: each place, by its JSON Pointer, where the tree leaves its schema; where a deliverable's
     kind is no kind of `practices`; where an open deliverable's necessary conditions aren't its
     best practice's, in their order; where an input names neither a deliverable's path nor a file
-    of the worktree; where a deliverable rests on itself through its inputs; and where an item of
-    `work` names no deliverable, or a `decide` names no condition or `about` of it; and, where
-    `steps` holds any, where a step names a path that no deliverable but the plan has or that an
-    earlier step holds, and where no step holds a deliverable but the plan. None where the tree
-    holds each.
+    of the worktree; where a deliverable rests on itself through its inputs; where an open
+    deliverable whose path is a Markdown file leaves out of its paths a figure that its kind's
+    template has it keep, naming the figure from the worktree's top; and where an item of `work`
+    names no deliverable, or a `decide` names no condition or `about` of it; and, where `steps`
+    holds any, where a step names a path that no deliverable but the plan has or that an earlier
+    step holds, where no step holds a deliverable but the plan, and where a step puts a deliverable
+    before a later step's deliverable of a kind that its kind's best practice takes as an input,
+    naming the pair. None where the tree holds each.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -54,10 +64,11 @@ def faults(tree: Tree, practices: Mapping[str, Practice], worktree: str) -> list
         ]
         if _rests_on(node["path"], node, paths, set()):
             found.append(f"{at}: rests on itself through its inputs; take its own path out of them")
+        found += _figures(node, figures.get(node["kind"], ()), at)
     found += [
         fault for place, item in enumerate(tree["work"]) for fault in _work(item, paths, place)
     ]
-    return found + _steps(tree["steps"], deliverables)
+    return found + _steps(tree["steps"], deliverables) + _order(tree["steps"], paths, practices)
 
 
 def _steps(steps: list[Any], deliverables: list[Deliverable]) -> list[str]:
@@ -83,6 +94,43 @@ def _steps(steps: list[Any], deliverables: list[Deliverable]) -> list[str]:
         if path not in held
     ]
     return found
+
+
+def _order(
+    steps: list[Any], paths: Mapping[str, Deliverable], practices: Mapping[str, Practice]
+) -> list[str]:
+    """The faults of the steps' order: each deliverable that a step puts before a later step's
+    deliverable of a kind that its own kind's best practice takes as an input."""
+    step_of = {path: index for index, step in enumerate(steps) for path in step["deliverables"]}
+    found = []
+    for index, step in enumerate(steps):
+        for place, path in enumerate(step["deliverables"]):
+            kind = paths[path]["kind"] if path in paths else ""
+            takes = {each["kind"] for each in practices.get(kind, {}).get("inputs", [])}
+            found += [
+                f"/steps/{index}/deliverables/{place}: puts {path} before {later}, which the best"
+                f" practice of its kind {kind} takes as an input; put {later} in a step no later"
+                f" than {path}'s"
+                for later, at in step_of.items()
+                if at > index and later in paths and paths[later]["kind"] in takes
+            ]
+    return found
+
+
+def _figures(node: Deliverable, figures: Sequence[str], at: str) -> list[str]:
+    """The faults of an open Markdown deliverable whose paths leave out a figure that its kind's
+    template has it keep of its own."""
+    path = node["path"]
+    if node["status"] not in OPEN or not path.endswith(".md"):
+        return []
+    held = [os.path.normpath(each) for each in node.get("more_paths", [])]
+    wanted = [os.path.normpath(os.path.join(os.path.dirname(path), each)) for each in figures]
+    return [
+        f"{at}/more_paths: leaves out {each}, a figure that the template of its kind"
+        f" {node['kind']} has {path} keep of its own; add it"
+        for each in wanted
+        if not any(each == place or each.startswith(place + os.sep) for place in held)
+    ]
 
 
 def _kind(node: Deliverable, practices: Mapping[str, Practice], at: str) -> list[str]:

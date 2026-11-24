@@ -14,6 +14,8 @@ from repository import push
 from repository.host import Host
 from repository.place import RunPlace, of_folder
 from rounds import course, files
+from template.check import TEMPLATE
+from template.check import figures as figures_of
 
 from tree import checks, cut, form, signoff, touched
 
@@ -56,8 +58,11 @@ def main(
     - `commit <run> <ground>`: where `tree.checks.faults` finds none, commits the design tree as
       `push.commit` does with `<ground>` as the message, and gives 0 printing the hash; else 1
       with the first fault, git left as it was; 0 printing the last commit's hash, committing
-      nothing, where the tree has no change since it. It pushes nothing and asks gh nothing, as the
-      final check pushes the work and the user marks the pull request ready.
+      nothing, where the tree has no change since it. Either way it marks with that hash, as
+      `rounds.files.weigh` does, each deliverable's last Fix that waits on the pruner to weigh
+      the decision its fixer named, as the commit follows that pruner's weighing. It pushes
+      nothing and asks gh nothing, as the final check pushes the work and the user marks the pull
+      request ready.
     - `cut <run> <role> <deliverable>`, `<role>` `generator`, `evaluator`, or `fixer`: writes the
       role's Cut in the Round that `rounds.course.next_in` gives the deliverable, made anew where
       the generator starts a new Round, or, for the fixer, in its last Fix, and gives 0 printing
@@ -116,6 +121,7 @@ def _commit(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: H
         made = push.commit(run, [path], given[0], host)
     else:
         made = host(["git", "rev-parse", "HEAD"], run.worktree).out.strip()
+    _weigh(run, made)
     return 0, f"{made}\n", ""
 
 
@@ -135,15 +141,12 @@ def _cut(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
         round_ = files.new(run, path, str(next_.stage))
     else:
         round_ = done[-1].round
-    kind = node["kind"]
-    if role == "generator" and round_.stage == "refactor":
-        kind = str(practice.refactoring(kind))
     kinds = practice.kinds(plugin_root, run.worktree)
-    found = practice.Found(kinds[kind], practice.read(kinds[kind]))
     if role == "generator":
-        written = cut.generator(tree, run, round_, found, _last([each.generator for each in done]))
+        written = cut.generator(tree, run, round_, kinds, _last([each.generator for each in done]))
     else:
-        written = cut.evaluator(tree, run, round_, found)
+        folder = kinds[node["kind"]]
+        written = cut.evaluator(tree, run, round_, practice.Found(folder, practice.read(folder)))
     return _written(round_.cut(role), written, cwd)
 
 
@@ -194,14 +197,32 @@ def _signoff(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: 
     return 0, f"{os.path.relpath(run.tree, cwd)}\n", ""
 
 
+def _weigh(run: RunPlace, made: str) -> None:
+    """Marks as weighed by the commit each deliverable's last Fix that waits on the pruner to weigh
+    the decision its fixer named, as the commit follows the pruner's weighing."""
+    for node in form.read(run.tree)["deliverables"]:
+        if course.next_in(run, node) == course.Next("pruner", course.FIX, False):
+            files.weigh(course.mended(run, node["path"])[-1].fix, made)
+
+
 def _faults(run: RunPlace, plugin_root: str) -> list[str]:
     """Each fault that `tree.checks.faults` finds in the run's design tree as it stands, by the
-    best practice of each kind that `practice.kinds` finds."""
-    practices = {
-        kind: practice.read(folder)
-        for kind, folder in practice.kinds(plugin_root, run.worktree).items()
+    best practice of each kind that `practice.kinds` finds, and the figures of its template where
+    its folder holds one."""
+    kinds = practice.kinds(plugin_root, run.worktree)
+    practices = {kind: practice.read(folder) for kind, folder in kinds.items()}
+    figures = {
+        kind: figures_of(_text(os.path.join(folder, TEMPLATE)))
+        for kind, folder in kinds.items()
+        if os.path.isfile(os.path.join(folder, TEMPLATE))
     }
-    return checks.faults(form.read(run.tree), practices, run.worktree)
+    return checks.faults(form.read(run.tree), practices, run.worktree, figures)
+
+
+def _text(path: str) -> str:
+    """The file's text."""
+    with open(path, encoding="utf-8") as file:
+        return file.read()
 
 
 def _committed(run: RunPlace, host: Host) -> Any:

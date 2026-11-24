@@ -205,6 +205,23 @@ def test_a_deliverable_short_after_two_content_rounds_gets_no_third(b: Bench, br
 
 
 @pytest.mark.supports("P3.3", "Round")
+def test_a_pruners_remedy_after_two_content_rounds_gets_a_new_content_round(b: Bench, broken: None):
+    """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2
+    When the pruner writes the remedy that it keeps of the finding as a decision of N1, holds N2
+    and N3 good, and the orchestrator writes the generator's Cut
+    Then tree.py cut gives 0 and writes the Cut in Round content-3 holding the remedy, as the limit
+    stops only a remake that the pruner gave no remedy for, and each remedy it keeps is vital"""
+    short_twice(b)
+    remedy = rn_files.decision("a comma in a line", "A line's comma is read as a decimal.", "maker")
+    reviewed(b, held(b, COMMAND, ["N2", "N3"], {"N1": [remedy]}), "The Round's findings.")
+    made = b.script(*cut_move(b, "generator", COMMAND))
+    assert made.code == 0, made.err
+    third = rn_files.round_of(b.folder, COMMAND, "content", 3)
+    given = cut_of(b, os.path.join(third, "generator-cut.json"))
+    assert remedy in given["deliverable"]["necessary_conditions"][0]["decisions"]
+
+
+@pytest.mark.supports("P3.3", "Round")
 def test_a_users_answer_after_two_content_rounds_gets_a_new_content_round(b: Bench, broken: None):
     """Given a run whose command's N1 the evaluator found short in Rounds content-1 and content-2
     When the user settles a decision of N1, one pruner writes it, and the orchestrator writes the

@@ -19,7 +19,7 @@ from urllib.parse import quote
 import pytest
 import rn_files
 from fault import Wrong
-from practice import Found
+from practice import Found, kinds
 from repository.place import RunPlace
 from rn_files import COMMAND, GOAL, GUIDE
 from rounds.files import Fix, Round
@@ -27,6 +27,8 @@ from tree.cut import evaluator, fixer, generator
 
 NAME = "20261120-a-command-with-which-the"
 LIGHT = os.path.join(rn_files.PRACTICES, "light")
+# The folder of each kind's best practice, rn's own, as practice.kinds finds them.
+KINDS = kinds(rn_files.RN, os.path.join(rn_files.RN, "no-worktree"))
 
 
 @pytest.fixture
@@ -84,11 +86,12 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_last_good(repo: st
     """Given the walkthrough's tree, the command resting on invoicer's lines, and no Round before
     When the generator's Cut of the command's Round content-1 is made by the light best practice
     Then it holds the goal, the deliverables' language, the command's node as the tree holds it,
-    the run's worktree, invoicer's lines in the worktree, light's folder, content, 1, the Round's
+    the run's worktree, invoicer's lines in the worktree, light's folder, no template, as light's
+    folder holds none, content, 1, the Round's
     folder, the people's folder in the system's temporary folder, named by the run and the Round,
     and no last good, and no findings, as the generator mends by its decisions alone"""
     the = walkthrough()
-    got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), None)
+    got = generator(the, run_of(repo), round_at(repo, COMMAND), KINDS, None)
     assert sorted(got) == sorted(
         [
             "goal",
@@ -97,6 +100,7 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_last_good(repo: st
             "worktree",
             "inputs",
             "best_practice",
+            "template",
             "stage",
             "number",
             "round",
@@ -112,6 +116,7 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_last_good(repo: st
         in_worktree(repo, "invoicer/lines.py")
     ]
     assert from_top(repo, got["best_practice"]) == LIGHT
+    assert got["template"] is None, "light's folder holds no template"
     assert (got["stage"], got["number"]) == ("content", 1)
     assert from_top(repo, got["round"]) == round_at(repo, COMMAND).folder
     assert os.path.normpath(got["trial"]) == trial_of(COMMAND, "content", 1)
@@ -128,7 +133,7 @@ def test_the_cut_holds_the_deliverables_language_not_the_conversations(repo: str
     Then its language is Japanese"""
     the = walkthrough()
     the["context"]["languages"] = {"deliverables": "Japanese", "conversation": "English"}
-    got = generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), None)
+    got = generator(the, run_of(repo), round_at(repo, COMMAND), KINDS, None)
     assert got["language"] == "Japanese"
 
 
@@ -145,7 +150,7 @@ def test_the_next_rounds_cut_holds_the_trees_decisions_and_the_last_good_alone(r
     )
     remedy = rn_files.decision("the tax", "The invoice shows the tax on its own line.", "reasoning")
     the = walkthrough(command_good=["N1"], command_decisions={"N3": [remedy]})
-    got = generator(the, run_of(repo), round_at(repo, COMMAND, number=2), found("light"), made)
+    got = generator(the, run_of(repo), round_at(repo, COMMAND, number=2), KINDS, made)
     assert "findings" not in got
     assert got["deliverable"] == the["deliverables"][1]
     assert got["deliverable"]["necessary_conditions"][2]["decisions"] == [remedy]
@@ -165,7 +170,7 @@ def test_a_last_generator_that_named_nothing_good_gives_an_empty_last_good(repo:
         walkthrough(guide_good=True),
         run_of(repo),
         round_at(repo, GUIDE, "refactor", 2),
-        found("refactor-doc"),
+        KINDS,
         rn_files.made([], [GUIDE]),
     )
     assert got["last_good"] == []
@@ -184,7 +189,7 @@ def test_the_cut_holds_the_users_answer_as_its_decision_by_user(repo: str):
         the,
         run_of(repo),
         round_at(repo, COMMAND),
-        found("light"),
+        KINDS,
         rn_files.point(),
     )
     assert got["deliverable"]["necessary_conditions"][0]["decisions"] == [tax]
@@ -202,31 +207,39 @@ def test_the_cut_names_each_input_in_the_worktree_in_its_order(repo: str, inputs
     """Given a tree whose guide rests on none, on the command, or on the command and two of
     invoicer's files
     When the guide's generator's Cut is made by the readme best practice
-    Then its inputs name each of them in the run's worktree, in the order the guide names them"""
+    Then its inputs name each of them in the run's worktree, in the order the guide names them,
+    and its template is the readme best practice's"""
     the = walkthrough()
     the["deliverables"][2]["inputs"] = inputs
-    got = generator(the, run_of(repo), round_at(repo, GUIDE), found("readme"), None)
+    got = generator(the, run_of(repo), round_at(repo, GUIDE), KINDS, None)
     assert [from_top(repo, each) for each in got["inputs"]] == [
         in_worktree(repo, each) for each in inputs
     ]
     assert from_top(repo, got["best_practice"]) == os.path.join(rn_files.PRACTICES, "readme")
+    assert from_top(repo, got["template"]) == os.path.join(
+        rn_files.PRACTICES, "readme", "template.md"
+    )
 
 
 @pytest.mark.supports(
     "test_a_deliverable_with_each_condition_good_is_refactored_by_its_refactor_best_practice"
 )
 def test_a_refactor_rounds_cut_names_the_refactor_best_practice(repo: str):
-    """Given a tree whose guide holds each condition good
-    When the generator's Cut of its Round refactor-2 is made by the refactor-doc best practice
-    Then it names refactor-doc's folder, the stage refactor, and the number 2"""
+    """Given a tree whose guide, of the kind readme, holds each condition good
+    When the generator's Cut of its Round refactor-2 is made
+    Then it names refactor-doc's folder, the readme template, as the guide keeps its kind's form
+    while it's refactored, the stage refactor, and the number 2"""
     got = generator(
         walkthrough(guide_good=True),
         run_of(repo),
         round_at(repo, GUIDE, "refactor", 2),
-        found("refactor-doc"),
+        KINDS,
         None,
     )
     assert from_top(repo, got["best_practice"]) == os.path.join(rn_files.PRACTICES, "refactor-doc")
+    assert from_top(repo, got["template"]) == os.path.join(
+        rn_files.PRACTICES, "readme", "template.md"
+    )
     assert (got["stage"], got["number"]) == ("refactor", 2)
     assert from_top(repo, got["round"]) == round_at(repo, GUIDE, "refactor", 2).folder
 
@@ -245,7 +258,7 @@ def test_the_generators_cut_refuses_a_round_of_no_open_deliverable(repo: str, pa
             walkthrough(),
             run_of(repo),
             round_at(repo, path),
-            found("light"),
+            KINDS,
             None,
         )
 
@@ -258,7 +271,7 @@ def test_the_generators_cut_refuses_a_tree_whose_goal_is_open(repo: str):
     the = walkthrough()
     the["goal"] = {"decided": None}
     with pytest.raises(Wrong, match="goal is open; hand the request to a new pruner"):
-        generator(the, run_of(repo), round_at(repo, COMMAND), found("light"), None)
+        generator(the, run_of(repo), round_at(repo, COMMAND), KINDS, None)
 
 
 # evaluator

@@ -241,7 +241,7 @@ For a kind it has none for, such as an invoice, its way to the goal makes one fi
 ### "It looks done, but the people it's for can't use it."
 
 AI evaluators read each deliverable with only what its people have, never what rn meant. rn remakes
-only what they find that the people fail without, twice at most, then shows you what's still short.
+what the people fail without, past two tries only for a vital fix, then shows you the rest.
 
 ### "Each fix breaks something else."
 

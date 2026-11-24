@@ -17,7 +17,7 @@ from typing import Any
 
 import pytest
 from fault import Wrong
-from template.check import Fault, faults, of_kind
+from template.check import Fault, faults, figures, of_kind
 from template.command import USAGE, main
 from template.language import MOST_CHARACTERS, MOST_WORDS
 
@@ -1711,3 +1711,58 @@ def test_template_gives_1_naming_a_blank_language(folder: str):
         " English\n"
     )
     assert main(["product-vision", "vision.md", ""], folder, RN) == (1, "", said)
+
+
+# The figures that a document of a template keeps of its own.
+
+
+@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
+def test_figures_are_each_own_figure_that_a_note_names_but_the_templates_own():
+    """Given a template with two figures of its own, images/template-a.svg and
+    images/template-b.png, whose notes say the document keeps its own at images/a.svg and at
+    images/b.png, naming one of them twice and the template's own once
+    When its figures are asked
+    Then they are images/a.svg and images/b.png, each once, in the order the notes name them"""
+    template = lines(
+        "# `<Product>`",
+        "",
+        "![A](images/template-a.svg)",
+        "",
+        note("The figure: the deliverable's own at images/a.svg, not images/template-a.svg."),
+        "",
+        "## More",
+        "",
+        "![B](images/template-b.png)",
+        "",
+        note("The figure: the deliverable's own, at images/b.png, beside images/a.svg."),
+    )
+    assert figures(template) == ["images/a.svg", "images/b.png"]
+
+
+@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
+def test_a_template_with_no_figure_has_no_figures():
+    """Given a template whose note names a folder of images but no figure's file
+    When its figures are asked
+    Then there are none"""
+    template = lines("# `<Product>`", "", "`<run>`", "", note("`<run>`: screens kept in images/."))
+    assert figures(template) == []
+
+
+@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
+@pytest.mark.parametrize(
+    ("kind", "wanted"),
+    [
+        ("readme", ["images/how-it-works.svg"]),
+        (
+            "architecture",
+            ["images/concept-model.svg", "images/components.svg", "images/deployment.svg"],
+        ),
+        ("software-design", []),
+    ],
+)
+def test_rns_templates_give_the_figures_their_notes_name(kind: str, wanted: list[str]):
+    """Given rn's template of the readme, the architecture, or the software design
+    When its figures are asked
+    Then they are the deliverable's own figures that its notes name, none for the software design"""
+    with open(of_kind(RN, kind), encoding="utf-8") as f:
+        assert figures(f.read()) == wanted
