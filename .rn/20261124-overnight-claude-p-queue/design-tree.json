@@ -168,10 +168,7 @@
     "plugins/overnight/images/how-it-works.svg"
    ],
    "kind": "readme",
-   "inputs": [
-    "dev/overnight/product-vision.md"
-   ],
-   "status": "open",
+   "status": "done",
    "necessary_conditions": [
     {
      "id": "N1",
@@ -481,12 +478,7 @@
    ]
   }
  ],
- "work": [
-  {
-   "do": "make",
-   "path": "plugins/overnight/README.md"
-  }
- ],
+ "work": [],
  "steps": [
   {
    "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
