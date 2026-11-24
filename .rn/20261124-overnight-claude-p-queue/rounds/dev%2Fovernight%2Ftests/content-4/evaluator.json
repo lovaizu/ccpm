@@ -1,0 +1,60 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "None in code, as overnight holds the prompts of ask and status. The walkthrough run of the README's",
+    "request tries it whole, as Test strategy says under Scenario testing. That run checks KR1.1. The",
+    "last line of its status shows the share that KR1.1 measures, such as"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "@pytest.mark.supports(\"S1\", \"S2\", \"ask\", \"status\", \"Piece\")",
+    "@pytest.mark.supports(\"P1.1\", \"Conversation\", \"Wait\")",
+    "@pytest.mark.supports(\"P5.2\", \"pieces\")",
+    "@pytest.mark.supports(\"S2\", \"pieces\", \"Wait\")",
+    "@pytest.mark.supports(\"hand-over\", \"Worktree\")"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_runs_of_a_runner_whose_id_now_names_a_later_process_is_false():",
+    "def test_begin_of_a_number_recorded_today_is_refused(repo: str):",
+    "def test_begin_with_a_runner_that_no_longer_runs_is_refused(repo: str):",
+    "def test_waits_of_several_stops_are_kept_in_order_the_latest_last(repo: str):"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "- A piece that the usage limit stops goes on in its conversation at each reset, however often it",
+    "  stops (P1.1): for any course of stops before the conversation ends, the piece is resumed in its",
+    "- A piece still recorded as running or waiting after its runner ended counted as stopped (P5.2,"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "Run `python3 dev/scripts/trace.py check overnight` from the top of the repository."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "- S1: hand-over records the piece as running only after it starts the runner. A runner whose",
+    "- P5.2: the README and `pieces.command.main` leave open how the table shows a piece that a stop",
+    "- P5.1: the README and `pieces.command.main` leave open how a row shows several waits. They leave"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N4",
+   "good_when": "The developer who reads the case of a piece whose `claude` isn't found learns from its Then the same thing that its checks hold and that the S1 gap says. Today its Then promises the system's words as the piece's last words and a failed piece, while its checks hold only that some last words show, and the gap says no case can show that piece failed with the system's words. So the developer can't tell whether a built hand-over must pass this case, or whether the piece then counts as stopped by the session closing in KR1.1's share."
+  }
+ ]
+}

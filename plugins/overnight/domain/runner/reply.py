@@ -21,8 +21,7 @@ class Limited:
 
 @dataclass(frozen=True)
 class Failed:
-    """A run that ended by an error of its own: the error, in Claude Code's or the system's
-    words."""
+    """A run that ended by an error of its own: the error, in Claude Code's words."""
 
     error: str
 

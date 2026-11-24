@@ -14,9 +14,5 @@ def hand_over(repository: str, prompt: str, tools: tuple[str, ...]) -> Handed:
     the piece as running, with that process as its runner.
     Refuses: `worktree.Refused` where git can't make the worktree, and OSError where the runner
     can't be started.
-
-    Gap, for the architecture's maker: S1 records the piece as running only after the runner
-    starts, so a runner whose conversation ends at once, such as where `claude` isn't found, meets
-    no record to write its end in, and the piece shows as stopped by the session closing.
     """
     raise NotImplementedError("handover.hand.hand_over")

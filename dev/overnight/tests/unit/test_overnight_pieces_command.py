@@ -61,11 +61,7 @@ def test_report_of_the_walkthroughs_night_shows_the_readmes_table(repo: str):
         resume(repo, number)
         end(repo, number, "done", LAST_WORDS[number - 1])
     shown = main(["report"], repo)
-    assert shown == (
-        0,
-        WALKTHROUGH_TABLE,
-        "",
-    )
+    assert shown == (0, WALKTHROUGH_TABLE, "")
     assert shown[1] == table(
         [
             ("1", "done", "overnight/1", "-", LAST_WORDS[0]),

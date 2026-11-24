@@ -22,7 +22,7 @@ import sys
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, NamedTuple
+from typing import Any
 
 import overnight_files
 from claude_code import claude_double
@@ -34,26 +34,18 @@ COLUMNS = ("Piece", "State", "Branch", "Waited", "Last words")
 SCRIPT_LONGEST = 30.0
 
 
-class Ran(NamedTuple):
-    """What a script gave: its exit code, its stdout, and its stderr."""
-
-    code: int
-    out: str
-    err: str
-
-
 @dataclass(frozen=True)
 class Bench:
     """A copy of overnight, the person's repository, the folder of the stand-in's state, the
     bench's clock and the files of its waits, the environment of each script, and what each
-    hand-over gave."""
+    hand-over gave, each as the standard library's `subprocess.CompletedProcess`."""
 
     plugin: str
     repo: str
     state: str
     clock: str
     env: dict[str, str]
-    handed: list[Ran] = field(default_factory=list)
+    handed: list[subprocess.CompletedProcess[str]] = field(default_factory=list)
 
     def at(self, path: str) -> str:
         """The path in the person's repository."""
@@ -63,10 +55,12 @@ class Bench:
         """Where the piece of the number works: `../<repository>-overnight-<n>/`."""
         return overnight_files.piece_folder(self.repo, number)
 
-    def script(self, name: str, *args: str, stdin: str = "", cwd: str | None = None) -> Ran:
+    def script(
+        self, name: str, *args: str, stdin: str = "", cwd: str | None = None
+    ) -> subprocess.CompletedProcess[str]:
         """Runs one of overnight's scripts from the repository's root, or the folder given, as a
         skill runs it."""
-        done = subprocess.run(
+        return subprocess.run(
             [sys.executable, os.path.join(self.plugin, "scripts", f"{name}.py"), *args],
             input=stdin,
             capture_output=True,
@@ -76,9 +70,10 @@ class Bench:
             timeout=SCRIPT_LONGEST,
             check=False,
         )
-        return Ran(done.returncode, done.stdout, done.stderr)
 
-    def hand(self, prompt: str = PROMPT, tools: str = TOOLS_LINE) -> Ran:
+    def hand(
+        self, prompt: str = PROMPT, tools: str = TOOLS_LINE
+    ) -> subprocess.CompletedProcess[str]:
         """Hands a piece over as ask does: handover.py with the tools, the prompt on its stdin."""
         given = self.script("handover", tools, stdin=prompt)
         self.handed.append(given)
@@ -90,20 +85,20 @@ class Bench:
 
         def checked() -> bool:
             for each in self.handed:
-                assert each.code == 0, f"a hand-over gave {each.code}: {each.err}"
+                assert each.returncode == 0, f"a hand-over gave {each.returncode}: {each.stderr}"
             return check()
 
         overnight_files.until(checked, timeout, what)
 
-    def status(self) -> Ran:
+    def status(self) -> subprocess.CompletedProcess[str]:
         """Shows where each piece stands as status does: pieces.py report."""
         return self.script("pieces", "report")
 
     def rows(self) -> list[dict[str, str]]:
         """Each row of the table that status shows, by its columns' names."""
         shown = self.status()
-        assert shown.code == 0, shown.err
-        return rows_of(shown.out)
+        assert shown.returncode == 0, shown.stderr
+        return rows_of(shown.stdout)
 
     def plays(self, given: dict[str, list[dict[str, Any]]]) -> None:
         """Gives the stand-in of Claude Code its plays, by each piece's number."""
@@ -257,7 +252,9 @@ def bench(tmp: str) -> Bench:
     return b
 
 
-def session(b: Bench, prompt: str = PROMPT, tools: str = TOOLS_LINE) -> tuple[Ran, int]:
+def session(
+    b: Bench, prompt: str = PROMPT, tools: str = TOOLS_LINE
+) -> tuple[subprocess.CompletedProcess[str], int]:
     """Hands a piece over from a session of its own, as ask does in a terminal that the person may
     close, and gives what handover.py gave and the session's process group."""
     apart: dict[str, Any] = {"start_new_session": True}
@@ -274,7 +271,7 @@ def session(b: Bench, prompt: str = PROMPT, tools: str = TOOLS_LINE) -> tuple[Ra
         **apart,
     )
     out, err = started.communicate(prompt, timeout=SCRIPT_LONGEST)
-    given = Ran(started.returncode, out, err)
+    given = subprocess.CompletedProcess(started.args, started.returncode, out, err)
     b.handed.append(given)
     return given, started.pid
 

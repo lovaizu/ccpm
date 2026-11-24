@@ -1,0 +1,57 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/domain/runner/claude.py",
+  "plugins/overnight/domain/handover/hand.py"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"The order in which a piece is set up apart from the person's work and started.\"\"\"",
+    "\"\"\"Which number a new piece takes: the one after the highest that any record, branch, or",
+    "\"\"\"Where a piece's worktree lies and which branch it's on, as git keeps them:",
+    "\"\"\"How a runner is started as a process of its own, apart from the session, by each OS's own",
+    "\"\"\"The clock that the runner reads and waits on.\"\"\"",
+    "\"\"\"What a reply of Claude Code says: how its run ended, the ID of its conversation, and when a",
+    "\"\"\"The layout of each piece's record on disk, a JSON file that each change writes whole, in",
+    "\"\"\"How the OS tells a runner's process apart from any later process with the same ID: by its ID",
+    "\"\"\"How each piece stands once its record is read against its runner's process, the count of the"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def main(argv: list[str], stdin: str, cwd: str) -> Answer:",
+    "    Refuses: 2 with what to add where the prompt is empty or no tool is named; 2 with git's words",
+    "def make(repository: str, number: int) -> Worktree:",
+    "def begin(repository: str, handed: Handed, pid: int) -> Record:",
+    "    def stopped(self) -> int:",
+    "def start(piece: Piece) -> int:",
+    "def run(piece: Piece, conversation: str | None) -> Output:",
+    "    Gives: what Claude Code gave once it exited.",
+    "def read(output: Output) -> Reply:",
+    "def wait(repository: str, number: int, began: datetime, resets: datetime) -> Record:",
+    "def end(repository: str, number: int, ending: Ending, last_words: str) -> Record:",
+    "def stand(records: list[Record]) -> Night:",
+    "    raise NotImplementedError(\"pieces.standing.stand\")"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "overnight's ask hands one piece of work over. The piece then runs apart from the session, through",
+    "- It takes the words after the skill's name. They hold the piece's prompt, with each question",
+    "- It gives the lines that `handover.py` prints, as given. They show the piece handed over and how",
+    "- It gives the lines that `pieces.py report` prints, as given: a table of each piece and the share"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "    Refuses: `worktree.Refused` where git can't make the worktree, and OSError where the runner",
+    "    Gives: Limited where the usage limit stopped the run, Ended where the conversation ended, and"
+   ]
+  }
+ ]
+}

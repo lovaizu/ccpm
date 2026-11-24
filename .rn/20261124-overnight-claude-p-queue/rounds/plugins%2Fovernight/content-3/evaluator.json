@@ -1,0 +1,58 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"Which number a new piece takes: the one after the highest that any record, branch, or",
+    "\"\"\"The layout of each piece's record on disk, a JSON file that each change writes whole, in",
+    "\"\"\"How Claude Code is run for a piece: its command line, in its mode that asks no one, with only",
+    "\"\"\"How a runner is started as a process of its own, apart from the session, by each OS's own",
+    "\"\"\"How a piece is carried to its end: run, then resumed in its conversation after each reset of",
+    "\"\"\"What a reply of Claude Code says: how its run ended, the ID of its conversation, and when a",
+    "\"\"\"How the OS tells a runner's process apart from any later process with the same ID: by its ID",
+    "\"\"\"How each piece stands once its record is read against its runner's process, the count of the",
+    "\"\"\"Where a piece's worktree lies and which branch it's on, as git keeps them:"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "    Refuses: 2 with what to add where the prompt is empty or no tool is named; 2 with git's words",
+    "    Gives: one more than the highest of `pieces.record.highest` and `worktree.taken`.",
+    "    \"\"\"Makes the piece's folder from the current commit, on a branch of its own.",
+    "    Refuses: OSError, with the system's words, where the process can't be started.",
+    "    Refuses: FileExistsError where a record of the number exists, and LookupError where the",
+    "    \"\"\"Runs Claude Code once for the piece, in the piece's folder.",
+    "    Gives: Limited where the usage limit stopped the run, Ended where the conversation ended, and",
+    "    \"\"\"Records a piece as waiting for the usage limit to reset.",
+    "    \"\"\"Waits until the time.",
+    "    \"\"\"Records a piece as running again after a wait.",
+    "    \"\"\"Records a piece as ended: done with its last words, or failed with its error as them.",
+    "    Refuses: 2 with the usage where the arguments aren't `report`, and 2 with the file and what's",
+    "    Gives: each record with what stopped it: the usage limit where it's recorded as waiting and",
+    "    raise NotImplementedError(\"handover.hand.hand_over\")"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "person's stay, or when the person types `/overnight:ask`. It gives the piece's number, folder,",
+    "- It takes the words after the skill's name. They hold the piece's prompt, with each question",
+    "- It gives the lines that `handover.py` prints, as given. They show the piece handed over and how",
+    "how the night went. Use it too when the person types `/overnight:status`.",
+    "- It takes nothing: it shows each piece recorded in the repository that the session works in.",
+    "- It gives the lines that `pieces.py report` prints, as given: a table of each piece and the share",
+    "## Steps"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "    Changes: makes the piece's worktree, starts its runner apart from the session, and records",
+    "    the piece as running, with that process as its runner."
+   ]
+  }
+ ],
+ "more": []
+}

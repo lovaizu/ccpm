@@ -22,8 +22,7 @@ def run(piece: Piece, conversation: str | None) -> Output:
     """Runs Claude Code once for the piece, in the piece's folder.
 
     Takes: the piece, and None for its first run, or the ID of its conversation to go on in.
-    Gives: what Claude Code gave once it exited; where Claude Code can't be started, such as when
-    `claude` isn't found, a code other than 0 with the system's words as its standard error.
+    Gives: what Claude Code gave once it exited.
     Changes: what Claude Code does in the piece's folder.
     Refuses: nothing.
     """

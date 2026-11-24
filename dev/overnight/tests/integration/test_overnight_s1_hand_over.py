@@ -58,12 +58,11 @@ def test_the_walkthroughs_three_pieces_go_on_through_the_limit_and_show_done_in_
     b.until(lambda: len(b.calls(2)) == 2, what="piece 2 to go on after the reset")
     b.release("third")
     b.settle(3)
-    assert given == [(0, handover_lines(n), "") for n in (1, 2, 3)]
-    assert b.status() == (
-        0,
-        WALKTHROUGH_TABLE,
-        "",
-    )
+    assert [(each.returncode, each.stdout, each.stderr) for each in given] == [
+        (0, handover_lines(n), "") for n in (1, 2, 3)
+    ]
+    shown = b.status()
+    assert (shown.returncode, shown.stdout, shown.stderr) == (0, WALKTHROUGH_TABLE, "")
 
 
 @pytest.mark.supports("S1", "hand-over")
@@ -73,11 +72,12 @@ def test_a_hand_over_with_no_prompt_is_refused_saying_what_to_add(b: Bench):
     Then handover.py gives 2, printing nothing, with words that name the prompt to add; no
     piece's folder is made, Claude Code never runs, and status shows no pieces yet"""
     refused = b.hand(prompt="")
-    assert (refused.code, refused.out) == (2, "")
-    assert "prompt" in refused.err
+    assert (refused.returncode, refused.stdout) == (2, "")
+    assert "prompt" in refused.stderr
     assert not os.path.exists(b.piece_folder(1))
     assert b.calls() == []
-    assert b.status() == (0, "No pieces yet\n", "")
+    shown = b.status()
+    assert (shown.returncode, shown.stdout, shown.stderr) == (0, "No pieces yet\n", "")
 
 
 @pytest.mark.supports("S1", "hand-over")
@@ -87,11 +87,12 @@ def test_a_hand_over_with_no_tool_named_is_refused_saying_what_to_add(b: Bench):
     Then handover.py gives 2, printing nothing, with words that name the tools to add; no
     piece's folder is made, Claude Code never runs, and status shows no pieces yet"""
     refused = b.hand(tools="")
-    assert (refused.code, refused.out) == (2, "")
-    assert "tool" in refused.err.lower()
+    assert (refused.returncode, refused.stdout) == (2, "")
+    assert "tool" in refused.stderr.lower()
     assert not os.path.exists(b.piece_folder(1))
     assert b.calls() == []
-    assert b.status() == (0, "No pieces yet\n", "")
+    shown = b.status()
+    assert (shown.returncode, shown.stdout, shown.stderr) == (0, "No pieces yet\n", "")
 
 
 @pytest.mark.supports("hand-over", "Worktree")
@@ -103,8 +104,8 @@ def test_a_hand_over_outside_a_git_repository_is_refused_with_gits_words(b: Benc
     outside = os.path.join(str(tmp_path), "outside")
     os.makedirs(outside)
     refused = b.script("handover", TOOLS_LINE, stdin=PROMPT, cwd=outside)
-    assert (refused.code, refused.out) == (2, "")
-    assert "not a git repository" in refused.err.lower()
+    assert (refused.returncode, refused.stdout) == (2, "")
+    assert "not a git repository" in refused.stderr.lower()
     assert b.calls() == []
 
 
@@ -116,11 +117,12 @@ def test_a_hand_over_in_a_repository_with_no_commit_is_refused_with_gits_words(b
     Code never runs, and status there shows no pieces yet"""
     fresh = overnight_files.repository(os.path.join(str(tmp_path), "fresh"), commit=False)
     refused = b.script("handover", TOOLS_LINE, stdin=PROMPT, cwd=fresh)
-    assert (refused.code, refused.out) == (2, "")
-    assert refused.err.strip()
+    assert (refused.returncode, refused.stdout) == (2, "")
+    assert refused.stderr.strip()
     assert not os.path.exists(os.path.join(fresh, ".overnight"))
     assert b.calls() == []
-    assert b.script("pieces", "report", cwd=fresh) == (0, "No pieces yet\n", "")
+    shown = b.script("pieces", "report", cwd=fresh)
+    assert (shown.returncode, shown.stdout, shown.stderr) == (0, "No pieces yet\n", "")
 
 
 @pytest.mark.supports("S1", "runner", "Record")
@@ -155,7 +157,8 @@ def test_a_piece_whose_claude_code_cant_start_is_recorded_failed_with_the_system
     Then handover.py gives the piece's lines, and status shows piece 1 failed on overnight/1,
     with no wait, and the system's words of `claude` not found as its last words"""
     alone = without_claude(b)
-    assert alone.hand() == (0, handover_lines(1), "")
+    given = alone.hand()
+    assert (given.returncode, given.stdout, given.stderr) == (0, handover_lines(1), "")
     b.until(lambda: [row["State"] for row in alone.rows()] == ["failed"], what="piece 1 to fail")
     (row,) = alone.rows()
     assert (row["Piece"], row["Branch"], row["Waited"]) == ("1", "overnight/1", "-")
@@ -178,7 +181,8 @@ def test_a_new_piece_takes_the_number_after_the_highest_of_records_branches_and_
     os.rename(b.at(f".overnight/{record}"), b.at(".overnight/20261120-9"))
     git(b.repo, "branch", "overnight/5")
     os.makedirs(b.piece_folder(7))
-    assert b.hand() == (0, handover_lines(10), "")
+    given = b.hand()
+    assert (given.returncode, given.stdout, given.stderr) == (0, handover_lines(10), "")
     b.settle(2)
     assert [each["cwd"] for each in b.calls(10)] == [os.path.realpath(b.piece_folder(10))]
 

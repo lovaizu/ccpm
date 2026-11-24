@@ -100,7 +100,7 @@ def test_a_piece_goes_on_after_the_session_that_handed_it_over_closes(b: Bench, 
     overnight_bench.close_session(group)
     b.release("closing")
     (row,) = b.settle(1)
-    assert given.code == 0
+    assert given.returncode == 0
     assert (row["State"], row["Last words"]) == ("done", LAST_WORDS[0])
 
 
@@ -118,7 +118,7 @@ def test_a_record_read_while_its_runner_writes_it_is_read_whole_each_time(b: Ben
     while time.monotonic() < end and (
         not b.runners() or any(map(overnight_files.alive, b.runners()))
     ):
-        codes.append(b.status().code)
+        codes.append(b.status().returncode)
     (row,) = b.settle(1)
     assert set(codes) <= {0}
     assert (row["State"], row["Last words"]) == ("done", "Done.")
@@ -200,7 +200,7 @@ def test_a_piece_whose_runner_ended_while_it_ran_is_shown_stopped_by_the_session
     overnight_files.kill(run["pid"])
     b.hand()
     first, second = b.settle(2)
-    shown = b.status().out.splitlines()
+    shown = b.status().stdout.splitlines()
     assert first["State"] != "running"
     assert "session closing" in shown[1]
     assert second["State"] == "done"
@@ -229,4 +229,4 @@ def test_the_share_stopped_counts_neither_a_failed_piece_nor_one_with_a_refused_
     overnight_files.kill(run["ppid"])
     overnight_files.kill(run["pid"])
     b.settle(3)
-    assert b.status().out.splitlines()[-1] == SHARE.format(1, 3)
+    assert b.status().stdout.splitlines()[-1] == SHARE.format(1, 3)

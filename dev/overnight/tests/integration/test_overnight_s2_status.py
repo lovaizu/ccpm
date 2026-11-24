@@ -19,7 +19,8 @@ def test_status_with_no_piece_handed_over_shows_no_pieces_yet(b: Bench):
     """Given the walkthrough's repository, where no piece was handed over
     When status runs in a later session
     Then pieces.py gives 0 with `No pieces yet`"""
-    assert b.status() == (0, "No pieces yet\n", "")
+    shown = b.status()
+    assert (shown.returncode, shown.stdout, shown.stderr) == (0, "No pieces yet\n", "")
 
 
 @pytest.mark.supports("S2", "pieces", "Wait")
@@ -45,7 +46,7 @@ def test_a_piece_whose_runner_ended_while_it_waited_is_counted_stopped_by_the_us
     rows = b.settle(2)
     assert rows[0]["State"] != "waiting"
     assert rows[1]["State"] == "done"
-    assert b.status().out.splitlines()[-1] == SHARE.format(1, 2)
+    assert b.status().stdout.splitlines()[-1] == SHARE.format(1, 2)
 
 
 @pytest.mark.supports("pieces", "Record")
@@ -61,5 +62,5 @@ def test_a_record_left_out_of_its_layout_is_refused_naming_its_file(b: Bench):
     with open(b.at(f".overnight/{folder}/{name}"), "w", encoding="utf-8") as f:
         f.write("{not json")
     refused = b.status()
-    assert (refused.code, refused.out) == (2, "")
-    assert name in refused.err
+    assert (refused.returncode, refused.stdout) == (2, "")
+    assert name in refused.stderr
