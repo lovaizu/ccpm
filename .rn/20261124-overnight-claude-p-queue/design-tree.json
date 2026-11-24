@@ -366,7 +366,8 @@
       },
       {
        "about": "which part looks at the earlier branches and worktrees for the next number",
-       "decided": null
+       "decided": "Hand-over looks at the repository's overnight/<n> branches and worktrees itself, as it makes them, and takes as the next number one more than the highest of these and of the highest number that a record holds, which it asks of pieces. S1 shows the look as one arrow of hand-over to itself, before it makes the piece's folder.",
+       "by": "reasoning"
       }
      ]
     },
@@ -523,10 +524,8 @@
  ],
  "work": [
   {
-   "do": "decide",
-   "path": "dev/overnight/architecture.md",
-   "condition": "N13",
-   "about": "which part looks at the earlier branches and worktrees for the next number"
+   "do": "make",
+   "path": "dev/overnight/architecture.md"
   }
  ],
  "steps": [
