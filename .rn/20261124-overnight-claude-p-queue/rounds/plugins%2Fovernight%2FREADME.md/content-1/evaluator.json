@@ -1,0 +1,90 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that runs each piece of work you hand it to its end.",
+    "overnight is for you when you're an AI, such as Claude Code, given work that outlasts the person's",
+    "stay. With it, you have that work run on through the usage limit, unanswered prompts, and your",
+    "session's end."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't get past the usage limit sooner, such as by another account: it waits for each",
+    "  reset.",
+    "- overnight doesn't let a piece ask anyone anything while it runs: settle each question in its",
+    "  prompt.",
+    "- overnight doesn't run while the computer is off or asleep: the person leaves it on and awake."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: overnight has no release yet, so nothing here runs, and this README draws what it",
+    "builds toward."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "[MIT](../../LICENSE)"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "At the end, you have three issues fixed on their own branches, though the limit came and your",
+    "session closed.",
+    "Fix issues #12, #15, and #18 while I sleep. Each has a failing test. I'll review the branches in the morning.",
+    "Fix issue #12: parse_date raises on \"2026-02-29 00:00\". Make tests/test_dates.py::test_leap_day pass, and change no other test. Run pytest to check, then commit on this branch.",
+    "Tools: Read, Edit, Bash(pytest:*), Bash(git add:*), Bash(git commit:*)",
+    "Piece  State  Branch       Waited                       Last words",
+    "1      done   overnight/1  -                            Fixed parse_date for leap days. 214 tests pass.",
+    "2      done   overnight/2  usage limit, 01:12 to 04:00  Kept the CSV header in its column order. 214 tests pass.",
+    "3      done   overnight/3  usage limit, 01:12 to 04:00  Added the --dry-run flag. 216 tests pass.",
+    "0 of 3 pieces stopped by the usage limit, a wait for an answer, or the session closing."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "A piece that the limit stops goes on in its conversation after each reset, however often the limit",
+    "comes back. So the hours after the limit still work, with no one there to start them.",
+    "Each piece gets the tools you name and a Git worktree of its own up front, so no prompt waits. overnight",
+    "refuses each tool you didn't name without asking, so name each tool the piece needs.",
+    "Each piece runs as a process apart from your session, so closing the session leaves it running. The",
+    "skill `overnight:status` shows, in any later session, where each piece stands.",
+    "No. A piece runs with only the tools you named, and its changes stay on its branch until merged."
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- Claude Code: `claude --version` shows it.",
+    "- Python 3.9 or later, run as `python3`: `python3 --version` shows it.",
+    "- A Git repository that holds the work: at its root, `git rev-parse --show-toplevel` shows its",
+    "  folder.",
+    "claude plugin marketplace add lovaizu/ccpm",
+    "claude plugin install overnight@ccpm",
+    "In the person's next session, the skill `overnight:status` shows `No pieces yet`."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N5",
+   "good_when": "The AI learns what a night's run gives it and why the work keeps going before it meets the steps to install overnight, so that by the time it reads Requirements and Installation it already knows overnight fits its work."
+  },
+  {
+   "condition": "N7",
+   "good_when": "The AI that opens How it works sees the figure it points to, how overnight runs each piece to its end, beside the one way that the section states first; today the figure's file, images/how-it-works.svg next to the README, isn't in the branch, so the reader meets a broken image."
+  },
+  {
+   "condition": "N10",
+   "good_when": "The AI finds from the README where to go for fuller use, such as what overnight:ask takes and what each piece state that overnight:status shows means, for when a piece ends other than done, as well as where to ask for help."
+  }
+ ]
+}

@@ -1,0 +1,107 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that keeps work from stopping by usage limits, unanswered prompts,",
+    "or closed sessions.",
+    "overnight is for you when you're an AI, such as Claude Code, given work that outlasts the person's",
+    "stay. With it, you have that work run on through the usage limit, unanswered prompts, and your",
+    "session's end."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't get past the usage limit sooner, such as by another account: it waits for each",
+    "  reset.",
+    "- overnight doesn't let a piece ask anyone anything while it runs: settle each question in its",
+    "  prompt.",
+    "- overnight doesn't run while the computer is off or asleep: the person leaves it on and awake."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: overnight has no release yet, so nothing here runs, and this README draws what it",
+    "builds toward."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "[MIT](../../LICENSE)"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "At the end, you have three issues fixed on their own branches, though the limit came and your",
+    "Fix issues #12, #15, and #18 while I sleep. Each has a failing test. I'll review the branches in the morning.",
+    "Fix issue #12: parse_date raises on \"2026-02-29 00:00\". Make tests/test_dates.py::test_leap_day pass, and change no other test. Run pytest to check, then commit on this branch.",
+    "Tools: Read, Edit, Bash(pytest:*), Bash(git add:*), Bash(git commit:*)",
+    "1      done   overnight/1  -                            Fixed parse_date for leap days. 214 tests pass.",
+    "2      done   overnight/2  usage limit, 01:12 to 04:00  Kept the CSV header in its column order. 214 tests pass.",
+    "3      done   overnight/3  usage limit, 01:12 to 04:00  Added the --dry-run flag. 216 tests pass.",
+    "0 of 3 pieces stopped by the usage limit, a wait for an answer, or the session closing.",
+    "You and the person review the three branches, each with its tests passing."
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or your session",
+    "closing.",
+    "A piece that the limit stops goes on in its conversation after each reset, however often the limit",
+    "Each piece gets the tools you name and a Git worktree of its own up front, so no prompt waits. overnight",
+    "Each piece runs as a process apart from your session, so closing the session leaves it running. The"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### Does the work go on once the usage limit stops it at 01:00?",
+    "A piece that the limit stops goes on in its conversation after each reset, however often the limit",
+    "comes back. So the hours after the limit still work, with no one there to start them.",
+    "### Does the work sit all night at a prompt that no one answers?",
+    "Each piece gets the tools you name and a Git worktree of its own up front, so no prompt waits. overnight",
+    "refuses each tool you didn't name without asking, so name each tool the piece needs.",
+    "### Does the work end when your session closes?",
+    "Each piece runs as a process apart from your session, so closing the session leaves it running. The",
+    "skill `overnight:status` shows, in any later session, where each piece stands.",
+    "### Can a piece do more than you let it?",
+    "No. A piece runs with only the tools you named, and its changes stay on its branch until merged."
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "- Claude Code: `claude --version` shows it.",
+    "- Python 3.9 or later, run as `python3`: `python3 --version` shows it.",
+    "- A Git repository that holds the work: at its root, `git rev-parse --show-toplevel` shows its",
+    "claude plugin marketplace add lovaizu/ccpm",
+    "claude plugin install overnight@ccpm",
+    "In the person's next session, the skill `overnight:status` shows `No pieces yet`."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N10",
+   "good_when": "The AI that has read the walkthrough's one run knows where to turn for what that run leaves open, such as whether a request to overnight:ask needs its Tools line and what overnight:status shows for a piece that didn't end done, besides where to ask for help."
+  }
+ ]
+}

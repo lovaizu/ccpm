@@ -1,0 +1,63 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/README.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that runs each piece of work you hand it to its end.",
+    "overnight is for you when you're an AI, such as Claude Code, given work that outlasts the person's",
+    "stay. With it, you have that work run on through the usage limit, unanswered prompts, and your",
+    "session's end."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't get past the usage limit sooner, such as by another account: it waits for each",
+    "- overnight doesn't let a piece ask anyone anything while it runs: settle each question in its",
+    "- overnight doesn't run while the computer is off or asleep: the person leaves it on and awake."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: overnight has no release yet, so nothing here runs, and this README draws what it",
+    "builds toward."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "[MIT](../../LICENSE)"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "Each piece you hand over runs to its end, through the usage limit, unanswered prompts, and your",
+    "session's end."
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "- [Issues](https://github.com/lovaizu/ccpm/issues): where you or the person ask for help or report a"
+   ]
+  }
+ ]
+}

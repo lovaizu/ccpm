@@ -1,0 +1,44 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/README.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "This run draws what overnight builds toward, as no release of overnight runs it yet. At 23:00, in",
+    "comes back. So the piece works through the hours after the limit, with no one there to restart it."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "stay. With it, you hand that work over in pieces, and each piece runs on through the usage limit,",
+    "Each piece runs as a process apart from your session, so closing the session leaves it running. In",
+    "any later session, the skill `overnight:status` shows where each piece stands."
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "Each piece gets the tools you name and a Git worktree of its own up front, so no prompt waits. When",
+    "the piece calls a tool you didn't name, overnight refuses it without asking anyone. So name each",
+    "tool the piece needs."
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "stay. With it, you hand that work over in pieces, and each piece runs on through the usage limit,"
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "You read the issues, and settle each question in each piece's prompt, as no one answers while the",
+    "- overnight doesn't let a piece ask anyone anything while it runs: settle each question in its"
+   ]
+  }
+ ]
+}
