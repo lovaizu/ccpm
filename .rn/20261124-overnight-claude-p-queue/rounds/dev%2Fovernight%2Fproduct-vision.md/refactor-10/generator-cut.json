@@ -1,0 +1,139 @@
+{
+ "goal": "The user has the work that the AI they instruct asks for run as much as it can, stopped neither by the usage limit, by waiting for an answer, nor by the session closing: \u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d Once it holds, the work that AI asks for goes on through the usage limit, with no prompt waiting for an answer, and after the session that asked for it closes, where before each of these stopped it.",
+ "language": "English",
+ "deliverable": {
+  "name": "overnight's developers know whom overnight serves and the one way it keeps the work the AI asks for running as much as it can",
+  "path": "dev/overnight/product-vision.md",
+  "kind": "product-vision",
+  "inputs": [],
+  "status": "open",
+  "necessary_conditions": [
+   {
+    "id": "N1",
+    "good": true,
+    "decisions": [
+     {
+      "about": "Roles",
+      "decided": "One role: the AI that the user instructs. Roles say nothing of how it calls overnight, directly or through a plugin, as a plugin that calls overnight is only that AI's way of calling it: \u300c\u30e6\u30fc\u30b6\u30fc\u304cAI\u306b\u6307\u793a\u3057\u3066\u3001AI\u304c\u6bb5\u53d6\u308b\u3001\u306a\u306e\u3067\u5229\u7528\u8005\u306fAI\u300d\u300cA\u3092\u30d7\u30e9\u30b0\u30a4\u30f3\u3067\u547c\u3073\u51fa\u3057\u305f\u3089\u540c\u3058\u3060\u3088\u306d\uff1f\u300d\u300c\uff08\u30d7\u30e9\u30b0\u30a4\u30f3\u7d4c\u7531\u3067\u547c\u3070\u308c\u308b\u5834\u5408\u3082\u542b\u3080\uff09\u8981\u3089\u306a\u3044 \u7f6e\u3044\u305f\u4f5c\u696d\uff1f \u4f5c\u696d\u306e\u4e2d\u8eab\u304c\u8a31\u3059\u3068\u3053\u308d\uff1f \u4e2d\u8eab\u4ee5\u5916\u306e\u7406\u7531\u3067\u6b62\u307e\u3063\u305f\uff1f \u610f\u56f3\u4ee5\u5916\u3001\u610f\u5473\u4e0d\u660e\u3067\u306f\uff1f\u300d\u300c\u4f7f\u3046\u4eba\uff1a\u3042\u306a\u305f\u306e\u6307\u793a\u3092\u53d7\u3051\u305f AI\u300d\u300cA\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N2",
+    "good": true,
+    "decisions": [
+     {
+      "about": "the objective",
+      "decided": "The objective says in plain words that the work the AI asks for runs as much as it can, not that it gets done, as whether a piece gets done depends on the work itself. It names no night or morning, and holds no taking in of the results: \u300c\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u3053\u3068\u3001\u306a\u306e\u3067\u306f\uff1f\u300d\u300c\u6700\u5f8c\u307e\u3067\u304b\u3069\u3046\u304b\u306f\u4f5c\u696d\u6b21\u7b2c\u3060\u3088\u306d\u3001\u3001\u3001\u300d\u300c\u591c\u3068\u304b\u671d\u3068\u304b\u3069\u3046\u3067\u3082\u3088\u3044\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3001\u3053\u308c\u304c\u76ee\u7684\u300d\u300c\uff08\u30d7\u30e9\u30b0\u30a4\u30f3\u7d4c\u7531\u3067\u547c\u3070\u308c\u308b\u5834\u5408\u3082\u542b\u3080\uff09\u8981\u3089\u306a\u3044 \u7f6e\u3044\u305f\u4f5c\u696d\uff1f \u4f5c\u696d\u306e\u4e2d\u8eab\u304c\u8a31\u3059\u3068\u3053\u308d\uff1f \u4e2d\u8eab\u4ee5\u5916\u306e\u7406\u7531\u3067\u6b62\u307e\u3063\u305f\uff1f \u610f\u56f3\u4ee5\u5916\u3001\u610f\u5473\u4e0d\u660e\u3067\u306f\uff1f\u300d\u300c\u76ee\u7684\uff1aAI \u304c\u983c\u3093\u3060\u4f5c\u696d\u304c\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u300d\u300cA\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N3",
+    "good": true,
+    "decisions": []
+   },
+   {
+    "id": "N4",
+    "good": true,
+    "decisions": [
+     {
+      "about": "Key results",
+      "decided": "One key result alone, named in plain words: the share of pieces stopped by the usage limit, a wait for an answer, or the session closing. Lower is better. No key result counts the steps the user takes, and none counts whether a piece succeeds or reaches its end, as that depends on the work itself: \u300c\u826f\u3057\u60aa\u3057\u306e\u6e2c\u308a\u65b9 \u9055\u3046\u306e\u3067\u306f\uff1f \u4e2d\u8eab\u6b21\u7b2c\u306e\u5185\u5bb9\u3092\u7701\u304f\u3068\uff1f \u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3055\u308c\u308b\u3053\u3068\u3001\u306a\u306e\u3067\u306f\uff1f \u610f\u56f3\u306e\u5185\u5bb9\u3063\u3066\u305d\u3046\u3044\u3046\u3053\u3068\u3067\u306f\uff1f\u300d\u300c\u6700\u5f8c\u307e\u3067\u304b\u3069\u3046\u304b\u306f\u4f5c\u696d\u6b21\u7b2c\u3060\u3088\u306d\u3001\u3001\u3001\u300d\u300cA \u306a\u306e\u3067\u30ed\u30b8\u30c3\u30af\u3060\u3088\u306d\u300d\u300c\uff08\u30d7\u30e9\u30b0\u30a4\u30f3\u7d4c\u7531\u3067\u547c\u3070\u308c\u308b\u5834\u5408\u3082\u542b\u3080\uff09\u8981\u3089\u306a\u3044 \u7f6e\u3044\u305f\u4f5c\u696d\uff1f \u4f5c\u696d\u306e\u4e2d\u8eab\u304c\u8a31\u3059\u3068\u3053\u308d\uff1f \u4e2d\u8eab\u4ee5\u5916\u306e\u7406\u7531\u3067\u6b62\u307e\u3063\u305f\uff1f \u610f\u56f3\u4ee5\u5916\u3001\u610f\u5473\u4e0d\u660e\u3067\u306f\uff1f\u300d\u300c\u6e2c\u308a\u65b9\uff1a\u4e0a\u9650\u3001\u8cea\u554f\u5f85\u3061\u3001\u4f1a\u8a71\u306e\u7d42\u4e86\u3067\u6b62\u307e\u3063\u3066\u3057\u307e\u3063\u305f\u4f5c\u696d\u306e\u5272\u5408\uff08\u5c11\u306a\u3044\u307b\u3069\u826f\u3044\uff09\u300d\u300cA\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N5",
+    "good": true,
+    "decisions": [
+     {
+      "about": "an objective for taking in the results",
+      "decided": "No objective for taking in the results: the one objective and its one key result stand alone, as results follow from running: \u300c\u7d50\u679c\u3092\u53d7\u3051\u53d6\u308c\u308b\u304b\u3069\u3046\u304b\u304c\u76ee\u7684\u3067\u306a\u304f\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3059\u308b\u304b\u3069\u3046\u304b\u3001\u304c\u672c\u8cea\u7684\u306a\u76ee\u7684 \u5b9f\u884c\u3067\u304d\u308c\u3070\u7d50\u679c\u304c\u3064\u3044\u3066\u304f\u308b \u591c\u3068\u304b\u671d\u3068\u304b\u3069\u3046\u3067\u3082\u3088\u3044\u3001\u3067\u304d\u308b\u3060\u3051\u5b9f\u884c\u3001\u3053\u308c\u304c\u76ee\u7684 \u30a4\u30e1\u30fc\u30b8\u3067\u304d\u307e\u3059\u304b\uff1f\u300d",
+      "by": "user"
+     }
+    ]
+   },
+   {
+    "id": "N6",
+    "good": true,
+    "decisions": [
+     {
+      "about": "who decides the one way and its ideas",
+      "decided": "The maker decides the one way and each idea that carries it from the goal and the run's records, and asks the user none of them, as the user confirms only the purpose and the intent: \u300c\u76ee\u7684\u306f\u3059\u3067\u306b\u4f1d\u3048\u3066\u308b\u3088\u306d\uff1f \u305d\u308c\u624b\u6bb5\u3060\u3088\u306d\uff1f\u300d \u300c\u79c1\u306f\u76ee\u7684\u3068\u610f\u56f3\u3060\u3051\u78ba\u8a8d\u3057\u305f\u3044\u3001\u4f7f\u3044\u65b9\u3084\u5b9f\u88c5\u306b\u8208\u5473\u306a\u3044\u3001\u5b9f\u73fe\u3057\u3066\u6b32\u3057\u3044\u300d",
+      "by": "user"
+     },
+     {
+      "about": "what the one way and its ideas serve",
+      "decided": "The one way and each idea of the concept serve the key result, keeping the work the AI asks for from stopping by the usage limit, by waiting for an answer, or by the session closing, and the one way promises no piece its end. The concept says it in the same plain words as the objective and the key result. Its three ideas keep their meaning: going on after each reset of the usage limit, handing each piece its tools and its folder up front so that no question waits for an answer, and going on after the session closes: \u300c\u610f\u56f3\u306e\u5185\u5bb9\u3063\u3066\u305d\u3046\u3044\u3046\u3053\u3068\u3067\u306f\uff1f\u300d\u300c\u6700\u5f8c\u307e\u3067\u304b\u3069\u3046\u304b\u306f\u4f5c\u696d\u6b21\u7b2c\u3060\u3088\u306d\u3001\u3001\u3001\u300d\u300c\uff08\u30d7\u30e9\u30b0\u30a4\u30f3\u7d4c\u7531\u3067\u547c\u3070\u308c\u308b\u5834\u5408\u3082\u542b\u3080\uff09\u8981\u3089\u306a\u3044 \u7f6e\u3044\u305f\u4f5c\u696d\uff1f \u4f5c\u696d\u306e\u4e2d\u8eab\u304c\u8a31\u3059\u3068\u3053\u308d\uff1f \u4e2d\u8eab\u4ee5\u5916\u306e\u7406\u7531\u3067\u6b62\u307e\u3063\u305f\uff1f \u610f\u56f3\u4ee5\u5916\u3001\u610f\u5473\u4e0d\u660e\u3067\u306f\uff1f\u300d\u300c\u610f\u56f3\uff1a\u4f7f\u7528\u67a0\u306e\u4e0a\u9650\u3067\u6b62\u307e\u3063\u3066\u3082\u89e3\u9664\u306e\u305f\u3073\u306b\u518d\u958b\u3059\u308b\u3002\u8cea\u554f\u3067\u6b62\u307e\u3089\u306a\u3044\u3088\u3046\u3001\u9053\u5177\u3068\u4f5c\u696d\u30d5\u30a9\u30eb\u30c0\u3092\u6700\u521d\u306b\u6e21\u3059\u3002\u4f1a\u8a71\u304c\u9589\u3058\u3066\u3082\u7d9a\u3051\u308b\u3002\u300d\u300cA\u300d",
+      "by": "user"
+     },
+     {
+      "about": "a piece that the usage limit stops again and again",
+      "decided": "The concept holds no idea of giving a piece up: such a piece waits out each reset like any other piece.",
+      "by": "reasoning"
+     }
+    ]
+   }
+  ]
+ },
+ "worktree": ".claude/worktrees/rn-20261124-overnight-claude-p-queue",
+ "inputs": [],
+ "best_practice": "../../../../../home/agent/.herdr/worktrees/ccpm/rn-lane-from-62/plugins/rn/domain/best-practices/refactor-doc",
+ "stage": "refactor",
+ "number": 10,
+ "round": ".claude/worktrees/rn-20261124-overnight-claude-p-queue/.rn/20261124-overnight-claude-p-queue/rounds/dev%2Fovernight%2Fproduct-vision.md/refactor-10",
+ "trial": "/tmp/rn-trial-20261124-overnight-claude-p-queue-dev%2Fovernight%2Fproduct-vision.md-refactor-10/",
+ "last_good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "- user\\",
+    "  An AI that a person instructs, such as Claude Code, which asks overnight to run its work."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- O1: the user has the work it asks for run as much as it can."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "- O1: the user has the work it asks for run as much as it can.",
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or the session",
+    "closing."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "  - KR1.1: the share of pieces stopped by the usage limit, a wait for an answer, or the session",
+    "    closing. Lower is better."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "- O1: the user has the work it asks for run as much as it can."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "overnight keeps each piece from stopping by the usage limit, a wait for an answer, or the session",
+    "closing.",
+    "- Waiting out the usage limit, for O1\\",
+    "  A piece that the limit stops goes on after each reset, however often the limit comes back.",
+    "- Nothing to answer, for O1\\",
+    "  Each piece gets its tools and a folder of its own up front, so no prompt waits for an answer.",
+    "- Running past the session, for O1\\",
+    "  Each piece goes on after the session that asked for it closes."
+   ]
+  }
+ ]
+}

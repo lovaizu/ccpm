@@ -8,8 +8,8 @@
 ## Objectives and key results
 
 - O1: the user has the work it asks for run as much as it can.
-  - KR1.1: the share of the pieces of work stopped by the usage limit, a wait for an answer, or
-    the session closing. Lower is better.
+  - KR1.1: the share of pieces stopped by the usage limit, a wait for an answer, or the session
+    closing. Lower is better.
 
 The first key result of each objective comes first. Keep a change that improves a key result
 only if none before it gets worse.
