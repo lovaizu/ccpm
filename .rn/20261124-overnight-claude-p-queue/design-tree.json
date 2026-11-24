@@ -103,7 +103,7 @@
     },
     {
      "id": "N2",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "the objective",
@@ -119,7 +119,7 @@
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "Key results",
@@ -130,12 +130,17 @@
     },
     {
      "id": "N5",
-     "good": true,
-     "decisions": []
+     "good": false,
+     "decisions": [
+      {
+       "about": "an objective for taking in the night's results in the morning",
+       "decided": null
+      }
+     ]
     },
     {
      "id": "N6",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "who decides the one way and its ideas",
@@ -456,6 +461,12 @@
   }
  ],
  "work": [
+  {
+   "do": "decide",
+   "path": "dev/overnight/product-vision.md",
+   "condition": "N5",
+   "about": "an objective for taking in the night's results in the morning"
+  },
   {
    "do": "make",
    "path": "dev/overnight/product-vision.md"
