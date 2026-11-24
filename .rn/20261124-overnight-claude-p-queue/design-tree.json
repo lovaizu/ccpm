@@ -1,0 +1,468 @@
+{
+ "context": {
+  "rn": "0.10.0",
+  "languages": {
+   "deliverables": "English",
+   "conversation": "Japanese"
+  },
+  "issues": {
+   "closes": [
+    62
+   ],
+   "refs": []
+  },
+  "pr": null
+ },
+ "goal": {
+  "decided": "The user has the AI they instruct run work overnight and receive its results in the morning: \u300cAI \u304c\u4f5c\u696d\u3092\u591c\u306b\u6d41\u3057\u3066\u304a\u304d\u3001\u671d\u306b\u7d50\u679c\u3092\u53d7\u3051\u53d6\u308c\u308b\u3002\u300d Once it holds, that AI, whether it calls overnight itself or through another plugin, leaves the work to run through the night while nobody answers, and in the morning takes in what came of it, where before the same work ran in the daytime.",
+  "by": "user"
+ },
+ "deliverables": [
+  {
+   "name": "This design tree holds every deliverable the goal needs, each after what it stands on",
+   "path": ".rn/20261124-overnight-claude-p-queue/design-tree.json",
+   "kind": "design-tree",
+   "status": "done",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": true,
+     "decisions": [
+      {
+       "about": "the request",
+       "decided": "#62: issue lovaizu/ccpm#62, which the run closes",
+       "by": "user"
+      },
+      {
+       "about": "whom the goal is for",
+       "decided": "One kind of person: an AI that the user instructs, which plans the work, whichever plugin calls overnight: \u300c\u30e6\u30fc\u30b6\u30fc\u304cAI\u306b\u6307\u793a\u3057\u3066\u3001AI\u304c\u6bb5\u53d6\u308b\u3001\u306a\u306e\u3067\u5229\u7528\u8005\u306fAI\u300d\u300cA\u3092\u30d7\u30e9\u30b0\u30a4\u30f3\u3067\u547c\u3073\u51fa\u3057\u305f\u3089\u540c\u3058\u3060\u3088\u306d\uff1f\u300d",
+       "by": "user"
+      },
+      {
+       "about": "what they can do",
+       "decided": "The AI runs work overnight and receives the results in the morning: \u300cAI \u304c\u4f5c\u696d\u3092\u591c\u306b\u6d41\u3057\u3066\u304a\u304d\u3001\u671d\u306b\u7d50\u679c\u3092\u53d7\u3051\u53d6\u308c\u308b\u3002\u300d",
+       "by": "user"
+      }
+     ]
+    },
+    {
+     "id": "N2",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": true,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": true,
+     "decisions": [
+      {
+       "about": "the steps the user checks",
+       "decided": "The first step alone, \u76ee\u7684\u3068\u610f\u56f3; each later step is done once its Rounds are over: \u300c\u79c1\u306f\u76ee\u7684\u3068\u610f\u56f3\u3060\u3051\u78ba\u8a8d\u3057\u305f\u3044\u3001\u4f7f\u3044\u65b9\u3084\u5b9f\u88c5\u306b\u8208\u5473\u306a\u3044\u3001\u5b9f\u73fe\u3057\u3066\u6b32\u3057\u3044\u300d",
+       "by": "user"
+      }
+     ]
+    },
+    {
+     "id": "N6",
+     "good": true,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "overnight's developers know whom overnight serves and the one way it brings them the night's results in the morning",
+   "path": "dev/overnight/product-vision.md",
+   "kind": "product-vision",
+   "inputs": [],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "An AI that the user instructs learns from the guide alone whether overnight fits its work, and how to leave work to it overnight and take in the results in the morning",
+   "path": "plugins/overnight/README.md",
+   "kind": "readme",
+   "inputs": [
+    "dev/overnight/product-vision.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "overnight's developers build its parts so that together they give what its README promises",
+   "path": "dev/overnight/architecture.md",
+   "kind": "architecture",
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N9",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N10",
+     "good": false,
+     "decisions": [
+      {
+       "about": "how `claude -p` behaves where a stand-in hides it",
+       "decided": "A `claude -p` stopped by the usage limit ends, and its reply holds a line with the time the limit resets, such as `You've hit your session limit \u00b7 resets 1:40pm`. Given `--add-dir`, it takes the arguments after it as directories, so the prompt goes on stdin.",
+       "by": "research"
+      }
+     ]
+    },
+    {
+     "id": "N11",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N12",
+     "good": false,
+     "decisions": [
+      {
+       "about": "Test strategy",
+       "decided": "No check runs the work through a real night or spends the usage limit on purpose. The resume after the usage limit resets, the start at the set time, the number of tasks run at once, and the record of each result are logic, each checked by tests with a stand-in in place of `claude`: \u300c\uff15\u3067\u5b9f\u969b\u306b\u591c\u6d41\u3059\u3053\u3068\u306b\u610f\u5473\u3042\u308b\u306e\uff1f\u4e0a\u9650\u6765\u308b\u3088\u3046\u306b\u7121\u99c4\u306a\u4f5c\u696d\u3059\u308b\u306e\uff1f \u30dd\u30a4\u30f3\u30c8\u306f\uff1f\u4e0a\u9650\u89e3\u9664\u5f8c\u306e\u518d\u958b\u30ed\u30b8\u30c3\u30af\u3001\u6642\u523b\u958b\u59cb\u3001\u4e26\u884c\u6570\u3001\u4f5c\u696d\u7d50\u679c\u306e\u8a18\u9332\u3001\u3050\u3089\u3044\u3058\u3083\u306a\u3044\u306e\uff1f\u5168\u90e8\u30ed\u30b8\u30c3\u30af\u3060\u3088\u306d\uff1f\u300d",
+       "by": "user"
+      }
+     ]
+    },
+    {
+     "id": "N13",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N14",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N15",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N16",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "overnight's developers see, before any body is written, that its parts fit together",
+   "path": "plugins/overnight",
+   "kind": "software-design",
+   "inputs": [
+    "dev/overnight/architecture.md"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "overnight's developers see, before any part is built, that its parts joined give each key result, by cases that fail until the parts are built",
+   "path": "dev/overnight/tests",
+   "kind": "test-design",
+   "inputs": [
+    "dev/overnight/product-vision.md",
+    "plugins/overnight/README.md",
+    "dev/overnight/architecture.md",
+    "plugins/overnight"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  },
+  {
+   "name": "overnight resumes work after the usage limit resets, starts it at the set time, runs the set number at once, and records each result, as its tests show",
+   "path": "plugins/overnight/domain",
+   "kind": "code",
+   "inputs": [
+    "dev/overnight/architecture.md",
+    "plugins/overnight",
+    "dev/overnight/tests"
+   ],
+   "status": "open",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N2",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N3",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N4",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N5",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N6",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N7",
+     "good": false,
+     "decisions": []
+    },
+    {
+     "id": "N8",
+     "good": false,
+     "decisions": []
+    }
+   ]
+  }
+ ],
+ "work": [
+  {
+   "do": "make",
+   "path": "dev/overnight/product-vision.md"
+  }
+ ],
+ "steps": [
+  {
+   "settles": "\u76ee\u7684\u3068\u610f\u56f3\uff1a\u8ab0\u304c\u4f55\u306e\u305f\u3081\u306b\u4f7f\u3046\u304b",
+   "deliverables": [
+    "dev/overnight/product-vision.md"
+   ],
+   "signoff": true
+  },
+  {
+   "settles": "\u4f7f\u3044\u65b9\u306e\u8aac\u660e\uff08AI \u304c\u8aad\u3093\u3067\u4f7f\u3048\u308b\u3082\u306e\uff09",
+   "deliverables": [
+    "plugins/overnight/README.md"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "\u3069\u3093\u306a\u90e8\u54c1\u3067\u3069\u3046\u52d5\u304f\u304b",
+   "deliverables": [
+    "dev/overnight/architecture.md"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "\u90e8\u54c1\u304c\u304b\u307f\u5408\u3046\u304b\u3092\u4f5c\u308b\u524d\u306b\u78ba\u304b\u3081\u308b",
+   "deliverables": [
+    "plugins/overnight",
+    "dev/overnight/tests"
+   ],
+   "signoff": false
+  },
+  {
+   "settles": "\u4f5c\u3063\u3066\u3001\u30c6\u30b9\u30c8\u3067\u78ba\u304b\u3081\u308b\uff08\u4e0a\u9650\u5f8c\u306e\u518d\u958b\u3001\u958b\u59cb\u6642\u523b\u3001\u4e26\u884c\u6570\u3001\u8a18\u9332\uff09",
+   "deliverables": [
+    "plugins/overnight/domain"
+   ],
+   "signoff": false
+  }
+ ]
+}
