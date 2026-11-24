@@ -197,7 +197,7 @@
     },
     {
      "id": "N4",
-     "good": false,
+     "good": true,
      "decisions": [
       {
        "about": "where the license's full text lies",
