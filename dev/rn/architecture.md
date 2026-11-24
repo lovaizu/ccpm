@@ -26,9 +26,11 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P2.3: the work is checked whole before its merge is proposed.
 - P3: made the field's established way
   - P3.1: running, weighing the plan, making, and judging are separate roles.
-  - P3.2: content is made by its kind's best practice and refactored, or, as the user picks, by
+  - P3.2: content is first made by its best practice and refactored, or, as the user picks, by
     its check alone.
   - P3.3: remaking has a limit, and each finding left goes to the user as a proposal.
+  - P3.4: a mend within the plan's decisions is checked by the repository's own checks and tests,
+    with no limit.
 - P4: each role on its own work
   - P4.1: each role starts with only what its work needs.
   - P4.2: what a role makes stays in files, and roles hand each other short results.
@@ -38,6 +40,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P5.1: the plan takes in each settled set of points, and each trial's result, as a whole.
   - P5.2: deliverables that rest on none still being made are made at the same time.
   - P5.3: work that a stop leaves alone goes on.
+  - P5.4: a mend within the plan's decisions starts at once, with no weighing before it.
 - P6: nothing lost on a stop
   - P6.1: the run's state lives in files, so that it goes on from any conversation.
 - P7: only what the people can't reach their aim without
@@ -62,6 +65,9 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   One making or refactoring of a deliverable, which its maker tries as its people would. Its judge
   tries content too. Its result, what each found, is weighed whole into the plan, whose decisions
   decide the next mend.
+- Fix\
+  One mend of a deliverable whose Rounds are over, which keeps each of its decisions. It holds the
+  problem in the words that raised it, and what the mend gave.
 
 Strategies:
 
@@ -79,7 +85,14 @@ Strategies:
   [P1.3]\
   Intent: the run's files alone say which deliverables wait for the user, and where the run stands.
 - Each deliverable's last Round marked as the end of its Rounds once it's put up. [P1.3]\
-  Intent: a send-back gets Rounds of its own, so that the user's change is remade.
+  Intent: a later mend is a Fix, or takes Rounds of its own where it changes a decision.
+- Each Fix kept beside the deliverable's Rounds, with the problem in the words that raised it, and
+  its result. [P6.1]\
+  Intent: a pick-up in any conversation finds a Fix under way, and starts it again on the same
+  problem.
+- A Fix counted toward no limit of the Rounds. [P3.4]\
+  Intent: each problem after the making is mended, however many come, and a changed decision
+  still takes full Rounds.
 - The issues to close and to refer to written from the request, never asked. [P1.2]\
   Intent: the user isn't asked what their request already says.
 - The pull request opened as a draft, which the user marks ready. [P2.3]\
@@ -107,6 +120,9 @@ Strategies:
   Makes a deliverable with which its people reach their aim, by the design tree's decisions.
 - evaluator (prompt)\
   Checks, as the people, whether a deliverable reaches their aim, for the pruner to weigh.
+- fixer (prompt)\
+  Mends a made deliverable so that its people still reach their aim, within the design tree's
+  decisions.
 - scripts (script)\
   Does each step that has one right result.
 - hook (hook)\
@@ -123,6 +139,10 @@ Strategies:
   design tree. [P7.1]\
   Intent: one role holding the stance alone weighs all the plan takes in, and no step waits on
   needless judgment.
+- Whether a problem after a deliverable's Rounds keeps its decisions judged at once by the
+  orchestrator, from the design tree. [P5.4]\
+  Intent: a mend within decisions already weighed starts without a wait, and one that changes them
+  is weighed first.
 - One shared prompt of the measure, read by the orchestrator and the pruner, each role's prompt
   holding only its part. [P7.1]\
   Intent: the two roles weigh by one measure, which changes in one place.
@@ -164,17 +184,28 @@ Strategies:
   Intent: the pull request holds only the deliverables and the run's records.
 - The generator mending by its Cut's decisions alone, never by an evaluator's findings. [P7.3]\
   Intent: only the remedy that the pruner weighed reaches the deliverable.
-- The last Round's roles resumed within the same conversation, and started from its files in a new
-  conversation. [P6.1]\
-  Intent: each mend starts from what the last Round learned, wherever the run goes on.
+- A new fixer for each Fix, with only the deliverable's decisions and files, and the problem in
+  its own words. [P4.1]\
+  Intent: the fixer mends what went wrong within what was decided, with nothing that would pull it
+  past them.
+- The fixer checking its files by the repository's own checks and tests, a push's among them, with
+  no evaluator. [P3.4]\
+  Intent: a mend within the decisions keeps what the trials judged, so the checks and tests show it
+  holds.
+- A fixer whose mend would change the decisions mending nothing, and naming the change as a unit
+  for one pruner. [P7.3]\
+  Intent: only a weighing changes the plan, and the fixer's finding reaches it whole.
+- The last Round's or Fix's roles resumed within the same conversation, and started from its files
+  in a new one. [P6.1]\
+  Intent: each mend starts from what the last Round or Fix learned, wherever the run goes on.
 - A point for the user, from the pruner or a generator, discussed until settled, then handed to
   one pruner. [P1.2]\
   Intent: the user settles the point in one talk, and the plan takes their own words in one
   weighing.
 - Each step that has one right result done by a script that the role runs. [P4.3]\
   Intent: each role spends its judgment and its context only where a step needs them.
-- Each deliverable's Rounds kept apart from the others', so that each deliverable due starts
-  at once. [P5.2]\
+- Each deliverable's Rounds and Fixes kept apart from the others', so that each deliverable due
+  starts at once. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
 - Each maker's removal done by a script of exact paths, which a hook names to its deletes in Bash.
   [P4.3]\
@@ -211,6 +242,7 @@ sequenceDiagram
   participant S as scripts
   participant G as generator
   participant E as evaluator
+  participant F as fixer
   U->>O: /rn:on [S1]
   O->>U: asks what it can help with: an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
@@ -221,7 +253,18 @@ sequenceDiagram
     U->>O: answers [P1.2]
   end
   loop each event: the hearing's end, a point settled, a sign-off, a role's end, or a refusal [P1.1]
-    opt a unit settled: the hearing's, a point the user settled, a judged Round, or the final check's findings [P5.1]
+    opt a problem with a deliverable whose Rounds are over: a put-up that the repository's checks refuse, a finding of the final check, or a send-back by /rn:gm [P3.4]
+      O->>T: reads the deliverable's decisions (Design tree) [P5.4]
+      O->>O: judges at once whether its mend keeps each of them, or changes or adds one [P5.4]
+      alt the mend keeps each decision [P5.4]
+        O->>S: writes the Fix, with the problem in the words that raised it (Fix) [P6.1]
+      else a send-back that changes or adds a decision [P1.2]
+        O->>O: takes it as a point for the user to settle [P1.2]
+      else another that changes or adds a decision, or that bears on no deliverable [P7.1]
+        O->>O: takes it, with the rest of its event's, as one unit for one pruner [P5.1]
+      end
+    end
+    opt a unit settled: the hearing's, a point the user settled, a judged Round, the final check's findings that no Fix takes, or a decision that a fixer named [P5.1]
       O->>P: starts a new one with the run's folder as an absolute path, the user's words of the run, the request among them, and the unit (Design tree, Round) [P4.1]
       P->>P: weighs each element that the unit would add, change, or ask by the shared measure of the vital few [P7.1]
       P->>P: weighs again each element of the tree that one of them rests on, a done deliverable's decisions and the issue's among them [P7.2]
@@ -232,6 +275,9 @@ sequenceDiagram
       end
       opt the final check's findings [P2.3]
         P->>T: sends each problem that the people fail without back to the deliverable whose file it is (Design tree) [P2.3]
+      end
+      opt a decision that a fixer named [P7.3]
+        P->>T: writes it as the measure keeps it, and holds its condition not good, so that the deliverable takes Rounds again (Design tree) [P7.3]
       end
       P->>S: lists each node that its change touches (Design tree) [P5.1]
       P->>T: rewrites each node listed that the change made false (Design tree) [P1.1]
@@ -250,7 +296,7 @@ sequenceDiagram
     opt a refusal that only the user can mend [P5.3]
       O->>U: the blocker, and what the user does, the other work going on [P5.3]
     end
-    alt a point that only the user can settle: left open in the tree, brought by a generator, or a change asked by /rn:gm [P1.2]
+    alt a point that only the user can settle: left open in the tree, brought by a generator, or a send-back that changes a decision [P1.2]
       loop until the user settles it [P1.2]
         O->>U: where the run stands, and the point, from the design tree and the user's words, with why and a recommendation [P1.2]
         U->>O: answers [P1.2]
@@ -258,9 +304,11 @@ sequenceDiagram
       O->>O: takes what the user settled, in their words, as the next unit for one pruner [P1.2]
     else the plan written from the hearing, with no point open [P1.3]
       O->>S: records the plan's sign-off, with the steps that the user checks as they settled them (Design tree) [P1.3]
-    else a deliverable whose Rounds are over [P1.3]
+    else a deliverable whose Rounds are over, or whose Fix ended fixed [P1.3]
       O->>S: puts it up, committed and pushed in the pull request, which names the run's issues, and makes it done where its step isn't one the user checks (Design tree) [P4.3]
-      opt at a step that the user checks [P1.3]
+      alt the repository's checks refuse the push [P3.4]
+        O->>O: takes the refusal, in the words that the checks printed, as a problem with the deliverable [P3.4]
+      else at a step that the user checks [P1.3]
         O->>U: puts it up, with a link to each of its files as pushed, and each finding left as a proposal [P3.3]
         U->>O: /rn:ty, or /rn:gm with what to change [P1.3]
       end
@@ -290,6 +338,16 @@ sequenceDiagram
           G->>G: runs the repository's tests as its developers run them [P3.2]
           G->>S: runs the repository's checks on its files [P4.3]
           G-->>O: ends, with the Round written, which ends the deliverable's Rounds (Round) [P4.2]
+        else its Fix, written [P3.4]
+          O->>F: starts a new one with its Cut, the deliverable's decisions and files, and the Fix's problem (Cut, Fix) [P4.1]
+          alt its mend would change or add a decision [P7.3]
+            F-->>O: ends, mending nothing, with the Fix written and the decision named, for one pruner (Fix) [P7.3]
+          else
+            F->>F: mends the deliverable's files to the problem, within its decisions [P3.4]
+            F->>S: runs the repository's checks on its files, those that a push runs among them [P3.4]
+            F->>F: runs the repository's tests as its developers run them [P3.4]
+            F-->>O: ends, with the Fix written, fixed, for the deliverable to be put up again (Fix) [P4.2]
+          end
         end
       end
     end
@@ -297,7 +355,7 @@ sequenceDiagram
       O->>O: starts a plain subagent with the goal, the pull request, and the points to check [P2.3]
       O->>S: pushes the work, and gives the pull request's whole diff, read by the subagent (Design tree) [P4.3]
       O->>S: waits for the pull request's CI, and gives its result to the subagent [P4.3]
-      O->>O: takes the subagent's findings, the goal reached, the fit with the repository's files, nothing extra, and CI, as one unit for one pruner [P2.3]
+      O->>O: takes each of the subagent's findings, the goal reached, the fit with the repository's files, nothing extra, and CI, as a problem with the deliverable whose file it is [P2.3]
     end
   end
   O->>U: the final check's results, each finding left as a proposal, and the merge proposed [P2.3]
@@ -315,12 +373,14 @@ sequenceDiagram
   participant S as scripts
   participant G as generator
   participant E as evaluator
+  participant F as fixer
   alt a cancel, in the user's words [S2]
     U->>O: asks to drop the run [S2]
     O->>U: asks once to confirm, as removing can't be undone [S2]
     U->>O: confirms [S2]
     O->>G: stops it [S2]
     O->>E: stops it [S2]
+    O->>F: stops it [S2]
     O->>S: removes the run's worktree, its local branch, and its branch and pull request on GitHub (Design tree) [S2]
     O->>U: the run cancelled, and what it couldn't remove on GitHub, with why [S2]
   else a pause, by /rn:dn or in the user's words [S2]
@@ -331,6 +391,7 @@ sequenceDiagram
     O->>O: waits for each pruner at work to end, as its write stays whole [P6.1]
     O->>G: stops it [S2]
     O->>E: stops it [S2]
+    O->>F: stops it [S2]
     O->>S: commits and pushes the run's folder (Design tree) [P6.1]
     O->>U: where it stopped, and the point or sign-off waiting [S2]
   end
@@ -344,6 +405,7 @@ sequenceDiagram
   O->>U: where it picks up, and the point or sign-off waiting [S2]
   O->>G: starts the generator stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
   O->>E: starts the evaluator stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
+  O->>F: starts the fixer stopped again, from the Fix's files and a fresh Cut (Fix, Cut) [P6.1]
 ```
 
 ### Deployment
@@ -363,7 +425,7 @@ Strategies:
 ```text
 plugins/rn/                        what Claude Code installs for the user
 ├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
-├── agents/                        the pruner's, the generator's, and the evaluator's starts
+├── agents/                        the pruner's, the generator's, the evaluator's, and the fixer's starts
 ├── hooks/                         the hook that turns a maker's delete to remove.py, and keeps the design tree to the pruner and the scripts
 ├── domain/
 │   ├── orchestrator.md            the event's own step, then those that every event shares
@@ -371,10 +433,11 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── pruner.md                  what the pruner does
 │   ├── generator.md               what the generator does
 │   ├── evaluator.md               what the evaluator does
+│   ├── fixer.md                   what the fixer does
 │   ├── schemas/                   the form of each Cut and result
 │   ├── tree/                      the code that checks the design tree
 │   ├── check/                     the code that checks each role's result against its form
-│   ├── rounds/                    the code that reads and writes the Rounds
+│   ├── rounds/                    the code that reads and writes the Rounds and the Fixes
 │   ├── template/                  the code that holds a document to its kind's template
 │   ├── repository/                the code that makes a run's worktree and puts a deliverable up
 │   ├── remove/                    the code that removes what a maker made for itself
@@ -391,7 +454,9 @@ dev/rn/                            what only rn's developers use
 .rn/                               what rn writes on the work's branch
 ├── <yyyymmdd>-<slug>/             one run's folder
 │   ├── design-tree.json           the design tree
-│   └── rounds/                    each Round
+│   └── rounds/                    each Round and each Fix, in a folder of its deliverable
+│       └── <deliverable>/         numbered in the order made, such as content-1, refactor-3, fix-4
+│           └── fix-<n>/           a Fix: its problem, the fixer's Cut, and the fixer's result
 └── best-practices/                each best practice made on a run
 ```
 
