@@ -356,7 +356,7 @@
        },
        {
         "at": "decide",
-        "text": "For the trace of the architecture, set as the criterion that every element of this document, each story, principle item, component, and data, has an integration test, and that every test names an element or a case one level up that exists."
+        "text": "For the trace of the architecture, set as the criterion that every element of this document, each story, principle item, component, and data, has an integration test, and that every test names an element or a case one level up that exists. Where the product holds a prompt, pick no integration test and no trace, as the guide's rule of Prompts says."
        },
        {
         "at": "make",
@@ -388,7 +388,7 @@
       "id": "N14",
       "about": "Components, Test strategy",
       "what": "Does each thing that the document says the product does rest on a part that a unit or integration test can check?",
-      "why": "A test that runs the product whole is slow and few, and for a product that holds a prompt it's a walkthrough run that a developer reads, so only the lower levels show what each change does, and a thing that only a prompt holds shows only in that run. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.",
+      "why": "A test that runs the product whole is slow and few, and for a product that holds a prompt it's the user's E2E run that a developer watches, so only the lower levels show what each change does, and a thing that only a prompt holds shows only in that run. The [Humble Object](https://martinfowler.com/bliki/HumbleObject.html) pattern of Gerard Meszaros's *xUnit Test Patterns* moves the logic out of a part that's hard to test into a part that a test can run.",
       "items": [
        {
         "at": "decide",
@@ -400,7 +400,7 @@
        },
        {
         "at": "decide",
-        "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the walkthrough run of the test strategy guide."
+        "text": "Leave a judgment that only an AI can make, such as whether a point is the user's, with the AI, and try it by the user's E2E run of the test strategy guide."
        }
       ]
      }

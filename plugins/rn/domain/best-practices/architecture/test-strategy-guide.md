@@ -38,23 +38,24 @@ guide links them and copies nothing:
   breaks what worked shows at once. This rerun is what SWEBOK and CTFL call regression testing, so
   it has no row of its own.
 - Prompts\
-  A product that holds a prompt is run whole by a walkthrough run, once its integration tests pass.
+  A product that holds a prompt is tested during the work by the unit tests of its scripts, static
+  analysis, and code coverage, and its prompts by the user's E2E run alone, once its unit tests
+  pass. It picks no integration testing, property-based testing, or traceability.
   A test that runs a prompt on fixed scenes meets only the cases that its writer set up, and can't
-  show whether the AI judges each new fact by the prompt's goal, so the walkthrough run alone tries
-  the prompt.
-  The developer's main conversation runs the README walkthrough's request on the model, with the
-  product as it ships. It types each of the people's words, and reads each reply against the
-  product vision. It chooses the next words from what the reply shows, and asks the developer where
-  a decision is theirs. A script fixes the people's words before the run, so it can't follow what a
-  reply shows or judge it by the purpose. A subagent can't ask the developer. The integration
-  tests put a double in place of each prompt and of the host, so only this run shows where the
-  product and its host differ. The main conversation mends each stop at its root before going on,
-  and the run's record becomes the README's walkthrough.
+  show whether the AI judges each new fact by the prompt's goal. A test that plays a prompt's part
+  checks only what its writer copied of the prompt, so its cases pass while the prompt and the
+  scripts drift apart, and each change must keep them. A script gives one right result for each
+  input, so its unit tests check it whole.
+  The user runs a real request through the product as it ships, and answers it as they would. The
+  run uses the model and the host that the product's people use. The developer watches the run, reads each reply against the
+  product vision, and takes each place where the product fails its people back to its cause, which
+  the developer proposes to mend with that cause. Only this run shows where the product and its
+  host differ, and the run's record becomes the README's walkthrough.
 - Timing\
   Each check runs at one of three times, which the Test strategy's row names.
   - During the work, each check of the parts and of the architecture that decides whether a change
-    holds, such as lint, unit testing, code coverage, property-based testing, integration testing,
-    and traceability. It runs on each change, and the work waits on it.
+    holds, such as lint, unit testing, code coverage, and, for a product that holds no prompt,
+    property-based testing, integration testing, and traceability. It runs on each change, and the work waits on it.
   - At stages, each test that runs the product whole, such as a scenario test of a product that
     holds no prompt. It grows from one pilot run as
     [the test implementation best practice](../test-implementation/best-practice.json) says, since a
@@ -75,7 +76,7 @@ Unit tests test each part against its contract.
 | Complexity analysis | Quality | Always. | The complexity of each function, such as its nesting, branches, returns, arguments, and statements. | Each limit at the default of the tool that checks it, such as a cognitive complexity of 15 in [SonarQube](https://docs.sonarsource.com/sonarqube-server/latest/user-guide/code-metrics/metrics-definition/). | CTAL-TTA, Fintan |
 | Unit testing | Quality | Always. | Each part against its contract. | Every case passes. | CTFL, CTAL-TA, Fintan |
 | Code coverage | Quality | Always. | The share of statements and branches that the tests run. | 100% statement (C0) and branch (C1) coverage. | CTFL, CTAL-TTA |
-| Property-based testing | Quality | Always. | Whether each invariant that the requirements state holds over many inputs that a tool generates. | 0 counterexamples. | Added |
+| Property-based testing | Quality | Always, but where the product holds a prompt, as the rule of Prompts says. | Whether each invariant that the requirements state holds over many inputs that a tool generates. | 0 counterexamples. | Added |
 | Characterization testing | Quality | When the work changes existing code that no specification describes. | What a part does now, recorded as its expected result before the change. | Every case passes. | Added, from [Working Effectively with Legacy Code](https://www.oreilly.com/library/view/working-effectively-with/0131177052/) by Michael Feathers |
 | Data compatibility testing | Quality | When the product reads data that another program or an earlier version wrote. | Whether the product reads that data. | The product reads, without loss, each kind of data that each earlier version wrote. | Fintan |
 
@@ -85,12 +86,12 @@ Integration tests test the joined parts against each element of the architecture
 
 | Check | Kind | When to pick | What it checks or measures | Recommended criterion | Sources |
 |---|---|---|---|---|---|
-| Integration testing | Quality | Always. | The joined parts against each element of the architecture, including each interface between two parts or to an outside system. | Every case passes. | SWEBOK, CTFL, Fintan |
+| Integration testing | Quality | Always, but where the product holds a prompt, as the rule of Prompts says. | The joined parts against each element of the architecture, including each interface between two parts or to an outside system. | Every case passes. | SWEBOK, CTFL, Fintan |
 | Reliability testing | Quality | When a fault or an interruption must not lose data or state, beyond what the user stories already promise. | Fault tolerance and recoverability, as ISO/IEC 25010 defines them: whether the product works as intended despite faults, and recovers the data directly affected. | The product recovers from each fault that the architecture names, with no data lost. | ISO/IEC 25010, CTAL-TTA, Fintan |
 | Security testing | Quality | When some data or operation must be open only to those authorized, such as with several users or with public access. | Security, as ISO/IEC 25010 defines it: whether the product defends against attack, and gives each user or system only the access that its authorization allows. | Each attack and each access beyond authorization that the architecture names is refused. | ISO/IEC 25010, SWEBOK, CTAL-TTA, CT-AI, Fintan |
 | Privacy testing | Quality | When the product handles personal data. | Whether the product uses personal data only as it allows. | No personal data reaches a use that the product doesn't allow. | SWEBOK |
 | Contract testing | Quality | When the tests use a double of an outside thing that the product doesn't control, such as its host. | Whether the double gives what the real thing gives. The steps of each recorded run run again on each new version of the real thing. | For each recorded step, the real thing gives the same result as the double. | Added, from [ContractTest](https://martinfowler.com/bliki/ContractTest.html) by Martin Fowler |
-| Traceability | Quality | Always. | Whether each element of the architecture has a test, and each test names an existing element or case one level up, which a script checks by name. Whether each test checks what its element says, such as each branch of a sequence, which a review checks by reading. | The script finds 0 faults, and the review finds 0 tests that miss what their element says. | CTFL |
+| Traceability | Quality | Always, but where the product holds a prompt, as the rule of Prompts says. | Whether each element of the architecture has a test, and each test names an existing element or case one level up, which a script checks by name. Whether each test checks what its element says, such as each branch of a sequence, which a review checks by reading. | The script finds 0 faults, and the review finds 0 tests that miss what their element says. | CTFL |
 
 ## Product
 
@@ -98,7 +99,7 @@ End-to-end (E2E) tests test the product in real use against each key result of t
 
 | Check | Kind | When to pick | What it checks or measures | Recommended criterion | Sources |
 |---|---|---|---|---|---|
-| Scenario testing | Quality | Always, as a walkthrough run where the product holds a prompt, as the rule of Prompts says. | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes, and a walkthrough run reaches the walkthrough's result with no stop that a fault caused. | Fintan |
+| Scenario testing | Quality | Always, as the user's E2E run where the product holds a prompt, as the rule of Prompts says. | A user's whole task from start to end, through every part that it crosses, as the E2E test runs it. | Every case passes, or, where the product holds a prompt, the user's E2E run reaches its result with no stop that a fault caused. | Fintan |
 | Installation testing | Quality | Always. | Whether the product installs, updates, and uninstalls as its documentation says. | The documented commands install, update, and uninstall the product on a fresh system. | SWEBOK |
 | Configuration testing | Quality | When the product supports more than one system, runtime, or setting. | The product on each combination of system, runtime, and settings that it supports. | Every case passes on each supported combination. | SWEBOK |
 | Back-to-back testing | Quality | When a change replaces a version and must keep its behavior. | Whether the new version gives the old version's result for the same input. | Each input gives the old version's result. | Fintan, CT-AI |

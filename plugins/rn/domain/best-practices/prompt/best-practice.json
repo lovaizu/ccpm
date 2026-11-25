@@ -391,12 +391,12 @@
      {
       "id": "N16",
       "about": "the whole",
-      "what": "Does a walkthrough run try the product that the prompt is part of, once its integration tests pass, with each place where it fails its people taken back to its cause?",
-      "why": "The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. A test that runs the prompt on fixed scenes meets only the cases that its writer set up, and can't show whether the AI judges each new fact by the prompt's goal. A walkthrough run of the product as it ships, by the architecture's [test strategy guide](../architecture/test-strategy-guide.md), meets real facts one after another, so it shows how the AI judges.",
+      "what": "Does the user's E2E run try the product that the prompt is part of, once its unit tests pass, with each place where it fails its people taken back to its cause?",
+      "why": "The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. A test that runs the prompt on fixed scenes meets only the cases that its writer set up, and can't show whether the AI judges each new fact by the prompt's goal. The user's E2E run of the product as it ships, by the architecture's [test strategy guide](../architecture/test-strategy-guide.md), meets real facts one after another, so it shows how the AI judges.",
       "items": [
        {
         "at": "make",
-        "text": "Once the product's integration tests pass, run it whole by the walkthrough run of the [test strategy guide](../architecture/test-strategy-guide.md)."
+        "text": "Once the product's unit tests pass, have the user run it whole by the E2E run of the [test strategy guide](../architecture/test-strategy-guide.md), and watch the run."
        },
        {
         "at": "make",

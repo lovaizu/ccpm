@@ -10,7 +10,7 @@
       "id": "N1",
       "about": "E2E cases",
       "what": "Where Test strategy runs the product whole, does each key result have an E2E case that runs an objective's main use at the size of a real request, and names the key result?",
-      "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. For a product that holds a prompt, Test strategy runs the product whole as a walkthrough run, in which a developer types the people's words and reads each reply, so its E2E case is the README walkthrough's request, and no E2E test code is written.",
+      "why": "The developers know that the product does what its product vision promises only where a case runs it as its users do, and a case written before any part is built fixes what the parts together must give. ISTQB's test analysis takes each test condition from the test basis, here each key result. For a product that holds a prompt, Test strategy runs the product whole as the user's E2E run, in which the user runs a real request and a developer watches each reply, so no E2E test code is written.",
       "items": [
        {
         "at": "decide",
@@ -18,14 +18,14 @@
        },
        {
         "at": "make",
-        "text": "Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`. Where the product holds a prompt, write no E2E case, as its walkthrough run is its E2E test."
+        "text": "Where Test strategy names the E2E level, for each key result write a case that runs the main use of its objective, as the README's walkthrough shows it, at the size of a real request, and names the key result, such as `KR1.1`. Where the product holds a prompt, write no E2E case, as the user's E2E run is its E2E test."
        }
       ]
      },
      {
       "id": "N2",
       "about": "Integration cases",
-      "what": "Does each element of the architecture, each path through each sequence, each principle item of Principles, each decision of a component, and each handoff with its data, have an integration case that names it?",
+      "what": "Where Test strategy names integration testing, does each element of the architecture, each path through each sequence, each principle item of Principles, each decision of a component, and each handoff with its data, have an integration case that names it?",
       "why": "An element that no case reaches is one whose parts no one has seen fit together, and a case written through the skeleton before any body shows a gap between the parts while it's still cheap to mend. Steve Freeman and Nat Pryce's outside-in test-driven development, in [Growing Object-Oriented Software, Guided by Tests](http://www.growing-object-oriented-software.com/), finds each part's roles by first writing the tests one level up.",
       "items": [
        {
@@ -49,12 +49,12 @@
      {
       "id": "N3",
       "about": "Unit cases",
-      "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals, its edges, and the collections inside it included, and, where its result depends on what came before, for each transition that the product's use can bring about, so that each fault likely in its body fails a case, each naming the integration case it supports?",
+      "what": "Does each interface of the skeleton have a unit case for each class of what it takes and gives, its refusals, its edges, and the collections inside it included, and, where its result depends on what came before, for each transition that the product's use can bring about, so that each fault likely in its body fails a case, each naming the integration case it supports where Test strategy names traceability?",
       "why": "The interface a part offers comes from what the cases one level up need of it, and a case for each class finds the inputs that the part must treat apart before its body is written. A part that keeps what came before, such as the steps a run has taken, breaks where its use sends an event in a state that no sequence draws, such as a subagent's end that reaches the main conversation after it resumed that subagent, which a case for each class of one call doesn't reach. The techniques are the four black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, decision table testing, and state transition testing. A fault that no case catches shows only once the body is built, and a case written then comes from the code, not from what the part must do, so the maker designs cases until no likely fault passes them. James Grenning's ZOMBIES takes each collection through zero, one, and many, and the syllabus's error guessing lists the faults likely in a body, each to design a case for.",
       "items": [
        {
         "at": "make",
-        "text": "Divide each input and each result that an interface's contract names into classes that the part treats alike, the refused ones among them, and write one case for each class, naming the integration case it supports."
+        "text": "Divide each input and each result that an interface's contract names into classes that the part treats alike, the refused ones among them, and write one case for each class, naming the integration case it supports where Test strategy names traceability."
        },
        {
         "at": "make",
@@ -97,7 +97,7 @@
      {
       "id": "N7",
       "about": "Properties",
-      "what": "Does each invariant that the requirements state, each that must hold for every input the product's use can bring, have a property that names the element it rests on?",
+      "what": "Where Test strategy names property-based testing, does each invariant that the requirements state, each that must hold for every input the product's use can bring, have a property that names the element it rests on?",
       "why": "A case shows a part right for the inputs its maker foresaw, while a property states what must hold for every input the use can bring, such as each form in which an AI names a file, and a tool then searches for one that breaks it. John Hughes's [How to Specify It!](https://research.chalmers.se/publication/517894) gives five kinds of property: invariant, postcondition, metamorphic, inductive, and model-based. In his trial, model-based and metamorphic properties caught the most faults, and he warns that a test that copies the code keeps the code's faults. So the maker takes each property from the requirements alone, the product vision, the README, and the architecture, before any body is written, and never from the skeleton or the code, since a property exists to check that the requirements hold, not that the code is robust.",
       "items": [
        {
@@ -157,7 +157,7 @@
      {
       "id": "N5",
       "about": "Trace",
-      "what": "Does the script that checks the trace give 0, finding that every element of the architecture has an integration case and every case names something one level up that exists?",
+      "what": "Where Test strategy names traceability, does the script that checks the trace give 0, finding that every element of the architecture has an integration case and every case names something one level up that exists?",
       "why": "Only a check by name finds each element that no case reaches among many, while the reading that N6 asks for judges whether the cases are enough.",
       "items": [
        {
