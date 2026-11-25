@@ -20,7 +20,7 @@ where someone decides it, and nothing piles up beside it.
 - **Write an issue in English with the title `<plugin>: <what it should be>`, then two headings.**
   - `## Situation`: the trouble as it happened, and where it was seen, such as the plugin's version
     and commit, the Claude Code version, and the session or pull request.
-  - `## Desired state`: the state wanted, for those it's for. No means, plan, or order: the
+  - `## Desired State`: the state wanted, for those it's for. No means, plan, or order: the
     development settles those, in the run's steering.
   - Rationale: an issue is the request that starts the work. The reader finds the same thing under
     the same heading in every issue, and the development stays free to choose the means.
