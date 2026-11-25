@@ -7,10 +7,7 @@ paths:
 
 # Figures in ccpm
 
-These rules make every figure of the repository look alike in light and dark themes, and in both
-English and Japanese.
-[The refactor-doc best practice](../../plugins/rn/domain/best-practices/refactor-doc/best-practice.md)
-says which form a figure takes, in its practice on lists, tables, and diagrams. These rules say only how an SVG figure looks.
+These rules make every figure of the repository look alike in light and dark themes.
 
 - **Take a figure's whole look from `dev/images/figures.css`: its colors in light and dark, its
   lines, its text sizes, and its fonts.** Put the style into each figure with
@@ -28,8 +25,3 @@ says which form a figure takes, in its practice on lists, tables, and diagrams. 
   - Rationale: a page shows a figure through `<img>`, which loads no other file, so a linked font
     never arrives. An embedded font adds its size to every figure, and a Japanese font weighs
     megabytes.
-- **Make the Japanese copy of a figure in `.review/ja` from the English figure, and change only its
-  text.** `figures.py` gives the copy the same style and checks it too. Render the copy, and check
-  that no text runs out of its box or across a line.
-  - Rationale: a label takes another width in Japanese than in English, so one that fits in English
-    can overflow in Japanese.

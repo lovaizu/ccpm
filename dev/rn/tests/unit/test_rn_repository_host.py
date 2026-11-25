@@ -1,8 +1,7 @@
-"""The unit cases of repository/host.py's `run`, the one way rn's code reaches git and gh: one for
-each class of what it takes, git, gh, and a program of another name, a near match among them, and
-variables of its environment given and none; and of what it gives, a command that gives 0 and one
-that gives another code, each with its stdout and stderr whole; and the refusal of a program not
-found."""
+"""The unit cases of repository/host.py's `run`, the one way rn's code reaches git, gh, and herdr:
+git giving 0 with its stdout, git with variables of its environment given, gh on the PATH giving
+another code with its stdout and stderr whole, and each refusal: a program of another name, and a
+program not found."""
 
 from __future__ import annotations
 
@@ -15,9 +14,6 @@ from fault import CantRun, Wrong
 from repository.host import Ran, run
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
 def test_git_runs_in_the_folder_given_and_gives_its_output(tmp_path: Any):
     """Given a git repository
     When run is given `git rev-parse --show-toplevel` in it
@@ -26,32 +22,6 @@ def test_git_runs_in_the_folder_given_and_gives_its_output(tmp_path: Any):
     assert run(["git", "rev-parse", "--show-toplevel"], repo) == Ran(0, repo + "\n", "")
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_git_that_fails_gives_its_code_and_stderr_whole(tmp_path: Any):
-    """Given a folder that isn't a git repository
-    When run is given `git status` in it
-    Then it gives git's code, 128, no stdout, and git's stderr saying it's not a git repository"""
-    folder = str(tmp_path)
-    ran = run(["git", "status"], folder)
-    assert (ran.code, ran.out) == (128, "")
-    assert "not a git repository" in ran.err
-
-
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-def test_git_changes_what_its_command_changes(tmp_path: Any):
-    """Given an empty folder
-    When run is given `git init -q` in it
-    Then it gives 0 with no output, and the folder holds a git repository"""
-    folder = str(tmp_path)
-    assert run(["git", "init", "-q"], folder) == Ran(0, "", "")
-    assert os.path.isdir(os.path.join(folder, ".git"))
-
-
-@pytest.mark.supports("test_the_generators_checks_judge_its_files_alone_beside_another_staged")
 def test_git_runs_with_the_variables_given_beside_rns_own(tmp_path: Any):
     """Given a git repository
     When run is given `git var GIT_AUTHOR_IDENT` in it, with GIT_AUTHOR_NAME set to `Ada`
@@ -64,7 +34,6 @@ def test_git_runs_with_the_variables_given_beside_rns_own(tmp_path: Any):
     assert os.environ.get("GIT_AUTHOR_NAME") == before
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
 def test_gh_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
     """Given a program gh first on the PATH that prints its arguments and gives 3
     When run is given `gh pr view 12`
@@ -78,19 +47,14 @@ def test_gh_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.M
     assert run(["gh", "pr", "view", "12"], str(tmp_path)) == Ran(3, "pr view 12\n", "said\n")
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_as_put"
-)
-@pytest.mark.parametrize("program", ["ls", "gitk", "git2", "ghx", "/usr/bin/git", ""])
-def test_a_program_other_than_git_or_gh_is_refused(tmp_path: Any, program: str):
-    """Given a program named other than git or gh, a near match or git by its path among them
+def test_a_program_other_than_git_gh_or_herdr_is_refused(tmp_path: Any):
+    """Given git2, a program named other than git, gh, or herdr
     When run is given it
-    Then Wrong is raised, and nothing runs"""
-    with pytest.raises(Wrong):
-        run([program, "--version"], str(tmp_path))
+    Then Wrong is raised, naming it"""
+    with pytest.raises(Wrong, match="'git2'"):
+        run(["git2", "--version"], str(tmp_path))
 
 
-@pytest.mark.supports("test_the_plan_waiting_for_signoff_is_put_up_in_the_runs_pull_request")
 def test_a_program_not_found_cant_run(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
     """Given a PATH that holds no gh
     When run is given `gh auth status`

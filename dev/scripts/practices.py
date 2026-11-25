@@ -1,11 +1,10 @@
-"""What a person or CI runs on rn's best practices, as `python3 dev/scripts/practices.py
-form|markdown` with the JSON of one best practice or more: `form` names each fault of a best
-practice's form, its Markdown, made from its JSON for a person to read, left behind it, its
-template where it's a JSON Schema that schema.py doesn't read whole, and each file in its folder
-that neither it nor its template holds. `markdown` writes its Markdown beside
-it. Each gives 0, or 1 where it names any fault, and 2 with its usage where it gets no command it
-takes. It's ccpm's own tooling, kept out of rn's folder, as no run of rn checks a best practice's
-Markdown. It holds each best practice to its form, rn's
+"""What a person or CI runs on rn's best practices, as `python3 dev/scripts/practices.py form`
+with the JSON of one best practice or more: it names each fault of a best practice's form, its
+template where it's a JSON Schema using a keyword that rn's check of a form doesn't hold, and each
+file in its folder
+that neither it nor its template holds. It gives 0, or 1 where it names any fault, and 2 with its
+usage where it gets no command it takes. It's ccpm's own tooling, kept out of rn's folder, as no
+run of rn checks the form of rn's own best practices. It holds each best practice to its form, rn's
 `plugins/rn/domain/schemas/best-practice.schema.json`."""
 
 from __future__ import annotations
@@ -16,19 +15,21 @@ import re
 import sys
 from typing import Any, Callable
 
-# rn's folder of the work's knowledge, where its best practices and their form lie. The code that
-# reads a file to its form lies beside this script.
+# rn's folder of the work's knowledge, where its best practices and their form lie, and the code
+# that holds a file to its form.
 RN = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     "plugins",
     "rn",
     "domain",
 )
+sys.path.insert(0, os.path.join(RN, "scripts"))
 
-import files
-import schema
+from check.form import KEYWORDS
+from fault import Wrong
+from practice import read
 
-USAGE = "usage: python3 dev/scripts/practices.py form|markdown <best practice json>..."
+USAGE = "usage: python3 dev/scripts/practices.py form <best practice json>..."
 
 # What the about of a question may name beside the parts or sections: the whole deliverable.
 WHOLE = "the whole"
@@ -48,12 +49,6 @@ NOTE = re.compile(r"^> \[!NOTE\]\n> " + MARKER + r":.*(?:\n>.*)*", re.MULTILINE)
 QUESTION = re.compile(r"\bN\d+\b")
 # An item named in a text, by its condition's ID and its place, such as N6.2.
 ITEM = re.compile(r"\b(N\d+)\.(\d+)\b")
-# An item that holds only in a case opens with Where or If and its case, as the template writes one.
-CASE = re.compile(r"^(?:Where|If) ")
-# What each action of a trace has its calls do, as the Markdown names them.
-DONE = {"run": "run", "read": "read to its end", "write": "made"}
-# When the maker takes each item, as the Markdown names it.
-AT = {"decide": "*While deciding.*", "make": "*While making.*"}
 # A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
 # that names no file: another site, or a place in the same page.
 LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
@@ -76,12 +71,6 @@ def conditions(data: dict[str, Any]) -> list[dict[str, Any]]:
     return [c for factor in factors(data) for c in factor["necessary_conditions"]]
 
 
-def by_id(found: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """The conditions in the order of their IDs, N9 before N10, as a reader looks a practice up by
-    the ID that a role cites."""
-    return sorted(found, key=lambda c: (len(c["id"]), c["id"]))
-
-
 def sections(template: str) -> list[str]:
     """The sections of a template a question may be about: the opening, where text stands between
     the title and the first heading under it, then each heading of the second level, and of the
@@ -93,7 +82,7 @@ def sections(template: str) -> list[str]:
 
 
 # A section of a template, by the names of the sections it lies in and its own, from the top: one
-# name for a heading of Markdown or an entry of a folder, and a key's path for a template in JSON.
+# name for a heading of Markdown, and a key's path for a template in JSON.
 Section = tuple[str, ...]
 
 
@@ -143,29 +132,12 @@ def beside(path: str, name: str) -> str:
     return os.path.join(os.path.dirname(path), name)
 
 
-def kind_of(path: str) -> str:
-    """The kind of the best practice at the path: the name of the folder it lies in."""
-    return os.path.basename(os.path.dirname(os.path.abspath(path)))
-
-
-def entries(folder: str) -> list[str]:
-    """The sections of a template that's a folder, such as the skeleton of a plugin: each folder
-    and file at its top, by name in order, but a hidden file, such as one the system keeps."""
-    return sorted(
-        name
-        for name in os.listdir(folder)
-        if not name.startswith(".") or os.path.isdir(os.path.join(folder, name))
-    )
-
-
 def template(path: str, data: dict[str, Any]) -> list[Section] | None:
     """The sections of the template the best practice at the path names, read as its format is,
     each by its path, or None where it names none. Refuses, by FileNotFoundError, one that isn't
     there."""
     if "template" not in data:
         return None
-    if os.path.isdir(beside(path, data["template"])):
-        return [(name,) for name in entries(beside(path, data["template"]))]
     with open(beside(path, data["template"]), encoding="utf-8") as f:
         text = f.read()
     if data["template"].endswith(".json"):
@@ -173,19 +145,36 @@ def template(path: str, data: dict[str, Any]) -> list[Section] | None:
     return [(name,) for name in sections(text)]
 
 
+def unheld(node: Any) -> list[str]:
+    """Each keyword of the JSON Schema node at any depth that rn's check of a form doesn't hold,
+    once each, in order."""
+    if not isinstance(node, dict):
+        return []
+    found = [key for key in node if key not in KEYWORDS]
+    inner = [node.get("items"), node.get("additionalProperties"), *node.get("anyOf", [])]
+    inner += [*node.get("oneOf", [])]
+    inner += [*node.get("properties", {}).values(), *node.get("$defs", {}).values()]
+    for each in inner:
+        found += unheld(each)
+    return [key for n, key in enumerate(found) if key not in found[:n]]
+
+
 def unread(path: str, data: dict[str, Any]) -> list[str]:
-    """Why the template of the best practice at the path, where it's a JSON Schema, is no schema
-    that schema.py reads whole, in words, as a check that holds a deliverable to it would read
-    it wrong."""
+    """Why the template of the best practice at the path, where it's a JSON Schema, uses a keyword
+    that rn's check of a form doesn't hold, in words, as a check that holds a deliverable to it
+    would stop."""
     if not data.get("template", "").endswith(".json"):
         return []
     try:
-        form = files.read(beside(path, data["template"]))
-        if SCHEMA in form:
-            schema.checked(form)
-    except (schema.Unread, files.Unreadable) as why:
-        return [f"its template {data['template']} is no schema it reads whole: {why}"]
-    return []
+        with open(beside(path, data["template"]), encoding="utf-8") as f:
+            form = json.load(f)
+    except ValueError as why:
+        return [f"its template {data['template']} isn't JSON: {why}"]
+    found = unheld(form) if SCHEMA in form else []
+    return [
+        f"its template {data['template']} uses {key}, which rn's check of a form doesn't hold"
+        for key in found
+    ]
 
 
 def practice_of(path: str, kind: str) -> str:
@@ -205,8 +194,8 @@ def lacked(path: str, taken: dict[str, Any]) -> list[str]:
         return []
     found = practice_of(path, kind)
     try:
-        held = template(found, files.read(found)) or []
-    except (files.Unreadable, FileNotFoundError, ValueError) as why:
+        held = template(found, read(os.path.dirname(found))) or []
+    except (Wrong, FileNotFoundError, ValueError) as why:
         return [f"its input {kind} takes sections of a template it can't read: {why}"]
     names = {" / ".join(section) for section in held}
     return [
@@ -249,18 +238,14 @@ def shown(text: str, figures_only: bool = True) -> list[str]:
 
 
 def kept(path: str, data: dict[str, Any]) -> set[str]:
-    """The files the folder of the best practice at the path holds by right: the best practice, its
-    Markdown and each file the Markdown links, and its template, each file in it where it's a
-    folder, else the figures it shows."""
-    markdown = os.path.splitext(path)[0] + ".md"
-    files = {path, markdown}
-    if os.path.isfile(markdown):
-        with open(markdown, encoding="utf-8") as f:
-            files.update(beside(markdown, linked) for linked in shown(f.read(), figures_only=False))
+    """The files the folder of the best practice at the path holds by right: the best practice and
+    each file that a text of it links, and its template and the figures it shows."""
+    files = {path}
+    for text in texts(data):
+        files.update(beside(path, linked) for linked in shown(text, figures_only=False))
     if "template" in data:
         named = os.path.normpath(beside(path, data["template"]))
         files.add(named)
-        files.update(os.path.join(r, n) for r, _, names in os.walk(named) for n in names)
         if os.path.isfile(named):
             with open(named, encoding="utf-8") as f:
                 files.update(beside(named, figure) for figure in shown(f.read()))
@@ -293,15 +278,14 @@ def texts(value: Any) -> list[str]:
 def faults(data: dict[str, Any], template: list[Section] | list[str] | None = None) -> list[str]:
     """Each fault of the best practice's form that its schema can't name, in words: factors
     numbered in their order from C1, conditions numbered from N1 each once, each about a section of
-    its template, where it names one, or the whole, every section asked of, each item's trace one
-    that every run makes and a call can match, each practice's items taken while deciding before
-    those taken while making, and each condition and item named in the text one that's there."""
+    its template, where it names one, or the whole, every section asked of, each practice's items
+    taken while deciding before those taken while making, and each condition and item named in the
+    text one that's there."""
     sections = [s if isinstance(s, tuple) else (s,) for s in template or []]
     return [
         *section_faults(data, sections),
         *number_faults(data),
         *about_faults(data, sections),
-        *trace_faults(data),
         *order_faults(data),
         *condition_faults(data),
         *item_faults(data),
@@ -389,86 +373,6 @@ def item_faults(data: dict[str, Any]) -> list[str]:
     ]
 
 
-def trace_faults(data: dict[str, Any]) -> list[str]:
-    """Each fault of an item's trace, in words: a trace on an item that holds only in its case,
-    which a run outside the case never makes, so Lane would stop that run's end, and an empty text
-    taken, which no call matches."""
-    found = []
-    for c in conditions(data):
-        for n, item in enumerate(c["items"], 1):
-            if "trace" not in item:
-                continue
-            where = f"{c['id']}.{n}"
-            if CASE.match(item["text"]):
-                found.append(
-                    f"{where} holds only in its case, so it carries no trace, as a run outside the"
-                    " case never makes it"
-                )
-            if any(not take.strip() for take in item["trace"]["takes"]):
-                found.append(f"{where} takes an empty text in its trace, which no call matches")
-    return found
-
-
-def listed(takes: list[str]) -> str:
-    """The texts in code, joined by commas, and by the word or before the last one."""
-    *rest, last = [f"`{t}`" for t in takes]
-    return f"{', '.join(rest)} or {last}" if rest else last
-
-
-def item_line(n: int, item: dict[str, Any]) -> str:
-    """The item as a line of a numbered list, with when the maker takes it, and the calls its trace
-    takes and what they do."""
-    line = f"{n}. {AT[item['at']]} {item['text']}"
-    if "trace" in item:
-        trace = item["trace"]
-        line += f" The trace: {listed(trace['takes'])} {DONE[trace['action']]}."
-    return line
-
-
-def tree(data: dict[str, Any]) -> list[str]:
-    """The goal tree as a nested list: the goal, each factor under it, and each condition under its
-    factor with the sections that hold it, each ID in bold before its sentence, as the prose check
-    reads a capital after a colon as a fault."""
-    lines = [f"- {data['goal']['what']}"]
-    for factor in factors(data):
-        lines.append(f"  - **{factor['id']}** {factor['what']}")
-        held = factor["necessary_conditions"]
-        lines += [f"    - **{c['id']}** {c['what']} ({c['about']})" for c in held]
-    return lines
-
-
-def link_of(path: str, kind: str) -> str:
-    """The link from the Markdown of the best practice at the path to that of the kind it takes."""
-    found = os.path.splitext(practice_of(path, kind))[0] + ".md"
-    return os.path.relpath(found, os.path.dirname(os.path.abspath(path))).replace(os.sep, "/")
-
-
-def line_of(path: str, taken: dict[str, Any]) -> str:
-    """The input's line in the Markdown of the best practice at the path: a link to its kind, then
-    the sections it takes, each in backticks as its template heads it, or that the kind is run
-    whole where it takes none."""
-    link = f"- [{taken['kind']}]({link_of(path, taken['kind'])})"
-    takes = ", ".join(f"`{name}`" for name in taken["takes"])
-    return f"{link}, taking {takes}" if takes else f"{link}, run whole"
-
-
-def markdown_of(path: str, data: dict[str, Any]) -> str:
-    """The best practice at the path as Markdown: its goal tree, a link to its template, and a link
-    to each kind it takes where it takes any, to where its best practice lies, then each
-    condition's practice, in the order of the IDs, under the question it meets."""
-    out = [f"# `{kind_of(path)}`", "", "## Goal tree", "", *tree(data)]
-    if "template" in data:
-        out += ["", "## Template", "", f"[{data['template']}]({data['template']})"]
-    if data["inputs"]:
-        out += ["", "## Inputs", ""]
-        out += [line_of(path, taken) for taken in data["inputs"]]
-    out += ["", "## Practices"]
-    for c in by_id(conditions(data)):
-        out += ["", f"### {c['id']}", "", c["what"], "", c["why"], ""]
-        out += [item_line(n, s) for n, s in enumerate(c["items"], 1)]
-    return "\n".join(out) + "\n"
-
-
 def strays(path: str, data: dict) -> list[str]:
     """Each file in the best practice's folder that neither it nor its template holds, in words."""
     return [
@@ -478,42 +382,25 @@ def strays(path: str, data: dict) -> list[str]:
 
 
 def form(path: str) -> list[str]:
-    """Each fault of the best practice's form, its template where it's a schema that schema.py
-    doesn't read whole, its Markdown left behind it, and each file in its folder that neither it
-    nor its template holds."""
+    """Each fault of the best practice's form, its template where it's a schema using a keyword
+    that rn's check of a form doesn't hold, and each file in its folder that neither it nor its
+    template holds."""
+    if os.path.basename(path) != PRACTICE:
+        return [f"a best practice lies in a file named {PRACTICE}"]
     try:
-        data = files.load(path, "best-practice")
-    except files.Unreadable as why:
-        return [str(why)]
+        data = read(os.path.dirname(path))
+    except Wrong as why:
+        # main names the path before each fault, and rn's Wrong opens with it too.
+        return [str(why).replace(f"{path}: ", "", 1)]
     late = strays(path, data)
     found = missing(path, data)
     if found:
         return found + late
-    found = unread(path, data) + faults(data, template(path, data))
-    target = os.path.splitext(path)[0] + ".md"
-    try:
-        with open(target, encoding="utf-8") as f:
-            if f.read() != markdown_of(path, data):
-                found.append(f"{target} is not as its JSON makes it; run practices.py markdown")
-    except FileNotFoundError:
-        found.append(f"{target} is missing; run practices.py markdown")
-    return found + late
-
-
-def markdown(path: str) -> list[str]:
-    """Writes the best practice's Markdown beside it, where a person can read it."""
-    try:
-        data = files.load(path, "best-practice")
-    except files.Unreadable as why:
-        return [str(why)]
-    with open(os.path.splitext(path)[0] + ".md", "w", encoding="utf-8") as f:
-        f.write(markdown_of(path, data))
-    return []
+    return unread(path, data) + faults(data, template(path, data)) + late
 
 
 PRACTICES: dict[str, Callable[[str], list[str]]] = {
     "form": form,
-    "markdown": markdown,
 }
 
 

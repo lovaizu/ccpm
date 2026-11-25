@@ -25,9 +25,9 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<interface>`: each name a module offers to others, with everything a caller needs to call it
->   without reading its body: the types it takes and gives, what it gives, what comes back when
->   there's nothing to give, what it expects of what it takes, what else it changes, and each way it
->   refuses a call.
+>   without reading its body: the types it takes and gives, and of the rest only what the types
+>   don't say, such as what comes back when there's nothing to give, what else it changes, and each
+>   way it refuses a call.
 
 ## Body
 
@@ -45,5 +45,5 @@
 > DELETE_TEMPLATE_COMMENT:
 > - `<tests>`: tests of the specification's cases, one test for each case, so the maintainer can
 >   tell which test checks which case and which code. Each test has a name that says the behavior it
->   checks, names the case one level up that it supports, and shows the situation, the action, and
->   what must be so.
+>   checks, names the case one level up that it supports where the architecture's Test strategy
+>   names traceability, and shows the situation, the action, and what must be so.

@@ -79,7 +79,7 @@ At the end, you have `<result>`.
 > - The figure: the deliverable's own, at images/how-it-works.svg, with the product named in its alt
 >   text. It shows the product's mechanism as one flow below the one way, with each problem and
 >   doubt beside the part that answers it, and what the reader gets from that part. The skeleton
->   here is one such form.
+>   here is one such form. Leave it out where the answers show the mechanism without it.
 > - `<problem or doubt>`, `<answer>`: each problem or doubt that would change whether the reader
 >   tries the product, as they would say it, as a heading of its own, and in a sentence or two the
 >   part of the mechanism that answers it, how it follows from the one way, and what the reader
@@ -106,6 +106,6 @@ At the end, you have `<result>`.
 > DELETE_TEMPLATE_COMMENT:
 > - `<license>`: the license's identifier in the SPDX License List, such as MIT.
 > - `<path>`: the license's full text, by its path from the README's folder.
-> - `<work>`, `<its license>`, `<its path>`: each work of others that the product holds, such as a
->   copied library, with its license's identifier and the path of its full text. Leave out the list
->   where there's none.
+> - `<work>`, `<its license>`, `<its path>`: each work of others that the product holds under a
+>   license other than the product's, such as a copied library, with its license's identifier and
+>   the path of its full text. Leave out the list where there's none.

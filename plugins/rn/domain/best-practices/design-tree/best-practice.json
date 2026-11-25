@@ -26,7 +26,7 @@
               },
               {
                 "at": "decide",
-                "text": "Put the goal to the user beside the words of the request it came from, write it as they confirm it, and write `user` in `by`, since only the user knows what they're after."
+                "text": "Ask the user, one at a time, as points of the plan's N1, whom the goal is for, then what those people can do once it's achieved, each with your recommendation from the request and the repository, since only the user knows what they're after. Then put both to them in one summary, write the goal as they confirm it, and write `user` in `by`. Put the summary to them again only where the work shows the purpose changed."
               }
             ]
           },
@@ -42,7 +42,7 @@
               },
               {
                 "at": "decide",
-                "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/` and of `.rn/best-practices/`, and give each deliverable as its kind the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a guide. Where no folder fits, ask the user whether to make a best practice of that kind first, and recommend it where the field has an established way of making the kind, such as for an invoice. Making it first adds a deliverable of kind `meta` at `.rn/best-practices/<kind>/`, which this one rests on. Otherwise give it the kind `light`, and write the check that judges it, such as a test that passes once it exists, as its decision about `The check`."
+                "text": "List the folders of `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/` and of `.rn/best-practices/`, and give each deliverable as its kind the folder whose goal names the deliverable's people and what they do with it, such as `readme` for a guide. Where no folder fits and the field has an established way of making the kind, such as for an invoice, make a best practice of that kind first, as a step of the way to the goal before the step it serves, which the user sees and may change when they sign off the plan. Making it first adds a deliverable of kind `meta` at `.rn/best-practices/<kind>/`, which this one rests on. Otherwise give it the kind `light`, and write the check that judges it, such as a test that passes once it exists, as its decision about `The check`."
               },
               {
                 "at": "decide",
@@ -54,12 +54,12 @@
               },
               {
                 "at": "make",
-                "text": "Keep one line for a deliverable that's done: its name, path, kind, and status. A node with no file keeps its necessary conditions and their decisions too, as the deliverables built on it read them there."
+                "text": "Keep a deliverable that's done with its name, path, kind, and status, and with its necessary conditions and their decisions, as a later deliverable rests on what it decided, and each of them is weighed again with the new one that rests on it."
               }
             ]
           },
           {
-            "id": "N7",
+            "id": "N6",
             "about": "context",
             "what": "Does the context name the rn that wrote the tree, the languages that the user settled, and the run's issues and pull request?",
             "why": "A newer rn reads a tree by the version that wrote it, the deliverables and the conversation reach their people only in a language they read, and a merge closes only the issues that the pull request names. The items follow GitHub's [linking of a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue), which closes an issue on merge where the pull request's body names it after `Closes`.",
@@ -70,11 +70,11 @@
               },
               {
                 "at": "decide",
-                "text": "Propose the language of the deliverables from what the repository's documents and the user's instructions set, or else English, and the language of the conversation from the user's instructions and words. Write each as the user settles it."
+                "text": "Write the language of the deliverables from what the repository's documents and the user's instructions set, or else English, and the language of the conversation from the user's instructions and words. Ask the user only where these give different languages for the same one."
               },
               {
                 "at": "decide",
-                "text": "Ask the user which issues the run completes and which it only serves, and write their numbers in `closes` and `refs`."
+                "text": "Write in `closes` the number of each issue that the user's words name as the request, as the run completes it, and in `refs` each other issue they name, as the run only serves it. Don't ask the user, as their request says it."
               },
               {
                 "at": "make",
@@ -108,7 +108,7 @@
               },
               {
                 "at": "decide",
-                "text": "Where the change is a point whose answers differ in what the people get, leave its `decided` null for the user, since only they can settle it."
+                "text": "Where the change is a point that the user's words, the goal, and the records leave open, leave its `decided` null for the user, since only they can settle it."
               }
             ]
           },
@@ -120,7 +120,7 @@
             "items": [
               {
                 "at": "make",
-                "text": "After each change to a node, run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py touched <run> <path>`, where `<run>` is the run's folder and `<path>` is the changed node's path. It lists each node that the change touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it."
+                "text": "After each change to a node, run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree touched <run> <path>`, where `<run>` is the run's folder and `<path>` is the changed node's path. It lists each node that the change touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there."
               },
               {
                 "at": "make",
@@ -128,11 +128,11 @@
               },
               {
                 "at": "make",
-                "text": "Run `tree.py touched` again for each node you rewrote, until a pass rewrites nothing."
+                "text": "Run `tree touched` again for each node you rewrote, until a pass rewrites nothing."
               },
               {
                 "at": "make",
-                "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py commit <run> '<ground>'`, where `<ground>` is why the change decides as it does. It gives 1 with the first fault where the tree leaves its schema or its checks, and leaves git as it was, so mend what it names and run it again. It gives 0 with the commit's hash, with `<ground>` as the commit message, so that git keeps the grounds and the tree holds the decision alone."
+                "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree commit <run> '<ground>'`, where `<ground>` is why the change decides as it does. It gives 1 with the first fault where the tree leaves its schema or its checks, and leaves git as it was, so mend what it names and run it again. It gives 0 with the commit's hash, with `<ground>` as the commit message, so that git keeps the grounds and the tree holds the decision alone."
               }
             ]
           }
@@ -144,9 +144,9 @@
         "necessary_conditions": [
           {
             "id": "N5",
-            "about": "work",
-            "what": "Is the first item of the work the one, among those that can start, that brings the goal's people closest?",
-            "why": "An item started before what it rests on is done is made again once that arrives, and an item that brings the people little delays the one that brings them most. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method), which lists each activity's predecessors before it orders the activities, and the [critical path method](https://en.wikipedia.org/wiki/Critical_path_method), which puts first what the end waits on.",
+            "about": "steps",
+            "what": "Does each deliverable come after each one it rests on, so that each starts once its inputs are done?",
+            "why": "A deliverable started before what it rests on is done is made again once that arrives. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method), which lists each activity's predecessors before it orders the activities.",
             "items": [
               {
                 "at": "decide",
@@ -154,23 +154,7 @@
               },
               {
                 "at": "decide",
-                "text": "Among the deliverables and points whose inputs are done, choose the one that brings the people closest to the goal's state by what the facts show, and write it first in `work`: a deliverable to make by its path, or a point to decide by its deliverable's path, its condition, and its `about`."
-              }
-            ]
-          },
-          {
-            "id": "N6",
-            "about": "work",
-            "what": "Does the work start together each item that rests on no other item still being made?",
-            "why": "Two items that rest on nothing of each other wait for nothing, so starting them together cuts the time to the goal to that of the slower one. The items follow the precedence diagram, in which activities with no link between them run in parallel.",
-            "items": [
-              {
-                "at": "decide",
-                "text": "List the items of `work` whose inputs are done and that name none of each other in their inputs."
-              },
-              {
-                "at": "decide",
-                "text": "Write them next to each other in `work`, each after each item it rests on, so that they start together."
+                "text": "Write in `steps` the way to the goal, first to last, each deliverable in one step after each step whose deliverables it rests on. Give each step one thing it settles in `settles`, such as `how it's used`, in the conversation's language and the user's words, taken from the goal of its deliverables' best practices, since the user follows the run by these alone. Write `signoff` true for each step whose deliverables the user signs off, and false for each other, whose deliverables are done once their Rounds are over: as the user answers when they sign off the plan, and until then true for the first step alone, as the rest follows from it."
               }
             ]
           }

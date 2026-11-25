@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open what the code must do, the sections that `inputs` takes, each from its file or, where its kind has no file in the product, from the decisions that the plan holds for it: the part's line in Components, the principles, each sequence that the part takes a step in, the part's skeleton, and its unit cases. The unit cases are the code's specification: each behavior of the code answers one of them, and the architecture's lines, where they exist, say only why a case asks what it does."
        },
        {
         "at": "decide",
@@ -37,10 +31,6 @@
        {
         "at": "make",
         "text": "Write at the top of each module, such as in its docstring, the sentence that the note of Module opening in the template asks for, naming what the module decides, not the steps it takes, such as `The layout of a record on disk.` Where the sentence joins two decisions that change for different reasons, split the module."
-       },
-       {
-        "at": "make",
-        "text": "Once every module states its decision, take a change that a unit case might come to ask for, such as a new field in what the part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, and repeat with a change of another kind until each change names one module."
        }
       ]
      },
@@ -80,25 +70,11 @@
        },
        {
         "at": "make",
-        "text": "Write the body one test at a time, once you see the test fail as N5.8 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case."
+        "text": "Write the body one test at a time, once you see the test fail as N5.7 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case."
        },
        {
         "at": "make",
-        "text": "Before you write a branch, a comparison, or a pick of one of several, name the case that fails where it's wrong, such as the case of two starts for a pick of the latest, and write none that no case fails on."
-       },
-       {
-        "at": "make",
-        "text": "Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{tests}"
-         ]
-        }
-       },
-       {
-        "at": "make",
-        "text": "Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses."
+        "text": "Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on."
        }
       ]
      }
@@ -144,11 +120,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports, by the techniques with which [the test design best practice](../test-design/best-practice.md) designs unit cases: each class of input, refusals among them, each end of a class on an ordered scale, none, one, and several of each collection, a value that nearly matches beside the one that matches, and a case that fails on each fault likely in its body. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
+        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports where Test strategy names traceability, as [the test design best practice](../test-design/best-practice.json) designs unit cases: one for each variation that its requirements name, each class, refusal, and bound among them. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
        },
        {
         "at": "decide",
-        "text": "Where the code seems to need a case that supports no unit case of the part, such as a mode that the part's tests never reach, end with `point` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for."
+        "text": "Where the code seems to need a case that no unit case of the part asks for, such as a mode that the part's tests never reach, end with `point` to take it back to whoever set the unit cases, such as the architecture's maker, and write it once a unit case asks for it, since until then it tests what no element asks for."
        },
        {
         "at": "make",
@@ -168,17 +144,7 @@
        },
        {
         "at": "make",
-        "text": "Give an assertion a failure message that names the part of the case it checks, wherever the test's name and the values compared don't already say it, such as `the refused line is named`."
-       },
-       {
-        "at": "make",
-        "text": "Run each test before you write the code it tests, and see it fail for the reason its Then names, not for a fault of the test itself, such as a misspelled name.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{tests}"
-         ]
-        }
+        "text": "Run each test before you write the code it tests, and see it fail for the reason its Then names, not for a fault of the test itself, such as a misspelled name."
        }
       ]
      },
@@ -205,7 +171,7 @@
      {
       "id": "N7",
       "about": "Body, Tests",
-      "what": "Does each test assert the whole result of its case, with coverage leaving no line that no case calls for?",
+      "what": "Does each test assert the whole result of its case, with coverage leaving no line that no case calls for, and no two tests on the same branch for the same case?",
       "why": "The maintainer knows that every behavior still holds only where breaking any of them makes a test fail. The cases, designed before the code, catch each break where each test asserts its whole Then, and coverage shows each line that no test runs, which either lacks its case or does what no case asks.",
       "items": [
        {
@@ -214,17 +180,15 @@
        },
        {
         "at": "make",
-        "text": "Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{coverage}"
-         ]
-        }
+        "text": "Once the tests pass, run them with line and branch coverage measured by the tool that Test strategy names, such as coverage.py, and list each line and branch that no test runs."
        },
        {
         "at": "make",
         "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `point`, and write its test once they add it."
+       },
+       {
+        "at": "make",
+        "text": "Where two tests run the same branches for the same case, merge them into one, as N3 of the test design best practice says."
        }
       ]
      }

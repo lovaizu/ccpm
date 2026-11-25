@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the architecture, and find the component that the prompt carries out: its line in Components, and its file in Directory structure, such as `agents/planner.md`. This best practice calls it the prompt's component, and the person of a user story the story's role, as the architecture does.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open the architecture, and find the component that the prompt carries out: its line in Components, and its file in Directory structure, such as `agents/planner.md`. This best practice calls it the prompt's component, and the person of a user story the story's role, as the architecture does."
        },
        {
         "at": "decide",
@@ -86,7 +80,7 @@
        },
        {
         "at": "decide",
-        "text": "For each thing on the list, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request."
+        "text": "For each thing on the list that could look done while it isn't, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request."
        },
        {
         "at": "decide",
@@ -102,7 +96,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the concept model. Take the rules of the place from the architecture's Principles and the rules they build on, such as the one folder a component writes in."
+        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the concept model. Take the rules of the place that the step's work could break from the architecture's Principles and the rules they build on, such as the one folder a component writes in."
        },
        {
         "at": "decide",
@@ -145,22 +139,26 @@
        {
         "at": "make",
         "text": "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses."
-       },
-       {
-        "at": "make",
-        "text": "Check that the last step leaves what the goal says the task is for."
        }
       ]
      },
      {
       "id": "N6",
       "about": "Steps",
-      "what": "Does each rule give the reason from which the AI decides a case that the rule doesn't name?",
-      "why": "A rule that says what it's for lets the AI apply it where the writer meant it, and judge a case that no rule names, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#add-context-to-improve-performance) say: the AI generalizes from the reason.",
+      "what": "Does the prompt hold a rule only where its steps' purpose and intent can't hold it, with the reason from which the AI decides a case that the rule doesn't name?",
+      "why": "An AI that holds what each step is for judges each case from it, while a rule makes its move turn on whether a case is on the rule or not, so it acts by what the rule names instead of judging, and the rules pile up the trivial many. So a prompt carries purpose and intent, and holds a rule only where intent alone can't. A rule that a program or a hook can hold goes to the program of N9 or the hook of N12. A rule that stays says what it's for, so that the AI applies it where the writer meant it, and judges a case that no rule names, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#add-context-to-improve-performance) say: the AI generalizes from the reason.",
       "items": [
        {
+        "at": "decide",
+        "text": "To keep the prompt to intent, go through each thing that the AI must do or keep in each step, and ask whether an AI that holds the step's result and what it's for, as N5.2 gives them, would do it on its own. Where it would, leave it to that intent."
+       },
+       {
+        "at": "decide",
+        "text": "To hold what must hold on every run, ask of each thing left whether a program or a hook can hold it, such as `state changes go through the scripts` or `the result's form is checked by its schema`. Where one can, give it to the program of N9 or the hook of N12, and write in the step only what the program or the hook is for."
+       },
+       {
         "at": "make",
-        "text": "Write each rule as what to do, in plain words, with its reason, such as `Your response is read aloud by a text-to-speech engine, so never use ellipses, which it can't pronounce` in place of `NEVER use ellipses`."
+        "text": "Write each rule that's left as what to do, in plain words, with its reason, such as `Your response is read aloud by a text-to-speech engine, so never use ellipses, which it can't pronounce` in place of `NEVER use ellipses`."
        },
        {
         "at": "make",
@@ -168,7 +166,7 @@
        },
        {
         "at": "make",
-        "text": "In place of a list of edge cases, give the way of judging and a few examples that are like the real requests and unlike one another."
+        "text": "In place of a list of edge cases, give the way of judging and a few examples that are like the real requests and unlike one another, since a list makes the AI act on whether a case is on it."
        },
        {
         "at": "make",
@@ -183,16 +181,24 @@
      {
       "id": "N7",
       "about": "Goal",
-      "what": "Does the prompt name the choices that are the user's, and how the AI hands them to the user?",
-      "why": "The user's purpose and intent stay the user's only if the AI hands them the choices that are theirs.",
+      "what": "Does the prompt convey that the user gives the purpose and intent and decides, that the AI judges all that follows from them, and how the AI hands back what's the user's?",
+      "why": "The user's purpose and intent stay the user's only if the AI hands them what's theirs, and the user isn't asked what their purpose already settles only if the AI judges the rest. A list of the user's choices makes the AI ask at each branch on the list and decide at each other, so the prompt conveys the intent, from which the AI tells a choice of the user's at a branch that the writer didn't foresee, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#balancing-autonomy-and-safety) have the AI act on its own and stop before an action that's hard to undo or touches what others share.",
       "items": [
        {
         "at": "decide",
-        "text": "Go through the steps, and each branch and each question put to the story's role in the architecture's Sequences, and mark each choice that's the user's: each action that's hard to undo, touches what others share, or destroys something, as the list in Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#balancing-autonomy-and-safety) gives, such as a force push, a comment on a pull request, or deleting a branch, and each choice between options that serve the purpose equally, where the AI has no ground to pick one. Leave every other choice to the AI."
+        "text": "To find what the task takes from the user, read the user stories whose sequences the prompt's component takes part in, and each question put to the story's role in the architecture's Sequences, and write what the story's role gives the task, its purpose and intent, and what the AI judges from them, such as `The developer says what the change is for, and the AI chooses how to reach it`."
+       },
+       {
+        "at": "decide",
+        "text": "To know what the AI hands back, decide from that intent what the purpose leaves open, such as options that serve it equally where the AI has no ground to pick one, and which actions of the task are hard to undo, touch what others share, or destroy something, as Anthropic's prompting best practices list them, such as a force push, a comment on a pull request, or deleting a branch."
        },
        {
         "at": "make",
-        "text": "Name each of the user's choices in the step where it comes, with how it reaches the user. A prompt that runs as a subagent can't talk to the person, so it ends with the result that Sequences give for a question to its caller, with the point, the options, and its recommendation, such as `End with asks, naming the branch to push and your recommendation.` A prompt that runs in the main conversation asks the person in a message, as N14 says, one choice at a time."
+        "text": "Write in the Goal that intent with its reason, in place of a list of the user's choices, such as `The developer gives what the work is for, and decides it. Judge what follows from that yourself, and hand back only what it leaves open, or an action that's hard to undo or touches what others share, since the developer wants the work done without being asked what their purpose already says.`"
+       },
+       {
+        "at": "make",
+        "text": "Write how what's the user's reaches them. A prompt that runs as a subagent can't talk to the person, so it ends with the result that Sequences give for a question to its caller, with the point, the options, and its recommendation. A prompt that runs in the main conversation asks the person in a message, as N14 says, one choice at a time, so that the person decides each from its first lines."
        }
       ]
      },
@@ -246,23 +252,19 @@
        },
        {
         "at": "decide",
-        "text": "Check each tool against the list that the prompt allows, such as the `tools` field of an agent's frontmatter. Where a step needs a tool that isn't on it, allow the tool if the action lies inside the task and N11 can keep the tool to the task. Otherwise, change the step so that it needs no such tool, such as having a script that the step runs fetch what the step needs."
+        "text": "Check each tool against the list that the prompt allows, such as the `tools` field of an agent's frontmatter. Where a step needs a tool that isn't on it, allow the tool if the action lies inside the task. Otherwise, change the step so that it needs no such tool, such as having a script that the step runs fetch what the step needs."
        }
       ]
      },
      {
       "id": "N11",
       "about": "Tools",
-      "what": "Does the host refuse each action that lies outside the task?",
-      "why": "A rule in words holds only while the AI follows it, so a slip of the AI can harm what lies outside the task unless the host refuses the action.",
+      "what": "Does the host refuse each tool that the task doesn't need?",
+      "why": "A rule in words holds only while the AI follows it, so a slip of the AI can harm what lies outside the task unless the host refuses the tool. N12 holds each rule that a tool the task needs must keep.",
       "items": [
        {
         "at": "decide",
         "text": "Allow only the tools that N10's list needs, in the list that the host reads, such as the `tools` field of an agent's frontmatter."
-       },
-       {
-        "at": "decide",
-        "text": "Where a tool it needs can also act outside the task, such as writing where the task only reads, add a rule that the host enforces: a deny rule where a permission pattern names the action, such as `Edit(./docs/**)`, in `permissions.deny` of the settings file that the architecture's Directory structure gives the host, such as `.claude/settings.json`, or else a hook, as N12 says. A prompt that ships in a plugin holds such a rule by a hook, since a plugin's files carry no permission rules."
        }
       ]
      },
@@ -278,7 +280,7 @@
        },
        {
         "at": "decide",
-        "text": "Hold each such rule with a deny rule where it limits what the AI may read, write, or run, and a permission pattern names it, such as `Read(./.env)`, since a deny rule holds in every permission mode. Write it in the settings file of N11.2. Hold it with a command [hook](https://code.claude.com/docs/en/hooks) where it's a step that must happen, where it turns on more than a pattern names, such as a write allowed only into the run's own file, or where the prompt ships in a plugin, as N11.2 says."
+        "text": "Hold each such rule with a deny rule where it limits what the AI may read, write, or run, and a permission pattern names it, such as `Read(./.env)`, since a deny rule holds in every permission mode. Write it in `permissions.deny` of the settings file that the architecture's Directory structure gives the host, such as `.claude/settings.json`. Hold it with a command [hook](https://code.claude.com/docs/en/hooks) where it's a step that must happen, where it turns on more than a pattern names, such as a write allowed only into the run's own file, or where the prompt ships in a plugin, since a plugin's files carry no permission rules."
        },
        {
         "at": "make",
@@ -312,7 +314,7 @@
        },
        {
         "at": "decide",
-        "text": "List what the caller needs for its next move: the result, what the AI did, and what it didn't do and why."
+        "text": "List only what the caller needs for its next move at N13.1, such as the result, and what the AI didn't do and why."
        },
        {
         "at": "decide",
@@ -332,23 +334,19 @@
       "items": [
        {
         "at": "decide",
-        "text": "From N7.1 and N13.4, list each message that the prompt has its AI write to a person: each of the user's choices that it asks in the main conversation, and each result that a person reads. Where it writes none, such as a subagent whose result a script reads, leave the prompt as it is."
+        "text": "From N7.2 and N13.4, list each message that the prompt has its AI write to a person: each of the user's choices that it asks in the main conversation, and each result that a person reads. Where it writes none, such as a subagent whose result a script reads, leave the prompt as it is."
        },
        {
         "at": "make",
-        "text": "In the prompt's Output section, write the order of each message, with its reason: first the context and the conclusion, what the message asks or reports and why, then the grounds, then the purpose and what it should be, and the rest only once the person asks, since the person decides from the first lines."
+        "text": "In the prompt's Output section, write what each message is for and the intent from which the AI shapes it, such as `The developer decides from your first lines, so open with what you ask or report and why, then its grounds, in a few plain sentences, and give the rest once they ask.`"
        },
        {
         "at": "make",
-        "text": "In the Output section, write the form of each message: a few plain sentences with no headings or labels, in short paragraphs of one point each."
+        "text": "In the Output section, give the terms of the person's that the messages use, from the user stories and the README, since the AI can't know them on its own, as N4 says."
        },
        {
         "at": "make",
-        "text": "In the Output section, write the terms that the person uses, taken from the user stories and the README, and that the AI says a term of its own in everyday words or leaves it out."
-       },
-       {
-        "at": "make",
-        "text": "In the Output section, write that each message asks for one decision, alone on its last line, with one recommendation, such as `End with the one choice you need, and the option you recommend.`"
+        "text": "Read the Output section as the AI would at a message that the writer didn't foresee, such as a blocker with two ways past it, and ask whether the intent alone leads to a message that the person decides from its first lines. Where it doesn't, fix the intent, and add a rule with its reason only where no wording of the intent leads there, as N6 says."
        }
       ]
      },
@@ -359,28 +357,12 @@
       "why": "The caller can't tell a claim that the AI checked from one it guessed, and acts on both alike, so Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#minimizing-hallucinations-in-agentic-coding) have the AI open what a claim rests on before it makes the claim.",
       "items": [
        {
-        "at": "decide",
-        "text": "From N13.3's list, take each claim that the AI reports, and name the check on the real thing that it rests on: the file to read, the command to run, or the record to open, a command that comes back pass or fail where the product has one, such as check.sh's exit code for `the checks pass`."
+        "at": "make",
+        "text": "In the Output section, write the intent from which the AI tells what it may claim, such as `The caller acts on each claim as checked, so claim only what you saw on the real thing in this run, such as a command's pass or fail, a file you opened, or a record you read, and say what you didn't check and why.`"
        },
        {
         "at": "make",
-        "text": "In the step that makes each claim, write its check from N15.1 for the AI to run before it reports the claim, with the reason, such as `Run check.sh before you report that the checks pass, since the caller acts on the report as checked.` Write that no claim rests on memory, a guess, or another agent's summary."
-       },
-       {
-        "at": "make",
-        "text": "Where a check is a command, write that the AI judges it by its pass or fail result, such as the exit code, not by a few lines of its output."
-       },
-       {
-        "at": "make",
-        "text": "Where the AI reports on another agent's work, write that it opens the records and files that the agent names, and judges them against the task's purpose, not from the agent's summary."
-       },
-       {
-        "at": "make",
-        "text": "Where a claim names several items, such as every file changed, write that the AI checks each one, not a sample."
-       },
-       {
-        "at": "make",
-        "text": "In the Output section, write that the AI states what it checked, what it didn't, and why, so that the report never reads as covering more than it did."
+        "text": "Read the step and the Output section as the AI would where a report could go beyond its checks, such as a command judged by a few lines of its output, another agent's work judged by its summary, or many files judged by a sample, and ask whether the intent alone leads the AI to check the real thing. Where it doesn't, fix the intent, and add a rule with its reason only where no wording of the intent leads there, as N6 says."
        }
       ]
      }
@@ -388,29 +370,25 @@
    },
    {
     "id": "C6",
-    "what": "The writer knows from tests how the prompt does over several runs and in real use.",
+    "what": "The writer knows from a real run how the prompt does in its product's use.",
     "necessary_conditions": [
      {
       "id": "N16",
       "about": "the whole",
-      "what": "Do the prompt's unit tests run each case several times on the model its users run, for the writer to judge the prompt from the results, and does a walkthrough run try the product it's part of once its integration tests pass?",
-      "why": "The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. The results vary from run to run, so a criterion would pass or fail by chance, and the writer judges from the results of several runs, as the architecture's [test strategy guide](../architecture/test-strategy-guide.md) says of a test that runs a prompt.",
+      "what": "Does the user's E2E run try the product that the prompt is part of, once its unit tests pass, with each place where it fails its people taken back to its cause?",
+      "why": "The writer knows a prompt only by what the AI does with it, where the AI's variance and the faults of the design show. A test that runs the prompt on fixed scenes meets only the cases that its writer set up, and can't show whether the AI judges each new fact by the prompt's goal. The user's E2E run of the product as it ships, by the architecture's [test strategy guide](../architecture/test-strategy-guide.md), meets real facts one after another, so it shows how the AI judges.",
       "items": [
        {
         "at": "make",
-        "text": "Build and run the prompt's unit tests by [the test-implementation best practice](../test-implementation/best-practice.md), on the model its users run, from one run of each case up to as many runs as Test strategy sets, in the folders that the architecture's Test strategy names for its test cases."
+        "text": "Once the product's unit tests pass, have the user run it whole by the E2E run of the [test strategy guide](../architecture/test-strategy-guide.md), and watch the run."
        },
        {
         "at": "make",
-        "text": "Open the record of each run, and see from what the AI did, not from its last message, which runs reached the result."
+        "text": "Open the run's record, and see from what the AI did, not from its last message, where it fell short of its people's goal."
        },
        {
         "at": "make",
-        "text": "Where a run didn't reach the result, find the cause in its record, as the test-implementation best practice says, and change the prompt only for a cause in the prompt. Run the cases again, and judge from their results whether the change helps."
-       },
-       {
-        "at": "make",
-        "text": "Once the product's integration tests pass, run it whole by the walkthrough run of the [test strategy guide](../architecture/test-strategy-guide.md), and take each place where it fails its people back to its cause, in the prompt or another part, since a unit test meets only the cases that its writer set up."
+        "text": "Take each place where the run fails its people back to its cause, in the prompt or another part, and change the prompt only for a cause in the prompt."
        }
       ]
      }

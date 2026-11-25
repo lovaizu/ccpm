@@ -1,6 +1,6 @@
 {
  "goal": {
-  "what": "The developers learn from a test that runs the product whole, such as an E2E test, a performance test, or a benchmark of a prompt, what the product does, as each run ran as they meant and measured what their decision takes.",
+  "what": "The developers learn from a test that runs the product whole, such as an E2E test or a performance test, what the product does, as each run ran as they meant and measured what their decision takes.",
   "critical_success_factors": [
    {
     "id": "C1",
@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision, the architecture, and the test cases, and read the sections that `inputs` takes from each: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open the product vision, the architecture, and the test cases, and read the sections that `inputs` takes from each: the key results with what a run records for each, the row of Test strategy for this test with what it measures or its criterion, and the case with its Given, When, and Then."
        },
        {
         "at": "decide",
@@ -44,7 +38,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each value of N1.3, list what a run must keep for it to be counted and checked: each event with its time, each result and output, and what the monitoring reads, such as each hook event, each command run, and the memory used."
+        "text": "For each value of N1.3, list only what a run must keep for it to be counted and checked, such as each hook event with its time where a value counts the order of the steps."
        },
        {
         "at": "make",

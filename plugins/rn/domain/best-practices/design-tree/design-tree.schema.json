@@ -1,13 +1,13 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "design tree",
- "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: its context, the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, and the work order. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
+ "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: its context, the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, and the way to the goal. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
  "type": "object",
  "required": [
   "context",
   "goal",
   "deliverables",
-  "work"
+  "steps"
  ],
  "additionalProperties": false,
  "properties": {
@@ -90,25 +90,18 @@
    }
   },
   "goal": {
-   "description": "The one end the user is after, which every deliverable serves.",
-   "type": "object",
-   "required": [
-    "decided",
-    "by"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "decided": {
-     "description": "The end, as one sentence with the user as its subject, followed by the state its people are in once it holds: what they do then that they couldn't before.",
-     "type": "string"
+   "description": "The one end the user is after, which every deliverable serves, open until the pruner writes it from the request.",
+   "anyOf": [
+    {
+     "$ref": "#/$defs/goal_settled"
     },
-    "by": {
-     "$ref": "#/$defs/by"
+    {
+     "$ref": "#/$defs/goal_open"
     }
-   }
+   ]
   },
   "deliverables": {
-   "description": "Every deliverable the goal needs, and a node of each kind that one takes with no file of it in the product. A meta deliverable makes the best practice of a kind that later deliverables have. The list holds no order of the work, which `work` holds.",
+   "description": "Every deliverable the goal needs, and a node of each kind that one takes with no file of it in the product. A meta deliverable makes the best practice of a kind that later deliverables have. The list holds no order of the work, which `steps` holds.",
    "type": "array",
    "items": {
     "anyOf": [
@@ -116,28 +109,24 @@
       "$ref": "#/$defs/done"
      },
      {
-      "$ref": "#/$defs/done_no_file"
-     },
-     {
       "$ref": "#/$defs/open"
      }
     ]
    }
   },
-  "work": {
-   "description": "The work next, first to last, each after each deliverable that the inputs of what it names name.",
+  "steps": {
+   "description": "The way to the goal that the user follows the run by, first to last, each deliverable but the plan in one step, after each step whose deliverables it rests on. It stays empty until the plan holds the deliverables.",
    "type": "array",
    "items": {
-    "$ref": "#/$defs/work"
+    "$ref": "#/$defs/steps"
    }
   }
  },
  "$defs": {
   "by": {
-   "description": "Who settled the point. user: the user decided it. maker: the maker of the deliverable decided it. reasoning: it follows from the goal and the best practices. research: a source found it. The reason itself goes in the commit message that makes the decision.",
+   "description": "Who settled the point. user: the user decided it. reasoning: it follows from the goal and the best practices. research: a source found it. The reason itself goes in the commit message that makes the decision.",
    "enum": [
     "user",
-    "maker",
     "reasoning",
     "research"
    ]
@@ -163,14 +152,47 @@
    "description": "The name of the folder of the best practice whose necessary conditions the deliverable meets, such as readme, or `light` for a deliverable made by its check alone, where a best practice of its own would cost more than it gives, or the user wants it at once.",
    "type": "string"
   },
+  "goal_settled": {
+   "description": "The goal, written.",
+   "type": "object",
+   "required": [
+    "decided",
+    "by"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "decided": {
+     "description": "The end, as one sentence with the user as its subject, followed by the state its people are in once it holds: what they do then that they couldn't before.",
+     "type": "string"
+    },
+    "by": {
+     "$ref": "#/$defs/by"
+    }
+   }
+  },
+  "goal_open": {
+   "description": "The goal while still open, as a run starts before the pruner writes it from the request.",
+   "type": "object",
+   "required": [
+    "decided"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "decided": {
+     "description": "null while the goal is open.",
+     "type": "null"
+    }
+   }
+  },
   "done": {
-   "description": "A deliverable that meets every necessary condition of its best practice. It keeps one line: its name, path, more_paths where it has them, kind, and status, as its files hold what its decisions made.",
+   "description": "A deliverable that meets every necessary condition of its best practice, or that the user signed off with its findings left as proposals. It keeps its necessary conditions and their decisions, as a later deliverable rests on what it decided, and the pruner weighs them again with it.",
    "type": "object",
    "required": [
     "name",
     "path",
     "kind",
-    "status"
+    "status",
+    "necessary_conditions"
    ],
    "additionalProperties": false,
    "properties": {
@@ -189,37 +211,9 @@
     "status": {
      "description": "done: the deliverable meets every necessary condition of its best practice, or passes its check.",
      "const": "done"
-    }
-   }
-  },
-  "done_no_file": {
-   "description": "A node with no file that meets every necessary condition of its best practice. It keeps its necessary conditions and their decisions, as the deliverables built on it read them there.",
-   "type": "object",
-   "required": [
-    "name",
-    "path",
-    "kind",
-    "status",
-    "file",
-    "necessary_conditions"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "name": {
-     "$ref": "#/$defs/name"
-    },
-    "path": {
-     "$ref": "#/$defs/path"
-    },
-    "kind": {
-     "$ref": "#/$defs/kind"
-    },
-    "status": {
-     "description": "done: the deliverable meets every necessary condition of its best practice, or passes its check.",
-     "const": "done"
     },
     "file": {
-     "description": "false: no file of the node is made; true is never written.",
+     "description": "false for a node with no file of it in the product: no file of the node is made. Left out for a deliverable whose file the work makes; true is never written.",
      "type": "boolean"
     },
     "necessary_conditions": {
@@ -264,10 +258,9 @@
      }
     },
     "status": {
-     "description": "Where the deliverable stands. open: no one is making it now. doing: someone is making it now.",
+     "description": "open: the deliverable isn't done yet.",
      "enum": [
-      "open",
-      "doing"
+      "open"
      ]
     },
     "necessary_conditions": {
@@ -362,33 +355,33 @@
     }
    }
   },
-  "work": {
-   "description": "One piece of the work next.",
+  "steps": {
+   "description": "One step of the way to the goal.",
    "type": "object",
    "required": [
-    "do",
-    "path"
+    "settles",
+    "deliverables",
+    "signoff"
    ],
    "additionalProperties": false,
    "properties": {
-    "do": {
-     "description": "make: a round of the deliverable. decide: settle the point, or put it to the user.",
-     "enum": [
-      "make",
-      "decide"
-     ]
+    "settles": {
+     "description": "What the step settles, in the conversation's language and the user's words, such as how it's used, as each message to the user names the step by it.",
+     "type": "string",
+     "minLength": 1
     },
-    "path": {
-     "description": "The path of the deliverable that the work makes, or that holds the point.",
-     "type": "string"
+    "deliverables": {
+     "description": "The path of each deliverable of the step.",
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
     },
-    "condition": {
-     "description": "With decide, for a deliverable of a best practice's kind: the ID of the necessary condition that holds the point, such as N3.",
-     "type": "string"
-    },
-    "about": {
-     "description": "With decide: the point's about, as the deliverable holds it.",
-     "type": "string"
+    "signoff": {
+     "description": "true where the user signs off each deliverable of the step before it's done; false where each is done once its Rounds are over.",
+     "type": "boolean"
     }
    }
   }

@@ -2,33 +2,27 @@
 lines, and its fonts. Run it from the top of the repository as
 `python3 dev/scripts/figures.py write|check`.
 
-A page shows a figure through `<img>`, which reads no other file, so each SVG that git holds, and
-each Japanese copy of one in .review/ja, carries a copy of the style in its own `<style>`. `write`
-puts the copy in each figure. `check`, which dev/scripts/check.sh runs, fails on any figure whose
-copy lags behind, and on any figure that sets a font or a color of its own, as the figure would
-then look unlike the rest."""
+A page shows a figure through `<img>`, which reads no other file, so each SVG that git holds
+carries a copy of the style in its own `<style>`. `write` puts the copy in each figure. `check`,
+which dev/scripts/check.sh runs, fails on any figure whose copy lags behind, and on any figure that
+sets a font or a color of its own, as the figure would then look unlike the rest."""
 
 from __future__ import annotations
 
-import os
 import re
 import subprocess
 import sys
 
 STYLE = "dev/images/figures.css"
 BLOCK = re.compile(r"(<style>\n)(.*?)(\n\s*</style>)", re.DOTALL)
-COPIES = ".review/ja"
 OWN = re.compile(r"\s(style|fill|stroke|color|font-[a-z]+)=")
 
 
 def figures() -> list[str]:
-    """Each SVG git holds, and each Japanese copy of one, which git ignores."""
-    listed = subprocess.run(
+    """Each SVG git holds."""
+    return subprocess.run(
         ["git", "ls-files", "*.svg"], capture_output=True, text=True, check=True
     ).stdout.split()
-    for folder, _, names in os.walk(COPIES):
-        listed += [os.path.join(folder, name) for name in sorted(names) if name.endswith(".svg")]
-    return listed
 
 
 def own_looks(path: str, svg: str) -> list[str]:

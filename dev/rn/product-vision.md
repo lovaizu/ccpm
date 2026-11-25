@@ -3,7 +3,7 @@
 ## Roles
 
 - user\
-  One who asks rn for a deliverable, such as a document, code or a plugin, for the people it's for.
+  One who asks rn for a deliverable, such as a report, code, or a plugin, for the people it's for.
 
 ## Objectives and key results
 
@@ -13,8 +13,8 @@
   - KR1.2: the time from the user's request to the deliverable, including the user's own time
     answering rn. Shorter is better.
 
-KR1.1 comes first: keep a change that improves a key result only if none before it gets
-worse.
+The first key result of each objective comes first. Keep a change that improves a key result
+only if none before it gets worse.
 Key results have no targets, as a measure made a target stops being a good measure, by Goodhart's
 law. They show whether a change brought its objective closer.
 
@@ -27,8 +27,10 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   Each part of rn starts from what the people are after, and makes what brings them there.
 - Reviewed each turn by what was learned, for O1\
   Each turn, rn reviews the
-  [design tree](../../plugins/rn/domain/best-practices/design-tree/best-practice.md) by what the
+  [design tree](../../plugins/rn/domain/best-practices/design-tree/best-practice.json) by what the
   run has done and learned, keeping to the vital few.
 - Good found and made good, for O1\
   rn finds what serves the people and what would serve them better, and makes only those
   changes.
+- In the user's own terms, for O1\
+  rn speaks only of the user's goal and the way to it, and says in each message where it stands.

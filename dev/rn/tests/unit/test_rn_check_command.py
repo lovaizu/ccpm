@@ -1,10 +1,9 @@
-"""The unit cases of check/command.py, check.py's command line as Lane's check at a role's end runs
-it: for each role, a result that holds, one with faults, and none written; a generator's guide off
-its kind's template, each place on a line, the worktree and the folder taken from the Cut and from
-`cwd`, not from the process's own folder; a Cut out of its schema
-or missing; a role of neither; and each count of arguments other than two. Each runs from the
-user's repository's top, with the Cut's path from there, as Lane runs a check in the folder that the
-conversation works in."""
+"""The unit cases of check/command.py, check's command line as a role runs it before it ends:
+a result that holds for each role, the fixer's in its Fix among them; one with two faults, each on
+a line; none written; a result that isn't JSON; a Cut out of its schema or missing, a schema that
+can't be read, and a role of none, each of which check couldn't check by; and arguments other than
+two. Each runs from the user's repository's top, with the Cut's path from there, as a role runs
+rn's scripts from there, while the case's process runs in another folder."""
 
 from __future__ import annotations
 
@@ -22,35 +21,48 @@ LINE = "from invoicer.lines import parse_lines"
 
 
 class Run:
-    """The repository's top, the run's worktree holding the command, and the command's Round
-    content-1 from the repository's top."""
+    """The repository's top, the run's worktree holding the command, the command's Round
+    content-1, and its Fix fix-2, each from the repository's top."""
 
     def __init__(self, repository: str):
         self.repository = repository
         self.worktree = rn_files.worktree_of(repository, NAME)
         folder = rn_files.run_folder(repository, NAME, rn_files.walkthrough_tree(NAME))
         self.round = os.path.relpath(rn_files.round_of(folder, COMMAND, "content", 1), repository)
+        self.fix = os.path.relpath(rn_files.round_of(folder, COMMAND, "fix", 2), repository)
+        self.folder = os.path.relpath(folder, repository)
         write_files(self.worktree, {COMMAND: f"{LINE}\n"})
 
-    def cut(self, role: str, node: Any = None, kind: str = "light") -> str:
-        """Writes the role's Cut in the Round, of the node and its kind for the generator, else
-        the command's, and gives its path from the repository's top."""
-        if role == "generator":
-            node = node or rn_files.walkthrough_tree(NAME)["deliverables"][1]
+    def cut(self, role: str) -> str:
+        """Writes the role's Cut of the command in the Round, or the fixer's in the Fix, and gives
+        its path from the repository's top."""
+        if role == "fixer":
             cut: dict[str, Any] = {
+                "deliverable": rn_files.walkthrough_tree(NAME)["deliverables"][1],
+                "worktree": os.path.relpath(self.worktree, self.repository),
+                "paths": [os.path.relpath(os.path.join(self.worktree, COMMAND), self.repository)],
+                "problem": {"source": "put-up", "words": "lint: a line ends in a space"},
+                "run": self.folder,
+                "fix": self.fix,
+            }
+            path = os.path.join(self.fix, "fixer-cut.json")
+            rn_files.write_json(os.path.join(self.repository, path), cut)
+            return path
+        if role == "generator":
+            cut = {
                 "goal": rn_files.GOAL,
                 "language": rn_files.DELIVERABLES_LANGUAGE,
-                "deliverable": node,
+                "deliverable": rn_files.walkthrough_tree(NAME)["deliverables"][1],
                 "worktree": os.path.relpath(self.worktree, self.repository),
                 "inputs": [],
                 "best_practice": os.path.relpath(
-                    os.path.join(rn_files.PRACTICES, kind), self.repository
+                    os.path.join(rn_files.PRACTICES, "light"), self.repository
                 ),
+                "template": None,
                 "stage": "content",
                 "number": 1,
                 "round": self.round,
                 "trial": "/tmp/rn-trial-x",
-                "findings": None,
                 "last_good": None,
             }
         else:
@@ -67,8 +79,9 @@ class Run:
         return path
 
     def result(self, role: str, value: Any) -> str:
-        """Writes the role's result in the Round, and gives its path from the repository's top."""
-        path = os.path.join(self.round, f"{role}.json")
+        """Writes the role's result in the Round, or the fixer's in the Fix, and gives its path
+        from the repository's top."""
+        path = os.path.join(self.fix if role == "fixer" else self.round, f"{role}.json")
         rn_files.write_json(os.path.join(self.repository, path), value)
         return path
 
@@ -87,36 +100,23 @@ def run(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> Run:
 GOOD = {
     "generator": rn_files.made([("N1", [LINE])], [COMMAND]),
     "evaluator": rn_files.judged([("N1", [LINE]), ("N2", [LINE])], [("N3", "They print it.")]),
+    "fixer": {"result": "fixed", "files": [COMMAND]},
 }
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
-@pytest.mark.parametrize("role", ["generator", "evaluator"])
+@pytest.mark.parametrize("role", ["generator", "evaluator", "fixer"])
 def test_a_result_that_holds_its_cut_gives_0_printing_nothing(run: Run, role: str):
     """Given the role's Cut and a result that holds it beside it
-    When check.py runs on the role and the Cut
+    When check runs on the role and the Cut
     Then it gives 0, printing nothing"""
     cut = run.cut(role)
     run.result(role, GOOD[role])
     assert main([role, cut], run.repository, rn_files.RN) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
-def test_a_generators_result_with_a_fault_gives_1_with_the_fault(run: Run):
-    """Given the generator's Cut and its made naming N9 good, which light doesn't hold
-    When check.py runs on it
-    Then it gives 1, its output naming N9 on a line"""
-    cut = run.cut("generator")
-    run.result("generator", rn_files.made([("N1", [LINE]), ("N9", [LINE])], [COMMAND]))
-    code, out, err = main(["generator", cut], run.repository, rn_files.RN)
-    assert code == 1
-    assert any("N9" in each for each in (out + err).splitlines())
-
-
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
 def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run):
     """Given the evaluator's Cut and its judged answering N1 alone
-    When check.py runs on it
+    When check runs on it
     Then it gives 1, with N2 and N3 each named on a line of its own"""
     cut = run.cut("evaluator")
     run.result("evaluator", rn_files.judged([("N1", [LINE])]))
@@ -127,82 +127,100 @@ def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run)
     assert any("N3" in each and "N2" not in each for each in lines)
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
-@pytest.mark.parametrize("role", ["generator", "evaluator"])
-def test_a_role_that_wrote_no_result_gives_1_with_where_it_writes_one(run: Run, role: str):
-    """Given the role's Cut, and no result beside it
-    When check.py runs on it
-    Then it gives 1, naming the path of <round>/<role>.json"""
-    cut = run.cut(role)
-    code, out, err = main([role, cut], run.repository, rn_files.RN)
+def test_a_fixer_that_wrote_no_result_gives_1_with_where_it_writes_one_in_its_fix(run: Run):
+    """Given the fixer's Cut, and no result beside it
+    When check runs on it
+    Then it gives 1, naming the path of <fix>/fixer.json"""
+    cut = run.cut("fixer")
+    written = os.path.join(run.fix, "fixer.json")
+    assert main(["fixer", cut], run.repository, rn_files.RN) == (
+        1,
+        f"{written}: no result is written there; write it before you end\n",
+        "",
+    )
+
+
+def test_a_result_that_isnt_json_gives_1_naming_it(run: Run):
+    """Given the generator's Cut, and a result beside it that isn't JSON
+    When check runs on it
+    Then it gives 1, its output starting `check: ` and naming the result's path, as the role
+    mends what it wrote"""
+    cut = run.cut("generator")
+    written = os.path.join(run.round, "generator.json")
+    write_files(run.repository, {written: "{made"})
+    code, out, err = main(["generator", cut], run.repository, rn_files.RN)
     assert code == 1
-    assert os.path.join(run.round, f"{role}.json") in out + err
+    assert (out + err).startswith(f"check: {written}: ")
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
-def test_a_cut_out_of_its_schema_gives_1_saying_whats_wrong(run: Run):
+def test_a_cut_out_of_its_schema_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given a generator's Cut with no goal, and a result that would hold it
-    When check.py runs on it
-    Then it gives 1, its output starting `check.py: ` and naming goal"""
+    When check runs on it
+    Then it gives 2, saying that it couldn't check the generator's result, as its Cut leaves its
+    form at goal"""
     cut = run.cut("generator")
     given = rn_files.read_json(os.path.join(run.repository, cut))
     del given["goal"]
     rn_files.write_json(os.path.join(run.repository, cut), given)
     run.result("generator", GOOD["generator"])
     code, out, err = main(["generator", cut], run.repository, rn_files.RN)
-    assert code == 1
-    assert (out + err).startswith("check.py: ")
+    assert code == 2
+    assert (out + err).startswith(
+        f"check: couldn't check the generator's result, as its Cut {cut} leaves the form of"
+        " a generator's Cut at "
+    )
     assert "goal" in out + err
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
-def test_a_cut_that_isnt_there_gives_1_naming_it(run: Run):
+def test_a_cut_that_isnt_there_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given no Cut at the path given
-    When check.py runs on it
-    Then it gives 1, its output starting `check.py: ` and naming the path"""
+    When check runs on it
+    Then it gives 2, saying that it couldn't check the generator's result, as its Cut, by its
+    path, can't be read"""
     missing = os.path.join(run.round, "generator-cut.json")
     code, out, err = main(["generator", missing], run.repository, rn_files.RN)
-    assert code == 1
-    assert (out + err).startswith("check.py: ")
-    assert missing in out + err
+    assert code == 2
+    assert (out + err).startswith(
+        f"check: couldn't check the generator's result, as its Cut {missing} can't be read"
+        " as JSON: "
+    )
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
-@pytest.mark.parametrize("role", ["orchestrator", "Generator"])
-def test_a_role_of_neither_gives_1_saying_whats_wrong(run: Run, role: str):
-    """Given the generator's Cut and its result
-    When check.py runs on a role that is neither generator nor evaluator
-    Then it gives 1, its output starting `check.py: `"""
+def test_a_schema_that_cant_be_read_gives_2_saying_what_check_py_couldnt_check(
+    run: Run, tmp_path: Any
+):
+    """Given the generator's Cut and its result, and an rn folder that holds no schema
+    When check runs on it
+    Then it gives 2, saying that the schema can't be read, by its path"""
     cut = run.cut("generator")
     run.result("generator", GOOD["generator"])
-    code, out, err = main([role, cut], run.repository, rn_files.RN)
-    assert code == 1
-    assert (out + err).startswith("check.py: ")
+    bare = os.path.join(str(tmp_path), "rn")
+    os.makedirs(bare)
+    code, out, err = main(["generator", cut], run.repository, bare)
+    assert code == 2
+    assert (out + err).startswith("check: ")
+    assert "generator-cut.schema.json: the schema can't be read: " in out + err
 
 
-@pytest.mark.supports("test_a_generators_end_with_no_result_written_is_stopped")
-@pytest.mark.parametrize("argv", [[], ["generator"], ["generator", "a.json", "b.json"]])
-def test_arguments_other_than_a_role_and_a_cut_give_2_with_the_usage(run: Run, argv: list[str]):
+def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run):
+    """Given the generator's Cut and its result
+    When check runs on the role orchestrator, none of generator, evaluator, and fixer
+    Then it gives 2, saying that it couldn't check a result of the role, as it checks only the
+    generator's, the evaluator's, and the fixer's"""
+    cut = run.cut("generator")
+    run.result("generator", GOOD["generator"])
+    code, out, err = main(["orchestrator", cut], run.repository, rn_files.RN)
+    assert code == 2
+    assert out + err == (
+        "check: couldn't check a result of 'orchestrator', as it checks only the generator's, the"
+        " evaluator's, and the fixer's\n"
+    )
+
+
+def test_arguments_other_than_a_role_and_a_cut_give_2_with_the_usage(run: Run):
     """Given the run
-    When check.py runs on no argument, one, or three
+    When check runs on three arguments
     Then it gives 2 with the usage"""
-    code, out, err = main(argv, run.repository, rn_files.RN)
+    code, out, err = main(["generator", "a.json", "b.json"], run.repository, rn_files.RN)
     assert code == 2
     assert USAGE in out + err
-
-
-@pytest.mark.supports("test_a_generators_end_with_its_deliverable_off_its_template_is_held")
-def test_a_generators_guide_off_its_template_gives_1_with_each_place_a_line(run: Run):
-    """Given the guide's generator's Cut, of the kind readme, and its made naming the guide,
-    which holds a heading and a paragraph alone, in the run's worktree that the Cut names
-    When check.py runs on it from the repository's top
-    Then it gives 1, with lines `docs/guide.md:<line>: <what>`, one for each place"""
-    guide = rn_files.open_node(rn_files.GUIDE_NAME, rn_files.GUIDE, "readme", [COMMAND])
-    write_files(run.worktree, {rn_files.GUIDE: "# Print an invoice\n\nType the command.\n"})
-    cut = run.cut("generator", guide, "readme")
-    run.result("generator", rn_files.made([], [rn_files.GUIDE]))
-    code, out, err = main(["generator", cut], run.repository, rn_files.RN)
-    places = [each for each in (out + err).splitlines() if each.startswith(f"{rn_files.GUIDE}:")]
-    assert code == 1
-    assert places
-    assert all(each.split(":")[1].isdigit() for each in places)

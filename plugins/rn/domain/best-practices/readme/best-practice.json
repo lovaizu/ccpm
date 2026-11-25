@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision and take from Roles the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open the product vision and take from Roles the people the product is for, named by the work they want done, narrowly enough that a reader outside the role can tell it isn't for them, such as `you keep a Python library that others install` in place of `you write Python`."
        },
        {
         "at": "decide",
@@ -32,13 +26,7 @@
        },
        {
         "at": "decide",
-        "text": "Open the product's manifest, such as plugin.json or pyproject.toml, which N3 and N9 take from too.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{manifest}"
-         ]
-        }
+        "text": "Open the product's manifest, such as plugin.json or pyproject.toml, which N3 and N9 take from too."
        },
        {
         "at": "decide",
@@ -61,7 +49,7 @@
      {
       "id": "N2",
       "about": "Non-goals",
-      "what": "Does the README list what readers might expect the product to do but it doesn't?",
+      "what": "Does the README list what a reader bringing the role's work would count on the product to do but it doesn't?",
       "why": "A reader who needs something the product doesn't do finds out before they install it, not after their work depends on it.",
       "items": [
        {
@@ -138,13 +126,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product's license file, such as LICENSE in the product's folder, and read which license it holds.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{license}"
-         ]
-        }
+        "text": "Open the product's license file, such as LICENSE in the product's folder, and read which license it holds."
        },
        {
         "at": "decide",
@@ -152,7 +134,7 @@
        },
        {
         "at": "decide",
-        "text": "Search the product's folder for the license files and notices of others' work, such as a copied library's own LICENSE, and list each work with its license's identifier and the path of its file."
+        "text": "Search the product's folder for the license files and notices of others' work, such as a copied library's own LICENSE, and list each work whose license differs from the product's, with its license's identifier and the path of its file."
        },
        {
         "at": "make",
@@ -160,13 +142,7 @@
        },
        {
         "at": "make",
-        "text": "Follow each link from the README's folder, and check that it opens the license file that the README names beside it.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{license}"
-         ]
-        }
+        "text": "Follow each link from the README's folder, and check that it opens the license file that the README names beside it."
        }
       ]
      },
@@ -186,13 +162,7 @@
        },
        {
         "at": "make",
-        "text": "Read the README from the top as a newcomer in the product vision's role, and after each section, write down the question you have next.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "Read the README from the top as a newcomer in the product vision's role, and after each section, write down the question you have next."
        },
        {
         "at": "make",
@@ -200,7 +170,7 @@
        },
        {
         "at": "make",
-        "text": "Where the next section doesn't answer the question you wrote, add the answer at its start, or, where a newcomer needs it neither to decide nor to start, link the document that holds it from Documentation."
+        "text": "Where the next section doesn't answer the question you wrote, and a newcomer needs the answer to decide or to start, add it at its start. Leave out each answer they need for neither."
        }
       ]
      }
@@ -324,7 +294,7 @@
        },
        {
         "at": "make",
-        "text": "Show the mechanism in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part."
+        "text": "Where the answers alone leave the mechanism unclear, show it in one figure, with each problem and doubt beside the part that answers it, and what the reader gets from that part."
        },
        {
         "at": "make",
@@ -374,13 +344,7 @@
        },
        {
         "at": "make",
-        "text": "Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again. Where the product isn't released yet, write the steps that its release takes, and run them once it's out.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{install}"
-         ]
-        }
+        "text": "Run each check and install command exactly as the README writes it, on a machine with nothing the product needs, such as a throwaway copy with an empty home folder. Where a step fails or needs something the README doesn't name, add it, and start again. Where the product isn't released yet, write the steps that its release takes, and run them once it's out."
        }
       ]
      },
@@ -392,11 +356,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "List what the product has for a reader who has started: the documents in its folder, such as a docs folder or a changelog, and the place for help that its manifest names, such as `bugs.url` in package.json or the issues of `repository` in plugin.json."
+        "text": "List what the product has for a reader who has started: the documents in its folder, such as a docs folder, and the place for help that its manifest names, such as `bugs.url` in package.json or the issues of `repository` in plugin.json."
        },
        {
         "at": "decide",
-        "text": "Keep each that serves a need the README leaves, such as fuller use, reference, help, or the changes in each version."
+        "text": "Keep each that a reader who has started goes to next, for fuller use or for help."
        },
        {
         "at": "decide",

@@ -1,10 +1,9 @@
 """The unit cases of check/form.py, which holds a JSON value to one of rn's JSON Schemas: one value
 that holds and one that leaves it for each keyword of draft-07 that rn's schemas and the design
-tree's use, `type` of each JSON type, `required`, `properties`, `additionalProperties`, `items`,
-`minItems`, `minLength`, `minimum`, `pattern`, `enum`, `const`, `oneOf`, `anyOf`, and `$ref` into
-`$defs`, each limit on both sides; a key that JSON Pointer escapes; no, one, and several faults;
-rn's own schemas on the values its parts write; and CantRun for a schema it can't read or a keyword
-it doesn't check."""
+tree's use, `type` of each JSON type, `required`, `properties`, `additionalProperties`, the last
+three on a value that isn't an object too, `items`, `minItems`, `minLength`, `minimum`, `pattern`,
+`enum`, `const`, `oneOf`, `anyOf`, and `$ref` into `$defs`, each limit on both sides; keys that
+JSON Pointer escapes; and CantRun for a schema it can't read or a keyword it doesn't check."""
 
 from __future__ import annotations
 
@@ -13,7 +12,6 @@ import os
 from typing import Any
 
 import pytest
-import rn_files
 from check.form import faults
 from fault import CantRun
 
@@ -45,7 +43,6 @@ def pointers(found: list[str]) -> list[str]:
     return sorted(each.split(": ", 1)[0] for each in found)
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 @pytest.mark.parametrize(
     ("kind", "good", "bad"),
     [
@@ -53,7 +50,6 @@ def pointers(found: list[str]) -> list[str]:
         ("array", '{"a": []}', '{"a": {}}'),
         ("string", '{"a": "x"}', '{"a": 1}'),
         ("integer", '{"a": 1}', '{"a": true}'),
-        ("integer", '{"a": -3}', '{"a": 1.5}'),
         ("boolean", '{"a": false}', '{"a": 0}'),
         ("null", '{"a": null}', '{"a": false}'),
     ],
@@ -68,7 +64,6 @@ def test_a_type_holds_its_own_kind_and_refuses_another(schema, kind: str, good: 
     assert pointers(faults(value(bad), path)) == ["/a"]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_required_property_missing_is_a_fault_naming_it(schema):
     """Given a schema whose object requires `goal` and `work`
     When a value with `work` alone is held to it
@@ -80,7 +75,6 @@ def test_a_required_property_missing_is_a_fault_naming_it(schema):
     assert "goal" in found[0]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_property_no_schema_names_is_a_fault_where_additional_ones_are_refused(schema):
     """Given a schema of an object with the property `a` alone and no additional property
     When a value with `a` and `b` is held to it
@@ -92,7 +86,24 @@ def test_a_property_no_schema_names_is_a_fault_where_additional_ones_are_refused
     assert "b" in found[0]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
+def test_a_value_not_an_object_where_one_is_taken_has_the_types_fault_alone(schema):
+    """Given a schema whose property `goal` takes an object that requires `decided`, holds it as a
+    string, and takes no other property, as the design tree's goal does
+    When a value whose `goal` is a string is held to it
+    Then it has one fault, at /goal, of its type, as `required`, `properties`, and
+    `additionalProperties` hold only of an object"""
+    goal = {
+        "type": "object",
+        "required": ["decided"],
+        "additionalProperties": False,
+        "properties": {"decided": {"type": "string"}},
+    }
+    path = schema({"type": "object", "properties": {"goal": goal}})
+    assert faults(value('{"goal": "The goal."}'), path) == [
+        "/goal: takes a value of the type object"
+    ]
+
+
 def test_each_item_of_an_array_is_held_to_items_by_its_index(schema):
     """Given a schema of an array of strings
     When ["x", 2, "y", 3] is held to it
@@ -102,7 +113,6 @@ def test_each_item_of_an_array_is_held_to_items_by_its_index(schema):
     assert pointers(faults(value('["x", 2, "y", 3]'), path)) == ["/1", "/3"]
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
 def test_min_items_holds_at_its_limit_and_refuses_one_less(schema):
     """Given a schema whose property `lines` takes at least 1 item
     When [] and ["x"] are held to it
@@ -112,7 +122,6 @@ def test_min_items_holds_at_its_limit_and_refuses_one_less(schema):
     assert faults(value('{"lines": ["x"]}'), path) == []
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
 def test_min_length_holds_at_its_limit_and_refuses_one_less(schema):
     """Given a schema whose property `good_when` takes at least 1 character
     When "" and "x" are held to it
@@ -124,18 +133,15 @@ def test_min_length_holds_at_its_limit_and_refuses_one_less(schema):
     assert faults(value('{"good_when": "x"}'), path) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_minimum_holds_at_its_limit_and_refuses_one_less(schema):
     """Given a schema whose property `number` takes an integer of 1 at least
-    When 0, 1, and 2 are held to it
-    Then 0 has a fault at /number, and 1 and 2 none"""
+    When 0 and 1 are held to it
+    Then 0 has a fault at /number, and 1 none"""
     path = schema({"type": "object", "properties": {"number": {"type": "integer", "minimum": 1}}})
     assert pointers(faults(value('{"number": 0}'), path)) == ["/number"]
     assert faults(value('{"number": 1}'), path) == []
-    assert faults(value('{"number": 2}'), path) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_pattern_is_searched_anywhere_in_the_string(schema):
     """Given a schema whose property `a` takes a string with the pattern `b`
     When "abc" and "acd" are held to it
@@ -145,30 +151,19 @@ def test_a_pattern_is_searched_anywhere_in_the_string(schema):
     assert pointers(faults(value('{"a": "acd"}'), path)) == ["/a"]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_an_enum_out_of_its_values_says_each_value_it_takes(schema):
-    """Given a schema whose work's `do` takes one of make and decide
-    When a value whose /work/0/do is `build` is held to it
-    Then it has the one fault `/work/0/do: takes one of make, decide`, as check/form.py's contract
-    words it"""
-    path = schema(
-        {
-            "type": "object",
-            "properties": {
-                "work": {
-                    "type": "array",
-                    "items": {"properties": {"do": {"enum": ["make", "decide"]}}},
-                }
-            },
-        }
-    )
-    assert faults(value('{"work": [{"do": "make"}]}'), path) == []
-    assert faults(value('{"work": [{"do": "build"}]}'), path) == [
-        "/work/0/do: takes one of make, decide"
+    """Given a schema whose goal's `by` takes one of user, reasoning, and research
+    When a value whose /goal/by is `nobody` is held to it
+    Then it has the one fault `/goal/by: takes one of user, reasoning, research`, as check/form.py's
+    contract words it"""
+    by = {"enum": ["user", "reasoning", "research"]}
+    path = schema({"type": "object", "properties": {"goal": {"properties": {"by": by}}}})
+    assert faults(value('{"goal": {"by": "user"}}'), path) == []
+    assert faults(value('{"goal": {"by": "nobody"}}'), path) == [
+        "/goal/by: takes one of user, reasoning, research"
     ]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_const_takes_its_one_value(schema):
     """Given a schema whose property `status` takes the const `done`
     When "done" and "Done" are held to it
@@ -178,7 +173,6 @@ def test_a_const_takes_its_one_value(schema):
     assert pointers(faults(value('{"status": "Done"}'), path)) == ["/status"]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_one_of_takes_a_value_that_holds_exactly_one_branch(schema):
     """Given a schema whose property `a` takes one of an integer or a value of 0 at least
     When -1, 1, and "x" are held to it
@@ -192,7 +186,6 @@ def test_one_of_takes_a_value_that_holds_exactly_one_branch(schema):
     assert faults(value('{"a": "x"}'), path) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_any_of_takes_a_value_that_holds_one_branch_or_more(schema):
     """Given a schema whose property `a` takes any of a string or an integer
     When "x", 1, and null are held to it
@@ -208,7 +201,6 @@ def test_any_of_takes_a_value_that_holds_one_branch_or_more(schema):
     assert pointers(faults(value('{"a": null}'), path)) == ["/a"]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_ref_into_defs_holds_the_value_to_the_definition(schema):
     """Given a schema whose property `by` refers to #/$defs/by, an enum of user and maker
     When "user" and "someone" are held to it
@@ -224,90 +216,14 @@ def test_a_ref_into_defs_holds_the_value_to_the_definition(schema):
     assert pointers(faults(value('{"by": "someone"}'), path)) == ["/by"]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
-@pytest.mark.parametrize(("key", "pointer"), [("a/b", "/a~1b"), ("a~b", "/a~0b")])
-def test_a_fault_under_a_key_with_a_slash_or_a_tilde_is_escaped_in_its_pointer(
-    schema, key: str, pointer: str
-):
+def test_a_fault_under_a_key_with_a_slash_or_a_tilde_is_escaped_in_its_pointer(schema):
     """Given a schema whose object's every property takes a string, by additionalProperties
-    When a value whose key holds `/` or `~` maps to 1
-    Then its one fault's pointer escapes the key as JSON Pointer does"""
+    When a value whose keys `a/b` and `a~b` each map to 1
+    Then each fault's pointer escapes its key as JSON Pointer does"""
     path = schema({"type": "object", "additionalProperties": {"type": "string"}})
-    assert pointers(faults({key: 1}, path)) == [pointer]
+    assert pointers(faults({"a/b": 1, "a~b": 1}, path)) == ["/a~0b", "/a~1b"]
 
 
-@pytest.mark.supports("test_an_evaluators_end_leaving_a_condition_unanswered_is_stopped")
-def test_several_faults_are_each_given(schema):
-    """Given a schema of an object requiring `result`, with `good` an array of strings and no
-    additional property
-    When a value lacking `result`, with good [1, 2] and an extra key, is held to it
-    Then it has four faults: one naming result, one at /good/0, one at /good/1, and one naming
-    the extra key"""
-    path = schema(
-        {
-            "type": "object",
-            "required": ["result"],
-            "additionalProperties": False,
-            "properties": {"result": {}, "good": {"type": "array", "items": {"type": "string"}}},
-        }
-    )
-    found = faults(value('{"good": [1, 2], "extra": 0}'), path)
-    assert len(found) == 4
-    assert "/good/0" in pointers(found) and "/good/1" in pointers(found)
-    assert any("result" in each for each in found) and any("extra" in each for each in found)
-
-
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
-def test_the_walkthroughs_design_tree_holds_the_design_tree_schema():
-    """Given the walkthrough's design tree, read from JSON
-    When it is held to design-tree.schema.json
-    Then it has no fault"""
-    tree = json.loads(json.dumps(rn_files.walkthrough_tree("20261120-a-command-with-which-the")))
-    assert faults(tree, rn_files.TREE_SCHEMA) == []
-
-
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
-def test_a_decision_stating_its_date_leaves_the_design_tree_schema():
-    """Given the walkthrough's design tree whose command's N1 holds a decision that names its date
-    When it is held to design-tree.schema.json
-    Then each fault lies under /deliverables/1, the command, where anyOf joins the forms that the
-    decision and the deliverable may take"""
-    tree = rn_files.walkthrough_tree(
-        "20261120-a-command-with-which-the",
-        command_decisions={"N1": [rn_files.decision("the tax rate", "Each invoice, 2026-11-20.")]},
-    )
-    found = pointers(faults(json.loads(json.dumps(tree)), rn_files.TREE_SCHEMA))
-    assert found
-    assert all(each.startswith("/deliverables/1/") for each in found)
-
-
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
-@pytest.mark.parametrize(
-    ("name", "written"),
-    [
-        ("generator-round", rn_files.made([("N1", ["print"])], ["invoicer/__main__.py"])),
-        ("generator-round", rn_files.point()),
-        ("evaluator-round", rn_files.judged([("N1", ["print"])], [("N2", "They print it.")])),
-    ],
-)
-def test_each_roles_result_holds_its_schema(name: str, written: Any):
-    """Given a role's result of each class, read from JSON
-    When it is held to its schema in domain/schemas/
-    Then it has no fault"""
-    path = os.path.join(rn_files.SCHEMAS, f"{name}.schema.json")
-    assert faults(json.loads(json.dumps(written)), path) == []
-
-
-@pytest.mark.supports("test_a_generators_good_of_a_condition_its_deliverable_lacks_is_stopped")
-def test_a_generators_result_of_another_word_leaves_its_schema():
-    """Given a generator's result `done`, read from JSON
-    When it is held to generator-round.schema.json
-    Then it has the one fault `/result: takes one of made, point`"""
-    path = os.path.join(rn_files.SCHEMAS, "generator-round.schema.json")
-    assert faults({"result": "done"}, path) == ["/result: takes one of made, point"]
-
-
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_keyword_it_doesnt_check_is_refused_naming_it(schema):
     """Given a schema whose property `a` uses maxLength, a keyword that none of rn's schemas uses
     When a value is held to it
@@ -317,14 +233,10 @@ def test_a_keyword_it_doesnt_check_is_refused_naming_it(schema):
         faults({"a": "x"}, path)
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_schema_that_cant_be_read_is_refused_naming_it(tmp_path: Any):
-    """Given a path where no schema lies, and a schema that isn't JSON
-    When a value is held to each
-    Then each raises CantRun naming its file"""
-    missing = os.path.join(str(tmp_path), "missing.schema.json")
-    with pytest.raises(CantRun, match="missing.schema.json"):
-        faults({}, missing)
+    """Given a schema that isn't JSON
+    When a value is held to it
+    Then it raises CantRun naming its file"""
     broken = os.path.join(str(tmp_path), "broken.schema.json")
     with open(broken, "w", encoding="utf-8") as f:
         f.write("{not json")

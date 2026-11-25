@@ -4,36 +4,29 @@ Each plugin's product vision and architecture live here. Installing a plugin
 copies only its own folder, so nothing here reaches its users' machines.
 
 Every plugin takes from [the plugin guide](plugin-development-guide.md) what its requirements call
-for, and starts from [the plugin template](plugin-template/).
-[.claude/rules/dev.md](../.claude/rules/dev.md) says how the work on a plugin runs: by the plugin
-guide and rn's architecture.
+for.
 
 - [Rn](./rn/)
-- [Lane](./lane/)
 
 ## The checks on every push
 
 CI runs these checks on every push:
 
-- the linter, the formatter, and the type checker of the checks' own code, and its tests
-- the checks of the code's design: copied code, import cycles, and a function more complex than
-  one reading can follow
-- the form of each best practice, and its Markdown
+- the linter, the formatter, and the type checker of the plugins' code and the checks' own
+- the checks of the code's design: copied code, import cycles, code that nothing uses, and a
+  function more complex than one reading can follow
+- the form of each best practice
 - the style of every figure
 - Mermaid's parse of every diagram in the Markdown files
 - Claude Code's check of every manifest
 - that each plugin works from its own folder, uses another plugin only through `dependencies`, and
   carries its LICENSE, by `dev/scripts/standalone.py`
 - the form of each product vision, README, and architecture against its template, by
-  `plugins/rn/scripts/template.py`
+  `plugins/rn/domain/scripts/template`
 - the tag of each decision of each architecture's views, by `dev/scripts/trace.py`
-- the trace of each plugin's test cases to its architecture, by `dev/scripts/trace.py`, once
-  `dev/<plugin>/tests/` holds them, and the plugin's unit and integration tests
+- each plugin's unit tests, and that they run every line and branch of its code
 - the records that each double of the plugins' tests takes its results from, and each line it
   names in them
-- each plugin's property-based tests
-- the tests of the trace script and of the double of Claude Code, and that they run every line and
-  branch of each
 
 Each night, CI runs the checks again on the oldest Python and the newest, of `main` and of each
 branch an open pull request comes from, and checks that each page of the documentation that a

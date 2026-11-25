@@ -14,23 +14,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it, and note in a line what each section is for, and note the language that the document is written in, which picks the rules that the items on sentences, punctuation, and words take.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "Read the document to its end before you change anything, and list in one line each fact, decision, and step that it states, with the section that states it and note the language that the document is written in, which picks the rules that the items on sentences, punctuation, and words take."
        },
        {
         "at": "make",
-        "text": "After your last change, read the document to its end, and check each line of the list against it: put back each fact, decision, or step that it no longer states, and take out each that the refactoring added. Check a fact that you moved to another document in its new place, and leave out one that the person who owns the document said to cut.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "After your last change, read the document to its end, and check each line of the list against it: put back each fact, decision, or step that it no longer states, and take out each that the refactoring added. Check a fact that you moved to another document in its new place, and leave out one that the person who owns the document said to cut."
        }
       ]
      }
@@ -65,10 +53,6 @@
        {
         "at": "decide",
         "text": "Split the document into sections of one topic each: for each section, ask whether a reader with one purpose would read part of it and skip the rest, and if so, split it there. For example, split `Setup` into `Install the plugin` and `Configure the proxy` where only readers behind a proxy configure one."
-       },
-       {
-        "at": "decide",
-        "text": "Give each item that a reader looks for, such as a question they have or a command they run, a heading of its own, so that it shows in the outline and a link can point to it."
        },
        {
         "at": "make",
@@ -120,13 +104,7 @@
        },
        {
         "at": "make",
-        "text": "After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "After cutting, read the document again from the top as each reader on your list, for their purpose, since a cut in one section can take what a sentence in another needs. Where a reader no longer finds a step, a value, or a condition that their purpose needs, put back the words that told it."
        }
       ]
      },
@@ -189,16 +167,6 @@
        {
         "at": "make",
         "text": "Put each exception to a rule in the sentence right after the rule, such as `Write each name in lowercase. Write the plugin's own name as its manifest does.`"
-       },
-       {
-        "at": "make",
-        "text": "Read the document from the top, and mark each place where you had to look back or ahead. Move what the place needed to before it.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
        }
       ]
      },
@@ -242,7 +210,7 @@
        },
        {
         "at": "make",
-        "text": "Where the document's language lets a sentence drop its subject, as Japanese does, write the subject wherever the sentences before it leave the reader more than one actor to take, as 公用文作成の考え方 asks, such as `rn は` before a sentence that follows one about Lane."
+        "text": "Where the document's language lets a sentence drop its subject, as Japanese does, write the subject wherever the sentences before it leave the reader more than one actor to take, as 公用文作成の考え方 asks, such as `rn は` before a sentence that follows one about the user."
        },
        {
         "at": "make",
@@ -250,7 +218,7 @@
        },
        {
         "at": "make",
-        "text": "For each pronoun, such as `it`, `they`, or `this`, ask whether it could refer to two nouns, or stands more than five words after its noun, and if so, write the noun."
+        "text": "For each pronoun, such as `it`, `they`, or `this`, ask whether it could refer to two nouns, and if so, write the noun."
        },
        {
         "at": "make",
@@ -262,13 +230,7 @@
        },
        {
         "at": "make",
-        "text": "Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{deliverable}"
-         ]
-        }
+        "text": "Read each sentence as a machine translator would: word by word, with nothing from outside the sentence. If it reads two ways, or would read unnaturally in another language, rewrite it."
        }
       ]
      },
@@ -285,10 +247,6 @@
        {
         "at": "make",
         "text": "In Japanese, keep a comma only at the border between two long modifiers or more, and where the words come in an order other than the usual one, by Honda's two principles, and take out each other comma, such as the one after a short subject, as in `rn は、` for `rn は`."
-       },
-       {
-        "at": "make",
-        "text": "Where a sentence still needs three commas or more, split it into sentences of one point each, as N7 does."
        }
       ]
      }
@@ -326,7 +284,7 @@
        },
        {
         "at": "make",
-        "text": "Write out each abbreviation where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does."
+        "text": "Write out each abbreviation that the readers don't already use where the reader first meets it, as the [Google developer documentation style guide](https://developers.google.com/style/abbreviations) does."
        }
       ]
      },

@@ -1,8 +1,7 @@
 # Plugin development guide
 
 This guide is for a Claude Code plugin whose roles work together to make a document, code, or
-another work, and for a plugin that such plugins depend on, such as
-[Lane](../plugins/lane/README.md). A plugin takes from it what its requirements call for.
+another work. A plugin takes from it what its requirements call for.
 
 ## Structure
 
@@ -18,10 +17,6 @@ another work, and for a plugin that such plugins depend on, such as
 - **generator**: a subagent that makes the work. A subagent started for one job, such as the
   generator or the evaluator, is a role.
 - **evaluator**: a subagent that checks the work in its user's place. It did not make the work.
-- **rules**: what the plugin gives Lane in `lane/`: each role's steps, each step's rules, and the
-  order of the roles' starts, fixed in `lane/rules.json` or given as the run goes by its adapters.
-- **Lane**: the plugin that the plugin depends on. Its hooks hold the orchestrator and each role to
-  the rules, as [its rules and adapters](../plugins/lane/docs/rules-and-adapters.md) define.
 
 ### Sequence
 
@@ -59,12 +54,9 @@ sequenceDiagram
 │       ├── .claude-plugin/plugin.json  the manifest, holding the version and the dependencies <JSON>
 │       ├── skills/<command>/SKILL.md   a typed command's entry, pointing to the orchestrator's part <Markdown>
 │       ├── agents/<role>.md            an agent's entry <Markdown>
-│       ├── lane/                       the rules that the plugin gives Lane
-│       │   ├── rules.json              each role's steps and rules, and the routes of a fixed order <JSON>
-│       │   └── adapters/               what only the plugin knows as the run goes <Python 3>
-│       ├── scripts/                    each command that a role or Lane runs, pointing to its code in domain/ <Python 3>
 │       ├── domain/                     the knowledge and rules of the plugin's work, apart from Claude Code
-│       │   └── <role>.md               a role's part: the steps it follows <Markdown>
+│       │   ├── <role>.md               a role's part: the steps it follows <Markdown>
+│       │   └── scripts/<script>/       a command that a role runs, its `__main__.py` and its code <Python 3>
 │       ├── images/                     the README's figures <SVG>
 │       ├── LICENSE                     the plugin's own copy of the repository's license
 │       ├── README.md                   for the plugin's users <Markdown>
@@ -72,28 +64,21 @@ sequenceDiagram
 └── dev/                                what only the developers need, never installed
     ├── README.md                       how to build and check the plugins <Markdown>
     ├── plugin-development-guide.md     this document
-    ├── plugin-template/                the files a plugin starts from
     ├── images/                         the figures' style, and this document's figures <CSS, SVG>
     ├── scripts/                        the checks <Python 3>
-    ├── tests/                          the double of Claude Code that the plugins' tests share <Python 3>
     └── <plugin>/                       one for each folder in plugins/
         ├── README.md                   how to build and check the plugin <Markdown>
         ├── product-vision.md           the plugin's product vision, where it keeps one <Markdown>
         ├── architecture.md             the plugin's architecture <Markdown>
         ├── images/                     the architecture's figures <SVG>
-        └── tests/                      the test cases, by when each runs, as Test says <Python 3>
+        └── tests/unit/                 the unit tests of the plugin's code <Python 3>
 ```
 
-A plugin that others depend on, such as Lane, keeps its own parts in its folder in place of the
-roles', such as its hooks in `hooks/`, its commands in `bin/`, and what it takes in and gives out
-in `docs/`.
-
-An entry is a file whose form Claude Code fixes: a skill, an agent, a hook, or a command line. Its
+An entry is a file whose form Claude Code fixes: a skill, an agent, or a hook. Its
 part is the file in `domain/` that does the entry's job. An entry is named as its caller calls it,
 such as the command a person types. A part is named by the role it holds, so a role's agent
 `agents/<role>.md` points to `domain/<role>.md`, and the orchestrator's skill points to
-`domain/orchestrator.md`. [The template](plugin-template/) holds the first form of each entry, of
-each role's part, and of the rules that the plugin gives Lane.
+`domain/orchestrator.md`.
 
 Installing a plugin copies only its folder, so what only developers need stays in `dev/`. A
 repository of one plugin keeps the same tree with one folder in `plugins/`.
@@ -116,8 +101,7 @@ entries to one job do not drift apart. What the plugin knows outlives the agent 
 
 A skill's or an agent's body points to its part, and says where each file the part names lies. The
 part names each file by its name alone, never
-by where it is installed. An agent reads its part in full before anything else, and Lane holds the
-agent to this by a rule of the files that its first step reads whole.
+by where it is installed. An agent reads its part in full before anything else.
 
 *Why*: Claude Code makes an agent's body its system prompt, and reads no other file into it. After
 `/compact`, a part that a skill links comes back in full. The skill's own body survives only as the
@@ -143,34 +127,17 @@ that failed counts as no pass.
 *Why*: a reader takes a check that stays silent when it could not check for one that found nothing.
 Claude Code reads a hook that fails with no `onFailure` as no answer, which stops nothing.
 
-### Each step and practice carried out
+### A rule that holds on every run
 
-Each role's steps say each practice and each file it takes, and the plugin's rules give Lane the
-rule that those words call for: a step done in order, the practices of a step as its checklist, a
-file read whole or never read, and the paths a step writes. The AI marks each step and each item
-done with Lane's reporters at the time it does them. The plugin's own check, a `check` rule of
-Lane's, runs at each end only for what no other rule of Lane's holds, such as a result against
-what the role was given.
+A hook of the plugin's own `hooks/hooks.json` holds each rule that must hold on every run, such as
+a path that a role never writes. A permission rule or branch protection holds what is hard to undo.
+The role's steps hold the rest.
 
-*Why*: an AI that lists at its end the practices it carried out makes a claim that no one checks,
-and a practice skipped leaves its condition unmet in the work. A mark made at the time, by the AI's
-own call, shows each step and practice as the AI took it, and Lane stops the step that skips one at
-once. A rule of Lane's holds on every run, while the plugin's own check repeats what a rule holds.
-
-### Lane tells each role its steps again
-
-Where an instruction alone does not hold a step, Lane tells the role the step again when it drifts,
-with the step's own sentence. Branch protection or permission rules hold what is hard to undo.
-Lane holds the orchestrator in the main conversation the same way: it stops a start that the order
-doesn't make due, gives the starts due as a role's result reaches the main conversation, and stops
-the orchestrator's turn from ending while a start is due. The plugin names Lane among the
-dependencies of its `plugin.json`, and writes no hooks of its own for what a rule of Lane's holds.
-
-*Why*: a hook runs every time, while an instruction is only advice. Lane holds the rules and the
-order for every plugin, so each check is written and tested once. A plugin's agent ignores `hooks`
-in its own frontmatter
+*Why*: a hook runs every time, while an instruction is only advice
+([best practices](https://code.claude.com/docs/en/best-practices)). A plugin's agent ignores
+`hooks` in its own frontmatter
 ([plugin agents](https://code.claude.com/docs/en/plugins/components#frontmatter-fields-in-plugin-agents)),
-so the hooks live in Lane's `hooks/hooks.json`.
+so the hooks live in the plugin's `hooks/hooks.json`.
 
 ### Where a plugin writes its files
 
@@ -182,8 +149,7 @@ that starts with the plugin's, its tests' files included. That folder is the one
 `${CLAUDE_PLUGIN_DATA}`. It writes nothing in `${CLAUDE_PLUGIN_ROOT}`.
 
 A deliverable that a run makes for the user is not a file of the run. It lies where the
-repository's layout or the tool that reads it puts it. For example, rn writes a best practice that
-it makes in `.rn/best-practices/<kind>/`, where every later run looks for it.
+repository's layout or the tool that reads it puts it.
 
 *Why*: one folder named after the plugin lets the user choose with one line of `.gitignore` whether
 git keeps it. The system clears its temporary folder, so a stopped run leaves nothing behind. An
@@ -204,7 +170,9 @@ terms than its purpose set.
 
 The caller decides what is theirs, and what is hard to undo, such as a merge. Such a point counts as
 approved only by the caller's own action, such as a skill the AI cannot call
-(`disable-model-invocation: true`).
+(`disable-model-invocation: true`). Only a skill that approves, or whose work is hard to undo, is
+kept from the AI; a skill that starts, picks up, or pauses work stays one that an AI can call, so
+that an AI can give out work.
 
 *Why*: an AI that decides for the caller leaves them answerable for what they never saw. An approval
 that an agent can give itself stops nothing.
@@ -249,18 +217,15 @@ the point to the person, as [Messages](#messages) says.
 *Why*: only the main conversation can ask the person
 ([subagents](https://code.claude.com/docs/en/sub-agents#available-tools)). An orchestrator run as
 an agent would leave the main conversation a layer that only carries its points, and each answer
-would resume the orchestrator before the role. Lane holds the main conversation to the order as it
-holds a role, as [Lane tells each role its steps again](#lane-tells-each-role-its-steps-again)
-says, and the state in files lets a compacted or new conversation go on, as
-[Where the order keeps the course](#where-the-order-keeps-the-course) says.
+would resume the orchestrator before the role. The run keeps its state in its files, so a
+compacted or new conversation goes on from them.
 
 ### Each event's steps in the orchestrator's part
 
 Each command that the person types, such as one that starts the run, approves what it put up, or
 pauses it, is an entry alone: its `skills/<command>/SKILL.md` points to `domain/orchestrator.md`.
 That part holds the steps of each event, a command, an answer, or a role's end, and the steps that
-every event shares. Lane holds each turn to its event's steps, as the plugin's adapter of the rules
-gives them at each turn.
+every event shares.
 
 *When*: a plugin with an orchestrator and roles.
 
@@ -279,8 +244,7 @@ and goes back to its own steps once the other hands its work back.
 
 *When*: a job another plugin already does.
 
-*Why*: the other plugin runs as it was built and tested. Nobody writes any of it again. Lane holds
-each plugin's run by its own rules, and leaves alone a start of another plugin's subagent.
+*Why*: the other plugin runs as it was built and tested. Nobody writes any of it again.
 
 ### One agent for each job
 
@@ -297,25 +261,22 @@ The orchestrator puts each point that a role has for the person to the person, a
 the role the person's answer word for word: within a session by SendMessage, which resumes the role
 with its whole conversation
 ([resume subagents](https://code.claude.com/docs/en/sub-agents#resume-subagents)), and in a new
-conversation in what it gives the role's fresh start from the run's files. Roles run in the background.
+conversation in what it gives the role's fresh start from the run's files.
 
 *When*: a plugin with an orchestrator and roles.
 
 *Why*: a subagent's last message reaches only the one who started it, and only the main
 conversation can ask the person ([subagents](https://code.claude.com/docs/en/sub-agents)). So the
 orchestrator, which starts every role, puts each point to the person. A point reworded on the way is
-a question that the role did not ask, and an answer summed up loses what the person meant. Lane
-follows only a role started in the background.
+a question that the role did not ask, and an answer summed up loses what the person meant.
 
 ### The form of a file
 
 A file that a plugin reads is JSON with a schema, and a script checks its form. Its nesting follows
 how its parts relate: a part that belongs to one other sits inside it, and a part that several
-others rest on is named by its path or ID, as a design tree names each deliverable's inputs. After
-the AI changes a part, a script lists the parts that the change touches, and the AI reads each, as
-[the design tree best practice](../plugins/rn/domain/best-practices/design-tree/best-practice.md)
-asks after a change to a node. A file that shows the form of a deliverable, such as a template, is
-in the deliverable's own format.
+others rest on is named by its path or ID, as a plan names the inputs of each deliverable. After
+the AI changes a part, a script lists the parts that the change touches, and the AI reads each. A
+file that shows the form of a deliverable, such as a template, is in the deliverable's own format.
 
 *When*: every plugin.
 
@@ -352,20 +313,6 @@ every work, and never ends, while the user's aim says which questions matter how
 ([harness design](https://www.anthropic.com/engineering/harness-design-long-running-apps)). An
 evaluator before the caller adds a reading the caller makes anyway.
 
-### Where the order keeps the course
-
-Where a run goes in a fixed loop, the routes of `lane/rules.json` keep the course. Where a run's
-course changes with what it finds, the plugin's adapter of the starts due gives each role to start
-from the run as it stands, and its own files. The developer writes the rules from each role's
-steps, as [Lane's rules and adapters](../plugins/lane/docs/rules-and-adapters.md) define them.
-Lane gives the main conversation each start due, and keeps the run's record for its conversation,
-so a compacted run goes on from its last move. In a new conversation, the plugin's adapter goes on
-from the plugin's own files.
-
-*Why*: code follows a course the same way every time. A course fixed in code has no move for what
-it did not foresee, so an adapter decides where the course turns. A conversation can end or be
-compacted, and the state in files lets a stopped run go on.
-
 ### Learning from each run
 
 Once the caller approves the work, the orchestrator looks once through what the run kept for what
@@ -397,11 +344,15 @@ the tools that check the tests need it.
 
 A step that has one right result runs a script, which the step names with its exact command and the
 form of its output, so that the role runs it and never reads it. Each script acts on one thing, such
-as the run's design tree, and takes each operation on it as a subcommand, named `noun verb`, such as
-`tree.py commit`. It handles each error it can meet, and its message says what's wrong, where, and
+as the run's plan, and takes each operation on it as a subcommand, named `noun verb`, such as
+`plan commit`. It handles each error it can meet, and its message says what's wrong, where, and
 how to fix the input. Where a role changes many things at once, it writes the plan as a file, and a
 script checks the plan before another applies it. Each constant of a script carries its reason
-beside it.
+beside it. The plugin's Python lies in `domain/scripts/`. Each script is a package there, run as
+`python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/<script> ...`. Its `__main__.py` only starts the
+code: it puts `domain/scripts/` on the import path, and hands the code what lies outside the plugin,
+such as the host that runs git. Code that several scripts share is a module or a package beside
+them.
 
 *When*: a plugin whose roles take a step that has one right result.
 
@@ -415,13 +366,16 @@ input lets it go on at once
 catches a wrong change before it touches anything
 ([verifiable intermediate outputs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#create-verifiable-intermediate-outputs)).
 Subcommands of one script for one thing keep related operations together and easy to find, and
-`noun verb` is the common order ([subcommands](https://clig.dev/#subcommands)). A constant with no
-reason leaves the next developer, or the role, no way to tell its right value.
+`noun verb` is the common order ([subcommands](https://clig.dev/#subcommands)). A script is a
+command that a role runs, not a form that Claude Code fixes, so it lies in `domain/` with the rest
+of the plugin's work. A package run by its `__main__.py` is Python's own form of a command, and
+gives each script one name for both its command and its code. The code takes what lies outside the
+plugin as given, so a test gives a double in its place.
 
 ### Code kept once
 
 A plugin keeps code that more than one plugin needs once, in the plugin whose job it is, and the
-other plugins depend on that plugin, as Lane holds every plugin's rules.
+other plugins depend on that plugin.
 
 *Why*: the developer writes, tests and fixes the code in one place.
 
@@ -440,128 +394,42 @@ that depend on each other can't change or install alone.
 
 ## Test
 
-A plugin is tested at the test levels of
-[the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.md):
-unit and integration tests, and end-to-end (E2E) tests, which for a plugin that holds a prompt are
-the walkthrough run of
-[the test strategy guide](../plugins/rn/domain/best-practices/architecture/test-strategy-guide.md).
-The unit tests of its code follow
-[the code best practice](../plugins/rn/domain/best-practices/code/best-practice.md), and those of
-its prompts [the prompt best practice](../plugins/rn/domain/best-practices/prompt/best-practice.md).
-Its architecture's Test strategy sets the tools and the criteria. This section holds only what
-every plugin adds to them.
+A plugin's code is checked on each push: the unit tests of its scripts, the static analysis of its
+code, and the coverage of every line and branch of it by the unit tests. Its prompts are checked by
+an end-to-end (E2E) run alone: the user runs a real request through the plugin, and the developer
+watches the run and proposes each fix with its cause. Its architecture's Test strategy sets the
+tools and the criteria. This section holds only what every plugin adds to them.
 
-### Each case a test that names what it supports
+*Why*: a script gives one right result for each input, so a unit test checks it whole and in a
+moment. A prompt's result varies from run to run, and a test that plays a prompt's part checks
+only what its writer copied of the prompt, so only a real run checks the prompts and how the
+scripts serve them.
 
-Each test case is a pytest test. Its docstring states its Given, When, and Then, a line each, and
-`@pytest.mark.supports("<name>")` names what it supports one level up: a key result, such as
-`KR1.1`, for an E2E case, an element of the architecture by its name, such as `S1` or a principle's
-`P1.1`, for an integration case, and an integration case by its test's name for a unit case. A
-plugin's cases lie in `dev/<plugin>/tests/`: the unit tests of its code in `unit/`, its
-property-based tests, each of an invariant that its requirements state, in `properties/`, the unit
-tests of its prompts in `prompts/`, the integration tests in `integration/`, and the E2E tests,
-where it has any, in `e2e/`. `python3 dev/scripts/trace.py check <plugin>` reads the cases and the
-elements of the plugin's architecture by their names. It gives 0 only where each case names what
-exists one level up, each element has an integration case, and each case of a principle fails as
-[A principle's test seen to fail](#a-principles-test-seen-to-fail) says. `trace.py doubles` and
-`trace.py sources` check the doubles, as
-[Each result of a double from a record](#each-result-of-a-double-from-a-record) says.
+### Each case a test with its Given, When, and Then
 
-*Why*: one form lets one script check the trace of every plugin, as every architecture names its
-elements by the template of the architecture best practice. A folder for each time a test runs lets
-each check run the tests it times: `check.sh` runs `unit/`, `integration/`, and `properties/` on
-each push, and the developer runs `prompts/` on the model when the Test strategy says.
+Each test case is a pytest test of the plugin's code. Its docstring states its Given, When, and
+Then, a line each. A plugin's cases lie in `dev/<plugin>/tests/unit/`.
 
-### A principle's test seen to fail
-
-Each integration case that names a principle takes the fixture `broken`, which takes out the part
-that holds the principle where the environment variable `TRACE_BROKEN` is `1`, and does nothing
-otherwise. The plugin defines `broken` beside the case, in its test file or in a `conftest.py` of
-`integration/`. `trace.py check <plugin>` runs each such case alone with `TRACE_BROKEN=1`, and gives 0
-only where each fails.
-
-*Why*: a test of a principle that still passes with the part that holds it taken out checks
-nothing of the principle, and only a run without the part shows that, as the architecture best
-practice says of a check trusted only once seen to fail. Only the plugin knows which part holds each
-principle, so its fixture takes the part out, and one form lets one script run the cases of every
-plugin. An environment variable reaches the fixture of each plugin, where an option of pytest that
-two plugins' `conftest.py` both added would stop the run that `check.sh` makes of their cases
-together.
-
-### A case of a part not yet built
-
-A case written before the body of the part it calls carries
-`pytest.mark.xfail(strict=True, reason="<why it fails now>")`, as `pytestmark` at the top of its
-file where no case of the file passes yet. The developer who builds the body takes the mark off each
-case it makes pass. `trace.py check <plugin>` runs each case of a principle with `--runxfail`, so the
-mark changes nothing it sees.
-
-*Why*: every case is written through a skeleton of the parts before any body, and fails on the empty
-bodies, yet the work is pushed only once `check.sh` gives 0. The mark lets `check.sh` pass while each
-case still fails, and `strict` fails a case that passes with the mark on, so no mark outlives the
-body that makes its case pass. An expected failure would also hide a case of a principle that passes
-with its part taken out, so `trace.py` runs the case as if unmarked.
+*Why*: the docstring says what the case holds in the words of the requirement, so a reader sees
+what breaks where it fails without reading its code.
 
 ### Each result of a double from a record
 
-A double of something outside the product, such as Claude Code or `gh`, gives each result from one
+A double of something outside the product, such as `gh`, gives each result from one
 line of a JSONL file in the `recorded/` folder beside it. It takes the line by
 `line("<record>", "<event>")`, or a run of lines by `lines("<record>", "<first>", "<last>")`, each
 name written out as a string or as a name that its module sets to one. Each line names itself by
 `event`, once in its file. A record of a run of the real thing names that run by its file's name,
 `<thing>-<version>[-<what>].jsonl`. A line taken from the documentation lies in a file whose name
 holds no version, and carries `source`, the URL of its page, and `shows`, the words of the page that
-show it. `trace.py doubles`, which `check.sh` runs on each push, checks each line of each record and
-each name that a double gives. `trace.py sources`, which CI runs each night, checks that each
-page still shows its words.
+show it. A check on each push reads each line of each record and each name that a double gives,
+and a check apart from the pushes, such as each night, reads that each page still shows its words.
 
-*Why*: a double that gives what the real thing never would passes a test that the real one fails,
-as the architecture best practice says of a double's source. A result taken from a line by names
+*Why*: a double that gives what the real thing never would passes a test that the real one fails.
+A result taken from a line by names
 that a script reads leaves no result whose source no one can check, where a result written in code
 or named in a comment leaves one. A page changes apart from any push, so a check of it on each push
 would fail for a change that the push didn't make, and it runs with the checks of the tests.
-
-### A prompt's unit tests on the model
-
-Each prompt, a skill or an agent with its part, has unit tests that start its role alone on the
-model its users run, in a throwaway copy of a repository that the test sets up, with its inputs
-given as files. Each case runs as many times as the plugin's Test strategy sets, each run a test of
-its own, and the developer judges the prompt from the results. Lane holds each rule of a role's
-steps that must hold on every run, and the integration tests try Lane's hold, so a prompt's unit tests
-try what only the AI's judgment holds.
-
-*Why*: a prompt is a part whose results vary from run to run, so only runs on the model show that it
-gives what the double in its place gives in the integration tests, and a criterion would pass or
-fail by chance, as the architecture best practice's test strategy guide says. A hook holds a rule on
-every run, which a prompt's words cannot
-([best practices](https://code.claude.com/docs/en/best-practices)). A unit test meets only the cases
-that its developer set up, so the walkthrough run of the test strategy guide runs the plugin whole
-once its integration tests pass. The cost: each
-change of a prompt waits on several runs of each of its cases on the model.
-
-### The parts joined in the test's own process
-
-The integration tests run with a double of Claude Code that runs each hook's entry and script in
-the test's own process, as a new process of Python would run it, and sends what its documentation
-says or what a recorded run of the real Claude Code showed. `claude plugin validate` checks each
-configuration written by hand, such as `hooks.json`, since no test runs its commands.
-
-*Why*: a process started for each call checks nothing a call does not, and a path would wait on
-hundreds of them.
-
-### The Claude Code of a test on the model
-
-Each Claude Code that a prompt's unit test starts runs on a configuration folder of
-its own that holds only the plugins under test, with the developer's login:
-`CLAUDE_CODE_OAUTH_TOKEN` where it's set
-([multiple accounts](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts)),
-or else a copy of the credentials file of the developer's own Claude Code.
-It runs on Opus, the model the plugins' users run, with each call allowed, as the test tries the
-prompt's judgment and not the permissions.
-
-*Why*: the developer's own settings would change what the test tries. A container or a Linux
-machine keeps the login in the credentials file, so the developer logs in once, as they already do. Another model makes other
-slips than the ones users meet.
 
 ## Release
 
@@ -577,7 +445,7 @@ A plugin is released only when whoever decides what reaches users says so. `plug
 `version` once, in semver. The largest change that users see decides which part of it rises. The
 CHANGELOG, in [Keep a Changelog](https://keepachangelog.com) form, gives each change that users
 notice one line, with why it helps them. `claude plugin tag --push` tags each release
-`<plugin>--v<version>`. `.claude-plugin/marketplace.json` and the root README list each release.
+`<plugin>--v<version>`.
 
 *Why*: users get an update only when the version rises. `plugin.json` wins over the marketplace
 entry. A dependency's version range resolves against these tags.

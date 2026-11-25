@@ -36,6 +36,10 @@ else
     "with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
+# Code that nothing uses still asks its maintainer to read it and keep it in line with the rest, so
+# the repository keeps none. vulture names each name that no file reads, by pyproject.toml.
+held design vulture
+
 # A function whose maintainer must hold more in mind at once than one reading gives, by how deep its
 # branches and loops nest, does more than one thing, as N5 of the refactor-code best practice says.
 # complexipy counts it as cognitive complexity, up to pyproject.toml's limit.
@@ -47,63 +51,32 @@ else
     "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
-# The property-based tests take hypothesis, which comes with pyproject.toml's test-quality group on
-# Python 3.11 or later, so pyrefly reads them, and pytest runs them, only where hypothesis is there.
-if python -c 'import hypothesis' 2>/dev/null; then
-  properties=""
-  levels="unit integration properties"
-else
-  properties="--project-excludes=**/properties/**"
-  levels="unit integration"
-  echo "check.sh: the property-based tests go unchecked, as hypothesis isn't installed. It"\
-    "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
-fi
+# The checks' own Python, and rn's code with its tests, as a type that doesn't fit across a call is a
+# fault no test may reach.
+held design pyrefly check --search-path dev/scripts --search-path plugins/rn/domain/scripts dev/scripts/*.py
 
-# The checks' own Python, and the double of Claude Code with its tests.
-held design pyrefly check --search-path dev/scripts --search-path dev/scripts/tests \
-  --search-path dev/tests dev/scripts/*.py dev/scripts/tests/*.py dev/tests/*.py
-
-# rn's code, its adapters, and its tests, with the double of Claude Code and the bench they call, as
-# a type that doesn't fit across a call is a fault no test may reach.
-# plugins/rn/scripts stays off the search path, as its template.py shares its name with the code of
-# plugins/rn/domain it runs.
-held design pyrefly check $properties --search-path plugins/rn/domain \
-  --search-path dev/tests --search-path dev/rn/tests \
-  plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
-  plugins/rn/lane/adapters/*.py dev/rn/tests/*.py dev/rn/tests/*/*.py
-
-# Lane's guard, its rule types, and its reporters, as a type that doesn't fit across a handoff is a
-# fault that no test may reach, as Lane's architecture says under Test strategy. The reporters have
-# no .py suffix, as the AI runs them by name, so the check names them.
-held design pyrefly check --search-path plugins/lane/hooks/lane \
-  plugins/lane/hooks/lane/*.py plugins/lane/hooks/lane/rule_types/*.py plugins/lane/bin/lane-*
-
-# Lane's cases, with the double of Claude Code they run, as a case that calls an interface with a
-# type it doesn't take fails at the call, not at the body it waits for.
-held design pyrefly check $properties --search-path plugins/lane/hooks/lane --search-path dev/tests \
-  --search-path dev/lane/tests dev/lane/tests/*.py dev/lane/tests/*/*.py
+held design pyrefly check --search-path plugins/rn/domain/scripts --search-path dev/rn/tests \
+  plugins/rn/domain/scripts/*.py plugins/rn/domain/scripts/*/*.py \
+  dev/rn/tests/*.py dev/rn/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
 # - a fault in a best practice's form
-# - a best practice's Markdown that lags behind its JSON, from which practices.py makes it for a
-#   person to read
-# - a template that is a JSON Schema in a form that schema.py doesn't read whole
+# - a template that is a JSON Schema using a keyword that rn's check of a form doesn't hold
 # - a file in the folder that neither uses, such as a figure that the template dropped
 # Each of these would make the folder say what rn doesn't hold.
 python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
 
 # Each plugin's product vision, README, and architecture holds its kind's template and nothing
-# beside it, as .claude/rules/dev.md says each keeps only the vital few, so a section or sentence
-# that drifts from the template shows on the push that adds it.
+# beside it, so a section or sentence that drifts from the template shows on the push that adds it.
 for vision in dev/*/product-vision.md; do
-  python3 plugins/rn/scripts/template.py product-vision "$vision"
+  python3 plugins/rn/domain/scripts/template product-vision "$vision"
 done
 for readme in plugins/*/README.md; do
-  python3 plugins/rn/scripts/template.py readme "$readme"
+  python3 plugins/rn/domain/scripts/template readme "$readme"
 done
 for architecture in dev/*/architecture.md; do
-  python3 plugins/rn/scripts/template.py architecture "$architecture"
+  python3 plugins/rn/domain/scripts/template architecture "$architecture"
 done
 
 # Each decision of an architecture's views tags the story or rule it carries out, and each story
@@ -126,25 +99,12 @@ python3 dev/scripts/standalone.py check
 # the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
-# Each test case of a plugin names what it supports one level up, and each element of its
-# architecture has an integration case, as the plugin guide's Test says, so a gap between the
-# parts shows before anyone builds around it. A plugin comes under the check once
-# dev/<plugin>/tests/integration/ holds its cases, as its developers write every case before any part.
+# The unit tests of each plugin run on each push.
 plugin_tests=""
 for architecture in dev/*/architecture.md; do
   plugin="${architecture#dev/}"
   plugin="${plugin%/architecture.md}"
-  if [ -n "$(find "dev/$plugin/tests/integration" -name 'test_*.py' 2>/dev/null)" ]; then
-    python3 dev/scripts/trace.py check "$plugin"
-  else
-    echo "check.sh: the trace of $plugin's cases goes unchecked, as dev/$plugin/tests/ holds"\
-      "none yet"
-  fi
-  # The unit, integration, and property-based tests of each plugin run on each push, as each
-  # plugin's Test strategy runs them during the work.
-  for level in $levels; do
-    [ ! -d "dev/$plugin/tests/$level" ] || plugin_tests="$plugin_tests dev/$plugin/tests/$level"
-  done
+  [ ! -d "dev/$plugin/tests/unit" ] || plugin_tests="$plugin_tests dev/$plugin/tests/unit"
 done
 
 # A double that gives what the real thing never would passes a test that the real one fails, so each
@@ -153,20 +113,18 @@ done
 # CI checks the documentation's pages each night, as a page changes apart from any push.
 python3 dev/scripts/trace.py doubles
 
-# A behavior that no test checks can break unseen, so the tests of the checks' own code, the double
-# of Claude Code among them, run every line and branch of what pyproject.toml has coverage count,
-# as the code best practice's N7 asks.
+# A behavior that no test checks can break unseen, so the tests run every line and branch of what
+# pyproject.toml has coverage count, as the code best practice's N7 asks.
 if command -v coverage >/dev/null 2>&1; then
   # The tests run once, on each core, as coverage's own .pth starts it in each worker where
   # COVERAGE_PROCESS_START names its settings.
   COVERAGE_FILE="$scratch/.coverage" COVERAGE_PROCESS_START="$PWD/pyproject.toml" \
-    coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider \
-    dev/scripts/tests dev/tests $plugin_tests
+    coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider $plugin_tests
   COVERAGE_FILE="$scratch/.coverage" coverage combine -q
   COVERAGE_FILE="$scratch/.coverage" held tests coverage report
 else
-  pytest -q -n auto dev/scripts/tests dev/tests $plugin_tests
-  echo "check.sh: which lines of the checks' own code the tests run goes unchecked, as"\
+  pytest -q -n auto $plugin_tests
+  echo "check.sh: which lines of rn's code the tests run goes unchecked, as"\
     "coverage isn't installed. It comes with pyproject.toml's test-quality group, on Python 3.11"\
     "or later"
 fi

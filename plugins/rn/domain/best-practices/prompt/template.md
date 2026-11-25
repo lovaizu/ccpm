@@ -25,7 +25,7 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<goal>`: what the AI reads first in the body: what it's to achieve, for whom, how it knows it
->   has finished, and what lies outside its task.
+>   has finished, and what the user decides and the AI judges, as N7 says.
 
 ## Context
 
@@ -33,8 +33,8 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<context>`: what the AI needs and can't find or know on its own: the situation, its inputs and
->   where they lie, and the rules of this place.
+> - `<context>`: only what the AI needs and can't find or know on its own, such as its inputs and
+>   where they lie, or a rule of this place, as N4 says.
 
 ## Steps
 
@@ -43,8 +43,9 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<steps>`: the steps, in the order the AI takes them. Each step names the result that holds when
->   it ends. It gives either the rules the step needs, each with its reason, or the script that does
->   the step and how to run it.
+>   it ends, what it's for, and the question the AI thinks through there. A step with one right
+>   result names the script that does it and how to run it. A rule stands only where that intent
+>   can't hold it, with its reason, as N6 says.
 > - Where some runs take steps that others don't, one step names each kind of run and gives each
 >   its own steps, as N5 says.
 
@@ -54,5 +55,6 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<output>`: what the AI hands back, in what form, and to whom.
+> - `<output>`: what the AI hands back, in what form, and to whom, with the intent from which the AI
+>   writes each message and each claim, which N14 gives for messages and N15 for claims.
 

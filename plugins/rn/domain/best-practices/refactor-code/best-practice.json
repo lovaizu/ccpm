@@ -14,13 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the inputs of your cut, and note from the architecture each decision that the code carries out, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second.",
-        "trace": {
-         "action": "read",
-         "takes": [
-          "{inputs}"
-         ]
-        }
+        "text": "Open the inputs of your cut, and note from the architecture each decision that the code carries out, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second."
        },
        {
         "at": "decide",
@@ -28,13 +22,7 @@
        },
        {
         "at": "decide",
-        "text": "Run the command. If a test fails, change nothing, and end with `point`, naming the test and its failure, since a test that already fails can't tell you whether a step broke something.",
-        "trace": {
-         "action": "run",
-         "takes": [
-          "{tests}"
-         ]
-        }
+        "text": "Run the command. If a test fails, change nothing, and end with `point`, naming the test and its failure, since a test that already fails can't tell you whether a step broke something."
        },
        {
         "at": "make",
@@ -120,7 +108,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "List the kinds of thing that several places of the code do, such as reporting an error, checking an input, reading a file, or laying out a module or a test, and for each, every way the code does it and where."
+        "text": "In the files that N3.1 lists, list the kinds of thing that several places do, such as reporting an error, checking an input, reading a file, or laying out a module or a test, and for each, every way the code does it and where."
        },
        {
         "at": "decide",
@@ -225,10 +213,6 @@
        {
         "at": "make",
         "text": "Where a line stopped you in that reading, such as a nested comprehension or a chained conditional expression, or where a function mixes lines at two levels, such as a loop over the bytes of a record beside a call to `save_order`, rewrite it in a plain form or move the lower lines into a function named for what they do."
-       },
-       {
-        "at": "make",
-        "text": "Where you had to read something outside the function to write the sentence, such as a global setting it reads, make the function take that thing as a parameter."
        }
       ]
      },
