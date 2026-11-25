@@ -1,0 +1,148 @@
+{
+  "ost": {
+    "outcome": "A user of rn, in a small product or a large existing app, gets from one run a solution to the opportunity they picked, working and checked on the real thing, with no opportunity they named cut.",
+    "opportunities": [
+      {
+        "opportunity": "Opportunities I name are never cut by a role.",
+        "by": "#86: \"cut needs that the people themselves named\" (the #62 run in #85)"
+      },
+      {
+        "opportunity": "I see the solution work on the real thing early, not after every deliverable is whole.",
+        "by": "#86: \"made every deliverable whole before anything ran for real\" (#85, 6,079 lines before the first real run)"
+      },
+      {
+        "opportunity": "rn works in a large existing app, aimed at the moment's goal.",
+        "by": "the user, 2026-11-25"
+      },
+      {
+        "opportunity": "At the end, I decide what happens to the opportunities left unpicked.",
+        "by": "the user, 2026-11-26"
+      },
+      {
+        "opportunity": "rn speaks to me of opportunities and the ways to meet them, not of its own files.",
+        "by": "#86: \"never of the tree's own\""
+      }
+    ],
+    "target": "all five: #86 takes them in one PR",
+    "solutions": [
+      {
+        "solution": "One file per run, .rn/<run>/steering.json: ost written by the pruner alone, state by the scripts alone. The design tree goes.",
+        "chosen": true,
+        "decisions": [
+          "rn's center stays: pile up the vital few that bring a deliverable's people to their aim, and cut the trivial many thoroughly. Under it hang three ways: the goal reached earliest by an opportunity solution tree and a walking skeleton; the user gives feedback as one who uses what rn makes, and rn leads the way and settles how it's made; each deliverable that rn makes meets every necessary condition of its best practice, while what it makes stays the least.",
+          "One file per run, .rn/<run>/steering.json, checked by a schema, takes the design tree's place. ost (outcome, opportunities, solutions compared, the one chosen with its decisions, its riskiest assumption with what a check showed) is written by the pruner alone; state (context, steps, each deliverable's status) by the scripts alone; the hook keeps each part to its writer.",
+          "The tree lives for one run, aimed at the moment's goal, so rn serves a large existing app with no tree of the whole product to keep.",
+          "rn takes what comes in as the trivial many and cuts it unless the purpose shows it vital; an opportunity that the people themselves name goes on the tree, for the user to pick.",
+          "The least solution is made as one walking skeleton; a walkthrough run checks its riskiest assumption on the real thing before rn makes most deliverables, and the result goes back on the tree.",
+          "At a run's end, rn proposes for each opportunity left unpicked, named in the issue or found during the run, to keep it in an issue or to let it go, and does what the user approves.",
+          "rn speaks to the user of opportunities and the ways to meet them, never of its own files.",
+          "The design tree goes, with its best practice, schema, and word. The product-vision best practice, rounds/, and pruner.json stay.",
+          "An issue holds only the trouble seen and what it should be; the means are settled in the steering."
+        ],
+        "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
+        "check": "Run rn from this branch on #62 up to the first real check; count what was made by then."
+      },
+      {
+        "solution": "One OST per product across runs, at dev/<product>/opportunity-solution-tree.json (#86 as written).",
+        "chosen": false,
+        "why_not": "Keeping a whole product's tree is the trivial many in a large app, and it drifts from the code."
+      },
+      {
+        "solution": "Keep the design tree and add an opportunities section to it.",
+        "chosen": false,
+        "why_not": "The tree's goal and decisions would hold the same points as the ost, in two places."
+      }
+    ]
+  },
+  "state": {
+    "context": {
+      "rn": "0.11.0",
+      "languages": {
+        "deliverables": "English",
+        "conversation": "Japanese"
+      },
+      "issues": {
+        "closes": [
+          86
+        ],
+        "refs": [
+          62,
+          76,
+          78
+        ]
+      },
+      "pr": null,
+      "branch": "rn-steering",
+      "built_on": "#81"
+    },
+    "steps": [
+      {
+        "settles": "the concept in dev/rn/product-vision.md and the README; rn runs from this branch; the design tree's content lives in steering.json state, with no change in behavior",
+        "check": "a small run goes to the end as before",
+        "status": "open"
+      },
+      {
+        "settles": "named opportunities go on the ost and the user picks one",
+        "check": "#62 run up to the pick shows every opportunity of #62",
+        "status": "open"
+      },
+      {
+        "settles": "solutions compared, the least one made as a walking skeleton, the riskiest assumption checked early",
+        "check": "#62 run up to the first real check; size made by then, against 6,079 lines in #85",
+        "status": "open"
+      },
+      {
+        "settles": "the end-of-run proposal, no design-tree words left, CHANGELOG and version",
+        "check": "#62 run to the end; then judge #76 and #78",
+        "status": "open"
+      },
+      {
+        "settles": "#76 and #78 judged against the rebuilt rn by running what each describes: closed if it no longer happens, kept with what still happens",
+        "check": "each issue's own steps",
+        "status": "open"
+      }
+    ],
+    "deliverables": [
+      {
+        "path": "dev/rn/product-vision.md (Concept), plugins/rn/README.md (intro, Non-goals)",
+        "step": 1,
+        "status": "open"
+      },
+      {
+        "path": "plugins/rn/domain/best-practices/design-tree/ -> steering/",
+        "step": 1,
+        "status": "open"
+      },
+      {
+        "path": "plugins/rn/domain/scripts/tree/, hook/, repository/, rounds/",
+        "step": 1,
+        "status": "open"
+      },
+      {
+        "path": "plugins/rn/domain/vital-few.md, pruner.md, orchestrator.md",
+        "step": 2,
+        "status": "open"
+      },
+      {
+        "path": "plugins/rn/domain/generator.md, evaluator.md, fixer.md",
+        "step": 3,
+        "status": "open"
+      },
+      {
+        "path": "dev/rn/architecture.md, plugins/rn/README.md",
+        "step": "each",
+        "status": "open"
+      },
+      {
+        "path": "60 files that name the design tree",
+        "step": 4,
+        "status": "open"
+      },
+      {
+        "path": "plugins/rn/CHANGELOG.md, plugin.json",
+        "step": 4,
+        "status": "open"
+      }
+    ]
+  }
+}
