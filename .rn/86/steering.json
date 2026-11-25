@@ -66,9 +66,7 @@
           86
         ],
         "refs": [
-          62,
-          76,
-          78
+          62
         ]
       },
       "pr": null,
@@ -93,12 +91,7 @@
       },
       {
         "settles": "the end-of-run proposal, no design-tree words left, CHANGELOG and version",
-        "check": "#62 run to the end; then judge #76 and #78",
-        "status": "open"
-      },
-      {
-        "settles": "#76 and #78 judged against the rebuilt rn by running what each describes: closed if it no longer happens, kept with what still happens",
-        "check": "each issue's own steps",
+        "check": "#62 run to the end",
         "status": "open"
       }
     ],
