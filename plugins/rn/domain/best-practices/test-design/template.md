@@ -27,9 +27,9 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<unit-cases>`: one test for each promise and each refusal of an interface's contract, each
->   bound it states, and each transition that the product's use brings about where its result
->   depends on what came before, and no test beside them. Each test is named by what it shows, and
+> - `<unit-cases>`: one test for each variation that an interface's requirements name: each class
+>   of what it takes and gives, each refusal, each bound, and each transition that the product's
+>   use brings about where its result depends on what came before. Each test is named by what it shows, and
 >   its Given, When, and Then stated in the test, its Then the whole of what the interface gives and
 >   changes.
 

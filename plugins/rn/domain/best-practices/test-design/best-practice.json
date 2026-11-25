@@ -49,32 +49,36 @@
           {
             "id": "N3",
             "about": "Unit cases",
-            "what": "Does each interface of the skeleton have one unit case for each promise of its contract, each refusal, each bound that the contract states, and, where its result depends on what came before, each transition that the product's use brings about, and no case beside them?",
-            "why": "A case for each promise fails on each fault that breaks one, and a case that checks what another already shows catches no fault more and only asks its maintainer to read and mend it again, as cases listed by every class of input and every spelling pile up past the code they test. The techniques are the black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/), equivalence partitioning, boundary value analysis, and state transition testing, each applied only where the part treats the classes apart.",
+            "what": "Does each interface of the skeleton have a unit case for each variation that its requirements name: each class of what it takes and gives, each refusal, each bound, and each transition that the product's use brings about, with no two cases left on the same branch for the same requirement once the body is built?",
+            "why": "Variations drawn from the requirements before the body is written find the inputs that the part must treat apart, so the cases say what the part must do rather than what its code does. Once the body is built, coverage shows each line that no case runs, which either does what no requirement asks or lacks its case, and two cases on the same branch for the same requirement catch no fault more and only ask the maintainer to read and mend both. The techniques are the black-box techniques of the [ISTQB Foundation Level syllabus](https://www.istqb.org/certifications/certified-tester-foundation-level-ctfl-v4-0/): equivalence partitioning, boundary value analysis, and state transition testing.",
             "items": [
               {
                 "at": "make",
-                "text": "Write one case for each promise and each refusal that an interface's contract states, with the result it gives. Split a promise into two cases only where the part must treat two classes of its input apart, such as a file that's there and one that's gone."
+                "text": "From each requirement of an interface, such as a promise or a refusal of its contract, divide what it takes and gives into the classes that the requirement treats apart, and write one case for each class."
               },
               {
                 "at": "make",
-                "text": "Where the contract states a bound, such as a most or a least, write one case at the bound and one just past it, and none for the values between."
+                "text": "Where a requirement states a bound, such as a most or a least, write one case at the bound and one just past it."
               },
               {
                 "at": "make",
-                "text": "Where an interface reads something from outside to check it, such as a file or another program's reply, write one case for each of the check's three results: no problem, a problem, and could not check, since one that answers a read it couldn't make as a problem or as no problem stops or passes the wrong thing."
+                "text": "Where a requirement holds a collection or picks one of several, such as the latest, write the cases of none, one, and several that the requirement treats apart, and one of several in which another pick gives another result."
               },
               {
                 "at": "make",
-                "text": "Where an interface's result depends on what came before, write one case for each transition that the architecture's sequences and the host's records show the use bringing about, with the state it moves to or the refusal it gives, since a case of a transition that no use brings about fixes a behavior that no person meets."
+                "text": "Where an interface reads something from outside to check it, such as a file or another program's reply, write one case for each of the check's three results: no problem, a problem, and could not check."
               },
               {
                 "at": "make",
-                "text": "Test each promise at the interface whose contract states it, and leave out a case that checks another part's promise again through this one."
+                "text": "Where an interface's result depends on what came before, write one case for each transition that the architecture's sequences and the host's records show the use bringing about, with the state it moves to or the refusal it gives."
               },
               {
                 "at": "make",
-                "text": "Once the body is built and its coverage measured, merge or drop each case that runs the same branch for the same promise as another, and add a case only for a branch that no case runs."
+                "text": "Test each requirement at the interface that states it, and leave out a case that checks another part's requirement again through this one."
+              },
+              {
+                "at": "make",
+                "text": "Once the body is built and its coverage measured, remove each line that no case runs and no requirement asks for, add a case for each one that a requirement asks for, and merge the cases that run the same branch for the same requirement into one."
               }
             ]
           },

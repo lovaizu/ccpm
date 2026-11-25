@@ -132,7 +132,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports where Test strategy names traceability, as [the test design best practice](../test-design/best-practice.json) designs unit cases: one for each promise and each refusal of its contract, and one at and one past each bound it states. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
+        "text": "For each module that N1.3 adds inside the part, design its cases before its code, each as a test's name with its Given, When, and Then, naming the unit case of the part that it supports where Test strategy names traceability, as [the test design best practice](../test-design/best-practice.json) designs unit cases: one for each variation that its requirements name, each class, refusal, and bound among them. For example, `test_reads_back_an_entry_whose_text_holds_a_newline` supports `test_add_then_check_accepts_the_record`."
        },
        {
         "at": "decide",
@@ -191,7 +191,7 @@
      {
       "id": "N7",
       "about": "Body, Tests",
-      "what": "Does each test assert the whole result of its case, with coverage leaving no line that no case calls for?",
+      "what": "Does each test assert the whole result of its case, with coverage leaving no line that no case calls for, and no two tests on the same branch for the same case?",
       "why": "The maintainer knows that every behavior still holds only where breaking any of them makes a test fail. The cases, designed before the code, catch each break where each test asserts its whole Then, and coverage shows each line that no test runs, which either lacks its case or does what no case asks.",
       "items": [
        {
@@ -205,6 +205,10 @@
        {
         "at": "make",
         "text": "For each line or branch that no test runs, name the case that calls for it. Where none does, remove it, as N3 says. Where a case that the tests name does, make that case's test reach it through the interface. Where only a case that no test names would, take that case back to whoever designs the cases, such as with `point`, and write its test once they add it."
+       },
+       {
+        "at": "make",
+        "text": "Where two tests run the same branches for the same case, merge them into one, as N3 of the test design best practice says."
        }
       ]
      }
