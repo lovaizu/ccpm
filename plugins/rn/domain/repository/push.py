@@ -24,23 +24,35 @@ _EVERY = 5
 _REFUSED = ("permission", "could not read username", "authentication failed", "remote rejected")
 
 
-def commit(run: RunPlace, paths: Sequence[str], message: str, host: Host) -> str:
-    """Commits the paths in the run's worktree.
+def commit(
+    run: RunPlace, paths: Sequence[str], message: str, host: Host, removed: Sequence[str] = ()
+) -> str:
+    """Commits the paths in the run's worktree, and the removal of each path to remove.
 
-    Takes: the run, each path from the worktree's top to commit, the commit message, and the host.
+    Takes: the run, each path from the worktree's top to commit, the commit message, the host,
+    and each file to remove, from the worktree's top, none by default.
     Gives: the new commit's hash.
-    Changes: stages and commits the paths on the work's branch, and nothing else of the index.
-    Refuses: Wrong where a path lies outside the worktree or none of them has a change, naming
-    them; CantRun where git fails, such as a commit check of the repository refusing, with what it
-    said.
+    Changes: removes each file to remove by `git rm`, stages the paths, and commits both on the
+    work's branch, and nothing else of the index.
+    Refuses, each before it changes anything: Wrong where a path or a file to remove lies outside
+    the worktree, naming them; Wrong where a file to remove is none that git holds in the
+    worktree, naming it; then Wrong where none of them has a change, naming them; CantRun where
+    git fails, such as a commit check of the repository refusing, with what it said.
     """
-    outside = [each for each in paths if not run.holds(each)]
+    outside = [each for each in [*paths, *removed] if not run.holds(each)]
     if outside:
         raise Wrong(f"{', '.join(outside)}: lies outside the run's worktree; commit only its paths")
+    for each in removed:
+        held = host(["git", "ls-files", "--error-unmatch", "--", each], run.worktree)
+        if held.code != 0:
+            raise Wrong(f"{each}: git holds no such file in the run's worktree to remove")
+    if removed:
+        _git(host, run, "rm", "-q", "--", *removed)
     _git(host, run, "add", "--", *paths)
-    if host(["git", "diff", "--cached", "--quiet", "--", *paths], run.worktree).code == 0:
-        raise Wrong(f"{', '.join(paths)}: holds no change to commit")
-    _git(host, run, "commit", "-q", "-m", message, "--", *paths)
+    every = [*paths, *removed]
+    if host(["git", "diff", "--cached", "--quiet", "--", *every], run.worktree).code == 0:
+        raise Wrong(f"{', '.join(every)}: holds no change to commit")
+    _git(host, run, "commit", "-q", "-m", message, "--", *every)
     return _git(host, run, "rev-parse", "HEAD").out.strip()
 
 

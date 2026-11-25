@@ -22,7 +22,6 @@ from rn_bench import (
     Bench,
     bash_called,
     command_signed,
-    cut_move,
     cut_of,
     denial,
     evaluated,
@@ -38,8 +37,8 @@ from rn_bench import (
     push_refused,
     resulted,
     reviewed,
-    signed,
     signed_plan,
+    started,
     tree_written,
     trial_made,
     wrote,
@@ -310,7 +309,7 @@ def test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook(b: Be
     """Given rn's hook before each Bash call, and a run whose hearing one pruner wrote
     When the orchestrator, the main conversation, calls Bash with jq on the run's design tree;
     with python3 -c whose code loads it and prints it by json.dumps; and with that code followed
-    by rn's tree.py cut by a path held in a variable, as on a real run; and Claude Code runs the
+    by rn's tree.py next by a path held in a variable, as on a real run; and Claude Code runs the
     hook before each
     Then the hook gives 0 printing nothing for each, and the code prints the goal"""
     heard(b)
@@ -322,7 +321,7 @@ def test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook(b: Be
     reads = [
         shlex.join(["jq", "-r", ".goal.decided", b.tree_path]),
         shlex.join(code),
-        f'{shlex.join(code)} && R={shlex.quote(b.rn)}; python3 "$R/scripts/tree.py" cut {b.run}',
+        f'{shlex.join(code)} && R={shlex.quote(b.rn)}; python3 "$R/scripts/tree.py" next {b.run}',
     ]
     for each in reads:
         assert denial(b.script("hook", given=bash_called(b, each, None))) is None, each
@@ -403,9 +402,9 @@ def test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_not
 def test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit(b: Bench):
     """Given a run that repository.py new made
     When the hearing's pruner writes the plan with the guide, of the kind readme, holding no more
-    paths, and runs tree.py check and then tree.py commit; and then writes the figure that the
-    readme template has the guide keep, docs/images/how-it-works.svg, as its more path, and runs
-    tree.py commit again
+    paths, and its result, and the orchestrator runs tree.py check and then tree.py commit; and
+    then the pruner writes the figure that the readme template has the guide keep,
+    docs/images/how-it-works.svg, as its more path, and the orchestrator runs tree.py commit again
     Then tree.py check and the first commit each give 1 naming /deliverables/2/more_paths and the
     figure, the work's branch holding no new commit; and the second commit gives 0, so that the
     guide's first generator finds the figure among its paths"""
@@ -413,9 +412,10 @@ def test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit(b
     design_tree = rn_files.walkthrough_tree(b.name(), plan_done=False)
     del design_tree["deliverables"][2]["more_paths"]
     b.write_tree(design_tree)
+    rn_files.write_json(os.path.join(b.folder, "pruner.json"), rn_files.pruner_result())
     branch = f"rn-{b.name()}"
     before = git(b.repo, "rev-parse", branch).strip()
-    for refused in (b.script("tree", "check", b.run), b.script("tree", "commit", b.run, "Plan.")):
+    for refused in (b.script("tree", "check", b.run), b.script("tree", "commit", b.run)):
         assert refused.code == 1
         assert "/deliverables/2/more_paths: leaves out docs/images/how-it-works.svg" in (
             refused.out + refused.err
@@ -423,7 +423,7 @@ def test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit(b
     assert git(b.repo, "rev-parse", branch).strip() == before
     design_tree["deliverables"][2]["more_paths"] = [rn_files.GUIDE_FIGURE]
     b.write_tree(design_tree)
-    assert b.script("tree", "commit", b.run, "The plan.").code == 0
+    assert b.script("tree", "commit", b.run).code == 0
 
 
 @pytest.mark.supports("pruner", "scripts", "Design tree")
@@ -483,13 +483,14 @@ def test_the_orchestrator_and_the_pruner_each_point_to_the_one_measure_of_the_vi
 @pytest.mark.supports("scripts", "Best practice")
 def test_a_runs_own_best_practice_is_taken_before_rns(b: Bench):
     """Given a run whose worktree holds its own best practice of the kind light, at
-    .rn/best-practices/light/, and whose hearing one pruner wrote
-    When the orchestrator records the plan's sign-off and writes the command's Cut
+    .rn/best-practices/light/, and whose hearing one pruner wrote, the plan signed off at its
+    commit
+    When the orchestrator writes the command's Cut by tree.py next
     Then the Cut's best practice is the run's own folder"""
     heard(b)
     own = os.path.join(b.worktree, ".rn", "best-practices", "light")
     shutil.copytree(os.path.join(b.rn, "domain", "best-practices", "light"), own)
-    cut_path = signed(b, [cut_move(b, "generator", COMMAND)])[0].strip()
+    cut_path = started(b, "generator", COMMAND)
     assert os.path.normpath(os.path.join(b.repo, cut_of(b, cut_path)["best_practice"])) == own
 
 
@@ -519,7 +520,7 @@ def fixer_cut(b: Bench) -> str:
     Fix, whose fixer's Cut the orchestrator wrote; gives the Cut's path."""
     refused = push_refused(b)
     fix_written(b, COMMAND, "put-up", refused.err)
-    return b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    return started(b, "fixer", COMMAND)
 
 
 @pytest.mark.supports("fixer", "Cut", "Fix")
@@ -534,7 +535,7 @@ def test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_
     fixer writes its result, and nothing else, no goal, best practice, or Round among it"""
     refused = push_refused(b)
     fix = fix_written(b, COMMAND, "put-up", refused.err)
-    given = cut_of(b, b.ran(*cut_move(b, "fixer", COMMAND)).strip())
+    given = cut_of(b, started(b, "fixer", COMMAND))
     node = next(each for each in b.tree()["deliverables"] if each["path"] == COMMAND)
 
     def at(path: str) -> str:

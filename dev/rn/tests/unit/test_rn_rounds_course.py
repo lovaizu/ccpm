@@ -11,8 +11,9 @@ generator or of the evaluator, at Round 1 and at LIMIT, which spends no Round. T
 with the Fixes after the Rounds: none, as next_of; a Fix whose fixer wrote nothing, its Cut written
 or not; a Fix fixed or naming a decision, the node as its fixer's Cut held it, changed since, or
 with no Cut, and a decision weighed by a commit since; Rounds after a Fix, which count alone toward
-the limit; and Fixes past LIMIT Rounds, which spend no Round; and mended and next_in, reading the
-Fixes from a run's files."""
+the limit; and Fixes past LIMIT Rounds, which spend no Round; mended and next_in, reading the Fixes
+from a run's files; the pruner where the last Round's point or findings are unweighed, before an
+answer and after a put-up; and asked, with no Round and past the limit."""
 
 from __future__ import annotations
 
@@ -23,7 +24,19 @@ from typing import Any
 import pytest
 import rn_files
 from repository.place import RunPlace
-from rounds.course import LIMIT, Done, Mend, Next, mended, next_in, next_of, next_with_fixes
+from rounds.course import (
+    JUDGED,
+    LIMIT,
+    POINT,
+    Done,
+    Mend,
+    Next,
+    asked,
+    mended,
+    next_in,
+    next_of,
+    next_with_fixes,
+)
 from rounds.files import Fix, Round
 
 COMMAND = rn_files.COMMAND
@@ -117,6 +130,67 @@ def test_an_open_decision_waits_on_the_answer_with_no_round_yet(results: str):
     assert next_of(node(open_decision=True, folder=results), [], False) == Next(
         "answer", None, False
     )
+
+
+# The pruner, where the last Round's result asks a judgment that no commit weighed yet.
+
+
+def unweighed(done: list[Done]) -> list[Done]:
+    """The Rounds, the last one's result unweighed, as `so_far` gives it before the tree's commit
+    after it."""
+    return [*done[:-1], done[-1]._replace(unweighed=True)]
+
+
+@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
+@pytest.mark.parametrize("open_decision", [False, True], ids=["none open", "one open"])
+def test_a_point_unweighed_waits_on_the_pruner_of_the_stage_point(
+    results: str, open_decision: bool
+):
+    """Given the command whose generator gave a point in content-1, unweighed, with no decision
+    open or with one
+    When what it waits on is asked
+    Then it waits on the pruner of the stage point, before any answer"""
+    done = unweighed(rounds(results, ("content", 1, POINTED, None)))
+    assert next_of(node(open_decision=open_decision, folder=results), done, False) == Next(
+        "pruner", POINT, False
+    )
+
+
+@pytest.mark.supports(
+    "test_a_judged_rounds_result_is_weighed_whole_by_one_pruner_with_each_node_it_touches"
+)
+def test_a_judged_round_unweighed_waits_on_the_pruner_of_the_stage_judged(results: str):
+    """Given the command whose evaluator judged content-1 short, unweighed
+    When what it waits on is asked
+    Then it waits on the pruner of the stage judged, not on a new Round"""
+    done = unweighed(rounds(results, ("content", 1, MADE_ALL, SHORT)))
+    assert next_of(node(folder=results), done, False) == Next("pruner", JUDGED, False)
+
+
+@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
+def test_a_round_put_up_and_unweighed_waits_on_the_signoff(results: str):
+    """Given the command whose content-1, judged good, is put up with the node's state, unweighed
+    When what it waits on is asked
+    Then it waits on the sign-off, as the put-up comes after the weighing"""
+    done = unweighed(rounds(results, ("content", 1, MADE_ALL, GOOD, GOOD_PUT_UP)))
+    assert next_of(node(good=True, folder=results), done, False) == Next("sign-off", None, False)
+
+
+@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
+def test_asked_gives_each_open_decision_but_the_proposals_past_the_limit(results: str):
+    """Given the command with an open decision of N1, not good, and one of N2, good: with no
+    Round, and past LIMIT Rounds of content with N1 short
+    When the decisions that wait on the user's answer are asked
+    Then they're both with no Round, and N2's alone past the limit, N1's being a proposal"""
+    given = node(good=["N2", "N3"], open_decision=True)
+    given["necessary_conditions"][1]["decisions"].append(rn_files.decision("the currency", None))
+    both = [
+        {"condition": "N1", "about": "a comma in a line"},
+        {"condition": "N2", "about": "the currency"},
+    ]
+    assert asked(given, [], []) == both
+    past = rounds(results, *[("content", n, MADE_ALL, SHORT) for n in range(1, LIMIT + 1)])
+    assert asked(given, past, []) == both[1:]
 
 
 # The generator resuming the last Round, where its last result is `point`.

@@ -3,12 +3,12 @@ each Write or Edit: a command of rn's maker that deletes, by rm, rmdir, unlink, 
 at the start or further on in a chain or a pipeline, denied with how to use remove.py; a Write or
 Edit of a run's design tree by the main conversation or by any agent but rn's pruner, its path
 written with / or \\, denied pointing to a new pruner; a Bash command of any but the pruner that
-surely writes a run's design tree denied the same way; and each call that passes, printing
-nothing: a maker's command that doesn't delete, a delete by the main conversation or by another
-plugin's subagent, another tool, the pruner's write of the tree, a run of rn's own scripts, a Bash
-command that only reads the tree, one that the hook isn't sure writes it, a write of a file near a
-run's tree, a write whose path can't be read, stdin that isn't the hook's JSON, a command that
-can't be read, and a fault of the hook's own."""
+surely writes a run's design tree denied the same way; and each call that passes, printing nothing:
+a maker's command that doesn't delete, a delete by the main conversation or by another plugin's
+subagent, another tool, the pruner's write of the tree and of its result, a run of rn's own scripts,
+a Bash command that only reads the tree, one that the hook isn't sure writes it, a write of a file
+near a run's tree, a write whose path can't be read, stdin that isn't the hook's JSON, a command
+that can't be read, and a fault of the hook's own."""
 
 from __future__ import annotations
 
@@ -251,6 +251,16 @@ def test_the_pruners_write_to_a_runs_tree_passes(tool: str):
     When the hook runs
     Then it gives 0 and prints nothing, so that the write goes on"""
     assert main(written(TREE, agent="rn:pruner", tool=tool), ROOT) == (0, "", "")
+
+
+@pytest.mark.supports("test_the_pruners_result_is_committed_with_its_strays_gone_and_its_asks_told")
+@pytest.mark.parametrize("tool", ["Write", "Edit"])
+def test_the_pruners_write_of_its_result_beside_a_runs_tree_passes(tool: str):
+    """Given rn's pruner calling Write or Edit on the run's pruner.json, beside its design tree
+    When the hook runs
+    Then it gives 0 and prints nothing, so that the pruner writes its result"""
+    result = os.path.join(os.path.dirname(TREE), "pruner.json")
+    assert main(written(result, agent="rn:pruner", tool=tool), ROOT) == (0, "", "")
 
 
 @pytest.mark.supports(

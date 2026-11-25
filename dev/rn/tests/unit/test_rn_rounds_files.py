@@ -6,14 +6,16 @@ one among them, another deliverable's Rounds beside them, among them one whose p
 by the deliverable's path percent-encoded whole, paths holding `-` and `%` among them; `at` from an
 absolute and a relative folder, and from a folder outside the run's Rounds; `new` past the
 deliverable's last Round of either stage, a gap among them included, and a stage of neither;
-`mark` of the last of several Rounds with a state, again, and of a deliverable with none, and
+`mark` of the last of several Rounds with a state, again, of a Fix last, and of a deliverable with
+none, and
 `marked` of a Round marked, of one not, and of a mark that isn't JSON; `given` of a Round whose
 generator's Cut holds the deliverable's node, and of one with no Cut; `result` written, not
 written, and not JSON; and the Fixes: Fix's paths; `fixes` with none, and several among Rounds,
 `of` leaving them out; a Round and a Fix that share a number; `at` of a Fix's folder; `new` and
 `new_fix` numbered past each Round and Fix; `problem` of each source, and of a source of none and
-words empty or only spaces; and `problem_of`, `fixer_result`, and `fixer_given` written, not
-written, and not JSON."""
+words empty or only spaces; `problem_of`, `fixer_result`, and `fixer_given` written, not written,
+and not JSON; `weigh` and `weighed` of a Fix and of a Round; and `reopen` of a Round holding a
+weighed point and of one holding no result."""
 
 from __future__ import annotations
 
@@ -40,6 +42,7 @@ from rounds.files import (
     of,
     problem,
     problem_of,
+    reopen,
     result,
     weigh,
     weighed,
@@ -388,7 +391,8 @@ def test_mark_marks_the_deliverables_last_round_alone_with_the_state(run: RunPla
     rn_files.a_round(folder(run), rn_files.COMMAND, "content", 3)
     left = {"short": ["N1"], "open": [{"condition": "N1", "about": "a comma in a line"}]}
     given = [mark(run, GUIDE, left), mark(run, GUIDE, {"short": [], "open": []})]
-    assert seen([each for each in given if each]) == [expected(run, GUIDE, "refactor", 2)] * 2
+    rounds = [each for each in given if isinstance(each, Round)]
+    assert seen(rounds) == [expected(run, GUIDE, "refactor", 2)] * 2
     assert [marked(each) for each in of(run, GUIDE)] == [None, {"short": [], "open": []}]
     assert marked(of(run, rn_files.COMMAND)[0]) is None
 
@@ -655,6 +659,53 @@ def test_a_fix_is_weighed_once_weigh_marks_it_with_the_commit(run: RunPlace):
     weigh(fix, "5de44e4")
     assert weighed(fix) == "5de44e4"
     assert rn_files.read_json(os.path.join(fix.folder, "weighed.json")) == {"commit": "5de44e4"}
+
+
+@pytest.mark.supports(
+    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
+)
+def test_mark_of_a_deliverable_whose_last_folder_is_a_fix_marks_the_fix(run: RunPlace):
+    """Given a run whose guide has Round content-1 and fix-2
+    When the guide is marked as put up with each condition good
+    Then the mark gives fix-2, which holds the state, and content-1 holds none"""
+    rn_files.a_round(folder(run), GUIDE, "content", 1)
+    a_fix(run, 2, {"problem.json": REFUSED})
+    (fix,) = fixes(run, GUIDE)
+    assert mark(run, GUIDE, {"short": [], "open": []}) == fix
+    assert marked(fix) == {"short": [], "open": []}
+    assert marked(of(run, GUIDE)[0]) is None
+
+
+@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
+def test_a_round_is_weighed_once_weigh_marks_it_with_the_commit(run: RunPlace):
+    """Given a run whose guide's Round content-1 holds a generator's point
+    When weighed is asked, then weigh marks it with a commit's hash, and weighed is asked again
+    Then it's None first, then the hash, held in content-1's weighed.json"""
+    place = rn_files.a_round(folder(run), GUIDE, "content", 1, {"generator": rn_files.point()})
+    (round_,) = of(run, GUIDE)
+    assert weighed(round_) is None
+    weigh(round_, "5de44e4")
+    assert weighed(round_) == "5de44e4"
+    assert rn_files.read_json(os.path.join(place, "weighed.json")) == {"commit": "5de44e4"}
+
+
+@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
+@pytest.mark.parametrize(
+    "results",
+    [{"generator": rn_files.point(), **rn_files.WEIGHED}, {}],
+    ids=["a weighed point", "no result"],
+)
+def test_reopen_takes_the_point_and_its_mark_out_of_the_round(
+    run: RunPlace, results: dict[str, Any]
+):
+    """Given a run whose guide's Round content-1 holds the generator's Cut, and its weighed point
+    with its mark, or no result
+    When the Round is reopened
+    Then it holds the generator's Cut alone"""
+    place = rn_files.a_round(folder(run), GUIDE, "content", 1, {"generator-cut": {}, **results})
+    (round_,) = of(run, GUIDE)
+    reopen(round_)
+    assert sorted(os.listdir(place)) == ["generator-cut.json"]
 
 
 @pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")

@@ -323,7 +323,47 @@ def fixes_spend_the_limit(b: Bench) -> None:
     )
 
 
+def point_to_the_user(b: Bench) -> None:
+    """A generator's point waits on the user's answer, as no pruner weighs it first."""
+    given_again(
+        b,
+        "domain/rounds/course.py",
+        "_given_next_of = next_of\n\n\n"
+        "def next_of(deliverable, rounds, refactors):\n"
+        "    given = _given_next_of(deliverable, rounds, refactors)\n"
+        "    if given == Next('pruner', POINT, False):\n"
+        "        return Next('answer', None, False)\n"
+        "    return given\n",
+    )
+
+
+def asks_untold(b: Bench) -> None:
+    """tree.py commit prints its hash alone, telling nothing of what the pruner asks."""
+    given_again(b, "domain/tree/pruned.py", "def told(weighing):\n    return []\n")
+
+
+def every_unit_weighed(b: Bench) -> None:
+    """tree.py commit marks weighed each unit that waits on a pruner, whichever its pruner
+    weighed."""
+    given_again(
+        b,
+        "domain/tree/command.py",
+        "def _weigh(weighable, units, made):\n"
+        "    for folder in weighable.values():\n"
+        "        if folder is not None:\n"
+        "            files.weigh(folder, made)\n",
+    )
+
+
 BREAKS: dict[str, Callable[[Bench], None]] = {
+    "test_a_commit_marks_weighed_only_the_units_its_pruner_weighed": every_unit_weighed,
+    "test_a_generators_point_the_records_settle_is_written_by_one_pruner_and_resumes_it": (
+        point_to_the_user
+    ),
+    "test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users": (
+        point_to_the_user
+    ),
+    "test_the_pruners_result_is_committed_with_its_strays_gone_and_its_asks_told": asks_untold,
     "test_a_tree_change_out_of_form_is_refused_at_its_commit": checks_unasked,
     "test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut": open_decisions_unread,
     "test_a_signoff_of_the_plan_makes_its_deliverables_generator_due": signoff_unrecorded,

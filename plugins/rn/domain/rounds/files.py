@@ -3,15 +3,16 @@ it holds: `rounds/<deliverable>/<stage>-<n>/`, the deliverable's path percent-en
 `urllib.parse.quote(path, safe="")` gives it, so that no two paths share a folder, `<stage>`
 `content` or `refactor` for a Round and `fix` for a Fix, and `<n>` its number among the
 deliverable's Rounds and Fixes together in the order they were made. A Round holds each role's Cut
-and each role's result, and, once the deliverable is put up for its sign-off after it, the mark
-`put-up.json`, the state put up: `{"short": [<the id of each condition not good>], "open":
-[{"condition": <its id>, "about": <its about>}, ...]}` for each open decision, each list in order,
-which `rounds.course` reads as what the user signs off. A Fix holds the problem that raised it,
-`problem.json`, `{"source": <put-up, final-check, or send-back>, "words": <the problem in the
-words that raised it>}`, the fixer's Cut, `fixer-cut.json`, the fixer's result, `fixer.json`, and,
-once the tree is committed after the fixer named a decision, the mark `weighed.json`,
-`{"commit": <the hash of the tree's commit>}`, which `rounds.course` reads as the decision
-weighed."""
+and each role's result. A Fix holds the problem that raised it, `problem.json`, `{"source":
+<put-up, final-check, or send-back>, "words": <the problem in the words that raised it>}`, the
+fixer's Cut, `fixer-cut.json`, and the fixer's result, `fixer.json`. Once the deliverable is put up
+after its last Round or Fix, that folder holds the mark `put-up.json`, the state put up:
+`{"short": [<the id of each condition not good>], "open": [{"condition": <its id>, "about": <its
+about>}, ...]}` for each open decision, each list in order, which `rounds.course` reads as what the
+user signs off. Once the tree is committed after a result that asks the pruner's judgment, a
+generator's point, an evaluator's findings, or a fixer's decision, its folder holds the mark
+`weighed.json`, `{"commit": <the hash of the tree's commit>}`, which `rounds.course` reads as the
+result weighed."""
 
 from __future__ import annotations
 
@@ -255,18 +256,29 @@ def fixer_given(fix: Fix) -> Any:
     return None if cut is None else cut.get("deliverable")
 
 
-def weigh(fix: Fix, commit: str) -> None:
-    """Marks the Fix as weighed by the tree's commit of the hash, writing `<folder>/weighed.json`
-    over one there."""
-    with open(os.path.join(fix.folder, _WEIGHED), "w", encoding="utf-8") as file:
+def weigh(folder: Round | Fix, commit: str) -> None:
+    """Marks the Round's or the Fix's last result as weighed by the tree's commit of the hash,
+    writing `<folder>/weighed.json` over one there."""
+    with open(os.path.join(folder.folder, _WEIGHED), "w", encoding="utf-8") as file:
         file.write(json.dumps({"commit": commit}) + "\n")
 
 
-def weighed(fix: Fix) -> str | None:
-    """The hash of the tree's commit that `weigh` marked the Fix with; None where it isn't marked.
-    Refuses Wrong where the file isn't JSON, naming it."""
-    mark = _read(os.path.join(fix.folder, _WEIGHED))
+def weighed(folder: Round | Fix) -> str | None:
+    """The hash of the tree's commit that `weigh` marked the Round or the Fix with; None where it
+    isn't marked. Refuses Wrong where the file isn't JSON, naming it."""
+    mark = _read(os.path.join(folder.folder, _WEIGHED))
     return None if mark is None else mark["commit"]
+
+
+def reopen(round_: Round) -> None:
+    """Takes the generator's weighed point out of the Round, as its generator starts the Round
+    again once its point is weighed: removes `<folder>/generator.json` and `<folder>/weighed.json`,
+    each where it lies, so that the Round holds a Cut with no result while its generator works,
+    and its evaluator's findings, once written, wait on a weighing of their own."""
+    for name in (os.path.basename(round_.result("generator")), _WEIGHED):
+        path = os.path.join(round_.folder, name)
+        if os.path.exists(path):
+            os.remove(path)
 
 
 def result(round_: Round, role: str) -> Result | None:
@@ -280,26 +292,29 @@ def result(round_: Round, role: str) -> Result | None:
     return _read(round_.result(role))
 
 
-def mark(run: RunPlace, deliverable: str, state: Mark) -> Round | None:
-    """Marks the deliverable's last Round as put up for its sign-off, with the state put up.
+def mark(run: RunPlace, deliverable: str, state: Mark) -> Round | Fix | None:
+    """Marks the deliverable's last Round or Fix as put up, with the state put up.
 
     Takes: the run, the deliverable's path, and its state as `put-up.json` holds it.
-    Gives: the Round marked; None where the deliverable has no Round, such as the plan.
-    Changes: writes `<folder>/put-up.json` of the last Round with the state, over one there.
-    Refuses: Wrong where a folder of the deliverable's Rounds isn't a Round's, as `of` refuses.
+    Gives: the Round or the Fix marked, the one made last; None where the deliverable has
+    neither, such as the plan.
+    Changes: writes `<folder>/put-up.json` of that Round or Fix with the state, over one there.
+    Refuses: Wrong where a folder of the deliverable's Rounds and Fixes has a name of another
+    form, as `of` refuses.
     """
-    rounds = of(run, deliverable)
-    if not rounds:
+    made: list[Round | Fix] = [*of(run, deliverable), *fixes(run, deliverable)]
+    if not made:
         return None
-    with open(os.path.join(rounds[-1].folder, _PUT_UP), "w", encoding="utf-8") as file:
+    last = max(made, key=lambda each: each.number)
+    with open(os.path.join(last.folder, _PUT_UP), "w", encoding="utf-8") as file:
         file.write(json.dumps(state) + "\n")
-    return rounds[-1]
+    return last
 
 
-def marked(round_: Round) -> Mark | None:
-    """The state the Round was put up with, as `mark` wrote it; None where it isn't put up.
-    Refuses Wrong where the file isn't JSON, naming it."""
-    return _read(os.path.join(round_.folder, _PUT_UP))
+def marked(folder: Round | Fix) -> Mark | None:
+    """The state the Round or the Fix was put up with, as `mark` wrote it; None where it isn't
+    put up. Refuses Wrong where the file isn't JSON, naming it."""
+    return _read(os.path.join(folder.folder, _PUT_UP))
 
 
 def given(round_: Round) -> Any:

@@ -214,6 +214,13 @@ Strategies:
   weighing.
 - Each step that has one right result done by a script that the role runs. [P4.3]\
   Intent: each role spends its judgment and its context only where a step needs them.
+- What is due after each event listed by a script from the run's files, each due role's Cut
+  written. [P4.3]\
+  Intent: the run moves the same way at each event, and no fact skips the role that weighs it.
+- The pruner's result written as a fixed form naming each unit it weighed, for the tree's commit.
+  [P4.2]\
+  Intent: the commit follows the pruner's own result, and a unit that ends meanwhile waits for its
+  own pruner.
 - Each deliverable's Rounds and Fixes kept apart from the others', so that each deliverable due
   starts at once. [P5.2]\
   Intent: the user waits for the slowest deliverable, not for all of them in turn.
@@ -291,18 +298,19 @@ sequenceDiagram
       end
       P->>S: lists each node that its change touches (Design tree) [P5.1]
       P->>T: rewrites each node listed that the change made false (Design tree) [P1.1]
-      P-->>O: ends, with what it changed, each point it left open, each stray file, and each step of its own it changed [P4.2]
-      opt a stray file [P2.3]
-        O->>O: removes it [P2.3]
-      end
+      P->>P: writes its result in the run's folder: each unit it weighed, what it cut and kept, each point it left open, each stray file, and each step of its own it changed [P4.2]
+      P-->>O: ends [P4.2]
     end
     opt a sign-off by /rn:ty [P1.3]
-      O->>S: records it (Design tree) [P4.3]
+      O->>S: records and commits it (Design tree) [P4.3]
     end
     opt a write to the design tree by any other role, by Write, Edit, or Bash [P7.3]
       H->>T: refuses the write, telling its writer to hand the fact to the pruner (Design tree) [P7.3]
     end
-    O->>S: checks and commits the change (Design tree) [P6.1]
+    opt a pruner's end [P6.1]
+      O->>S: commits the pruner's result: checks the tree, marks weighed each unit it names and no other, removes each stray file, signs off the plan written from the hearing where no point is open or asked, commits, and gives each point asked and each step changed (Design tree) [P4.3, P6.1]
+    end
+    O->>S: lists what's due now from the run's files: a unit for a pruner, a point for the user, a role due or at work, a put-up, a sign-off, or the final check (Design tree, Round, Fix) [P4.3]
     opt a refusal that only the user can mend [P5.3]
       O->>U: the blocker, and what the user does, the other work going on [P5.3]
     end
@@ -312,8 +320,6 @@ sequenceDiagram
         U->>O: answers [P1.2]
       end
       O->>O: takes what the user settled, in their words, as the next unit for one pruner [P1.2]
-    else the plan written from the hearing, with no point open [P1.3]
-      O->>S: records the plan's sign-off, with the steps that the user checks as they settled them (Design tree) [P1.3]
     else a deliverable whose Rounds are over, or whose Fix ended fixed or had its decision cut [P1.3]
       O->>S: puts it up, committed and pushed in the pull request, which names the run's issues, and makes it done where its step isn't one the user checks (Design tree) [P4.3]
       alt the repository's checks refuse the push [P3.4]
@@ -326,7 +332,7 @@ sequenceDiagram
       end
     else each deliverable whose inputs are done, resting on none still being made [P5.2]
       par one for each such deliverable [P5.2]
-        O->>S: writes the due role's Cut from the design tree as it stands (Cut) [P4.1]
+        S-->>O: the due role's Cut, written from the design tree as it stands (Cut) [P4.1]
         alt its Round of content, to make [P3.2]
           O->>G: starts it with its Cut, or resumes the last Round's with the user's words, as given (Cut) [P4.1]
           alt a point it can't settle [P1.2]
@@ -413,7 +419,7 @@ sequenceDiagram
   opt no run found [S2]
     O->>U: asks which run to pick up [S2]
   end
-  O->>T: reads where it stopped (Design tree) [P6.1]
+  O->>S: lists what's due, writing a fresh Cut for each role that the pause stopped (Design tree, Cut) [P6.1]
   O->>U: where it picks up, and the point or sign-off waiting [S2]
   O->>G: starts the generator stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
   O->>E: starts the evaluator stopped again, from the Round's files and a fresh Cut (Round, Cut) [P6.1]
@@ -447,7 +453,7 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── evaluator.md               what the evaluator does
 │   ├── fixer.md                   what the fixer does
 │   ├── schemas/                   the form of each Cut and result
-│   ├── tree/                      the code that checks the design tree
+│   ├── tree/                      the code that checks and commits the design tree, and lists what's due
 │   ├── check/                     the code that checks each role's result against its form
 │   ├── rounds/                    the code that reads and writes the Rounds and the Fixes
 │   ├── template/                  the code that holds a document to its kind's template
@@ -466,6 +472,7 @@ dev/rn/                            what only rn's developers use
 .rn/                               what rn writes on the work's branch
 ├── <yyyymmdd>-<slug>/             one run's folder
 │   ├── design-tree.json           the design tree
+│   ├── pruner.json                the last pruner's result, until the tree's commit acts on it
 │   └── rounds/                    each Round and each Fix, in a folder of its deliverable
 │       └── <deliverable>/         numbered in the order made, such as content-1, refactor-3, fix-4
 │           └── fix-<n>/           a Fix: its problem, the fixer's Cut, and the fixer's result

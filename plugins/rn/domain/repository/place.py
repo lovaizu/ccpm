@@ -1,6 +1,6 @@
 """Decides where a run lies and what it's called: its name from the day and a slug of the work, its
-worktree and branch, its folder, the paths of its design tree and its Rounds in that folder, and
-which run a conversation works on."""
+worktree and branch, its folder, the paths of its design tree, the pruner's result, and its Rounds
+in that folder, and which run a conversation works on."""
 
 from __future__ import annotations
 
@@ -47,6 +47,11 @@ class RunPlace:
     def tree(self) -> str:
         """The run's design tree, `<folder>/design-tree.json`."""
         return os.path.join(self.folder, "design-tree.json")
+
+    @property
+    def pruner(self) -> str:
+        """The pruner's result of its last unit, `<folder>/pruner.json`, which no commit holds."""
+        return os.path.join(self.folder, "pruner.json")
 
     @property
     def rounds(self) -> str:

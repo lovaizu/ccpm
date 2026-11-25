@@ -17,8 +17,8 @@ from rn_bench import (
     COMMAND_TEXT,
     Bench,
     command_signed,
-    cut_move,
     cut_of,
+    due,
     evaluator_cut,
     fix_written,
     held,
@@ -27,6 +27,7 @@ from rn_bench import (
     push_refused,
     reviewed,
     signed_plan,
+    started,
     wrote,
 )
 from rn_files import COMMAND, GOAL, GUIDE
@@ -40,9 +41,8 @@ def paused(b: Bench) -> str:
 
 def picked_up(b: Bench) -> None:
     """In a new conversation, the orchestrator finds the run by repository.py find, which prints
-    the run's folder, and commits its review."""
+    the run's folder."""
     assert b.ran("repository", "find").split() == [b.run]
-    reviewed(b, ground="Picked up.")
 
 
 def mid_command(b: Bench) -> None:
@@ -122,13 +122,15 @@ def test_a_pause_leaves_the_users_own_worktree_and_branch_as_they_were(b: Bench)
 @pytest.mark.supports("S2", "Round", "Cut")
 def test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut(b: Bench):
     """Given a run paused while its command's generator made Round content-1
-    When the user types /rn:up in a new conversation, and the orchestrator finds the run and
-    writes the generator's Cut
-    Then the Cut lies in Round content-1 again"""
+    When the user types /rn:up in a new conversation, and the orchestrator finds the run, runs
+    tree.py next, and writes the generator's Cut by tree.py next --restart
+    Then next prints the generator running, and next --restart its start, the Cut lying in Round
+    content-1 again"""
     mid_command(b)
     paused(b)
     picked_up(b)
-    cut_path = b.ran(*cut_move(b, "generator", COMMAND)).strip()
+    assert due(b) == [["running", "generator", COMMAND]]
+    cut_path = started(b, "generator", COMMAND, "--restart")
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
     assert os.path.join(b.repo, cut_path) == os.path.join(first, "generator-cut.json")
 
@@ -137,12 +139,12 @@ def test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_
 def test_a_pick_up_starts_the_stopped_evaluator_again_in_its_round(b: Bench):
     """Given a run paused while its command's evaluator tried Round content-1
     When the user picks it up in a new conversation, and the orchestrator writes the evaluator's
-    Cut
+    Cut by tree.py next --restart
     Then the Cut lies in Round content-1"""
     evaluator_cut(b)
     paused(b)
     picked_up(b)
-    cut_path = b.ran(*cut_move(b, "evaluator", COMMAND)).strip()
+    cut_path = started(b, "evaluator", COMMAND, "--restart")
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
     assert os.path.join(b.repo, cut_path) == os.path.join(first, "evaluator-cut.json")
 
@@ -152,12 +154,12 @@ def test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut(b:
     """Given a run whose command's put-up the repository's push check refused, written as the Fix
     fix-2, whose fixer stripped the space from the command's line but wrote no result
     When the user pauses the run, picks it up in a new conversation, and the orchestrator writes
-    the fixer's Cut
+    the fixer's Cut by tree.py next --restart
     Then the remote's branch holds the Fix's problem and the fixer's Cut; the Cut lies in fix-2
     again, holding the same problem, and no new Fix is made"""
     refused = push_refused(b)
     fix = fix_written(b, COMMAND, "put-up", refused.err)
-    first = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    first = started(b, "fixer", COMMAND)
     wrote(b, {COMMAND: COMMAND_TEXT})
     paused(b)
     pushed = b.branch_files(f"rn-{b.name()}")
@@ -165,7 +167,7 @@ def test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut(b:
     assert f"{within}/problem.json" in pushed
     assert f"{within}/fixer-cut.json" in pushed
     picked_up(b)
-    again = b.ran(*cut_move(b, "fixer", COMMAND)).strip()
+    again = started(b, "fixer", COMMAND, "--restart")
     assert again == first
     assert cut_of(b, again)["problem"] == {"source": "put-up", "words": refused.err}
     folders = os.listdir(os.path.dirname(fix))
@@ -177,17 +179,15 @@ def test_a_pick_up_with_a_point_waiting_keeps_it_open_and_starts_no_role(b: Benc
     """Given a run paused while a point waits on the user, which the pruner of the command's
     judged Round left open as a decision of its N1
     When the user picks it up in a new conversation
-    Then the design tree still holds the point open, and tree.py cut of the generator gives 1, as
-    the command waits on the user's answer"""
+    Then the design tree still holds the point open, and tree.py next --restart prints its answer
+    alone, starting no role, as the command waits on the user's answer"""
     judged_command(b, {"N1": "The accountant prints an invoice with no quantity in a line."})
     point = rn_files.decision("a line's quantity", None)
     reviewed(b, held(b, COMMAND, ["N2", "N3"], {"N1": [point]}), "The Round's result.")
     paused(b)
     picked_up(b)
     assert point in b.tree()["deliverables"][1]["necessary_conditions"][0]["decisions"]
-    refused = b.script(*cut_move(b, "generator", COMMAND))
-    assert refused.code == 1
-    assert "the user's answer" in refused.err
+    assert due(b, "--restart") == [["answer", COMMAND, "N1", "a line's quantity"]]
 
 
 @pytest.mark.supports("S2", "scripts", "Design tree")
@@ -195,7 +195,7 @@ def test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again(b: Benc
     """Given a run paused while its command's generator made it, whose worktree and local branch
     the user then removed, so that only origin's branch holds the run
     When the user types /rn:up in a new conversation, the orchestrator runs repository.py find,
-    and writes the generator's Cut
+    and writes the generator's Cut by tree.py next --restart
     Then find prints the run's folder, its worktree lies there again on rn-<name> at origin's
     head, holding the design tree that the pause pushed, and the Cut lies in Round content-1"""
     mid_command(b)
@@ -209,8 +209,7 @@ def test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again(b: Benc
         == git(b.origin, "rev-parse", f"rn-{b.name()}").strip()
     )
     assert b.tree() == pushed
-    reviewed(b, ground="Picked up.")
-    cut_path = b.ran(*cut_move(b, "generator", COMMAND)).strip()
+    cut_path = started(b, "generator", COMMAND, "--restart")
     first = rn_files.round_of(b.folder, COMMAND, "content", 1)
     assert os.path.join(b.repo, cut_path) == os.path.join(first, "generator-cut.json")
 

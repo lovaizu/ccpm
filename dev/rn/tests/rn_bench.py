@@ -5,10 +5,10 @@ of a run as rn's architecture draws them under Sequences, each a handoff between
 Each move runs rn's scripts as a role runs them, from the repository's top, each in a process of its
 own, and feeds what one prints to the next, as the orchestrator and each role do. A double stands in
 for each prompt's work, as rn's Test strategy says under Integration testing: the pruner's writes
-the design tree, rewrites the nodes that `tree.py touched` lists, and checks it by `tree.py check`,
-the generator's writes a deliverable's files, the fixer's mends them or names a decision, and each
-role's writes its result where the prompt's result form says. Each helper plays one move, and
-says nothing of how rn's parts carry it."""
+the design tree, rewrites the nodes that `tree.py touched` lists, checks it by `tree.py check`, and
+writes its result, `pruner.json`, the generator's writes a deliverable's files, the fixer's mends
+them or names a decision, and each role's writes its result where the prompt's result form says.
+Each helper plays one move, and says nothing of how rn's parts carry it."""
 
 from __future__ import annotations
 
@@ -17,10 +17,10 @@ import os
 import shutil
 import subprocess
 import sys
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
-from typing import Any
+from typing import Any, Union
 
 import rn_files
 from gh import gh_double
@@ -133,14 +133,19 @@ def bench(tmp: str) -> Bench:
 
 
 def pruned(
-    b: Bench, design_tree: Mapping[str, Any], rewritten: Mapping[str, Any] | None = None
+    b: Bench,
+    design_tree: Mapping[str, Any],
+    rewritten: Mapping[str, Any] | None = None,
+    result: Mapping[str, Any] | None = None,
 ) -> list[str]:
     """A new pruner weighs a unit, given the run's folder by its absolute path, from a folder of
     its own, the run's worktree: it writes the design tree given; runs `tree.py touched`, which
     lists each node that its change touches; rewrites itself each node of `rewritten`, by its
     pointer, which must be among those listed, to the value given, as the change made it false;
-    and checks its write by `tree.py check`, which must give 0, before it ends. Gives the nodes
-    that `tree.py touched` listed."""
+    checks its write by `tree.py check`, which must give 0; and writes its result, `pruner.json`,
+    the one given, or else one that weighs each unit of `handed`, keeps a node, and asks nothing,
+    before it ends. Gives the nodes that `tree.py touched` listed."""
+    units = handed(b)
     b.write_tree(design_tree)
     listed = b.ran_in(b.worktree, "tree", "touched", b.folder).split()
     if rewritten:
@@ -150,7 +155,33 @@ def pruned(
             _set_at(mended, pointer, value)
         b.write_tree(mended)
     b.ran_in(b.worktree, "tree", "check", b.folder)
+    weighing = rn_files.pruner_result(units=units) if result is None else dict(result)
+    rn_files.write_json(os.path.join(b.folder, "pruner.json"), weighing)
     return listed
+
+
+def handed(b: Bench) -> list[str]:
+    """Each unit that waits on a pruner, as the orchestrator hands each that `tree.py next`
+    printed on a pruner line: by its absolute path, the result in each deliverable's last Round or
+    Fix, with no weighed.json beside it, that is a fixer's decision, an evaluator's findings, or a
+    generator's point."""
+    found = []
+    top = os.path.join(b.folder, "rounds")
+    for encoded in sorted(os.listdir(top)) if os.path.isdir(top) else []:
+        folders = os.listdir(os.path.join(top, encoded))
+        last = os.path.join(top, encoded, max(folders, key=lambda each: int(each.split("-")[1])))
+        if os.path.exists(os.path.join(last, "weighed.json")):
+            continue
+        for name, asks in (
+            ("fixer.json", lambda result: result["result"] == "decision"),
+            ("evaluator.json", lambda result: True),
+            ("generator.json", lambda result: result["result"] == "point"),
+        ):
+            path = os.path.join(last, name)
+            if os.path.isfile(path) and asks(rn_files.read_json(path)):
+                found.append(path)
+                break
+    return found
 
 
 def _set_at(design_tree: dict[str, Any], pointer: str, value: Any) -> None:
@@ -165,21 +196,28 @@ def _set_at(design_tree: dict[str, Any], pointer: str, value: Any) -> None:
         node[last] = value
 
 
+# A move of the orchestrator: a script's name and its arguments, such as
+# `("repository", "put-up", ...)`, or a move that gives what it printed, such as `cut_move`'s.
+Move = Union[Sequence[str], Callable[[], str]]
+
+
 def reviewed(
     b: Bench,
     design_tree: Mapping[str, Any] | None = None,
     ground: str = "The run's facts decide it.",
-    moves: Sequence[Sequence[str]] = (),
+    moves: Sequence[Move] = (),
     rewritten: Mapping[str, Any] | None = None,
 ) -> list[str]:
     """The moves after each event: where a tree is given, a unit is settled, and one pruner weighs
-    it as `pruned` does, rewriting each node of `rewritten`; then the orchestrator commits by
-    `tree.py commit` with the ground, and runs each move given, a script's name and its arguments,
-    such as `("repository", "put-up", ...)`. Gives what each move printed."""
+    it as `pruned` does, rewriting each node of `rewritten`, keeping the ground and asking
+    nothing; then, where the pruner wrote its result, the orchestrator commits by `tree.py
+    commit`; and it runs each move given. Gives what each move printed."""
     if design_tree is not None:
-        pruned(b, design_tree, rewritten)
-    b.ran("tree", "commit", b.run, ground)
-    return [b.ran(*each) for each in moves]
+        result = rn_files.pruner_result(units=handed(b), kept=[ground])
+        pruned(b, design_tree, rewritten, result)
+    if os.path.exists(os.path.join(b.folder, "pruner.json")):
+        b.ran("tree", "commit", b.run)
+    return [each() if callable(each) else b.ran(*each) for each in moves]
 
 
 def new_run(b: Bench) -> str:
@@ -216,33 +254,63 @@ def heard_tree(b: Bench, answered: bool = True) -> dict[str, Any]:
     return design_tree
 
 
+# The tax rate's point as the pruner asks it of the user.
+TAX_ASK = {
+    "deliverable": rn_files.COMMAND,
+    "condition": "N1",
+    "about": rn_files.TAX_ABOUT,
+    "question": (
+        "Is the tax rate given with each invoice, or set once? I recommend with each invoice, as"
+        " the rate changes."
+    ),
+}
+
+
 def heard(b: Bench, answered: bool = True) -> None:
     """The user asked for the walkthrough's words; the orchestrator made the run by `new_run`,
     held the hearing with the user until the way to the goal was settled, handed it to one pruner,
-    which wrote `heard_tree`, and committed the tree."""
+    which wrote `heard_tree`, asking the tax rate's point where it left it open, and committed
+    the tree, which signs off the plan where the pruner asks nothing."""
     new_run(b)
-    reviewed(b, heard_tree(b, answered), "The way to the goal, as the user settled it.")
+    kept = ["The way to the goal, as the user settled it."]
+    asks = [] if answered else [TAX_ASK]
+    pruned(b, heard_tree(b, answered), result=rn_files.pruner_result(kept=kept, ask=asks))
+    b.ran("tree", "commit", b.run)
 
 
-def signed(b: Bench, moves: Sequence[Sequence[str]] = ()) -> list[str]:
-    """The orchestrator records a sign-off by `tree.py signoff`, the plan's once the hearing is
-    written or a deliverable's at the user's `/rn:ty`, and commits it with the moves given; gives
-    what the moves printed."""
+def due(b: Bench, *more: str) -> list[list[str]]:
+    """What `tree.py next` prints, which must give 0, each line split at its tabs."""
+    return [each.split("\t") for each in b.ran("tree", "next", b.run, *more).splitlines()]
+
+
+def started(b: Bench, role: str, deliverable: str, *more: str) -> str:
+    """The orchestrator runs `tree.py next`, given each word of `more`, such as `--restart`, which
+    must print the role's `start` for the deliverable; gives the Cut's path that it printed."""
+    lines = due(b, *more)
+    found = [each[3] for each in lines if each[:3] == ["start", role, deliverable]]
+    assert found, f"no start of the {role} of {deliverable} in {lines}"
+    return found[0]
+
+
+def signed(b: Bench, moves: Sequence[Move] = ()) -> list[str]:
+    """The orchestrator records a deliverable's sign-off at the user's `/rn:ty` by `tree.py
+    signoff`, which commits it, and runs the moves given; gives what the moves printed."""
     b.ran("tree", "signoff", b.run)
-    return reviewed(b, ground="The user signs it off.", moves=moves)
+    return reviewed(b, moves=moves)
 
 
-def cut_move(b: Bench, role: str, deliverable: str) -> tuple[str, ...]:
-    """The move that writes the role's Cut for the deliverable."""
-    return ("tree", "cut", b.run, role, deliverable)
+def cut_move(b: Bench, role: str, deliverable: str) -> Callable[[], str]:
+    """The move that writes the role's Cut for the deliverable by `tree.py next`, as `started`
+    does, giving the Cut's path."""
+    return lambda: started(b, role, deliverable)
 
 
 def signed_plan(b: Bench) -> str:
-    """A run whose hearing one pruner wrote, whose plan's sign-off the orchestrator recorded, and
-    whose command's Cut it wrote for its generator, the one deliverable whose inputs are done;
-    gives the Cut's path."""
+    """A run whose hearing one pruner wrote, its commit signing off the plan, and whose command's
+    Cut the orchestrator wrote for its generator by `tree.py next`, the one deliverable whose
+    inputs are done; gives the Cut's path."""
     heard(b)
-    return signed(b, [cut_move(b, "generator", rn_files.COMMAND)])[0].strip()
+    return started(b, "generator", rn_files.COMMAND)
 
 
 CHANGELOG = "CHANGELOG.md"
@@ -262,13 +330,15 @@ def apart_tree(b: Bench, decisions: Sequence[Mapping[str, Any]] = ()) -> dict[st
 
 
 def signed_apart(b: Bench, design_tree: Mapping[str, Any], made: Sequence[str]) -> list[str]:
-    """A run whose hearing one pruner wrote as the plan given, whose plan's sign-off the
-    orchestrator recorded, writing the generator's Cut of each deliverable given; gives each Cut's
-    path."""
+    """A run whose hearing one pruner wrote as the plan given, its commit signing off the plan,
+    and whose orchestrator ran `tree.py next` once, which must start the generator of each
+    deliverable given; gives each Cut's path, in the order given."""
     new_run(b)
     reviewed(b, design_tree, "The way to the goal, as the user settled it.")
-    moves = [cut_move(b, "generator", each) for each in made]
-    return [each.strip() for each in signed(b, moves)]
+    lines = due(b)
+    starts = {each[2]: each[3] for each in lines if each[:2] == ["start", "generator"]}
+    assert set(made) <= set(starts), f"no start of each of {made} in {lines}"
+    return [starts[each] for each in made]
 
 
 def held(

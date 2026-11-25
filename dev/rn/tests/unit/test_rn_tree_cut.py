@@ -176,7 +176,7 @@ def test_a_last_generator_that_named_nothing_good_gives_an_empty_last_good(repo:
     assert got["last_good"] == []
 
 
-@pytest.mark.supports("test_a_generators_point_reaches_the_user_and_their_answer_resumes_it")
+@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 def test_the_cut_holds_the_users_answer_as_its_decision_by_user(repo: str):
     """Given a tree whose command's N1 holds the user's answer about the tax rate, and the
     generator's last result a point

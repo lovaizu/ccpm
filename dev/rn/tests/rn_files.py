@@ -317,13 +317,38 @@ def run_folder(repository: str, name: str, design_tree: Mapping[str, Any]) -> st
 def a_round(
     run: str, deliverable: str, stage: str, number: int, results: Mapping[str, Any] | None = None
 ) -> str:
-    """Writes a Round's folder with each role's result given, by `generator` and `evaluator`, and
-    gives the folder."""
+    """Writes a Round's folder with each file given by its name, `<name>.json`: each role's
+    result, by `generator` and `evaluator`, and the mark of the tree's commit that weighed its last
+    result, by `weighed`, as `WEIGHED` gives it; gives the folder."""
     folder = round_of(run, deliverable, stage, number)
     os.makedirs(folder, exist_ok=True)
     for role, result in (results or {}).items():
         write_json(os.path.join(folder, f"{role}.json"), result)
     return folder
+
+
+# The mark of a Round whose last result a commit of the tree weighed, as `a_round` takes it.
+WEIGHED = {"weighed": {"commit": "a1b2c3"}}
+
+
+def pruner_result(**fields: Sequence[Any]) -> dict[str, Any]:
+    """A pruner's result, in the form of pruner.schema.json, each of its fields as given, by its
+    name, and else empty, but `kept`, which keeps one node."""
+    result: dict[str, Any] = {
+        "units": [],
+        "cut": [],
+        "kept": ["/deliverables/1 N1: the tax rate"],
+        "ask": [],
+        "stray": [],
+        "changed": [],
+    }
+    result.update(
+        {
+            name: [dict(each) if isinstance(each, Mapping) else each for each in value]
+            for name, value in fields.items()
+        }
+    )
+    return result
 
 
 def made(good: Sequence[tuple[str, Sequence[str]]] = (), files: Sequence[str] = ()) -> dict:

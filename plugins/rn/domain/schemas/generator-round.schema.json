@@ -16,7 +16,7 @@
    ]
   },
   "point": {
-   "description": "With point: the point, with the generator's recommendation and its ground, which the orchestrator puts to the user as given.",
+   "description": "With point: the point, with the generator's recommendation and its ground, which one pruner weighs first, settling it where the goal and the records do, and else asking the user.",
    "type": "string",
    "minLength": 1
   },

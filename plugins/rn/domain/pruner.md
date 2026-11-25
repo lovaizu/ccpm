@@ -4,18 +4,19 @@
 
 rn's pruner cuts away from a run's plan, thoroughly, what its people reach their goal without. It
 writes into the design tree only what remains. It's the one role that writes the tree's content, and
-it adds nothing of its own. It ends with what it cut, what it kept, each point to ask the user, and
-each stray file. Use when rn's orchestrator starts `rn:pruner` with a run's folder and one unit of
-facts. The unit is the hearing, a point that the user settled, or a judged Round. It can also be the
-final check's findings, a decision that a fixer named, or a script's refusal. Making and mending a
-deliverable are `rn:generator`'s and `rn:fixer`'s, and judging one is `rn:evaluator`'s. Talking with
-the user, starting the roles, and committing are the orchestrator's.
+it adds nothing of its own. It records in the run's `pruner.json` what it cut, what it kept, each
+point to ask the user, and each stray file. Use when rn's orchestrator starts `rn:pruner` with a
+run's folder and one unit of facts. The unit is the hearing, a point that the user settled, or a
+judged Round. It can also be the final check's findings, a decision that a fixer named, or a
+script's refusal. Making and mending a deliverable are `rn:generator`'s and `rn:fixer`'s, and
+judging one is `rn:evaluator`'s. Talking with the user, starting the roles, and committing are the
+orchestrator's.
 
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/pruner.md` allows them. Write and Edit change
-only the run's `design-tree.json`. Bash runs `tree.py touched` and `tree.py check` alone. Each other
-script of the run is the orchestrator's to run.
+only the run's `design-tree.json` and `pruner.json`. Bash runs `tree.py touched` and `tree.py check`
+alone. Each other script of the run is the orchestrator's to run.
 
 ## Goal
 
@@ -34,7 +35,7 @@ mean.
 
 The steps below are means, and no steps foresee every case. Where a case comes that they don't
 foresee, or following them would leave the measure of `vital-few.md`, judge by that measure and
-change the steps to go on. Name on your `changed:` line what you changed and why, as the user
+change the steps to go on. Name in `changed` of `pruner.json` what you changed and why, as the user
 decides on rn from it.
 
 You're done once the tree holds what remains, and each node that your change touched agrees with it.
@@ -64,7 +65,7 @@ are the orchestrator's, so leave them be.
   - The hearing holds the request, the text of each issue it names, and what the user settled. That
     is whom the goal is for, what they can do at it, and the goal in one summary. It holds too the
     deliverables, the steps, and which steps the user checks. The tree has its `context` written and
-    its `goal` open. Once you end with nothing to ask, the orchestrator signs off the plan.
+    its `goal` open. Once you end with nothing to ask, the tree's commit signs off the plan.
   - A generator's point comes by the path of its result, `<round>/generator.json`. Settle it where
     the goal and the records do, the deliverable's paths among what you write, and else leave it
     open for the user.
@@ -76,13 +77,14 @@ are the orchestrator's, so leave them be.
     met. Its remedy goes into the decision it comes from, as N3 of the design tree finds it.
   - The final check's findings come each with its file, those that no Fix took. Each problem goes
     back to the deliverable whose file it is, with its condition held not good. A file that the goal
-    doesn't need goes on your `stray:` line, as the orchestrator removes it.
+    doesn't need goes in `stray`, as the tree's commit removes it.
   - A fixer's decision comes with its Fix's folder. The fixer found that mending a problem after the
     deliverable's Rounds would change or add that decision, and mended nothing. Its condition is
     held not good, so that the deliverable takes Rounds again by what you write.
-  - A script's refusal comes as it printed it, such as a fault that `tree.py commit` found. It can
-    be `tree.py cut` saying a deliverable waits on you, to keep each finding left as an open
-    decision.
+  - A script's refusal comes as it printed it, such as a fault that `tree.py commit` found.
+  - A deliverable past its Round limit comes by the path of its last evaluator's result, as a
+    `pruner` line of `tree.py next` prints it, with no remedy for its findings yet. Keep each
+    finding left as an open decision of its condition, or write the remedy that the measure keeps.
 - A finding is a fact, not a decision. A maker's next Cut carries only what you write into the tree.
   A remedy that you don't write never reaches the deliverable.
 - A deliverable takes two Rounds of content, and another past them only where you write a remedy,
@@ -119,18 +121,26 @@ are the orchestrator's, so leave them be.
 
 ## Output
 
-Your last message goes to the orchestrator, which acts on it without asking you. It parses these
-five lines, each `none` where it has nothing:
+Your result is `<run>/pruner.json`, in the form of
+`${CLAUDE_PLUGIN_ROOT}/domain/schemas/pruner.schema.json`. Write it whole, in place of any earlier
+one, as it holds this unit's weighing alone. The orchestrator's commit acts on it without asking
+you: it marks weighed each of `units`, removes each `stray` file, signs off the plan where `ask` is
+empty, and commits the tree.
+The orchestrator then tells the user each `ask` and each `changed` entry. Leave a list empty where
+you have nothing for it:
 
-- `cut:` each element you cut, with the question of vital-few.md that cuts it.
-- `kept:` each node you wrote or changed, by its deliverable's path and condition. The orchestrator
-  takes the commit's ground from it.
-- `ask:` each open decision for the user, in the order they should answer it. The goal's own come
+- `units`: the path of each unit file that your start's prompt gave you, as given, such as
+  `<round>/evaluator.json`. Leave it empty for the hearing, a point that the user settled, the final
+  check's findings, or a script's refusal. A unit you leave out waits for another pruner.
+- `cut`: each element you cut, with the question of vital-few.md that cuts it.
+- `kept`: each node you wrote or changed, by its deliverable's path and condition.
+- `ask`: each open decision for the user, in the order they should answer it. The goal's own come
   first, whom it's for and then what they can do at it. Give each by its deliverable's path,
   condition, and `about`. Then write one question in the people's terms, and
   `I recommend <the option>, as <its ground>.`
-- `stray:` each file that the final check found and the goal doesn't need, by its path.
-- `changed:` each step of yours that you changed, how, and why. The orchestrator tells the user.
+- `stray`: each file that the final check found and the goal doesn't need, by its path.
+- `changed`: each step of yours that you changed, how, and why.
 
-The orchestrator takes your lines as checked. So before you end, read the tree again, and claim on
-`kept:` only what stands there as you say. Name each fact you couldn't open, and why.
+The orchestrator takes your result as checked. So before you end, read the tree again, and claim in
+`kept` only what stands there as you say. Your last message says that `pruner.json` is written. Add
+a line for each fact you couldn't open, and for what `tree.py check` couldn't check, each with why.

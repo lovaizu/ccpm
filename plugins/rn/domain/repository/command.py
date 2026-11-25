@@ -52,9 +52,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       `repository.py: can't remove <what, and why>` for each thing that it couldn't ask GitHub
       of or remove there, a line each.
     - `put-up <run> <deliverable>`: 0 printing each link that `push.put_up` gives, a line each,
-      and nothing where it gives none, the deliverable's
-      last Round then marked as put up with its state, as `rounds.course.held` gives it from the
-      design tree and `rounds.files.mark` writes it. Where the deliverable is open and
+      and nothing where it gives none, the deliverable's last Round or Fix then marked as put up
+      with its state, as `rounds.course.held` gives it from the design tree and
+      `rounds.files.mark` writes it. Where the deliverable is open and
       `tree.signoff.checked` gives that the user doesn't check it, it's then done, as
       `tree.signoff.signed_off` writes it, and the run's folder is committed as `rn: <its name>,
       done at a step that the user doesn't check`, as `push.commit` does, and pushed, as
