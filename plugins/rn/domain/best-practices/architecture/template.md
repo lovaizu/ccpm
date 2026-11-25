@@ -97,7 +97,7 @@ Strategies:
 > - One section for each user story.
 > - `<path>`: what the story does, in a few words.
 > - `U`, `A`: a short ID for each one that takes part, used in the messages.
-> - `<role>`, `<component>`: the role of the story, and each component and data it reaches, as Data
+> - `<role>`, `<component>`: the role of the story, and each component and data it reaches, as Concept
 >   model and Components name them.
 > - `<action>`, `<Data>`, `<tag>`: one action on each arrow; the data it hands on, in parentheses;
 >   and the story or principle item that it carries out, in brackets, on each arrow and each branch

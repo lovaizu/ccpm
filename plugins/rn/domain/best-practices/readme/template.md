@@ -106,6 +106,6 @@ At the end, you have `<result>`.
 > DELETE_TEMPLATE_COMMENT:
 > - `<license>`: the license's identifier in the SPDX License List, such as MIT.
 > - `<path>`: the license's full text, by its path from the README's folder.
-> - `<work>`, `<its license>`, `<its path>`: each work of others that the product holds, such as a
->   copied library, with its license's identifier and the path of its full text. Leave out the list
->   where there's none.
+> - `<work>`, `<its license>`, `<its path>`: each work of others that the product holds under a
+>   license other than the product's, such as a copied library, with its license's identifier and
+>   the path of its full text. Leave out the list where there's none.

@@ -49,7 +49,7 @@
      {
       "id": "N2",
       "about": "Non-goals",
-      "what": "Does the README list what readers might expect the product to do but it doesn't?",
+      "what": "Does the README list what a reader bringing the role's work would count on the product to do but it doesn't?",
       "why": "A reader who needs something the product doesn't do finds out before they install it, not after their work depends on it.",
       "items": [
        {
@@ -134,7 +134,7 @@
        },
        {
         "at": "decide",
-        "text": "Search the product's folder for the license files and notices of others' work, such as a copied library's own LICENSE, and list each work with its license's identifier and the path of its file."
+        "text": "Search the product's folder for the license files and notices of others' work, such as a copied library's own LICENSE, and list each work whose license differs from the product's, with its license's identifier and the path of its file."
        },
        {
         "at": "make",
@@ -170,7 +170,7 @@
        },
        {
         "at": "make",
-        "text": "Where the next section doesn't answer the question you wrote, add the answer at its start, or, where a newcomer needs it neither to decide nor to start, link the document that holds it from Documentation."
+        "text": "Where the next section doesn't answer the question you wrote, and a newcomer needs the answer to decide or to start, add it at its start. Leave out each answer they need for neither."
        }
       ]
      }
@@ -356,11 +356,11 @@
       "items": [
        {
         "at": "decide",
-        "text": "List what the product has for a reader who has started: the documents in its folder, such as a docs folder or a changelog, and the place for help that its manifest names, such as `bugs.url` in package.json or the issues of `repository` in plugin.json."
+        "text": "List what the product has for a reader who has started: the documents in its folder, such as a docs folder, and the place for help that its manifest names, such as `bugs.url` in package.json or the issues of `repository` in plugin.json."
        },
        {
         "at": "decide",
-        "text": "Keep each that serves a need the README leaves, such as fuller use, reference, help, or the changes in each version."
+        "text": "Keep each that a reader who has started goes to next, for fuller use or for help."
        },
        {
         "at": "decide",

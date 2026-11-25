@@ -80,7 +80,7 @@
        },
        {
         "at": "decide",
-        "text": "For each thing on the list, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request."
+        "text": "For each thing on the list that could look done while it isn't, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request."
        },
        {
         "at": "decide",
@@ -96,7 +96,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the concept model. Take the rules of the place from the architecture's Principles and the rules they build on, such as the one folder a component writes in."
+        "text": "For each step, list the facts it needs. Take its inputs and where they lie from the arrows to the prompt's component in the architecture's Sequences and from its Directory structure, and the terms it uses from the concept model. Take the rules of the place that the step's work could break from the architecture's Principles and the rules they build on, such as the one folder a component writes in."
        },
        {
         "at": "decide",
@@ -139,10 +139,6 @@
        {
         "at": "make",
         "text": "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses."
-       },
-       {
-        "at": "make",
-        "text": "Check that the last step leaves what the goal says the task is for."
        }
       ]
      },
@@ -256,23 +252,19 @@
        },
        {
         "at": "decide",
-        "text": "Check each tool against the list that the prompt allows, such as the `tools` field of an agent's frontmatter. Where a step needs a tool that isn't on it, allow the tool if the action lies inside the task and N11 can keep the tool to the task. Otherwise, change the step so that it needs no such tool, such as having a script that the step runs fetch what the step needs."
+        "text": "Check each tool against the list that the prompt allows, such as the `tools` field of an agent's frontmatter. Where a step needs a tool that isn't on it, allow the tool if the action lies inside the task. Otherwise, change the step so that it needs no such tool, such as having a script that the step runs fetch what the step needs."
        }
       ]
      },
      {
       "id": "N11",
       "about": "Tools",
-      "what": "Does the host refuse each action that lies outside the task?",
-      "why": "A rule in words holds only while the AI follows it, so a slip of the AI can harm what lies outside the task unless the host refuses the action.",
+      "what": "Does the host refuse each tool that the task doesn't need?",
+      "why": "A rule in words holds only while the AI follows it, so a slip of the AI can harm what lies outside the task unless the host refuses the tool. N12 holds each rule that a tool the task needs must keep.",
       "items": [
        {
         "at": "decide",
         "text": "Allow only the tools that N10's list needs, in the list that the host reads, such as the `tools` field of an agent's frontmatter."
-       },
-       {
-        "at": "decide",
-        "text": "Where a tool it needs can also act outside the task, such as writing where the task only reads, add a rule that the host enforces: a deny rule where a permission pattern names the action, such as `Edit(./docs/**)`, in `permissions.deny` of the settings file that the architecture's Directory structure gives the host, such as `.claude/settings.json`, or else a hook, as N12 says. A prompt that ships in a plugin holds such a rule by a hook, since a plugin's files carry no permission rules."
        }
       ]
      },
@@ -288,7 +280,7 @@
        },
        {
         "at": "decide",
-        "text": "Hold each such rule with a deny rule where it limits what the AI may read, write, or run, and a permission pattern names it, such as `Read(./.env)`, since a deny rule holds in every permission mode. Write it in the settings file of N11.2. Hold it with a command [hook](https://code.claude.com/docs/en/hooks) where it's a step that must happen, where it turns on more than a pattern names, such as a write allowed only into the run's own file, or where the prompt ships in a plugin, as N11.2 says."
+        "text": "Hold each such rule with a deny rule where it limits what the AI may read, write, or run, and a permission pattern names it, such as `Read(./.env)`, since a deny rule holds in every permission mode. Write it in `permissions.deny` of the settings file that the architecture's Directory structure gives the host, such as `.claude/settings.json`. Hold it with a command [hook](https://code.claude.com/docs/en/hooks) where it's a step that must happen, where it turns on more than a pattern names, such as a write allowed only into the run's own file, or where the prompt ships in a plugin, since a plugin's files carry no permission rules."
        },
        {
         "at": "make",
@@ -322,7 +314,7 @@
        },
        {
         "at": "decide",
-        "text": "List what the caller needs for its next move: the result, what the AI did, and what it didn't do and why."
+        "text": "List only what the caller needs for its next move at N13.1, such as the result, and what the AI didn't do and why."
        },
        {
         "at": "decide",
@@ -350,7 +342,7 @@
        },
        {
         "at": "make",
-        "text": "In the Output section, give the terms that the person uses, from the user stories and the README, since the AI can't know them on its own, as N4 says."
+        "text": "In the Output section, give the terms of the person's that the messages use, from the user stories and the README, since the AI can't know them on its own, as N4 says."
        },
        {
         "at": "make",
@@ -364,14 +356,6 @@
       "what": "Does each claim that the AI reports rest on a check it ran on the real thing, with what it didn't check stated?",
       "why": "The caller can't tell a claim that the AI checked from one it guessed, and acts on both alike, so Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#minimizing-hallucinations-in-agentic-coding) have the AI open what a claim rests on before it makes the claim.",
       "items": [
-       {
-        "at": "decide",
-        "text": "From N13.3's list, take each claim that the AI reports, and name the check on the real thing that it rests on: the file to read, the command to run, or the record to open, a command that comes back pass or fail where the product has one, such as check.sh's exit code for `the checks pass`."
-       },
-       {
-        "at": "make",
-        "text": "In the step that makes each claim, write its check from N15.1 for the AI to run before it reports the claim, with what the check is for, such as `Run check.sh before you report that the checks pass, since the caller acts on the report as checked.`"
-       },
        {
         "at": "make",
         "text": "In the Output section, write the intent from which the AI tells what it may claim, such as `The caller acts on each claim as checked, so claim only what you saw on the real thing in this run, such as a command's pass or fail, a file you opened, or a record you read, and say what you didn't check and why.`"

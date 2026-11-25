@@ -108,7 +108,7 @@
               },
               {
                 "at": "decide",
-                "text": "Where the change is a point whose answers differ in what the people get, leave its `decided` null for the user, since only they can settle it."
+                "text": "Where the change is a point that the user's words, the goal, and the records leave open, leave its `decided` null for the user, since only they can settle it."
               }
             ]
           },

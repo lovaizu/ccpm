@@ -25,8 +25,7 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<goal>`: what the AI reads first in the body: what it's to achieve, for whom, how it knows it
->   has finished, what lies outside its task, and what the user decides and the AI judges, as N7
->   says.
+>   has finished, and what the user decides and the AI judges, as N7 says.
 
 ## Context
 
@@ -34,8 +33,8 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<context>`: what the AI needs and can't find or know on its own: the situation, its inputs and
->   where they lie, and the rules of this place.
+> - `<context>`: only what the AI needs and can't find or know on its own, such as its inputs and
+>   where they lie, or a rule of this place, as N4 says.
 
 ## Steps
 

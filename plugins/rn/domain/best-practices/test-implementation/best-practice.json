@@ -38,7 +38,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "For each value of N1.3, list what a run must keep for it to be counted and checked: each event with its time, each result and output, and what the monitoring reads, such as each hook event, each command run, and the memory used."
+        "text": "For each value of N1.3, list only what a run must keep for it to be counted and checked, such as each hook event with its time where a value counts the order of the steps."
        },
        {
         "at": "make",

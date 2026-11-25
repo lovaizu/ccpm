@@ -38,11 +38,7 @@
               },
               {
                 "at": "make",
-                "text": "For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Concept model names it, until each kind of data lies on some case."
-              },
-              {
-                "at": "make",
-                "text": "Once the cases are written, go through each sequence arrow by arrow and branch by branch, name the case that runs each, and write a case for each arrow or branch that none runs, since the script that checks the trace finds only an element that no case names, not a branch left out."
+                "text": "For each decision that a component alone makes, write a case that shows it, and for each handoff between parts, a case with the data it passes as Concept model names it."
               }
             ]
           },

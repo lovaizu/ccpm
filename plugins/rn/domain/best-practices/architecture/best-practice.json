@@ -38,7 +38,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the product vision and the README, and list each objective and each promise the README makes, in its walkthrough, its Non-goals, and its How it works."
+        "text": "Open the product vision and the README, and list each objective and each promise that the README makes its users."
        },
        {
         "at": "decide",
@@ -46,19 +46,11 @@
        },
        {
         "at": "decide",
-        "text": "Where a want is a means toward such a value, such as answering points or signing off, leave it to Principles and Sequences, since a story of a means states a design as a want."
-       },
-       {
-        "at": "decide",
-        "text": "Read each idea of the product vision's Concept, and ask at which moment of the use it keeps the one way holding. Where the role wants something there that no story carries, add a story for it, such as going on with a run that stopped."
+        "text": "Where a want is a means toward such a value, such as answering points or signing off, leave it to Principles and Sequences, unless the role wants that means itself, such as working within the tool they already use, since a story of a means states a design as a want."
        },
        {
         "at": "make",
         "text": "For each objective and each promise, name the stories that carry it, and add a story where none does. Leave an activity without a story of its own where another story already carries it."
-       },
-       {
-        "at": "make",
-        "text": "Read each story and ask whether it still holds where the product met it another way, such as a reply in place of a command. Rewrite each that doesn't, as it names a means, not a want, unless the role wants that means itself, such as working within the tool they already use."
        }
       ]
      },
@@ -86,7 +78,7 @@
        },
        {
         "at": "make",
-        "text": "Where the product already exists, list each behavior of its code that the users meet, such as how an invoice shows its amounts, and ask whether it serves them as the README promises, from the users' starting state to their aim. Write each that doesn't as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place."
+        "text": "Where the product already exists, follow each story's path through its code, and where a behavior that the users meet there doesn't serve them as the README promises, such as how an invoice shows its amounts, write it as a decision of the component that changes it, since a behavior kept unasked becomes the specification, and every case built on it fixes its faults in place."
        }
       ]
      }
@@ -224,7 +216,7 @@
        },
        {
         "at": "make",
-        "text": "At each handoff, ask what can go otherwise there, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering."
+        "text": "At each handoff, ask what can go otherwise there that changes what the role meets or gets, from the README's walkthrough and from what each component alone decides: an input that a component refuses, a check that fails, or a choice that only the role can make, such as a question that the walkthrough shows the role answering."
        },
        {
         "at": "make",
@@ -336,7 +328,7 @@
        },
        {
         "at": "decide",
-        "text": "Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule. Write a row for each check picked."
+        "text": "Pick each check that the guide says to pick always, and each other check whose condition the product meets, given what it is and what it builds on, such as a contract test where the tests use a double of a host that changes on its own schedule."
        },
        {
         "at": "decide",
@@ -360,7 +352,7 @@
        },
        {
         "at": "make",
-        "text": "Write one row for each check picked, in the guide's order, in the template's table. Name no tool and no means in it. Give each its kind as the guide gives it, and when it runs as the guide's rule of timing gives it."
+        "text": "Write one row for each check picked, in the guide's order, in the template's table, with its kind as the guide gives it, and name no tool and no means in it."
        }
       ]
      },

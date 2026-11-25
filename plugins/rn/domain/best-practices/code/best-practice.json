@@ -31,10 +31,6 @@
        {
         "at": "make",
         "text": "Write at the top of each module, such as in its docstring, the sentence that the note of Module opening in the template asks for, naming what the module decides, not the steps it takes, such as `The layout of a record on disk.` Where the sentence joins two decisions that change for different reasons, split the module."
-       },
-       {
-        "at": "make",
-        "text": "Once every module states its decision, take a change that a unit case might come to ask for, such as a new field in what the part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, and repeat with a change of another kind until each change names one module."
        }
       ]
      },
@@ -74,19 +70,11 @@
        },
        {
         "at": "make",
-        "text": "Write the body one test at a time, once you see the test fail as N5.9 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case."
-       },
-       {
-        "at": "make",
-        "text": "Before you write a branch, a comparison, or a pick of one of several, name the case that fails where it's wrong, such as the case of two starts for a pick of the latest, and write none that no case fails on."
+        "text": "Write the body one test at a time, once you see the test fail as N5.7 says: under the interface that the test calls, write the least code that makes it pass, such as `return []` for a test of an empty file before any code that reads an entry, and leave each other behavior to the test of its own case."
        },
        {
         "at": "make",
         "text": "Run the tests once you write the code for a test, and take the next failing test only once all of them pass. Where a test that passed before fails, mend the body before you go on."
-       },
-       {
-        "at": "make",
-        "text": "Once the tests pass, read each module's body and remove each option, mode, parameter, and branch that no case calls for, such as a fallback for an input that the interface already refuses."
        }
       ]
      }
@@ -144,10 +132,6 @@
        },
        {
         "at": "make",
-        "text": "Before you write code by which the body newly reads something from outside to check, such as a file or another program's reply, write one test for each of the check's three results: no problem, a problem, and could not check, such as a file it reads that's gone, each asserting what follows the result, since a body written first answers a read that fails as one of the other two."
-       },
-       {
-        "at": "make",
         "text": "Take each value that a test expects from its case's Then, since a value copied from what the code gives when run passes whatever the code does."
        },
        {
@@ -157,10 +141,6 @@
        {
         "at": "make",
         "text": "Keep loops and branches out of each test, since a test that loops over inputs hides which one failed: write one test for each input instead, or a parametrized test that names each."
-       },
-       {
-        "at": "make",
-        "text": "Give an assertion a failure message that names the part of the case it checks, wherever the test's name and the values compared don't already say it, such as `the refused line is named`."
        },
        {
         "at": "make",

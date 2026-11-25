@@ -9,7 +9,7 @@
      {
       "id": "N1",
       "about": "Roles",
-      "what": "Does Roles list every kind of person who comes to the product with a goal of their own?",
+      "what": "Does Roles list each kind of person who comes to the product to get its job done?",
       "why": "The developers build for the people Roles lists, so a missing role goes unserved, and two roles merged into one get a product that fits neither.",
       "items": [
        {
@@ -104,15 +104,11 @@
        },
        {
         "at": "decide",
-        "text": "Give each key result the direction that's better, such as `Lower is better.`"
+        "text": "Give each key result the direction that's better, such as `Lower is better.`, and no target, since developers who aim at a number improve the number in place of the users' result."
        },
        {
         "at": "decide",
         "text": "Rank the key results, how well before how fast, so that a developer keeps a change that improves one only if none ranked before it gets worse."
-       },
-       {
-        "at": "decide",
-        "text": "Give each key result its direction alone, since developers who aim at a number improve the number in place of the users' result."
        },
        {
         "at": "make",
@@ -128,7 +124,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the decisions of your cut name. Where the repository already holds the product, add each of its open issues and each feature its README names. Where none of these lists any work, list the pieces that each role's task needs, as products that do the same job offer them, since the pieces are means that follow from the objectives."
+        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the decisions of your cut name. Where the repository already holds the product, add each of its open issues and each feature its README names."
        },
        {
         "at": "decide",

@@ -7,8 +7,8 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<role>`: each kind of person who comes to the product with a goal of their own, such as a
->   guest, a member, or an administrator. Name it "user" where it's the only one.
+> - `<role>`: each kind of person who comes to the product to get its job done, such as a guest, a
+>   member, or an administrator. Name it "user" where it's the only one.
 > - `<who they are>`: the people in the role and the job they hire the product for, in one clause begun in uppercase.
 
 ## Objectives and key results

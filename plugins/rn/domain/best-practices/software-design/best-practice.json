@@ -30,7 +30,7 @@
        },
        {
         "at": "make",
-        "text": "Once each module states its decision, take a change that the README or the product vision might come to ask for, such as a new field in what a part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, or, where the architecture itself places the decision in two components, list it as a gap as N4 says, and repeat with a change of another kind until each change names one module."
+        "text": "Once each module states its decision, take a change that the README or the product vision might come to ask for, such as a new field in what a part keeps, read only the modules' first sentences, and name the one module to open. Where you name none or more than one, move the decision or rewrite the sentence, or, where the architecture itself places the decision in two components, list it as a gap as N4 says, until the change names one module."
        }
       ]
      }
@@ -64,7 +64,7 @@
        },
        {
         "at": "make",
-        "text": "For each decision that the module at an arrow's head makes, name where each value it decides on comes from: what the interface gives it, or its own module. Where it would find again what the module at the arrow's tail already found, such as the start that a resume resumes, have the interface give it, since a thing found twice is one decision in two modules, which the type checker passes."
+        "text": "Where the module at an arrow's head would find again what the module at the arrow's tail already found, such as the start that a resume resumes, have the interface give it, since a thing found twice is one decision in two modules, which the type checker passes."
        }
       ]
      },
