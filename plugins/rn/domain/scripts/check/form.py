@@ -25,6 +25,26 @@ _TYPES: dict[str, Callable[[Any], bool]] = {
 }
 # The keywords that only describe, and hold nothing of the value.
 _NOTES = {"$schema", "title", "description", "$defs"}
+# Each keyword that a schema may use, as `faults` refuses a schema that uses any other.
+KEYWORDS = frozenset(
+    {
+        *_NOTES,
+        "type",
+        "enum",
+        "const",
+        "required",
+        "properties",
+        "additionalProperties",
+        "items",
+        "minItems",
+        "minLength",
+        "minimum",
+        "pattern",
+        "anyOf",
+        "oneOf",
+        "$ref",
+    }
+)
 
 
 def schema(name: str) -> str:
@@ -77,12 +97,12 @@ class _Holder:
         """Each fault of the value at the pointer against the part of the schema."""
         found: list[str] = []
         for keyword, given in schema.items():
-            if keyword in _NOTES:
-                continue
-            if keyword not in self._keywords and keyword != "additionalProperties":
+            if keyword not in KEYWORDS:
                 raise CantRun(
                     f"{self._path}: uses {keyword}, which rn's check of a form doesn't hold"
                 )
+            if keyword in _NOTES:
+                continue
             if keyword == "additionalProperties":
                 found += self._additional(value, given, at, schema.get("properties", {}))
             else:

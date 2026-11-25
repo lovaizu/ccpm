@@ -1,6 +1,7 @@
 """What a person or CI runs on rn's best practices, as `python3 dev/scripts/practices.py form`
 with the JSON of one best practice or more: it names each fault of a best practice's form, its
-template where it's a JSON Schema that schema.py doesn't read whole, and each file in its folder
+template where it's a JSON Schema using a keyword that rn's check of a form doesn't hold, and each
+file in its folder
 that neither it nor its template holds. It gives 0, or 1 where it names any fault, and 2 with its
 usage where it gets no command it takes. It's ccpm's own tooling, kept out of rn's folder, as no
 run of rn checks the form of rn's own best practices. It holds each best practice to its form, rn's
@@ -14,17 +15,19 @@ import re
 import sys
 from typing import Any, Callable
 
-# rn's folder of the work's knowledge, where its best practices and their form lie. The code that
-# reads a file to its form lies beside this script.
+# rn's folder of the work's knowledge, where its best practices and their form lie, and the code
+# that holds a file to its form.
 RN = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     "plugins",
     "rn",
     "domain",
 )
+sys.path.insert(0, os.path.join(RN, "scripts"))
 
-import files
-import schema
+from check.form import KEYWORDS
+from fault import Wrong
+from practice import read
 
 USAGE = "usage: python3 dev/scripts/practices.py form <best practice json>..."
 
@@ -142,19 +145,36 @@ def template(path: str, data: dict[str, Any]) -> list[Section] | None:
     return [(name,) for name in sections(text)]
 
 
+def unheld(node: Any) -> list[str]:
+    """Each keyword of the JSON Schema node at any depth that rn's check of a form doesn't hold,
+    once each, in order."""
+    if not isinstance(node, dict):
+        return []
+    found = [key for key in node if key not in KEYWORDS]
+    inner = [node.get("items"), node.get("additionalProperties"), *node.get("anyOf", [])]
+    inner += [*node.get("oneOf", [])]
+    inner += [*node.get("properties", {}).values(), *node.get("$defs", {}).values()]
+    for each in inner:
+        found += unheld(each)
+    return [key for n, key in enumerate(found) if key not in found[:n]]
+
+
 def unread(path: str, data: dict[str, Any]) -> list[str]:
-    """Why the template of the best practice at the path, where it's a JSON Schema, is no schema
-    that schema.py reads whole, in words, as a check that holds a deliverable to it would read
-    it wrong."""
+    """Why the template of the best practice at the path, where it's a JSON Schema, uses a keyword
+    that rn's check of a form doesn't hold, in words, as a check that holds a deliverable to it
+    would stop."""
     if not data.get("template", "").endswith(".json"):
         return []
     try:
-        form = files.read(beside(path, data["template"]))
-        if SCHEMA in form:
-            schema.checked(form)
-    except (schema.Unread, files.Unreadable) as why:
-        return [f"its template {data['template']} is no schema it reads whole: {why}"]
-    return []
+        with open(beside(path, data["template"]), encoding="utf-8") as f:
+            form = json.load(f)
+    except ValueError as why:
+        return [f"its template {data['template']} isn't JSON: {why}"]
+    found = unheld(form) if SCHEMA in form else []
+    return [
+        f"its template {data['template']} uses {key}, which rn's check of a form doesn't hold"
+        for key in found
+    ]
 
 
 def practice_of(path: str, kind: str) -> str:
@@ -174,8 +194,8 @@ def lacked(path: str, taken: dict[str, Any]) -> list[str]:
         return []
     found = practice_of(path, kind)
     try:
-        held = template(found, files.read(found)) or []
-    except (files.Unreadable, FileNotFoundError, ValueError) as why:
+        held = template(found, read(os.path.dirname(found))) or []
+    except (Wrong, FileNotFoundError, ValueError) as why:
         return [f"its input {kind} takes sections of a template it can't read: {why}"]
     names = {" / ".join(section) for section in held}
     return [
@@ -362,12 +382,16 @@ def strays(path: str, data: dict) -> list[str]:
 
 
 def form(path: str) -> list[str]:
-    """Each fault of the best practice's form, its template where it's a schema that schema.py
-    doesn't read whole, and each file in its folder that neither it nor its template holds."""
+    """Each fault of the best practice's form, its template where it's a schema using a keyword
+    that rn's check of a form doesn't hold, and each file in its folder that neither it nor its
+    template holds."""
+    if os.path.basename(path) != PRACTICE:
+        return [f"a best practice lies in a file named {PRACTICE}"]
     try:
-        data = files.load(path, "best-practice")
-    except files.Unreadable as why:
-        return [str(why)]
+        data = read(os.path.dirname(path))
+    except Wrong as why:
+        # main names the path before each fault, and rn's Wrong opens with it too.
+        return [str(why).replace(f"{path}: ", "", 1)]
     late = strays(path, data)
     found = missing(path, data)
     if found:

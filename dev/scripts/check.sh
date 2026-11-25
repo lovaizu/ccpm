@@ -53,7 +53,7 @@ fi
 
 # The checks' own Python, and rn's code with its tests, as a type that doesn't fit across a call is a
 # fault no test may reach.
-held design pyrefly check --search-path dev/scripts dev/scripts/*.py
+held design pyrefly check --search-path dev/scripts --search-path plugins/rn/domain/scripts dev/scripts/*.py
 
 held design pyrefly check --search-path plugins/rn/domain/scripts --search-path dev/rn/tests \
   plugins/rn/domain/scripts/*.py plugins/rn/domain/scripts/*/*.py \
@@ -62,7 +62,7 @@ held design pyrefly check --search-path plugins/rn/domain/scripts --search-path 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
 # - a fault in a best practice's form
-# - a template that is a JSON Schema in a form that schema.py doesn't read whole
+# - a template that is a JSON Schema using a keyword that rn's check of a form doesn't hold
 # - a file in the folder that neither uses, such as a figure that the template dropped
 # Each of these would make the folder say what rn doesn't hold.
 python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
