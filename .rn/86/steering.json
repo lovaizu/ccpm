@@ -36,8 +36,7 @@
           "Have the user give feedback as one who uses it, and rn settle how it's made, so the user's time goes to what only they can judge.",
           "Make the least, and use the best practices in full on what's made, so less made costs no quality.",
           "Propose at the run's end what to do with each unpicked opportunity, so the user decides what stays.",
-          "Keep the steering in one file with one writer to each part, so no part has two writers.",
-          "Keep only the trouble and the aim in an issue, as the means are the development's."
+          "Keep the steering in one file with one writer to each part, so no part has two writers."
         ],
         "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
         "check": "Run rn from this branch on #62 up to the first real check; count what was made by then."
