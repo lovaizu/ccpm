@@ -20,3 +20,6 @@ touch
 Given
 When
 Then
+# The second heading of every issue, by the form that .claude/rules/issue.md
+# gives, kept as the first issues of ccpm wrote it.
+Desired State
