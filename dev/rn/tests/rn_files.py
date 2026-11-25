@@ -18,13 +18,11 @@ from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 from urllib.parse import quote
 
-from repo_files import git, write_files
+from repo_files import git
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 RN = os.path.join(TOP, "plugins", "rn")
 PRACTICES = os.path.join(RN, "domain", "best-practices")
-SCHEMAS = os.path.join(RN, "domain", "schemas")
-TREE_SCHEMA = os.path.join(PRACTICES, "design-tree", "design-tree.schema.json")
 INVOICER = os.path.join(TOP, "dev", "rn", "tests", "invoicer")
 
 # The bench's own request, in English, apart from the Japanese run that rn's README walkthrough
@@ -364,17 +362,14 @@ def judged(
 # The user's repository.
 
 
-def repository(folder: str, files: Mapping[str, str] | None = None, branch: str = "main") -> str:
-    """Makes a git repository in the folder with invoicer's files, or the files given, committed on
-    the branch, and gives its real path."""
+def repository(folder: str, branch: str = "main") -> str:
+    """Makes a git repository in the folder with invoicer's files committed on the branch, and
+    gives its real path."""
     os.makedirs(folder, exist_ok=True)
     git(folder, "init", "-q", "-b", branch)
     git(folder, "config", "user.email", "rn@example.com")
     git(folder, "config", "user.name", "rn")
-    if files is None:
-        shutil.copytree(INVOICER, folder, dirs_exist_ok=True)
-    else:
-        write_files(folder, files)
+    shutil.copytree(INVOICER, folder, dirs_exist_ok=True)
     git(folder, "add", "-A")
     git(folder, "commit", "-q", "-m", "invoicer")
     return os.path.realpath(folder)

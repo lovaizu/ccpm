@@ -1,6 +1,6 @@
 """The double of gh that rn's unit cases run in its place. It answers each command of gh that rn's
 code runs from one line of a record in recorded/: gh 2.102.1's runs for `gh auth status`,
-`gh pr view`, with the state of a pull request that is open, closed, or merged, and where gh can't
+`gh pr view`, with the state of a pull request that is open or closed, and where gh can't
 reach GitHub, `gh pr close`, and `gh pr checks`, by `--watch` and by `--json`, with checks that
 passed, failed, or were cancelled; and, of gh's manual and code, `gh pr create` and a check that
 timed out, as the plugin guide's Each result of a double from a record says. A command that no
@@ -47,8 +47,8 @@ def state(folder: str) -> dict[str, Any]:
     `closes`, whether it reaches GitHub to close a pull request once it read it, `reads_checks`,
     whether it reaches GitHub to read the checks once it read the pull request's head,
     `pull_request` (the URL of the open one, or None), `earlier`, an earlier pull request of the
-    branch that isn't open, as its `url` and `state`, `CLOSED` or `MERGED`, or None, `checks`,
-    what the CI's checks found, `passed`, `failed`, or `none`, `started`, how many views of the
+    branch that isn't open, as its `url` and `state`, `CLOSED`, or None, `checks`, what
+    the CI's checks found, `passed` or `failed`, `started`, how many views of the
     pull request's head after a push give the head before it, `stale`, then the pushed head with
     no check started, `unstarted`, before its checks show, and `asked`, each gh command it was
     asked, by its words."""
@@ -114,7 +114,7 @@ def opened(folder: str, url: str) -> None:
 
 
 def earlier(folder: str, url: str, held: str) -> None:
-    """Sets an earlier pull request of the branch, of the URL, as `CLOSED` or `MERGED`, as an
+    """Sets an earlier pull request of the branch, of the URL, as `CLOSED`, as an
     earlier run of the same branch's name leaves it."""
     kept = state(folder)
     kept["earlier"] = {"url": url, "state": held}
@@ -132,8 +132,7 @@ def started(folder: str, stale: int, unstarted: int) -> None:
 
 def checks(folder: str, found: str) -> None:
     """Sets what the CI's checks found: `passed`, `failed`, `cancelled`, `ended` each way, as one
-    passed, one failed, and others were cancelled, `timed-out`, or `none`, where it has no
-    checks."""
+    passed, one failed, and others were cancelled, or `timed-out`."""
     kept = state(folder)
     kept["checks"] = found
     keep(folder, kept)
@@ -178,14 +177,13 @@ def _viewed(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
 def _head(kept: dict[str, Any]) -> dict[str, Any]:
     """What `gh pr view <branch> --json headRefOid,statusCheckRollup` gives of the open pull
     request: the head before the push while `started` says so, then the pushed head, the commit
-    that HEAD names in the folder gh runs in, with no check, then with its checks started, or
-    with none where the CI has no checks."""
+    that HEAD names in the folder gh runs in, with no check, then with its checks started."""
     waits = kept["started"]
     if waits["stale"] > 0:
         waits["stale"] -= 1
         return line(PR_VIEW, "gh pr view gives the head before the push's, right after the push")
-    if waits["unstarted"] > 0 or kept["checks"] == "none":
-        waits["unstarted"] = max(waits["unstarted"] - 1, 0)
+    if waits["unstarted"] > 0:
+        waits["unstarted"] -= 1
         given = line(PR_VIEW, "gh pr view gives the pushed head before its checks start")
     else:
         given = line(PR_VIEW, "gh pr view gives the pushed head with its checks started")
@@ -234,7 +232,7 @@ def _checks(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
 
 def _ends(found: str) -> dict[str, Any]:
     """What `gh pr checks --json name,state,bucket,link` gives where the CI's checks found
-    `passed`, `failed`, `cancelled`, `ended` each way, `timed-out`, or `none`."""
+    `passed`, `failed`, `cancelled`, `ended` each way, or `timed-out`."""
     if found == "failed":
         return line(PR_CHECKS, "gh pr checks --json gives a check failed and the rest passed")
     if found == "cancelled":
@@ -243,8 +241,6 @@ def _ends(found: str) -> dict[str, Any]:
         return line(PR_CHECKS, "gh pr checks --json gives checks that ended each way")
     if found == "timed-out":
         return line(MANUAL, "gh pr checks --json gives a check that timed out")
-    if found == "none":
-        return line(PR_CHECKS, "gh pr checks --json finds no checks")
     return line(PR_CHECKS, "gh pr checks --json gives each check passed")
 
 
@@ -254,9 +250,6 @@ def _state(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
     if kept["pull_request"] is not None:
         given = line(PR_VIEW, "gh pr view gives the open pull request of the branch")
         url = kept["pull_request"]
-    elif kept["earlier"] is not None and kept["earlier"]["state"] == "MERGED":
-        given = line(PR_VIEW, "gh pr view gives the merged pull request of the branch")
-        url = kept["earlier"]["url"]
     elif kept["earlier"] is not None:
         given = line(PR_VIEW, "gh pr view gives the closed pull request of the branch")
         url = kept["earlier"]["url"]
@@ -280,7 +273,7 @@ def _fields(argv: Sequence[str]) -> list[str]:
 
 def _checked(found: str) -> dict[str, Any]:
     """What `gh pr checks --watch` gives where the CI's checks found `passed`, `failed`,
-    `cancelled`, `ended` each way, `timed-out`, or `none`; a check that timed out fails gh's watch
+    `cancelled`, `ended` each way, or `timed-out`; a check that timed out fails gh's watch
     as one that failed does, as gh 2.102.1 counts it."""
     if found in ("failed", "timed-out"):
         return line(PR_CHECKS, "gh pr checks --watch finds a check failed")
@@ -288,8 +281,6 @@ def _checked(found: str) -> dict[str, Any]:
         return line(PR_CHECKS, "gh pr checks --watch finds a check cancelled and the rest passed")
     if found == "ended":
         return line(PR_CHECKS, "gh pr checks --watch finds checks that ended each way")
-    if found == "none":
-        return line(PR_CHECKS, "gh pr checks --watch finds no checks")
     return line(PR_CHECKS, "gh pr checks --watch finds each check passed")
 
 

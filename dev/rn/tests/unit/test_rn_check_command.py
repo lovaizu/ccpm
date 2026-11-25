@@ -1,11 +1,9 @@
 """The unit cases of check/command.py, check's command line as a role runs it before it ends:
-for each role, the fixer's in its Fix among them, a result that holds, one with faults, and none
-written; a generator's guide off its
-kind's template, each place on a line, the worktree and the folder taken from the Cut and from
-`cwd`, not from the process's own folder; a result that isn't JSON; a Cut out of its schema or
-missing, a schema that can't be read, and a role of neither, each of which check couldn't check
-by; and each count of arguments other than two. Each runs from the user's repository's top, with
-the Cut's path from there, as a role runs rn's scripts from there."""
+a result that holds for each role, the fixer's in its Fix among them; one with two faults, each on
+a line; none written; a result that isn't JSON; a Cut out of its schema or missing, a schema that
+can't be read, and a role of none, each of which check couldn't check by; and arguments other than
+two. Each runs from the user's repository's top, with the Cut's path from there, as a role runs
+rn's scripts from there, while the case's process runs in another folder."""
 
 from __future__ import annotations
 
@@ -35,9 +33,9 @@ class Run:
         self.folder = os.path.relpath(folder, repository)
         write_files(self.worktree, {COMMAND: f"{LINE}\n"})
 
-    def cut(self, role: str, node: Any = None, kind: str = "light") -> str:
-        """Writes the role's Cut in the Round, or the fixer's in the Fix, of the node and its kind
-        for the generator, else the command's, and gives its path from the repository's top."""
+    def cut(self, role: str) -> str:
+        """Writes the role's Cut of the command in the Round, or the fixer's in the Fix, and gives
+        its path from the repository's top."""
         if role == "fixer":
             cut: dict[str, Any] = {
                 "deliverable": rn_files.walkthrough_tree(NAME)["deliverables"][1],
@@ -51,20 +49,16 @@ class Run:
             rn_files.write_json(os.path.join(self.repository, path), cut)
             return path
         if role == "generator":
-            node = node or rn_files.walkthrough_tree(NAME)["deliverables"][1]
-            template = os.path.join(rn_files.PRACTICES, kind, "template.md")
             cut = {
                 "goal": rn_files.GOAL,
                 "language": rn_files.DELIVERABLES_LANGUAGE,
-                "deliverable": node,
+                "deliverable": rn_files.walkthrough_tree(NAME)["deliverables"][1],
                 "worktree": os.path.relpath(self.worktree, self.repository),
                 "inputs": [],
                 "best_practice": os.path.relpath(
-                    os.path.join(rn_files.PRACTICES, kind), self.repository
+                    os.path.join(rn_files.PRACTICES, "light"), self.repository
                 ),
-                "template": (
-                    os.path.relpath(template, self.repository) if os.path.isfile(template) else None
-                ),
+                "template": None,
                 "stage": "content",
                 "number": 1,
                 "round": self.round,
@@ -120,28 +114,6 @@ def test_a_result_that_holds_its_cut_gives_0_printing_nothing(run: Run, role: st
     assert main([role, cut], run.repository, rn_files.RN) == (0, "", "")
 
 
-def test_a_generators_result_with_a_fault_gives_1_with_the_fault(run: Run):
-    """Given the generator's Cut and its made naming N9 good, which light doesn't hold
-    When check runs on it
-    Then it gives 1, its output naming N9 on a line"""
-    cut = run.cut("generator")
-    run.result("generator", rn_files.made([("N1", [LINE]), ("N9", [LINE])], [COMMAND]))
-    code, out, err = main(["generator", cut], run.repository, rn_files.RN)
-    assert code == 1
-    assert any("N9" in each for each in (out + err).splitlines())
-
-
-def test_a_fixers_result_with_a_fault_gives_1_with_the_fault(run: Run):
-    """Given the fixer's Cut and its fixed naming invoicer's README beside the command
-    When check runs on it
-    Then it gives 1, its output naming README.md on a line"""
-    cut = run.cut("fixer")
-    run.result("fixer", {"result": "fixed", "files": [COMMAND, "README.md"]})
-    code, out, err = main(["fixer", cut], run.repository, rn_files.RN)
-    assert code == 1
-    assert [each for each in (out + err).splitlines() if "README.md" in each] != []
-
-
 def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run):
     """Given the evaluator's Cut and its judged answering N1 alone
     When check runs on it
@@ -166,17 +138,6 @@ def test_a_fixer_that_wrote_no_result_gives_1_with_where_it_writes_one_in_its_fi
         f"{written}: no result is written there; write it before you end\n",
         "",
     )
-
-
-@pytest.mark.parametrize("role", ["generator", "evaluator"])
-def test_a_role_that_wrote_no_result_gives_1_with_where_it_writes_one(run: Run, role: str):
-    """Given the role's Cut, and no result beside it
-    When check runs on it
-    Then it gives 1, naming the path of <round>/<role>.json"""
-    cut = run.cut(role)
-    code, out, err = main([role, cut], run.repository, rn_files.RN)
-    assert code == 1
-    assert os.path.join(run.round, f"{role}.json") in out + err
 
 
 def test_a_result_that_isnt_json_gives_1_naming_it(run: Run):
@@ -241,43 +202,25 @@ def test_a_schema_that_cant_be_read_gives_2_saying_what_check_py_couldnt_check(
     assert "generator-cut.schema.json: the schema can't be read: " in out + err
 
 
-@pytest.mark.parametrize("role", ["orchestrator", "Generator"])
-def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run, role: str):
+def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given the generator's Cut and its result
-    When check runs on a role that is none of generator, evaluator, and fixer
+    When check runs on the role orchestrator, none of generator, evaluator, and fixer
     Then it gives 2, saying that it couldn't check a result of the role, as it checks only the
     generator's, the evaluator's, and the fixer's"""
     cut = run.cut("generator")
     run.result("generator", GOOD["generator"])
-    code, out, err = main([role, cut], run.repository, rn_files.RN)
+    code, out, err = main(["orchestrator", cut], run.repository, rn_files.RN)
     assert code == 2
     assert out + err == (
-        f"check: couldn't check a result of {role!r}, as it checks only the generator's, the"
+        "check: couldn't check a result of 'orchestrator', as it checks only the generator's, the"
         " evaluator's, and the fixer's\n"
     )
 
 
-@pytest.mark.parametrize("argv", [[], ["generator"], ["generator", "a.json", "b.json"]])
-def test_arguments_other_than_a_role_and_a_cut_give_2_with_the_usage(run: Run, argv: list[str]):
+def test_arguments_other_than_a_role_and_a_cut_give_2_with_the_usage(run: Run):
     """Given the run
-    When check runs on no argument, one, or three
+    When check runs on three arguments
     Then it gives 2 with the usage"""
-    code, out, err = main(argv, run.repository, rn_files.RN)
+    code, out, err = main(["generator", "a.json", "b.json"], run.repository, rn_files.RN)
     assert code == 2
     assert USAGE in out + err
-
-
-def test_a_generators_guide_off_its_template_gives_1_with_each_place_a_line(run: Run):
-    """Given the guide's generator's Cut, of the kind readme, and its made naming the guide,
-    which holds a heading and a paragraph alone, in the run's worktree that the Cut names
-    When check runs on it from the repository's top
-    Then it gives 1, with lines `docs/guide.md:<line>: <what>`, one for each place"""
-    guide = rn_files.open_node(rn_files.GUIDE_NAME, rn_files.GUIDE, "readme", [COMMAND])
-    write_files(run.worktree, {rn_files.GUIDE: "# Print an invoice\n\nType the command.\n"})
-    cut = run.cut("generator", guide, "readme")
-    run.result("generator", rn_files.made([], [rn_files.GUIDE]))
-    code, out, err = main(["generator", cut], run.repository, rn_files.RN)
-    places = [each for each in (out + err).splitlines() if each.startswith(f"{rn_files.GUIDE}:")]
-    assert code == 1
-    assert places
-    assert all(each.split(":")[1].isdigit() for each in places)

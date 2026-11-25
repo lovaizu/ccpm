@@ -4,9 +4,8 @@ throwaway repository, as the plugin guide's Each result of a double from a recor
 herdr's run changed the repository, the double makes the same change with git: `herdr worktree
 create` adds the worktree on a new branch from the base, as `git worktree add -b` does, `herdr
 worktree open` changes no file, and `herdr worktree remove --force` removes the worktree of the
-workspace that create or open gave, keeping its branch, as `git worktree remove --force` does. The
-first open of a worktree gives the record's newly opened workspace, and each later one, or one
-after create, the record's workspace already open. A command that no record holds fails with exit
+workspace that create or open gave, keeping its branch, as `git worktree remove --force` does. A
+command that no record holds fails with exit
 1, naming itself, so that a body that runs it shows the gap.
 
 It serves as `host`, a Host of repository.host that wraps another, such as the double of gh's, and
@@ -29,11 +28,8 @@ CREATED = (
     "herdr worktree create makes the worktree on a new branch from the base and opens its workspace"
 )
 OPENED = "herdr worktree open opens the workspace of the worktree that git made"
-NOT_FOUND = "herdr worktree open fails where no worktree lies at the path"
 NOT_RUNNING = "herdr worktree open fails where no herdr server is running"
-ALREADY_OPEN = "herdr worktree open gives the workspace that is already open on the worktree"
 REMOVED = "herdr worktree remove removes the worktree and closes its workspace, leaving its branch"
-NO_WORKSPACE = "herdr worktree remove fails where no workspace has the ID"
 
 
 @functools.cache
@@ -93,22 +89,15 @@ def _answer(argv: list[str], cwd: str, running: bool, workspaces: dict[str, str]
 
 
 def _opened(path: str, workspaces: dict[str, str]) -> dict[str, Any]:
-    """What herdr gives for the opening of the worktree at the path: its workspace newly opened, or
-    already open where create or open gave it, kept by its ID; the record's failure where no
-    worktree lies there."""
-    if not os.path.isfile(os.path.join(path, ".git")):
-        return line(WORKTREE, NOT_FOUND)
-    if path in workspaces.values():
-        return _given(line(WORKTREE, ALREADY_OPEN), path, workspaces)
+    """What herdr gives for the opening of the worktree at the path: its workspace newly opened,
+    kept by its ID."""
     return _given(line(WORKTREE, OPENED), path, workspaces)
 
 
 def _removed(workspace: str, cwd: str, workspaces: dict[str, str]) -> dict[str, Any]:
     """What herdr gives for the forced removal of the workspace's worktree, which git then removes
-    with its change, the workspace no longer kept; the record's failure where none has the ID."""
-    path = workspaces.pop(workspace, None)
-    if path is None:
-        return line(WORKTREE, NO_WORKSPACE)
+    with its change, the workspace no longer kept."""
+    path = workspaces.pop(workspace)
     removed = ["git", "worktree", "remove", "--force", path]
     subprocess.run(removed, cwd=cwd, capture_output=True, check=True)
     return line(WORKTREE, REMOVED)

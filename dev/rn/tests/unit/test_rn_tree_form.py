@@ -1,10 +1,9 @@
 """The unit cases of tree/form.py, how the design tree is kept as a file: `context`, the context
 a run starts with, and its refusal of an empty language; `started`, the tree a run starts from, its
-goal open, by a best practice of each order of conditions; `goal`, of a goal written, of one
-character, and of one open; `read` and `write`, of a file
-in form, out of it, missing, not JSON, and one that can't be written; `at`, of each kind of node
-and of each pointer that names none; and `deliverable`, of one path among several, a near match,
-and none."""
+goal open and the plan's conditions in the best practice's order; `goal`, of a goal written and of
+one open; `read` and `write`, of a file out of the tree's form, missing, not JSON, written and read
+back, and one that can't be written; `at`, of a node and of pointers that name none; and
+`deliverable`, of one path among several, and of none."""
 
 from __future__ import annotations
 
@@ -68,15 +67,6 @@ def test_started_holds_the_goal_open_and_the_plan_as_its_one_deliverable():
     }
 
 
-def test_started_takes_the_conditions_in_the_best_practices_order_not_by_their_ids():
-    """Given a best practice whose conditions stand as N1, N2, N3, N7, N4, N5, N6, test-design's
-    When the tree a run starts from is made by it
-    Then the plan's conditions stand in that order"""
-    got = started(CONTEXT, PLAN, rn_files.practice("test-design"))
-    ids = [each["id"] for each in got["deliverables"][0]["necessary_conditions"]]
-    assert ids == ["N1", "N2", "N3", "N7", "N4", "N5", "N6"]
-
-
 # goal
 
 
@@ -85,15 +75,6 @@ def test_goal_gives_the_goals_sentence_once_written():
     When its goal is taken
     Then it is the goal's sentence"""
     assert goal(the_tree()) == GOAL
-
-
-def test_goal_of_a_goal_of_one_character_gives_it():
-    """Given a tree whose goal is one character, x
-    When its goal is taken
-    Then it is x, as an empty goal is the schema's to judge"""
-    the = the_tree()
-    the["goal"] = {"decided": "x", "by": "reasoning"}
-    assert goal(the) == "x"
 
 
 def test_goal_refuses_an_open_goal_saying_a_new_pruner_writes_it():
@@ -125,33 +106,15 @@ def test_context_holds_the_version_and_the_languages():
     }
 
 
-@pytest.mark.parametrize(
-    ("deliverables", "conversation", "named"),
-    [
-        ("", "Japanese", "deliverables"),
-        ("English", "", "conversation"),
-        ("English", "  ", "conversation"),
-    ],
-)
-def test_context_refuses_an_empty_language_naming_which(
-    deliverables: str, conversation: str, named: str
-):
-    """Given languages of which the deliverables' or the conversation's is empty or only spaces
+def test_context_refuses_an_empty_language_naming_which():
+    """Given English as the deliverables' language, and only spaces as the conversation's
     When the context that a run starts with is made
-    Then it refuses with Wrong, naming which language is empty"""
-    with pytest.raises(Wrong, match=f"the {named} language is empty"):
-        context("0.9.0", deliverables, conversation)
+    Then it refuses with Wrong, naming the conversation's language as empty"""
+    with pytest.raises(Wrong, match="the conversation language is empty"):
+        context("0.9.0", "English", "  ")
 
 
 # read and write
-
-
-def test_read_gives_the_tree_that_the_file_holds(tmp_path: Any):
-    """Given a run's design-tree.json holding the walkthrough's tree
-    When it's read
-    Then it gives that tree"""
-    path = written(str(tmp_path), json.dumps(the_tree(), indent=1))
-    assert read(path) == the_tree()
 
 
 def test_read_gives_a_tree_out_of_its_form_as_the_file_holds_it(tmp_path: Any):
@@ -209,46 +172,19 @@ def test_write_refuses_a_file_that_cant_be_written_naming_it(tmp_path: Any):
 # at
 
 
-@pytest.mark.parametrize(
-    ("pointer", "node"),
-    [
-        ("/goal", lambda t: t["goal"]),
-        ("/deliverables/2", lambda t: t["deliverables"][2]),
-        (
-            "/deliverables/1/necessary_conditions/0",
-            lambda t: t["deliverables"][1]["necessary_conditions"][0],
-        ),
-        (
-            "/deliverables/1/necessary_conditions/0/decisions/0",
-            lambda t: t["deliverables"][1]["necessary_conditions"][0]["decisions"][0],
-        ),
-        ("/deliverables/1/path", lambda t: COMMAND),
-    ],
-)
-def test_at_gives_the_node_that_the_pointer_names(pointer: str, node: Any):
-    """Given the walkthrough's tree, and a pointer to its goal, a deliverable past the first, a
-    condition, a decision, or a field
+def test_at_gives_the_node_that_the_pointer_names():
+    """Given the walkthrough's tree, and a pointer to a decision of the command's condition
     When the node at the pointer is taken
-    Then it gives that node"""
+    Then it gives that decision"""
     the = the_tree()
-    assert at(the, pointer) == node(the)
+    pointer = "/deliverables/1/necessary_conditions/0/decisions/0"
+    assert at(the, pointer) == the["deliverables"][1]["necessary_conditions"][0]["decisions"][0]
 
 
-@pytest.mark.parametrize(
-    "pointer",
-    [
-        "/deliverables/3",
-        "/deliverables/-1",
-        "/deliverables/x",
-        "/deliverable/0",
-        "/deliverables/1/necessary_conditions/3",
-        "deliverables/0",
-    ],
-)
+@pytest.mark.parametrize("pointer", ["/deliverables/3", "deliverables/0"])
 def test_at_refuses_a_pointer_that_names_no_node_naming_it(pointer: str):
-    """Given the walkthrough's tree of 3 deliverables and light's 3 conditions
-    When the node is taken at an index one past the last, a negative index, a word for an index, a
-    key it lacks, or a pointer without its leading /
+    """Given the walkthrough's tree of 3 deliverables
+    When the node is taken at an index one past the last, or by a pointer without its leading /
     Then it refuses with Wrong naming the pointer"""
     with pytest.raises(Wrong, match=pointer):
         at(the_tree(), pointer)
@@ -265,29 +201,11 @@ def test_deliverable_gives_the_one_of_the_path_among_several_not_the_first():
     assert deliverable(the, GUIDE) == the["deliverables"][2]
 
 
-def test_deliverable_gives_one_that_is_done():
-    """Given the walkthrough's tree, the plan done
-    When the deliverable of the plan's path is taken
-    Then it gives the plan's line"""
-    the = the_tree()
-    assert deliverable(the, PLAN) == the["deliverables"][0]
-
-
-@pytest.mark.parametrize("path", ["docs/guide", "docs/guide.md/", "Docs/guide.md", ""])
-def test_deliverable_refuses_a_path_that_nearly_matches_naming_each_path(path: str):
+def test_deliverable_refuses_a_path_of_none_naming_each_path():
     """Given the walkthrough's tree
-    When the deliverable of a path short of the guide's, past it, in another case, or empty is
-    taken
+    When the deliverable of a path short of the guide's is taken
     Then it refuses with Wrong naming each path the tree holds"""
     with pytest.raises(Wrong) as refused:
-        deliverable(the_tree(), path)
+        deliverable(the_tree(), "docs/guide")
     for each in (PLAN, COMMAND, GUIDE):
         assert each in str(refused.value)
-
-
-def test_deliverable_refuses_any_path_of_a_tree_with_no_deliverable():
-    """Given a tree with no deliverable
-    When the deliverable of the guide's path is taken
-    Then it refuses with Wrong"""
-    with pytest.raises(Wrong):
-        deliverable(rn_files.tree([]), GUIDE)

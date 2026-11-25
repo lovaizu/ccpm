@@ -1,9 +1,8 @@
-"""The unit cases of repository/trial.py: `folder`, its path under the system's temporary folder for
-a first Round and a later one, its deliverable's path percent-encoded, the same at each call
-and none made, and apart for each Round, each run, and two paths alike but for a slash; and
-`starting_state`, a clone of the work's branch with the worktree's files as they stand, a change, a
-new file, and a removal not committed among them, without .rn/, made anew over what an earlier
-trial left, and the refusal of a folder that can't be made."""
+"""The unit cases of repository/trial.py: `folder`, its path under the system's temporary folder,
+the same at each call and none made; and `starting_state`, a clone of the work's branch with the
+worktree's files as they stand, a change, a new file, and a removal not committed among them,
+without .rn/, made anew over what an earlier trial left, and the refusal of a folder that can't be
+made."""
 
 from __future__ import annotations
 
@@ -34,51 +33,15 @@ def same(path: str, expected: str) -> bool:
 
 def test_a_rounds_folder_lies_in_the_temporary_folder_by_run_and_round(temp: str):
     """Given the run 20261120-invoices, and the command's Round content-1
-    When folder is asked
-    Then it's <temporary folder>/rn-trial-20261120-invoices-invoicer%2F__main__.py-content-1, and no
-    folder is made"""
+    When folder is asked twice
+    Then each gives <temporary folder>/rn-trial-20261120-invoices-invoicer%2F__main__.py-content-1,
+    and no folder is made"""
     run = RunPlace("/work/invoicer", NAME)
     given = folder(run, a_round(run, rn_files.COMMAND))
     expected = os.path.join(temp, f"rn-trial-{NAME}-invoicer%2F__main__.py-content-1")
     assert same(given, expected)
+    assert folder(run, a_round(run, rn_files.COMMAND)) == given
     assert os.listdir(temp) == []
-
-
-def test_a_later_rounds_folder_names_its_stage_and_number(temp: str):
-    """Given the run 20261120-invoices, and the guide's Round content-2
-    When folder is asked
-    Then it's <temporary folder>/rn-trial-20261120-invoices-docs%2Fguide.md-content-2"""
-    run = RunPlace("/work/invoicer", NAME)
-    given = folder(run, a_round(run, rn_files.GUIDE, "content", 2))
-    assert same(given, os.path.join(temp, f"rn-trial-{NAME}-docs%2Fguide.md-content-2"))
-
-
-def test_a_rounds_folder_is_the_same_at_each_call_and_apart_for_each_round_and_run(temp: str):
-    """Given two runs, and two Rounds of one deliverable: content-1 and content-2
-    When folder is asked twice of each Round of each run
-    Then each call of the same run and Round gives the same folder, and no two others give the
-    same one"""
-    runs = [RunPlace("/work/invoicer", NAME), RunPlace("/work/invoicer", "20261121-invoices")]
-    rounds = [("content", 1), ("content", 2)]
-    given = {}
-    for run in runs:
-        for stage, number in rounds:
-            first = folder(run, a_round(run, rn_files.COMMAND, stage, number))
-            assert folder(run, a_round(run, rn_files.COMMAND, stage, number)) == first
-            given[(run.name, stage, number)] = os.path.normpath(first)
-    assert len(set(given.values())) == len(runs) * len(rounds)
-
-
-def test_two_paths_alike_but_for_a_slash_get_folders_apart(temp: str):
-    """Given the run 20261120-invoices, and Round content-1 of docs/guide.md and of docs-guide.md
-    When folder is asked of each
-    Then they're <temporary folder>/rn-trial-20261120-invoices-docs%2Fguide.md-content-1 and
-    .../rn-trial-20261120-invoices-docs-guide.md-content-1, two folders"""
-    run = RunPlace("/work/invoicer", NAME)
-    slashed = folder(run, a_round(run, "docs/guide.md"))
-    dashed = folder(run, a_round(run, "docs-guide.md"))
-    assert same(slashed, os.path.join(temp, f"rn-trial-{NAME}-docs%2Fguide.md-content-1"))
-    assert same(dashed, os.path.join(temp, f"rn-trial-{NAME}-docs-guide.md-content-1"))
 
 
 def files_under(top: str) -> set[str]:

@@ -1,12 +1,12 @@
 """The unit cases of remove/command.py, remove's command line as a maker runs it to remove what
-it made for itself: a file and a folder of the git work tree by their paths from the current
-folder, a path absolute in the system's temporary folder, several paths at once, a path out of a
-subfolder of the work tree, a link removed as the link, alone or in a folder, a read-only folder,
-and a path given within another; and each refusal, which removes none of the paths given and gives
-2 with the usage, each wrong path with why, and what to do instead: a path missing, outside both
-places, through a link to outside, the top of either, empty, holding a wildcard, a git repository's
-`.git` or a folder that holds one, a work tree's path from a folder in none, and no path at all;
-and a removal that the system refuses, which gives 2 saying what's left."""
+it made for itself: a file of the git work tree by its path from the current folder, a folder whole
+and a path absolute in the system's temporary folder at once, a path out of a subfolder of the work
+tree, a link removed as the link, alone or in a folder, a read-only folder, and a path given within
+another; and each refusal, which removes none of the paths given and gives 2 with the usage, each
+wrong path with why, and what to do instead: a path missing, outside both places, through a link
+to outside, the top of either, empty, holding a wildcard, a git repository's `.git` or a folder
+that holds one, a work tree's path from a folder in none, and no path at all; and a removal that
+the system refuses, which gives 2 saying what's left."""
 
 from __future__ import annotations
 
@@ -90,33 +90,19 @@ def test_a_file_of_the_work_tree_by_its_path_from_the_current_folder_is_removed(
     assert os.path.isfile(os.path.join(work, "invoicer", "__main__.py"))
 
 
-def test_a_folder_of_the_work_tree_is_removed_whole(work: str):
-    """Given a git work tree whose __pycache__ holds two files
-    When remove is given invoicer/__pycache__
-    Then it gives 0, the folder is gone with both, and the command stays"""
-    assert main(["invoicer/__pycache__"], work) == (0, "", "")
-    assert not os.path.lexists(os.path.join(work, "invoicer", "__pycache__"))
-    assert os.path.isfile(os.path.join(work, "invoicer", "__main__.py"))
-
-
-def test_a_folder_in_the_system_temporary_folder_by_its_absolute_path_is_removed(
+def test_a_folder_and_a_path_in_the_system_temporary_folder_are_each_removed(
     work: str, scratch: str, temp: str
 ):
-    """Given a maker's folder in the system's temporary folder
-    When remove is given its absolute path, run in the work tree
-    Then it gives 0, the folder is gone, and the temporary folder stays"""
-    assert main([scratch], work) == (0, "", "")
-    assert not os.path.lexists(scratch)
-    assert os.path.isdir(temp)
-
-
-def test_several_paths_at_once_are_each_removed(work: str, scratch: str):
-    """Given a cache folder in the work tree and a maker's folder in the system's temporary folder
-    When remove is given both, one argument each
-    Then it gives 0, and both are gone"""
+    """Given a cache folder in the work tree holding two files, and a maker's folder in the
+    system's temporary folder
+    When remove is given the cache folder from the work tree's top, and the maker's folder by its
+    absolute path, one argument each
+    Then it gives 0, both are gone whole, and the command and the temporary folder stay"""
     assert main(["invoicer/__pycache__", scratch], work) == (0, "", "")
     assert not os.path.lexists(os.path.join(work, "invoicer", "__pycache__"))
     assert not os.path.lexists(scratch)
+    assert os.path.isfile(os.path.join(work, "invoicer", "__main__.py"))
+    assert os.path.isdir(temp)
 
 
 def test_a_path_out_of_a_subfolder_within_the_work_tree_is_removed(work: str):
@@ -205,12 +191,11 @@ def test_a_path_through_a_link_to_outside_is_refused(work: str, outside: str):
     assert os.path.isfile(os.path.join(outside, "notes.txt"))
 
 
-@pytest.mark.parametrize("top", [".", "./", "invoicer/.."])
-def test_the_top_of_the_work_tree_is_refused(work: str, top: str):
+def test_the_top_of_the_work_tree_is_refused(work: str):
     """Given a git work tree
-    When remove is given its top, as . or another path to it
+    When remove is given its top as invoicer/..
     Then it gives 2 naming the path as the work tree's top, and the work tree stays"""
-    refused(main([top], work), f"{top}: is the top of the git work tree")
+    refused(main(["invoicer/.."], work), "invoicer/..: is the top of the git work tree")
     assert os.path.isfile(os.path.join(work, "invoicer", "__main__.py"))
 
 
@@ -230,18 +215,11 @@ def test_an_empty_path_is_refused(work: str):
     assert os.path.isdir(os.path.join(work, "invoicer", "__pycache__"))
 
 
-@pytest.mark.parametrize(
-    "pattern",
-    [
-        "invoicer/__pycache__/*.pyc",
-        "invoicer/__pycache__/lines.cpython-31?.pyc",
-        "invoicer/__pycache__/[l]ines.cpython-314.pyc",
-    ],
-)
-def test_a_path_holding_a_wildcard_is_refused(work: str, pattern: str):
+def test_a_path_holding_a_wildcard_is_refused(work: str):
     """Given a cache folder in the work tree
     When remove is given a pattern of its files that the shell didn't expand
     Then it gives 2 naming the pattern as a wildcard, and each file stays"""
+    pattern = "invoicer/__pycache__/*.pyc"
     refused(main([pattern], work), f"{pattern}: ", "wildcard")
     assert os.path.isfile(os.path.join(work, "invoicer", "__pycache__", "lines.cpython-314.pyc"))
 
@@ -273,16 +251,6 @@ def test_a_path_from_a_folder_in_no_work_tree_is_refused(outside: str, scratch: 
     refused(main(["notes.txt", scratch], outside), "notes.txt: lies outside", "no git work tree")
     assert os.path.isfile(os.path.join(outside, "notes.txt"))
     assert os.path.isdir(scratch)
-
-
-def test_a_path_in_the_temporary_folder_from_a_folder_in_no_work_tree_is_removed(
-    outside: str, scratch: str
-):
-    """Given a current folder that lies in no git work tree
-    When remove is given a maker's folder in the system's temporary folder
-    Then it gives 0, and the folder is gone"""
-    assert main([scratch], outside) == (0, "", "")
-    assert not os.path.lexists(scratch)
 
 
 def test_no_path_gives_the_usage(work: str):

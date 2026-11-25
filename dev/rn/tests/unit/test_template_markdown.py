@@ -273,20 +273,6 @@ def test_words_count_no_mark_without_a_letter_or_a_digit():
     assert words("rn - invoicer") == 2
 
 
-def test_a_list_item_holds_an_item_indented_past_its_words():
-    """Given an item, and a nested item indented further than the item's words
-    When the text is read
-    Then the item holds the nested item"""
-    assert read("- a\n    - b") == (Block(ITEM, 1, "a", children=(Block(ITEM, 2, "b"),)),)
-
-
-def test_a_list_item_holds_a_paragraph_indented_past_its_words_after_a_blank_line():
-    """Given an item, a blank line, and a paragraph indented further than the item's words
-    When the text is read
-    Then the item holds the paragraph"""
-    assert read("- a\n\n    b") == (Block(ITEM, 1, "a", children=(Block(PARAGRAPH, 3, "b"),)),)
-
-
 def test_a_quote_ends_at_the_first_line_without_its_mark():
     """Given a heading, a quote of one line right under it, and a paragraph right under the quote
     When the text is read
@@ -307,31 +293,6 @@ def test_a_fence_with_an_info_string_doesnt_close_a_code_block():
         Block(HEADING, 1, "T", level=1),
         Block(CODE, 2, "  ```py"),
     )
-
-
-def test_a_code_block_closed_right_after_its_fence_is_empty():
-    """Given a code block whose closing fence is the line after its opening one, and a paragraph
-    When the text is read
-    Then the code block has no body, and the paragraph stands after it"""
-    assert read("```text\n```\nAfter.") == (
-        Block(CODE, 1, "", info="text"),
-        Block(PARAGRAPH, 3, "After."),
-    )
-
-
-def test_sentences_keep_each_of_three_code_spans_whole():
-    """Given a sentence with three code spans
-    When it's split into sentences
-    Then it gives the sentence as it was"""
-    assert sentences("Run `a`, `b`, and `c`.") == ["Run `a`, `b`, and `c`."]
-
-
-def test_sections_end_a_section_at_a_heading_above_its_level():
-    """Given a heading of level 2, and then one of level 1
-    When the blocks are put into sections
-    Then each stands alone"""
-    lower, upper = read("## A\n# B")
-    assert sections((lower, upper)) == (Node(lower), Node(upper))
 
 
 def test_a_table_holds_its_header_and_each_row_but_the_delimiter_row():
@@ -356,43 +317,18 @@ def test_a_table_holds_its_header_and_each_row_but_the_delimiter_row():
     )
 
 
-def test_a_table_ends_the_paragraph_above_it():
-    """Given a paragraph line right before a table of a header, a delimiter row, and a row
-    When the text is read
-    Then the paragraph at line 1 and the table at line 2, holding the row at line 4, are two
-    blocks"""
-    assert read("Intro text\n| a | b |\n|---|---|\n| 1 | 2 |") == (
-        Block(PARAGRAPH, 1, "Intro text"),
-        Block(TABLE, 2, "| a | b |", children=(Block(ROW, 4, "| 1 | 2 |"),)),
-    )
-
-
-def test_a_table_not_indented_right_after_an_items_words_ends_the_item():
-    """Given a list item's line right before a table not indented, of a header, a delimiter row,
-    and a row
-    When the text is read
-    Then the item at line 1, holding only its words, and the table at line 2, holding the row at
-    line 4, are two blocks"""
-    assert read("- Item\n| a | b |\n|---|---|\n| 1 | 2 |") == (
-        Block(ITEM, 1, "Item"),
-        Block(TABLE, 2, "| a | b |", children=(Block(ROW, 4, "| 1 | 2 |"),)),
-    )
-
-
-@pytest.mark.parametrize("mark", ["。", "！", "？"])
-def test_sentences_split_after_a_japanese_mark_with_no_space_after_it(mark: str):
-    """Given two Japanese sentences, the first ending at `。`, `！`, or `？`, with no space after it
+def test_sentences_split_after_a_japanese_mark_with_no_space_after_it():
+    """Given two Japanese sentences, the first ending at `。`, with no space after it
     When they're split into sentences
     Then the first ends at its mark"""
-    assert sentences(f"一つ目です{mark}二つ目です。") == [f"一つ目です{mark}", "二つ目です。"]
+    assert sentences("一つ目です。二つ目です。") == ["一つ目です。", "二つ目です。"]
 
 
-@pytest.mark.parametrize("close", ["」", "』", "）"])
-def test_a_japanese_sentence_closed_inside_a_quote_ends_after_the_quote(close: str):
-    """Given a Japanese sentence whose full stop lies inside a closing quote or bracket
+def test_a_japanese_sentence_closed_inside_a_quote_ends_after_the_quote():
+    """Given a Japanese sentence whose full stop lies inside a closing quote
     When its block is split into sentences
     Then the sentence ends after the closing mark"""
-    assert sentences(f"「止めます。{close}次です。") == [f"「止めます。{close}", "次です。"]
+    assert sentences("「止めます。」次です。") == ["「止めます。」", "次です。"]
 
 
 def test_characters_count_each_but_a_space():

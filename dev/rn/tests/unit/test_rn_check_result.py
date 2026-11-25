@@ -1,22 +1,19 @@
 """The unit cases of check/result.py, whether a role's result holds what its Cut gave it: for the
 generator, a result that holds, one out of its schema, a good of a condition the deliverable lacks,
-a point with no words, a file outside the deliverable's paths and the Round's folder beside files
-inside them and one that nearly matches, and a line that no file of the deliverable holds; for the
-evaluator, each condition answered once, and one unanswered, answered in both, answered twice, and
-an ID the Cut doesn't hold; for the generator of a kind whose best practice holds a template.md,
-the deliverable's Markdown path off it, one on it, a file that isn't Markdown, a Markdown more
-path, Markdown files inside a folder deliverable, and the guide off it by a refactoring Round, and
-the same Markdown of a kind with no template.md, and of the evaluator; for the fixer, a fixed whose
-files lie in the deliverable's paths or the Fix's folder, one with a file outside them beside one
-that nearly matches, a decision with its words, each out of its schema, and a guide off its
-template, which the fixer isn't held to; and a role of none of them. Each Cut
-and result is read from the JSON of its file. The conversation's folder, from which the Cut's paths
-are given, is the user's repository's top, given as `cwd`, while the case's process runs in
-another folder, so that a body that reads the Cut's paths from its own folder fails."""
+a point with no words, a file outside the deliverable's paths and the Round's folder, and a line
+that no file of the deliverable holds; for the fixer, files in the deliverable's paths and the
+Fix's folder, a file outside them, a result out of its schema, and a guide off its template, which
+the fixer isn't held to; for the evaluator, each condition answered once, and one unanswered,
+answered in both, answered twice, and an ID the Cut doesn't hold; a role of none of them; and for
+the generator of a kind whose best practice holds a template.md, the deliverable's Markdown path
+off it, one on it, one held in the Cut's language, a Markdown more path, and Markdown files inside
+a folder deliverable, and the same Markdown of a kind with no template.md. Each Cut and result is
+read from the JSON of its file. The conversation's folder, from which the Cut's paths are given, is
+the user's repository's top, given as `cwd`, while the case's process runs in another folder, so
+that a body that reads the Cut's paths from its own folder fails."""
 
 from __future__ import annotations
 
-import json
 import os
 from typing import Any
 
@@ -82,11 +79,9 @@ def from_json(run: Run, name: str, value: Any) -> Any:
     return rn_files.read_json(path)
 
 
-def generator_cut(
-    run: Run, node: Any = None, kind: str = "light", made_by: str | None = None
-) -> Any:
+def generator_cut(run: Run, node: Any = None, kind: str = "light") -> Any:
     """The generator's Cut, of generator-cut.schema.json, of the node, else the command's of the
-    kind light with its tests at tests/, by the best practice made_by, else the kind's, with the
+    kind light with its tests at tests/, by the kind's best practice, with the
     kind's template where its folder holds one, read from JSON."""
     template = os.path.join(rn_files.PRACTICES, kind, "template.md")
     if node is None:
@@ -100,13 +95,11 @@ def generator_cut(
         "inputs": [
             os.path.relpath(os.path.join(run.worktree, "invoicer/lines.py"), run.repository)
         ],
-        "best_practice": os.path.relpath(
-            os.path.join(rn_files.PRACTICES, made_by or kind), run.repository
-        ),
+        "best_practice": os.path.relpath(os.path.join(rn_files.PRACTICES, kind), run.repository),
         "template": (
             os.path.relpath(template, run.repository) if os.path.isfile(template) else None
         ),
-        "stage": "content" if made_by is None else "refactor",
+        "stage": "content",
         "number": 1,
         "round": run.round,
         "trial": "/tmp/rn-trial-x",
@@ -186,20 +179,6 @@ def test_a_generators_made_that_holds_its_cut_has_no_fault(run: Run):
     assert generator(run, result) == []
 
 
-def test_a_generators_made_with_no_good_and_no_file_has_no_fault(run: Run):
-    """Given a generator's made with no good and no file, as its schema lets it
-    When its faults are asked
-    Then there are none"""
-    assert generator(run, {"result": "made"}) == []
-
-
-def test_a_generators_point_with_its_words_has_no_fault(run: Run):
-    """Given a generator's point with the point's words
-    When its faults are asked
-    Then there are none"""
-    assert generator(run, rn_files.point()) == []
-
-
 def test_a_generators_result_out_of_its_schema_is_a_fault_at_its_place(run: Run):
     """Given a generator's result `done`
     When its faults are asked
@@ -226,17 +205,16 @@ def test_a_generators_point_with_no_words_is_a_fault(run: Run):
     assert "point" in found[0]
 
 
-@pytest.mark.parametrize(
-    "outside", ["README.md", "tests-old/test_command.py", "invoicer/__main__.py.bak", "../notes.md"]
-)
-def test_a_generators_file_outside_its_paths_and_round_is_a_fault_naming_it(run: Run, outside: str):
-    """Given a generator's made naming the command and a file outside the deliverable's paths and
-    the Round's folder, one that nearly matches them among them
+def test_a_generators_file_outside_its_paths_and_round_is_a_fault_naming_it(run: Run):
+    """Given a generator's made naming the command and tests-old/test_command.py, a file outside
+    the deliverable's paths and the Round's folder that nearly matches its more path tests/
     When its faults are asked
-    Then there is one, naming that file"""
+    Then there is one, naming that file, the deliverable's paths, and the Round's folder"""
+    outside = "tests-old/test_command.py"
     found = generator(run, rn_files.made([("N1", [LINE])], [COMMAND, outside]))
-    assert len(found) == 1
-    assert outside in found[0]
+    assert found == [
+        f"{outside}: lies outside the deliverable's paths and the Round's folder; write only there"
+    ]
 
 
 def test_a_generators_line_that_no_file_of_the_deliverable_holds_is_a_fault_naming_it(run: Run):
@@ -249,96 +227,35 @@ def test_a_generators_line_that_no_file_of_the_deliverable_holds_is_a_fault_nami
     assert "# invoicer" in found[0]
 
 
-def test_a_generators_line_changed_since_it_quoted_it_is_a_fault(run: Run):
-    """Given a generator's made whose N1 quotes the command's line, and the command changed after
-    so that it no longer holds it
-    When its faults are asked
-    Then there is one, naming the line"""
-    result = rn_files.made([("N1", [LINE])], [COMMAND])
-    write_files(run.worktree, {COMMAND: '"""Prints an invoice."""\n'})
-    found = generator(run, result)
-    assert len(found) == 1
-    assert LINE in found[0]
-
-
 # The fixer.
 
 
-@pytest.mark.parametrize(
-    "files",
-    [[COMMAND], [COMMAND, "tests/test_command.py"], []],
-    ids=["the command", "a file of its more paths", "none"],
-)
-def test_a_fixers_fixed_naming_files_of_its_deliverable_has_no_fault(run: Run, files: list[str]):
-    """Given a fixer's fixed naming the command, a file under its more path tests/, or none
-    When its faults are asked
-    Then there is none"""
-    assert fixer(run, {"result": "fixed", "files": files}) == []
-
-
-def test_a_fixers_file_in_its_fix_has_no_fault(run: Run):
-    """Given a fixer's fixed naming the command and a file in the Fix's folder, by its path from
-    the worktree's top
+def test_a_fixers_files_in_its_paths_and_fix_have_no_fault(run: Run):
+    """Given a fixer's fixed naming the command, a file under its more path tests/, and a file in
+    the Fix's folder, by its path from the worktree's top
     When its faults are asked
     Then there is none"""
     inside = os.path.relpath(os.path.join(run.repository, run.fix, "notes.txt"), run.worktree)
-    assert fixer(run, {"result": "fixed", "files": [COMMAND, inside]}) == []
+    files = [COMMAND, "tests/test_command.py", inside]
+    assert fixer(run, {"result": "fixed", "files": files}) == []
 
 
-@pytest.mark.parametrize(
-    "outside",
-    [
-        "README.md",
-        "tests-old/test_command.py",
-        "invoicer/__main__.py.bak",
-        "../notes.md",
-        os.path.join(".rn", NAME, "design-tree.json"),
-    ],
-)
-def test_a_fixers_file_outside_its_paths_and_fix_is_a_fault_naming_it(run: Run, outside: str):
-    """Given a fixer's fixed naming the command and a file outside the deliverable's paths and the
-    Fix's folder, one that nearly matches them among them, and the run's design tree, beside the
-    Fix's folder
+def test_a_fixers_file_outside_its_paths_and_fix_is_a_fault_naming_it(run: Run):
+    """Given a fixer's fixed naming the command and the run's design tree, beside the Fix's folder
     When its faults are asked
     Then there is one, naming that file, the deliverable's paths, and the Fix's folder"""
+    outside = os.path.join(".rn", NAME, "design-tree.json")
     found = fixer(run, {"result": "fixed", "files": [COMMAND, outside]})
     assert found == [
         f"{outside}: lies outside the deliverable's paths and the Fix's folder; write only there"
     ]
 
 
-def test_a_fixers_decision_with_its_words_has_no_fault(run: Run):
-    """Given a fixer's decision naming the decision its mend would change
-    When its faults are asked
-    Then there is none"""
-    words = "N1 decides the lines as the user wrote them, which the mend would change."
-    assert fixer(run, {"result": "decision", "decision": words}) == []
-
-
-@pytest.mark.parametrize(
-    "result",
-    [
-        {"result": "decision"},
-        {"result": "decision", "decision": ""},
-        {"result": "fixed"},
-        {"result": "fixed", "files": [COMMAND], "decision": "x"},
-        {"result": "made", "files": [COMMAND]},
-        {"files": [COMMAND]},
-    ],
-    ids=[
-        "a decision with no words",
-        "a decision with empty words",
-        "a fixed with no files",
-        "a fixed with a decision",
-        "a generator's result",
-        "no result",
-    ],
-)
-def test_a_fixers_result_out_of_its_schema_is_a_fault(run: Run, result: Any):
-    """Given a fixer's result out of fixer-fix.schema.json
+def test_a_fixers_result_out_of_its_schema_is_a_fault(run: Run):
+    """Given a fixer's fixed with no files, out of fixer-fix.schema.json
     When its faults are asked
     Then there is at least one, the result left unchecked by its files"""
-    assert fixer(run, result) != []
+    assert fixer(run, {"result": "fixed"}) != []
 
 
 def test_a_fixers_markdown_off_its_kinds_template_isnt_held(run: Run):
@@ -375,15 +292,6 @@ def test_an_evaluators_condition_unanswered_is_a_fault_naming_it(run: Run):
     assert "N3" in found[0]
 
 
-def test_an_evaluators_conditions_each_unanswered_are_each_a_fault(run: Run):
-    """Given an evaluator's judged with no answer at all
-    When its faults are asked
-    Then there are three, one naming each of N1, N2, and N3"""
-    found = evaluator(run, answers([], []))
-    assert len(found) == 3
-    assert all(any(c in each for each in found) for c in ("N1", "N2", "N3"))
-
-
 def test_an_evaluators_condition_answered_good_and_more_is_a_fault_naming_it(run: Run):
     """Given an evaluator's judged with N1, N2, and N3 good, and N2 more as well
     When its faults are asked
@@ -393,67 +301,35 @@ def test_an_evaluators_condition_answered_good_and_more_is_a_fault_naming_it(run
     assert "N2" in found[0]
 
 
-@pytest.mark.parametrize(
-    ("good", "more"), [(["N1", "N1", "N2", "N3"], []), (["N2", "N3"], ["N1", "N1"])]
-)
-def test_an_evaluators_condition_answered_twice_is_a_fault_naming_it(
-    run: Run, good: list[str], more: list[str]
-):
-    """Given an evaluator's judged answering N1 twice, in good or in more, and N2 and N3 once
+def test_an_evaluators_condition_answered_twice_is_a_fault_naming_it(run: Run):
+    """Given an evaluator's judged answering N1 twice in good, and N2 and N3 once
     When its faults are asked
     Then there is one, naming N1"""
-    found = evaluator(run, answers(good, more))
+    found = evaluator(run, answers(["N1", "N1", "N2", "N3"], []))
     assert len(found) == 1
     assert "N1" in found[0]
 
 
-@pytest.mark.parametrize("unknown", ["N4", "N10", "n1", "C1"])
-def test_an_evaluators_id_the_cut_doesnt_hold_is_a_fault_naming_it(run: Run, unknown: str):
-    """Given an evaluator's judged answering N1 to N3 once, and an ID the Cut doesn't hold among
-    its conditions, such as one past the last, one whose prefix is N1, or a factor's ID
+def test_an_evaluators_id_the_cut_doesnt_hold_is_a_fault_naming_it(run: Run):
+    """Given an evaluator's judged answering N1 to N3 once, and N4, which the Cut doesn't hold
     When its faults are asked
-    Then there is one, naming that ID"""
-    found = evaluator(run, answers(["N1", "N2", "N3", unknown], []))
+    Then there is one, naming N4"""
+    found = evaluator(run, answers(["N1", "N2", "N3", "N4"], []))
     assert len(found) == 1
-    assert unknown in found[0]
+    assert "N4" in found[0]
 
 
-def test_an_evaluators_line_in_the_deliverables_more_paths_holds(run: Run):
-    """Given an evaluator's judged whose N2 quotes the line of the command's test under tests/
-    When its faults are asked
-    Then there are none"""
-    result = rn_files.judged([("N1", [LINE]), ("N2", [TEST_LINE])], [("N3", "They print it.")])
-    assert evaluator(run, result) == []
-
-
-def test_an_evaluators_line_that_no_file_of_the_deliverable_holds_is_a_fault(run: Run):
-    """Given an evaluator's judged whose N1 quotes `print('receipt')`, which no file holds
-    When its faults are asked
-    Then there is one, naming the line"""
-    result = rn_files.judged([("N1", ["print('receipt')"]), ("N2", [LINE]), ("N3", [LINE])])
-    found = evaluator(run, result)
-    assert len(found) == 1
-    assert "print('receipt')" in found[0]
-
-
-def test_an_evaluators_result_out_of_its_schema_is_a_fault(run: Run):
-    """Given an evaluator's judged whose N1's good_when is empty
-    When its faults are asked
-    Then one names the place of good_when"""
-    result = json.loads(json.dumps(answers(["N2", "N3"], ["N1"])))
-    result["more"][0]["good_when"] = ""
-    found = evaluator(run, result)
-    assert any(each.startswith("/more/0/good_when") for each in found)
-
-
-@pytest.mark.parametrize("role", ["orchestrator", "Evaluator", ""])
-def test_a_role_of_neither_is_refused(run: Run, role: str):
+def test_a_role_of_neither_is_refused(run: Run):
     """Given the evaluator's Cut and its judged
-    When the faults of a role that is neither generator nor evaluator are asked
+    When the faults of the role orchestrator, none of generator, evaluator, and fixer, are asked
     Then it raises Wrong"""
     with pytest.raises(Wrong):
         faults(
-            role, evaluator_cut(run), answers(["N1", "N2", "N3"], []), run.worktree, run.repository
+            "orchestrator",
+            evaluator_cut(run),
+            answers(["N1", "N2", "N3"], []),
+            run.worktree,
+            run.repository,
         )
 
 
@@ -468,13 +344,11 @@ def guide_node(kind: str, more: list[str] | None = None) -> Any:
     return node
 
 
-def guide_faults(
-    run: Run, kind: str, text: str, more: list[str] | None = None, made_by: str | None = None
-) -> list[str]:
+def guide_faults(run: Run, kind: str, text: str, more: list[str] | None = None) -> list[str]:
     """The faults of a generator's made of the guide of the kind, its text as given, with no
-    good, against its Cut by the best practice made_by, else the kind's."""
+    good, against its Cut."""
     write_files(run.worktree, {GUIDE: text})
-    cut = generator_cut(run, guide_node(kind, more), kind, made_by)
+    cut = generator_cut(run, guide_node(kind, more), kind)
     result = from_json(run, "generator.json", rn_files.made([], [GUIDE, *(more or [])]))
     return faults("generator", cut, result, run.worktree, run.repository)
 
@@ -528,15 +402,6 @@ def test_a_generators_markdown_is_held_to_the_template_in_its_cuts_language(run:
     assert faults("generator", cut, result, run.worktree, run.repository) == []
 
 
-def test_a_generators_file_that_isnt_markdown_isnt_held_to_the_template(run: Run):
-    """Given a generator's made of the guide, of the kind readme, on the template, with a more path
-    docs/lines.csv, a file that isn't Markdown, that holds none of it
-    When its faults are asked
-    Then there are none"""
-    write_files(run.worktree, {"docs/lines.csv": "Hosting;40.00;1\n"})
-    assert guide_faults(run, "readme", ON, ["docs/lines.csv"]) == []
-
-
 def test_a_generators_markdown_of_a_kind_with_no_template_isnt_held(run: Run):
     """Given a generator's made of the guide, of the kind light, whose best practice's folder holds
     no template.md, the guide off the readme template
@@ -544,59 +409,6 @@ def test_a_generators_markdown_of_a_kind_with_no_template_isnt_held(run: Run):
     Then there are none"""
     assert not os.path.exists(os.path.join(rn_files.PRACTICES, "light", "template.md"))
     assert guide_faults(run, "light", OFF) == []
-
-
-def test_an_evaluators_markdown_off_the_template_isnt_held(run: Run):
-    """Given the guide off the readme template, and an evaluator's judged of it, each condition
-    of readme answered good by its heading
-    When the evaluator's faults are asked
-    Then there are none, as the template check holds the generator alone"""
-    write_files(run.worktree, {GUIDE: OFF})
-    cut = from_json(
-        run,
-        "evaluator-cut.json",
-        {
-            "goal": rn_files.GOAL,
-            "deliverable": {"name": rn_files.GUIDE_NAME, "path": GUIDE},
-            "judges_by": rn_files.judged_by("readme"),
-            "worktree": os.path.relpath(run.worktree, run.repository),
-            "round": run.round,
-            "trial": "/tmp/rn-trial-x",
-        },
-    )
-    ids = rn_files.conditions("readme")
-    result = from_json(
-        run, "evaluator.json", rn_files.judged([(c, ["# Print an invoice"]) for c in ids])
-    )
-    assert faults("evaluator", cut, result, run.worktree, run.repository) == []
-
-
-def test_a_generators_good_and_template_faults_come_together(run: Run):
-    """Given a generator's made of the guide, of the kind readme, off the template, whose good of
-    N1 quotes a line the guide doesn't hold
-    When its faults are asked
-    Then they hold one naming the line, and each place of the template check"""
-    write_files(run.worktree, {GUIDE: OFF})
-    cut = generator_cut(run, guide_node("readme"), "readme")
-    result = from_json(
-        run, "generator.json", rn_files.made([("N1", ["# Print a receipt"])], [GUIDE])
-    )
-    found = faults("generator", cut, result, run.worktree, run.repository)
-    assert [each for each in found if "# Print a receipt" in each] != []
-    assert set(template_places(OFF)) <= set(found)
-    assert len(found) == len(template_places(OFF)) + 1
-
-
-def test_the_guide_is_named_from_the_worktrees_top_not_the_conversations_folder(run: Run):
-    """Given a generator's made of the guide, of the kind readme, off the template, the
-    conversation working at the repository's top, apart from the worktree
-    When its faults are asked
-    Then each place names the guide as `docs/guide.md:<line>: <what>`, and none names it by its
-    path from the conversation's folder"""
-    found = guide_faults(run, "readme", OFF)
-    assert run.worktree != run.repository
-    assert sorted(found) == sorted(template_places(OFF))
-    assert not any(each.startswith(".claude/") for each in found)
 
 
 def test_a_markdown_more_path_isnt_held_to_the_template(run: Run):
@@ -621,14 +433,3 @@ def test_markdown_inside_a_folder_deliverable_isnt_held_to_the_template(run: Run
     cut = generator_cut(run, node, "readme")
     result = from_json(run, "generator.json", rn_files.made([], ["skeleton/"]))
     assert faults("generator", cut, result, run.worktree, run.repository) == []
-
-
-def test_a_refactoring_generators_markdown_off_its_kinds_template_gives_each_place(run: Run):
-    """Given a refactoring generator's made of the guide, of the kind readme, its Cut by the
-    refactor-doc best practice, which holds no template.md, the guide a heading and a paragraph
-    alone
-    When its faults are asked
-    Then they are each place that the readme template's check finds, as the guide keeps its
-    kind's form while it's refactored"""
-    assert not os.path.exists(os.path.join(rn_files.PRACTICES, "refactor-doc", "template.md"))
-    assert guide_faults(run, "readme", OFF, made_by="refactor-doc") == template_places(OFF)

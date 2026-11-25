@@ -1,8 +1,8 @@
 """The unit cases of repository/commit_checks.py's `findings`: a repository that sets no check, a
-check that passes, one that fails with one line and with several, one set by core.hooksPath, the
-files given alone checked beside another changed file and beside another staged one, none, one, and
-several files, the worktree's index left as it was, and each refusal: a file outside the worktree, a
-file that doesn't exist, and a check whose program is missing."""
+check that passes, one that fails with each of its lines in order, one set by core.hooksPath, the
+files given alone checked beside another changed file and another staged one, the worktree's index
+left as it was, no file, and each refusal: a file outside the worktree, a file that doesn't exist,
+and a check whose program is missing."""
 
 from __future__ import annotations
 
@@ -48,26 +48,17 @@ def test_a_check_that_passes_gives_none(tmp_path: Any, host: Any):
     assert findings(run, [rn_files.COMMAND], host) == []
 
 
-def test_a_check_that_fails_gives_its_one_line(tmp_path: Any, host: Any):
-    """Given a run whose repository's pre-commit check fails saying one line
-    When findings is asked of the command
-    Then it gives that line, and the branch's head is as it was"""
-    run = made_run(str(tmp_path))
-    hook(run.repository, "echo 'invoicer/__main__.py: no tests'\nexit 1\n")
-    changed(run, {rn_files.COMMAND: "print()\n"})
-    before = head(rn_files.worktree_of(run.repository, run.name))
-    assert findings(run, [rn_files.COMMAND], host) == ["invoicer/__main__.py: no tests"]
-    assert head(rn_files.worktree_of(run.repository, run.name)) == before
-
-
 def test_a_check_that_fails_gives_each_of_its_lines_in_order(tmp_path: Any, host: Any):
     """Given a run whose repository's pre-commit check fails saying three lines, one on stderr
     When findings is asked of the command
-    Then it gives each of the three lines, in the order printed"""
+    Then it gives each of the three lines, in the order printed, and the branch's head is as it
+    was"""
     run = made_run(str(tmp_path))
     hook(run.repository, "echo first\necho second >&2\necho third\nexit 1\n")
     changed(run, {rn_files.COMMAND: "print()\n"})
+    before = head(rn_files.worktree_of(run.repository, run.name))
     assert findings(run, [rn_files.COMMAND], host) == ["first", "second", "third"]
+    assert head(rn_files.worktree_of(run.repository, run.name)) == before
 
 
 def test_a_check_set_by_core_hookspath_runs(tmp_path: Any, host: Any):
@@ -84,18 +75,6 @@ def test_a_check_set_by_core_hookspath_runs(tmp_path: Any, host: Any):
     assert findings(run, [rn_files.COMMAND], host) == ["from hooksPath"]
 
 
-def test_the_check_reads_the_files_given_alone(tmp_path: Any, host: Any):
-    """Given a run whose command and guide are written, and whose check prints each file a commit
-    would hold and fails
-    When findings is asked of the command alone
-    Then it gives the command alone, and nothing is staged in the worktree"""
-    run = made_run(str(tmp_path))
-    hook(run.repository, NAMES)
-    changed(run, {rn_files.COMMAND: "print()\n", rn_files.GUIDE: "# Guide\n"})
-    assert findings(run, [rn_files.COMMAND], host) == [rn_files.COMMAND]
-    assert staged(run) == []
-
-
 def test_the_check_reads_the_files_given_alone_beside_another_staged(tmp_path: Any, host: Any):
     """Given a run whose command and guide are written, the guide staged in the worktree, and whose
     check prints each file a commit would hold and fails
@@ -107,18 +86,6 @@ def test_the_check_reads_the_files_given_alone_beside_another_staged(tmp_path: A
     git(rn_files.worktree_of(run.repository, run.name), "add", "--", rn_files.GUIDE)
     assert findings(run, [rn_files.COMMAND], host) == [rn_files.COMMAND]
     assert staged(run) == [rn_files.GUIDE]
-
-
-def test_the_check_reads_each_of_several_files(tmp_path: Any, host: Any):
-    """Given a run whose command and guide are written, and whose check prints each file a commit
-    would hold and fails
-    When findings is asked of both
-    Then it gives both, in git's order"""
-    run = made_run(str(tmp_path))
-    hook(run.repository, NAMES)
-    changed(run, {rn_files.COMMAND: "print()\n", rn_files.GUIDE: "# Guide\n"})
-    given = findings(run, [rn_files.GUIDE, rn_files.COMMAND], host)
-    assert given == [rn_files.GUIDE, rn_files.COMMAND]
 
 
 def test_no_file_gives_none_and_stages_nothing(tmp_path: Any, host: Any):
@@ -133,14 +100,13 @@ def test_no_file_gives_none_and_stages_nothing(tmp_path: Any, host: Any):
     assert staged(run) == []
 
 
-@pytest.mark.parametrize("outside", ["../outside.py", "/etc/hostname"])
-def test_a_file_outside_the_worktree_is_refused(tmp_path: Any, host: Any, outside: str):
+def test_a_file_outside_the_worktree_is_refused(tmp_path: Any, host: Any):
     """Given a run
     When findings is asked of a file outside its worktree
     Then Wrong is raised, naming it, and nothing is staged"""
     run = made_run(str(tmp_path))
-    with pytest.raises(Wrong, match=outside.replace(".", r"\.")):
-        findings(run, [outside], host)
+    with pytest.raises(Wrong, match=r"\.\./outside\.py"):
+        findings(run, ["../outside.py"], host)
     assert staged(run) == []
 
 

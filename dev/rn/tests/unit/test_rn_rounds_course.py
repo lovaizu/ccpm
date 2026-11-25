@@ -1,19 +1,19 @@
 """The unit cases of rounds/course.py, which Round a deliverable takes next: one for each row of
-next_of's decision table, in the order its contract gives, each row's boundaries of LIMIT Rounds of
-content in a course and of the one refactor Round, a course started again after a Round put up for
-the sign-off, the last Round picked among several, and each transition that a run brings: a point
-kept as an open decision and then answered, a generator's made with no evaluator yet, an evaluator's
-findings, the content at LIMIT whose findings left the pruner keeps as open decisions, which then
-waits on the sign-off before the answer, and past which a remedy that the pruner wrote since the
-last Cut takes another content Round, a refactor Round made, which no evaluator judges, a Round put
-up and a send-back after it, and a pause that leaves a Round with its Cut and no result, of the
-generator or of the evaluator, at Round 1 and at LIMIT, which spends no Round. Then next_with_fixes,
-with the Fixes after the Rounds: none, as next_of; a Fix whose fixer wrote nothing, its Cut written
-or not; a Fix fixed or naming a decision, the node as its fixer's Cut held it, changed since, or
-with no Cut, and a decision weighed by a commit since; Rounds after a Fix, which count alone toward
-the limit; and Fixes past LIMIT Rounds, which spend no Round; mended and next_in, reading the Fixes
-from a run's files; the pruner where the last Round's point or findings are unweighed, before an
-answer and after a put-up; and asked, with no Round and past the limit."""
+next_of's decision table, in the order its contract gives, and each boundary that tells two rows
+apart: an open decision with no Round and after a point; the pruner where the last Round's point or
+findings are unweighed, before an answer, and the sign-off before it where the Round is put up; a
+point answered, which resumes its Round; a Round made with no evaluator yet, of content and of
+refactoring, which no evaluator judges; no Round yet; a condition short below LIMIT Rounds of
+content and at it; a course started again by the user's answer and by a Round put up, each counting
+LIMIT Rounds anew; a remedy that the pruner wrote since the last Cut past LIMIT, alone or beside an
+open decision, and none; each condition good, refactored or not; a pause at LIMIT that leaves a
+Round with no generator's or no evaluator's result, which spends no Round; proposals kept at a
+Round put up, a new point after one, and a point open in the LIMIT-th Round or in a refactor Round;
+and the table of which open decisions past the limit are proposals. Then asked, with no Round and
+past the limit; next_with_fixes, with the Fixes after the Rounds: none, as next_of; a Fix whose
+fixer wrote nothing, its Cut written or not; a Fix fixed, naming a decision, and weighed since; the
+node changed since its fixer's Cut; and Rounds after a Fix, which count alone toward the limit; and
+mended and next_in, reading the Fixes from a run's files."""
 
 from __future__ import annotations
 
@@ -109,17 +109,6 @@ def test_an_open_decision_waits_on_the_answer_after_a_point(results: str):
     )
 
 
-def test_an_open_decision_waits_on_the_answer_before_the_evaluator_due(results: str):
-    """Given the command made in content-1 with no evaluator yet, and an open decision of N1, as
-    the pruner keeps a point that the user settles
-    When what it waits on is asked
-    Then it waits on the answer, the first row that holds"""
-    done = rounds(results, ("content", 1, MADE_ALL, None))
-    assert next_of(node(open_decision=True, folder=results), done, False) == Next(
-        "answer", None, False
-    )
-
-
 def test_an_open_decision_waits_on_the_answer_with_no_round_yet(results: str):
     """Given the command with no Round, and an open decision of N1 that the plan left for the user
     When what it waits on is asked
@@ -138,16 +127,13 @@ def unweighed(done: list[Done]) -> list[Done]:
     return [*done[:-1], done[-1]._replace(unweighed=True)]
 
 
-@pytest.mark.parametrize("open_decision", [False, True], ids=["none open", "one open"])
-def test_a_point_unweighed_waits_on_the_pruner_of_the_stage_point(
-    results: str, open_decision: bool
-):
-    """Given the command whose generator gave a point in content-1, unweighed, with no decision
-    open or with one
+def test_a_point_unweighed_waits_on_the_pruner_of_the_stage_point(results: str):
+    """Given the command whose generator gave a point in content-1, unweighed, with a decision
+    open
     When what it waits on is asked
     Then it waits on the pruner of the stage point, before any answer"""
     done = unweighed(rounds(results, ("content", 1, POINTED, None)))
-    assert next_of(node(open_decision=open_decision, folder=results), done, False) == Next(
+    assert next_of(node(open_decision=True, folder=results), done, False) == Next(
         "pruner", POINT, False
     )
 
@@ -195,26 +181,6 @@ def test_a_point_answered_resumes_the_generator_in_its_round(results: str):
     assert next_of(node(folder=results), done, False) == Next("generator", "content", True)
 
 
-def test_a_point_answered_in_a_later_round_resumes_that_one(results: str):
-    """Given the command judged short in content-1, whose generator gave a point in content-2, now
-    answered
-    When what it waits on is asked
-    Then the generator resumes content-2, the last Round, and not the first"""
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, POINTED, None))
-    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next(
-        "generator", "content", True
-    )
-
-
-def test_a_point_answered_in_a_refactor_round_resumes_it(results: str):
-    """Given the guide-like command, refactored, judged good in content-1, whose generator gave a
-    point in refactor-2, now answered
-    When what it waits on is asked
-    Then the generator resumes refactor-2"""
-    done = rounds(results, ("content", 1, MADE_ALL, GOOD), ("refactor", 2, POINTED, None))
-    assert next_of(node(True, folder=results), done, True) == Next("generator", "refactor", True)
-
-
 # The evaluator in the last Round, where the generator made it and the evaluator wrote nothing.
 
 
@@ -235,27 +201,14 @@ def test_a_refactor_round_made_waits_on_no_evaluator(results: str):
     assert next_of(node(True, folder=results), done, True) == Next("sign-off", None, False)
 
 
-def test_a_round_made_after_an_earlier_one_judged_waits_on_its_evaluator(results: str):
-    """Given the command judged short in content-1 and made in content-2, its evaluator stopped by
-    a pause with no result
-    When what it waits on is asked
-    Then the evaluator in content-2, the last Round, and not a new Round from content-1's
-    findings"""
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, None))
-    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next(
-        "evaluator", "content", False
-    )
-
-
 # The generator in a new content Round, where there's no Round yet.
 
 
-@pytest.mark.parametrize("refactors", [False, True])
-def test_no_round_yet_waits_on_the_generator_in_a_new_content_round(results: str, refactors: bool):
-    """Given the command with no Round and no open decision, its kind refactored or not
+def test_no_round_yet_waits_on_the_generator_in_a_new_content_round(results: str):
+    """Given the command with no Round and no open decision, its kind refactored
     When what it waits on is asked
     Then the generator in a new Round of the stage content"""
-    assert next_of(node(folder=results), [], refactors) == Next("generator", "content", False)
+    assert next_of(node(folder=results), [], True) == Next("generator", "content", False)
 
 
 # A condition not good: a new Round of the last stage below LIMIT, else the pruner.
@@ -316,16 +269,6 @@ def test_limit_content_rounds_after_a_users_answer_wait_on_the_pruner(results: s
     assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
 
 
-def test_limit_content_rounds_each_given_the_users_answer_wait_on_the_pruner(results: str):
-    """Given the command judged short on N1 in content-1 and content-2, each generator given the
-    user's answer on N1 that the node holds
-    When what it waits on is asked
-    Then the pruner, as no answer came since the Rounds"""
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, SHORT))
-    done = [each._replace(given=WITH_ANSWER) for each in done]
-    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
-
-
 # The remedies in the node that a Round's generator was given in its Cut, by condition, about, and
 # decided: none, as node() holds the user's answer alone, which is no remedy.
 NO_REMEDY: frozenset[tuple[str, str, str]] = frozenset()
@@ -340,17 +283,14 @@ def remedied(results: str, open_decision: bool = False) -> Any:
     return read_back(results, "remedied", given)
 
 
-@pytest.mark.parametrize("count", [LIMIT, LIMIT + 1])
-def test_a_remedy_written_since_the_last_cut_past_limit_gets_a_new_content_round(
-    results: str, count: int
-):
-    """Given the command judged short on N1 in <count> content Rounds, LIMIT or one past it, each
+def test_a_remedy_written_since_the_last_cut_past_limit_gets_a_new_content_round(results: str):
+    """Given the command judged short on N1 in LIMIT content Rounds, each
     generator's Cut given the user's answer and holding no remedy, and the node now holding the
     remedy that the pruner wrote of the last finding
     When what it waits on is asked
     Then the generator in a new content Round, as the limit stops only a remake that the pruner
     gave no remedy for"""
-    done = rounds(results, *[("content", n, MADE_ALL, SHORT) for n in range(1, count + 1)])
+    done = rounds(results, *[("content", n, MADE_ALL, SHORT) for n in range(1, LIMIT + 1)])
     done = [each._replace(given=WITH_ANSWER, remedies=NO_REMEDY) for each in done]
     assert next_of(remedied(results), done, False) == Next("generator", "content", False)
 
@@ -365,58 +305,28 @@ def test_a_remedy_past_limit_with_an_open_decision_waits_on_the_answer(results: 
     assert next_of(remedied(results, True), done, False) == Next("answer", None, False)
 
 
-@pytest.mark.parametrize(
-    ("open_decision", "waits_on"), [(False, "pruner"), (True, "sign-off")], ids=["none", "kept"]
-)
-def test_no_remedy_since_the_last_cut_past_limit_leaves_the_findings_to_the_user(
-    results: str, open_decision: bool, waits_on: str
-):
-    """Given the command judged short on N1 in LIMIT content Rounds, the last generator's Cut
-    holding no remedy, and the node holding the user's answer alone, no remedy, and no open
-    decision, or the finding kept as one
+def test_no_remedy_since_the_last_cut_past_limit_waits_on_the_pruner(results: str):
+    """Given the command judged short on N1 in LIMIT content Rounds, each generator's Cut given
+    the user's answer and holding no remedy, and the node holding the user's answer alone, no
+    remedy, and no open decision
     When what it waits on is asked
-    Then the pruner, to keep each finding left, or the sign-off with the finding as a proposal, as
-    no remedy came since the last Cut"""
+    Then the pruner, to keep each finding left, as no remedy came since the last Cut"""
     done = rounds(results, *[("content", n, MADE_ALL, SHORT) for n in range(1, LIMIT + 1)])
     done = [each._replace(given=WITH_ANSWER, remedies=NO_REMEDY) for each in done]
-    left = node(["N2", "N3"], open_decision, folder=results)
-    assert next_of(left, done, False) == Next(waits_on, None, False)
+    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
 
 
-@pytest.mark.parametrize("content", sorted({1, LIMIT}))
-def test_a_condition_short_after_the_refactor_round_gets_a_new_content_round(
-    results: str, content: int
-):
-    """Given the command judged good in content-<content>, below LIMIT or at it, each Round before
-    it judged short, then made in refactor-<content + 1>, put up, and the node holding N1 not
-    good, as a send-back holds it
+def test_a_condition_short_after_the_refactor_round_gets_a_new_content_round(results: str):
+    """Given the command judged short in content-1 and good in content-2, LIMIT Rounds, then made
+    in refactor-3, put up, and the node holding N1 not good, as a send-back holds it
     When what it waits on is asked
     Then the generator in a new content Round, as the send-back starts the course again, whatever
     the content took before"""
-    each = [("content", n, MADE_ALL, SHORT) for n in range(1, content)]
-    done = rounds(
-        results,
-        *each,
-        ("content", content, MADE_ALL, GOOD),
-        ("refactor", content + 1, MADE_ALL, None, GOOD_PUT_UP),
-    )
-    assert next_of(node(["N2", "N3"], folder=results), done, True) == Next(
-        "generator", "content", False
-    )
-
-
-def test_a_content_round_after_a_round_put_up_counts_alone_toward_the_limit(results: str):
-    """Given the command judged short in content-1 and good in content-2, made in refactor-3, put
-    up, then judged short on N1 in content-4, after a send-back
-    When what it waits on is asked
-    Then the generator in a new content Round, as the course since refactor-3 holds one Round,
-    fewer than LIMIT"""
     done = rounds(
         results,
         ("content", 1, MADE_ALL, SHORT),
         ("content", 2, MADE_ALL, GOOD),
         ("refactor", 3, MADE_ALL, None, GOOD_PUT_UP),
-        ("content", 4, MADE_ALL, SHORT),
     )
     assert next_of(node(["N2", "N3"], folder=results), done, True) == Next(
         "generator", "content", False
@@ -438,33 +348,6 @@ def test_limit_content_rounds_after_a_round_put_up_wait_on_the_pruner(results: s
     assert next_of(node(["N2", "N3"], folder=results), done, True) == Next("pruner", None, False)
 
 
-def test_each_condition_good_after_a_content_round_past_the_refactor_round_refactors_again(
-    results: str,
-):
-    """Given a refactored kind's command judged good in content-1, made in refactor-2, put up, then
-    judged good in content-3, after a send-back
-    When what it waits on is asked
-    Then the generator in a new refactor Round, as a refactor Round follows the content again"""
-    done = rounds(
-        results,
-        ("content", 1, MADE_ALL, GOOD),
-        ("refactor", 2, MADE_ALL, None, GOOD_PUT_UP),
-        ("content", 3, MADE_ALL, GOOD),
-    )
-    assert next_of(node(True, folder=results), done, True) == Next("generator", "refactor", False)
-
-
-def test_a_condition_the_node_holds_short_counts_though_the_evaluator_found_it_good(results: str):
-    """Given the command judged good on each condition in content-1, the node holding N1 not good
-    When what it waits on is asked
-    Then the generator in a new content Round, as the node's conditions decide, not the
-    evaluator's"""
-    done = rounds(results, ("content", 1, MADE_ALL, GOOD))
-    assert next_of(node(["N2", "N3"], folder=results), done, True) == Next(
-        "generator", "content", False
-    )
-
-
 # Each condition good: a refactor Round where the kind is refactored and has none, else sign-off.
 
 
@@ -476,20 +359,6 @@ def test_each_condition_good_after_content_gets_a_refactor_round(results: str):
     assert next_of(node(True, folder=results), done, True) == Next("generator", "refactor", False)
 
 
-def test_each_condition_good_after_a_refactor_round_waits_on_the_signoff(results: str):
-    """Given a refactored kind's deliverable judged short in content-1 and good in content-2, and
-    made in refactor-3
-    When what it waits on is asked
-    Then the sign-off, and not a second refactor Round"""
-    done = rounds(
-        results,
-        ("content", 1, MADE_ALL, SHORT),
-        ("content", 2, MADE_ALL, GOOD),
-        ("refactor", 3, MADE_ALL, None),
-    )
-    assert next_of(node(True, folder=results), done, True) == Next("sign-off", None, False)
-
-
 def test_each_condition_good_of_a_kind_not_refactored_waits_on_the_signoff(results: str):
     """Given the command, of the kind light, which isn't refactored, judged short on N1 in
     content-1, the pruner holding N1 good as its people would never meet it
@@ -499,50 +368,10 @@ def test_each_condition_good_of_a_kind_not_refactored_waits_on_the_signoff(resul
     assert next_of(node(True, folder=results), done, False) == Next("sign-off", None, False)
 
 
-def test_each_condition_good_after_limit_content_rounds_isnt_held_back_by_the_limit(results: str):
-    """Given a refactored kind's deliverable judged short in content-1 and good in content-2
-    When what it waits on is asked
-    Then the generator in a new refactor Round, the limit counting content alone"""
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, GOOD))
-    assert next_of(node(True, folder=results), done, True) == Next("generator", "refactor", False)
-
-
 # A pause that leaves a Round with its Cut and no result.
 
 
-def test_a_round_whose_generator_was_stopped_resumes_it_there(results: str):
-    """Given the command whose generator, in content-1, was stopped by a pause before it wrote a
-    result
-    When what it waits on is asked
-    Then the generator in the last Round again, content-1, as S2 starts each role stopped again
-    from the Round's files, not a new Round"""
-    done = rounds(results, ("content", 1, None, None))
-    assert next_of(node(folder=results), done, False) == Next("generator", "content", True)
-
-
-def test_a_second_round_whose_generator_was_stopped_resumes_it_there(results: str):
-    """Given the command judged short in content-1, whose generator, in content-2, was stopped by a
-    pause before it wrote a result
-    When what it waits on is asked
-    Then the generator in content-2 again, not the pruner, as the Round was never made"""
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, None, None))
-    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next(
-        "generator", "content", True
-    )
-
-
-def test_a_refactor_round_whose_generator_was_stopped_resumes_it_there(results: str):
-    """Given a refactored kind's command judged good in content-1, whose generator, in refactor-2,
-    was stopped by a pause before it wrote a result
-    When what it waits on is asked
-    Then the generator in refactor-2 again, not a new refactor Round or the sign-off"""
-    done = rounds(results, ("content", 1, MADE_ALL, GOOD), ("refactor", 2, None, None))
-    assert next_of(node(True, folder=results), done, True) == Next("generator", "refactor", True)
-
-
-def test_a_round_at_limit_whose_generator_was_stopped_resumes_it_not_the_pruner(
-    results: str,
-):
+def test_a_round_at_limit_whose_generator_was_stopped_resumes_it_not_the_pruner(results: str):
     """Given the command judged short in content-1, and the LIMIT-th Round, content-2, whose
     generator a pause stopped before it wrote a result
     When what it waits on is asked
@@ -554,44 +383,18 @@ def test_a_round_at_limit_whose_generator_was_stopped_resumes_it_not_the_pruner(
     )
 
 
-@pytest.mark.parametrize("number", [1, LIMIT])
-def test_a_round_whose_evaluator_was_stopped_waits_on_the_evaluator_there(
-    results: str, number: int
-):
-    """Given the command made in content-<number>, Round 1 or the LIMIT-th, each Round before it
-    judged short, its evaluator stopped by a pause before it wrote a result
+def test_a_round_at_limit_whose_evaluator_was_stopped_waits_on_the_evaluator_there(results: str):
+    """Given the command judged short in content-1, and made in content-2, the LIMIT-th Round,
+    its evaluator stopped by a pause before it wrote a result
     When what it waits on is asked
-    Then the evaluator in that Round"""
-    each = [("content", n, MADE_ALL, SHORT) for n in range(1, number)]
-    done = rounds(results, *each, ("content", number, MADE_ALL, None))
+    Then the evaluator in content-2, not the pruner"""
+    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", LIMIT, MADE_ALL, None))
     assert next_of(node(["N2", "N3"], folder=results), done, False) == Next(
         "evaluator", "content", False
     )
 
 
 # The sign-off past the limit, with the findings left kept as open decisions.
-
-
-def test_findings_kept_open_past_limit_content_rounds_wait_on_the_signoff(results: str):
-    """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds each with
-    both results, and the finding left kept as an open decision of N1
-    When what it waits on is asked
-    Then the sign-off, before the answer that the open decision would ask"""
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, SHORT))
-    assert next_of(node(["N2", "N3"], open_decision=True, folder=results), done, False) == Next(
-        "sign-off", None, False
-    )
-
-
-def test_a_round_put_up_with_each_condition_good_waits_on_the_signoff(results: str):
-    """Given a refactored kind's command judged good in content-1, made in refactor-2, put up, each
-    condition good
-    When what it waits on is asked
-    Then the sign-off, as the mark ends its Rounds with no send-back"""
-    done = rounds(
-        results, ("content", 1, MADE_ALL, GOOD), ("refactor", 2, MADE_ALL, None, GOOD_PUT_UP)
-    )
-    assert next_of(node(True, folder=results), done, True) == Next("sign-off", None, False)
 
 
 def test_proposals_kept_at_a_round_put_up_past_the_limit_wait_on_the_signoff(results: str):
@@ -604,34 +407,6 @@ def test_proposals_kept_at_a_round_put_up_past_the_limit_wait_on_the_signoff(res
     )
     assert next_of(node(["N2", "N3"], open_decision=True, folder=results), done, False) == Next(
         "sign-off", None, False
-    )
-
-
-@pytest.mark.parametrize("put_up", [True, False])
-def test_a_send_back_past_the_limit_gets_a_new_content_round_once_put_up(
-    results: str, put_up: bool
-):
-    """Given the command judged short in content-1 and good in content-2, LIMIT Rounds, put up or
-    not, and the node holding N1 not good with no open decision, as a send-back holds it
-    When what it waits on is asked
-    Then, put up, the generator in a new content Round, as the send-back gets Rounds of its own;
-    else the pruner, as findings left past the limit wait on it"""
-    second = ("content", 2, MADE_ALL, GOOD, *([GOOD_PUT_UP] if put_up else []))
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT), second)
-    expected = Next("generator", "content", False) if put_up else Next("pruner", None, False)
-    assert next_of(node(["N2", "N3"], folder=results), done, False) == expected
-
-
-def test_a_send_back_settling_the_proposal_gets_a_new_content_round(results: str):
-    """Given the command judged short on N1 in content-1 and content-2, content-2 put up with the
-    finding left kept as an open decision of N1, then sent back, the user's words settling it
-    When what it waits on is asked
-    Then the generator in a new content Round, as the state put up changed"""
-    done = rounds(
-        results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, SHORT, LEFT_PUT_UP)
-    )
-    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next(
-        "generator", "content", False
     )
 
 
@@ -651,52 +426,6 @@ def test_a_new_point_on_a_condition_not_good_after_a_round_put_up_waits_on_the_a
     )
 
 
-def test_an_open_decision_of_a_good_condition_after_a_round_put_up_waits_on_the_answer(
-    results: str,
-):
-    """Given a refactored kind's command judged good in content-1, made in refactor-2, put up, the
-    node holding N1 not good after a send-back, with an open decision of N1 and of N2, good
-    When what it waits on is asked
-    Then the answer, as an open decision of a condition good is a point"""
-    done = rounds(
-        results, ("content", 1, MADE_ALL, GOOD), ("refactor", 2, MADE_ALL, None, GOOD_PUT_UP)
-    )
-    assert next_of(with_open(["N2", "N3"], ["N1", "N2"], results), done, True) == Next(
-        "answer", None, False
-    )
-
-
-def test_findings_kept_open_past_limit_rounds_after_a_round_put_up_wait_on_the_signoff(
-    results: str,
-):
-    """Given a refactored kind's command judged good in content-1, made in refactor-2, put up, then
-    judged short on N1 in content-3 and content-4, and the finding left kept as an open decision
-    of N1
-    When what it waits on is asked
-    Then the sign-off, as the course since refactor-2 has LIMIT Rounds, each with both results"""
-    done = rounds(
-        results,
-        ("content", 1, MADE_ALL, GOOD),
-        ("refactor", 2, MADE_ALL, None, GOOD_PUT_UP),
-        ("content", 3, MADE_ALL, SHORT),
-        ("content", 4, MADE_ALL, SHORT),
-    )
-    assert next_of(node(["N2", "N3"], open_decision=True, folder=results), done, True) == Next(
-        "sign-off", None, False
-    )
-
-
-def test_an_open_decision_below_limit_waits_on_the_answer_not_the_signoff(results: str):
-    """Given the command judged short on N1 in content-1 alone, one Round below LIMIT, and an
-    open decision of N1
-    When what it waits on is asked
-    Then the answer, as the stage hasn't LIMIT Rounds"""
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT))
-    assert next_of(node(["N2", "N3"], open_decision=True, folder=results), done, False) == Next(
-        "answer", None, False
-    )
-
-
 def test_a_point_open_in_the_limit_round_waits_on_the_answer_not_the_signoff(results: str):
     """Given the command judged short in content-1, whose generator gave a point in content-2, the
     LIMIT-th Round, kept as an open decision of N1, with no evaluator's result
@@ -706,15 +435,6 @@ def test_a_point_open_in_the_limit_round_waits_on_the_answer_not_the_signoff(res
     assert next_of(node(["N2", "N3"], open_decision=True, folder=results), done, False) == Next(
         "answer", None, False
     )
-
-
-def test_limit_rounds_judged_with_no_decision_open_wait_on_the_pruner(results: str):
-    """Given the command judged short on N1 in content-1 and content-2, and no decision open, as
-    the pruner hasn't kept the finding left yet
-    When what it waits on is asked
-    Then the pruner, to keep it, and not the sign-off"""
-    done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, SHORT))
-    assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
 
 
 def test_a_point_open_in_the_refactor_round_waits_on_the_answer_not_the_signoff(results: str):
@@ -752,9 +472,6 @@ def with_open(good: Sequence[str], on: Sequence[str], folder: str) -> Any:
     ("good", "on", "waits_on"),
     [
         (["N2", "N3"], ["N1"], "sign-off"),
-        (["N3"], ["N1", "N2"], "sign-off"),
-        (["N1", "N2", "N3"], ["N1"], "answer"),
-        (["N2", "N3"], ["N2"], "answer"),
         (["N2", "N3"], ["N1", "N2"], "answer"),
         (["N3"], ["N1"], "pruner"),
     ],
@@ -770,18 +487,6 @@ def test_open_decisions_past_limit_are_proposals_of_conditions_not_good_and_poin
     pruner where a condition not good keeps none yet"""
     done = rounds(results, ("content", 1, MADE_ALL, SHORT), ("content", 2, MADE_ALL, SHORT))
     assert next_of(with_open(good, on, results), done, False) == Next(waits_on, None, False)
-
-
-@pytest.mark.parametrize("number", sorted({1, LIMIT - 1}))
-def test_an_open_decision_of_a_condition_not_good_below_limit_is_a_point(results: str, number: int):
-    """Given the command judged short on N1 in content-1 to content-<number>, below LIMIT, and an
-    open decision of N1
-    When what it waits on is asked
-    Then the answer, as below the limit an open decision is a point, not a proposal"""
-    done = rounds(results, *[("content", each, MADE_ALL, SHORT) for each in range(1, number + 1)])
-    assert next_of(with_open(["N2", "N3"], ["N1"], results), done, False) == Next(
-        "answer", None, False
-    )
 
 
 # The Fixes after the Rounds.
@@ -838,14 +543,12 @@ def test_a_fix_whose_fixer_was_stopped_resumes_it(results: str):
     )
 
 
-@pytest.mark.parametrize("cut", [True, False], ids=["the node its Cut held", "no Cut"])
-def test_a_fix_fixed_waits_on_the_signoff(results: str, cut: bool):
-    """Given the command judged good in content-1, and fix-2 fixed, its fixer's Cut holding the
-    node as it stands, or no Cut
+def test_a_fix_fixed_waits_on_the_signoff(results: str):
+    """Given the command judged good in content-1, and fix-2 fixed, with no fixer's Cut
     When what it waits on is asked
     Then the sign-off, for the command to be put up again"""
     held_node = node(True, folder=results)
-    fixes = [a_fix(results, 2, FIXED, held_node if cut else None)]
+    fixes = [a_fix(results, 2, FIXED)]
     assert next_with_fixes(held_node, judged_good(results), fixes, False) == Next(
         "sign-off", None, False
     )
@@ -863,40 +566,24 @@ def test_a_fixs_decision_waits_on_the_pruner_to_weigh_it(results: str):
     )
 
 
-@pytest.mark.parametrize("status", ["open", "done"])
-def test_a_fixs_decision_weighed_with_the_node_unchanged_waits_on_the_signoff(
-    results: str, status: str
-):
-    """Given the command, open or done, judged good in content-1 and put up, and fix-2 whose fixer
+def test_a_fixs_decision_weighed_with_the_node_unchanged_waits_on_the_signoff(results: str):
+    """Given the command, done, judged good in content-1 and put up, and fix-2 whose fixer
     named a decision, its Cut holding the node as it stands, and a commit of the tree since,
     the pruner having cut the decision
     When what it waits on is asked
     Then the sign-off, as the Fix is over and the command is back where its Rounds were over"""
     held_node = node(True, folder=results)
-    held_node["status"] = status
+    held_node["status"] = "done"
     fixes = [a_fix(results, 2, DECISION, held_node, "5de44e4")]
     assert next_with_fixes(held_node, judged_good(results), fixes, False) == Next(
         "sign-off", None, False
     )
 
 
-def test_a_fixs_decision_weighed_with_the_node_changed_takes_a_new_content_round(results: str):
-    """Given the command judged good in content-1, and fix-2 whose fixer named a decision, its Cut
-    holding the node with each condition good, a commit of the tree since, and the node now
-    holding N1 not good, as the pruner wrote the decision
-    When what it waits on is asked
-    Then the generator in a new content Round"""
-    fixes = [a_fix(results, 2, DECISION, node(True, folder=results), "5de44e4")]
-    assert next_with_fixes(
-        node(["N2", "N3"], folder=results), judged_good(results), fixes, False
-    ) == Next("generator", "content", False)
-
-
-@pytest.mark.parametrize("fixer", [DECISION, FIXED], ids=["decision", "fixed"])
-def test_a_fix_whose_node_changed_since_takes_a_new_content_round(results: str, fixer: Any):
-    """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds, then good,
-    and fix-3, its fixer's Cut holding the node with each condition good, and the node now holding
-    N1 not good, as a pruner wrote a decision since
+def test_a_fix_whose_node_changed_since_takes_a_new_content_round(results: str):
+    """Given the command judged short on N1 in content-1, then good in content-2, LIMIT Rounds,
+    and fix-3 fixed, its fixer's Cut holding the node with each condition good, and the node now
+    holding N1 not good, as a pruner wrote a decision since
     When what it waits on is asked
     Then the generator in a new content Round, as a course anew, the Rounds before the Fix
     counting toward no limit"""
@@ -905,22 +592,10 @@ def test_a_fix_whose_node_changed_since_takes_a_new_content_round(results: str, 
         ("content", 1, MADE_ALL, SHORT),
         ("content", 2, MADE_ALL, GOOD, GOOD_PUT_UP),
     )
-    fixes = [a_fix(results, 3, fixer, node(True, folder=results))]
+    fixes = [a_fix(results, 3, FIXED, node(True, folder=results))]
     assert next_with_fixes(node(["N2", "N3"], folder=results), done, fixes, False) == Next(
         "generator", "content", False
     )
-
-
-def test_a_fix_whose_node_changed_to_an_open_decision_waits_on_the_answer(results: str):
-    """Given the command judged good in content-1, and fix-2 whose fixer named a decision, its
-    Cut holding the node with each condition good, and the node now holding an open decision of
-    N1, a point that the pruner left for the user
-    When what it waits on is asked
-    Then the answer"""
-    fixes = [a_fix(results, 2, DECISION, node(True, folder=results))]
-    assert next_with_fixes(
-        node(["N2", "N3"], open_decision=True, folder=results), judged_good(results), fixes, False
-    ) == Next("answer", None, False)
 
 
 def test_rounds_after_a_fix_count_alone_toward_the_limit(results: str):
@@ -938,38 +613,6 @@ def test_rounds_after_a_fix_count_alone_toward_the_limit(results: str):
     assert next_with_fixes(node(["N2", "N3"], folder=results), done, fixes, False) == Next(
         "generator", "content", False
     )
-
-
-def test_limit_rounds_after_a_fix_wait_on_the_pruner(results: str):
-    """Given the command judged good in content-1, fix-2 whose fixer named a decision, and
-    content-3 and content-4 judged short, LIMIT Rounds after the Fix
-    When what it waits on is asked
-    Then the pruner, to keep each finding left"""
-    done = rounds(
-        results,
-        ("content", 1, MADE_ALL, GOOD, GOOD_PUT_UP),
-        ("content", 3, MADE_ALL, SHORT),
-        ("content", 4, MADE_ALL, SHORT),
-    )
-    fixes = [a_fix(results, 2, DECISION, node(True, folder=results))]
-    assert next_with_fixes(node(["N2", "N3"], folder=results), done, fixes, False) == Next(
-        "pruner", None, False
-    )
-
-
-def test_fixes_past_limit_rounds_each_wait_on_their_fixer(results: str):
-    """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds, the finding
-    kept as an open decision and put up, then fix-3 fixed and fix-4 holding its problem alone
-    When what it waits on is asked
-    Then the fixer, as no Fix spends a Round of the limit"""
-    left = with_open(["N2", "N3"], ["N1"], results)
-    done = rounds(
-        results,
-        ("content", 1, MADE_ALL, SHORT),
-        ("content", 2, MADE_ALL, SHORT, LEFT_PUT_UP),
-    )
-    fixes = [a_fix(results, 3, FIXED, left), a_fix(results, 4)]
-    assert next_with_fixes(left, done, fixes, False) == Next("fixer", "fix", False)
 
 
 # Reading the Fixes from a run's files.

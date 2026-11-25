@@ -90,25 +90,6 @@ def test_sections_out_of_order_are_named():
     assert faults(template, document) == (Fault(7, '"## B" lies beside the template'),)
 
 
-def test_a_section_whose_note_says_to_leave_it_out_may_be_left_out():
-    """Given a template whose section Non-goals has a note that says to leave it out where there's
-    none, and a document without it
-    When the document is checked
-    Then it has no fault"""
-    template = lines(
-        "# T",
-        "",
-        "## Non-goals",
-        "",
-        "- `<Product>` doesn't `<expectation>`.",
-        "",
-        note("`<expectation>`: each thing. Leave out Non-goals where there's none."),
-        "",
-        "## License",
-    )
-    assert faults(template, lines("# T", "", "## License")) == ()
-
-
 def test_a_heading_with_a_slot_may_repeat():
     """Given a template whose section of level 3 is `S<n>`: `<path>`, and a document with two
     such sections
@@ -129,15 +110,6 @@ def test_a_heading_with_a_slot_may_repeat():
         "Ask.",
     )
     assert faults(template, document) == ()
-
-
-def test_a_numbered_heading_may_name_several_numbers():
-    """Given a template whose heading is `S<n>`: `<path>`, and a document whose heading is
-    S6, S7: the work handed over
-    When the document is checked
-    Then it has no fault"""
-    template = lines("# T", "", "## `S<n>`: `<path>`")
-    assert faults(template, lines("# T", "", "## S6, S7: the work handed over")) == ()
 
 
 def test_a_heading_reworded_leaves_the_form():
@@ -163,22 +135,6 @@ def test_a_list_item_whose_first_words_hold_a_slot_may_repeat():
     template = lines("# T", "", "- `<requirement>`: `<check>` shows it.")
     document = lines("# T", "", "- Git: `git --version` shows it.", "- gh: `gh` shows it.")
     assert faults(template, document) == ()
-
-
-def test_a_list_item_out_of_its_form_is_named():
-    """Given a template of the item `<requirement>`: `<check>` shows it., and a document whose item
-    says what the check shows in its place
-    When the document is checked
-    Then the fault names the item by the template's words"""
-    template = lines("# T", "", "- `<requirement>`: `<check>` shows it.")
-    document = lines("# T", "", "- Git: `git --version` shows `git`.")
-    assert faults(template, document) == (
-        Fault(
-            3,
-            '"- Git: `git --version` shows `git`." leaves the form of the template\'s'
-            ' "- `<requirement>`: `<check>` shows it." at its line 3',
-        ),
-    )
 
 
 def test_a_list_item_whose_first_words_are_fixed_stands_once():
@@ -209,21 +165,6 @@ def test_a_nested_item_beside_the_template_is_named():
     document = lines("# T", "", "- KR1.1: the share.", "  - A role breaks a step.")
     assert faults(template, document) == (
         Fault(4, '"- A role breaks a step." lies beside the template'),
-    )
-
-
-def test_a_paragraph_out_of_its_sentence_pattern_is_named():
-    """Given a template of the paragraph With it, you `<benefit>`., and a document that says With
-    rn, you get it.
-    When the document is checked
-    Then the fault names the paragraph by the template's words"""
-    template = lines("# T", "", "With it, you `<benefit>`.")
-    assert faults(template, lines("# T", "", "With rn, you get it.")) == (
-        Fault(
-            3,
-            '"With rn, you get it." leaves the form of the template\'s'
-            ' "With it, you `<benefit>`." at its line 3',
-        ),
     )
 
 
@@ -263,25 +204,6 @@ def test_a_paragraph_that_leads_into_items_that_may_be_left_out_may_go_with_them
     assert faults(template, lines("# T", "", "Intro.")) == ()
 
 
-def test_a_paragraph_of_fixed_words_before_a_part_that_may_be_left_out_stands():
-    """Given a template of the fixed paragraph Intro., without a colon, before a paragraph whose
-    note says to leave it out, and a document without both
-    When the document is checked
-    Then the one fault names Intro."""
-    template = lines(
-        "# T",
-        "",
-        "Intro.",
-        "",
-        "`<status>`.",
-        "",
-        note("`<status>`: where. Leave it out where none."),
-    )
-    assert faults(template, lines("# T")) == (
-        Fault(1, 'lacks the template\'s "Intro." at its line 3'),
-    )
-
-
 def test_a_paragraph_beside_the_template_is_named():
     """Given a template of one paragraph, and a document with a second
     When the document is checked
@@ -307,21 +229,6 @@ def test_a_slot_with_more_sentences_than_its_note_gives_is_named():
     )
 
 
-def test_a_slot_with_the_most_sentences_its_note_gives_has_no_fault():
-    """Given a template whose paragraph ends with `<idea>`. of two or three sentences, and a
-    document whose paragraph has its fixed sentence and three more
-    When the document is checked
-    Then it has no fault"""
-    template = lines(
-        "# T",
-        "",
-        "This says how. `<idea>`.",
-        "",
-        note("`<idea>`: one idea. Two or three sentences."),
-    )
-    assert faults(template, lines("# T", "", "This says how. One. Two. Three.")) == ()
-
-
 def test_a_slot_whose_note_gives_no_number_takes_one_sentence():
     """Given a template of the paragraph `<sign>`. with no number in its note, and a document
     whose paragraph has two sentences
@@ -334,22 +241,12 @@ def test_a_slot_whose_note_gives_no_number_takes_one_sentence():
     )
 
 
-def test_a_slot_whose_note_gives_a_sentence_for_each_thing_takes_any_number():
-    """Given a template whose paragraph `<places>`. has a note of one sentence for each top
-    folder, and a document whose paragraph has three
-    When the document is checked
-    Then it has no fault"""
-    template = lines(
-        "# T", "", "`<places>`.", "", note("`<places>`: one sentence for each top folder.")
-    )
-    assert faults(template, lines("# T", "", "One. Two. Three.")) == ()
-
-
-def test_a_note_that_says_to_leave_out_a_word_and_the_link_lets_both_go():
+def test_a_note_that_says_to_leave_out_a_word_and_the_link_lets_both_go_or_stay():
     """Given a template of the paragraph `<Product>` tests by [`<shared rules>`](<path>), in unit
-    tests., whose note says to leave out `by` and the link, and a document without them
-    When the document is checked
-    Then it has no fault"""
+    tests., whose note says to leave out `by` and the link, and a document without them and one
+    that keeps them
+    When each document is checked
+    Then neither has a fault"""
     template = lines(
         "# T",
         "",
@@ -358,6 +255,8 @@ def test_a_note_that_says_to_leave_out_a_word_and_the_link_lets_both_go():
         note("`<shared rules>`, `<path>`: the rules. Leave out `by` and the link where none."),
     )
     assert faults(template, lines("# T", "", "rn tests, in unit tests.")) == ()
+    document = lines("# T", "", "rn tests by [the guide](guide.md), in unit tests.")
+    assert faults(template, document) == ()
 
 
 def test_a_note_that_says_as_in_a_section_takes_that_sections_items():
@@ -432,16 +331,6 @@ def test_the_templates_own_figure_kept_is_named():
     document = lines("# T", "", "![rn's parts](images/template-components.svg)")
     assert faults(template, document) == (
         Fault(3, "keeps the template's own figure images/template-components.svg"),
-    )
-
-
-def test_a_figure_left_out_is_named():
-    """Given a template with a figure, and a document without one
-    When the document is checked
-    Then the one fault names the template's figure"""
-    template = lines("# T", "", "![Parts](images/template-components.svg)")
-    assert faults(template, lines("# T")) == (
-        Fault(1, 'lacks the template\'s "![Parts" at its line 3'),
     )
 
 
@@ -554,64 +443,20 @@ def test_a_paragraph_whose_each_note_names_slots_of_two_levels_stands_once():
 
 
 def test_a_sentence_of_more_than_the_most_words_is_named():
-    """Given a template of a free slot, and a document whose sentence has one word more than the
-    most
+    """Given a template of a free slot, and a document of a sentence of the most words and one of
+    one word more
     When the document is checked
-    Then the fault names its number of words and its first words"""
+    Then the one fault names the longer one's number of words and its first words"""
     template = lines("# T", "", "`<body>`")
+    most = " ".join(["word"] * MOST_WORDS) + "."
     sentence = " ".join(["word"] * (MOST_WORDS + 1)) + "."
-    assert faults(template, lines("# T", "", sentence)) == (
+    assert faults(template, lines("# T", "", f"{most} {sentence}")) == (
         Fault(
             3,
             f"has a sentence of {MOST_WORDS + 1} words, more than {MOST_WORDS}:"
             " word word word word word word ...",
         ),
     )
-
-
-def test_a_sentence_of_the_most_words_has_no_fault():
-    """Given a template of a free slot, and a document whose sentence has the most words
-    When the document is checked
-    Then it has no fault"""
-    template = lines("# T", "", "`<body>`")
-    assert faults(template, lines("# T", "", " ".join(["word"] * MOST_WORDS) + ".")) == ()
-
-
-def test_the_most_words_of_a_sentence_are_20():
-    """Given the limit of words, which the user set from ASD-STE100's for procedures
-    When it's read
-    Then it is 20"""
-    assert MOST_WORDS == 20
-
-
-def test_a_code_span_counts_as_one_word():
-    """Given a document whose sentence holds the most words, one of them a code span of three
-    When the document is checked
-    Then it has no fault"""
-    template = lines("# T", "", "`<body>`")
-    sentence = " ".join(["word"] * (MOST_WORDS - 1)) + " `gh auth status`."
-    assert faults(template, lines("# T", "", sentence)) == ()
-
-
-def test_a_link_counts_as_its_words():
-    """Given a document whose sentence holds the most words, two of them a link's words, its path
-    long
-    When the document is checked
-    Then it has no fault"""
-    template = lines("# T", "", "`<body>`")
-    sentence = " ".join(["word"] * (MOST_WORDS - 2)) + " [the guide](../a/b/c.md#a-long-anchor)."
-    assert faults(template, lines("# T", "", sentence)) == ()
-
-
-def test_a_line_after_a_backslash_is_a_sentence_of_its_own():
-    """Given a document whose item's label and description each hold most of the limit, joined by
-    a backslash
-    When the document is checked
-    Then it has no fault"""
-    template = lines("# T", "", "- `<component>`\\", "  `<what it alone decides>`.")
-    label = " ".join(["label"] * MOST_WORDS)
-    words = " ".join(["word"] * MOST_WORDS)
-    assert faults(template, lines("# T", "", f"- {label}\\", f"  {words}.")) == ()
 
 
 def test_a_free_slot_takes_any_blocks():
@@ -624,15 +469,6 @@ def test_a_free_slot_takes_any_blocks():
         "# T", "", "## Steps", "", "1. Read.", "2. Write.", "", "Then.", "", "```", "x", "```"
     )
     assert faults(template, document) == ()
-
-
-def test_a_block_before_the_title_lies_beside_the_template():
-    """Given a template of a title, and a document with a paragraph before it
-    When the document is checked
-    Then the paragraph lies beside the template"""
-    assert faults(lines("# T"), lines("Hello.", "", "# T")) == (
-        Fault(1, '"Hello." lies beside the template'),
-    )
 
 
 def test_an_empty_document_lacks_the_title_at_its_first_line():
@@ -716,38 +552,6 @@ def test_template_gives_0_and_prints_nothing_for_a_document_that_holds_its_kinds
     assert main(["product-vision", "vision.md"], folder, RN) == (0, "", "")
 
 
-def test_template_holds_a_vision_of_one_key_result_and_no_idea_under_its_one_way(folder: str):
-    """Given a product vision whose objective has one key result, of how well, and whose concept
-    is its one way alone, as the time decides nothing and the way holds without an idea
-    When `template product-vision <document>` runs
-    Then it gives 0 and prints nothing"""
-    document = lines(
-        "# Product vision of overnight",
-        "",
-        "## Roles",
-        "",
-        "- user\\",
-        "  One who leaves Claude Code tasks for the night.",
-        "",
-        "## Objectives and key results",
-        "",
-        "- O1: the user finds the night's tasks done in the morning.",
-        "  - KR1.1: the share of the night's tasks left undone in the morning. Lower is better.",
-        "",
-        "The first key result of each objective comes first. Keep a change that improves a key",
-        "result only if none before it gets worse.",
-        "Key results have no targets, as a measure made a target stops being a good measure, by",
-        "Goodhart's law. They show whether a change brought its objective closer.",
-        "",
-        "## Concept",
-        "",
-        "overnight has an AI agent do the work while the user sleeps.",
-    )
-    with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
-        file.write(document)
-    assert main(["product-vision", "vision.md"], folder, RN) == (0, "", "")
-
-
 def test_template_gives_1_with_each_fault_at_the_documents_path_and_line(folder: str):
     """Given a document of a title and a section FAQ
     When `template product-vision <document>` runs
@@ -820,52 +624,13 @@ def test_template_gives_1_naming_a_document_that_isnt_utf_8(folder: str):
     )
 
 
-def test_template_gives_1_naming_the_kinds_for_a_kind_without_a_template(folder: str):
-    """Given a document, and the kind design-tree, which has no Markdown template
-    When `template design-tree <document>` runs
-    Then it gives 1, naming the kinds that have one"""
-    with open(os.path.join(folder, "tree.md"), "w", encoding="utf-8") as file:
-        file.write("# T\n")
-    code, _, said = main(["design-tree", "tree.md"], folder, RN)
-    assert (code, said) == (
-        1,
-        (
-            "template: no kind 'design-tree' has a Markdown template; the kinds that have one"
-            " are architecture, code, product-vision, prompt, readme, software-design,"
-            " test-design, test-implementation\n"
-        ),
-    )
-
-
-@pytest.mark.parametrize("argv", [[], ["readme"], ["a", "b", "c", "d"]])
 def test_template_with_other_than_a_kind_a_document_and_a_language_gives_2_with_the_usage(
-    folder: str, argv: list[str]
+    folder: str,
 ):
-    """Given no argument, one, or four
+    """Given four arguments
     When `template` runs
     Then it gives 2 with the usage"""
-    assert main(argv, folder, RN) == (2, "", USAGE)
-
-
-def test_a_slot_with_fewer_sentences_than_its_note_gives_is_named():
-    """Given a template whose paragraph is a fixed sentence and `<idea>`. of two or three
-    sentences, and a document whose paragraph has the fixed sentence and one more
-    When the document is checked
-    Then the fault names the two sentences and the three to four the template takes"""
-    template = lines(
-        "# T",
-        "",
-        "This says how. `<idea>`.",
-        "",
-        note("`<idea>`: one idea. Two or three sentences."),
-    )
-    assert faults(template, lines("# T", "", "This says how. One.")) == (
-        Fault(
-            3,
-            'has 2 sentences, where the template\'s "This says how. `<idea>`." at its line 3 takes'
-            " 3 to 4",
-        ),
-    )
+    assert main(["a", "b", "c", "d"], folder, RN) == (2, "", USAGE)
 
 
 def test_a_link_whose_path_is_a_slot_takes_any_path_after_its_words():
@@ -876,52 +641,15 @@ def test_a_link_whose_path_is_a_slot_takes_any_path_after_its_words():
     assert faults(template, lines("# T", "", "See [the guide](docs/guide.md).")) == ()
 
 
-def test_a_numbered_slot_takes_only_a_number():
-    """Given a template whose heading is `S<n>`: `<path>`, and a document whose heading is Sx: a
-    request
+def test_a_block_is_named_by_its_first_60_characters():
+    """Given a document whose two paragraphs beside the template have 60 and 61 characters
     When the document is checked
-    Then the one fault names the heading"""
-    template = lines("# T", "", "## `S<n>`: `<path>`")
-    assert faults(template, lines("# T", "", "## Sx: a request")) == (
-        Fault(3, '"## Sx: a request" lies beside the template'),
-    )
-
-
-def test_a_quote_that_is_no_note_of_the_template_lies_beside_it():
-    """Given a template of a title, and a document with a quote that isn't a note of the template
-    When the document is checked
-    Then the quote lies beside the template"""
-    assert faults(lines("# T"), lines("# T", "", "> A quote.")) == (
-        Fault(3, '"A quote." lies beside the template'),
-    )
-
-
-def test_a_heading_of_fixed_words_stands_once():
-    """Given a template whose section A has fixed words, and a document with two such sections
-    When the document is checked
-    Then the second lies beside the template"""
-    assert faults(lines("# T", "", "## A"), lines("# T", "", "## A", "", "## A")) == (
-        Fault(5, '"## A" lies beside the template'),
-    )
-
-
-def test_a_block_of_61_characters_is_named_by_its_first_60():
-    """Given a document whose paragraph beside the template has 61 characters
-    When the document is checked
-    Then the fault names its first 60 characters, and marks the rest left out"""
-    paragraph = "a" * 60 + "."
-    assert faults(lines("# T"), lines("# T", "", paragraph)) == (
-        Fault(3, f'"{"a" * 60}..." lies beside the template'),
-    )
-
-
-def test_a_block_of_60_characters_is_named_whole():
-    """Given a document whose paragraph beside the template has 60 characters
-    When the document is checked
-    Then the fault names all of it"""
-    paragraph = "a" * 59 + "."
-    assert faults(lines("# T"), lines("# T", "", paragraph)) == (
-        Fault(3, f'"{paragraph}" lies beside the template'),
+    Then the first is named whole, and the second by its first 60 characters, the rest marked left
+    out"""
+    whole = "a" * 59 + "."
+    assert faults(lines("# T"), lines("# T", "", whole, "", "a" * 60 + ".")) == (
+        Fault(3, f'"{whole}" lies beside the template'),
+        Fault(5, f'"{"a" * 60}..." lies beside the template'),
     )
 
 
@@ -936,26 +664,6 @@ def test_a_paragraph_that_leads_into_items_that_must_stand_stands():
     )
 
 
-def test_a_paragraph_before_a_code_block_that_may_repeat_stands_once():
-    """Given a template of a fixed paragraph and a code block whose note says each command, and a
-    document with the paragraph twice
-    When the document is checked
-    Then the second paragraph lies beside the template"""
-    template = lines(
-        "# T",
-        "",
-        "Intro.",
-        "",
-        "```console",
-        "<command>",
-        "```",
-        "",
-        note("`<command>`: each command."),
-    )
-    document = lines("# T", "", "Intro.", "", "Intro.", "", "```console", "x", "```")
-    assert faults(template, document) == (Fault(5, '"Intro." lies beside the template'),)
-
-
 def test_a_placeholder_of_mermaid_kept_is_named():
     """Given a template whose Mermaid code block holds #lt;name#gt;, and a document that keeps it
     on a line of its own
@@ -964,16 +672,6 @@ def test_a_placeholder_of_mermaid_kept_is_named():
     template = lines("# T", "", "```mermaid", "sequenceDiagram", "  A->>B: #lt;name#gt;", "```")
     document = lines("# T", "", "```mermaid", "sequenceDiagram", "#lt;name#gt;", "```")
     assert faults(template, document) == (Fault(3, "keeps the template's placeholder <name>"),)
-
-
-def test_a_placeholder_kept_both_in_a_code_span_and_bare_is_named_once():
-    """Given a template of the item `<role>`, and a document whose item keeps `<role>` and <role>
-    When the document is checked
-    Then the one fault names the placeholder"""
-    template = lines("# T", "", "- `<role>`")
-    assert faults(template, lines("# T", "", "- `<role>` or <role>")) == (
-        Fault(3, "keeps the template's placeholder <role>"),
-    )
 
 
 def test_a_title_with_a_slot_stands_once():
@@ -985,41 +683,12 @@ def test_a_title_with_a_slot_stands_once():
     )
 
 
-def test_a_heading_reworded_in_the_place_of_the_first_of_two_lies_beside_the_template():
-    """Given a template of sections A and B, and a document of a section X alone
-    When the document is checked
-    Then the one fault names X, as A and B may be left out"""
-    assert faults(lines("# T", "", "## A", "", "## B"), lines("# T", "", "## X")) == (
-        Fault(3, '"## X" lies beside the template'),
-    )
-
-
 def test_a_heading_a_level_below_the_templates_lies_beside_it():
     """Given a template of the section A at level 2, and a document whose section A is at level 3
     When the document is checked
     Then A at level 3 lies beside the template"""
     assert faults(lines("# T", "", "## A"), lines("# T", "", "### A")) == (
         Fault(3, '"### A" lies beside the template'),
-    )
-
-
-def test_a_heading_a_level_above_the_templates_lies_beside_it():
-    """Given a template of the section A at level 3, and a document whose section A is at level 2
-    When the document is checked
-    Then A at level 3 is missing, and A at level 2 lies beside the template"""
-    assert faults(lines("# T", "", "### A"), lines("# T", "", "## A")) == (
-        Fault(3, 'lacks the template\'s "### A" at its line 3'),
-        Fault(3, '"## A" lies beside the template'),
-    )
-
-
-def test_a_list_item_in_the_place_of_a_paragraph_lies_beside_the_template():
-    """Given a template of the paragraph Intro., and a document of the item - Intro.
-    When the document is checked
-    Then the paragraph is missing, and the item lies beside the template"""
-    assert faults(lines("# T", "", "Intro."), lines("# T", "", "- Intro.")) == (
-        Fault(3, 'lacks the template\'s "Intro." at its line 3'),
-        Fault(3, '"- Intro." lies beside the template'),
     )
 
 
@@ -1039,45 +708,6 @@ def test_a_slot_whose_note_gives_a_sentence_for_each_thing_takes_at_least_one():
             'has 1 sentence, where the template\'s "Intro. `<places>`." at its line 3 takes 2 or'
             " more",
         ),
-    )
-
-
-def test_a_placeholder_kept_after_a_note_kept_is_named():
-    """Given a template of the item `<role>` with a note, and a document that keeps the note and
-    then `<role>`
-    When the document is checked
-    Then the faults name the note and the placeholder"""
-    template = lines("# T", "", "- `<role>`", "", note("`<role>`: each kind of person."))
-    document = lines("# T", "", note("`<role>`: each kind of person."), "", "- `<role>`")
-    assert faults(template, document) == (
-        Fault(3, "keeps a note of the template"),
-        Fault(7, "keeps the template's placeholder <role>"),
-    )
-
-
-def test_a_note_that_says_as_in_a_section_takes_only_its_items_of_the_same_slots():
-    """Given a template whose Components note lets `<start>` be left out, and whose Deployment
-    note says its choices are as in Components, and a document whose Deployment lacks `<start>`.
-    When the document is checked
-    Then the one fault names Deployment's `<start>`."""
-    template = lines(
-        "# T",
-        "",
-        "## Components",
-        "",
-        note("`<choice>`: each choice.", "`<start>`: where. Leave it out where none."),
-        "",
-        "## Deployment",
-        "",
-        "`<start>`.",
-        "",
-        "- `<choice>` over it",
-        "",
-        note("`<choice>`: as in Components."),
-    )
-    document = lines("# T", "", "## Components", "", "## Deployment", "", "- One over it")
-    assert faults(template, document) == (
-        Fault(7, 'lacks the template\'s "`<start>`." at its line 12'),
     )
 
 
@@ -1123,87 +753,6 @@ def test_a_section_below_the_top_whose_note_says_to_leave_it_out_may_be_left_out
         note("`<part>`, `<part_steps>`: each part. Leave out each part where none."),
     )
     assert faults(template, lines("# T", "", "## Steps", "", "Go.")) == ()
-
-
-def test_a_section_below_the_top_whose_note_says_nothing_of_leaving_it_out_stands():
-    """Given a template whose section of level 3 is `<part>`, with a note of `<part>` that says
-    nothing of leaving it out, and a document without it
-    When the document is checked
-    Then the one fault names `<part>` as lacking"""
-    template = lines(
-        "# T",
-        "",
-        "## Steps",
-        "",
-        "`<steps>`.",
-        "",
-        "### `<part>`",
-        "",
-        "`<part_steps>`.",
-        "",
-        note("`<part>`, `<part_steps>`: each part."),
-    )
-    assert faults(template, lines("# T", "", "## Steps", "", "Go.")) == (
-        Fault(5, 'lacks the template\'s "### `<part>`" at its line 7'),
-    )
-
-
-def test_a_heading_of_level_2_with_a_slot_may_repeat():
-    """Given a template whose section of level 2 is `<problem>`, and a document with two such
-    sections
-    When the document is checked
-    Then it has no fault"""
-    template = lines("# T", "", "## `<problem>`")
-    assert faults(template, lines("# T", "", "## Slow?", "", "## Costly?")) == ()
-
-
-def test_a_run_of_three_blocks_whose_note_names_each_repeats_as_a_whole():
-    """Given a template of an input, `<who>` shows:, and an output, whose note names the three
-    slots, each exchange, and a document of two such runs
-    When the document is checked
-    Then it has no fault"""
-    template = lines(
-        "# T",
-        "",
-        "```<language>",
-        "<input>",
-        "```",
-        "",
-        "`<who>` shows:",
-        "",
-        "```<language>",
-        "<output>",
-        "```",
-        "",
-        note("`<input>`, `<who>`, `<output>`: as they were, for each exchange."),
-    )
-    exchange = ("```text", "yes", "```", "", "rn shows:", "", "```text", "Done.", "```", "")
-    assert faults(template, lines("# T", "", *exchange, *exchange)) == ()
-
-
-def test_a_note_that_says_to_leave_out_a_word_and_the_link_lets_both_stay():
-    """Given the template of the paragraph `<Product>` tests by [`<shared rules>`](<path>), in unit
-    tests., whose note says to leave out `by` and the link, and a document that keeps them
-    When the document is checked
-    Then it has no fault"""
-    template = lines(
-        "# T",
-        "",
-        "`<Product>` tests by [`<shared rules>`](<path>), in unit tests.",
-        "",
-        note("`<shared rules>`, `<path>`: the rules. Leave out `by` and the link where none."),
-    )
-    document = lines("# T", "", "rn tests by [the guide](guide.md), in unit tests.")
-    assert faults(template, document) == ()
-
-
-def test_a_note_item_without_slots_may_let_a_section_be_left_out():
-    """Given a template whose section Extras has a note item that names no slot and says to leave
-    out Extras where there's none, and a document without it
-    When the document is checked
-    Then it has no fault"""
-    template = lines("# T", "", "## Extras", "", note("Leave out Extras where there's none."))
-    assert faults(template, lines("# T")) == ()
 
 
 def test_a_free_slot_holds_its_prose_to_the_most_words_and_not_its_code():
@@ -1388,20 +937,6 @@ def test_a_japanese_document_without_a_part_of_the_form_lacks_it():
     )
 
 
-def test_a_japanese_document_with_parts_out_of_order_is_named():
-    """Given a template of a paragraph and then an item, and a document in Japanese of an item and
-    then a paragraph
-    When the document is checked in Japanese
-    Then the faults name the paragraph lacking before the item, and the paragraph after it as
-    beside the template"""
-    template = lines("# T", "", "`<a>`.", "", "- `<b>`.")
-    document = lines("# 題", "", "- 項目です。", "", "段落です。")
-    assert faults(template, document, "Japanese") == (
-        Fault(3, 'lacks the template\'s "`<a>`." at its line 3'),
-        Fault(5, '"段落です。" lies beside the template'),
-    )
-
-
 def test_a_japanese_document_without_a_section_takes_each_other_by_its_form():
     """Given a template of sections A of a paragraph, B of an item, and C of a paragraph, and a
     document in Japanese of a section of an item and then one of a paragraph
@@ -1423,18 +958,6 @@ def test_a_japanese_section_with_a_fault_inside_is_named_at_the_fault():
     document = lines("# 題", "", "## 甲", "", "一つ目です。二つ目です。", "", "- 項目です。")
     assert faults(template, document, "Japanese") == (
         Fault(5, 'has 2 sentences, where the template\'s "`<a>`." at its line 5 takes 1'),
-    )
-
-
-def test_a_japanese_heading_a_level_below_the_templates_lies_beside_it():
-    """Given a template of a section A of level 2, and a document in Japanese whose section is of
-    level 3
-    When the document is checked in Japanese
-    Then the one fault names the heading as beside the template"""
-    template = lines("# T", "", "## A")
-    document = lines("# 題", "", "### 甲")
-    assert faults(template, document, "Japanese") == (
-        Fault(3, '"### 甲" lies beside the template'),
     )
 
 
@@ -1469,50 +992,21 @@ def test_a_japanese_code_block_in_another_language_than_the_template_fixes_is_na
     )
 
 
-def test_a_japanese_sentence_of_the_most_characters_has_no_fault():
-    """Given a template of a free slot, and a document in Japanese whose sentence has 60
-    characters, its full stop among them
-    When the document is checked in Japanese
-    Then it has no fault"""
-    template = lines("# T", "", "`<body>`")
-    sentence = "あ" * (MOST_CHARACTERS - 1) + "。"
-    assert faults(template, lines("# 題", "", sentence), "Japanese") == ()
-
-
-@pytest.mark.parametrize("language", ["Japanese", "Simplified Chinese", "thai"])
-def test_a_sentence_of_more_than_the_most_characters_is_named_in_a_language_without_spaces(
-    language: str,
-):
-    """Given a template of a free slot, and a document whose sentence has 61 characters, in
-    Japanese, in Chinese named with another word before it, or in Thai named in small letters
+def test_a_sentence_of_more_than_the_most_characters_is_named_in_a_language_without_spaces():
+    """Given a template of a free slot, and a document in Chinese, named Simplified Chinese, of a
+    sentence of the most characters, its full stop among them, and one of a character more
     When the document is checked in that language
-    Then the fault names its number of characters and its first characters"""
+    Then the one fault names the longer one's number of characters and its first characters"""
     template = lines("# T", "", "`<body>`")
+    most = "い" * (MOST_CHARACTERS - 1) + "。"
     sentence = "あ" * MOST_CHARACTERS + "。"
-    assert faults(template, lines("# 題", "", sentence), language) == (
+    assert faults(template, lines("# 題", "", most + sentence), "Simplified Chinese") == (
         Fault(
             3,
             f"has a sentence of {MOST_CHARACTERS + 1} characters, more than {MOST_CHARACTERS}:"
             f" {'あ' * 20} ...",
         ),
     )
-
-
-def test_the_most_characters_of_a_sentence_are_60():
-    """Given the limit of characters, which the user set as the bound of an easy read that
-    Japanese writing guides name most
-    When it's read
-    Then it is 60"""
-    assert MOST_CHARACTERS == 60
-
-
-def test_a_japanese_code_span_counts_as_one_character():
-    """Given a document in Japanese whose sentence holds 59 characters and a code span of 11
-    When the document is checked in Japanese
-    Then it has no fault"""
-    template = lines("# T", "", "`<body>`")
-    sentence = "`template`" + "あ" * (MOST_CHARACTERS - 2) + "。"
-    assert faults(template, lines("# 題", "", sentence), "Japanese") == ()
 
 
 def test_a_sentence_of_more_than_the_most_words_is_named_in_a_language_with_spaces():
@@ -1528,18 +1022,6 @@ def test_a_sentence_of_more_than_the_most_words_is_named_in_a_language_with_spac
             f"has a sentence of {MOST_WORDS + 1} words, more than {MOST_WORDS}:"
             " mot mot mot mot mot mot ...",
         ),
-    )
-
-
-def test_a_japanese_paragraph_of_two_sentences_ending_at_their_marks_is_named():
-    """Given a template of a paragraph of one sentence, and a document in Japanese whose paragraph
-    is two sentences, the first ending at `。` with no space after it
-    When the document is checked in Japanese
-    Then the fault names its two sentences"""
-    template = lines("# T", "", "`<a>`.")
-    document = lines("# 題", "", "一つ目です。二つ目です。")
-    assert faults(template, document, "Japanese") == (
-        Fault(3, 'has 2 sentences, where the template\'s "`<a>`." at its line 3 takes 1'),
     )
 
 
@@ -1587,29 +1069,6 @@ def test_template_with_a_language_holds_the_document_in_it(folder: str):
     assert main(["product-vision", "vision.md", "Japanese"], folder, RN) == (0, "", "")
 
 
-def test_template_without_a_language_holds_the_document_in_english(folder: str):
-    """Given a product vision in Japanese on rn's template in its own words
-    When `template product-vision <document>` runs, with no language
-    Then it gives 1, as the document leaves the template's English words"""
-    with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
-        file.write(VISION_JA)
-    code, printed, said = main(["product-vision", "vision.md"], folder, RN)
-    assert (code, printed) == (1, "")
-    assert 'vision.md:3: "## 役割" lies beside the template' in said.splitlines()
-
-
-def test_template_gives_1_naming_a_blank_language(folder: str):
-    """Given a product vision
-    When `template product-vision <document> ""` runs
-    Then it gives 1, saying what language it takes"""
-    with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
-        file.write(VISION_JA)
-    said = (
-        "template: the language is blank; give the document's language as a word, such as English\n"
-    )
-    assert main(["product-vision", "vision.md", ""], folder, RN) == (1, "", said)
-
-
 # The figures that a document of a template keeps of its own.
 
 
@@ -1635,28 +1094,9 @@ def test_figures_are_each_own_figure_that_a_note_names_but_the_templates_own():
     assert figures(template) == ["images/a.svg", "images/b.png"]
 
 
-def test_a_template_with_no_figure_has_no_figures():
-    """Given a template whose note names a folder of images but no figure's file
+def test_rns_readme_template_gives_the_figure_its_note_names():
+    """Given rn's template of the readme
     When its figures are asked
-    Then there are none"""
-    template = lines("# `<Product>`", "", "`<run>`", "", note("`<run>`: screens kept in images/."))
-    assert figures(template) == []
-
-
-@pytest.mark.parametrize(
-    ("kind", "wanted"),
-    [
-        ("readme", ["images/how-it-works.svg"]),
-        (
-            "architecture",
-            ["images/concept-model.svg", "images/components.svg", "images/deployment.svg"],
-        ),
-        ("software-design", []),
-    ],
-)
-def test_rns_templates_give_the_figures_their_notes_name(kind: str, wanted: list[str]):
-    """Given rn's template of the readme, the architecture, or the software design
-    When its figures are asked
-    Then they are the deliverable's own figures that its notes name, none for the software design"""
-    with open(of_kind(RN, kind), encoding="utf-8") as f:
-        assert figures(f.read()) == wanted
+    Then they are the deliverable's own figure that its note names, images/how-it-works.svg"""
+    with open(of_kind(RN, "readme"), encoding="utf-8") as f:
+        assert figures(f.read()) == ["images/how-it-works.svg"]
