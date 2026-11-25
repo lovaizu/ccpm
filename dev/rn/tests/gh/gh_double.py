@@ -1,18 +1,15 @@
-"""The double of gh that rn's cases run in its place, as rn's Test strategy says under Integration
-testing and Contract testing. It answers each command of gh that rn's code runs from one line of a
-record in recorded/: gh 2.102.1's runs for `gh auth status`, `gh pr view`, with the state of a pull
-request that is open, closed, or merged, and where gh can't reach GitHub, `gh pr close`, and
-`gh pr checks`, by `--watch` and by `--json`, with checks that passed, failed, or were cancelled;
-and, of gh's manual and code, `gh pr create` and a check that timed out, as the plugin guide's Each
-result of a double from a record says. A command that no record holds fails with exit 1, naming
-itself, so that a body that runs it shows the gap.
+"""The double of gh that rn's unit cases run in its place. It answers each command of gh that rn's
+code runs from one line of a record in recorded/: gh 2.102.1's runs for `gh auth status`,
+`gh pr view`, with the state of a pull request that is open, closed, or merged, and where gh can't
+reach GitHub, `gh pr close`, and `gh pr checks`, by `--watch` and by `--json`, with checks that
+passed, failed, or were cancelled; and, of gh's manual and code, `gh pr create` and a check that
+timed out, as the plugin guide's Each result of a double from a record says. A command that no
+record holds fails with exit 1, naming itself, so that a body that runs it shows the gap.
 
-It serves two ways in: `host`, a Host of repository.host for the unit cases, which runs git for
-real and gh from the records; and `program`, a `gh` written into a folder for the integration
-cases, put first on the PATH of each command that the double of Claude Code runs. Each keeps its
-state, whether the person is logged in and GitHub is reached, the pull request it opened, an
-earlier one of the branch that isn't open, and what its CI's checks found, in a JSON file of the
-folder it's given, and each command it was asked in the same file."""
+It serves the unit cases by `host`, a Host of repository.host, which runs git for real and gh from
+the records. It keeps its state, whether the person is logged in and GitHub is reached, the pull
+request it opened, an earlier one of the branch that isn't open, and what its CI's checks found, in
+a JSON file of the folder it's given, and each command it was asked in the same file."""
 
 from __future__ import annotations
 
@@ -173,14 +170,8 @@ def _viewed(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
         return _state(kept, argv)
     if "headRefOid" in _fields(argv) and kept["pull_request"] is not None:
         return _head(kept)
-    if kept["pull_request"] is None and kept["earlier"] is None:
-        given = line(PR_VIEW, "gh pr view finds no pull request for the branch")
-        given["stderr"] = given["stderr"].replace("no-such-branch-rn", _branch(argv))
-        return given
-    given = line(PR_VIEW, "gh pr view gives the pull request with its comments")
-    shown = json.loads(given["stdout"])
-    shown.update(url=kept["pull_request"] or kept["earlier"]["url"], comments=[])
-    given["stdout"] = json.dumps(shown) + "\n"
+    given = line(PR_VIEW, "gh pr view finds no pull request for the branch")
+    given["stderr"] = given["stderr"].replace("no-such-branch-rn", _branch(argv))
     return given
 
 
@@ -328,29 +319,6 @@ def host(folder: str) -> Any:
 
     run.ran = ran  # type: ignore[attr-defined]
     return run
-
-
-def program(bin_folder: str, state_folder: str) -> str:
-    """Writes `gh` into the bin folder, a program that answers as `answer` does with its state in
-    the state folder, and gives the bin folder."""
-    os.makedirs(bin_folder, exist_ok=True)
-    path = os.path.join(bin_folder, "gh")
-    here = os.path.dirname(os.path.abspath(__file__))
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(
-            "#!/usr/bin/env python3\n"
-            "import os\n"
-            "import sys\n"
-            f"sys.path.insert(0, {here!r})\n"
-            "import gh_double\n"
-            f"given = gh_double.answer(['gh', *sys.argv[1:]], {state_folder!r}, os.getcwd())\n"
-            "code, out, err = given\n"
-            "sys.stdout.write(out)\n"
-            "sys.stderr.write(err)\n"
-            "sys.exit(code)\n"
-        )
-    os.chmod(path, 0o755)
-    return bin_folder
 
 
 # What the double gives for each command of gh but `gh auth status`, by its two words after `gh`.
