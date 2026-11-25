@@ -774,13 +774,19 @@ def test_template_gives_1_with_each_fault_at_the_documents_path_and_line(folder:
 
 def test_template_run_as_a_command_ends_with_what_main_gives(folder: str):
     """Given a document of a title and a section FAQ
-    When `python3 scripts/template.py product-vision <document>` runs in the document's folder
+    When `python3 domain/scripts/template.py product-vision <document>` runs in the document's
+    folder
     Then it exits 1, prints nothing, and says the fault on its standard error, as a maker that
     runs the command reads only its exit code and what it says"""
     with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
         file.write("# Product vision of tally\n\n## FAQ\n")
     run = subprocess.run(
-        [sys.executable, os.path.join(RN, "scripts", "template.py"), "product-vision", "vision.md"],
+        [
+            sys.executable,
+            os.path.join(RN, "domain", "scripts", "template.py"),
+            "product-vision",
+            "vision.md",
+        ],
         cwd=folder,
         capture_output=True,
         text=True,

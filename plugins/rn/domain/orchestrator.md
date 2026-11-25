@@ -55,7 +55,7 @@ at the end.
   its pull request, which the scripts make. Where a push fails, tell them why, and give the file's
   path on this machine.
 - rn's folder is the one that the command's skill names. Each script runs as
-  `python3 <rn's folder>/scripts/<script> ...`. Write rn's folder out in full, as a Bash command
+  `python3 <rn's folder>/domain/scripts/<script> ...`. Write rn's folder out in full, as a Bash command
   holds no variable of it. Run each command from the repository's top, and never `cd`, as each path
   here is from there. Quote each of the user's words in a command, as the shell splits them
   otherwise.
@@ -73,7 +73,7 @@ at the end.
   deliverable's Rounds and Fixes lie in `<run>/rounds/<its path, percent-encoded>/`, numbered in the
   order made, such as `content-1`, `refactor-3`, and `fix-4`. Each holds its roles' Cuts and
   results.
-- The scripts of a run, each as `python3 <rn's folder>/scripts/<script>`:
+- The scripts of a run, each as `python3 <rn's folder>/domain/scripts/<script>`:
   - `repository.py new "<slug>" "<deliverables' language>" "<conversation's language>"` makes the
     run's worktree, and its design tree with the goal open, and prints `<run>`. The slug is one to
     five lower-case English words joined by `-`, from the issue's title or the request's words, such

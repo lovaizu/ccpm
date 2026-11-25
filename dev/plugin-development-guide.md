@@ -54,9 +54,9 @@ sequenceDiagram
 │       ├── .claude-plugin/plugin.json  the manifest, holding the version and the dependencies <JSON>
 │       ├── skills/<command>/SKILL.md   a typed command's entry, pointing to the orchestrator's part <Markdown>
 │       ├── agents/<role>.md            an agent's entry <Markdown>
-│       ├── scripts/                    each command that a role runs, pointing to its code in domain/ <Python 3>
 │       ├── domain/                     the knowledge and rules of the plugin's work, apart from Claude Code
-│       │   └── <role>.md               a role's part: the steps it follows <Markdown>
+│       │   ├── <role>.md               a role's part: the steps it follows <Markdown>
+│       │   └── scripts/                each command that a role runs, pointing to its code beside it <Python 3>
 │       ├── images/                     the README's figures <SVG>
 │       ├── LICENSE                     the plugin's own copy of the repository's license
 │       ├── README.md                   for the plugin's users <Markdown>
@@ -74,7 +74,7 @@ sequenceDiagram
         └── tests/unit/                 the unit tests of the plugin's code <Python 3>
 ```
 
-An entry is a file whose form Claude Code fixes: a skill, an agent, a hook, or a command line. Its
+An entry is a file whose form Claude Code fixes: a skill, an agent, or a hook. Its
 part is the file in `domain/` that does the entry's job. An entry is named as its caller calls it,
 such as the command a person types. A part is named by the role it holds, so a role's agent
 `agents/<role>.md` points to `domain/<role>.md`, and the orchestrator's skill points to
@@ -348,7 +348,9 @@ as the run's plan, and takes each operation on it as a subcommand, named `noun v
 `plan.py commit`. It handles each error it can meet, and its message says what's wrong, where, and
 how to fix the input. Where a role changes many things at once, it writes the plan as a file, and a
 script checks the plan before another applies it. Each constant of a script carries its reason
-beside it.
+beside it. The script lies in `domain/scripts/`, and only starts the code beside it in `domain/`:
+it puts `domain/` on the import path, and hands the code what lies outside the plugin, such as the
+host that runs git.
 
 *When*: a plugin whose roles take a step that has one right result.
 
@@ -362,7 +364,10 @@ input lets it go on at once
 catches a wrong change before it touches anything
 ([verifiable intermediate outputs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#create-verifiable-intermediate-outputs)).
 Subcommands of one script for one thing keep related operations together and easy to find, and
-`noun verb` is the common order ([subcommands](https://clig.dev/#subcommands)). A constant with no
+`noun verb` is the common order ([subcommands](https://clig.dev/#subcommands)). A script is a
+command that a role runs, not a form that Claude Code fixes, so it lies in `domain/` with the code
+it starts. Its code takes what lies outside the plugin as given, so a test gives a double in its
+place. A constant with no
 reason leaves the next developer, or the role, no way to tell its right value.
 
 ### Code kept once

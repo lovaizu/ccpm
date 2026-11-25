@@ -55,10 +55,8 @@ fi
 # fault no test may reach.
 held design pyrefly check --search-path dev/scripts dev/scripts/*.py
 
-# plugins/rn/scripts stays off the search path, as its template.py shares its name with the code of
-# plugins/rn/domain it runs.
 held design pyrefly check --search-path plugins/rn/domain --search-path dev/rn/tests \
-  plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
+  plugins/rn/domain/*.py plugins/rn/domain/*/*.py \
   dev/rn/tests/*.py dev/rn/tests/*/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
@@ -72,13 +70,13 @@ python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-pr
 # Each plugin's product vision, README, and architecture holds its kind's template and nothing
 # beside it, so a section or sentence that drifts from the template shows on the push that adds it.
 for vision in dev/*/product-vision.md; do
-  python3 plugins/rn/scripts/template.py product-vision "$vision"
+  python3 plugins/rn/domain/scripts/template.py product-vision "$vision"
 done
 for readme in plugins/*/README.md; do
-  python3 plugins/rn/scripts/template.py readme "$readme"
+  python3 plugins/rn/domain/scripts/template.py readme "$readme"
 done
 for architecture in dev/*/architecture.md; do
-  python3 plugins/rn/scripts/template.py architecture "$architecture"
+  python3 plugins/rn/domain/scripts/template.py architecture "$architecture"
 done
 
 # Each decision of an architecture's views tags the story or rule it carries out, and each story

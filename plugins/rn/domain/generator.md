@@ -74,7 +74,7 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
 - Write only the deliverable's paths, `<round>/generator.json`, and the Cut's `trial`. Each other
   file is another deliverable's or the user's.
 - Remove each file that you made only to try or check the deliverable, such as a test's
-  `__pycache__`. Remove it by `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/remove.py <path> [<path> ...]`,
+  `__pycache__`. Remove it by `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/remove.py <path> [<path> ...]`,
   each by its exact path, one argument each. It asks no permission, which would stop the run. rn's
   hook refuses each other delete.
 
@@ -98,7 +98,7 @@ there as that point's decision, by user. Then go on from `decide`.
    people don't need, such as a needless test. A part left in as good enough misleads whoever reads
    it next.
 4. `try`: you know what the people get. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py trial <run's folder> <round>`. It makes the
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository.py trial <run's folder> <round>`. It makes the
    Cut's `trial` anew and prints its path. That folder lies outside the work's branch, and holds the
    branch as its people get it. There, try the deliverable as its people would, with only what the
    goal says they have. For example, run the command on their own file, or follow the guide alone.
@@ -122,12 +122,12 @@ there as that point's decision, by user. Then go on from `decide`.
      line whole from the deliverable as it stands, indentation included. Leave out each condition
      you didn't see met. The orchestrator and the next generator take `good` as seen.
 
-   Run `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py generator <cut>`, and judge it by its exit
+   Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/check.py generator <cut>`, and judge it by its exit
    code. On 1, mend the result by each line it prints, and run it again. On 2, it couldn't check the
    result, and a rerun checks no more. So name what it couldn't check and why in your last message,
    as Output says.
 5. `check`: the repository's own checks pass on your files. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py checks <run's folder> <each file of files>`,
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository.py checks <run's folder> <each file of files>`,
    and judge it by its exit code. On 1, mend each finding it prints in the deliverable's files. Then
    bring the lines of `generator.json` to the files as they now stand, and run it again. On 2, a
    check couldn't run, such as when its program is missing, and a rerun checks no more. So name what

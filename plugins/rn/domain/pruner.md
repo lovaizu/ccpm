@@ -109,12 +109,12 @@ are the orchestrator's, so leave them be.
    plan first, then each node below them. Hold good each condition that a judged Round found good.
    Write a step's `signoff` as the user's words say it.
 4. Each node that your change touched agrees with it. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py touched <run>`. It lists each node that your
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree.py touched <run>`. It lists each node that your
    changes since the last commit touch, as the design tree best practice's N4 says. Rewrite each
    listed node that your change made false. Run it again after each rewrite, until a pass rewrites
    nothing. A node left false leads the next role to build on what you dropped.
 5. The tree holds its schema and its checks. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/tree.py check <run>`, and judge it by its exit code. It
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree.py check <run>`, and judge it by its exit code. It
    checks the tree whole, as the orchestrator's commit does. On 1, mend each fault on its line, and
    run it again until it gives 0. On 2, it couldn't check the tree, and a rerun checks no more. So
    name what it couldn't check and why in your last message.

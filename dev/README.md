@@ -22,7 +22,7 @@ CI runs these checks on every push:
 - that each plugin works from its own folder, uses another plugin only through `dependencies`, and
   carries its LICENSE, by `dev/scripts/standalone.py`
 - the form of each product vision, README, and architecture against its template, by
-  `plugins/rn/scripts/template.py`
+  `plugins/rn/domain/scripts/template.py`
 - the tag of each decision of each architecture's views, by `dev/scripts/trace.py`
 - each plugin's unit tests, and that they run every line and branch of its code
 - the records that each double of the plugins' tests takes its results from, and each line it

@@ -22,7 +22,7 @@ from hook import command
 from hook.command import main
 
 ROOT = os.path.join(os.sep, "plugins", "rn")
-REMOVE = os.path.join(ROOT, "scripts", "remove.py")
+REMOVE = os.path.join(ROOT, "domain", "scripts", "remove.py")
 
 
 def given(cmd: Any, agent: Any = "rn:generator", tool: str = "Bash") -> bytes:
@@ -93,7 +93,7 @@ def test_the_fixers_delete_is_denied_with_how_to_use_remove_py():
         "echo rm -r build",
         "grep -n unlink invoicer/lines.py",
         "find . -name '*.pyc'",
-        "python3 /plugins/rn/scripts/remove.py invoicer/__pycache__",
+        "python3 /plugins/rn/domain/scripts/remove.py invoicer/__pycache__",
         "ls > rm",
     ],
 )
@@ -413,12 +413,12 @@ def test_a_bash_write_to_a_runs_tree_by_any_agent_but_the_pruner_is_denied(agent
 @pytest.mark.parametrize(
     "cmd",
     [
-        f"python3 {ROOT}/scripts/tree.py signoff {TREE}",
-        f"python3 {ROOT}/scripts/template.py design-tree {TREE}",
-        f"python3 -B {ROOT}/scripts/tree.py check {TREE}",
-        f"python {ROOT}/scripts/tree.py signoff {TREE} && git -C {RUN} status",
-        f"cd /tmp && python3 {ROOT}/scripts/tree.py signoff {TREE}",
-        f'R=/elsewhere/rn; python3 "$R/scripts/tree.py" cut {RUN} {TREE}',
+        f"python3 {ROOT}/domain/scripts/tree.py signoff {TREE}",
+        f"python3 {ROOT}/domain/scripts/template.py design-tree {TREE}",
+        f"python3 -B {ROOT}/domain/scripts/tree.py check {TREE}",
+        f"python {ROOT}/domain/scripts/tree.py signoff {TREE} && git -C {RUN} status",
+        f"cd /tmp && python3 {ROOT}/domain/scripts/tree.py signoff {TREE}",
+        f'R=/elsewhere/rn; python3 "$R/domain/scripts/tree.py" cut {RUN} {TREE}',
         f'python3 "${{CLAUDE_PLUGIN_ROOT}}/scripts/tree.py" commit {RUN} {TREE}',
     ],
 )
@@ -436,7 +436,9 @@ def test_a_run_of_rns_script_whose_output_is_redirected_onto_the_tree_is_denied(
     run's design-tree.json
     When the hook runs
     Then it denies the call, naming the tree"""
-    tree_denied(main(bash_of(f"python3 {ROOT}/scripts/tree.py touched {RUN} > {TREE}"), ROOT), TREE)
+    tree_denied(
+        main(bash_of(f"python3 {ROOT}/domain/scripts/tree.py touched {RUN} > {TREE}"), ROOT), TREE
+    )
 
 
 @pytest.mark.parametrize(
@@ -447,7 +449,7 @@ def test_a_run_of_rns_script_whose_output_is_redirected_onto_the_tree_is_denied(
         f"python3 - <<'EOF'\nimport json\nwith open('{TREE}', 'w') as f:\n    f.write('{{}}')\nEOF",
         f"node -e \"require('fs').writeFileSync('{TREE}', '{{}}')\"",
         f"python3 /tmp/fix.py {TREE}",
-        f"python3 /elsewhere/rn/scripts/tree.py signoff {RUN} {TREE}",
+        f"python3 /elsewhere/rn/domain/scripts/tree.py signoff {RUN} {TREE}",
         f"vim {TREE}",
         f"yq -i '.work = []' {TREE}",
         f"git commit -m 'Plan' -- {TREE}",
@@ -484,7 +486,7 @@ def test_a_command_naming_a_runs_tree_that_the_hook_isnt_sure_writes_it_passes(c
         f"python3 -c \"import json; print(json.load(open('{WORDY_TREE}')))\"",
         (
             f"python3 -c \"import json; print(json.dumps(json.load(open('{TREE}')), indent=2))\""
-            f' && python3 "$R/scripts/tree.py" cut {RUN}'
+            f' && python3 "$R/domain/scripts/tree.py" cut {RUN}'
         ),
         f"python3 - <<'EOF'\nimport json\nprint(json.load(open('{TREE}'))['work'])\nEOF",
         f"sed -n '1,20p' {TREE}",

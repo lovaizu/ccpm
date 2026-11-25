@@ -460,8 +460,8 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── repository/                the code that makes a run's worktree and puts a deliverable up
 │   ├── remove/                    the code that removes what a maker made for itself
 │   ├── hook/                      the code of the hook before each Bash command and each write
-│   └── best-practices/            rn's own best practice of each kind
-└── scripts/                       each step with one right result, as a role runs it
+│   ├── best-practices/            rn's own best practice of each kind
+│   └── scripts/                   each step with one right result, as a role runs it
 
 dev/rn/                            what only rn's developers use
 └── tests/                         the unit tests of rn's code

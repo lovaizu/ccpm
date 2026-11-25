@@ -74,7 +74,9 @@ def decided(stdin: bytes, plugin_root: str) -> Answer:
     if not isinstance(called, dict):
         return PASS
     if _rn_deletes(called):
-        return _denied(_REASON.format(remove=os.path.join(plugin_root, "scripts", "remove.py")))
+        return _denied(
+            _REASON.format(remove=os.path.join(plugin_root, "domain", "scripts", "remove.py"))
+        )
     tree = _tree_written(called)
     if tree is not None:
         return _denied(_TREE_REASON.format(tree=tree))

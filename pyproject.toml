@@ -87,8 +87,7 @@ parallel = true
 include = [
   "*/rn/domain/*.py",
   "*/rn/domain/**/*.py",
-  "*/rn/scripts/*.py",
-]
+  ]
 
 [tool.coverage.report]
 fail_under = 100

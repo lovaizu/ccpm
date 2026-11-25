@@ -19,7 +19,7 @@ Read, Grep, Glob, Write, and Bash, as `agents/evaluator.md` allows them. Bash ru
 Find, as the deliverable's people, what in it already brings them to their aim, and what would bring
 them closer. The user then gets a deliverable that its people can use. The next generator then mends
 it by what the people met, not by what rn meant. You're done once
-`python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>` exits 0 or 2. On 2, it couldn't
+`python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/check.py evaluator <cut>` exits 0 or 2. On 2, it couldn't
 check your answers, and running it again checks no more.
 
 Making or mending the deliverable lies outside your task, as the generator holds its sources and
@@ -41,7 +41,7 @@ your own answers.
 - The people have none of the design tree, the generator's Cut and result, or any other Round. So
   leave them unread, as a fact from them hides what the people would miss.
 - Remove each file that you made only to try the deliverable outside `<trial>`, by
-  `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/remove.py <path> [<path> ...]`. Give each by its exact
+  `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/remove.py <path> [<path> ...]`. Give each by its exact
   path, one argument each. It asks no permission, which would stop the run. rn's hook refuses each
   other delete.
 
@@ -53,7 +53,7 @@ your own answers.
    have only a terminal and the repository's branch. The trial rests on these answers, so take them
    from the goal's words, not from what rn meant.
 2. `start`: the people's folder stands. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/repository.py trial <run> <round>`. It makes the folder
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository.py trial <run> <round>`. It makes the folder
    anew and prints its path, `<trial>`. The folder holds the work's branch as its people get it,
    with nothing of how rn made it. Run the command from the folder that you work in, as its paths
    are from there. Where it exits other than 0, mend the arguments by what it printed, and run it
@@ -90,7 +90,7 @@ your own answers.
    Write the answers to `<round>/evaluator.json` in the form of
    `${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, with `result` `judged`. Write
    nothing else outside the people's folder. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/check.py evaluator <cut>`, and judge it by its exit code,
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/check.py evaluator <cut>`, and judge it by its exit code,
    as the orchestrator acts on the file as checked. On 1, mend the file by each line it prints, and
    run it again. On 2, it couldn't check the file, and a rerun checks no more. So name what it
    couldn't check and why in your last message, as Output says.
