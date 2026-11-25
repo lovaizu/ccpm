@@ -27,12 +27,11 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<unit-cases>`: one test for each class of what an interface takes or gives, the collections
->   inside it at none, one, and several among them, and one for each transition that the product's
->   use brings about where its result depends on what came before. Each test is named by its class,
->   or by its state and event, with the integration case it supports where Test strategy names
->   traceability, and its Given, When, and Then stated in the test, its Then the whole of what the
->   interface gives and changes.
+> - `<unit-cases>`: one test for each promise and each refusal of an interface's contract, each
+>   bound it states, and each transition that the product's use brings about where its result
+>   depends on what came before, and no test beside them. Each test is named by what it shows, and
+>   its Given, When, and Then stated in the test, its Then the whole of what the interface gives and
+>   changes.
 
 ## Properties
 
