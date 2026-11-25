@@ -49,10 +49,12 @@ _ANY = r"[^\n]+?"
 
 @dataclass(frozen=True)
 class _Note:
-    """One item of a note of the template: the slots it names, and what it says of them."""
+    """One item of a note of the template: the slots it names, what it says of them, and its
+    label, such as `The figure`, the words before its first `: `."""
 
     slots: frozenset[str]
     words: str
+    label: str = ""
 
 
 @dataclass
@@ -151,8 +153,20 @@ def _notes_of(block: Block) -> list[_Note]:
         words = " ".join(item.split())
         label, _, said = words.partition(": ")
         slots = frozenset(_LONE_SLOT.findall(label)) if said else frozenset()
-        found.append(_Note(slots, said or words))
+        found.append(_Note(slots, said or words, label if said else ""))
     return found
+
+
+def kept_notes(blocks: tuple[Block, ...]) -> list[str]:
+    """The words of each item of the template's notes but those that let the document leave its
+    part out, such as a figure that the deliverable needs only where its answers fall short."""
+    return [
+        note.words
+        for block in flat(blocks)
+        if is_note(block)
+        for note in _notes_of(block)
+        if not _LEAVE.search(note.words)
+    ]
 
 
 def _own_notes(nodes: tuple[Node, ...]) -> list[_Note]:
@@ -236,6 +250,9 @@ def _unit(node: Node, context: _Context) -> Unit:
     """The unit of one node of the template."""
     block = node.block
     notes = [note for note in context.scoped[block.line] if note.slots & _slots(block)]
+    if block.kind == FIGURE:
+        # A figure holds no slot, so the note items labeled `The figure` speak of it.
+        notes = [note for note in context.scoped[block.line] if note.label == "The figure"]
     free = block.kind == PARAGRAPH and bool(_LONE_SLOT.fullmatch(block.text))
     return Unit(
         block=block,

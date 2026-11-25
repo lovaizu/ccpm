@@ -13,7 +13,7 @@ from enum import Enum
 
 from fault import Wrong
 
-from template.form import Form, Unit, form, is_note, kept
+from template.form import Form, Unit, form, is_note, kept, kept_notes
 from template.language import ENGLISH, Language, of
 from template.markdown import (
     CODE,
@@ -66,15 +66,14 @@ def figures(template: str) -> list[str]:
     """The figures that a document of the Markdown text `template` keeps of its own, by their
     paths from the document's folder, in the order the template names them, each once: each file
     of a figure that a note of the template names, as the meta best practice has each note say
-    where the deliverable keeps its own figure, but the template's own figures. [] where the notes
-    name none."""
+    where the deliverable keeps its own figure, but the template's own figures and those that a
+    note lets the document leave out. [] where the notes name none."""
     blocks = read(template)
     own = form(blocks).figures
     named = [
         found
-        for block in flat(blocks)
-        if is_note(block)
-        for found in _FIGURE_FILE.findall(block.text)
+        for words in kept_notes(blocks)
+        for found in _FIGURE_FILE.findall(words)
         if found not in own
     ]
     return list(dict.fromkeys(named))

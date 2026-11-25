@@ -1094,9 +1094,20 @@ def test_figures_are_each_own_figure_that_a_note_names_but_the_templates_own():
     assert figures(template) == ["images/a.svg", "images/b.png"]
 
 
-def test_rns_readme_template_gives_the_figure_its_note_names():
-    """Given rn's template of the readme
-    When its figures are asked
-    Then they are the deliverable's own figure that its note names, images/how-it-works.svg"""
-    with open(of_kind(RN, "readme"), encoding="utf-8") as f:
-        assert figures(f.read()) == ["images/how-it-works.svg"]
+def test_a_figure_that_its_note_lets_the_document_leave_out_is_neither_kept_nor_asked():
+    """Given a template whose figure's note says the document keeps its own at images/a.svg, and
+    to leave it out where the answers show the mechanism without it
+    When its figures are asked, and a document without the figure is checked
+    Then there are none, and the document has no fault"""
+    template = lines(
+        "# T",
+        "",
+        "![A](images/template-a.svg)",
+        "",
+        note(
+            "The figure: the deliverable's own at images/a.svg. Leave it out where the answers"
+            " show the mechanism without it."
+        ),
+    )
+    assert figures(template) == []
+    assert faults(template, lines("# T")) == ()

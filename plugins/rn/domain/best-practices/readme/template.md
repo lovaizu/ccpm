@@ -79,7 +79,7 @@ At the end, you have `<result>`.
 > - The figure: the deliverable's own, at images/how-it-works.svg, with the product named in its alt
 >   text. It shows the product's mechanism as one flow below the one way, with each problem and
 >   doubt beside the part that answers it, and what the reader gets from that part. The skeleton
->   here is one such form.
+>   here is one such form. Leave it out where the answers show the mechanism without it.
 > - `<problem or doubt>`, `<answer>`: each problem or doubt that would change whether the reader
 >   tries the product, as they would say it, as a heading of its own, and in a sentence or two the
 >   part of the mechanism that answers it, how it follows from the one way, and what the reader
