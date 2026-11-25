@@ -14,7 +14,7 @@ from tree.form import OPEN, Deliverable, Tree
 
 # The design tree's schema, beside its best practice in rn's folder.
 _SCHEMA = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     "best-practices",
     "design-tree",
     "design-tree.schema.json",

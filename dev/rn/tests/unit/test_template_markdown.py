@@ -1,4 +1,4 @@
-"""The unit cases of template/markdown.py, how template.py reads Markdown for rn's check of a
+"""The unit cases of template/markdown.py, how template reads Markdown for rn's check of a
 deliverable against its kind's template, through `read`, `sections`, `flat`, `sentences`, `words`,
 and `characters`. A block's kind, its line, and its words turn on how each Markdown construct
 starts and ends, so the cases take one for each construct, and one for each way a list item or a

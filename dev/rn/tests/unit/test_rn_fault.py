@@ -12,8 +12,8 @@ from fault import Answer, end
     ("code", "printed", "said"),
     [
         (0, "abc123\n", ""),
-        (1, "", "tree.py: /deliverables/1/kind: takes one of rn's kinds\n"),
-        (2, "", "usage: check.py <role> <cut>\n"),
+        (1, "", "tree: /deliverables/1/kind: takes one of rn's kinds\n"),
+        (2, "", "usage: check <role> <cut>\n"),
         (1, "a line\n", "another line\n"),
         (0, "", ""),
     ],

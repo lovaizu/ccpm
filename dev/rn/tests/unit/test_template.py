@@ -1,5 +1,5 @@
 """The unit cases of template/check.py, rn's check of a deliverable against its kind's template,
-through `faults` and `of_kind`, and of its command, `template.py`, through `main`. Whether a
+through `faults` and `of_kind`, and of its command, `template`, through `main`. Whether a
 document holds its template turns on each part of the template's form: its sections, items,
 paragraphs, figures, and code blocks, what its notes let a document leave out, repeat, or say in
 how many sentences, and how many words a sentence takes; and on the document's language, in which
@@ -683,7 +683,7 @@ def test_template_gives_0_and_prints_nothing_for_a_document_that_holds_its_kinds
     folder: str,
 ):
     """Given a product vision that fills each slot of rn's template and drops its notes
-    When `template.py product-vision <document>` runs
+    When `template product-vision <document>` runs
     Then it gives 0 and prints nothing"""
     document = lines(
         "# Product vision of tally",
@@ -719,7 +719,7 @@ def test_template_gives_0_and_prints_nothing_for_a_document_that_holds_its_kinds
 def test_template_holds_a_vision_of_one_key_result_and_no_idea_under_its_one_way(folder: str):
     """Given a product vision whose objective has one key result, of how well, and whose concept
     is its one way alone, as the time decides nothing and the way holds without an idea
-    When `template.py product-vision <document>` runs
+    When `template product-vision <document>` runs
     Then it gives 0 and prints nothing"""
     document = lines(
         "# Product vision of overnight",
@@ -750,7 +750,7 @@ def test_template_holds_a_vision_of_one_key_result_and_no_idea_under_its_one_way
 
 def test_template_gives_1_with_each_fault_at_the_documents_path_and_line(folder: str):
     """Given a document of a title and a section FAQ
-    When `template.py product-vision <document>` runs
+    When `template product-vision <document>` runs
     Then it gives 1, with each fault of the document on a line of its own, at its path and line,
     after a line on why the template holds and before a line on when to change the template"""
     with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
@@ -774,7 +774,7 @@ def test_template_gives_1_with_each_fault_at_the_documents_path_and_line(folder:
 
 def test_template_run_as_a_command_ends_with_what_main_gives(folder: str):
     """Given a document of a title and a section FAQ
-    When `python3 domain/scripts/template.py product-vision <document>` runs in the document's
+    When `python3 domain/scripts/template product-vision <document>` runs in the document's
     folder
     Then it exits 1, prints nothing, and says the fault on its standard error, as a maker that
     runs the command reads only its exit code and what it says"""
@@ -783,7 +783,7 @@ def test_template_run_as_a_command_ends_with_what_main_gives(folder: str):
     run = subprocess.run(
         [
             sys.executable,
-            os.path.join(RN, "domain", "scripts", "template.py"),
+            os.path.join(RN, "domain", "scripts", "template"),
             "product-vision",
             "vision.md",
         ],
@@ -798,31 +798,31 @@ def test_template_run_as_a_command_ends_with_what_main_gives(folder: str):
 
 def test_template_gives_1_naming_a_document_that_isnt_there(folder: str):
     """Given no file vision.md
-    When `template.py product-vision vision.md` runs
+    When `template product-vision vision.md` runs
     Then it gives 1, naming the file"""
     assert main(["product-vision", "vision.md"], folder, RN) == (
         1,
         "",
-        "template.py: vision.md: no such file to check against the template of product-vision\n",
+        "template: vision.md: no such file to check against the template of product-vision\n",
     )
 
 
 def test_template_gives_1_naming_a_document_that_isnt_utf_8(folder: str):
     """Given a file vision.md that isn't UTF-8
-    When `template.py product-vision vision.md` runs
+    When `template product-vision vision.md` runs
     Then it gives 1, naming the file and the encoding it takes"""
     with open(os.path.join(folder, "vision.md"), "wb") as file:
         file.write(b"# \xff\n")
     assert main(["product-vision", "vision.md"], folder, RN) == (
         1,
         "",
-        "template.py: vision.md: isn't UTF-8 text, which the check of a template reads\n",
+        "template: vision.md: isn't UTF-8 text, which the check of a template reads\n",
     )
 
 
 def test_template_gives_1_naming_the_kinds_for_a_kind_without_a_template(folder: str):
     """Given a document, and the kind design-tree, which has no Markdown template
-    When `template.py design-tree <document>` runs
+    When `template design-tree <document>` runs
     Then it gives 1, naming the kinds that have one"""
     with open(os.path.join(folder, "tree.md"), "w", encoding="utf-8") as file:
         file.write("# T\n")
@@ -830,7 +830,7 @@ def test_template_gives_1_naming_the_kinds_for_a_kind_without_a_template(folder:
     assert (code, said) == (
         1,
         (
-            "template.py: no kind 'design-tree' has a Markdown template; the kinds that have one"
+            "template: no kind 'design-tree' has a Markdown template; the kinds that have one"
             " are architecture, code, product-vision, prompt, readme, software-design,"
             " test-design, test-implementation\n"
         ),
@@ -842,7 +842,7 @@ def test_template_with_other_than_a_kind_a_document_and_a_language_gives_2_with_
     folder: str, argv: list[str]
 ):
     """Given no argument, one, or four
-    When `template.py` runs
+    When `template` runs
     Then it gives 2 with the usage"""
     assert main(argv, folder, RN) == (2, "", USAGE)
 
@@ -1511,7 +1511,7 @@ def test_a_japanese_code_span_counts_as_one_character():
     When the document is checked in Japanese
     Then it has no fault"""
     template = lines("# T", "", "`<body>`")
-    sentence = "`template.py`" + "あ" * (MOST_CHARACTERS - 2) + "。"
+    sentence = "`template`" + "あ" * (MOST_CHARACTERS - 2) + "。"
     assert faults(template, lines("# 題", "", sentence), "Japanese") == ()
 
 
@@ -1580,7 +1580,7 @@ VISION_JA = lines(
 
 def test_template_with_a_language_holds_the_document_in_it(folder: str):
     """Given a product vision in Japanese on rn's template in its own words
-    When `template.py product-vision <document> Japanese` runs
+    When `template product-vision <document> Japanese` runs
     Then it gives 0 and prints nothing"""
     with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
         file.write(VISION_JA)
@@ -1589,7 +1589,7 @@ def test_template_with_a_language_holds_the_document_in_it(folder: str):
 
 def test_template_without_a_language_holds_the_document_in_english(folder: str):
     """Given a product vision in Japanese on rn's template in its own words
-    When `template.py product-vision <document>` runs, with no language
+    When `template product-vision <document>` runs, with no language
     Then it gives 1, as the document leaves the template's English words"""
     with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
         file.write(VISION_JA)
@@ -1600,13 +1600,12 @@ def test_template_without_a_language_holds_the_document_in_english(folder: str):
 
 def test_template_gives_1_naming_a_blank_language(folder: str):
     """Given a product vision
-    When `template.py product-vision <document> ""` runs
+    When `template product-vision <document> ""` runs
     Then it gives 1, saying what language it takes"""
     with open(os.path.join(folder, "vision.md"), "w", encoding="utf-8") as file:
         file.write(VISION_JA)
     said = (
-        "template.py: the language is blank; give the document's language as a word, such as"
-        " English\n"
+        "template: the language is blank; give the document's language as a word, such as English\n"
     )
     assert main(["product-vision", "vision.md", ""], folder, RN) == (1, "", said)
 

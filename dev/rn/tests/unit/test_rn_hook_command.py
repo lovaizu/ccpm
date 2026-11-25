@@ -1,6 +1,6 @@
 """The unit cases of hook/command.py, the hook that Claude Code runs before each Bash command and
 each Write or Edit: a command of rn's maker that deletes, by rm, rmdir, unlink, or find's -delete,
-at the start or further on in a chain or a pipeline, denied with how to use remove.py; a Write or
+at the start or further on in a chain or a pipeline, denied with how to use remove; a Write or
 Edit of a run's design tree by the main conversation or by any agent but rn's pruner, its path
 written with / or \\, denied pointing to a new pruner; a Bash command of any but the pruner that
 surely writes a run's design tree denied the same way; and each call that passes, printing nothing:
@@ -22,7 +22,7 @@ from hook import command
 from hook.command import main
 
 ROOT = os.path.join(os.sep, "plugins", "rn")
-REMOVE = os.path.join(ROOT, "domain", "scripts", "remove.py")
+REMOVE = os.path.join(ROOT, "domain", "scripts", "remove")
 
 
 def given(cmd: Any, agent: Any = "rn:generator", tool: str = "Bash") -> bytes:
@@ -63,7 +63,7 @@ def test_a_makers_delete_is_denied_with_how_to_use_remove_py(cmd: str):
     """Given rn's generator calling Bash with a command that deletes, by rm, rmdir, unlink, or
     find's -delete, at any place in it
     When the hook runs
-    Then it denies the call, its reason giving remove.py's command by its absolute path, with an
+    Then it denies the call, its reason giving remove's command by its absolute path, with an
     exact path for each argument"""
     reason = denied(main(given(cmd), ROOT))
     assert f"python3 {REMOVE} <exact path> [<exact path> ...]" in reason
@@ -80,7 +80,7 @@ def test_the_evaluators_delete_is_denied():
 def test_the_fixers_delete_is_denied_with_how_to_use_remove_py():
     """Given rn's fixer calling Bash with rm
     When the hook runs
-    Then it denies the call, its reason giving remove.py's command by its absolute path"""
+    Then it denies the call, its reason giving remove's command by its absolute path"""
     reason = denied(main(given("rm -r invoicer/__pycache__", agent="rn:fixer"), ROOT))
     assert f"python3 {REMOVE} <exact path> [<exact path> ...]" in reason
 
@@ -93,7 +93,7 @@ def test_the_fixers_delete_is_denied_with_how_to_use_remove_py():
         "echo rm -r build",
         "grep -n unlink invoicer/lines.py",
         "find . -name '*.pyc'",
-        "python3 /plugins/rn/domain/scripts/remove.py invoicer/__pycache__",
+        "python3 /plugins/rn/domain/scripts/remove invoicer/__pycache__",
         "ls > rm",
     ],
 )
@@ -413,12 +413,12 @@ def test_a_bash_write_to_a_runs_tree_by_any_agent_but_the_pruner_is_denied(agent
 @pytest.mark.parametrize(
     "cmd",
     [
-        f"python3 {ROOT}/domain/scripts/tree.py signoff {TREE}",
-        f"python3 {ROOT}/domain/scripts/template.py design-tree {TREE}",
-        f"python3 -B {ROOT}/domain/scripts/tree.py check {TREE}",
-        f"python {ROOT}/domain/scripts/tree.py signoff {TREE} && git -C {RUN} status",
-        f"cd /tmp && python3 {ROOT}/domain/scripts/tree.py signoff {TREE}",
-        f'R=/elsewhere/rn; python3 "$R/domain/scripts/tree.py" cut {RUN} {TREE}',
+        f"python3 {ROOT}/domain/scripts/tree signoff {TREE}",
+        f"python3 {ROOT}/domain/scripts/template design-tree {TREE}",
+        f"python3 -B {ROOT}/domain/scripts/tree check {TREE}",
+        f"python {ROOT}/domain/scripts/tree signoff {TREE} && git -C {RUN} status",
+        f"cd /tmp && python3 {ROOT}/domain/scripts/tree signoff {TREE}",
+        f'R=/elsewhere/rn; python3 "$R/domain/scripts/tree" cut {RUN} {TREE}',
         f'python3 "${{CLAUDE_PLUGIN_ROOT}}/scripts/tree.py" commit {RUN} {TREE}',
     ],
 )
@@ -437,7 +437,7 @@ def test_a_run_of_rns_script_whose_output_is_redirected_onto_the_tree_is_denied(
     When the hook runs
     Then it denies the call, naming the tree"""
     tree_denied(
-        main(bash_of(f"python3 {ROOT}/domain/scripts/tree.py touched {RUN} > {TREE}"), ROOT), TREE
+        main(bash_of(f"python3 {ROOT}/domain/scripts/tree touched {RUN} > {TREE}"), ROOT), TREE
     )
 
 
@@ -449,7 +449,7 @@ def test_a_run_of_rns_script_whose_output_is_redirected_onto_the_tree_is_denied(
         f"python3 - <<'EOF'\nimport json\nwith open('{TREE}', 'w') as f:\n    f.write('{{}}')\nEOF",
         f"node -e \"require('fs').writeFileSync('{TREE}', '{{}}')\"",
         f"python3 /tmp/fix.py {TREE}",
-        f"python3 /elsewhere/rn/domain/scripts/tree.py signoff {RUN} {TREE}",
+        f"python3 /elsewhere/rn/domain/scripts/tree signoff {RUN} {TREE}",
         f"vim {TREE}",
         f"yq -i '.work = []' {TREE}",
         f"git commit -m 'Plan' -- {TREE}",
@@ -469,7 +469,7 @@ def test_a_command_naming_a_runs_tree_that_the_hook_isnt_sure_writes_it_passes(c
     a variable, a folder changed first, the tree found by find or fed through xargs, or a command
     the shell can't read
     When the hook runs
-    Then it gives 0 and prints nothing, as a refused read stops the run, and tree.py checks the
+    Then it gives 0 and prints nothing, as a refused read stops the run, and tree checks the
     tree's form before each commit"""
     assert main(bash_of(cmd), ROOT) == (0, "", "")
 
@@ -486,7 +486,7 @@ def test_a_command_naming_a_runs_tree_that_the_hook_isnt_sure_writes_it_passes(c
         f"python3 -c \"import json; print(json.load(open('{WORDY_TREE}')))\"",
         (
             f"python3 -c \"import json; print(json.dumps(json.load(open('{TREE}')), indent=2))\""
-            f' && python3 "$R/domain/scripts/tree.py" cut {RUN}'
+            f' && python3 "$R/domain/scripts/tree" cut {RUN}'
         ),
         f"python3 - <<'EOF'\nimport json\nprint(json.load(open('{TREE}'))['work'])\nEOF",
         f"sed -n '1,20p' {TREE}",

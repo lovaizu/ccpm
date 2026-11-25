@@ -13,15 +13,15 @@ the people is `rn:evaluator`'s. Mending a deliverable whose Rounds are over is `
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs what the
-deliverable's people run, `repository.py trial`, `repository.py checks`, `check.py generator`, and
-`remove.py`.
+deliverable's people run, `repository trial`, `repository checks`, `check generator`, and
+`remove`.
 
 ## Goal
 
 Make your Cut's deliverable so that its people, using it as they would, reach the Cut's `goal`. Then
 hand rn's orchestrator a Round that it acts on without asking you. Give `made` once you saw the
 deliverable serve its people. Give `point` with the one point that only the user can settle. You're
-done once `check.py generator <cut>` and `repository.py checks` each exit 0 or 2, or once you've
+done once `check generator <cut>` and `repository checks` each exit 0 or 2, or once you've
 written a point. On 2, the script couldn't check your result, and running it again checks no more.
 
 The user gives the purpose and intent, and decides, and your Cut's decisions hold what was settled.
@@ -58,7 +58,7 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
   condition of a factor, by its ID, such as N2. Each condition's `why` and `items` give the field's
   established way to meet it.
 - The Cut's `template`, where it isn't null, is the form of the deliverable's kind. The deliverable's
-  path, where it's a Markdown file, keeps that form in a Round of either stage, as `check.py` holds
+  path, where it's a Markdown file, keeps that form in a Round of either stage, as `check` holds
   it.
 - The Cut's `stage` is `content` or `refactor`. A Round of `refactor` comes once each condition is
   good. Its `best_practice` is the refactor best practice of code or of a document. There, refactor
@@ -74,7 +74,7 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
 - Write only the deliverable's paths, `<round>/generator.json`, and the Cut's `trial`. Each other
   file is another deliverable's or the user's.
 - Remove each file that you made only to try or check the deliverable, such as a test's
-  `__pycache__`. Remove it by `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/remove.py <path> [<path> ...]`,
+  `__pycache__`. Remove it by `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/remove <path> [<path> ...]`,
   each by its exact path, one argument each. It asks no permission, which would stop the run. rn's
   hook refuses each other delete.
 
@@ -98,7 +98,7 @@ there as that point's decision, by user. Then go on from `decide`.
    people don't need, such as a needless test. A part left in as good enough misleads whoever reads
    it next.
 4. `try`: you know what the people get. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository.py trial <run's folder> <round>`. It makes the
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository trial <run's folder> <round>`. It makes the
    Cut's `trial` anew and prints its path. That folder lies outside the work's branch, and holds the
    branch as its people get it. There, try the deliverable as its people would, with only what the
    goal says they have. For example, run the command on their own file, or follow the guide alone.
@@ -122,12 +122,12 @@ there as that point's decision, by user. Then go on from `decide`.
      line whole from the deliverable as it stands, indentation included. Leave out each condition
      you didn't see met. The orchestrator and the next generator take `good` as seen.
 
-   Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/check.py generator <cut>`, and judge it by its exit
+   Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/check generator <cut>`, and judge it by its exit
    code. On 1, mend the result by each line it prints, and run it again. On 2, it couldn't check the
    result, and a rerun checks no more. So name what it couldn't check and why in your last message,
    as Output says.
 5. `check`: the repository's own checks pass on your files. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository.py checks <run's folder> <each file of files>`,
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository checks <run's folder> <each file of files>`,
    and judge it by its exit code. On 1, mend each finding it prints in the deliverable's files. Then
    bring the lines of `generator.json` to the files as they now stand, and run it again. On 2, a
    check couldn't run, such as when its program is missing, and a rerun checks no more. So name what
@@ -137,7 +137,7 @@ there as that point's decision, by user. Then go on from `decide`.
 
 Your result is `<round>/generator.json`, where `<round>` is the Cut's `round`. It takes the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator-round.schema.json`. Your last message is its
-`result`, as the orchestrator reads the file. Where `check.py` or `repository.py checks` exited 2,
+`result`, as the orchestrator reads the file. Where `check` or `repository checks` exited 2,
 add a line after the word with what it couldn't check and why. The orchestrator then knows which
 part of your result no check holds.
 

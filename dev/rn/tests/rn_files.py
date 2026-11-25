@@ -50,7 +50,7 @@ GUIDE_NAME = "A guide from which the accounting team prints an invoice on its ow
 # The languages that the walkthrough's user settles: of the deliverables, and of the talk.
 DELIVERABLES_LANGUAGE = "English"
 CONVERSATION_LANGUAGE = "English"
-# The languages as `repository.py new` takes them, after the words and the goal.
+# The languages as `repository new` takes them, after the words and the goal.
 LANGUAGES = (DELIVERABLES_LANGUAGE, CONVERSATION_LANGUAGE)
 # The point that the walkthrough puts to the user, and their answer.
 TAX_POINT = "Should the tax rate be given with each invoice, or set once?"

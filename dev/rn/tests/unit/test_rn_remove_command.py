@@ -1,4 +1,4 @@
-"""The unit cases of remove/command.py, remove.py's command line as a maker runs it to remove what
+"""The unit cases of remove/command.py, remove's command line as a maker runs it to remove what
 it made for itself: a file and a folder of the git work tree by their paths from the current
 folder, a path absolute in the system's temporary folder, several paths at once, a path out of a
 subfolder of the work tree, a link removed as the link, alone or in a folder, a read-only folder,
@@ -82,7 +82,7 @@ def refused(answer: tuple[int, str, str], *said: str) -> None:
 
 def test_a_file_of_the_work_tree_by_its_path_from_the_current_folder_is_removed(work: str):
     """Given a git work tree holding the command and a cache file of its tests
-    When remove.py is given the cache file's path from the work tree's top, run there
+    When remove is given the cache file's path from the work tree's top, run there
     Then it gives 0, printing nothing, the file is gone, and the command stays"""
     pyc = "invoicer/__pycache__/lines.cpython-314.pyc"
     assert main([pyc], work) == (0, "", "")
@@ -92,7 +92,7 @@ def test_a_file_of_the_work_tree_by_its_path_from_the_current_folder_is_removed(
 
 def test_a_folder_of_the_work_tree_is_removed_whole(work: str):
     """Given a git work tree whose __pycache__ holds two files
-    When remove.py is given invoicer/__pycache__
+    When remove is given invoicer/__pycache__
     Then it gives 0, the folder is gone with both, and the command stays"""
     assert main(["invoicer/__pycache__"], work) == (0, "", "")
     assert not os.path.lexists(os.path.join(work, "invoicer", "__pycache__"))
@@ -103,7 +103,7 @@ def test_a_folder_in_the_system_temporary_folder_by_its_absolute_path_is_removed
     work: str, scratch: str, temp: str
 ):
     """Given a maker's folder in the system's temporary folder
-    When remove.py is given its absolute path, run in the work tree
+    When remove is given its absolute path, run in the work tree
     Then it gives 0, the folder is gone, and the temporary folder stays"""
     assert main([scratch], work) == (0, "", "")
     assert not os.path.lexists(scratch)
@@ -112,7 +112,7 @@ def test_a_folder_in_the_system_temporary_folder_by_its_absolute_path_is_removed
 
 def test_several_paths_at_once_are_each_removed(work: str, scratch: str):
     """Given a cache folder in the work tree and a maker's folder in the system's temporary folder
-    When remove.py is given both, one argument each
+    When remove is given both, one argument each
     Then it gives 0, and both are gone"""
     assert main(["invoicer/__pycache__", scratch], work) == (0, "", "")
     assert not os.path.lexists(os.path.join(work, "invoicer", "__pycache__"))
@@ -121,7 +121,7 @@ def test_several_paths_at_once_are_each_removed(work: str, scratch: str):
 
 def test_a_path_out_of_a_subfolder_within_the_work_tree_is_removed(work: str):
     """Given a git work tree whose folder docs/ is the current folder
-    When remove.py is given ../invoicer/__pycache__
+    When remove is given ../invoicer/__pycache__
     Then it gives 0, and the cache folder is gone, as the work tree holds the current folder"""
     docs = os.path.join(work, "docs")
     os.makedirs(docs)
@@ -131,7 +131,7 @@ def test_a_path_out_of_a_subfolder_within_the_work_tree_is_removed(work: str):
 
 def test_a_link_to_a_folder_outside_is_removed_as_the_link(work: str, outside: str):
     """Given a link in the work tree to a folder outside both places
-    When remove.py is given the link
+    When remove is given the link
     Then it gives 0, the link is gone, and the folder outside still holds its file"""
     link = os.path.join(work, "notes")
     os.symlink(outside, link)
@@ -144,7 +144,7 @@ def test_a_folder_holding_a_link_to_outside_is_removed_without_following_it(
     work: str, outside: str
 ):
     """Given a folder in the work tree holding a link to a folder outside both places
-    When remove.py is given the folder
+    When remove is given the folder
     Then it gives 0, the folder is gone, and the folder outside still holds its file"""
     held = os.path.join(work, "build")
     os.makedirs(held)
@@ -157,7 +157,7 @@ def test_a_folder_holding_a_link_to_outside_is_removed_without_following_it(
 def test_a_read_only_folder_is_removed_whole(work: str, writable: list[str]):
     """Given a cache folder in the work tree that holds a file and is read-only, as a tool's cache
     can be
-    When remove.py is given the folder
+    When remove is given the folder
     Then it gives 0, and the folder is gone"""
     cache = os.path.join(work, "invoicer", "__pycache__")
     writable.append(cache)
@@ -168,7 +168,7 @@ def test_a_read_only_folder_is_removed_whole(work: str, writable: list[str]):
 
 def test_a_path_given_within_another_given_is_removed_with_it(work: str):
     """Given a cache folder in the work tree
-    When remove.py is given the folder, then a file in it, then the folder again
+    When remove is given the folder, then a file in it, then the folder again
     Then it gives 0, and the folder is gone"""
     pyc = "invoicer/__pycache__/lines.cpython-314.pyc"
     assert main(["invoicer/__pycache__", pyc, "invoicer/__pycache__"], work) == (0, "", "")
@@ -180,7 +180,7 @@ def test_a_path_given_within_another_given_is_removed_with_it(work: str):
 
 def test_a_missing_path_beside_a_good_one_removes_neither(work: str, scratch: str):
     """Given a maker's folder in the system's temporary folder
-    When remove.py is given it and invoicer/build, which isn't there
+    When remove is given it and invoicer/build, which isn't there
     Then it gives 2 naming invoicer/build as missing, with the usage, and the folder stays"""
     refused(main([scratch, "invoicer/build"], work), "invoicer/build: no such file or folder")
     assert os.path.isfile(os.path.join(scratch, "log.txt"))
@@ -188,7 +188,7 @@ def test_a_missing_path_beside_a_good_one_removes_neither(work: str, scratch: st
 
 def test_a_path_outside_both_places_is_refused(work: str, outside: str):
     """Given a folder outside the work tree and the system's temporary folder
-    When remove.py is given its file and the work tree's cache folder
+    When remove is given its file and the work tree's cache folder
     Then it gives 2 naming the file as outside, and both stay"""
     notes = os.path.join(outside, "notes.txt")
     refused(main([notes, "invoicer/__pycache__"], work), f"{notes}: lies outside")
@@ -198,7 +198,7 @@ def test_a_path_outside_both_places_is_refused(work: str, outside: str):
 
 def test_a_path_through_a_link_to_outside_is_refused(work: str, outside: str):
     """Given a link in the work tree to a folder outside both places
-    When remove.py is given the file within it through the link
+    When remove is given the file within it through the link
     Then it gives 2 naming the path as outside, and the file stays"""
     os.symlink(outside, os.path.join(work, "notes"))
     refused(main(["notes/notes.txt"], work), "notes/notes.txt: lies outside")
@@ -208,7 +208,7 @@ def test_a_path_through_a_link_to_outside_is_refused(work: str, outside: str):
 @pytest.mark.parametrize("top", [".", "./", "invoicer/.."])
 def test_the_top_of_the_work_tree_is_refused(work: str, top: str):
     """Given a git work tree
-    When remove.py is given its top, as . or another path to it
+    When remove is given its top, as . or another path to it
     Then it gives 2 naming the path as the work tree's top, and the work tree stays"""
     refused(main([top], work), f"{top}: is the top of the git work tree")
     assert os.path.isfile(os.path.join(work, "invoicer", "__main__.py"))
@@ -216,7 +216,7 @@ def test_the_top_of_the_work_tree_is_refused(work: str, top: str):
 
 def test_the_top_of_the_system_temporary_folder_is_refused(work: str, scratch: str, temp: str):
     """Given a maker's folder in the system's temporary folder
-    When remove.py is given the temporary folder itself
+    When remove is given the temporary folder itself
     Then it gives 2 naming it as the temporary folder's top, and the maker's folder stays"""
     refused(main([temp], work), f"{temp}: is the top of the system's temporary folder")
     assert os.path.isdir(scratch)
@@ -224,7 +224,7 @@ def test_the_top_of_the_system_temporary_folder_is_refused(work: str, scratch: s
 
 def test_an_empty_path_is_refused(work: str):
     """Given a git work tree
-    When remove.py is given an empty argument beside the cache folder
+    When remove is given an empty argument beside the cache folder
     Then it gives 2 saying an empty path names nothing, and the cache folder stays"""
     refused(main(["", "invoicer/__pycache__"], work), "empty")
     assert os.path.isdir(os.path.join(work, "invoicer", "__pycache__"))
@@ -240,7 +240,7 @@ def test_an_empty_path_is_refused(work: str):
 )
 def test_a_path_holding_a_wildcard_is_refused(work: str, pattern: str):
     """Given a cache folder in the work tree
-    When remove.py is given a pattern of its files that the shell didn't expand
+    When remove is given a pattern of its files that the shell didn't expand
     Then it gives 2 naming the pattern as a wildcard, and each file stays"""
     refused(main([pattern], work), f"{pattern}: ", "wildcard")
     assert os.path.isfile(os.path.join(work, "invoicer", "__pycache__", "lines.cpython-314.pyc"))
@@ -248,7 +248,7 @@ def test_a_path_holding_a_wildcard_is_refused(work: str, pattern: str):
 
 def test_the_git_folder_of_the_work_tree_is_refused(work: str):
     """Given a git work tree
-    When remove.py is given .git, and then a file within it
+    When remove is given .git, and then a file within it
     Then it gives 2 naming each as git's, and the repository stays"""
     refused(main([".git", ".git/HEAD"], work), ".git: ", ".git/HEAD: ")
     assert os.path.isfile(os.path.join(work, ".git", "HEAD"))
@@ -257,7 +257,7 @@ def test_the_git_folder_of_the_work_tree_is_refused(work: str):
 def test_a_folder_holding_another_work_tree_is_refused(work: str):
     """Given a git work tree holding another in .claude/worktrees/rn-run, as a run's worktree
     lies in the user's repository
-    When remove.py is given .claude
+    When remove is given .claude
     Then it gives 2 naming it as holding a git repository, and the other work tree stays"""
     run = os.path.join(work, ".claude", "worktrees", "rn-run")
     os.makedirs(run)
@@ -268,7 +268,7 @@ def test_a_folder_holding_another_work_tree_is_refused(work: str):
 
 def test_a_path_from_a_folder_in_no_work_tree_is_refused(outside: str, scratch: str):
     """Given a current folder that lies in no git work tree, holding the user's notes
-    When remove.py is given the notes and a maker's folder in the system's temporary folder
+    When remove is given the notes and a maker's folder in the system's temporary folder
     Then it gives 2 naming the notes as outside, and both stay"""
     refused(main(["notes.txt", scratch], outside), "notes.txt: lies outside", "no git work tree")
     assert os.path.isfile(os.path.join(outside, "notes.txt"))
@@ -279,7 +279,7 @@ def test_a_path_in_the_temporary_folder_from_a_folder_in_no_work_tree_is_removed
     outside: str, scratch: str
 ):
     """Given a current folder that lies in no git work tree
-    When remove.py is given a maker's folder in the system's temporary folder
+    When remove is given a maker's folder in the system's temporary folder
     Then it gives 0, and the folder is gone"""
     assert main([scratch], outside) == (0, "", "")
     assert not os.path.lexists(scratch)
@@ -287,7 +287,7 @@ def test_a_path_in_the_temporary_folder_from_a_folder_in_no_work_tree_is_removed
 
 def test_no_path_gives_the_usage(work: str):
     """Given a git work tree
-    When remove.py is given no argument
+    When remove is given no argument
     Then it gives 2 with the usage"""
     refused(main([], work))
 
@@ -300,7 +300,7 @@ def test_a_file_the_system_wont_remove_gives_2_saying_what_is_left(
 ):
     """Given a cache file in a folder of the work tree that is read-only, so that the system
     refuses its removal, and a maker's folder in the system's temporary folder
-    When remove.py is given the file, then the maker's folder
+    When remove is given the file, then the maker's folder
     Then it gives 2 saying it couldn't remove the file, and that it left the maker's folder"""
     cache = os.path.join(work, "invoicer", "__pycache__")
     writable.append(cache)

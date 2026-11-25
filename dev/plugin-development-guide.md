@@ -56,7 +56,7 @@ sequenceDiagram
 │       ├── agents/<role>.md            an agent's entry <Markdown>
 │       ├── domain/                     the knowledge and rules of the plugin's work, apart from Claude Code
 │       │   ├── <role>.md               a role's part: the steps it follows <Markdown>
-│       │   └── scripts/                each command that a role runs, pointing to its code beside it <Python 3>
+│       │   └── scripts/<script>/       a command that a role runs, its `__main__.py` and its code <Python 3>
 │       ├── images/                     the README's figures <SVG>
 │       ├── LICENSE                     the plugin's own copy of the repository's license
 │       ├── README.md                   for the plugin's users <Markdown>
@@ -345,12 +345,14 @@ the tools that check the tests need it.
 A step that has one right result runs a script, which the step names with its exact command and the
 form of its output, so that the role runs it and never reads it. Each script acts on one thing, such
 as the run's plan, and takes each operation on it as a subcommand, named `noun verb`, such as
-`plan.py commit`. It handles each error it can meet, and its message says what's wrong, where, and
+`plan commit`. It handles each error it can meet, and its message says what's wrong, where, and
 how to fix the input. Where a role changes many things at once, it writes the plan as a file, and a
 script checks the plan before another applies it. Each constant of a script carries its reason
-beside it. The script lies in `domain/scripts/`, and only starts the code beside it in `domain/`:
-it puts `domain/` on the import path, and hands the code what lies outside the plugin, such as the
-host that runs git.
+beside it. The plugin's Python lies in `domain/scripts/`. Each script is a package there, run as
+`python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/<script> ...`. Its `__main__.py` only starts the
+code: it puts `domain/scripts/` on the import path, and hands the code what lies outside the plugin,
+such as the host that runs git. Code that several scripts share is a module or a package beside
+them.
 
 *When*: a plugin whose roles take a step that has one right result.
 
@@ -365,10 +367,10 @@ catches a wrong change before it touches anything
 ([verifiable intermediate outputs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#create-verifiable-intermediate-outputs)).
 Subcommands of one script for one thing keep related operations together and easy to find, and
 `noun verb` is the common order ([subcommands](https://clig.dev/#subcommands)). A script is a
-command that a role runs, not a form that Claude Code fixes, so it lies in `domain/` with the code
-it starts. Its code takes what lies outside the plugin as given, so a test gives a double in its
-place. A constant with no
-reason leaves the next developer, or the role, no way to tell its right value.
+command that a role runs, not a form that Claude Code fixes, so it lies in `domain/` with the rest
+of the plugin's work. A package run by its `__main__.py` is Python's own form of a command, and
+gives each script one name for both its command and its code. The code takes what lies outside the
+plugin as given, so a test gives a double in its place.
 
 ### Code kept once
 

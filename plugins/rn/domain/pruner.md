@@ -15,7 +15,7 @@ orchestrator's.
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/pruner.md` allows them. Write and Edit change
-only the run's `design-tree.json` and `pruner.json`. Bash runs `tree.py touched` and `tree.py check`
+only the run's `design-tree.json` and `pruner.json`. Bash runs `tree touched` and `tree check`
 alone. Each other script of the run is the orchestrator's to run.
 
 ## Goal
@@ -39,7 +39,7 @@ change the steps to go on. Name in `changed` of `pruner.json` what you changed a
 decides on rn from it.
 
 You're done once the tree holds what remains, and each node that your change touched agrees with it.
-`tree.py check` then gives 0 or 2 on it. Committing the tree, starting a role, and asking the user
+`tree check` then gives 0 or 2 on it. Committing the tree, starting a role, and asking the user
 are the orchestrator's, so leave them be.
 
 ## Context
@@ -56,7 +56,7 @@ are the orchestrator's, so leave them be.
     `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/design-tree/design-tree.schema.json`.
   - The design tree best practice,
     `${CLAUDE_PLUGIN_ROOT}/domain/best-practices/design-tree/best-practice.json`, which says how
-    each part of the tree is written. Its item that runs `tree.py commit` is the orchestrator's,
+    each part of the tree is written. Its item that runs `tree commit` is the orchestrator's,
     which commits the tree once you end.
 - The tree keeps the user's words word for word, in each decision `by` `user`. Write the request as
   the plan's decision of N1 about `the request`. Write each later word of the user the same way, as
@@ -81,9 +81,9 @@ are the orchestrator's, so leave them be.
   - A fixer's decision comes with its Fix's folder. The fixer found that mending a problem after the
     deliverable's Rounds would change or add that decision, and mended nothing. Its condition is
     held not good, so that the deliverable takes Rounds again by what you write.
-  - A script's refusal comes as it printed it, such as a fault that `tree.py commit` found.
+  - A script's refusal comes as it printed it, such as a fault that `tree commit` found.
   - A deliverable past its Round limit comes by the path of its last evaluator's result, as a
-    `pruner` line of `tree.py next` prints it, with no remedy for its findings yet. Keep each
+    `pruner` line of `tree next` prints it, with no remedy for its findings yet. Keep each
     finding left as an open decision of its condition, or write the remedy that the measure keeps.
 - A finding is a fact, not a decision. A maker's next Cut carries only what you write into the tree.
   A remedy that you don't write never reaches the deliverable.
@@ -109,12 +109,12 @@ are the orchestrator's, so leave them be.
    plan first, then each node below them. Hold good each condition that a judged Round found good.
    Write a step's `signoff` as the user's words say it.
 4. Each node that your change touched agrees with it. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree.py touched <run>`. It lists each node that your
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree touched <run>`. It lists each node that your
    changes since the last commit touch, as the design tree best practice's N4 says. Rewrite each
    listed node that your change made false. Run it again after each rewrite, until a pass rewrites
    nothing. A node left false leads the next role to build on what you dropped.
 5. The tree holds its schema and its checks. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree.py check <run>`, and judge it by its exit code. It
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree check <run>`, and judge it by its exit code. It
    checks the tree whole, as the orchestrator's commit does. On 1, mend each fault on its line, and
    run it again until it gives 0. On 2, it couldn't check the tree, and a rerun checks no more. So
    name what it couldn't check and why in your last message.
@@ -143,4 +143,4 @@ you have nothing for it:
 
 The orchestrator takes your result as checked. So before you end, read the tree again, and claim in
 `kept` only what stands there as you say. Your last message says that `pruner.json` is written. Add
-a line for each fact you couldn't open, and for what `tree.py check` couldn't check, each with why.
+a line for each fact you couldn't open, and for what `tree check` couldn't check, each with why.

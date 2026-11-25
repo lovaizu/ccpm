@@ -1,4 +1,4 @@
-"""Decides tree.py's command line: its subcommands, what each takes and prints, and the exit code
+"""Decides tree's command line: its subcommands, what each takes and prints, and the exit code
 by which whoever ran it reads its result."""
 
 from __future__ import annotations
@@ -35,19 +35,19 @@ _WHO = {
 RESTART = "--restart"
 
 USAGE = """\
-usage: tree.py touched <run> [<pointer>]
-       tree.py check <run>
-       tree.py next <run> [--restart]
-       tree.py commit <run>
-       tree.py fix <run> <deliverable> <source>   (the problem's words on stdin)
-       tree.py signoff <run>
+usage: tree touched <run> [<pointer>]
+       tree check <run>
+       tree next <run> [--restart]
+       tree commit <run>
+       tree fix <run> <deliverable> <source>   (the problem's words on stdin)
+       tree signoff <run>
 """
 
 
 def main(
     argv: Sequence[str], cwd: str, plugin_root: str, host: Host, stdin: Callable[[], str] = str
 ) -> Answer:
-    """The exit code, stdout, and stderr of `tree.py` with the arguments, from the folder `cwd`,
+    """The exit code, stdout, and stderr of `tree` with the arguments, from the folder `cwd`,
     with rn's folder at `plugin_root`, git reached through `host`, and what it's given on stdin
     read by `stdin`, which only `fix` reads.
 
@@ -82,7 +82,7 @@ def main(
       then marks with that hash, as `rounds.files.weigh` does, the Round or Fix of each of the
       result's `units` whose point, findings, or fixer's decision waits on the pruner, and no other.
       1, changing nothing, where the result is missing or Wrong, naming each place where it leaves
-      its form; where the tree holds a fault, with the first; where a unit is none that `tree.py
+      its form; where the tree holds a fault, with the first; where a unit is none that `tree
       next` prints on a pruner line for the tree as last committed; or where `push.commit` refuses a
       stray as Wrong. It pushes nothing and asks gh nothing, as the final check pushes the work and
       the user marks the pull request ready.
@@ -98,7 +98,7 @@ def main(
       signed off`, so that the next pruner's change since the last commit is its own alone, and
       gives 0 printing the tree's path; 1 where none waits. It pushes nothing.
 
-    `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `tree.py: <what's wrong>`
+    `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `tree: <what's wrong>`
     where the input is Wrong or something is Missing, saying how to mend it; 2 with what stopped it
     where it CantRun, such as a commit check of the repository refusing the design tree's commit,
     with what git said; 2 with the usage where the arguments are other than these, `next` given
@@ -113,7 +113,7 @@ def main(
         return 2, "", USAGE
     given = list(argv[2:]) + ([stdin()] if argv[0] in _READS_STDIN else [])
     return answered(
-        "tree.py", lambda: subcommand(of_folder(cwd, argv[1]), given, cwd, plugin_root, host)
+        "tree", lambda: subcommand(of_folder(cwd, argv[1]), given, cwd, plugin_root, host)
     )
 
 
@@ -180,12 +180,12 @@ def _commit(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: H
     weighing = pruned.read(run.pruner)
     found = _faults(run, plugin_root)
     if found:
-        return 1, "", f"tree.py: {found[0]}\n"
+        return 1, "", f"tree: {found[0]}\n"
     weighable = _weighable(run, _committed(run, host))
     for each in weighing["units"]:
         if os.path.normpath(each) not in weighable:
             raise Wrong(
-                f"{each}: is no unit that tree.py next prints on a pruner line now; name in units"
+                f"{each}: is no unit that tree next prints on a pruner line now; name in units"
                 " only each path that such a line gave, and none for the hearing or the user's"
                 " words"
             )
@@ -216,7 +216,7 @@ def _fix(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host
     node = form.deliverable(form.read(run.tree), path)
     next_ = course.next_in(run, node)
     if next_.waits_on != "sign-off":
-        return 1, "", f"tree.py: {path} waits on {_who(next_)}, {_unfinished(next_)}\n"
+        return 1, "", f"tree: {path} waits on {_who(next_)}, {_unfinished(next_)}\n"
     return 0, f"{files.new_fix(run, path, problem).folder}\n", ""
 
 
@@ -252,7 +252,7 @@ def _signoff(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: 
     }
     waiting = signoff.waiting(tree, nexts)
     if waiting is None:
-        return 1, "", "tree.py: no deliverable waits for the user's sign-off\n"
+        return 1, "", "tree: no deliverable waits for the user's sign-off\n"
     form.write(run.tree, signoff.signed_off(tree, waiting))
     name = form.deliverable(tree, waiting)["name"]
     push.commit(run, [os.path.relpath(run.tree, run.worktree)], f"rn: {name}, signed off", host)
@@ -260,7 +260,7 @@ def _signoff(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: 
 
 
 def _weighable(run: RunPlace, committed: form.Tree) -> dict[str, files.Round | files.Fix | None]:
-    """Each unit that `tree.py next` prints on a pruner line for the tree as last committed, as it
+    """Each unit that `tree next` prints on a pruner line for the tree as last committed, as it
     stood when the pruner was handed its unit, by its absolute path, with the Round or Fix to mark
     weighed; None for the last Round's findings past the limit, weighed already; none where no
     commit holds the tree yet."""

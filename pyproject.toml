@@ -85,8 +85,8 @@ addopts = ["-p", "no:cacheprovider"]
 branch = true
 parallel = true
 include = [
-  "*/rn/domain/*.py",
-  "*/rn/domain/**/*.py",
+  "*/rn/domain/scripts/*.py",
+  "*/rn/domain/scripts/**/*.py",
   ]
 
 [tool.coverage.report]

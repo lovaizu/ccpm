@@ -50,7 +50,7 @@
    "type": "object"
   },
   "worktree": {
-   "description": "The run's worktree, from the folder that the conversation works in, of which repository.py trial makes the folder of the people's starting state.",
+   "description": "The run's worktree, from the folder that the conversation works in, of which repository trial makes the folder of the people's starting state.",
    "type": "string",
    "minLength": 1
   },
@@ -60,7 +60,7 @@
    "minLength": 1
   },
   "trial": {
-   "description": "The folder of the people's starting state, named by the Round, which repository.py trial makes and the evaluator tries the deliverable in.",
+   "description": "The folder of the people's starting state, named by the Round, which repository trial makes and the evaluator tries the deliverable in.",
    "type": "string",
    "minLength": 1
   }

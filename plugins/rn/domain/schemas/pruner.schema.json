@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "pruner's result",
- "description": "What the pruner writes as it ends, at <run>/pruner.json, its weighing of one unit alone: each unit it weighed, what it cut, what it kept, each point to ask the user, each stray file, and each step of its own that it changed. tree.py commit acts on it and removes it, so that no commit holds it. Each string is one line, as tree.py commit prints each of ask and changed on a line of its own.",
+ "description": "What the pruner writes as it ends, at <run>/pruner.json, its weighing of one unit alone: each unit it weighed, what it cut, what it kept, each point to ask the user, each stray file, and each step of its own that it changed. tree commit acts on it and removes it, so that no commit holds it. Each string is one line, as tree commit prints each of ask and changed on a line of its own.",
  "type": "object",
  "required": [
   "units",
@@ -14,7 +14,7 @@
  "additionalProperties": false,
  "properties": {
   "units": {
-   "description": "The absolute path of each unit file it weighed, as tree.py next printed it on a pruner line: a generator's point, an evaluator's result, or a fixer's decision; none for the hearing, a point that the user settled, the final check's findings, or a script's refusal. tree.py commit marks weighed only these.",
+   "description": "The absolute path of each unit file it weighed, as tree next printed it on a pruner line: a generator's point, an evaluator's result, or a fixer's decision; none for the hearing, a point that the user settled, the final check's findings, or a script's refusal. tree commit marks weighed only these.",
    "type": "array",
    "items": {
     "$ref": "#/$defs/line"
@@ -28,14 +28,14 @@
    }
   },
   "kept": {
-   "description": "Each node it wrote or changed, by its deliverable's path and condition, which tree.py commit makes the ground of the tree's commit.",
+   "description": "Each node it wrote or changed, by its deliverable's path and condition, which tree commit makes the ground of the tree's commit.",
    "type": "array",
    "items": {
     "$ref": "#/$defs/line"
    }
   },
   "ask": {
-   "description": "Each open decision for the user, in the order they should answer it, the goal's own first. tree.py commit signs off the plan only where this is empty.",
+   "description": "Each open decision for the user, in the order they should answer it, the goal's own first. tree commit signs off the plan only where this is empty.",
    "type": "array",
    "items": {
     "type": "object",
@@ -68,7 +68,7 @@
    }
   },
   "stray": {
-   "description": "Each file that the final check found and the goal doesn't need, by its path from the run's worktree's top, which tree.py commit removes by git rm.",
+   "description": "Each file that the final check found and the goal doesn't need, by its path from the run's worktree's top, which tree commit removes by git rm.",
    "type": "array",
    "items": {
     "$ref": "#/$defs/line"

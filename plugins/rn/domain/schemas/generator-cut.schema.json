@@ -52,7 +52,7 @@
    "minLength": 1
   },
   "template": {
-   "description": "The template.md of the best practice of the deliverable's kind, from the folder that the conversation works in, whatever best practice the Round makes by, as a refactoring keeps the kind's form; null where that best practice holds none. The deliverable's path, where it's a Markdown file, holds its form, as check.py holds it.",
+   "description": "The template.md of the best practice of the deliverable's kind, from the folder that the conversation works in, whatever best practice the Round makes by, as a refactoring keeps the kind's form; null where that best practice holds none. The deliverable's path, where it's a Markdown file, holds its form, as check holds it.",
    "oneOf": [
     {
      "type": "null"
@@ -81,7 +81,7 @@
    "minLength": 1
   },
   "trial": {
-   "description": "The folder of the people's starting state, named by the Round, which repository.py trial makes and the generator tries the deliverable in, outside the work's branch.",
+   "description": "The folder of the people's starting state, named by the Round, which repository trial makes and the generator tries the deliverable in, outside the work's branch.",
    "type": "string",
    "minLength": 1
   },

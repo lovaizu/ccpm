@@ -14,8 +14,8 @@ Rounds is `rn:generator`'s, and judging one is `rn:evaluator`'s. Weighing a deci
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/fixer.md` allows them. Bash runs
-`repository.py checks`, the checks that a push runs, the repository's tests, `check.py fixer`, and
-`remove.py`.
+`repository checks`, the checks that a push runs, the repository's tests, `check fixer`, and
+`remove`.
 
 ## Goal
 
@@ -23,7 +23,7 @@ Mend the deliverable so that the problem is gone, and its people still get what 
 conditions asks. The deliverable then goes up again at once, with no wait for a weighing or for new
 Rounds. Its trials judged its decisions, so a mend that keeps each of them keeps what the people
 got. The repository's checks and tests then show that the mend holds. You're done once you've
-written your result, and `check.py fixer <cut>` exits 0 or 2. On 2, it couldn't check your result,
+written your result, and `check fixer <cut>` exits 0 or 2. On 2, it couldn't check your result,
 and running it again checks no more.
 
 The user gives the purpose and intent, and decides, and the deliverable's decisions hold what was
@@ -57,7 +57,7 @@ The design tree, commits, pushes, and talk with the user are the orchestrator's,
   another deliverable decided, so name it as a decision.
 - The orchestrator commits each change in the worktree when it puts the deliverable up. So remove
   each file that a check or a test left there and git doesn't ignore, such as a report. Remove it by
-  `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/remove.py <path> [<path> ...]`, each by its exact path. It
+  `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/remove <path> [<path> ...]`, each by its exact path. It
   asks no permission, which would stop the run. rn's hook refuses each other delete.
 
 ## Steps
@@ -72,7 +72,7 @@ The design tree, commits, pushes, and talk with the user are the orchestrator's,
 3. `mend`: the problem is gone from the deliverable's files. Change the least that removes it, as
    each decision says. Keep each other part as it stands, as the trials judged it.
 4. `check`: the repository's own checks and tests pass on your files.
-   - Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository.py checks <run> <each file you changed>`,
+   - Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository checks <run> <each file you changed>`,
      `<run>` being the Cut's `run`. It runs the repository's commit checks on those files alone, and
      exits 1 with each finding.
    - Run the checks that a push runs, as the repository's hook settings set them, without pushing.
@@ -86,7 +86,7 @@ The design tree, commits, pushes, and talk with the user are the orchestrator's,
    couldn't check and why in your last message.
 5. `result`: the orchestrator can act on your Fix. Where you mended, write `<fix>/fixer.json` as
    `{"result": "fixed", "files": [...]}`, each file you changed from the worktree's top. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/check.py fixer <cut>`, and judge it by its exit code. On
+   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/check fixer <cut>`, and judge it by its exit code. On
    1, mend the result by each line it prints, and run it again. On 2, it couldn't check the result,
    and a rerun checks no more. So name what it couldn't check and why in your last message.
 

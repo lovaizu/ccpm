@@ -1,4 +1,4 @@
-"""Decides repository.py's command line: its subcommands, what each takes and prints, and the exit
+"""Decides repository's command line: its subcommands, what each takes and prints, and the exit
 code by which whoever ran it reads its result."""
 
 from __future__ import annotations
@@ -19,20 +19,20 @@ from repository import commit_checks, place, push, trial, worktree
 from repository.host import Host
 
 USAGE = """\
-usage: repository.py new <slug> <deliverables language> <conversation language>
-       repository.py find
-       repository.py pause <run>
-       repository.py cancel <run>
-       repository.py put-up <run> <deliverable>
-       repository.py checks <run> <file>...
-       repository.py trial <run> <round>
-       repository.py diff <run>
-       repository.py ci <run>
+usage: repository new <slug> <deliverables language> <conversation language>
+       repository find
+       repository pause <run>
+       repository cancel <run>
+       repository put-up <run> <deliverable>
+       repository checks <run> <file>...
+       repository trial <run> <round>
+       repository diff <run>
+       repository ci <run>
 """
 
 
 def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    """The exit code, stdout, and stderr of `repository.py` with the arguments, from the folder
+    """The exit code, stdout, and stderr of `repository` with the arguments, from the folder
     `cwd`, the top of the user's repository, with rn's folder at `plugin_root`, and git and gh
     reached through `host`.
 
@@ -44,12 +44,12 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       tree best practice, its goal open for the pruner to write from the request.
     - `find`: 0 printing the folder from `cwd` of the run that `worktree.found` gives, its
       worktree made again where none lies, as a line, and nothing where there's none; and on
-      stderr `repository.py: can't check <what, and why>` where it couldn't ask GitHub for the
+      stderr `repository: can't check <what, and why>` where it couldn't ask GitHub for the
       runs it holds, so that it picked from this machine's alone.
     - `pause <run>`: 0 printing the hash that `push.pause` gives.
     - `cancel <run>`: 0 printing each thing of the run that `worktree.removed` removed on GitHub
       once it removes the run here, a line each, and nothing where there's none; and on stderr
-      `repository.py: can't remove <what, and why>` for each thing that it couldn't ask GitHub
+      `repository: can't remove <what, and why>` for each thing that it couldn't ask GitHub
       of or remove there, a line each.
     - `put-up <run> <deliverable>`: 0 printing each link that `push.put_up` gives, a line each,
       and nothing where it gives none, the deliverable's last Round or Fix then marked as put up
@@ -69,7 +69,7 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `diff <run>`: 0 printing the diff that `push.diff` gives.
     - `ci <run>`: 0 printing what `push.ci` gives.
 
-    `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `repository.py: <what's
+    `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `repository: <what's
     wrong>` where the input is Wrong or something is Missing, saying how to mend it; 2 with what
     stopped it where it CantRun; 2 with the usage where the arguments are other than these.
     """
@@ -79,7 +79,7 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     given = list(argv[1:])
     if len(given) < least or (most is not None and len(given) > most):
         return 2, "", USAGE
-    return answered("repository.py", lambda: subcommand(given, cwd, plugin_root, host))
+    return answered("repository", lambda: subcommand(given, cwd, plugin_root, host))
 
 
 def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
@@ -102,7 +102,7 @@ def _version(plugin_root: str) -> str:
 def _find(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     found = worktree.found(cwd, host)
     printed = f"{os.path.relpath(found.run.folder, cwd)}\n" if found.run else ""
-    said = f"repository.py: can't check {found.unchecked}\n" if found.unchecked else ""
+    said = f"repository: can't check {found.unchecked}\n" if found.unchecked else ""
     return 0, printed, said
 
 
@@ -112,7 +112,7 @@ def _pause(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 def _cancel(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     gone = worktree.removed(place.of_folder(cwd, given[0]), host)
-    said = "".join(f"repository.py: can't remove {each}\n" for each in gone.kept)
+    said = "".join(f"repository: can't remove {each}\n" for each in gone.kept)
     return 0, "".join(f"{each}\n" for each in gone.removed), said
 
 

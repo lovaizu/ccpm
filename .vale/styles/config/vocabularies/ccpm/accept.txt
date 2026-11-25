@@ -13,7 +13,7 @@ rn
 # a test level by, in a heading too.
 E2E
 # The verb by which rn's design tree best practice says a change reaches a
-# node, as `tree.py touched` lists them, not a tap on a screen.
+# node, as `tree touched` lists them, not a tap on a screen.
 touch
 # The keywords of a test case's Given, When, and Then, after Gherkin, which
 # keep their capitals in a heading too.

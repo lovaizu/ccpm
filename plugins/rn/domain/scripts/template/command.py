@@ -1,4 +1,4 @@
-"""Decides template.py's command line: what it takes, what it prints, and the exit code by which
+"""Decides template's command line: what it takes, what it prints, and the exit code by which
 whoever ran it reads its result: 0 where the document holds its template, 1 with what's wrong, and
 2 with the usage."""
 
@@ -12,7 +12,7 @@ from template import check
 from template.language import ENGLISH
 
 USAGE = """\
-usage: template.py <kind> <document> [<language>]
+usage: template <kind> <document> [<language>]
 """
 
 # What the reader of the faults is to do with them, as the purpose is a document of the vital few,
@@ -28,7 +28,7 @@ _AFTER = (
 
 
 def main(argv: list[str], cwd: str, plugin_root: str) -> Answer:
-    """The exit code, stdout, and stderr of `template.py` with the arguments, from the folder
+    """The exit code, stdout, and stderr of `template` with the arguments, from the folder
     `cwd`, with rn's folder at `plugin_root`.
 
     `<kind> <document> [<language>]` gives 0 where the document, by its path from `cwd`, holds the
@@ -45,11 +45,11 @@ def main(argv: list[str], cwd: str, plugin_root: str) -> Answer:
     if len(argv) not in (2, 3):
         return 2, "", USAGE
     language = argv[2] if len(argv) == 3 else ENGLISH
-    return answered("template.py", lambda: _template(argv[0], argv[1], language, cwd, plugin_root))
+    return answered("template", lambda: _template(argv[0], argv[1], language, cwd, plugin_root))
 
 
 def _template(kind: str, document: str, language: str, cwd: str, plugin_root: str) -> Answer:
-    """The result of `template.py` on the document in its language against the kind's
+    """The result of `template` on the document in its language against the kind's
     template."""
     path = check.of_kind(plugin_root, kind)
     with open(path, encoding="utf-8") as file:

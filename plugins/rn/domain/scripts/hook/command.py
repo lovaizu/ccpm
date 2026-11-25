@@ -1,6 +1,6 @@
-"""Decides hook.py's input and output, as Claude Code runs it before each Bash command and each
-write by Write or Edit: it denies a command of rn's makers that deletes, with how to use remove.py,
-as only remove.py removes without a permission prompt that stops the run; it denies each write to a
+"""Decides hook's input and output, as Claude Code runs it before each Bash command and each
+write by Write or Edit: it denies a command of rn's makers that deletes, with how to use remove,
+as only remove removes without a permission prompt that stops the run; it denies each write to a
 run's design tree but the pruner's, by Write, Edit, or Bash, telling its writer to hand the fact to
 a new pruner, as the plan holds only what the pruner weighed, where it's sure of a write by Bash;
 and it lets every other call pass, rn's scripts among them, which write the tree by design."""
@@ -29,7 +29,7 @@ PRUNER = "rn:pruner"
 WRITERS = ("Write", "Edit")
 
 _REASON = (
-    "rn's makers remove files only through remove.py, which asks no permission:"
+    "rn's makers remove files only through remove, which asks no permission:"
     " python3 {remove} <exact path> [<exact path> ...]. Give each file or folder you made by its"
     " exact path, absolute or from the current folder, one argument each, with no wildcard. It"
     " removes only inside the git work tree that holds the current folder and inside the system's"
@@ -45,10 +45,10 @@ _TREE_REASON = (
 
 
 def main(stdin: bytes, plugin_root: str) -> Answer:
-    """The exit code, stdout, and stderr of `hook.py` on the hook's input, with rn's folder at
+    """The exit code, stdout, and stderr of `hook` on the hook's input, with rn's folder at
     `plugin_root`.
 
-    0 with the JSON that denies the call, its reason giving remove.py's command by its absolute
+    0 with the JSON that denies the call, its reason giving remove's command by its absolute
     path, where the input is a Bash call of one of rn's agents whose command deletes, as
     `hook.bash.deletes` holds it. 0 with the JSON that denies the call, its reason naming the file
     and telling the writer to hand the fact to a new pruner, where the input is a Write or Edit
@@ -75,7 +75,7 @@ def decided(stdin: bytes, plugin_root: str) -> Answer:
         return PASS
     if _rn_deletes(called):
         return _denied(
-            _REASON.format(remove=os.path.join(plugin_root, "domain", "scripts", "remove.py"))
+            _REASON.format(remove=os.path.join(plugin_root, "domain", "scripts", "remove"))
         )
     tree = _tree_written(called)
     if tree is not None:

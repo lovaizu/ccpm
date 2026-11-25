@@ -1,4 +1,4 @@
-"""Decides remove.py's command line, by which a maker removes what it made for itself without a
+"""Decides remove's command line, by which a maker removes what it made for itself without a
 permission prompt that a variable path in `rm` would raise: what it takes, which paths it removes,
 and the exit code by which the maker reads its result: 0 where each path is removed, and 2 with
 the usage, each wrong path with why, and what to do instead, or with what the system refused."""
@@ -13,7 +13,7 @@ import tempfile
 from fault import Answer, CantRun, answered
 
 USAGE = """\
-usage: remove.py <path> [<path> ...]
+usage: remove <path> [<path> ...]
 """
 
 # The characters of a shell's wildcards, which a path holds only where no shell expanded them, so
@@ -22,16 +22,16 @@ WILDCARDS = "*?["
 
 # What the maker is to do instead of a wrong path: it reaches each path it made by its exact name.
 _INSTEAD = (
-    "remove.py removed nothing. Give each file or folder you made by its exact path, absolute or"
+    "remove removed nothing. Give each file or folder you made by its exact path, absolute or"
     " from the current folder, one argument each, with no wildcard: list a folder to find the"
-    " paths in it. remove.py removes only inside the git work tree that holds the current folder,"
+    " paths in it. remove removes only inside the git work tree that holds the current folder,"
     " {top}, and inside the system's temporary folder, {temp}, never the top of either, and never"
     " a git repository's .git."
 )
 
 
 def main(argv: list[str], cwd: str) -> Answer:
-    """The exit code, stdout, and stderr of `remove.py` with the arguments, from the folder `cwd`.
+    """The exit code, stdout, and stderr of `remove` with the arguments, from the folder `cwd`.
 
     `<path> [<path> ...]` gives 0, printing nothing, once it removed each path, a file or a folder
     whole, a link as the link, where each lies inside the git work tree that holds `cwd` or inside
@@ -44,11 +44,11 @@ def main(argv: list[str], cwd: str) -> Answer:
     temp = os.path.realpath(tempfile.gettempdir())
     top = _work_tree(os.path.realpath(cwd))
     whys = [(path, _wrong(path, cwd, top, temp)) for path in argv]
-    wrong = [f"remove.py: {path}: {why}\n" for path, why in whys if why]
+    wrong = [f"remove: {path}: {why}\n" for path, why in whys if why]
     if not argv or wrong:
         instead = _INSTEAD.format(top=top or "none here", temp=temp)
         return 2, "", USAGE + "".join(wrong) + instead + "\n"
-    return answered("remove.py", lambda: _removed(argv, cwd))
+    return answered("remove", lambda: _removed(argv, cwd))
 
 
 def _work_tree(folder: str) -> str | None:
@@ -79,7 +79,7 @@ def _within(path: str, folder: str) -> bool:
 
 
 def _wrong(path: str, cwd: str, top: str | None, temp: str) -> str:
-    """Why remove.py won't remove the path, or nothing where it will."""
+    """Why remove won't remove the path, or nothing where it will."""
     if not path:
         return "is empty, so it names nothing"
     if any(each in path for each in WILDCARDS):

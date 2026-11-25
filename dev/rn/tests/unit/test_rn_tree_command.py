@@ -1,4 +1,4 @@
-"""The unit cases of tree/command.py, tree.py's command line, through `main`: `touched` with a
+"""The unit cases of tree/command.py, tree's command line, through `main`: `touched` with a
 pointer and without, of none, one, and two changes; `check` of a tree in form, as committed,
 changed, or as a run starts, of one with faults, out of its schema, and of none; `commit` of a
 change in form, of one out of it, and of none, of the tree a run starts from, refused by a commit
@@ -55,7 +55,7 @@ class Run:
 
     @property
     def run(self) -> str:
-        """The run's folder from the repository's top, as tree.py takes it."""
+        """The run's folder from the repository's top, as tree takes it."""
         return os.path.relpath(self.folder, self.repo)
 
     def write(self, design_tree: dict[str, Any]) -> None:
@@ -75,7 +75,7 @@ class Run:
         return rn_files.round_of(self.folder, deliverable, stage, number)
 
     def main(self, host: Any, *argv: str, stdin: str = "") -> tuple[int, str, str]:
-        """tree.py with the arguments, from the repository's top, given stdin."""
+        """tree with the arguments, from the repository's top, given stdin."""
         return main(list(argv), self.repo, RN, host, lambda: stdin)
 
 
@@ -85,10 +85,10 @@ def walkthrough(**given: Any) -> dict[str, Any]:
 
 
 def refused(result: tuple[int, str, str], *words: str) -> None:
-    """The result is 1 with `tree.py: ` and each of the words on stderr, and nothing on stdout."""
+    """The result is 1 with `tree: ` and each of the words on stderr, and nothing on stdout."""
     code, out, err = result
     assert (code, out) == (1, ""), result
-    assert err.startswith("tree.py: "), err
+    assert err.startswith("tree: "), err
     for each in words:
         assert each in err, err
 
@@ -116,7 +116,7 @@ def refused(result: tuple[int, str, str], *words: str) -> None:
 )
 def test_arguments_other_than_the_usages_give_2_with_it(tmp_path: Any, host: Any, argv: list[str]):
     """Given the walkthrough's run
-    When tree.py runs with no arguments, an unknown subcommand, or a subcommand short of or past
+    When tree runs with no arguments, an unknown subcommand, or a subcommand short of or past
     its arguments
     Then it gives 2 with the usage, and changes nothing"""
     r = Run(str(tmp_path), walkthrough())
@@ -132,7 +132,7 @@ def test_arguments_other_than_the_usages_give_2_with_it(tmp_path: Any, host: Any
 
 def test_touched_with_a_pointer_prints_each_node_it_touches_a_line(tmp_path: Any, host: Any):
     """Given the walkthrough's run
-    When tree.py touched runs with the pointer of the command's N1's decision
+    When tree touched runs with the pointer of the command's N1's decision
     Then it gives 0 printing the goal, the command, its N1, the guide, and the work making the
     command, from the goal down, a pointer a line"""
     r = Run(str(tmp_path), walkthrough())
@@ -152,7 +152,7 @@ def test_touched_with_a_pointer_of_a_path_changed_since_the_commit_follows_the_o
 ):
     """Given the walkthrough's run whose tree, since its last commit, gives the command the path
     invoicer/cli.py, the guide's input still naming invoicer/__main__.py
-    When tree.py touched runs with the pointer of the command's path
+    When tree touched runs with the pointer of the command's path
     Then it gives 0 printing the goal, the command, the guide by the command's old path, and the
     work making the command, a pointer a line"""
     r = Run(str(tmp_path), walkthrough())
@@ -166,7 +166,7 @@ def test_touched_with_a_pointer_of_a_path_changed_since_the_commit_follows_the_o
 
 def test_touched_with_a_pointer_of_no_node_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run, of three deliverables
-    When tree.py touched runs with the pointer of a fourth
+    When tree touched runs with the pointer of a fourth
     Then it gives 1 naming the pointer"""
     r = Run(str(tmp_path), walkthrough())
     refused(r.main(host, "touched", r.run, "/deliverables/3"), "/deliverables/3")
@@ -175,7 +175,7 @@ def test_touched_with_a_pointer_of_no_node_gives_1_naming_it(tmp_path: Any, host
 def test_touched_of_a_change_since_the_commit_prints_what_it_touches(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree committed, then the user's answer about the tax rate
     changed in the tree
-    When tree.py touched runs with no pointer
+    When tree touched runs with no pointer
     Then it gives 0 printing the goal, the command, its N1, the decision, the guide, and the work
     making the command, the changed decided left out"""
     r = Run(str(tmp_path), walkthrough())
@@ -198,7 +198,7 @@ def test_touched_of_a_decision_taken_away_prints_what_its_condition_touches(
 ):
     """Given the walkthrough's run, its tree committed, then the user's answer about the tax rate
     taken out of the tree
-    When tree.py touched runs with no pointer
+    When tree touched runs with no pointer
     Then it gives 0 printing what the command's N1, which held the answer, touches: the goal, the
     command, its N1, the guide, and the work making the command"""
     r = Run(str(tmp_path), walkthrough())
@@ -218,7 +218,7 @@ def test_touched_of_a_decision_taken_away_prints_what_its_condition_touches(
 def test_touched_of_a_deliverable_taken_away_prints_the_goal(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree committed, then the guide, its last deliverable, taken
     out of the tree
-    When tree.py touched runs with no pointer
+    When tree touched runs with no pointer
     Then it gives 0 printing the goal, the nearest node above the guide that the tree still holds"""
     r = Run(str(tmp_path), walkthrough())
     changed = r.tree()
@@ -232,7 +232,7 @@ def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
 ):
     """Given the walkthrough's run, its tree committed, then the tax rate's answer and the guide's
     N1's good both changed
-    When tree.py touched runs with no pointer
+    When tree touched runs with no pointer
     Then it gives 0 printing each node that either touches once, and neither change"""
     r = Run(str(tmp_path), walkthrough())
     changed = r.tree()
@@ -259,7 +259,7 @@ def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
 
 def test_touched_of_no_change_since_the_commit_prints_nothing(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree as committed
-    When tree.py touched runs with no pointer
+    When tree touched runs with no pointer
     Then it gives 0 printing nothing"""
     r = Run(str(tmp_path), walkthrough())
     assert r.main(host, "touched", r.run) == (0, "", "")
@@ -274,7 +274,7 @@ def test_check_of_a_tree_in_form_gives_0_printing_nothing(
 ):
     """Given the walkthrough's run whose tree is as committed, or changed by a decision settled in
     the guide's N1 and not committed
-    When tree.py check runs
+    When tree check runs
     Then it gives 0 printing nothing, the tree and the branch's last commit as they were"""
     r = Run(str(tmp_path), walkthrough())
     if not committed:
@@ -291,7 +291,7 @@ def test_check_of_a_tree_in_form_gives_0_printing_nothing(
 def test_check_of_the_tree_a_run_starts_from_gives_0(tmp_path: Any, host: Any):
     """Given a run's worktree whose design tree is as the run starts, its goal open, never
     committed
-    When tree.py check runs
+    When tree check runs
     Then it gives 0 printing nothing, as the tree's checks take the goal open"""
     r = Run(str(tmp_path), rn_files.started(NAME), committed=False)
     assert r.main(host, "check", r.run) == (0, "", "")
@@ -300,7 +300,7 @@ def test_check_of_the_tree_a_run_starts_from_gives_0(tmp_path: Any, host: Any):
 def test_check_of_a_tree_with_two_faults_gives_1_with_each_on_a_line(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree changed so that the command's kind is `lights` and the
     guide's input names a file that the worktree doesn't hold
-    When tree.py check runs
+    When tree check runs
     Then it gives 1 printing two lines, the first naming /deliverables/1/kind and the second
     /deliverables/2/inputs/0, nothing on stderr, and the tree and the branch's last commit as they
     were"""
@@ -321,7 +321,7 @@ def test_check_of_a_tree_with_two_faults_gives_1_with_each_on_a_line(tmp_path: A
 
 def test_check_of_a_tree_out_of_its_schema_gives_1_with_its_place(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree changed so that the goal holds no `by`
-    When tree.py check runs
+    When tree check runs
     Then it gives 1 with a line naming /goal"""
     r = Run(str(tmp_path), walkthrough())
     changed = r.tree()
@@ -334,8 +334,8 @@ def test_check_of_a_tree_out_of_its_schema_gives_1_with_its_place(tmp_path: Any,
 
 def test_check_of_a_run_with_no_design_tree_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose design tree was deleted
-    When tree.py check runs
-    Then it gives 1 with `tree.py: ` and that the run's folder holds no design tree on stderr"""
+    When tree check runs
+    Then it gives 1 with `tree: ` and that the run's folder holds no design tree on stderr"""
     r = Run(str(tmp_path), walkthrough())
     os.remove(r.tree_path)
     refused(r.main(host, "check", r.run), "holds no design tree")
@@ -380,7 +380,7 @@ def test_commit_of_a_change_in_form_commits_the_tree_alone_with_the_ground_of_ke
     """Given the walkthrough's run, its tree committed, then a decision settled by reasoning in the
     guide's N1, the guide's file written beside it, and the pruner's result keeping that node,
     asking nothing
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0 printing the new commit's hash alone, whose message names the run and then
     the node kept, and which holds the tree alone, the guide left uncommitted; pruner.json is
     gone"""
@@ -407,7 +407,7 @@ def test_commit_of_a_tree_out_of_form_gives_1_with_its_first_fault_leaving_git(
 ):
     """Given the walkthrough's run, its tree committed, then the command's kind made `lights`, and
     the pruner's result
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 1 naming /deliverables/1/kind, the branch's last commit as it was, the tree
     still changed, and pruner.json still there"""
     r = Run(str(tmp_path), walkthrough())
@@ -427,7 +427,7 @@ def test_commit_of_a_tree_out_of_form_gives_1_with_its_first_fault_leaving_git(
 def test_commit_of_no_change_prints_the_last_commit_committing_nothing(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree as committed, and the pruner's result, as the pruner
     cut what its unit asked
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0 printing the last commit's hash, the branch holds no new commit, and
     pruner.json is gone"""
     r = Run(str(tmp_path), walkthrough())
@@ -443,7 +443,7 @@ def test_commit_of_the_tree_a_run_starts_from_commits_it_first_signing_off_nothi
 ):
     """Given a run's worktree whose design tree, as the run starts with its goal open, was never
     committed, and the pruner's result keeping nothing and asking nothing
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0 printing a new commit's hash, whose message is its first line alone, as the
     tree's checks take the goal open, and the plan is still open, as its goal is"""
     r = Run(str(tmp_path), rn_files.started(NAME), committed=False)
@@ -462,8 +462,8 @@ def test_commit_that_a_commit_check_refuses_gives_2_with_what_git_said(tmp_path:
     """Given the walkthrough's run, its tree committed, then a decision settled in the guide's N1,
     and the pruner's result, in a repository whose pre-commit hook refuses each commit saying
     `tree: no`
-    When tree.py commit runs
-    Then it gives 2, nothing on stdout, and stderr naming tree.py and the hook's line; the branch
+    When tree commit runs
+    Then it gives 2, nothing on stdout, and stderr naming tree and the hook's line; the branch
     holds no new commit, and pruner.json is still there"""
     r = Run(str(tmp_path), walkthrough())
     hook(r.repo, "echo 'tree: no'\nexit 1\n")
@@ -472,14 +472,14 @@ def test_commit_that_a_commit_check_refuses_gives_2_with_what_git_said(tmp_path:
     before = r.head()
     code, out, err = r.main(host, "commit", r.run)
     assert (code, out) == (2, "")
-    assert err.startswith("tree.py: ") and "tree: no" in err
+    assert err.startswith("tree: ") and "tree: no" in err
     assert r.head() == before
     assert os.path.isfile(path)
 
 
 def test_commit_with_no_pruners_result_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree changed since its commit, and no pruner's result
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 1 naming pruner.json and saying the pruner writes it, and the branch holds no
     new commit"""
     r = Run(str(tmp_path), walkthrough())
@@ -509,7 +509,7 @@ def test_commit_of_a_pruners_result_out_of_its_form_gives_1_naming_the_place(
     """Given the walkthrough's run, its tree changed since its commit, and a pruner's result that
     isn't JSON, leaves out a list, asks a question with no recommendation, or holds a tab or a line
     break in a line
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 1 naming pruner.json and the place, the branch holds no new commit, and the
     tree and pruner.json are as they were"""
     r = Run(str(tmp_path), walkthrough())
@@ -528,7 +528,7 @@ def test_commit_of_an_open_plan_asking_nothing_signs_it_off_in_the_same_commit(
 ):
     """Given the walkthrough's run whose plan is open, its goal settled, and the pruner's result
     asking nothing
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0 printing the hash; the plan is done in the commit, whose message closes with
     `The plan is signed off.`, and the tree has no change since"""
     r = Run(str(tmp_path), walkthrough(plan_done=False), committed=False)
@@ -543,7 +543,7 @@ def test_commit_of_an_open_plan_asking_nothing_signs_it_off_in_the_same_commit(
 def test_commit_of_an_open_plan_with_a_condition_not_good_leaves_it_open(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan is open, its goal settled and its N2 not good, as a
     pause mid-hearing leaves it, and the pruner's result asking nothing
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0 printing the new commit's hash, and the plan stays open, as it waits on more
     of the hearing, not on its sign-off"""
     the = walkthrough(plan_done=False)
@@ -560,7 +560,7 @@ def test_commit_of_an_open_plan_asking_prints_each_ask_and_change_leaving_the_pl
 ):
     """Given the walkthrough's run whose plan is open, its command's N1 holding an open decision,
     and the pruner's result asking it and naming two steps of its own that it changed
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0 printing the hash, then the ask, and then each change, a line each, its words
     apart by a tab; and the plan stays open"""
     open_point = rn_files.decision("a line's quantity", None)
@@ -592,7 +592,7 @@ def test_commit_with_a_stray_removes_it_in_the_trees_commit(
 ):
     """Given the walkthrough's run whose worktree holds NOTES.md as committed, the tree changed or
     as committed, and the pruner's result naming NOTES.md a stray
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0 printing a new commit's hash, which removes NOTES.md, with the tree where it
     changed; the file is gone, and the worktree holds no change"""
     r = Run(str(tmp_path), walkthrough())
@@ -621,7 +621,7 @@ def test_commit_with_a_stray_git_doesnt_hold_gives_1_changing_nothing(
     """Given the walkthrough's run whose plan is open, its tree as committed, NOTES.md committed,
     and DRAFT.md written but never committed; and the pruner's result asking nothing, naming as
     strays NOTES.md and DRAFT.md, or a path outside the worktree
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 1 naming the stray; the branch holds no new commit, NOTES.md and DRAFT.md stay,
     the plan stays open, and pruner.json is still there"""
     r = Run(str(tmp_path), walkthrough(plan_done=False))
@@ -651,7 +651,7 @@ def test_commit_after_a_rounds_result_marks_it_weighed(
 ):
     """Given the walkthrough's run whose command's Round content-1 holds a generator's point, or a
     made and judged Round, unweighed, and the pruner's result
-    When tree.py commit runs
+    When tree commit runs
     Then content-1's weighed.json holds the commit's hash"""
     r = Run(str(tmp_path), walkthrough())
     first = rn_files.a_round(r.folder, COMMAND, "content", 1, results)
@@ -666,7 +666,7 @@ def test_commit_after_a_rounds_result_marks_it_weighed(
 def test_commit_leaves_a_round_its_pruner_didnt_weigh_unweighed(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's Round content-1 holds an evaluator's findings,
     unweighed, and the pruner's result of another unit, naming no unit
-    When tree.py commit runs, then tree.py next
+    When tree commit runs, then tree next
     Then the commit gives 0, content-1 holds no weighed.json, and next prints the command's
     pruner with content-1's evaluator.json still"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
@@ -689,7 +689,7 @@ def test_commit_of_a_unit_next_doesnt_print_gives_1_changing_nothing(
     """Given the walkthrough's run whose command's Round content-1, judged short, is weighed, and
     the pruner's result naming as its unit content-1's evaluator.json, its generator.json, a made,
     or a file there that doesn't exist
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 1 naming the path; the branch holds no new commit, and the tree and pruner.json
     are as they were"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
@@ -708,7 +708,7 @@ def test_commit_of_the_findings_left_past_the_limit_takes_the_unit_marking_nothi
     """Given the walkthrough's run whose command's evaluators found N1 short in Rounds content-1
     and content-2, each weighed, so that next prints its pruner with content-2's evaluator.json;
     then the pruner keeping the finding as an open decision of N1, and naming that unit
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0, and content-2's weighed.json holds the commit that weighed it before"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
     for number in (1, 2):
@@ -726,7 +726,7 @@ def test_commit_of_the_findings_left_past_the_limit_takes_the_unit_marking_nothi
 
 
 def next_lines(r: Run, host: Any, *more: str) -> list[list[str]]:
-    """What tree.py next prints, each line split at its tabs; it must give 0 with nothing on
+    """What tree next prints, each line split at its tabs; it must give 0 with nothing on
     stderr."""
     code, out, err = r.main(host, "next", r.run, *more)
     assert (code, err) == (0, ""), err
@@ -742,7 +742,7 @@ def test_next_while_the_goal_is_open_prints_the_hearing_alone_making_no_round(
     tmp_path: Any, host: Any
 ):
     """Given the walkthrough's run whose goal is open, its decided null
-    When tree.py next runs
+    When tree next runs
     Then it prints `hearing` alone, and makes no Round"""
     the = walkthrough()
     the["goal"] = {"decided": None}
@@ -753,7 +753,7 @@ def test_next_while_the_goal_is_open_prints_the_hearing_alone_making_no_round(
 
 def test_next_of_an_open_plan_prints_its_signoff_and_starts_nothing(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan is open with each condition good
-    When tree.py next runs
+    When tree next runs
     Then it prints `sign-off`, `plan` alone, as the work that rests on the plan starts at its
     sign-off, and makes no Round"""
     r = Run(str(tmp_path), walkthrough(plan_done=False))
@@ -766,7 +766,7 @@ def test_next_of_open_decisions_of_the_plan_and_a_deliverable_prints_an_answer_f
 ):
     """Given the walkthrough's run whose plan is open, its N2 not good holding an open decision of
     the steps, and whose command's N1 holds an open decision of a line's quantity
-    When tree.py next runs
+    When tree next runs
     Then it prints an `answer` for the plan's, then one for the command's, and no sign-off"""
     the = rn_files.walkthrough_tree(
         NAME, plan_done=False, command_decisions={"N1": [rn_files.decision("quantity", None)]}
@@ -785,7 +785,7 @@ def test_next_of_open_decisions_of_the_plan_and_a_deliverable_prints_an_answer_f
 def test_next_of_the_first_generator_writes_its_cut_in_round_content_1(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its plan done and no Round yet, the guide resting on the
     command
-    When tree.py next runs
+    When tree next runs
     Then it prints one `start` line, of the command's generator, with the path of Round
     content-1's generator-cut.json from the repository's top, which holds the command's Cut; and
     nothing of the guide, whose input isn't done"""
@@ -808,7 +808,7 @@ def test_next_of_the_first_generator_writes_its_cut_in_round_content_1(tmp_path:
 def test_next_starts_each_deliverable_whose_inputs_are_done_together(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command is done, and whose guide rests on it, with no
     Round
-    When tree.py next runs
+    When tree next runs
     Then it prints the guide's generator's `start`, as its input is done"""
     the = walkthrough()
     the["deliverables"][1] = rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light")
@@ -820,7 +820,7 @@ def test_next_after_a_generators_made_writes_the_evaluators_cut_in_its_round(
     tmp_path: Any, host: Any
 ):
     """Given the walkthrough's run whose command's generator made Round content-1
-    When tree.py next runs, and again
+    When tree next runs, and again
     Then the first prints the evaluator's `start` with the path of Round content-1's
     evaluator-cut.json, which holds the command's name and path and what light judges by, making
     no Round content-2; the second prints it `running`"""
@@ -842,7 +842,7 @@ def test_next_of_a_deliverable_with_an_open_point_prints_the_answer_writing_no_c
 ):
     """Given the walkthrough's run whose command's generator gave a point in Round content-1, which
     one pruner weighed and kept open in its N1
-    When tree.py next runs
+    When tree next runs
     Then it prints the `answer` of the command's N1 alone, and writes no Cut"""
     the = rn_files.walkthrough_tree(
         NAME, command_decisions={"N1": [rn_files.decision("a line's quantity", None)]}
@@ -860,7 +860,7 @@ def test_next_of_a_point_unweighed_prints_a_pruner_with_its_result_writing_no_cu
 ):
     """Given the walkthrough's run whose command's generator gave a point in Round content-1, which
     no commit weighed yet
-    When tree.py next runs
+    When tree next runs
     Then it prints the `pruner` of the command with the absolute path of content-1's
     generator.json alone, and writes no Cut"""
     r = Run(str(tmp_path), walkthrough())
@@ -874,7 +874,7 @@ def test_next_after_a_point_weighed_writes_the_same_rounds_cut_again_taking_the_
 ):
     """Given the walkthrough's run whose command's generator gave a point in Round content-1, which
     a commit weighed, the tree holding the user's answer in its N1
-    When tree.py next runs, and again
+    When tree next runs, and again
     Then the first prints the generator's `start` with content-1's generator-cut.json, holding
     the answer by user; content-1 holds no generator.json and no weighed.json, and no Round
     content-2 is made; the second prints it `running`"""
@@ -897,7 +897,7 @@ def test_next_of_a_judged_round_unweighed_prints_a_pruner_with_the_evaluators_re
 ):
     """Given the walkthrough's run whose command's evaluator judged Round content-1, which no
     commit weighed yet
-    When tree.py next runs
+    When tree next runs
     Then it prints the `pruner` of the command with the absolute path of content-1's
     evaluator.json alone"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
@@ -908,7 +908,7 @@ def test_next_of_a_judged_round_unweighed_prints_a_pruner_with_the_evaluators_re
 def test_next_after_a_round_judged_short_and_weighed_makes_the_next_round(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's evaluator found N1 short in Round content-1,
     weighed, its tree holding N2 and N3 good
-    When tree.py next runs
+    When tree next runs
     Then it prints the generator's `start` with Round content-2's generator-cut.json, which holds
     none of the evaluator's findings, and the generator's good of content-1 as its last good"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
@@ -929,7 +929,7 @@ def test_next_of_a_round_a_pause_stopped_prints_it_running_and_restarts_it_with_
 ):
     """Given the walkthrough's run whose command's Round content-1 holds the generator's Cut of a
     stale goal and no result, as a pause stopped it
-    When tree.py next runs, then tree.py next --restart
+    When tree next runs, then tree next --restart
     Then the first prints the generator `running`, leaving the Cut; the second prints its `start`
     with content-1's generator-cut.json, written anew with the tree's goal, and makes no Round
     content-2"""
@@ -952,7 +952,7 @@ def test_next_restart_of_an_evaluator_a_pause_stopped_writes_its_cut_in_that_rou
 ):
     """Given the walkthrough's run whose command's Round content-1 holds the generator's made and
     the evaluator's Cut with no result, as a pause stopped it
-    When tree.py next --restart runs
+    When tree next --restart runs
     Then it prints the evaluator's `start` with content-1's evaluator-cut.json, written anew"""
     r = Run(str(tmp_path), walkthrough())
     first = rn_files.a_round(
@@ -968,8 +968,8 @@ def test_next_restart_of_an_evaluator_a_pause_stopped_writes_its_cut_in_that_rou
 
 def test_next_restart_with_none_at_work_prints_as_next_does(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's evaluator judged Round content-1, unweighed
-    When tree.py next --restart runs
-    Then it prints what tree.py next prints, the pruner's line"""
+    When tree next --restart runs
+    Then it prints what tree next prints, the pruner's line"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
     rn_files.a_round(r.folder, COMMAND, "content", 1, SHORT)
     assert next_lines(r, host, RESTART) == next_lines(r, host)
@@ -987,7 +987,7 @@ def test_next_after_two_content_rounds_short_prints_a_pruner_making_no_third(
 ):
     """Given the walkthrough's run whose command's evaluators found N1 short in Rounds content-1 and
     content-2, each weighed, its tree holding N2 and N3 good and no decision open
-    When tree.py next runs
+    When tree next runs
     Then it prints the `pruner` of the command with content-2's evaluator.json, to keep each
     finding left as an open decision, and makes no Round content-3"""
     r = Run(str(tmp_path), walkthrough(command_good=["N2", "N3"]))
@@ -1016,7 +1016,7 @@ def test_next_of_a_deliverable_past_its_rounds_prints_its_put_up_then_its_signof
 ):
     """Given the walkthrough's run whose command is past its two content Rounds, its finding kept
     as an open decision, a proposal
-    When tree.py next runs, before content-2 is marked put up with the command's state, and after
+    When tree next runs, before content-2 is marked put up with the command's state, and after
     Then the first prints the command's `put-up` alone, asking no answer of the proposal, and the
     second its `sign-off`, at a step that the user checks, as no step says otherwise; neither
     makes a Round content-3"""
@@ -1030,7 +1030,7 @@ def test_next_of_a_deliverable_past_its_rounds_prints_its_put_up_then_its_signof
 
 def test_next_past_the_limit_answers_only_a_point_of_a_good_condition(tmp_path: Any, host: Any):
     """Given the run of `left_past` whose N2, good, holds an open point too
-    When tree.py next runs
+    When tree next runs
     Then it prints the `answer` of N2's point alone, the finding of N1 left as a proposal"""
     r = left_past(str(tmp_path))
     the = r.tree()
@@ -1044,7 +1044,7 @@ def test_next_past_the_limit_answers_only_a_point_of_a_good_condition(tmp_path: 
 def test_next_of_each_deliverable_done_prints_the_final_check(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan, command, and guide are done, the command's last
     Round put up
-    When tree.py next runs
+    When tree next runs
     Then it prints `final-check` alone"""
     the = walkthrough()
     the["deliverables"][1] = rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light")
@@ -1060,7 +1060,7 @@ def test_next_with_more_than_restart_gives_2_with_the_usage(
     tmp_path: Any, host: Any, more: list[str]
 ):
     """Given the walkthrough's run
-    When tree.py next runs with a word other than --restart after the run, or with two
+    When tree next runs with a word other than --restart after the run, or with two
     Then it gives 2 with the usage, and makes no Round"""
     r = Run(str(tmp_path), walkthrough())
     code, out, err = r.main(host, "next", r.run, *more)
@@ -1071,7 +1071,7 @@ def test_next_with_more_than_restart_gives_2_with_the_usage(
 # fix, and the fixer's start
 
 # The words that a put-up refused by the repository's push check printed.
-REFUSAL = "repository.py: git can't push the run's work: lint: a line ends in a space\n"
+REFUSAL = "repository: git can't push the run's work: lint: a line ends in a space\n"
 JUDGED_GOOD = {
     "generator": rn_files.made([], [COMMAND]),
     "evaluator": rn_files.judged([("N1", ["x"]), ("N2", ["x"]), ("N3", ["x"])]),
@@ -1090,7 +1090,7 @@ def test_fix_of_a_deliverable_whose_rounds_are_over_writes_its_fix_and_prints_it
     tmp_path: Any, host: Any
 ):
     """Given the walkthrough's run whose command's Rounds are over
-    When tree.py fix runs for the command, from put-up, with the refusal's words on stdin
+    When tree fix runs for the command, from put-up, with the refusal's words on stdin
     Then it gives 0 printing fix-2's folder, absolute, which holds the problem with the words as
     given, and the design tree is as it was"""
     r = over(str(tmp_path))
@@ -1108,7 +1108,7 @@ def test_fix_of_a_deliverable_whose_rounds_are_over_writes_its_fix_and_prints_it
 def test_fix_after_a_fix_fixed_writes_the_next(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 its fixer
     fixed, its Cut holding the command's node as it stands
-    When tree.py fix runs for the command, from send-back, with the user's words
+    When tree fix runs for the command, from send-back, with the user's words
     Then it gives 0 printing fix-3's folder"""
     r = over(str(tmp_path))
     fix = r.round(COMMAND, "fix", 2)
@@ -1125,7 +1125,7 @@ def test_fix_of_a_deliverable_whose_rounds_arent_over_gives_1_writing_no_fix(
 ):
     """Given the walkthrough's run whose command's generator made Round content-1, the evaluator
     still due
-    When tree.py fix runs for the command
+    When tree fix runs for the command
     Then it gives 1 saying it waits on its evaluator, as its Rounds aren't over yet, and writes no
     Fix"""
     r = Run(str(tmp_path), walkthrough())
@@ -1140,7 +1140,7 @@ def test_fix_of_a_deliverable_whose_rounds_arent_over_gives_1_writing_no_fix(
 def test_fix_while_a_fix_waits_on_its_fixer_gives_1_writing_no_fix(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 holds its
     problem alone
-    When tree.py fix runs for the command
+    When tree fix runs for the command
     Then it gives 1 saying it waits on its fixer, as a Fix of it is unfinished, and writes no
     fix-3"""
     r = over(str(tmp_path))
@@ -1155,7 +1155,7 @@ def test_fix_while_a_fix_waits_on_its_fixer_gives_1_writing_no_fix(tmp_path: Any
 def test_fix_and_next_while_a_fixs_decision_waits_on_the_pruner(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's fix-2 its fixer ended with decision, its Cut
     holding the command's node as it stands
-    When tree.py fix, then tree.py next, run
+    When tree fix, then tree next, run
     Then the fix gives 1 saying it waits on the pruner, to weigh the decision its fixer named;
     next prints the `pruner` of the command with fix-2's fixer.json; and neither writes a
     folder"""
@@ -1189,7 +1189,7 @@ def test_commit_after_a_fixs_decision_marks_it_weighed_and_the_command_is_put_up
 ):
     """Given the walkthrough's run whose command's fix-2 its fixer ended with decision, the tree as
     committed, as the pruner cut the decision and changed nothing, and the pruner's result
-    When tree.py commit runs, and then tree.py next
+    When tree commit runs, and then tree next
     Then the commit gives 0 printing the last commit's hash, which fix-2's weighed.json holds; and
     next prints the command's `put-up`, as the Fix is over"""
     r = over(str(tmp_path))
@@ -1204,7 +1204,7 @@ def test_commit_after_a_fixs_decision_marks_it_weighed_and_the_command_is_put_up
 def test_commit_leaves_a_fixs_decision_its_pruner_didnt_weigh_unmarked(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's fix-2 its fixer ended with decision, and the
     pruner's result of another unit, naming no unit
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0, and fix-2 holds no weighed.json, its decision still due to a pruner"""
     r = over(str(tmp_path))
     fix = fixer_ended(r, {"result": "decision", "decision": "x"})
@@ -1223,7 +1223,7 @@ def test_commit_leaves_a_fix_that_waits_on_no_pruner_unmarked(
 ):
     """Given the walkthrough's run whose command's fix-2 its fixer fixed, or holds no result yet,
     and the pruner's result of another unit
-    When tree.py commit runs
+    When tree commit runs
     Then it gives 0, and fix-2 holds no weighed.json, as no pruner weighs it"""
     r = over(str(tmp_path))
     fix = fixer_ended(r, result)
@@ -1245,7 +1245,7 @@ def test_fix_with_a_wrong_source_or_no_words_gives_1_writing_no_fix(
     tmp_path: Any, host: Any, source: str, words: str, said: str
 ):
     """Given the walkthrough's run whose command's Rounds are over
-    When tree.py fix runs for the command with a source of none, or with no words on stdin
+    When tree fix runs for the command with a source of none, or with no words on stdin
     Then it gives 1 saying what it takes, and writes no Fix"""
     r = over(str(tmp_path))
     refused(r.main(host, "fix", r.run, COMMAND, source, stdin=words), said)
@@ -1254,7 +1254,7 @@ def test_fix_with_a_wrong_source_or_no_words_gives_1_writing_no_fix(
 
 def test_fix_of_a_path_of_no_deliverable_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run
-    When tree.py fix runs for invoicer/cli.py, no deliverable's path
+    When tree fix runs for invoicer/cli.py, no deliverable's path
     Then it gives 1 naming the path"""
     r = over(str(tmp_path))
     refused(
@@ -1263,9 +1263,9 @@ def test_fix_of_a_path_of_no_deliverable_gives_1_naming_it(tmp_path: Any, host: 
 
 
 def test_next_after_a_fix_writes_the_fixers_cut_in_it(tmp_path: Any, host: Any):
-    """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 tree.py fix
+    """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 tree fix
     wrote
-    When tree.py next runs, and again
+    When tree next runs, and again
     Then the first prints the fixer's `start` with the path of fix-2's fixer-cut.json from the
     repository's top, which holds the command's node and the Fix's problem; the second prints it
     `running`"""
@@ -1284,7 +1284,7 @@ def test_next_restart_of_a_fixer_a_pause_stopped_writes_a_fresh_cut_in_its_fix(
 ):
     """Given the walkthrough's run whose command's fix-2 holds a fixer's Cut of an older node and
     no result, as a pause stopped its fixer
-    When tree.py next --restart runs
+    When tree next --restart runs
     Then it prints the fixer's `start`, fix-2's Cut holding the node as the tree holds it now, and
     no fix-3 made"""
     r = over(str(tmp_path))
@@ -1298,7 +1298,7 @@ def test_next_restart_of_a_fixer_a_pause_stopped_writes_a_fresh_cut_in_its_fix(
 
 def test_next_of_a_fix_fixed_prints_its_put_up_until_it_is_put_up(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's fix-2 its fixer fixed
-    When tree.py next runs, before fix-2 is marked put up with the command's state, and after
+    When tree next runs, before fix-2 is marked put up with the command's state, and after
     Then the first prints the command's `put-up`, and the second its `sign-off`, as the command
     is open at a step that the user checks"""
     r = over(str(tmp_path))
@@ -1311,7 +1311,7 @@ def test_next_of_a_fix_fixed_prints_its_put_up_until_it_is_put_up(tmp_path: Any,
 def test_next_of_a_done_deliverables_fix_starts_its_fixer_then_its_put_up(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan, command, and guide are done, the command's Round
     content-1 judged good and weighed, and its fix-2 written with its problem
-    When tree.py next runs; then once its fixer fixed it; then once fix-2 is marked put up
+    When tree next runs; then once its fixer fixed it; then once fix-2 is marked put up
     Then it prints the fixer's `start`; then the command's `put-up`; then `final-check`, as the
     command stays done"""
     the = walkthrough()
@@ -1335,7 +1335,7 @@ def test_next_of_a_done_deliverable_whose_fix_changed_its_decisions_starts_nothi
     """Given the walkthrough's run whose plan, command, and guide are done, and whose command's
     fix-2 its fixer ended with decision, its Cut holding the command with N1 good, which the tree
     now holds not good, as a pruner left the command done
-    When tree.py next runs
+    When tree next runs
     Then it prints `final-check` alone, starting no Round of the done command, so that the final
     check finds the problem again for a pruner, which opens the command for its Rounds"""
     the = walkthrough()
@@ -1361,7 +1361,7 @@ def test_signoff_of_the_plan_waiting_writes_it_done_commits_it_and_prints_the_tr
     tmp_path: Any, host: Any
 ):
     """Given the walkthrough's run whose plan is open with each condition good
-    When tree.py signoff runs
+    When tree signoff runs
     Then it gives 0 printing the design tree's path, whose plan is now done in its one line, and
     the tree is committed as `rn: <the plan's name>, signed off`, with no change left"""
     r = Run(str(tmp_path), walkthrough(plan_done=False))
@@ -1379,21 +1379,21 @@ def test_signoff_of_the_plan_waiting_writes_it_done_commits_it_and_prints_the_tr
 
 def test_signoff_with_none_waiting_gives_1_leaving_the_tree(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan is done, and whose command and guide have no Round
-    When tree.py signoff runs
+    When tree signoff runs
     Then it gives 1, and the tree is as it was"""
     r = Run(str(tmp_path), walkthrough())
     before = r.tree()
     code, out, err = r.main(host, "signoff", r.run)
     assert code == 1
     assert out == ""
-    assert err.startswith("tree.py: ")
+    assert err.startswith("tree: ")
     assert r.tree() == before
 
 
 def test_signoff_of_a_deliverable_past_its_rounds_writes_it_done(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command is past its two content Rounds, its finding kept
     as an open decision
-    When tree.py signoff runs
+    When tree signoff runs
     Then it gives 0 printing the design tree's path, whose command is now done, keeping N1 not
     good with the user's answer and the finding left as its decisions, and N2 and N3 good"""
     r = left_past(str(tmp_path))
@@ -1448,7 +1448,7 @@ def test_signoff_that_leaves_a_deliverable_open_commits_pushing_nothing_and_aski
 ):
     """Given the walkthrough's run with a remote origin, whose command waits for sign-off and whose
     guide is open, its pull request open
-    When tree.py signoff runs
+    When tree signoff runs
     Then it gives 0, the branch holds a new commit, origin holds no work branch, and the host ran
     no push and no command of gh"""
     r = signed_with_origin(str(tmp_path), host, gh_state, last=False)
@@ -1464,7 +1464,7 @@ def test_signoff_that_leaves_each_deliverable_done_commits_it_pushing_nothing_an
 ):
     """Given the walkthrough's run with a remote origin, whose plan and guide are done and whose
     command waits for sign-off, its pull request open
-    When tree.py signoff runs
+    When tree signoff runs
     Then it gives 0 printing the tree's path, each deliverable is done, the branch holds a new
     commit, origin holds no work branch, and the host ran no push and no command of gh, as the
     final check pushes the work and the user marks the pull request ready"""
@@ -1488,7 +1488,7 @@ def test_signoff_that_leaves_each_deliverable_done_commits_it_pushing_nothing_an
 )
 def test_a_folder_that_isnt_a_runs_gives_1(tmp_path: Any, host: Any, folder: str):
     """Given the walkthrough's run
-    When tree.py touched runs with a folder of invoicer, one whose names differ, or the worktree's
+    When tree touched runs with a folder of invoicer, one whose names differ, or the worktree's
     .rn
     Then it gives 1 naming the folder"""
     r = Run(str(tmp_path), walkthrough())
@@ -1497,7 +1497,7 @@ def test_a_folder_that_isnt_a_runs_gives_1(tmp_path: Any, host: Any, folder: str
 
 def test_a_runs_folder_with_no_design_tree_gives_1(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose design tree is taken away
-    When tree.py touched runs on its folder
+    When tree touched runs on its folder
     Then it gives 1 naming the folder"""
     r = Run(str(tmp_path), walkthrough())
     os.remove(r.tree_path)
@@ -1506,7 +1506,7 @@ def test_a_runs_folder_with_no_design_tree_gives_1(tmp_path: Any, host: Any):
 
 def test_a_runs_folder_given_whole_is_the_same_run(tmp_path: Any, host: Any):
     """Given the walkthrough's run
-    When tree.py touched runs on its folder given as an absolute path
+    When tree touched runs on its folder given as an absolute path
     Then it prints what it prints for the folder from the repository's top"""
     r = Run(str(tmp_path), walkthrough())
     pointer = "/deliverables/2"

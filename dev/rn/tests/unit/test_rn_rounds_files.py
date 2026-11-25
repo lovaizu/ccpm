@@ -477,7 +477,7 @@ def test_a_round_and_a_fix_that_share_a_number_are_refused(
 
 def test_at_a_fixs_folder_is_refused(run: RunPlace):
     """Given a run whose guide has Round content-1 and Fix fix-2
-    When the Round of the Fix's folder is asked, as repository.py trial takes a Round's
+    When the Round of the Fix's folder is asked, as repository trial takes a Round's
     Then it raises Wrong naming the folder, as a Fix is no Round"""
     rn_files.a_round(folder(run), GUIDE, "content", 1)
     place = a_fix(run, 2)

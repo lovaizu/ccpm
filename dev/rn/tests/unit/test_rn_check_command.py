@@ -1,9 +1,9 @@
-"""The unit cases of check/command.py, check.py's command line as a role runs it before it ends:
+"""The unit cases of check/command.py, check's command line as a role runs it before it ends:
 for each role, the fixer's in its Fix among them, a result that holds, one with faults, and none
 written; a generator's guide off its
 kind's template, each place on a line, the worktree and the folder taken from the Cut and from
 `cwd`, not from the process's own folder; a result that isn't JSON; a Cut out of its schema or
-missing, a schema that can't be read, and a role of neither, each of which check.py couldn't check
+missing, a schema that can't be read, and a role of neither, each of which check couldn't check
 by; and each count of arguments other than two. Each runs from the user's repository's top, with
 the Cut's path from there, as a role runs rn's scripts from there."""
 
@@ -113,7 +113,7 @@ GOOD = {
 @pytest.mark.parametrize("role", ["generator", "evaluator", "fixer"])
 def test_a_result_that_holds_its_cut_gives_0_printing_nothing(run: Run, role: str):
     """Given the role's Cut and a result that holds it beside it
-    When check.py runs on the role and the Cut
+    When check runs on the role and the Cut
     Then it gives 0, printing nothing"""
     cut = run.cut(role)
     run.result(role, GOOD[role])
@@ -122,7 +122,7 @@ def test_a_result_that_holds_its_cut_gives_0_printing_nothing(run: Run, role: st
 
 def test_a_generators_result_with_a_fault_gives_1_with_the_fault(run: Run):
     """Given the generator's Cut and its made naming N9 good, which light doesn't hold
-    When check.py runs on it
+    When check runs on it
     Then it gives 1, its output naming N9 on a line"""
     cut = run.cut("generator")
     run.result("generator", rn_files.made([("N1", [LINE]), ("N9", [LINE])], [COMMAND]))
@@ -133,7 +133,7 @@ def test_a_generators_result_with_a_fault_gives_1_with_the_fault(run: Run):
 
 def test_a_fixers_result_with_a_fault_gives_1_with_the_fault(run: Run):
     """Given the fixer's Cut and its fixed naming invoicer's README beside the command
-    When check.py runs on it
+    When check runs on it
     Then it gives 1, its output naming README.md on a line"""
     cut = run.cut("fixer")
     run.result("fixer", {"result": "fixed", "files": [COMMAND, "README.md"]})
@@ -144,7 +144,7 @@ def test_a_fixers_result_with_a_fault_gives_1_with_the_fault(run: Run):
 
 def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run):
     """Given the evaluator's Cut and its judged answering N1 alone
-    When check.py runs on it
+    When check runs on it
     Then it gives 1, with N2 and N3 each named on a line of its own"""
     cut = run.cut("evaluator")
     run.result("evaluator", rn_files.judged([("N1", [LINE])]))
@@ -157,7 +157,7 @@ def test_an_evaluators_result_with_two_faults_gives_1_with_each_a_line(run: Run)
 
 def test_a_fixer_that_wrote_no_result_gives_1_with_where_it_writes_one_in_its_fix(run: Run):
     """Given the fixer's Cut, and no result beside it
-    When check.py runs on it
+    When check runs on it
     Then it gives 1, naming the path of <fix>/fixer.json"""
     cut = run.cut("fixer")
     written = os.path.join(run.fix, "fixer.json")
@@ -171,7 +171,7 @@ def test_a_fixer_that_wrote_no_result_gives_1_with_where_it_writes_one_in_its_fi
 @pytest.mark.parametrize("role", ["generator", "evaluator"])
 def test_a_role_that_wrote_no_result_gives_1_with_where_it_writes_one(run: Run, role: str):
     """Given the role's Cut, and no result beside it
-    When check.py runs on it
+    When check runs on it
     Then it gives 1, naming the path of <round>/<role>.json"""
     cut = run.cut(role)
     code, out, err = main([role, cut], run.repository, rn_files.RN)
@@ -181,20 +181,20 @@ def test_a_role_that_wrote_no_result_gives_1_with_where_it_writes_one(run: Run, 
 
 def test_a_result_that_isnt_json_gives_1_naming_it(run: Run):
     """Given the generator's Cut, and a result beside it that isn't JSON
-    When check.py runs on it
-    Then it gives 1, its output starting `check.py: ` and naming the result's path, as the role
+    When check runs on it
+    Then it gives 1, its output starting `check: ` and naming the result's path, as the role
     mends what it wrote"""
     cut = run.cut("generator")
     written = os.path.join(run.round, "generator.json")
     write_files(run.repository, {written: "{made"})
     code, out, err = main(["generator", cut], run.repository, rn_files.RN)
     assert code == 1
-    assert (out + err).startswith(f"check.py: {written}: ")
+    assert (out + err).startswith(f"check: {written}: ")
 
 
 def test_a_cut_out_of_its_schema_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given a generator's Cut with no goal, and a result that would hold it
-    When check.py runs on it
+    When check runs on it
     Then it gives 2, saying that it couldn't check the generator's result, as its Cut leaves its
     form at goal"""
     cut = run.cut("generator")
@@ -205,7 +205,7 @@ def test_a_cut_out_of_its_schema_gives_2_saying_what_check_py_couldnt_check(run:
     code, out, err = main(["generator", cut], run.repository, rn_files.RN)
     assert code == 2
     assert (out + err).startswith(
-        f"check.py: couldn't check the generator's result, as its Cut {cut} leaves the form of"
+        f"check: couldn't check the generator's result, as its Cut {cut} leaves the form of"
         " a generator's Cut at "
     )
     assert "goal" in out + err
@@ -213,14 +213,14 @@ def test_a_cut_out_of_its_schema_gives_2_saying_what_check_py_couldnt_check(run:
 
 def test_a_cut_that_isnt_there_gives_2_saying_what_check_py_couldnt_check(run: Run):
     """Given no Cut at the path given
-    When check.py runs on it
+    When check runs on it
     Then it gives 2, saying that it couldn't check the generator's result, as its Cut, by its
     path, can't be read"""
     missing = os.path.join(run.round, "generator-cut.json")
     code, out, err = main(["generator", missing], run.repository, rn_files.RN)
     assert code == 2
     assert (out + err).startswith(
-        f"check.py: couldn't check the generator's result, as its Cut {missing} can't be read"
+        f"check: couldn't check the generator's result, as its Cut {missing} can't be read"
         " as JSON: "
     )
 
@@ -229,7 +229,7 @@ def test_a_schema_that_cant_be_read_gives_2_saying_what_check_py_couldnt_check(
     run: Run, tmp_path: Any
 ):
     """Given the generator's Cut and its result, and an rn folder that holds no schema
-    When check.py runs on it
+    When check runs on it
     Then it gives 2, saying that the schema can't be read, by its path"""
     cut = run.cut("generator")
     run.result("generator", GOOD["generator"])
@@ -237,14 +237,14 @@ def test_a_schema_that_cant_be_read_gives_2_saying_what_check_py_couldnt_check(
     os.makedirs(bare)
     code, out, err = main(["generator", cut], run.repository, bare)
     assert code == 2
-    assert (out + err).startswith("check.py: ")
+    assert (out + err).startswith("check: ")
     assert "generator-cut.schema.json: the schema can't be read: " in out + err
 
 
 @pytest.mark.parametrize("role", ["orchestrator", "Generator"])
 def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run, role: str):
     """Given the generator's Cut and its result
-    When check.py runs on a role that is none of generator, evaluator, and fixer
+    When check runs on a role that is none of generator, evaluator, and fixer
     Then it gives 2, saying that it couldn't check a result of the role, as it checks only the
     generator's, the evaluator's, and the fixer's"""
     cut = run.cut("generator")
@@ -252,7 +252,7 @@ def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run, 
     code, out, err = main([role, cut], run.repository, rn_files.RN)
     assert code == 2
     assert out + err == (
-        f"check.py: couldn't check a result of {role!r}, as it checks only the generator's, the"
+        f"check: couldn't check a result of {role!r}, as it checks only the generator's, the"
         " evaluator's, and the fixer's\n"
     )
 
@@ -260,7 +260,7 @@ def test_a_role_of_neither_gives_2_saying_what_check_py_couldnt_check(run: Run, 
 @pytest.mark.parametrize("argv", [[], ["generator"], ["generator", "a.json", "b.json"]])
 def test_arguments_other_than_a_role_and_a_cut_give_2_with_the_usage(run: Run, argv: list[str]):
     """Given the run
-    When check.py runs on no argument, one, or three
+    When check runs on no argument, one, or three
     Then it gives 2 with the usage"""
     code, out, err = main(argv, run.repository, rn_files.RN)
     assert code == 2
@@ -270,7 +270,7 @@ def test_arguments_other_than_a_role_and_a_cut_give_2_with_the_usage(run: Run, a
 def test_a_generators_guide_off_its_template_gives_1_with_each_place_a_line(run: Run):
     """Given the guide's generator's Cut, of the kind readme, and its made naming the guide,
     which holds a heading and a paragraph alone, in the run's worktree that the Cut names
-    When check.py runs on it from the repository's top
+    When check runs on it from the repository's top
     Then it gives 1, with lines `docs/guide.md:<line>: <what>`, one for each place"""
     guide = rn_files.open_node(rn_files.GUIDE_NAME, rn_files.GUIDE, "readme", [COMMAND])
     write_files(run.worktree, {rn_files.GUIDE: "# Print an invoice\n\nType the command.\n"})

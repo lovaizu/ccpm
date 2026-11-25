@@ -378,7 +378,7 @@ def test_the_fixers_cut_refuses_a_fix_of_no_deliverable(repo: str):
 def test_the_fixers_cut_refuses_a_fix_with_no_problem(repo: str):
     """Given the walkthrough's tree, and the command's fix-2 holding no problem
     When the fixer's Cut is made
-    Then it refuses with Wrong naming the Fix's folder and saying to write it by tree.py fix"""
+    Then it refuses with Wrong naming the Fix's folder and saying to write it by tree fix"""
     fix = fix_at(repo, COMMAND, 2, problem=None)
-    with pytest.raises(Wrong, match="holds no problem; write the Fix by tree.py fix"):
+    with pytest.raises(Wrong, match="holds no problem; write the Fix by tree fix"):
         fixer(walkthrough(), run_of(repo), fix)

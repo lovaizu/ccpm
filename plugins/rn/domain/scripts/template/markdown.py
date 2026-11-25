@@ -1,4 +1,4 @@
-"""Decides how template.py reads Markdown into blocks: each heading, paragraph, list item, fenced
+"""Decides how template reads Markdown into blocks: each heading, paragraph, list item, fenced
 code block, figure, and quote, with the line it starts on, and each list item with the blocks
 nested in it, so that rn's check of a template reads a template and a document alike."""
 

@@ -18,7 +18,7 @@ from tree.cut import Cut
 from check.form import faults as form_faults
 from check.form import schema
 
-# The roles whose result check.py checks, each by the name of its result's schema in
+# The roles whose result check checks, each by the name of its result's schema in
 # domain/schemas/, and the key of its Cut that names the folder of its result: a Round's for the
 # generator and the evaluator, and a Fix's for the fixer.
 FORMS = {
@@ -84,7 +84,7 @@ def _form(role: str) -> tuple[str, str]:
     """The role's result's schema and its Cut's key of its folder, refused as Wrong for a role of
     none of FORMS."""
     if role not in FORMS:
-        raise Wrong(f"check.py checks the result of {', '.join(FORMS)}, not {role!r}")
+        raise Wrong(f"check checks the result of {', '.join(FORMS)}, not {role!r}")
     return FORMS[role]
 
 

@@ -10,8 +10,9 @@ from typing import Any, Callable
 
 from fault import CantRun
 
-# The folder of rn's own schemas, domain/schemas/.
-_SCHEMAS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "schemas")
+# The folder of rn's own schemas, domain/schemas/, two above this file's folder.
+_DOMAIN = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_SCHEMAS = os.path.join(_DOMAIN, "schemas")
 
 # Each type that rn's schemas name, by whether a value from JSON is of it; a bool is no integer.
 _TYPES: dict[str, Callable[[Any], bool]] = {

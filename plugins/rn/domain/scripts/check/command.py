@@ -1,4 +1,4 @@
-"""Decides check.py's command line: what it takes, what it prints, and the exit code by which the
+"""Decides check's command line: what it takes, what it prints, and the exit code by which the
 role that runs it reads its result."""
 
 from __future__ import annotations
@@ -13,12 +13,12 @@ from fault import Answer, CantRun, Wrong
 from check import form, result
 
 USAGE = """\
-usage: check.py <role> <cut>
+usage: check <role> <cut>
 """
 
 
 def main(argv: Sequence[str], cwd: str, plugin_root: str) -> Answer:
-    """The exit code, stdout, and stderr of `check.py` with the arguments, from the folder `cwd`,
+    """The exit code, stdout, and stderr of `check` with the arguments, from the folder `cwd`,
     with rn's folder at `plugin_root`.
 
     `<role> <cut>`, `<role>` one of `check.result.FORMS`, the role's Cut by its path from `cwd`: 0
@@ -26,8 +26,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str) -> Answer:
     the role's result, `<role>.json` in the Round's folder that the Cut names, or in the Fix's
     for the fixer, with the run's worktree that the Cut's paths give and `cwd`; 1 with each
     fault a line, or, where the role wrote no result, the path where it writes one. 1 with
-    `check.py: <what's wrong>` where the role's result is Wrong, as one that can't be read as JSON,
-    saying how to mend it. 2 with `check.py: <what it couldn't check and why>` where it CantRun: a
+    `check: <what's wrong>` where the role's result is Wrong, as one that can't be read as JSON,
+    saying how to mend it. 2 with `check: <what it couldn't check and why>` where it CantRun: a
     role of neither, a Cut that can't be read as JSON or leaves its schema, or a schema that can't
     be read, as the role reads 2 as a check that couldn't check; 2 with the usage where the
     arguments are other than a role and a Cut.
@@ -37,9 +37,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str) -> Answer:
     try:
         found = _faults(argv[0], argv[1], cwd, plugin_root)
     except Wrong as wrong:
-        return 1, "", f"check.py: {wrong}\n"
+        return 1, "", f"check: {wrong}\n"
     except CantRun as couldnt:
-        return 2, "", f"check.py: {couldnt}\n"
+        return 2, "", f"check: {couldnt}\n"
     return (1 if found else 0), "".join(f"{each}\n" for each in found), ""
 
 

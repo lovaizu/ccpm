@@ -444,7 +444,7 @@ Strategies:
 plugins/rn/                        what Claude Code installs for the user
 ├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
 ├── agents/                        the pruner's, the generator's, the evaluator's, and the fixer's starts
-├── hooks/                         the hook that turns a maker's delete to remove.py, and keeps the design tree to the pruner and the scripts
+├── hooks/                         the hook that turns a maker's delete to remove, and keeps the design tree to the pruner and the scripts
 ├── domain/
 │   ├── orchestrator.md            the event's own step, then those that every event shares
 │   ├── vital-few.md               the measure of the vital few, which the orchestrator and the pruner read
@@ -453,15 +453,15 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── evaluator.md               what the evaluator does
 │   ├── fixer.md                   what the fixer does
 │   ├── schemas/                   the form of each Cut and result
-│   ├── tree/                      the code that checks and commits the design tree, and lists what's due
-│   ├── check/                     the code that checks each role's result against its form
-│   ├── rounds/                    the code that reads and writes the Rounds and the Fixes
-│   ├── template/                  the code that holds a document to its kind's template
-│   ├── repository/                the code that makes a run's worktree and puts a deliverable up
-│   ├── remove/                    the code that removes what a maker made for itself
-│   ├── hook/                      the code of the hook before each Bash command and each write
 │   ├── best-practices/            rn's own best practice of each kind
 │   └── scripts/                   each step with one right result, as a role runs it
+│       ├── tree/                  checks and commits the design tree, and lists what's due
+│       ├── check/                 checks each role's result against its form
+│       ├── template/              holds a document to its kind's template
+│       ├── repository/            makes a run's worktree and puts a deliverable up
+│       ├── remove/                removes what a maker made for itself
+│       ├── hook/                  the hook before each Bash command and each write
+│       └── rounds/                reads and writes the Rounds and the Fixes, for the scripts above
 
 dev/rn/                            what only rn's developers use
 └── tests/                         the unit tests of rn's code

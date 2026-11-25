@@ -111,7 +111,7 @@ def fixer(tree: Tree, run: RunPlace, fix: Fix) -> Cut:
     node = deliverable(tree, fix.deliverable)
     problem = files.problem_of(fix)
     if problem is None:
-        raise Wrong(f"{fix.folder}: holds no problem; write the Fix by tree.py fix")
+        raise Wrong(f"{fix.folder}: holds no problem; write the Fix by tree fix")
     paths = [node["path"], *node.get("more_paths", [])]
     return {
         "deliverable": node,

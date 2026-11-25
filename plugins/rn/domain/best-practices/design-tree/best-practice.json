@@ -120,7 +120,7 @@
             "items": [
               {
                 "at": "make",
-                "text": "After each change to a node, run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree.py touched <run> <path>`, where `<run>` is the run's folder and `<path>` is the changed node's path. It lists each node that the change touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it."
+                "text": "After each change to a node, run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree touched <run> <path>`, where `<run>` is the run's folder and `<path>` is the changed node's path. It lists each node that the change touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it."
               },
               {
                 "at": "make",
@@ -128,11 +128,11 @@
               },
               {
                 "at": "make",
-                "text": "Run `tree.py touched` again for each node you rewrote, until a pass rewrites nothing."
+                "text": "Run `tree touched` again for each node you rewrote, until a pass rewrites nothing."
               },
               {
                 "at": "make",
-                "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree.py commit <run> '<ground>'`, where `<ground>` is why the change decides as it does. It gives 1 with the first fault where the tree leaves its schema or its checks, and leaves git as it was, so mend what it names and run it again. It gives 0 with the commit's hash, with `<ground>` as the commit message, so that git keeps the grounds and the tree holds the decision alone."
+                "text": "Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree commit <run> '<ground>'`, where `<ground>` is why the change decides as it does. It gives 1 with the first fault where the tree leaves its schema or its checks, and leaves git as it was, so mend what it names and run it again. It gives 0 with the commit's hash, with `<ground>` as the commit message, so that git keeps the grounds and the tree holds the decision alone."
               }
             ]
           }
