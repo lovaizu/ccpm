@@ -4,8 +4,7 @@ conditions, and each fault the contract names, one at a time and two at once: a 
 schema, a goal with `by` but no sentence or a sentence but no `by`, a done deliverable in one line
 without its conditions, a kind with no best practice, an open deliverable's conditions out of its
 best practice's set or order, an input that names neither a deliverable nor a file of the worktree,
-a deliverable resting on itself directly or through another, an item of the work that names no
-deliverable, or a decide naming no condition or about of it, an open Markdown deliverable lacking a
+a deliverable resting on itself directly or through another, an open Markdown deliverable lacking a
 figure that its kind's template has it keep, and steps that put a deliverable before one of a kind
 that its kind's best practice takes as an input; with a near match beside each."""
 
@@ -59,11 +58,9 @@ def worktree(tmp_path: Any) -> str:
 
 
 def the_tree() -> dict[str, Any]:
-    """The walkthrough's tree with the plan done, a settled decision of the command's N1, and the
-    work making the command and deciding its N1's tax rate."""
+    """The walkthrough's tree with the plan done and a settled decision of the command's N1."""
     tax = rn_files.decision(rn_files.TAX_ABOUT, rn_files.TAX_ANSWER, "user")
     the = rn_files.walkthrough_tree(NAME, command_decisions={"N1": [tax]})
-    the["work"].append(rn_files.work("decide", COMMAND, "N1", rn_files.TAX_ABOUT))
     return the
 
 
@@ -91,7 +88,6 @@ def test_the_plan_open_with_its_conditions_in_order_has_no_fault(worktree: str):
 @pytest.mark.parametrize(
     ("change", "pointer"),
     [
-        (lambda t: t["work"][0].update(do="build"), "/work/0/do"),
         (lambda t: t["goal"].update(by="nobody"), "/goal/by"),
         (lambda t: t["goal"].pop("by"), "/goal"),
         (lambda t: t["goal"].update(decided=None), "/goal"),
@@ -101,6 +97,13 @@ def test_the_plan_open_with_its_conditions_in_order_has_no_fault(worktree: str):
         ),
         (lambda t: t["deliverables"][1].pop("inputs"), "/deliverables/1"),
         (lambda t: t["deliverables"][1].update(status="done"), "/deliverables/1"),
+        (lambda t: t["deliverables"][1].update(status="doing"), "/deliverables/1"),
+        (
+            lambda t: t["deliverables"][1]["necessary_conditions"][0]["decisions"][0].update(
+                by="maker"
+            ),
+            "/deliverables/1/necessary_conditions/0/decisions/0",
+        ),
         (
             lambda t: t["deliverables"][1]["necessary_conditions"][0]["decisions"][0].update(
                 decided="The rate, as the user decided."
@@ -116,10 +119,10 @@ def test_the_plan_open_with_its_conditions_in_order_has_no_fault(worktree: str):
 def test_a_place_out_of_the_schema_is_a_fault_naming_its_pointer(
     worktree: str, change: Any, pointer: str
 ):
-    """Given the walkthrough's tree with one place out of design-tree.schema.json: a work item's do
-    of neither make nor decide, a goal's by of no one, an open deliverable lacking its inputs or
-    done with its conditions kept, a decision whose decided says the user decided it, or a good
-    that isn't a boolean
+    """Given the walkthrough's tree with one place out of design-tree.schema.json: a goal's by of no
+    one, an open deliverable lacking its inputs, done with its conditions kept, or of a status
+    neither open nor done, a decision by its deliverable's maker or whose decided says the user
+    decided it, or a good that isn't a boolean
     When its faults are found
     Then they are one line, naming the place's pointer"""
     the = the_tree()
@@ -265,53 +268,18 @@ def test_a_deliverable_resting_on_one_twice_rests_on_nothing_of_itself(worktree:
     assert faults(the, practices(), worktree) == []
 
 
-@pytest.mark.parametrize(
-    ("item", "pointer"),
-    [
-        (rn_files.work("make", "docs/guide"), "/work/2"),
-        (rn_files.work("make", "invoicer/lines.py"), "/work/2"),
-        (rn_files.work("decide", COMMAND, "N4", rn_files.TAX_ABOUT), "/work/2"),
-        (rn_files.work("decide", COMMAND, "N1", "the tax"), "/work/2"),
-        (rn_files.work("decide", COMMAND, "N2", rn_files.TAX_ABOUT), "/work/2"),
-    ],
-)
-def test_an_item_of_the_work_naming_no_deliverable_condition_or_about_of_it_is_a_fault(
-    worktree: str, item: dict[str, Any], pointer: str
-):
-    """Given the walkthrough's tree with a third item of the work: a make of a path near the
-    guide's, or of a file that's no deliverable, or a decide of the command naming a condition light
-    lacks, an about that N1 lacks, or N2, which lacks the tax rate's about that N1 holds
-    When its faults are found
-    Then they are one line, naming /work/2"""
-    the = the_tree()
-    the["work"] = the["work"][:2] + [item]
-    one_fault(faults(the, practices(), worktree), pointer)
-
-
-def test_a_decide_of_an_open_point_of_its_condition_holds(worktree: str):
-    """Given the walkthrough's tree whose command's N1 holds the tax rate's point open, and whose
-    work decides it
-    When its faults are found
-    Then there is none"""
-    the = the_tree()
-    the["deliverables"][1]["necessary_conditions"][0]["decisions"] = [
-        rn_files.decision(rn_files.TAX_ABOUT, None)
-    ]
-    assert faults(the, practices(), worktree) == []
-
-
 def test_each_fault_of_a_tree_is_given_not_only_the_first(worktree: str):
     """Given the walkthrough's tree whose done plan's kind is `plan`, which no best practice has,
-    and whose first item of the work makes a path no deliverable has
+    and whose command names as its input a file the worktree lacks
     When its faults are found
-    Then they are two lines, naming /deliverables/0/kind and /work/0"""
+    Then they are two lines, naming /deliverables/0/kind and /deliverables/1/inputs/0"""
     the = copy.deepcopy(the_tree())
     the["deliverables"][0]["kind"] = "plan"
-    the["work"][0]["path"] = "invoicer/cli.py"
+    the["deliverables"][1]["inputs"] = ["invoicer/cli.py"]
     found = faults(the, practices(), worktree)
     assert len(found) == 2, found
     assert any("/deliverables/0/kind" in each for each in found)
-    assert any("/work/0" in each for each in found)
+    assert any("/deliverables/1/inputs/0" in each for each in found)
 
 
 # The steps of the way to the goal.
@@ -406,7 +374,6 @@ def guide_with(more: list[str] | None, status: str = "open") -> dict[str, Any]:
         guide["more_paths"] = more
     if status == "done":
         the["deliverables"][2] = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
-        the["work"] = the["work"][:1]
     return the
 
 
@@ -471,7 +438,6 @@ def test_a_deliverable_that_isnt_markdown_is_asked_no_figure(worktree: str):
     Then there is none, as only a Markdown document holds its template"""
     the = guide_with(None)
     the["deliverables"][2]["path"] = "docs/guide.txt"
-    the["work"][1]["path"] = "docs/guide.txt"
     assert faults(the, practices(), worktree) == []
 
 

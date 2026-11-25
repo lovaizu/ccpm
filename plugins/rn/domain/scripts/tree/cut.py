@@ -19,7 +19,7 @@ from rounds import files
 from rounds.files import Fix, Result, Round
 from template.check import TEMPLATE
 
-from tree.form import OPEN, Deliverable, Tree, deliverable, goal
+from tree.form import Deliverable, Tree, deliverable, goal
 
 # A role's Cut, in the form of domain/schemas/<role>-cut.schema.json.
 Cut = dict[str, Any]
@@ -126,7 +126,7 @@ def fixer(tree: Tree, run: RunPlace, fix: Fix) -> Cut:
 def _open(tree: Tree, round_: Round) -> Deliverable:
     """The open deliverable of the Round's path."""
     for each in tree["deliverables"]:
-        if each["path"] == round_.deliverable and each["status"] in OPEN:
+        if each["path"] == round_.deliverable and each["status"] == "open":
             return each
     raise Wrong(f"{round_.deliverable}: no open deliverable of the design tree has the path")
 

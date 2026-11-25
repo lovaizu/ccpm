@@ -16,7 +16,7 @@ from repository.place import RunPlace
 from rounds import course, files
 
 from tree import signoff
-from tree.form import OPEN, Deliverable, Tree
+from tree.form import Deliverable, Tree
 
 # The kinds of what is due, in the order they come.
 KINDS = (
@@ -101,7 +101,7 @@ def _of(run: RunPlace, tree: Tree, node: Deliverable, may_start: bool) -> list[D
     path = node["path"]
     rounds, mends = course.so_far(run, path), course.mended(run, path)
     fixed_last = bool(mends) and (not rounds or mends[-1].fix.number > rounds[-1].round.number)
-    opened = node["status"] in OPEN
+    opened = node["status"] == "open"
     if not opened and not fixed_last:
         return []
     next_ = course.next_in(run, node)
@@ -122,7 +122,7 @@ def _signed(tree: Tree, node: Deliverable, put_up: bool) -> list[Due]:
     or the user's sign-off where it's open at a step that they check."""
     if not put_up:
         return [Due("put-up", (node["path"],))]
-    if node["status"] in OPEN and signoff.checked(tree, node["path"]):
+    if node["status"] == "open" and signoff.checked(tree, node["path"]):
         return [Due("sign-off", (node["path"],))]
     return []
 

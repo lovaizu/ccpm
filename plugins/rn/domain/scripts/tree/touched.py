@@ -9,7 +9,7 @@ from typing import Any
 from tree.form import Tree, at
 
 # The order of the tree's parts, from the context and the goal down.
-_PARTS = {"context": 0, "goal": 1, "deliverables": 2, "work": 3}
+_PARTS = {"context": 0, "goal": 1, "deliverables": 2}
 # The depth, in a pointer's names, of each node of a deliverable: the deliverable, a condition, and
 # a decision.
 _DELIVERABLE, _CONDITION, _DECISION = 2, 4, 6
@@ -22,16 +22,17 @@ def touched(before: Tree, after: Tree, pointer: str) -> list[str]:
     in the tree as it stands.
     Gives: the JSON Pointer in the tree as it stands of each node up to the goal; of each later
     decision of the same deliverable; of each deliverable whose inputs name the changed
-    deliverable's path, the old one or the new one, or that it names there; and of each item of
-    `work` that names either path; each once, from the goal down, the changed node left out.
+    deliverable's path, the old one or the new one, or that it names there; each once, from the goal
+    down, the changed node left out.
     Changes: nothing.
     Refuses: Wrong where the pointer names no node, as `tree.form.at` refuses.
     """
     at(after, pointer)
     names = pointer[1:].split("/")
     found = {"/goal"}
-    depths = {"work": (2,), "deliverables": (_DELIVERABLE, _CONDITION, _DECISION)}
-    found |= {_pointer(names[:depth]) for depth in depths.get(names[0], ()) if depth <= len(names)}
+    if names[0] == "deliverables":
+        depths = (_DELIVERABLE, _CONDITION, _DECISION)
+        found |= {_pointer(names[:depth]) for depth in depths if depth <= len(names)}
     if names[0] == "deliverables" and len(names) >= _DELIVERABLE:
         found |= _linked(before, after, int(names[1]))
         if len(names) >= _DECISION:
@@ -53,7 +54,7 @@ def changed(before: Tree, after: Tree) -> list[str]:
 
 
 def _linked(before: Tree, after: Tree, index: int) -> set[str]:
-    """The deliverables and items of the work that the links reach from the deliverable."""
+    """The deliverables that the links reach from the deliverable."""
     node = after["deliverables"][index]
     paths = {node["path"]}
     if index < len(before["deliverables"]):
@@ -63,7 +64,6 @@ def _linked(before: Tree, after: Tree, index: int) -> set[str]:
         names_it = paths & set(each.get("inputs", []))
         if other != index and (names_it or each["path"] in node.get("inputs", [])):
             found.add(f"/deliverables/{other}")
-    found |= {f"/work/{place}" for place, item in enumerate(after["work"]) if item["path"] in paths}
     return found
 
 

@@ -1,13 +1,12 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "design tree",
- "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: its context, the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, the work order, and the way to the goal. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
+ "description": "The plan of a piece of work, at .rn/<yyyymmdd>-<goal>/design-tree.json: its context, the goal, the deliverables, each with the necessary conditions of its best practice in that best practice's order, each necessary condition with its decisions, and the way to the goal. Each deliverable's inputs make the deliverables a tree, each under the deepest deliverable they name. It keeps only what holds now, and git keeps the history of each point.",
  "type": "object",
  "required": [
   "context",
   "goal",
   "deliverables",
-  "work",
   "steps"
  ],
  "additionalProperties": false,
@@ -102,7 +101,7 @@
    ]
   },
   "deliverables": {
-   "description": "Every deliverable the goal needs, and a node of each kind that one takes with no file of it in the product. A meta deliverable makes the best practice of a kind that later deliverables have. The list holds no order of the work, which `work` holds.",
+   "description": "Every deliverable the goal needs, and a node of each kind that one takes with no file of it in the product. A meta deliverable makes the best practice of a kind that later deliverables have. The list holds no order of the work, which `steps` holds.",
    "type": "array",
    "items": {
     "anyOf": [
@@ -115,13 +114,6 @@
     ]
    }
   },
-  "work": {
-   "description": "The work next, first to last, each after each deliverable that the inputs of what it names name.",
-   "type": "array",
-   "items": {
-    "$ref": "#/$defs/work"
-   }
-  },
   "steps": {
    "description": "The way to the goal that the user follows the run by, first to last, each deliverable but the plan in one step, after each step whose deliverables it rests on. It stays empty until the plan holds the deliverables.",
    "type": "array",
@@ -132,10 +124,9 @@
  },
  "$defs": {
   "by": {
-   "description": "Who settled the point. user: the user decided it. maker: the maker of the deliverable decided it. reasoning: it follows from the goal and the best practices. research: a source found it. The reason itself goes in the commit message that makes the decision.",
+   "description": "Who settled the point. user: the user decided it. reasoning: it follows from the goal and the best practices. research: a source found it. The reason itself goes in the commit message that makes the decision.",
    "enum": [
     "user",
-    "maker",
     "reasoning",
     "research"
    ]
@@ -267,10 +258,9 @@
      }
     },
     "status": {
-     "description": "Where the deliverable stands. open: no one is making it now. doing: someone is making it now.",
+     "description": "open: the deliverable isn't done yet.",
      "enum": [
-      "open",
-      "doing"
+      "open"
      ]
     },
     "necessary_conditions": {
@@ -362,36 +352,6 @@
     "decided": {
      "description": "null while the point is open.",
      "type": "null"
-    }
-   }
-  },
-  "work": {
-   "description": "One piece of the work next.",
-   "type": "object",
-   "required": [
-    "do",
-    "path"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "do": {
-     "description": "make: a round of the deliverable. decide: settle the point, or put it to the user.",
-     "enum": [
-      "make",
-      "decide"
-     ]
-    },
-    "path": {
-     "description": "The path of the deliverable that the work makes, or that holds the point.",
-     "type": "string"
-    },
-    "condition": {
-     "description": "With decide, for a deliverable of a best practice's kind: the ID of the necessary condition that holds the point, such as N3.",
-     "type": "string"
-    },
-    "about": {
-     "description": "With decide: the point's about, as the deliverable holds it.",
-     "type": "string"
     }
    }
   },

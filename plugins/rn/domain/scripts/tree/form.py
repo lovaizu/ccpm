@@ -15,8 +15,6 @@ from practice import Practice, conditions
 Tree = dict[str, Any]
 # A deliverable of the design tree: one of `done` or `open` of its schema.
 Deliverable = dict[str, Any]
-# The statuses of a deliverable not yet done.
-OPEN = ("open", "doing")
 # The context of a design tree: the `context` of its schema.
 Context = dict[str, Any]
 
@@ -76,7 +74,6 @@ def started(context: Context, plan: str, practice: Practice) -> Tree:
                 "necessary_conditions": held,
             }
         ],
-        "work": [],
         "steps": [],
     }
 

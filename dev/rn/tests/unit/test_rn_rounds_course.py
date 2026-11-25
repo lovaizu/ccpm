@@ -329,7 +329,7 @@ def test_limit_content_rounds_each_given_the_users_answer_wait_on_the_pruner(res
 # The remedies in the node that a Round's generator was given in its Cut, by condition, about, and
 # decided: none, as node() holds the user's answer alone, which is no remedy.
 NO_REMEDY: frozenset[tuple[str, str, str]] = frozenset()
-REMEDY = rn_files.decision("a comma in a line", "A line's comma is read as a decimal.", "maker")
+REMEDY = rn_files.decision("a comma in a line", "A line's comma is read as a decimal.", "reasoning")
 
 
 def remedied(results: str, open_decision: bool = False) -> Any:

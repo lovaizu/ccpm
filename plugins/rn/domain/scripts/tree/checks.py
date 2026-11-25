@@ -10,7 +10,7 @@ from typing import Any
 from check.form import faults as form_faults
 from practice import Practice, conditions
 
-from tree.form import OPEN, Deliverable, Tree
+from tree.form import Deliverable, Tree
 
 # The design tree's schema, beside its best practice in rn's folder.
 _SCHEMA = os.path.join(
@@ -34,16 +34,15 @@ def faults(
     its own, by the kind's name, each by its path from the document's folder, as
     `template.check.figures` gives them.
     Gives: each place, by its JSON Pointer, where the tree leaves its schema; where a deliverable's
-    kind is no kind of `practices`; where an open deliverable's necessary conditions aren't its
-    best practice's, in their order; where an input names neither a deliverable's path nor a file
-    of the worktree; where a deliverable rests on itself through its inputs; where an open
-    deliverable whose path is a Markdown file leaves out of its paths a figure that its kind's
-    template has it keep, naming the figure from the worktree's top; and where an item of `work`
-    names no deliverable, or a `decide` names no condition or `about` of it; and, where `steps`
-    holds any, where a step names a path that no deliverable but the plan has or that an earlier
-    step holds, where no step holds a deliverable but the plan, and where a step puts a deliverable
-    before a later step's deliverable of a kind that its kind's best practice takes as an input,
-    naming the pair. None where the tree holds each.
+    kind is no kind of `practices`; where an open deliverable's necessary conditions aren't its best
+    practice's, in their order; where an input names neither a deliverable's path nor a file of the
+    worktree; where a deliverable rests on itself through its inputs; where an open deliverable
+    whose path is a Markdown file leaves out of its paths a figure that its kind's template has it
+    keep, naming the figure from the worktree's top; and, where `steps` holds any, where a step
+    names a path that no deliverable but the plan has or that an earlier step holds, where no step
+    holds a deliverable but the plan, and where a step puts a deliverable before a later step's
+    deliverable of a kind that its kind's best practice takes as an input, naming the pair. None
+    where the tree holds each.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -65,9 +64,6 @@ def faults(
         if _rests_on(node["path"], node, paths, set()):
             found.append(f"{at}: rests on itself through its inputs; take its own path out of them")
         found += _figures(node, figures.get(node["kind"], ()), at)
-    found += [
-        fault for place, item in enumerate(tree["work"]) for fault in _work(item, paths, place)
-    ]
     return found + _steps(tree["steps"], deliverables) + _order(tree["steps"], paths, practices)
 
 
@@ -121,7 +117,7 @@ def _figures(node: Deliverable, figures: Sequence[str], at: str) -> list[str]:
     """The faults of an open Markdown deliverable whose paths leave out a figure that its kind's
     template has it keep of its own."""
     path = node["path"]
-    if node["status"] not in OPEN or not path.endswith(".md"):
+    if node["status"] != "open" or not path.endswith(".md"):
         return []
     held = [os.path.normpath(each) for each in node.get("more_paths", [])]
     wanted = [os.path.normpath(os.path.join(os.path.dirname(path), each)) for each in figures]
@@ -138,7 +134,7 @@ def _kind(node: Deliverable, practices: Mapping[str, Practice], at: str) -> list
     if node["kind"] not in practices:
         kinds = ", ".join(sorted(practices))
         return [f"{at}/kind: takes one of the kinds of the best practices, {kinds}"]
-    if node["status"] not in OPEN:
+    if node["status"] != "open":
         return []
     wanted = [condition["id"] for condition in conditions(practices[node["kind"]]["goal"])]
     held = [each["id"] for each in node["necessary_conditions"]]
@@ -164,25 +160,3 @@ def _rests_on(
             if _rests_on(path, paths[each], paths, seen):
                 return True
     return False
-
-
-def _work(item: dict[str, Any], paths: Mapping[str, Deliverable], place: int) -> list[str]:
-    """The fault of the item of the work, where it names no deliverable, or no point of it."""
-    at = f"/work/{place}"
-    if item["path"] not in paths:
-        return [f"{at}: names {item['path']}, which no deliverable has; name a deliverable's path"]
-    if item["do"] != "decide":
-        return []
-    conditions = {each["id"]: each for each in paths[item["path"]].get("necessary_conditions", [])}
-    condition = conditions.get(item.get("condition", ""))
-    if condition is None:
-        return [f"{at}: names no condition of {item['path']}; name one of {', '.join(conditions)}"]
-    abouts = [each["about"] for each in condition["decisions"]]
-    if item.get("about") in abouts:
-        return []
-    return [
-        (
-            f"{at}: names no point of {item['path']}'s {condition['id']}; name the about of one of"
-            f" its decisions, {', '.join(abouts) or 'none yet'}"
-        )
-    ]

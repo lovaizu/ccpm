@@ -140,11 +140,11 @@ at the end.
    - `/rn:on`: ask the user what you can help with, an issue's number or a few words alike, and end
      the turn. Their reply is the request.
    - The request: read the issue that it names, by `gh issue view`, and the repository's files that
-     it bears on. Take the languages by N7.2 of the design tree best practice,
+     it bears on. Take the languages by N6.2 of the design tree best practice,
      `<rn's folder>/domain/best-practices/design-tree/best-practice.json`. Then make the run by
      `repository new`.
    - The hearing: talk with the user, one point at a time, of what only they know of the plan, as
-     N1, N2, N5, and N7 of the design tree best practice ask it. That's the goal, then the way to
+     N1, N2, N5, and N6 of the design tree best practice ask it. That's the goal, then the way to
      it: its deliverables and steps, each step by what it settles in the user's terms, and which
      steps the user checks. The hearing is settled once the way is.
    - A pick-up, by `/rn:up`: find the run by `repository find`, and read where it stopped from

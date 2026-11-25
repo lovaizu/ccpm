@@ -272,18 +272,6 @@ def test_a_newer_run_whose_every_deliverable_is_done_is_passed_over(tmp_path: An
     assert newest(repo, host) == RunPlace(repo, "20261110-old")
 
 
-def test_a_run_whose_open_deliverable_is_being_made_is_given(tmp_path: Any, host: Any):
-    """Given a repository with one run whose only deliverable not done has status doing
-    When newest is asked
-    Then it gives that run"""
-    repo = a_repository(tmp_path)
-    node = rn_files.open_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
-    node["status"] = "doing"
-    plan = rn_files.done_node(GOAL, rn_files.plan_path(NAME), "design-tree")
-    branch_run(repo, NAME, rn_files.tree([plan, node]))
-    assert newest(repo, host) == RunPlace(repo, NAME)
-
-
 def test_branches_that_nearly_match_a_run_are_left_out(tmp_path: Any, host: Any):
     """Given a repository with one run, beside newer branches rn2-<name> and <name> with no rn-,
     each holding a design tree with work left

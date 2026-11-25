@@ -59,7 +59,7 @@
             ]
           },
           {
-            "id": "N7",
+            "id": "N6",
             "about": "context",
             "what": "Does the context name the rn that wrote the tree, the languages that the user settled, and the run's issues and pull request?",
             "why": "A newer rn reads a tree by the version that wrote it, the deliverables and the conversation reach their people only in a language they read, and a merge closes only the issues that the pull request names. The items follow GitHub's [linking of a pull request to an issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue), which closes an issue on merge where the pull request's body names it after `Closes`.",
@@ -120,7 +120,7 @@
             "items": [
               {
                 "at": "make",
-                "text": "After each change to a node, run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree touched <run> <path>`, where `<run>` is the run's folder and `<path>` is the changed node's path. It lists each node that the change touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there, and each item of `work` that names it."
+                "text": "After each change to a node, run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree touched <run> <path>`, where `<run>` is the run's folder and `<path>` is the changed node's path. It lists each node that the change touches: each node up to the goal, the later decisions of the same deliverable, each deliverable that names the changed one in its inputs or that it names there."
               },
               {
                 "at": "make",
@@ -144,9 +144,9 @@
         "necessary_conditions": [
           {
             "id": "N5",
-            "about": "work, steps",
-            "what": "Is the first item of the work the one, among those that can start, that brings the goal's people closest?",
-            "why": "An item started before what it rests on is done is made again once that arrives, and an item that brings the people little delays the one that brings them most. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method), which lists each activity's predecessors before it orders the activities, and the [critical path method](https://en.wikipedia.org/wiki/Critical_path_method), which puts first what the end waits on.",
+            "about": "steps",
+            "what": "Does each deliverable come after each one it rests on, so that each starts once its inputs are done?",
+            "why": "A deliverable started before what it rests on is done is made again once that arrives. The items follow the [precedence diagram](https://en.wikipedia.org/wiki/Precedence_diagram_method), which lists each activity's predecessors before it orders the activities.",
             "items": [
               {
                 "at": "decide",
@@ -154,27 +154,7 @@
               },
               {
                 "at": "decide",
-                "text": "Among the deliverables and points whose inputs are done, choose the one that brings the people closest to the goal's state by what the facts show, and write it first in `work`: a deliverable to make by its path, or a point to decide by its deliverable's path, its condition, and its `about`."
-              },
-              {
-                "at": "decide",
                 "text": "Write in `steps` the way to the goal, first to last, each deliverable in one step after each step whose deliverables it rests on. Give each step one thing it settles in `settles`, such as `how it's used`, in the conversation's language and the user's words, taken from the goal of its deliverables' best practices, since the user follows the run by these alone. Write `signoff` true for each step whose deliverables the user signs off, and false for each other, whose deliverables are done once their Rounds are over: as the user answers when they sign off the plan, and until then true for the first step alone, as the rest follows from it."
-              }
-            ]
-          },
-          {
-            "id": "N6",
-            "about": "work",
-            "what": "Does the work start together each item that rests on no other item still being made?",
-            "why": "Two items that rest on nothing of each other wait for nothing, so starting them together cuts the time to the goal to that of the slower one. The items follow the precedence diagram, in which activities with no link between them run in parallel.",
-            "items": [
-              {
-                "at": "decide",
-                "text": "List the items of `work` whose inputs are done and that name none of each other in their inputs."
-              },
-              {
-                "at": "decide",
-                "text": "Write them next to each other in `work`, each after each item it rests on, so that they start together."
               }
             ]
           }

@@ -12,7 +12,7 @@ from collections.abc import Mapping
 from fault import Wrong
 from rounds.course import Next
 
-from tree.form import OPEN, Tree
+from tree.form import Tree
 
 
 def waiting(tree: Tree, nexts: Mapping[str, Next]) -> str | None:
@@ -26,7 +26,7 @@ def waiting(tree: Tree, nexts: Mapping[str, Next]) -> str | None:
     Changes: nothing.
     Refuses: nothing.
     """
-    opened = [each for each in tree["deliverables"] if each["status"] in OPEN]
+    opened = [each for each in tree["deliverables"] if each["status"] == "open"]
     for each in opened:
         good = all(condition["good"] for condition in each["necessary_conditions"])
         if each["kind"] == "design-tree" and good:
@@ -59,16 +59,15 @@ def signed_off(tree: Tree, deliverable: str) -> Tree:
     Takes: the tree, and the path of the deliverable that `waiting` names.
     Gives: the tree with the deliverable done, whatever its conditions, keeping its name, path,
     more_paths, kind, `file` where the node has it, and its necessary conditions with their
-    decisions, as they stood; and without each item of `work` that names it.
+    decisions, as they stood.
     Changes: nothing.
     Refuses: Wrong where no open deliverable has the path.
     """
     signed = copy.deepcopy(tree)
     deliverables = signed["deliverables"]
     for index, node in enumerate(deliverables):
-        if node["path"] == deliverable and node["status"] in OPEN:
+        if node["path"] == deliverable and node["status"] == "open":
             deliverables[index] = _done(node)
-            signed["work"] = [each for each in signed["work"] if each["path"] != deliverable]
             return signed
     raise Wrong(f"{deliverable}: no open deliverable of the design tree has the path to sign off")
 

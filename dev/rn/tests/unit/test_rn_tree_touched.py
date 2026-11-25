@@ -1,16 +1,14 @@
 """The unit cases of tree/touched.py, which nodes a change touches: `touched`, from the tree as last
 committed and the tree as it stands, of a changed decision with decisions before and after it, the
 last decision, a deliverable named by none, a deliverable added, a node of another that names it and
-one it names, the goal, a deliverable's path changed, with inputs and items of the work that name
-its old path, its new one, or a path near either, and a pointer of no node in the tree as it stands,
-beside a deliverable whose input nearly matches and items of the work of other paths; and `changed`,
-of trees equal, of a value changed, of a node added or taken away, of a decision answered, and of
-two changes.
+one it names, the goal, a deliverable's path changed, with inputs that name its old path, its new
+one, or a path near either, and a pointer of no node in the tree as it stands; and `changed`, of
+trees equal, of a value changed, of a node added or taken away, of a decision answered, and of two
+changes.
 
-Each node of the design tree is the goal, a deliverable, a necessary condition, a decision, or an
-item of the work, by its JSON Pointer; the nodes up to the goal from a change are those that hold
-it, and the order from the goal down is the tree's own, the goal first, then the deliverables, then
-the work."""
+Each node of the design tree is the goal, a deliverable, a necessary condition, or a decision, by
+its JSON Pointer; the nodes up to the goal from a change are those that hold it, and the order from
+the goal down is the tree's own, the goal first, then the deliverables."""
 
 from __future__ import annotations
 
@@ -31,9 +29,7 @@ D = rn_files.decision
 def the_tree() -> dict[str, Any]:
     """A tree of six deliverables, read from its JSON: the plan, done; the command, resting on the
     spec, with two decisions of N1 and one of N2; the guide and the changelog, each resting on the
-    command; the spec, with one decision of N1; and notes, resting on a path near the command's;
-    and the work making the command and the guide, deciding the command's N1, and making the
-    spec."""
+    command; the spec, with one decision of N1; and notes, resting on a path near the command's."""
     command = rn_files.decided(
         rn_files.open_node(rn_files.COMMAND_NAME, COMMAND, "light", [SPEC]),
         {
@@ -54,13 +50,7 @@ def the_tree() -> dict[str, Any]:
                     spec,
                     rn_files.open_node("The changes", "CHANGELOG.md", "light", [COMMAND]),
                     rn_files.open_node("Notes", "NOTES.md", "light", ["invoicer/__main__.pyc"]),
-                ],
-                [
-                    rn_files.work("make", COMMAND),
-                    rn_files.work("make", GUIDE),
-                    rn_files.work("decide", COMMAND, "N1", "the file"),
-                    rn_files.work("make", SPEC),
-                ],
+                ]
             )
         )
     )
@@ -95,8 +85,8 @@ def test_a_changed_decision_touches_what_holds_it_its_later_decisions_and_each_l
     """Given the six deliverables' tree
     When the command's N1's second decision changes
     Then it touches, from the goal down, the goal, the command, its N1, its N2's decision, the
-    guide and the changelog that rest on it, the spec it rests on, and the work making it and
-    deciding its N1; not its N1's first decision, the notes, or the work of the guide or the spec"""
+    guide and the changelog that rest on it, and the spec it rests on; not its N1's first
+    decision or the notes"""
     assert touched_by("/deliverables/1/necessary_conditions/0/decisions/1") == [
         "/goal",
         "/deliverables/1",
@@ -105,16 +95,14 @@ def test_a_changed_decision_touches_what_holds_it_its_later_decisions_and_each_l
         "/deliverables/2",
         "/deliverables/3",
         "/deliverables/4",
-        "/work/0",
-        "/work/2",
     ]
 
 
 def test_the_last_decision_of_a_deliverable_touches_none_of_its_earlier_decisions():
     """Given the six deliverables' tree
     When the command's N2's one decision, its last, changes
-    Then it touches the goal, the command, its N2, the guide, the spec, the changelog, and the
-    work making it and deciding its N1, and none of its N1's decisions"""
+    Then it touches the goal, the command, its N2, the guide, the spec, and the changelog, and
+    none of its N1's decisions"""
     assert touched_by("/deliverables/1/necessary_conditions/1/decisions/0") == [
         "/goal",
         "/deliverables/1",
@@ -122,22 +110,18 @@ def test_the_last_decision_of_a_deliverable_touches_none_of_its_earlier_decision
         "/deliverables/2",
         "/deliverables/3",
         "/deliverables/4",
-        "/work/0",
-        "/work/2",
     ]
 
 
 def test_a_change_of_a_deliverable_that_one_names_touches_the_one_that_names_it():
     """Given the six deliverables' tree
     When the spec's N1's decision changes
-    Then it touches the goal, the command that rests on the spec, the spec, its N1, and the work
-    making the spec"""
+    Then it touches the goal, the command that rests on the spec, the spec, and its N1"""
     assert touched_by("/deliverables/3/necessary_conditions/0/decisions/0") == [
         "/goal",
         "/deliverables/1",
         "/deliverables/3",
         "/deliverables/3/necessary_conditions/0",
-        "/work/3",
     ]
 
 
@@ -145,7 +129,7 @@ def test_a_change_of_a_deliverable_that_none_names_touches_the_goal_and_itself()
     """Given the six deliverables' tree
     When the done plan's status changes
     Then it touches the goal and the plan alone"""
-    assert touched_by("/deliverables/0/status", "doing") == ["/goal", "/deliverables/0"]
+    assert touched_by("/deliverables/0/status", "open") == ["/goal", "/deliverables/0"]
 
 
 def test_a_deliverable_added_since_the_commit_touches_the_goal_and_the_one_it_names():
@@ -179,11 +163,11 @@ def test_a_node_reached_by_two_links_is_touched_once():
 
 
 @pytest.mark.parametrize(
-    "pointer", ["/deliverables/6", "/deliverables/1/necessary_conditions/0/decisions/2", "/work/4"]
+    "pointer", ["/deliverables/6", "/deliverables/1/necessary_conditions/0/decisions/2"]
 )
 def test_touched_refuses_a_pointer_of_no_node(pointer: str):
     """Given the six deliverables' tree, as committed and as it stands
-    When a change at a deliverable, a decision, or an item one past the last is asked
+    When a change at a deliverable or a decision one past the last is asked
     Then it refuses with Wrong naming the pointer"""
     with pytest.raises(Wrong, match=pointer):
         touched(the_tree(), the_tree(), pointer)
@@ -200,43 +184,37 @@ def test_a_pointer_of_a_node_taken_away_since_the_commit_is_refused():
         touched(the_tree(), after, "/deliverables/5")
 
 
-def test_a_changed_path_touches_each_deliverable_and_item_that_still_names_the_old_one():
+def test_a_changed_path_touches_each_deliverable_that_still_names_the_old_one():
     """Given the six deliverables' tree as committed, and as it stands with the command's path
     invoicer/cli.py, the guide and the changelog still naming invoicer/__main__.py
     When the change of the command's path is asked
     Then it touches the goal, the command, the guide and the changelog by the old path, the spec
-    it names, and the work making it and deciding its N1 by the old path; not the notes, whose
-    input nearly matches the old path"""
+    it names; not the notes, whose input nearly matches the old path"""
     assert touched_by("/deliverables/1/path", NEW) == [
         "/goal",
         "/deliverables/1",
         "/deliverables/2",
         "/deliverables/3",
         "/deliverables/4",
-        "/work/0",
-        "/work/2",
     ]
 
 
 def test_a_changed_path_touches_one_that_names_the_new_path_and_one_that_names_the_old():
     """Given the six deliverables' tree as committed, and as it stands with the command's path
-    invoicer/cli.py, the guide's input and the work's first item renamed to it, the changelog and
-    the work's deciding item still on the old path, and the notes resting on invoicer/cli.pyc
+    invoicer/cli.py, the guide's input renamed to it, the changelog still on the old path, and
+    the notes resting on invoicer/cli.pyc
     When the change of the command's path is asked
-    Then it touches the guide by the new path and the changelog by the old, and both items of the
-    work, and not the notes, whose input nearly matches the new path"""
+    Then it touches the guide by the new path and the changelog by the old, and not the notes,
+    whose input nearly matches the new path"""
     after = changed_at("/deliverables/1/path", NEW)
     after["deliverables"][2]["inputs"] = [NEW]
     after["deliverables"][5]["inputs"] = ["invoicer/cli.pyc"]
-    after["work"][0]["path"] = NEW
     assert touched(the_tree(), after, "/deliverables/1/path") == [
         "/goal",
         "/deliverables/1",
         "/deliverables/2",
         "/deliverables/3",
         "/deliverables/4",
-        "/work/0",
-        "/work/2",
     ]
 
 
@@ -244,8 +222,7 @@ def test_a_changed_path_of_a_deliverable_that_none_names_touches_no_other_delive
     """Given the six deliverables' tree as committed, and as it stands with the notes' path
     NOTES.txt
     When the change of the notes' path is asked
-    Then it touches the goal and the notes alone, as no input or item names NOTES.md or
-    NOTES.txt"""
+    Then it touches the goal and the notes alone, as no input names NOTES.md or NOTES.txt"""
     assert touched_by("/deliverables/5/path", "NOTES.txt") == ["/goal", "/deliverables/5"]
 
 
@@ -286,23 +263,23 @@ def test_a_decision_answered_changes_its_decided_and_adds_its_by():
 
 def test_a_node_added_or_taken_away_is_the_node_itself():
     """Given the six deliverables' tree, one with a third decision of the command's N1, and one
-    without the work's last item
+    without the notes
     When the change from the tree to each is found
-    Then it is the decision added, and the item taken away"""
+    Then it is the decision added, and the notes taken away"""
     added = the_tree()
     added["deliverables"][1]["necessary_conditions"][0]["decisions"].append(D("the font", "Mono."))
     taken = the_tree()
-    taken["work"].pop()
+    taken["deliverables"].pop()
     assert changed(the_tree(), added) == ["/deliverables/1/necessary_conditions/0/decisions/2"]
-    assert changed(the_tree(), taken) == ["/work/3"]
+    assert changed(the_tree(), taken) == ["/deliverables/5"]
 
 
 def test_two_changes_are_given_from_the_goal_down():
-    """Given the six deliverables' tree, and one whose work's first item makes the guide and whose
-    goal is by reasoning
+    """Given the six deliverables' tree, and one whose notes lie at NOTES.txt and whose goal is by
+    reasoning
     When the change between them is found
-    Then it is the goal's by, then the work's first item's path"""
+    Then it is the goal's by, then the notes' path"""
     after = the_tree()
-    after["work"][0]["path"] = GUIDE
+    after["deliverables"][5]["path"] = "NOTES.txt"
     after["goal"]["by"] = "reasoning"
-    assert changed(the_tree(), after) == ["/goal/by", "/work/0/path"]
+    assert changed(the_tree(), after) == ["/goal/by", "/deliverables/5/path"]

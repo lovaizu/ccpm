@@ -301,7 +301,7 @@ def test_put_up_at_a_step_the_user_doesnt_check_makes_it_done_marks_its_round_an
     step that the user doesn't check
     When repository put-up is given the run's folder and the command's path
     Then it gives 0 printing the command's link at the commit before it's done; the tree holds the
-    command done in its one line, its item of the work gone; content-1 holds put-up.json; the
+    command done in its one line; content-1 holds put-up.json; the
     tree, put-up.json among it, is committed as
     `rn: <command's name>, done at a step that the user doesn't check`; and origin's rn-<name>
     holds that commit"""
@@ -314,7 +314,6 @@ def test_put_up_at_a_step_the_user_doesnt_check_makes_it_done_marks_its_round_an
     design_tree = rn_files.read_json(os.path.join(folder, "design-tree.json"))
     done = rn_files.done_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
     assert design_tree["deliverables"][1] == done
-    assert design_tree["work"] == [rn_files.work("make", rn_files.GUIDE)]
     assert os.path.isfile(os.path.join(first, "put-up.json"))
     worktree = rn_files.worktree_of(run.repository, NAME)
     assert git(worktree, "status", "--porcelain") == ""
@@ -344,13 +343,11 @@ def test_put_up_of_a_deliverable_done_at_a_step_the_user_doesnt_check_leaves_it_
     """Given a run whose command, done at a step that the user doesn't check, its Round content-1
     put up, was mended by a Fix fix-2 that its fixer fixed
     When repository put-up is given the run's folder and the command's path
-    Then it gives 0 printing the command's link; the tree holds the command done as it was, and
-    the work as it was, beside the pull request put-up wrote; and no commit makes a deliverable
-    done"""
+    Then it gives 0 printing the command's link; the tree holds the command done as it was,
+    beside the pull request put-up wrote; and no commit makes a deliverable done"""
     design_tree = stepped(False)
     done = rn_files.done_node(rn_files.COMMAND_NAME, rn_files.COMMAND, "light")
     design_tree["deliverables"][1] = done
-    design_tree["work"] = [rn_files.work("make", rn_files.GUIDE)]
     run = made_run(str(tmp_path), design_tree=design_tree)
     changed(run, {rn_files.COMMAND: "print()\n"})
     folder = rn_files.folder_of(run.repository, NAME)

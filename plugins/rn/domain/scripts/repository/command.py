@@ -13,7 +13,6 @@ import practice
 from fault import Answer, answered
 from rounds import course, files
 from tree import form, signoff
-from tree.form import OPEN
 
 from repository import commit_checks, place, push, trial, worktree
 from repository.host import Host
@@ -122,7 +121,7 @@ def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     tree = form.read(run.tree)
     node = form.deliverable(tree, given[1])
     files.mark(run, given[1], course.held(node))
-    if node["status"] in OPEN and not signoff.checked(tree, given[1]):
+    if node["status"] == "open" and not signoff.checked(tree, given[1]):
         form.write(run.tree, signoff.signed_off(tree, given[1]))
         folder = os.path.relpath(run.folder, run.worktree)
         message = f"rn: {node['name']}, done at a step that the user doesn't check"

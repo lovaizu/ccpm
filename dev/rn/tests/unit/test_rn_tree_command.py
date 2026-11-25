@@ -133,8 +133,8 @@ def test_arguments_other_than_the_usages_give_2_with_it(tmp_path: Any, host: Any
 def test_touched_with_a_pointer_prints_each_node_it_touches_a_line(tmp_path: Any, host: Any):
     """Given the walkthrough's run
     When tree touched runs with the pointer of the command's N1's decision
-    Then it gives 0 printing the goal, the command, its N1, the guide, and the work making the
-    command, from the goal down, a pointer a line"""
+    Then it gives 0 printing the goal, the command, its N1, and the guide, from the goal down, a
+    pointer a line"""
     r = Run(str(tmp_path), walkthrough())
     got = r.main(host, "touched", r.run, "/deliverables/1/necessary_conditions/0/decisions/0")
     lines = [
@@ -142,7 +142,6 @@ def test_touched_with_a_pointer_prints_each_node_it_touches_a_line(tmp_path: Any
         "/deliverables/1",
         "/deliverables/1/necessary_conditions/0",
         "/deliverables/2",
-        "/work/0",
     ]
     assert got == (0, "".join(f"{each}\n" for each in lines), "")
 
@@ -153,14 +152,14 @@ def test_touched_with_a_pointer_of_a_path_changed_since_the_commit_follows_the_o
     """Given the walkthrough's run whose tree, since its last commit, gives the command the path
     invoicer/cli.py, the guide's input still naming invoicer/__main__.py
     When tree touched runs with the pointer of the command's path
-    Then it gives 0 printing the goal, the command, the guide by the command's old path, and the
-    work making the command, a pointer a line"""
+    Then it gives 0 printing the goal, the command, and the guide by the command's old path, a
+    pointer a line"""
     r = Run(str(tmp_path), walkthrough())
     changed = r.tree()
     changed["deliverables"][1]["path"] = "invoicer/cli.py"
     r.write(changed)
     got = r.main(host, "touched", r.run, "/deliverables/1/path")
-    lines = ["/goal", "/deliverables/1", "/deliverables/2", "/work/0"]
+    lines = ["/goal", "/deliverables/1", "/deliverables/2"]
     assert got == (0, "".join(f"{each}\n" for each in lines), "")
 
 
@@ -176,8 +175,8 @@ def test_touched_of_a_change_since_the_commit_prints_what_it_touches(tmp_path: A
     """Given the walkthrough's run, its tree committed, then the user's answer about the tax rate
     changed in the tree
     When tree touched runs with no pointer
-    Then it gives 0 printing the goal, the command, its N1, the decision, the guide, and the work
-    making the command, the changed decided left out"""
+    Then it gives 0 printing the goal, the command, its N1, the decision, and the guide, the changed
+    decided left out"""
     r = Run(str(tmp_path), walkthrough())
     changed = r.tree()
     changed["deliverables"][1]["necessary_conditions"][0]["decisions"][0]["decided"] = "Once."
@@ -188,7 +187,6 @@ def test_touched_of_a_change_since_the_commit_prints_what_it_touches(tmp_path: A
         "/deliverables/1/necessary_conditions/0",
         "/deliverables/1/necessary_conditions/0/decisions/0",
         "/deliverables/2",
-        "/work/0",
     ]
     assert r.main(host, "touched", r.run) == (0, "".join(f"{each}\n" for each in lines), "")
 
@@ -200,7 +198,7 @@ def test_touched_of_a_decision_taken_away_prints_what_its_condition_touches(
     taken out of the tree
     When tree touched runs with no pointer
     Then it gives 0 printing what the command's N1, which held the answer, touches: the goal, the
-    command, its N1, the guide, and the work making the command"""
+    command, its N1, and the guide"""
     r = Run(str(tmp_path), walkthrough())
     changed = r.tree()
     del changed["deliverables"][1]["necessary_conditions"][0]["decisions"][0]
@@ -210,7 +208,6 @@ def test_touched_of_a_decision_taken_away_prints_what_its_condition_touches(
         "/deliverables/1",
         "/deliverables/1/necessary_conditions/0",
         "/deliverables/2",
-        "/work/0",
     ]
     assert r.main(host, "touched", r.run) == (0, "".join(f"{each}\n" for each in lines), "")
 
@@ -251,8 +248,6 @@ def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
             "/deliverables/1/necessary_conditions/0/decisions/0",
             "/deliverables/2",
             "/deliverables/2/necessary_conditions/0",
-            "/work/0",
-            "/work/1",
         ]
     )
 
@@ -1049,7 +1044,6 @@ def test_next_of_each_deliverable_done_prints_the_final_check(tmp_path: Any, hos
     the = walkthrough()
     the["deliverables"][1] = rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light")
     the["deliverables"][2] = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
-    the["work"] = []
     r = Run(str(tmp_path), the)
     rn_files.a_round(r.folder, COMMAND, "content", 1, {**JUDGED_GOOD, **rn_files.WEIGHED})
     assert next_lines(r, host) == [["final-check"]]
@@ -1317,7 +1311,6 @@ def test_next_of_a_done_deliverables_fix_starts_its_fixer_then_its_put_up(tmp_pa
     the = walkthrough()
     the["deliverables"][1] = rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light")
     the["deliverables"][2] = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
-    the["work"] = []
     r = Run(str(tmp_path), the)
     rn_files.a_round(r.folder, COMMAND, "content", 1, {**JUDGED_GOOD, **rn_files.WEIGHED})
     r.main(host, "fix", r.run, COMMAND, "final-check", stdin="It prints no total.")
@@ -1341,7 +1334,6 @@ def test_next_of_a_done_deliverable_whose_fix_changed_its_decisions_starts_nothi
     the = walkthrough()
     the["deliverables"][1] = rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light", ["N2"])
     the["deliverables"][2] = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
-    the["work"] = []
     r = Run(str(tmp_path), the)
     rn_files.a_round(r.folder, COMMAND, "content", 1, {**JUDGED_GOOD, **rn_files.WEIGHED})
     fix = r.round(COMMAND, "fix", 2)
@@ -1411,7 +1403,6 @@ def all_but_command(tmp: str) -> Run:
     r = left_past(tmp)
     the = r.tree()
     the["deliverables"][2] = rn_files.done_node(rn_files.GUIDE_NAME, GUIDE, "readme")
-    the["work"] = [rn_files.work("make", COMMAND)]
     r.write(the)
     return r
 

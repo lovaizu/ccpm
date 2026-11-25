@@ -106,7 +106,7 @@ def condition(
     return {"id": id, "good": good, "decisions": [dict(each) for each in decisions]}
 
 
-def decision(about: str, decided: str | None, by: str | None = "maker") -> dict[str, Any]:
+def decision(about: str, decided: str | None, by: str | None = "reasoning") -> dict[str, Any]:
     """A decision: settled where `decided` is a string, by `by`, or open where it's None."""
     if decided is None:
         return {"about": about, "decided": None}
@@ -163,16 +163,6 @@ def done_node(
     }
 
 
-def work(do: str, path: str, condition_id: str | None = None, about: str | None = None) -> dict:
-    """An item of the work."""
-    item: dict[str, Any] = {"do": do, "path": path}
-    if condition_id:
-        item["condition"] = condition_id
-    if about:
-        item["about"] = about
-    return item
-
-
 def version() -> str:
     """rn's version, as its plugin.json gives it."""
     return read_json(os.path.join(RN, ".claude-plugin", "plugin.json"))["version"]
@@ -193,19 +183,16 @@ def context(
 
 def tree(
     deliverables: Sequence[Mapping[str, Any]],
-    order: Sequence[Mapping[str, Any]] = (),
     goal: str = GOAL,
     by: str = "user",
     steps: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
-    """A design tree with the context as a run starts it, the goal, the deliverables, the work,
-    and the steps of the way to the goal, none where none is given, as before the plan holds
-    them."""
+    """A design tree with the context as a run starts it, the goal, the deliverables, and the
+    steps of the way to the goal, none where none is given, as before the plan holds them."""
     return {
         "context": context(),
         "goal": {"decided": goal, "by": by},
         "deliverables": [copy.deepcopy(dict(each)) for each in deliverables],
-        "work": [dict(each) for each in order],
         "steps": [copy.deepcopy(dict(each)) for each in steps],
     }
 
@@ -256,8 +243,7 @@ def walkthrough_tree(
 ) -> dict[str, Any]:
     """The design tree of the walkthrough's run: the plan, done or open with each condition good,
     the command, of the kind `light`, resting on invoicer's lines, and the guide, of the kind
-    `readme`, resting on the command, with its figure; the work makes the command, then the
-    guide."""
+    `readme`, resting on the command, with its figure."""
     head = done_node(GOAL, plan_path(name), "design-tree") if plan_done else plan(name, good=True)
     return tree(
         [
@@ -267,8 +253,7 @@ def walkthrough_tree(
                 command_decisions or {},
             ),
             guide_node(guide_good),
-        ],
-        [work("make", COMMAND), work("make", GUIDE)],
+        ]
     )
 
 

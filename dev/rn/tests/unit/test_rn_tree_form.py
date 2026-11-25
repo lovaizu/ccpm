@@ -46,7 +46,7 @@ def test_started_holds_the_goal_open_and_the_plan_as_its_one_deliverable():
     Then its context is the one given; its goal is open, its decided null with no by; its one
     deliverable the plan, its name empty until the pruner names it, of the kind design-tree, at
     the plan's path, with no inputs, open, each condition in the best practice's order, N1, N2,
-    N7, N3 to N6, not good with no decision; and its work and its steps none"""
+    N6, N3 to N5, not good with no decision; and its steps none"""
     got = started(CONTEXT, PLAN, rn_files.practice("design-tree"))
     assert got == {
         "context": rn_files.context(),
@@ -60,11 +60,10 @@ def test_started_holds_the_goal_open_and_the_plan_as_its_one_deliverable():
                 "status": "open",
                 "necessary_conditions": [
                     {"id": each, "good": False, "decisions": []}
-                    for each in ["N1", "N2", "N7", "N3", "N4", "N5", "N6"]
+                    for each in ["N1", "N2", "N6", "N3", "N4", "N5"]
                 ],
             }
         ],
-        "work": [],
         "steps": [],
     }
 
@@ -224,12 +223,11 @@ def test_write_refuses_a_file_that_cant_be_written_naming_it(tmp_path: Any):
             lambda t: t["deliverables"][1]["necessary_conditions"][0]["decisions"][0],
         ),
         ("/deliverables/1/path", lambda t: COMMAND),
-        ("/work/1", lambda t: t["work"][1]),
     ],
 )
 def test_at_gives_the_node_that_the_pointer_names(pointer: str, node: Any):
     """Given the walkthrough's tree, and a pointer to its goal, a deliverable past the first, a
-    condition, a decision, a field, or an item of the work
+    condition, a decision, or a field
     When the node at the pointer is taken
     Then it gives that node"""
     the = the_tree()
@@ -244,12 +242,11 @@ def test_at_gives_the_node_that_the_pointer_names(pointer: str, node: Any):
         "/deliverables/x",
         "/deliverable/0",
         "/deliverables/1/necessary_conditions/3",
-        "/work/2",
         "deliverables/0",
     ],
 )
 def test_at_refuses_a_pointer_that_names_no_node_naming_it(pointer: str):
-    """Given the walkthrough's tree of 3 deliverables, light's 3 conditions, and 2 items of work
+    """Given the walkthrough's tree of 3 deliverables and light's 3 conditions
     When the node is taken at an index one past the last, a negative index, a word for an index, a
     key it lacks, or a pointer without its leading /
     Then it refuses with Wrong naming the pointer"""

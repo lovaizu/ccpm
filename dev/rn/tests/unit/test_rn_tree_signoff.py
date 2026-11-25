@@ -6,7 +6,7 @@ is another, and for one of several, none, and only those done, and for one whose
 checks and one whose step they don't; `checked`, of a deliverable in no step, in a step the user
 checks, and in one they don't; and `signed_off`, of the plan, of a deliverable with more paths, of
 a node with no file, of one with findings left as its open decisions, each keeping its conditions
-and their decisions, with the work that names it and other work, and each refusal."""
+and their decisions, and each refusal."""
 
 from __future__ import annotations
 
@@ -73,12 +73,10 @@ def test_a_deliverable_with_each_condition_good_waiting_on_the_signoff_waits():
 
 
 def test_of_two_deliverables_waiting_the_first_in_the_trees_order_waits():
-    """Given a tree whose command and guide both wait on the sign-off with each condition good, and
-    whose work makes the guide first
-    When what waits for the sign-off is found
+    """Given a tree whose command and guide both wait on the sign-off with each condition good
+    When what waits for the sign-off is found, given the guide's wait first
     Then it is the command's path, first in the tree"""
     the = walkthrough(command_good=True, guide_good=True)
-    the["work"].reverse()
     assert waiting(the, {GUIDE: SIGN_OFF, COMMAND: SIGN_OFF}) == COMMAND
 
 
@@ -164,15 +162,13 @@ def test_the_plan_signed_off_is_done_with_its_conditions():
     assert the == before
 
 
-def test_a_deliverable_signed_off_drops_each_item_of_the_work_that_names_it():
-    """Given a tree whose command is open with each condition good and more paths, and whose work
-    makes it, decides its N1, and makes the guide
+def test_a_deliverable_signed_off_is_done_keeping_what_names_it_and_its_conditions():
+    """Given a tree whose command is open with each condition good and more paths
     When the user signs the command off
     Then the command is done keeping its name, path, more paths, kind, and conditions with the
-    user's answer, and the work holds only the guide's item"""
+    user's answer, and the guide is as it was"""
     the = walkthrough(command_good=True)
     the["deliverables"][1]["more_paths"] = ["tests/test_main.py"]
-    the["work"].insert(1, rn_files.work("decide", COMMAND, "N1", rn_files.TAX_ABOUT))
     got = signed_off(the, COMMAND)
     assert got["deliverables"][1] == {
         "name": rn_files.COMMAND_NAME,
@@ -182,7 +178,6 @@ def test_a_deliverable_signed_off_drops_each_item_of_the_work_that_names_it():
         "status": "done",
         "necessary_conditions": the["deliverables"][1]["necessary_conditions"],
     }
-    assert got["work"] == [rn_files.work("make", GUIDE)]
     assert got["deliverables"][2] == the["deliverables"][2]
 
 
@@ -204,16 +199,6 @@ def test_a_node_with_no_file_signed_off_keeps_its_conditions():
     assert got["deliverables"][1] == want
 
 
-def test_a_deliverable_being_made_signed_off_is_done():
-    """Given a tree whose command, status doing, has each condition good
-    When the user signs it off
-    Then it is done with its conditions"""
-    the = walkthrough(command_good=True)
-    the["deliverables"][1]["status"] = "doing"
-    got = signed_off(the, COMMAND)
-    assert got["deliverables"][1] == rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light")
-
-
 @pytest.mark.parametrize("path", [PLAN, "invoicer/__main__", "docs/guide.txt"])
 def test_signed_off_refuses_a_path_of_no_open_deliverable(path: str):
     """Given a tree whose plan is done and whose command and guide are open with each condition
@@ -229,11 +214,10 @@ def test_a_deliverable_with_a_finding_left_signed_off_keeps_it_among_its_conditi
     """Given a tree whose command holds N1 not good with its finding left as an open decision
     When the user signs the command off
     Then the command is done keeping N1 not good with the open decision, as the proposal the user
-    signed off, and its item of the work gone"""
+    signed off"""
     got = signed_off(left_past(), COMMAND)
     want = rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light", ["N2", "N3"], {"N1": [LEFT]})
     assert got["deliverables"][1] == want
-    assert got["work"] == [rn_files.work("make", GUIDE)]
 
 
 def test_a_node_with_no_file_signed_off_with_a_finding_left_keeps_it_among_its_conditions():

@@ -157,24 +157,15 @@ def test_a_pattern_is_searched_anywhere_in_the_string(schema):
 
 
 def test_an_enum_out_of_its_values_says_each_value_it_takes(schema):
-    """Given a schema whose work's `do` takes one of make and decide
-    When a value whose /work/0/do is `build` is held to it
-    Then it has the one fault `/work/0/do: takes one of make, decide`, as check/form.py's contract
-    words it"""
-    path = schema(
-        {
-            "type": "object",
-            "properties": {
-                "work": {
-                    "type": "array",
-                    "items": {"properties": {"do": {"enum": ["make", "decide"]}}},
-                }
-            },
-        }
-    )
-    assert faults(value('{"work": [{"do": "make"}]}'), path) == []
-    assert faults(value('{"work": [{"do": "build"}]}'), path) == [
-        "/work/0/do: takes one of make, decide"
+    """Given a schema whose goal's `by` takes one of user, reasoning, and research
+    When a value whose /goal/by is `nobody` is held to it
+    Then it has the one fault `/goal/by: takes one of user, reasoning, research`, as check/form.py's
+    contract words it"""
+    by = {"enum": ["user", "reasoning", "research"]}
+    path = schema({"type": "object", "properties": {"goal": {"properties": {"by": by}}}})
+    assert faults(value('{"goal": {"by": "user"}}'), path) == []
+    assert faults(value('{"goal": {"by": "nobody"}}'), path) == [
+        "/goal/by: takes one of user, reasoning, research"
     ]
 
 
