@@ -9,21 +9,26 @@ where someone decides it, and nothing piles up beside it.
   A plugin being rebuilt has its rebuild issue. A request for that plugin goes there as a section.
   - Rationale: two issues for one piece of work each get their own decisions, and the two drift
     apart. The extra one waits for someone to close it.
-- **When the plan changes, rewrite the issue and its pull request in place**, title included, so
-  they say what the plan means now.
+- **When what the work should be changes, rewrite the issue and its pull request in place**, title
+  included, so they say what holds now.
   - Rationale: a new issue beside the old one leaves the reader to work out which still holds.
+- **Give work that a pull request's purpose doesn't need its own issue, and do it in a worktree
+  of its own from main.** Open the issue when the work comes up during development, and take its
+  own pull request to main.
+  - Rationale: the change reaches main without waiting for the other pull request, so several
+    improvements go on at once, and each pull request holds only what its purpose needs.
 - **Close an issue opened by mistake with a line saying where its content went.**
   - Rationale: whoever finds it through a link reaches the place that holds its content.
 
 ## 2. Form
 
-- **Write an issue in the form of the existing issues of its kind, in English.**
-  - A fault: title `<plugin>: <what happens>`, then `## What happened`, `## Why it matters`,
-    `## What it should be` once you know it, and `## Seen in` with the plugin's version and commit,
-    the Claude Code version, and the session or pull request.
-  - A piece of work: title `<plugin>: <what it should be>`, then `## What it should be`, `## Why`,
-    `## Order`, and `## Existing issues to judge once it is built` when there are any.
-  - Rationale: the reader finds the same thing under the same heading in every issue.
+- **Write an issue in English with the title `<plugin>: <what it should be>`, then two headings.**
+  - `## Situation`: the trouble as it happened, and where it was seen, such as the plugin's version
+    and commit, the Claude Code version, and the session or pull request.
+  - `## Desired State`: the state wanted, for those it's for. No means, plan, or order: the
+    development settles those, in the run's steering.
+  - Rationale: an issue is the request that starts the work. The reader finds the same thing under
+    the same heading in every issue, and the development stays free to choose the means.
 - **Name each place a claim rests on as `path:line`, with the words quoted.**
   - Rationale: the reader checks the claim against the source without searching.
 - **Keep only what holds now. How you reached it stays in the edit history and in git.**
