@@ -70,8 +70,7 @@ held design pyrefly check --search-path plugins/rn/domain --search-path dev/rn/t
 python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
 
 # Each plugin's product vision, README, and architecture holds its kind's template and nothing
-# beside it, as .claude/rules/dev.md says each keeps only the vital few, so a section or sentence
-# that drifts from the template shows on the push that adds it.
+# beside it, so a section or sentence that drifts from the template shows on the push that adds it.
 for vision in dev/*/product-vision.md; do
   python3 plugins/rn/scripts/template.py product-vision "$vision"
 done
