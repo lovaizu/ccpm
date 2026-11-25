@@ -99,7 +99,6 @@ GOOD = rn_files.judged([("N1", ["print"]), ("N2", ["print"]), ("N3", ["print"])]
 # The answer, where a decision of the node is open.
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_an_open_decision_waits_on_the_answer_after_a_point(results: str):
     """Given the command whose generator gave a point in content-1, kept as an open decision of N1
     When what it waits on is asked
@@ -110,7 +109,6 @@ def test_an_open_decision_waits_on_the_answer_after_a_point(results: str):
     )
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_an_open_decision_waits_on_the_answer_before_the_evaluator_due(results: str):
     """Given the command made in content-1 with no evaluator yet, and an open decision of N1, as
     the pruner keeps a point that the user settles
@@ -122,7 +120,6 @@ def test_an_open_decision_waits_on_the_answer_before_the_evaluator_due(results: 
     )
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_an_open_decision_waits_on_the_answer_with_no_round_yet(results: str):
     """Given the command with no Round, and an open decision of N1 that the plan left for the user
     When what it waits on is asked
@@ -141,7 +138,6 @@ def unweighed(done: list[Done]) -> list[Done]:
     return [*done[:-1], done[-1]._replace(unweighed=True)]
 
 
-@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 @pytest.mark.parametrize("open_decision", [False, True], ids=["none open", "one open"])
 def test_a_point_unweighed_waits_on_the_pruner_of_the_stage_point(
     results: str, open_decision: bool
@@ -156,9 +152,6 @@ def test_a_point_unweighed_waits_on_the_pruner_of_the_stage_point(
     )
 
 
-@pytest.mark.supports(
-    "test_a_judged_rounds_result_is_weighed_whole_by_one_pruner_with_each_node_it_touches"
-)
 def test_a_judged_round_unweighed_waits_on_the_pruner_of_the_stage_judged(results: str):
     """Given the command whose evaluator judged content-1 short, unweighed
     When what it waits on is asked
@@ -167,7 +160,6 @@ def test_a_judged_round_unweighed_waits_on_the_pruner_of_the_stage_judged(result
     assert next_of(node(folder=results), done, False) == Next("pruner", JUDGED, False)
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_a_round_put_up_and_unweighed_waits_on_the_signoff(results: str):
     """Given the command whose content-1, judged good, is put up with the node's state, unweighed
     When what it waits on is asked
@@ -176,7 +168,6 @@ def test_a_round_put_up_and_unweighed_waits_on_the_signoff(results: str):
     assert next_of(node(good=True, folder=results), done, False) == Next("sign-off", None, False)
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_asked_gives_each_open_decision_but_the_proposals_past_the_limit(results: str):
     """Given the command with an open decision of N1, not good, and one of N2, good: with no
     Round, and past LIMIT Rounds of content with N1 short
@@ -196,9 +187,6 @@ def test_asked_gives_each_open_decision_but_the_proposals_past_the_limit(results
 # The generator resuming the last Round, where its last result is `point`.
 
 
-@pytest.mark.supports(
-    "test_a_resumed_generator_after_its_answer_ends_with_made_and_the_evaluator_is_due"
-)
 def test_a_point_answered_resumes_the_generator_in_its_round(results: str):
     """Given the command whose generator gave a point in content-1, now answered by the user
     When what it waits on is asked
@@ -207,9 +195,6 @@ def test_a_point_answered_resumes_the_generator_in_its_round(results: str):
     assert next_of(node(folder=results), done, False) == Next("generator", "content", True)
 
 
-@pytest.mark.supports(
-    "test_a_resumed_generator_after_its_answer_ends_with_made_and_the_evaluator_is_due"
-)
 def test_a_point_answered_in_a_later_round_resumes_that_one(results: str):
     """Given the command judged short in content-1, whose generator gave a point in content-2, now
     answered
@@ -221,9 +206,6 @@ def test_a_point_answered_in_a_later_round_resumes_that_one(results: str):
     )
 
 
-@pytest.mark.supports(
-    "test_a_resumed_generator_after_its_answer_ends_with_made_and_the_evaluator_is_due"
-)
 def test_a_point_answered_in_a_refactor_round_resumes_it(results: str):
     """Given the guide-like command, refactored, judged good in content-1, whose generator gave a
     point in refactor-2, now answered
@@ -236,7 +218,6 @@ def test_a_point_answered_in_a_refactor_round_resumes_it(results: str):
 # The evaluator in the last Round, where the generator made it and the evaluator wrote nothing.
 
 
-@pytest.mark.supports("test_a_generators_made_makes_the_evaluator_due_in_the_same_round")
 def test_a_round_made_with_no_evaluator_yet_waits_on_the_evaluator(results: str):
     """Given the command made in content-1, no evaluator's result yet
     When what it waits on is asked
@@ -245,7 +226,6 @@ def test_a_round_made_with_no_evaluator_yet_waits_on_the_evaluator(results: str)
     assert next_of(node(folder=results), done, False) == Next("evaluator", "content", False)
 
 
-@pytest.mark.supports("test_no_evaluator_is_due_after_a_refactor_round")
 def test_a_refactor_round_made_waits_on_no_evaluator(results: str):
     """Given the command judged good in content-1 and made in refactor-2, no evaluator's result in
     it
@@ -255,7 +235,6 @@ def test_a_refactor_round_made_waits_on_no_evaluator(results: str):
     assert next_of(node(True, folder=results), done, True) == Next("sign-off", None, False)
 
 
-@pytest.mark.supports("test_a_pause_while_the_evaluator_tries_pushes_its_cut")
 def test_a_round_made_after_an_earlier_one_judged_waits_on_its_evaluator(results: str):
     """Given the command judged short in content-1 and made in content-2, its evaluator stopped by
     a pause with no result
@@ -271,9 +250,6 @@ def test_a_round_made_after_an_earlier_one_judged_waits_on_its_evaluator(results
 # The generator in a new content Round, where there's no Round yet.
 
 
-@pytest.mark.supports(
-    "test_a_signoff_of_the_plan_makes_it_done_and_starts_the_generator_of_each_deliverable_due"
-)
 @pytest.mark.parametrize("refactors", [False, True])
 def test_no_round_yet_waits_on_the_generator_in_a_new_content_round(results: str, refactors: bool):
     """Given the command with no Round and no open decision, its kind refactored or not
@@ -285,7 +261,6 @@ def test_no_round_yet_waits_on_the_generator_in_a_new_content_round(results: str
 # A condition not good: a new Round of the last stage below LIMIT, else the pruner.
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_a_condition_short_after_one_content_round_gets_another(results: str):
     """Given the command judged short on N1 in content-1, LIMIT being 2
     When what it waits on is asked
@@ -297,7 +272,6 @@ def test_a_condition_short_after_one_content_round_gets_another(results: str):
     )
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 def test_a_condition_short_after_limit_content_rounds_waits_on_the_pruner(results: str):
     """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds of content
     When what it waits on is asked
@@ -312,7 +286,6 @@ BEFORE_ANSWER: frozenset[tuple[str, str]] = frozenset()
 WITH_ANSWER = frozenset({("N1", "the tax rate")})
 
 
-@pytest.mark.supports("test_a_users_answer_after_two_content_rounds_gets_a_new_content_round")
 def test_a_users_answer_after_limit_content_rounds_starts_the_course_again(results: str):
     """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds, neither
     generator given the user's answer on N1 that the node holds now
@@ -326,7 +299,6 @@ def test_a_users_answer_after_limit_content_rounds_starts_the_course_again(resul
     )
 
 
-@pytest.mark.supports("test_a_users_answer_after_two_content_rounds_gets_a_new_content_round")
 def test_limit_content_rounds_after_a_users_answer_wait_on_the_pruner(results: str):
     """Given the command judged short on N1 in content-1 and content-2, neither generator given the
     user's answer on N1, then short in content-3 and content-4, each generator given it
@@ -344,7 +316,6 @@ def test_limit_content_rounds_after_a_users_answer_wait_on_the_pruner(results: s
     assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 def test_limit_content_rounds_each_given_the_users_answer_wait_on_the_pruner(results: str):
     """Given the command judged short on N1 in content-1 and content-2, each generator given the
     user's answer on N1 that the node holds
@@ -369,7 +340,6 @@ def remedied(results: str, open_decision: bool = False) -> Any:
     return read_back(results, "remedied", given)
 
 
-@pytest.mark.supports("test_a_pruners_remedy_after_two_content_rounds_gets_a_new_content_round")
 @pytest.mark.parametrize("count", [LIMIT, LIMIT + 1])
 def test_a_remedy_written_since_the_last_cut_past_limit_gets_a_new_content_round(
     results: str, count: int
@@ -385,7 +355,6 @@ def test_a_remedy_written_since_the_last_cut_past_limit_gets_a_new_content_round
     assert next_of(remedied(results), done, False) == Next("generator", "content", False)
 
 
-@pytest.mark.supports("test_a_pruners_remedy_after_two_content_rounds_gets_a_new_content_round")
 def test_a_remedy_past_limit_with_an_open_decision_waits_on_the_answer(results: str):
     """Given the command judged short on N1 in LIMIT content Rounds, and the node now holding a
     remedy of N1 beside an open decision of N1, a point the pruner left for the user
@@ -396,7 +365,6 @@ def test_a_remedy_past_limit_with_an_open_decision_waits_on_the_answer(results: 
     assert next_of(remedied(results, True), done, False) == Next("answer", None, False)
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 @pytest.mark.parametrize(
     ("open_decision", "waits_on"), [(False, "pruner"), (True, "sign-off")], ids=["none", "kept"]
 )
@@ -415,7 +383,6 @@ def test_no_remedy_since_the_last_cut_past_limit_leaves_the_findings_to_the_user
     assert next_of(left, done, False) == Next(waits_on, None, False)
 
 
-@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
 @pytest.mark.parametrize("content", sorted({1, LIMIT}))
 def test_a_condition_short_after_the_refactor_round_gets_a_new_content_round(
     results: str, content: int
@@ -438,7 +405,6 @@ def test_a_condition_short_after_the_refactor_round_gets_a_new_content_round(
     )
 
 
-@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
 def test_a_content_round_after_a_round_put_up_counts_alone_toward_the_limit(results: str):
     """Given the command judged short in content-1 and good in content-2, made in refactor-3, put
     up, then judged short on N1 in content-4, after a send-back
@@ -457,7 +423,6 @@ def test_a_content_round_after_a_round_put_up_counts_alone_toward_the_limit(resu
     )
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 def test_limit_content_rounds_after_a_round_put_up_wait_on_the_pruner(results: str):
     """Given the command judged good in content-1, made in refactor-2, put up, then judged short
     on N1 in content-3 and content-4, LIMIT Rounds since refactor-2
@@ -473,7 +438,6 @@ def test_limit_content_rounds_after_a_round_put_up_wait_on_the_pruner(results: s
     assert next_of(node(["N2", "N3"], folder=results), done, True) == Next("pruner", None, False)
 
 
-@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
 def test_each_condition_good_after_a_content_round_past_the_refactor_round_refactors_again(
     results: str,
 ):
@@ -490,7 +454,6 @@ def test_each_condition_good_after_a_content_round_past_the_refactor_round_refac
     assert next_of(node(True, folder=results), done, True) == Next("generator", "refactor", False)
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_a_condition_the_node_holds_short_counts_though_the_evaluator_found_it_good(results: str):
     """Given the command judged good on each condition in content-1, the node holding N1 not good
     When what it waits on is asked
@@ -505,9 +468,6 @@ def test_a_condition_the_node_holds_short_counts_though_the_evaluator_found_it_g
 # Each condition good: a refactor Round where the kind is refactored and has none, else sign-off.
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_with_each_condition_good_is_refactored_by_its_refactor_best_practice"
-)
 def test_each_condition_good_after_content_gets_a_refactor_round(results: str):
     """Given a refactored kind's deliverable judged good in content-1, each condition good
     When what it waits on is asked
@@ -516,7 +476,6 @@ def test_each_condition_good_after_content_gets_a_refactor_round(results: str):
     assert next_of(node(True, folder=results), done, True) == Next("generator", "refactor", False)
 
 
-@pytest.mark.supports("test_the_refactoring_generators_made_waits_on_the_signoff_with_no_evaluator")
 def test_each_condition_good_after_a_refactor_round_waits_on_the_signoff(results: str):
     """Given a refactored kind's deliverable judged short in content-1 and good in content-2, and
     made in refactor-3
@@ -531,9 +490,6 @@ def test_each_condition_good_after_a_refactor_round_waits_on_the_signoff(results
     assert next_of(node(True, folder=results), done, True) == Next("sign-off", None, False)
 
 
-@pytest.mark.supports(
-    "test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_condition_good"
-)
 def test_each_condition_good_of_a_kind_not_refactored_waits_on_the_signoff(results: str):
     """Given the command, of the kind light, which isn't refactored, judged short on N1 in
     content-1, the pruner holding N1 good as its people would never meet it
@@ -543,7 +499,6 @@ def test_each_condition_good_of_a_kind_not_refactored_waits_on_the_signoff(resul
     assert next_of(node(True, folder=results), done, False) == Next("sign-off", None, False)
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 def test_each_condition_good_after_limit_content_rounds_isnt_held_back_by_the_limit(results: str):
     """Given a refactored kind's deliverable judged short in content-1 and good in content-2
     When what it waits on is asked
@@ -555,9 +510,6 @@ def test_each_condition_good_after_limit_content_rounds_isnt_held_back_by_the_li
 # A pause that leaves a Round with its Cut and no result.
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_a_round_whose_generator_was_stopped_resumes_it_there(results: str):
     """Given the command whose generator, in content-1, was stopped by a pause before it wrote a
     result
@@ -568,9 +520,6 @@ def test_a_round_whose_generator_was_stopped_resumes_it_there(results: str):
     assert next_of(node(folder=results), done, False) == Next("generator", "content", True)
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_a_second_round_whose_generator_was_stopped_resumes_it_there(results: str):
     """Given the command judged short in content-1, whose generator, in content-2, was stopped by a
     pause before it wrote a result
@@ -582,9 +531,6 @@ def test_a_second_round_whose_generator_was_stopped_resumes_it_there(results: st
     )
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_a_refactor_round_whose_generator_was_stopped_resumes_it_there(results: str):
     """Given a refactored kind's command judged good in content-1, whose generator, in refactor-2,
     was stopped by a pause before it wrote a result
@@ -594,9 +540,6 @@ def test_a_refactor_round_whose_generator_was_stopped_resumes_it_there(results: 
     assert next_of(node(True, folder=results), done, True) == Next("generator", "refactor", True)
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_a_round_at_limit_whose_generator_was_stopped_resumes_it_not_the_pruner(
     results: str,
 ):
@@ -611,7 +554,6 @@ def test_a_round_at_limit_whose_generator_was_stopped_resumes_it_not_the_pruner(
     )
 
 
-@pytest.mark.supports("test_a_pick_up_starts_the_stopped_evaluator_again_in_its_round")
 @pytest.mark.parametrize("number", [1, LIMIT])
 def test_a_round_whose_evaluator_was_stopped_waits_on_the_evaluator_there(
     results: str, number: int
@@ -630,7 +572,6 @@ def test_a_round_whose_evaluator_was_stopped_waits_on_the_evaluator_there(
 # The sign-off past the limit, with the findings left kept as open decisions.
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_findings_kept_open_past_limit_content_rounds_wait_on_the_signoff(results: str):
     """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds each with
     both results, and the finding left kept as an open decision of N1
@@ -642,7 +583,6 @@ def test_findings_kept_open_past_limit_content_rounds_wait_on_the_signoff(result
     )
 
 
-@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
 def test_a_round_put_up_with_each_condition_good_waits_on_the_signoff(results: str):
     """Given a refactored kind's command judged good in content-1, made in refactor-2, put up, each
     condition good
@@ -654,7 +594,6 @@ def test_a_round_put_up_with_each_condition_good_waits_on_the_signoff(results: s
     assert next_of(node(True, folder=results), done, True) == Next("sign-off", None, False)
 
 
-@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
 def test_proposals_kept_at_a_round_put_up_past_the_limit_wait_on_the_signoff(results: str):
     """Given the command judged short on N1 in content-1 and content-2, content-2 put up, with the
     finding left kept as an open decision of N1
@@ -668,7 +607,6 @@ def test_proposals_kept_at_a_round_put_up_past_the_limit_wait_on_the_signoff(res
     )
 
 
-@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
 @pytest.mark.parametrize("put_up", [True, False])
 def test_a_send_back_past_the_limit_gets_a_new_content_round_once_put_up(
     results: str, put_up: bool
@@ -684,7 +622,6 @@ def test_a_send_back_past_the_limit_gets_a_new_content_round_once_put_up(
     assert next_of(node(["N2", "N3"], folder=results), done, False) == expected
 
 
-@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
 def test_a_send_back_settling_the_proposal_gets_a_new_content_round(results: str):
     """Given the command judged short on N1 in content-1 and content-2, content-2 put up with the
     finding left kept as an open decision of N1, then sent back, the user's words settling it
@@ -698,7 +635,6 @@ def test_a_send_back_settling_the_proposal_gets_a_new_content_round(results: str
     )
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_a_new_point_on_a_condition_not_good_after_a_round_put_up_waits_on_the_answer(
     results: str,
 ):
@@ -715,7 +651,6 @@ def test_a_new_point_on_a_condition_not_good_after_a_round_put_up_waits_on_the_a
     )
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_an_open_decision_of_a_good_condition_after_a_round_put_up_waits_on_the_answer(
     results: str,
 ):
@@ -731,7 +666,6 @@ def test_an_open_decision_of_a_good_condition_after_a_round_put_up_waits_on_the_
     )
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_findings_kept_open_past_limit_rounds_after_a_round_put_up_wait_on_the_signoff(
     results: str,
 ):
@@ -752,7 +686,6 @@ def test_findings_kept_open_past_limit_rounds_after_a_round_put_up_wait_on_the_s
     )
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 def test_an_open_decision_below_limit_waits_on_the_answer_not_the_signoff(results: str):
     """Given the command judged short on N1 in content-1 alone, one Round below LIMIT, and an
     open decision of N1
@@ -764,7 +697,6 @@ def test_an_open_decision_below_limit_waits_on_the_answer_not_the_signoff(result
     )
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_a_point_open_in_the_limit_round_waits_on_the_answer_not_the_signoff(results: str):
     """Given the command judged short in content-1, whose generator gave a point in content-2, the
     LIMIT-th Round, kept as an open decision of N1, with no evaluator's result
@@ -776,7 +708,6 @@ def test_a_point_open_in_the_limit_round_waits_on_the_answer_not_the_signoff(res
     )
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 def test_limit_rounds_judged_with_no_decision_open_wait_on_the_pruner(results: str):
     """Given the command judged short on N1 in content-1 and content-2, and no decision open, as
     the pruner hasn't kept the finding left yet
@@ -786,7 +717,6 @@ def test_limit_rounds_judged_with_no_decision_open_wait_on_the_pruner(results: s
     assert next_of(node(["N2", "N3"], folder=results), done, False) == Next("pruner", None, False)
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_a_point_open_in_the_refactor_round_waits_on_the_answer_not_the_signoff(results: str):
     """Given a refactored kind's command judged short on N1 in content-1 and content-2, LIMIT
     Rounds each with both results, whose generator gave a point in refactor-3, kept as an open
@@ -818,7 +748,6 @@ def with_open(good: Sequence[str], on: Sequence[str], folder: str) -> Any:
     return read_back(folder, "node", given)
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 @pytest.mark.parametrize(
     ("good", "on", "waits_on"),
     [
@@ -843,7 +772,6 @@ def test_open_decisions_past_limit_are_proposals_of_conditions_not_good_and_poin
     assert next_of(with_open(good, on, results), done, False) == Next(waits_on, None, False)
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 @pytest.mark.parametrize("number", sorted({1, LIMIT - 1}))
 def test_an_open_decision_of_a_condition_not_good_below_limit_is_a_point(results: str, number: int):
     """Given the command judged short on N1 in content-1 to content-<number>, below LIMIT, and an
@@ -879,7 +807,6 @@ def judged_good(folder: str) -> list[Done]:
     return rounds(folder, ("content", 1, MADE_ALL, GOOD, GOOD_PUT_UP))
 
 
-@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
 def test_with_no_fix_it_waits_on_what_next_of_gives(results: str):
     """Given the command made in content-1 with no evaluator yet, and no Fix
     When what it waits on is asked with its Fixes
@@ -890,7 +817,6 @@ def test_with_no_fix_it_waits_on_what_next_of_gives(results: str):
     )
 
 
-@pytest.mark.supports("test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner")
 def test_a_fix_with_no_cut_waits_on_a_new_fixer(results: str):
     """Given the command judged good in content-1 and put up, and fix-2 holding its problem alone
     When what it waits on is asked
@@ -900,7 +826,6 @@ def test_a_fix_with_no_cut_waits_on_a_new_fixer(results: str):
     ) == Next("fixer", "fix", False)
 
 
-@pytest.mark.supports("test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut")
 def test_a_fix_whose_fixer_was_stopped_resumes_it(results: str):
     """Given the command judged good in content-1, and fix-2 whose fixer's Cut holds the node, and
     no fixer's result, as a pause stopped it
@@ -913,9 +838,6 @@ def test_a_fix_whose_fixer_was_stopped_resumes_it(results: str):
     )
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 @pytest.mark.parametrize("cut", [True, False], ids=["the node its Cut held", "no Cut"])
 def test_a_fix_fixed_waits_on_the_signoff(results: str, cut: bool):
     """Given the command judged good in content-1, and fix-2 fixed, its fixer's Cut holding the
@@ -929,9 +851,6 @@ def test_a_fix_fixed_waits_on_the_signoff(results: str, cut: bool):
     )
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 def test_a_fixs_decision_waits_on_the_pruner_to_weigh_it(results: str):
     """Given the command judged good in content-1, and fix-2 whose fixer named a decision, its Cut
     holding the node as it stands
@@ -944,7 +863,6 @@ def test_a_fixs_decision_waits_on_the_pruner_to_weigh_it(results: str):
     )
 
 
-@pytest.mark.supports("test_a_fixers_decision_that_the_pruner_cuts_ends_the_fix")
 @pytest.mark.parametrize("status", ["open", "done"])
 def test_a_fixs_decision_weighed_with_the_node_unchanged_waits_on_the_signoff(
     results: str, status: str
@@ -962,9 +880,6 @@ def test_a_fixs_decision_weighed_with_the_node_unchanged_waits_on_the_signoff(
     )
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 def test_a_fixs_decision_weighed_with_the_node_changed_takes_a_new_content_round(results: str):
     """Given the command judged good in content-1, and fix-2 whose fixer named a decision, its Cut
     holding the node with each condition good, a commit of the tree since, and the node now
@@ -977,9 +892,6 @@ def test_a_fixs_decision_weighed_with_the_node_changed_takes_a_new_content_round
     ) == Next("generator", "content", False)
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 @pytest.mark.parametrize("fixer", [DECISION, FIXED], ids=["decision", "fixed"])
 def test_a_fix_whose_node_changed_since_takes_a_new_content_round(results: str, fixer: Any):
     """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds, then good,
@@ -999,9 +911,6 @@ def test_a_fix_whose_node_changed_since_takes_a_new_content_round(results: str, 
     )
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 def test_a_fix_whose_node_changed_to_an_open_decision_waits_on_the_answer(results: str):
     """Given the command judged good in content-1, and fix-2 whose fixer named a decision, its
     Cut holding the node with each condition good, and the node now holding an open decision of
@@ -1014,9 +923,6 @@ def test_a_fix_whose_node_changed_to_an_open_decision_waits_on_the_answer(result
     ) == Next("answer", None, False)
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 def test_rounds_after_a_fix_count_alone_toward_the_limit(results: str):
     """Given the command judged short in content-1 and content-2, fix-3 whose fixer named a
     decision, and content-4 judged short
@@ -1034,9 +940,6 @@ def test_rounds_after_a_fix_count_alone_toward_the_limit(results: str):
     )
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 def test_limit_rounds_after_a_fix_wait_on_the_pruner(results: str):
     """Given the command judged good in content-1, fix-2 whose fixer named a decision, and
     content-3 and content-4 judged short, LIMIT Rounds after the Fix
@@ -1054,7 +957,6 @@ def test_limit_rounds_after_a_fix_wait_on_the_pruner(results: str):
     )
 
 
-@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
 def test_fixes_past_limit_rounds_each_wait_on_their_fixer(results: str):
     """Given the command judged short on N1 in content-1 and content-2, LIMIT Rounds, the finding
     kept as an open decision and put up, then fix-3 fixed and fix-4 holding its problem alone
@@ -1083,7 +985,6 @@ def run(tmp_path: Any) -> RunPlace:
     return RunPlace(repository, NAME)
 
 
-@pytest.mark.supports("test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut")
 def test_mended_gives_each_fix_with_its_result_and_the_node_its_cut_held(run: RunPlace):
     """Given a run whose command has content-1, fix-2 fixed with its fixer's Cut, and fix-3
     holding its problem alone
@@ -1103,7 +1004,6 @@ def test_mended_gives_each_fix_with_its_result_and_the_node_its_cut_held(run: Ru
     ]
 
 
-@pytest.mark.supports("test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner")
 def test_next_in_reads_the_fixes_of_the_run(run: RunPlace):
     """Given a run whose command has content-1 made and judged good, and fix-2 holding its problem
     alone

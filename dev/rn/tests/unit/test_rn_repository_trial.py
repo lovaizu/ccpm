@@ -32,9 +32,6 @@ def same(path: str, expected: str) -> bool:
     return os.path.normpath(path) == os.path.normpath(expected)
 
 
-@pytest.mark.supports(
-    "test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work"
-)
 def test_a_rounds_folder_lies_in_the_temporary_folder_by_run_and_round(temp: str):
     """Given the run 20261120-invoices, and the command's Round content-1
     When folder is asked
@@ -47,9 +44,6 @@ def test_a_rounds_folder_lies_in_the_temporary_folder_by_run_and_round(temp: str
     assert os.listdir(temp) == []
 
 
-@pytest.mark.supports(
-    "test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work"
-)
 def test_a_later_rounds_folder_names_its_stage_and_number(temp: str):
     """Given the run 20261120-invoices, and the guide's Round content-2
     When folder is asked
@@ -59,9 +53,6 @@ def test_a_later_rounds_folder_names_its_stage_and_number(temp: str):
     assert same(given, os.path.join(temp, f"rn-trial-{NAME}-docs%2Fguide.md-content-2"))
 
 
-@pytest.mark.supports(
-    "test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work"
-)
 def test_a_rounds_folder_is_the_same_at_each_call_and_apart_for_each_round_and_run(temp: str):
     """Given two runs, and two Rounds of one deliverable: content-1 and content-2
     When folder is asked twice of each Round of each run
@@ -78,9 +69,6 @@ def test_a_rounds_folder_is_the_same_at_each_call_and_apart_for_each_round_and_r
     assert len(set(given.values())) == len(runs) * len(rounds)
 
 
-@pytest.mark.supports(
-    "test_the_generators_try_puts_the_peoples_files_in_its_folder_outside_the_work"
-)
 def test_two_paths_alike_but_for_a_slash_get_folders_apart(temp: str):
     """Given the run 20261120-invoices, and Round content-1 of docs/guide.md and of docs-guide.md
     When folder is asked of each
@@ -102,7 +90,6 @@ def files_under(top: str) -> set[str]:
     return found
 
 
-@pytest.mark.supports("test_the_people_start_from_the_branch_without_rns_folder")
 def test_the_starting_state_holds_the_branch_as_its_people_get_it(tmp_path: Any, host: Any):
     """Given a run whose worktree holds a new command, a changed docs/product-vision.md, and
     lines.py removed, none committed, and its design tree and a Round under .rn/
@@ -128,7 +115,6 @@ def test_the_starting_state_holds_the_branch_as_its_people_get_it(tmp_path: Any,
     assert git(given, "branch", "--show-current").strip() == f"rn-{run.name}"
 
 
-@pytest.mark.supports("test_the_people_start_from_the_branch_without_rns_folder")
 def test_the_starting_state_is_made_anew_over_what_an_earlier_trial_left(tmp_path: Any, host: Any):
     """Given a run, and the Round's folder of the people's starting state holding a file an
     earlier trial wrote
@@ -145,7 +131,6 @@ def test_the_starting_state_is_made_anew_over_what_an_earlier_trial_left(tmp_pat
     assert os.path.isfile(os.path.join(given, "invoicer", "lines.py"))
 
 
-@pytest.mark.supports("test_the_people_start_from_the_branch_without_rns_folder")
 def test_a_folder_that_cant_be_made_cant_run(tmp_path: Any, host: Any, temp: str):
     """Given a run, and a system's temporary folder that may not be written
     When starting_state is made for a Round

@@ -15,9 +15,6 @@ from fault import CantRun, Wrong
 from repository.host import Ran, run
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_git_runs_in_the_folder_given_and_gives_its_output(tmp_path: Any):
     """Given a git repository
     When run is given `git rev-parse --show-toplevel` in it
@@ -26,9 +23,6 @@ def test_git_runs_in_the_folder_given_and_gives_its_output(tmp_path: Any):
     assert run(["git", "rev-parse", "--show-toplevel"], repo) == Ran(0, repo + "\n", "")
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_git_that_fails_gives_its_code_and_stderr_whole(tmp_path: Any):
     """Given a folder that isn't a git repository
     When run is given `git status` in it
@@ -39,9 +33,6 @@ def test_git_that_fails_gives_its_code_and_stderr_whole(tmp_path: Any):
     assert "not a git repository" in ran.err
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_git_changes_what_its_command_changes(tmp_path: Any):
     """Given an empty folder
     When run is given `git init -q` in it
@@ -51,7 +42,6 @@ def test_git_changes_what_its_command_changes(tmp_path: Any):
     assert os.path.isdir(os.path.join(folder, ".git"))
 
 
-@pytest.mark.supports("test_the_generators_checks_judge_its_files_alone_beside_another_staged")
 def test_git_runs_with_the_variables_given_beside_rns_own(tmp_path: Any):
     """Given a git repository
     When run is given `git var GIT_AUTHOR_IDENT` in it, with GIT_AUTHOR_NAME set to `Ada`
@@ -64,9 +54,6 @@ def test_git_runs_with_the_variables_given_beside_rns_own(tmp_path: Any):
     assert os.environ.get("GIT_AUTHOR_NAME") == before
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_gh_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
     """Given a program gh first on the PATH that prints its arguments and gives 3
     When run is given `gh pr view 12`
@@ -80,9 +67,6 @@ def test_gh_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.M
     assert run(["gh", "pr", "view", "12"], str(tmp_path)) == Ran(3, "pr view 12\n", "said\n")
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_herdr_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
     """Given a program herdr first on the PATH that prints its arguments and gives 1
     When run is given `herdr worktree open --no-focus`
@@ -98,9 +82,6 @@ def test_herdr_runs_as_the_program_on_the_path(tmp_path: Any, monkeypatch: pytes
     assert run(argv, str(tmp_path)) == Ran(1, "worktree open --no-focus\n", "said\n")
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 @pytest.mark.parametrize("program", ["ls", "gitk", "git2", "ghx", "herdrx", "/usr/bin/git", ""])
 def test_a_program_other_than_git_or_gh_is_refused(tmp_path: Any, program: str):
     """Given a program named other than git, gh, or herdr, a near match or git by its path among
@@ -111,9 +92,6 @@ def test_a_program_other_than_git_or_gh_is_refused(tmp_path: Any, program: str):
         run([program, "--version"], str(tmp_path))
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_program_not_found_cant_run(tmp_path: Any, monkeypatch: pytest.MonkeyPatch):
     """Given a PATH that holds no gh
     When run is given `gh auth status`

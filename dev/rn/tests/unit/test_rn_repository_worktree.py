@@ -52,9 +52,6 @@ def a_repository(tmp_path: Any, branch: str = "main") -> str:
     return repo
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_new_run_has_its_branch_from_main_checked_out_with_the_tree_uncommitted(
     tmp_path: Any, host: Any
 ):
@@ -78,9 +75,18 @@ def test_a_new_run_has_its_branch_from_main_checked_out_with_the_tree_uncommitte
     assert git(repo, "status", "--porcelain", "--untracked-files=no").strip() == ""
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
+def test_a_second_run_keeps_the_one_line_of_info_exclude(tmp_path: Any, host: Any):
+    """Given invoicer's repository in which new made the run 20261120-invoices
+    When new makes the run 20261121-receipts
+    Then the repository's info/exclude holds the line that keeps the runs' worktrees out of the
+    user's untracked files once"""
+    repo = a_repository(tmp_path)
+    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, host)
+    new(RunPlace(repo, "20261121-receipts"), CONTEXT, PRACTICE, host)
+    with open(os.path.join(repo, ".git", "info", "exclude"), encoding="utf-8") as f:
+        assert f.read().splitlines().count("/.claude/worktrees/") == 1
+
+
 def test_a_new_run_branches_from_the_default_branch_while_the_user_is_on_another(
     tmp_path: Any, host: Any
 ):
@@ -104,9 +110,6 @@ def test_a_new_run_branches_from_the_default_branch_while_the_user_is_on_another
     assert git(repo, "status", "--porcelain", "--untracked-files=no").split() == ["M", "NOTES.md"]
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_new_run_branches_from_what_origins_head_names_not_the_branch_checked_out(
     tmp_path: Any, host: Any
 ):
@@ -130,9 +133,6 @@ def test_a_new_run_branches_from_what_origins_head_names_not_the_branch_checked_
     assert git(repo, "branch", "--show-current").strip() == "main"
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 @pytest.mark.parametrize("remote", [True, False])
 def test_a_repository_whose_origin_head_names_no_branch_is_missing_its_default(
     tmp_path: Any, host: Any, remote: bool
@@ -151,7 +151,6 @@ def test_a_repository_whose_origin_head_names_no_branch_is_missing_its_default(
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
 
 
-@pytest.mark.supports("test_a_new_request_in_a_paused_runs_words_leaves_the_run_as_it_was")
 def test_a_run_of_the_name_already_there_is_refused_and_left_as_it_was(tmp_path: Any, host: Any):
     """Given invoicer's repository whose run 20261120-invoices was made
     When new makes a run of the same name again
@@ -166,9 +165,6 @@ def test_a_run_of_the_name_already_there_is_refused_and_left_as_it_was(tmp_path:
     assert rn_files.read_json(tree_path) == before
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_folder_that_isnt_a_git_repository_is_missing_one(tmp_path: Any, host: Any):
     """Given a folder of invoicer's files with no git
     When new makes a run there
@@ -180,9 +176,6 @@ def test_a_folder_that_isnt_a_git_repository_is_missing_one(tmp_path: Any, host:
     assert not os.path.exists(rn_files.worktree_of(folder, NAME))
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_folder_inside_a_repository_but_not_its_top_is_missing_one(tmp_path: Any, host: Any):
     """Given invoicer's repository, and its folder invoicer/
     When new makes a run with that folder as its repository
@@ -192,9 +185,6 @@ def test_a_folder_inside_a_repository_but_not_its_top_is_missing_one(tmp_path: A
         new(RunPlace(os.path.join(repo, "invoicer"), NAME), CONTEXT, PRACTICE, host)
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_repository_with_no_commit_is_missing_one(tmp_path: Any, host: Any):
     """Given a git repository with no commit
     When new makes a run there
@@ -223,7 +213,6 @@ def cloned(tmp_path: Any, origin: str) -> str:
     return clone
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_finds_none_and_makes_no_worktree")
 def test_a_folder_that_isnt_a_repository_has_no_run(tmp_path: Any, host: Any):
     """Given a folder that isn't a git repository
     When newest is asked
@@ -231,7 +220,6 @@ def test_a_folder_that_isnt_a_repository_has_no_run(tmp_path: Any, host: Any):
     assert newest(os.path.realpath(str(tmp_path)), host) is None
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_finds_none_and_makes_no_worktree")
 def test_a_repository_with_no_branch_of_rn_has_no_run(tmp_path: Any, host: Any):
     """Given a repository with a remote and no branch rn-*
     When newest and found are asked
@@ -242,7 +230,6 @@ def test_a_repository_with_no_branch_of_rn_has_no_run(tmp_path: Any, host: Any):
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_one_run_with_work_left_is_given_with_its_worktree_as_it_was(tmp_path: Any, host: Any):
     """Given a repository with one run whose committed design tree holds an open deliverable, its
     worktree there with a change not committed
@@ -258,7 +245,6 @@ def test_one_run_with_work_left_is_given_with_its_worktree_as_it_was(tmp_path: A
         assert f.read() == "kept\n"
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_of_several_runs_the_newest_by_its_last_commit_is_given(tmp_path: Any, host: Any):
     """Given a repository with three runs with work left, whose names order them otherwise than
     their last commits, the newest commit on 20261101-z
@@ -274,7 +260,6 @@ def test_of_several_runs_the_newest_by_its_last_commit_is_given(tmp_path: Any, h
     assert newest(repo, host) == RunPlace(repo, "20261101-z")
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_newer_run_whose_every_deliverable_is_done_is_passed_over(tmp_path: Any, host: Any):
     """Given a repository with a run whose every deliverable is done, newer than one with work
     left, and a branch rn-<name> newer still that holds no design tree
@@ -287,7 +272,6 @@ def test_a_newer_run_whose_every_deliverable_is_done_is_passed_over(tmp_path: An
     assert newest(repo, host) == RunPlace(repo, "20261110-old")
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_run_whose_open_deliverable_is_being_made_is_given(tmp_path: Any, host: Any):
     """Given a repository with one run whose only deliverable not done has status doing
     When newest is asked
@@ -300,7 +284,6 @@ def test_a_run_whose_open_deliverable_is_being_made_is_given(tmp_path: Any, host
     assert newest(repo, host) == RunPlace(repo, NAME)
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_branches_that_nearly_match_a_run_are_left_out(tmp_path: Any, host: Any):
     """Given a repository with one run, beside newer branches rn2-<name> and <name> with no rn-,
     each holding a design tree with work left
@@ -318,7 +301,6 @@ def test_branches_that_nearly_match_a_run_are_left_out(tmp_path: Any, host: Any)
     assert newest(repo, host) == RunPlace(repo, NAME)
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
 def test_a_run_whose_worktree_is_gone_gets_it_again_on_its_local_branch(tmp_path: Any, host: Any):
     """Given a repository whose one run's worktree was removed, its local branch kept
     When newest and found are asked
@@ -337,7 +319,6 @@ def test_a_run_whose_worktree_is_gone_gets_it_again_on_its_local_branch(tmp_path
     assert git(repo, "status", "--porcelain").strip() == ""
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
 def test_a_run_whose_worktree_folder_was_deleted_gets_it_again(tmp_path: Any, host: Any):
     """Given a repository whose one run's worktree folder was deleted, git still recording it
     When found is asked
@@ -350,7 +331,6 @@ def test_a_run_whose_worktree_folder_was_deleted_gets_it_again(tmp_path: Any, ho
     assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
 def test_a_run_only_origin_holds_gets_its_worktree_on_a_branch_from_origins(
     tmp_path: Any, host: Any
 ):
@@ -381,7 +361,6 @@ def gone_from_github(repo: str, name: str, tree: dict[str, Any], when: str) -> N
     git(repo, "branch", "-q", "-D", f"rn-{name}")
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 @pytest.mark.parametrize("local", [False, True], ids=["alone", "beside-an-older-local-run"])
 def test_a_run_github_no_longer_holds_is_never_picked_up(tmp_path: Any, host: Any, local: bool):
     """Given a run with work left that was cancelled on another machine, whose only trace here is
@@ -399,7 +378,6 @@ def test_a_run_github_no_longer_holds_is_never_picked_up(tmp_path: Any, host: An
     assert git(repo, "for-each-ref", f"refs/remotes/origin/rn-{NAME}").strip() == ""
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_run_pushed_from_another_machine_since_the_last_fetch_is_picked_up(
     tmp_path: Any, host: Any
 ):
@@ -419,7 +397,6 @@ def test_a_run_pushed_from_another_machine_since_the_last_fetch_is_picked_up(
     assert head(rn_files.worktree_of(repo, NAME)) == head(other, f"rn-{NAME}")
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 @pytest.mark.parametrize("local", [False, True], ids=["none-here", "one-here"])
 def test_with_github_out_of_reach_only_this_machines_runs_are_picked_up(
     tmp_path: Any, host: Any, local: bool
@@ -448,7 +425,6 @@ def test_with_github_out_of_reach_only_this_machines_runs_are_picked_up(
     ), given.unchecked
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_runs_newer_local_branch_decides_over_origins_older_one(tmp_path: Any, host: Any):
     """Given a run pushed with work left, whose local branch then made each deliverable done in a
     newer commit not pushed
@@ -462,7 +438,6 @@ def test_a_runs_newer_local_branch_decides_over_origins_older_one(tmp_path: Any,
     assert newest(repo, host) is None
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
 def test_a_worktree_git_cant_make_is_cantrun_with_what_git_said(tmp_path: Any, host: Any):
     """Given a repository whose run's worktree was removed, and a file lying where the worktree
     goes
@@ -476,7 +451,6 @@ def test_a_worktree_git_cant_make_is_cantrun_with_what_git_said(tmp_path: Any, h
         found(repo, host)
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_design_tree_that_isnt_json_is_refused_naming_the_branch_and_path(
     tmp_path: Any, host: Any
 ):
@@ -499,9 +473,6 @@ def herdr_commands(host: Any) -> list[list[str]]:
     return [argv for argv, _ in host.asked]
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_new_run_inside_herdr_has_its_worktree_made_by_herdr_from_mains_commit(
     tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
 ):
@@ -526,9 +497,6 @@ def test_a_new_run_inside_herdr_has_its_worktree_made_by_herdr_from_mains_commit
     assert not [argv for argv, _ in host.ran if argv[:3] == ["git", "worktree", "add"]]
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 @pytest.mark.parametrize("value", [None, "0", ""])
 def test_a_new_run_outside_herdr_has_its_worktree_made_by_git(
     tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch, value: str | None
@@ -547,9 +515,6 @@ def test_a_new_run_outside_herdr_has_its_worktree_made_by_git(
     assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_new_run_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said(
     tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
 ):
@@ -564,7 +529,6 @@ def test_a_new_run_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
 def test_a_pick_up_inside_herdr_has_git_make_the_worktree_again_and_herdr_open_it(
     tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
 ):
@@ -584,7 +548,6 @@ def test_a_pick_up_inside_herdr_has_git_make_the_worktree_again_and_herdr_open_i
     assert herdr.asked == [(opened, repo)]
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
 def test_a_pick_up_outside_herdr_asks_herdr_nothing(tmp_path: Any, host: Any):
     """Given a repository whose one run's worktree was removed, its local branch kept, outside
     herdr
@@ -598,7 +561,6 @@ def test_a_pick_up_outside_herdr_asks_herdr_nothing(tmp_path: Any, host: Any):
     assert herdr_commands(herdr) == []
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
 def test_a_pick_up_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said(
     tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
 ):
@@ -663,7 +625,6 @@ def branches(repo: str) -> list[str]:
     return git(remote(repo), "for-each-ref", "--format=%(refname) %(objectname)").splitlines()
 
 
-@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 @pytest.mark.parametrize(
     ("branch", "pr"),
     [
@@ -717,7 +678,6 @@ def git_said(tmp_path: Any) -> str:
     )
 
 
-@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 @pytest.mark.parametrize(
     "failing", ["git-unreached", "git-refused", "gh-unreached", "gh-logged-out", "gh-close"]
 )
@@ -773,7 +733,6 @@ def test_a_cancelled_run_names_what_it_couldnt_remove_on_github_and_why(
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
 
 
-@pytest.mark.supports("test_a_cancel_whose_worktree_cant_be_removed_gives_2_and_keeps_the_run")
 def test_a_worktree_git_cant_remove_is_cantrun_and_keeps_the_branch(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -789,7 +748,6 @@ def test_a_worktree_git_cant_remove_is_cantrun_and_keeps_the_branch(
     assert git(repo, "branch", "--list", f"rn-{NAME}").strip() != ""
 
 
-@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 @pytest.mark.parametrize("made_by", ["git", "herdr"])
 def test_a_cancelled_run_inside_herdr_has_herdr_remove_its_worktree(
     tmp_path: Any, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch, made_by: str
@@ -820,7 +778,6 @@ def test_a_cancelled_run_inside_herdr_has_herdr_remove_its_worktree(
     assert not [argv for argv, _ in host.ran if argv[:3] == ["git", "worktree", "remove"]]
 
 
-@pytest.mark.supports("test_a_cancel_whose_worktree_cant_be_removed_gives_2_and_keeps_the_run")
 def test_a_cancelled_run_inside_herdr_that_herdr_fails_is_cantrun_and_keeps_the_run(
     tmp_path: Any, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
 ):

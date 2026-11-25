@@ -1,5 +1,5 @@
-"""How rn's cases make and read the files of a bench: git run in a repository, files written
-under a folder, and the environment of each command a bench runs."""
+"""How rn's cases make and read the files of a repository: git run in it, and files written under
+a folder."""
 
 from __future__ import annotations
 
@@ -12,24 +12,6 @@ def git(repo: str, *args: str) -> str:
     """Runs git in the repository, and gives what it printed."""
     done = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, check=True)
     return done.stdout
-
-
-# The settings by which coverage counts a process that a case starts.
-COVERAGE_SETTINGS = ("COVERAGE_PROCESS_START", "COVERAGE_FILE")
-
-
-def environment(tmp: str) -> dict[str, str]:
-    """The environment of each command that a bench in the folder runs: the PATH, a home and a
-    system's temporary folder of its own, the latter made, and, where check.sh measures coverage,
-    its settings, so that a process that a case starts counts toward it as well."""
-    env = {
-        "PATH": os.environ.get("PATH", os.defpath),
-        "HOME": os.path.join(tmp, "home"),
-        "TMPDIR": os.path.join(tmp, "system-temp"),
-    }
-    env.update({name: os.environ[name] for name in COVERAGE_SETTINGS if name in os.environ})
-    os.makedirs(env["TMPDIR"])
-    return env
 
 
 def write_files(folder: str, files: Mapping[str, str]) -> None:

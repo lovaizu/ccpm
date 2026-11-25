@@ -19,7 +19,6 @@
     .line { fill: none; stroke: #59636e; stroke-width: 1.5; }
     .dashed { stroke-dasharray: 5 4; }
     .head { fill: #59636e; }
-    .hole { fill: #ffffff; stroke: #59636e; stroke-width: 1.5; }
     .halo { stroke: #ffffff; stroke-width: 7; stroke-linejoin: round; paint-order: stroke; }
     .mid { text-anchor: middle; }
     .start { text-anchor: start; }
@@ -39,7 +38,6 @@
       .gets { fill: #3fb950; }
       .line { stroke: #9198a1; }
       .head { fill: #9198a1; }
-      .hole { fill: #0d1117; stroke: #9198a1; }
       .halo { stroke: #0d1117; }
     }
   </style>

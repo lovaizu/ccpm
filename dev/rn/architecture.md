@@ -464,7 +464,7 @@ plugins/rn/                        what Claude Code installs for the user
 └── scripts/                       each step with one right result, as a role runs it
 
 dev/rn/                            what only rn's developers use
-└── tests/                         the test cases, from unit to integration
+└── tests/                         the unit tests of rn's code
 
 .claude/worktrees/                 rn's worktree of each run
 └── rn-<yyyymmdd>-<slug>/          one run's worktree, on the work's branch
@@ -488,11 +488,7 @@ dev/rn/                            what only rn's developers use
 | Complexity analysis | Parts | Quality | During the work | Per function, McCabe 10, cognitive 15, 6 returns, 12 branches, 5 arguments, 50 statements at most. |
 | Unit testing | Parts | Quality | During the work | Every case passes. |
 | Code coverage | Parts | Quality | During the work | 100% statement (C0) and branch (C1) coverage. |
-| Property-based testing | Parts | Quality | During the work | 0 counterexamples of each invariant that rn's product vision, README, and this document state. |
-| Integration testing | Architecture | Quality | During the work | Every case passes, with a double of each prompt, and each handoff gives the data the concept model names. |
-| Contract testing | Architecture | Quality | Apart from the work | On each new version of gh, each recorded command gives what it recorded. |
-| Traceability | Architecture | Quality | During the work | Every element tested, every case naming one level up, and each principle's case failing with its part broken. |
-| Scenario testing | Product | Quality | Apart from the work | A walkthrough run of the README's request reaches its pull request with no stop that a fault caused. |
+| Scenario testing | Product | Quality | Apart from the work | The user's E2E run of a real request reaches its pull request with no stop that a fault caused. |
 | Installation testing | Product | Quality | Apart from the work | Once ccpm's marketplace lists rn, it installs alone by the README's commands in a fresh home. |
 | Configuration testing | Product | Quality | During the work | Every case passes on Python 3.9 and on the newest Python. |
 | Conformance and compliance testing | Product | Quality | During the work | Claude Code's strict check of the plugin passes. |

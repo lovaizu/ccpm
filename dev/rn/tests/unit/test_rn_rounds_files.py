@@ -75,7 +75,6 @@ def expected(run: RunPlace, deliverable: str, stage: str, number: int) -> tuple[
     return (rn_files.round_of(folder(run), deliverable, stage, number), deliverable, stage, number)
 
 
-@pytest.mark.supports("test_a_generators_made_makes_the_evaluator_due_in_the_same_round")
 @pytest.mark.parametrize("role", ["generator", "evaluator"])
 def test_a_rounds_cut_of_each_role_lies_in_its_folder(role: str):
     """Given a Round whose folder is /r/rounds/docs%2Fguide.md/content-1
@@ -85,7 +84,6 @@ def test_a_rounds_cut_of_each_role_lies_in_its_folder(role: str):
     assert round_.cut(role) == os.path.join(round_.folder, f"{role}-cut.json")
 
 
-@pytest.mark.supports("test_a_generators_made_makes_the_evaluator_due_in_the_same_round")
 @pytest.mark.parametrize("role", ["generator", "evaluator"])
 def test_a_rounds_result_of_each_role_lies_in_its_folder(role: str):
     """Given a Round whose folder is /r/rounds/docs%2Fguide.md/content-1
@@ -95,7 +93,6 @@ def test_a_rounds_result_of_each_role_lies_in_its_folder(role: str):
     assert round_.result(role) == os.path.join(round_.folder, f"{role}.json")
 
 
-@pytest.mark.supports("test_a_generators_made_makes_the_evaluator_due_in_the_same_round")
 @pytest.mark.parametrize("role", ["orchestrator", "Generator", ""])
 def test_a_rounds_paths_of_a_role_of_neither_are_refused(role: str):
     """Given a Round
@@ -108,7 +105,6 @@ def test_a_rounds_paths_of_a_role_of_neither_are_refused(role: str):
         round_.result(role)
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_of_a_deliverable_with_no_round_gives_none(run: RunPlace):
     """Given a run with no Round
     When the guide's Rounds are asked
@@ -116,7 +112,6 @@ def test_of_a_deliverable_with_no_round_gives_none(run: RunPlace):
     assert of(run, GUIDE) == []
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_of_a_deliverable_with_one_round_gives_it(run: RunPlace):
     """Given a run whose guide has Round content-1
     When the guide's Rounds are asked
@@ -125,7 +120,6 @@ def test_of_a_deliverable_with_one_round_gives_it(run: RunPlace):
     assert seen(of(run, GUIDE)) == [expected(run, GUIDE, "content", 1)]
 
 
-@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
 def test_of_gives_the_rounds_in_the_order_they_were_made_by_their_numbers(run: RunPlace):
     """Given a run whose guide has Rounds content-11, refactor-10, content-2, and content-1, their
     folders made in that order
@@ -142,7 +136,6 @@ def test_of_gives_the_rounds_in_the_order_they_were_made_by_their_numbers(run: R
     ]
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_of_leaves_out_another_deliverables_rounds(run: RunPlace):
     """Given a run whose guide has Round content-1, and whose command, and a deliverable
     docs/guide.md.old beside the guide, each have Rounds content-1 and content-2
@@ -155,7 +148,6 @@ def test_of_leaves_out_another_deliverables_rounds(run: RunPlace):
     assert seen(of(run, GUIDE)) == [expected(run, GUIDE, "content", 1)]
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 @pytest.mark.parametrize("name", ["content-x", "draft-1", "content-0", "content1"])
 def test_of_refuses_a_folder_of_another_form(run: RunPlace, name: str):
     """Given a run whose guide's Rounds folder holds content-1 and a folder of another form
@@ -167,7 +159,6 @@ def test_of_refuses_a_folder_of_another_form(run: RunPlace, name: str):
         of(run, GUIDE)
 
 
-@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
 def test_of_refuses_two_folders_that_share_a_number(run: RunPlace):
     """Given a run whose guide has Rounds content-1, content-2, and refactor-2
     When the guide's Rounds are asked
@@ -178,9 +169,6 @@ def test_of_refuses_two_folders_that_share_a_number(run: RunPlace):
         of(run, GUIDE)
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_at_an_absolute_folder_gives_its_round(run: RunPlace):
     """Given a run whose guide has Round refactor-2
     When the Round of its absolute folder is asked
@@ -189,9 +177,6 @@ def test_at_an_absolute_folder_gives_its_round(run: RunPlace):
     assert seen([at(run, place)]) == [expected(run, GUIDE, "refactor", 2)]
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_at_a_folder_from_the_folder_the_command_runs_in_gives_its_round(
     run: RunPlace, monkeypatch: pytest.MonkeyPatch
 ):
@@ -205,9 +190,6 @@ def test_at_a_folder_from_the_folder_the_command_runs_in_gives_its_round(
     assert seen([at(run, given)]) == [expected(run, rn_files.COMMAND, "content", 1)]
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_at_a_folder_outside_the_runs_rounds_is_refused(run: RunPlace, tmp_path: Any):
     """Given a run, and a folder content-1 outside its Rounds
     When the Round of that folder is asked
@@ -218,9 +200,6 @@ def test_at_a_folder_outside_the_runs_rounds_is_refused(run: RunPlace, tmp_path:
         at(run, outside)
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_at_the_rounds_folder_of_a_deliverable_is_refused(run: RunPlace):
     """Given a run whose guide has Round content-1
     When the Round of the guide's Rounds folder, one level above content-1, is asked
@@ -230,7 +209,6 @@ def test_at_the_rounds_folder_of_a_deliverable_is_refused(run: RunPlace):
         at(run, os.path.dirname(place))
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_new_with_no_round_of_the_stage_makes_its_first(run: RunPlace):
     """Given a run with no Round
     When a new content Round of the guide is made
@@ -240,7 +218,6 @@ def test_new_with_no_round_of_the_stage_makes_its_first(run: RunPlace):
     assert os.path.isdir(made.folder)
 
 
-@pytest.mark.supports("test_a_send_back_after_the_refactor_round_is_remade_in_a_new_content_round")
 def test_new_makes_the_round_one_past_the_deliverables_last(run: RunPlace):
     """Given a run whose guide has Rounds content-1 and refactor-3, a gap between them
     When a new content Round, then a new refactor Round, of the guide are made
@@ -256,7 +233,6 @@ def test_new_makes_the_round_one_past_the_deliverables_last(run: RunPlace):
     assert os.path.isdir(content.folder) and os.path.isdir(refactor.folder)
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_new_counts_only_the_deliverables_own_rounds(run: RunPlace):
     """Given a run whose command has Rounds content-1 and content-2
     When a new content Round of the guide is made
@@ -266,7 +242,6 @@ def test_new_counts_only_the_deliverables_own_rounds(run: RunPlace):
     assert seen([new(run, GUIDE, "content")]) == [expected(run, GUIDE, "content", 1)]
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 @pytest.mark.parametrize("stage", ["Content", "refactoring", ""])
 def test_new_of_a_stage_of_neither_is_refused(run: RunPlace, stage: str):
     """Given a run with no Round
@@ -277,7 +252,6 @@ def test_new_of_a_stage_of_neither_is_refused(run: RunPlace, stage: str):
     assert not os.path.exists(os.path.join(folder(run), "rounds", "docs%2Fguide.md"))
 
 
-@pytest.mark.supports("test_a_generators_made_makes_the_evaluator_due_in_the_same_round")
 @pytest.mark.parametrize(
     ("role", "written"),
     [
@@ -295,9 +269,6 @@ def test_result_gives_the_result_the_role_wrote(run: RunPlace, role: str, writte
     )
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 @pytest.mark.parametrize("role", ["generator", "evaluator"])
 def test_result_of_a_role_that_wrote_none_is_none(run: RunPlace, role: str):
     """Given a Round of the guide holding only the role's Cut, as a pause leaves it
@@ -308,7 +279,6 @@ def test_result_of_a_role_that_wrote_none_is_none(run: RunPlace, role: str):
     assert result(Round(place, GUIDE, "content", 1), role) is None
 
 
-@pytest.mark.supports("test_a_generators_made_makes_the_evaluator_due_in_the_same_round")
 def test_result_that_isnt_json_is_refused_naming_it(run: RunPlace):
     """Given a Round of the guide whose generator.json holds `made` as plain text
     When the generator's result is asked
@@ -320,7 +290,6 @@ def test_result_that_isnt_json_is_refused_naming_it(run: RunPlace):
         result(Round(place, GUIDE, "content", 1), "generator")
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 @pytest.mark.parametrize(
     ("deliverable", "named"),
     [
@@ -343,7 +312,6 @@ def test_new_names_the_folder_by_the_deliverables_path_percent_encoded_whole(
     assert os.path.isdir(place)
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_paths_that_differ_only_by_slash_and_dash_keep_their_rounds_apart(run: RunPlace):
     """Given a run whose deliverable docs/guide.md has Round content-1, and another docs-guide.md
     has Rounds content-1 and content-2
@@ -363,9 +331,6 @@ def test_paths_that_differ_only_by_slash_and_dash_keep_their_rounds_apart(run: R
     ]
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 @pytest.mark.parametrize(
     "deliverable", ["docs/guide.md", "docs-guide.md", "docs/100%/a b.md", "a%2Fb.md"]
 )
@@ -378,7 +343,6 @@ def test_at_turns_the_folders_name_back_into_the_deliverables_path(run: RunPlace
     assert seen([at(run, place)]) == [expected(run, deliverable, "refactor", 1)]
 
 
-@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
 def test_mark_marks_the_deliverables_last_round_alone_with_the_state(run: RunPlace):
     """Given a run whose guide has Rounds content-1 and refactor-2, and whose command has
     content-3
@@ -397,7 +361,6 @@ def test_mark_marks_the_deliverables_last_round_alone_with_the_state(run: RunPla
     assert marked(of(run, rn_files.COMMAND)[0]) is None
 
 
-@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
 def test_mark_of_a_deliverable_with_no_round_marks_none(run: RunPlace):
     """Given a run with no Round
     When the plan's last Round is marked as put up
@@ -406,7 +369,6 @@ def test_mark_of_a_deliverable_with_no_round_marks_none(run: RunPlace):
     assert not os.path.exists(os.path.join(folder(run), "rounds"))
 
 
-@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
 def test_marked_refuses_a_mark_that_isnt_json(run: RunPlace):
     """Given a run whose guide's Round content-1 holds a put-up.json that isn't JSON
     When the state it was put up with is asked
@@ -418,7 +380,6 @@ def test_marked_refuses_a_mark_that_isnt_json(run: RunPlace):
         marked(of(run, GUIDE)[0])
 
 
-@pytest.mark.supports("test_a_users_answer_after_two_content_rounds_gets_a_new_content_round")
 def test_given_is_the_node_that_the_generators_cut_held(run: RunPlace):
     """Given a run whose guide's Round content-1 holds a generator's Cut with the guide's node
     When the node its generator was given is asked
@@ -429,7 +390,6 @@ def test_given_is_the_node_that_the_generators_cut_held(run: RunPlace):
     assert given(of(run, GUIDE)[0]) == node
 
 
-@pytest.mark.supports("test_a_users_answer_after_two_content_rounds_gets_a_new_content_round")
 def test_given_of_a_round_with_no_generators_cut_is_none(run: RunPlace):
     """Given a run whose guide's Round content-1 holds no generator's Cut
     When the node its generator was given is asked
@@ -459,9 +419,6 @@ def seen_fixes(found: list[Fix]) -> list[tuple[str, str, int]]:
     return [(os.path.normpath(f.folder), f.deliverable, f.number) for f in found]
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_a_fixs_problem_cut_and_result_lie_in_its_folder():
     """Given a Fix whose folder is /r/rounds/docs%2Fguide.md/fix-3
     When its problem's, its fixer's Cut's, and its fixer's result's paths are asked
@@ -474,7 +431,6 @@ def test_a_fixs_problem_cut_and_result_lie_in_its_folder():
     )
 
 
-@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
 def test_fixes_of_a_deliverable_with_none_gives_none(run: RunPlace):
     """Given a run whose guide has Round content-1 and no Fix
     When the guide's Fixes are asked
@@ -483,7 +439,6 @@ def test_fixes_of_a_deliverable_with_none_gives_none(run: RunPlace):
     assert fixes(run, GUIDE) == []
 
 
-@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
 def test_fixes_and_rounds_are_each_given_apart_in_the_order_they_were_made(run: RunPlace):
     """Given a run whose guide has content-1, fix-12, refactor-2, fix-3, and content-4, their
     folders made in that order
@@ -506,7 +461,6 @@ def test_fixes_and_rounds_are_each_given_apart_in_the_order_they_were_made(run: 
     ]
 
 
-@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
 @pytest.mark.parametrize("ask", [of, fixes], ids=["of", "fixes"])
 def test_a_round_and_a_fix_that_share_a_number_are_refused(
     run: RunPlace, ask: Callable[[RunPlace, str], list[Any]]
@@ -521,9 +475,6 @@ def test_a_round_and_a_fix_that_share_a_number_are_refused(
         ask(run, GUIDE)
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_at_a_fixs_folder_is_refused(run: RunPlace):
     """Given a run whose guide has Round content-1 and Fix fix-2
     When the Round of the Fix's folder is asked, as repository.py trial takes a Round's
@@ -534,9 +485,6 @@ def test_at_a_fixs_folder_is_refused(run: RunPlace):
         at(run, place)
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 def test_new_makes_the_round_one_past_the_deliverables_last_fix(run: RunPlace):
     """Given a run whose guide has Round content-1 and Fix fix-2
     When a new content Round of the guide is made
@@ -546,9 +494,6 @@ def test_new_makes_the_round_one_past_the_deliverables_last_fix(run: RunPlace):
     assert seen([new(run, GUIDE, "content")]) == [expected(run, GUIDE, "content", 3)]
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_new_fix_makes_the_fix_one_past_the_last_round_holding_its_problem(run: RunPlace):
     """Given a run whose guide has Rounds content-1 and refactor-2
     When a new Fix of the guide is made with a problem of put-up
@@ -561,7 +506,6 @@ def test_new_fix_makes_the_fix_one_past_the_last_round_holding_its_problem(run: 
     assert rn_files.read_json(os.path.join(place, "problem.json")) == REFUSED
 
 
-@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
 def test_new_fix_after_a_fix_makes_the_next(run: RunPlace):
     """Given a run whose guide has Round content-1 and Fix fix-2
     When a new Fix of the guide is made
@@ -573,9 +517,6 @@ def test_new_fix_after_a_fix_makes_the_next(run: RunPlace):
     assert fixer_result(fixes(run, GUIDE)[0]) == {"result": "fixed", "files": []}
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 @pytest.mark.parametrize("source", ["put-up", "final-check", "send-back"])
 def test_problem_of_each_source_holds_it_and_the_words_as_given(source: str):
     """Given a source of the problem and its words, with a new line at their end
@@ -585,9 +526,6 @@ def test_problem_of_each_source_holds_it_and_the_words_as_given(source: str):
     assert problem(source, words) == {"source": source, "words": words}
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 @pytest.mark.parametrize("source", ["put_up", "push", "", "Send-back"])
 def test_problem_of_a_source_of_none_is_refused_naming_each(source: str):
     """Given a source that is none of put-up, final-check, and send-back, one that nearly matches
@@ -598,9 +536,6 @@ def test_problem_of_a_source_of_none_is_refused_naming_each(source: str):
         problem(source, "the words")
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 @pytest.mark.parametrize("words", ["", " \n\t"], ids=["empty", "only spaces"])
 def test_problem_with_no_words_is_refused_saying_to_give_them_on_stdin(words: str):
     """Given the source put-up, and words empty or only spaces
@@ -610,9 +545,6 @@ def test_problem_with_no_words_is_refused_saying_to_give_them_on_stdin(words: st
         problem("put-up", words)
 
 
-@pytest.mark.supports(
-    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
-)
 def test_problem_of_a_fix_is_the_problem_it_holds_or_none(run: RunPlace):
     """Given a run whose guide has fix-1 holding its problem, and fix-2 holding none
     When each Fix's problem is asked
@@ -622,7 +554,6 @@ def test_problem_of_a_fix_is_the_problem_it_holds_or_none(run: RunPlace):
     assert [problem_of(each) for each in fixes(run, GUIDE)] == [REFUSED, None]
 
 
-@pytest.mark.supports("test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut")
 def test_a_fixs_result_and_node_are_none_before_its_fixer_writes_them(run: RunPlace):
     """Given a run whose guide has fix-1 holding its problem alone
     When the fixer's result and the node its Cut held are asked
@@ -632,9 +563,6 @@ def test_a_fixs_result_and_node_are_none_before_its_fixer_writes_them(run: RunPl
     assert (fixer_result(fix), fixer_given(fix)) == (None, None)
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 def test_a_fixs_result_and_node_are_those_its_fixer_was_given_and_wrote(run: RunPlace):
     """Given a run whose guide has fix-1 holding its problem, a fixer's Cut with the guide's
     node, and the fixer's decision
@@ -648,7 +576,6 @@ def test_a_fixs_result_and_node_are_those_its_fixer_was_given_and_wrote(run: Run
     assert (fixer_result(fix), fixer_given(fix)) == (decided, node)
 
 
-@pytest.mark.supports("test_a_fixers_decision_that_the_pruner_cuts_ends_the_fix")
 def test_a_fix_is_weighed_once_weigh_marks_it_with_the_commit(run: RunPlace):
     """Given a run whose guide has fix-1 holding its problem and a fixer's decision
     When weighed is asked, then weigh marks it with a commit's hash, and weighed is asked again
@@ -661,9 +588,6 @@ def test_a_fix_is_weighed_once_weigh_marks_it_with_the_commit(run: RunPlace):
     assert rn_files.read_json(os.path.join(fix.folder, "weighed.json")) == {"commit": "5de44e4"}
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_mark_of_a_deliverable_whose_last_folder_is_a_fix_marks_the_fix(run: RunPlace):
     """Given a run whose guide has Round content-1 and fix-2
     When the guide is marked as put up with each condition good
@@ -676,7 +600,6 @@ def test_mark_of_a_deliverable_whose_last_folder_is_a_fix_marks_the_fix(run: Run
     assert marked(of(run, GUIDE)[0]) is None
 
 
-@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 def test_a_round_is_weighed_once_weigh_marks_it_with_the_commit(run: RunPlace):
     """Given a run whose guide's Round content-1 holds a generator's point
     When weighed is asked, then weigh marks it with a commit's hash, and weighed is asked again
@@ -689,7 +612,6 @@ def test_a_round_is_weighed_once_weigh_marks_it_with_the_commit(run: RunPlace):
     assert rn_files.read_json(os.path.join(place, "weighed.json")) == {"commit": "5de44e4"}
 
 
-@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 @pytest.mark.parametrize(
     "results",
     [{"generator": rn_files.point(), **rn_files.WEIGHED}, {}],
@@ -708,7 +630,6 @@ def test_reopen_takes_the_point_and_its_mark_out_of_the_round(
     assert sorted(os.listdir(place)) == ["generator-cut.json"]
 
 
-@pytest.mark.supports("test_a_fixers_file_outside_its_deliverable_is_refused_by_check_py")
 @pytest.mark.parametrize("name", ["problem.json", "fixer-cut.json", "fixer.json"])
 def test_a_fixs_file_that_isnt_json_is_refused_naming_it(run: RunPlace, name: str):
     """Given a run whose guide's fix-1 holds the file, which isn't JSON

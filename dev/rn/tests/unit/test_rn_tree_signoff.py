@@ -39,9 +39,6 @@ def walkthrough(**given: Any) -> dict[str, Any]:
 # waiting
 
 
-@pytest.mark.supports(
-    "test_the_hearing_settled_is_written_by_one_pruner_and_the_plans_signoff_recorded"
-)
 def test_the_plan_open_with_each_condition_good_waits_before_a_deliverable_earlier_in_the_tree():
     """Given a tree whose command, first in the tree, is open with each condition good and waits on
     the sign-off, and whose plan, after it, is open with each condition good
@@ -52,9 +49,6 @@ def test_the_plan_open_with_each_condition_good_waits_before_a_deliverable_earli
     assert waiting(the, {COMMAND: SIGN_OFF, GUIDE: Next("generator", "content", False)}) == PLAN
 
 
-@pytest.mark.supports(
-    "test_the_hearing_settled_is_written_by_one_pruner_and_the_plans_signoff_recorded"
-)
 def test_the_plan_open_with_a_condition_short_doesnt_wait():
     """Given a tree whose plan is open with N2 not good, and whose deliverables wait on the
     generator
@@ -69,9 +63,6 @@ def test_the_plan_open_with_a_condition_short_doesnt_wait():
     assert waiting(the, nexts) is None
 
 
-@pytest.mark.supports(
-    "test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_condition_good"
-)
 def test_a_deliverable_with_each_condition_good_waiting_on_the_signoff_waits():
     """Given a tree whose plan is done and whose command is open with each condition good and waits
     on the sign-off
@@ -81,9 +72,6 @@ def test_a_deliverable_with_each_condition_good_waiting_on_the_signoff_waits():
     assert waiting(the, {COMMAND: SIGN_OFF, GUIDE: Next("generator", "content", False)}) == COMMAND
 
 
-@pytest.mark.supports(
-    "test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_condition_good"
-)
 def test_of_two_deliverables_waiting_the_first_in_the_trees_order_waits():
     """Given a tree whose command and guide both wait on the sign-off with each condition good, and
     whose work makes the guide first
@@ -94,9 +82,6 @@ def test_of_two_deliverables_waiting_the_first_in_the_trees_order_waits():
     assert waiting(the, {GUIDE: SIGN_OFF, COMMAND: SIGN_OFF}) == COMMAND
 
 
-@pytest.mark.supports(
-    "test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_condition_good"
-)
 @pytest.mark.parametrize(
     "next_",
     [
@@ -128,7 +113,6 @@ def left_past(**given: Any) -> dict[str, Any]:
     )
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_a_deliverable_whose_course_is_the_signoff_with_a_finding_left_waits():
     """Given a tree whose command holds N1 not good with its finding left as an open decision, and
     whose course is the sign-off
@@ -138,7 +122,6 @@ def test_a_deliverable_whose_course_is_the_signoff_with_a_finding_left_waits():
     assert waiting(left_past(), nexts) == COMMAND
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_a_deliverable_with_a_condition_short_whose_course_is_the_orchestrator_doesnt_wait():
     """Given a tree whose command holds N1 not good, its finding not yet kept, and whose course is
     the orchestrator
@@ -149,7 +132,6 @@ def test_a_deliverable_with_a_condition_short_whose_course_is_the_orchestrator_d
     assert waiting(the, nexts) is None
 
 
-@pytest.mark.supports("test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts")
 def test_a_tree_of_deliverables_each_done_has_none_waiting():
     """Given a tree whose deliverables are each done
     When what waits for the sign-off is found
@@ -168,9 +150,6 @@ def test_a_tree_of_deliverables_each_done_has_none_waiting():
 # signed_off
 
 
-@pytest.mark.supports(
-    "test_a_signoff_of_the_plan_makes_it_done_and_starts_the_generator_of_each_deliverable_due"
-)
 def test_the_plan_signed_off_is_done_with_its_conditions():
     """Given a tree whose plan is open with each condition good
     When the user signs the plan off
@@ -185,7 +164,6 @@ def test_the_plan_signed_off_is_done_with_its_conditions():
     assert the == before
 
 
-@pytest.mark.supports("test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts")
 def test_a_deliverable_signed_off_drops_each_item_of_the_work_that_names_it():
     """Given a tree whose command is open with each condition good and more paths, and whose work
     makes it, decides its N1, and makes the guide
@@ -208,7 +186,6 @@ def test_a_deliverable_signed_off_drops_each_item_of_the_work_that_names_it():
     assert got["deliverables"][2] == the["deliverables"][2]
 
 
-@pytest.mark.supports("test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts")
 def test_a_node_with_no_file_signed_off_keeps_its_conditions():
     """Given a tree whose node with no file, of the kind light, is open with each condition good and
     a decision of its N1
@@ -227,7 +204,6 @@ def test_a_node_with_no_file_signed_off_keeps_its_conditions():
     assert got["deliverables"][1] == want
 
 
-@pytest.mark.supports("test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts")
 def test_a_deliverable_being_made_signed_off_is_done():
     """Given a tree whose command, status doing, has each condition good
     When the user signs it off
@@ -238,7 +214,6 @@ def test_a_deliverable_being_made_signed_off_is_done():
     assert got["deliverables"][1] == rn_files.done_node(rn_files.COMMAND_NAME, COMMAND, "light")
 
 
-@pytest.mark.supports("test_a_deliverable_signed_off_is_done_and_the_one_resting_on_it_starts")
 @pytest.mark.parametrize("path", [PLAN, "invoicer/__main__", "docs/guide.txt"])
 def test_signed_off_refuses_a_path_of_no_open_deliverable(path: str):
     """Given a tree whose plan is done and whose command and guide are open with each condition
@@ -250,7 +225,6 @@ def test_signed_off_refuses_a_path_of_no_open_deliverable(path: str):
         signed_off(the, path)
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_a_deliverable_with_a_finding_left_signed_off_keeps_it_among_its_conditions():
     """Given a tree whose command holds N1 not good with its finding left as an open decision
     When the user signs the command off
@@ -262,7 +236,6 @@ def test_a_deliverable_with_a_finding_left_signed_off_keeps_it_among_its_conditi
     assert got["work"] == [rn_files.work("make", GUIDE)]
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_a_node_with_no_file_signed_off_with_a_finding_left_keeps_it_among_its_conditions():
     """Given a tree whose node with no file holds N1 not good with its finding left as an open
     decision
@@ -282,10 +255,6 @@ def test_a_node_with_no_file_signed_off_with_a_finding_left_keeps_it_among_its_c
 
 # The steps that the user checks.
 
-ONE_STEP = (
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
-
 
 def with_steps(the: dict[str, Any], command: bool, guide: bool) -> dict[str, Any]:
     """The tree with a step of the command and one of the guide, each with the sign-off given."""
@@ -296,9 +265,6 @@ def with_steps(the: dict[str, Any], command: bool, guide: bool) -> dict[str, Any
     return the
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 def test_a_deliverable_past_its_rounds_at_a_step_the_user_doesnt_check_doesnt_wait():
     """Given a tree whose command waits on the sign-off with each condition good, at a step whose
     sign-off is false
@@ -308,9 +274,6 @@ def test_a_deliverable_past_its_rounds_at_a_step_the_user_doesnt_check_doesnt_wa
     assert waiting(the, {COMMAND: SIGN_OFF, GUIDE: Next("generator", "content", False)}) is None
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 def test_a_deliverable_past_its_rounds_at_a_step_the_user_checks_waits():
     """Given a tree whose command waits on the sign-off with each condition good, at a step whose
     sign-off is true, and the guide's step's false
@@ -320,9 +283,6 @@ def test_a_deliverable_past_its_rounds_at_a_step_the_user_checks_waits():
     assert waiting(the, {COMMAND: SIGN_OFF, GUIDE: Next("generator", "content", False)}) == COMMAND
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 @pytest.mark.parametrize(
     ("steps", "path", "expected"),
     [

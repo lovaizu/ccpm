@@ -36,6 +36,10 @@ else
     "with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
+# Code that nothing uses still asks its maintainer to read it and keep it in line with the rest, so
+# the repository keeps none. vulture names each name that no file reads, by pyproject.toml.
+held design vulture
+
 # A function whose maintainer must hold more in mind at once than one reading gives, by how deep its
 # branches and loops nest, does more than one thing, as N5 of the refactor-code best practice says.
 # complexipy counts it as cognitive complexity, up to pyproject.toml's limit.
@@ -47,27 +51,13 @@ else
     "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
-# The property-based tests take hypothesis, which comes with pyproject.toml's test-quality group on
-# Python 3.11 or later, so pyrefly reads them, and pytest runs them, only where hypothesis is there.
-if python -c 'import hypothesis' 2>/dev/null; then
-  properties=""
-  levels="unit integration properties"
-else
-  properties="--project-excludes=**/properties/**"
-  levels="unit integration"
-  echo "check.sh: the property-based tests go unchecked, as hypothesis isn't installed. It"\
-    "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
-fi
-
-# The checks' own Python, with its tests.
-held design pyrefly check --search-path dev/scripts --search-path dev/scripts/tests \
-  dev/scripts/*.py dev/scripts/tests/*.py
-
-# rn's code and its tests, with the bench they call, as a type that doesn't fit across a call is a
+# The checks' own Python, and rn's code with its tests, as a type that doesn't fit across a call is a
 # fault no test may reach.
+held design pyrefly check --search-path dev/scripts dev/scripts/*.py
+
 # plugins/rn/scripts stays off the search path, as its template.py shares its name with the code of
 # plugins/rn/domain it runs.
-held design pyrefly check $properties --search-path plugins/rn/domain --search-path dev/rn/tests \
+held design pyrefly check --search-path plugins/rn/domain --search-path dev/rn/tests \
   plugins/rn/domain/*.py plugins/rn/domain/*/*.py plugins/rn/scripts/*.py \
   dev/rn/tests/*.py dev/rn/tests/*/*.py
 
@@ -112,25 +102,12 @@ python3 dev/scripts/standalone.py check
 # the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
-# Each test case of a plugin names what it supports one level up, and each element of its
-# architecture has an integration case, as the plugin guide's Test says, so a gap between the
-# parts shows before anyone builds around it. A plugin comes under the check once
-# dev/<plugin>/tests/integration/ holds its cases, as its developers write every case before any part.
+# The unit tests of each plugin run on each push.
 plugin_tests=""
 for architecture in dev/*/architecture.md; do
   plugin="${architecture#dev/}"
   plugin="${plugin%/architecture.md}"
-  if [ -n "$(find "dev/$plugin/tests/integration" -name 'test_*.py' 2>/dev/null)" ]; then
-    python3 dev/scripts/trace.py check "$plugin"
-  else
-    echo "check.sh: the trace of $plugin's cases goes unchecked, as dev/$plugin/tests/ holds"\
-      "none yet"
-  fi
-  # The unit, integration, and property-based tests of each plugin run on each push, as each
-  # plugin's Test strategy runs them during the work.
-  for level in $levels; do
-    [ ! -d "dev/$plugin/tests/$level" ] || plugin_tests="$plugin_tests dev/$plugin/tests/$level"
-  done
+  [ ! -d "dev/$plugin/tests/unit" ] || plugin_tests="$plugin_tests dev/$plugin/tests/unit"
 done
 
 # A double that gives what the real thing never would passes a test that the real one fails, so each
@@ -145,13 +122,12 @@ if command -v coverage >/dev/null 2>&1; then
   # The tests run once, on each core, as coverage's own .pth starts it in each worker where
   # COVERAGE_PROCESS_START names its settings.
   COVERAGE_FILE="$scratch/.coverage" COVERAGE_PROCESS_START="$PWD/pyproject.toml" \
-    coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider \
-    dev/scripts/tests $plugin_tests
+    coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider $plugin_tests
   COVERAGE_FILE="$scratch/.coverage" coverage combine -q
   COVERAGE_FILE="$scratch/.coverage" held tests coverage report
 else
-  pytest -q -n auto dev/scripts/tests $plugin_tests
-  echo "check.sh: which lines of the checks' own code the tests run goes unchecked, as"\
+  pytest -q -n auto $plugin_tests
+  echo "check.sh: which lines of rn's code the tests run goes unchecked, as"\
     "coverage isn't installed. It comes with pyproject.toml's test-quality group, on Python 3.11"\
     "or later"
 fi

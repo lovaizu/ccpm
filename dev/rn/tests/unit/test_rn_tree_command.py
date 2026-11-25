@@ -96,7 +96,6 @@ def refused(result: tuple[int, str, str], *words: str) -> None:
 # The usage
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     "argv",
     [
@@ -131,7 +130,6 @@ def test_arguments_other_than_the_usages_give_2_with_it(tmp_path: Any, host: Any
 # touched
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_with_a_pointer_prints_each_node_it_touches_a_line(tmp_path: Any, host: Any):
     """Given the walkthrough's run
     When tree.py touched runs with the pointer of the command's N1's decision
@@ -149,7 +147,6 @@ def test_touched_with_a_pointer_prints_each_node_it_touches_a_line(tmp_path: Any
     assert got == (0, "".join(f"{each}\n" for each in lines), "")
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_with_a_pointer_of_a_path_changed_since_the_commit_follows_the_old_path(
     tmp_path: Any, host: Any
 ):
@@ -167,7 +164,6 @@ def test_touched_with_a_pointer_of_a_path_changed_since_the_commit_follows_the_o
     assert got == (0, "".join(f"{each}\n" for each in lines), "")
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_with_a_pointer_of_no_node_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run, of three deliverables
     When tree.py touched runs with the pointer of a fourth
@@ -176,7 +172,6 @@ def test_touched_with_a_pointer_of_no_node_gives_1_naming_it(tmp_path: Any, host
     refused(r.main(host, "touched", r.run, "/deliverables/3"), "/deliverables/3")
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_of_a_change_since_the_commit_prints_what_it_touches(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree committed, then the user's answer about the tax rate
     changed in the tree
@@ -198,7 +193,40 @@ def test_touched_of_a_change_since_the_commit_prints_what_it_touches(tmp_path: A
     assert r.main(host, "touched", r.run) == (0, "".join(f"{each}\n" for each in lines), "")
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
+def test_touched_of_a_decision_taken_away_prints_what_its_condition_touches(
+    tmp_path: Any, host: Any
+):
+    """Given the walkthrough's run, its tree committed, then the user's answer about the tax rate
+    taken out of the tree
+    When tree.py touched runs with no pointer
+    Then it gives 0 printing what the command's N1, which held the answer, touches: the goal, the
+    command, its N1, the guide, and the work making the command"""
+    r = Run(str(tmp_path), walkthrough())
+    changed = r.tree()
+    del changed["deliverables"][1]["necessary_conditions"][0]["decisions"][0]
+    r.write(changed)
+    lines = [
+        "/goal",
+        "/deliverables/1",
+        "/deliverables/1/necessary_conditions/0",
+        "/deliverables/2",
+        "/work/0",
+    ]
+    assert r.main(host, "touched", r.run) == (0, "".join(f"{each}\n" for each in lines), "")
+
+
+def test_touched_of_a_deliverable_taken_away_prints_the_goal(tmp_path: Any, host: Any):
+    """Given the walkthrough's run, its tree committed, then the guide, its last deliverable, taken
+    out of the tree
+    When tree.py touched runs with no pointer
+    Then it gives 0 printing the goal, the nearest node above the guide that the tree still holds"""
+    r = Run(str(tmp_path), walkthrough())
+    changed = r.tree()
+    del changed["deliverables"][2]
+    r.write(changed)
+    assert r.main(host, "touched", r.run) == (0, "/goal\n", "")
+
+
 def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
     tmp_path: Any, host: Any
 ):
@@ -229,7 +257,6 @@ def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
     )
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_touched_of_no_change_since_the_commit_prints_nothing(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree as committed
     When tree.py touched runs with no pointer
@@ -241,7 +268,6 @@ def test_touched_of_no_change_since_the_commit_prints_nothing(tmp_path: Any, hos
 # check
 
 
-@pytest.mark.supports("test_the_pruners_write_passes_the_hook_and_tree_py_check_takes_it")
 @pytest.mark.parametrize("committed", [True, False], ids=["committed", "changed"])
 def test_check_of_a_tree_in_form_gives_0_printing_nothing(
     tmp_path: Any, host: Any, committed: bool
@@ -262,7 +288,6 @@ def test_check_of_a_tree_in_form_gives_0_printing_nothing(
     assert (r.head(), r.tree()) == (before, tree)
 
 
-@pytest.mark.supports("test_the_pruners_write_passes_the_hook_and_tree_py_check_takes_it")
 def test_check_of_the_tree_a_run_starts_from_gives_0(tmp_path: Any, host: Any):
     """Given a run's worktree whose design tree is as the run starts, its goal open, never
     committed
@@ -272,9 +297,6 @@ def test_check_of_the_tree_a_run_starts_from_gives_0(tmp_path: Any, host: Any):
     assert r.main(host, "check", r.run) == (0, "", "")
 
 
-@pytest.mark.supports(
-    "test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_nothing"
-)
 def test_check_of_a_tree_with_two_faults_gives_1_with_each_on_a_line(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree changed so that the command's kind is `lights` and the
     guide's input names a file that the worktree doesn't hold
@@ -297,9 +319,6 @@ def test_check_of_a_tree_with_two_faults_gives_1_with_each_on_a_line(tmp_path: A
     assert (r.head(), r.tree()) == (before, changed)
 
 
-@pytest.mark.supports(
-    "test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_nothing"
-)
 def test_check_of_a_tree_out_of_its_schema_gives_1_with_its_place(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree changed so that the goal holds no `by`
     When tree.py check runs
@@ -313,9 +332,6 @@ def test_check_of_a_tree_out_of_its_schema_gives_1_with_its_place(tmp_path: Any,
     assert "/goal" in out
 
 
-@pytest.mark.supports(
-    "test_tree_py_check_gives_each_fault_of_the_pruners_write_a_line_changing_nothing"
-)
 def test_check_of_a_run_with_no_design_tree_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose design tree was deleted
     When tree.py check runs
@@ -358,7 +374,6 @@ def guide_decided(r: Run) -> None:
     r.write(changed)
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_commit_of_a_change_in_form_commits_the_tree_alone_with_the_ground_of_kept(
     tmp_path: Any, host: Any
 ):
@@ -387,7 +402,6 @@ def test_commit_of_a_change_in_form_commits_the_tree_alone_with_the_ground_of_ke
     assert not os.path.exists(path)
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_commit_of_a_tree_out_of_form_gives_1_with_its_first_fault_leaving_git(
     tmp_path: Any, host: Any
 ):
@@ -410,7 +424,6 @@ def test_commit_of_a_tree_out_of_form_gives_1_with_its_first_fault_leaving_git(
     ]
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_commit_of_no_change_prints_the_last_commit_committing_nothing(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree as committed, and the pruner's result, as the pruner
     cut what its unit asked
@@ -425,7 +438,6 @@ def test_commit_of_no_change_prints_the_last_commit_committing_nothing(tmp_path:
     assert not os.path.exists(path)
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_commit_of_the_tree_a_run_starts_from_commits_it_first_signing_off_nothing(
     tmp_path: Any, host: Any
 ):
@@ -446,7 +458,6 @@ def test_commit_of_the_tree_a_run_starts_from_commits_it_first_signing_off_nothi
     assert r.tree()["deliverables"][0]["status"] == "open"
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_commit_that_a_commit_check_refuses_gives_2_with_what_git_said(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree committed, then a decision settled in the guide's N1,
     and the pruner's result, in a repository whose pre-commit hook refuses each commit saying
@@ -466,7 +477,6 @@ def test_commit_that_a_commit_check_refuses_gives_2_with_what_git_said(tmp_path:
     assert os.path.isfile(path)
 
 
-@pytest.mark.supports("test_the_pruners_result_is_committed_with_its_strays_gone_and_its_asks_told")
 def test_commit_with_no_pruners_result_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree changed since its commit, and no pruner's result
     When tree.py commit runs
@@ -479,7 +489,6 @@ def test_commit_with_no_pruners_result_gives_1_naming_it(tmp_path: Any, host: An
     assert r.head() == before
 
 
-@pytest.mark.supports("test_the_pruners_result_is_committed_with_its_strays_gone_and_its_asks_told")
 @pytest.mark.parametrize(
     ("written", "said"),
     [
@@ -514,9 +523,6 @@ def test_commit_of_a_pruners_result_out_of_its_form_gives_1_naming_the_place(
     assert os.path.isfile(path)
 
 
-@pytest.mark.supports(
-    "test_the_hearing_settled_is_written_by_one_pruner_and_the_plans_signoff_recorded"
-)
 def test_commit_of_an_open_plan_asking_nothing_signs_it_off_in_the_same_commit(
     tmp_path: Any, host: Any
 ):
@@ -534,9 +540,6 @@ def test_commit_of_an_open_plan_asking_nothing_signs_it_off_in_the_same_commit(
     assert git(r.worktree, "status", "--porcelain", "--", r.tree_path).strip() == ""
 
 
-@pytest.mark.supports(
-    "test_a_pause_in_the_hearing_hands_what_the_user_settled_to_one_pruner_and_pushes_it"
-)
 def test_commit_of_an_open_plan_with_a_condition_not_good_leaves_it_open(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan is open, its goal settled and its N2 not good, as a
     pause mid-hearing leaves it, and the pruner's result asking nothing
@@ -552,7 +555,6 @@ def test_commit_of_an_open_plan_with_a_condition_not_good_leaves_it_open(tmp_pat
     assert not git(r.worktree, "log", "-1", "--format=%B").strip().endswith("signed off.")
 
 
-@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 def test_commit_of_an_open_plan_asking_prints_each_ask_and_change_leaving_the_plan_open(
     tmp_path: Any, host: Any
 ):
@@ -584,7 +586,6 @@ def tracked(r: Run, path: str) -> None:
     git(r.worktree, "commit", "-q", "-m", "Notes.")
 
 
-@pytest.mark.supports("test_the_pruners_result_is_committed_with_its_strays_gone_and_its_asks_told")
 @pytest.mark.parametrize("changed", [True, False], ids=["the tree changed", "the tree as it was"])
 def test_commit_with_a_stray_removes_it_in_the_trees_commit(
     tmp_path: Any, host: Any, changed: bool
@@ -609,7 +610,6 @@ def test_commit_with_a_stray_removes_it_in_the_trees_commit(
     assert git(r.worktree, "status", "--porcelain").strip() == ""
 
 
-@pytest.mark.supports("test_the_pruners_result_is_committed_with_its_strays_gone_and_its_asks_told")
 @pytest.mark.parametrize(
     ("stray", "said"),
     [("DRAFT.md", "git holds no such file"), ("../outside.md", "lies outside the run's worktree")],
@@ -638,7 +638,6 @@ def test_commit_with_a_stray_git_doesnt_hold_gives_1_changing_nothing(
     assert os.path.isfile(path)
 
 
-@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 @pytest.mark.parametrize(
     "results",
     [
@@ -664,7 +663,6 @@ def test_commit_after_a_rounds_result_marks_it_weighed(
     assert rn_files.read_json(os.path.join(first, "weighed.json")) == {"commit": out.strip()}
 
 
-@pytest.mark.supports("test_a_commit_marks_weighed_only_the_units_its_pruner_weighed")
 def test_commit_leaves_a_round_its_pruner_didnt_weigh_unweighed(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's Round content-1 holds an evaluator's findings,
     unweighed, and the pruner's result of another unit, naming no unit
@@ -680,7 +678,6 @@ def test_commit_leaves_a_round_its_pruner_didnt_weigh_unweighed(tmp_path: Any, h
     assert next_lines(r, host) == [["pruner", COMMAND, os.path.join(first, "evaluator.json")]]
 
 
-@pytest.mark.supports("test_a_commit_marks_weighed_only_the_units_its_pruner_weighed")
 @pytest.mark.parametrize(
     "unit",
     ["evaluator.json", "generator.json", "nothing.json"],
@@ -705,7 +702,6 @@ def test_commit_of_a_unit_next_doesnt_print_gives_1_changing_nothing(
     assert os.path.isfile(path)
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 def test_commit_of_the_findings_left_past_the_limit_takes_the_unit_marking_nothing_anew(
     tmp_path: Any, host: Any
 ):
@@ -742,7 +738,6 @@ def cut_at(r: Run, line: list[str]) -> str:
     return os.path.normpath(os.path.join(r.repo, line[3]))
 
 
-@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
 def test_next_while_the_goal_is_open_prints_the_hearing_alone_making_no_round(
     tmp_path: Any, host: Any
 ):
@@ -756,9 +751,6 @@ def test_next_while_the_goal_is_open_prints_the_hearing_alone_making_no_round(
     assert not os.path.exists(os.path.join(r.folder, "rounds"))
 
 
-@pytest.mark.supports(
-    "test_a_signoff_of_the_plan_makes_it_done_and_starts_the_generator_of_each_deliverable_due"
-)
 def test_next_of_an_open_plan_prints_its_signoff_and_starts_nothing(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan is open with each condition good
     When tree.py next runs
@@ -769,7 +761,6 @@ def test_next_of_an_open_plan_prints_its_signoff_and_starts_nothing(tmp_path: An
     assert not os.path.exists(os.path.join(r.folder, "rounds"))
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_next_of_open_decisions_of_the_plan_and_a_deliverable_prints_an_answer_for_each(
     tmp_path: Any, host: Any
 ):
@@ -791,9 +782,6 @@ def test_next_of_open_decisions_of_the_plan_and_a_deliverable_prints_an_answer_f
     ]
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 def test_next_of_the_first_generator_writes_its_cut_in_round_content_1(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its plan done and no Round yet, the guide resting on the
     command
@@ -817,7 +805,6 @@ def test_next_of_the_first_generator_writes_its_cut_in_round_content_1(tmp_path:
     assert "findings" not in given
 
 
-@pytest.mark.supports("test_two_deliverables_resting_on_none_are_due_together")
 def test_next_starts_each_deliverable_whose_inputs_are_done_together(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command is done, and whose guide rests on it, with no
     Round
@@ -829,7 +816,6 @@ def test_next_starts_each_deliverable_whose_inputs_are_done_together(tmp_path: A
     assert [each[:3] for each in next_lines(r, host)] == [["start", "generator", GUIDE]]
 
 
-@pytest.mark.supports("test_a_generators_made_makes_the_evaluator_due_in_the_same_round")
 def test_next_after_a_generators_made_writes_the_evaluators_cut_in_its_round(
     tmp_path: Any, host: Any
 ):
@@ -851,7 +837,6 @@ def test_next_after_a_generators_made_writes_the_evaluators_cut_in_its_round(
     assert next_lines(r, host) == [["running", "evaluator", COMMAND]]
 
 
-@pytest.mark.supports("test_a_deliverable_whose_point_waits_on_the_user_gets_no_cut")
 def test_next_of_a_deliverable_with_an_open_point_prints_the_answer_writing_no_cut(
     tmp_path: Any, host: Any
 ):
@@ -870,7 +855,6 @@ def test_next_of_a_deliverable_with_an_open_point_prints_the_answer_writing_no_c
     assert not os.path.exists(os.path.join(r.round(COMMAND, "content", 1), "generator-cut.json"))
 
 
-@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 def test_next_of_a_point_unweighed_prints_a_pruner_with_its_result_writing_no_cut(
     tmp_path: Any, host: Any
 ):
@@ -885,7 +869,6 @@ def test_next_of_a_point_unweighed_prints_a_pruner_with_its_result_writing_no_cu
     assert not os.path.exists(os.path.join(first, "generator-cut.json"))
 
 
-@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 def test_next_after_a_point_weighed_writes_the_same_rounds_cut_again_taking_the_point_out(
     tmp_path: Any, host: Any
 ):
@@ -909,9 +892,6 @@ def test_next_after_a_point_weighed_writes_the_same_rounds_cut_again_taking_the_
     assert next_lines(r, host) == [["running", "generator", COMMAND]]
 
 
-@pytest.mark.supports(
-    "test_a_judged_rounds_result_is_weighed_whole_by_one_pruner_with_each_node_it_touches"
-)
 def test_next_of_a_judged_round_unweighed_prints_a_pruner_with_the_evaluators_result(
     tmp_path: Any, host: Any
 ):
@@ -925,7 +905,6 @@ def test_next_of_a_judged_round_unweighed_prints_a_pruner_with_the_evaluators_re
     assert next_lines(r, host) == [["pruner", COMMAND, os.path.join(first, "evaluator.json")]]
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_next_after_a_round_judged_short_and_weighed_makes_the_next_round(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's evaluator found N1 short in Round content-1,
     weighed, its tree holding N2 and N3 good
@@ -945,9 +924,6 @@ def test_next_after_a_round_judged_short_and_weighed_makes_the_next_round(tmp_pa
     assert given["last_good"] == []
 
 
-@pytest.mark.supports(
-    "test_a_pick_up_starts_the_stopped_generator_again_in_its_round_with_a_fresh_cut"
-)
 def test_next_of_a_round_a_pause_stopped_prints_it_running_and_restarts_it_with_a_fresh_cut(
     tmp_path: Any, host: Any
 ):
@@ -971,7 +947,6 @@ def test_next_of_a_round_a_pause_stopped_prints_it_running_and_restarts_it_with_
     assert not os.path.exists(r.round(COMMAND, "content", 2))
 
 
-@pytest.mark.supports("test_a_pick_up_starts_the_stopped_evaluator_again_in_its_round")
 def test_next_restart_of_an_evaluator_a_pause_stopped_writes_its_cut_in_that_round(
     tmp_path: Any, host: Any
 ):
@@ -991,7 +966,6 @@ def test_next_restart_of_an_evaluator_a_pause_stopped_writes_its_cut_in_that_rou
     assert rn_files.read_json(path)["goal"] == GOAL
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_next_restart_with_none_at_work_prints_as_next_does(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's evaluator judged Round content-1, unweighed
     When tree.py next --restart runs
@@ -1008,7 +982,6 @@ SHORT = {
 }
 
 
-@pytest.mark.supports("test_a_deliverable_short_after_two_content_rounds_gets_no_third")
 def test_next_after_two_content_rounds_short_prints_a_pruner_making_no_third(
     tmp_path: Any, host: Any
 ):
@@ -1038,7 +1011,6 @@ def left_past(tmp: str) -> Run:
     return r
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_next_of_a_deliverable_past_its_rounds_prints_its_put_up_then_its_signoff(
     tmp_path: Any, host: Any
 ):
@@ -1056,7 +1028,6 @@ def test_next_of_a_deliverable_past_its_rounds_prints_its_put_up_then_its_signof
     assert not os.path.exists(r.round(COMMAND, "content", 3))
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_next_past_the_limit_answers_only_a_point_of_a_good_condition(tmp_path: Any, host: Any):
     """Given the run of `left_past` whose N2, good, holds an open point too
     When tree.py next runs
@@ -1070,7 +1041,6 @@ def test_next_past_the_limit_answers_only_a_point_of_a_good_condition(tmp_path: 
     assert next_lines(r, host) == [["answer", COMMAND, "N2", "the currency"]]
 
 
-@pytest.mark.supports("test_the_pull_request_stays_a_draft_after_the_last_signoff")
 def test_next_of_each_deliverable_done_prints_the_final_check(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan, command, and guide are done, the command's last
     Round put up
@@ -1085,7 +1055,6 @@ def test_next_of_each_deliverable_done_prints_the_final_check(tmp_path: Any, hos
     assert next_lines(r, host) == [["final-check"]]
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 @pytest.mark.parametrize("more", [["again"], ["--restart", "again"]], ids=["a word", "two"])
 def test_next_with_more_than_restart_gives_2_with_the_usage(
     tmp_path: Any, host: Any, more: list[str]
@@ -1117,9 +1086,6 @@ def over(tmp: str) -> Run:
     return r
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_fix_of_a_deliverable_whose_rounds_are_over_writes_its_fix_and_prints_its_folder(
     tmp_path: Any, host: Any
 ):
@@ -1139,7 +1105,6 @@ def test_fix_of_a_deliverable_whose_rounds_are_over_writes_its_fix_and_prints_it
     assert r.tree() == before
 
 
-@pytest.mark.supports("test_a_fix_counts_toward_no_limit_of_the_rounds")
 def test_fix_after_a_fix_fixed_writes_the_next(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 its fixer
     fixed, its Cut holding the command's node as it stands
@@ -1155,9 +1120,6 @@ def test_fix_after_a_fix_fixed_writes_the_next(tmp_path: Any, host: Any):
     assert (code, out, err) == (0, f"{r.round(COMMAND, 'fix', 3)}\n", "")
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_fix_of_a_deliverable_whose_rounds_arent_over_gives_1_writing_no_fix(
     tmp_path: Any, host: Any
 ):
@@ -1175,7 +1137,6 @@ def test_fix_of_a_deliverable_whose_rounds_arent_over_gives_1_writing_no_fix(
     assert not os.path.exists(r.round(COMMAND, "fix", 2))
 
 
-@pytest.mark.supports("test_a_mend_within_the_decisions_starts_its_fixer_at_once_with_no_pruner")
 def test_fix_while_a_fix_waits_on_its_fixer_gives_1_writing_no_fix(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 holds its
     problem alone
@@ -1191,9 +1152,6 @@ def test_fix_while_a_fix_waits_on_its_fixer_gives_1_writing_no_fix(tmp_path: Any
     assert not os.path.exists(r.round(COMMAND, "fix", 3))
 
 
-@pytest.mark.supports(
-    "test_a_fixers_decision_goes_to_one_pruner_and_the_deliverable_takes_content_rounds_again"
-)
 def test_fix_and_next_while_a_fixs_decision_waits_on_the_pruner(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's fix-2 its fixer ended with decision, its Cut
     holding the command's node as it stands
@@ -1226,7 +1184,6 @@ def fixer_ended(r: Run, result: Any) -> str:
     return fix
 
 
-@pytest.mark.supports("test_a_fixers_decision_that_the_pruner_cuts_ends_the_fix")
 def test_commit_after_a_fixs_decision_marks_it_weighed_and_the_command_is_put_up_again(
     tmp_path: Any, host: Any
 ):
@@ -1244,7 +1201,6 @@ def test_commit_after_a_fixs_decision_marks_it_weighed_and_the_command_is_put_up
     assert next_lines(r, host) == [["put-up", COMMAND]]
 
 
-@pytest.mark.supports("test_a_commit_marks_weighed_only_the_units_its_pruner_weighed")
 def test_commit_leaves_a_fixs_decision_its_pruner_didnt_weigh_unmarked(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's fix-2 its fixer ended with decision, and the
     pruner's result of another unit, naming no unit
@@ -1259,7 +1215,6 @@ def test_commit_leaves_a_fixs_decision_its_pruner_didnt_weigh_unmarked(tmp_path:
     assert next_lines(r, host) == [["pruner", COMMAND, os.path.join(fix, "fixer.json")]]
 
 
-@pytest.mark.supports("test_a_fixers_decision_that_the_pruner_cuts_ends_the_fix")
 @pytest.mark.parametrize(
     "result", [{"result": "fixed", "files": [COMMAND]}, None], ids=["fixed", "no result"]
 )
@@ -1277,9 +1232,6 @@ def test_commit_leaves_a_fix_that_waits_on_no_pruner_unmarked(
     assert not os.path.exists(os.path.join(fix, "weighed.json"))
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 @pytest.mark.parametrize(
     ("source", "words", "said"),
     [
@@ -1300,9 +1252,6 @@ def test_fix_with_a_wrong_source_or_no_words_gives_1_writing_no_fix(
     assert not os.path.exists(r.round(COMMAND, "fix", 2))
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_fix_of_a_path_of_no_deliverable_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run
     When tree.py fix runs for invoicer/cli.py, no deliverable's path
@@ -1313,9 +1262,6 @@ def test_fix_of_a_path_of_no_deliverable_gives_1_naming_it(tmp_path: Any, host: 
     )
 
 
-@pytest.mark.supports(
-    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
-)
 def test_next_after_a_fix_writes_the_fixers_cut_in_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's Rounds are over, and whose fix-2 tree.py fix
     wrote
@@ -1333,7 +1279,6 @@ def test_next_after_a_fix_writes_the_fixers_cut_in_it(tmp_path: Any, host: Any):
     assert next_lines(r, host) == [["running", "fixer", COMMAND]]
 
 
-@pytest.mark.supports("test_a_pick_up_starts_the_stopped_fixer_again_in_its_fix_with_a_fresh_cut")
 def test_next_restart_of_a_fixer_a_pause_stopped_writes_a_fresh_cut_in_its_fix(
     tmp_path: Any, host: Any
 ):
@@ -1351,9 +1296,6 @@ def test_next_restart_of_a_fixer_a_pause_stopped_writes_a_fresh_cut_in_its_fix(
     assert not os.path.exists(r.round(COMMAND, "fix", 3))
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_next_of_a_fix_fixed_prints_its_put_up_until_it_is_put_up(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command's fix-2 its fixer fixed
     When tree.py next runs, before fix-2 is marked put up with the command's state, and after
@@ -1366,9 +1308,6 @@ def test_next_of_a_fix_fixed_prints_its_put_up_until_it_is_put_up(tmp_path: Any,
     assert next_lines(r, host) == [["sign-off", COMMAND]]
 
 
-@pytest.mark.supports(
-    "test_a_final_checks_finding_within_the_decisions_is_mended_by_a_fix_of_the_done_deliverable"
-)
 def test_next_of_a_done_deliverables_fix_starts_its_fixer_then_its_put_up(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan, command, and guide are done, the command's Round
     content-1 judged good and weighed, and its fix-2 written with its problem
@@ -1390,9 +1329,6 @@ def test_next_of_a_done_deliverables_fix_starts_its_fixer_then_its_put_up(tmp_pa
     assert next_lines(r, host) == [["final-check"]]
 
 
-@pytest.mark.supports(
-    "test_a_final_checks_finding_within_the_decisions_is_mended_by_a_fix_of_the_done_deliverable"
-)
 def test_next_of_a_done_deliverable_whose_fix_changed_its_decisions_starts_nothing_of_it(
     tmp_path: Any, host: Any
 ):
@@ -1421,9 +1357,6 @@ def test_next_of_a_done_deliverable_whose_fix_changed_its_decisions_starts_nothi
 # signoff
 
 
-@pytest.mark.supports(
-    "test_a_signoff_of_the_plan_makes_it_done_and_starts_the_generator_of_each_deliverable_due"
-)
 def test_signoff_of_the_plan_waiting_writes_it_done_commits_it_and_prints_the_trees_path(
     tmp_path: Any, host: Any
 ):
@@ -1444,9 +1377,6 @@ def test_signoff_of_the_plan_waiting_writes_it_done_commits_it_and_prints_the_tr
     assert git(r.worktree, "status", "--porcelain", "--", r.tree_path).strip() == ""
 
 
-@pytest.mark.supports(
-    "test_a_signoff_of_the_plan_makes_it_done_and_starts_the_generator_of_each_deliverable_due"
-)
 def test_signoff_with_none_waiting_gives_1_leaving_the_tree(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose plan is done, and whose command and guide have no Round
     When tree.py signoff runs
@@ -1460,7 +1390,6 @@ def test_signoff_with_none_waiting_gives_1_leaving_the_tree(tmp_path: Any, host:
     assert r.tree() == before
 
 
-@pytest.mark.supports("test_a_finding_left_past_two_content_rounds_goes_to_the_user_as_a_proposal")
 def test_signoff_of_a_deliverable_past_its_rounds_writes_it_done(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose command is past its two content Rounds, its finding kept
     as an open decision
@@ -1514,7 +1443,6 @@ def sent(host: Any) -> list[tuple[list[str], str]]:
     return [(argv, cwd) for argv, cwd in host.ran if argv[:2] == ["git", "push"] or argv[0] == "gh"]
 
 
-@pytest.mark.supports("test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open")
 def test_signoff_that_leaves_a_deliverable_open_commits_pushing_nothing_and_asking_gh_nothing(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -1531,7 +1459,6 @@ def test_signoff_that_leaves_a_deliverable_open_commits_pushing_nothing_and_aski
     assert sent(host) == []
 
 
-@pytest.mark.supports("test_the_pull_request_stays_a_draft_after_the_last_signoff")
 def test_signoff_that_leaves_each_deliverable_done_commits_it_pushing_nothing_and_asking_gh_nothing(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -1556,7 +1483,6 @@ def test_signoff_that_leaves_each_deliverable_done_commits_it_pushing_nothing_an
 # The run's folder
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     "folder", ["invoicer", ".claude/worktrees/rn-x/.rn/y", f".claude/worktrees/{BRANCH}/.rn"]
 )
@@ -1569,7 +1495,6 @@ def test_a_folder_that_isnt_a_runs_gives_1(tmp_path: Any, host: Any, folder: str
     refused(r.main(host, "touched", folder, "/goal"), folder)
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_runs_folder_with_no_design_tree_gives_1(tmp_path: Any, host: Any):
     """Given the walkthrough's run whose design tree is taken away
     When tree.py touched runs on its folder
@@ -1579,7 +1504,6 @@ def test_a_runs_folder_with_no_design_tree_gives_1(tmp_path: Any, host: Any):
     refused(r.main(host, "touched", r.run, "/goal"), r.run)
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_a_runs_folder_given_whole_is_the_same_run(tmp_path: Any, host: Any):
     """Given the walkthrough's run
     When tree.py touched runs on its folder given as an absolute path

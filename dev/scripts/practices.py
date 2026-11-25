@@ -79,7 +79,7 @@ def sections(template: str) -> list[str]:
 
 
 # A section of a template, by the names of the sections it lies in and its own, from the top: one
-# name for a heading of Markdown or an entry of a folder, and a key's path for a template in JSON.
+# name for a heading of Markdown, and a key's path for a template in JSON.
 Section = tuple[str, ...]
 
 
@@ -129,24 +129,12 @@ def beside(path: str, name: str) -> str:
     return os.path.join(os.path.dirname(path), name)
 
 
-def entries(folder: str) -> list[str]:
-    """The sections of a template that's a folder, such as the skeleton of a plugin: each folder
-    and file at its top, by name in order, but a hidden file, such as one the system keeps."""
-    return sorted(
-        name
-        for name in os.listdir(folder)
-        if not name.startswith(".") or os.path.isdir(os.path.join(folder, name))
-    )
-
-
 def template(path: str, data: dict[str, Any]) -> list[Section] | None:
     """The sections of the template the best practice at the path names, read as its format is,
     each by its path, or None where it names none. Refuses, by FileNotFoundError, one that isn't
     there."""
     if "template" not in data:
         return None
-    if os.path.isdir(beside(path, data["template"])):
-        return [(name,) for name in entries(beside(path, data["template"]))]
     with open(beside(path, data["template"]), encoding="utf-8") as f:
         text = f.read()
     if data["template"].endswith(".json"):
@@ -231,15 +219,13 @@ def shown(text: str, figures_only: bool = True) -> list[str]:
 
 def kept(path: str, data: dict[str, Any]) -> set[str]:
     """The files the folder of the best practice at the path holds by right: the best practice and
-    each file that a text of it links, and its template, each file in it where it's a folder, else
-    the figures it shows."""
+    each file that a text of it links, and its template and the figures it shows."""
     files = {path}
     for text in texts(data):
         files.update(beside(path, linked) for linked in shown(text, figures_only=False))
     if "template" in data:
         named = os.path.normpath(beside(path, data["template"]))
         files.add(named)
-        files.update(os.path.join(r, n) for r, _, names in os.walk(named) for n in names)
         if os.path.isfile(named):
             with open(named, encoding="utf-8") as f:
                 files.update(beside(named, figure) for figure in shown(f.read()))

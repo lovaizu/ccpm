@@ -73,7 +73,6 @@ def one_fault(found: list[str], pointer: str) -> None:
     assert pointer in found[0]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_tree_in_form_has_no_fault(worktree: str):
     """Given the walkthrough's tree, each input a deliverable's path or a file of the worktree
     When its faults are found
@@ -81,7 +80,6 @@ def test_a_tree_in_form_has_no_fault(worktree: str):
     assert faults(the_tree(), practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_the_plan_open_with_its_conditions_in_order_has_no_fault(worktree: str):
     """Given the tree a run starts from, its goal open and the plan open, unnamed, with
     design-tree's conditions in order
@@ -90,7 +88,6 @@ def test_the_plan_open_with_its_conditions_in_order_has_no_fault(worktree: str):
     assert faults(rn_files.started(NAME), practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 @pytest.mark.parametrize(
     ("change", "pointer"),
     [
@@ -130,7 +127,6 @@ def test_a_place_out_of_the_schema_is_a_fault_naming_its_pointer(
     one_fault(faults(the, practices(), worktree), pointer)
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_kind_with_no_best_practice_is_a_fault(worktree: str):
     """Given the walkthrough's tree whose command's kind is `lights`, near light, which no best
     practice has
@@ -141,7 +137,6 @@ def test_a_kind_with_no_best_practice_is_a_fault(worktree: str):
     one_fault(faults(the, practices(), worktree), "/deliverables/1/kind")
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_done_deliverables_kind_is_held_to_the_best_practices_too(worktree: str):
     """Given the walkthrough's tree whose done plan is of the kind `plan`, which no best practice
     has
@@ -152,7 +147,6 @@ def test_a_done_deliverables_kind_is_held_to_the_best_practices_too(worktree: st
     one_fault(faults(the, practices(), worktree), "/deliverables/0/kind")
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 @pytest.mark.parametrize(
     "ids",
     [
@@ -177,7 +171,6 @@ def test_an_open_deliverables_conditions_other_than_its_best_practices_in_order_
     one_fault(faults(the, practices(), worktree), "/deliverables/1/necessary_conditions")
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_done_node_with_no_file_keeps_its_conditions_without_a_fault(worktree: str):
     """Given the walkthrough's tree beside a done node with no file of the kind light, holding its
     conditions good
@@ -199,7 +192,6 @@ def test_a_done_node_with_no_file_keeps_its_conditions_without_a_fault(worktree:
     assert faults(the, practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 @pytest.mark.parametrize(
     "named", ["invoicer/nothing.py", "invoicer/lines", "invoicer/lines.py.bak"]
 )
@@ -215,7 +207,6 @@ def test_an_input_naming_neither_a_deliverable_nor_a_file_of_the_worktree_is_a_f
     one_fault(faults(the, practices(), worktree), "/deliverables/1/inputs/0")
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_an_input_is_looked_for_in_the_worktree_not_the_folder_it_runs_in(
     worktree: str, tmp_path: Any, monkeypatch: pytest.MonkeyPatch
 ):
@@ -230,7 +221,6 @@ def test_an_input_is_looked_for_in_the_worktree_not_the_folder_it_runs_in(
     one_fault(faults(the, practices(), worktree), "/deliverables/1/inputs/0")
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_inputs_of_none_one_and_several_each_named_hold(worktree: str):
     """Given the walkthrough's tree whose command rests on none, and whose guide rests on the
     command, invoicer's lines, and an old document of the worktree
@@ -242,7 +232,6 @@ def test_inputs_of_none_one_and_several_each_named_hold(worktree: str):
     assert faults(the, practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_deliverable_resting_on_itself_is_a_fault(worktree: str):
     """Given the walkthrough's tree whose command names its own path in its inputs
     When its faults are found
@@ -252,7 +241,6 @@ def test_a_deliverable_resting_on_itself_is_a_fault(worktree: str):
     one_fault(faults(the, practices(), worktree), "/deliverables/1")
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_two_deliverables_resting_on_each_other_are_each_a_fault(worktree: str):
     """Given the walkthrough's tree whose command rests on the guide, which rests on the command
     When its faults are found
@@ -265,7 +253,6 @@ def test_two_deliverables_resting_on_each_other_are_each_a_fault(worktree: str):
     assert any("/deliverables/2" in each for each in found)
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_deliverable_resting_on_one_twice_rests_on_nothing_of_itself(worktree: str):
     """Given the walkthrough's tree with a changelog resting on both the command and the guide,
     which rests on the command
@@ -278,7 +265,6 @@ def test_a_deliverable_resting_on_one_twice_rests_on_nothing_of_itself(worktree:
     assert faults(the, practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 @pytest.mark.parametrize(
     ("item", "pointer"),
     [
@@ -302,7 +288,6 @@ def test_an_item_of_the_work_naming_no_deliverable_condition_or_about_of_it_is_a
     one_fault(faults(the, practices(), worktree), pointer)
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_decide_of_an_open_point_of_its_condition_holds(worktree: str):
     """Given the walkthrough's tree whose command's N1 holds the tax rate's point open, and whose
     work decides it
@@ -315,7 +300,6 @@ def test_a_decide_of_an_open_point_of_its_condition_holds(worktree: str):
     assert faults(the, practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_each_fault_of_a_tree_is_given_not_only_the_first(worktree: str):
     """Given the walkthrough's tree whose done plan's kind is `plan`, which no best practice has,
     and whose first item of the work makes a path no deliverable has
@@ -332,10 +316,6 @@ def test_each_fault_of_a_tree_is_given_not_only_the_first(worktree: str):
 
 # The steps of the way to the goal.
 
-ONE_STEP = (
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
-
 
 def stepped(*steps: dict[str, Any]) -> dict[str, Any]:
     """The walkthrough's tree with the steps given."""
@@ -344,9 +324,6 @@ def stepped(*steps: dict[str, Any]) -> dict[str, Any]:
     return the
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 def test_steps_holding_each_deliverable_but_the_plan_once_have_no_fault(worktree: str):
     """Given the walkthrough's tree whose steps hold the command, then the guide, each once
     When its faults are found
@@ -358,9 +335,6 @@ def test_steps_holding_each_deliverable_but_the_plan_once_have_no_fault(worktree
     assert faults(the, practices(), worktree) == []
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 def test_a_tree_with_no_steps_has_no_fault_of_them(worktree: str):
     """Given the walkthrough's tree with no steps, as before the plan holds them
     When its faults are found
@@ -368,9 +342,6 @@ def test_a_tree_with_no_steps_has_no_fault_of_them(worktree: str):
     assert faults(stepped(), practices(), worktree) == []
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 @pytest.mark.parametrize(
     ("steps", "pointer", "words"),
     [
@@ -412,9 +383,6 @@ def test_a_fault_of_the_steps_names_its_place(
     assert words in found[0]
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 def test_a_step_without_its_signoff_is_out_of_the_schema(worktree: str):
     """Given the walkthrough's tree whose one step lacks `signoff`
     When its faults are found
@@ -442,7 +410,6 @@ def guide_with(more: list[str] | None, status: str = "open") -> dict[str, Any]:
     return the
 
 
-@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
 @pytest.mark.parametrize(
     "more", [[GUIDE_FIGURE], ["docs/images/"], ["docs/images"], ["tests/", GUIDE_FIGURE]]
 )
@@ -455,7 +422,6 @@ def test_a_guide_holding_its_templates_figure_has_no_fault(worktree: str, more: 
     assert faults(guide_with(more), practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
 @pytest.mark.parametrize(
     "more", [None, ["docs/how-it-works.svg"], ["docs/images/how-it-works.png"], ["docs/imag/"]]
 )
@@ -473,7 +439,6 @@ def test_a_guide_lacking_its_templates_figure_is_a_fault_naming_it(
     assert "readme" in found[0], "the kind whose template asks it is named"
 
 
-@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
 def test_an_architecture_lacking_two_of_its_figures_is_a_fault_for_each(worktree: str):
     """Given the walkthrough's tree with an open architecture at dev/architecture.md, of the kind
     architecture, holding only dev/images/components.svg of its template's three figures
@@ -492,7 +457,6 @@ def test_an_architecture_lacking_two_of_its_figures_is_a_fault_for_each(worktree
     )
 
 
-@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
 def test_a_done_guide_lacking_its_templates_figure_has_no_fault(worktree: str):
     """Given the walkthrough's tree whose guide is done, holding no more paths
     When its faults are found
@@ -500,7 +464,6 @@ def test_a_done_guide_lacking_its_templates_figure_has_no_fault(worktree: str):
     assert faults(guide_with(None, "done"), practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_guide_lacking_the_figure_its_template_asks_is_refused_at_its_commit")
 def test_a_deliverable_that_isnt_markdown_is_asked_no_figure(worktree: str):
     """Given the walkthrough's tree whose guide, of the kind readme, lies at docs/guide.txt, with
     no more paths
@@ -526,7 +489,6 @@ def with_vision(*steps: list[str]) -> dict[str, Any]:
     return the
 
 
-@pytest.mark.supports("test_a_plan_putting_a_deliverable_before_its_kinds_input_is_refused")
 @pytest.mark.parametrize(
     "steps",
     [
@@ -546,7 +508,6 @@ def test_steps_putting_each_input_of_a_kind_no_later_have_no_fault(
     assert faults(with_vision(*steps), practices(), worktree) == []
 
 
-@pytest.mark.supports("test_a_plan_putting_a_deliverable_before_its_kinds_input_is_refused")
 def test_steps_putting_the_guide_before_the_product_vision_is_a_fault_naming_the_pair(
     worktree: str,
 ):

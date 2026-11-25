@@ -26,9 +26,6 @@ def same(path: str, expected: str) -> bool:
     return os.path.normpath(path) == os.path.normpath(expected)
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_runs_worktree_lies_under_the_repositorys_claude_worktrees():
     """Given the run 20261120-invoices of the repository /work/invoicer
     When its worktree is asked
@@ -37,9 +34,6 @@ def test_a_runs_worktree_lies_under_the_repositorys_claude_worktrees():
     assert same(run.worktree, "/work/invoicer/.claude/worktrees/rn-20261120-invoices")
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_runs_branch_is_rn_and_its_name():
     """Given the run 20261120-invoices
     When its branch is asked
@@ -47,9 +41,6 @@ def test_a_runs_branch_is_rn_and_its_name():
     assert RunPlace("/work/invoicer", NAME).branch == "rn-20261120-invoices"
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_runs_folder_lies_in_its_worktrees_rn_folder():
     """Given the run 20261120-invoices of /work/invoicer
     When its folder is asked
@@ -60,9 +51,6 @@ def test_a_runs_folder_lies_in_its_worktrees_rn_folder():
     )
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_runs_design_tree_lies_in_its_folder():
     """Given the run 20261120-invoices of /work/invoicer
     When its design tree is asked
@@ -74,9 +62,6 @@ def test_a_runs_design_tree_lies_in_its_folder():
     )
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_runs_rounds_lie_in_its_folder():
     """Given the run 20261120-invoices of /work/invoicer
     When the folder of its Rounds is asked
@@ -88,9 +73,6 @@ def test_a_runs_rounds_lie_in_its_folder():
     )
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 @pytest.mark.parametrize(
     "slug",
     ["invoices", "overnight-claude-p-queue", "print-invoices-from-their-lines", "v2-readme-typo"],
@@ -104,9 +86,6 @@ def test_a_name_is_the_day_and_the_slug(slug: str):
     assert named(DAY, slug) == f"20261120-{slug}"
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_a_name_writes_a_day_of_one_digit_with_two():
     """Given the day 2026-01-05
     When a run is named
@@ -114,9 +93,6 @@ def test_a_name_writes_a_day_of_one_digit_with_two():
     assert named(date(2026, 1, 5), "invoices") == "20260105-invoices"
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 @pytest.mark.parametrize(
     "slug",
     [
@@ -160,7 +136,6 @@ def a_run_folder(tmp_path: Any, name: str = NAME) -> tuple[str, str]:
     return repo, folder
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_run_folder_given_from_the_folder_the_command_runs_in_is_its_run(tmp_path: Any):
     """Given a repository whose run 20261120-invoices has its design tree
     When of_folder is given .claude/worktrees/rn-20261120-invoices/.rn/20261120-invoices from the
@@ -171,7 +146,6 @@ def test_a_run_folder_given_from_the_folder_the_command_runs_in_is_its_run(tmp_p
     assert of_folder(repo, given) == RunPlace(repo, NAME)
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_run_folder_given_absolute_is_its_run(tmp_path: Any):
     """Given a repository whose run has its design tree, and another folder the command runs in
     When of_folder is given the run's folder as an absolute path
@@ -182,7 +156,6 @@ def test_a_run_folder_given_absolute_is_its_run(tmp_path: Any):
     assert of_folder(elsewhere, folder) == RunPlace(repo, NAME)
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_run_folder_given_with_its_closing_slash_is_its_run(tmp_path: Any):
     """Given a repository whose run has its design tree
     When of_folder is given the run's folder with a closing /
@@ -191,7 +164,6 @@ def test_a_run_folder_given_with_its_closing_slash_is_its_run(tmp_path: Any):
     assert of_folder(repo, folder + "/") == RunPlace(repo, NAME)
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 def test_a_run_folder_with_no_design_tree_is_refused(tmp_path: Any):
     """Given a repository holding a run's folder of the right form with no design tree
     When of_folder is given it
@@ -203,7 +175,6 @@ def test_a_run_folder_with_no_design_tree_is_refused(tmp_path: Any):
         of_folder(repo, folder)
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 @pytest.mark.parametrize(
     "given",
     [

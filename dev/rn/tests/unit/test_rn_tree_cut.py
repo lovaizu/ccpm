@@ -79,9 +79,6 @@ def in_worktree(repo: str, path: str) -> str:
 # generator
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 def test_the_first_rounds_cut_holds_the_node_its_input_and_no_last_good(repo: str):
     """Given the walkthrough's tree, the command resting on invoicer's lines, and no Round before
     When the generator's Cut of the command's Round content-1 is made by the light best practice
@@ -123,9 +120,6 @@ def test_the_first_rounds_cut_holds_the_node_its_input_and_no_last_good(repo: st
     assert got["last_good"] is None
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 def test_the_cut_holds_the_deliverables_language_not_the_conversations(repo: str):
     """Given the walkthrough's tree whose context holds Japanese as the deliverables' language and
     English as the conversation's
@@ -137,7 +131,6 @@ def test_the_cut_holds_the_deliverables_language_not_the_conversations(repo: str
     assert got["language"] == "Japanese"
 
 
-@pytest.mark.supports("test_the_generators_cut_holds_the_pruners_remedy_and_no_evaluators_finding")
 def test_the_next_rounds_cut_holds_the_trees_decisions_and_the_last_good_alone(repo: str):
     """Given the command's Round content-1, its generator good on N1, N2, and N3, and the tree
     holding N1 good and, in N3, the remedy that the pruner kept of the evaluator's finding
@@ -158,9 +151,6 @@ def test_the_next_rounds_cut_holds_the_trees_decisions_and_the_last_good_alone(r
     assert (got["stage"], got["number"]) == ("content", 2)
 
 
-@pytest.mark.supports(
-    "test_a_finding_the_people_would_never_meet_is_dropped_by_holding_its_condition_good"
-)
 def test_a_last_generator_that_named_nothing_good_gives_an_empty_last_good(repo: str):
     """Given the guide's last generator, which named no condition good, and a tree that holds each
     of the guide's conditions good
@@ -176,7 +166,6 @@ def test_a_last_generator_that_named_nothing_good_gives_an_empty_last_good(repo:
     assert got["last_good"] == []
 
 
-@pytest.mark.supports("test_a_generators_point_goes_to_a_pruner_which_leaves_open_only_the_users")
 def test_the_cut_holds_the_users_answer_as_its_decision_by_user(repo: str):
     """Given a tree whose command's N1 holds the user's answer about the tax rate, and the
     generator's last result a point
@@ -196,9 +185,6 @@ def test_the_cut_holds_the_users_answer_as_its_decision_by_user(repo: str):
     assert got["last_good"] is None
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 @pytest.mark.parametrize(
     "inputs",
     [[], [COMMAND], [COMMAND, "invoicer/lines.py", "invoicer/tax.py"]],
@@ -221,9 +207,6 @@ def test_the_cut_names_each_input_in_the_worktree_in_its_order(repo: str, inputs
     )
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_with_each_condition_good_is_refactored_by_its_refactor_best_practice"
-)
 def test_a_refactor_rounds_cut_names_the_refactor_best_practice(repo: str):
     """Given a tree whose guide, of the kind readme, holds each condition good
     When the generator's Cut of its Round refactor-2 is made
@@ -244,9 +227,6 @@ def test_a_refactor_rounds_cut_names_the_refactor_best_practice(repo: str):
     assert from_top(repo, got["round"]) == round_at(repo, GUIDE, "refactor", 2).folder
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 @pytest.mark.parametrize("path", [rn_files.plan_path(NAME), "invoicer/__main__", "docs/guide.txt"])
 def test_the_generators_cut_refuses_a_round_of_no_open_deliverable(repo: str, path: str):
     """Given the walkthrough's tree, its plan done
@@ -263,7 +243,6 @@ def test_the_generators_cut_refuses_a_round_of_no_open_deliverable(repo: str, pa
         )
 
 
-@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
 def test_the_generators_cut_refuses_a_tree_whose_goal_is_open(repo: str):
     """Given the walkthrough's tree whose goal is open, its decided null
     When the generator's Cut of the command's Round content-1 is made
@@ -277,7 +256,6 @@ def test_the_generators_cut_refuses_a_tree_whose_goal_is_open(repo: str):
 # evaluator
 
 
-@pytest.mark.supports("test_the_evaluators_cut_holds_only_what_the_people_have")
 def test_the_evaluators_cut_holds_only_what_the_people_have(repo: str):
     """Given the walkthrough's tree whose command holds the user's answer about the tax rate
     When the evaluator's Cut of the command's Round content-1 is made by the light best practice
@@ -298,7 +276,6 @@ def test_the_evaluators_cut_holds_only_what_the_people_have(repo: str):
     assert rn_files.TAX_ANSWER not in json.dumps(got)
 
 
-@pytest.mark.supports("test_the_evaluators_cut_holds_only_what_the_people_have")
 def test_the_evaluators_cut_names_each_more_path_of_the_deliverable(repo: str):
     """Given a tree whose guide lies in more paths too
     When the evaluator's Cut of its Round content-2 is made by the readme best practice
@@ -317,7 +294,6 @@ def test_the_evaluators_cut_names_each_more_path_of_the_deliverable(repo: str):
     assert os.path.normpath(got["trial"]) == trial
 
 
-@pytest.mark.supports("test_the_evaluators_cut_holds_only_what_the_people_have")
 def test_the_evaluators_cut_refuses_a_round_of_a_deliverable_done(repo: str):
     """Given the walkthrough's tree, its plan done
     When the evaluator's Cut is made for a Round of the plan
@@ -331,7 +307,6 @@ def test_the_evaluators_cut_refuses_a_round_of_a_deliverable_done(repo: str):
         )
 
 
-@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
 def test_the_evaluators_cut_refuses_a_tree_whose_goal_is_open(repo: str):
     """Given the walkthrough's tree whose goal is open, its decided null
     When the evaluator's Cut of the command's Round content-1 is made
@@ -357,9 +332,6 @@ def fix_at(repo: str, deliverable: str, number: int, problem: Any = PROBLEM) -> 
     return Fix(folder, deliverable, number)
 
 
-@pytest.mark.supports(
-    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
-)
 def test_the_fixers_cut_holds_its_node_paths_problem_and_folders_alone(repo: str):
     """Given the walkthrough's tree, and the command's fix-2 holding its problem
     When the fixer's Cut of fix-2 is made
@@ -378,9 +350,6 @@ def test_the_fixers_cut_holds_its_node_paths_problem_and_folders_alone(repo: str
     assert from_top(repo, got["fix"]) == fix.folder
 
 
-@pytest.mark.supports(
-    "test_a_final_checks_finding_within_the_decisions_is_mended_by_a_fix_of_the_done_deliverable"
-)
 def test_the_fixers_cut_of_a_done_deliverable_holds_its_node_and_each_more_path(repo: str):
     """Given the walkthrough's tree whose guide is done, keeping its conditions, with a more path
     docs/images/, and the guide's fix-3
@@ -398,9 +367,6 @@ def test_the_fixers_cut_of_a_done_deliverable_holds_its_node_and_each_more_path(
     ]
 
 
-@pytest.mark.supports(
-    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
-)
 def test_the_fixers_cut_refuses_a_fix_of_no_deliverable(repo: str):
     """Given the walkthrough's tree, and a Fix of invoicer/cli.py, no deliverable's path
     When the fixer's Cut is made
@@ -409,9 +375,6 @@ def test_the_fixers_cut_refuses_a_fix_of_no_deliverable(repo: str):
         fixer(walkthrough(), run_of(repo), fix_at(repo, "invoicer/cli.py", 1))
 
 
-@pytest.mark.supports(
-    "test_the_fixers_cut_holds_the_deliverables_node_paths_and_problem_and_where_it_writes"
-)
 def test_the_fixers_cut_refuses_a_fix_with_no_problem(repo: str):
     """Given the walkthrough's tree, and the command's fix-2 holding no problem
     When the fixer's Cut is made

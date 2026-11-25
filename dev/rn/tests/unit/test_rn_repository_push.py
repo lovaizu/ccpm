@@ -58,7 +58,6 @@ def origin(tmp_path: Any) -> str:
 # commit
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_commit_of_one_path_holds_it_alone_with_the_message(tmp_path: Any, host: Any):
     """Given a run whose design tree and the command are changed, neither staged
     When commit is given the design tree with a message of two lines
@@ -74,7 +73,6 @@ def test_a_commit_of_one_path_holds_it_alone_with_the_message(tmp_path: Any, hos
     assert git(worktree(run), "status", "--porcelain").split() == ["??", "invoicer/__main__.py"]
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_commit_of_several_paths_and_a_folder_holds_each(tmp_path: Any, host: Any):
     """Given a run whose design tree, a Round's file, and the guide are changed
     When commit is given the design tree, the run's folder of Rounds, and the guide
@@ -88,7 +86,6 @@ def test_a_commit_of_several_paths_and_a_folder_holds_each(tmp_path: Any, host: 
     )
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_commit_takes_a_path_with_no_change_beside_one_with_one(tmp_path: Any, host: Any):
     """Given a run whose design tree is changed and whose docs/product-vision.md isn't
     When commit is given both
@@ -99,7 +96,6 @@ def test_a_commit_takes_a_path_with_no_change_beside_one_with_one(tmp_path: Any,
     assert committed_files(worktree(run)) == [tree_file(run)]
 
 
-@pytest.mark.supports("test_a_point_the_pruner_settles_is_committed_with_its_ground_as_the_message")
 def test_a_commit_leaves_the_rest_of_the_index_as_it_was(tmp_path: Any, host: Any):
     """Given a run whose guide is changed and staged, and whose design tree is changed
     When commit is given the design tree
@@ -112,7 +108,6 @@ def test_a_commit_leaves_the_rest_of_the_index_as_it_was(tmp_path: Any, host: An
     assert git(worktree(run), "diff", "--cached", "--name-only").split() == [rn_files.GUIDE]
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 @pytest.mark.parametrize("outside", ["../outside.txt", "/etc/hostname", "../../../NOTES.md"])
 def test_a_commit_of_a_path_outside_the_worktree_is_refused(tmp_path: Any, host: Any, outside: str):
     """Given a run whose design tree is changed
@@ -126,7 +121,6 @@ def test_a_commit_of_a_path_outside_the_worktree_is_refused(tmp_path: Any, host:
     assert head(worktree(run)) == before
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_commit_with_no_change_in_any_path_is_refused(tmp_path: Any, host: Any):
     """Given a run with nothing changed
     When commit is given the design tree
@@ -138,7 +132,6 @@ def test_a_commit_with_no_change_in_any_path_is_refused(tmp_path: Any, host: Any
     assert head(worktree(run)) == before
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_a_commit_that_a_commit_check_refuses_cant_run(tmp_path: Any, host: Any):
     """Given a run whose design tree is changed, in a repository whose pre-commit hook refuses each
     commit saying `tree: no`
@@ -156,7 +149,6 @@ def test_a_commit_that_a_commit_check_refuses_cant_run(tmp_path: Any, host: Any)
 # pause
 
 
-@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_commits_each_change_and_pushes_the_branch_with_its_upstream(
     tmp_path: Any, host: Any
 ):
@@ -176,7 +168,6 @@ def test_a_pause_commits_each_change_and_pushes_the_branch_with_its_upstream(
     assert git(worktree(run), "status", "--porcelain").strip() == ""
 
 
-@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_with_no_change_pushes_the_last_commit_alone(tmp_path: Any, host: Any):
     """Given a run with nothing changed since its last commit
     When pause is given the run
@@ -188,7 +179,6 @@ def test_a_pause_with_no_change_pushes_the_last_commit_alone(tmp_path: Any, host
     assert head(origin(tmp_path), f"rn-{run.name}") == before
 
 
-@pytest.mark.supports("test_a_pause_leaves_the_users_own_worktree_and_branch_as_they_were")
 def test_a_pause_leaves_the_users_branch_and_change_as_they_were(tmp_path: Any, host: Any):
     """Given a run whose design tree is changed, and the user's own change to docs/test-design.md
     on main
@@ -208,7 +198,6 @@ def test_a_pause_leaves_the_users_branch_and_change_as_they_were(tmp_path: Any, 
     ]
 
 
-@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
     """Given a run whose repository has no remote
     When pause is given the run
@@ -219,7 +208,6 @@ def test_a_pause_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
         pause(run, host)
 
 
-@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
     tmp_path: Any, host: Any
 ):
@@ -239,7 +227,6 @@ def test_a_pause_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
             os.chmod(folder, os.stat(folder).st_mode | stat.S_IWUSR)
 
 
-@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_a_pause_to_a_remote_that_isnt_there_cant_run(tmp_path: Any, host: Any):
     """Given a run whose remote origin names a folder that doesn't exist
     When pause is given the run
@@ -286,9 +273,6 @@ def created(gh_state: str) -> list[list[str]]:
     return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "create"]]
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_first_put_up_pushes_and_opens_the_pull_request_titled_by_the_goal(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -309,9 +293,6 @@ def test_a_first_put_up_pushes_and_opens_the_pull_request_titled_by_the_goal(
     assert [title(each) for each in created(gh_state)] == [FIRST]
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_first_put_ups_body_names_each_issue_it_closes_then_each_it_refers_to(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -329,9 +310,6 @@ def test_a_first_put_ups_body_names_each_issue_it_closes_then_each_it_refers_to(
     ]
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_first_put_ups_body_of_a_run_with_no_issue_is_the_goal_alone(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -343,9 +321,6 @@ def test_a_first_put_ups_body_of_a_run_with_no_issue_is_the_goal_alone(
     assert [body(each) for each in created(gh_state)] == [rn_files.GOAL]
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_first_put_up_writes_the_pull_requests_url_into_the_tree_and_pushes_it(
     tmp_path: Any, host: Any
 ):
@@ -364,9 +339,6 @@ def test_a_first_put_up_writes_the_pull_requests_url_into_the_tree_and_pushes_it
     assert git(worktree(run), "status", "--porcelain") == ""
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_put_up_whose_pull_request_is_open_writes_its_url_where_the_tree_has_none(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -383,9 +355,6 @@ def test_a_put_up_whose_pull_request_is_open_writes_its_url_where_the_tree_has_n
     assert created(gh_state) == []
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 @pytest.mark.parametrize("held", ["CLOSED", "MERGED"])
 @pytest.mark.parametrize("named", [False, True], ids=["tree-names-none", "tree-names-it"])
 def test_a_put_up_beside_an_earlier_pull_request_not_open_opens_its_own(
@@ -410,9 +379,6 @@ def test_a_put_up_beside_an_earlier_pull_request_not_open_opens_its_own(
     assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_goal_of_one_sentence_titles_the_pull_request_whole(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -427,9 +393,6 @@ def test_a_goal_of_one_sentence_titles_the_pull_request_whole(
     assert [title(each) for each in created(gh_state)] == [goal]
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 @pytest.mark.parametrize(
     ("goal", "first"),
     [
@@ -465,9 +428,6 @@ def test_the_title_is_the_first_sentence_as_markdown_splits_the_goal(
     assert [title(each) for each in created(gh_state)] == [first]
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_second_put_up_opens_no_second_pull_request(tmp_path: Any, host: Any, gh_state: str):
     """Given a run whose plan was put up once, and whose command then changed
     When put_up is given the command
@@ -485,9 +445,6 @@ def test_a_second_put_up_opens_no_second_pull_request(tmp_path: Any, host: Any, 
     assert [each[1:3] for each in asked].count(["pr", "create"]) == 1
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_put_up_with_no_change_makes_no_commit(tmp_path: Any, host: Any):
     """Given a run with nothing changed since its last commit, the command among it, whose tree's
     context holds its pull request
@@ -503,9 +460,6 @@ def test_a_put_up_with_no_change_makes_no_commit(tmp_path: Any, host: Any):
     assert head(worktree(run)) == before == head(origin(tmp_path), f"rn-{NAME}")
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 @pytest.mark.parametrize("deliverable", ["docs/other.md", "docs/guide", "invoicer"])
 def test_a_put_up_of_a_deliverable_the_tree_lacks_is_refused(
     tmp_path: Any, host: Any, gh_state: str, deliverable: str
@@ -523,9 +477,6 @@ def test_a_put_up_of_a_deliverable_the_tree_lacks_is_refused(
     assert created(gh_state) == []
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_put_up_gives_a_link_of_each_path_a_folder_as_a_tree_and_a_file_as_a_blob(
     tmp_path: Any, host: Any
 ):
@@ -550,9 +501,6 @@ def test_a_put_up_gives_a_link_of_each_path_a_folder_as_a_tree_and_a_file_as_a_b
     ]
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_put_up_of_a_node_of_no_file_gives_no_link(tmp_path: Any, host: Any):
     """Given a run whose command is a node of no file, its `file` false, with no file at its path
     When put_up is given the command
@@ -564,9 +512,6 @@ def test_a_put_up_of_a_node_of_no_file_gives_no_link(tmp_path: Any, host: Any):
     assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_put_up_of_a_path_the_commit_doesnt_hold_is_refused_naming_it(tmp_path: Any, host: Any):
     """Given a run whose command's file isn't written, and whose guide is
     When put_up is given the command
@@ -578,9 +523,6 @@ def test_a_put_up_of_a_path_the_commit_doesnt_hold_is_refused_naming_it(tmp_path
         put_up(run, rn_files.COMMAND, host)
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_put_up_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
     """Given a run whose repository has no remote
     When put_up is given the command
@@ -590,9 +532,6 @@ def test_a_put_up_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
         put_up(run, rn_files.COMMAND, host)
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_a_put_up_with_gh_logged_out_is_missing_its_login(tmp_path: Any, host: Any, gh_state: str):
     """Given a run, and gh with no login
     When put_up is given the command
@@ -611,7 +550,6 @@ def test_a_put_up_with_gh_logged_out_is_missing_its_login(tmp_path: Any, host: A
     assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]
 
 
-@pytest.mark.supports("test_a_put_up_while_the_goal_is_open_is_refused_before_any_push")
 def test_a_put_up_while_the_goal_is_open_is_wrong_before_any_commit_or_push(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -636,7 +574,6 @@ def test_a_put_up_while_the_goal_is_open_is_wrong_before_any_commit_or_push(
     assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]
 
 
-@pytest.mark.supports("test_the_pull_request_stays_a_draft_while_a_deliverable_is_left_open")
 def test_a_first_put_up_opens_the_pull_request_as_a_draft(tmp_path: Any, host: Any, gh_state: str):
     """Given a run whose plan is open, with no pull request
     When put_up is given the plan
@@ -649,7 +586,6 @@ def test_a_first_put_up_opens_the_pull_request_as_a_draft(tmp_path: Any, host: A
 # diff
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 def test_diff_commits_each_change_pushes_it_and_gives_the_whole_diff_against_the_default_branch(
     tmp_path: Any, host: Any
 ):
@@ -667,7 +603,6 @@ def test_diff_commits_each_change_pushes_it_and_gives_the_whole_diff_against_the
     assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 def test_diff_after_a_stray_file_is_removed_holds_no_line_of_it(tmp_path: Any, host: Any):
     """Given a run whose branch holds a stray note, which is then removed from its worktree
     When diff is given the run
@@ -680,7 +615,6 @@ def test_diff_after_a_stray_file_is_removed_holds_no_line_of_it(tmp_path: Any, h
     assert "notes.md" not in diff(run, host)
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 def test_diff_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
     """Given a run of a repository with no remote origin
     When diff is given the run
@@ -717,7 +651,6 @@ def lines(checks: list[tuple[str, str]]) -> str:
     return "".join(f"{name}\t{end}\n" for name, end in checks)
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 def test_ci_where_each_check_passed_gives_them_having_waited_for_the_works_branch(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -737,7 +670,6 @@ def test_ci_where_each_check_passed_gives_them_having_waited_for_the_works_branc
     assert host.ran[-1][1] == worktree(run)
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 @pytest.mark.parametrize(
     "case",
     [("cancelled", "cancels", "cancelled"), ("timed-out", "deploy", "timed out")],
@@ -761,7 +693,6 @@ def test_ci_where_a_check_ended_neither_passing_nor_failing_names_how_it_ended(
     assert ci(run, host) == lines([(name, end if name == other else "passed") for name in names])
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 @pytest.mark.parametrize(
     ("found", "expected"),
     [
@@ -786,7 +717,6 @@ def test_ci_where_a_check_failed_is_wrong_naming_it_once(
     assert str(refused.value) == expected
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 @pytest.mark.parametrize(
     "case",
     [
@@ -818,7 +748,6 @@ def test_ci_that_gh_cant_give_cant_run_with_what_gh_said(
     assert clock.slept == []
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 def test_ci_whose_checks_gh_cant_read_once_they_started_cant_run_with_what_gh_said(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -841,7 +770,6 @@ def views(gh_state: str) -> int:
     return sum(1 for each in asked if each[1:3] == ["pr", "view"] and "headRefOid" in each[-1])
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 @pytest.mark.parametrize(
     "waits",
     [(0, 0), (1, 0), (0, 1), (2, 3), (0, 24)],
@@ -866,7 +794,6 @@ def test_ci_waits_until_the_pushed_heads_checks_start_then_reads_their_ends(
     assert views(gh_state) == stale + unstarted + 1
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 @pytest.mark.parametrize("unstarted", [25, None], ids=["start-past-the-bound", "no-ci"])
 def test_ci_whose_checks_dont_start_within_120_seconds_says_no_ci_started(
     tmp_path: Any, host: Any, gh_state: str, clock: Any, unstarted: int | None

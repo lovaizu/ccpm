@@ -41,7 +41,6 @@ def denied(answer: tuple[int, str, str]) -> str:
     return output["permissionDecisionReason"]
 
 
-@pytest.mark.supports("test_a_makers_delete_by_rm_is_denied_pointing_to_remove_py")
 @pytest.mark.parametrize(
     "cmd",
     [
@@ -71,7 +70,6 @@ def test_a_makers_delete_is_denied_with_how_to_use_remove_py(cmd: str):
     assert "one argument each" in reason
 
 
-@pytest.mark.supports("test_a_makers_delete_by_rm_is_denied_pointing_to_remove_py")
 def test_the_evaluators_delete_is_denied():
     """Given rn's evaluator calling Bash with rm
     When the hook runs
@@ -79,7 +77,6 @@ def test_the_evaluators_delete_is_denied():
     denied(main(given("rm -r /tmp/rn-trial/build", agent="rn:evaluator"), ROOT))
 
 
-@pytest.mark.supports("test_a_fixers_delete_by_rm_is_denied_pointing_to_remove_py")
 def test_the_fixers_delete_is_denied_with_how_to_use_remove_py():
     """Given rn's fixer calling Bash with rm
     When the hook runs
@@ -88,7 +85,6 @@ def test_the_fixers_delete_is_denied_with_how_to_use_remove_py():
     assert f"python3 {REMOVE} <exact path> [<exact path> ...]" in reason
 
 
-@pytest.mark.supports("test_a_delete_by_the_main_conversation_passes_the_hook")
 @pytest.mark.parametrize(
     "cmd",
     [
@@ -109,7 +105,6 @@ def test_a_makers_command_that_doesnt_delete_passes(cmd: str):
     assert main(given(cmd), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_delete_by_the_main_conversation_passes_the_hook")
 @pytest.mark.parametrize("agent", [None, "Explore", "general-purpose", "turn:worker", "rn"])
 def test_a_delete_outside_rns_makers_passes(agent: Any):
     """Given a Bash call with rm by the main conversation, which names no agent, or by an agent
@@ -119,7 +114,6 @@ def test_a_delete_outside_rns_makers_passes(agent: Any):
     assert main(given("rm -r build", agent=agent), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_delete_by_the_main_conversation_passes_the_hook")
 def test_another_tool_passes():
     """Given rn's generator calling a tool other than Bash, whose input holds rm
     When the hook runs
@@ -127,7 +121,6 @@ def test_another_tool_passes():
     assert main(given("rm -r build", tool="Write"), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_delete_by_the_main_conversation_passes_the_hook")
 @pytest.mark.parametrize(
     "stdin",
     [
@@ -151,7 +144,6 @@ def test_stdin_that_isnt_the_hooks_json_passes(stdin: bytes):
     assert main(stdin, ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_delete_by_the_main_conversation_passes_the_hook")
 @pytest.mark.parametrize("cmd", ["rm -r 'build", 42])
 def test_a_command_that_cant_be_read_passes(cmd: Any):
     """Given rn's generator calling Bash with a command whose quote never closes, or that isn't
@@ -161,7 +153,6 @@ def test_a_command_that_cant_be_read_passes(cmd: Any):
     assert main(given(cmd), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_delete_by_the_main_conversation_passes_the_hook")
 def test_a_fault_of_the_hooks_own_passes(monkeypatch: pytest.MonkeyPatch):
     """Given a hook whose reading of the call fails on an error it doesn't expect
     When the hook runs on rn's generator's rm
@@ -195,9 +186,6 @@ def written(path: Any, agent: Any = None, tool: str = "Write") -> bytes:
     return rn_files.hook_input("/work/invoicer", tool, tool_input, agent).encode("utf-8")
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner"
-)
 @pytest.mark.parametrize("tool", ["Write", "Edit"])
 def test_the_main_conversations_write_to_a_runs_tree_is_denied_pointing_to_a_new_pruner(
     tool: str,
@@ -212,7 +200,6 @@ def test_the_main_conversations_write_to_a_runs_tree_is_denied_pointing_to_a_new
     assert "hand the fact you'd write to a new pruner" in reason
 
 
-@pytest.mark.supports("test_a_makers_write_to_the_design_tree_is_denied_while_the_scripts_write_it")
 @pytest.mark.parametrize(
     "agent",
     [
@@ -235,7 +222,6 @@ def test_a_write_to_a_runs_tree_by_any_agent_but_the_pruner_is_denied(agent: Any
     denied(main(written(TREE, agent=agent), ROOT))
 
 
-@pytest.mark.supports("test_a_makers_write_to_the_design_tree_is_denied_while_the_scripts_write_it")
 def test_a_write_to_a_runs_tree_given_with_backslashes_is_denied():
     """Given the main conversation calling Write on a run's design-tree.json, its path written
     with backslashes, as Claude Code gives it on Windows
@@ -244,7 +230,6 @@ def test_a_write_to_a_runs_tree_given_with_backslashes_is_denied():
     denied(main(written(WINDOWS_TREE), ROOT))
 
 
-@pytest.mark.supports("test_the_pruners_write_passes_the_hook_and_tree_py_check_takes_it")
 @pytest.mark.parametrize("tool", ["Write", "Edit"])
 def test_the_pruners_write_to_a_runs_tree_passes(tool: str):
     """Given rn's pruner calling Write or Edit on a run's design-tree.json
@@ -253,7 +238,6 @@ def test_the_pruners_write_to_a_runs_tree_passes(tool: str):
     assert main(written(TREE, agent="rn:pruner", tool=tool), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_the_pruners_result_is_committed_with_its_strays_gone_and_its_asks_told")
 @pytest.mark.parametrize("tool", ["Write", "Edit"])
 def test_the_pruners_write_of_its_result_beside_a_runs_tree_passes(tool: str):
     """Given rn's pruner calling Write or Edit on the run's pruner.json, beside its design tree
@@ -263,9 +247,6 @@ def test_the_pruners_write_of_its_result_beside_a_runs_tree_passes(tool: str):
     assert main(written(result, agent="rn:pruner", tool=tool), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports(
-    "test_a_fixers_write_to_the_design_tree_is_denied_while_its_deliverables_file_passes"
-)
 @pytest.mark.parametrize(
     "path",
     [
@@ -283,9 +264,6 @@ def test_the_fixers_write_to_its_deliverable_or_its_result_passes(path: str, too
     assert main(written(path, agent="rn:fixer", tool=tool), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner"
-)
 @pytest.mark.parametrize(
     "path",
     [
@@ -305,9 +283,6 @@ def test_the_main_conversations_write_to_another_file_passes(path: str):
     assert main(written(path), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner"
-)
 @pytest.mark.parametrize("tool", ["Read", "NotebookEdit"])
 def test_another_tool_on_a_runs_tree_passes(tool: str):
     """Given the main conversation calling Read, or a tool that writes no JSON file, on a run's
@@ -317,9 +292,6 @@ def test_another_tool_on_a_runs_tree_passes(tool: str):
     assert main(written(TREE, tool=tool), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_is_denied_pointing_to_a_new_pruner"
-)
 @pytest.mark.parametrize("given_input", [{"content": "{}"}, {"file_path": 7}, TREE])
 def test_a_write_whose_path_cant_be_read_passes(given_input: Any):
     """Given the main conversation calling Write with no file_path, one that isn't text, or an
@@ -354,9 +326,6 @@ def tree_denied(answer: tuple[int, str, str], named: str) -> str:
     return reason
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
-)
 @pytest.mark.parametrize(
     "cmd",
     [
@@ -396,9 +365,6 @@ def test_a_bash_command_that_writes_a_runs_tree_is_denied_pointing_to_a_new_prun
     tree_denied(main(bash_of(cmd), ROOT), WINDOWS_TREE if WINDOWS_TREE in cmd else TREE)
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
-)
 def test_a_bash_write_by_a_path_from_the_current_folder_is_denied():
     """Given the main conversation calling Bash, in the repository's top, with a redirection onto
     the run's design-tree.json by its path from there
@@ -407,9 +373,6 @@ def test_a_bash_write_by_a_path_from_the_current_folder_is_denied():
     tree_denied(main(bash_of(f"echo '{{}}' > {RELATIVE_TREE}"), ROOT), RELATIVE_TREE)
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
-)
 def test_a_bash_write_by_the_trees_name_in_the_runs_folder_is_denied():
     """Given the main conversation calling Bash in the run's folder, with a redirection onto
     design-tree.json by its name alone
@@ -418,9 +381,6 @@ def test_a_bash_write_by_the_trees_name_in_the_runs_folder_is_denied():
     tree_denied(main(bash_of("echo '{}' > design-tree.json", cwd=RUN), ROOT), "design-tree.json")
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
-)
 @pytest.mark.parametrize(
     "cmd",
     [
@@ -439,9 +399,6 @@ def test_a_shell_or_git_command_that_writes_a_runs_tree_is_denied(cmd: str):
     tree_denied(main(bash_of(cmd), ROOT), TREE)
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
-)
 @pytest.mark.parametrize(
     "agent", ["rn:generator", "rn:evaluator", "rn:fixer", "general-purpose", "pruner"]
 )
@@ -453,9 +410,6 @@ def test_a_bash_write_to_a_runs_tree_by_any_agent_but_the_pruner_is_denied(agent
     tree_denied(main(bash_of(f"echo '{{}}' > {TREE}", agent), ROOT), TREE)
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
-)
 @pytest.mark.parametrize(
     "cmd",
     [
@@ -477,9 +431,6 @@ def test_a_run_of_rns_own_scripts_on_a_runs_tree_passes(cmd: str):
     assert main(bash_of(cmd), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports(
-    "test_the_orchestrators_write_to_the_design_tree_by_bash_is_denied_while_rns_scripts_run"
-)
 def test_a_run_of_rns_script_whose_output_is_redirected_onto_the_tree_is_denied():
     """Given the main conversation calling Bash with rn's script whose output is redirected onto a
     run's design-tree.json
@@ -488,7 +439,6 @@ def test_a_run_of_rns_script_whose_output_is_redirected_onto_the_tree_is_denied(
     tree_denied(main(bash_of(f"python3 {ROOT}/scripts/tree.py touched {RUN} > {TREE}"), ROOT), TREE)
 
 
-@pytest.mark.supports("test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook")
 @pytest.mark.parametrize(
     "cmd",
     [
@@ -522,7 +472,6 @@ def test_a_command_naming_a_runs_tree_that_the_hook_isnt_sure_writes_it_passes(c
     assert main(bash_of(cmd), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook")
 @pytest.mark.parametrize(
     "cmd",
     [
@@ -562,7 +511,6 @@ def test_a_bash_command_that_only_reads_a_runs_tree_passes(cmd: str):
     assert main(bash_of(cmd), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook")
 @pytest.mark.parametrize(
     "cmd",
     [
@@ -582,7 +530,6 @@ def test_a_bash_write_near_a_runs_tree_passes(cmd: str):
     assert main(bash_of(cmd), ROOT) == (0, "", "")
 
 
-@pytest.mark.supports("test_the_orchestrators_read_of_the_design_tree_by_bash_passes_the_hook")
 @pytest.mark.parametrize(
     "cmd",
     [

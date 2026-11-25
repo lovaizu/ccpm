@@ -64,7 +64,6 @@ sequenceDiagram
 └── dev/                                what only the developers need, never installed
     ├── README.md                       how to build and check the plugins <Markdown>
     ├── plugin-development-guide.md     this document
-    ├── plugin-template/                the files a plugin starts from
     ├── images/                         the figures' style, and this document's figures <CSS, SVG>
     ├── scripts/                        the checks <Python 3>
     └── <plugin>/                       one for each folder in plugins/
@@ -79,8 +78,7 @@ An entry is a file whose form Claude Code fixes: a skill, an agent, a hook, or a
 part is the file in `domain/` that does the entry's job. An entry is named as its caller calls it,
 such as the command a person types. A part is named by the role it holds, so a role's agent
 `agents/<role>.md` points to `domain/<role>.md`, and the orchestrator's skill points to
-`domain/orchestrator.md`. [The template](plugin-template/) holds the first form of each entry and
-of each role's part.
+`domain/orchestrator.md`.
 
 Installing a plugin copies only its folder, so what only developers need stays in `dev/`. A
 repository of one plugin keeps the same tree with one folder in `plugins/`.
@@ -392,68 +390,24 @@ that depend on each other can't change or install alone.
 
 ## Test
 
-A plugin is tested at the test levels of
-[the architecture best practice](../plugins/rn/domain/best-practices/architecture/best-practice.json):
-unit and integration tests, and end-to-end (E2E) tests, which for a plugin that holds a prompt are
-the walkthrough run of
-[the test strategy guide](../plugins/rn/domain/best-practices/architecture/test-strategy-guide.md).
-The unit tests of its code follow
-[the code best practice](../plugins/rn/domain/best-practices/code/best-practice.json).
-Its prompts are checked by the walkthrough run alone, as
-[the prompt best practice](../plugins/rn/domain/best-practices/prompt/best-practice.json) says.
-Its architecture's Test strategy sets the tools and the criteria. This section holds only what
-every plugin adds to them.
+A plugin's code is checked on each push: the unit tests of its scripts, the static analysis of its
+code, and the coverage of every line and branch of it by the unit tests. Its prompts are checked by
+an end-to-end (E2E) run alone: the user runs a real request through the plugin, and the developer
+watches the run and proposes each fix with its cause. Its architecture's Test strategy sets the
+tools and the criteria. This section holds only what every plugin adds to them.
 
-### Each case a test that names what it supports
+*Why*: a script gives one right result for each input, so a unit test checks it whole and in a
+moment. A prompt's result varies from run to run, and a test that plays a prompt's part checks
+only what its writer copied of the prompt, so only a real run checks the prompts and how the
+scripts serve them.
 
-Each test case is a pytest test. Its docstring states its Given, When, and Then, a line each, and
-`@pytest.mark.supports("<name>")` names what it supports one level up: a key result, such as
-`KR1.1`, for an E2E case, an element of the architecture by its name, such as `S1` or a principle's
-`P1.1`, for an integration case, and an integration case by its test's name for a unit case. A
-plugin's cases lie in `dev/<plugin>/tests/`: the unit tests of its code in `unit/`, its
-property-based tests, each of an invariant that its requirements state, in `properties/`, the
-integration tests in `integration/`, and the E2E tests,
-where it has any, in `e2e/`. `python3 dev/scripts/trace.py check <plugin>` reads the cases and the
-elements of the plugin's architecture by their names. It gives 0 only where each case names what
-exists one level up, each element has an integration case, and each case of a principle fails as
-[A principle's test seen to fail](#a-principles-test-seen-to-fail) says. `trace.py doubles` and
-`trace.py sources` check the doubles, as
-[Each result of a double from a record](#each-result-of-a-double-from-a-record) says.
+### Each case a test with its Given, When, and Then
 
-*Why*: one form lets one script check the trace of every plugin, as every architecture names its
-elements by the template of the architecture best practice. A folder for each time a test runs lets
-each check run the tests it times: `check.sh` runs `unit/`, `integration/`, and `properties/` on
-each push.
+Each test case is a pytest test of the plugin's code. Its docstring states its Given, When, and
+Then, a line each. A plugin's cases lie in `dev/<plugin>/tests/unit/`.
 
-### A principle's test seen to fail
-
-Each integration case that names a principle takes the fixture `broken`, which takes out the part
-that holds the principle where the environment variable `TRACE_BROKEN` is `1`, and does nothing
-otherwise. The plugin defines `broken` beside the case, in its test file or in a `conftest.py` of
-`integration/`. `trace.py check <plugin>` runs each such case alone with `TRACE_BROKEN=1`, and gives 0
-only where each fails.
-
-*Why*: a test of a principle that still passes with the part that holds it taken out checks
-nothing of the principle, and only a run without the part shows that, as the architecture best
-practice says of a check trusted only once seen to fail. Only the plugin knows which part holds each
-principle, so its fixture takes the part out, and one form lets one script run the cases of every
-plugin. An environment variable reaches the fixture of each plugin, where an option of pytest that
-two plugins' `conftest.py` both added would stop the run that `check.sh` makes of their cases
-together.
-
-### A case of a part not yet built
-
-A case written before the body of the part it calls carries
-`pytest.mark.xfail(strict=True, reason="<why it fails now>")`, as `pytestmark` at the top of its
-file where no case of the file passes yet. The developer who builds the body takes the mark off each
-case it makes pass. `trace.py check <plugin>` runs each case of a principle with `--runxfail`, so the
-mark changes nothing it sees.
-
-*Why*: every case is written through a skeleton of the parts before any body, and fails on the empty
-bodies, yet the work is pushed only once `check.sh` gives 0. The mark lets `check.sh` pass while each
-case still fails, and `strict` fails a case that passes with the mark on, so no mark outlives the
-body that makes its case pass. An expected failure would also hide a case of a principle that passes
-with its part taken out, so `trace.py` runs the case as if unmarked.
+*Why*: the docstring says what the case holds in the words of the requirement, so a reader sees
+what breaks where it fails without reading its code.
 
 ### Each result of a double from a record
 
@@ -473,17 +427,6 @@ as the architecture best practice says of a double's source. A result taken from
 that a script reads leaves no result whose source no one can check, where a result written in code
 or named in a comment leaves one. A page changes apart from any push, so a check of it on each push
 would fail for a change that the push didn't make, and it runs with the checks of the tests.
-
-### The parts joined at their handoffs
-
-The integration tests play the handoffs that the architecture's sequences draw. Each script runs
-as its role runs it, and its output feeds the next. In place of each prompt's work, the test writes
-the files that the prompt's result form says. `claude plugin validate` checks each configuration
-written by hand, such as `hooks.json`, since no test runs its commands.
-
-*Why*: parts that pass alone fail where one hands the next what it doesn't take. A prompt's results
-vary from run to run, so the walkthrough run checks the prompts, and the integration tests check
-what the scripts do with their results.
 
 ## Release
 

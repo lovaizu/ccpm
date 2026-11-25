@@ -14,14 +14,14 @@ dev = [
   "pytest>=8.4",
   "pytest-xdist>=3.8.0",
   "ruff>=0.17.2",
+  "vulture>=2.14",
 ]
 # The checks that need a newer Python only to check, not to run: copied code, how deep each function
-# nests, which lines the tests run, and the property-based tests, as each plugin's Test strategy
+# nests, and which lines the tests run, as each plugin's Test strategy
 # sets them in dev/<plugin>/architecture.md.
 test-quality = [
   "complexipy>=9.0.0",
   "coverage>=7.17.2",
-  "hypothesis>=6.170.15",
   "pylint>=4.1.3",
 ]
 
@@ -54,6 +54,17 @@ max-branches = 12
 max-args = 5
 max-statements = 50
 
+# The code that nothing uses, which check.sh finds by vulture: a name that no file reads. A name
+# that only a library reads stays out, as vulture sees no read of it: a fixture of pytest, and
+# shlex's whitespace_split. So does the sample product that the tests make a run in, whose code
+# the tests only hold as files.
+[tool.vulture]
+paths = ["plugins", "dev/scripts", "dev/rn/tests"]
+exclude = ["dev/scripts/node_modules/", "dev/rn/tests/invoicer/"]
+ignore_decorators = ["@pytest.fixture"]
+ignore_names = ["whitespace_split"]
+min_confidence = 60
+
 # The most cognitive complexity that complexipy, which check.sh runs, lets a function have.
 [tool.complexipy]
 max-complexity-allowed = 15
@@ -67,31 +78,20 @@ python-version = "3.9"
 python_files = ["test*.py"]
 norecursedirs = [".*", "__pycache__", "node_modules"]
 addopts = ["-p", "no:cacheprovider"]
-# The mark by which each test case of a plugin names what it supports one level up, which
-# dev/scripts/trace.py reads, as the plugin guide's Test says.
-markers = ["supports(name): the key result, element, or integration case one level up"]
 
-# How much of the trace script and of rn's code the tests run, as N7 of
+# How much of rn's code the tests run, as N7 of
 # plugins/rn/domain/best-practices/code/best-practice.json says: every line and branch.
 [tool.coverage.run]
 branch = true
 parallel = true
 include = [
-  "*/dev/scripts/trace.py",
   "*/rn/domain/*.py",
   "*/rn/domain/**/*.py",
   "*/rn/scripts/*.py",
 ]
-
-# rn's integration cases run a bench's copy of plugins/rn/, which counts as its file there.
-[tool.coverage.paths]
-rn = ["plugins/rn/", "*/rn/"]
 
 [tool.coverage.report]
 fail_under = 100
 show_missing = true
 # A script runs only as `__main__`, so its other branch never runs.
 partial_also = ["if __name__ == .__main__.:"]
-# A body not yet built raises NotImplementedError, and its cases are xfail until it's built, as A
-# case of a part not yet built of dev/plugin-development-guide.md says.
-exclude_also = ["raise NotImplementedError"]

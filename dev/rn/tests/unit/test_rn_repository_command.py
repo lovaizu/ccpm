@@ -36,9 +36,6 @@ def command_link(run: RunPlace, ref: str = "HEAD") -> str:
     return f"http://github.com/owner/repo/blob/{head(worktree, ref)}/{rn_files.COMMAND}\n"
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_new_prints_the_new_runs_folder_from_the_repositorys_top(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote
     When repository.py new is given the walkthrough's slug and its languages
@@ -55,9 +52,6 @@ def test_new_prints_the_new_runs_folder_from_the_repositorys_top(tmp_path: Any, 
     assert tree["goal"] == {"decided": None}
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_new_writes_rns_version_and_the_languages_in_the_trees_context(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote
     When repository.py new is given the walkthrough's slug, English, and Japanese
@@ -79,9 +73,6 @@ def test_new_writes_rns_version_and_the_languages_in_the_trees_context(tmp_path:
     }
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_new_of_an_empty_language_says_which_to_give(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote
     When repository.py new is given the walkthrough's slug, an empty deliverables'
@@ -97,9 +88,6 @@ def test_new_of_an_empty_language_says_which_to_give(tmp_path: Any, host: Any):
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 @pytest.mark.parametrize("given", ["?!", rn_files.WORDS], ids=["no-letter", "the-users-words"])
 def test_new_of_other_than_a_slug_says_the_form_it_takes(tmp_path: Any, host: Any, given: str):
     """Given invoicer's repository with a remote
@@ -115,9 +103,6 @@ def test_new_of_other_than_a_slug_says_the_form_it_takes(tmp_path: Any, host: An
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_new_with_no_default_branch_on_origin_says_what_is_missing(tmp_path: Any, host: Any):
     """Given invoicer's repository with no remote, so that origin's HEAD names no branch
     When repository.py new is given the walkthrough's slug and its languages
@@ -130,7 +115,6 @@ def test_new_with_no_default_branch_on_origin_says_what_is_missing(tmp_path: Any
     assert not os.path.exists(os.path.join(repo, ".claude", "worktrees"))
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_finds_none_and_makes_no_worktree")
 def test_find_of_no_run_prints_nothing(tmp_path: Any, host: Any):
     """Given invoicer's repository with a remote and no run
     When repository.py find is run
@@ -140,7 +124,6 @@ def test_find_of_no_run_prints_nothing(tmp_path: Any, host: Any):
     assert main(["find"], repo, rn_files.RN, host) == (0, "", "")
 
 
-@pytest.mark.supports("test_a_pick_up_with_no_run_finds_none_and_makes_no_worktree")
 def test_find_with_github_out_of_reach_says_so_on_stderr(tmp_path: Any, host: Any):
     """Given invoicer's repository with one run with work left, whose origin git can't reach
     When repository.py find is run
@@ -155,7 +138,6 @@ def test_find_with_github_out_of_reach_says_so_on_stderr(tmp_path: Any, host: An
     assert err.startswith(prefix) and err.endswith("exists.\n") and err.count("\n") == 1
 
 
-@pytest.mark.supports("test_a_pick_up_in_a_repository_whose_worktree_is_gone_makes_it_again")
 def test_find_prints_the_newest_run_and_makes_its_worktree_again(tmp_path: Any, host: Any):
     """Given a repository with two runs with work left, the newer by its last commit with its
     worktree removed, and one newer still whose every deliverable is done
@@ -178,7 +160,6 @@ def test_find_prints_the_newest_run_and_makes_its_worktree_again(tmp_path: Any, 
     assert os.path.isfile(os.path.join(repo, printed.strip(), "design-tree.json"))
 
 
-@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_pause_prints_the_hash_the_remote_holds(tmp_path: Any, host: Any):
     """Given a run whose design tree is changed
     When repository.py pause is given the run's folder
@@ -189,7 +170,6 @@ def test_pause_prints_the_hash_the_remote_holds(tmp_path: Any, host: Any):
     assert (code, out, err) == (0, head(str(tmp_path / "origin.git"), f"rn-{NAME}") + "\n", "")
 
 
-@pytest.mark.supports("test_a_pause_pushes_the_runs_work_so_far")
 def test_pause_with_no_origin_says_what_is_missing(tmp_path: Any, host: Any):
     """Given a run whose repository has no remote
     When repository.py pause is given the run's folder
@@ -200,7 +180,6 @@ def test_pause_with_no_origin_says_what_is_missing(tmp_path: Any, host: Any):
     assert err.startswith("repository.py: ")
 
 
-@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 @pytest.mark.parametrize("pushed", [False, True], ids=["local-only", "pushed"])
 def test_cancel_removes_the_run_and_prints_what_it_removed_on_github(
     tmp_path: Any, host: Any, gh_state: str, pushed: bool
@@ -222,7 +201,6 @@ def test_cancel_removes_the_run_and_prints_what_it_removed_on_github(
     assert git(run.repository, "ls-remote", "--heads", "origin", f"rn-{NAME}") == ""
 
 
-@pytest.mark.supports("test_a_cancel_removes_the_worktree_its_branch_and_its_pull_request")
 def test_cancel_that_cant_remove_on_github_says_so_on_stderr_and_still_gives_0(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -248,7 +226,6 @@ def test_cancel_that_cant_remove_on_github_says_so_on_stderr_and_still_gives_0(
     assert git(run.repository, "branch", "--list", f"rn-{NAME}").strip() == ""
 
 
-@pytest.mark.supports("test_a_cancel_whose_worktree_cant_be_removed_gives_2_and_keeps_the_run")
 def test_cancel_of_a_worktree_git_cant_remove_gives_2(tmp_path: Any, host: Any):
     """Given a run whose worktree is locked
     When repository.py cancel is given the run's folder
@@ -261,9 +238,6 @@ def test_cancel_of_a_worktree_git_cant_remove_gives_2(tmp_path: Any, host: Any):
     assert os.path.isdir(run.worktree)
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_put_up_of_the_plan_prints_nothing(tmp_path: Any, host: Any):
     """Given a run whose plan is open
     When repository.py put-up is given the run's folder and the plan's path
@@ -273,9 +247,6 @@ def test_put_up_of_the_plan_prints_nothing(tmp_path: Any, host: Any):
     assert given == (0, "", "")
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_put_up_prints_a_link_of_each_path_of_the_deliverable_a_line_each(tmp_path: Any, host: Any):
     """Given a run whose command lies at invoicer/__main__.py and at the more path docs/
     When repository.py put-up is given the run's folder and the command's path
@@ -291,7 +262,6 @@ def test_put_up_prints_a_link_of_each_path_of_the_deliverable_a_line_each(tmp_pa
     assert given == (0, command_link(run) + docs, "")
 
 
-@pytest.mark.supports("test_a_send_back_past_the_contents_limit_is_remade_in_rounds_of_its_own")
 def test_put_up_marks_the_deliverables_last_round_as_put_up(tmp_path: Any, host: Any):
     """Given a run whose command has Rounds content-1 and content-2, its node holding N1 not good
     with an open decision of N1, the rest good
@@ -313,11 +283,6 @@ def test_put_up_marks_the_deliverables_last_round_as_put_up(tmp_path: Any, host:
     }
 
 
-ONE_STEP = (
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
-
-
 def stepped(command: bool) -> dict:
     """The walkthrough's tree whose command is open with each condition good, at a step whose
     sign-off is as given, and whose guide's step the user checks."""
@@ -329,9 +294,6 @@ def stepped(command: bool) -> dict:
     return design_tree
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 def test_put_up_at_a_step_the_user_doesnt_check_makes_it_done_marks_its_round_and_pushes(
     tmp_path: Any, host: Any
 ):
@@ -362,9 +324,6 @@ def test_put_up_at_a_step_the_user_doesnt_check_makes_it_done_marks_its_round_an
     assert head(str(tmp_path / "origin.git"), f"rn-{NAME}") == head(worktree)
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_at_a_step_the_user_doesnt_check_is_done_once_put_up_and_the_next_starts"
-)
 def test_put_up_at_a_step_the_user_checks_leaves_it_open_for_the_signoff(tmp_path: Any, host: Any):
     """Given a run whose command, open with each condition good after Round content-1, lies at a
     step that the user checks
@@ -379,9 +338,6 @@ def test_put_up_at_a_step_the_user_checks_leaves_it_open_for_the_signoff(tmp_pat
     assert design_tree["deliverables"][1]["status"] == "open"
 
 
-@pytest.mark.supports(
-    "test_a_final_checks_finding_within_the_decisions_is_mended_by_a_fix_of_the_done_deliverable"
-)
 def test_put_up_of_a_deliverable_done_at_a_step_the_user_doesnt_check_leaves_it_as_it_is(
     tmp_path: Any, host: Any
 ):
@@ -409,9 +365,6 @@ def test_put_up_of_a_deliverable_done_at_a_step_the_user_doesnt_check_leaves_it_
     assert "done at a step" not in git(worktree, "log", "-3", "--format=%s")
 
 
-@pytest.mark.supports(
-    "test_a_put_up_that_the_repositorys_push_check_refuses_is_mended_by_a_fix_and_put_up_again"
-)
 def test_put_up_whose_push_the_repositorys_check_refuses_leaves_the_run_to_a_fix(
     tmp_path: Any, host: Any
 ):
@@ -436,7 +389,6 @@ def test_put_up_whose_push_the_repositorys_check_refuses_leaves_the_run_to_a_fix
     assert f"rn-{NAME}" not in git(str(tmp_path / "origin.git"), "branch", "--list")
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 def test_diff_prints_the_pull_requests_whole_diff(tmp_path: Any, host: Any):
     """Given a run whose guide is written but not committed
     When repository.py diff is given the run's folder
@@ -448,7 +400,6 @@ def test_diff_prints_the_pull_requests_whole_diff(tmp_path: Any, host: Any):
     assert f"+++ b/{rn_files.GUIDE}" in out
 
 
-@pytest.mark.supports("test_the_final_check_pushes_the_work_and_reads_its_whole_diff_and_ci")
 @pytest.mark.parametrize(
     ("found", "expected"),
     [
@@ -475,9 +426,6 @@ def test_ci_gives_0_or_1_by_what_the_checks_found(
     assert expected[1] in out + err
 
 
-@pytest.mark.supports(
-    "test_the_first_deliverable_whose_rounds_are_over_is_put_up_in_the_runs_pull_request"
-)
 def test_put_up_with_gh_logged_out_says_what_is_missing_and_commits_nothing(
     tmp_path: Any, host: Any, gh_state: str
 ):
@@ -496,7 +444,6 @@ def test_put_up_with_gh_logged_out_says_what_is_missing_and_commits_nothing(
     assert head(worktree) == before
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_checks_with_no_finding_prints_nothing(tmp_path: Any, host: Any):
     """Given a run whose repository sets no check, and the command written
     When repository.py checks is given the run's folder and the command
@@ -510,7 +457,6 @@ def test_checks_with_no_finding_prints_nothing(tmp_path: Any, host: Any):
     )
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_checks_with_findings_gives_1_with_each_a_line(tmp_path: Any, host: Any):
     """Given a run whose repository's check fails saying two lines, and the command and the guide
     written
@@ -526,7 +472,6 @@ def test_checks_with_findings_gives_1_with_each_a_line(tmp_path: Any, host: Any)
     assert out + err == "first\nsecond\n"
 
 
-@pytest.mark.supports("test_the_people_start_from_the_branch_without_rns_folder")
 def test_trial_prints_the_folder_of_the_peoples_starting_state(tmp_path: Any, host: Any, temp: str):
     """Given a run with the command's Round content-1
     When repository.py trial is given the run's folder and the Round's folder from the top
@@ -544,7 +489,6 @@ def test_trial_prints_the_folder_of_the_peoples_starting_state(tmp_path: Any, ho
     assert os.path.isfile(os.path.join(folder, "invoicer", "lines.py"))
 
 
-@pytest.mark.supports("test_the_people_start_from_the_branch_without_rns_folder")
 def test_trial_where_the_folder_cant_be_made_gives_2(tmp_path: Any, host: Any, temp: str):
     """Given a run with the command's Round content-1, and a system's temporary folder that may
     not be written
@@ -562,7 +506,6 @@ def test_trial_where_the_folder_cant_be_made_gives_2(tmp_path: Any, host: Any, t
     assert err
 
 
-@pytest.mark.supports("test_a_new_conversation_picks_up_the_run_from_its_files")
 @pytest.mark.parametrize("sub", ["pause", "cancel", "put-up", "checks", "trial", "diff", "ci"])
 def test_a_folder_that_isnt_a_runs_is_wrong(tmp_path: Any, host: Any, sub: str):
     """Given invoicer's repository with no run
@@ -577,9 +520,6 @@ def test_a_folder_that_isnt_a_runs_is_wrong(tmp_path: Any, host: Any, sub: str):
     assert err.startswith("repository.py: ") and "docs" in err
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 @pytest.mark.parametrize(
     "argv",
     [

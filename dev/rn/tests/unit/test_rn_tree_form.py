@@ -40,9 +40,6 @@ def the_tree() -> dict[str, Any]:
 # started
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_started_holds_the_goal_open_and_the_plan_as_its_one_deliverable():
     """Given the walkthrough's context, the plan's path, and the design tree best practice
     When the tree a run starts from is made
@@ -72,9 +69,6 @@ def test_started_holds_the_goal_open_and_the_plan_as_its_one_deliverable():
     }
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_started_takes_the_conditions_in_the_best_practices_order_not_by_their_ids():
     """Given a best practice whose conditions stand as N1, N2, N3, N7, N4, N5, N6, test-design's
     When the tree a run starts from is made by it
@@ -87,7 +81,6 @@ def test_started_takes_the_conditions_in_the_best_practices_order_not_by_their_i
 # goal
 
 
-@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
 def test_goal_gives_the_goals_sentence_once_written():
     """Given the walkthrough's tree, its goal written by user
     When its goal is taken
@@ -95,7 +88,6 @@ def test_goal_gives_the_goals_sentence_once_written():
     assert goal(the_tree()) == GOAL
 
 
-@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
 def test_goal_of_a_goal_of_one_character_gives_it():
     """Given a tree whose goal is one character, x
     When its goal is taken
@@ -105,7 +97,6 @@ def test_goal_of_a_goal_of_one_character_gives_it():
     assert goal(the) == "x"
 
 
-@pytest.mark.supports("test_a_cut_waits_while_the_goal_is_open")
 def test_goal_refuses_an_open_goal_saying_a_new_pruner_writes_it():
     """Given the tree that a run starts from, its goal open
     When its goal is taken
@@ -121,9 +112,6 @@ def test_goal_refuses_an_open_goal_saying_a_new_pruner_writes_it():
 # context
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 def test_context_holds_the_version_and_the_languages():
     """Given rn's version 0.9.0, English as the deliverables' language, and Japanese as the
     conversation's
@@ -138,9 +126,6 @@ def test_context_holds_the_version_and_the_languages():
     }
 
 
-@pytest.mark.supports(
-    "test_a_request_makes_the_runs_worktree_and_its_design_tree_with_the_goal_open"
-)
 @pytest.mark.parametrize(
     ("deliverables", "conversation", "named"),
     [
@@ -162,7 +147,6 @@ def test_context_refuses_an_empty_language_naming_which(
 # read and write
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_read_gives_the_tree_that_the_file_holds(tmp_path: Any):
     """Given a run's design-tree.json holding the walkthrough's tree
     When it's read
@@ -171,7 +155,6 @@ def test_read_gives_the_tree_that_the_file_holds(tmp_path: Any):
     assert read(path) == the_tree()
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_read_gives_a_tree_out_of_its_form_as_the_file_holds_it(tmp_path: Any):
     """Given a design-tree.json holding JSON out of the tree's form, with no goal
     When it's read
@@ -180,7 +163,6 @@ def test_read_gives_a_tree_out_of_its_form_as_the_file_holds_it(tmp_path: Any):
     assert read(path) == {"deliverables": "none"}
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_read_refuses_a_file_that_isnt_json_naming_it(tmp_path: Any):
     """Given a design-tree.json whose text isn't JSON
     When it's read
@@ -190,7 +172,6 @@ def test_read_refuses_a_file_that_isnt_json_naming_it(tmp_path: Any):
         read(path)
 
 
-@pytest.mark.supports("test_a_tree_change_out_of_form_is_refused_at_its_commit")
 def test_read_refuses_a_missing_file_naming_it(tmp_path: Any):
     """Given no design-tree.json in the folder
     When it's read
@@ -199,7 +180,6 @@ def test_read_refuses_a_missing_file_naming_it(tmp_path: Any):
         read(os.path.join(str(tmp_path), "design-tree.json"))
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_write_keeps_the_tree_indented_by_one_space_in_its_key_order_with_a_newline(
     tmp_path: Any,
 ):
@@ -216,7 +196,6 @@ def test_write_keeps_the_tree_indented_by_one_space_in_its_key_order_with_a_newl
     assert read(path) == the
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 def test_write_refuses_a_file_that_cant_be_written_naming_it(tmp_path: Any):
     """Given a path whose folder is a file
     When a tree is written there
@@ -231,7 +210,6 @@ def test_write_refuses_a_file_that_cant_be_written_naming_it(tmp_path: Any):
 # at
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     ("pointer", "node"),
     [
@@ -258,7 +236,6 @@ def test_at_gives_the_node_that_the_pointer_names(pointer: str, node: Any):
     assert at(the, pointer) == node(the)
 
 
-@pytest.mark.supports("test_the_pruner_rewrites_each_node_its_change_touches_before_the_commit")
 @pytest.mark.parametrize(
     "pointer",
     [
@@ -283,9 +260,6 @@ def test_at_refuses_a_pointer_that_names_no_node_naming_it(pointer: str):
 # deliverable
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 def test_deliverable_gives_the_one_of_the_path_among_several_not_the_first():
     """Given the walkthrough's tree, the plan done, the command and the guide open
     When the deliverable of the guide's path is taken
@@ -294,9 +268,6 @@ def test_deliverable_gives_the_one_of_the_path_among_several_not_the_first():
     assert deliverable(the, GUIDE) == the["deliverables"][2]
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 def test_deliverable_gives_one_that_is_done():
     """Given the walkthrough's tree, the plan done
     When the deliverable of the plan's path is taken
@@ -305,9 +276,6 @@ def test_deliverable_gives_one_that_is_done():
     assert deliverable(the, PLAN) == the["deliverables"][0]
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 @pytest.mark.parametrize("path", ["docs/guide", "docs/guide.md/", "Docs/guide.md", ""])
 def test_deliverable_refuses_a_path_that_nearly_matches_naming_each_path(path: str):
     """Given the walkthrough's tree
@@ -320,9 +288,6 @@ def test_deliverable_refuses_a_path_that_nearly_matches_naming_each_path(path: s
         assert each in str(refused.value)
 
 
-@pytest.mark.supports(
-    "test_the_generators_cut_holds_its_deliverables_node_inputs_and_best_practice"
-)
 def test_deliverable_refuses_any_path_of_a_tree_with_no_deliverable():
     """Given a tree with no deliverable
     When the deliverable of the guide's path is taken

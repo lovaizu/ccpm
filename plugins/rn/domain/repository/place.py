@@ -16,8 +16,6 @@ _SLUG = re.compile(r"[a-z0-9]+(-[a-z0-9]+){0,4}")
 # A run's folder, `<repository>/.claude/worktrees/rn-<name>/.rn/<name>`.
 _FOLDER = re.compile(r"(.+)/\.claude/worktrees/rn-([^/]+)/\.rn/([^/]+)")
 _FORM = "<repository>/.claude/worktrees/rn-<name>/.rn/<name>"
-# A run's worktree's folder name, `rn-<yyyymmdd>-<slug>`.
-_WORKTREE = re.compile(r"rn-(\d{8})-(.+)")
 
 
 @dataclass(frozen=True)

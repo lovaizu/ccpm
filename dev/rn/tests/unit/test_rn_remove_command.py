@@ -80,7 +80,6 @@ def refused(answer: tuple[int, str, str], *said: str) -> None:
 # The removals.
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_file_of_the_work_tree_by_its_path_from_the_current_folder_is_removed(work: str):
     """Given a git work tree holding the command and a cache file of its tests
     When remove.py is given the cache file's path from the work tree's top, run there
@@ -91,7 +90,6 @@ def test_a_file_of_the_work_tree_by_its_path_from_the_current_folder_is_removed(
     assert os.path.isfile(os.path.join(work, "invoicer", "__main__.py"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_folder_of_the_work_tree_is_removed_whole(work: str):
     """Given a git work tree whose __pycache__ holds two files
     When remove.py is given invoicer/__pycache__
@@ -101,7 +99,6 @@ def test_a_folder_of_the_work_tree_is_removed_whole(work: str):
     assert os.path.isfile(os.path.join(work, "invoicer", "__main__.py"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_folder_in_the_system_temporary_folder_by_its_absolute_path_is_removed(
     work: str, scratch: str, temp: str
 ):
@@ -113,7 +110,6 @@ def test_a_folder_in_the_system_temporary_folder_by_its_absolute_path_is_removed
     assert os.path.isdir(temp)
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_several_paths_at_once_are_each_removed(work: str, scratch: str):
     """Given a cache folder in the work tree and a maker's folder in the system's temporary folder
     When remove.py is given both, one argument each
@@ -123,7 +119,6 @@ def test_several_paths_at_once_are_each_removed(work: str, scratch: str):
     assert not os.path.lexists(scratch)
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_path_out_of_a_subfolder_within_the_work_tree_is_removed(work: str):
     """Given a git work tree whose folder docs/ is the current folder
     When remove.py is given ../invoicer/__pycache__
@@ -134,7 +129,6 @@ def test_a_path_out_of_a_subfolder_within_the_work_tree_is_removed(work: str):
     assert not os.path.lexists(os.path.join(work, "invoicer", "__pycache__"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_link_to_a_folder_outside_is_removed_as_the_link(work: str, outside: str):
     """Given a link in the work tree to a folder outside both places
     When remove.py is given the link
@@ -146,7 +140,6 @@ def test_a_link_to_a_folder_outside_is_removed_as_the_link(work: str, outside: s
     assert os.path.isfile(os.path.join(outside, "notes.txt"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_folder_holding_a_link_to_outside_is_removed_without_following_it(
     work: str, outside: str
 ):
@@ -161,7 +154,6 @@ def test_a_folder_holding_a_link_to_outside_is_removed_without_following_it(
     assert os.path.isfile(os.path.join(outside, "notes.txt"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_read_only_folder_is_removed_whole(work: str, writable: list[str]):
     """Given a cache folder in the work tree that holds a file and is read-only, as a tool's cache
     can be
@@ -174,7 +166,6 @@ def test_a_read_only_folder_is_removed_whole(work: str, writable: list[str]):
     assert not os.path.lexists(cache)
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_path_given_within_another_given_is_removed_with_it(work: str):
     """Given a cache folder in the work tree
     When remove.py is given the folder, then a file in it, then the folder again
@@ -187,7 +178,6 @@ def test_a_path_given_within_another_given_is_removed_with_it(work: str):
 # The refusals, each of which leaves every path given in place.
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_a_missing_path_beside_a_good_one_removes_neither(work: str, scratch: str):
     """Given a maker's folder in the system's temporary folder
     When remove.py is given it and invoicer/build, which isn't there
@@ -196,7 +186,6 @@ def test_a_missing_path_beside_a_good_one_removes_neither(work: str, scratch: st
     assert os.path.isfile(os.path.join(scratch, "log.txt"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_a_path_outside_both_places_is_refused(work: str, outside: str):
     """Given a folder outside the work tree and the system's temporary folder
     When remove.py is given its file and the work tree's cache folder
@@ -207,7 +196,6 @@ def test_a_path_outside_both_places_is_refused(work: str, outside: str):
     assert os.path.isdir(os.path.join(work, "invoicer", "__pycache__"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_a_path_through_a_link_to_outside_is_refused(work: str, outside: str):
     """Given a link in the work tree to a folder outside both places
     When remove.py is given the file within it through the link
@@ -217,7 +205,6 @@ def test_a_path_through_a_link_to_outside_is_refused(work: str, outside: str):
     assert os.path.isfile(os.path.join(outside, "notes.txt"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 @pytest.mark.parametrize("top", [".", "./", "invoicer/.."])
 def test_the_top_of_the_work_tree_is_refused(work: str, top: str):
     """Given a git work tree
@@ -227,7 +214,6 @@ def test_the_top_of_the_work_tree_is_refused(work: str, top: str):
     assert os.path.isfile(os.path.join(work, "invoicer", "__main__.py"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_the_top_of_the_system_temporary_folder_is_refused(work: str, scratch: str, temp: str):
     """Given a maker's folder in the system's temporary folder
     When remove.py is given the temporary folder itself
@@ -236,7 +222,6 @@ def test_the_top_of_the_system_temporary_folder_is_refused(work: str, scratch: s
     assert os.path.isdir(scratch)
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_an_empty_path_is_refused(work: str):
     """Given a git work tree
     When remove.py is given an empty argument beside the cache folder
@@ -245,7 +230,6 @@ def test_an_empty_path_is_refused(work: str):
     assert os.path.isdir(os.path.join(work, "invoicer", "__pycache__"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 @pytest.mark.parametrize(
     "pattern",
     [
@@ -262,7 +246,6 @@ def test_a_path_holding_a_wildcard_is_refused(work: str, pattern: str):
     assert os.path.isfile(os.path.join(work, "invoicer", "__pycache__", "lines.cpython-314.pyc"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_the_git_folder_of_the_work_tree_is_refused(work: str):
     """Given a git work tree
     When remove.py is given .git, and then a file within it
@@ -271,7 +254,6 @@ def test_the_git_folder_of_the_work_tree_is_refused(work: str):
     assert os.path.isfile(os.path.join(work, ".git", "HEAD"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_a_folder_holding_another_work_tree_is_refused(work: str):
     """Given a git work tree holding another in .claude/worktrees/rn-run, as a run's worktree
     lies in the user's repository
@@ -284,7 +266,6 @@ def test_a_folder_holding_another_work_tree_is_refused(work: str):
     assert os.path.isdir(os.path.join(run, ".git"))
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_a_path_from_a_folder_in_no_work_tree_is_refused(outside: str, scratch: str):
     """Given a current folder that lies in no git work tree, holding the user's notes
     When remove.py is given the notes and a maker's folder in the system's temporary folder
@@ -294,7 +275,6 @@ def test_a_path_from_a_folder_in_no_work_tree_is_refused(outside: str, scratch: 
     assert os.path.isdir(scratch)
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_path_in_the_temporary_folder_from_a_folder_in_no_work_tree_is_removed(
     outside: str, scratch: str
 ):
@@ -305,7 +285,6 @@ def test_a_path_in_the_temporary_folder_from_a_folder_in_no_work_tree_is_removed
     assert not os.path.lexists(scratch)
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_a_wildcard_is_refused_with_how_to_use_remove_py")
 def test_no_path_gives_the_usage(work: str):
     """Given a git work tree
     When remove.py is given no argument
@@ -316,7 +295,6 @@ def test_no_path_gives_the_usage(work: str):
 # A removal that the system refuses.
 
 
-@pytest.mark.supports("test_a_makers_clean_up_by_remove_py_removes_each_exact_path_it_made")
 def test_a_file_the_system_wont_remove_gives_2_saying_what_is_left(
     work: str, scratch: str, writable: list[str]
 ):

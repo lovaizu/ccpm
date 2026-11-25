@@ -47,7 +47,6 @@ def own(worktree: str, kind: str, practice: Any) -> str:
     return folder
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 def test_kinds_of_a_run_with_none_of_its_own_are_rns(worktree: str):
     """Given a run's worktree with no .rn/best-practices/
     When the kinds are asked
@@ -55,7 +54,6 @@ def test_kinds_of_a_run_with_none_of_its_own_are_rns(worktree: str):
     assert normalized(kinds(rn_files.RN, worktree)) == normalized(rns_kinds())
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 def test_kinds_take_a_runs_own_best_practice_before_rns(worktree: str):
     """Given a run's worktree holding its own best practice of the kind light
     When the kinds are asked
@@ -66,7 +64,6 @@ def test_kinds_take_a_runs_own_best_practice_before_rns(worktree: str):
     assert normalized(kinds(rn_files.RN, worktree)) == normalized(expected)
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 def test_kinds_add_each_kind_made_on_the_run(worktree: str):
     """Given a run's worktree holding its own best practices of two kinds rn has none of,
     `invoice` and `guide`, made by meta deliverables
@@ -78,7 +75,6 @@ def test_kinds_add_each_kind_made_on_the_run(worktree: str):
     assert normalized(kinds(rn_files.RN, worktree)) == normalized(expected)
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 def test_kinds_leave_out_a_folder_with_no_best_practice_json(worktree: str):
     """Given a run's worktree whose .rn/best-practices/readme/ holds a template alone, and whose
     .rn/best-practices/notes/ holds a README alone
@@ -92,7 +88,6 @@ def test_kinds_leave_out_a_folder_with_no_best_practice_json(worktree: str):
     assert normalized(kinds(rn_files.RN, worktree)) == normalized(rns_kinds())
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 def test_kinds_of_a_plugin_with_one_best_practice_is_that_one(tmp_path: Any, worktree: str):
     """Given an rn whose domain/best-practices/ holds light alone
     When the kinds are asked
@@ -103,7 +98,6 @@ def test_kinds_of_a_plugin_with_one_best_practice_is_that_one(tmp_path: Any, wor
     assert normalized(kinds(plugin, worktree)) == {"light": os.path.normpath(folder)}
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 def test_read_of_a_folder_with_no_best_practice_is_refused_naming_the_file(tmp_path: Any):
     """Given a folder with no best-practice.json
     When it is read
@@ -112,7 +106,6 @@ def test_read_of_a_folder_with_no_best_practice_is_refused_naming_the_file(tmp_p
         read(str(tmp_path))
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 def test_read_of_a_best_practice_that_isnt_json_is_refused_naming_the_file(tmp_path: Any):
     """Given a folder whose best-practice.json isn't JSON
     When it is read
@@ -123,7 +116,6 @@ def test_read_of_a_best_practice_that_isnt_json_is_refused_naming_the_file(tmp_p
         read(str(tmp_path))
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 def test_read_of_a_best_practice_out_of_its_form_is_refused_naming_its_first_fault(tmp_path: Any):
     """Given a folder whose best-practice.json is light's without its inputs, which its form
     requires
@@ -137,7 +129,6 @@ def test_read_of_a_best_practice_out_of_its_form_is_refused_naming_its_first_fau
     assert "inputs" in str(raised.value)
 
 
-@pytest.mark.supports("test_the_evaluators_cut_holds_only_what_the_people_have")
 @pytest.mark.parametrize("kind", ["light", "readme", "test-design"])
 def test_judged_gives_the_goal_and_each_condition_without_its_practice(kind: str):
     """Given rn's best practice of the kind, read from JSON
@@ -152,9 +143,6 @@ def test_judged_gives_the_goal_and_each_condition_without_its_practice(kind: str
 CODE_KINDS = ("code", "software-design", "test-design", "test-implementation")
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_with_each_condition_good_is_refactored_by_its_refactor_best_practice"
-)
 @pytest.mark.parametrize("kind", sorted(rns_kinds()))
 def test_refactoring_of_each_of_rns_kinds(kind: str):
     """Given each kind of rn's best practices
@@ -165,9 +153,6 @@ def test_refactoring_of_each_of_rns_kinds(kind: str):
     assert refactoring(kind) == by
 
 
-@pytest.mark.supports(
-    "test_a_deliverable_with_each_condition_good_is_refactored_by_its_refactor_best_practice"
-)
 @pytest.mark.parametrize("kind", ["codes", "Code", "code-review", "test", "lights", "invoice", ""])
 def test_refactoring_of_a_kind_near_one_named_is_refactor_doc(kind: str):
     """Given a kind that nearly matches code or light, or one that a run made, such as `invoice`
@@ -176,7 +161,6 @@ def test_refactoring_of_a_kind_near_one_named_is_refactor_doc(kind: str):
     assert refactoring(kind) == "refactor-doc"
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 @pytest.mark.parametrize("kind", sorted(rns_kinds()))
 def test_read_holds_each_of_rns_best_practices_to_rns_form(kind: str):
     """Given each of rn's best practices, which domain/schemas/best-practice.schema.json holds
@@ -185,7 +169,6 @@ def test_read_holds_each_of_rns_best_practices_to_rns_form(kind: str):
     assert read(os.path.join(rn_files.PRACTICES, kind)) == rn_files.practice(kind)
 
 
-@pytest.mark.supports("test_a_runs_own_best_practice_is_taken_before_rns")
 @pytest.mark.parametrize(
     ("broken", "named"),
     [

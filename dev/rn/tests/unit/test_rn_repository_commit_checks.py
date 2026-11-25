@@ -26,7 +26,6 @@ def staged(run: Any) -> list[str]:
     return git(worktree, "diff", "--cached", "--name-only").split()
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_a_repository_with_no_check_gives_none_and_stages_nothing(tmp_path: Any, host: Any):
     """Given a run whose repository sets no pre-commit check, and the command written
     When findings is asked of the command
@@ -39,7 +38,6 @@ def test_a_repository_with_no_check_gives_none_and_stages_nothing(tmp_path: Any,
     assert head(rn_files.worktree_of(run.repository, run.name)) == before
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_a_check_that_passes_gives_none(tmp_path: Any, host: Any):
     """Given a run whose repository's pre-commit check prints a line and passes
     When findings is asked of the command
@@ -50,7 +48,6 @@ def test_a_check_that_passes_gives_none(tmp_path: Any, host: Any):
     assert findings(run, [rn_files.COMMAND], host) == []
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_a_check_that_fails_gives_its_one_line(tmp_path: Any, host: Any):
     """Given a run whose repository's pre-commit check fails saying one line
     When findings is asked of the command
@@ -63,7 +60,6 @@ def test_a_check_that_fails_gives_its_one_line(tmp_path: Any, host: Any):
     assert head(rn_files.worktree_of(run.repository, run.name)) == before
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_a_check_that_fails_gives_each_of_its_lines_in_order(tmp_path: Any, host: Any):
     """Given a run whose repository's pre-commit check fails saying three lines, one on stderr
     When findings is asked of the command
@@ -74,7 +70,6 @@ def test_a_check_that_fails_gives_each_of_its_lines_in_order(tmp_path: Any, host
     assert findings(run, [rn_files.COMMAND], host) == ["first", "second", "third"]
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_a_check_set_by_core_hookspath_runs(tmp_path: Any, host: Any):
     """Given a repository whose checks are committed on main in hooks/, set by core.hooksPath,
     one failing on each commit of the command, and a run made from it
@@ -89,7 +84,6 @@ def test_a_check_set_by_core_hookspath_runs(tmp_path: Any, host: Any):
     assert findings(run, [rn_files.COMMAND], host) == ["from hooksPath"]
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_the_check_reads_the_files_given_alone(tmp_path: Any, host: Any):
     """Given a run whose command and guide are written, and whose check prints each file a commit
     would hold and fails
@@ -102,7 +96,6 @@ def test_the_check_reads_the_files_given_alone(tmp_path: Any, host: Any):
     assert staged(run) == []
 
 
-@pytest.mark.supports("test_the_generators_checks_judge_its_files_alone_beside_another_staged")
 def test_the_check_reads_the_files_given_alone_beside_another_staged(tmp_path: Any, host: Any):
     """Given a run whose command and guide are written, the guide staged in the worktree, and whose
     check prints each file a commit would hold and fails
@@ -116,7 +109,6 @@ def test_the_check_reads_the_files_given_alone_beside_another_staged(tmp_path: A
     assert staged(run) == [rn_files.GUIDE]
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_the_check_reads_each_of_several_files(tmp_path: Any, host: Any):
     """Given a run whose command and guide are written, and whose check prints each file a commit
     would hold and fails
@@ -129,7 +121,6 @@ def test_the_check_reads_each_of_several_files(tmp_path: Any, host: Any):
     assert given == [rn_files.GUIDE, rn_files.COMMAND]
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_no_file_gives_none_and_stages_nothing(tmp_path: Any, host: Any):
     """Given a run whose command is written, and whose check prints each file a commit would hold
     and fails
@@ -142,7 +133,6 @@ def test_no_file_gives_none_and_stages_nothing(tmp_path: Any, host: Any):
     assert staged(run) == []
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 @pytest.mark.parametrize("outside", ["../outside.py", "/etc/hostname"])
 def test_a_file_outside_the_worktree_is_refused(tmp_path: Any, host: Any, outside: str):
     """Given a run
@@ -154,7 +144,6 @@ def test_a_file_outside_the_worktree_is_refused(tmp_path: Any, host: Any, outsid
     assert staged(run) == []
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_a_file_that_doesnt_exist_is_refused(tmp_path: Any, host: Any):
     """Given a run with no file invoicer/cli.py
     When findings is asked of it beside the command
@@ -165,7 +154,6 @@ def test_a_file_that_doesnt_exist_is_refused(tmp_path: Any, host: Any):
         findings(run, [rn_files.COMMAND, "invoicer/cli.py"], host)
 
 
-@pytest.mark.supports("test_the_generators_checks_give_the_repositorys_commit_check_findings")
 def test_a_check_whose_program_is_missing_cant_run(tmp_path: Any, host: Any):
     """Given a run whose repository's pre-commit check runs a program that isn't there
     When findings is asked of the command
