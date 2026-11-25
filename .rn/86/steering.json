@@ -29,15 +29,15 @@
         "solution": "One file per run, .rn/<run>/steering.json: ost written by the pruner alone, state by the scripts alone. The design tree goes.",
         "chosen": true,
         "decisions": [
-          "rn's center stays: pile up the vital few that bring a deliverable's people to their aim, and cut the trivial many thoroughly. Under it hang three ways: the goal reached earliest by an opportunity solution tree and a walking skeleton; the user gives feedback as one who uses what rn makes, and rn leads the way and settles how it's made; each deliverable that rn makes meets every necessary condition of its best practice, while what it makes stays the least.",
-          "One file per run, .rn/<run>/steering.json, checked by a schema, takes the design tree's place. ost (outcome, opportunities, solutions compared, the one chosen with its decisions, its riskiest assumption with what a check showed) is written by the pruner alone; state (context, steps, each deliverable's status) by the scripts alone; the hook keeps each part to its writer.",
-          "The tree lives for one run, aimed at the moment's goal, so rn serves a large existing app with no tree of the whole product to keep.",
-          "rn takes what comes in as the trivial many and cuts it unless the purpose shows it vital; an opportunity that the people themselves name goes on the tree, for the user to pick.",
-          "The least solution is made as one walking skeleton; a walkthrough run checks its riskiest assumption on the real thing before rn makes most deliverables, and the result goes back on the tree.",
-          "At a run's end, rn proposes for each opportunity left unpicked, named in the issue or found during the run, to keep it in an issue or to let it go, and does what the user approves.",
-          "rn speaks to the user of opportunities and the ways to meet them, never of its own files.",
-          "The design tree goes, with its best practice, schema, and word. The product-vision best practice, rounds/, and pruner.json stay.",
-          "An issue holds only the trouble seen and what it should be; the means are settled in the steering."
+          "Pile up the vital few and cut the trivial many thoroughly, as rn's center.",
+          "Make the least solution as one walking skeleton and check its riskiest assumption on the real thing first, so the run knows it reaches the goal before it builds much.",
+          "Make the opportunity solution tree for one run, so rn aims at the moment's goal, in a large existing app too.",
+          "Put each opportunity that people name on the tree for the user to pick, as the user decides what's dropped, not a role.",
+          "Have the user give feedback as one who uses it, and rn settle how it's made, so the user's time goes to what only they can judge.",
+          "Make the least, and use the best practices in full on what's made, so less made costs no quality.",
+          "Propose at the run's end what to do with each unpicked opportunity, so the user decides what stays.",
+          "Keep the steering in one file with one writer to each part, so no part has two writers.",
+          "Keep only the trouble and the aim in an issue, as the means are the development's."
         ],
         "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
         "check": "Run rn from this branch on #62 up to the first real check; count what was made by then."
