@@ -71,7 +71,7 @@ sequenceDiagram
         ├── product-vision.md           the plugin's product vision, where it keeps one <Markdown>
         ├── architecture.md             the plugin's architecture <Markdown>
         ├── images/                     the architecture's figures <SVG>
-        └── tests/                      the test cases, by when each runs, as Test says <Python 3>
+        └── tests/unit/                 the unit tests of the plugin's code <Python 3>
 ```
 
 An entry is a file whose form Claude Code fixes: a skill, an agent, a hook, or a command line. Its
@@ -149,8 +149,7 @@ that starts with the plugin's, its tests' files included. That folder is the one
 `${CLAUDE_PLUGIN_DATA}`. It writes nothing in `${CLAUDE_PLUGIN_ROOT}`.
 
 A deliverable that a run makes for the user is not a file of the run. It lies where the
-repository's layout or the tool that reads it puts it. For example, rn writes a best practice that
-it makes in `.rn/best-practices/<kind>/`, where every later run looks for it.
+repository's layout or the tool that reads it puts it.
 
 *Why*: one folder named after the plugin lets the user choose with one line of `.gitignore` whether
 git keeps it. The system clears its temporary folder, so a stopped run leaves nothing behind. An
@@ -275,11 +274,9 @@ a question that the role did not ask, and an answer summed up loses what the per
 
 A file that a plugin reads is JSON with a schema, and a script checks its form. Its nesting follows
 how its parts relate: a part that belongs to one other sits inside it, and a part that several
-others rest on is named by its path or ID, as a design tree names each deliverable's inputs. After
-the AI changes a part, a script lists the parts that the change touches, and the AI reads each, as
-[the design tree best practice](../plugins/rn/domain/best-practices/design-tree/best-practice.json)
-asks after a change to a node. A file that shows the form of a deliverable, such as a template, is
-in the deliverable's own format.
+others rest on is named by its path or ID, as a plan names the inputs of each deliverable. After
+the AI changes a part, a script lists the parts that the change touches, and the AI reads each. A
+file that shows the form of a deliverable, such as a template, is in the deliverable's own format.
 
 *When*: every plugin.
 
@@ -347,8 +344,8 @@ the tools that check the tests need it.
 
 A step that has one right result runs a script, which the step names with its exact command and the
 form of its output, so that the role runs it and never reads it. Each script acts on one thing, such
-as the run's design tree, and takes each operation on it as a subcommand, named `noun verb`, such as
-`tree.py commit`. It handles each error it can meet, and its message says what's wrong, where, and
+as the run's plan, and takes each operation on it as a subcommand, named `noun verb`, such as
+`plan.py commit`. It handles each error it can meet, and its message says what's wrong, where, and
 how to fix the input. Where a role changes many things at once, it writes the plan as a file, and a
 script checks the plan before another applies it. Each constant of a script carries its reason
 beside it.
@@ -418,12 +415,11 @@ name written out as a string or as a name that its module sets to one. Each line
 `event`, once in its file. A record of a run of the real thing names that run by its file's name,
 `<thing>-<version>[-<what>].jsonl`. A line taken from the documentation lies in a file whose name
 holds no version, and carries `source`, the URL of its page, and `shows`, the words of the page that
-show it. `trace.py doubles`, which `check.sh` runs on each push, checks each line of each record and
-each name that a double gives. `trace.py sources`, which CI runs each night, checks that each
-page still shows its words.
+show it. A check on each push reads each line of each record and each name that a double gives,
+and a check apart from the pushes, such as each night, reads that each page still shows its words.
 
-*Why*: a double that gives what the real thing never would passes a test that the real one fails,
-as the architecture best practice says of a double's source. A result taken from a line by names
+*Why*: a double that gives what the real thing never would passes a test that the real one fails.
+A result taken from a line by names
 that a script reads leaves no result whose source no one can check, where a result written in code
 or named in a comment leaves one. A page changes apart from any push, so a check of it on each push
 would fail for a change that the push didn't make, and it runs with the checks of the tests.
@@ -442,7 +438,7 @@ A plugin is released only when whoever decides what reaches users says so. `plug
 `version` once, in semver. The largest change that users see decides which part of it rises. The
 CHANGELOG, in [Keep a Changelog](https://keepachangelog.com) form, gives each change that users
 notice one line, with why it helps them. `claude plugin tag --push` tags each release
-`<plugin>--v<version>`. `.claude-plugin/marketplace.json` and the root README list each release.
+`<plugin>--v<version>`.
 
 *Why*: users get an update only when the version rises. `plugin.json` wins over the marketplace
 entry. A dependency's version range resolves against these tags.
