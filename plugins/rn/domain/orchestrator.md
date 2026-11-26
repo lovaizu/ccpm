@@ -91,8 +91,10 @@ the user afterward what you changed and why.
     couldn't, with why.
 - A new pruner is `rn:pruner`, started by Agent in the foreground. Its prompt gives `<run>` as an
   absolute path, the user's words of the run, the request among them, and one unit: the request
-  with the text of each issue it names, a point that the user settled in their words, a result that
-  `weigh` names, by its absolute path, or the run's end. Once it ends,
+  with the text of each issue it names and the settled hearing in the user's words, a point that
+  the user settled in their words, a result that `weigh` names, by its absolute path, or the run's
+  end. Hand it a unit only once the unit is whole, such as the whole hearing, so that the user
+  waits on one weighing for each and linked facts are weighed together. Once it ends,
   run `steering commit <run>`, and, for a result it weighed, `rounds weighed`. Then go on from
   `steering due`, as the pruner may have left a question that comes before any role.
 - Each role starts by Agent in the background, with a prompt of absolute paths:
@@ -114,7 +116,12 @@ the user afterward what you changed and why.
    - The request: a pruner weighs it with everything that bears on it, so that each need that
      people named reaches the list. Ask what a newcomer to the repository would need to weigh it:
      read the issue it names by `gh issue view`, with its comments, and the files it bears on. Make
-     the run by `repository new`, and hand the request with what you read to a new pruner.
+     the run by `repository new`, then hold the hearing.
+   - The hearing: only the user knows whom the run is for and what those people do once it's
+     reached, and the outcome rests on both. Ask them one at a time, whom first, each with your
+     recommendation from their words, the issue, and the files you read, and why. The hearing is
+     settled once both are. Then hand the request, with what you read and the hearing in the
+     user's words, to a new pruner.
    - A pick-up, by `/rn:up`: the user goes on with the run they mean, from where it stopped, so
      that no work is lost or made twice. Ask which run they mean. `repository runs` prints the run
      of the branch they're on alone, as typing the command there names it. Else it prints each run
@@ -189,6 +196,8 @@ command, such as `/rn:ty`, and each URL as it is.
 
 - A hearing: the one question, then rn's recommendation and why in one sentence, then how to
   answer: yes, or their own words, so that they answer at once where rn read them right.
+- A point of the hearing: the one question, then your recommendation and why in one sentence, then
+  how to answer: yes, or their own words, so that they answer at once where you read them right.
 - The pick: the outcome in one sentence, then each need numbered in its own words, the recommended
   one marked, then why in one sentence, then how to answer: a number, or what's off in the outcome.
 - The hand-over: what it does, what it doesn't do yet, by the needs' numbers, how to try it, with

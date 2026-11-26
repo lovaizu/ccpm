@@ -203,7 +203,7 @@
         "by": "user"
       },
       {
-        "decision": "Hear from the user whom the run is for and what for, one question at a time, before the needs are listed, as only they know them and a request needs no issue.",
+        "decision": "Have the orchestrator hear from the user whom the run is for and what for, one question at a time, and hand the hearing to a pruner only once it is whole, as rn 0.11.0 did, since a pruner can't talk with the user and a request needs no issue.",
         "by": "user"
       }
     ],

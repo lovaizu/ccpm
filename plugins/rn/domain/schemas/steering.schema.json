@@ -22,11 +22,8 @@
    "additionalProperties": false,
    "properties": {
     "outcome": {
-     "description": "Whom the run is for, and what they do once it's reached, in one sentence, null until the user has said both, as only they know them.",
-     "type": [
-      "string",
-      "null"
-     ],
+     "description": "Whom the run is for, and what they do once it's reached, in one sentence.",
+     "type": "string",
      "minLength": 1
     },
     "opportunities": {
