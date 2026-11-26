@@ -229,6 +229,10 @@
       {
         "decision": "Write vital-few.md as rn's measure, a document of the goal, the questions, what doesn't count, and a judgment's form, not as a prompt, as it's the standard that each role judges by.",
         "by": "user"
+      },
+      {
+        "decision": "Write each role's prompt from the architecture and the prompt best practice: its Role from its component's line, its steps from its arrows in the sequences with the intent of their rules and strategies, and only the plugin's rules beside them, then trace both ways, so that what rn has built up stays in the architecture and nothing in a prompt comes from nowhere.",
+        "by": "user"
       }
     ],
     "questions": []
