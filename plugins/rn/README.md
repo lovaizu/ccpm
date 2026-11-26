@@ -78,14 +78,7 @@ rn reads your repository, then shows what the run aims at and the needs it found
 番号で選んでください。目指すことが違えば、その点を書いてください。
 ```
 
-You type `1`. rn makes the least that prints an invoice, and each message opens with where it
-stands:
-
-```text
-いま：明細ファイルから請求書を1枚印刷できる、の一番細い形を作っています。
-```
-
-Once AI evaluators have tried it as your accounting team would, rn hands it to you:
+You type `1`. rn makes the least that prints an invoice, and once AI evaluators have tried it as your accounting team would, rn hands it to you:
 
 ```text
 一番細い形ができました。試してください。

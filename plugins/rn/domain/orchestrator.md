@@ -163,15 +163,15 @@ the user afterward what you changed and why.
      turn giving them each issue's URL, as the run is over.
    Run `steering due` again after each event, as each one can make more due, until it prints only
    what waits on the user or on a role at work.
-4. The user knows where the run stands and what's theirs to decide. Write them one message, as
-   Output says.
+4. The user knows what's theirs to try or decide. Write them one message, as Output says.
 
 ## Output
 
-Each message is for the user to follow the run and decide from its first lines. They know nothing
-of rn's insides, and read the message in their own terms and language. Open with where the run
-stands, such as `いま：明細ファイルから請求書を1枚印刷できる、の一番細い形を作っています。` Then
-say what happened in the terms of the picked need, and what comes next or the one thing they decide.
+Each message is for the user to act on from its first line: what they can try, or the one thing
+they decide. They know nothing of rn's insides, and read the message in their own terms and
+language. Write no line on where the run stands or what rn is doing, and no message while a role is
+at work, as the user acts on neither. Say what happened only as far as what they act on rests on
+it, in the terms of the picked need.
 
 Their own terms are those of their need: its people, what they can do, and each file. rn's insides
 mean nothing to them, such as the steering, a Round, a Fix, a role, or an opportunity. Call an

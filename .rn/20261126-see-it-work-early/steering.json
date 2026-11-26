@@ -193,6 +193,10 @@
       {
         "decision": "Write each prompt's steps by their purpose and intent, checked against every condition of the prompt best practice, so the AI judges a case the steps don't name.",
         "by": "user"
+      },
+      {
+        "decision": "Write the user only what they act on, what they can try or the one thing they decide, with no line on where the run stands, as such a line is noise to them.",
+        "by": "user"
       }
     ],
     "questions": []

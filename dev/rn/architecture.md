@@ -23,7 +23,8 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
     with a recommendation and why.
   - P2.2: each need that the user or the issue named stays on the list, and only the user decides
     what happens to it.
-  - P2.3: each message to the user opens with where the run stands.
+  - P2.3: each message to the user holds only what they act on: what they can try, or the one
+    thing they decide.
   - P2.4: rn talks in the user's language and writes in the repository's, asking only where they
     disagree.
 - P3: best practices in full
@@ -199,7 +200,7 @@ sequenceDiagram
   P-->>O: ends [P5.1]
   O->>S: commits the steering (Steering) [P5.3]
   loop until no question is open [P2.1]
-    O->>U: where the run stands, and the open question, the needs numbered, with a recommendation and why [P2.3]
+    O->>U: the open question, the needs numbered, with a recommendation and why [P2.3]
     U->>O: answers [P2.1]
     O->>P: starts one with the answer, word for word (Steering) [P4.1]
     P->>T: writes the answer as the user's decision, and for a pick, the target and its solution with its riskiest assumption (Steering, Solution) [P1.1]
