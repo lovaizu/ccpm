@@ -127,6 +127,11 @@
         "path": "plugins/rn/CHANGELOG.md, plugin.json",
         "step": 4,
         "status": "open"
+      },
+      {
+        "path": "plugins/rn/domain/orchestrator.md:51, pruner.md:99, vital-few.md:51 and :58, which read an issue as holding means and decisions; an issue now holds only its situation and desired state",
+        "step": "prompts",
+        "status": "open"
       }
     ]
   }
