@@ -1,0 +1,57 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/unit/conftest.py",
+  "dev/overnight/tests/unit/claude_double.py",
+  "dev/overnight/tests/unit/test_overnight_resume_main.py",
+  "dev/overnight/tests/unit/test_overnight_resume_run.py",
+  "dev/overnight/tests/unit/recorded/claude-2.1.332-transcript.jsonl",
+  "dev/overnight/tests/unit/recorded/claude-manual.jsonl"
+ ],
+ "good": [
+  {
+   "condition": "N4",
+   "lines": [
+    "    folder = os.path.join(str(tmp_path), \"project\")",
+    "        \"PATH\": path,"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "def test_leaves_the_waiter_that_resumes_the_session_after_900_seconds(",
+    "def test_resumes_the_session_in_the_last_permission_mode_that_the_transcript_records(",
+    "def test_passes_over_the_transcripts_last_line_not_yet_whole(",
+    "def test_passes_over_a_line_that_names_a_permission_mode_only_within_it(",
+    "def test_waits_the_seconds_that_overnight_interval_seconds_holds(",
+    "def test_leaves_nothing_on_an_error_other_than_rate_limit(",
+    "def test_refuses_an_input_that_isnt_json(claude: str, left: Left) -> None:",
+    "def test_refuses_json_that_isnt_an_object(claude: str, left: Left) -> None:",
+    "def test_refuses_an_input_missing_a_field(",
+    "def test_refuses_an_input_whose_field_isnt_a_string(",
+    "def test_refuses_a_transcript_that_cant_be_read(",
+    "def test_refuses_a_transcript_that_records_no_permission_mode(",
+    "def test_refuses_a_permission_mode_that_claude_doesnt_accept(",
+    "def test_refuses_an_interval_that_isnt_a_whole_number_from_1(",
+    "def test_refuses_where_claude_isnt_on_path(sessions: str, project: str, left: Left) -> None:",
+    "def test_the_waiter_resumes_the_session_once_the_hook_has_ended(",
+    "def test_wait_becomes_the_command_once_its_seconds_are_over(tmp_path: Any, calls: str) -> None:"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "    answer = main(stdin(given), {}, claude, WAITER, left)",
+    "    answer = main(stdin(given), {}, None, WAITER, left)",
+    "        [sys.executable, FOLDER],",
+    "        [sys.executable, WAIT, \"1\", claude, \"-p\", \"--resume\", \"abc123\", \"go on\"],"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "    refused(answer, left, \"claude\", \"PATH\")"
+   ]
+  }
+ ]
+}

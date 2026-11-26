@@ -1,0 +1,60 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/unit/conftest.py",
+  "dev/overnight/tests/unit/claude_double.py",
+  "dev/overnight/tests/unit/test_overnight_resume_main.py",
+  "dev/overnight/tests/unit/test_overnight_resume_run.py"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "    assert left.started == [([*WAITER, \"900\", *resumed(claude, \"bypassPermissions\")], project)]",
+    "    refused(answer, left, \"claude\", \"PATH\")",
+    "    assert (ran.returncode, ran.stdout, ran.stderr) == (0, b\"\", b\"\")",
+    "    assert call[\"pid\"] == waiter.pid"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def _written(record: dict[str, Any]) -> str:",
+    "    return json.dumps(record, separators=(\",\", \":\")) + \"\\n\"",
+    "def project(tmp_path: Any) -> str:",
+    "def claude(tmp_path: Any) -> str:",
+    "def sessions(tmp_path: Any) -> str:"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "    sessions: str, project: str, claude: str, calls: str",
+    "def test_wait_becomes_the_command_once_its_seconds_are_over(claude: str, calls: str) -> None:",
+    "    transcript = claude_double.transcript(sessions, claude_double.prompt(\"dontAsk\"))"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "def stop_failure(transcript: str, cwd: str) -> dict[str, Any]:",
+    "    given.update(session_id=session_id(), transcript_path=transcript, cwd=cwd)",
+    "    given = claude_double.stop_failure(transcript, project)"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "    mode = '\"permissionMode\":\"plan\"'",
+    "    half = plan[: plan.index(mode) + len(mode)]"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "# The double lies in HERE, which the loop above puts on the import path.",
+    "import claude_double"
+   ]
+  }
+ ]
+}

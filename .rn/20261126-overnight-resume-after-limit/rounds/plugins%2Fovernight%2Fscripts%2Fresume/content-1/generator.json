@@ -1,0 +1,38 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/scripts/resume/__init__.py",
+    "plugins/overnight/scripts/resume/__main__.py",
+    "plugins/overnight/scripts/resume/command.py",
+    "plugins/overnight/scripts/resume/wait.py"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides what resume takes and what it leaves behind, as Claude Code runs it when a turn ends at",
+        "\"\"\"Decides when the waiter resumes the session: it sleeps out its interval, then becomes the",
+        "\"\"\"resume, as Claude Code runs it when a turn ends at the usage limit, by overnight's"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "    \"\"\"The exit code and stderr of resume on the hook's input, with `claude` the path of the",
+        "    0 with nothing said, once it left the waiter: `waiter` with the interval and",
+        "    0 with nothing said, leaving nothing, where the input's `error` isn't `rate_limit`.",
+        "    1 with `resume: <what's wrong>`, leaving nothing, where the input isn't a JSON object with"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "        raise Wrong(f\"the hook's input isn't JSON: {wrong}\") from wrong",
+        "        raise Wrong(\"the hook's input must be a JSON object, as Claude Code gives a StopFailure\")",
+        "        raise Wrong(f\"{transcript}: the session's transcript can't be read: {wrong}\") from wrong",
+        "        raise Wrong(f\"{INTERVAL_VARIABLE} must be a whole number of seconds from 1, not {given!r}\")",
+        "            raise Wrong(\"claude isn't on PATH, so no waiter can resume the session\")"
+      ]
+    }
+  ]
+}

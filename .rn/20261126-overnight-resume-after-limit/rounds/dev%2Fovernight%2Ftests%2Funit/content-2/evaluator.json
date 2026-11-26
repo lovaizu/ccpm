@@ -1,0 +1,86 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides what resume takes and what it leaves behind, as Claude Code runs it when a turn ends at",
+        "\"\"\"Decides when the waiter resumes the session: it sleeps out its interval, then becomes the",
+        "\"\"\"The double of Claude Code that overnight's unit cases run in its place: the input that it gives a",
+        "\"\"\"What overnight's unit cases share: the folder of overnight's code on the import path, as resume's",
+        "\"\"\"The unit cases of resume's main, as resume's `__main__.py` calls it with the StopFailure hook's",
+        "\"\"\"The unit cases of resume as overnight's hook runs it, `python3 <scripts>/resume` with the"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "    \"\"\"The exit code and stderr of resume on the hook's input, with `claude` the path of the",
+        "    0 with nothing said, once it left the waiter: `waiter` with the interval and",
+        "    1 with `resume: <what's wrong>`, leaving nothing, where the input isn't a JSON object with",
+        "    \"\"\"A copy of the line of the record in recorded/ that the event names.\"\"\"",
+        "    \"\"\"Each call of the double kept in the file, once it holds one, as `argv` without the"
+      ]
+    },
+    {
+      "condition": "N4",
+      "lines": [
+        "    \"\"\"The path of the session's transcript, written in the folder with the text.\"\"\"",
+        "    \"\"\"The folder that the session ran in.\"\"\"",
+        "    return os.path.join(str(tmp_path), \"calls.jsonl\")",
+        "PATIENCE = 30.0"
+      ]
+    },
+    {
+      "condition": "N5",
+      "lines": [
+        "def test_leaves_the_waiter_that_resumes_the_session_after_900_seconds(",
+        "def test_resumes_the_session_in_the_last_permission_mode_that_the_transcript_records(",
+        "def test_passes_over_the_transcripts_last_line_not_yet_whole(",
+        "def test_passes_over_a_line_that_names_a_permission_mode_only_within_it(",
+        "def test_waits_the_seconds_that_overnight_interval_seconds_holds(",
+        "def test_leaves_nothing_on_an_error_other_than_rate_limit(",
+        "def test_refuses_an_input_that_isnt_json(claude: str, left: Left) -> None:",
+        "def test_refuses_json_that_isnt_an_object(claude: str, left: Left) -> None:",
+        "def test_refuses_an_input_missing_a_field(",
+        "def test_refuses_an_input_whose_field_isnt_a_string(",
+        "def test_refuses_a_transcript_that_cant_be_read(",
+        "def test_refuses_a_transcript_that_records_no_permission_mode(",
+        "def test_refuses_a_permission_mode_that_claude_doesnt_accept(",
+        "def test_refuses_an_interval_that_isnt_a_whole_number_from_1(",
+        "def test_refuses_where_claude_isnt_on_path(sessions: str, project: str, left: Left) -> None:",
+        "def test_the_waiter_resumes_the_session_once_the_hook_has_ended(",
+        "def test_wait_becomes_the_command_once_its_seconds_are_over(tmp_path: Any, calls: str) -> None:"
+      ]
+    },
+    {
+      "condition": "N6",
+      "lines": [
+        "    answer = main(stdin(given), {}, claude, WAITER, left)",
+        "        [sys.executable, FOLDER],",
+        "        [sys.executable, WAIT, \"1\", claude, \"-p\", \"--resume\", \"abc123\", \"go on\"],",
+        "WAITER = [sys.executable, os.path.join(os.path.dirname(resume.__file__), \"wait.py\")]"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "        raise Wrong(f\"the hook's input isn't JSON: {wrong}\") from wrong",
+        "            f\"the hook's input must give {name} as a string, as Claude Code gives a StopFailure,\"",
+        "        raise Wrong(f\"{transcript}: the session's transcript can't be read: {wrong}\") from wrong",
+        "        raise Wrong(f\"{INTERVAL_VARIABLE} must be a whole number of seconds from 1, not {given!r}\")",
+        "            raise Wrong(\"claude isn't on PATH, so no waiter can resume the session\")"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "condition": "N3",
+      "good_when": "The maintainer finds each behavior of resume among the cases that the test modules' openings list, with none beyond them: today `_text` still refuses an empty `session_id`, `transcript_path`, or `cwd` (`if not isinstance(field, str) or not field:`, and its docstring \"which must be a string that isn't empty\"), which neither main's docstring (\"as strings\") nor any case names, and `_mode` passes over a parsed line that isn't an object or lacks a top-level permissionMode, which no case names either, as the test of a mode \"only within\" a line is passed over by the substring check before it is parsed. A maintainer who removes either sees no test tell them whether it was asked for."
+    },
+    {
+      "condition": "N7",
+      "good_when": "The maintainer who pushes a change to resume learns from the repository's own check that every line and branch of overnight's code still runs under a case: today `sh dev/scripts/check.sh` runs only `dev/rn/tests/unit`, as it finds tests only beside a `dev/<plugin>/architecture.md`, trace.py reads no `dev/overnight/tests/recorded`, and pyproject.toml's coverage counts only rn's scripts. Run by hand with coverage over `plugins/overnight/scripts/resume`, wait.py goes uncounted as it ends in `os.execv`, and command.py's branch 127->120 runs under no case."
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"The code of resume, the hook that Claude Code runs when a turn stops at the usage limit:",
+    "\"\"\"resume, as Claude Code runs it when a turn ends at the usage limit, by overnight's",
+    "\"\"\"Decides what resume takes and what it leaves behind, as Claude Code runs it when a turn ends at",
+    "\"\"\"Decides when the waiter resumes the session: it sleeps out its interval, then becomes the"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "    \"\"\"The exit code and stderr of resume on the hook's input, with `claude` the path of the",
+    "    0 with nothing said, once it left the waiter: `waiter` with the interval and",
+    "    0 with nothing said, leaving nothing, where the input's `error` isn't `rate_limit`.",
+    "    1 with `resume: <what's wrong>`, leaving nothing, where the input isn't a JSON object with",
+    "`python3 wait.py <seconds> <command> [<argument> ...]`, which only resume's hook gives it.\"\"\""
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "        raise Wrong(f\"the hook's input isn't JSON: {wrong}\") from wrong",
+    "            f\"the hook's input must give {name} as a string, as Claude Code gives a StopFailure,\"",
+    "        raise Wrong(f\"{transcript}: the session's transcript can't be read: {wrong}\") from wrong",
+    "        raise Wrong(f\"{INTERVAL_VARIABLE} must be a whole number of seconds from 1, not {given!r}\")",
+    "            raise Wrong(\"claude isn't on PATH, so no waiter can resume the session\")"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N3",
+   "good_when": "the maintainer who changes resume finds, in the branch, the specification that overnight's architecture gives resume, and checks each behavior of the code, such as passing over a transcript line not yet whole or reading the last permissionMode, against a case of it; today the branch holds no architecture or specification of overnight, so the maintainer can't tell a behavior asked for from one the code added"
+  },
+  {
+   "condition": "N4",
+   "good_when": "the maintainer runs the repository's checks, `uv run sh dev/scripts/check.sh`, after a change to resume and sees resume's tests pass in any order on a fresh machine; today the branch holds no tests of overnight, so the checks pass without trying resume at all"
+  },
+  {
+   "condition": "N5",
+   "good_when": "the maintainer finds one test per case of resume, by a name that says the case, such as the waiter left on a rate_limit stop, nothing left on another error, and each refusal: input not JSON, a missing field, an unreadable transcript, no permission mode, a bad OVERNIGHT_INTERVAL_SECONDS, and claude not on PATH; today no test exists for any of them"
+  },
+  {
+   "condition": "N6",
+   "good_when": "the maintainer sees resume's tests call it only as its callers do, through `main` and through running the folder and wait.py as the hook runs them; today there are no tests to show it"
+  },
+  {
+   "condition": "N7",
+   "good_when": "the maintainer sees each test of resume assert the whole result of its case, the exit code, what it said, and the waiter's whole command and folder, and sees the checks' coverage count resume's code and report no line that no case calls for; today the coverage that the checks run counts only rn's code, and no test runs any line of resume"
+  }
+ ]
+}

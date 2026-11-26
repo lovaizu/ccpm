@@ -1,0 +1,70 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"The unit cases of resume's main, as resume's `__main__.py` calls it with the StopFailure hook's",
+    "\"\"\"The unit cases of resume as overnight's hook runs it, `python3 <scripts>/resume` with the",
+    "\"\"\"The double of Claude Code that overnight's unit cases run in its place: the input that it gives a",
+    "\"\"\"What overnight's unit cases share: the folder of overnight's code on the import path, as resume's"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "    \"\"\"A copy of the line of the record in recorded/ that the event names.\"\"\"",
+    "    \"\"\"The input of a StopFailure hook at the usage limit, naming the session, its transcript, and",
+    "    \"\"\"The path of the double's `claude` command, written in the folder.\"\"\"",
+    "    \"\"\"Each call of the double kept in the file, once it holds one, as `argv` without the",
+    "    \"\"\"The answer of a refusal: 1, one line on stderr that starts `resume: ` and names each of the"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def test_leaves_the_waiter_that_resumes_the_session_after_900_seconds(",
+    "def test_resumes_the_session_in_the_last_permission_mode_that_the_transcript_records(",
+    "def test_waits_the_seconds_that_overnight_interval_seconds_holds(",
+    "def test_leaves_nothing_on_an_error_other_than_rate_limit(",
+    "def test_the_waiter_resumes_the_session_once_the_hook_has_ended("
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "    \"\"\"The folder that the session ran in.\"\"\"",
+    "    return os.path.join(str(tmp_path), \"calls.jsonl\")",
+    "        \"PATH\": path,",
+    "# How long a case waits for the waiter to run the double: far past the interval of a second that the"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "    answer = main(stdin(given), {}, claude, WAITER, left)",
+    "        [sys.executable, FOLDER],",
+    "        [sys.executable, WAIT, \"1\", claude, \"-p\", \"--resume\", \"abc123\", \"go on\"],"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "    refused(answer, left, field)",
+    "    refused(answer, left, transcript)",
+    "    refused(answer, left, \"OVERNIGHT_INTERVAL_SECONDS\")",
+    "    assert \"PATH\" in said"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N5",
+   "good_when": "the maintainer who drops resume's refusal of a field given as an empty string, such as a cwd of \"\", or of an interval written in non-ASCII digits, sees a test that names that case fail, as main's docstring and the tests now name only a field missing or not a string and an interval of zero, a negative, a fraction, words, or nothing"
+  },
+  {
+   "condition": "N7",
+   "good_when": "the maintainer who measures coverage of resume over these tests sees every line and branch run by a case: today the branch of command.py where a transcript line holds \"permissionMode\" but is no object with it at its top (127->120) runs in no case, and wait.py shows in no report at all, as it becomes claude before coverage keeps what it ran; and the refusal where claude isn't on PATH shows, as each other refusal does, that resume left no waiter"
+  }
+ ]
+}
