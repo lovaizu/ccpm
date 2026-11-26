@@ -137,7 +137,7 @@
           {
             "path": "plugins/overnight/scripts/resume",
             "kind": "code",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "dev/overnight/tests",
