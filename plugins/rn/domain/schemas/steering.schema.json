@@ -1,0 +1,200 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "steering",
+ "description": "The steering of one run, at .rn/<run>/steering.json: ost, what the run aims at and why, which the pruner alone writes, and state, where the run stands, which rn's scripts alone write. It lives for the run alone, and git keeps the history of each point.",
+ "type": "object",
+ "required": ["ost", "state"],
+ "additionalProperties": false,
+ "properties": {
+  "ost": {
+   "description": "The run's opportunity solution tree, after Teresa Torres: the outcome, the opportunities under it, the one the user picked, the solutions compared for it, and the run's decisions.",
+   "type": "object",
+   "required": ["outcome", "opportunities", "target", "solutions", "decisions"],
+   "additionalProperties": false,
+   "properties": {
+    "outcome": {
+     "description": "Whom the run is for, and what they do once it's reached, in one sentence.",
+     "type": "string",
+     "minLength": 1
+    },
+    "opportunities": {
+     "description": "The needs that the people named or the run found, broadest first, each more specific one under the one it serves. None is cut: the user picks.",
+     "type": "array",
+     "items": { "$ref": "#/definitions/opportunity" }
+    },
+    "target": {
+     "description": "The id of the opportunity that the user picked, null until they pick.",
+     "type": ["string", "null"]
+    },
+    "solutions": {
+     "description": "The solutions compared for the target, the chosen one among them. rn shows them to the user only on asking.",
+     "type": "array",
+     "items": { "$ref": "#/definitions/solution" }
+    },
+    "decisions": {
+     "description": "Each decision of the run, as its aim and intent in one sentence.",
+     "type": "array",
+     "items": { "$ref": "#/definitions/decision" }
+    }
+   }
+  },
+  "state": {
+   "description": "Where the run stands.",
+   "type": "object",
+   "required": ["context", "steps", "deliverables"],
+   "additionalProperties": false,
+   "properties": {
+    "context": {
+     "description": "What the run is bound by, apart from its aim.",
+     "type": "object",
+     "required": ["rn", "languages", "issues", "pr"],
+     "additionalProperties": false,
+     "properties": {
+      "rn": {
+       "description": "The version of rn that started the run, as its plugin.json gives it.",
+       "type": "string",
+       "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      },
+      "languages": {
+       "description": "The languages that the user settled, each by its name in English, such as Japanese.",
+       "type": "object",
+       "required": ["deliverables", "conversation"],
+       "additionalProperties": false,
+       "properties": {
+        "deliverables": { "type": "string", "minLength": 1 },
+        "conversation": { "type": "string", "minLength": 1 }
+       }
+      },
+      "issues": {
+       "description": "The issues of the run, by number: each that the merge closes, and each that the run only serves.",
+       "type": "object",
+       "required": ["closes", "refs"],
+       "additionalProperties": false,
+       "properties": {
+        "closes": { "type": "array", "items": { "type": "integer" } },
+        "refs": { "type": "array", "items": { "type": "integer" } }
+       }
+      },
+      "pr": {
+       "description": "The URL of the run's pull request, null until the run opens it.",
+       "type": ["string", "null"]
+      }
+     }
+    },
+    "steps": {
+     "description": "The way to the target, first to last: first the walking skeleton, then each addition.",
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": ["settles", "deliverables", "status"],
+      "additionalProperties": false,
+      "properties": {
+       "settles": {
+        "description": "What the step settles, in the user's words.",
+        "type": "string",
+        "minLength": 1
+       },
+       "deliverables": {
+        "description": "The path of each deliverable that the step makes or changes.",
+        "type": "array",
+        "items": { "type": "string" }
+       },
+       "status": { "enum": ["open", "done"] }
+      }
+     }
+    },
+    "deliverables": {
+     "description": "Each deliverable of the run, with its kind and whether it meets every necessary condition of its kind's best practice.",
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": ["path", "kind", "status"],
+      "additionalProperties": false,
+      "properties": {
+       "path": { "type": "string", "minLength": 1 },
+       "kind": {
+        "description": "The kind of the deliverable, by its best practice's folder name, such as readme.",
+        "type": "string",
+        "minLength": 1
+       },
+       "status": { "enum": ["open", "done"] }
+      }
+     }
+    }
+   }
+  }
+ },
+ "definitions": {
+  "opportunity": {
+   "type": "object",
+   "required": ["id", "opportunity", "by", "opportunities"],
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "description": "O and its place in the tree, such as O1 or O1.2.",
+     "type": "string",
+     "pattern": "^O\\d+(\\.\\d+)*$"
+    },
+    "opportunity": {
+     "description": "The need, in the words of those who have it.",
+     "type": "string",
+     "minLength": 1
+    },
+    "by": {
+     "description": "Who named it and where, such as an issue, a comment, or the user's words on a day.",
+     "type": "string",
+     "minLength": 1
+    },
+    "opportunities": {
+     "description": "The more specific needs under it.",
+     "type": "array",
+     "items": { "$ref": "#/definitions/opportunity" }
+    }
+   }
+  },
+  "solution": {
+   "type": "object",
+   "required": ["solution", "chosen", "why", "assumption", "check", "checked"],
+   "additionalProperties": false,
+   "properties": {
+    "solution": { "type": "string", "minLength": 1 },
+    "chosen": { "type": "boolean" },
+    "why": {
+     "description": "Why it was chosen, or why not.",
+     "type": "string",
+     "minLength": 1
+    },
+    "assumption": {
+     "description": "The riskiest assumption it rests on.",
+     "type": "string",
+     "minLength": 1
+    },
+    "check": {
+     "description": "How the assumption is checked on the real thing.",
+     "type": "string",
+     "minLength": 1
+    },
+    "checked": {
+     "description": "What the check showed, null until it runs.",
+     "type": ["string", "null"]
+    }
+   }
+  },
+  "decision": {
+   "type": "object",
+   "required": ["decision", "by"],
+   "additionalProperties": false,
+   "properties": {
+    "decision": {
+     "description": "The decision, as its aim and intent in one sentence.",
+     "type": "string",
+     "minLength": 1
+    },
+    "by": {
+     "description": "user where it's the user's own answer, which only the user changes; rn where rn settled it.",
+     "enum": ["user", "rn"]
+    }
+   }
+  }
+ }
+}

@@ -3,50 +3,137 @@
     "outcome": "A user of rn sees what they asked for work on the real thing early in a run, and grows it from there.",
     "opportunities": [
       {
+        "id": "O1",
         "opportunity": "I see what I asked for work on the real thing early.",
-        "by": "#86, and the user on 2026-11-26"
+        "by": "#86, and the user on 2026-11-26",
+        "opportunities": []
       },
       {
+        "id": "O2",
         "opportunity": "From there, I grow it one addition at a time, and keep each thing I asked for.",
-        "by": "#86, and the user on 2026-11-26"
+        "by": "#86, and the user on 2026-11-26",
+        "opportunities": []
       }
     ],
-    "target": "both, in one pull request: the first, then the second on it",
+    "target": "O1",
     "solutions": [
       {
-        "solution": "One file per run, .rn/<run>/steering.json: ost written by the pruner alone, state by the scripts alone. The design tree goes.",
+        "solution": "Rebuild rn as prompts and work scripts on one steering file per run, its opportunity solution tree for the moment's goal, making the least solution as one walking skeleton.",
         "chosen": true,
-        "decisions": [
-          "Pile up the vital few and cut the trivial many thoroughly, as rn's center.",
-          "Make the least solution as one walking skeleton and check its riskiest assumption on the real thing first, so the run knows it reaches the goal before it builds much.",
-          "Make the opportunity solution tree for one run, so rn aims at the moment's goal, in a large existing app too.",
-          "Put each opportunity that people name on the tree for the user to pick, as the user decides what's dropped, not a role.",
-          "Show the opportunities in the user's words, numbered, with rn's pick and its grounds, so the user judges only which one brings the outcome closest.",
-          "Have the user give feedback as one who uses it, and rn settle how it's made and explain the solution only when asked, so the user's time goes to what only they can judge.",
-          "Make the least, and use the best practices in full on what's made, so less made costs no quality.",
-          "Propose at the run's end what to do with each unpicked opportunity, so the user decides what stays.",
-          "Keep the steering in one file with one writer to each part, so no part has two writers.",
-          "Make a unit case for each class that an interface's contract treats apart, with C0 and C1 at 100%, so each requirement has its case and no line lacks a requirement.",
-          "Have the user run the walking skeleton as the E2E check, so what works is judged by one who uses it.",
-          "Add a test above the unit level only for a fault that the user's run found and that should have been caught before it, or for an operation that can't be undone, so tests grow from evidence, not from what the design draws.",
-          "Make a test design or a test implementation only when a key result needs what the user's run can't show, such as a measure over many runs, so no test machinery is built ahead of need.",
-          "Make a deliverable in Rounds only when it's first made or remade, against every condition of its best practice, so its first quality is built in before the user touches it.",
-          "Make a change that adds what the people can do in Rounds for the added part alone, with the evaluator judging only the conditions it touches, as only one who tries it as the people would sees whether it serves them.",
-          "Have the fixer make a change that brings back what was promised, such as a fault or the user's mend, at once, checking it by the kind's best practice and the unit tests itself, so a mend waits for no Round.",
-          "Call an opportunity 「できるようにしたいこと」 to rn's users, as they don't know the opportunity solution tree."
-        ],
+        "why": "It puts something that runs in the user's hands before most is made, and keeps no tree of the whole product to maintain.",
         "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
-        "check": "Run rn from this branch on #62 up to the first real check; count what was made by then."
+        "check": "Run rn from this branch on #62 up to the first real check; count what was made by then.",
+        "checked": null
       },
       {
         "solution": "One OST per product across runs, at dev/<product>/opportunity-solution-tree.json (#86 as written).",
         "chosen": false,
-        "why_not": "Keeping a whole product's tree is the trivial many in a large app, and it drifts from the code."
+        "why": "Keeping a whole product's tree is the trivial many in a large app, and it drifts from the code.",
+        "assumption": "A product-wide tree stays true across runs.",
+        "check": "Keep one for a large app over several runs.",
+        "checked": null
       },
       {
         "solution": "Keep the design tree and add an opportunities section to it.",
         "chosen": false,
-        "why_not": "The tree's goal and decisions would hold the same points as the ost, in two places."
+        "why": "The tree's goal and decisions would hold the same points as the ost, in two places.",
+        "assumption": "The design tree's goal and an opportunities section stay apart.",
+        "check": "Write both for #62 and compare.",
+        "checked": null
+      }
+    ],
+    "decisions": [
+      {
+        "decision": "Pile up the vital few and cut the trivial many thoroughly, as rn's center.",
+        "by": "user"
+      },
+      {
+        "decision": "Make the least solution as one walking skeleton and check its riskiest assumption on the real thing first, so the run knows it reaches the goal before it builds much.",
+        "by": "user"
+      },
+      {
+        "decision": "Make the opportunity solution tree for one run, so rn aims at the moment's goal, in a large existing app too.",
+        "by": "user"
+      },
+      {
+        "decision": "Put each opportunity that people name on the tree for the user to pick, as the user decides what's dropped, not a role.",
+        "by": "user"
+      },
+      {
+        "decision": "Show the opportunities in the user's words, numbered, with rn's pick and its grounds, so the user judges only which one brings the outcome closest.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the user give feedback as one who uses it, and rn settle how it's made and explain the solution only when asked, so the user's time goes to what only they can judge.",
+        "by": "user"
+      },
+      {
+        "decision": "Make the least, and use the best practices in full on what's made, so less made costs no quality.",
+        "by": "user"
+      },
+      {
+        "decision": "Propose at the run's end what to do with each unpicked opportunity, so the user decides what stays.",
+        "by": "user"
+      },
+      {
+        "decision": "Keep the steering in one file with one writer to each part, so no part has two writers.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a unit case for each class that an interface's contract treats apart, with C0 and C1 at 100%, so each requirement has its case and no line lacks a requirement.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the user run the walking skeleton as the E2E check, so what works is judged by one who uses it.",
+        "by": "user"
+      },
+      {
+        "decision": "Add a test above the unit level only for a fault that the user's run found and that should have been caught before it, or for an operation that can't be undone, so tests grow from evidence, not from what the design draws.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a test design or a test implementation only when a key result needs what the user's run can't show, such as a measure over many runs, so no test machinery is built ahead of need.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a deliverable in Rounds only when it's first made or remade, against every condition of its best practice, so its first quality is built in before the user touches it.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a change that adds what the people can do in Rounds for the added part alone, with the evaluator judging only the conditions it touches, as only one who tries it as the people would sees whether it serves them.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the fixer make a change that brings back what was promised, such as a fault or the user's mend, at once, checking it by the kind's best practice and the unit tests itself, so a mend waits for no Round.",
+        "by": "user"
+      },
+      {
+        "decision": "Call an opportunity 「できるようにしたいこと」 to rn's users, as they don't know the opportunity solution tree.",
+        "by": "rn"
+      },
+      {
+        "decision": "Work one step at a time, in order, and remove the old before making the new, so the branch never holds two ways at once.",
+        "by": "user"
+      },
+      {
+        "decision": "Keep tests green and push on each commit, so each step stands on checked work.",
+        "by": "user"
+      },
+      {
+        "decision": "Do the work alone, with no subagents, so one judgment keeps documents, scripts, and prompts in step.",
+        "by": "user"
+      },
+      {
+        "decision": "Give work outside #86's purpose its own issue, herdr worktree, and pull request, so it reaches main without waiting.",
+        "by": "user"
+      },
+      {
+        "decision": "Speak to the user in plain words, never in rn's or the plan's own terms, so the user follows without learning them.",
+        "by": "user"
+      },
+      {
+        "decision": "Leave issue #86 as it was asked, as it's the request that started the work.",
+        "by": "user"
       }
     ]
   },
@@ -65,41 +152,83 @@
           62
         ]
       },
-      "pr": null,
-      "branch": "rn-steering",
-      "built_on": "#81"
+      "pr": null
     },
     "steps": [
       {
         "settles": "the product vision's Concept, as agreed",
+        "deliverables": [
+          "dev/rn/product-vision.md"
+        ],
         "status": "done"
       },
       {
         "settles": "the README: what rn promises its users, and the walkthrough of the first mode",
+        "deliverables": [
+          "plugins/rn/README.md"
+        ],
+        "status": "done"
+      },
+      {
+        "settles": "the steering's form, so the run's aim and standing have one shape from now on",
+        "deliverables": [
+          "plugins/rn/domain/schemas/steering.schema.json"
+        ],
         "status": "done"
       },
       {
         "settles": "the architecture of the least rn, by the architecture best practice, from the README; then every part it doesn't hold is removed",
+        "deliverables": [
+          "dev/rn/architecture.md"
+        ],
         "status": "open"
       },
       {
         "settles": "the scripts, by TDD at their least, each existing part taken only where the architecture gives it a role",
+        "deliverables": [
+          "plugins/rn/domain/scripts"
+        ],
         "status": "open"
       },
       {
         "settles": "the prompts, by the prompt best practice, taking the best of the existing ones",
+        "deliverables": [
+          "plugins/rn/domain"
+        ],
         "status": "open"
       },
       {
         "settles": "a desk trace of the whole run in order, from the issue to the walking skeleton in the user's hands",
+        "deliverables": [],
         "status": "open"
       },
       {
         "settles": "the second mode: grow it",
+        "deliverables": [],
         "status": "open"
       }
     ],
-    "deliverables": [],
-    "way": "One at a time, in the order of the steps; remove the old before making the new; tests green on each commit, pushed at once; no subagents. Work outside #86's purpose gets its own issue, herdr worktree, and pull request. Speak to the user in plain words. Don't edit issue #86."
+    "deliverables": [
+      {
+        "path": "dev/rn/product-vision.md",
+        "kind": "product-vision",
+        "status": "done"
+      },
+      {
+        "path": "plugins/rn/README.md",
+        "kind": "readme",
+        "status": "done"
+      },
+      {
+        "path": "plugins/rn/domain/schemas/steering.schema.json",
+        "kind": "code",
+        "status": "done"
+      },
+      {
+        "path": "dev/rn/architecture.md",
+        "kind": "architecture",
+        "status": "open"
+      }
+    ]
   }
 }
