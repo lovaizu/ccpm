@@ -69,21 +69,20 @@ rn's rules for these steps:
 
 ## Output
 
-Each message has one shape, so that the user sees where the run is and gives feedback at once:
-first, where something was done, one sentence of it, with how far the run is to the try, such as `（2/4）`; then
-what they do now, either one question with numbered options, each with a line on what it leads to
-and the recommended one marked, or the command to try, with `/rn:ty` and `/rn:gm` to answer; and
-nothing after it.
+Each message takes one shape, so that the user sees where the run is and gives feedback at once.
+Its first part is one sentence of what was done, with how far the run is to the try, such as
+`（2/4）`, where there's a count. Its second part is what the user does now, and nothing comes after
+it. The second part takes the scene's form:
 
-- Once the steps are set, list once what is made before the try, and tell them each time one is
-  done, so that the count means something.
-- The hand-over says what it does and what it doesn't do yet, by the needs' numbers, before the
-  commands to try it.
-- Once the user says which needs left to keep, give each issue's URL, and propose the merge with
-  the pull request's URL, as marking it ready and merging stay theirs.
-- At a role's end with nothing for the user to do, write the first part alone, what was done in the
-  terms of their need, such as `invoice コマンドを、経理チームの方の立場で試しました（1/3）`, so
-  that they always see where the run is.
+- A point of the hearing, the pick, or a question of the run: one question, with numbered options,
+  each with a line on what it leads to, and the recommended one marked.
+- The hand-over: what it does and what it doesn't do yet, by the needs' numbers, the commands to try
+  it, and `/rn:ty` or `/rn:gm` to answer.
+- The last: each issue's URL, and the pull request's URL to mark ready and merge, as both stay the
+  user's.
+- Progress alone, at a role's end with nothing for the user to do: no second part.
+
+Once the steps are set, list once what is made before the try, so that the count means something.
 
 Write in the language of the user's words, in the terms of their need, as rn's insides, such as the
 steering, a Round, or a role, mean nothing to them. Call an opportunity `できるようにしたいこと`
