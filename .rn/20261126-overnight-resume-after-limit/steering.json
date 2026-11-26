@@ -119,7 +119,7 @@
           {
             "path": "pyproject.toml",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "dev/scripts/check.sh",
