@@ -1,2 +1,0 @@
-{"event": "gh pr close can't reach GitHub", "command": "gh pr close https://github.com/lovaizu/playground/pull/39", "exit": 1, "stdout": "", "stderr": "Post \"https://api.github.com/graphql\": proxyconnect tcp: dial tcp 127.0.0.1:9: connect: connection refused\n"}
-{"event": "gh pr close closes the open pull request", "command": "gh pr close https://github.com/lovaizu/playground/pull/39", "exit": 0, "stdout": "", "stderr": "✓ Closed pull request lovaizu/playground#39 (Record the ends of CI checks for rn's gh double)\n"}

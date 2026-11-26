@@ -8,7 +8,7 @@ from __future__ import annotations
 import copy
 import json
 import os
-from typing import Any, NamedTuple
+from typing import Any
 
 from fault import Wrong
 
@@ -21,13 +21,6 @@ _CODE = {"code", "software-design", "test-design", "test-implementation"}
 # A best practice as its best-practice.json holds it, in the form of
 # domain/schemas/best-practice.schema.json.
 Practice = dict[str, Any]
-
-
-class Found(NamedTuple):
-    """A kind's best practice with the folder it lies in, which a Cut names."""
-
-    folder: str
-    practice: Practice
 
 
 def kinds(plugin_root: str, worktree: str) -> dict[str, str]:

@@ -1,59 +1,20 @@
 """How rn's cases make the files that rn reads, each in the form that its use reads it: a best
-practice as its best-practice.json holds it, a design tree of design-tree.schema.json, a run's
-folder at the place that the architecture's Directory structure names, a Round's folder with its
-Cuts and results, a git repository with a commit, as the user's repository is, and the input that
-Claude Code gives rn's hook before a tool call.
+practice as its best-practice.json holds it, and the input that Claude Code gives rn's hook before a
+tool call.
 
 Each helper writes or gives what the documents name, and nothing of how rn's code reads it, so
 that a case calls rn's parts only through their interfaces."""
 
 from __future__ import annotations
 
-import copy
 import functools
 import json
 import os
-import shutil
-from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
-from urllib.parse import quote
-
-from repo_files import git
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 RN = os.path.join(TOP, "plugins", "rn")
 PRACTICES = os.path.join(RN, "domain", "best-practices")
-INVOICER = os.path.join(TOP, "dev", "rn", "tests", "invoicer")
-
-# The bench's own request, in English, apart from the Japanese run that rn's README walkthrough
-# shows: the user's words in reply to /rn:on, the goal as the orchestrator puts it with what its
-# people do then, and the two deliverables of the plan, the command and its guide, the guide resting
-# on the command.
-WORDS = (
-    "a command with which the accounting team prints an invoice from its lines, without writing"
-    " Python"
-)
-GOAL = (
-    "The accounting team prints each invoice themselves from the lines they keep in a"
-    " spreadsheet, without asking a developer. A colleague from accounting prints an invoice from"
-    " the guide alone."
-)
-# The run's slug that the orchestrator writes from WORDS, as the cases that make the run give it:
-# one to five lower-case English words joined by `-`.
-NAMED = "a-command-with-which-the"
-COMMAND = "invoicer/__main__.py"
-COMMAND_NAME = "A command that prints an invoice from a file of its lines"
-GUIDE = "docs/guide.md"
-GUIDE_NAME = "A guide from which the accounting team prints an invoice on its own"
-# The languages that the walkthrough's user settles: of the deliverables, and of the talk.
-DELIVERABLES_LANGUAGE = "English"
-CONVERSATION_LANGUAGE = "English"
-# The languages as `repository new` takes them, after the words and the goal.
-LANGUAGES = (DELIVERABLES_LANGUAGE, CONVERSATION_LANGUAGE)
-# The point that the walkthrough puts to the user, and their answer.
-TAX_POINT = "Should the tax rate be given with each invoice, or set once?"
-TAX_ABOUT = "the tax rate"
-TAX_ANSWER = "with each invoice"
 
 
 @functools.cache
@@ -65,15 +26,6 @@ def _practice(kind: str) -> str:
 def practice(kind: str) -> dict[str, Any]:
     """rn's best practice of the kind, read from the JSON of its best-practice.json."""
     return json.loads(_practice(kind))
-
-
-def conditions(kind: str) -> list[str]:
-    """The ID of each necessary condition of rn's best practice of the kind, in its order."""
-    return [
-        each["id"]
-        for factor in practice(kind)["goal"]["critical_success_factors"]
-        for each in factor["necessary_conditions"]
-    ]
 
 
 def judged_by(kind: str) -> dict[str, Any]:
@@ -97,294 +49,12 @@ def judged_by(kind: str) -> dict[str, Any]:
     }
 
 
-def condition(
-    id: str, good: bool = False, decisions: Sequence[Mapping[str, Any]] = ()
-) -> dict[str, Any]:
-    """A necessary condition of a deliverable, with whether it's good and its decisions."""
-    return {"id": id, "good": good, "decisions": [dict(each) for each in decisions]}
-
-
-def decision(about: str, decided: str | None, by: str | None = "reasoning") -> dict[str, Any]:
-    """A decision: settled where `decided` is a string, by `by`, or open where it's None."""
-    if decided is None:
-        return {"about": about, "decided": None}
-    return {"about": about, "decided": decided, "by": by}
-
-
-def open_node(
-    name: str,
-    path: str,
-    kind: str,
-    inputs: Sequence[str] = (),
-    good: bool | Iterable[str] = False,
-) -> dict[str, Any]:
-    """An open deliverable of the kind, with each necessary condition of its best practice in
-    order, good where `good` is True or names it, each with no decision."""
-    held = set(conditions(kind)) if good is True else set(good or ())
-    return {
-        "name": name,
-        "path": path,
-        "kind": kind,
-        "inputs": list(inputs),
-        "status": "open",
-        "necessary_conditions": [condition(each, each in held) for each in conditions(kind)],
-    }
-
-
-def decided(
-    node: Mapping[str, Any], decisions: Mapping[str, Sequence[Mapping[str, Any]]]
-) -> dict[str, Any]:
-    """A copy of the deliverable with each decision given added to its condition, by its ID."""
-    given = copy.deepcopy(dict(node))
-    for each in given["necessary_conditions"]:
-        each["decisions"] += [dict(d) for d in decisions.get(each["id"], ())]
-    return given
-
-
-def done_node(
-    name: str,
-    path: str,
-    kind: str,
-    good: bool | Iterable[str] = True,
-    decisions: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
-) -> dict[str, Any]:
-    """A deliverable that's done, keeping each necessary condition of its best practice in order,
-    good where `good` is True or names it, with each decision given added to its condition by its
-    ID."""
-    held = decided(open_node(name, path, kind, good=good), decisions or {})
-    return {
-        "name": name,
-        "path": path,
-        "kind": kind,
-        "status": "done",
-        "necessary_conditions": held["necessary_conditions"],
-    }
-
-
-def version() -> str:
-    """rn's version, as its plugin.json gives it."""
-    return read_json(os.path.join(RN, ".claude-plugin", "plugin.json"))["version"]
-
-
-def context(
-    closes: Sequence[int] = (), refs: Sequence[int] = (), pr: str | None = None
-) -> dict[str, Any]:
-    """A design tree's context: rn's version, the walkthrough's languages, the issues, the pull
-    request."""
-    return {
-        "rn": version(),
-        "languages": {"deliverables": DELIVERABLES_LANGUAGE, "conversation": CONVERSATION_LANGUAGE},
-        "issues": {"closes": list(closes), "refs": list(refs)},
-        "pr": pr,
-    }
-
-
-def tree(
-    deliverables: Sequence[Mapping[str, Any]],
-    goal: str = GOAL,
-    by: str = "user",
-    steps: Sequence[Mapping[str, Any]] = (),
-) -> dict[str, Any]:
-    """A design tree with the context as a run starts it, the goal, the deliverables, and the
-    steps of the way to the goal, none where none is given, as before the plan holds them."""
-    return {
-        "context": context(),
-        "goal": {"decided": goal, "by": by},
-        "deliverables": [copy.deepcopy(dict(each)) for each in deliverables],
-        "steps": [copy.deepcopy(dict(each)) for each in steps],
-    }
-
-
-def step(settles: str, deliverables: Sequence[str], signoff: bool) -> dict[str, Any]:
-    """A step of the way to the goal: what it settles, the path of each of its deliverables, and
-    whether the user signs each off."""
-    return {"settles": settles, "deliverables": list(deliverables), "signoff": signoff}
-
-
-def plan_path(name: str) -> str:
-    """The plan's path from the run's worktree, the tree's own."""
-    return f".rn/{name}/design-tree.json"
-
-
-def plan(name: str, good: bool | Iterable[str] = True, goal: str = GOAL) -> dict[str, Any]:
-    """The plan, the tree's own deliverable of the kind `design-tree`, named by the goal."""
-    return open_node(goal, plan_path(name), "design-tree", good=good)
-
-
-def started(name: str) -> dict[str, Any]:
-    """The design tree that a run starts from, before the pruner writes the goal: the context, the
-    goal open as an open decision is, `decided` null, and the plan as its one deliverable, its name
-    empty until the pruner names it by the goal, each condition not good, with no work or steps."""
-    design_tree = tree([plan(name, good=False, goal="")])
-    design_tree["goal"] = {"decided": None}
-    return design_tree
-
-
-# The figure that the readme template has the guide keep of its own, from the worktree's top.
-GUIDE_FIGURE = "docs/images/how-it-works.svg"
-
-
-def guide_node(good: bool | Iterable[str] = False) -> dict[str, Any]:
-    """The walkthrough's guide, open, of the kind `readme`, resting on the command, with the figure
-    that its template has it keep as its more path."""
-    node = open_node(GUIDE_NAME, GUIDE, "readme", [COMMAND], good)
-    node["more_paths"] = [GUIDE_FIGURE]
-    return node
-
-
-def walkthrough_tree(
-    name: str,
-    plan_done: bool = True,
-    command_good: bool | Iterable[str] = False,
-    guide_good: bool | Iterable[str] = False,
-    command_decisions: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
-) -> dict[str, Any]:
-    """The design tree of the walkthrough's run: the plan, done or open with each condition good,
-    the command, of the kind `light`, resting on invoicer's lines, and the guide, of the kind
-    `readme`, resting on the command, with its figure."""
-    head = done_node(GOAL, plan_path(name), "design-tree") if plan_done else plan(name, good=True)
-    return tree(
-        [
-            head,
-            decided(
-                open_node(COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"], command_good),
-                command_decisions or {},
-            ),
-            guide_node(guide_good),
-        ]
-    )
-
-
-# Where a run lies, as the architecture's Directory structure and repository.place's contract
-# name each path.
-
-
-def worktree_of(repository: str, name: str) -> str:
-    """The run's worktree, `<repository>/.claude/worktrees/rn-<name>`."""
-    return os.path.join(repository, ".claude", "worktrees", f"rn-{name}")
-
-
-def folder_of(repository: str, name: str) -> str:
-    """The run's folder, `<worktree>/.rn/<name>`."""
-    return os.path.join(worktree_of(repository, name), ".rn", name)
-
-
-def round_of(run_folder: str, deliverable: str, stage: str, number: int) -> str:
-    """A Round's folder, `<run's folder>/rounds/<deliverable, percent-encoded whole>/<stage>-<n>`,
-    as rounds.files names it."""
-    return os.path.join(run_folder, "rounds", quote(deliverable, safe=""), f"{stage}-{number}")
-
-
 def write_json(path: str, value: Any) -> None:
     """Writes the value as JSON at the path, its folder made."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(value, f, indent=1)
         f.write("\n")
-
-
-def read_json(path: str) -> Any:
-    """The JSON of the file."""
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
-
-
-def run_folder(repository: str, name: str, design_tree: Mapping[str, Any]) -> str:
-    """Writes the run's design tree in its folder, under its worktree, as files alone, with no git,
-    and gives the run's folder."""
-    folder = folder_of(repository, name)
-    write_json(os.path.join(folder, "design-tree.json"), design_tree)
-    return folder
-
-
-def a_round(
-    run: str, deliverable: str, stage: str, number: int, results: Mapping[str, Any] | None = None
-) -> str:
-    """Writes a Round's folder with each file given by its name, `<name>.json`: each role's
-    result, by `generator` and `evaluator`, and the mark of the tree's commit that weighed its last
-    result, by `weighed`, as `WEIGHED` gives it; gives the folder."""
-    folder = round_of(run, deliverable, stage, number)
-    os.makedirs(folder, exist_ok=True)
-    for role, result in (results or {}).items():
-        write_json(os.path.join(folder, f"{role}.json"), result)
-    return folder
-
-
-# The mark of a Round whose last result a commit of the tree weighed, as `a_round` takes it.
-WEIGHED = {"weighed": {"commit": "a1b2c3"}}
-
-
-def pruner_result(**fields: Sequence[Any]) -> dict[str, Any]:
-    """A pruner's result, in the form of pruner.schema.json, each of its fields as given, by its
-    name, and else empty, but `kept`, which keeps one node."""
-    result: dict[str, Any] = {
-        "units": [],
-        "cut": [],
-        "kept": ["/deliverables/1 N1: the tax rate"],
-        "ask": [],
-        "stray": [],
-        "changed": [],
-    }
-    result.update(
-        {
-            name: [dict(each) if isinstance(each, Mapping) else each for each in value]
-            for name, value in fields.items()
-        }
-    )
-    return result
-
-
-def made(good: Sequence[tuple[str, Sequence[str]]] = (), files: Sequence[str] = ()) -> dict:
-    """A generator's result `made`, with the files it wrote and each condition it saw good."""
-    return {
-        "result": "made",
-        "files": list(files),
-        "good": [{"condition": c, "lines": list(lines)} for c, lines in good],
-    }
-
-
-def point(words: str = TAX_POINT) -> dict[str, Any]:
-    """A generator's result `point`, with the point."""
-    return {"result": "point", "point": words}
-
-
-def judged(
-    good: Sequence[tuple[str, Sequence[str]]] = (), more: Sequence[tuple[str, str]] = ()
-) -> dict[str, Any]:
-    """An evaluator's result `judged`, with each condition good and each with more."""
-    return {
-        "result": "judged",
-        "good": [{"condition": c, "lines": list(lines)} for c, lines in good],
-        "more": [{"condition": c, "good_when": when} for c, when in more],
-    }
-
-
-# The user's repository.
-
-
-def repository(folder: str, branch: str = "main") -> str:
-    """Makes a git repository in the folder with invoicer's files committed on the branch, and
-    gives its real path."""
-    os.makedirs(folder, exist_ok=True)
-    git(folder, "init", "-q", "-b", branch)
-    git(folder, "config", "user.email", "rn@example.com")
-    git(folder, "config", "user.name", "rn")
-    shutil.copytree(INVOICER, folder, dirs_exist_ok=True)
-    git(folder, "add", "-A")
-    git(folder, "commit", "-q", "-m", "invoicer")
-    return os.path.realpath(folder)
-
-
-def with_origin(repo: str, origin: str) -> str:
-    """Gives the repository a bare repository as its remote `origin`, holding its branch, and gives
-    the remote's path."""
-    os.makedirs(origin)
-    git(origin, "init", "-q", "--bare")
-    git(repo, "remote", "add", "origin", origin)
-    branch = git(repo, "branch", "--show-current").strip()
-    git(repo, "push", "-q", "-u", "origin", branch)
-    git(repo, "remote", "set-head", "origin", branch)
-    return origin
 
 
 # The hook's input.

@@ -1,6 +1,6 @@
 """Decides how each of rn's commands says what stopped it: a fault of the input that whoever ran it
-can mend, a thing outside the work that's missing, or a step that couldn't run; and how each ends,
-with what it prints and the exit code it gives."""
+can mend, or a step that couldn't run; and how each ends, with what it prints and the exit code it
+gives."""
 
 from __future__ import annotations
 
@@ -18,24 +18,15 @@ class Wrong(Exception):
     The command gives 1."""
 
 
-class Missing(Exception):
-    """Something outside the work that a command needs and doesn't find, such as a git repository
-    or a remote to push to, said so that the user can clear it. The command gives 1."""
-
-
 class CantRun(Exception):
     """What kept a command from doing what it names, such as git failing, so that it claims nothing
     it didn't do. The command gives 2."""
 
 
 def answered(script: str, call: Callable[[], Answer]) -> Answer:
-    """What the call gives, or, where it raises, the exit code of the fault with
-    `<script>: <what's wrong>`: 1 where the input is Wrong or something is Missing, and 2 where it
-    CantRun."""
+    """What the call gives, or, where it raises CantRun, 2 with `<script>: <what stopped it>`."""
     try:
         return call()
-    except (Wrong, Missing) as wrong:
-        return 1, "", f"{script}: {wrong}\n"
     except CantRun as stopped:
         return 2, "", f"{script}: {stopped}\n"
 
