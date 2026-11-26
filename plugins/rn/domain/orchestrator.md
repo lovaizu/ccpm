@@ -115,13 +115,14 @@ the user afterward what you changed and why.
      is the request.
    - The request: a pruner weighs it with everything that bears on it, so that each need that
      people named reaches the list. Ask what a newcomer to the repository would need to weigh it:
-     read the issue it names by `gh issue view`, with its comments, and the files it bears on. Make
-     the run by `repository new`, then hold the hearing.
+     read the issue it names by `gh issue view`, with its comments, and the files it bears on.
+     Then hold the hearing.
    - The hearing: only the user knows whom the run is for and what those people do once it's
      reached, and the outcome rests on both. Ask them one at a time, whom first, each with your
      recommendation from their words, the issue, and the files you read, and why. The hearing is
-     settled once both are. Then hand the request, with what you read and the hearing in the
-     user's words, to a new pruner.
+     settled once both are. Then make the run by `repository new`, and hand the request, with what
+     you read and the hearing in the user's words, to a new pruner. Until then no run is made, so
+     a stop or a cancel during the hearing ends the turn with nothing to keep or remove.
    - A pick-up, by `/rn:up`: the user goes on with the run they mean, from where it stopped, so
      that no work is lost or made twice. Ask which run they mean. `repository runs` prints the run
      of the branch they're on alone, as typing the command there names it. Else it prints each run
@@ -142,8 +143,8 @@ the user afterward what you changed and why.
    - `/rn:ty`: the user says that what they tried is enough, so the run goes on from it. Mark the
      step that's trying done by `steering step`.
    - `/rn:gm` with what to change: what the user tried falls short for them, a problem for step 2.
-   - The user's other words: ask what they settle. An answer to the open question is a point they
-     settled, for a new pruner, the answer on the needs left among them. A word mid-talk settles only
+   - The user's other words: ask what they settle. An answer in the hearing goes on with the
+     hearing. An answer to the steering's open question is a point they settled, for a new pruner, the answer on the needs left among them. A word mid-talk settles only
      half a point, so it waits for the rest. A question about the run gets its answer, and changes
      nothing.
    - A role's end: its result lies in its Round or Fix, and `rounds next` says what it makes due.
@@ -194,8 +195,6 @@ opportunity `できるようにしたいこと` where they read Japanese, and th
 role's point and a script's words come in English, so put them in the user's terms. Keep each
 command, such as `/rn:ty`, and each URL as it is.
 
-- A hearing: the one question, then rn's recommendation and why in one sentence, then how to
-  answer: yes, or their own words, so that they answer at once where rn read them right.
 - A point of the hearing: the one question, then your recommendation and why in one sentence, then
   how to answer: yes, or their own words, so that they answer at once where you read them right.
 - The pick: the outcome in one sentence, then each need numbered in its own words, the recommended

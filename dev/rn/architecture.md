@@ -142,7 +142,12 @@ Strategies:
 - Each problem with a deliverable whose Rounds are over handed at once to a new fixer. [P1.3]\
   Intent: a mend within what was weighed starts without a wait, and one that changes it is
   weighed first, as the fixer names it.
-- The orchestrator speaking only from the steering and the user's words. [P2.1]\
+- The hearing of whom the run is for and what for held by the orchestrator, one question at a
+  time, before any weighing, and handed whole to one pruner. [P2.1]\
+  Intent: the outcome rests on what only the user knows, and the pruner weighs once with it
+  whole.
+- The orchestrator speaking, after the hearing, only from the steering and the user's words.
+  [P2.1]\
   Intent: the talk brings back nothing the pruner cut, such as an issue's means.
 - Each need shown numbered in the user's words, and one of them recommended with its grounds. [P2.1]\
   Intent: the user judges only which need brings them closest to what they're after.
@@ -198,11 +203,11 @@ sequenceDiagram
   O->>U: asks what it can help with, an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
   O->>O: reads the issue it names and the repository [P2.1]
-  O->>S: makes the run's worktree, its branch, and its steering (Steering) [P7.1]
   loop whom it's for, then what they do once it's reached [P2.1]
     O->>U: asks it, with a recommendation and why [P2.1]
     U->>O: answers [P2.1]
   end
+  O->>S: makes the run's worktree, its branch, and its steering (Steering) [P7.1]
   O->>P: starts one with the run's folder, the user's words, the request, and the hearing (Steering) [P4.1]
   P->>P: weighs the request by the measure of the vital few [P4.1]
   P->>T: writes the outcome, each need named or found in its own words, and the pick as an open question (Steering, Opportunity) [P2.2]
