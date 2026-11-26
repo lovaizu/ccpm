@@ -68,6 +68,10 @@
       {
         "decision": "Make the resuming a new plugin, overnight, in this marketplace, as issue #62's title names it, so a user installs it beside rn and the AI they instruct needs nothing more from them.",
         "by": "rn"
+      },
+      {
+        "decision": "The overnight plugin carries a byte-for-byte copy of the repository's LICENSE at plugins/overnight/LICENSE, as the repository's pre-push check refuses any push without it (dev/scripts/standalone.py, license_faults: \"missing; copy the repository's LICENSE there\"), so no deliverable reaches the branch the user installs from without it; the plugin's own README stays cut, as no check requires one (dev/scripts/check.sh checks plugins/*/README.md only where it exists) and the first try reaches the plugin through the repository's README.",
+        "by": "rn"
       }
     ],
     "questions": []
@@ -84,6 +88,11 @@
         "for": "O1",
         "settles": "the walking skeleton: once the usage limit lifts, the work resumes on its own, from where it stopped, with overnight installed",
         "deliverables": [
+          {
+            "path": "plugins/overnight/LICENSE",
+            "kind": "light",
+            "status": "open"
+          },
           {
             "path": "plugins/overnight/.claude-plugin/plugin.json",
             "kind": "light",
