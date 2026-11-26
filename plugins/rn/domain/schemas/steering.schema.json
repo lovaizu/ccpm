@@ -15,9 +15,9 @@
    "required": [
     "outcome",
     "opportunities",
-    "pick",
     "target",
-    "decisions"
+    "decisions",
+    "questions"
    ],
    "additionalProperties": false,
    "properties": {
@@ -41,33 +41,18 @@
      ]
     },
     "decisions": {
-     "description": "Each point of the run, as its aim and intent in one sentence. A point whose decision is null is a question that waits on the user.",
+     "description": "Each decision of the run, as its aim and intent in one sentence.",
      "type": "array",
      "items": {
       "$ref": "#/definitions/decision"
      }
     },
-    "pick": {
-     "description": "rn's recommendation of the opportunity to meet first, shown with its grounds when the user picks, null until rn has one.",
-     "type": [
-      "object",
-      "null"
-     ],
-     "required": [
-      "id",
-      "why"
-     ],
-     "additionalProperties": false,
-     "properties": {
-      "id": {
-       "type": "string",
-       "pattern": "^O\\d+(\\.\\d+)*$"
-      },
-      "why": {
-       "description": "Its grounds, in the user's words: who named it, the facts, and what the others wait on.",
-       "type": "string",
-       "minLength": 1
-      }
+    "questions": {
+     "description": "Each question that waits on the user, in the user's words. Once answered, it goes, and its answer is a decision by user.",
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
      }
     }
    }
@@ -77,8 +62,7 @@
    "type": "object",
    "required": [
     "context",
-    "steps",
-    "deliverables"
+    "steps"
    ],
    "additionalProperties": false,
    "properties": {
@@ -173,10 +157,34 @@
         "minLength": 1
        },
        "deliverables": {
-        "description": "The path of each deliverable that the step makes or changes, in the order they're made, each after those it rests on.",
+        "description": "Each deliverable that the step makes or changes, in the order they're made, each after those it rests on.",
         "type": "array",
         "items": {
-         "type": "string"
+         "type": "object",
+         "required": [
+          "path",
+          "kind",
+          "status"
+         ],
+         "additionalProperties": false,
+         "properties": {
+          "path": {
+           "type": "string",
+           "minLength": 1
+          },
+          "kind": {
+           "description": "The kind of the deliverable, by its best practice's folder name, such as readme.",
+           "type": "string",
+           "minLength": 1
+          },
+          "status": {
+           "description": "done once it meets every necessary condition of its kind's best practice.",
+           "enum": [
+            "open",
+            "done"
+           ]
+          }
+         }
         }
        },
        "status": {
@@ -184,36 +192,6 @@
         "enum": [
          "open",
          "trying",
-         "done"
-        ]
-       }
-      }
-     }
-    },
-    "deliverables": {
-     "description": "Each deliverable of the run, with its kind and whether it meets every necessary condition of its kind's best practice.",
-     "type": "array",
-     "items": {
-      "type": "object",
-      "required": [
-       "path",
-       "kind",
-       "status"
-      ],
-      "additionalProperties": false,
-      "properties": {
-       "path": {
-        "type": "string",
-        "minLength": 1
-       },
-       "kind": {
-        "description": "The kind of the deliverable, by its best practice's folder name, such as readme.",
-        "type": "string",
-        "minLength": 1
-       },
-       "status": {
-        "enum": [
-         "open",
          "done"
         ]
        }
@@ -231,8 +209,7 @@
     "opportunity",
     "by",
     "opportunities",
-    "solutions",
-    "afterwards"
+    "solutions"
    ],
    "additionalProperties": false,
    "properties": {
@@ -264,13 +241,6 @@
      "items": {
       "$ref": "#/definitions/solution"
      }
-    },
-    "afterwards": {
-     "description": "What the user approved at the run's end for an opportunity that no step met: the issue that keeps it, such as #91, or let go; null until then.",
-     "type": [
-      "string",
-      "null"
-     ]
     }
    }
   },
@@ -280,7 +250,7 @@
     "solution",
     "chosen",
     "why",
-    "assumptions"
+    "assumption"
    ],
    "additionalProperties": false,
    "properties": {
@@ -296,42 +266,37 @@
      "type": "string",
      "minLength": 1
     },
-    "assumptions": {
-     "description": "The assumptions it rests on, the riskiest first, each with its test.",
-     "type": "array",
-     "items": {
-      "$ref": "#/definitions/assumption"
-     }
+    "assumption": {
+     "description": "For the chosen one, its riskiest assumption with its test; null for the others.",
+     "oneOf": [
+      {
+       "type": "null"
+      },
+      {
+       "$ref": "#/definitions/assumption"
+      }
+     ]
     }
    }
   },
   "decision": {
    "type": "object",
    "required": [
-    "about",
     "decision",
     "by"
    ],
    "additionalProperties": false,
    "properties": {
-    "about": {
-     "description": "What the point is about, in a few words.",
+    "decision": {
+     "description": "The decision, as its aim and intent in one sentence.",
      "type": "string",
      "minLength": 1
     },
-    "decision": {
-     "description": "The decision, as its aim and intent in one sentence, null while it waits on the user.",
-     "type": [
-      "string",
-      "null"
-     ]
-    },
     "by": {
-     "description": "user where it's the user's own answer, which only the user changes; rn where rn settled it; null while it waits.",
+     "description": "user where it's the user's own answer, which only the user changes; rn where rn settled it.",
      "enum": [
       "user",
-      "rn",
-      null
+      "rn"
      ]
     }
    }
