@@ -146,16 +146,23 @@ def kind_of(run_: RunPlace, kind: str) -> None:
     rn_files.write_json(run_.steering, held)
 
 
-def test_a_kind_that_no_refactoring_takes_goes_to_its_put_up(made: RunPlace) -> None:
+def test_a_kind_that_no_refactoring_takes_goes_to_its_put_up_and_takes_a_fix(
+    made: RunPlace,
+) -> None:
     """Given a deliverable of the kind light, judged with each condition good.
-    When `next` runs.
-    Then the put-up, with no Round of refactoring made."""
+    When `next` runs, then `fix` with the words of a put-up that the checks refused.
+    Then the put-up, with no Round of refactoring made, and then the Fix fix-2 with its fixer
+    due."""
     kind_of(made, "light")
     call(made, "next", rn_files.COMMAND)
     wrote(made, f"{ROUNDS}/content-1", "generator.json", MADE)
     wrote(made, f"{ROUNDS}/content-1", "evaluator.json", GOOD)
     assert call(made, "next", rn_files.COMMAND) == (0, "put-up\n", "")
     assert sorted(os.listdir(os.path.join(made.worktree, ROUNDS))) == ["content-1"]
+    fix = os.path.join(made.worktree, ROUNDS, "fix-2")
+    assert call(made, "fix", rn_files.COMMAND, words="LICENSE: missing") == (0, f"{fix}\n", "")
+    light = os.path.join(rn_files.PRACTICES, "light")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"fixer\t{fix}\t{light}\n", "")
 
 
 @pytest.mark.parametrize(

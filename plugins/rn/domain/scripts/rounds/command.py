@@ -68,9 +68,7 @@ def _line(run: RunPlace, deliverable: str, plugin_root: str) -> str:
     kind = _kind(steering, deliverable)
     decisions = len(steering["ost"]["decisions"])
     made = files.entries(run, deliverable, schemas)
-    found = course.next_of(made, decisions)
-    if found.what == "new" and found.stage == files.REFACTOR and not practice.refactoring(kind):
-        return "put-up\n"
+    found = _course(made, decisions, kind)
     if found.what == "new":
         stage = found.stage or files.CONTENT
         folder = files.started(run, deliverable, stage, decisions, made)
@@ -86,6 +84,15 @@ def _line(run: RunPlace, deliverable: str, plugin_root: str) -> str:
     stage = found.entry.stage
     role = _ROLE.get(stage, found.what)
     return f"{role}\t{found.entry.folder}\t{_practice(run, plugin_root, kind, stage)}\n"
+
+
+def _course(made: list[files.Entry], decisions: int, kind: str) -> course.Next:
+    """What comes next for the deliverable, as `course.next_of` gives it, its put-up in place of
+    a Round of refactoring where the kind takes none."""
+    found = course.next_of(made, decisions)
+    if found.what == "new" and found.stage == files.REFACTOR and not practice.refactoring(kind):
+        return course.Next("put-up")
+    return found
 
 
 def _kind(steering: dict, deliverable: str) -> str:
@@ -137,8 +144,9 @@ def _fix(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer:
         )
     schemas = os.path.join(plugin_root, "domain", "schemas")
     made = files.entries(run, deliverable, schemas)
-    decisions = len(_steering(run, schemas)["ost"]["decisions"])
-    if course.next_of(made, decisions).what != "put-up":
+    steering = _steering(run, schemas)
+    decisions = len(steering["ost"]["decisions"])
+    if _course(made, decisions, _kind(steering, deliverable)).what != "put-up":
         raise Wrong(
             f"{deliverable}: its Rounds aren't over, or a Fix of it is under way; take its next"
             " step from rounds next first"
