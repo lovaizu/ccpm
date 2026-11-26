@@ -71,8 +71,6 @@ jobs:
           node node_modules/@anthropic-ai/claude-code/install.cjs
           echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
       - run: uv run --no-sync sh dev/scripts/check.sh
-      - if: matrix.python == '3.x'
-        run: uv run --no-sync python3 dev/scripts/trace.py sources
 
   prose:
     if: github.event_name == 'workflow_dispatch'

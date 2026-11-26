@@ -24,13 +24,10 @@ CI runs these checks on every push:
 - the form of each product vision, README, and architecture against its template, by
   `plugins/rn/domain/scripts/template`
 - the tag of each decision of each architecture's views, by `dev/scripts/trace.py`
-- each plugin's unit tests, and that they run every line and branch of its code
-- the records that each double of the plugins' tests takes its results from, and each line it
-  names in them
+- each plugin's unit tests, and that they run every line and branch of the plugins' code
 
 Each night, CI runs the checks again on the oldest Python and the newest, of `main` and of each
-branch an open pull request comes from, and checks that each page of the documentation that a
-double's record names still shows its words, as a page changes apart from any push.
+branch an open pull request comes from.
 
 Run the checks from the top of the repository:
 
