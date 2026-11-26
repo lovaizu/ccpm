@@ -3,11 +3,13 @@ which whoever ran it reads its result."""
 
 from __future__ import annotations
 
+import json
 import os
 from collections.abc import Callable, Sequence
 from urllib.parse import unquote
 
 import form
+import practice
 from fault import Answer, Wrong, answered
 from place import RunPlace, of_folder
 
@@ -28,10 +30,15 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], st
     `fix` reads.
 
     - `next <run> <deliverable>`: 0 printing what `course.next_of` gives for the deliverable, as
-      one line, its words apart by a tab, each folder and file absolute: `generator\\t<folder>`
-      for a Round of content, `refactor\\t<folder>` for a Round of refactoring, a new one made by
-      `files.started` where the course takes one, `evaluator\\t<folder>`, `fixer\\t<folder>`,
-      `weigh\\t<the result to weigh>`, or `put-up`.
+      one line, its words apart by a tab, each folder and file absolute: `generator`, for a Round
+      of content, or `refactor`, for a Round of refactoring, each a new one made by
+      `files.started` where the course takes one, with its folder and the folder of the best
+      practice it's made by, as `practice.kinds` finds the deliverable's kind or the kind that
+      `practice.refactoring` gives; `evaluator` with its folder and the file `judges-by.json` there,
+      written with what `practice.judged` gives of the kind's best practice; `fixer` with its
+      folder and the kind's best practice; `weigh` with the result to weigh; or `put-up`, also where
+      the course takes a Round of refactoring of a kind that `practice.refactoring` refactors by
+      none.
     - `fix <run> <deliverable>`, with the problem's words on stdin, as they were printed or said:
       0 printing the new Fix's folder, absolute, its problem in `problem.md`; 1 writing nothing
       where the words are empty, or where the deliverable's course isn't at its put-up, as a Fix
@@ -40,34 +47,76 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], st
       0 printing what's next for its deliverable, as `next` prints it.
 
     `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `rounds: <what's wrong>`
-    where the input is Wrong, such as a result out of its schema, saying how to mend it; 2 with
-    the usage where the arguments are other than these.
+    where the input is Wrong, such as a result out of its schema, a deliverable that no step of
+    the steering names, or a kind with no best practice, saying how to mend it; 2 with the usage
+    where the arguments are other than these.
     """
     if not argv or argv[0] not in _SUBCOMMANDS or len(argv) != 3:
         return 2, "", USAGE
-    schemas = os.path.join(plugin_root, "domain", "schemas")
     given = [argv[2], stdin()] if argv[0] == "fix" else [argv[2]]
     subcommand = _SUBCOMMANDS[argv[0]]
-    return answered("rounds", lambda: subcommand(of_folder(cwd, argv[1]), given, cwd, schemas))
+    return answered("rounds", lambda: subcommand(of_folder(cwd, argv[1]), given, cwd, plugin_root))
 
 
-def _next(run: RunPlace, given: list[str], cwd: str, schemas: str) -> Answer:
-    return 0, _line(run, given[0], schemas), ""
+def _next(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer:
+    return 0, _line(run, given[0], plugin_root), ""
 
 
-def _line(run: RunPlace, deliverable: str, schemas: str) -> str:
+def _line(run: RunPlace, deliverable: str, plugin_root: str) -> str:
+    schemas = os.path.join(plugin_root, "domain", "schemas")
+    steering = _steering(run, schemas)
+    kind = _kind(steering, deliverable)
+    decisions = len(steering["ost"]["decisions"])
     made = files.entries(run, deliverable, schemas)
-    decisions = _decisions(run, schemas)
     found = course.next_of(made, decisions)
+    if found.what == "new" and found.stage == files.REFACTOR and not practice.refactoring(kind):
+        return "put-up\n"
     if found.what == "new":
         stage = found.stage or files.CONTENT
-        return f"{_ROLE[stage]}\t{files.started(run, deliverable, stage, decisions, made)}\n"
+        folder = files.started(run, deliverable, stage, decisions, made)
+        return f"{_ROLE[stage]}\t{folder}\t{_practice(run, plugin_root, kind, stage)}\n"
     if found.entry is None:
         return f"{found.what}\n"
     if found.what == "weigh":
         return f"weigh\t{_result(found.entry)}\n"
-    role = _ROLE.get(found.entry.stage, found.what) if found.what == "generator" else found.what
-    return f"{role}\t{found.entry.folder}\n"
+    if found.what == "evaluator":
+        return (
+            f"evaluator\t{found.entry.folder}\t{_judges_by(run, plugin_root, kind, found.entry)}\n"
+        )
+    stage = found.entry.stage
+    role = _ROLE.get(stage, found.what)
+    return f"{role}\t{found.entry.folder}\t{_practice(run, plugin_root, kind, stage)}\n"
+
+
+def _kind(steering: dict, deliverable: str) -> str:
+    for step in steering["state"]["steps"]:
+        for each in step["deliverables"]:
+            if each["path"] == deliverable:
+                return each["kind"]
+    raise Wrong(
+        f"no step names the deliverable {deliverable!r}; give its path as its step names it"
+    )
+
+
+def _practice(run: RunPlace, plugin_root: str, kind: str, stage: str) -> str:
+    """The folder of the best practice that a Round or Fix of the stage is made by."""
+    by = (practice.refactoring(kind) or kind) if stage == files.REFACTOR else kind
+    found = practice.kinds(plugin_root, run.worktree)
+    if by not in found:
+        raise Wrong(
+            f"rn has no best practice of the kind {by!r}; give the deliverable a kind it has"
+        )
+    return found[by]
+
+
+def _judges_by(run: RunPlace, plugin_root: str, kind: str, entry: files.Entry) -> str:
+    """Writes what the evaluator judges by in its Round, and gives the file's path."""
+    held = practice.judged(practice.read(_practice(run, plugin_root, kind, files.CONTENT)))
+    path = os.path.join(entry.folder, "judges-by.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(held, f, indent=1, ensure_ascii=False)
+        f.write("\n")
+    return path
 
 
 def _result(entry: files.Entry) -> str:
@@ -75,19 +124,20 @@ def _result(entry: files.Entry) -> str:
     return os.path.join(entry.folder, files.RESULTS[role][0])
 
 
-def _decisions(run: RunPlace, schemas: str) -> int:
+def _steering(run: RunPlace, schemas: str) -> dict:
     schema = os.path.join(schemas, "steering.schema.json")
-    return len(form.held(run.steering, schema, "the steering")["ost"]["decisions"])
+    return form.held(run.steering, schema, "the steering")
 
 
-def _fix(run: RunPlace, given: list[str], cwd: str, schemas: str) -> Answer:
+def _fix(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer:
     deliverable, words = given
     if not words.strip():
         raise Wrong(
             "the problem's words are empty; give them on stdin as they were printed or said"
         )
+    schemas = os.path.join(plugin_root, "domain", "schemas")
     made = files.entries(run, deliverable, schemas)
-    decisions = _decisions(run, schemas)
+    decisions = len(_steering(run, schemas)["ost"]["decisions"])
     if course.next_of(made, decisions).what != "put-up":
         raise Wrong(
             f"{deliverable}: its Rounds aren't over, or a Fix of it is under way; take its next"
@@ -99,14 +149,13 @@ def _fix(run: RunPlace, given: list[str], cwd: str, schemas: str) -> Answer:
     return 0, f"{folder}\n", ""
 
 
-def _weighed(run: RunPlace, given: list[str], cwd: str, schemas: str) -> Answer:
+def _weighed(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer:
     folder = os.path.normpath(os.path.join(cwd, given[0]))
     files.weigh(run, folder)
-    deliverable = _deliverable_of(run, folder)
-    return 0, _line(run, deliverable, schemas), ""
+    return 0, _line(run, _deliverable_of(folder), plugin_root), ""
 
 
-def _deliverable_of(run: RunPlace, folder: str) -> str:
+def _deliverable_of(folder: str) -> str:
     return unquote(os.path.basename(os.path.dirname(folder)))
 
 

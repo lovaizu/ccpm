@@ -1,9 +1,8 @@
 """The unit cases of practice.py, where each kind's best practice lies and what of it each role
 gets: `kinds` of rn's own best practices, of a run's own before them and beside them, and of a
 folder of neither; `read` of a best practice, one missing, and one that isn't JSON; `judged` without
-any practice; `template` of a kind that has one and of one that has none; and `refactoring` of a
-kind of code, of light, and of another kind. dev/scripts/practices.py holds each of rn's best
-practices to its form."""
+any practice; and `refactoring` of a kind of code, of light, and of another kind.
+dev/scripts/practices.py holds each of rn's best practices to its form."""
 
 from __future__ import annotations
 
@@ -14,7 +13,7 @@ from typing import Any
 import pytest
 import rn_files
 from fault import Wrong
-from practice import judged, kinds, read, refactoring, template
+from practice import judged, kinds, read, refactoring
 
 
 def rns_kinds() -> dict[str, str]:
@@ -98,19 +97,6 @@ def test_read_of_a_best_practice_that_isnt_json_is_refused_naming_the_file(tmp_p
         f.write("{goal")
     with pytest.raises(Wrong, match="best-practice.json"):
         read(str(tmp_path))
-
-
-@pytest.mark.parametrize(
-    ("kind", "has"), [("architecture", True), ("light", False)], ids=["one", "none"]
-)
-def test_template_of_a_kind_gives_its_template_md_or_none(kind: str, has: bool):
-    """Given rn's best practice of architecture, whose folder holds template.md, or of light,
-    whose folder holds none
-    When its template is asked
-    Then it gives the path of that template.md, or None"""
-    folder = os.path.join(rn_files.PRACTICES, kind)
-    expected = os.path.join(folder, "template.md") if has else None
-    assert template(folder) == expected
 
 
 def test_judged_gives_the_goal_and_each_condition_without_its_practice():
