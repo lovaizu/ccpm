@@ -317,10 +317,8 @@ def double_faults(folder: str) -> list[str]:
 
 
 def plugins() -> list[str]:
-    """Each plugin whose architecture dev/ holds."""
-    return sorted(
-        name for name in os.listdir("dev") if os.path.isfile(f"dev/{name}/architecture.md")
-    )
+    """Each plugin whose tests dev/ holds, as a plugin may have no architecture."""
+    return sorted(name for name in os.listdir("dev") if os.path.isdir(f"dev/{name}/tests"))
 
 
 def doubles() -> list[str]:

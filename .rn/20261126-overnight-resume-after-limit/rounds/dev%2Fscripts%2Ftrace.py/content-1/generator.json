@@ -1,0 +1,28 @@
+{
+  "result": "made",
+  "files": [
+    "dev/scripts/trace.py"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "def plugins() -> list[str]:",
+        "    \"\"\"Each plugin whose tests dev/ holds, as a plugin may have no architecture.\"\"\"",
+        "    return sorted(name for name in os.listdir(\"dev\") if os.path.isdir(f\"dev/{name}/tests\"))"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "    return sorted(name for name in os.listdir(\"dev\") if os.path.isdir(f\"dev/{name}/tests\"))"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "    \"\"\"Each plugin whose tests dev/ holds, as a plugin may have no architecture.\"\"\""
+      ]
+    }
+  ]
+}

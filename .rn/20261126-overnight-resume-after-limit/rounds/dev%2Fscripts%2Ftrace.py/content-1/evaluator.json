@@ -1,0 +1,31 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "    \"\"\"Each plugin whose tests dev/ holds, as a plugin may have no architecture.\"\"\"",
+    "    return sorted(name for name in os.listdir(\"dev\") if os.path.isdir(f\"dev/{name}/tests\"))",
+    "    return [fault for folder in records(plugins()) for fault in double_faults(folder)]"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def plugins() -> list[str]:",
+    "    \"\"\"Each plugin whose tests dev/ holds, as a plugin may have no architecture.\"\"\"",
+    "    return sorted(name for name in os.listdir(\"dev\") if os.path.isdir(f\"dev/{name}/tests\"))"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "`doubles` reads each folder `recorded/` under each plugin's tests, as the guide's",
+    "Each result of a double from a record says: each line of each record names its event once, and,",
+    "where the file's name holds no version of a recorded run, its `source` and `shows`; and each call",
+    "`line(...)` or `lines(...)` of each double beside the folder, a Python file but a test, names a"
+   ]
+  }
+ ],
+ "more": []
+}
