@@ -195,7 +195,7 @@
         "by": "user"
       },
       {
-        "decision": "Write the user only what they act on, what they can try or the one thing they decide, with no line on where the run stands, as such a line is noise to them.",
+        "decision": "Write each message to the user in one shape, with no heading such as 「いま：」: first one sentence of what was done, with how far the run is to the try as (2/4) where it counts, then what the user does now, either one question with numbered options, each with a line on what it leads to and the recommended one marked, or the command to try, and nothing after it. List once, when making starts, what is made before the try. Tell nothing of rn's insides, such as a test or a fix, and end a turn on such an event with an empty reply, so the user sees how far the run has come and gives feedback at once, as Spec Kit and AI-DLC report progress against the plan shown first.",
         "by": "user"
       },
       {
@@ -207,13 +207,27 @@
         "by": "user"
       },
       {
-        "decision": "Open the pick with which to make first, rn's recommendation and why, then each need in the user's words alone, with no restated outcome and no means, so the user decides from the first line.",
+        "decision": "Show the pick as the question, then each need numbered in the user's words alone, with no restated outcome and no means, the recommended one marked with why in one sentence.",
+        "by": "user"
+      },
+      {
+        "decision": "Before choosing how to meet the picked need, look for what already meets it, such as Claude Code's own features, a tool its people have, or a part of the repository, reading public documents too, and make only what it lacks, as #62 found Claude Code's built-in auto-continue only after 8 of 10 deliverables.",
+        "by": "user"
+      },
+      {
+        "decision": "Send a change to a part that others share outside what the run delivers, such as the repository's checks, out of the run, asking the user once whether to give it its own issue, so the run holds only its purpose.",
+        "by": "user"
+      },
+      {
+        "decision": "Write each prompt in domain/ in three sections, Role, what the role is expected to achieve, Steps, each step's purpose and intent with only the plugin's own rules, and Output, what it hands back, as the entries hold the form that Claude Code fixes, so each line changes what the AI does.",
+        "by": "user"
+      },
+      {
+        "decision": "Read each rewritten prompt through with the user, one at a time, the orchestrator's first, as the user judges whether its length fits rn as they use and designed it.",
         "by": "user"
       }
     ],
-    "questions": [
-      "Which E2E finding of #62 to fix in rn first? (1) rn doesn't first ask whether what already exists meets the need: it found Claude Code's built-in autoContinueAtUsageLimit only after making 8 of 10 deliverables of overnight; (2) the messages: progress lines while a role works, a first line that is neither the question nor the try, and English mixed into the Japanese talk; (3) work outside the run's purpose, such as changes to ccpm's check.sh and trace.py, made inside the run, its cause in ccpm fixed by #94 but rn having no judgment to send such work out. Recommended: 1, as fewer deliverables leave 2 and 3 fewer places to happen. The #62 run is paused with draft PR #93, handed over for the user's night test of the built-in auto-continue."
-    ]
+    "questions": []
   },
   "state": {
     "issues": {
@@ -305,9 +319,50 @@
       },
       {
         "for": "O1",
+        "settles": "the prompt best practice and its template, in Role, Steps, and Output",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain/best-practices/prompt",
+            "kind": "meta",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "the README and the architecture, for messages in one shape and the findings of #62",
+        "deliverables": [
+          {
+            "path": "plugins/rn/README.md",
+            "kind": "readme",
+            "status": "open"
+          },
+          {
+            "path": "dev/rn/architecture.md",
+            "kind": "architecture",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "the prompts, rewritten in Role, Steps, and Output with the fixes of the findings of #62, read through with the user one at a time",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain",
+            "kind": "prompt",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
         "settles": "the user's E2E run of rn from this branch on #62, up to the first real check, as the solution's assumption test",
         "deliverables": [],
-        "status": "trying"
+        "status": "open"
       },
       {
         "for": "O2",
