@@ -177,6 +177,22 @@
       {
         "decision": "Keep /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, so the user starts, stops, picks up, approves, and asks for a mend each by its own command.",
         "by": "user"
+      },
+      {
+        "decision": "Check the pull request whole before the merge is proposed, as any careful team does.",
+        "by": "user"
+      },
+      {
+        "decision": "Leave the pull request's CI to the user, who sees it on the pull request before they merge, as waiting for it brings nothing in the user's hands earlier.",
+        "by": "user"
+      },
+      {
+        "decision": "Have /rn:up go on with the run of the branch the user is on, and ask which only elsewhere, so the user names the run by where they type.",
+        "by": "user"
+      },
+      {
+        "decision": "Write each prompt's steps by their purpose and intent, checked against every condition of the prompt best practice, so the AI judges a case the steps don't name.",
+        "by": "user"
       }
     ],
     "questions": []
@@ -268,6 +284,12 @@
         "settles": "a desk trace of the whole run in order, from the issue to the walking skeleton in the user's hands",
         "deliverables": [],
         "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the user's E2E run of rn from this branch on #62, up to the first real check, as the solution's assumption test",
+        "deliverables": [],
+        "status": "trying"
       },
       {
         "for": "O2",
