@@ -1,0 +1,9 @@
+{
+  "result": "made",
+  "files": ["plugins/overnight/CHANGELOG.md"],
+  "good": [
+    {"condition": "N1", "lines": ["## [0.1.0] - 2026-11-26", "### Added"]},
+    {"condition": "N2", "lines": ["- overnight resumes the work that the usage limit stopped, from where it stopped, each time the", "  limit lifts, so you find the work you left at night done in the morning."]},
+    {"condition": "N3", "lines": ["- overnight resumes the work that the usage limit stopped, from where it stopped, each time the", "  limit lifts, so you find the work you left at night done in the morning."]}
+  ]
+}
