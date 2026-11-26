@@ -1,0 +1,38 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "held design pyrefly check --search-path plugins/overnight/scripts \\",
+    "  --search-path dev/overnight/tests/unit \\",
+    "  plugins/overnight/scripts/*/*.py dev/overnight/tests/unit/*.py",
+    "for unit in dev/*/tests/unit; do",
+    "  [ ! -d \"$unit\" ] || plugin_tests=\"$plugin_tests $unit\"",
+    "    coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider $plugin_tests",
+    "  COVERAGE_FILE=\"$scratch/.coverage\" held tests coverage report"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "# The checks' own Python, and each plugin's code with its tests, as a type that doesn't fit across a",
+    "# call is a fault no test may reach.",
+    "# The unit tests of each plugin run on each push, found by their folder, as a plugin may have no",
+    "# architecture.",
+    "  echo \"check.sh: which lines of the plugins' code the tests run goes unchecked, as\"\\"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "# The checks CI runs on every push, run from the top of the repository with the tools of",
+    "# pyproject.toml's dev group: the checks' own code, the best practices, the figures, and the",
+    "# A behavior that no test checks can break unseen, so the tests run every line and branch of what",
+    "# pyproject.toml has coverage count, as the code best practice's N7 asks.",
+    "  COVERAGE_FILE=\"$scratch/.coverage\" COVERAGE_PROCESS_START=\"$PWD/pyproject.toml\" \\"
+   ]
+  }
+ ],
+ "more": []
+}

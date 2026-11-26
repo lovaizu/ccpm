@@ -51,13 +51,17 @@ else
     "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
-# The checks' own Python, and rn's code with its tests, as a type that doesn't fit across a call is a
-# fault no test may reach.
+# The checks' own Python, and each plugin's code with its tests, as a type that doesn't fit across a
+# call is a fault no test may reach.
 held design pyrefly check --search-path dev/scripts --search-path plugins/rn/domain/scripts dev/scripts/*.py
 
 held design pyrefly check --search-path plugins/rn/domain/scripts --search-path dev/rn/tests \
   plugins/rn/domain/scripts/*.py plugins/rn/domain/scripts/*/*.py \
   dev/rn/tests/*.py dev/rn/tests/*/*.py
+
+held design pyrefly check --search-path plugins/overnight/scripts \
+  --search-path dev/overnight/tests/unit \
+  plugins/overnight/scripts/*/*.py dev/overnight/tests/unit/*.py
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
@@ -99,12 +103,11 @@ python3 dev/scripts/standalone.py check
 # the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
-# The unit tests of each plugin run on each push.
+# The unit tests of each plugin run on each push, found by their folder, as a plugin may have no
+# architecture.
 plugin_tests=""
-for architecture in dev/*/architecture.md; do
-  plugin="${architecture#dev/}"
-  plugin="${plugin%/architecture.md}"
-  [ ! -d "dev/$plugin/tests/unit" ] || plugin_tests="$plugin_tests dev/$plugin/tests/unit"
+for unit in dev/*/tests/unit; do
+  [ ! -d "$unit" ] || plugin_tests="$plugin_tests $unit"
 done
 
 # A double that gives what the real thing never would passes a test that the real one fails, so each
@@ -124,7 +127,7 @@ if command -v coverage >/dev/null 2>&1; then
   COVERAGE_FILE="$scratch/.coverage" held tests coverage report
 else
   pytest -q -n auto $plugin_tests
-  echo "check.sh: which lines of rn's code the tests run goes unchecked, as"\
+  echo "check.sh: which lines of the plugins' code the tests run goes unchecked, as"\
     "coverage isn't installed. It comes with pyproject.toml's test-quality group, on Python 3.11"\
     "or later"
 fi

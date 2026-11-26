@@ -1,0 +1,38 @@
+{
+ "result": "made",
+ "files": [
+  "dev/scripts/check.sh"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "for unit in dev/*/tests/unit; do",
+    "  [ ! -d \"$unit\" ] || plugin_tests=\"$plugin_tests $unit\"",
+    "held design pyrefly check --search-path plugins/overnight/scripts \\",
+    "  --search-path dev/overnight/tests/unit \\",
+    "  plugins/overnight/scripts/*/*.py dev/overnight/tests/unit/*.py"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "for unit in dev/*/tests/unit; do",
+    "  [ ! -d \"$unit\" ] || plugin_tests=\"$plugin_tests $unit\"",
+    "held design pyrefly check --search-path plugins/overnight/scripts \\",
+    "  --search-path dev/overnight/tests/unit \\",
+    "  plugins/overnight/scripts/*/*.py dev/overnight/tests/unit/*.py"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "for unit in dev/*/tests/unit; do",
+    "  [ ! -d \"$unit\" ] || plugin_tests=\"$plugin_tests $unit\"",
+    "held design pyrefly check --search-path plugins/overnight/scripts \\",
+    "  --search-path dev/overnight/tests/unit \\",
+    "  plugins/overnight/scripts/*/*.py dev/overnight/tests/unit/*.py"
+   ]
+  }
+ ]
+}
