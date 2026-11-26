@@ -17,4 +17,5 @@ from fault import end
 from rounds.command import main
 
 if __name__ == "__main__":
-    end(lambda: main(sys.argv[1:], os.getcwd(), os.path.dirname(SCRIPTS), sys.stdin.read))
+    root = os.path.dirname(os.path.dirname(SCRIPTS))
+    end(lambda: main(sys.argv[1:], os.getcwd(), root, sys.stdin.read))
