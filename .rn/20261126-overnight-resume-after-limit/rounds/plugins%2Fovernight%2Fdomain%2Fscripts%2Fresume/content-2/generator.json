@@ -1,0 +1,71 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/domain/scripts/resume/__init__.py",
+    "plugins/overnight/domain/scripts/resume/__main__.py",
+    "plugins/overnight/domain/scripts/resume/command.py",
+    "plugins/overnight/domain/scripts/resume/wait.py",
+    "dev/overnight/tests/unit/conftest.py",
+    "pyproject.toml",
+    "dev/scripts/check.sh"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides what resume takes and what it leaves behind, as Claude Code runs it when a turn ends at",
+        "\"\"\"Decides when the waiter resumes the session: it sleeps out its interval, then becomes the",
+        "`hooks/hooks.json`: `python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/resume\"`, with the StopFailure",
+        "# domain/scripts/, this folder's parent, so that folder takes its place.",
+        "    \"\"\"Starts the waiter in a session of its own, so that it outlives the hook and the Claude Code"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "    \"\"\"The exit code and stderr of resume on the hook's input, with `claude` the path of the",
+        "    `claude` command or None where it isn't found, `waiter` the command that starts wait.py, and",
+        "    `leave` what starts a command in a folder and outlives the hook.",
+        "`python3 wait.py <seconds> <command> [<argument> ...]`, which only resume's hook gives it.\"\"\""
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "FIELDS = (\"session_id\", \"transcript_path\", \"cwd\")",
+        "RATE_LIMIT = \"rate_limit\"",
+        "                try:",
+        "                    record = json.loads(line)",
+        "                if \"permissionMode\" in record:",
+        "    time.sleep(float(sys.argv[1]))",
+        "    os.execv(sys.argv[2], sys.argv[2:])"
+      ]
+    },
+    {
+      "condition": "N4",
+      "lines": [
+        "SCRIPTS = os.path.join(TOP, \"plugins\", \"overnight\", \"domain\", \"scripts\")",
+        "HERE = os.path.dirname(os.path.abspath(__file__))",
+        "sys.path[0] = os.path.dirname(HERE)"
+      ]
+    },
+    {
+      "condition": "N7",
+      "lines": [
+        "  \"*/overnight/domain/scripts/**/*.py\",",
+        "    resumed = [claude, \"-p\", \"--resume\", session_id, \"--permission-mode\", mode, PROMPT]",
+        "        raise Wrong(f\"the hook's input isn't JSON: {wrong}\") from wrong"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "    except Wrong as wrong:",
+        "        return 1, f\"resume: {wrong}\\n\"",
+        "            f\"the hook's input must give {name} as a string, as Claude Code gives a StopFailure,\"",
+        "        raise Wrong(f\"{INTERVAL_VARIABLE} must be a whole number of seconds from 1, not {given!r}\")",
+        "            raise Wrong(\"claude isn't on PATH, so no waiter can resume the session\")"
+      ]
+    }
+  ]
+}

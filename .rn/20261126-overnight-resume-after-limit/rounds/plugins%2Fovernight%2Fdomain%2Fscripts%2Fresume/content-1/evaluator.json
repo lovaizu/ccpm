@@ -1,0 +1,61 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N2",
+      "lines": [
+        "    \"\"\"The exit code and stderr of resume on the hook's input, with `claude` the path of the",
+        "    `claude` command or None where it isn't found, `waiter` the command that starts wait.py, and",
+        "    `leave` what starts a command in a folder and outlives the hook.",
+        "`python3 wait.py <seconds> <command> [<argument> ...]`, which only resume's hook gives it.\"\"\""
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "    0 with nothing said, once it left the waiter: `waiter` with the interval and",
+        "    0 with nothing said, leaving nothing, where the input's `error` isn't `rate_limit`.",
+        "    1 with `resume: <what's wrong>`, leaving nothing, where the input isn't a JSON object with",
+        "    time.sleep(float(sys.argv[1]))",
+        "    os.execv(sys.argv[2], sys.argv[2:])"
+      ]
+    },
+    {
+      "condition": "N4",
+      "lines": [
+        "HERE = os.path.dirname(os.path.abspath(__file__))",
+        "sys.path[0] = os.path.dirname(HERE)"
+      ]
+    },
+    {
+      "condition": "N6",
+      "lines": [
+        "from resume.command import PROMPT, main",
+        "    answer = main(stdin(given), {}, claude, WAITER, left)",
+        "        [sys.executable, FOLDER],"
+      ]
+    },
+    {
+      "condition": "N7",
+      "lines": [
+        "    assert left.started == [([*WAITER, \"900\", *resumed(claude, \"bypassPermissions\")], project)]",
+        "    assert (ran.returncode, ran.stdout, ran.stderr) == (0, b\"\", b\"\")",
+        "    assert call[\"pid\"] == waiter.pid"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "condition": "N1",
+      "good_when": "the maintainer who wants to change how the waiter outlives the hook, such as in its own session with its output closed, learns from the opening of the module that holds it that this module alone decides it, rather than being sent to command.py by __init__.py's and command.py's openings, which both say command decides the waiter it leaves behind"
+    },
+    {
+      "condition": "N5",
+      "good_when": "the maintainer who changes how OVERNIGHT_INTERVAL_SECONDS is read sees a test fail once a value of digits that are not ASCII, such as the one the code's own comment names, is no longer refused with the variable's message, as today the refusal cases hold zero, negative, fraction, words, and empty only, and every test still passes with that guard taken out"
+    },
+    {
+      "condition": "N8",
+      "good_when": "whoever runs the hook by hand with an input whose cwd is a folder not on their machine, such as the documented sample's \"/Users/...\" once they have mended its transcript_path, gets a `resume:` line naming cwd and the folder, as they do for a transcript that can't be read, rather than a Python traceback ending in FileNotFoundError"
+    }
+  ]
+}

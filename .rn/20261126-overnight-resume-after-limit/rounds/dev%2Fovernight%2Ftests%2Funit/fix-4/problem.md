@@ -1,0 +1,1 @@
+The run's decisions changed after this deliverable was put up: resume moves to plugins/overnight/domain/scripts/resume (the plugin guide's directory structure), and pytest finds the plugins' unit tests by pyproject.toml's testpaths. conftest.py and the tests still point at plugins/overnight/scripts, so they must follow resume to its new place, as the steering's decisions now say.

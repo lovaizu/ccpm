@@ -1,0 +1,87 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that resumes work stopped at the usage limit, from where it",
+    "stopped.",
+    "overnight is for you when you leave Claude Code working through the night, and the usage limit can",
+    "stop it. With it, you find the work done in the morning, not stopped since the small hours."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't go on in the window you left: it resumes in the background, and",
+    "  `claude --continue` shows it.",
+    "- overnight doesn't answer permission prompts: start the night's work in a mode that asks nothing,",
+    "  such as `auto`.",
+    "- overnight doesn't resume work stopped for another reason, such as a failed login.",
+    "- overnight doesn't keep your computer awake: leave it on, such as with `caffeinate` on macOS."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "[MIT](LICENSE)"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "When the usage limit stops a turn, overnight resumes that session every 15 minutes until the limit",
+    "lifts.",
+    "No: Claude Code runs overnight's hook each time the limit stops a turn, so you give the work as",
+    "No: overnight resumes the very session that stopped, with its whole conversation, and prompts it to",
+    "Within 15 minutes: overnight tries every 15 minutes, and each try that meets the limit waits for"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### \"Does the night's work have to start some other way?\"",
+    "No: Claude Code runs overnight's hook each time the limit stops a turn, so you give the work as",
+    "### \"Does the work start over?\"",
+    "No: overnight resumes the very session that stopped, with its whole conversation, and prompts it to",
+    "### \"When does the work start again after the limit lifts?\"",
+    "Within 15 minutes: overnight tries every 15 minutes, and each try that meets the limit waits for",
+    "### \"Does it do more than the session's permission mode allows?\"",
+    "No: overnight resumes the session in the permission mode it last ran in, as its transcript records"
+   ]
+  },
+  {
+   "condition": "N10",
+   "lines": [
+    "- [Changelog](CHANGELOG.md): for you after an update, the changes in each version.",
+    "- [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault."
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N3",
+   "good_when": "the reader learns at the top, before choosing to leave a night's work to it, that no run of this version has yet shown it resuming stopped work to its end, as they now learn it only partway into the walkthrough"
+  },
+  {
+   "condition": "N6",
+   "good_when": "the reader sees what a real night with this version gave: the stop at the limit, overnight's resume, and the commits made after it, as recorded from an actual run, not the run its design draws"
+  },
+  {
+   "condition": "N9",
+   "good_when": "the reader runs the README's two installation commands and they succeed, and `claude plugin details overnight@ccpm` shows `Hooks (1)  StopFailure`; now the install stops at `Plugin \"overnight\" not found in marketplace \"ccpm\"`"
+  }
+ ]
+}

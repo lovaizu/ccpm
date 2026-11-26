@@ -1,0 +1,73 @@
+{
+ "result": "made",
+ "files": [
+  "plugins/overnight/README.md"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "overnight is a Claude Code plugin that resumes work stopped at the usage limit, from where it",
+    "overnight is for you when you leave Claude Code working through the night, and the usage limit can",
+    "stop it. With it, you find the work done in the morning, not stopped since the small hours."
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "- overnight doesn't go on in the window you left: it resumes in the background, and",
+    "  `claude --continue` shows it.",
+    "- overnight doesn't answer permission prompts: start the night's work in a mode that asks nothing,",
+    "  such as `auto`.",
+    "- overnight doesn't resume work stopped for another reason, such as a failed login.",
+    "- overnight doesn't keep your computer awake: leave it on, such as with `caffeinate` on macOS."
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "In development: it resumes the stopped work, but doesn't yet tell you whether the work reached its",
+    "end."
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "[MIT](LICENSE)"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "## Non-goals",
+    "## Requirements",
+    "## Installation",
+    "## Walkthrough",
+    "## How it works",
+    "## Documentation",
+    "## License"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "When the usage limit stops a turn, overnight resumes that session every 15 minutes until the limit",
+    "lifts."
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "### \"Does the night's work have to start some other way?\"",
+    "No: Claude Code runs overnight's hook each time the limit stops a turn, so you give the work as",
+    "### \"Does the work start over?\"",
+    "No: overnight resumes the very session that stopped, with its whole conversation, and prompts it to",
+    "### \"When does the work start again after the limit lifts?\"",
+    "Within 15 minutes: overnight tries every 15 minutes, and each try that meets the limit waits for",
+    "the next. To try at another interval, set `OVERNIGHT_INTERVAL_SECONDS` to its seconds before you",
+    "### \"Does it do more than the session's permission mode allows?\"",
+    "No: overnight resumes the session in the permission mode it last ran in, as its transcript records"
+   ]
+  }
+ ]
+}

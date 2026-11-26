@@ -1,0 +1,45 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/domain/scripts/resume/__init__.py",
+    "plugins/overnight/domain/scripts/resume/__main__.py",
+    "plugins/overnight/domain/scripts/resume/command.py",
+    "plugins/overnight/domain/scripts/resume/wait.py",
+    "dev/overnight/tests/unit/conftest.py",
+    "pyproject.toml",
+    "dev/scripts/check.sh"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides what resume takes and what it leaves behind, as Claude Code runs it when a turn ends at",
+        "\"\"\"Decides when the waiter resumes the session: it sleeps out its interval, then becomes the",
+        "`hooks/hooks.json`: `python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/resume\"`, with the StopFailure",
+        "# domain/scripts/, this folder's parent, so that folder takes its place."
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "FIELDS = (\"session_id\", \"transcript_path\", \"cwd\")",
+        "RATE_LIMIT = \"rate_limit\""
+      ]
+    },
+    {
+      "condition": "N7",
+      "lines": [
+        "    resumed = [claude, \"-p\", \"--resume\", session_id, \"--permission-mode\", mode, PROMPT]",
+        "        raise Wrong(f\"the hook's input isn't JSON: {wrong}\") from wrong"
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "    except Wrong as wrong:",
+        "        return 1, f\"resume: {wrong}\\n\"",
+        "            f\"the hook's input must give {name} as a string, as Claude Code gives a StopFailure,\""
+      ]
+    }
+  ]
+}
