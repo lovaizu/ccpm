@@ -168,8 +168,8 @@ Strategies:
 - A stop taken from /rn:dn or the user's words, and a pick-up from /rn:up. [S2]\
   Intent: the user stops and goes on at the moment they choose, and a new run never asks about an
   old one.
-- A cancel taken from the user's words once they confirm what goes, removing the
-  run's worktree, branch, and pull request by a script. [S3]\
+- A cancel taken from the user's words once they confirm what goes, removing the run's worktree,
+  branch, and pull request by a script. [S3]\
   Intent: a cancel can't be undone, so only the user starts it, and nothing of the run is left
   for a pick-up to meet.
 - A stop waiting for each pruner at work to end, then stopping the other roles and pushing the
