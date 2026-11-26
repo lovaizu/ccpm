@@ -124,7 +124,7 @@
           {
             "path": "dev/scripts/check.sh",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "dev/scripts/trace.py",
