@@ -107,3 +107,21 @@ def test_a_field_beyond_the_form_passes_where_the_schema_allows_others(tmp_path:
     Then no fault is named, as JSON Schema allows other fields unless it says otherwise."""
     path = schema(tmp_path, {"type": "object", "properties": {"a": {"type": "string"}}})
     assert faults({"a": "x", "b": 1}, path) == []
+
+
+def test_a_constant_and_a_count_of_items_name_their_faults(tmp_path: Any) -> None:
+    """Given a schema of an object whose word is the constant fixed and whose lines hold one at
+    least.
+    When an object with another word and no line is checked.
+    Then each is named."""
+    path = schema(
+        tmp_path,
+        {
+            "type": "object",
+            "properties": {"result": {"const": "fixed"}, "lines": {"type": "array", "minItems": 1}},
+        },
+    )
+    assert faults({"result": "made", "lines": []}, path) == [
+        "/result: takes fixed",
+        "/lines: takes at least 1 item",
+    ]

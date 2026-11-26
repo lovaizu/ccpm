@@ -1,8 +1,8 @@
 """Decides whether a JSON value holds to the form that one of rn's schemas gives, by the keywords
 of JSON Schema that rn's schemas use: `type`, `required`, `properties`, `additionalProperties`,
-`items`, `enum`, `minLength`, `pattern`, `oneOf`, and `$ref`, to a definition in the same schema or
-to a part of another schema beside it. A schema that uses another keyword is a fault of rn's own,
-so it refuses that schema rather than pass what it didn't check."""
+`items`, `minItems`, `enum`, `const`, `minLength`, `pattern`, `oneOf`, and `$ref`, to a definition
+in the same schema or to a part of another schema beside it. A schema that uses another keyword is
+a fault of rn's own, so it refuses that schema rather than pass what it didn't check."""
 
 from __future__ import annotations
 
@@ -31,7 +31,9 @@ _CHECKED = {
     "properties",
     "additionalProperties",
     "items",
+    "minItems",
     "enum",
+    "const",
     "minLength",
     "pattern",
     "oneOf",
@@ -160,6 +162,10 @@ def _said(named: str | list[str]) -> str:
 
 def _scalar_faults(value: Any, schema: dict[str, Any], at: str) -> list[str]:
     found = []
+    if "const" in schema and value != schema["const"]:
+        found.append(f"{at}: takes {schema['const']}")
+    if isinstance(value, list) and len(value) < schema.get("minItems", 0):
+        found.append(f"{at}: takes at least {schema['minItems']} item")
     if "enum" in schema and value not in schema["enum"]:
         found.append(f"{at}: takes one of {', '.join(map(str, schema['enum']))}")
     if isinstance(value, str) and len(value) < schema.get("minLength", 0):
