@@ -32,7 +32,8 @@
           "Make a test design or a test implementation only when a key result needs what the user's run can't show, such as a measure over many runs, so no test machinery is built ahead of need.",
           "Make a deliverable in Rounds only when it's first made or remade, against every condition of its best practice, so its first quality is built in before the user touches it.",
           "Make a change that adds what the people can do in Rounds for the added part alone, with the evaluator judging only the conditions it touches, as only one who tries it as the people would sees whether it serves them.",
-          "Have the fixer make a change that brings back what was promised, such as a fault or the user's mend, at once, checking it by the kind's best practice and the unit tests itself, so a mend waits for no Round."
+          "Have the fixer make a change that brings back what was promised, such as a fault or the user's mend, at once, checking it by the kind's best practice and the unit tests itself, so a mend waits for no Round.",
+          "Call an opportunity 「できるようにしたいこと」 to rn's users, as they don't know the opportunity solution tree."
         ],
         "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
         "check": "Run rn from this branch on #62 up to the first real check; count what was made by then."
@@ -99,6 +100,6 @@
       }
     ],
     "deliverables": [],
-    "way": "One at a time, in the order of the steps; remove the old before making the new; tests green on each commit, pushed at once; no subagents."
+    "way": "One at a time, in the order of the steps; remove the old before making the new; tests green on each commit, pushed at once; no subagents. Work outside #86's purpose gets its own issue, herdr worktree, and pull request. Speak to the user in plain words. Don't edit issue #86."
   }
 }
