@@ -100,6 +100,10 @@
       {
         "decision": "overnight keeps the fixed interval and reads no reset time, neither from the resumed runs' stream-json output with --verbose nor through a runner that starts the night's work headless, as the user asked \"ロジック、output-format --verboseは使えないの？\": the Agent SDK reference documents SDKRateLimitEvent, \"Emitted when the session encounters a rate limit.\", with status rejected and an optional resetsAt, but the first stop of a night is the interactive session's, whose StopFailure input holds only error, error_details, and last_assistant_message, as the hooks reference lists them, and whose transcript holds the reset only in api_error_params, which Claude Code 2.1.332 describes as \"@internal\"; reading resetsAt in the resumed runs would bring the work back at most one interval, 15 minutes, sooner after each stop, which doesn't change whether the user finds it done in the morning, yet it would turn the waiter, which now only sleeps and then becomes claude, into a reader of claude's output; a runner would have the AI start each night's work through it, where the hook needs nothing of anyone; so no deliverable reopens, and stream-json output as a record of where the work stopped waits for need O2.1 to be picked.",
         "by": "rn"
+      },
+      {
+        "decision": "Of the evaluator's findings on plugins/overnight/README.md, content-1, the walkthrough is redone from the run of the solution's assumption test on the real thing once it records a result, showing the stop, overnight's resume, and the commits after it as that run gave them, and the line at the top that says where overnight isn't ready names what the recorded runs haven't shown yet, so the README comes after hooks/hooks.json and .claude-plugin/marketplace.json, which that run rests on, as a reader deciding to leave a night's work to overnight trusts what it promises only from what a run showed (readme best practice N3, N6); the finding that the installation stops at \"Plugin \\\"overnight\\\" not found in marketplace \\\"ccpm\\\"\" and the CHANGELOG link with no target are held good for the README, as no reader meets them once .claude-plugin/marketplace.json, hooks/hooks.json, and plugins/overnight/CHANGELOG.md, still open in the step, are done and the branch is merged, the marketplace serving main.",
+        "by": "rn"
       }
     ],
     "questions": []
@@ -125,11 +129,6 @@
             "path": "plugins/overnight/.claude-plugin/plugin.json",
             "kind": "light",
             "status": "done"
-          },
-          {
-            "path": "plugins/overnight/README.md",
-            "kind": "readme",
-            "status": "open"
           },
           {
             "path": "dev/overnight/tests/unit",
@@ -169,6 +168,11 @@
           {
             "path": ".claude-plugin/marketplace.json",
             "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/README.md",
+            "kind": "readme",
             "status": "open"
           },
           {
