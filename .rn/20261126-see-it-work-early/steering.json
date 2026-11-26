@@ -195,7 +195,7 @@
         "by": "user"
       },
       {
-        "decision": "Write each message to the user in one shape, with no heading such as 「いま：」: first one sentence of what was done, with how far the run is to the try as (2/4) where it counts, then what the user does now, either one question with numbered options, each with a line on what it leads to and the recommended one marked, or the command to try, and nothing after it. List once, when making starts, what is made before the try. Tell nothing of rn's insides, such as a test or a fix, and end a turn on such an event with an empty reply, so the user sees how far the run has come and gives feedback at once, as Spec Kit and AI-DLC report progress against the plan shown first.",
+        "decision": "Write each message to the user in one shape, with no heading such as 「いま：」: first one sentence of what was done, with how far the run is to the try as (2/4) where it counts, then what the user does now, either one question with numbered options, each with a line on what it leads to and the recommended one marked, or the command to try, and nothing after it. List once, when making starts, what is made before the try. At a role's end with nothing for the user to do, write the first part alone, in the terms of their need, never of rn's insides, so the user always sees how far the run has come and gives feedback at once, as Spec Kit and AI-DLC report progress against the plan shown first.",
         "by": "user"
       },
       {

@@ -81,8 +81,9 @@ nothing after it.
   commands to try it.
 - Once the user says which needs left to keep, give each issue's URL, and propose the merge with
   the pull request's URL, as marking it ready and merging stay theirs.
-- At an event of rn's insides with nothing for the user, such as a role's end, end the turn with an
-  empty reply, which Claude Code takes as a whole turn.
+- At a role's end with nothing for the user to do, write the first part alone, what was done in the
+  terms of their need, such as `invoice コマンドを、経理チームの方の立場で試しました（1/3）`, so
+  that they always see where the run is.
 
 Write in the language of the user's words, in the terms of their need, as rn's insides, such as the
 steering, a Round, or a role, mean nothing to them. Call an opportunity `できるようにしたいこと`
