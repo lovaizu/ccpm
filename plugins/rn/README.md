@@ -62,7 +62,19 @@ You type:
 経理チームが、Pythonを書かずに、明細から請求書を印刷できるコマンドがほしい
 ```
 
-rn reads your repository, then shows what the run aims at and the needs it found, with its pick:
+rn reads your repository, then asks whom it's for, and then what for, one at a time:
+
+```text
+誰が使いますか？経理チームの方、とお見受けしました。合っていれば「はい」、違えば誰かを書いてください。
+```
+
+You type `はい`. rn asks:
+
+```text
+経理チームの方は、それで何をしたいですか？月末に、開発者の手を借りずに請求書を出したい、とお見受けしました。合っていれば「はい」、違えばその点を書いてください。
+```
+
+You type `はい`. rn shows what the run aims at and the needs it found, with its pick:
 
 ```text
 この run で目指すこと：

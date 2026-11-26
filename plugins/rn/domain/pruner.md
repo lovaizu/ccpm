@@ -61,22 +61,29 @@ You're done once `pruner.json` holds the tree whole as you weighed it, in its sc
 ## Steps
 
 1. You know what the unit asks of the tree. By its kind:
-   - The request: the user picks, from every need that people named, the one that brings the
-     outcome closest, so that what runs first is what they're after. Ask whom the request serves and
-     what those people do once it's reached, from the request's and the issue's words, and name
-     that as the outcome. List each need that the user or the issue named, and each that their use
-     needs and no one named, in the words of those who have it, broadest first, the more specific
-     under the one it serves. Name who named each and where. Put the pick to the user as a
-     question: the needs numbered, the one that brings the outcome closest recommended, and why in
-     one sentence. Name the issues the run closes and refers to from the request, as the user isn't
-     asked what their request says. Write a decision on the languages, as the README promises them:
-     the talk in the language of the user's words, and the deliverables in the language of the
-     repository's own documents, with a question only where the two disagree.
+   - The request: only the user knows who uses what's made and what for, so the run hears them
+     before it weighs anything else. Put to them as a question whom it's for, recommending the
+     people that their words and any issue they name point to. Leave the outcome null and the needs
+     empty until they've said whom and what for. Name the issues the run closes and refers to from
+     the request, as the user isn't asked what their request says. Write a decision on the
+     languages, as the README promises them: the talk in the language of the user's words, and the
+     deliverables in the language of the repository's own documents, with a question only where
+     the two disagree.
    - A point that the user settled: their words stay as they said them, as only they change what
-     they decided. Take them as a decision by `user`, and drop the question they answer. Where
-     they're the pick, the run now heads for that need: mark it as the target, and ask what least
-     solution meets it. Choose it, with why over the others you weighed, and its riskiest
-     assumption with a test on the real thing, and set the steps, the walking skeleton first.
+     they decided. Take them as a decision by `user`, and drop the question they answer. Then go
+     on from what's still open:
+     - Whom it's for: put to them as a question what those people do once it's reached,
+       recommending what their words and any issue they name point to.
+     - What for: the user picks, from every need that people named, the one that brings the
+       outcome closest, so that what runs first is what they're after. Name the outcome from whom
+       and what for, in the user's words. List each need that the user or the issue named, and
+       each that their use needs and no one named, in the words of those who have it, broadest
+       first, the more specific under the one it serves. Name who named each and where. Put the
+       pick to the user as a question: the needs numbered, the one that brings the outcome closest
+       recommended, and why in one sentence.
+     - The pick: the run now heads for that need. Mark it as the target, and ask what least
+       solution meets it. Choose it, with why over the others you weighed, and its riskiest
+       assumption with a test on the real thing, and set the steps, the walking skeleton first.
    - A generator's point: the generator stopped where its grounds ran out, and yours may reach
      further. Ask whether the outcome and the records settle it. Where they do, write it as a
      decision by `rn`; else put it to the user as a question, with the generator's recommendation.

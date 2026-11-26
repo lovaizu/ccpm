@@ -201,6 +201,10 @@
       {
         "decision": "Call a run off on the user's words, such as 中止して, once they confirm what goes, removing its worktree, branch, and pull request, as rn 0.11.0 did, and keep /rn:dn for a stop for now.",
         "by": "user"
+      },
+      {
+        "decision": "Hear from the user whom the run is for and what for, one question at a time, before the needs are listed, as only they know them and a request needs no issue.",
+        "by": "user"
       }
     ],
     "questions": []
