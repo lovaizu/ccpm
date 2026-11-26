@@ -1,0 +1,9 @@
+{
+  "name": "overnight",
+  "description": "overnight resumes the work that your AI stopped at the usage limit, from where it stopped, each time the limit lifts, so you find it done in the morning.",
+  "version": "0.1.0",
+  "author": {
+    "name": "lovaizu"
+  },
+  "repository": "https://github.com/lovaizu/ccpm"
+}

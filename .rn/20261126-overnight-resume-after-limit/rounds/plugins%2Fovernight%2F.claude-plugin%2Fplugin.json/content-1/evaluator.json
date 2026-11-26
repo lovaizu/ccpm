@@ -1,0 +1,31 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "  \"name\": \"overnight\",",
+        "  \"description\": \"overnight resumes the work that your AI stopped at the usage limit, from where it stopped, each time the limit lifts, so you find it done in the morning.\",",
+        "  \"version\": \"0.1.0\","
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "  \"name\": \"overnight\",",
+        "  \"description\": \"overnight resumes the work that your AI stopped at the usage limit, from where it stopped, each time the limit lifts, so you find it done in the morning.\",",
+        "  \"version\": \"0.1.0\",",
+        "    \"name\": \"lovaizu\"",
+        "  \"repository\": \"https://github.com/lovaizu/ccpm\""
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "    \"name\": \"lovaizu\"",
+        "  \"repository\": \"https://github.com/lovaizu/ccpm\""
+      ]
+    }
+  ],
+  "more": []
+}
