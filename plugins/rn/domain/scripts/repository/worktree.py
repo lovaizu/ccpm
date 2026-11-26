@@ -1,7 +1,9 @@
 """Decides how a run's worktree comes to be and is found again: made with its branch from the
 default branch that origin's HEAD names, with the run's folder empty for the pruner's first
 result; found from the runs' branches whose committed steering hasn't ended, its worktree made
-again where none lies; and removed, here and on GitHub, where the user cancels it."""
+again where none lies; and removed, here and on GitHub, where the user cancels it. Where the user
+works in herdr, herdr opens each worktree made in a workspace of its own, as herdr shows only the
+worktrees it holds, and removes each it holds."""
 
 from __future__ import annotations
 
@@ -22,6 +24,8 @@ _ORIGINS = "refs/remotes/origin/rn-*"
 # What a pick-up fetches of origin: the runs' branches, each ref of one that origin no longer
 # holds pruned, so that a run deleted on GitHub is never picked up.
 _FETCH = ["git", "fetch", "-q", "--prune", "origin", f"+refs/heads/rn-*:{_ORIGINS}"]
+# The variable that herdr sets in each of its panes, by which rn tells that the user works in herdr.
+_HERDR = "HERDR_ENV"
 
 
 def new(run: RunPlace, host: Host) -> RunPlace:
@@ -33,10 +37,11 @@ def new(run: RunPlace, host: Host) -> RunPlace:
     Changes: adds the branch `rn-<name>` from the head of the default branch that
     `git symbolic-ref refs/remotes/origin/HEAD` names, tracking none, checks it out in the run's
     worktree, makes the run's folder there, empty, and keeps the runs' worktrees out of the user's
-    untracked files; the user's own worktree and branch stay as they were.
+    untracked files; where the user works in herdr, has herdr open the worktree in a workspace,
+    without the focus; the user's own worktree and branch stay as they were.
     Refuses: Missing where the run's repository isn't the top of a git repository, or
     `refs/remotes/origin/HEAD` names no default branch; Wrong where a run of the name already lies
-    there; CantRun where git fails, with what it said.
+    there; CantRun where git or herdr fails, with what it said.
     """
     top = host(["git", "rev-parse", "--show-toplevel"], run.repository)
     if top.code != 0 or os.path.realpath(top.out.strip()) != os.path.realpath(run.repository):
@@ -54,7 +59,16 @@ def new(run: RunPlace, host: Host) -> RunPlace:
     checked(host, [*add, default.out.strip()], run.repository, CantRun, what)
     _exclude(run, host)
     os.makedirs(run.folder)
+    _opened(run, host)
     return run
+
+
+def _opened(run: RunPlace, host: Host) -> None:
+    """Has herdr open the run's worktree in a workspace, where the user works in herdr."""
+    if os.environ.get(_HERDR):
+        opened = ["herdr", "worktree", "open", "--cwd", run.repository, "--path", run.worktree]
+        what = "herdr can't open the run's worktree"
+        checked(host, [*opened, "--no-focus"], run.repository, CantRun, what)
 
 
 def _exclude(run: RunPlace, host: Host) -> None:
@@ -165,6 +179,7 @@ def _made_again(run: RunPlace, host: Host) -> None:
     add = ["git", "worktree", "add", "-q", run.worktree, run.branch]
     checked(host, add, run.repository, CantRun, "git can't make the run's worktree again")
     _exclude(run, host)
+    _opened(run, host)
 
 
 class Gone(NamedTuple):
@@ -189,7 +204,8 @@ def removed(run: RunPlace, host: Host) -> Gone:
     said>`, or `the branch rn-<name> on GitHub, as git can't delete it: <what git said>`, each
     one line. A pull request that gh gives closed or merged, such as an earlier run's of the same
     branch's name, is left as it is.
-    Changes: removes the run's worktree, with each change in it that isn't committed, and then its
+    Changes: removes the run's worktree, with each change in it that isn't committed, by herdr
+    where herdr holds it open in a workspace, else by git, and then its
     local branch `rn-<name>`; then closes the branch's open pull request, before the branch goes,
     as GitHub closes it by itself once its branch is deleted; then deletes origin's branch
     `rn-<name>` and the repository's ref of it, or that ref alone where origin holds no such
@@ -206,13 +222,32 @@ def removed(run: RunPlace, host: Host) -> Gone:
             " as by git switch main, and cancel the run again"
         )
     top = run.repository
-    remove = ["git", "worktree", "remove", "--force", run.worktree]
-    checked(host, remove, top, CantRun, "git can't remove the run's worktree")
+    workspace = _workspace(run, host)
+    if workspace:
+        remove = ["herdr", "worktree", "remove", "--workspace", workspace, "--force"]
+        checked(host, remove, top, CantRun, "herdr can't remove the run's worktree")
+    else:
+        remove = ["git", "worktree", "remove", "--force", run.worktree]
+        checked(host, remove, top, CantRun, "git can't remove the run's worktree")
     checked(host, ["git", "branch", "-D", run.branch], top, CantRun, "git can't delete the branch")
     gone = Gone([], [])
     _pull_request_closed(run, host, gone)
     _branch_deleted(run, host, gone)
     return gone
+
+
+def _workspace(run: RunPlace, host: Host) -> str:
+    """The id of herdr's workspace that holds the run's worktree open, where the user works in
+    herdr and herdr lists one, else the empty string."""
+    if not os.environ.get(_HERDR):
+        return ""
+    listed = host(["herdr", "worktree", "list", "--cwd", run.repository], run.repository)
+    if listed.code != 0:
+        return ""
+    for each in json.loads(listed.out)["result"]["worktrees"]:
+        if os.path.realpath(each["path"]) == os.path.realpath(run.worktree):
+            return str(each["open_workspace_id"] or "")
+    return ""
 
 
 def _pull_request_closed(run: RunPlace, host: Host, gone: Gone) -> None:

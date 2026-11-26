@@ -348,6 +348,9 @@ Strategies:
 
 - rn's own git worktree and branch for each run. [P7.1]\
   Intent: the user goes on with their own work, and their side stays as it was.
+- Each run's worktree opened in a workspace of herdr where the user works in herdr, and removed by
+  herdr where it holds it. [P7.1]\
+  Intent: the user finds the run's worktree among herdr's, as herdr shows only those it holds.
 - The pull request opened as a draft, which the user marks ready. [P7.2]\
   Intent: nobody reviews or merges the work before the user has seen it checked whole.
 
@@ -370,7 +373,9 @@ plugins/rn/                        what Claude Code installs for the user
     └── scripts/                   each step with one right result, as a role runs it
 
 dev/rn/                            what only rn's developers use
-└── tests/unit/                    the unit tests of rn's code
+├── tests/unit/                    the unit tests of rn's code
+├── tests/gh/                      the double of gh, with its records
+└── tests/herdr/                   the double of herdr, with its records
 
 .claude/worktrees/                 rn's worktree of each run
 └── rn-<yyyymmdd>-<slug>/          one run's worktree, on the work's branch

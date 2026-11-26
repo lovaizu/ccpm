@@ -7,7 +7,9 @@ again from its local branch or from origin's, the local branches alone where git
 run in a folder that isn't a repository, and a steering that isn't JSON; and `removed`, a run
 cancelled here and on GitHub, one never pushed, one whose pull request is closed already, what it
 couldn't ask or remove on GitHub and why, a run in the user's checkout refused, and a worktree git
-can't remove."""
+can't remove; and, where the user works in herdr, a run's worktree opened in herdr when it's made
+and when it's made again, and a cancelled run's worktree removed by herdr where herdr holds it open,
+else by git."""
 
 from __future__ import annotations
 
@@ -19,6 +21,7 @@ import pytest
 import rn_files
 from fault import CantRun, Missing, Wrong
 from gh import gh_double
+from herdr import herdr_double
 from host import Ran, run
 from place import RunPlace
 from repo_files import git
@@ -300,3 +303,120 @@ def test_a_worktree_git_cant_remove_cant_run_and_keeps_the_branch(repo: str, hos
         removed(made, host)
     assert os.path.isdir(made.worktree)
     assert git(repo, "branch", "--list", made.branch) != ""
+
+
+def in_herdr(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Sets the session as one that herdr runs, as herdr sets HERDR_ENV in each of its panes."""
+    monkeypatch.setenv("HERDR_ENV", "1")
+
+
+def herdr_asked(gh_state: str) -> list[list[str]]:
+    """Each herdr command that the double was asked."""
+    return herdr_double.state(gh_state)["asked"]
+
+
+def test_a_run_made_in_herdr_is_opened_in_a_workspace_of_herdr(
+    repo: str, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given a session that herdr runs.
+    When a run is made.
+    Then herdr opens its worktree in a workspace, without the focus, and the worktree holds its
+    branch, tracking none."""
+    in_herdr(monkeypatch)
+    made = new(RunPlace(repo, NAME), host)
+    opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", made.worktree, "--no-focus"]
+    assert herdr_asked(gh_state) == [opened]
+    assert git(made.worktree, "branch", "--show-current") == f"{made.branch}\n"
+    ref = f"refs/heads/{made.branch}"
+    assert git(made.worktree, "for-each-ref", "--format=%(upstream)", ref) == "\n"
+
+
+def test_a_run_made_outside_herdr_asks_nothing_of_herdr(
+    repo: str, host: Any, gh_state: str
+) -> None:
+    """Given a session that herdr doesn't run.
+    When a run is made.
+    Then herdr is asked nothing."""
+    new(RunPlace(repo, NAME), host)
+    assert herdr_asked(gh_state) == []
+
+
+def test_a_worktree_made_again_in_herdr_is_opened_in_a_workspace_of_herdr(
+    repo: str, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given a session that herdr runs, and a run with work left whose worktree was removed.
+    When the runs are found.
+    Then the worktree lies there again, and herdr opens it."""
+    here = made_with(repo, NAME, [rn_files.step()], "2026-11-26T09:00:00")
+    git(repo, "worktree", "remove", "--force", here.worktree)
+    in_herdr(monkeypatch)
+    assert found(repo, host).runs == [here]
+    assert os.path.isfile(here.steering)
+    opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", here.worktree, "--no-focus"]
+    assert herdr_asked(gh_state) == [opened]
+
+
+def test_a_run_cancelled_in_herdr_is_removed_by_herdr(
+    repo: str, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given a session that herdr runs, and a run made there, with a change not committed.
+    When it's removed.
+    Then herdr removes the workspace's worktree, forced, and the worktree and the branch are
+    gone."""
+    in_herdr(monkeypatch)
+    made = new(RunPlace(repo, NAME), host)
+    with open(os.path.join(made.worktree, "draft.md"), "w", encoding="utf-8") as f:
+        f.write("draft\n")
+    workspace = herdr_double.state(gh_state)["open"][made.worktree]
+    removed(made, host)
+    assert ["herdr", "worktree", "remove", "--workspace", workspace, "--force"] in herdr_asked(
+        gh_state
+    )
+    assert not os.path.exists(made.worktree)
+    assert git(repo, "branch", "--list", made.branch) == ""
+
+
+def test_a_run_that_herdr_holds_no_workspace_of_is_removed_by_git(
+    repo: str, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given a session that herdr runs, and a run made before, outside herdr.
+    When it's removed.
+    Then herdr removes nothing, and git removes the worktree and the branch."""
+    made = new(RunPlace(repo, NAME), host)
+    in_herdr(monkeypatch)
+    removed(made, host)
+    assert not [each for each in herdr_asked(gh_state) if each[1:3] == ["worktree", "remove"]]
+    assert not os.path.exists(made.worktree)
+    assert git(repo, "branch", "--list", made.branch) == ""
+
+
+def test_a_run_cancelled_in_herdr_beside_another_is_removed_alone(
+    repo: str, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given a session that herdr runs, and two runs made there.
+    When the second is removed.
+    Then herdr removes its workspace's worktree alone, and the first stays."""
+    in_herdr(monkeypatch)
+    first = new(RunPlace(repo, NAME), host)
+    second = new(RunPlace(repo, OTHER), host)
+    workspace = herdr_double.state(gh_state)["open"][second.worktree]
+    removed(second, host)
+    assert ["herdr", "worktree", "remove", "--workspace", workspace, "--force"] in herdr_asked(
+        gh_state
+    )
+    assert not os.path.exists(second.worktree)
+    assert os.path.isdir(first.worktree)
+
+
+def test_a_run_whose_worktrees_herdr_cant_list_is_removed_by_git(
+    repo: str, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Given a session that herdr runs, a run made there, and herdr unable to list the worktrees.
+    When it's removed.
+    Then git removes the worktree and the branch."""
+    in_herdr(monkeypatch)
+    made = new(RunPlace(repo, NAME), host)
+    herdr_double.unlisted(gh_state)
+    removed(made, host)
+    assert not os.path.exists(made.worktree)
+    assert git(repo, "branch", "--list", made.branch) == ""
