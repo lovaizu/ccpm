@@ -53,9 +53,11 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _commit(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
-    result = _read(run.pruner, os.path.join(schemas, "pruner.schema.json"), "the pruner's result")
+    result = form.held(
+        run.pruner, os.path.join(schemas, "pruner.schema.json"), "the pruner's result"
+    )
     before = (
-        _read(run.steering, os.path.join(schemas, "steering.schema.json"), "the steering")
+        form.held(run.steering, os.path.join(schemas, "steering.schema.json"), "the steering")
         if os.path.isfile(run.steering)
         else None
     )
@@ -84,23 +86,7 @@ def _due(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
 
 
 def _steering(run: RunPlace, schemas: str) -> dict[str, Any]:
-    return _read(run.steering, os.path.join(schemas, "steering.schema.json"), "the steering")
-
-
-def _read(path: str, schema: str, what: str) -> dict[str, Any]:
-    try:
-        with open(path, encoding="utf-8") as f:
-            value = json.load(f)
-    except FileNotFoundError:
-        raise Wrong(f"{path}: no {what} lies there") from None
-    except json.JSONDecodeError as error:
-        raise Wrong(f"{path}: {what} isn't JSON: {error}") from None
-    found = form.faults(value, schema)
-    if found:
-        raise Wrong(
-            f"{path}: {what} leaves its schema, {os.path.basename(schema)}: " + "; ".join(found)
-        )
-    return value
+    return form.held(run.steering, os.path.join(schemas, "steering.schema.json"), "the steering")
 
 
 def _committed(run: RunPlace, steering: dict[str, Any], message: str, host: Host) -> str:

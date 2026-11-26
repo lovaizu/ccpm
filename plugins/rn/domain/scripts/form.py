@@ -11,6 +11,8 @@ import os
 import re
 from typing import Any
 
+from fault import Wrong
+
 # Each JSON type by its name in a schema, and the Python types that `json.load` gives for it. A
 # bool is an int in Python, so `integer` takes int alone, and a bool is held apart below.
 _TYPES: dict[str, tuple[type, ...]] = {
@@ -36,6 +38,30 @@ _CHECKED = {
     "$ref",
 }
 _TOLD = {"$schema", "title", "description", "definitions"}
+
+
+def held(path: str, schema_path: str, what: str) -> dict[str, Any]:
+    """A file that one of rn's roles or scripts wrote, read and checked against its schema.
+
+    Takes: the file's path, its schema's path, and what the file is, such as `the steering`, for
+    the message.
+    Gives: the file's JSON.
+    Changes: nothing.
+    Refuses: Wrong where no file lies there, it isn't JSON, or it leaves its schema, naming each
+    place as `faults` does.
+    """
+    try:
+        with open(path, encoding="utf-8") as f:
+            value = json.load(f)
+    except FileNotFoundError:
+        raise Wrong(f"{path}: no {what} lies there") from None
+    except json.JSONDecodeError as error:
+        raise Wrong(f"{path}: {what} isn't JSON: {error}") from None
+    found = faults(value, schema_path)
+    if found:
+        name = os.path.basename(schema_path)
+        raise Wrong(f"{path}: {what} leaves its schema, {name}: " + "; ".join(found))
+    return value
 
 
 def read(path: str) -> dict[str, Any]:

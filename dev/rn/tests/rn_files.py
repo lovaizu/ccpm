@@ -10,6 +10,7 @@ from __future__ import annotations
 import functools
 import json
 import os
+import subprocess
 from typing import Any
 
 from repo_files import git, write_files
@@ -159,6 +160,31 @@ def repository(folder: str, branch: str = "main") -> str:
     git(folder, "add", "-A")
     git(folder, "commit", "-q", "-m", "accounting")
     return os.path.realpath(folder)
+
+
+def with_origin(repo: str, origin: str) -> str:
+    """Gives the repository a bare repository as its remote `origin`, holding its branch, and gives
+    the remote's path."""
+    os.makedirs(origin)
+    git(origin, "init", "-q", "--bare")
+    git(repo, "remote", "add", "origin", origin)
+    branch = git(repo, "branch", "--show-current").strip()
+    git(repo, "push", "-q", "-u", "origin", branch)
+    git(repo, "remote", "set-head", "origin", branch)
+    return origin
+
+
+def committed_steering(
+    worktree: str, name: str, value: Any, when: str = "2026-11-26T09:00:00"
+) -> None:
+    """Writes the run's steering in its worktree, and commits it as made at the time given, as the
+    runs' branches are ordered by their last commit's time."""
+    write_json(os.path.join(worktree, ".rn", name, "steering.json"), value)
+    git(worktree, "add", "-A")
+    env = {**os.environ, "GIT_COMMITTER_DATE": when, "GIT_AUTHOR_DATE": when}
+    subprocess.run(
+        ["git", "-C", worktree, "commit", "-q", "-m", f"steering of {name}"], env=env, check=True
+    )
 
 
 # The hook's input.
