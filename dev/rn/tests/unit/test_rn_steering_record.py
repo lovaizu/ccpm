@@ -73,6 +73,18 @@ def test_a_later_result_keeps_the_final_checks_pass() -> None:
     assert made["state"]["checked"] is True
 
 
+def test_a_result_that_adds_a_step_takes_the_final_check_again() -> None:
+    """Given a steering whose step is done and the final check passed, and a result that keeps the
+    step and adds one for a need left.
+    When the result is taken in.
+    Then the final check is no longer passed, as the pull request grows."""
+    held = rn_files.steering([rn_files.step("done")])
+    held["state"]["checked"] = True
+    added = dict(STEP, settles="print a second page")
+    made = taken_in(held, result(steps=[STEP, added]))
+    assert "checked" not in made["state"]
+
+
 def test_a_step_with_each_deliverable_done_is_marked_trying() -> None:
     """Given a steering whose step has each deliverable done.
     When step 1 is marked trying.

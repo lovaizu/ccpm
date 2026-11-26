@@ -1,6 +1,7 @@
 """The unit cases of rounds/command.py and rounds/files.py, rounds' command line as the orchestrator
 runs it: a deliverable's course from its first Round to its put-up, each Round's folder by its
-stage and number with the decisions' count it started with, a point weighed, a Fix made from the
+step, its stage, and its number with the decisions' count it started with, a deliverable that a
+later step names again starting its own Rounds in that step, a point weighed, a Fix made from the
 problem's words and fixed, and each refusal: a result out of its schema, a Fix before the Rounds
 are over or with no words, a folder that's no Round's, and arguments of another form."""
 
@@ -16,7 +17,7 @@ from place import RunPlace
 from rounds.command import USAGE, main
 
 NAME = "20261126-invoice-from-statement"
-ROUNDS = f".rn/{NAME}/rounds/invoice%2F__main__.py"
+ROUNDS = f".rn/{NAME}/rounds/1/invoice%2F__main__.py"
 CODE = os.path.join(rn_files.PRACTICES, "code")
 REFACTOR = os.path.join(rn_files.PRACTICES, "refactor-code")
 MADE = {"result": "made", "files": [rn_files.COMMAND], "good": []}
@@ -181,3 +182,45 @@ def test_a_deliverable_no_step_names_or_of_a_kind_with_no_best_practice_is_refus
     kind_of(made, kind)
     code, _, err = call(made, "next", deliverable)
     assert (code, says in err) == (1, True)
+
+
+def test_a_deliverable_that_a_later_step_names_again_starts_its_rounds_in_that_step(
+    made: RunPlace,
+) -> None:
+    """Given a deliverable whose Rounds in step 1 are over, its step done, and a step 2 that adds
+    to it.
+    When `next` runs on it.
+    Then content-1 of step 2 starts, and a Fix of it lies in step 2."""
+    call(made, "next", rn_files.COMMAND)
+    first = os.path.join(made.worktree, ROUNDS, "content-1")
+    wrote(made, first, "generator.json", MADE)
+    call(made, "next", rn_files.COMMAND)
+    wrote(made, first, "evaluator.json", GOOD)
+    call(made, "next", rn_files.COMMAND)
+    wrote(made, os.path.join(ROUNDS, "refactor-2"), "generator.json", MADE)
+    added = dict(rn_files.step(), settles="print a second page")
+    rn_files.write_json(
+        made.steering,
+        rn_files.steering([rn_files.step("done", done=(rn_files.COMMAND, rn_files.GUIDE)), added]),
+    )
+    later = os.path.join(made.worktree, f".rn/{NAME}/rounds/2/invoice%2F__main__.py", "content-1")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"generator\t{later}\t{CODE}\n", "")
+
+
+def test_a_fix_of_a_deliverable_whose_step_is_done_lies_in_that_step(made: RunPlace) -> None:
+    """Given a deliverable whose Rounds in step 1 are over, and step 1 done.
+    When `fix` runs with the user's words.
+    Then the Fix lies in step 1's folder of the deliverable."""
+    call(made, "next", rn_files.COMMAND)
+    first = os.path.join(made.worktree, ROUNDS, "content-1")
+    wrote(made, first, "generator.json", MADE)
+    call(made, "next", rn_files.COMMAND)
+    wrote(made, first, "evaluator.json", GOOD)
+    call(made, "next", rn_files.COMMAND)
+    wrote(made, os.path.join(ROUNDS, "refactor-2"), "generator.json", MADE)
+    rn_files.write_json(
+        made.steering,
+        rn_files.steering([rn_files.step("done", done=(rn_files.COMMAND, rn_files.GUIDE))]),
+    )
+    fix = os.path.join(made.worktree, ROUNDS, "fix-3")
+    assert call(made, "fix", rn_files.COMMAND, words="the total is off") == (0, f"{fix}\n", "")

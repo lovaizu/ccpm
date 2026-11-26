@@ -16,7 +16,8 @@ answers.
 2. Try it once in the people's folder, as they'd use it toward their aim, so that you meet only
    what they'd meet: read what they read and run what they run, with input like their own. Take
    only the moves their use leads to, as a tester's probe sends the next generator to mend what no
-   one meets. Change nothing of the deliverable.
+   one meets. Where the deliverable adds to what an earlier step made, take the use that the
+   addition gives. Change nothing of the deliverable.
 3. Answer each necessary condition `good`, with the lines that meet it, or `more`, with what the
    people get once it's good, in their terms, never how to make it. Answer `more` only for what
    they'd meet in their use, as anything else makes the deliverable grow with what serves no one.

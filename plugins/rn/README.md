@@ -6,8 +6,8 @@ rn is for you when you have Claude Code make something in a GitHub repository fo
 use. With it, you see what you asked for work early, and you decide only what's yours: which
 need to meet first, and how it works for you once you try it.
 
-This version makes the first working slice of a request. Growing it after you try it, one
-addition at a time, comes in a later version.
+rn makes the first working slice of a request, and once you've tried it, grows it one addition
+at a time, for each need you choose to make now.
 
 ## Non-goals
 
@@ -137,16 +137,16 @@ pick:
 
 選ばなかった2から4を、どうしますか？
 
-1. 2と3はissueに残し、4は残さない（おすすめ）
-   2と3は印刷を毎月使うのに要り、4は使う人が少ないうちは要りません
+1. 2を今作り、3と4はissueに残す（おすすめ）
+   2がないと、経理チームの方は請求書を月末にそのまま出せません
 2. すべてissueに残す
-3. どれも残さない
 ```
 
-You type `1`. rn shows:
+You type `1`. rn grows the command to meet 2 the same way, one addition, and hands it to you
+to try. Once you type `/rn:ty` again, it asks of 3 and 4, and you keep both in issues. rn shows:
 
 ```text
-2と3をissueに残しました：https://github.com/lovaizu/playground/issues/39 、https://github.com/lovaizu/playground/issues/40
+3と4をissueに残しました：https://github.com/lovaizu/playground/issues/39 、https://github.com/lovaizu/playground/issues/40
 
 PRを「レビュー可」にしてから、マージしてください：https://github.com/lovaizu/playground/pull/38
 ```
@@ -193,8 +193,8 @@ rn meant. Then you try it yourself.
 
 ### "Does it drop part of the request?"
 
-No. Each need that you or the issue named stays on the list. At the end, rn proposes for each one left
-whether to keep it in an issue.
+No. Each need that you or the issue named stays on the list. Once you've tried what runs, rn
+proposes for each one left whether to make it now or keep it in an issue.
 
 ### "Does it change what others share?"
 

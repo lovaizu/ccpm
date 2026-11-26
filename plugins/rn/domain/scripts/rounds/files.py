@@ -1,6 +1,8 @@
 """Decides where each Round and each Fix of a deliverable lies in the run's folder and what it
-holds: `rounds/<deliverable>/<stage>-<n>/`, the deliverable's path percent-encoded whole, so that
-no two paths share a folder, `<stage>` `content` or `refactor` for a Round and `fix` for a Fix, and
+holds: `rounds/<step>/<deliverable>/<stage>-<n>/`, `<step>` the number of the step that makes or
+adds to the deliverable, so that a later step that adds to it starts its own Rounds, the
+deliverable's path percent-encoded whole, so that no two paths share a folder, `<stage>`
+`content` or `refactor` for a Round and `fix` for a Fix, and
 `<n>` its number among the deliverable's Rounds and Fixes, from 1 in the order made; each holding
 `start.json`, how many decisions the run held when it started, then the role's result, and
 `weighed.json` once a pruner weighed it, and a Fix its problem in `problem.md`."""
@@ -43,21 +45,21 @@ class Entry(NamedTuple):
     weighed: bool
 
 
-def folder_of(run: RunPlace, deliverable: str) -> str:
-    """The folder of the deliverable's Rounds and Fixes."""
-    return os.path.join(run.rounds, quote(deliverable, safe=""))
+def folder_of(run: RunPlace, step: int, deliverable: str) -> str:
+    """The folder of the deliverable's Rounds and Fixes in the step."""
+    return os.path.join(run.rounds, str(step), quote(deliverable, safe=""))
 
 
-def entries(run: RunPlace, deliverable: str, schemas: str) -> list[Entry]:
-    """Each Round and Fix of the deliverable, in the order made.
+def entries(root: str, schemas: str) -> list[Entry]:
+    """Each Round and Fix of the deliverable in the step, in the order made.
 
-    Takes: the run, the deliverable's path, and the folder of rn's schemas.
+    Takes: the folder of the deliverable's Rounds and Fixes in the step, as `folder_of` gives it,
+    and the folder of rn's schemas.
     Gives: each, read from its folder, each result checked against its schema; none where the
     deliverable has none yet.
     Changes: nothing.
     Refuses: Wrong where a result or `start.json` leaves its form, as `form.held` names it.
     """
-    root = folder_of(run, deliverable)
     names = os.listdir(root) if os.path.isdir(root) else []
     found = sorted((int(m[2]), m[1], name) for name in names if (m := _NAMED.fullmatch(name)))
     return [
@@ -77,17 +79,17 @@ def _read(folder: str, stage: str, number: int, schemas: str) -> Entry:
     return Entry(stage, number, folder, decisions, results, weighed)
 
 
-def started(run: RunPlace, deliverable: str, stage: str, decisions: int, made: list[Entry]) -> str:
-    """Makes the deliverable's next Round or Fix of the stage, and gives its folder.
+def started(root: str, stage: str, decisions: int, made: list[Entry]) -> str:
+    """Makes the deliverable's next Round or Fix of the stage in the step, and gives its folder.
 
-    Takes: the run, the deliverable's path, the stage, how many decisions the run holds now, and
-    its Rounds and Fixes made so far.
+    Takes: the folder of the deliverable's Rounds and Fixes in the step, as `folder_of` gives it,
+    the stage, how many decisions the run holds now, and its Rounds and Fixes there so far.
     Gives: the new folder, numbered one past the last.
     Changes: makes the folder, holding `start.json` with the decisions' count.
     Refuses: nothing.
     """
     number = made[-1].number + 1 if made else 1
-    folder = os.path.join(folder_of(run, deliverable), f"{stage}-{number}")
+    folder = os.path.join(root, f"{stage}-{number}")
     os.makedirs(folder)
     with open(os.path.join(folder, "start.json"), "w", encoding="utf-8") as f:
         json.dump({"decisions": decisions}, f)
@@ -104,7 +106,8 @@ def weigh(run: RunPlace, folder: str) -> None:
     Refuses: Wrong where the folder isn't a Round's or a Fix's of the run.
     """
     within = os.path.relpath(os.path.normpath(folder), run.rounds).split(os.sep)
-    if len(within) != 2 or not _NAMED.fullmatch(within[1]) or not os.path.isdir(folder):
+    shaped = len(within) == 3 and within[0].isdigit() and _NAMED.fullmatch(within[2])
+    if not shaped or not os.path.isdir(folder):
         raise Wrong(f"{folder}: isn't a Round's or a Fix's folder of the run")
     with open(os.path.join(folder, "weighed.json"), "w", encoding="utf-8") as f:
         f.write("{}\n")

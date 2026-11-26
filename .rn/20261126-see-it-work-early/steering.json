@@ -233,6 +233,14 @@
       {
         "decision": "Write each role's prompt from the architecture and the prompt best practice: its Role from its component's line, its steps from its arrows in the sequences with the intent of their rules and strategies, and only the plugin's rules beside them, then trace both ways, so that what rn has built up stays in the architecture and nothing in a prompt comes from nowhere.",
         "by": "user"
+      },
+      {
+        "decision": "Where the user works in herdr, open each run's worktree in a workspace of herdr, and have herdr remove it on a cancel, else keep Claude Code's default place, as the user finds the run's worktree where they work, and herdr shows only those it holds.",
+        "by": "user"
+      },
+      {
+        "decision": "Grow the run in this pull request: after the walking skeleton, ask at the run's end of each need left whether to make it now or keep it in an issue, and make each one picked as the walking skeleton was, one addition at a time, as the second mode is only that.",
+        "by": "user"
       }
     ],
     "questions": []
@@ -368,13 +376,41 @@
       },
       {
         "for": "O1",
-        "settles": "the user's E2E run of rn from this branch on #62, up to the first real check, as the solution's assumption test",
-        "deliverables": [],
-        "status": "open"
+        "settles": "a run's worktree that herdr shows, where the user works in herdr",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain/scripts",
+            "kind": "code",
+            "status": "done"
+          }
+        ],
+        "status": "done"
       },
       {
         "for": "O2",
         "settles": "the second mode: grow it",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain/scripts",
+            "kind": "code",
+            "status": "done"
+          },
+          {
+            "path": "plugins/rn/domain",
+            "kind": "prompt",
+            "status": "done"
+          },
+          {
+            "path": "plugins/rn/README.md",
+            "kind": "readme",
+            "status": "done"
+          }
+        ],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the user's E2E run of rn from this branch on #62, up to the first real check, as the solution's assumption test",
         "deliverables": [],
         "status": "open"
       }

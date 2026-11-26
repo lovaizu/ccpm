@@ -72,7 +72,7 @@ def test_each_subcommand_on_a_run_prints_what_its_module_gives(
     run_folder = started(repo, host)
     code, out, _ = main(["put-up", run_folder, rn_files.COMMAND], repo, rn_files.RN, host)
     assert (code, out.startswith("http://github.com/owner/repo/blob/")) == (0, True)
-    round_ = f"{run_folder}/rounds/invoice/content-1"
+    round_ = f"{run_folder}/rounds/1/invoice/content-1"
     trial = main(["trial", run_folder, round_], repo, rn_files.RN, host)
     assert trial[0] == 0 and trial[1].startswith(os.path.join(temp, "rn-trial-"))
     assert f"+++ b/{rn_files.COMMAND}" in main(["diff", run_folder], repo, rn_files.RN, host)[1]

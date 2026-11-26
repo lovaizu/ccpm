@@ -34,8 +34,10 @@ what the records leave open.
    the people meet in their use, or a fixer's decision as the measure keeps it. Leave to the user
    what the records leave open, and, once the Rounds reach their limit, each finding left as a
    proposal.
-5. For the run's end, propose for each need the user didn't pick whether to keep it in an issue,
-   with why, so that they decide what stays.
+5. For the run's end, ask the user of each need they didn't pick whether to make it now or keep it
+   in an issue, with your proposal and why, so that the run grows one addition at a time and no
+   need drops without their say. For a need to make now, mark it as the target, choose its least
+   solution as for a pick, and add its steps after those done, each adding to what's there.
 6. Keep out of the steps a change to a part that others share outside what the run delivers, such
    as the repository's checks, and ask the user once whether to give it an issue of its own, so
    that the run holds only its purpose.

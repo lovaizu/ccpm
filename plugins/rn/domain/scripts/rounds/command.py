@@ -65,13 +65,14 @@ def _next(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer
 def _line(run: RunPlace, deliverable: str, plugin_root: str) -> str:
     schemas = os.path.join(plugin_root, "domain", "schemas")
     steering = _steering(run, schemas)
-    kind = _kind(steering, deliverable)
+    step, kind = _named(steering, deliverable)
     decisions = len(steering["ost"]["decisions"])
-    made = files.entries(run, deliverable, schemas)
+    root = files.folder_of(run, step, deliverable)
+    made = files.entries(root, schemas)
     found = _course(made, decisions, kind)
     if found.what == "new":
         stage = found.stage or files.CONTENT
-        folder = files.started(run, deliverable, stage, decisions, made)
+        folder = files.started(root, stage, decisions, made)
         return f"{_ROLE[stage]}\t{folder}\t{_practice(run, plugin_root, kind, stage)}\n"
     if found.entry is None:
         return f"{found.what}\n"
@@ -95,11 +96,21 @@ def _course(made: list[files.Entry], decisions: int, kind: str) -> course.Next:
     return found
 
 
-def _kind(steering: dict, deliverable: str) -> str:
-    for step in steering["state"]["steps"]:
-        for each in step["deliverables"]:
-            if each["path"] == deliverable:
-                return each["kind"]
+def _named(steering: dict, deliverable: str) -> tuple[int, str]:
+    """The number of the step whose Rounds the deliverable takes now, and its kind there: the
+    first step not done that names it, else the last that does, as a later step that adds to it
+    starts its own Rounds."""
+    named = [
+        (number, step["status"], each["kind"])
+        for number, step in enumerate(steering["state"]["steps"], 1)
+        for each in step["deliverables"]
+        if each["path"] == deliverable
+    ]
+    for number, status, kind in named:
+        if status != "done":
+            return number, kind
+    if named:
+        return named[-1][0], named[-1][2]
     raise Wrong(
         f"no step names the deliverable {deliverable!r}; give its path as its step names it"
     )
@@ -143,15 +154,17 @@ def _fix(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer:
             "the problem's words are empty; give them on stdin as they were printed or said"
         )
     schemas = os.path.join(plugin_root, "domain", "schemas")
-    made = files.entries(run, deliverable, schemas)
     steering = _steering(run, schemas)
+    step, kind = _named(steering, deliverable)
+    root = files.folder_of(run, step, deliverable)
+    made = files.entries(root, schemas)
     decisions = len(steering["ost"]["decisions"])
-    if _course(made, decisions, _kind(steering, deliverable)).what != "put-up":
+    if _course(made, decisions, kind).what != "put-up":
         raise Wrong(
             f"{deliverable}: its Rounds aren't over, or a Fix of it is under way; take its next"
             " step from rounds next first"
         )
-    folder = files.started(run, deliverable, files.FIX, decisions, made)
+    folder = files.started(root, files.FIX, decisions, made)
     with open(os.path.join(folder, "problem.md"), "w", encoding="utf-8") as f:
         f.write(words if words.endswith("\n") else words + "\n")
     return 0, f"{folder}\n", ""

@@ -17,7 +17,7 @@ point only what the decisions leave open.
    gives the people what the user didn't mean.
 2. Make it by the best practice's way, as the decisions say, and no further, so that it holds no
    part its people don't need. Keep what the last Round saw good, and each part that people
-   already use where it stood before the run.
+   already use where it stood before the run or the step, so that an addition keeps what's there.
 3. Try it as its people would, with only what the outcome says they have, so that you hand on what
    serves them, and run the repository's checks on your files. Where it falls short in a way they
    meet, go back to the decision behind it; where that decision is the user's, give it as a point.

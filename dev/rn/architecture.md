@@ -278,11 +278,15 @@ sequenceDiagram
     O->>O: takes it as a problem with the deliverable whose file it is, mended as /rn:gm's [P1.3]
   end
   O->>P: starts one with the run's end (Steering) [P4.1]
-  P-->>O: ends, with a proposal for each need left, to keep it in an issue or to leave it [P2.2]
+  P-->>O: ends, with a proposal for each need left, to make it now or to keep it in an issue [P2.2]
   O->>S: marks the final check passed, so the run ends once nothing is asked (Steering) [P6.1]
-  O->>U: the need reached, and which needs left to keep, with a proposal for each [P2.2]
+  O->>U: the need reached, and which needs left to make now or keep in an issue, with a proposal for each [P2.2]
   U->>O: answers [P2.2]
   O->>P: starts one with the answer, word for word (Steering) [P4.1]
+  opt a need to make now [P1.1]
+    P->>T: marks it the target, with its least solution, and adds its steps after those done, which take the final check again (Steering, Step) [P1.2]
+    Note over O,E: the steps go as the walking skeleton's did, each Round on the added part [P3.1]
+  end
   O->>S: opens an issue for each need kept, in its own words [P2.2]
   O->>U: each issue opened, and the merge proposed [P2.3]
   U->>U: marks the pull request ready, and merges [P7.2]
@@ -383,7 +387,7 @@ dev/rn/                            what only rn's developers use
 .rn/                               what rn writes on the work's branch
 └── <yyyymmdd>-<slug>/             one run's folder
     ├── steering.json              the steering
-    └── rounds/<deliverable>/      each Round and each Fix of the deliverable, in the order made
+    └── rounds/<step>/<deliverable>/  each Round and each Fix of the deliverable in the step, in the order made
 ```
 
 ## Test strategy

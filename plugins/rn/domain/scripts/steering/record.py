@@ -27,7 +27,7 @@ def taken_in(steering: Steering | None, result: dict[str, Any]) -> Steering:
     and its steps, else the steering's, each step that the steering holds for the same need with
     the same words keeping its status, and each of its deliverables at the same path keeping its
     own, every other step and deliverable open; and the final check passed where the steering
-    holds it so.
+    holds it so and the result adds no step, as a step added grows the pull request.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -36,7 +36,9 @@ def taken_in(steering: Steering | None, result: dict[str, Any]) -> Steering:
     if "steps" in result:
         steps = [_kept(each, state["steps"]) for each in result["steps"]]
     issues = copy.deepcopy(result.get("issues", state["issues"]))
-    checked = {"checked": True} if state.get("checked") else {}
+    held = [(each["for"], each["settles"]) for each in state["steps"]]
+    added = any((each["for"], each["settles"]) not in held for each in steps)
+    checked = {"checked": True} if state.get("checked") and not added else {}
     return {
         "ost": copy.deepcopy(result["ost"]),
         "state": {"issues": issues, "steps": steps, **checked},
