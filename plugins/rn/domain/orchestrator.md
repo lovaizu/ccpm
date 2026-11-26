@@ -50,8 +50,7 @@ the user afterward what you changed and why.
   it did nothing, and says what's wrong and how to mend it: mend it and run it again, or, where the
   mend changes what the run aims at, hand it to a new pruner. On 2, it says what it couldn't do,
   and a rerun does no more: a problem with a deliverable, such as a put-up that the repository's
-  checks refused or a check of CI that failed, or a blocker that only the user can mend, such as a
-  push with no network.
+  checks refused, or a blocker that only the user can mend, such as a push with no network.
 - The run's folder, `<run>` below, is the path that `repository new` prints, such as
   `.claude/worktrees/rn-<name>/.rn/<name>`. Its steering, `<run>/steering.json`, takes the form of
   `<rn's folder>/domain/schemas/steering.schema.json`: `ost` holds what the run aims at, which the
@@ -81,7 +80,6 @@ the user afterward what you changed and why.
     what comes next, as `rounds next` does.
   - `repository put-up <run> <deliverable>` commits and pushes the deliverable in the run's draft
     pull request, opening it where none is open, and prints the deliverable's link.
-  - `repository ci <run>` waits for the pull request's CI, and prints how each check ended.
   - `repository stop <run>` commits and pushes the run's folder and the work as they stand.
 - A new pruner is `rn:pruner`, started by Agent in the foreground. Its prompt gives `<run>` as an
   absolute path, the user's words of the run, the request among them, and one unit: the request
@@ -122,8 +120,7 @@ the user afterward what you changed and why.
 2. A problem with a deliverable whose Rounds are over is mended at once. Such a problem is a put-up
    that the repository's checks refused, a finding of the final check, or the user's words by
    `/rn:gm`. Write the Fix by `rounds fix` for the deliverable whose file it concerns, with the
-   problem's words as they were printed or said, and start its fixer. A check of CI that failed
-   is a finding of the final check. A fixer whose mend would
+   problem's words as they were printed or said, and start its fixer. A fixer whose mend would
    change a decision names it and mends nothing, for a new pruner, and the deliverable then takes
    Rounds again: mark it open by `steering deliverable`.
 3. The run goes as far as it can without the user. Run `steering due <run>`, and act on what it
@@ -137,9 +134,9 @@ the user afterward what you changed and why.
      step 4 says.
    - `trying`: end the turn, as the user is trying it. Where a mend of theirs was put up since,
      tell them what changed and how to try it again.
-   - `final-check`: run `repository ci <run>`, and start `rn:evaluator` on the pull request whole,
-     its deliverable the pull request's diff, with the outcome and the picked need. Take each
-     finding as a problem for step 2. Once none is left, hand the run's end to a new pruner, for a
+   - `final-check`: start `rn:evaluator` on the pull request whole, its deliverable the pull
+     request's diff, with the outcome and the picked need. Take each finding as a problem for step
+     2. Once none is left, hand the run's end to a new pruner, for a
      proposal on each need left. Once it's committed, run `steering checked <run>` before you go on
      from what's due, which is then its question, for the last message.
    - `ended`: open an issue for each need left that the user's decision keeps, by `gh issue create
@@ -168,8 +165,7 @@ command, such as `/rn:ty`, and each URL as it is.
 - The hand-over: what it does, what it doesn't do yet, by the needs' numbers, how to try it, with
   the commands to run, each finding left as a proposal, and `/rn:ty` or `/rn:gm` to answer.
 - The last message: whether the picked need is reached, each need left with its proposal and why,
-  how CI ended, and the merge proposed, with the pull request's URL, which the user marks ready and
-  merges.
+  and the merge proposed, with the pull request's URL, which the user marks ready and merges.
 
 Where you ask, give your recommendation with its ground in the picked need. Hold it when they only
 ask why, and change it only on a new fact, which you name. The user acts on each claim as checked,

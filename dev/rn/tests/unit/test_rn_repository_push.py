@@ -5,14 +5,10 @@ a draft titled by the picked need, its body the outcome and the issues, or the o
 open pull request used as it is, its own opened beside an earlier one closed, the link of a file
 and of a folder, and each refusal: gh with no login, no need picked, a deliverable that no step
 names, each before any commit or push, gh that may not open the pull request, and a path that the
-commit doesn't hold; `diff`, which commits and pushes each change and gives the whole diff; and
-`ci`, which waits for the checks to start, each passed, one cancelled or timed out, one failed alone
-or beside cancelled ones, gh that can't give the pull request or its checks, and no check started
-within 120 seconds."""
+commit doesn't hold; and `diff`, which commits and pushes each change and gives the whole diff."""
 
 from __future__ import annotations
 
-import json
 import os
 import stat
 from collections.abc import Mapping, Sequence
@@ -25,7 +21,7 @@ from gh import gh_double
 from host import Ran
 from place import RunPlace
 from repo_files import git, write_files
-from repository.push import ci, diff, put_up, stop
+from repository.push import diff, put_up, stop
 from repository.worktree import new
 
 NAME = "20261126-invoice-from-statement"
@@ -310,167 +306,3 @@ def test_diff_commits_each_change_pushes_it_and_gives_the_whole_diff(
     assert f"+++ b/{rn_files.COMMAND}" in given and f"+++ b/.rn/{NAME}/steering.json" in given
     assert subject(run_.worktree) == f"rn: the final check of {NAME}"
     assert head(str(tmp_path / "origin.git"), run_.branch) == head(run_.worktree)
-
-
-# ci
-
-
-def checks_asked(gh_state: str) -> list[list[str]]:
-    """Each `gh pr checks` that the double of gh was asked."""
-    return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "checks"]]
-
-
-# What ci says of the checks that failed, and of three that the CI cancelled.
-MEND = "; mend each in the deliverable whose file it concerns"
-AGAIN = (
-    "; these ended neither passing nor failing, for the user to run again: times-out cancelled,"
-    " cancels cancelled, cancelled cancelled"
-)
-
-
-def ended(found: str) -> list[dict[str, str]]:
-    """Each check of the record that the double of gh gives for what the CI's checks found, as
-    `gh pr checks --json name,state,bucket,link` gives them."""
-    return json.loads(gh_double._ends(found)["stdout"])
-
-
-def lines(checks: list[tuple[str, str]]) -> str:
-    """The lines that ci gives of the checks, each by its name and how it ended."""
-    return "".join(f"{name}\t{end}\n" for name, end in checks)
-
-
-def test_ci_where_each_check_passed_gives_them_having_waited_for_the_works_branch(
-    tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose command was put up, and whose CI's checks each passed
-    When ci is given the run
-    Then it gives each check by its name, once each, in gh's order, as passed; and gh was asked,
-    in the run's worktree, to wait for rn-<name>'s checks, then to give each check's end"""
-    run = with_command(made(tmp_path))
-    put_up(run, STEERING, rn_files.COMMAND, host)
-    names = list(dict.fromkeys(each["name"] for each in ended("passed")))
-    assert ci(run, host) == lines([(name, "passed") for name in names])
-    branch = run.branch
-    assert checks_asked(gh_state) == [
-        ["gh", "pr", "checks", branch, "--watch"],
-        ["gh", "pr", "checks", branch, "--json", "name,state,bucket,link"],
-    ]
-    assert host.ran[-1][1] == run.worktree
-
-
-@pytest.mark.parametrize(
-    "case",
-    [("cancelled", "cancels", "cancelled"), ("timed-out", "deploy", "timed out")],
-    ids=["cancelled", "timed-out"],
-)
-def test_ci_where_a_check_ended_neither_passing_nor_failing_names_how_it_ended(
-    tmp_path: Any, host: Any, gh_state: str, case: tuple[str, str, str]
-):
-    """Given a run whose command was put up, and whose CI's check was cancelled, as GitHub Actions
-    ends a job past its time limit too, or timed out, as another check's app may end it, each other
-    check passed, and gh's watch ending 0 or 1
-    When ci is given the run
-    Then it gives each check by its name in gh's order, that one as cancelled or timed out and
-    each other as passed, as neither passing nor failing, for the user to run again"""
-    found, other, end = case
-    run = with_command(made(tmp_path))
-    put_up(run, STEERING, rn_files.COMMAND, host)
-    gh_double.checks(gh_state, found)
-    names = list(dict.fromkeys(each["name"] for each in ended(found)))
-    assert other in names
-    assert ci(run, host) == lines([(name, end if name == other else "passed") for name in names])
-
-
-@pytest.mark.parametrize(
-    ("found", "expected"),
-    [
-        ("failed", f"the pull request's CI fails at tests{MEND}"),
-        ("ended", f"the pull request's CI fails at fails{MEND}{AGAIN}"),
-    ],
-    ids=["failed", "failed-and-cancelled"],
-)
-def test_ci_where_a_check_failed_cant_run_naming_it_once(
-    tmp_path: Any, host: Any, gh_state: str, found: str, expected: str
-):
-    """Given a run whose command was put up, and whose CI's check `tests` failed, which gh's lines
-    show twice as it waits, or whose check `fails` failed while three others were cancelled
-    When ci is given the run
-    Then CantRun is raised, as a problem with the deliverable that no rerun mends, naming each
-    check that failed once, and no check that passed, then each that was cancelled, for the user
-    to run again"""
-    run = with_command(made(tmp_path))
-    put_up(run, STEERING, rn_files.COMMAND, host)
-    gh_double.checks(gh_state, found)
-    with pytest.raises(CantRun) as refused:
-        ci(run, host)
-    assert str(refused.value) == expected
-
-
-def test_ci_that_gh_cant_give_cant_run_with_what_gh_said(tmp_path: Any, host: Any, clock: Any):
-    """Given a run that has no pull request
-    When ci is given the run
-    Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said, with no
-    wait"""
-    run = with_command(made(tmp_path))
-    with pytest.raises(CantRun) as refused:
-        ci(run, host)
-    assert str(refused.value).startswith("gh can't give the pull request's CI: ")
-    assert 'no pull requests found for branch "rn-' in str(refused.value)
-    assert clock.slept == []
-
-
-def test_ci_whose_checks_gh_cant_read_once_they_started_cant_run_with_what_gh_said(
-    tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose command was put up, whose pushed head's checks started, and whose gh then
-    can't reach GitHub
-    When ci is given the run
-    Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said"""
-    run = with_command(made(tmp_path))
-    put_up(run, STEERING, rn_files.COMMAND, host)
-    gh_double.checks_unreached(gh_state)
-    said = gh_double.line(gh_double.PR_CHECKS, "gh pr checks --json can't reach GitHub")["stderr"]
-    with pytest.raises(CantRun) as refused:
-        ci(run, host)
-    assert str(refused.value) == f"gh can't give the pull request's CI: {said.strip()}"
-
-
-def views(gh_state: str) -> int:
-    """How many times the double of gh was asked for the pull request's head and its checks."""
-    asked = gh_double.state(gh_state)["asked"]
-    return sum(1 for each in asked if each[1:3] == ["pr", "view"] and "headRefOid" in each[-1])
-
-
-def test_ci_waits_until_the_pushed_heads_checks_start_then_reads_their_ends(
-    tmp_path: Any, host: Any, gh_state: str, clock: Any
-):
-    """Given a run whose command was put up, whose CI's checks each passed, and whose pull request
-    gives the head before the push for one view, then the pushed head with no check started for
-    23 views, its checks starting 120 seconds after the first view, the most
-    When ci is given the run
-    Then it views the head every 5 seconds until the pushed head's checks show, then gives each
-    check as passed, as it gives with no wait"""
-    run = with_command(made(tmp_path))
-    put_up(run, STEERING, rn_files.COMMAND, host)
-    gh_double.started(gh_state, 1, 23)
-    names = list(dict.fromkeys(each["name"] for each in ended("passed")))
-    assert ci(run, host) == lines([(name, "passed") for name in names])
-    assert clock.slept == [5] * 24
-    assert views(gh_state) == 25
-
-
-def test_ci_whose_checks_dont_start_within_120_seconds_says_no_ci_started(
-    tmp_path: Any, host: Any, gh_state: str, clock: Any
-):
-    """Given a run whose command was put up, and whose pushed head's checks start only past 120
-    seconds after the first view
-    When ci is given the run
-    Then it gives that no CI started within 120 seconds of the push, having viewed the head at
-    each 5 seconds up to 120, and asked gh for no check"""
-    run = with_command(made(tmp_path))
-    put_up(run, STEERING, rn_files.COMMAND, host)
-    gh_double.started(gh_state, 0, 25)
-    assert ci(run, host) == "no CI started within 120 seconds of the push\n"
-    assert clock.slept == [5] * 24
-    assert views(gh_state) == 25
-    assert checks_asked(gh_state) == []

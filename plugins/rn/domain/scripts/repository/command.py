@@ -21,7 +21,6 @@ usage: repository new <slug>
        repository put-up <run> <deliverable>
        repository trial <run> <round>
        repository diff <run>
-       repository ci <run>
 """
 
 
@@ -41,7 +40,6 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `trial <run> <round>`, the Round's folder from `cwd`: 0 printing the folder that
       `trial.starting_state` makes.
     - `diff <run>`: 0 printing the diff that `push.diff` gives.
-    - `ci <run>`: 0 printing what `push.ci` gives.
 
     `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `repository: <what's
     wrong>` where the input is Wrong or something is Missing, saying how to mend it; 2 with what
@@ -85,10 +83,6 @@ def _diff(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     return 0, push.diff(of_folder(cwd, given[0]), host), ""
 
 
-def _ci(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    return 0, push.ci(of_folder(cwd, given[0]), host), ""
-
-
 _Subcommand = Callable[[list[str], str, str, Host], Answer]
 # Each subcommand, with the count of arguments after its name.
 _SUBCOMMANDS: dict[str, tuple[_Subcommand, int]] = {
@@ -98,5 +92,4 @@ _SUBCOMMANDS: dict[str, tuple[_Subcommand, int]] = {
     "put-up": (_put_up, 2),
     "trial": (_trial, 2),
     "diff": (_diff, 1),
-    "ci": (_ci, 1),
 }

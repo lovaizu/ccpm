@@ -159,7 +159,7 @@ Strategies:
   Intent: the fixer mends what went wrong within what was decided.
 - A fixer whose mend would change a decision mending nothing, and naming the change. [P4.1]\
   Intent: only a weighing changes what the run aims at.
-- The pull request checked whole by an evaluator once each step is done, with its CI. [P3.2]\
+- The pull request checked whole by an evaluator once each step is done. [P3.2]\
   Intent: a newcomer to the work reads the whole diff before the merge is proposed.
 - Each step that has one right result done by a script that the role runs. [P5.3]\
   Intent: each role spends its judgment and its context only where a step needs them.
@@ -249,8 +249,7 @@ sequenceDiagram
       O->>S: marks the step done (Step) [P5.2]
     end
   end
-  O->>S: pushes, and waits for the pull request's CI [P5.3]
-  O->>E: starts one with the outcome, the pull request whole, and its CI [P3.2]
+  O->>E: starts one with the outcome and the pull request whole [P3.2]
   E-->>O: ends, with each finding [P5.2]
   opt a finding [P3.2]
     O->>O: takes it as a problem with the deliverable whose file it is, mended as /rn:gm's [P1.3]
@@ -258,7 +257,7 @@ sequenceDiagram
   O->>P: starts one with the run's end (Steering) [P4.1]
   P-->>O: ends, with a proposal for each need left, to keep it in an issue or to leave it [P2.2]
   O->>S: marks the final check passed, so the run ends once nothing is asked (Steering) [P6.1]
-  O->>U: the need reached, each need left with its proposal, CI, and the merge proposed [P2.2]
+  O->>U: the need reached, each need left with its proposal, and the merge proposed [P2.2]
   opt the user says which needs to keep [P2.2]
     O->>P: starts one with the answer, word for word (Steering) [P4.1]
     O->>S: opens an issue for each need kept, in its own words [P2.2]

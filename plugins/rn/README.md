@@ -110,7 +110,6 @@ type `/rn:ty`. rn checks the pull request whole, then shows:
 選ばなかったこと：2から4。issueに残すか、何もしないかを提案します
   2と3は、印刷を毎月使うのに要るので、issueに残すことをおすすめします
   4は、使う人が少ないうちは要らないので、何もしないことをおすすめします
-CI：すべて通っています
 
 マージをおすすめします。PRを「レビュー可」にしてから、マージしてください。
 PR：https://github.com/lovaizu/playground/pull/38
