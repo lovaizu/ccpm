@@ -70,67 +70,35 @@
     },
     "steps": [
       {
-        "settles": "I see what I asked for work early: a run makes the thinnest thing that runs first, and I try it before anything else is made",
-        "check": "I run rn from this branch on #62; what was made before I first try it, against the 6,079 lines of #85",
+        "settles": "the product vision's Concept, as agreed",
         "status": "open"
       },
       {
-        "settles": "From there, I grow it: from my feedback, one addition at a time; each thing I asked for stays on the list for me to pick next; what's left is proposed at the end",
-        "check": "I go on with the #62 run, adding one thing, and see requests 4 and 5 kept",
+        "settles": "the README: what rn promises its users, and the walkthrough of the first mode",
         "status": "open"
       },
       {
-        "settles": "The base fits the two: steering.json in place of the design tree, the test best practices as decided, the concept in product-vision.md and the README, no design-tree word left, CHANGELOG and version",
-        "check": "unit tests with C0/C1 at 100%, and the #62 run once more from the start",
+        "settles": "the architecture of the least rn, by the architecture best practice, from the README; then every part it doesn't hold is removed",
+        "status": "open"
+      },
+      {
+        "settles": "the scripts, by TDD at their least, each existing part taken only where the architecture gives it a role",
+        "status": "open"
+      },
+      {
+        "settles": "the prompts, by the prompt best practice, taking the best of the existing ones",
+        "status": "open"
+      },
+      {
+        "settles": "a desk trace of the whole run in order, from the issue to the walking skeleton in the user's hands",
+        "status": "open"
+      },
+      {
+        "settles": "the second mode: grow it",
         "status": "open"
       }
     ],
-    "deliverables": [
-      {
-        "path": "dev/rn/product-vision.md (Concept), plugins/rn/README.md (intro, Non-goals)",
-        "step": 1,
-        "status": "open"
-      },
-      {
-        "path": "plugins/rn/domain/best-practices/design-tree/ -> steering/",
-        "step": 1,
-        "status": "open"
-      },
-      {
-        "path": "plugins/rn/domain/scripts/tree/, hook/, repository/, rounds/",
-        "step": 1,
-        "status": "open"
-      },
-      {
-        "path": "plugins/rn/domain/vital-few.md, pruner.md, orchestrator.md",
-        "step": 2,
-        "status": "open"
-      },
-      {
-        "path": "plugins/rn/domain/generator.md, evaluator.md, fixer.md",
-        "step": 3,
-        "status": "open"
-      },
-      {
-        "path": "dev/rn/architecture.md, plugins/rn/README.md",
-        "step": "each",
-        "status": "open"
-      },
-      {
-        "path": "60 files that name the design tree",
-        "step": 4,
-        "status": "open"
-      },
-      {
-        "path": "plugins/rn/CHANGELOG.md, plugin.json",
-        "step": 4,
-        "status": "open"
-      },
-      {
-        "path": "plugins/rn/domain/orchestrator.md:51, pruner.md:99, vital-few.md:51 and :58, which read an issue as holding means and decisions; an issue now holds only its situation and desired state",
-        "step": "prompts",
-        "status": "open"
-      }
-    ]
+    "deliverables": [],
+    "way": "One at a time, in the order of the steps; remove the old before making the new; tests green on each commit, pushed at once; no subagents."
   }
 }
