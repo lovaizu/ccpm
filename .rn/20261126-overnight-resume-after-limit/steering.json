@@ -161,7 +161,7 @@
           {
             "path": "plugins/overnight/CHANGELOG.md",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": ".claude-plugin/marketplace.json",
