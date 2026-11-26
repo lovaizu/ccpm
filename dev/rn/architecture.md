@@ -5,6 +5,7 @@
 - S1: the user wants what they asked for working for the one need they pick, early, asking in
   their own words, and to decide what happens to each need left.
 - S2: the user wants to stop a run and go on with it later, in any conversation, losing nothing.
+- S3: the user wants to call a run off and have nothing of it stay on their computer or on GitHub.
 
 ## Solution strategy
 
@@ -167,6 +168,10 @@ Strategies:
 - A stop taken from /rn:dn or the user's words, and a pick-up from /rn:up. [S2]\
   Intent: the user stops and goes on at the moment they choose, and a new run never asks about an
   old one.
+- A cancel taken from /rn:dn or the user's words once the user confirms what goes, removing the
+  run's worktree, branch, and pull request by a script. [S3]\
+  Intent: a cancel can't be undone, so only the user starts it, and nothing of the run is left
+  for a pick-up to meet.
 - A stop waiting for each pruner at work to end, then stopping the other roles and pushing the
   run's folder. [P6.2]\
   Intent: a pick-up reads a whole steering, and GitHub keeps the work so far as well as the
@@ -298,6 +303,21 @@ sequenceDiagram
   else a Fix under way [P6.1]
     O->>F: starts a new one from the Fix's files [P6.1]
   end
+```
+
+#### S3: a run called off
+
+```mermaid
+sequenceDiagram
+  actor U as user
+  participant O as orchestrator
+  participant S as scripts
+  U->>O: /rn:dn, or asks to call the run off [S3]
+  O->>U: what goes, the worktree, the branch, and the pull request, to confirm [P2.1]
+  U->>O: confirms [S3]
+  O->>O: stops each role at work [S3]
+  O->>S: removes the run's worktree and branch, closes its pull request, and deletes its branch on GitHub (Steering) [S3]
+  O->>U: what went, and what couldn't, with why [P2.3]
 ```
 
 ### Deployment

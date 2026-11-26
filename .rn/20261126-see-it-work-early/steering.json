@@ -197,6 +197,10 @@
       {
         "decision": "Write the user only what they act on, what they can try or the one thing they decide, with no line on where the run stands, as such a line is noise to them.",
         "by": "user"
+      },
+      {
+        "decision": "Have /rn:dn or the user's words call a run off once the user confirms what goes, removing its worktree, branch, and pull request, as rn did before and only the user says a run is over.",
+        "by": "user"
       }
     ],
     "questions": []

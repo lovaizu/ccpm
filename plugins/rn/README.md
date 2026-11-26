@@ -146,7 +146,8 @@ whether to keep it in an issue.
 ### "Can a run stop and go on later?"
 
 Yes. `/rn:dn` stops the run once what it's writing is whole, and `/rn:up` picks it up where it
-stopped, in any conversation.
+stopped, in any conversation. To call the run off instead, say so with `/rn:dn`: once you
+confirm, rn removes its worktree, its branch, and its pull request.
 
 ### "Does it change the repository's files, or merge on its own?"
 

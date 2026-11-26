@@ -1,6 +1,7 @@
 """The unit cases of repository/command.py, repository's command line as the orchestrator and each
 role run it: `new` printing the run's folder, `runs` printing each run with work left and what it
-couldn't check, `stop`, `put-up`, `trial`, `diff`, and `ci` each printing what its module gives, a
+couldn't check, `stop`, `cancel` printing what it removed on GitHub and saying
+what it couldn't, `put-up`, `trial`, `diff`, and `ci` each printing what its module gives, a
 refusal given as its exit code, and arguments of another form."""
 
 from __future__ import annotations
@@ -11,6 +12,7 @@ from typing import Any
 
 import pytest
 import rn_files
+from gh import gh_double
 from repo_files import git, write_files
 from repository.command import USAGE, main
 
@@ -85,6 +87,23 @@ def test_a_refusal_gives_its_exit_code_with_what_is_wrong(repo: str, host: Any) 
     run_folder = started(repo, host)
     code, _, err = main(["put-up", run_folder, "docs/other.md"], repo, rn_files.RN, host)
     assert (code, err.startswith("repository: no step names the deliverable")) == (1, True)
+
+
+def test_cancel_prints_what_it_removed_and_says_what_it_couldnt(
+    repo: str, host: Any, gh_state: str
+) -> None:
+    """Given a run pushed by `stop`, and gh unable to reach GitHub.
+    When `cancel` runs on it.
+    Then it gives 0, printing origin's branch deleted, and saying on stderr that it can't remove
+    the pull request, and the run's worktree is gone."""
+    run_folder = started(repo, host)
+    main(["stop", run_folder], repo, rn_files.RN, host)
+    gh_double.unreached(gh_state)
+    code, out, err = main(["cancel", run_folder], repo, rn_files.RN, host)
+    branch = run_folder.split("/")[2]
+    assert (code, out) == (0, f"origin/{branch}\n")
+    assert err.startswith(f"repository: can't remove the pull request of {branch} on GitHub")
+    assert not os.path.exists(os.path.join(repo, run_folder))
 
 
 @pytest.mark.parametrize("argv", [[], ["make"], ["new"], ["stop", "a", "b"]])

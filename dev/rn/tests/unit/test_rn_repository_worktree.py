@@ -4,7 +4,10 @@ files, and each refusal: a folder that isn't a repository's top, a run of the na
 no default branch on origin, and git refusing the worktree; and `found` with `left`, the runs with
 work left, newest first, each once, a run ended or with no steering left out, a worktree made
 again from its local branch or from origin's, the local branches alone where git can't fetch, no
-run in a folder that isn't a repository, and a steering that isn't JSON."""
+run in a folder that isn't a repository, and a steering that isn't JSON; and `removed`, a run
+cancelled here and on GitHub, one never pushed, one whose pull request is closed already, what it
+couldn't ask or remove on GitHub and why, a run in the user's checkout refused, and a worktree git
+can't remove."""
 
 from __future__ import annotations
 
@@ -15,10 +18,11 @@ from typing import Any
 import pytest
 import rn_files
 from fault import CantRun, Missing, Wrong
+from gh import gh_double
 from host import Ran, run
 from place import RunPlace
 from repo_files import git
-from repository.worktree import found, left, new
+from repository.worktree import Gone, found, left, new, removed
 
 NAME = "20261126-invoice-from-statement"
 OTHER = "20261127-invoice-rules"
@@ -186,3 +190,113 @@ def test_a_steering_that_is_not_json_is_refused(repo: str) -> None:
     git(made.worktree, "commit", "-q", "-m", "broken")
     with pytest.raises(Wrong, match=f"rn-{NAME}:.rn/{NAME}/steering.json: isn't JSON"):
         left(repo, run)
+
+
+PR = "https://github.com/lovaizu/accounting/pull/7"
+
+
+def pushed(repo: str) -> RunPlace:
+    """A run made, with its branch pushed to origin."""
+    made = new(RunPlace(repo, NAME), run)
+    git(made.worktree, "push", "-q", "origin", made.branch)
+    return made
+
+
+def test_a_cancelled_run_is_removed_here_and_on_github(repo: str, host: Any, gh_state: str) -> None:
+    """Given a run pushed with its pull request open, and a change in it not committed.
+    When it's removed.
+    Then the pull request is closed and origin's branch deleted, each named, the worktree, the
+    local branch, and origin's ref are gone, and the user's branch stays main."""
+    made = pushed(repo)
+    gh_double.opened(gh_state, PR)
+    with open(os.path.join(made.worktree, "draft.md"), "w", encoding="utf-8") as f:
+        f.write("draft\n")
+    assert removed(made, host) == Gone([PR, f"origin/{made.branch}"], [])
+    assert not os.path.exists(made.worktree)
+    assert git(repo, "branch", "--list", made.branch) == ""
+    assert git(repo, "branch", "-r", "--list", f"origin/{made.branch}") == ""
+    assert gh_double.state(gh_state)["pull_request"] is None
+    assert git(repo, "branch", "--show-current") == "main\n"
+
+
+def test_a_run_never_pushed_is_removed_here_and_its_stale_ref_with_it(repo: str, host: Any) -> None:
+    """Given a run with no pull request, which origin doesn't hold, but whose ref of origin's
+    branch is left here.
+    When it's removed.
+    Then nothing is named on GitHub, and the worktree, the branch, and the ref are gone."""
+    made = new(RunPlace(repo, NAME), run)
+    git(repo, "update-ref", f"refs/remotes/origin/{made.branch}", made.branch)
+    assert removed(made, host) == Gone([], [])
+    assert not os.path.exists(made.worktree)
+    assert git(repo, "for-each-ref", f"refs/remotes/origin/{made.branch}") == ""
+
+
+def test_a_pull_request_closed_already_is_left_as_it_is(
+    repo: str, host: Any, gh_state: str
+) -> None:
+    """Given a pushed run whose branch has only an earlier pull request, closed.
+    When it's removed.
+    Then gh closes nothing, and origin's branch alone is named."""
+    made = pushed(repo)
+    gh_double.earlier(gh_state, PR, "CLOSED")
+    assert removed(made, host) == Gone([f"origin/{made.branch}"], [])
+    assert not any(each[1:3] == ["pr", "close"] for each in gh_double.state(gh_state)["asked"])
+
+
+def test_what_github_couldnt_be_asked_of_is_kept_with_why(
+    repo: str, host: Any, gh_state: str
+) -> None:
+    """Given a run, with gh unable to reach GitHub and origin gone.
+    When it's removed.
+    Then it's removed here, and the pull request and the branch on GitHub are kept, each with
+    what gh or git said."""
+    made = new(RunPlace(repo, NAME), run)
+    gh_double.unreached(gh_state)
+    git(repo, "remote", "set-url", "origin", os.path.join(repo, "no-such-origin"))
+    gone = removed(made, host)
+    assert gone.removed == []
+    assert gone.kept[0].startswith(f"the pull request of {made.branch} on GitHub, as gh can't ask")
+    assert gone.kept[1].startswith(f"the branch {made.branch} on GitHub, as git can't ask origin: ")
+    assert not os.path.exists(made.worktree)
+
+
+def test_what_github_refused_to_remove_is_kept_with_why(
+    repo: str, tmp_path: Any, host: Any, gh_state: str
+) -> None:
+    """Given a pushed run with its pull request open, gh losing GitHub once it read it, and origin
+    refusing each push.
+    When it's removed.
+    Then the pull request and the branch on GitHub are kept, each with what gh or git said."""
+    made = pushed(repo)
+    gh_double.opened(gh_state, PR)
+    gh_double.closes_unreached(gh_state)
+    hook = tmp_path / "origin.git" / "hooks" / "pre-receive"
+    hook.write_text("#!/bin/sh\necho no deletes here >&2\nexit 1\n")
+    hook.chmod(0o755)
+    gone = removed(made, host)
+    assert gone.removed == []
+    assert gone.kept[0].startswith(f"the pull request {PR} on GitHub, as gh can't close it: ")
+    assert gone.kept[1].startswith(f"the branch {made.branch} on GitHub, as git can't delete it: ")
+    assert "no deletes here" in gone.kept[1]
+
+
+def test_a_run_in_the_users_checkout_is_refused(repo: str, host: Any) -> None:
+    """Given the user's checkout on a run's branch.
+    When that run is removed.
+    Then Wrong is raised, saying to switch the checkout first, and the branch stays."""
+    made = new(RunPlace(repo, NAME), run)
+    with pytest.raises(Wrong, match="git switch main"):
+        removed(RunPlace(repo, NAME, checkout=True), host)
+    assert git(repo, "branch", "--list", made.branch) != ""
+
+
+def test_a_worktree_git_cant_remove_cant_run_and_keeps_the_branch(repo: str, host: Any) -> None:
+    """Given a run whose worktree is locked.
+    When it's removed.
+    Then CantRun is raised with what git said, and the worktree and the branch stay."""
+    made = new(RunPlace(repo, NAME), run)
+    git(repo, "worktree", "lock", made.worktree)
+    with pytest.raises(CantRun, match="locked"):
+        removed(made, host)
+    assert os.path.isdir(made.worktree)
+    assert git(repo, "branch", "--list", made.branch) != ""

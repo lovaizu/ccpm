@@ -18,6 +18,7 @@ USAGE = """\
 usage: repository new <slug>
        repository runs
        repository stop <run>
+       repository cancel <run>
        repository put-up <run> <deliverable>
        repository trial <run> <round>
        repository diff <run>
@@ -35,6 +36,10 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       each, newest first, and nothing where there's none; and on stderr `repository: can't check
       <what, and why>` where it couldn't ask GitHub for the runs it holds.
     - `stop <run>`: 0 printing the hash that `push.stop` gives.
+    - `cancel <run>`: 0 printing each thing of the run that `worktree.removed` removed on GitHub
+      once it removes the run here, a line each, and nothing where there's none; and on stderr
+      `repository: can't remove <what, and why>` for each thing that it couldn't ask GitHub of
+      or remove there, a line each.
     - `put-up <run> <deliverable>`: 0 printing the link that `push.put_up` gives, from the run's
       steering, read as its schema holds it.
     - `trial <run> <round>`, the Round's folder from `cwd`: 0 printing the folder that
@@ -67,6 +72,12 @@ def _stop(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     return 0, f"{push.stop(of_folder(cwd, given[0]), host)}\n", ""
 
 
+def _cancel(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
+    gone = worktree.removed(of_folder(cwd, given[0]), host)
+    said = "".join(f"repository: can't remove {each}\n" for each in gone.kept)
+    return 0, "".join(f"{each}\n" for each in gone.removed), said
+
+
 def _put_up(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     run = of_folder(cwd, given[0])
     schema = os.path.join(plugin_root, "domain", "schemas", "steering.schema.json")
@@ -89,6 +100,7 @@ _SUBCOMMANDS: dict[str, tuple[_Subcommand, int]] = {
     "new": (_new, 1),
     "runs": (_runs, 0),
     "stop": (_stop, 1),
+    "cancel": (_cancel, 1),
     "put-up": (_put_up, 2),
     "trial": (_trial, 2),
     "diff": (_diff, 1),

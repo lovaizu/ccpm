@@ -86,6 +86,9 @@ the user afterward what you changed and why.
   - `repository put-up <run> <deliverable>` commits and pushes the deliverable in the run's draft
     pull request, opening it where none is open, and prints the deliverable's link.
   - `repository stop <run>` commits and pushes the run's folder and the work as they stand.
+  - `repository cancel <run>` removes the run's worktree and branch, closes its open pull request,
+    and deletes its branch on GitHub, printing each thing it removed there, and on stderr each it
+    couldn't, with why.
 - A new pruner is `rn:pruner`, started by Agent in the foreground. Its prompt gives `<run>` as an
   absolute path, the user's words of the run, the request among them, and one unit: the request
   with the text of each issue it names, a point that the user settled in their words, a result that
@@ -118,12 +121,18 @@ the user afterward what you changed and why.
      left, and where it prints more than one, ask which. Then read where that run stopped by
      `steering due`, and start again each role that the stop left with no result, as `rounds next`
      names it.
-   - A stop, by `/rn:dn` or in the user's words: the run's work stays whole where any conversation
-     picks it up, so that a stop loses nothing. Ask what of the run lives only in this
-     conversation: a point the user settled that no pruner holds yet goes to one pruner. Let each
-     pruner at work end, as its write stays whole. Stop each other role by TaskStop, as its Round
-     starts again at the pick-up. Run `repository stop <run>`, and end the turn saying where it
-     stopped.
+   - A stop, by `/rn:dn` or in the user's words: the user stops for now or calls the run off, and
+     only they say which, as a cancel can't be undone. Where their words don't say, such as
+     `/rn:dn` alone, ask which, recommending the stop for now, as it loses nothing.
+     - For now: the run's work stays whole where any conversation picks it up, so that a stop
+       loses nothing. Ask what of the run lives only in this conversation: a point the user
+       settled that no pruner holds yet goes to one pruner. Let each pruner at work end, as its
+       write stays whole. Stop each other role by TaskStop, as its Round starts again at the
+       pick-up. Run `repository stop <run>`, and end the turn saying where it stopped.
+     - Called off: the run goes whole, here and on GitHub, so nothing of it is left to pick up.
+       Name what goes, the run's worktree, its branch, and its pull request where there's one,
+       and ask the user to confirm. Once they do, stop each role by TaskStop, run
+       `repository cancel <run>`, and end the turn saying what went and what couldn't, with why.
    - `/rn:ty`: the user says that what they tried is enough, so the run goes on from it. Mark the
      step that's trying done by `steering step`.
    - `/rn:gm` with what to change: what the user tried falls short for them, a problem for step 2.
