@@ -415,21 +415,10 @@ what breaks where it fails without reading its code.
 
 ### Each result of a double from a record
 
-A double of something outside the product, such as `gh`, gives each result from one
-line of a JSONL file in the `recorded/` folder beside it. It takes the line by
-`line("<record>", "<event>")`, or a run of lines by `lines("<record>", "<first>", "<last>")`, each
-name written out as a string or as a name that its module sets to one. Each line names itself by
-`event`, once in its file. A record of a run of the real thing names that run by its file's name,
-`<thing>-<version>[-<what>].jsonl`. A line taken from the documentation lies in a file whose name
-holds no version, and carries `source`, the URL of its page, and `shows`, the words of the page that
-show it. A check on each push reads each line of each record and each name that a double gives,
-and a check apart from the pushes, such as each night, reads that each page still shows its words.
+A double of something outside the product, such as `gh`, gives each result from a record of what
+the real thing gave, in the `recorded/` folder beside it, as record and replay does.
 
 *Why*: a double that gives what the real thing never would passes a test that the real one fails.
-A result taken from a line by names
-that a script reads leaves no result whose source no one can check, where a result written in code
-or named in a comment leaves one. A page changes apart from any push, so a check of it on each push
-would fail for a change that the push didn't make, and it runs with the checks of the tests.
 
 ## Release
 

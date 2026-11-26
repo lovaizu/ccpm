@@ -17,8 +17,7 @@ dev = [
   "vulture>=2.14",
 ]
 # The checks that need a newer Python only to check, not to run: copied code, how deep each function
-# nests, and which lines the tests run, as each plugin's Test strategy
-# sets them in dev/<plugin>/architecture.md.
+# nests, and which lines the tests run.
 test-quality = [
   "complexipy>=9.0.0",
   "coverage>=7.17.2",
@@ -76,17 +75,19 @@ python-version = "3.9"
 [tool.pytest.ini_options]
 # unittest's own pattern, which the names of the tests follow.
 python_files = ["test*.py"]
+# Each plugin's tests lie under dev/, as pytest finds them.
+testpaths = ["dev"]
 norecursedirs = [".*", "__pycache__", "node_modules"]
 addopts = ["-p", "no:cacheprovider"]
 
-# How much of rn's code the tests run, as N7 of
+# How much of the plugins' code the tests run, as N7 of
 # plugins/rn/domain/best-practices/code/best-practice.json says: every line and branch.
 [tool.coverage.run]
 branch = true
 parallel = true
 include = [
-  "*/rn/domain/scripts/*.py",
-  "*/rn/domain/scripts/**/*.py",
+  "*/plugins/*/*.py",
+  "*/plugins/**/*.py",
   ]
 
 [tool.coverage.report]
