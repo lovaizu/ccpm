@@ -324,10 +324,10 @@
           {
             "path": "plugins/rn/domain/best-practices/prompt",
             "kind": "meta",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",
