@@ -91,7 +91,7 @@
           {
             "path": "plugins/overnight/LICENSE",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/overnight/.claude-plugin/plugin.json",
