@@ -67,24 +67,24 @@
      {
       "id": "N3",
       "about": "Role",
-      "what": "Does the role say what the task is for, as the people it serves reach their aim, and how the AI checks that it has reached it?",
-      "why": "The AI stops when its work looks done, so the prompt must say what the result is for, and give a check that separates done from looking done, as Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run) give the AI something to run that comes back pass or fail.",
+      "what": "Does the role say in one sentence who the AI is, the one job it's accountable for, where its job ends and another role's begins, and why the role exists?",
+      "why": "A single sentence of role focuses the AI's behavior, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#give-claude-a-role) say, and a role focused on one task does it well, as Claude Code's [subagents](https://code.claude.com/docs/en/sub-agents) guide says. Roles without clear boundaries duplicate work and leave gaps, as Anthropic's [multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) found, and the reason for the role lets the AI generalize to a case that the steps don't name.",
       "items": [
        {
         "at": "decide",
-        "text": "Write what the task is for in one sentence: whom the result serves, the story's role of each user story whose sequence the prompt's component takes part in, what they gain by it, the story's benefit, and the few things of the task that bring them there, from the line of the prompt's component in the architecture, such as `so that the developer gets a plan they can approve in one reading, holding only the deliverables their request needs`."
+        "text": "Take the line of the prompt's component in the architecture's Components, and write who the AI is and the one job it's accountable for in one sentence, such as `You're rn's evaluator, accountable for the deliverable as its people meet it.`"
        },
        {
         "at": "decide",
-        "text": "List what holds once the AI has done the task: each thing it hands on at its last arrow in Sequences, and each file or state it leaves, such as a plan written in its form."
+        "text": "Take the components whose arrows meet the prompt's component in the architecture's Sequences, and write what lies on their side, so that the AI neither does their work nor leaves a gap, such as `Making or mending it is the generator's.`"
        },
        {
         "at": "decide",
-        "text": "For each thing on the list that could look done while it isn't, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request."
+        "text": "Take the intent of the strategy that gives the component its job in the architecture, and write what breaks without the role, so that the AI judges by it where a step doesn't fit, such as `Its maker can't see where the people would stumble, as it knows what was meant.`"
        },
        {
-        "at": "decide",
-        "text": "Decide when the AI stops: once every check passes, or at a blocker it can't pass, which it hands back with what it found."
+        "at": "make",
+        "text": "Keep the role to these and to the intent of N7, and give each detail of the work to the steps."
        }
       ]
      },
@@ -117,16 +117,28 @@
      {
       "id": "N5",
       "about": "Role, Steps",
-      "what": "Does each step lead toward what the role says the task is for, with the question the AI thinks through there from the facts at hand, and the last step reaching it?",
-      "why": "An AI that knows what each step's result is for, and thinks there from the facts in front of it, chooses how to reach it, puts its effort where the people gain most, and follows the purpose where a step doesn't fit the case.",
+      "what": "Does each step lead toward the job that the role names, with the question the AI thinks through there from the facts at hand, and the last step reaching a result that a check shows done?",
+      "why": "An AI that knows what each step's result is for, and thinks there from the facts in front of it, chooses how to reach it, puts its effort where the people gain most, and follows the purpose where a step doesn't fit the case. The AI stops when its work looks done, so the last step gives a check that separates done from looking done, as Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run) give the AI something to run that comes back pass or fail.",
       "items": [
        {
         "at": "decide",
-        "text": "Go through the steps that the arrows of the prompt's component in the architecture's Sequences give it, and ask of each whether an AI that holds the role, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI."
+        "text": "Go through the steps that the arrows of the prompt's component in the architecture's Sequences give it, and ask of each whether an AI that holds the job that the role names, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI."
        },
        {
         "at": "decide",
         "text": "Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the steering.`"
+       },
+       {
+        "at": "decide",
+        "text": "List what holds once the AI has done the task: each thing it hands on at its last arrow in Sequences, and each file or state it leaves, such as a plan written in its form."
+       },
+       {
+        "at": "decide",
+        "text": "For each thing on the list that could look done while it isn't, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request."
+       },
+       {
+        "at": "decide",
+        "text": "Decide when the AI stops: once every check passes, or at a blocker it can't pass, which it hands back with what it found."
        },
        {
         "at": "make",

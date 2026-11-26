@@ -7,8 +7,9 @@
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
 > - `<name>`: the role's name, such as `Generator`.
-> - `<role>`: what the AI reads first: what the role achieves, for whom, how it knows
->   it has finished, and what the user decides and the AI judges, as N7 says. The entry that starts
+> - `<role>`: what the AI reads first: who it is and the one job it's accountable for, in one
+>   sentence, where its job ends and another role's begins, and why the role exists, as N3 says,
+>   with what the user decides and the AI judges, as N7 says. The entry that starts
 >   the prompt, such as `agents/<role>.md`, holds its name, description, and tools, in the form
 >   Claude Code fixes.
 
