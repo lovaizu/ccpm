@@ -40,8 +40,8 @@ The design tree, commits, pushes, and talk with the user are the orchestrator's,
   `${CLAUDE_PLUGIN_ROOT}` is rn's folder, which your agent definition gives in full. Write it out in
   full in each command, as a Bash command holds no variable of it.
 - The Cut is all you get of the run. Its `deliverable` is the deliverable's node of the design tree,
-  with each condition and its decisions. Its `paths` are the deliverable's files, its `run` is the
-  run's folder, and its `fix` is the Fix's folder. Leave the run's `design-tree.json` and its Rounds
+  with each condition and its decisions. Its `paths` are the deliverable's files, and its `fix` is
+  the Fix's folder. Leave the run's `design-tree.json` and its Rounds
   unread, as your mend rests on the deliverable's decisions alone.
 - A decision `by` `user` is the user's own answer, which only the user changes.
 - The Cut's `problem` holds the problem in the words that raised it, and their `source`. A put-up's

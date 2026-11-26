@@ -274,17 +274,16 @@ def test_the_fixers_cut_holds_its_node_paths_problem_and_folders_alone(repo: str
     """Given the walkthrough's tree, and the command's fix-2 holding its problem
     When the fixer's Cut of fix-2 is made
     Then it holds the command's node as the tree holds it, the run's worktree, the command's path
-    in it, the problem, the run's folder, and fix-2's folder, each path from the repository's top,
+    in it, the problem, and fix-2's folder, each path from the repository's top,
     and nothing else"""
     the = walkthrough()
     fix = fix_at(repo, COMMAND, 2)
     got = fixer(the, run_of(repo), fix)
-    assert sorted(got) == ["deliverable", "fix", "paths", "problem", "run", "worktree"]
+    assert sorted(got) == ["deliverable", "fix", "paths", "problem", "worktree"]
     assert got["deliverable"] == the["deliverables"][1]
     assert from_top(repo, got["worktree"]) == rn_files.worktree_of(repo, NAME)
     assert [from_top(repo, each) for each in got["paths"]] == [in_worktree(repo, COMMAND)]
     assert got["problem"] == PROBLEM
-    assert from_top(repo, got["run"]) == rn_files.folder_of(repo, NAME)
     assert from_top(repo, got["fix"]) == fix.folder
 
 

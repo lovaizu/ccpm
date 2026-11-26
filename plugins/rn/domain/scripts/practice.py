@@ -1,6 +1,7 @@
 """Decides where the best practice of each kind lies and what of it each role gets: the run's own
 best practices in `.rn/best-practices/<kind>/` before rn's, each read from its
-`best-practice.json`, and the goal and conditions alone that an evaluator judges by."""
+`best-practice.json`, its template at `template.md` beside it, and the goal and conditions alone
+that an evaluator judges by."""
 
 from __future__ import annotations
 
@@ -12,6 +13,8 @@ from typing import Any, NamedTuple
 from fault import Wrong
 
 _FILE = "best-practice.json"
+# The file of a kind's template, beside its best practice.
+_TEMPLATE = "template.md"
 # The kinds whose deliverables are code, refactored by refactor-code.
 _CODE = {"code", "software-design", "test-design", "test-implementation"}
 
@@ -67,6 +70,18 @@ def read(folder: str) -> Practice:
     except ValueError as error:
         raise Wrong(f"{path}: isn't JSON: {error}") from None
     return practice
+
+
+def template(folder: str) -> str | None:
+    """The template of the best practice in the folder.
+
+    Takes: the folder of a kind's best practice.
+    Gives: the path of its `template.md`; None where the folder holds none.
+    Changes: nothing.
+    Refuses: nothing.
+    """
+    path = os.path.join(folder, _TEMPLATE)
+    return path if os.path.isfile(path) else None
 
 
 def judged(practice: Practice) -> dict[str, Any]:

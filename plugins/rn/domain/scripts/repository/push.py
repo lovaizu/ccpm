@@ -10,7 +10,7 @@ from collections.abc import Sequence
 from urllib.parse import quote
 
 from fault import CantRun, Missing, Wrong
-from template.markdown import sentences
+from sentences import sentences
 from tree import form
 
 from repository.host import Host, Ran, checked
@@ -84,7 +84,7 @@ def put_up(run: RunPlace, deliverable: str, host: Host) -> list[str]:
     <deliverable's name>`, pushes the work's branch to `origin`, and opens the pull request into the
     default branch as a draft, where the branch has none open, as `gh pr view` gives a closed or
     merged one of an earlier run of the same branch's name too: titled by the first sentence of the
-    design tree's goal, as `template.markdown.sentences` splits it, its body the goal, then a line
+    design tree's goal, as `sentences.sentences` splits it, its body the goal, then a line
     `Closes #N` for each issue of the tree's `context.issues.closes` and a line `Refs #N` for each
     of its `refs`, in their order. Where the tree's `context.pr` isn't the open pull request's URL,
     such as null, it then writes that URL there, commits it as `rn: the pull request of <name>`, and

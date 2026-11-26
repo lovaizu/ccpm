@@ -12,12 +12,11 @@ import os
 from typing import Any
 
 from fault import Wrong
-from practice import Found, judged, refactoring
+from practice import Found, judged, refactoring, template
 from repository import trial
 from repository.place import RunPlace
 from rounds import files
 from rounds.files import Fix, Result, Round
-from template.check import TEMPLATE
 
 from tree.form import Deliverable, Tree, deliverable, goal
 
@@ -36,24 +35,22 @@ def generator(
 
     Takes: the tree, the run, the Round to make, a new one or the last one resumed, the folder of
     each kind's best practice, as `practice.kinds` gives them, and the deliverable's last
-    generator's result, None before the first.
-    Gives: the Cut of `generator-cut.schema.json`: the goal; the language of the deliverables, as
-    the tree's context holds it; the deliverable's node, with each
-    decision and the user's answers as its decisions; the run's worktree; the path of each
-    deliverable its inputs name; the folder of the best practice it makes by, its kind's for
-    content and the refactoring kind's, as `practice.refactoring` names it, for refactor; the
-    `template.md` of its kind's best practice, whatever the stage, or None where the folder holds
-    none; the Round's stage, number, and folder; the folder of the people's starting state as
-    `repository.trial.folder` names it; and the last generator's `good`. It holds no evaluator's
-    findings, as the pruner writes the remedy that it keeps of each into the node's decisions.
-    Changes: nothing.
-    Refuses: Wrong where the tree's goal is open, or the tree holds no open deliverable of the
-    Round's path.
+    generator's result, None before the first. Gives: the Cut of `generator-cut.schema.json`: the
+    goal; the language of the deliverables, as the tree's context holds it; the deliverable's node,
+    with each decision and the user's answers as its decisions; the run's worktree; the path of each
+    deliverable its inputs name; the folder of the best practice it makes by, its kind's for content
+    and the refactoring kind's, as `practice.refactoring` names it, for refactor; the template of
+    its kind's best practice, as `practice.template` gives it, whatever the stage, or None where the
+    folder holds none; the Round's stage, number, and folder; the folder of the people's starting
+    state as `repository.trial.folder` names it; and the last generator's `good`. It holds no
+    evaluator's findings, as the pruner writes the remedy that it keeps of each into the node's
+    decisions. Changes: nothing. Refuses: Wrong where the tree's goal is open, or the tree holds no
+    open deliverable of the Round's path.
     """
     node = _open(tree, round_)
     kind = node["kind"]
     made_by = kind if round_.stage == "content" else str(refactoring(kind))
-    template = os.path.join(kinds[kind], TEMPLATE)
+    form = template(kinds[kind])
     return {
         "goal": goal(tree),
         "language": tree["context"]["languages"]["deliverables"],
@@ -61,7 +58,7 @@ def generator(
         "worktree": _from(run, run.worktree),
         "inputs": [_from(run, os.path.join(run.worktree, each)) for each in node["inputs"]],
         "best_practice": _from(run, kinds[made_by]),
-        "template": _from(run, template) if os.path.isfile(template) else None,
+        "template": None if form is None else _from(run, form),
         "stage": round_.stage,
         "number": round_.number,
         "round": _from(run, round_.folder),
@@ -101,7 +98,7 @@ def fixer(tree: Tree, run: RunPlace, fix: Fix) -> Cut:
     Gives: the Cut of `fixer-cut.schema.json`: the deliverable's node as the tree holds it, open
     or done, with its necessary conditions and their decisions; the run's worktree; the path of
     each file or folder of the deliverable in it, its path then each of its more paths; the Fix's
-    problem; the run's folder; and the Fix's folder, where the fixer writes its result; each path
+    problem; and the Fix's folder, where the fixer writes its result; each path
     from the folder that the conversation works in. It holds no goal, best practice, or Round,
     as the fixer mends within the decisions alone.
     Changes: nothing.
@@ -118,7 +115,6 @@ def fixer(tree: Tree, run: RunPlace, fix: Fix) -> Cut:
         "worktree": _from(run, run.worktree),
         "paths": [_from(run, os.path.join(run.worktree, each)) for each in paths],
         "problem": problem,
-        "run": _from(run, run.folder),
         "fix": _from(run, fix.folder),
     }
 

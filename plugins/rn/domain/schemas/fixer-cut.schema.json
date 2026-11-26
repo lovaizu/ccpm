@@ -8,7 +8,6 @@
   "worktree",
   "paths",
   "problem",
-  "run",
   "fix"
  ],
  "additionalProperties": false,
@@ -54,11 +53,6 @@
      "minLength": 1
     }
    }
-  },
-  "run": {
-   "description": "The run's folder, from the folder that the conversation works in, which repository checks takes.",
-   "type": "string",
-   "minLength": 1
   },
   "fix": {
    "description": "The Fix's folder, from the folder that the conversation works in, where the fixer writes its result.",
