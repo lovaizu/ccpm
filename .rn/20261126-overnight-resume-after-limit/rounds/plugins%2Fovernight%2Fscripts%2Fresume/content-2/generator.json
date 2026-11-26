@@ -1,0 +1,51 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/scripts/resume/command.py"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"The code of resume, the hook that Claude Code runs when a turn stops at the usage limit:",
+        "\"\"\"resume, as Claude Code runs it when a turn ends at the usage limit, by overnight's",
+        "\"\"\"Decides what resume takes and what it leaves behind, as Claude Code runs it when a turn ends at",
+        "\"\"\"Decides when the waiter resumes the session: it sleeps out its interval, then becomes the"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "    \"\"\"The exit code and stderr of resume on the hook's input, with `claude` the path of the",
+        "    0 with nothing said, once it left the waiter: `waiter` with the interval and",
+        "    `cwd`, the mode being the last `permissionMode` that the transcript records at the top of a",
+        "    0 with nothing said, leaving nothing, where the input's `error` isn't `rate_limit`.",
+        "    1 with `resume: <what's wrong>`, leaving nothing, where the input isn't a JSON object with"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "                    record = json.loads(line)",
+        "                if \"permissionMode\" in record:",
+        "    if not isinstance(field, str):"
+      ]
+    },
+    {
+      "condition": "N6",
+      "lines": [
+        "    code, said = main("
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "        raise Wrong(f\"the hook's input isn't JSON: {wrong}\") from wrong",
+        "            f\"the hook's input must give {name} as a string, as Claude Code gives a StopFailure,\"",
+        "        raise Wrong(f\"{transcript}: the session's transcript can't be read: {wrong}\") from wrong",
+        "        raise Wrong(f\"{INTERVAL_VARIABLE} must be a whole number of seconds from 1, not {given!r}\")",
+        "            raise Wrong(\"claude isn't on PATH, so no waiter can resume the session\")"
+      ]
+    }
+  ]
+}

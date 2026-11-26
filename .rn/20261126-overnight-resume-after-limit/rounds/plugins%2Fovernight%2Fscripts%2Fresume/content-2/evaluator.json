@@ -1,0 +1,84 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"Decides what resume takes and what it leaves behind, as Claude Code runs it when a turn ends at",
+    "\"\"\"Decides when the waiter resumes the session: it sleeps out its interval, then becomes the",
+    "\"\"\"resume, as Claude Code runs it when a turn ends at the usage limit, by overnight's",
+    "    \"\"\"Starts the waiter in a session of its own, so that it outlives the hook and the Claude Code"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "    \"\"\"The exit code and stderr of resume on the hook's input, with `claude` the path of the",
+    "    0 with nothing said, once it left the waiter: `waiter` with the interval and",
+    "    0 with nothing said, leaving nothing, where the input's `error` isn't `rate_limit`.",
+    "    1 with `resume: <what's wrong>`, leaving nothing, where the input isn't a JSON object with",
+    "`python3 wait.py <seconds> <command> [<argument> ...]`, which only resume's hook gives it.\"\"\""
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "        if called.get(\"error\") != RATE_LIMIT:",
+    "                if \"permissionMode\" in record:",
+    "    if mode not in MODES:",
+    "    if not (given.isascii() and given.isdigit()) or int(given) < 1:",
+    "        if claude is None:",
+    "    resumed = [claude, \"-p\", \"--resume\", stop.session, \"--permission-mode\", stop.mode, PROMPT]",
+    "    os.execv(sys.argv[2], sys.argv[2:])"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "from __future__ import annotations",
+    "import json",
+    "import os",
+    "import subprocess",
+    "    time.sleep(float(sys.argv[1]))"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "def main(",
+    "def _mode(transcript: str) -> str:",
+    "def _interval(environ: Mapping[str, str]) -> int:",
+    "def _text(called: dict, name: str) -> str:"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "def main(",
+    "if __name__ == \"__main__\":",
+    "    code, said = main("
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "    leave([*waiter, str(seconds), *resumed], stop.cwd)",
+    "    return 0, \"\"",
+    "        return 1, f\"resume: {wrong}\\n\""
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "        raise Wrong(f\"the hook's input isn't JSON: {wrong}\") from wrong",
+    "        raise Wrong(\"the hook's input must be a JSON object, as Claude Code gives a StopFailure\")",
+    "            f\"the hook's input must give {name} as a string, as Claude Code gives a StopFailure,\"",
+    "        raise Wrong(f\"{transcript}: the session's transcript can't be read: {wrong}\") from wrong",
+    "            f\"{transcript}: the transcript records no permission mode of {', '.join(MODES)},\"",
+    "        raise Wrong(f\"{INTERVAL_VARIABLE} must be a whole number of seconds from 1, not {given!r}\")",
+    "            raise Wrong(\"claude isn't on PATH, so no waiter can resume the session\")"
+   ]
+  }
+ ],
+ "more": []
+}

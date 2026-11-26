@@ -1,0 +1,50 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/scripts/resume/command.py"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "        hook_input = _read(stdin)",
+        "        if hook_input.get(\"error\") != RATE_LIMIT:"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "FIELDS = (\"session_id\", \"transcript_path\", \"cwd\")",
+        "RATE_LIMIT = \"rate_limit\""
+      ]
+    },
+    {
+      "condition": "N4",
+      "lines": [
+        "    except Wrong as wrong:",
+        "        return 1, f\"resume: {wrong}\\n\""
+      ]
+    },
+    {
+      "condition": "N5",
+      "lines": [
+        "        session_id, transcript, cwd = (_text(hook_input, name) for name in FIELDS)",
+        "        mode = _mode(transcript)",
+        "    leave([*waiter, str(seconds), *resumed], cwd)"
+      ]
+    },
+    {
+      "condition": "N7",
+      "lines": [
+        "    resumed = [claude, \"-p\", \"--resume\", session_id, \"--permission-mode\", mode, PROMPT]",
+        "        raise Wrong(f\"the hook's input isn't JSON: {wrong}\") from wrong"
+      ]
+    },
+    {
+      "condition": "N9",
+      "lines": [
+        "    # isdigit alone takes digits such as \"²\" that int refuses."
+      ]
+    }
+  ]
+}

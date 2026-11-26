@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable, Mapping
-from typing import NamedTuple
 
 # The error by which Claude Code names a turn stopped at the usage limit, the one stop that waiting
 # mends: each other error, such as a failed login, stops the resumed run the same way.
@@ -36,15 +35,6 @@ class Wrong(Exception):
     """An input that resume refuses, said so that whoever ran the hook can mend it."""
 
 
-class Stop(NamedTuple):
-    """The session that stopped at the usage limit: its ID, the folder it ran in, and its
-    permission mode."""
-
-    session: str
-    cwd: str
-    mode: str
-
-
 def main(
     stdin: bytes,
     environ: Mapping[str, str],
@@ -58,8 +48,9 @@ def main(
 
     0 with nothing said, once it left the waiter: `waiter` with the interval and
     `claude -p --resume <session_id> --permission-mode <mode> <PROMPT>`, started in the input's
-    `cwd`, the mode being the last `permissionMode` that the transcript records. The interval is
-    INTERVAL seconds, or the whole number of seconds that INTERVAL_VARIABLE holds.
+    `cwd`, the mode being the last `permissionMode` that the transcript records at the top of a
+    whole line. The interval is INTERVAL seconds, or the whole number of seconds that
+    INTERVAL_VARIABLE holds.
 
     0 with nothing said, leaving nothing, where the input's `error` isn't `rate_limit`.
 
@@ -68,41 +59,36 @@ def main(
     no permission mode that MODES holds, INTERVAL_VARIABLE holds no whole number from 1, or
     `claude` isn't found."""
     try:
-        called = _read(stdin)
-        if called.get("error") != RATE_LIMIT:
+        hook_input = _read(stdin)
+        if hook_input.get("error") != RATE_LIMIT:
             return 0, ""
-        stop = _stop(called)
+        session_id, transcript, cwd = (_text(hook_input, name) for name in FIELDS)
+        mode = _mode(transcript)
         seconds = _interval(environ)
         if claude is None:
             raise Wrong("claude isn't on PATH, so no waiter can resume the session")
     except Wrong as wrong:
         return 1, f"resume: {wrong}\n"
-    resumed = [claude, "-p", "--resume", stop.session, "--permission-mode", stop.mode, PROMPT]
-    leave([*waiter, str(seconds), *resumed], stop.cwd)
+    resumed = [claude, "-p", "--resume", session_id, "--permission-mode", mode, PROMPT]
+    leave([*waiter, str(seconds), *resumed], cwd)
     return 0, ""
 
 
 def _read(stdin: bytes) -> dict:
     """The hook's input as a JSON object."""
     try:
-        called = json.loads(stdin.decode("utf-8"))
+        hook_input = json.loads(stdin.decode("utf-8"))
     except ValueError as wrong:
         raise Wrong(f"the hook's input isn't JSON: {wrong}") from wrong
-    if not isinstance(called, dict):
+    if not isinstance(hook_input, dict):
         raise Wrong("the hook's input must be a JSON object, as Claude Code gives a StopFailure")
-    return called
+    return hook_input
 
 
-def _stop(called: dict) -> Stop:
-    """The session that the input names, with its permission mode from its transcript."""
-    session, transcript, cwd = (_text(called, name) for name in FIELDS)
-    return Stop(session, cwd, _mode(transcript))
-
-
-def _text(called: dict, name: str) -> str:
-    """The input's field of the name, which must be a string that isn't empty."""
-    field = called.get(name)
-    if not isinstance(field, str) or not field:
+def _text(hook_input: dict, name: str) -> str:
+    """The input's field of the name, which must be a string."""
+    field = hook_input.get(name)
+    if not isinstance(field, str):
         raise Wrong(
             f"the hook's input must give {name} as a string, as Claude Code gives a StopFailure,"
             f" not {field!r}"
@@ -111,20 +97,19 @@ def _text(called: dict, name: str) -> str:
 
 
 def _mode(transcript: str) -> str:
-    """The session's permission mode: the last `permissionMode` among the transcript's records.
-    Claude Code writes the transcript as the session goes, so a line not yet whole is passed
-    over."""
+    """The session's permission mode: the last `permissionMode` at the top of a record of the
+    transcript. Claude Code writes the transcript as the session goes, so a line not yet whole is
+    passed over, and so is a record that names `permissionMode` only within it, such as the output
+    of a command that read another transcript."""
     mode = None
     try:
         with open(transcript, encoding="utf-8") as lines:
             for line in lines:
-                if '"permissionMode"' not in line:
-                    continue
                 try:
                     record = json.loads(line)
                 except ValueError:
                     continue
-                if isinstance(record, dict) and "permissionMode" in record:
+                if "permissionMode" in record:
                     mode = record["permissionMode"]
     except OSError as wrong:
         raise Wrong(f"{transcript}: the session's transcript can't be read: {wrong}") from wrong
@@ -141,6 +126,7 @@ def _interval(environ: Mapping[str, str]) -> int:
     given = environ.get(INTERVAL_VARIABLE)
     if given is None:
         return INTERVAL
+    # isdigit alone takes digits such as "²" that int refuses.
     if not (given.isascii() and given.isdigit()) or int(given) < 1:
         raise Wrong(f"{INTERVAL_VARIABLE} must be a whole number of seconds from 1, not {given!r}")
     return int(given)
