@@ -168,7 +168,7 @@ Strategies:
 - A stop taken from /rn:dn or the user's words, and a pick-up from /rn:up. [S2]\
   Intent: the user stops and goes on at the moment they choose, and a new run never asks about an
   old one.
-- A cancel taken from /rn:dn or the user's words once the user confirms what goes, removing the
+- A cancel taken from the user's words once they confirm what goes, removing the
   run's worktree, branch, and pull request by a script. [S3]\
   Intent: a cancel can't be undone, so only the user starts it, and nothing of the run is left
   for a pick-up to meet.
@@ -312,7 +312,7 @@ sequenceDiagram
   actor U as user
   participant O as orchestrator
   participant S as scripts
-  U->>O: /rn:dn, or asks to call the run off [S3]
+  U->>O: asks to call the run off [S3]
   O->>U: what goes, the worktree, the branch, and the pull request, to confirm [P2.1]
   U->>O: confirms [S3]
   O->>O: stops each role at work [S3]

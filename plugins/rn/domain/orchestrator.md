@@ -121,18 +121,17 @@ the user afterward what you changed and why.
      left, and where it prints more than one, ask which. Then read where that run stopped by
      `steering due`, and start again each role that the stop left with no result, as `rounds next`
      names it.
-   - A stop, by `/rn:dn` or in the user's words: the user stops for now or calls the run off, and
-     only they say which, as a cancel can't be undone. Where their words don't say, such as
-     `/rn:dn` alone, ask which, recommending the stop for now, as it loses nothing.
-     - For now: the run's work stays whole where any conversation picks it up, so that a stop
-       loses nothing. Ask what of the run lives only in this conversation: a point the user
-       settled that no pruner holds yet goes to one pruner. Let each pruner at work end, as its
-       write stays whole. Stop each other role by TaskStop, as its Round starts again at the
-       pick-up. Run `repository stop <run>`, and end the turn saying where it stopped.
-     - Called off: the run goes whole, here and on GitHub, so nothing of it is left to pick up.
-       Name what goes, the run's worktree, its branch, and its pull request where there's one,
-       and ask the user to confirm. Once they do, stop each role by TaskStop, run
-       `repository cancel <run>`, and end the turn saying what went and what couldn't, with why.
+   - A stop, by `/rn:dn` or in the user's words: the run's work stays whole where any conversation
+     picks it up, so that a stop loses nothing. Ask what of the run lives only in this
+     conversation: a point the user settled that no pruner holds yet goes to one pruner. Let each
+     pruner at work end, as its write stays whole. Stop each other role by TaskStop, as its Round
+     starts again at the pick-up. Run `repository stop <run>`, and end the turn saying where it
+     stopped.
+   - A cancel, in the user's words, such as `中止して`: the run goes whole, here and on GitHub, so
+     nothing of it is left. As it can't be undone, ask them to confirm, naming what goes: the
+     run's worktree, its branch, and its pull request where there's one. Once they do, stop each
+     role by TaskStop, run `repository cancel <run>`, and end the turn saying what went and what
+     couldn't, with why.
    - `/rn:ty`: the user says that what they tried is enough, so the run goes on from it. Mark the
      step that's trying done by `steering step`.
    - `/rn:gm` with what to change: what the user tried falls short for them, a problem for step 2.

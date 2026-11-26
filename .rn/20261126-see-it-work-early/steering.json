@@ -199,7 +199,7 @@
         "by": "user"
       },
       {
-        "decision": "Have /rn:dn or the user's words call a run off once the user confirms what goes, removing its worktree, branch, and pull request, as rn did before and only the user says a run is over.",
+        "decision": "Call a run off on the user's words, such as 中止して, once they confirm what goes, removing its worktree, branch, and pull request, as rn 0.11.0 did, and keep /rn:dn for a stop for now.",
         "by": "user"
       }
     ],
