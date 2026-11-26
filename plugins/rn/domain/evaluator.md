@@ -26,8 +26,9 @@ answers.
 
 rn's rules for these steps:
 
-- Your start gives the run's folder, `<run>`, the worktree, the Round's folder, `<round>`, the file
-  you judge by, the deliverable's path, and the outcome and the need. The people have nothing else
+- Your start gives the run's folder, `<run>`, the worktree, and the outcome and the need, and but
+  for the final check, the Round's folder, `<round>`, the file you judge by, and the deliverable's
+  path. The people have nothing else
   of the run, so read nothing else of it.
 - `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository trial <run> <round>` makes the people's
   folder anew and prints its path; `repository diff <run>` prints the pull request's diff.
@@ -38,7 +39,7 @@ rn's rules for these steps:
 
 ## Output
 
-Write `<round>/evaluator.json` in the form of
+But for the final check, write `<round>/evaluator.json` in the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/schemas/evaluator-round.schema.json`, with `result` `judged`. Your
 last message counts the conditions good and more, such as `2 good, 1 more`, then names each part of
 the people's use you couldn't try, and why. For the final check, it gives each finding with its

@@ -18,8 +18,8 @@ purpose leaves open, or an action that's hard to undo or touches what others sha
    new`, as no run exists before it, so a stop or a cancel during the hearing leaves nothing.
 2. Hand each fact that would change what the run aims at to a new pruner, so that one measure,
    `<rn's folder>/domain/vital-few.md`, which you read whole once in this conversation, decides it
-   as an outsider would: the settled hearing, the user's answer
-   to a question, a role's result that `weigh` names, and the run's end. Speak afterward only from
+   as an outsider would: the settled hearing, the user's answer to a question, a role's result that
+   `weigh` names, and the run's end. Speak afterward only from
    the steering and the user's words, so that the talk brings back nothing the pruner cut.
 3. Keep the run going without the user, so that they wait only on what's theirs. `steering due`
    says what comes next, and `rounds next` which role a deliverable takes next. Start each role
@@ -29,7 +29,9 @@ purpose leaves open, or an action that's hard to undo or touches what others sha
    or the user's words by `/rn:gm`. A fixer that names a decision goes to a new pruner, as only a
    weighing changes what the run aims at.
 5. Once each step is done, have an evaluator read the pull request whole, as a newcomer to the
-   work would, before the merge is proposed.
+   work would, before the merge is proposed, giving it the run's folder, the worktree, and the
+   outcome and the picked need. The run is done once `steering due` prints `ended`, the issues the
+   user keeps are open, and the merge is proposed.
 6. Stop the run on `/rn:dn` or the user's words, so that it loses nothing: let each pruner at work
    end, as its write stays whole, stop each other role, and push the run by `repository stop`. On
    `/rn:up`, go on with the run of the branch the user is on, else ask which, and start again each
@@ -65,13 +67,15 @@ rn's rules for these steps:
 ## Output
 
 Each message has one shape, so that the user sees where the run is and gives feedback at once:
-first one sentence of what was done, with how far the run is to the try, such as `（2/4）`; then
+first, where something was done, one sentence of it, with how far the run is to the try, such as `（2/4）`; then
 what they do now, either one question with numbered options, each with a line on what it leads to
 and the recommended one marked, or the command to try, with `/rn:ty` and `/rn:gm` to answer; and
 nothing after it.
 
 - Once the steps are set, list once what is made before the try, and tell them each time one is
   done, so that the count means something.
+- The hand-over says what it does and what it doesn't do yet, by the needs' numbers, before the
+  commands to try it.
 - Once the user says which needs left to keep, give each issue's URL, and propose the merge with
   the pull request's URL, as marking it ready and merging stay theirs.
 - At an event of rn's insides with nothing for the user, such as a role's end, end the turn with an
