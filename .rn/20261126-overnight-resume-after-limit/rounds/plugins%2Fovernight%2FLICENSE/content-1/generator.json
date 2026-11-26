@@ -1,0 +1,31 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/LICENSE"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "MIT License",
+        "Copyright (c) 2026 Lovaizu"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "MIT License",
+        "Copyright (c) 2026 Lovaizu",
+        "SOFTWARE."
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "MIT License",
+        "Copyright (c) 2026 Lovaizu",
+        "SOFTWARE."
+      ]
+    }
+  ]
+}

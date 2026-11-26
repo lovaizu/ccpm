@@ -1,0 +1,31 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "MIT License",
+        "Copyright (c) 2026 Lovaizu",
+        "Permission is hereby granted, free of charge, to any person obtaining a copy"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "MIT License",
+        "Copyright (c) 2026 Lovaizu",
+        "Permission is hereby granted, free of charge, to any person obtaining a copy",
+        "The above copyright notice and this permission notice shall be included in all",
+        "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "MIT License",
+        "Copyright (c) 2026 Lovaizu"
+      ]
+    }
+  ],
+  "more": []
+}
