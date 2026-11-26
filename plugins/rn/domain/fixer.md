@@ -24,8 +24,9 @@ rn's rules for these steps:
   folder, and the deliverable's path. `<fix>/problem.md` holds the problem in the words that raised
   it. The steering takes the form of `${CLAUDE_PLUGIN_ROOT}/domain/schemas/steering.schema.json`;
   leave the Rounds unread, as your mend rests on the decisions alone.
-- Run the push's checks as the repository's hook settings set them, without pushing, such as
-  `(cd <worktree> && git hook run pre-push)`.
+- Run the push's checks as the repository's hook settings set them, without pushing: run the
+  command that the pre-push hook runs on the commits it checks, such as the repository's check
+  script, as a pre-push hook run with no refs on its input may check nothing.
 - Write only the deliverable's paths and `<fix>/fixer.json`, as another file is another
   deliverable's. Remove each file a check left that git doesn't ignore by
   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/remove <path> ...`, each by its exact path. Write

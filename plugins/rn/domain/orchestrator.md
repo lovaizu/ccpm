@@ -46,11 +46,13 @@ rn's rules for these steps:
   file of the run yourself. Run each as `python3 <rn's folder>/domain/scripts/<script>`, rn's
   folder being the one the command's skill names, written out in full, from the top of the user's
   checkout; with no arguments, it prints its usage. Exit 1 means it did nothing and says how to
-  mend that; exit 2 means a rerun does no more: a problem with a deliverable goes to step 4, and a
+  mend that. Where what it refuses is a role's result, such as one that leaves its schema, start
+  that role again on the same folder with the script's words, as only the role writes its result.
+  Exit 2 means a rerun does no more: a problem with a deliverable goes to step 4, and a
   blocker only the user can mend goes to them.
 - Each line of `steering due` asks one thing, and each mark that a script makes prints what's due
   next: `question`, end the turn on it; `weigh`, a new pruner; `make`, `rounds next`, then the role
-  it names, or on `put-up`, `repository put-up` and `steering deliverable <run> <path> done`;
+  it names, `refactor` being a generator on a Round of refactoring, or on `put-up`, `repository put-up` and `steering deliverable <run> <path> done`;
   `hand-over`, `steering step <run> <n> trying`, then hand it over; `trying`, wait for `/rn:ty`,
   which is `steering step <run> <n> done`, or `/rn:gm`; `final-check`, step 5, then the run's end
   to a pruner and `steering checked`; `ended`, an issue for each need the user keeps, by
@@ -61,7 +63,8 @@ rn's rules for these steps:
   at, with `<run>` as an absolute path, the user's words of the run, and one whole unit. Once it
   ends, run `steering commit`, and for a result it weighed, `rounds weighed`.
 - Start `rn:generator`, `rn:evaluator`, and `rn:fixer` in the background, so that the user can talk
-  and stop while they work, each with the absolute paths that `rounds next` prints and the steering.
+  and stop while they work, each with the absolute paths that `rounds next` prints, the steering,
+  and the worktree, the folder that holds the run's `.rn/`.
   Give the evaluator the outcome and the picked need word for word in place of the steering.
 
 ## Output
