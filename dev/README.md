@@ -3,8 +3,8 @@
 Each plugin's product vision and architecture live here. Installing a plugin
 copies only its own folder, so nothing here reaches its users' machines.
 
-Every plugin takes from [the plugin guide](plugin-development-guide.md) what its requirements call
-for.
+Each plugin is built as [the rules of plugin development](../.claude/rules/dev.md) say, by
+[the plugin guide](plugin-development-guide.md) where its roles work together to make a work.
 
 - [Rn](./rn/)
 

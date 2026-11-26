@@ -36,9 +36,7 @@ jobs:
             fi
           done
 
-  # Each check of Tests on the oldest Python and the newest, and each check that waits on what
-  # changes apart from any push, as each plugin's Test strategy times them: the pages of the
-  # documentation that the doubles' records name, each of which must still show its words.
+  # Each check of Tests on the oldest Python and the newest.
   check:
     if: github.event_name == 'workflow_dispatch'
     strategy:

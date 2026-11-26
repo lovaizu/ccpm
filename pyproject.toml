@@ -17,8 +17,7 @@ dev = [
   "vulture>=2.14",
 ]
 # The checks that need a newer Python only to check, not to run: copied code, how deep each function
-# nests, and which lines the tests run, as each plugin's Test strategy
-# sets them in dev/<plugin>/architecture.md.
+# nests, and which lines the tests run.
 test-quality = [
   "complexipy>=9.0.0",
   "coverage>=7.17.2",
