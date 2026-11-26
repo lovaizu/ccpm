@@ -1,0 +1,70 @@
+{
+  "ost": {
+    "outcome": "The AI that the user instructs, and that arranges the work itself, continues the work stopped at the usage limit from where it stopped, so that the user, looking in the morning, finds the work entrusted done to its end.",
+    "opportunities": [
+      {
+        "id": "O1",
+        "opportunity": "Once the usage limit lifts, the work resumes on its own.",
+        "by": "The user, in issue #62, Desired State: \"Once the usage limit lifts, the work resumes on its own.\"",
+        "opportunities": [
+          {
+            "id": "O1.1",
+            "opportunity": "The AI that the user instructed arranges the resuming itself, so the user only gives the instruction.",
+            "by": "The user, in the hearing on 2026-11-26: \"ユーザーがaiに指示してaiが段取りする 利用者はai\"",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O1.2",
+            "opportunity": "The resumed work goes on from where it stopped.",
+            "by": "The user, in the hearing on 2026-11-26, saying \"k\" to the proposal that the AI continues the stopped work from where it stopped.",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O1.3",
+            "opportunity": "The work resumes each time it stops at the limit, however often that happens in a night.",
+            "by": "rn, from the use that issue #62 describes: a night of work given at night and left until morning can run past the limit more than once.",
+            "opportunities": [],
+            "solution": null
+          }
+        ],
+        "solution": null
+      },
+      {
+        "id": "O2",
+        "opportunity": "When the user looks in the morning, the work entrusted is done to its end.",
+        "by": "The user, in the hearing on 2026-11-26, saying \"k\" to the proposal that the user finds the work entrusted done to its end in the morning.",
+        "opportunities": [
+          {
+            "id": "O2.1",
+            "opportunity": "In the morning, the user sees whether the work reached its end, and if it didn't, where it stopped.",
+            "by": "rn, from the user's use in the hearing on 2026-11-26: the user looks at the work in the morning.",
+            "opportunities": [],
+            "solution": null
+          }
+        ],
+        "solution": null
+      }
+    ],
+    "target": null,
+    "decisions": [
+      {
+        "decision": "rn talks with the user in Japanese, the language of their words, and writes the deliverables in English, the language of the repository's documents, as the README promises and the user's own rule says.",
+        "by": "rn"
+      }
+    ],
+    "questions": [
+      "どのニーズから始めますか。番号で選んでください。\n1. 利用上限が解けたら、作業がひとりでに再開する（#62）\n1.1 ユーザーが指示したAIが、再開の段取りを自分で整え、ユーザーは指示するだけで済む\n1.2 再開した作業が、止まったところから続く\n1.3 一晩に何度上限で止まっても、そのたびに再開する\n2. 朝見たとき、任せた作業が最後まで終わっている\n2.1 朝、作業が最後まで済んだか、済んでいなければどこで止まったかがわかる\nおすすめは 1 です。ほかのどのニーズも、上限が解けたら作業がまた動き出すことの上に成り立つからです。"
+    ]
+  },
+  "state": {
+    "issues": {
+      "closes": [
+        62
+      ],
+      "refs": []
+    },
+    "steps": []
+  }
+}
