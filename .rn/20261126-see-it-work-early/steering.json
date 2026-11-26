@@ -211,7 +211,9 @@
         "by": "user"
       }
     ],
-    "questions": []
+    "questions": [
+      "Which E2E finding of #62 to fix in rn first? (1) rn doesn't first ask whether what already exists meets the need: it found Claude Code's built-in autoContinueAtUsageLimit only after making 8 of 10 deliverables of overnight; (2) the messages: progress lines while a role works, a first line that is neither the question nor the try, and English mixed into the Japanese talk; (3) work outside the run's purpose, such as changes to ccpm's check.sh and trace.py, made inside the run, its cause in ccpm fixed by #94 but rn having no judgment to send such work out. Recommended: 1, as fewer deliverables leave 2 and 3 fewer places to happen. The #62 run is paused with draft PR #93, handed over for the user's night test of the built-in auto-continue."
+    ]
   },
   "state": {
     "issues": {
