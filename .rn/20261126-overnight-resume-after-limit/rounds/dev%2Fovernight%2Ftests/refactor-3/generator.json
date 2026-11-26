@@ -1,0 +1,66 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/unit/test_overnight_resume_main.py"
+ ],
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "def test_passes_over_the_transcripts_last_line_not_yet_whole(",
+    "    assert left.started == [([*WAITER, \"900\", *resumed(claude, \"default\")], project)]"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "    answer = main(stdin(given), {}, claude, WAITER, left)",
+    "    [call] = claude_double.called(calls)"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "def line(record: str, event: str) -> dict[str, Any]:",
+    "# The variable of the double's environment that names the file where it keeps each call.",
+    "CALLS = \"CLAUDE_DOUBLE_CALLS\""
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "    \"\"\"A copy of the line of the record in recorded/ that the event names.\"\"\"",
+    "    return copy.deepcopy(next(each for each in _record(record) if each[\"event\"] == event))"
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "def resumed(claude: str, mode: str) -> list[str]:",
+    "def refused(answer: tuple[int, str], left: Left, *named: str) -> None:"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "def answer() -> None:",
+    "    \"\"\"Runs as `claude`: adds the call to those kept before it, then exits as the record says.\"\"\""
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "def called(calls: str) -> list[dict[str, Any]]:",
+    "def stop_failure(transcript: str, cwd: str) -> dict[str, Any]:"
+   ]
+  },
+  {
+   "condition": "N9",
+   "lines": [
+    "    # Cut just past the mode, so that the half line names plan, and only passing it over gives",
+    "    # default.",
+    "    half = plan[: plan.index(mode) + len(mode)]"
+   ]
+  }
+ ]
+}

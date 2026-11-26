@@ -1,0 +1,65 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"The double of Claude Code that overnight's unit cases run in its place: the input that it gives a",
+    "StopFailure hook, the lines that it writes to a session's transcript, and the `claude` command that",
+    "the waiter resumes the session with. Each comes from one line of a record in recorded/, as the"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "STOP_FAILURE = (",
+    "    \"StopFailure gives the hook the session, its transcript, its folder, and the error rate_limit\"",
+    "PROMPT = \"a prompt that the user typed records the session's permission mode\"",
+    "OUTPUT = \"the output of a command that the session ran records no permission mode of its own\""
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "# How long a case waits for the waiter to run the double: far past the interval of a second that the",
+    "# cases give, so that only a waiter that never runs it fails the case.",
+    "PATIENCE = 30.0",
+    "    # The call is written whole and then named, so that a case never reads half of it."
+   ]
+  },
+  {
+   "condition": "N5",
+   "lines": [
+    "def test_resumes_the_session_in_the_last_permission_mode_that_the_transcript_records(",
+    "def test_passes_over_a_line_that_names_a_permission_mode_only_within_it(",
+    "def test_refuses_a_permission_mode_that_claude_doesnt_accept("
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "def install(folder: str) -> str:",
+    "    \"\"\"The path of the double's `claude` command, written in the folder.\"\"\"",
+    "    return claude_double.install(os.path.join(str(tmp_path), \"bin\"))"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "    assert (ran.returncode, ran.stdout, ran.stderr) == (0, b\"\", b\"\")",
+    "    assert call[\"argv\"] == [\"-p\", \"--resume\", \"abc123\", \"go on\"]",
+    "    assert call[\"pid\"] == waiter.pid"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N2",
+   "good_when": "A maintainer who writes a case where claude is run more than once, such as a second try while the limit holds, gets from called() every call, as the module's opening (\"it adds to the file that CALLS names in its environment a line\") and called()'s docstring (\"Each call of the double kept in the file\") say; in the trial, two runs of the double gave called() only the second call."
+  },
+  {
+   "condition": "N8",
+   "good_when": "A maintainer who writes a new case and leaves CLAUDE_DOUBLE_CALLS out of the environment that resume runs in learns at once that the double was run without that variable, and so knows to add it; in the trial, the case waited 30 seconds and then said \"claude wasn't called within 30.0 seconds\", though the waiter had run the double."
+  }
+ ]
+}

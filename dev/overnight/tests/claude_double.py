@@ -141,11 +141,15 @@ def called(calls: str) -> list[dict[str, Any]]:
 
 
 def answer() -> None:
-    """Runs as `claude`: keeps the call, then exits as the record says."""
+    """Runs as `claude`: adds the call to those kept before it, then exits as the record says."""
     call = {"argv": sys.argv[1:], "cwd": os.getcwd(), "at": time.time(), "pid": os.getpid()}
-    # The call is written whole and then named, so that a case never reads half of it.
     calls = os.environ[CALLS]
+    kept = ""
+    if os.path.exists(calls):
+        with open(calls, encoding="utf-8") as f:
+            kept = f.read()
+    # The calls are written whole and then named, so that a case never reads half of one.
     with open(f"{calls}.part", "w", encoding="utf-8") as f:
-        f.write(json.dumps(call) + "\n")
+        f.write(kept + json.dumps(call) + "\n")
     os.replace(f"{calls}.part", calls)
     raise SystemExit(exit_code())

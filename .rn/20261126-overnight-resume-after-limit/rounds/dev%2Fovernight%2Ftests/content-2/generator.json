@@ -1,0 +1,34 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/claude_double.py"
+ ],
+ "good": [
+  {
+   "condition": "N2",
+   "lines": [
+    "    \"\"\"Each call of the double kept in the file, once it holds one, as `argv` without the",
+    "    \"\"\"Runs as `claude`: adds the call to those kept before it, then exits as the record says.\"\"\"",
+    "            kept = f.read()",
+    "        f.write(kept + json.dumps(call) + \"\\n\")"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "TESTS = os.path.dirname(HERE)",
+    "for folder in (SCRIPTS, TESTS):",
+    "    folder = os.path.join(str(tmp_path), \"project\")",
+    "    # The calls are written whole and then named, so that a case never reads half of one."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "def line(record: str, event: str) -> dict[str, Any]:",
+    "    \"\"\"A copy of the line of the record in recorded/ that the event names.\"\"\"",
+    "{\"event\": \"claude -p exits 0 once its run succeeds\", \"exit\": 0}"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "result": "made",
+ "files": [
+  "dev/overnight/tests/claude_double.py",
+  "dev/overnight/tests/recorded/claude-2.1.332-transcript.jsonl",
+  "dev/overnight/tests/recorded/claude-manual.jsonl",
+  "dev/overnight/tests/unit/conftest.py",
+  "dev/overnight/tests/unit/claude_double.py",
+  "dev/overnight/tests/unit/recorded/claude-2.1.332-transcript.jsonl",
+  "dev/overnight/tests/unit/recorded/claude-manual.jsonl"
+ ],
+ "good": [
+  {
+   "condition": "N4",
+   "lines": [
+    "TESTS = os.path.dirname(HERE)",
+    "for folder in (SCRIPTS, TESTS):",
+    "    folder = os.path.join(str(tmp_path), \"project\")"
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "def line(record: str, event: str) -> dict[str, Any]:",
+    "    \"\"\"A copy of the line of the record in recorded/ that the event names.\"\"\"",
+    "{\"event\": \"claude -p exits 0 once its run succeeds\", \"exit\": 0}"
+   ]
+  }
+ ]
+}

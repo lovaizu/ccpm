@@ -107,6 +107,8 @@ def test_passes_over_the_transcripts_last_line_not_yet_whole(
     Then the waiter resumes the session in default"""
     plan = claude_double.prompt("plan")
     mode = '"permissionMode":"plan"'
+    # Cut just past the mode, so that the half line names plan, and only passing it over gives
+    # default.
     half = plan[: plan.index(mode) + len(mode)]
     transcript = claude_double.transcript(sessions, claude_double.prompt("default") + half)
     given = claude_double.stop_failure(transcript, project)

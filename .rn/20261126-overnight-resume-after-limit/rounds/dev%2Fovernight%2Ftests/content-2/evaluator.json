@@ -1,0 +1,76 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "\"\"\"The double of Claude Code that overnight's unit cases run in its place: the input that it gives a",
+    "\"\"\"What overnight's unit cases share: the folder of overnight's code on the import path, as resume's",
+    "\"\"\"The unit cases of resume's main, as resume's `__main__.py` calls it with the StopFailure hook's",
+    "\"\"\"The unit cases of resume as overnight's hook runs it, `python3 <scripts>/resume` with the"
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "def stop_failure(transcript: str, cwd: str) -> dict[str, Any]:",
+    "    \"\"\"The input of a StopFailure hook at the usage limit, naming the recorded session, its",
+    "def called(calls: str) -> list[dict[str, Any]]:",
+    "    \"\"\"Each call of the double kept in the file, once it holds one, as `argv` without the",
+    "    command's own path, `cwd`, `at` by the system's clock, and `pid`. Raises TimeoutError where no",
+    "def install(folder: str) -> str:",
+    "    \"\"\"The path of the double's `claude` command, written in the folder.\"\"\""
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "the waiter resumes the session with. Each comes from one line of a record in recorded/, as the",
+    "def other_error() -> str:",
+    "def exit_code() -> int:",
+    "    assert call[\"pid\"] == waiter.pid"
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "    deadline = time.monotonic() + PATIENCE",
+    "def project(tmp_path: Any) -> str:",
+    "    \"\"\"The environment of the developer's run, such as coverage's settings, with PATH naming only",
+    "    # The calls are written whole and then named, so that a case never reads half of one."
+   ]
+  },
+  {
+   "condition": "N6",
+   "lines": [
+    "    answer = main(stdin(given), {}, claude, WAITER, left)",
+    "        [sys.executable, FOLDER],",
+    "        [sys.executable, WAIT, \"1\", claude, \"-p\", \"--resume\", \"abc123\", \"go on\"],"
+   ]
+  },
+  {
+   "condition": "N7",
+   "lines": [
+    "    assert left.started == [([*WAITER, \"900\", *resumed(claude, \"bypassPermissions\")], project)]",
+    "    assert (ran.returncode, ran.stdout, ran.stderr) == (0, b\"\", b\"\")",
+    "    [call] = claude_double.called(calls)",
+    "    assert call[\"at\"] > ended",
+    "    assert code == claude_double.exit_code()"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "    calls = os.environ[CALLS]",
+    "    \"\"\"Each call of the double kept in the file, once it holds one, as `argv` without the",
+    "            raise TimeoutError(f\"claude wasn't called within {PATIENCE} seconds\")"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N5",
+   "good_when": "the maintainer who changes how resume reads OVERNIGHT_INTERVAL_SECONDS sees a test fail, named for the case, once resume takes digits other than 0 to 9, such as the full-width digits that a Japanese keyboard types: today resume refuses them and every test passes whether it does or not"
+  }
+ ]
+}
