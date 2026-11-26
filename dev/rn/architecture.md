@@ -19,15 +19,20 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P1.2: the least that runs, through every kind of deliverable that the need takes, goes to the
     user before anything more is made.
   - P1.3: a mend that keeps what the run decided starts at once, with no weighing before it.
+  - P1.4: the solution makes only what nothing that already exists meets, such as a feature of
+    Claude Code, a tool its people have, or a part of the repository.
 - P2: the user as one who uses it
   - P2.1: the user is asked only what only they can decide, one point at a time, in plain words
     with a recommendation and why.
   - P2.2: each need that the user or the issue named stays on the list, and only the user decides
     what happens to it.
-  - P2.3: each message to the user holds only what they act on: what they can try, or the one
-    thing they decide.
+  - P2.3: each message to the user has one shape: what was done, with how far the run is to the
+    try, then what they do now, one question with numbered options or what to try, and nothing of
+    rn's insides, so that they see where the run is and give feedback at once.
   - P2.4: rn talks in the user's language and writes in the repository's, asking only where they
     disagree.
+  - P2.5: a change to a part that others share, outside what the run delivers, leaves the run for
+    an issue of its own, with the user's say.
 - P3: best practices in full
   - P3.1: each deliverable, when first made or remade, meets every necessary condition of its
     kind's best practice before the user touches it.
@@ -218,13 +223,15 @@ sequenceDiagram
     U->>O: answers [P2.1]
     O->>P: starts one with the answer, word for word (Steering) [P4.1]
     P->>T: writes the answer as the user's decision, and for a pick, the target and its solution with its riskiest assumption (Steering, Solution) [P1.1]
+    P->>P: looks for what already meets the target, in the repository and in public documents, for the solution to make only what it lacks [P1.4]
     P-->>O: ends, with the steps to the target, the walking skeleton first (Step) [P1.2]
     O->>S: writes the steps into the steering, and commits (Steering, Step) [P5.2]
   end
+  O->>U: what is made before the try, listed once [P2.3]
   loop each deliverable of the step, each after those it rests on [P1.2]
     loop each Round, until each condition is good [P3.1]
       O->>G: starts one with the steering, the deliverable, and its best practice (Deliverable, Best practice) [P5.1]
-      alt a point it can't settle [P2.1]
+      alt a point it can't settle, such as a change to a part that others share [P2.5]
         G-->>O: the point, for a pruner to weigh or leave to the user (Round) [P4.1]
       else
         G->>G: makes it by every necessary condition of its kind's best practice, by the run's decisions [P3.1]
@@ -244,6 +251,7 @@ sequenceDiagram
     G->>G: refactors it, keeping its intent, and runs the repository's tests [P3.1]
     G-->>O: ends, which ends the deliverable's Rounds (Round) [P5.2]
     O->>S: puts it up, committed and pushed in the draft pull request, and marks it done (Steering, Deliverable) [P5.3]
+    O->>U: what was done, with how far the run is to the try [P2.3]
   end
   O->>S: marks the step trying (Step) [P6.1]
   loop until the user says it's enough [P2.1]
@@ -272,11 +280,11 @@ sequenceDiagram
   O->>P: starts one with the run's end (Steering) [P4.1]
   P-->>O: ends, with a proposal for each need left, to keep it in an issue or to leave it [P2.2]
   O->>S: marks the final check passed, so the run ends once nothing is asked (Steering) [P6.1]
-  O->>U: the need reached, each need left with its proposal, and the merge proposed [P2.2]
-  opt the user says which needs to keep [P2.2]
-    O->>P: starts one with the answer, word for word (Steering) [P4.1]
-    O->>S: opens an issue for each need kept, in its own words [P2.2]
-  end
+  O->>U: the need reached, and which needs left to keep, with a proposal for each [P2.2]
+  U->>O: answers [P2.2]
+  O->>P: starts one with the answer, word for word (Steering) [P4.1]
+  O->>S: opens an issue for each need kept, in its own words [P2.2]
+  O->>U: each issue opened, and the merge proposed [P2.3]
   U->>U: marks the pull request ready, and merges [P7.2]
 ```
 

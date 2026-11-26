@@ -219,11 +219,15 @@
         "by": "user"
       },
       {
-        "decision": "Write each prompt in domain/ in three sections, Role, what the role is expected to achieve, Steps, each step's purpose and intent with only the plugin's own rules, and Output, what it hands back, as the entries hold the form that Claude Code fixes, so each line changes what the AI does.",
+        "decision": "Write each role's prompt in domain/ in three sections, Role, what the role is expected to achieve, Steps, each step's purpose and intent with only the plugin's own rules, and Output, what it hands back, as the entries hold the form that Claude Code fixes, so each line changes what the AI does.",
         "by": "user"
       },
       {
-        "decision": "Read each rewritten prompt through with the user, one at a time, the orchestrator's first, as the user judges whether its length fits rn as they use and designed it.",
+        "decision": "Rewrite every prompt at once, with no reading through with the user, as the user asked for all of them fixed.",
+        "by": "user"
+      },
+      {
+        "decision": "Write vital-few.md as rn's measure, a document of the goal, the questions, what doesn't count, and a judgment's form, not as a prompt, as it's the standard that each role judges by.",
         "by": "user"
       }
     ],
@@ -336,27 +340,27 @@
           {
             "path": "plugins/rn/README.md",
             "kind": "readme",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "dev/rn/architecture.md",
             "kind": "architecture",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",
-        "settles": "the prompts, rewritten in Role, Steps, and Output with the fixes of the findings of #62, read through with the user one at a time",
+        "settles": "the prompts, rewritten in Role, Steps, and Output with the fixes of the findings of #62, and the measure as a document of its own",
         "deliverables": [
           {
             "path": "plugins/rn/domain",
             "kind": "prompt",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",
