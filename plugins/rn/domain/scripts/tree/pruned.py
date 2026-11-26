@@ -1,15 +1,13 @@
 """Decides what the pruner's result of one unit, `<run>/pruner.json` in the form of
-domain/schemas/pruner.schema.json, makes of the design tree's commit: whether the result is one the
-commit may act on, the ground of the commit's message, from each node the pruner kept, and what the
-orchestrator tells the user once it's committed, each point to ask and each step of its own that
-the pruner changed, a line each."""
+domain/schemas/pruner.schema.json, makes of the design tree's commit: the ground of the commit's
+message, from each node the pruner kept, and what the orchestrator tells the user once it's
+committed, each point to ask and each step of its own that the pruner changed, a line each."""
 
 from __future__ import annotations
 
 import json
 from typing import Any
 
-from check.form import faults, schema
 from fault import Wrong
 
 # The pruner's result, in the form of domain/schemas/pruner.schema.json.
@@ -22,9 +20,8 @@ def read(path: str) -> Weighing:
     Takes: the path of a run's `pruner.json`.
     Gives: the result, in its form.
     Changes: nothing.
-    Refuses: Wrong where no file lies there, saying that the pruner writes it before the commit;
-    where it isn't JSON; or where it leaves its schema, naming the file and each place with what
-    the form takes there, a line each.
+    Refuses: Wrong where no file lies there, saying that the pruner writes it before the commit, or
+    where it isn't JSON.
     """
     try:
         with open(path, encoding="utf-8") as file:
@@ -36,9 +33,6 @@ def read(path: str) -> Weighing:
         ) from None
     except ValueError as error:
         raise Wrong(f"{path}: isn't JSON: {error}; write it as JSON") from None
-    found = faults(weighing, schema("pruner"))
-    if found:
-        raise Wrong("\n".join(f"{path}{each}" for each in found))
     return weighing
 
 

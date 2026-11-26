@@ -14,10 +14,8 @@ from repository import push
 from repository.host import Host
 from repository.place import RunPlace, of_folder
 from rounds import course, files
-from template.check import TEMPLATE
-from template.check import figures as figures_of
 
-from tree import checks, cut, due, form, pruned, signoff, touched
+from tree import cut, due, form, pruned, signoff, touched
 
 # Whom a deliverable waits on, as a refused Fix says it, by what it waits on and the stage.
 _WHO = {
@@ -36,7 +34,6 @@ RESTART = "--restart"
 
 USAGE = """\
 usage: tree touched <run> [<pointer>]
-       tree check <run>
        tree next <run> [--restart]
        tree commit <run>
        tree fix <run> <deliverable> <source>   (the problem's words on stdin)
@@ -56,9 +53,6 @@ def main(
     - `touched <run>`: the same for each node that `tree.touched.changed` gives between the tree in
       the work branch's last commit and the tree as it stands, each node once, the changed nodes
       left out.
-    - `check <run>`: 0 printing nothing where `tree.checks.faults` finds no fault in the design
-      tree as it stands, else 1 printing each fault on a line of its own; it changes nothing, so
-      that the pruner checks its write before it ends.
     - `next <run>`: 0 printing each thing that `tree.due.due` gives due now, a line each, its words
       apart by a tab: `hearing`; `sign-off\\tplan`; `pruner\\t<deliverable>\\t<result>`, the result
       to weigh by its absolute path; `answer\\t<deliverable>\\t<condition>\\t<about>`;
@@ -72,20 +66,18 @@ def main(
       its Cut written anew in its Round or Fix, as a pick-up in a new conversation starts again
       each role that a pause stopped.
     - `commit <run>`: reads the pruner's result, `<run>/pruner.json`, as `tree.pruned.read` holds
-      it; where `tree.checks.faults` finds no fault in the design tree, signs off the plan where
-      `tree.signoff.waiting` names it, open with each condition good, the goal is settled, and the
-      result asks nothing, as `tree.signoff.signed_off` writes it; commits the tree with the removal
-      of each of its `stray`, as `push.commit` does, with the message that `tree.pruned.ground`
-      gives; removes `pruner.json`, which no commit holds; and gives 0 printing the hash, then each
-      line that `tree.pruned.told` gives. Where the tree has no change since the last commit and the
-      result names no stray, it commits nothing and prints the last commit's hash. Either way it
-      then marks with that hash, as `rounds.files.weigh` does, the Round or Fix of each of the
-      result's `units` whose point, findings, or fixer's decision waits on the pruner, and no other.
-      1, changing nothing, where the result is missing or Wrong, naming each place where it leaves
-      its form; where the tree holds a fault, with the first; where a unit is none that `tree
-      next` prints on a pruner line for the tree as last committed; or where `push.commit` refuses a
-      stray as Wrong. It pushes nothing and asks gh nothing, as the final check pushes the work and
-      the user marks the pull request ready.
+      it; signs off the plan where `tree.signoff.waiting` names it, open with each condition good,
+      the goal is settled, and the result asks nothing, as `tree.signoff.signed_off` writes it;
+      commits the tree with the removal of each of its `stray`, as `push.commit` does, with the
+      message that `tree.pruned.ground` gives; removes `pruner.json`, which no commit holds; and
+      gives 0 printing the hash, then each line that `tree.pruned.told` gives. Where the tree has no
+      change since the last commit and the result names no stray, it commits nothing and prints the
+      last commit's hash. Either way it then marks with that hash, as `rounds.files.weigh` does, the
+      Round or Fix of each of the result's `units` whose point, findings, or fixer's decision waits
+      on the pruner, and no other. 1, changing nothing, where the result is missing or Wrong; where
+      a unit is none that `tree next` prints on a pruner line for the tree as last committed; or
+      where `push.commit` refuses a stray as Wrong. It pushes nothing and asks gh nothing, as the
+      final check pushes the work and the user marks the pull request ready.
     - `fix <run> <deliverable> <source>`, `<source>` one of `rounds.files.SOURCES`, with the
       problem's words on stdin, as they were printed or said: writes the deliverable's next Fix
       as `rounds.files.new_fix` does, with the problem that `rounds.files.problem` gives, and
@@ -126,11 +118,6 @@ def _touched(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: 
     for each in made:
         found += touched.touched(before, after, _held(after, each))
     return 0, _lines(list(dict.fromkeys(node for node in found if node not in made))), ""
-
-
-def _check(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    found = _faults(run, plugin_root)
-    return (1 if found else 0), _lines(found), ""
 
 
 def _next(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
@@ -178,9 +165,6 @@ def _started(run: RunPlace, tree: form.Tree, role: str, path: str, plugin_root: 
 
 def _commit(run: RunPlace, given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     weighing = pruned.read(run.pruner)
-    found = _faults(run, plugin_root)
-    if found:
-        return 1, "", f"tree: {found[0]}\n"
     weighable = _weighable(run, _committed(run, host))
     for each in weighing["units"]:
         if os.path.normpath(each) not in weighable:
@@ -291,26 +275,6 @@ def _weigh(
             files.weigh(folder, made)
 
 
-def _faults(run: RunPlace, plugin_root: str) -> list[str]:
-    """Each fault that `tree.checks.faults` finds in the run's design tree as it stands, by the
-    best practice of each kind that `practice.kinds` finds, and the figures of its template where
-    its folder holds one."""
-    kinds = practice.kinds(plugin_root, run.worktree)
-    practices = {kind: practice.read(folder) for kind, folder in kinds.items()}
-    figures = {
-        kind: figures_of(_text(os.path.join(folder, TEMPLATE)))
-        for kind, folder in kinds.items()
-        if os.path.isfile(os.path.join(folder, TEMPLATE))
-    }
-    return checks.faults(form.read(run.tree), practices, run.worktree, figures)
-
-
-def _text(path: str) -> str:
-    """The file's text."""
-    with open(path, encoding="utf-8") as file:
-        return file.read()
-
-
 def _committed(run: RunPlace, host: Host) -> Any:
     """The design tree in the work branch's last commit, or {} where none holds it yet."""
     path = os.path.relpath(run.tree, run.worktree)
@@ -336,7 +300,7 @@ def _last(results: list[Any]) -> Any:
 
 
 def _lines(given: list[str]) -> str:
-    """Each one given, such as a node's pointer or a fault, on a line of its own."""
+    """Each one given, such as a node's pointer, on a line of its own."""
     return "".join(f"{each}\n" for each in given)
 
 
@@ -344,7 +308,6 @@ _Subcommand = Callable[[RunPlace, list[str], str, str, Host], Answer]
 # Each subcommand, with its least and most count of arguments after its name, the run's among them.
 _SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int]] = {
     "touched": (_touched, 1, 2),
-    "check": (_check, 1, 1),
     "next": (_next, 1, 2),
     "commit": (_commit, 1, 1),
     "fix": (_fix, 3, 3),

@@ -1,11 +1,9 @@
 """What a person or CI runs on rn's best practices, as `python3 dev/scripts/practices.py form`
-with the JSON of one best practice or more: it names each fault of a best practice's form, its
-template where it's a JSON Schema using a keyword that rn's check of a form doesn't hold, and each
-file in its folder
-that neither it nor its template holds. It gives 0, or 1 where it names any fault, and 2 with its
-usage where it gets no command it takes. It's ccpm's own tooling, kept out of rn's folder, as no
-run of rn checks the form of rn's own best practices. It holds each best practice to its form, rn's
-`plugins/rn/domain/schemas/best-practice.schema.json`."""
+with the JSON of one best practice or more: it names each fault of a best practice's form that its
+schema, rn's `plugins/rn/domain/schemas/best-practice.schema.json`, can't name, and each file in
+its folder that neither it nor its template holds. It gives 0, or 1 where it names any fault, and 2
+with its usage where it gets no command it takes. It's ccpm's own tooling, kept out of rn's folder,
+as no run of rn checks the form of rn's own best practices."""
 
 from __future__ import annotations
 
@@ -16,7 +14,7 @@ import sys
 from typing import Any, Callable
 
 # rn's folder of the work's knowledge, where its best practices and their form lie, and the code
-# that holds a file to its form.
+# that reads a best practice.
 RN = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
     "plugins",
@@ -25,7 +23,6 @@ RN = os.path.join(
 )
 sys.path.insert(0, os.path.join(RN, "scripts"))
 
-from check.form import KEYWORDS
 from fault import Wrong
 from practice import read
 
@@ -143,38 +140,6 @@ def template(path: str, data: dict[str, Any]) -> list[Section] | None:
     if data["template"].endswith(".json"):
         return keys(text)
     return [(name,) for name in sections(text)]
-
-
-def unheld(node: Any) -> list[str]:
-    """Each keyword of the JSON Schema node at any depth that rn's check of a form doesn't hold,
-    once each, in order."""
-    if not isinstance(node, dict):
-        return []
-    found = [key for key in node if key not in KEYWORDS]
-    inner = [node.get("items"), node.get("additionalProperties"), *node.get("anyOf", [])]
-    inner += [*node.get("oneOf", [])]
-    inner += [*node.get("properties", {}).values(), *node.get("$defs", {}).values()]
-    for each in inner:
-        found += unheld(each)
-    return [key for n, key in enumerate(found) if key not in found[:n]]
-
-
-def unread(path: str, data: dict[str, Any]) -> list[str]:
-    """Why the template of the best practice at the path, where it's a JSON Schema, uses a keyword
-    that rn's check of a form doesn't hold, in words, as a check that holds a deliverable to it
-    would stop."""
-    if not data.get("template", "").endswith(".json"):
-        return []
-    try:
-        with open(beside(path, data["template"]), encoding="utf-8") as f:
-            form = json.load(f)
-    except ValueError as why:
-        return [f"its template {data['template']} isn't JSON: {why}"]
-    found = unheld(form) if SCHEMA in form else []
-    return [
-        f"its template {data['template']} uses {key}, which rn's check of a form doesn't hold"
-        for key in found
-    ]
 
 
 def practice_of(path: str, kind: str) -> str:
@@ -382,8 +347,7 @@ def strays(path: str, data: dict) -> list[str]:
 
 
 def form(path: str) -> list[str]:
-    """Each fault of the best practice's form, its template where it's a schema using a keyword
-    that rn's check of a form doesn't hold, and each file in its folder that neither it nor its
+    """Each fault of the best practice's form, and each file in its folder that neither it nor its
     template holds."""
     if os.path.basename(path) != PRACTICE:
         return [f"a best practice lies in a file named {PRACTICE}"]
@@ -396,7 +360,7 @@ def form(path: str) -> list[str]:
     found = missing(path, data)
     if found:
         return found + late
-    return unread(path, data) + faults(data, template(path, data)) + late
+    return faults(data, template(path, data)) + late
 
 
 PRACTICES: dict[str, Callable[[str], list[str]]] = {

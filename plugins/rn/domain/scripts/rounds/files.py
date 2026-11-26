@@ -245,7 +245,7 @@ def problem_of(fix: Fix) -> Problem | None:
 def fixer_result(fix: Fix) -> Result | None:
     """The fixer's result in the Fix, as it wrote it in the form of
     domain/schemas/fixer-fix.schema.json; None where it wrote none yet. Refuses Wrong where the
-    file isn't JSON, naming it, as check.result holds its form."""
+    file isn't JSON, naming it."""
     return _read(fix.result)
 
 
@@ -287,7 +287,7 @@ def result(round_: Round, role: str) -> Result | None:
     Takes: the Round, and `generator` or `evaluator`.
     Gives: the result the role wrote; None where it wrote none yet.
     Changes: nothing.
-    Refuses: Wrong where the file isn't JSON, naming it, as check.result holds its form.
+    Refuses: Wrong where the file isn't JSON, naming it.
     """
     return _read(round_.result(role))
 

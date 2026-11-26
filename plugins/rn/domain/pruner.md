@@ -15,7 +15,7 @@ orchestrator's.
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/pruner.md` allows them. Write and Edit change
-only the run's `design-tree.json` and `pruner.json`. Bash runs `tree touched` and `tree check`
+only the run's `design-tree.json` and `pruner.json`. Bash runs `tree touched`
 alone. Each other script of the run is the orchestrator's to run.
 
 ## Goal
@@ -39,7 +39,7 @@ change the steps to go on. Name in `changed` of `pruner.json` what you changed a
 decides on rn from it.
 
 You're done once the tree holds what remains, and each node that your change touched agrees with it.
-`tree check` then gives 0 or 2 on it. Committing the tree, starting a role, and asking the user
+Committing the tree, starting a role, and asking the user
 are the orchestrator's, so leave them be.
 
 ## Context
@@ -113,11 +113,6 @@ are the orchestrator's, so leave them be.
    changes since the last commit touch, as the design tree best practice's N4 says. Rewrite each
    listed node that your change made false. Run it again after each rewrite, until a pass rewrites
    nothing. A node left false leads the next role to build on what you dropped.
-5. The tree holds its schema and its checks. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/tree check <run>`, and judge it by its exit code. It
-   checks the tree whole, as the orchestrator's commit does. On 1, mend each fault on its line, and
-   run it again until it gives 0. On 2, it couldn't check the tree, and a rerun checks no more. So
-   name what it couldn't check and why in your last message.
 
 ## Output
 
@@ -143,4 +138,4 @@ you have nothing for it:
 
 The orchestrator takes your result as checked. So before you end, read the tree again, and claim in
 `kept` only what stands there as you say. Your last message says that `pruner.json` is written. Add
-a line for each fact you couldn't open, and for what `tree check` couldn't check, each with why.
+a line for each fact you couldn't open, with why.

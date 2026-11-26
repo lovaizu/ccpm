@@ -1,8 +1,8 @@
 """The unit cases of practice.py, where each kind's best practice lies and what of it each role
 gets: `kinds` of rn's own best practices, of a run's own before them and beside them, and of a
-folder of neither; `read` of a best practice, one missing, one that isn't JSON, and one out of its
-form; `judged` without any practice; and `refactoring` of a kind of code, of light, and of another
-kind. dev/scripts/practices.py holds each of rn's best practices to its form."""
+folder of neither; `read` of a best practice, one missing, and one that isn't JSON; `judged` without
+any practice; and `refactoring` of a kind of code, of light, and of another kind.
+dev/scripts/practices.py holds each of rn's best practices to its form."""
 
 from __future__ import annotations
 
@@ -97,19 +97,6 @@ def test_read_of_a_best_practice_that_isnt_json_is_refused_naming_the_file(tmp_p
         f.write("{goal")
     with pytest.raises(Wrong, match="best-practice.json"):
         read(str(tmp_path))
-
-
-def test_read_of_a_best_practice_out_of_its_form_is_refused_naming_its_first_fault(tmp_path: Any):
-    """Given a folder whose best-practice.json is light's without its inputs, which its form
-    requires
-    When it is read
-    Then it raises Wrong naming best-practice.json and inputs"""
-    practice = rn_files.practice("light")
-    del practice["inputs"]
-    rn_files.write_json(os.path.join(str(tmp_path), "best-practice.json"), practice)
-    with pytest.raises(Wrong, match="best-practice.json") as raised:
-        read(str(tmp_path))
-    assert "inputs" in str(raised.value)
 
 
 def test_judged_gives_the_goal_and_each_condition_without_its_practice():

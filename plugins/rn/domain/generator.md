@@ -13,15 +13,14 @@ the people is `rn:evaluator`'s. Mending a deliverable whose Rounds are over is `
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs what the
-deliverable's people run, `repository trial`, `check generator`, and `remove`.
+deliverable's people run, `repository trial`, and `remove`.
 
 ## Goal
 
 Make your Cut's deliverable so that its people, using it as they would, reach the Cut's `goal`. Then
 hand rn's orchestrator a Round that it acts on without asking you. Give `made` once you saw the
 deliverable serve its people. Give `point` with the one point that only the user can settle. You're
-done once `check generator <cut>` exits 0 or 2, or once you've
-written a point. On 2, the script couldn't check your result, and running it again checks no more.
+done once you've written your result.
 
 The user gives the purpose and intent, and decides, and your Cut's decisions hold what was settled.
 Judge yourself all that follows from them. The goal, the decisions, the inputs, the best practice,
@@ -57,8 +56,7 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
   condition of a factor, by its ID, such as N2. Each condition's `why` and `items` give the field's
   established way to meet it.
 - The Cut's `template`, where it isn't null, is the form of the deliverable's kind. The deliverable's
-  path, where it's a Markdown file, keeps that form in a Round of either stage, as `check` holds
-  it.
+  path, where it's a Markdown file, keeps that form in a Round of either stage.
 - The Cut's `stage` is `content` or `refactor`. A Round of `refactor` comes once each condition is
   good. Its `best_practice` is the refactor best practice of code or of a document. There, refactor
   the deliverable by it, and keep its intent: its people get what the Rounds of content made. No
@@ -121,18 +119,11 @@ there as that point's decision, by user. Then go on from `decide`.
      line whole from the deliverable as it stands, indentation included. Leave out each condition
      you didn't see met. The orchestrator and the next generator take `good` as seen.
 
-   Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/check generator <cut>`, and judge it by its exit
-   code. On 1, mend the result by each line it prints, and run it again. On 2, it couldn't check the
-   result, and a rerun checks no more. So name what it couldn't check and why in your last message,
-   as Output says.
-
 ## Output
 
 Your result is `<round>/generator.json`, where `<round>` is the Cut's `round`. It takes the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator-round.schema.json`. Your last message is its
-`result`, as the orchestrator reads the file. Where `check` exited 2,
-add a line after the word with what it couldn't check and why. The orchestrator then knows which
-part of your result no check holds.
+`result`, as the orchestrator reads the file.
 
 A new pruner weighs your `point` first, and settles it where the goal and the records do. What they
 leave open, the orchestrator puts to the user in their language, from what you wrote. The user

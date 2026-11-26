@@ -9,7 +9,6 @@ import json
 import os
 from typing import Any, NamedTuple
 
-from check.form import faults, schema
 from fault import Wrong
 
 _FILE = "best-practice.json"
@@ -57,9 +56,7 @@ def read(folder: str) -> Practice:
     Takes: the folder of a kind's best practice.
     Gives: its `best-practice.json`.
     Changes: nothing.
-    Refuses: Wrong where the file is missing, isn't JSON, or leaves rn's form of a best practice,
-    `domain/schemas/best-practice.schema.json`, as `check.form.faults` holds it, naming the file
-    and the first fault.
+    Refuses: Wrong where the file is missing or isn't JSON, naming the file.
     """
     path = os.path.join(folder, _FILE)
     try:
@@ -69,9 +66,6 @@ def read(folder: str) -> Practice:
         raise Wrong(f"{path}: no best practice lies there") from None
     except ValueError as error:
         raise Wrong(f"{path}: isn't JSON: {error}") from None
-    found = faults(practice, schema("best-practice"))
-    if found:
-        raise Wrong(f"{path}: leaves rn's form of a best practice at {found[0]}")
     return practice
 
 

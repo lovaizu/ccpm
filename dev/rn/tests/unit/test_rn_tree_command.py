@@ -1,21 +1,19 @@
-"""The unit cases of tree/command.py, tree's command line, through `main`: `touched` with a
-pointer, and without of a decision taken away, a deliverable taken away, and two changes; `check`
-of a tree in form and of one with two faults; `commit` of a change in form, of one out of it, and
-of none, of the tree a run starts from, refused by a commit check, with no pruner's result or one
-out of its form, of an open plan asking nothing or asking, with a stray git holds and one it
-doesn't, after a Round's point, which it marks weighed, with a unit it didn't weigh or that next
-doesn't print, and of the findings left past the limit; `next` while the goal is open, of an open
-plan, of open decisions, of the first generator, of a deliverable whose input is done, after a
-made, of a point open, unweighed, and weighed, of a judged Round unweighed and weighed, of a Round
-a pause stopped, with --restart and without, past the limit, with a proposal before its put-up
-and after, and of each deliverable done; `fix` of a deliverable whose Rounds are over, and refused
-where its Rounds aren't over, a Fix waits on its fixer or on the pruner, or the source is wrong;
-`next` after a Fix, of a done deliverable's Fix, and of one whose Fix changed its decisions;
-`commit` after a fixer's decision; `signoff` of the plan, of a deliverable with its findings left,
-leaving each done, committing and asking gh nothing, and of none waiting; a run's folder out of
-its form or with no design tree; and arguments other than the usage's. Each runs in the user's
-repository, the run's worktree a git worktree on the work's branch, with a host that runs git for
-real."""
+"""The unit cases of tree/command.py, tree's command line, through `main`: `touched` with a pointer,
+and without of a decision taken away, a deliverable taken away, and two changes; `commit` of a
+change, and of none, of the tree a run starts from, refused by a commit check, with no pruner's
+result or one that isn't JSON, of an open plan asking nothing or asking, with a stray git holds and
+one it doesn't, after a Round's point, which it marks weighed, with a unit it didn't weigh or that
+next doesn't print, and of the findings left past the limit; `next` while the goal is open, of an
+open plan, of open decisions, of the first generator, of a deliverable whose input is done, after a
+made, of a point open, unweighed, and weighed, of a judged Round unweighed and weighed, of a Round a
+pause stopped, with --restart and without, past the limit, with a proposal before its put-up and
+after, and of each deliverable done; `fix` of a deliverable whose Rounds are over, and refused where
+its Rounds aren't over, a Fix waits on its fixer or on the pruner, or the source is wrong; `next`
+after a Fix, of a done deliverable's Fix, and of one whose Fix changed its decisions; `commit` after
+a fixer's decision; `signoff` of the plan, of a deliverable with its findings left, leaving each
+done, committing and asking gh nothing, and of none waiting; a run's folder out of its form or with
+no design tree; and arguments other than the usage's. Each runs in the user's repository, the run's
+worktree a git worktree on the work's branch, with a host that runs git for real."""
 
 from __future__ import annotations
 
@@ -96,7 +94,7 @@ def refused(result: tuple[int, str, str], *words: str) -> None:
 
 @pytest.mark.parametrize(
     "argv",
-    [[], ["check", "x", "more"], ["next", "x", "again"]],
+    [[], ["commit", "x", "more"], ["next", "x", "again"]],
 )
 def test_arguments_other_than_the_usages_give_2_with_it(tmp_path: Any, host: Any, argv: list[str]):
     """Given the walkthrough's run
@@ -191,7 +189,7 @@ def test_touched_of_two_changes_prints_each_node_once_leaving_each_change_out(
     )
 
 
-# check
+# A decision settled in the guide.
 
 
 def guide_decided(r: Run) -> None:
@@ -201,49 +199,6 @@ def guide_decided(r: Run) -> None:
         rn_files.decision("its people", "The accounting team.", "reasoning")
     )
     r.write(changed)
-
-
-def test_check_of_a_tree_in_form_gives_0_printing_nothing(tmp_path: Any, host: Any):
-    """Given the walkthrough's run whose tree is changed by a decision settled in the guide's N1
-    and not committed
-    When tree check runs
-    Then it gives 0 printing nothing, the tree and the branch's last commit as they were"""
-    r = Run(str(tmp_path), walkthrough())
-    guide_decided(r)
-    before, tree = r.head(), r.tree()
-    assert r.main(host, "check", r.run) == (0, "", "")
-    assert (r.head(), r.tree()) == (before, tree)
-
-
-def test_check_of_a_tree_with_two_faults_gives_1_with_each_on_a_line(tmp_path: Any, host: Any):
-    """Given the walkthrough's run, its tree changed so that the command's kind is `lights` and the
-    guide's input names a file that the worktree doesn't hold
-    When tree check runs
-    Then it gives 1 printing two lines, the first naming /deliverables/1/kind and the second
-    /deliverables/2/inputs/0, nothing on stderr, and the tree and the branch's last commit as they
-    were"""
-    r = Run(str(tmp_path), walkthrough())
-    changed = r.tree()
-    changed["deliverables"][1]["kind"] = "lights"
-    changed["deliverables"][2]["inputs"] = ["docs/missing.md"]
-    r.write(changed)
-    before = r.head()
-    code, out, err = r.main(host, "check", r.run)
-    assert (code, err) == (1, "")
-    lines = out.splitlines()
-    assert len(lines) == 2 and out.endswith("\n")
-    assert lines[0].startswith("/deliverables/1/kind: ")
-    assert lines[1].startswith("/deliverables/2/inputs/0: names docs/missing.md")
-    assert (r.head(), r.tree()) == (before, changed)
-
-
-def test_check_of_a_run_with_no_design_tree_gives_1_naming_it(tmp_path: Any, host: Any):
-    """Given the walkthrough's run whose design tree was deleted
-    When tree check runs
-    Then it gives 1 with `tree: ` and that the run's folder holds no design tree on stderr"""
-    r = Run(str(tmp_path), walkthrough())
-    os.remove(r.tree_path)
-    refused(r.main(host, "check", r.run), "holds no design tree")
 
 
 # commit
@@ -296,28 +251,6 @@ def test_commit_of_a_change_in_form_commits_the_tree_alone_with_the_ground_of_ke
     assert held == [os.path.relpath(r.tree_path, r.worktree)]
     assert git(r.worktree, "status", "--porcelain").strip() == f"?? {GUIDE}"
     assert not os.path.exists(path)
-
-
-def test_commit_of_a_tree_out_of_form_gives_1_with_its_first_fault_leaving_git(
-    tmp_path: Any, host: Any
-):
-    """Given the walkthrough's run, its tree committed, then the command's kind made `lights`, and
-    the pruner's result
-    When tree commit runs
-    Then it gives 1 naming /deliverables/1/kind, the branch's last commit as it was, the tree
-    still changed, and pruner.json still there"""
-    r = Run(str(tmp_path), walkthrough())
-    changed = r.tree()
-    changed["deliverables"][1]["kind"] = "lights"
-    r.write(changed)
-    path = weighed_by_pruner(r)
-    before = r.head()
-    refused(r.main(host, "commit", r.run), "/deliverables/1/kind")
-    assert r.head() == before
-    assert git(r.worktree, "status", "--porcelain").strip().splitlines() == [
-        f"M {os.path.relpath(r.tree_path, r.worktree)}",
-        f"?? {os.path.relpath(path, r.worktree)}",
-    ]
 
 
 def test_commit_of_no_change_prints_the_last_commit_committing_nothing(tmp_path: Any, host: Any):
@@ -385,22 +318,13 @@ def test_commit_with_no_pruners_result_gives_1_naming_it(tmp_path: Any, host: An
     assert r.head() == before
 
 
-@pytest.mark.parametrize(
-    ("written", "said"),
-    [
-        ("{", "isn't JSON"),
-        ('{"kept": []}', "/cut: is required"),
-    ],
-    ids=["not JSON", "a list left out"],
-)
-def test_commit_of_a_pruners_result_out_of_its_form_gives_1_naming_the_place(
-    tmp_path: Any, host: Any, written: str, said: str
-):
+def test_commit_of_a_pruners_result_that_isnt_json_gives_1_naming_it(tmp_path: Any, host: Any):
     """Given the walkthrough's run, its tree changed since its commit, and a pruner's result that
-    isn't JSON, or leaves out a list
+    isn't JSON
     When tree commit runs
-    Then it gives 1 naming pruner.json and the place, the branch holds no new commit, and the
-    tree and pruner.json are as they were"""
+    Then it gives 1 naming pruner.json and that it isn't JSON, the branch holds no new commit, and
+    the tree and pruner.json are as they were"""
+    written, said = "{", "isn't JSON"
     r = Run(str(tmp_path), walkthrough())
     guide_decided(r)
     before, tree = r.head(), r.tree()
