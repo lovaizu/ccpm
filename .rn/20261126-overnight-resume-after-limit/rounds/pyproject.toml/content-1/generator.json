@@ -1,0 +1,32 @@
+{
+  "result": "made",
+  "files": [
+    "pyproject.toml"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "  \"*/overnight/scripts/**/*.py\",",
+        "patch = [\"subprocess\", \"execv\"]"
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "  \"*/overnight/scripts/**/*.py\",",
+        "# overnight's tests run resume and wait.py as processes of their own, and wait.py becomes claude",
+        "# before coverage keeps what it ran, so coverage starts in each process and keeps its data first.",
+        "patch = [\"subprocess\", \"execv\"]"
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "# How much of each plugin's code the tests run, as N7 of",
+        "# plugins/rn/domain/best-practices/code/best-practice.json and the Test of",
+        "# dev/plugin-development-guide.md say: every line and branch."
+      ]
+    }
+  ]
+}

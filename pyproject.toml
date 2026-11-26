@@ -79,15 +79,20 @@ python_files = ["test*.py"]
 norecursedirs = [".*", "__pycache__", "node_modules"]
 addopts = ["-p", "no:cacheprovider"]
 
-# How much of rn's code the tests run, as N7 of
-# plugins/rn/domain/best-practices/code/best-practice.json says: every line and branch.
+# How much of each plugin's code the tests run, as N7 of
+# plugins/rn/domain/best-practices/code/best-practice.json and the Test of
+# dev/plugin-development-guide.md say: every line and branch.
 [tool.coverage.run]
 branch = true
 parallel = true
 include = [
   "*/rn/domain/scripts/*.py",
   "*/rn/domain/scripts/**/*.py",
+  "*/overnight/scripts/**/*.py",
   ]
+# overnight's tests run resume and wait.py as processes of their own, and wait.py becomes claude
+# before coverage keeps what it ran, so coverage starts in each process and keeps its data first.
+patch = ["subprocess", "execv"]
 
 [tool.coverage.report]
 fail_under = 100
