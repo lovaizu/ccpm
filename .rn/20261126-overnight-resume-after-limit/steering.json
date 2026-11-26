@@ -166,7 +166,7 @@
           {
             "path": ".claude-plugin/marketplace.json",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/overnight/README.md",
