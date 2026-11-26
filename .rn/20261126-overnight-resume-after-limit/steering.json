@@ -74,7 +74,11 @@
         "by": "user"
       },
       {
-        "decision": "overnight follows dev/plugin-development-guide.md's directory structure, with its script under plugins/overnight/domain/scripts/, as the user answered \"１\" to fixing all that departs from it; of its documents, this run makes only plugins/overnight/README.md and plugins/overnight/CHANGELOG.md, at their least, and makes neither dev/overnight/README.md nor dev/overnight/architecture.md, which are proposed at the run's end as a need left, as the user said \"ごめん今回はREADME、CHANGELOGとか最低限でいいのでは？\", asked \"開発者向け README、アーキテクチャ文書、いる？\", and answered \"はい\" to leaving those two out.",
+        "decision": "overnight follows dev/plugin-development-guide.md's directory structure, with its script under plugins/overnight/domain/scripts/, as the user answered \"１\" to fixing all that departs from it; of its documents, this run makes only plugins/overnight/README.md and plugins/overnight/CHANGELOG.md, and makes neither dev/overnight/README.md nor dev/overnight/architecture.md, which are proposed at the run's end as a need left, as the user said \"ごめん今回はREADME、CHANGELOGとか最低限でいいのでは？\", asked \"開発者向け README、アーキテクチャ文書、いる？\", and answered \"はい\" to leaving those two out, their \"最低限\" being the least set of documents, not the least content.",
+        "by": "user"
+      },
+      {
+        "decision": "plugins/overnight/README.md and plugins/overnight/CHANGELOG.md face the plugin's users, so they're made normally, by their kinds' best practices and templates, as rn's are, not cut to the least that passes the checks, and whether the README has a figure is the readme best practice's call, as for any README, as the user said: \"プラグインの README と CHANGELOG は、チェックを通る最低限の中身にする これは外向けだから普通に作らないの？当たり前の話かと\".",
         "by": "user"
       },
       {
@@ -90,7 +94,7 @@
         "by": "rn"
       },
       {
-        "decision": "Each new file of overnight holds the least that its people need and that the checks of dev/scripts/check.sh pass: plugins/overnight/README.md is the readme template at its least, with no figure, as the template's note leaves the figure out where the answers show the mechanism and `template readme` passes a README without one (tried on plugins/rn/README.md with its figure removed), and it passes `template readme`; plugins/overnight/CHANGELOG.md gives 0.1.0, plugin.json's version, in Keep a Changelog form with one line for what users get; hooks/hooks.json runs `python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/resume\"`; and the tests, dev/overnight/tests/unit, reach resume at its new place; no check needs dev/overnight/architecture.md, as check.sh runs `template architecture` and `trace.py tags` only on each dev/*/architecture.md that exists.",
+        "decision": "Of overnight's new files beyond its README and CHANGELOG, each holds the least that its people need and that the checks of dev/scripts/check.sh pass: hooks/hooks.json runs `python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/resume\"`; the tests, dev/overnight/tests/unit, reach resume at its new place; and plugins/overnight/CHANGELOG.md gives 0.1.0, plugin.json's version, in Keep a Changelog form as rn's does, with what the plugin's users get; no check needs dev/overnight/architecture.md, as check.sh runs `template architecture` and `trace.py tags` only on each dev/*/architecture.md that exists.",
         "by": "rn"
       }
     ],
