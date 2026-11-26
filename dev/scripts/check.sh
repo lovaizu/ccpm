@@ -51,13 +51,22 @@ else
     "comes with pyproject.toml's test-quality group, on Python 3.11 or later"
 fi
 
-# The checks' own Python, and rn's code with its tests, as a type that doesn't fit across a call is a
-# fault no test may reach.
+# The checks' own Python, and each plugin's code with its tests, as a type that doesn't fit across a
+# call is a fault no test may reach.
 held design pyrefly check --search-path dev/scripts --search-path plugins/rn/domain/scripts dev/scripts/*.py
 
-held design pyrefly check --search-path plugins/rn/domain/scripts --search-path dev/rn/tests \
-  plugins/rn/domain/scripts/*.py plugins/rn/domain/scripts/*/*.py \
-  dev/rn/tests/*.py dev/rn/tests/*/*.py
+for plugin in plugins/*/; do
+  plugin=$(basename "$plugin")
+  code=$(git ls-files "plugins/$plugin/*.py" "dev/$plugin/tests/*.py")
+  [ -n "$code" ] || continue
+  # A script's package imports its siblings from the folder that holds it, and a test imports its
+  # helpers from the tests' folder.
+  paths=$(git ls-files "plugins/$plugin/*/__main__.py" | while read -r main; do
+    dirname "$(dirname "$main")"
+  done | sort -u | sed 's/^/--search-path /')
+  [ ! -d "dev/$plugin/tests" ] || paths="$paths --search-path dev/$plugin/tests"
+  held design pyrefly check $paths $code
+done
 
 # Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
 # lies beside it. The check fails on:
@@ -99,32 +108,19 @@ python3 dev/scripts/standalone.py check
 # the page, so Mermaid's own parser parses each.
 sh dev/scripts/mermaid.sh
 
-# The unit tests of each plugin run on each push.
-plugin_tests=""
-for architecture in dev/*/architecture.md; do
-  plugin="${architecture#dev/}"
-  plugin="${plugin%/architecture.md}"
-  [ ! -d "dev/$plugin/tests/unit" ] || plugin_tests="$plugin_tests dev/$plugin/tests/unit"
-done
-
-# A double that gives what the real thing never would passes a test that the real one fails, so each
-# double of the plugins' tests takes each result from a line of a record that names its source, as
-# the plugin guide's Test says. This part of the check needs no network, so it runs on each push;
-# CI checks the documentation's pages each night, as a page changes apart from any push.
-python3 dev/scripts/trace.py doubles
-
-# A behavior that no test checks can break unseen, so the tests run every line and branch of what
+# Each plugin's unit tests run on each push, as pytest finds them where pyproject.toml points it. A
+# behavior that no test checks can break unseen, so the tests run every line and branch of what
 # pyproject.toml has coverage count, as the code best practice's N7 asks.
 if command -v coverage >/dev/null 2>&1; then
   # The tests run once, on each core, as coverage's own .pth starts it in each worker where
   # COVERAGE_PROCESS_START names its settings.
   COVERAGE_FILE="$scratch/.coverage" COVERAGE_PROCESS_START="$PWD/pyproject.toml" \
-    coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider $plugin_tests
+    coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider
   COVERAGE_FILE="$scratch/.coverage" coverage combine -q
   COVERAGE_FILE="$scratch/.coverage" held tests coverage report
 else
-  pytest -q -n auto $plugin_tests
-  echo "check.sh: which lines of rn's code the tests run goes unchecked, as"\
+  pytest -q -n auto
+  echo "check.sh: which lines of the plugins' code the tests run goes unchecked, as"\
     "coverage isn't installed. It comes with pyproject.toml's test-quality group, on Python 3.11"\
     "or later"
 fi
