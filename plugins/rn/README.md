@@ -74,20 +74,17 @@ You type `はい`. rn asks:
 経理チームの方は、それで何をしたいですか？月末に、開発者の手を借りずに請求書を出したい、とお見受けしました。合っていれば「はい」、違えばその点を書いてください。
 ```
 
-You type `はい`. rn shows what the run aims at and the needs it found, with its pick:
+You type `はい`. rn asks which need to make first, with its pick:
 
 ```text
-この run で目指すこと：
-  月末に請求書を出す経理担当の方が、開発者の手を借りずに、明細ファイルから請求書を印刷できる
+どれから作りますか？1をおすすめします。印刷できれば、経理チームの方が月末に自分で請求書を出せるからです。
 
-できるようにしたいこと：
   1. 明細ファイルから、請求書を1枚印刷できる     ← おすすめ
   2. インボイス制度の記載事項を満たしている
   3. 発行者の情報を毎回入れなくて済む
   4. ガイドだけで使い始められる
 
-1をおすすめします。2から4は、印刷できて初めて意味を持つからです。
-番号で選んでください。目指すことが違えば、その点を書いてください。
+番号で答えてください。
 ```
 
 You type `1`. rn makes the least that prints an invoice, and once AI evaluators have tried it as your accounting team would, rn hands it to you:

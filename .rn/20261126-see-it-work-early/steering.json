@@ -205,6 +205,10 @@
       {
         "decision": "Have the orchestrator hear from the user whom the run is for and what for, one question at a time, and hand the hearing to a pruner only once it is whole, as rn 0.11.0 did, since a pruner can't talk with the user and a request needs no issue.",
         "by": "user"
+      },
+      {
+        "decision": "Open the pick with which to make first, rn's recommendation and why, then each need in the user's words alone, with no restated outcome and no means, so the user decides from the first line.",
+        "by": "user"
       }
     ],
     "questions": []

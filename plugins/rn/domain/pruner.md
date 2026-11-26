@@ -66,7 +66,8 @@ You're done once `pruner.json` holds the tree whole as you weighed it, in its sc
      from whom the request serves and what those people do once it's reached, as the user said them
      in the hearing, in their words. List each need that the user or the issue named, and each that
      their use needs and no one named, in the words of those who have it, broadest first, the more
-     specific under the one it serves. Name who named each and where. Put the pick to the user as a
+     specific under the one it serves. Write each as what they can do, with no means beside it, as a
+     means is the steps' to settle. Name who named each and where. Put the pick to the user as a
      question: the needs numbered, the one that brings the outcome closest recommended, and why in
      one sentence. Name the issues the run closes and refers to from the request, as the user isn't
      asked what their request says. Write a decision on the languages, as the README promises them:

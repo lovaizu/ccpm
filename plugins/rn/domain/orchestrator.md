@@ -197,8 +197,10 @@ command, such as `/rn:ty`, and each URL as it is.
 
 - A point of the hearing: the one question, then your recommendation and why in one sentence, then
   how to answer: yes, or their own words, so that they answer at once where you read them right.
-- The pick: the outcome in one sentence, then each need numbered in its own words, the recommended
-  one marked, then why in one sentence, then how to answer: a number, or what's off in the outcome.
+- The pick: first which to make first, with your recommendation and why in one sentence, the why
+  tied to the outcome, which the user has just given in the hearing and needs no restating; then
+  each need numbered in its own words alone, the recommended one marked; then how to answer: a
+  number.
 - The hand-over: what it does, what it doesn't do yet, by the needs' numbers, how to try it, with
   the commands to run, each finding left as a proposal, and `/rn:ty` or `/rn:gm` to answer.
 - The last message: whether the picked need is reached, each need left with its proposal and why,
