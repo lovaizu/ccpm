@@ -108,7 +108,6 @@ it.
 
 ## Documentation
 
-- Changelog: for you after an update, the changes in each version. TODO: link `CHANGELOG.md` once it exists.
 - [Issues](https://github.com/lovaizu/ccpm/issues): where you ask for help or report a fault.
 
 ## License
