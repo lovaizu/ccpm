@@ -37,7 +37,11 @@
           "Have the user give feedback as one who uses it, and rn settle how it's made and explain the solution only when asked, so the user's time goes to what only they can judge.",
           "Make the least, and use the best practices in full on what's made, so less made costs no quality.",
           "Propose at the run's end what to do with each unpicked opportunity, so the user decides what stays.",
-          "Keep the steering in one file with one writer to each part, so no part has two writers."
+          "Keep the steering in one file with one writer to each part, so no part has two writers.",
+          "Make a unit case for each class that an interface's contract treats apart, with C0 and C1 at 100%, so each requirement has its case and no line lacks a requirement.",
+          "Have the user run the walking skeleton as the E2E check, so what works is judged by one who uses it.",
+          "Add a test above the unit level only for a fault that the user's run found and that should have been caught before it, or for an operation that can't be undone, so tests grow from evidence, not from what the design draws.",
+          "Make a test design or a test implementation only when a key result needs what the user's run can't show, such as a measure over many runs, so no test machinery is built ahead of need."
         ],
         "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
         "check": "Run rn from this branch on #62 up to the first real check; count what was made by then."
