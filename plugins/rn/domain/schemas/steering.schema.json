@@ -15,6 +15,7 @@
    "required": [
     "outcome",
     "opportunities",
+    "pick",
     "target",
     "decisions"
    ],
@@ -33,17 +34,40 @@
      }
     },
     "target": {
-     "description": "The id of the opportunity that the user picked, null until they pick. Its solutions are the run's.",
+     "description": "The id of the opportunity that the user picked, null until they pick, so a run with none waits on the user's pick. Its solutions are the run's.",
      "type": [
       "string",
       "null"
      ]
     },
     "decisions": {
-     "description": "Each decision of the run, as its aim and intent in one sentence.",
+     "description": "Each point of the run, as its aim and intent in one sentence. A point whose decision is null is a question that waits on the user.",
      "type": "array",
      "items": {
       "$ref": "#/definitions/decision"
+     }
+    },
+    "pick": {
+     "description": "rn's recommendation of the opportunity to meet first, shown with its grounds when the user picks, null until rn has one.",
+     "type": [
+      "object",
+      "null"
+     ],
+     "required": [
+      "id",
+      "why"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "id": {
+       "type": "string",
+       "pattern": "^O\\d+(\\.\\d+)*$"
+      },
+      "why": {
+       "description": "Its grounds, in the user's words: who named it, the facts, and what the others wait on.",
+       "type": "string",
+       "minLength": 1
+      }
      }
     }
    }
@@ -126,32 +150,40 @@
      }
     },
     "steps": {
-     "description": "The way to the target, first to last: first the walking skeleton, then each addition.",
+     "description": "The way to the target, first to last: first the walking skeleton for the target, then each addition, each for the opportunity it meets.",
      "type": "array",
      "items": {
       "type": "object",
       "required": [
+       "for",
        "settles",
        "deliverables",
        "status"
       ],
       "additionalProperties": false,
       "properties": {
+       "for": {
+        "description": "The id of the opportunity that the step meets.",
+        "type": "string",
+        "pattern": "^O\\d+(\\.\\d+)*$"
+       },
        "settles": {
         "description": "What the step settles, in the user's words.",
         "type": "string",
         "minLength": 1
        },
        "deliverables": {
-        "description": "The path of each deliverable that the step makes or changes.",
+        "description": "The path of each deliverable that the step makes or changes, in the order they're made, each after those it rests on.",
         "type": "array",
         "items": {
          "type": "string"
         }
        },
        "status": {
+        "description": "open while rn makes it; trying once it's in the user's hands, waiting on their feedback; done once the user says it's enough.",
         "enum": [
          "open",
+         "trying",
          "done"
         ]
        }
@@ -199,7 +231,8 @@
     "opportunity",
     "by",
     "opportunities",
-    "solutions"
+    "solutions",
+    "afterwards"
    ],
    "additionalProperties": false,
    "properties": {
@@ -231,6 +264,13 @@
      "items": {
       "$ref": "#/definitions/solution"
      }
+    },
+    "afterwards": {
+     "description": "What the user approved at the run's end for an opportunity that no step met: the issue that keeps it, such as #91, or let go; null until then.",
+     "type": [
+      "string",
+      "null"
+     ]
     }
    }
   },
@@ -268,21 +308,30 @@
   "decision": {
    "type": "object",
    "required": [
+    "about",
     "decision",
     "by"
    ],
    "additionalProperties": false,
    "properties": {
-    "decision": {
-     "description": "The decision, as its aim and intent in one sentence.",
+    "about": {
+     "description": "What the point is about, in a few words.",
      "type": "string",
      "minLength": 1
     },
+    "decision": {
+     "description": "The decision, as its aim and intent in one sentence, null while it waits on the user.",
+     "type": [
+      "string",
+      "null"
+     ]
+    },
     "by": {
-     "description": "user where it's the user's own answer, which only the user changes; rn where rn settled it.",
+     "description": "user where it's the user's own answer, which only the user changes; rn where rn settled it; null while it waits.",
      "enum": [
       "user",
-      "rn"
+      "rn",
+      null
      ]
     }
    }
