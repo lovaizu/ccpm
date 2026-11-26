@@ -9,9 +9,10 @@ where someone decides it, and nothing piles up beside it.
   A plugin being rebuilt has its rebuild issue. A request for that plugin goes there as a section.
   - Rationale: two issues for one piece of work each get their own decisions, and the two drift
     apart. The extra one waits for someone to close it.
-- **When what the work should be changes, rewrite the issue and its pull request in place**, title
-  included, so they say what holds now.
-  - Rationale: a new issue beside the old one leaves the reader to work out which still holds.
+- **Once the work starts, leave its issue as it is, and write the aim as it changes in the run's
+  steering and the pull request.**
+  - Rationale: the issue is the request that started the work, and the reader finds what the work
+    aims at now in one place beside the work.
 - **Give work that a pull request's purpose doesn't need its own issue, and do it in a worktree
   of its own from main.** Open the issue when the work comes up during development, and take its
   own pull request to main.
