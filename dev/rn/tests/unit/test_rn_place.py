@@ -56,11 +56,26 @@ def test_a_run_is_found_from_its_folder_by_a_path_from_the_folder_given(tmp_path
     assert of_folder(run.worktree, f".rn/{NAME}") == run
 
 
+def test_a_run_on_the_users_checkout_is_found_from_its_folder(tmp_path: Any) -> None:
+    """Given a run's folder in the user's own checkout, on the run's branch.
+    When it's given by its path from the checkout's top.
+    Then the run is found, its worktree the checkout, and its paths from there."""
+    run = RunPlace(str(tmp_path), NAME, checkout=True)
+    os.makedirs(run.folder)
+    assert (of_folder(str(tmp_path), f".rn/{NAME}"), run.worktree, run.folder) == (
+        run,
+        str(tmp_path),
+        os.path.join(str(tmp_path), ".rn", NAME),
+    )
+
+
 @pytest.mark.parametrize(
-    "folder", ["/work/accounting/.rn/x", f"/w/.claude/worktrees/rn-{NAME}/.rn/other"]
+    "folder",
+    ["/work/accounting/x", "/work/.rn/BAD NAME", f"/w/.claude/worktrees/rn-{NAME}/.rn/other"],
 )
 def test_a_path_of_another_form_is_refused(folder: str) -> None:
-    """Given a path outside a run's worktree, or a folder whose name differs from its worktree's.
+    """Given a path outside a run's folder, a folder in a checkout not named as a run, or a folder
+    whose name differs from its worktree's.
     When the run is found from it.
     Then Wrong is raised, naming the form a run's folder takes."""
     with pytest.raises(Wrong, match="isn't a run's folder"):

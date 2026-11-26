@@ -118,6 +118,28 @@ def test_the_runs_with_work_left_are_found_newest_first(repo: str) -> None:
     assert found(repo, run) == ([checking, newer, older], None)
 
 
+def test_on_a_runs_branch_its_run_alone_is_found_in_the_checkout(repo: str) -> None:
+    """Given the user's checkout on a run's branch, as a session started on it leaves it, with
+    another run left beside it.
+    When the runs are found.
+    Then that run alone is given, its worktree the checkout, and no other worktree is made."""
+    made_with(repo, OTHER, [rn_files.step()], "2026-11-27T09:00:00")
+    git(repo, "checkout", "-q", "-b", f"rn-{NAME}")
+    rn_files.committed_steering(repo, NAME, rn_files.steering())
+    assert found(repo, run) == ([RunPlace(repo, NAME, checkout=True)], None)
+    assert not os.path.exists(RunPlace(repo, NAME).worktree)
+
+
+def test_on_a_branch_of_rn_s_name_with_no_run_each_run_left_is_found(repo: str) -> None:
+    """Given the user's checkout on a branch named like a run's, with no run's folder, and a run
+    left.
+    When the runs are found.
+    Then the run left is given, as the branch names no run."""
+    other = made_with(repo, OTHER, [rn_files.step()], "2026-11-27T09:00:00")
+    git(repo, "checkout", "-q", "-b", "rn-something")
+    assert found(repo, run).runs == [other]
+
+
 def test_a_worktree_gone_is_made_again_from_its_branch(repo: str) -> None:
     """Given a run with work left whose worktree was removed, and another on origin alone.
     When the runs are found.

@@ -284,7 +284,7 @@ sequenceDiagram
   O->>U: where it stopped, and what waits for the user [P2.3]
   Note over U,O: Later, in any conversation
   U->>O: /rn:up [S2]
-  O->>S: lists the runs of this repository whose pull request is open (Steering) [P6.1]
+  O->>S: names the run of the branch the user is on, else lists the runs with work left (Steering) [P6.1]
   opt more than one run [S2]
     O->>U: asks which run to go on with [P2.1]
     U->>O: answers [S2]

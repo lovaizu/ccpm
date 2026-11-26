@@ -82,7 +82,9 @@ def found(repository: str, host: Host) -> Found:
     """The runs to pick up, the worktree of each made again where none lies.
 
     Takes: the top of the user's repository, and the host.
-    Gives: the runs that `left` gives once origin's branches of the runs are fetched, each that
+    Gives: the run of the branch that the user's checkout is on alone, in the checkout, where the
+    checkout holds that run's steering, as a session started on the branch names its run; else the
+    runs that `left` gives once origin's branches of the runs are fetched, each that
     origin no longer holds pruned; where git can't fetch, such as with no network, those of the
     local branches alone, with what it couldn't check.
     Changes: fetches origin's branches `rn-*`, pruning the refs of those that origin no longer
@@ -91,6 +93,9 @@ def found(repository: str, host: Host) -> Found:
     origin's, so that a pick-up works in a fresh clone or on another machine.
     Refuses: Wrong as `left` refuses; CantRun where git can't make a worktree, with what it said.
     """
+    here = _checked_out(repository, host)
+    if here is not None:
+        return Found([here], None)
     fetched = host(_FETCH, repository)
     unchecked = None
     if fetched.code != 0:
@@ -101,6 +106,16 @@ def found(repository: str, host: Host) -> Found:
         if not os.path.isdir(run.worktree):
             _made_again(run, host)
     return Found(runs, unchecked)
+
+
+def _checked_out(repository: str, host: Host) -> RunPlace | None:
+    """The run of the branch that the user's checkout is on, where the checkout holds its
+    steering, else None."""
+    branch = host(["git", "branch", "--show-current"], repository).out.strip()
+    if not branch.startswith("rn-"):
+        return None
+    run = RunPlace(repository, branch[len("rn-") :], checkout=True)
+    return run if os.path.isfile(run.steering) else None
 
 
 def left(repository: str, host: Host, origins: bool = True) -> list[RunPlace]:

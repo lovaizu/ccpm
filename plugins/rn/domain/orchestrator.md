@@ -22,11 +22,12 @@ runs for the one need they pick, so that what doesn't serve shows before rn buil
 one pull request, checked whole, with the merge proposed and each need left with a proposal. A turn
 ends once the run goes as far as it can without the user, on one message to them.
 
-The user gives the purpose and intent, and decides. They decide three things alone: which need to
-meet first, whether what they tried is enough or what to change, and what happens to each need
-left. rn judges all that follows, from the steering, their words, the issue, the best practices,
-and the repository's precedents. Ask nothing else, unless it's hard to undo or touches what others
-share. The user wants the work done without being asked what their purpose already says.
+The user gives the purpose and intent, and decides. They judge as one who uses what's made, and
+rn settles how it's made, so that their time goes to what only they can judge. Judge all that
+follows yourself, from the steering, their words, the issue, the best practices, and the
+repository's precedents. Hand them only what these leave open, or an action that's hard to undo or
+touches what others share, as the user wants the work done without being asked what their purpose
+already says.
 
 What the run aims at is a pruner's judgment, by the one measure of `vital-few.md`. So hand each
 fact that would change it to a new pruner. A judgment of yours beside the pruner's lets the trivial
@@ -44,23 +45,27 @@ the user afterward what you changed and why.
   command. It's the measure behind every judgment in rn, what you say to the user among them.
 - rn's folder is the one that the command's skill names. Each script runs as
   `python3 <rn's folder>/domain/scripts/<script> ...`, with rn's folder written out in full, as a
-  Bash command holds no variable of it. Run each from the repository's top, and never `cd`. Quote
-  each of the user's words in a command, as the shell splits them otherwise.
+  Bash command holds no variable of it. Run each from the folder the conversation started in, the
+  top of the user's checkout, as each script reads a path from there, and leave the shell there, as
+  a `cd` lasts into each later command. Quote each of the user's words in a command, as the shell
+  splits them otherwise.
 - A script's exit code says what came of it. On 0, it did its work, and prints its result. On 1,
   it did nothing, and says what's wrong and how to mend it: mend it and run it again, or, where the
   mend changes what the run aims at, hand it to a new pruner. On 2, it says what it couldn't do,
   and a rerun does no more: a problem with a deliverable, such as a put-up that the repository's
   checks refused, or a blocker that only the user can mend, such as a push with no network.
-- The run's folder, `<run>` below, is the path that `repository new` prints, such as
-  `.claude/worktrees/rn-<name>/.rn/<name>`. Its steering, `<run>/steering.json`, takes the form of
+- The run's folder, `<run>` below, is the path that `repository new` or `repository runs` prints,
+  such as `.claude/worktrees/rn-<name>/.rn/<name>`, or `.rn/<name>` where the user's checkout is on
+  the run's branch, which is then the run's worktree. Its steering, `<run>/steering.json`, takes the form of
   `<rn's folder>/domain/schemas/steering.schema.json`: `ost` holds what the run aims at, which the
   pruner alone writes, and `state` where it stands, which the scripts alone write.
 - The scripts, each as `python3 <rn's folder>/domain/scripts/<script>`:
   - `repository new "<slug>"` makes the run's worktree and its empty folder, and prints `<run>`.
     The slug is one to five lower-case English words joined by `-`, from the issue's title or the
     request's words.
-  - `repository runs` prints the folder of each run with work left, newest first, here or on
-    GitHub, its worktree made again where none lies.
+  - `repository runs` prints the folder of the run of the branch that the user's checkout is on,
+    alone; else of each run with work left, newest first, here or on GitHub, its worktree made
+    again where none lies.
   - `steering commit <run>` takes the pruner's result into the steering, commits it, and prints
     the commit, then what's due.
   - `steering due <run>` prints what's due, a line each, tab-separated: `question` and its words,
@@ -99,32 +104,44 @@ the user afterward what you changed and why.
 
 ## Steps
 
-1. You know what the event changes. Take it in by its kind:
-   - `/rn:on`: ask what you can help with, an issue's number or a few words alike, and end the
-     turn. Their reply is the request.
-   - The request: read the issue it names by `gh issue view`, and the repository's files it bears
-     on. Make the run by `repository new`, and hand the request to a new pruner. Its result holds
-     every need named, and the pick put to the user as a question.
-   - A pick-up, by `/rn:up`: find the runs by `repository runs`. Where more than one is left, ask
-     which. Read where it stopped by `steering due`, and start again each role that the stop left
-     with no result, as `rounds next` names it.
-   - A stop, by `/rn:dn` or in the user's words: hand one pruner what the user settled that no
-     pruner holds yet. Let each pruner at work end, as its write stays whole. Stop each other role
-     by TaskStop, run `repository stop <run>`, and end the turn saying where it stopped.
-   - `/rn:ty`: mark the step that's trying done by `steering step`.
-   - `/rn:gm` with what to change: a problem with what the user tried, for step 2.
-   - The user's other words: an answer to the open question is a point they settled, for a new
-     pruner, the answer to the last message's question on the needs left among them. A word
-     mid-talk settles only half a point, so it waits for the rest.
+1. You know what the event asks of the run. Take it in by its kind:
+   - `/rn:on`: the user can say what they want in their own words, as rn asks for no form. Ask
+     what you can help with, an issue's number or a few words alike, and end the turn. Their reply
+     is the request.
+   - The request: a pruner weighs it with everything that bears on it, so that each need that
+     people named reaches the list. Ask what a newcomer to the repository would need to weigh it:
+     read the issue it names by `gh issue view`, with its comments, and the files it bears on. Make
+     the run by `repository new`, and hand the request with what you read to a new pruner.
+   - A pick-up, by `/rn:up`: the user goes on with the run they mean, from where it stopped, so
+     that no work is lost or made twice. Ask which run they mean. `repository runs` prints the run
+     of the branch they're on alone, as typing the command there names it. Else it prints each run
+     left, and where it prints more than one, ask which. Then read where that run stopped by
+     `steering due`, and start again each role that the stop left with no result, as `rounds next`
+     names it.
+   - A stop, by `/rn:dn` or in the user's words: the run's work stays whole where any conversation
+     picks it up, so that a stop loses nothing. Ask what of the run lives only in this
+     conversation: a point the user settled that no pruner holds yet goes to one pruner. Let each
+     pruner at work end, as its write stays whole. Stop each other role by TaskStop, as its Round
+     starts again at the pick-up. Run `repository stop <run>`, and end the turn saying where it
+     stopped.
+   - `/rn:ty`: the user says that what they tried is enough, so the run goes on from it. Mark the
+     step that's trying done by `steering step`.
+   - `/rn:gm` with what to change: what the user tried falls short for them, a problem for step 2.
+   - The user's other words: ask what they settle. An answer to the open question is a point they
+     settled, for a new pruner, the answer on the needs left among them. A word mid-talk settles only
+     half a point, so it waits for the rest. A question about the run gets its answer, and changes
+     nothing.
    - A role's end: its result lies in its Round or Fix, and `rounds next` says what it makes due.
-2. A problem with a deliverable whose Rounds are over is mended at once. Such a problem is a put-up
-   that the repository's checks refused, a finding of the final check, or the user's words by
-   `/rn:gm`. Write the Fix by `rounds fix` for the deliverable whose file it concerns, with the
-   problem's words as they were printed or said, and start its fixer. A fixer whose mend would
+2. A problem with a deliverable whose Rounds are over is mended at once, so that the user gets the
+   mend without waiting for new Rounds. Such a problem is a put-up that the repository's checks
+   refused, a finding of the final check, or the user's words by `/rn:gm`. Ask in which
+   deliverable's file the problem lies, from the words and the steps' paths. Write the Fix by
+   `rounds fix` for that deliverable, with the problem's words as they were printed or said, and
+   start its fixer. A fixer whose mend would
    change a decision names it and mends nothing, for a new pruner, and the deliverable then takes
    Rounds again: mark it open by `steering deliverable`.
-3. The run goes as far as it can without the user. Run `steering due <run>`, and act on what it
-   prints:
+3. The run goes as far as it can without the user, so that they wait only on what's theirs. Run
+   `steering due <run>`, and act on what it prints:
    - `question`: end the turn on it, as step 4 says.
    - `weigh`: hand the run's state to a new pruner.
    - `make`: run `rounds next` for the deliverable, and act on its line. Start each role it names.
@@ -134,11 +151,13 @@ the user afterward what you changed and why.
      step 4 says.
    - `trying`: end the turn, as the user is trying it. Where a mend of theirs was put up since,
      tell them what changed and how to try it again.
-   - `final-check`: start `rn:evaluator` on the pull request whole, its deliverable the pull
-     request's diff, with the outcome and the picked need. Take each finding as a problem for step
-     2. Once none is left, hand the run's end to a new pruner, for a
-     proposal on each need left. Once it's committed, run `steering checked <run>` before you go on
-     from what's due, which is then its question, for the last message.
+   - `final-check`: the merge is proposed only once the pull request reads whole as its people
+     need it, as a newcomer to the work would read it. Start `rn:evaluator` on the pull request
+     whole, its deliverable the pull request's diff, with the outcome and the picked need. Take each
+     finding as a problem for step 2. Once none is left, hand the run's end to a new pruner, for a
+     proposal on each need left. Once it's committed, run `steering checked <run>`, which keeps the
+     check from coming due again, then go on from what it prints: the pruner's question, for the
+     last message.
    - `ended`: open an issue for each need left that the user's decision keeps, by `gh issue create
      --title "<the need, in its words>" --body "Left from <the pull request's URL>."`, and end the
      turn giving them each issue's URL, as the run is over.
