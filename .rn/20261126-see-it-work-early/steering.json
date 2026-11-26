@@ -258,16 +258,16 @@
           {
             "path": "plugins/rn/domain",
             "kind": "prompt",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",
         "settles": "a desk trace of the whole run in order, from the issue to the walking skeleton in the user's hands",
         "deliverables": [],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O2",

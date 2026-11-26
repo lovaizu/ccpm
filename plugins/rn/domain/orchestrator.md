@@ -11,10 +11,9 @@ question, and at each role's end in a run. Not for a one-line fix or a question 
 
 The main conversation's tools. Bash runs rn's scripts, `gh issue view` to read an issue, and git in
 the run's worktree. Agent starts `rn:pruner` in the foreground, as one pruner at a time writes what
-the run aims at. It starts `rn:generator`, `rn:evaluator`, and `rn:fixer` in the background.
-SendMessage resumes one of them, and TaskStop stops one. Write and Edit change no file of the run:
-the pruner writes its result, the roles write their Rounds and Fixes, and the scripts write the
-rest.
+the run aims at. It starts `rn:generator`, `rn:evaluator`, and `rn:fixer` in the background, and
+TaskStop stops one. Write and Edit change no file of the run: the pruner writes its result, the
+roles write their Rounds and Fixes, and the scripts write the rest.
 
 ## Goal
 
@@ -31,8 +30,9 @@ share. The user wants the work done without being asked what their purpose alrea
 
 What the run aims at is a pruner's judgment, by the one measure of `vital-few.md`. So hand each
 fact that would change it to a new pruner. A judgment of yours beside the pruner's lets the trivial
-many in. One judgment is yours: whether a problem with a deliverable whose Rounds are over can be
-mended within the run's decisions. Judge it at once, so that such a mend starts with no wait.
+many in. A problem with a deliverable whose Rounds are over goes at once to a fixer, which mends it
+within the run's decisions or names the one its mend would change, so that a mend waits for no
+weighing.
 
 The steps below are means, and no steps foresee every case. Where a case comes that they don't
 foresee, or following them would leave the measure of `vital-few.md`, go on by that measure. Tell
@@ -85,7 +85,8 @@ the user afterward what you changed and why.
   absolute path, the user's words of the run, the request among them, and one unit: the request
   with the text of each issue it names, a point that the user settled in their words, a result that
   `weigh` names, by its absolute path, the final check's findings, or the run's end. Once it ends,
-  run `steering commit <run>`, and, for a result it weighed, `rounds weighed`.
+  run `steering commit <run>`, and, for a result it weighed, `rounds weighed`. Then go on from
+  `steering due`, as the pruner may have left a question that comes before any role.
 - Each role starts by Agent in the background, with a prompt of absolute paths:
   - `rn:generator`: the steering, the deliverable, its kind, the worktree, the Round's folder, and
     the best practice's folder, from `rounds next`.
@@ -95,8 +96,6 @@ the user afterward what you changed and why.
     the people have none of it.
   - `rn:fixer`: the steering, the deliverable, the worktree, the Fix's folder, and the best
     practice's folder.
-  Where a role of this conversation ended in that same Round, such as a generator on its point,
-  resume it by SendMessage instead, as it holds what it learned there.
 
 ## Steps
 
@@ -120,14 +119,12 @@ the user afterward what you changed and why.
      by `gh issue create --title "<the need, in its words>" --body "Left from <the pull request's
      URL>."`, as the user decided it, and give them each issue's URL.
    - A role's end: its result lies in its Round or Fix, and `rounds next` says what it makes due.
-2. A problem with a deliverable whose Rounds are over is mended at once where its mend keeps each
-   decision of the run. Such a problem is a put-up that the repository's checks refused, a finding
-   of the final check, or the user's words by `/rn:gm`. Read the steering's decisions, and ask
-   whether the mend leaves each as written.
-   - Where it does, or you can't tell, write the Fix by `rounds fix`, as a fixer whose mend would
-     change a decision names it and mends nothing.
-   - Where it plainly changes or adds a decision, hand the user's words to a new pruner, and mark
-     each deliverable it changes open by `steering deliverable`, as it's made again.
+2. A problem with a deliverable whose Rounds are over is mended at once. Such a problem is a put-up
+   that the repository's checks refused, a finding of the final check, or the user's words by
+   `/rn:gm`. Write the Fix by `rounds fix` for the deliverable whose file it concerns, with the
+   problem's words as they were printed or said, and start its fixer. A fixer whose mend would
+   change a decision names it and mends nothing, for a new pruner, and the deliverable then takes
+   Rounds again: mark it open by `steering deliverable`.
 3. The run goes as far as it can without the user. Run `steering due <run>`, and act on what it
    prints:
    - `question`: end the turn on it, as step 4 says.
@@ -137,7 +134,8 @@ the user afterward what you changed and why.
      deliverable done by `steering deliverable`.
    - `hand-over`: mark the step trying by `steering step`, and end the turn handing it over, as
      step 4 says.
-   - `trying`: end the turn, as the user is trying it.
+   - `trying`: end the turn, as the user is trying it. Where a mend of theirs was put up since,
+     tell them what changed and how to try it again.
    - `final-check`: run `repository ci <run>`, and start `rn:evaluator` on the pull request whole,
      its deliverable the pull request's diff, with the outcome and the picked need. Take each
      finding as a problem for step 2. Once none is left, hand the run's end to a new pruner, for a

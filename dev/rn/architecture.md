@@ -137,10 +137,9 @@ Strategies:
 - The pruner's result handed to a script, which writes the steps into where the run stands.
   [P5.2]\
   Intent: the pruner decides the way, and only scripts write the run's standing.
-- Whether a problem keeps the run's decisions judged at once by the orchestrator, from the
-  steering. [P1.3]\
+- Each problem with a deliverable whose Rounds are over handed at once to a new fixer. [P1.3]\
   Intent: a mend within what was weighed starts without a wait, and one that changes it is
-  weighed first.
+  weighed first, as the fixer names it.
 - The orchestrator speaking only from the steering and the user's words. [P2.1]\
   Intent: the talk brings back nothing the pruner cut, such as an issue's means.
 - Each need shown numbered in the user's words, and one of them recommended with its grounds. [P2.1]\
@@ -235,7 +234,7 @@ sequenceDiagram
   loop until the user says it's enough [P2.1]
     O->>U: what it does, what it doesn't do yet, how to try it, and each finding left as a proposal [P1.2]
     U->>O: /rn:ty, or /rn:gm with what to change [P2.1]
-    alt /rn:gm whose mend keeps each decision [P1.3]
+    alt /rn:gm with what to change [P1.3]
       O->>S: writes the Fix, with the problem in the user's words (Fix) [P6.1]
       O->>F: starts one with the Fix, the deliverable, its best practice, and the run's decisions (Fix) [P5.1]
       alt its mend would change a decision [P4.1]
@@ -246,8 +245,6 @@ sequenceDiagram
         F-->>O: ends, fixed (Fix) [P5.2]
         O->>S: puts it up again (Deliverable) [P5.3]
       end
-    else /rn:gm that changes or adds a decision [P4.1]
-      O->>P: starts one with the user's words, which takes the deliverables it changes through Rounds again (Steering) [P4.1]
     else /rn:ty [P2.1]
       O->>S: marks the step done (Step) [P5.2]
     end
