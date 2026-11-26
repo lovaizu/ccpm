@@ -12,9 +12,97 @@ import json
 import os
 from typing import Any
 
+from repo_files import git, write_files
+
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 RN = os.path.join(TOP, "plugins", "rn")
 PRACTICES = os.path.join(RN, "domain", "best-practices")
+SCHEMAS = os.path.join(RN, "domain", "schemas")
+
+# The outcome and the needs of the README's walkthrough, in English.
+OUTCOME = (
+    "An accountant who sends invoices at the month's end prints one from a statement file,"
+    " without a developer's help."
+)
+PRINT = "I print one invoice from a statement file."
+RULES = "It meets the invoice rules."
+SETTLES = "the least that prints one invoice"
+COMMAND = "invoice/__main__.py"
+GUIDE = "docs/guide.md"
+
+
+# The walkthrough's walking skeleton as the pruner gives it: the command, then its guide.
+WAY = {
+    "for": "O1",
+    "settles": SETTLES,
+    "deliverables": [{"path": COMMAND, "kind": "code"}, {"path": GUIDE, "kind": "readme"}],
+}
+
+
+def schema(name: str = "steering") -> dict[str, Any]:
+    """rn's schema of the name, read from domain/schemas/."""
+    with open(os.path.join(SCHEMAS, f"{name}.schema.json"), encoding="utf-8") as f:
+        return json.load(f)
+
+
+def opportunity(id_: str, words: str, under: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """An opportunity of the steering, named by the user on the walkthrough's day, with no
+    solution."""
+    return {
+        "id": id_,
+        "opportunity": words,
+        "by": "the user on 2026-11-26",
+        "opportunities": under or [],
+        "solution": None,
+    }
+
+
+def ost(target: str | None = "O1", questions: list[str] | None = None) -> dict[str, Any]:
+    """The walkthrough's opportunity solution tree: printing an invoice, with the rules under it,
+    and its solution where it's the target."""
+    picked = opportunity("O1", PRINT, [opportunity("O1.1", RULES)])
+    if target == "O1":
+        picked["solution"] = {
+            "solution": "A command that reads a statement file and prints one invoice.",
+            "why": "It's the least that prints.",
+            "assumption": {
+                "assumption": "The accountant can name the statement file.",
+                "test": "The user prints the sample statement.",
+                "result": None,
+            },
+        }
+    return {
+        "outcome": OUTCOME,
+        "opportunities": [picked],
+        "target": target,
+        "decisions": [{"decision": "Talk in Japanese, and write in English.", "by": "user"}],
+        "questions": questions or [],
+    }
+
+
+def step(status: str = "open", done: tuple[str, ...] = ()) -> dict[str, Any]:
+    """The walkthrough's walking skeleton: the command, then its guide, each done where named."""
+    return {
+        "for": "O1",
+        "settles": SETTLES,
+        "deliverables": [
+            {"path": path, "kind": kind, "status": "done" if path in done else "open"}
+            for path, kind in ((COMMAND, "code"), (GUIDE, "readme"))
+        ],
+        "status": status,
+    }
+
+
+def steering(steps: list[dict[str, Any]] | None = None, **fields: Any) -> dict[str, Any]:
+    """A steering in its schema's form: the walkthrough's tree, with its fields as given, and the
+    steps as given, or its walking skeleton, open."""
+    return {
+        "ost": ost(**fields),
+        "state": {
+            "issues": {"closes": [38], "refs": []},
+            "steps": [step()] if steps is None else steps,
+        },
+    }
 
 
 @functools.cache
@@ -55,6 +143,22 @@ def write_json(path: str, value: Any) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(value, f, indent=1)
         f.write("\n")
+
+
+# The user's repository.
+
+
+def repository(folder: str, branch: str = "main") -> str:
+    """Makes a git repository in the folder with a README committed on the branch, and gives its
+    real path."""
+    os.makedirs(folder, exist_ok=True)
+    git(folder, "init", "-q", "-b", branch)
+    git(folder, "config", "user.email", "rn@example.com")
+    git(folder, "config", "user.name", "rn")
+    write_files(folder, {"README.md": "# Accounting\n"})
+    git(folder, "add", "-A")
+    git(folder, "commit", "-q", "-m", "accounting")
+    return os.path.realpath(folder)
 
 
 # The hook's input.

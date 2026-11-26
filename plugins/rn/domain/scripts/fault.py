@@ -24,9 +24,12 @@ class CantRun(Exception):
 
 
 def answered(script: str, call: Callable[[], Answer]) -> Answer:
-    """What the call gives, or, where it raises CantRun, 2 with `<script>: <what stopped it>`."""
+    """What the call gives, or, where it raises, the exit code of the fault with
+    `<script>: <what's wrong>`: 1 where the input is Wrong, and 2 where it CantRun."""
     try:
         return call()
+    except Wrong as wrong:
+        return 1, "", f"{script}: {wrong}\n"
     except CantRun as stopped:
         return 2, "", f"{script}: {stopped}\n"
 

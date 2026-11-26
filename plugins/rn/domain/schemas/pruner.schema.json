@@ -1,0 +1,65 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "pruner",
+ "description": "What the pruner writes as it ends, at .rn/<run>/pruner.json, for `steering commit` to take into the steering: the run's opportunity solution tree whole as it weighed it, and, where it settled them, the issues of the run and the steps to the target. No commit holds it.",
+ "type": "object",
+ "required": [
+  "message",
+  "ost"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "message": {
+   "description": "What the weighing changed and why, in one sentence, for the commit's message.",
+   "type": "string",
+   "minLength": 1
+  },
+  "ost": {
+   "$ref": "steering.schema.json#/properties/ost"
+  },
+  "issues": {
+   "$ref": "steering.schema.json#/properties/state/properties/issues"
+  },
+  "steps": {
+   "description": "The way to the target, first to last, the walking skeleton first. A step or a deliverable that the steering already holds keeps its status.",
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "for",
+     "settles",
+     "deliverables"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "for": {
+      "$ref": "steering.schema.json#/properties/state/properties/steps/items/properties/for"
+     },
+     "settles": {
+      "$ref": "steering.schema.json#/properties/state/properties/steps/items/properties/settles"
+     },
+     "deliverables": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "path",
+        "kind"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "path": {
+         "type": "string",
+         "minLength": 1
+        },
+        "kind": {
+         "$ref": "steering.schema.json#/properties/state/properties/steps/items/properties/deliverables/items/properties/kind"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}
