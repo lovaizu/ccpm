@@ -72,8 +72,9 @@ You're done once `pruner.json` holds the tree whole as you weighed it, in its sc
    - A point that the user settled: their words stay as they said them, as only they change what
      they decided. Take them as a decision by `user`, and drop the question they answer. Then go
      on from what's still open:
-     - Whom it's for: put to them as a question what those people do once it's reached,
-       recommending what their words and any issue they name point to.
+     - Whom it's for: what those people do once it's reached is the user's to say too, and the
+       outcome rests on both. Put it to them as a question. Recommend what their words and any
+       issue they name point to.
      - What for: the user picks, from every need that people named, the one that brings the
        outcome closest, so that what runs first is what they're after. Name the outcome from whom
        and what for, in the user's words. List each need that the user or the issue named, and

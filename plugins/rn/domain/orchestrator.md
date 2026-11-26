@@ -188,7 +188,7 @@ role's point and a script's words come in English, so put them in the user's ter
 command, such as `/rn:ty`, and each URL as it is.
 
 - A hearing: the one question, then rn's recommendation and why in one sentence, then how to
-  answer: yes, or their own words.
+  answer: yes, or their own words, so that they answer at once where rn read them right.
 - The pick: the outcome in one sentence, then each need numbered in its own words, the recommended
   one marked, then why in one sentence, then how to answer: a number, or what's off in the outcome.
 - The hand-over: what it does, what it doesn't do yet, by the needs' numbers, how to try it, with
