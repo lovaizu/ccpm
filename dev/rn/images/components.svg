@@ -110,8 +110,6 @@
   <text class="data halo start" x="604" y="165">runs</text>
   <path class="line" d="M740,260 L800,260" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="770" y="251">commits</text>
-  <path class="line" d="M890,400 L890,300" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="882" y="356">refuses other writes</text>
   <path class="line" d="M800,440 L600,440" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="700" y="431">sends deletes to a script</text>
   <path class="line" d="M400,120 L400,340" marker-end="url(#arrow)"/>

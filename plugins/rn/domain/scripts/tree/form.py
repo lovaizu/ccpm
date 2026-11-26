@@ -100,7 +100,7 @@ def read(path: str) -> Tree:
     """The design tree in the file.
 
     Takes: the path of a run's `design-tree.json`.
-    Gives: the tree, as the file holds it, whatever its form, as `tree.checks` judges that.
+    Gives: the tree, as the file holds it, whatever its form.
     Changes: nothing.
     Refuses: Wrong where the file is missing or isn't JSON, naming it.
     """

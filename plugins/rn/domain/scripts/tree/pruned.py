@@ -18,7 +18,7 @@ def read(path: str) -> Weighing:
     """The pruner's result in the file.
 
     Takes: the path of a run's `pruner.json`.
-    Gives: the result, in its form.
+    Gives: the result, as the file holds it.
     Changes: nothing.
     Refuses: Wrong where no file lies there, saying that the pruner writes it before the commit, or
     where it isn't JSON.

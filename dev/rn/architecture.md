@@ -71,9 +71,6 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
 
 Strategies:
 
-- Each design tree edit checked before its commit, on each condition of its best practice that
-  code can check. [P1.1]\
-  Intent: the work always rests on a design tree in form.
 - The plan kept as the design tree's own deliverable, and each sign-off as its deliverable done.
   [P1.3]\
   Intent: the run's files alone say what waits for the user and what may start.
@@ -130,7 +127,7 @@ Strategies:
 - scripts (script)\
   Does each step that has one right result.
 - hook (hook)\
-  Holds each role, on every call, to the writes and the deletes that are its own.
+  Turns each maker's delete in Bash to a script, on every call.
 
 Strategies:
 
@@ -228,9 +225,6 @@ Strategies:
   [P4.3]\
   Intent: a maker's clean-up never waits on a permission prompt, and stays in the work and the
   temporary folder.
-- Each design tree write by Write, Edit, or Bash refused by the hook, but the pruner's and
-  scripts'. [P7.3]\
-  Intent: the plan holds only what the pruner weighed, on every run, whatever a prompt forgets.
 - Each step written as what it does, never tied to one OS's tools, such as Glob or Bash's
   `find`. [P4.3]\
   Intent: rn runs alike on each OS that Claude Code runs on.
@@ -254,7 +248,6 @@ sequenceDiagram
   actor U as user
   participant O as orchestrator
   participant P as pruner
-  participant H as hook
   participant T as design tree
   participant S as scripts
   participant G as generator
@@ -304,11 +297,8 @@ sequenceDiagram
     opt a sign-off by /rn:ty [P1.3]
       O->>S: records and commits it (Design tree) [P4.3]
     end
-    opt a write to the design tree by any other role, by Write, Edit, or Bash [P7.3]
-      H->>T: refuses the write, telling its writer to hand the fact to the pruner (Design tree) [P7.3]
-    end
     opt a pruner's end [P6.1]
-      O->>S: commits the pruner's result: checks the tree, marks weighed each unit it names and no other, removes each stray file, signs off the plan written from the hearing where no point is open or asked, commits, and gives each point asked and each step changed (Design tree) [P4.3, P6.1]
+      O->>S: commits the pruner's result: marks weighed each unit it names and no other, removes each stray file, signs off the plan written from the hearing where no point is open or asked, commits, and gives each point asked and each step changed (Design tree) [P4.3, P6.1]
     end
     O->>S: lists what's due now from the run's files: a unit for a pruner, a point for the user, a role due or at work, a put-up, a sign-off, or the final check (Design tree, Round, Fix) [P4.3]
     opt a refusal that only the user can mend [P5.3]
@@ -444,7 +434,7 @@ Strategies:
 plugins/rn/                        what Claude Code installs for the user
 ├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
 ├── agents/                        the pruner's, the generator's, the evaluator's, and the fixer's starts
-├── hooks/                         the hook that turns a maker's delete to remove, and keeps the design tree to the pruner and the scripts
+├── hooks/                         the hook that turns a maker's delete to remove
 ├── domain/
 │   ├── orchestrator.md            the event's own step, then those that every event shares
 │   ├── vital-few.md               the measure of the vital few, which the orchestrator and the pruner read
@@ -455,12 +445,10 @@ plugins/rn/                        what Claude Code installs for the user
 │   ├── schemas/                   the form of each Cut and result
 │   ├── best-practices/            rn's own best practice of each kind
 │   └── scripts/                   each step with one right result, as a role runs it
-│       ├── tree/                  checks and commits the design tree, and lists what's due
-│       ├── check/                 checks each role's result against its form
-│       ├── template/              holds a document to its kind's template
+│       ├── tree/                  reads and commits the design tree, and lists what's due
 │       ├── repository/            makes a run's worktree and puts a deliverable up
 │       ├── remove/                removes what a maker made for itself
-│       ├── hook/                  the hook before each Bash command and each write
+│       ├── hook/                  the hook before each Bash command
 │       └── rounds/                reads and writes the Rounds and the Fixes, for the scripts above
 
 dev/rn/                            what only rn's developers use
