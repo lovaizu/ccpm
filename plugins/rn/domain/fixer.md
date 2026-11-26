@@ -14,8 +14,7 @@ Rounds is `rn:generator`'s, and judging one is `rn:evaluator`'s. Weighing a deci
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/fixer.md` allows them. Bash runs
-`repository checks`, the checks that a push runs, the repository's tests, `check fixer`, and
-`remove`.
+the checks that a push runs, the repository's tests, `check fixer`, and `remove`.
 
 ## Goal
 
@@ -72,9 +71,6 @@ The design tree, commits, pushes, and talk with the user are the orchestrator's,
 3. `mend`: the problem is gone from the deliverable's files. Change the least that removes it, as
    each decision says. Keep each other part as it stands, as the trials judged it.
 4. `check`: the repository's own checks and tests pass on your files.
-   - Run `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository checks <run> <each file you changed>`,
-     `<run>` being the Cut's `run`. It runs the repository's commit checks on those files alone, and
-     exits 1 with each finding.
    - Run the checks that a push runs, as the repository's hook settings set them, without pushing.
      An example is `(cd <worktree> && git hook run pre-push)`, or the check script that the hook
      runs. A refused put-up came from them, so they show whether the problem is gone.

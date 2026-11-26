@@ -14,7 +14,7 @@ from fault import Answer, answered
 from rounds import course, files
 from tree import form, signoff
 
-from repository import commit_checks, place, push, trial, worktree
+from repository import place, push, trial, worktree
 from repository.host import Host
 
 USAGE = """\
@@ -23,7 +23,6 @@ usage: repository new <slug> <deliverables language> <conversation language>
        repository pause <run>
        repository cancel <run>
        repository put-up <run> <deliverable>
-       repository checks <run> <file>...
        repository trial <run> <round>
        repository diff <run>
        repository ci <run>
@@ -61,8 +60,6 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       done as it is. Where `push.put_up` refuses, as where the repository's checks refuse the
       push, it marks nothing and changes no design tree, so that a Fix of the deliverable
       starts from the run as it stands.
-    - `checks <run> <file>...`: 0 printing nothing where `commit_checks.findings` gives none, and 1
-      with each finding a line.
     - `trial <run> <round>`, the Round's folder from `cwd`: 0 printing the folder that
       `trial.starting_state` makes.
     - `diff <run>`: 0 printing the diff that `push.diff` gives.
@@ -74,9 +71,9 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     """
     if not argv or argv[0] not in _SUBCOMMANDS:
         return 2, "", USAGE
-    subcommand, least, most = _SUBCOMMANDS[argv[0]]
+    subcommand, count = _SUBCOMMANDS[argv[0]]
     given = list(argv[1:])
-    if len(given) < least or (most is not None and len(given) > most):
+    if len(given) != count:
         return 2, "", USAGE
     return answered("repository", lambda: subcommand(given, cwd, plugin_root, host))
 
@@ -138,11 +135,6 @@ def _ci(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     return 0, push.ci(place.of_folder(cwd, given[0]), host), ""
 
 
-def _checks(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    found = commit_checks.findings(place.of_folder(cwd, given[0]), given[1:], host)
-    return (1 if found else 0), "".join(f"{each}\n" for each in found), ""
-
-
 def _trial(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     run = place.of_folder(cwd, given[0])
     round_ = files.at(run, os.path.join(cwd, given[1]))
@@ -150,16 +142,14 @@ def _trial(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 _Subcommand = Callable[[list[str], str, str, Host], Answer]
-# Each subcommand, with its least and most count of arguments after its name, None where it takes
-# any more.
-_SUBCOMMANDS: dict[str, tuple[_Subcommand, int, int | None]] = {
-    "new": (_new, 3, 3),
-    "find": (_find, 0, 0),
-    "pause": (_pause, 1, 1),
-    "cancel": (_cancel, 1, 1),
-    "put-up": (_put_up, 2, 2),
-    "checks": (_checks, 1, None),
-    "trial": (_trial, 2, 2),
-    "diff": (_diff, 1, 1),
-    "ci": (_ci, 1, 1),
+# Each subcommand, with the count of arguments after its name.
+_SUBCOMMANDS: dict[str, tuple[_Subcommand, int]] = {
+    "new": (_new, 3),
+    "find": (_find, 0),
+    "pause": (_pause, 1),
+    "cancel": (_cancel, 1),
+    "put-up": (_put_up, 2),
+    "trial": (_trial, 2),
+    "diff": (_diff, 1),
+    "ci": (_ci, 1),
 }

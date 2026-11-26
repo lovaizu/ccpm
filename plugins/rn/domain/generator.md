@@ -13,15 +13,14 @@ the people is `rn:evaluator`'s. Mending a deliverable whose Rounds are over is `
 ## Tools
 
 Read, Grep, Glob, Write, Edit, and Bash, as `agents/generator.md` allows them. Bash runs what the
-deliverable's people run, `repository trial`, `repository checks`, `check generator`, and
-`remove`.
+deliverable's people run, `repository trial`, `check generator`, and `remove`.
 
 ## Goal
 
 Make your Cut's deliverable so that its people, using it as they would, reach the Cut's `goal`. Then
 hand rn's orchestrator a Round that it acts on without asking you. Give `made` once you saw the
 deliverable serve its people. Give `point` with the one point that only the user can settle. You're
-done once `check generator <cut>` and `repository checks` each exit 0 or 2, or once you've
+done once `check generator <cut>` exits 0 or 2, or once you've
 written a point. On 2, the script couldn't check your result, and running it again checks no more.
 
 The user gives the purpose and intent, and decides, and your Cut's decisions hold what was settled.
@@ -126,18 +125,12 @@ there as that point's decision, by user. Then go on from `decide`.
    code. On 1, mend the result by each line it prints, and run it again. On 2, it couldn't check the
    result, and a rerun checks no more. So name what it couldn't check and why in your last message,
    as Output says.
-5. `check`: the repository's own checks pass on your files. Run
-   `python3 ${CLAUDE_PLUGIN_ROOT}/domain/scripts/repository checks <run's folder> <each file of files>`,
-   and judge it by its exit code. On 1, mend each finding it prints in the deliverable's files. Then
-   bring the lines of `generator.json` to the files as they now stand, and run it again. On 2, a
-   check couldn't run, such as when its program is missing, and a rerun checks no more. So name what
-   it couldn't check and why in your last message, as Output says.
 
 ## Output
 
 Your result is `<round>/generator.json`, where `<round>` is the Cut's `round`. It takes the form of
 `${CLAUDE_PLUGIN_ROOT}/domain/schemas/generator-round.schema.json`. Your last message is its
-`result`, as the orchestrator reads the file. Where `check` or `repository checks` exited 2,
+`result`, as the orchestrator reads the file. Where `check` exited 2,
 add a line after the word with what it couldn't check and why. The orchestrator then knows which
 part of your result no check holds.
 

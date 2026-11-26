@@ -5,7 +5,7 @@ of one where gh can't ask GitHub, and of a worktree that can't be removed, `put-
 of each of the deliverable's paths, marking the deliverable's last Round, making done one at a step
 that the user doesn't check, leaving open one at a step the user checks and one done already, put
 up again after a Fix, as it is, and leaving the run as it stood where the push is refused, `diff`,
-`ci`, `checks` with findings and with none, `trial`, and each fault by its exit code: 2 with the
+`ci`, `trial`, and each fault by its exit code: 2 with the
 usage for arguments of another form, 1 with `repository: ` for an input that is Wrong and for
 something Missing, and 2 for what CantRun."""
 
@@ -21,7 +21,7 @@ from gh import gh_double
 from repo_files import git
 from repository.command import USAGE, main
 from repository.place import RunPlace
-from rn_runs import NAME, branch_run, changed, head, hook, made_run
+from rn_runs import NAME, branch_run, changed, head, made_run
 
 RUN = f".claude/worktrees/rn-{NAME}/.rn/{NAME}"
 PR = "http://github.com/owner/repo/pull/1"
@@ -329,34 +329,6 @@ def test_ci_prints_how_each_check_ended(tmp_path: Any, host: Any):
     code, out, err = main(["ci", RUN], run.repository, rn_files.RN, host)
     assert (code, err) == (0, "")
     assert "tests\tpassed\n" in out
-
-
-def test_checks_with_no_finding_prints_nothing(tmp_path: Any, host: Any):
-    """Given a run whose repository sets no check, and the command written
-    When repository checks is given the run's folder and the command
-    Then it gives 0 printing nothing"""
-    run = made_run(str(tmp_path))
-    changed(run, {rn_files.COMMAND: "print()\n"})
-    assert main(["checks", RUN, rn_files.COMMAND], run.repository, rn_files.RN, host) == (
-        0,
-        "",
-        "",
-    )
-
-
-def test_checks_with_findings_gives_1_with_each_a_line(tmp_path: Any, host: Any):
-    """Given a run whose repository's check fails saying two lines, and the command and the guide
-    written
-    When repository checks is given the run's folder, the command, and the guide
-    Then it gives 1 with the two lines, each a line"""
-    run = made_run(str(tmp_path))
-    hook(run.repository, "echo first\necho second\nexit 1\n")
-    changed(run, {rn_files.COMMAND: "print()\n", rn_files.GUIDE: "# Guide\n"})
-    code, out, err = main(
-        ["checks", RUN, rn_files.COMMAND, rn_files.GUIDE], run.repository, rn_files.RN, host
-    )
-    assert code == 1
-    assert out + err == "first\nsecond\n"
 
 
 def test_trial_prints_the_folder_of_the_peoples_starting_state(tmp_path: Any, host: Any, temp: str):
