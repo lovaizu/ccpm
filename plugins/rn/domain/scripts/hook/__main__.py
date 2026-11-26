@@ -1,4 +1,4 @@
-"""hook, as Claude Code runs it before each Bash command and each Write or Edit, by rn's
+"""hook, as Claude Code runs it before each Bash command, by rn's
 `hooks/hooks.json`: `python3 "${CLAUDE_PLUGIN_ROOT}/domain/scripts/hook"`, with the hook's input on
 stdin. It runs the code of this folder, whose `command` module says what it takes and gives."""
 
