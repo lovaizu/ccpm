@@ -67,23 +67,18 @@
     },
     "steps": [
       {
-        "settles": "the concept in dev/rn/product-vision.md and the README; rn runs from this branch; the design tree's content lives in steering.json state, with no change in behavior",
-        "check": "a small run goes to the end as before",
+        "settles": "I see what I asked for work early: a run makes the thinnest thing that runs first, and I try it before anything else is made",
+        "check": "I run rn from this branch on #62; what was made before I first try it, against the 6,079 lines of #85",
         "status": "open"
       },
       {
-        "settles": "named opportunities go on the ost and the user picks one",
-        "check": "#62 run up to the pick shows every opportunity of #62",
+        "settles": "From there, I grow it: from my feedback, one addition at a time; each thing I asked for stays on the list for me to pick next; what's left is proposed at the end",
+        "check": "I go on with the #62 run, adding one thing, and see requests 4 and 5 kept",
         "status": "open"
       },
       {
-        "settles": "solutions compared, the least one made as a walking skeleton, the riskiest assumption checked early",
-        "check": "#62 run up to the first real check; size made by then, against 6,079 lines in #85",
-        "status": "open"
-      },
-      {
-        "settles": "the end-of-run proposal, no design-tree words left, CHANGELOG and version",
-        "check": "#62 run to the end",
+        "settles": "The base fits the two: steering.json in place of the design tree, the test best practices as decided, the concept in product-vision.md and the README, no design-tree word left, CHANGELOG and version",
+        "check": "unit tests with C0/C1 at 100%, and the #62 run once more from the start",
         "status": "open"
       }
     ],
