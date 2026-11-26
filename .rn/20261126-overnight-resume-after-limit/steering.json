@@ -30,11 +30,11 @@
           }
         ],
         "solution": {
-          "solution": "The overnight plugin's StopFailure hook, matched on rate_limit, leaves behind a waiter that, at a fixed interval, resumes the same session headless with claude -p --resume <session_id> and the session's own permission mode, telling it to go on from where it stopped; while the limit still holds, that resumed run stops at the limit too, its own StopFailure hook leaves the next waiter, and so the work resumes however often it stops in a night.",
-          "why": "It needs no setup from the user beyond the install and resumes the very session, so the work goes on from where it stopped, whereas a wrapper loop around claude, or a runner that starts the night's work headless and reads its output, asks the user or the AI to start each night's work through it, sending keys to the terminal works only under a terminal multiplexer, and waiting until the reset time can't start from the stop that begins a night's waiting: Claude Code documents a reset time, rate_limit_event's optional resetsAt, only in a headless run's stream-json output, while the interactive session's StopFailure input holds only error, error_details, and last_assistant_message, and its transcript holds the reset only in fields that Claude Code marks internal.",
+          "solution": "Claude Code's own automatic continue, autoContinueAtUsageLimit, on by default from 2.1.234 in interactive sessions signed in with a claude.ai subscription, carries the work: when a claude.ai usage limit stops Claude mid-task, Claude Code waits in the open session and, at the reset, prompts Claude to pick the task up where it stopped, and starts the wait again each time the task hits the limit, so the run makes nothing, and the user only leaves the session open, with the computer awake, on the night's work.",
+          "why": "It's Claude Code's documented way for exactly this case (interactive-mode, Wait for a usage limit to reset: \"When a claude.ai usage limit stops Claude mid-task, Claude Code waits in the open session and continues the task on its own after the limit resets\"; \"Claude Code prompts Claude to pick the task up where it stopped\"; \"If the task hits the limit again, the wait starts again\"), needs no install and no instruction from anyone, and goes on in the very open session, whereas overnight, built in this run, rests on StopFailure firing with rate_limit at a claude.ai usage limit, which the hooks reference gives only with \"429 Too Many Requests\" and nowhere ties to a usage limit, and, where it did fire, its headless resume would run beside Claude Code's own continuing of the same session.",
           "assumption": {
-            "assumption": "When a claude.ai usage limit stops the user's interactive session, Claude Code ends the turn with StopFailure and error rate_limit, rather than waiting in the open session as autoContinueAtUsageLimit, on by default from 2.1.234, does, so the hook fires at all, and the waiter's headless claude -p --resume of the session doesn't run beside the open session's own continuing of the same work.",
-            "test": "On the real thing, with overnight installed from this branch and Claude Code 2.1.332 in an interactive session signed in with the user's claude.ai subscription: leave work that runs into a real usage limit, then read the session's transcript and the waiter's traces to see whether StopFailure fired with rate_limit, whether Claude Code's own wait sent quota_auto_resume_fired, and whether the work went on once, from where it stopped, to its end; a fed StopFailure input doesn't test this, as it skips whether Claude Code sends one at the limit.",
+            "assumption": "Over one night of rn's work, which runs much of itself in subagents, Claude Code's own wait starts at a real claude.ai usage limit and continues the work from where it stopped to its end, within the three automatic continuations after which it stops (\"After three automatic continuations, automatic continue stops\"), as the docs say nothing of whether work in subagents or other background work falls under the continuing.",
+            "test": "On the real thing, in Claude Code 2.1.332 in an interactive session signed in with the user's claude.ai subscription, with autoContinueAtUsageLimit set false in none of the settings files (none sets it now: ~/.claude/settings.json, the repository's .claude/settings.json, and the worktree's hold no such key), overnight not installed, and the computer kept from sleeping, as after a sleep of more than about 30 minutes the wait asks for Enter (\"the first line reads `Your usage limit has reset` and the second reads `Press enter to continue`\"): leave rn a night's work that runs into the limit, and in the morning read the session for `Usage limit reset · Continuing automatically` and whether the work, its subagents' parts included, went on once from where it stopped and reached its end, or where it stopped and on what, such as a permission prompt or `Automatic continue stopped after repeated usage-limit hits`.",
             "result": null
           }
         }
@@ -66,61 +66,23 @@
         "by": "rn"
       },
       {
-        "decision": "Make the resuming a new plugin, overnight, in this marketplace, as issue #62's title names it, so a user installs it beside rn and the AI they instruct needs nothing more from them.",
-        "by": "rn"
-      },
-      {
         "decision": "The check finds and runs the plugins' unit tests the standard pytest way: pyproject.toml's pytest settings name the folders that hold them, as testpaths, and pytest finds test*.py in them on its own, with no loop over the plugins in dev/scripts/check.sh, as the user settled: \"３と４、意味不明、通常ルートのディレクトリ配下の拡張子でマッピングするよね\", then \"３・４ ベストプラクティスで対応して\" and \"３・４はそれで進めて\".",
         "by": "user"
       },
       {
-        "decision": "overnight is built as simply as Claude Code's plugin documentation lets a plugin of a hook and a script be built, with the LICENSE, README, CHANGELOG, and unit tests that any plugin of ccpm carries, as .claude/rules/dev.md now says on main (0f1cc70c, #95: \"Build any other plugin, such as one of a hook and a script, as simply as Claude Code's plugin documentation (https://code.claude.com/docs/en/plugins) lets its kind be built\"), which the user took into main and of which they said \"mainを取り込んで、色々対応した\", in place of their earlier \"１\" to building it by the plugin guide in full; so its script stays at plugins/overnight/scripts/resume, where Claude Code's plugin documentation puts a plugin's scripts, and the run makes neither dev/overnight/README.md nor dev/overnight/architecture.md, as the user also said \"ごめん今回はREADME、CHANGELOGとか最低限でいいのでは？\", asked \"開発者向け README、アーキテクチャ文書、いる？\", and answered \"はい\", their \"最低限\" being the least set of documents, not the least content.",
+        "decision": "Drop overnight and rely on Claude Code's own automatic continue at the usage limit, checked over one night on a real limit, as the user answered \"１\" to the choice between that and keeping overnight to check whether StopFailure fires; this ends the earlier decisions that rest on overnight, the user's on building it as simply as Claude Code's plugin documentation lets it be built with no developer README or architecture document, and on its README and CHANGELOG being made normally for its users.",
         "by": "user"
       },
       {
-        "decision": "plugins/overnight/README.md and plugins/overnight/CHANGELOG.md face the plugin's users, so they're made normally, by their kinds' best practices and templates, as rn's are, not cut to the least that passes the checks, and whether the README has a figure is the readme best practice's call, as for any README, as the user said: \"プラグインの README と CHANGELOG は、チェックを通る最低限の中身にする これは外向けだから普通に作らないの？当たり前の話かと\".",
-        "by": "user"
-      },
-      {
-        "decision": "The overnight plugin carries a byte-for-byte copy of the repository's LICENSE at plugins/overnight/LICENSE, as the repository's pre-push check refuses any push without it (dev/scripts/standalone.py, license_faults: \"missing; copy the repository's LICENSE there\").",
+        "decision": "With overnight dropped, the run makes and changes nothing in the repository: plugins/overnight/*, dev/overnight/tests, pyproject.toml's coverage `patch = [\"subprocess\", \"execv\"]`, which only wait.py's exec needed, and overnight's entry in .claude-plugin/marketplace.json leave the steps, and the open plugins/overnight/README.md and README.md go, as main's README needs no line for a setting on by default that its people never set, and the interactive-mode page already says what the user does; the one step left is the user's night on a real limit, read again from the live pages on 2026-11-26, where the page's wording on the three automatic continuations and on the Enter after a sleep of more than about 30 minutes holds as the earlier summary gave it, and also says that a project or local settings file that sets the key turns the feature off (settings-reference: \"When none of those sets the key, a project or local settings file that sets it turns the feature off rather than being ignored\") and that background sessions and -p runs get no wait (\"Background sessions and `-p` runs: the menu row isn't available\"), which the night's test checks for rn's subagents.",
         "by": "rn"
       },
       {
-        "decision": "resume, at plugins/overnight/scripts/resume/, has these unit cases as its specification, held in the steering as the code best practice holds a part's unit cases: on a StopFailure input whose error is rate_limit, with session_id, transcript_path, and cwd as strings, resume exits 0 saying nothing and leaves, in cwd and outliving the hook, the waiter `python3 wait.py <seconds> claude -p --resume <session_id> --permission-mode <mode> <the prompt to go on>`, the mode being the last permissionMode that the transcript records at the top of a line, a line not yet whole passed over, and a line that names permissionMode only within it, such as in a message that quotes it, passed over too, as a session's transcript holds such lines in common use; and the seconds 900 or the whole number from 1 that OVERNIGHT_INTERVAL_SECONDS holds; on any other error it exits 0 saying nothing and leaves nothing; it exits 1 with `resume: <what's wrong>` and leaves nothing where the input isn't a JSON object, a field is missing or not a string, the transcript can't be read or records no permission mode that claude accepts, OVERNIGHT_INTERVAL_SECONDS holds no whole number from 1, or claude isn't on PATH; and wait.py sleeps its seconds, then becomes the command it was given; resume parses each line of the transcript with no search for the name ahead of parsing, so that the case of a line that names permissionMode only within it runs resume's passing over of a record that holds none at its top, which no case runs while the search passes the quoted name over before parsing; resume holds no behavior beyond these, so its refusal of a field given as an empty string goes, as Claude Code gives none and no case holds it, and of the evaluator's findings, the ask for a case of an interval in non-ASCII digits, asked again of dev/overnight/tests in content-2 as the full-width digits that a Japanese keyboard types, is held good, as no one sets the interval so: the README's only call to set it is to try another interval before starting Claude Code, and one who does give full-width digits gets `resume: OVERNIGHT_INTERVAL_SECONDS must be a whole number of seconds from 1`, from which they fix it, while a case for them would only pin a refusal that no one meets; the ask for a `resume:` line where the input's cwd is a folder that doesn't exist is held good, as Claude Code gives the folder that the stopped session runs in, which exists, the assumption test feeds the hook a live session's input, and the README tells no one to run the hook by hand; and the ask that the module holding how the waiter outlives the hook say so at its opening is held good, as the overnight plugin's people, the AI the user instructs and the user, never read resume's modules, and a maintainer who opens __main__.py, the file that hooks/hooks.json runs, meets _leave with its docstring there.",
-        "by": "rn"
-      },
-      {
-        "decision": "main's #95 now carries out the test-finding decision and counts every plugin's code, so the run changes neither dev/scripts/check.sh nor dev/scripts/trace.py, and both leave the steps: pytest finds the tests under testpaths = [\"dev\"], coverage counts \"*/plugins/**/*.py\", pyrefly checks each plugin with the search paths of its scripts' folders and dev/<plugin>/tests, and trace.py keeps only tags; of the run's lines, pyproject.toml keeps only coverage's `patch = [\"subprocess\", \"execv\"]` with its comment, as wait.py execs claude before coverage keeps what it ran, and else the coverage check refuses resume.",
-        "by": "rn"
-      },
-      {
-        "decision": "Of overnight's new files beyond its README and CHANGELOG, each holds the least that its people need and that the checks of dev/scripts/check.sh pass: hooks/hooks.json runs `python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/resume\"`; the double of Claude Code, claude_double.py, with its recorded/ beside it, lies in dev/overnight/tests, where main's pyrefly check gives the tests' search path, as with it in dev/overnight/tests/unit that check fails with \"Cannot find module `claude_double`\" at conftest.py and both test modules, and with it one folder up it passes with 0 errors; the double keeps taking each result by line(record, event), as rn's gh_double.py does on main, and claude-manual.jsonl drops `source` and `shows`, which only the removed `trace.py doubles` read, as main dropped them from rn's gh-manual.jsonl; and plugins/overnight/CHANGELOG.md gives 0.1.0, plugin.json's version, in Keep a Changelog form as rn's does, with what the plugin's users get.",
-        "by": "rn"
-      },
-      {
-        "decision": "First due is the merge of origin/main into the run's branch, as each put-up after it runs main's checks: the uncommitted move of resume to plugins/overnight/domain/scripts/resume goes first, its tree back as HEAD holds it, so plugins/overnight/scripts/resume, dev/overnight/tests/unit/conftest.py, pyproject.toml, and dev/scripts/check.sh are HEAD's and plugins/overnight/domain is removed; the merge then takes main's dev/scripts/check.sh and dev/scripts/trace.py whole and main's pyproject.toml with the run's coverage `patch` and its comment, and, as its tip must pass main's pyrefly check of overnight, moves claude_double.py and recorded/ from dev/overnight/tests/unit to dev/overnight/tests with conftest.py's import path and docstring following; then plugins/overnight/scripts/resume, which HEAD holds as its Rounds made it, is marked done, and dev/overnight/tests, pyproject.toml, hooks/hooks.json, plugins/overnight/CHANGELOG.md, .claude-plugin/marketplace.json, plugins/overnight/README.md, and README.md follow in that order.",
-        "by": "rn"
-      },
-      {
-        "decision": "overnight keeps the fixed interval and reads no reset time, neither from the resumed runs' stream-json output with --verbose nor through a runner that starts the night's work headless, as the user asked \"ロジック、output-format --verboseは使えないの？\": the Agent SDK reference documents SDKRateLimitEvent, \"Emitted when the session encounters a rate limit.\", with status rejected and an optional resetsAt, but the first stop of a night is the interactive session's, whose StopFailure input holds only error, error_details, and last_assistant_message, as the hooks reference lists them, and whose transcript holds the reset only in api_error_params, which Claude Code 2.1.332 describes as \"@internal\"; reading resetsAt in the resumed runs would bring the work back at most one interval, 15 minutes, sooner after each stop, which doesn't change whether the user finds it done in the morning, yet it would turn the waiter, which now only sleeps and then becomes claude, into a reader of claude's output; a runner would have the AI start each night's work through it, where the hook needs nothing of anyone; so no deliverable reopens, and stream-json output as a record of where the work stopped waits for need O2.1 to be picked.",
-        "by": "rn"
-      },
-      {
-        "decision": "Of the evaluator's findings on plugins/overnight/README.md, content-1, the walkthrough is redone from the run of the solution's assumption test on the real thing once it records a result, showing the stop, overnight's resume, and the commits after it as that run gave them, and the line at the top that says where overnight isn't ready names what the recorded runs haven't shown yet, so the README comes after hooks/hooks.json and .claude-plugin/marketplace.json, which that run rests on, as a reader deciding to leave a night's work to overnight trusts what it promises only from what a run showed (readme best practice N3, N6); the finding that the installation stops at \"Plugin \\\"overnight\\\" not found in marketplace \\\"ccpm\\\"\" and the CHANGELOG link with no target are held good for the README, as no reader meets them once .claude-plugin/marketplace.json, hooks/hooks.json, and plugins/overnight/CHANGELOG.md, still open in the step, are done and the branch is merged, the marketplace serving main.",
-        "by": "rn"
-      },
-      {
-        "decision": "Of the evaluator's findings on dev/overnight/tests, content-1, the double's answer() keeps each call it's run with, adding it to the calls that the file already holds and still writing the whole file before naming it, so that called() gives every call as its docstring (\"Each call of the double kept in the file\") and the module's opening (\"it adds to the file that CALLS names in its environment a line\") say, as both cases of test_overnight_resume_run.py read `[call] = claude_double.called(calls)`, which a maintainer reads as claude run once and which, while answer() writes over the file, still passes where a change has the waiter run claude twice, as the trial's two runs giving only the second call showed; the ask that a case run without CLAUDE_DOUBLE_CALLS say so at once is held good, as each case that runs the double sets it (test_overnight_resume_run.py: `claude_double.CALLS: calls,` in environment() and `env={**os.environ, claude_double.CALLS: calls}`), resume's specification holds no further case, and such a case already fails, naming the call that didn't come.",
-        "by": "rn"
-      },
-      {
-        "decision": "The user's doubt, \"気にしてるのは上限になった時にフックの動きが想定どおりか？ 公式情報ないよね？\", holds: Claude Code's hooks reference says StopFailure \"Runs instead of Stop when the turn ends due to an API error\" and gives rate_limit only with \"429 Too Many Requests\", and nowhere says it fires for a claude.ai usage limit, while the same reference and the settings reference document Claude Code's own way for exactly that case, autoContinueAtUsageLimit, \"Wait in the open session and continue the task automatically after a claude.ai usage limit resets\", on by default in interactive sessions signed in with a claude.ai subscription from 2.1.234, below the 2.1.332 installed here, with the Notification types quota_auto_resume_fired, quota_auto_resume_stale, and quota_auto_resume_disabled; so the solution's riskiest assumption is now that the turn ends with StopFailure at the limit at all, and that the waiter doesn't resume the session a second time beside Claude Code's own continuing; the fed input of the earlier test can't test it, so only a real limit does; and the open steps, plugins/overnight/README.md and README.md, wait on the user's answer to whether the run keeps overnight, as dropping a built plugin from the pull request is hard to undo; the exact wording of the interactive-mode page, its three automatic continuations and the stale wait after a sleep of more than about 30 minutes, came from a summary and is read again on the live page before any deliverable rests on it.",
+        "decision": "Draft pull request #93 stays as it is until the night's result, so that, should the built-in continuing fail, overnight is still at hand to weigh again from that result; once the night shows the work went on to its end, the run closes #93 unmerged and closes #62 with a line pointing to Claude Code's interactive-mode section \"Wait for a usage limit to reset\" and the night's result, as .claude/rules/issue.md asks a closed issue to say where its content went.",
         "by": "rn"
       }
     ],
-    "questions": [
-      "公式ドキュメントには、上限で StopFailure が発火するとは書かれていません。代わりに Claude Code 自身が #62 と同じことをする設定 autoContinueAtUsageLimit（2.1.234 以降、claude.ai サブスクの対話セッションで既定オン、上限が解けると開いたセッションで止まったところから続ける）を公式に持っています。どちらで進めますか？ 1: overnight をやめ、Claude Code 標準の自動継続に任せて、本物の上限で一晩動くかを確かめる（推奨: 公式に支えられ、導入も不要で、overnight を併用すると同じセッションを二重に再開するおそれがあるため） 2: overnight を続け、本物の上限で StopFailure が発火するかを確かめる"
-    ]
+    "questions": []
   },
   "state": {
     "issues": {
@@ -132,59 +94,8 @@
     "steps": [
       {
         "for": "O1",
-        "settles": "the walking skeleton: once the usage limit lifts, the work resumes on its own, from where it stopped, with overnight installed",
-        "deliverables": [
-          {
-            "path": "plugins/overnight/LICENSE",
-            "kind": "light",
-            "status": "done"
-          },
-          {
-            "path": "plugins/overnight/.claude-plugin/plugin.json",
-            "kind": "light",
-            "status": "done"
-          },
-          {
-            "path": "plugins/overnight/scripts/resume",
-            "kind": "code",
-            "status": "done"
-          },
-          {
-            "path": "dev/overnight/tests",
-            "kind": "code",
-            "status": "done"
-          },
-          {
-            "path": "pyproject.toml",
-            "kind": "light",
-            "status": "done"
-          },
-          {
-            "path": "plugins/overnight/hooks/hooks.json",
-            "kind": "light",
-            "status": "done"
-          },
-          {
-            "path": "plugins/overnight/CHANGELOG.md",
-            "kind": "light",
-            "status": "done"
-          },
-          {
-            "path": ".claude-plugin/marketplace.json",
-            "kind": "light",
-            "status": "done"
-          },
-          {
-            "path": "plugins/overnight/README.md",
-            "kind": "readme",
-            "status": "open"
-          },
-          {
-            "path": "README.md",
-            "kind": "readme",
-            "status": "open"
-          }
-        ],
+        "settles": "the walking skeleton: once the usage limit lifts, the work resumes on its own, from where it stopped, with Claude Code's own automatic continue, tried over one night on a real limit",
+        "deliverables": [],
         "status": "open"
       }
     ]
