@@ -156,7 +156,7 @@
           {
             "path": "plugins/overnight/hooks/hooks.json",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/overnight/CHANGELOG.md",
