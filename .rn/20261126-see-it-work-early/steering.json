@@ -35,7 +35,7 @@
           "assumption": {
             "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
             "test": "Run rn from this branch on #62 up to the first real check; count what was made by then.",
-            "result": null
+            "result": "Failed on #62 (2026-11-26): the hearing and the pick held, and every named need stayed, but after 1h20m the run had made 7 of 10 deliverables, 834 lines, with nothing the user could try, as each put-up pushed through the repository's checks, which pulled in tests, coverage, check.sh, and trace.py before the hook that runs it; and its messages spoke of rn's insides while roles worked."
           }
         }
       },
