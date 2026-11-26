@@ -1,29 +1,17 @@
 {
   "ost": {
-    "outcome": "A user of rn, in a small product or a large existing app, gets from one run a solution to the opportunity they picked, working and checked on the real thing, with no opportunity they named cut.",
+    "outcome": "A user of rn sees what they asked for work on the real thing early in a run, and grows it from there.",
     "opportunities": [
       {
-        "opportunity": "Opportunities I name are never cut by a role.",
-        "by": "#86: \"cut needs that the people themselves named\" (the #62 run in #85)"
+        "opportunity": "I see what I asked for work on the real thing early.",
+        "by": "#86, and the user on 2026-11-26"
       },
       {
-        "opportunity": "I see the solution work on the real thing early, not after every deliverable is whole.",
-        "by": "#86: \"made every deliverable whole before anything ran for real\" (#85, 6,079 lines before the first real run)"
-      },
-      {
-        "opportunity": "rn works in a large existing app, aimed at the moment's goal.",
-        "by": "the user, 2026-11-25"
-      },
-      {
-        "opportunity": "At the end, I decide what happens to the opportunities left unpicked.",
-        "by": "the user, 2026-11-26"
-      },
-      {
-        "opportunity": "rn speaks to me of opportunities and the ways to meet them, not of its own files.",
-        "by": "#86: \"never of the tree's own\""
+        "opportunity": "From there, I grow it one addition at a time, and keep each thing I asked for.",
+        "by": "#86, and the user on 2026-11-26"
       }
     ],
-    "target": "all five: #86 takes them in one PR",
+    "target": "both, in one pull request: the first, then the second on it",
     "solutions": [
       {
         "solution": "One file per run, .rn/<run>/steering.json: ost written by the pruner alone, state by the scripts alone. The design tree goes.",
