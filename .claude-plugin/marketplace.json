@@ -11,6 +11,12 @@
       "description": "rn makes what you ask for, such as a document, code, or a plugin, so that the people it's for can use it for what they're after, and asks you only the points that are yours.",
       "source": "./plugins/rn",
       "category": "development"
+    },
+    {
+      "name": "overnight",
+      "description": "overnight resumes the work that your AI stopped at the usage limit, from where it stopped, each time the limit lifts, so you find it done in the morning.",
+      "source": "./plugins/overnight",
+      "category": "development"
     }
   ]
 }

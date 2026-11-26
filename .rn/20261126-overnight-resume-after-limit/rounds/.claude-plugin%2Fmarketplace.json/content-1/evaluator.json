@@ -1,0 +1,31 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "      \"name\": \"overnight\",",
+        "      \"description\": \"overnight resumes the work that your AI stopped at the usage limit, from where it stopped, each time the limit lifts, so you find it done in the morning.\",",
+        "      \"source\": \"./plugins/overnight\","
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "  \"name\": \"ccpm\",",
+        "      \"name\": \"overnight\",",
+        "      \"description\": \"overnight resumes the work that your AI stopped at the usage limit, from where it stopped, each time the limit lifts, so you find it done in the morning.\",",
+        "      \"source\": \"./plugins/overnight\",",
+        "      \"category\": \"development\""
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "      \"name\": \"overnight\",",
+        "      \"description\": \"overnight resumes the work that your AI stopped at the usage limit, from where it stopped, each time the limit lifts, so you find it done in the morning.\","
+      ]
+    }
+  ],
+  "more": []
+}
