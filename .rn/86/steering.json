@@ -5,43 +5,107 @@
       {
         "id": "O1",
         "opportunity": "I see what I asked for work on the real thing early.",
-        "by": "#86, and the user on 2026-11-26",
-        "opportunities": []
+        "by": "#86: 6,079 lines before the first real check in #85",
+        "opportunities": [
+          {
+            "id": "O1.1",
+            "opportunity": "I pick what to meet first, without spelling out every detail.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solutions": []
+          },
+          {
+            "id": "O1.2",
+            "opportunity": "What I first touch already holds the quality its kind needs.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solutions": []
+          },
+          {
+            "id": "O1.3",
+            "opportunity": "It works in a large existing app, aimed at what I'm after now.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solutions": []
+          }
+        ],
+        "solutions": [
+          {
+            "solution": "Rebuild rn as prompts and work scripts on one steering file per run, its opportunity solution tree for the moment's goal, making the least solution as one walking skeleton.",
+            "chosen": true,
+            "why": "It puts something that runs in the user's hands before most is made, and keeps no tree of the whole product to maintain.",
+            "assumptions": [
+              {
+                "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
+                "test": "Run rn from this branch on #62 up to the first real check; count what was made by then.",
+                "result": null
+              }
+            ]
+          },
+          {
+            "solution": "One OST per product across runs, at dev/<product>/opportunity-solution-tree.json (#86 as written).",
+            "chosen": false,
+            "why": "Keeping a whole product's tree is the trivial many in a large app, and it drifts from the code.",
+            "assumptions": [
+              {
+                "assumption": "A product-wide tree stays true across runs.",
+                "test": "Keep one for a large app over several runs.",
+                "result": null
+              }
+            ]
+          },
+          {
+            "solution": "Keep the design tree and add an opportunities section to it.",
+            "chosen": false,
+            "why": "The tree's goal and decisions would hold the same points as the ost, in two places.",
+            "assumptions": [
+              {
+                "assumption": "The design tree's goal and an opportunities section stay apart.",
+                "test": "Write both for #62 and compare.",
+                "result": null
+              }
+            ]
+          }
+        ]
       },
       {
         "id": "O2",
         "opportunity": "From there, I grow it one addition at a time, and keep each thing I asked for.",
-        "by": "#86, and the user on 2026-11-26",
-        "opportunities": []
+        "by": "#86: requests 4 and 5 of #62 cut in #85",
+        "opportunities": [
+          {
+            "id": "O2.1",
+            "opportunity": "A mend I ask for lands at once.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solutions": []
+          },
+          {
+            "id": "O2.2",
+            "opportunity": "An addition keeps the quality of what's there.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solutions": []
+          },
+          {
+            "id": "O2.3",
+            "opportunity": "No need I named is dropped without my say.",
+            "by": "#86: requests 4 and 5 of #62 cut in #85",
+            "opportunities": [],
+            "solutions": []
+          },
+          {
+            "id": "O2.4",
+            "opportunity": "At the end, I decide what happens to what I didn't pick.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solutions": []
+          }
+        ],
+        "solutions": []
       }
     ],
     "target": "O1",
-    "solutions": [
-      {
-        "solution": "Rebuild rn as prompts and work scripts on one steering file per run, its opportunity solution tree for the moment's goal, making the least solution as one walking skeleton.",
-        "chosen": true,
-        "why": "It puts something that runs in the user's hands before most is made, and keeps no tree of the whole product to maintain.",
-        "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
-        "check": "Run rn from this branch on #62 up to the first real check; count what was made by then.",
-        "checked": null
-      },
-      {
-        "solution": "One OST per product across runs, at dev/<product>/opportunity-solution-tree.json (#86 as written).",
-        "chosen": false,
-        "why": "Keeping a whole product's tree is the trivial many in a large app, and it drifts from the code.",
-        "assumption": "A product-wide tree stays true across runs.",
-        "check": "Keep one for a large app over several runs.",
-        "checked": null
-      },
-      {
-        "solution": "Keep the design tree and add an opportunities section to it.",
-        "chosen": false,
-        "why": "The tree's goal and decisions would hold the same points as the ost, in two places.",
-        "assumption": "The design tree's goal and an opportunities section stay apart.",
-        "check": "Write both for #62 and compare.",
-        "checked": null
-      }
-    ],
     "decisions": [
       {
         "decision": "Pile up the vital few and cut the trivial many thoroughly, as rn's center.",
