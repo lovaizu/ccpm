@@ -29,7 +29,15 @@
             "solution": null
           }
         ],
-        "solution": null
+        "solution": {
+          "solution": "The overnight plugin's StopFailure hook, matched on rate_limit, leaves behind a waiter that, at a fixed interval, resumes the same session headless with claude -p --resume <session_id> and the session's own permission mode, telling it to go on from where it stopped; while the limit still holds, that resumed run stops at the limit too, its own StopFailure hook leaves the next waiter, and so the work resumes however often it stops in a night.",
+          "why": "It needs no setup from the user beyond the install and resumes the very session, so the work goes on from where it stopped, whereas a wrapper loop around claude asks the user to start each night's work through it, sending keys to the terminal works only under a terminal multiplexer, and reading the reset time from the limit's message rests on a wording that Claude Code doesn't promise.",
+          "assumption": {
+            "assumption": "A waiter that the StopFailure hook leaves behind outlives the hook, and the session it resumes headless with the session's permission mode takes the stopped work up where it stopped and carries it on to its end with no one at the keyboard.",
+            "test": "On the real thing, with overnight installed from this branch: in a live session given a task of several steps, feed the hook a StopFailure input with error rate_limit for that session and the interval cut to one minute, then read the session's transcript and the repository to see the work go on from the stopped step to its end; then the user leaves a real night's work that runs into the limit and looks in the morning.",
+            "result": null
+          }
+        }
       },
       {
         "id": "O2",
@@ -47,16 +55,22 @@
         "solution": null
       }
     ],
-    "target": null,
+    "target": "O1",
     "decisions": [
+      {
+        "decision": "Start with need 1, that once the usage limit lifts the work resumes on its own, as the user picked it.",
+        "by": "user"
+      },
       {
         "decision": "rn talks with the user in Japanese, the language of their words, and writes the deliverables in English, the language of the repository's documents, as the README promises and the user's own rule says.",
         "by": "rn"
+      },
+      {
+        "decision": "Make the resuming a new plugin, overnight, in this marketplace, as issue #62's title names it, so a user installs it beside rn and the AI they instruct needs nothing more from them.",
+        "by": "rn"
       }
     ],
-    "questions": [
-      "どのニーズから始めますか。番号で選んでください。\n1. 利用上限が解けたら、作業がひとりでに再開する（#62）\n1.1 ユーザーが指示したAIが、再開の段取りを自分で整え、ユーザーは指示するだけで済む\n1.2 再開した作業が、止まったところから続く\n1.3 一晩に何度上限で止まっても、そのたびに再開する\n2. 朝見たとき、任せた作業が最後まで終わっている\n2.1 朝、作業が最後まで済んだか、済んでいなければどこで止まったかがわかる\nおすすめは 1 です。ほかのどのニーズも、上限が解けたら作業がまた動き出すことの上に成り立つからです。"
-    ]
+    "questions": []
   },
   "state": {
     "issues": {
@@ -65,6 +79,39 @@
       ],
       "refs": []
     },
-    "steps": []
+    "steps": [
+      {
+        "for": "O1",
+        "settles": "the walking skeleton: once the usage limit lifts, the work resumes on its own, from where it stopped, with overnight installed",
+        "deliverables": [
+          {
+            "path": "plugins/overnight/.claude-plugin/plugin.json",
+            "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/scripts/resume",
+            "kind": "code",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/hooks/hooks.json",
+            "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": ".claude-plugin/marketplace.json",
+            "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": "README.md",
+            "kind": "readme",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      }
+    ]
   }
 }
