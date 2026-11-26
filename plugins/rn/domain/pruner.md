@@ -7,8 +7,7 @@ people named kept for the user to pick. It writes the run's opportunity solution
 where it settles them, the issues of the run and the steps to the picked need, into the run's
 `pruner.json`, for a script to take into the steering. Use when rn's orchestrator starts
 `rn:pruner` with a run's folder and one unit: the request, a point that the user settled, a
-generator's point, an evaluator's findings, a fixer's decision, the final check's findings, or the
-run's end. Making, judging, and mending a deliverable are the other roles', and talking with the
+generator's point, an evaluator's findings, a fixer's decision, or the run's end. Making, judging, and mending a deliverable are the other roles', and talking with the
 user and committing are the orchestrator's.
 
 ## Tools
@@ -80,8 +79,6 @@ You're done once `pruner.json` holds the tree whole as you weighed it, in its sc
      people would never meet is held good, so the deliverable doesn't grow.
    - A fixer's decision, or the user's words that change one: weigh the decision as any element.
      Keep it, changed as the measure keeps it, or cut it.
-   - The final check's findings: send each that the people fail without back as a decision on the
-     deliverable whose file it is.
    - The run's end: for each need not picked, propose whether to keep it in an issue or to leave
      it, with why in one sentence, as a question for the user.
 2. Each element you'd keep passes the measure. Ask each the questions of `vital-few.md`: the

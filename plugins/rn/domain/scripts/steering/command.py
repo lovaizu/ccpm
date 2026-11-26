@@ -19,6 +19,7 @@ USAGE = """\
 usage: steering commit <run>
        steering step <run> <number> open|trying|done
        steering deliverable <run> <path> open|done
+       steering checked <run>
        steering due <run>
 """
 
@@ -35,6 +36,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       steering alone as `rn: <its words>: <status>`, and gives 0 printing what's due.
     - `deliverable <run> <path> <status>`: marks the deliverable as `record.deliverable_marked`
       does, commits the steering alone as `rn: <path>: <status>`, and gives 0 printing what's due.
+    - `checked <run>`: marks the final check passed as `record.checked_marked` does, commits the
+      steering alone as `rn: the final check passed`, and gives 0 printing what's due.
     - `due <run>`: gives 0 printing each line that `due.due` gives, a line each.
 
     `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `steering: <what's wrong>`,
@@ -81,6 +84,12 @@ def _deliverable(run: RunPlace, given: list[str], schemas: str, host: Host) -> A
     return 0, _lines(due.due(steering)), ""
 
 
+def _checked(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
+    steering = record.checked_marked(_steering(run, schemas))
+    _committed(run, steering, "the final check passed", host)
+    return 0, _lines(due.due(steering)), ""
+
+
 def _due(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
     return 0, _lines(due.due(_steering(run, schemas))), ""
 
@@ -116,5 +125,6 @@ _SUBCOMMANDS: dict[str, tuple[Callable[[RunPlace, list[str], str, Host], Answer]
     "commit": (_commit, 2),
     "step": (_step, 4),
     "deliverable": (_deliverable, 4),
+    "checked": (_checked, 2),
     "due": (_due, 2),
 }

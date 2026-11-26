@@ -257,8 +257,10 @@ sequenceDiagram
   end
   O->>P: starts one with the run's end (Steering) [P4.1]
   P-->>O: ends, with a proposal for each need left, to keep it in an issue or to leave it [P2.2]
+  O->>S: marks the final check passed, so the run ends once nothing is asked (Steering) [P6.1]
   O->>U: the need reached, each need left with its proposal, CI, and the merge proposed [P2.2]
   opt the user says which needs to keep [P2.2]
+    O->>P: starts one with the answer, word for word (Steering) [P4.1]
     O->>S: opens an issue for each need kept, in its own words [P2.2]
   end
   U->>U: marks the pull request ready, and merges [P7.2]

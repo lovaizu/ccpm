@@ -1,7 +1,7 @@
 """Decides how a run's worktree comes to be and is found again: made with its branch from the
 default branch that origin's HEAD names, with the run's folder empty for the pruner's first
-result; and found from the runs' branches whose committed steering holds a step not done, its
-worktree made again where none lies."""
+result; and found from the runs' branches whose committed steering hasn't ended, its worktree
+made again where none lies."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from typing import NamedTuple
 from fault import CantRun, Missing, Wrong
 from host import Host, checked
 from place import RunPlace
+from steering.due import due
 
 # The line of info/exclude that keeps the runs' worktrees out of the user's untracked files.
 _EXCLUDED = "/.claude/worktrees/"
@@ -109,7 +110,8 @@ def left(repository: str, host: Host, origins: bool = True) -> list[RunPlace]:
     Gives: the run of each branch among the local branches `rn-*` and, where `origins` says so,
     origin's, as the repository last fetched them, newest first by its last commit, each run once,
     by its newest branch, whose committed steering, `.rn/<name>/steering.json` on the branch,
-    holds a step that isn't done, or no step yet; none where the folder isn't a git repository.
+    has something due other than `ended`, as `steering.due` gives it; none where the folder isn't
+    a git repository.
     Changes: nothing.
     Refuses: Wrong where a branch's steering isn't JSON, naming the branch and the path.
     """
@@ -130,15 +132,15 @@ def left(repository: str, host: Host, origins: bool = True) -> list[RunPlace]:
 
 
 def _open(repository: str, ref: str, path: str, host: Host) -> bool:
-    """Whether the steering that the branch commits holds a step not done, or none yet."""
+    """Whether the steering that the branch commits has something due other than its end."""
     shown = host(["git", "show", f"{ref}:{path}"], repository)
     if shown.code != 0:
         return False
     try:
-        steps = json.loads(shown.out)["state"]["steps"]
+        steering = json.loads(shown.out)
     except ValueError as error:
         raise Wrong(f"{ref}:{path}: isn't JSON: {error}") from None
-    return not steps or any(each["status"] != "done" for each in steps)
+    return due(steering) != ["ended"]
 
 
 def _made_again(run: RunPlace, host: Host) -> None:

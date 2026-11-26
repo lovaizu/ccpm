@@ -1,5 +1,6 @@
 """The unit cases of steering/command.py, steering's command line as the orchestrator runs it: the
-pruner's first result committed, a later one, each mark committed, what's due read, and each
+pruner's first result committed, a later one, each mark committed, the final check's pass
+committed, what's due read, and each
 refusal: a result missing, not JSON, or out of its schema, a step's number that isn't one, a mark
 that the steering refuses, git refusing the commit, and arguments of another form."""
 
@@ -124,6 +125,16 @@ def test_each_mark_is_committed_and_gives_whats_due(made: RunPlace) -> None:
         f"rn: {rn_files.GUIDE}: done",
         f"rn: {rn_files.COMMAND}: done",
     ]
+
+
+def test_the_final_checks_pass_is_committed_and_gives_the_runs_end(made: RunPlace) -> None:
+    """Given a steering whose one step is done.
+    When the final check is marked passed.
+    Then it's committed with its words, and the run's end is due."""
+    steering(made, rn_files.steering([rn_files.step("done")]))
+    assert call(made, "checked") == (0, "ended\n", "")
+    assert git(made.worktree, "log", "-1", "--format=%s") == "rn: the final check passed\n"
+    assert held(made)["state"]["checked"] is True
 
 
 def test_whats_due_is_read_from_the_steering(made: RunPlace) -> None:

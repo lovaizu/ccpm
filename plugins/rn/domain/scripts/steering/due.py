@@ -1,8 +1,8 @@
 """Decides what waits now in a run, from its steering alone: each question for the user, which
 holds up the rest; the pruner, where the run has no target and asks nothing; else the first step
 not done, as the way goes in order: the user's try where it's trying, the next deliverable to make
-where it's open, or the hand-over once each of its deliverables is done; and the final check once
-each step is done."""
+where it's open, or the hand-over once each of its deliverables is done; the final check once
+each step is done; and the run's end once the final check passed."""
 
 from __future__ import annotations
 
@@ -16,8 +16,9 @@ def due(steering: Steering) -> list[str]:
     Gives: `question\\t<words>` for each open question, and nothing more where there's one;
     `weigh` where no need is picked and nothing is asked; else, for the first step not done,
     numbered from 1, `trying\\t<n>\\t<settles>`, `make\\t<n>\\t<path>\\t<kind>` for its first
-    deliverable not done, or `hand-over\\t<n>\\t<settles>`; else `final-check` once there are
-    steps and each is done; and `weigh` where no step is set yet.
+    deliverable not done, or `hand-over\\t<n>\\t<settles>`; else, once there are steps and each
+    is done, `final-check`, or `ended` where the steering holds the final check passed; and
+    `weigh` where no step is set yet.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -30,7 +31,7 @@ def due(steering: Steering) -> list[str]:
     for number, step in enumerate(steps, 1):
         if step["status"] != "done":
             return [_of(number, step)]
-    return ["final-check"]
+    return ["ended"] if steering["state"].get("checked") else ["final-check"]
 
 
 def _of(number: int, step: dict) -> str:

@@ -153,6 +153,10 @@
        }
       }
      }
+    },
+    "checked": {
+     "description": "true once the pull request passed its final check whole, so the run ends once nothing is asked; absent before.",
+     "const": true
     }
    }
   }

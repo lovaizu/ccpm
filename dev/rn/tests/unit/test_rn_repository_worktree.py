@@ -2,7 +2,7 @@
 origin's default branch with its folder empty and the worktrees kept out of the user's untracked
 files, and each refusal: a folder that isn't a repository's top, a run of the name already there,
 no default branch on origin, and git refusing the worktree; and `found` with `left`, the runs with
-work left, newest first, each once, a run all done or with no steering left out, a worktree made
+work left, newest first, each once, a run ended or with no steering left out, a worktree made
 again from its local branch or from origin's, the local branches alone where git can't fetch, no
 run in a folder that isn't a repository, and a steering that isn't JSON."""
 
@@ -101,16 +101,21 @@ def made_with(repo: str, name: str, steps: list[Any] | None, when: str) -> RunPl
 
 
 def test_the_runs_with_work_left_are_found_newest_first(repo: str) -> None:
-    """Given a run with a step open, a newer one with no step yet, one with each step done, and one
-    with no steering.
+    """Given a run with a step open, a newer one with no step yet, one with each step done, one that
+    ended, and one with no steering.
     When the runs are found.
-    Then the two with work left are given, the newer first, and nothing is unchecked."""
+    Then the three with work left are given, the final check of the one all done among them,
+    newest first, and nothing is unchecked."""
     older = made_with(repo, NAME, [rn_files.step()], "2026-11-26T09:00:00")
     newer = made_with(repo, OTHER, [], "2026-11-27T09:00:00")
-    made_with(repo, "20261125-done", [rn_files.step("done")], "2026-11-28T09:00:00")
+    checking = made_with(repo, "20261125-done", [rn_files.step("done")], "2026-11-28T09:00:00")
+    ended = rn_files.steering([rn_files.step("done")])
+    ended["state"]["checked"] = True
+    gone = new(RunPlace(repo, "20261123-ended"), run)
+    rn_files.committed_steering(gone.worktree, gone.name, ended, "2026-11-29T09:00:00")
     made_with(repo, "20261124-bare", None, "")
     git(older.worktree, "push", "-q", "origin", older.branch)
-    assert found(repo, run) == ([newer, older], None)
+    assert found(repo, run) == ([checking, newer, older], None)
 
 
 def test_a_worktree_gone_is_made_again_from_its_branch(repo: str) -> None:

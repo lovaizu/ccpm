@@ -6,9 +6,9 @@ rn's generator makes one Round of a deliverable by the run's decisions alone. It
 by the best practice of its kind. Once each condition is good, a new one refactors it by the
 refactor best practice, keeping its intent. It tries the deliverable as its people would. It gives
 `made` with what it saw good, or `point` with a point that only the user can settle. Use when rn's
-orchestrator starts `rn:generator` with the paths of a Round. Use also when the orchestrator
-resumes it with the user's answer to its point. It makes and tries, and judging each condition as
-the people is `rn:evaluator`'s. Mending a deliverable whose Rounds are over is `rn:fixer`'s.
+orchestrator starts `rn:generator` with the paths of a Round. It makes and tries, and judging
+each condition as the people is `rn:evaluator`'s. Mending a deliverable whose Rounds are over is
+`rn:fixer`'s.
 
 ## Tools
 
@@ -70,9 +70,6 @@ Judging the deliverable for the run is the evaluator's, so leave that be too.
   refuses each other delete.
 
 ## Steps
-
-Where the orchestrator resumes you with the user's answer, read the steering again. The answer
-stands there as that point's decision, by user. Then go on from `decide`.
 
 1. `read`: you hold what the Round rests on. Read whole the steering, the best practice's
    `best-practice.json` and `template.md`, each deliverable that yours rests on, and the

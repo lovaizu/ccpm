@@ -144,8 +144,9 @@ def ci(run: RunPlace, host: Host) -> str:
     reads each check's end by
     `gh pr checks <the work's branch> --json name,state,bucket,link`, as gh's watch prints a
     cancelled check as `fail` and ends 0 where no other failed.
-    Refuses: Wrong where a check failed, naming each once, then each that ended neither passing
-    nor failing, with how; CantRun where gh can't give the pull request or its checks, such as
+    Refuses: CantRun where a check failed, as a problem with a deliverable that no rerun mends,
+    naming each once, then each that ended neither passing nor failing, with how; CantRun where
+    gh can't give the pull request or its checks, such as
     where the branch has no pull request, or gh has no login or can't reach GitHub, with what gh
     said.
     """
@@ -165,7 +166,7 @@ def ci(run: RunPlace, host: Host) -> str:
         if others:
             what += "; these ended neither passing nor failing, for the user to run again: "
             what += ", ".join(others)
-        raise Wrong(what)
+        raise CantRun(what)
     return "".join(f"{name}\t{end}\n" for name, end in ends.items())
 
 

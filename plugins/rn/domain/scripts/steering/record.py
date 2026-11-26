@@ -1,6 +1,6 @@
 """Decides what each change makes of a run's steering: the pruner's result taken in, the tree
 whole and the way to the target, each step and deliverable that the steering already holds keeping
-its status; and a step or a deliverable marked as the run moves on."""
+its status; a step or a deliverable marked as the run moves on; and the final check's pass."""
 
 from __future__ import annotations
 
@@ -26,7 +26,8 @@ def taken_in(steering: Steering | None, result: dict[str, Any]) -> Steering:
     Gives: a new steering: the result's tree whole; its issues, else the steering's, else none;
     and its steps, else the steering's, each step that the steering holds for the same need with
     the same words keeping its status, and each of its deliverables at the same path keeping its
-    own, every other step and deliverable open.
+    own, every other step and deliverable open; and the final check passed where the steering
+    holds it so.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -34,9 +35,11 @@ def taken_in(steering: Steering | None, result: dict[str, Any]) -> Steering:
     steps = state["steps"]
     if "steps" in result:
         steps = [_kept(each, state["steps"]) for each in result["steps"]]
+    issues = copy.deepcopy(result.get("issues", state["issues"]))
+    checked = {"checked": True} if state.get("checked") else {}
     return {
         "ost": copy.deepcopy(result["ost"]),
-        "state": {"issues": copy.deepcopy(result.get("issues", state["issues"])), "steps": steps},
+        "state": {"issues": issues, "steps": steps, **checked},
     }
 
 
@@ -103,4 +106,21 @@ def deliverable_marked(steering: Steering, path: str, status: str) -> Steering:
                 step["status"] = "open" if status == "open" else step["status"]
     if not found:
         raise Wrong(f"no step names the deliverable {path!r}; give its path as its step names it")
+    return marked
+
+
+def checked_marked(steering: Steering) -> Steering:
+    """The steering with the pull request's final check passed.
+
+    Takes: the steering.
+    Gives: a new steering that holds the final check passed, so that it's due no more.
+    Changes: nothing.
+    Refuses: Wrong where a step isn't done, as the final check comes once each is, naming the
+    first.
+    """
+    for number, step in enumerate(steering["state"]["steps"], 1):
+        if step["status"] != "done":
+            raise Wrong(f"step {number} isn't done; check the pull request once each step is done")
+    marked = copy.deepcopy(steering)
+    marked["state"]["checked"] = True
     return marked

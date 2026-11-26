@@ -50,7 +50,8 @@ the user afterward what you changed and why.
   it did nothing, and says what's wrong and how to mend it: mend it and run it again, or, where the
   mend changes what the run aims at, hand it to a new pruner. On 2, it says what it couldn't do,
   and a rerun does no more: a problem with a deliverable, such as a put-up that the repository's
-  checks refused, or a blocker that only the user can mend, such as a push with no network.
+  checks refused or a check of CI that failed, or a blocker that only the user can mend, such as a
+  push with no network.
 - The run's folder, `<run>` below, is the path that `repository new` prints, such as
   `.claude/worktrees/rn-<name>/.rn/<name>`. Its steering, `<run>/steering.json`, takes the form of
   `<rn's folder>/domain/schemas/steering.schema.json`: `ost` holds what the run aims at, which the
@@ -65,10 +66,11 @@ the user afterward what you changed and why.
     the commit, then what's due.
   - `steering due <run>` prints what's due, a line each, tab-separated: `question` and its words,
     for the user; `weigh`, for a new pruner; `make`, a step's number, a deliverable, and its kind;
-    `hand-over`, a step's number and its words; `trying`, the same, waiting on the user's try; or
-    `final-check`.
+    `hand-over`, a step's number and its words; `trying`, the same, waiting on the user's try;
+    `final-check`; or `ended`, once the final check passed and nothing is asked.
   - `steering deliverable <run> <path> done|open` and `steering step <run> <n> trying|done` mark
-    where the run stands, commit it, and print what's due.
+    where the run stands, commit it, and print what's due. `steering checked <run>` marks the
+    final check passed the same way.
   - `rounds next <run> <deliverable>` prints what comes next for the deliverable, tab-separated:
     `generator`, `refactor`, or `fixer`, with the folder of its Round or Fix and of the best
     practice it's made by; `evaluator`, with its Round's folder and the file it judges by; `weigh`
@@ -84,7 +86,7 @@ the user afterward what you changed and why.
 - A new pruner is `rn:pruner`, started by Agent in the foreground. Its prompt gives `<run>` as an
   absolute path, the user's words of the run, the request among them, and one unit: the request
   with the text of each issue it names, a point that the user settled in their words, a result that
-  `weigh` names, by its absolute path, the final check's findings, or the run's end. Once it ends,
+  `weigh` names, by its absolute path, or the run's end. Once it ends,
   run `steering commit <run>`, and, for a result it weighed, `rounds weighed`. Then go on from
   `steering due`, as the pruner may have left a question that comes before any role.
 - Each role starts by Agent in the background, with a prompt of absolute paths:
@@ -114,15 +116,14 @@ the user afterward what you changed and why.
    - `/rn:ty`: mark the step that's trying done by `steering step`.
    - `/rn:gm` with what to change: a problem with what the user tried, for step 2.
    - The user's other words: an answer to the open question is a point they settled, for a new
-     pruner. A word mid-talk settles only half a point, so it waits for the rest.
-   - The user's words on which needs left to keep, after the last message: open an issue for each
-     by `gh issue create --title "<the need, in its words>" --body "Left from <the pull request's
-     URL>."`, as the user decided it, and give them each issue's URL.
+     pruner, the answer to the last message's question on the needs left among them. A word
+     mid-talk settles only half a point, so it waits for the rest.
    - A role's end: its result lies in its Round or Fix, and `rounds next` says what it makes due.
 2. A problem with a deliverable whose Rounds are over is mended at once. Such a problem is a put-up
    that the repository's checks refused, a finding of the final check, or the user's words by
    `/rn:gm`. Write the Fix by `rounds fix` for the deliverable whose file it concerns, with the
-   problem's words as they were printed or said, and start its fixer. A fixer whose mend would
+   problem's words as they were printed or said, and start its fixer. A check of CI that failed
+   is a finding of the final check. A fixer whose mend would
    change a decision names it and mends nothing, for a new pruner, and the deliverable then takes
    Rounds again: mark it open by `steering deliverable`.
 3. The run goes as far as it can without the user. Run `steering due <run>`, and act on what it
@@ -139,7 +140,11 @@ the user afterward what you changed and why.
    - `final-check`: run `repository ci <run>`, and start `rn:evaluator` on the pull request whole,
      its deliverable the pull request's diff, with the outcome and the picked need. Take each
      finding as a problem for step 2. Once none is left, hand the run's end to a new pruner, for a
-     proposal on each need left, and end the turn on the last message.
+     proposal on each need left. Once it's committed, run `steering checked <run>` before you go on
+     from what's due, which is then its question, for the last message.
+   - `ended`: open an issue for each need left that the user's decision keeps, by `gh issue create
+     --title "<the need, in its words>" --body "Left from <the pull request's URL>."`, and end the
+     turn giving them each issue's URL, as the run is over.
    Run `steering due` again after each event, as each one can make more due, until it prints only
    what waits on the user or on a role at work.
 4. The user knows where the run stands and what's theirs to decide. Write them one message, as

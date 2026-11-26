@@ -1,6 +1,6 @@
 """The unit cases of steering/record.py, what each change makes of a run's steering: the pruner's
 first result, a later one that keeps each status the steering holds, one with no steps or issues,
-and each mark of a step or a deliverable, with each refusal."""
+each mark of a step or a deliverable, and the final check's pass, with each refusal."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from typing import Any
 import pytest
 import rn_files
 from fault import Wrong
-from steering.record import deliverable_marked, step_marked, taken_in
+from steering.record import checked_marked, deliverable_marked, step_marked, taken_in
 
 STEP = rn_files.WAY
 
@@ -60,6 +60,17 @@ def test_a_later_result_with_no_steps_keeps_those_the_steering_holds() -> None:
     held = rn_files.steering([rn_files.step("trying")])
     made = taken_in(held, result(ost=rn_files.ost(questions=["Which printer?"])))
     assert (made["state"], made["ost"]["questions"]) == (held["state"], ["Which printer?"])
+
+
+def test_a_later_result_keeps_the_final_checks_pass() -> None:
+    """Given a steering whose step is done, the final check passed, and a result with a question
+    and its steps again.
+    When the result is taken in.
+    Then the final check stays passed."""
+    held = rn_files.steering([rn_files.step("done")])
+    held["state"]["checked"] = True
+    made = taken_in(held, result(ost=rn_files.ost(questions=["Keep 2?"]), steps=[STEP]))
+    assert made["state"]["checked"] is True
 
 
 def test_a_step_with_each_deliverable_done_is_marked_trying() -> None:
@@ -125,3 +136,19 @@ def test_a_mark_of_a_deliverable_that_can_not_be_is_refused(
     Then Wrong is raised, saying why."""
     with pytest.raises(Wrong, match=says):
         deliverable_marked(rn_files.steering(), path, status)
+
+
+def test_the_final_check_is_marked_passed_once_each_step_is_done() -> None:
+    """Given a steering whose one step is done.
+    When the final check is marked passed.
+    Then the steering holds it passed, and the step stays done."""
+    marked = checked_marked(rn_files.steering([rn_files.step("done")]))
+    assert (marked["state"]["checked"], marked["state"]["steps"][0]["status"]) == (True, "done")
+
+
+def test_the_final_check_is_refused_while_a_step_is_not_done() -> None:
+    """Given a steering whose step is trying.
+    When the final check is marked passed.
+    Then Wrong is raised, naming the step."""
+    with pytest.raises(Wrong, match="step 1 isn't done"):
+        checked_marked(rn_files.steering([rn_files.step("trying")]))

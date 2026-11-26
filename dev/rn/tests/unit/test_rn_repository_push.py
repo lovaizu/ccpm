@@ -389,18 +389,19 @@ def test_ci_where_a_check_ended_neither_passing_nor_failing_names_how_it_ended(
     ],
     ids=["failed", "failed-and-cancelled"],
 )
-def test_ci_where_a_check_failed_is_wrong_naming_it_once(
+def test_ci_where_a_check_failed_cant_run_naming_it_once(
     tmp_path: Any, host: Any, gh_state: str, found: str, expected: str
 ):
     """Given a run whose command was put up, and whose CI's check `tests` failed, which gh's lines
     show twice as it waits, or whose check `fails` failed while three others were cancelled
     When ci is given the run
-    Then Wrong is raised, naming each check that failed once, and no check that passed, then each
-    that was cancelled, for the user to run again"""
+    Then CantRun is raised, as a problem with the deliverable that no rerun mends, naming each
+    check that failed once, and no check that passed, then each that was cancelled, for the user
+    to run again"""
     run = with_command(made(tmp_path))
     put_up(run, STEERING, rn_files.COMMAND, host)
     gh_double.checks(gh_state, found)
-    with pytest.raises(Wrong) as refused:
+    with pytest.raises(CantRun) as refused:
         ci(run, host)
     assert str(refused.value) == expected
 
