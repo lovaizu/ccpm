@@ -1,0 +1,32 @@
+{
+  "result": "made",
+  "files": [
+    "plugins/overnight/hooks/hooks.json"
+  ],
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "    \"StopFailure\": [",
+        "        \"matcher\": \"rate_limit\",",
+        "            \"type\": \"command\",",
+        "            \"command\": \"python3 \\\"${CLAUDE_PLUGIN_ROOT}/scripts/resume\\\"\""
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "  \"description\": \"Resumes the session that the usage limit stopped, once the limit lifts, from where it stopped.\",",
+        "    \"StopFailure\": [",
+        "        \"matcher\": \"rate_limit\",",
+        "            \"command\": \"python3 \\\"${CLAUDE_PLUGIN_ROOT}/scripts/resume\\\"\""
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "            \"command\": \"python3 \\\"${CLAUDE_PLUGIN_ROOT}/scripts/resume\\\"\""
+      ]
+    }
+  ]
+}

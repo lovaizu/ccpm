@@ -1,0 +1,16 @@
+{
+  "description": "Resumes the session that the usage limit stopped, once the limit lifts, from where it stopped.",
+  "hooks": {
+    "StopFailure": [
+      {
+        "matcher": "rate_limit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/resume\""
+          }
+        ]
+      }
+    ]
+  }
+}

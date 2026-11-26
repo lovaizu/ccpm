@@ -1,0 +1,26 @@
+{
+ "what": "The people that a deliverable is made for use it toward their aim soon after the user asks for it.",
+ "critical_success_factors": [
+  {
+   "id": "C1",
+   "what": "The deliverable gives its people what its name says, and holds nothing more.",
+   "necessary_conditions": [
+    {
+     "id": "N1",
+     "about": "the whole",
+     "what": "Does the deliverable give its people what its name says as they meet it?"
+    },
+    {
+     "id": "N2",
+     "about": "the whole",
+     "what": "Does each part of the deliverable give its people something they need for what its name says?"
+    },
+    {
+     "id": "N3",
+     "about": "the whole",
+     "what": "Does the deliverable say what each deliverable it rests on says, wherever it carries it?"
+    }
+   ]
+  }
+ ]
+}
