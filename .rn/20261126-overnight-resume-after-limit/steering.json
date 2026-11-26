@@ -72,6 +72,14 @@
       {
         "decision": "The overnight plugin carries a byte-for-byte copy of the repository's LICENSE at plugins/overnight/LICENSE, as the repository's pre-push check refuses any push without it (dev/scripts/standalone.py, license_faults: \"missing; copy the repository's LICENSE there\"), so no deliverable reaches the branch the user installs from without it; the plugin's own README stays cut, as no check requires one (dev/scripts/check.sh checks plugins/*/README.md only where it exists) and the first try reaches the plugin through the repository's README.",
         "by": "rn"
+      },
+      {
+        "decision": "resume's specification is these unit cases, held in the steering as the code best practice allows where the product has no architecture, so the walking skeleton waits on no architecture of overnight: on a StopFailure input whose error is rate_limit, with session_id, transcript_path, and cwd as strings, resume exits 0 saying nothing and leaves, in cwd and outliving the hook, the waiter `python3 wait.py <seconds> claude -p --resume <session_id> --permission-mode <mode> <the prompt to go on>`, the mode being the last permissionMode that the transcript records, a line of it not yet whole passed over, and the seconds 900 or the whole number from 1 that OVERNIGHT_INTERVAL_SECONDS holds; on any other error it exits 0 saying nothing and leaves nothing; it exits 1 with `resume: <what's wrong>` and leaves nothing where the input isn't a JSON object, a field is missing or not a string, the transcript can't be read or records no permission mode that claude accepts, OVERNIGHT_INTERVAL_SECONDS holds no whole number from 1, or claude isn't on PATH; and wait.py sleeps its seconds, then becomes the command it was given; resume holds no behavior beyond these.",
+        "by": "rn"
+      },
+      {
+        "decision": "resume gets one unit test for each of its cases in dev/overnight/tests/unit/, each called as the hook calls resume, through main and through running the folder and wait.py, each asserting the case's whole result with a double of claude from a record, and run on each push by dev/scripts/check.sh, which finds each plugin's unit tests by its tests/unit folder and type-checks overnight's code, with pyproject.toml's coverage counting every line and branch of overnight's code, as the plugin guide's Test requires of every plugin's code (dev/plugin-development-guide.md:397, \"A plugin's code is checked on each push: the unit tests of its scripts, the static analysis of its code, and the coverage of every line and branch of it by the unit tests\") and the user's #86 settled unit cases always with C0 and C1 at 100%; overnight's architecture stays cut, as no check or rule needs one once check.sh finds the tests by their folder and the first try needs none.",
+        "by": "rn"
       }
     ],
     "questions": []
@@ -99,8 +107,23 @@
             "status": "done"
           },
           {
+            "path": "dev/overnight/tests/unit",
+            "kind": "code",
+            "status": "open"
+          },
+          {
             "path": "plugins/overnight/scripts/resume",
             "kind": "code",
+            "status": "open"
+          },
+          {
+            "path": "pyproject.toml",
+            "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": "dev/scripts/check.sh",
+            "kind": "light",
             "status": "open"
           },
           {
