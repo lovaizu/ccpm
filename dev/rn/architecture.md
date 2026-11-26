@@ -4,7 +4,7 @@
 
 - S1: the user wants what they asked for working for the one need they pick, early, asking in
   their own words, and to decide what happens to each need left.
-- S2: the user wants to go on with a run in a new conversation, losing nothing.
+- S2: the user wants to stop a run and go on with it later, in any conversation, losing nothing.
 
 ## Solution strategy
 
@@ -46,6 +46,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
     judgment.
 - P6: nothing lost on a stop
   - P6.1: the run's state lives in files on its branch, so that it goes on from any conversation.
+  - P6.2: a stop lets each record being written end whole before the run halts.
 - P7: the user's repository left as it was
   - P7.1: rn works on its own copy of the repository and its own branch.
   - P7.2: the ready mark and the merge stay the user's.
@@ -163,6 +164,13 @@ Strategies:
   Intent: a newcomer to the work reads the whole diff before the merge is proposed.
 - Each step that has one right result done by a script that the role runs. [P5.3]\
   Intent: each role spends its judgment and its context only where a step needs them.
+- A stop taken from /rn:dn or the user's words, and a pick-up from /rn:up. [S2]\
+  Intent: the user stops and goes on at the moment they choose, and a new run never asks about an
+  old one.
+- A stop waiting for each pruner at work to end, then stopping the other roles and pushing the
+  run's folder. [P6.2]\
+  Intent: a pick-up reads a whole steering, and GitHub keeps the work so far as well as the
+  user's computer.
 - Each role's delete in Bash sent by the hook to a script of exact paths. [P5.3]\
   Intent: a role's clean-up never waits on a permission prompt, and stays in the work and the
   temporary folder.
@@ -259,7 +267,7 @@ sequenceDiagram
   U->>U: marks the pull request ready, and merges [P7.2]
 ```
 
-#### S2: a run picked up in a new conversation
+#### S2: a run stopped, and picked up later
 
 ```mermaid
 sequenceDiagram
@@ -269,10 +277,18 @@ sequenceDiagram
   participant G as generator
   participant E as evaluator
   participant F as fixer
-  U->>O: /rn:on, in a new conversation [S2]
+  U->>O: /rn:dn, or asks to stop for now [S2]
+  O->>O: waits for each pruner at work to end, as its write stays whole [P6.2]
+  O->>G: stops it [S2]
+  O->>E: stops it [S2]
+  O->>F: stops it [S2]
+  O->>S: commits and pushes the run's folder (Steering, Round, Fix) [P6.2]
+  O->>U: where it stopped, and what waits for the user [P2.3]
+  Note over U,O: Later, in any conversation
+  U->>O: /rn:up [S2]
   O->>S: lists the runs of this repository whose pull request is open (Steering) [P6.1]
-  opt one run or more [S2]
-    O->>U: asks whether to go on with one of them, or to start a new run [P2.1]
+  opt more than one run [S2]
+    O->>U: asks which run to go on with [P2.1]
     U->>O: answers [S2]
   end
   O->>S: lists what's due from the run's files, an open question, a step trying, a Round, or a Fix (Steering, Round, Fix) [P6.1]
@@ -303,7 +319,7 @@ Strategies:
 
 ```text
 plugins/rn/                        what Claude Code installs for the user
-├── skills/                        /rn:on, /rn:ty, and /rn:gm, each pointing to the orchestrator
+├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
 ├── agents/                        the pruner's, the generator's, the evaluator's, and the fixer's starts
 ├── hooks/                         the hook that turns a role's delete to a script
 └── domain/

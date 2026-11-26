@@ -151,6 +151,11 @@ rn meant. Then you try it yourself.
 No. Each need that you or the issue named stays on the list. At the end, rn proposes for each one left
 whether to keep it in an issue.
 
+### "Can a run stop and go on later?"
+
+Yes. `/rn:dn` stops the run once what it's writing is whole, and `/rn:up` picks it up where it
+stopped, in any conversation.
+
 ### "Does it change the repository's files, or merge on its own?"
 
 No. rn works in its own worktree, and leaves the ready mark and the merge to you.

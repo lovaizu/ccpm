@@ -173,6 +173,10 @@
       {
         "decision": "Leave issue #86 as it was asked, as it's the request that started the work.",
         "by": "user"
+      },
+      {
+        "decision": "Keep /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, so the user starts, stops, picks up, approves, and asks for a mend each by its own command.",
+        "by": "user"
       }
     ],
     "questions": []
