@@ -94,7 +94,11 @@
         "by": "rn"
       },
       {
-        "decision": "Of overnight's new files beyond its README and CHANGELOG, each holds the least that its people need and that the checks of dev/scripts/check.sh pass: hooks/hooks.json runs `python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/resume\"`; the tests, dev/overnight/tests/unit, reach resume at its new place; and plugins/overnight/CHANGELOG.md gives 0.1.0, plugin.json's version, in Keep a Changelog form as rn's does, with what the plugin's users get; no check needs dev/overnight/architecture.md, as check.sh runs `template architecture` and `trace.py tags` only on each dev/*/architecture.md that exists.",
+        "decision": "Of overnight's new files beyond its README and CHANGELOG, each holds the least that its people need and that the checks of dev/scripts/check.sh pass: hooks/hooks.json runs `python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/resume\"`; the tests, dev/overnight/tests/unit, reach resume at its new place, by the move's line that the next decision names; and plugins/overnight/CHANGELOG.md gives 0.1.0, plugin.json's version, in Keep a Changelog form as rn's does, with what the plugin's users get; no check needs dev/overnight/architecture.md, as check.sh runs `template architecture` and `trace.py tags` only on each dev/*/architecture.md that exists.",
+        "by": "rn"
+      },
+      {
+        "decision": "The move of resume to plugins/overnight/domain/scripts/resume comes first of the open deliverables, and its Round makes, with the move, each line elsewhere that names resume's place: dev/overnight/tests/unit/conftest.py's SCRIPTS, os.path.join(TOP, \"plugins\", \"overnight\", \"domain\", \"scripts\"), with its docstring following; pyproject.toml's coverage include \"*/overnight/domain/scripts/**/*.py\" in place of \"*/overnight/scripts/**/*.py\"; and dev/scripts/check.sh's pyrefly check of overnight on plugins/overnight/domain/scripts; and it removes plugins/overnight/scripts whole; then the tests, pyproject.toml with testpaths, and dev/scripts/check.sh without its plugin_tests loop follow in that order, as each put-up runs dev/scripts/check.sh's tests, coverage, and pyrefly on the tip, which refuse resume at its new place while any of those lines names the old one, as the fixer of dev/overnight/tests/unit found (fix-4: \"with that mend every case fails at `import resume`\"), and the move's own evaluator runs the tests on resume only where conftest.py reaches its new place, whereas testpaths with the explicit paths that check.sh still gives, then check.sh without them, each pass alone.",
         "by": "rn"
       },
       {
@@ -131,12 +135,12 @@
             "status": "done"
           },
           {
-            "path": "dev/overnight/tests/unit",
+            "path": "plugins/overnight/domain/scripts/resume",
             "kind": "code",
             "status": "open"
           },
           {
-            "path": "plugins/overnight/domain/scripts/resume",
+            "path": "dev/overnight/tests/unit",
             "kind": "code",
             "status": "open"
           },
