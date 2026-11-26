@@ -1,6 +1,7 @@
 """What overnight's unit cases share: the folder of overnight's code on the import path, as resume's
-`__main__.py` puts `scripts/` there, and this folder, where the double of Claude Code lies, as the
-type checker finds each there; and the folders and the double of claude that each case sets up."""
+`__main__.py` puts `scripts/` there, and the tests' folder, where the double of Claude Code lies,
+as the type checker finds each there; and the folders and the double of claude that each case sets
+up."""
 
 from __future__ import annotations
 
@@ -11,13 +12,14 @@ from typing import Any
 import pytest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TOP = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
+TESTS = os.path.dirname(HERE)
+TOP = os.path.dirname(os.path.dirname(os.path.dirname(TESTS)))
 SCRIPTS = os.path.join(TOP, "plugins", "overnight", "scripts")
-for folder in (SCRIPTS, HERE):
+for folder in (SCRIPTS, TESTS):
     if folder not in sys.path:
         sys.path.insert(0, folder)
 
-# The double lies in HERE, which the loop above puts on the import path.
+# The double lies in TESTS, which the loop above puts on the import path.
 import claude_double
 
 
