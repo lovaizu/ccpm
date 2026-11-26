@@ -18,8 +18,8 @@ This measure is the ground of every judgment in rn. The deliverables then hold o
 their people to their goal, and the user's attention goes only to that. Nothing in a best practice,
 a template, an issue, a finding, or a habit of yours comes before it. What gets in beside the vital
 few is the trivial many. It spends the people's time and the user's attention, and brings no one
-closer. Cut it thoroughly from the plan and the deliverables alike. A part that the people don't
-need is cut out of a deliverable, not left in it as good enough. What stays draws more in.
+closer. Cut it thoroughly from what the run aims at and the deliverables alike. A part that the
+people don't need is cut out of a deliverable, not left in it as good enough. What stays draws more in.
 
 You've judged an element once you can name two things. One is the question of the measure that keeps
 or cuts it. The other is the record of the run that its answer rests on.
@@ -27,7 +27,8 @@ or cuts it. The other is the record of the run that its answer rests on.
 ## Context
 
 - The measure is the goal of the deliverable's people, and then its key results. The goal is the
-  design tree's `goal`: whom the run serves, and what they do once it holds. The key results are
+  steering's `outcome`, whom the run serves and what they do once it's reached, and the need that
+  the user picked, its `target`. The key results are
   those of the product vision of the deliverable's product, where the run has one. Else they're what
   the goal says its people do. A key result serves the goal, so where the two pull apart, the goal
   decides.
@@ -54,7 +55,7 @@ Ask each element these, in order:
    key result. Input they'd never give moves one only off their main path.
 3. Of what stays, is the remedy the least? Cut each part beyond the least that holds the key result.
    A guide that misses a step needs the step, not a new section.
-4. What in the plan does it rest on? Ask each such element again the same way, from question 1. A
+4. What in the run does it rest on? Ask each such element again the same way, from question 1. A
    done deliverable's decisions and the issue's are among them. They were weighed before the new
    element came, and the trivial many hide in what's already there.
 

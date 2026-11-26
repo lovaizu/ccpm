@@ -9,30 +9,31 @@ import shutil
 import tempfile
 from typing import Callable
 
-from fault import CantRun
-from rounds.files import Round
-
-from repository.host import Host, checked
-from repository.place import RunPlace
+from fault import CantRun, Wrong
+from host import Host, checked
+from place import RunPlace
 
 
-def folder(run: RunPlace, round_: Round) -> str:
+def folder(run: RunPlace, round_: str) -> str:
     """Where the Round's evaluator tries its deliverable.
 
-    Takes: the run, and the Round.
+    Takes: the run, and the Round's folder, absolute.
     Gives: the absolute path `<tempfile.gettempdir()>/rn-trial-<run's name>-<Round's folder's
-    name within the run's Rounds, each `/` as `-`>/`, the same for each call.
+    path within the run's Rounds, each `/` as `-`>/`, the same for each call.
     Changes: nothing.
-    Refuses: nothing.
+    Refuses: Wrong where the folder doesn't lie within the run's Rounds, naming it.
     """
-    within = os.path.relpath(round_.folder, run.rounds).replace(os.sep, "-")
+    within = os.path.relpath(os.path.normpath(round_), run.rounds)
+    if within == os.curdir or within.startswith(os.pardir):
+        raise Wrong(f"{round_}: isn't a Round's folder within {run.rounds}")
+    within = within.replace(os.sep, "-")
     return os.path.join(tempfile.gettempdir(), f"rn-trial-{run.name}-{within}") + os.sep
 
 
-def starting_state(run: RunPlace, round_: Round, host: Host) -> str:
+def starting_state(run: RunPlace, round_: str, host: Host) -> str:
     """Makes the folder in which the Round's evaluator tries its deliverable as its people would.
 
-    Takes: the run, the Round, and the host.
+    Takes: the run, the Round's folder, absolute, and the host.
     Gives: the folder's absolute path, as `folder` gives it.
     Changes: makes the folder anew, removing one left there, holding a clone of the work's branch
     at the worktree's files as they stand, the uncommitted ones among them, without `.rn/`.

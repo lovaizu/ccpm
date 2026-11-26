@@ -1,657 +1,302 @@
-"""The unit cases of repository/worktree.py: `new`, from main and from the branch that origin's
-HEAD names rather than the one checked out, the goal open, info/exclude's line kept once, and each
-refusal: a run of the name already there, a folder that isn't a repository, and origin's HEAD
-naming no branch; `newest`, with no repository, several runs, newest by its last commit, a newer
-run whose every deliverable is done or that holds no design tree passed over, a run's newer local
-branch deciding over origin's, and the refusal of a design tree that isn't JSON; `found`, with the
-run's worktree there, removed with its local branch kept, its folder deleted, a run that only
-origin holds in a fresh clone, one that another clone pushed since the last fetch, one that GitHub
-no longer holds beside an older local run, origin out of reach, and a worktree that git can't
-make; `removed`, here and on GitHub, of a branch GitHub holds, has deleted since, or only nearly
-matches, and of no pull request, the run's open one, or an earlier run's closed one; with git or
-gh that can't ask GitHub or can't remove what it holds; and a worktree that git can't remove; and,
-inside herdr and outside, `new`, `found` with the worktree gone, and `removed`, each with herdr
-failing inside it."""
+"""The unit cases of repository/worktree.py: `new`, which makes a run's worktree on its branch from
+origin's default branch with its folder empty and the worktrees kept out of the user's untracked
+files, and each refusal: a folder that isn't a repository's top, a run of the name already there,
+no default branch on origin, and git refusing the worktree; and `found` with `left`, the runs with
+work left, newest first, each once, a run ended or with no steering left out, a worktree made
+again from its local branch or from origin's, the local branches alone where git can't fetch, no
+run in a folder that isn't a repository, and a steering that isn't JSON; and `removed`, a run
+cancelled here and on GitHub, one never pushed, one whose pull request is closed already, what it
+couldn't ask or remove on GitHub and why, a run in the user's checkout refused, and a worktree git
+can't remove."""
 
 from __future__ import annotations
 
 import os
-import re
-import shutil
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import pytest
 import rn_files
 from fault import CantRun, Missing, Wrong
 from gh import gh_double
-from herdr import herdr_double
-from repo_files import git, write_files
-from repository.place import RunPlace
-from repository.worktree import Found, Gone, found, new, newest, removed
-from rn_runs import NAME, branch_run, dated_commit, head
+from host import Ran, run
+from place import RunPlace
+from repo_files import git
+from repository.worktree import Gone, found, left, new, removed
 
-GOAL = rn_files.GOAL
-PRACTICE = rn_files.practice("design-tree")
-CONTEXT = rn_files.context()
+NAME = "20261126-invoice-from-statement"
+OTHER = "20261127-invoice-rules"
 
 
-def started_tree(name: str) -> dict[str, Any]:
-    """The tree that a run starts from, as tree.form.started's contract names it: the goal open,
-    the plan as its one deliverable, unnamed, open, each condition not good, and no work."""
-    return rn_files.started(name)
+@pytest.fixture
+def repo(tmp_path: Any) -> str:
+    """The user's repository, with origin holding its default branch."""
+    made = rn_files.repository(str(tmp_path / "accounting"))
+    rn_files.with_origin(made, str(tmp_path / "origin.git"))
+    return made
 
 
-def a_repository(tmp_path: Any, branch: str = "main") -> str:
-    """invoicer's repository with a remote origin whose default branch is the branch given."""
-    repo = rn_files.repository(str(tmp_path / "invoicer"), branch=branch)
-    rn_files.with_origin(repo, str(tmp_path / "origin.git"))
-    return repo
-
-
-def test_a_new_run_has_its_branch_from_main_checked_out_with_the_tree_uncommitted(
-    tmp_path: Any, host: Any
-):
-    """Given invoicer's repository on main with a remote, the user on main
-    When new makes the run 20261120-invoices
-    Then it gives the run; the worktree has rn-20261120-invoices checked out at main's head,
-    holding the started tree at .rn/20261120-invoices/design-tree.json, uncommitted; and the
-    user's branch, head, and files are as they were"""
-    repo = a_repository(tmp_path)
-    before = head(repo, "main")
-    run = RunPlace(repo, NAME)
-    assert new(run, CONTEXT, PRACTICE, host) == run
-    worktree = rn_files.worktree_of(repo, NAME)
-    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
-    assert head(worktree) == before
-    tree_path = os.path.join(rn_files.folder_of(repo, NAME), "design-tree.json")
-    assert rn_files.read_json(tree_path) == started_tree(NAME)
-    assert git(worktree, "status", "--porcelain").split() == ["??", ".rn/"]
-    assert git(repo, "branch", "--show-current").strip() == "main"
-    assert head(repo) == before
-    assert git(repo, "status", "--porcelain", "--untracked-files=no").strip() == ""
-
-
-def test_a_second_run_keeps_the_one_line_of_info_exclude(tmp_path: Any, host: Any):
-    """Given invoicer's repository in which new made the run 20261120-invoices
-    When new makes the run 20261121-receipts
-    Then the repository's info/exclude holds the line that keeps the runs' worktrees out of the
-    user's untracked files once"""
-    repo = a_repository(tmp_path)
-    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, host)
-    new(RunPlace(repo, "20261121-receipts"), CONTEXT, PRACTICE, host)
+def test_a_run_is_made_on_its_branch_from_origins_default_branch(repo: str) -> None:
+    """Given the user's repository with origin's HEAD naming main.
+    When a run is made.
+    Then its worktree holds main's files on the branch rn-<name>, its folder lies
+    there empty, the user's branch stays main, and info/exclude keeps the worktrees out once."""
+    made = new(RunPlace(repo, NAME), run)
+    new(RunPlace(repo, OTHER), run)
+    assert git(made.worktree, "branch", "--show-current") == f"{made.branch}\n"
+    assert os.listdir(made.folder) == []
+    assert os.path.isfile(os.path.join(made.worktree, "README.md"))
+    assert git(repo, "branch", "--show-current") == "main\n"
+    assert git(repo, "status", "--porcelain") == ""
     with open(os.path.join(repo, ".git", "info", "exclude"), encoding="utf-8") as f:
         assert f.read().splitlines().count("/.claude/worktrees/") == 1
 
 
-def test_a_new_run_branches_from_what_origins_head_names_not_the_branch_checked_out(
-    tmp_path: Any, host: Any
-):
-    """Given invoicer's repository on main with a remote whose HEAD names trunk, a branch with a
-    commit past main, the user on main
-    When new makes the run
-    Then the run's branch starts at origin's trunk's head, not main's, and main is as it was"""
-    repo = a_repository(tmp_path)
-    main = head(repo, "main")
-    git(repo, "checkout", "-q", "-b", "trunk")
-    write_files(repo, {"CHANGES.md": "trunk\n"})
-    git(repo, "add", "CHANGES.md")
-    git(repo, "commit", "-q", "-m", "Trunk.")
-    git(repo, "push", "-q", "origin", "trunk")
-    trunk = head(repo, "trunk")
-    git(repo, "checkout", "-q", "main")
-    git(repo, "remote", "set-head", "origin", "trunk")
-    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, host)
-    assert head(rn_files.worktree_of(repo, NAME)) == trunk
-    assert head(repo, "main") == main
-    assert git(repo, "branch", "--show-current").strip() == "main"
-
-
-def test_a_repository_whose_origin_head_names_no_branch_is_missing_its_default(
-    tmp_path: Any, host: Any
-):
-    """Given invoicer's repository on main with a commit, and a remote origin whose HEAD is
-    unset
-    When new makes the run
-    Then Missing is raised, and no worktree and no branch rn-<name> is made"""
-    repo = rn_files.repository(str(tmp_path / "invoicer"))
-    rn_files.with_origin(repo, str(tmp_path / "origin.git"))
-    git(repo, "remote", "set-head", "origin", "--delete")
-    with pytest.raises(Missing):
-        new(RunPlace(repo, NAME), CONTEXT, PRACTICE, host)
-    assert not os.path.exists(rn_files.worktree_of(repo, NAME))
-    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
-
-
-def test_a_run_of_the_name_already_there_is_refused_and_left_as_it_was(tmp_path: Any, host: Any):
-    """Given invoicer's repository whose run 20261120-invoices was made
-    When new makes a run of the same name again
-    Then Wrong is raised naming the run, and its design tree is as it was"""
-    repo = a_repository(tmp_path)
-    run = RunPlace(repo, NAME)
-    new(run, CONTEXT, PRACTICE, host)
-    tree_path = os.path.join(rn_files.folder_of(repo, NAME), "design-tree.json")
-    before = rn_files.read_json(tree_path)
-    with pytest.raises(Wrong, match=NAME):
-        new(run, CONTEXT, PRACTICE, host)
-    assert rn_files.read_json(tree_path) == before
-
-
-def test_a_folder_that_isnt_a_git_repository_is_missing_one(tmp_path: Any, host: Any):
-    """Given a folder of invoicer's files with no git
-    When new makes a run there
-    Then Missing is raised, and no worktree is made"""
-    folder = os.path.realpath(str(tmp_path / "plain"))
-    write_files(folder, {"README.md": "# plain\n"})
-    with pytest.raises(Missing):
-        new(RunPlace(folder, NAME), CONTEXT, PRACTICE, host)
-    assert not os.path.exists(rn_files.worktree_of(folder, NAME))
-
-
-# newest and found
-
-
-def a_tree(name: str, done: bool = False) -> dict[str, Any]:
-    """The walkthrough's design tree of the run, or one whose every deliverable is done."""
-    if done:
-        return rn_files.tree([rn_files.done_node(GOAL, rn_files.plan_path(name), "design-tree")])
-    return rn_files.walkthrough_tree(name)
-
-
-def cloned(tmp_path: Any, origin: str) -> str:
-    """A fresh clone of the remote, as on another machine, with no worktree of rn."""
-    clone = os.path.realpath(str(tmp_path / "clone"))
-    git(str(tmp_path), "clone", "-q", origin, clone)
-    return clone
-
-
-def test_a_folder_that_isnt_a_repository_has_no_run(tmp_path: Any, host: Any):
-    """Given a folder that isn't a git repository
-    When newest is asked
-    Then it gives None"""
-    assert newest(os.path.realpath(str(tmp_path)), host) is None
-
-
-def test_one_run_with_work_left_is_given_with_its_worktree_as_it_was(tmp_path: Any, host: Any):
-    """Given a repository with one run whose committed design tree holds an open deliverable, its
-    worktree there with a change not committed
-    When newest and found are asked
-    Then each gives that run, and the worktree keeps its change"""
-    repo = a_repository(tmp_path)
-    branch_run(repo, NAME, a_tree(NAME))
-    note = os.path.join(rn_files.worktree_of(repo, NAME), "NOTES.md")
-    write_files(rn_files.worktree_of(repo, NAME), {"NOTES.md": "kept\n"})
-    assert newest(repo, host) == RunPlace(repo, NAME)
-    assert found(repo, host) == Found(RunPlace(repo, NAME), None)
-    with open(note, encoding="utf-8") as f:
-        assert f.read() == "kept\n"
-
-
-def test_of_several_runs_the_newest_by_its_last_commit_is_given(tmp_path: Any, host: Any):
-    """Given a repository with three runs with work left, whose names order them otherwise than
-    their last commits, the newest commit on 20261101-z
-    When newest is asked
-    Then it gives 20261101-z, neither the first nor the last by name"""
-    repo = a_repository(tmp_path)
-    for name, when in (
-        ("20261115-b", "2026-11-15T09:00:00"),
-        ("20261101-z", "2026-11-21T09:00:00"),
-        ("20261120-a", "2026-11-20T09:00:00"),
-    ):
-        branch_run(repo, name, a_tree(name), when)
-    assert newest(repo, host) == RunPlace(repo, "20261101-z")
-
-
-def test_a_newer_run_whose_every_deliverable_is_done_is_passed_over(tmp_path: Any, host: Any):
-    """Given a repository with a run whose every deliverable is done, newer than one with work
-    left, and a branch rn-<name> newer still that holds no design tree
-    When newest is asked
-    Then it gives the run with work left"""
-    repo = a_repository(tmp_path)
-    branch_run(repo, "20261110-old", a_tree("20261110-old"), "2026-11-10T09:00:00")
-    branch_run(repo, "20261115-done", a_tree("20261115-done", True), "2026-11-15T09:00:00")
-    git(repo, "branch", "rn-20261121-bare", "main")
-    assert newest(repo, host) == RunPlace(repo, "20261110-old")
-
-
-def test_a_run_whose_worktree_is_gone_gets_it_again_on_its_local_branch(tmp_path: Any, host: Any):
-    """Given a repository whose one run's worktree was removed, its local branch kept
-    When newest and found are asked
-    Then newest gives the run and makes nothing; found gives it, its worktree checked out on
-    rn-<name> again at the branch's head, holding the committed design tree, and git shows nothing
-    untracked in the user's own worktree"""
-    repo = a_repository(tmp_path)
-    branch_run(repo, NAME, a_tree(NAME), worktree=False)
-    worktree = rn_files.worktree_of(repo, NAME)
-    assert newest(repo, host) == RunPlace(repo, NAME)
-    assert not os.path.exists(worktree)
-    assert found(repo, host) == Found(RunPlace(repo, NAME), None)
-    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
-    assert head(worktree) == head(repo, f"rn-{NAME}")
-    assert rn_files.read_json(RunPlace(repo, NAME).tree) == a_tree(NAME)
-    assert git(repo, "status", "--porcelain").strip() == ""
-
-
-def test_a_run_whose_worktree_folder_was_deleted_gets_it_again(tmp_path: Any, host: Any):
-    """Given a repository whose one run's worktree folder was deleted, git still recording it
-    When found is asked
-    Then it gives the run, its worktree there again on rn-<name>"""
-    repo = a_repository(tmp_path)
-    branch_run(repo, NAME, a_tree(NAME))
-    worktree = rn_files.worktree_of(repo, NAME)
-    shutil.rmtree(worktree)
-    assert found(repo, host) == Found(RunPlace(repo, NAME), None)
-    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
-
-
-def test_a_run_only_origin_holds_gets_its_worktree_on_a_branch_from_origins(
-    tmp_path: Any, host: Any
-):
-    """Given a fresh clone of a remote that holds a run's branch, pushed, with no local branch of
-    rn
-    When found is asked in the clone
-    Then it gives the run, its worktree on a new local branch rn-<name> at origin's head, tracking
-    it, holding the committed design tree"""
-    repo = a_repository(tmp_path)
-    branch_run(repo, NAME, a_tree(NAME))
-    git(repo, "push", "-q", "origin", f"rn-{NAME}")
-    clone = cloned(tmp_path, str(tmp_path / "origin.git"))
-    assert found(clone, host) == Found(RunPlace(clone, NAME), None)
-    worktree = rn_files.worktree_of(clone, NAME)
-    assert head(worktree) == head(repo, f"rn-{NAME}")
-    upstream = git(worktree, "rev-parse", "--abbrev-ref", "@{upstream}").strip()
-    assert upstream == f"origin/rn-{NAME}"
-    assert rn_files.read_json(RunPlace(clone, NAME).tree) == a_tree(NAME)
-
-
-def gone_from_github(repo: str, name: str, tree: dict[str, Any], when: str) -> None:
-    """Makes the run of the name, pushed with its design tree at the time given, then cancelled on
-    another machine: its branch deleted on origin and here, its worktree removed, and only the
-    repository's ref of origin's branch left from the push."""
-    branch_run(repo, name, tree, when, worktree=False)
-    git(repo, "push", "-q", "origin", f"rn-{name}")
-    git(str(os.path.dirname(repo)), "--git-dir", "origin.git", "branch", "-q", "-D", f"rn-{name}")
-    git(repo, "branch", "-q", "-D", f"rn-{name}")
-
-
-def test_a_run_github_no_longer_holds_is_never_picked_up(tmp_path: Any, host: Any):
-    """Given a run with work left that was cancelled on another machine, whose only trace here is
-    the ref of origin's branch, newer than any other, beside an older run with work left on this
-    machine
-    When found is asked
-    Then it gives the older local run, and nothing it couldn't check; and the ref of the cancelled
-    run's branch is gone"""
-    repo = a_repository(tmp_path)
-    branch_run(repo, "20261119-older", a_tree("20261119-older"), "2026-11-19T09:00:00")
-    gone_from_github(repo, NAME, a_tree(NAME), "2026-11-21T09:00:00")
-    assert found(repo, host) == Found(RunPlace(repo, "20261119-older"), None)
-    assert git(repo, "for-each-ref", f"refs/remotes/origin/rn-{NAME}").strip() == ""
-
-
-def test_a_run_pushed_from_another_machine_since_the_last_fetch_is_picked_up(
-    tmp_path: Any, host: Any
-):
-    """Given a repository, and a run with work left that another clone pushed to origin since
-    the repository last fetched
-    When found is asked in the repository
-    Then it gives that run, its worktree made on a branch from origin's, and nothing it couldn't
-    check"""
-    repo = a_repository(tmp_path)
-    other = cloned(tmp_path, str(tmp_path / "origin.git"))
-    git(other, "checkout", "-q", "main")
-    git(other, "config", "user.email", "rn@example.com")
-    git(other, "config", "user.name", "rn")
-    branch_run(other, NAME, a_tree(NAME))
-    git(other, "push", "-q", "origin", f"rn-{NAME}")
-    assert found(repo, host) == Found(RunPlace(repo, NAME), None)
-    assert head(rn_files.worktree_of(repo, NAME)) == head(other, f"rn-{NAME}")
-
-
-def test_with_github_out_of_reach_only_this_machines_runs_are_picked_up(tmp_path: Any, host: Any):
-    """Given a repository whose origin git can't reach, with the ref of origin's branch of a run
-    with work left, newer than any other, and an older run with work left on this machine
-    When found is asked
-    Then it gives the older local run, and that it couldn't check the runs on GitHub, with what git
-    said, as one line"""
-    repo = a_repository(tmp_path)
-    branch_run(repo, "20261119-older", a_tree("20261119-older"), "2026-11-19T09:00:00")
-    branch_run(repo, NAME, a_tree(NAME), "2026-11-21T09:00:00", worktree=False)
-    git(repo, "push", "-q", "origin", f"rn-{NAME}")
-    git(repo, "branch", "-q", "-D", f"rn-{NAME}")
-    git(repo, "remote", "set-url", "origin", str(tmp_path / "gone.git"))
-    given = found(repo, host)
-    assert given.run == RunPlace(repo, "20261119-older")
-    gone = re.escape(str(tmp_path / "gone.git"))
-    assert given.unchecked is not None
-    assert re.fullmatch(
-        f"the runs on GitHub, as git can't ask origin: fatal: '{gone}' does not appear to be a git"
-        " repository fatal: Could not read from remote repository. .*exists[.]",
-        given.unchecked,
-    ), given.unchecked
-
-
-def test_a_runs_newer_local_branch_decides_over_origins_older_one(tmp_path: Any, host: Any):
-    """Given a run pushed with work left, whose local branch then made each deliverable done in a
-    newer commit not pushed
-    When newest is asked
-    Then it gives None, as the run's newest branch has no work left"""
-    repo = a_repository(tmp_path)
-    folder = branch_run(repo, NAME, a_tree(NAME), "2026-11-20T09:00:00")
-    git(repo, "push", "-q", "origin", f"rn-{NAME}")
-    rn_files.write_json(os.path.join(folder, "design-tree.json"), a_tree(NAME, done=True))
-    dated_commit(rn_files.worktree_of(repo, NAME), "Done.", "2026-11-21T09:00:00")
-    assert newest(repo, host) is None
-
-
-def test_a_worktree_git_cant_make_is_cantrun_with_what_git_said(tmp_path: Any, host: Any):
-    """Given a repository whose run's worktree was removed, and a file lying where the worktree
-    goes
-    When found is asked
-    Then CantRun is raised with what git said"""
-    repo = a_repository(tmp_path)
-    branch_run(repo, NAME, a_tree(NAME), worktree=False)
-    with open(rn_files.worktree_of(repo, NAME), "w", encoding="utf-8") as f:
-        f.write("in the way\n")
-    with pytest.raises(CantRun, match="git can't make the run's worktree again: .*already exists"):
-        found(repo, host)
-
-
-def test_a_design_tree_that_isnt_json_is_refused_naming_the_branch_and_path(
-    tmp_path: Any, host: Any
-):
-    """Given a repository with a run whose committed design tree isn't JSON
-    When newest is asked
-    Then Wrong is raised, naming the branch and the design tree's path"""
-    repo = a_repository(tmp_path)
-    folder = branch_run(repo, NAME, a_tree(NAME))
-    write_files(folder, {"design-tree.json": "{ not json"})
-    dated_commit(rn_files.worktree_of(repo, NAME), "Broken.", "2026-11-21T09:00:00")
-    with pytest.raises(Wrong, match=f"refs/heads/rn-{NAME}:.rn/{NAME}/design-tree.json"):
-        newest(repo, host)
-
-
-# Inside herdr and outside
-
-
-def herdr_commands(host: Any) -> list[list[str]]:
-    """Each herdr command that the double of herdr was asked, by its words."""
-    return [argv for argv, _ in host.asked]
-
-
-def test_a_new_run_inside_herdr_has_its_worktree_made_by_herdr_from_mains_commit(
-    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
-):
-    """Given invoicer's repository on main with a remote, inside herdr, `HERDR_ENV` 1
-    When new makes the run
-    Then herdr was asked, in the repository, to create the worktree on rn-<name> from the commit
-    of origin's main at the run's worktree, keeping the focus where it is; the worktree has
-    rn-<name> checked out at main's head with no upstream, holding the started tree; and git made
-    no worktree itself"""
-    monkeypatch.setenv("HERDR_ENV", "1")
-    herdr = herdr_double.host(host)
-    repo = a_repository(tmp_path)
-    worktree = rn_files.worktree_of(repo, NAME)
-    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, herdr)
-    create = ["herdr", "worktree", "create", "--cwd", repo, "--branch", f"rn-{NAME}"]
-    rest = ["--base", head(repo, "main"), "--path", worktree, "--no-focus"]
-    assert herdr.asked == [([*create, *rest], repo)]
-    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
-    assert head(worktree) == head(repo, "main")
-    assert git(worktree, "for-each-ref", "--format=%(upstream)", f"refs/heads/rn-{NAME}") == "\n"
-    assert rn_files.read_json(RunPlace(repo, NAME).tree) == started_tree(NAME)
-    assert not [argv for argv, _ in host.ran if argv[:3] == ["git", "worktree", "add"]]
-
-
-def test_a_new_run_outside_herdr_has_its_worktree_made_by_git(
-    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
-):
-    """Given invoicer's repository on main with a remote, outside herdr: `HERDR_ENV` 0
-    When new makes the run
-    Then herdr was asked nothing, and git made the run's worktree on rn-<name>"""
-    monkeypatch.setenv("HERDR_ENV", "0")
-    herdr = herdr_double.host(host)
-    repo = a_repository(tmp_path)
-    new(RunPlace(repo, NAME), CONTEXT, PRACTICE, herdr)
-    assert herdr_commands(herdr) == []
-    worktree = rn_files.worktree_of(repo, NAME)
-    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
-
-
-def test_a_new_run_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said(
-    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
-):
-    """Given invoicer's repository on main with a remote, inside herdr, whose server isn't running
-    When new makes the run
-    Then CantRun is raised with what herdr said, and no worktree, branch, or design tree is made"""
-    monkeypatch.setenv("HERDR_ENV", "1")
-    repo = a_repository(tmp_path)
-    with pytest.raises(CantRun, match="herdr can't make the run's worktree: .*server_not_running"):
-        new(RunPlace(repo, NAME), CONTEXT, PRACTICE, herdr_double.host(host, running=False))
-    assert not os.path.exists(rn_files.worktree_of(repo, NAME))
-    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
-
-
-def test_a_pick_up_inside_herdr_has_git_make_the_worktree_again_and_herdr_open_it(
-    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
-):
-    """Given a repository whose one run's worktree was removed, its local branch kept, inside
-    herdr
-    When found is asked
-    Then it gives the run, its worktree checked out on rn-<name> again, and herdr was asked, in the
-    repository, to open the worktree at its path, keeping the focus where it is"""
-    monkeypatch.setenv("HERDR_ENV", "1")
-    herdr = herdr_double.host(host)
-    repo = a_repository(tmp_path)
-    branch_run(repo, NAME, a_tree(NAME), worktree=False)
-    worktree = rn_files.worktree_of(repo, NAME)
-    assert found(repo, herdr) == Found(RunPlace(repo, NAME), None)
-    assert git(worktree, "branch", "--show-current").strip() == f"rn-{NAME}"
-    opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", worktree, "--no-focus"]
-    assert herdr.asked == [(opened, repo)]
-
-
-def test_a_pick_up_inside_herdr_that_herdr_fails_is_cantrun_with_what_herdr_said(
-    tmp_path: Any, host: Any, monkeypatch: pytest.MonkeyPatch
-):
-    """Given a repository whose one run's worktree was removed, inside herdr, whose server isn't
-    running
-    When found is asked
-    Then CantRun is raised with what herdr said"""
-    monkeypatch.setenv("HERDR_ENV", "1")
-    repo = a_repository(tmp_path)
-    branch_run(repo, NAME, a_tree(NAME), worktree=False)
-    with pytest.raises(CantRun, match="herdr can't open the run's worktree: .*server_not_running"):
-        found(repo, herdr_double.host(host, running=False))
-
-
-# A run cancelled
-
-PR = "https://github.com/lovaizu/invoicer/pull/38"
-# The pull request of an earlier run of the same branch's name, closed or merged since.
-EARLIER = "https://github.com/lovaizu/invoicer/pull/37"
-# The ref of origin's branch of the run, as the repository's last fetch or push left it.
-TRACKED = f"refs/remotes/origin/rn-{NAME}"
-
-
-def cancelled_run(repo: str, gh: str, branch: str = "never", pr: str = "none") -> RunPlace:
-    """The run of the repository with its worktree here and a change in it not committed. Its
-    branch on GitHub, as `branch` says: `never` pushed; `held` by origin; `gone`, pushed and
-    since deleted on origin, its ref of origin's branch left here; or `near`, never pushed, while
-    origin holds branches whose names nearly match. Its pull request, as `pr` says: `none`;
-    `open`, named in the design tree; or `closed` or `merged`, an earlier run's of the same
-    branch's name, as gh's double in the folder `gh` holds it."""
-    tree = a_tree(NAME)
-    if pr == "open":
-        tree["context"]["pr"] = PR
-        gh_double.opened(gh, PR)
-    elif pr != "none":
-        gh_double.earlier(gh, EARLIER, pr.upper())
-    branch_run(repo, NAME, tree)
-    worktree = rn_files.worktree_of(repo, NAME)
-    write_files(worktree, {"invoicer/lines.py": "def parse_lines(text):\n    return []\n"})
-    if branch in ("held", "gone"):
-        git(worktree, "push", "-q", "-u", "origin", f"rn-{NAME}")
-    if branch == "gone":
-        git(remote(repo), "branch", "-q", "-D", f"rn-{NAME}")
-    if branch == "near":
-        git(worktree, "push", "-q", "origin", f"HEAD:refs/heads/x/rn-{NAME}")
-        git(worktree, "push", "-q", "origin", f"HEAD:refs/heads/rn-{NAME}-2")
-    return RunPlace(repo, NAME)
-
-
-def remote(repo: str) -> str:
-    """The folder of the repository's remote origin."""
-    return git(repo, "remote", "get-url", "origin").strip()
-
-
-def tracked(repo: str) -> bool:
-    """Whether the repository holds its ref of origin's branch of the run."""
-    return git(repo, "for-each-ref", TRACKED).strip() != ""
-
-
-def branches(repo: str) -> list[str]:
-    """Each branch that origin holds, by its ref and commit."""
-    return git(remote(repo), "for-each-ref", "--format=%(refname) %(objectname)").splitlines()
-
-
-@pytest.mark.parametrize(
-    ("branch", "pr"),
-    [("near", "closed"), ("held", "open"), ("gone", "none")],
-)
-def test_a_cancelled_run_is_removed_here_and_on_github(
-    tmp_path: Any, host: Any, gh_state: str, branch: str, pr: str
-):
-    """Given a run whose worktree holds a change not committed, outside herdr: one whose branch's
-    name only nearly matches branches that GitHub holds, and GitHub holds an earlier run's closed
-    pull request of; one whose branch and open pull request GitHub holds; or one whose branch
-    GitHub held and has since deleted, its ref of origin's branch left here, with no pull
-    request
-    When removed is asked
-    Then it gives as removed on GitHub the open pull request where GitHub held one, then origin's
-    branch where GitHub held it, and nothing that it couldn't remove; the worktree, the local
-    branch rn-<name>, and the ref of origin's branch are gone; origin holds no branch rn-<name>,
-    and each other branch of origin is as it was; no pull request of the branch is open; and the
-    user's branch and files are as they were"""
-    repo = a_repository(tmp_path)
-    run = cancelled_run(repo, gh_state, branch, pr)
-    before = head(repo, "main")
-    others = [each for each in branches(repo) if not each.startswith(f"refs/heads/rn-{NAME} ")]
-    expected = ([PR] if pr == "open" else []) + ([f"origin/rn-{NAME}"] if branch == "held" else [])
-    assert removed(run, host) == Gone(expected, [])
-    assert not os.path.exists(run.worktree)
-    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
-    assert not tracked(repo)
-    assert branches(repo) == others
-    assert gh_double.state(gh_state)["pull_request"] is None
-    assert git(repo, "branch", "--show-current").strip() == "main"
-    assert head(repo) == before
-
-
-def git_said(tmp_path: Any) -> str:
-    """The pattern of what git says, as one line, where origin's folder is gone."""
-    gone = re.escape(str(tmp_path / "gone.git"))
-    return (
-        f"fatal: '{gone}' does not appear to be a git repository fatal: Could not read from remote"
-        " repository. .*exists[.]"
+def test_a_folder_that_is_not_a_repositorys_top_is_refused(repo: str) -> None:
+    """Given a folder inside the user's repository, below its top.
+    When a run is made there.
+    Then Missing is raised, asking for /rn:on at the top."""
+    inside = os.path.join(repo, "docs")
+    os.makedirs(inside)
+    with pytest.raises(Missing, match="isn't the top of a git repository"):
+        new(RunPlace(inside, NAME), run)
+
+
+def test_a_run_of_the_same_name_is_refused(repo: str) -> None:
+    """Given a run of the name already made.
+    When it's made again.
+    Then Wrong is raised, pointing to /rn:up."""
+    new(RunPlace(repo, NAME), run)
+    with pytest.raises(Wrong, match="/rn:up"):
+        new(RunPlace(repo, NAME), run)
+
+
+def test_a_repository_with_no_default_branch_on_origin_is_refused(tmp_path: Any) -> None:
+    """Given a repository with no remote.
+    When a run is made.
+    Then Missing is raised, saying how to name the default branch."""
+    bare = rn_files.repository(str(tmp_path / "accounting"))
+    with pytest.raises(Missing, match="set-head origin --auto"):
+        new(RunPlace(bare, NAME), run)
+
+
+def test_git_refusing_the_worktree_cant_run(repo: str) -> None:
+    """Given git that refuses to add a worktree.
+    When a run is made.
+    Then CantRun is raised with what git said."""
+
+    def refusing(argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None) -> Ran:
+        return (
+            Ran(128, "", "fatal: no room\n")
+            if argv[1:3] == ["worktree", "add"]
+            else run(argv, cwd, env)
+        )
+
+    with pytest.raises(CantRun, match="fatal: no room"):
+        new(RunPlace(repo, NAME), refusing)
+
+
+def made_with(repo: str, name: str, steps: list[Any] | None, when: str) -> RunPlace:
+    """A run made, with its steering of the steps committed at the time, or none where None."""
+    made = new(RunPlace(repo, name), run)
+    if steps is not None:
+        rn_files.committed_steering(made.worktree, name, rn_files.steering(steps), when)
+    return made
+
+
+def test_the_runs_with_work_left_are_found_newest_first(repo: str) -> None:
+    """Given a run with a step open, a newer one with no step yet, one with each step done, one that
+    ended, and one with no steering.
+    When the runs are found.
+    Then the three with work left are given, the final check of the one all done among them,
+    newest first, and nothing is unchecked."""
+    older = made_with(repo, NAME, [rn_files.step()], "2026-11-26T09:00:00")
+    newer = made_with(repo, OTHER, [], "2026-11-27T09:00:00")
+    checking = made_with(repo, "20261125-done", [rn_files.step("done")], "2026-11-28T09:00:00")
+    ended = rn_files.steering([rn_files.step("done")])
+    ended["state"]["checked"] = True
+    gone = new(RunPlace(repo, "20261123-ended"), run)
+    rn_files.committed_steering(gone.worktree, gone.name, ended, "2026-11-29T09:00:00")
+    made_with(repo, "20261124-bare", None, "")
+    git(older.worktree, "push", "-q", "origin", older.branch)
+    assert found(repo, run) == ([checking, newer, older], None)
+
+
+def test_on_a_runs_branch_its_run_alone_is_found_in_the_checkout(repo: str) -> None:
+    """Given the user's checkout on a run's branch, as a session started on it leaves it, with
+    another run left beside it.
+    When the runs are found.
+    Then that run alone is given, its worktree the checkout, and no other worktree is made."""
+    made_with(repo, OTHER, [rn_files.step()], "2026-11-27T09:00:00")
+    git(repo, "checkout", "-q", "-b", f"rn-{NAME}")
+    rn_files.committed_steering(repo, NAME, rn_files.steering())
+    assert found(repo, run) == ([RunPlace(repo, NAME, checkout=True)], None)
+    assert not os.path.exists(RunPlace(repo, NAME).worktree)
+
+
+def test_on_a_branch_of_rn_s_name_with_no_run_each_run_left_is_found(repo: str) -> None:
+    """Given the user's checkout on a branch named like a run's, with no run's folder, and a run
+    left.
+    When the runs are found.
+    Then the run left is given, as the branch names no run."""
+    other = made_with(repo, OTHER, [rn_files.step()], "2026-11-27T09:00:00")
+    git(repo, "checkout", "-q", "-b", "rn-something")
+    assert found(repo, run).runs == [other]
+
+
+def test_a_worktree_gone_is_made_again_from_its_branch(repo: str) -> None:
+    """Given a run with work left whose worktree was removed, and another on origin alone.
+    When the runs are found.
+    Then each worktree lies there again, on its branch."""
+    here = made_with(repo, NAME, [rn_files.step()], "2026-11-26T09:00:00")
+    there = made_with(repo, OTHER, [rn_files.step()], "2026-11-27T09:00:00")
+    git(there.worktree, "push", "-q", "origin", there.branch)
+    for each in (here, there):
+        git(repo, "worktree", "remove", "--force", each.worktree)
+    git(repo, "branch", "-D", there.branch)
+    assert found(repo, run).runs == [there, here]
+    assert git(there.worktree, "branch", "--show-current") == f"{there.branch}\n"
+    assert os.path.isfile(here.steering)
+
+
+def test_the_local_branches_alone_count_where_git_cant_fetch(repo: str) -> None:
+    """Given a run with work left, and origin gone.
+    When the runs are found.
+    Then the run is given, with what couldn't be checked on GitHub."""
+    made = made_with(repo, NAME, [rn_files.step()], "2026-11-26T09:00:00")
+    git(repo, "remote", "set-url", "origin", os.path.join(repo, "no-such-origin"))
+    runs, unchecked = found(repo, run)
+    assert runs == [made]
+    assert unchecked is not None and unchecked.startswith(
+        "the runs on GitHub, as git can't ask origin: "
     )
 
 
-@pytest.mark.parametrize("failing", ["git-unreached", "git-refused", "gh-unreached", "gh-close"])
-def test_a_cancelled_run_names_what_it_couldnt_remove_on_github_and_why(
-    tmp_path: Any, host: Any, gh_state: str, failing: str
-):
-    """Given a run whose worktree is here, outside herdr, whose branch GitHub holds with its open
-    pull request, and git that can't reach origin, or that origin refuses to delete a branch for,
-    or gh that can't reach GitHub, or loses GitHub once it read the pull request
-    When removed is asked
-    Then it gives as removed on GitHub what it could remove, and, for what it couldn't, what that
-    is and what git or gh said, as one line; the worktree and the local branch rn-<name> are
-    gone; and the ref of origin's branch stays where git couldn't remove the branch"""
-    repo = a_repository(tmp_path)
-    run = cancelled_run(repo, gh_state, "held", "open")
-    if failing == "git-unreached":
-        git(repo, "remote", "set-url", "origin", str(tmp_path / "gone.git"))
-    elif failing == "git-refused":
-        git(remote(repo), "config", "receive.denyDeletes", "true")
-    elif failing == "gh-unreached":
-        gh_double.unreached(gh_state)
-    else:
-        gh_double.closes_unreached(gh_state)
-    gone = removed(run, host)
-    branch = f"the branch rn-{NAME} on GitHub, as git can't "
-    if failing.startswith("git"):
-        assert gone.removed == [PR]
-        [said] = gone.kept
-        why = (
-            f"ask origin: {git_said(tmp_path)}"
-            if failing == "git-unreached"
-            else "delete it: .*deletion prohibited.*"
-        )
-        assert re.fullmatch(re.escape(branch) + why, said), said
-        assert tracked(repo)
-    else:
-        record = {
-            "gh-unreached": (gh_double.PR_VIEW, "gh pr view can't reach GitHub"),
-            "gh-close": (gh_double.PR_CLOSE, "gh pr close can't reach GitHub"),
-        }[failing]
-        said = gh_double.line(*record)["stderr"].strip()
-        what = (
-            f"the pull request {PR} on GitHub, as gh can't close it: {said}"
-            if failing == "gh-close"
-            else f"the pull request of rn-{NAME} on GitHub, as gh can't ask GitHub: {said}"
-        )
-        assert gone == Gone([f"origin/rn-{NAME}"], [what])
-        assert not tracked(repo)
-    assert not os.path.exists(run.worktree)
-    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
+def test_a_folder_that_is_not_a_repository_holds_no_run(tmp_path: Any) -> None:
+    """Given a folder that isn't a git repository.
+    When the runs with work left are asked.
+    Then none is given."""
+    assert left(str(tmp_path), run) == []
 
 
-def test_a_worktree_git_cant_remove_is_cantrun_and_keeps_the_branch(
-    tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose worktree is locked, outside herdr
-    When removed is asked
-    Then CantRun is raised with what git said, and the worktree and the branch rn-<name> stay"""
-    repo = a_repository(tmp_path)
-    run = cancelled_run(repo, gh_state)
-    git(repo, "worktree", "lock", run.worktree)
-    with pytest.raises(CantRun, match="git can't remove the run's worktree: .*locked"):
-        removed(run, host)
-    assert os.path.isdir(run.worktree)
-    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() != ""
+def test_a_steering_that_is_not_json_is_refused(repo: str) -> None:
+    """Given a run whose committed steering isn't JSON.
+    When the runs with work left are asked.
+    Then Wrong is raised, naming the branch and the path."""
+    made = new(RunPlace(repo, NAME), run)
+    with open(made.steering, "w", encoding="utf-8") as f:
+        f.write("{")
+    git(made.worktree, "add", "-A")
+    git(made.worktree, "commit", "-q", "-m", "broken")
+    with pytest.raises(Wrong, match=f"rn-{NAME}:.rn/{NAME}/steering.json: isn't JSON"):
+        left(repo, run)
 
 
-def test_a_cancelled_run_inside_herdr_has_herdr_remove_its_worktree(
-    tmp_path: Any, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
-):
-    """Given a run whose worktree holds a change not committed, made by git, inside herdr
-    When removed is asked
-    Then herdr was asked, in the repository, to open the worktree, keeping the focus where it is,
-    then to remove the worktree of the workspace it gave, with its change; the worktree and the
-    local branch rn-<name> are gone; and git removed no worktree itself"""
-    monkeypatch.setenv("HERDR_ENV", "1")
-    herdr = herdr_double.host(host)
-    repo = a_repository(tmp_path)
-    run = cancelled_run(repo, gh_state)
-    before = len(herdr.asked)
-    assert removed(run, herdr) == Gone([], [])
-    opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", run.worktree, "--no-focus"]
-    remove = ["herdr", "worktree", "remove", "--workspace", "w1J", "--force"]
-    assert herdr.asked[before:] == [(opened, repo), (remove, repo)]
-    assert not os.path.exists(run.worktree)
-    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() == ""
-    assert not [argv for argv, _ in host.ran if argv[:3] == ["git", "worktree", "remove"]]
+PR = "https://github.com/lovaizu/accounting/pull/7"
 
 
-def test_a_cancelled_run_inside_herdr_that_herdr_fails_is_cantrun_and_keeps_the_run(
-    tmp_path: Any, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
-):
-    """Given a run whose worktree is here, inside herdr, whose server isn't running
-    When removed is asked
-    Then CantRun is raised with what herdr said, and the worktree and the branch rn-<name> stay"""
-    monkeypatch.setenv("HERDR_ENV", "1")
-    repo = a_repository(tmp_path)
-    run = cancelled_run(repo, gh_state)
-    with pytest.raises(CantRun, match="herdr can't open the run's worktree: .*server_not_running"):
-        removed(run, herdr_double.host(host, running=False))
-    assert os.path.isdir(run.worktree)
-    assert git(repo, "branch", "--list", f"rn-{NAME}").strip() != ""
+def pushed(repo: str) -> RunPlace:
+    """A run made, with its branch pushed to origin."""
+    made = new(RunPlace(repo, NAME), run)
+    git(made.worktree, "push", "-q", "origin", made.branch)
+    return made
+
+
+def test_a_cancelled_run_is_removed_here_and_on_github(repo: str, host: Any, gh_state: str) -> None:
+    """Given a run pushed with its pull request open, and a change in it not committed.
+    When it's removed.
+    Then the pull request is closed and origin's branch deleted, each named, the worktree, the
+    local branch, and origin's ref are gone, and the user's branch stays main."""
+    made = pushed(repo)
+    gh_double.opened(gh_state, PR)
+    with open(os.path.join(made.worktree, "draft.md"), "w", encoding="utf-8") as f:
+        f.write("draft\n")
+    assert removed(made, host) == Gone([PR, f"origin/{made.branch}"], [])
+    assert not os.path.exists(made.worktree)
+    assert git(repo, "branch", "--list", made.branch) == ""
+    assert git(repo, "branch", "-r", "--list", f"origin/{made.branch}") == ""
+    assert gh_double.state(gh_state)["pull_request"] is None
+    assert git(repo, "branch", "--show-current") == "main\n"
+
+
+def test_a_run_never_pushed_is_removed_here_and_its_stale_ref_with_it(repo: str, host: Any) -> None:
+    """Given a run with no pull request, which origin doesn't hold, but whose ref of origin's
+    branch is left here.
+    When it's removed.
+    Then nothing is named on GitHub, and the worktree, the branch, and the ref are gone."""
+    made = new(RunPlace(repo, NAME), run)
+    git(repo, "update-ref", f"refs/remotes/origin/{made.branch}", made.branch)
+    assert removed(made, host) == Gone([], [])
+    assert not os.path.exists(made.worktree)
+    assert git(repo, "for-each-ref", f"refs/remotes/origin/{made.branch}") == ""
+
+
+def test_a_pull_request_closed_already_is_left_as_it_is(
+    repo: str, host: Any, gh_state: str
+) -> None:
+    """Given a pushed run whose branch has only an earlier pull request, closed.
+    When it's removed.
+    Then gh closes nothing, and origin's branch alone is named."""
+    made = pushed(repo)
+    gh_double.earlier(gh_state, PR, "CLOSED")
+    assert removed(made, host) == Gone([f"origin/{made.branch}"], [])
+    assert not any(each[1:3] == ["pr", "close"] for each in gh_double.state(gh_state)["asked"])
+
+
+def test_what_github_couldnt_be_asked_of_is_kept_with_why(
+    repo: str, host: Any, gh_state: str
+) -> None:
+    """Given a run, with gh unable to reach GitHub and origin gone.
+    When it's removed.
+    Then it's removed here, and the pull request and the branch on GitHub are kept, each with
+    what gh or git said."""
+    made = new(RunPlace(repo, NAME), run)
+    gh_double.unreached(gh_state)
+    git(repo, "remote", "set-url", "origin", os.path.join(repo, "no-such-origin"))
+    gone = removed(made, host)
+    assert gone.removed == []
+    assert gone.kept[0].startswith(f"the pull request of {made.branch} on GitHub, as gh can't ask")
+    assert gone.kept[1].startswith(f"the branch {made.branch} on GitHub, as git can't ask origin: ")
+    assert not os.path.exists(made.worktree)
+
+
+def test_what_github_refused_to_remove_is_kept_with_why(
+    repo: str, tmp_path: Any, host: Any, gh_state: str
+) -> None:
+    """Given a pushed run with its pull request open, gh losing GitHub once it read it, and origin
+    refusing each push.
+    When it's removed.
+    Then the pull request and the branch on GitHub are kept, each with what gh or git said."""
+    made = pushed(repo)
+    gh_double.opened(gh_state, PR)
+    gh_double.closes_unreached(gh_state)
+    hook = tmp_path / "origin.git" / "hooks" / "pre-receive"
+    hook.write_text("#!/bin/sh\necho no deletes here >&2\nexit 1\n")
+    hook.chmod(0o755)
+    gone = removed(made, host)
+    assert gone.removed == []
+    assert gone.kept[0].startswith(f"the pull request {PR} on GitHub, as gh can't close it: ")
+    assert gone.kept[1].startswith(f"the branch {made.branch} on GitHub, as git can't delete it: ")
+    assert "no deletes here" in gone.kept[1]
+
+
+def test_a_run_in_the_users_checkout_is_refused(repo: str, host: Any) -> None:
+    """Given the user's checkout on a run's branch.
+    When that run is removed.
+    Then Wrong is raised, saying to switch the checkout first, and the branch stays."""
+    made = new(RunPlace(repo, NAME), run)
+    with pytest.raises(Wrong, match="git switch main"):
+        removed(RunPlace(repo, NAME, checkout=True), host)
+    assert git(repo, "branch", "--list", made.branch) != ""
+
+
+def test_a_worktree_git_cant_remove_cant_run_and_keeps_the_branch(repo: str, host: Any) -> None:
+    """Given a run whose worktree is locked.
+    When it's removed.
+    Then CantRun is raised with what git said, and the worktree and the branch stay."""
+    made = new(RunPlace(repo, NAME), run)
+    git(repo, "worktree", "lock", made.worktree)
+    with pytest.raises(CantRun, match="locked"):
+        removed(made, host)
+    assert os.path.isdir(made.worktree)
+    assert git(repo, "branch", "--list", made.branch) != ""

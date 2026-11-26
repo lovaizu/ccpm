@@ -23,14 +23,13 @@ law. They show whether a change brought its objective closer.
 rn piles up the [vital few](https://en.wikipedia.org/wiki/Pareto_principle) that bring a
 deliverable's people to their aim, and cuts the trivial many thoroughly.
 
-- From the people's purpose, for O1\
-  Each part of rn starts from what the people are after, and makes what brings them there.
-- Reviewed each turn by what was learned, for O1\
-  Each turn, rn reviews the
-  [design tree](../../plugins/rn/domain/best-practices/design-tree/best-practice.json) by what the
-  run has done and learned, keeping to the vital few.
-- Good found and made good, for O1\
-  rn finds what serves the people and what would serve them better, and makes only those
-  changes.
-- In the user's own terms, for O1\
-  rn speaks only of the user's goal and the way to it, and says in each message where it stands.
+- The goal reached earliest, for O1\
+  Each run aims at one opportunity that the user picks, and puts in the user's hands early the
+  least that runs, as a [walking skeleton](https://wiki.c2.com/?WalkingSkeleton), so what doesn't
+  serve shows before rn builds it.
+- The user as one who uses it, for O1\
+  The user picks the opportunity and gives feedback on what runs, as its people would, and rn
+  leads the way to the goal and settles how it's made.
+- Best practices in full, for O1\
+  Each deliverable that rn makes meets every necessary condition of its best practice, while what
+  rn makes stays the least.

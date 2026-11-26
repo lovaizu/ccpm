@@ -1,2 +1,3 @@
-"""The code of a deliverable's Rounds: `files` for where each Round's files lie and how they're
-read, and `course` for which Round comes next."""
+"""The code of rounds, by which the orchestrator moves each deliverable through its Rounds and
+Fixes: `files` for where each lies and what it holds, `course` for what comes next, and `command`
+for the command line that joins them."""

@@ -1,6 +1,6 @@
 """Decides how a Bash command reads as the shell would split it: each simple command at any place
-in a chain, a pipeline, a list, or a subshell, with its words, its redirections, and the body of
-each heredoc it takes, and which of its words is the command word."""
+in a chain, a pipeline, a list, or a subshell, with its words and the body of each heredoc it
+takes, and which of its words is the command word."""
 
 from __future__ import annotations
 
@@ -47,12 +47,10 @@ _HEREDOC = re.compile(r"(?<!<)<<(-?)(?!<)\s*(['\"]?)([^\s'\"<>;&|()]+)\2")
 
 
 class Command(NamedTuple):
-    """One simple command: its words, without its redirections; each redirection, its operator
-    and the word after it, such as (`>`, `out.txt`) or (`<<<`, a here-string's text); and the body
-    of each heredoc it takes, in order."""
+    """One simple command: its words, without its redirections and the word after each, such as
+    `> out.txt`; and the body of each heredoc it takes, in order."""
 
     words: list[str]
-    redirections: list[tuple[str, str]]
     heredocs: list[str]
 
 
@@ -69,18 +67,17 @@ def commands(text: str) -> list[Command] | None:
         tokens = list(lexer)
     except ValueError:
         return None
-    found = [Command([], [], [])]
+    found = [Command([], [])]
     operator = None
     for token in tokens:
         if operator is not None:
-            found[-1].redirections.append((operator, token))
             if operator in HEREDOCS and bodies:
                 found[-1].heredocs.append(bodies.pop(0))
             operator = None
         elif REDIRECTION.fullmatch(token):
             operator = token
         elif SEPARATOR.fullmatch(token):
-            found.append(Command([], [], []))
+            found.append(Command([], []))
         else:
             found[-1].words.append(token)
     return found

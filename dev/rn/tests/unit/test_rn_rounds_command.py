@@ -1,0 +1,183 @@
+"""The unit cases of rounds/command.py and rounds/files.py, rounds' command line as the orchestrator
+runs it: a deliverable's course from its first Round to its put-up, each Round's folder by its
+stage and number with the decisions' count it started with, a point weighed, a Fix made from the
+problem's words and fixed, and each refusal: a result out of its schema, a Fix before the Rounds
+are over or with no words, a folder that's no Round's, and arguments of another form."""
+
+from __future__ import annotations
+
+import json
+import os
+from typing import Any
+
+import pytest
+import rn_files
+from place import RunPlace
+from rounds.command import USAGE, main
+
+NAME = "20261126-invoice-from-statement"
+ROUNDS = f".rn/{NAME}/rounds/invoice%2F__main__.py"
+CODE = os.path.join(rn_files.PRACTICES, "code")
+REFACTOR = os.path.join(rn_files.PRACTICES, "refactor-code")
+MADE = {"result": "made", "files": [rn_files.COMMAND], "good": []}
+GOOD = {"result": "judged", "good": [{"condition": "N1", "lines": ["print"]}], "more": []}
+
+
+@pytest.fixture
+def made(tmp_path: Any) -> RunPlace:
+    """A run whose folder holds the walkthrough's steering."""
+    held = RunPlace(str(tmp_path), NAME)
+    rn_files.write_json(held.steering, rn_files.steering())
+    return held
+
+
+def call(run_: RunPlace, *argv: str, words: str = "") -> tuple[int, str, str]:
+    return main([argv[0], f".rn/{NAME}", *argv[1:]], run_.worktree, rn_files.RN, lambda: words)
+
+
+def wrote(run_: RunPlace, folder: str, file: str, value: Any) -> None:
+    rn_files.write_json(os.path.join(run_.worktree, folder, file), value)
+
+
+def test_a_deliverable_goes_from_its_first_round_to_its_put_up(made: RunPlace) -> None:
+    """Given a deliverable with no Round.
+    When `next` runs after each role writes its result.
+    Then it starts content-1 with the decisions' count, gives its evaluator, then refactor-2 once
+    each condition is good, then the put-up."""
+    first = os.path.join(made.worktree, ROUNDS, "content-1")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"generator\t{first}\t{CODE}\n", "")
+    with open(os.path.join(first, "start.json"), encoding="utf-8") as f:
+        assert json.load(f) == {"decisions": 1}
+    wrote(made, first, "generator.json", MADE)
+    judges = os.path.join(first, "judges-by.json")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"evaluator\t{first}\t{judges}\n", "")
+    with open(judges, encoding="utf-8") as f:
+        assert json.load(f) == rn_files.judged_by("code")
+    wrote(made, first, "evaluator.json", GOOD)
+    second = os.path.join(made.worktree, ROUNDS, "refactor-2")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"refactor\t{second}\t{REFACTOR}\n", "")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"refactor\t{second}\t{REFACTOR}\n", "")
+    wrote(made, second, "generator.json", MADE)
+    assert call(made, "next", rn_files.COMMAND) == (0, "put-up\n", "")
+
+
+def test_a_point_goes_to_a_pruner_then_to_a_new_round(made: RunPlace) -> None:
+    """Given a first Round whose generator gave a point.
+    When `next` runs, then `weighed` on the Round.
+    Then the point's file is due to weigh, then content-2 starts."""
+    call(made, "next", rn_files.COMMAND)
+    first = os.path.join(made.worktree, ROUNDS, "content-1")
+    wrote(made, first, "generator.json", {"result": "point", "point": "Which rate?"})
+    assert call(made, "next", rn_files.COMMAND) == (0, f"weigh\t{first}/generator.json\n", "")
+    second = os.path.join(made.worktree, ROUNDS, "content-2")
+    assert call(made, "weighed", f"{ROUNDS}/content-1") == (0, f"generator\t{second}\t{CODE}\n", "")
+
+
+def test_a_fix_is_made_from_the_problems_words_and_fixed(made: RunPlace) -> None:
+    """Given a deliverable whose Rounds are over.
+    When `fix` runs with the user's words, then `next`, then `next` once the fixer fixed it.
+    Then fix-3 holds the words, its fixer is due, then the put-up."""
+    call(made, "next", rn_files.COMMAND)
+    wrote(made, f"{ROUNDS}/content-1", "generator.json", MADE)
+    wrote(made, f"{ROUNDS}/content-1", "evaluator.json", GOOD)
+    call(made, "next", rn_files.COMMAND)
+    wrote(made, f"{ROUNDS}/refactor-2", "generator.json", MADE)
+    fix = os.path.join(made.worktree, ROUNDS, "fix-3")
+    assert call(made, "fix", rn_files.COMMAND, words="合計が出ない") == (0, f"{fix}\n", "")
+    with open(os.path.join(fix, "problem.md"), encoding="utf-8") as f:
+        assert f.read() == "合計が出ない\n"
+    assert call(made, "next", rn_files.COMMAND) == (0, f"fixer\t{fix}\t{CODE}\n", "")
+    wrote(made, fix, "fixer.json", {"result": "fixed", "files": [rn_files.COMMAND]})
+    assert call(made, "next", rn_files.COMMAND) == (0, "put-up\n", "")
+
+
+@pytest.mark.parametrize(
+    ("words", "says"), [("合計が出ない\n", "its Rounds aren't over"), (" \n", "words are empty")]
+)
+def test_a_fix_before_the_rounds_are_over_or_with_no_words_is_refused(
+    made: RunPlace, words: str, says: str
+) -> None:
+    """Given a deliverable with no Round.
+    When `fix` runs with words, or with none.
+    Then it gives 1 saying why, and makes no Fix."""
+    code, _, err = call(made, "fix", rn_files.COMMAND, words=words)
+    assert (code, says in err, os.path.exists(os.path.join(made.worktree, ROUNDS))) == (
+        1,
+        True,
+        False,
+    )
+
+
+def test_a_result_out_of_its_schema_is_refused(made: RunPlace) -> None:
+    """Given a Round whose generator wrote a result of no known word.
+    When `next` runs.
+    Then it gives 1 naming the place."""
+    call(made, "next", rn_files.COMMAND)
+    wrote(made, f"{ROUNDS}/content-1", "generator.json", {"result": "done"})
+    code, _, err = call(made, "next", rn_files.COMMAND)
+    assert (code, "generator-round.schema.json: /result: takes one of made, point" in err) == (
+        1,
+        True,
+    )
+
+
+@pytest.mark.parametrize("folder", [ROUNDS, f"{ROUNDS}/content-9", f".rn/{NAME}"])
+def test_a_folder_that_is_no_rounds_is_refused_as_weighed(made: RunPlace, folder: str) -> None:
+    """Given a deliverable's folder, a Round not made, and the run's folder.
+    When `weighed` runs on it.
+    Then it gives 1, as none is a Round's or a Fix's folder."""
+    os.makedirs(os.path.join(made.worktree, ROUNDS), exist_ok=True)
+    code, _, err = call(made, "weighed", folder)
+    assert (code, "isn't a Round's or a Fix's folder" in err) == (1, True)
+
+
+@pytest.mark.parametrize("argv", [[], ["make", "a", "b"], ["next", "a"]])
+def test_arguments_of_another_form_give_the_usage(argv: list[str]) -> None:
+    """Given no subcommand, one that isn't rounds', or too few arguments.
+    When rounds runs.
+    Then it gives 2 with the usage."""
+    assert main(argv, "/", rn_files.RN) == (2, "", USAGE)
+
+
+def kind_of(run_: RunPlace, kind: str) -> None:
+    """Gives the command the kind in the run's steering."""
+    held = rn_files.steering()
+    held["state"]["steps"][0]["deliverables"][0]["kind"] = kind
+    rn_files.write_json(run_.steering, held)
+
+
+def test_a_kind_that_no_refactoring_takes_goes_to_its_put_up_and_takes_a_fix(
+    made: RunPlace,
+) -> None:
+    """Given a deliverable of the kind light, judged with each condition good.
+    When `next` runs, then `fix` with the words of a put-up that the checks refused.
+    Then the put-up, with no Round of refactoring made, and then the Fix fix-2 with its fixer
+    due."""
+    kind_of(made, "light")
+    call(made, "next", rn_files.COMMAND)
+    wrote(made, f"{ROUNDS}/content-1", "generator.json", MADE)
+    wrote(made, f"{ROUNDS}/content-1", "evaluator.json", GOOD)
+    assert call(made, "next", rn_files.COMMAND) == (0, "put-up\n", "")
+    assert sorted(os.listdir(os.path.join(made.worktree, ROUNDS))) == ["content-1"]
+    fix = os.path.join(made.worktree, ROUNDS, "fix-2")
+    assert call(made, "fix", rn_files.COMMAND, words="LICENSE: missing") == (0, f"{fix}\n", "")
+    light = os.path.join(rn_files.PRACTICES, "light")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"fixer\t{fix}\t{light}\n", "")
+
+
+@pytest.mark.parametrize(
+    ("deliverable", "kind", "says"),
+    [
+        ("docs/other.md", "code", "no step names the deliverable"),
+        (rn_files.COMMAND, "poem", "no best practice of the kind 'poem'"),
+    ],
+)
+def test_a_deliverable_no_step_names_or_of_a_kind_with_no_best_practice_is_refused(
+    made: RunPlace, deliverable: str, kind: str, says: str
+) -> None:
+    """Given a path that no step names, or a deliverable of a kind that rn has no best practice of.
+    When `next` runs.
+    Then it gives 1 saying why."""
+    kind_of(made, kind)
+    code, _, err = call(made, "next", deliverable)
+    assert (code, says in err) == (1, True)

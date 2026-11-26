@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the cut of the design tree, the product vision where the product has one, and each best practice whose `inputs` name this kind, and list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem."
+        "text": "Open the steering, the product vision where the product has one, and each best practice whose `inputs` name this kind, and list each kind of person who reads or runs a deliverable of the kind, with what they're trying to get done when they do, such as a developer who opens a README to decide whether a plugin solves their problem."
        },
        {
         "at": "decide",
@@ -128,7 +128,7 @@
        },
        {
         "at": "decide",
-        "text": "Where one of those schemas describes the deliverable, as design-tree.schema.json describes the design tree, take it as the template: its fields are the sections, and the description of each field is its note, since a second template would state each field's form twice. Elsewhere, write the template in the deliverable's format, where each heading, or in JSON each key that holds content at any depth, is a section."
+        "text": "Where one of those schemas describes the deliverable, as steering.schema.json describes the steering, take it as the template: its fields are the sections, and the description of each field is its note, since a second template would state each field's form twice. Elsewhere, write the template in the deliverable's format, where each heading, or in JSON each key that holds content at any depth, is a section."
        },
        {
         "at": "decide",

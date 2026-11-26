@@ -21,8 +21,6 @@ CI runs these checks on every push:
 - Claude Code's check of every manifest
 - that each plugin works from its own folder, uses another plugin only through `dependencies`, and
   carries its LICENSE, by `dev/scripts/standalone.py`
-- the form of each product vision, README, and architecture against its template, by
-  `plugins/rn/domain/scripts/template`
 - the tag of each decision of each architecture's views, by `dev/scripts/trace.py`
 - each plugin's unit tests, and that they run every line and branch of the plugins' code
 

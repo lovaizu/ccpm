@@ -1,652 +1,308 @@
-"""The unit cases of repository/push.py: `commit`, of a path alone with the rest of the index left
-as it was, and of a file removed beside it, and each refusal: a path outside the worktree, a file
-to remove that git doesn't hold, no change, and a commit check that
-refuses; `pause`, which commits each change and pushes with its upstream set, and each refusal: no
-origin, a push refused for want of a permission, and a remote that isn't there; `put_up`, which asks
-gh's login first, its first time opening the pull request as a draft titled by the goal's first
-sentence, its body naming the issues and naming none, the pull request's URL written into the tree,
-an open pull request's URL written where the tree has none, its own opened beside an earlier one
-closed, no commit where nothing changed, the link it gives of each path of the deliverable, a
-file's and a folder's, and none for a node of no file, and each refusal: gh with no login and the
-goal open, each before any commit or push, a deliverable the tree lacks, and a path of the
-deliverable that the commit doesn't hold; `diff`, which commits and pushes each change and gives
-the whole diff, a stray file removed; and `ci`, which waits for the checks to start, each passed,
-one cancelled or timed out, one failed alone or beside cancelled ones, gh that can't give the pull
-request or its checks, and no check started within 120 seconds."""
+"""The unit cases of repository/push.py: `stop`, which commits each change and pushes with its
+upstream set, and each refusal: no origin, a push refused for want of a permission, and a remote
+that isn't there; `put_up`, which asks gh's login first, its first time opening the pull request as
+a draft titled by the picked need, its body the outcome and the issues, or the outcome alone, an
+open pull request used as it is, its own opened beside an earlier one closed, the link of a file
+and of a folder, and each refusal: gh with no login, no need picked, a deliverable that no step
+names, each before any commit or push, gh that may not open the pull request, and a path that the
+commit doesn't hold; and `diff`, which commits and pushes each change and gives the whole diff."""
 
 from __future__ import annotations
 
-import json
 import os
 import stat
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import pytest
 import rn_files
 from fault import CantRun, Missing, Wrong
 from gh import gh_double
-from repo_files import git
-from repository.place import RunPlace
-from repository.push import ci, commit, diff, pause, put_up
-from rn_runs import NAME, changed, committed_files, head, hook, made_run, subject
+from host import Ran
+from place import RunPlace
+from repo_files import git, write_files
+from repository.push import diff, put_up, stop
+from repository.worktree import new
 
+NAME = "20261126-invoice-from-statement"
 URL = "http://github.com/owner/repo/pull/1"
 # The repository's page on GitHub, as the pull request's URL gives it.
 REPOSITORY = "http://github.com/owner/repo"
-# The first sentence of the walkthrough's goal, which titles the pull request.
-FIRST = (
-    "The accounting team prints each invoice themselves from the lines they keep in a"
-    " spreadsheet, without asking a developer."
-)
+STEERING = rn_files.steering()
 
 
-def worktree(run: RunPlace) -> str:
-    """The run's worktree, as the architecture's Directory structure places it."""
-    return rn_files.worktree_of(run.repository, run.name)
+def made(tmp_path: Any, origin: bool = True) -> RunPlace:
+    """The user's repository with origin, unless not, and a run made in it, its steering
+    committed."""
+    repo = rn_files.repository(str(tmp_path / "accounting"))
+    if origin:
+        rn_files.with_origin(repo, str(tmp_path / "origin.git"))
+    else:
+        git(repo, "update-ref", "refs/remotes/origin/HEAD", "HEAD")
+        git(repo, "symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
+        git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    run_ = new(RunPlace(repo, NAME), gh_double.host(str(tmp_path / "unused")))
+    rn_files.committed_steering(run_.worktree, NAME, STEERING)
+    return run_
 
 
-def tree_file(run: RunPlace) -> str:
-    """The run's design tree from its worktree's top."""
-    return f".rn/{run.name}/design-tree.json"
+def with_command(run_: RunPlace) -> RunPlace:
+    """The run, with the command written in its worktree, as its generator leaves it."""
+    write_files(run_.worktree, {rn_files.COMMAND: "print('invoice')\n"})
+    return run_
 
 
-def origin(tmp_path: Any) -> str:
-    """The run's remote."""
-    return str(tmp_path / "origin.git")
+def head(folder: str, ref: str = "HEAD") -> str:
+    return git(folder, "rev-parse", ref).strip()
 
 
-# commit
+def subject(folder: str) -> str:
+    return git(folder, "log", "-1", "--format=%s").strip()
 
 
-def test_a_commit_holds_its_paths_alone_and_leaves_the_rest_of_the_index(tmp_path: Any, host: Any):
-    """Given a run whose design tree and the command are changed, neither staged, and whose guide
-    is changed and staged
-    When commit is given the design tree with a message of two lines
-    Then it gives the new head of the run's branch, whose message is the given one word for word,
-    and which holds the design tree alone; the guide stays staged, and the command unstaged"""
-    run = made_run(str(tmp_path))
-    changed(run, {tree_file(run): "{}\n", rn_files.COMMAND: "print()\n", rn_files.GUIDE: "# G\n"})
-    git(worktree(run), "add", rn_files.GUIDE)
-    message = "The README names its people.\n\nThe guide is for the accounting team."
-    given = commit(run, [tree_file(run)], message, host)
-    assert given == head(worktree(run), f"rn-{run.name}")
-    assert subject(worktree(run)) == message
-    assert committed_files(worktree(run)) == [tree_file(run)]
-    assert git(worktree(run), "status", "--porcelain").split() == [
-        "A",
-        rn_files.GUIDE,
-        "??",
-        rn_files.COMMAND,
+def asked(gh_state: str, *words: str) -> list[list[str]]:
+    """Each gh command that the double was asked whose words after `gh` begin with those given."""
+    return [
+        each
+        for each in gh_double.state(gh_state)["asked"]
+        if each[1 : 1 + len(words)] == list(words)
     ]
 
 
-def test_a_commit_removes_each_file_to_remove_beside_its_paths(tmp_path: Any, host: Any):
-    """Given a run whose design tree is changed, and whose branch holds invoicer/lines.py
-    When commit is given the design tree, and invoicer/lines.py to remove
-    Then the commit holds the design tree and the removal of invoicer/lines.py, which is gone from
-    the worktree"""
-    run = made_run(str(tmp_path))
-    changed(run, {tree_file(run): "{}\n"})
-    commit(run, [tree_file(run)], "The tree.", host, removed=["invoicer/lines.py"])
-    assert sorted(committed_files(worktree(run))) == sorted([tree_file(run), "invoicer/lines.py"])
-    status = git(worktree(run), "show", "--name-status", "--format=", "HEAD").splitlines()
-    assert "D\tinvoicer/lines.py" in status
-    assert not os.path.exists(os.path.join(worktree(run), "invoicer", "lines.py"))
+def flag(argv: list[str], name: str) -> str:
+    """The value that a command names after the flag."""
+    return argv[argv.index(name) + 1]
 
 
-def test_a_commit_removing_a_file_git_doesnt_hold_is_refused(tmp_path: Any, host: Any):
-    """Given a run whose design tree is changed, and no file invoicer/cli.py
-    When commit is given the design tree, and invoicer/cli.py to remove
-    Then Wrong is raised naming invoicer/cli.py, and the branch's head is as it was"""
-    run = made_run(str(tmp_path))
-    changed(run, {tree_file(run): "{}\n"})
-    before = head(worktree(run))
-    with pytest.raises(Wrong, match="invoicer/cli.py: git holds no such file"):
-        commit(run, [tree_file(run)], "The tree.", host, removed=["invoicer/cli.py"])
-    assert head(worktree(run)) == before
+# stop
 
 
-def test_a_commit_of_a_path_outside_the_worktree_is_refused(tmp_path: Any, host: Any):
-    """Given a run whose design tree is changed
-    When commit is given it and a path outside the worktree
-    Then Wrong is raised, naming the path, and the branch's head is as it was"""
-    run = made_run(str(tmp_path))
-    changed(run, {tree_file(run): "{}\n"})
-    before = head(worktree(run))
-    with pytest.raises(Wrong, match=r"\.\./outside\.txt"):
-        commit(run, [tree_file(run), "../outside.txt"], "The tree.", host)
-    assert head(worktree(run)) == before
-
-
-def test_a_commit_with_no_change_in_any_path_is_refused(tmp_path: Any, host: Any):
-    """Given a run with nothing changed
-    When commit is given the design tree
-    Then Wrong is raised, naming it, and the branch's head is as it was"""
-    run = made_run(str(tmp_path))
-    before = head(worktree(run))
-    with pytest.raises(Wrong, match="design-tree.json"):
-        commit(run, [tree_file(run)], "The tree.", host)
-    assert head(worktree(run)) == before
-
-
-def test_a_commit_that_a_commit_check_refuses_cant_run(tmp_path: Any, host: Any):
-    """Given a run whose design tree is changed, in a repository whose pre-commit hook refuses each
-    commit saying `tree: no`
-    When commit is given the design tree
-    Then CantRun is raised with what the hook said, and the branch's head is as it was"""
-    run = made_run(str(tmp_path))
-    hook(run.repository, "echo 'tree: no'\nexit 1\n")
-    changed(run, {tree_file(run): "{}\n"})
-    before = head(worktree(run))
-    with pytest.raises(CantRun, match="tree: no"):
-        commit(run, [tree_file(run)], "The tree.", host)
-    assert head(worktree(run)) == before
-
-
-# pause
-
-
-def test_a_pause_commits_each_change_and_pushes_the_branch_with_its_upstream(
+def test_a_stop_commits_each_change_and_pushes_the_branch_with_its_upstream(
     tmp_path: Any, host: Any
-):
-    """Given a run whose design tree is changed and whose command is new, not committed
-    When pause is given the run
-    Then it gives the hash that origin's rn-<name> now holds, a commit `rn: paused <name>` holding
-    both files; the branch's upstream is origin's, and nothing is left uncommitted"""
-    run = made_run(str(tmp_path))
-    changed(run, {tree_file(run): "{}\n", rn_files.COMMAND: "print()\n"})
-    given = pause(run, host)
-    branch = f"rn-{run.name}"
-    assert given == head(origin(tmp_path), branch) == head(worktree(run))
-    assert subject(worktree(run)) == f"rn: paused {run.name}"
-    assert sorted(committed_files(worktree(run))) == sorted([tree_file(run), rn_files.COMMAND])
-    upstream = git(worktree(run), "rev-parse", "--abbrev-ref", f"{branch}@{{upstream}}").strip()
-    assert upstream == f"origin/{branch}"
-    assert git(worktree(run), "status", "--porcelain").strip() == ""
+) -> None:
+    """Given a run whose command is new, not committed.
+    When stop is given the run.
+    Then it gives the hash that origin's branch now holds, a commit `rn: stopped <name>`, whose
+    upstream is origin's, with nothing left uncommitted."""
+    run_ = with_command(made(tmp_path))
+    given = stop(run_, host)
+    assert given == head(str(tmp_path / "origin.git"), run_.branch) == head(run_.worktree)
+    assert subject(run_.worktree) == f"rn: stopped {NAME}"
+    upstream = git(
+        run_.worktree, "rev-parse", "--abbrev-ref", f"{run_.branch}@{{upstream}}"
+    ).strip()
+    assert (upstream, git(run_.worktree, "status", "--porcelain")) == (f"origin/{run_.branch}", "")
 
 
-def test_a_pause_with_no_origin_is_missing_one(tmp_path: Any, host: Any):
-    """Given a run whose repository has no remote
-    When pause is given the run
-    Then Missing is raised"""
-    run = made_run(str(tmp_path), origin=False)
-    changed(run, {tree_file(run): "{}\n"})
-    with pytest.raises(Missing):
-        pause(run, host)
+def test_a_stop_with_no_origin_is_missing_one(tmp_path: Any, host: Any) -> None:
+    """Given a run whose repository has no remote.
+    When stop is given the run.
+    Then Missing is raised."""
+    with pytest.raises(Missing, match="no remote origin"):
+        stop(made(tmp_path, origin=False), host)
 
 
-def test_a_pause_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
+def test_a_stop_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
     tmp_path: Any, host: Any
-):
-    """Given a run whose remote's files may not be written
-    When pause is given the run
-    Then Missing is raised, with what git said of the permission"""
-    run = made_run(str(tmp_path))
-    changed(run, {tree_file(run): "{}\n"})
-    for folder, _, files in os.walk(origin(tmp_path)):
+) -> None:
+    """Given a run whose remote's files may not be written.
+    When stop is given the run.
+    Then Missing is raised, with what git said of the permission."""
+    run_ = with_command(made(tmp_path))
+    origin = str(tmp_path / "origin.git")
+    for folder, _, files in os.walk(origin):
         for each in [folder, *(os.path.join(folder, f) for f in files)]:
             os.chmod(each, os.stat(each).st_mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH))
     try:
         with pytest.raises(Missing, match=r"(?s)a permission: .*\[remote rejected\]"):
-            pause(run, host)
+            stop(run_, host)
     finally:
-        for folder, _, _ in os.walk(origin(tmp_path)):
+        for folder, _, _ in os.walk(origin):
             os.chmod(folder, os.stat(folder).st_mode | stat.S_IWUSR)
 
 
-def test_a_pause_to_a_remote_that_isnt_there_cant_run(tmp_path: Any, host: Any):
-    """Given a run whose remote origin names a folder that doesn't exist
-    When pause is given the run
-    Then CantRun is raised, with what git said"""
-    run = made_run(str(tmp_path), origin=False)
-    git(run.repository, "remote", "add", "origin", str(tmp_path / "gone.git"))
+def test_a_stop_to_a_remote_that_isnt_there_cant_run(tmp_path: Any, host: Any) -> None:
+    """Given a run whose remote origin names a folder that doesn't exist.
+    When stop is given the run.
+    Then CantRun is raised, with what git said."""
+    run_ = made(tmp_path, origin=False)
+    git(run_.repository, "remote", "add", "origin", str(tmp_path / "gone.git"))
     with pytest.raises(CantRun, match="push the run's work: .*does not appear to be a git repo"):
-        pause(run, host)
+        stop(run_, host)
 
 
 # put_up
 
 
-def title(argv: list[str]) -> str | None:
-    """The title that a `gh pr create` names, as `--title <title>`, `--title=<title>`, or
-    `-t <title>`."""
-    for place, word in enumerate(argv):
-        if word in ("--title", "-t") and place + 1 < len(argv):
-            return argv[place + 1]
-        if word.startswith("--title="):
-            return word[len("--title=") :]
-    return None
-
-
-def body(argv: list[str]) -> str | None:
-    """The body that a `gh pr create` names, as `--body <body>`, `--body=<body>`, or
-    `-b <body>`."""
-    for place, word in enumerate(argv):
-        if word in ("--body", "-b") and place + 1 < len(argv):
-            return argv[place + 1]
-        if word.startswith("--body="):
-            return word[len("--body=") :]
-    return None
-
-
-def with_command(run: RunPlace) -> RunPlace:
-    """The run, with the command written in its worktree, as its generator leaves it."""
-    changed(run, {rn_files.COMMAND: "print()\n"})
-    return run
-
-
-def created(gh_state: str) -> list[list[str]]:
-    """Each `gh pr create` that the double was asked."""
-    return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "create"]]
-
-
-def test_a_first_put_up_pushes_and_opens_the_pull_request_titled_by_the_goal(
+def test_a_first_put_up_opens_the_pull_request_as_a_draft_titled_by_the_picked_need(
     tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose plan is open and whose design tree is changed, with no pull request, its
-    goal of two sentences
-    When put_up is given the plan
-    Then it gives no link, as the plan's file is rn's own; gh was asked its login before anything
-    else; the change is committed as `rn: <plan's name>` and pushed to origin's rn-<name>; and gh
-    was asked once to open a pull request, as a draft, titled by the goal's first sentence alone"""
-    design_tree = rn_files.walkthrough_tree(NAME, plan_done=False)
-    run = made_run(str(tmp_path), design_tree=design_tree)
-    changed(run, {rn_files.GUIDE: "# Guide\n"})
-    assert put_up(run, rn_files.plan_path(NAME), host) == []
+) -> None:
+    """Given a run whose command is made, with no pull request.
+    When put_up is given the command.
+    Then gh's login is asked first, the command is committed as `rn: <path>` and pushed, a draft
+    pull request is opened of the branch titled by the picked need, its body the outcome and
+    `Closes #38`, and the command's link at the pushed commit is given."""
+    run_ = with_command(made(tmp_path))
+    links = put_up(run_, STEERING, rn_files.COMMAND, host)
     assert gh_double.state(gh_state)["asked"][0][:3] == ["gh", "auth", "status"]
-    assert subject(worktree(run), "HEAD~1") == f"rn: {rn_files.GOAL}"
-    assert committed_files(worktree(run), "HEAD~1") == [rn_files.GUIDE]
-    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
-    assert [title(each) for each in created(gh_state)] == [FIRST]
-    assert ["--draft" in each for each in created(gh_state)] == [True]
+    assert subject(run_.worktree) == f"rn: {rn_files.COMMAND}"
+    pushed = head(str(tmp_path / "origin.git"), run_.branch)
+    assert links == [f"{REPOSITORY}/blob/{pushed}/invoice/__main__.py"]
+    [create] = asked(gh_state, "pr", "create")
+    assert ("--draft" in create, flag(create, "--head"), flag(create, "--title")) == (
+        True,
+        run_.branch,
+        rn_files.PRINT,
+    )
+    assert flag(create, "--body") == f"{rn_files.OUTCOME}\n\nCloses #38"
 
 
-def test_a_first_put_ups_body_names_each_issue_it_closes_then_each_it_refers_to(
+def test_a_put_up_names_each_issue_it_closes_then_each_it_refers_to_or_none(
     tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose tree's context names issues 12 and 3 to close and 8 to refer to, with no
-    pull request
-    When put_up is given the command
-    Then gh was asked once to open a pull request whose body is the goal, a blank line, then
-    `Closes #12`, `Closes #3`, and `Refs #8`, one per line"""
-    design_tree = rn_files.walkthrough_tree(NAME)
-    design_tree["context"] = rn_files.context(closes=[12, 3], refs=[8])
-    run = with_command(made_run(str(tmp_path), design_tree=design_tree))
-    put_up(run, rn_files.COMMAND, host)
-    assert [body(each) for each in created(gh_state)] == [
-        f"{rn_files.GOAL}\n\nCloses #12\nCloses #3\nRefs #8"
-    ]
+) -> None:
+    """Given a run that closes #38 and #40 and refers to #12, and another that names none.
+    When each puts its command up first.
+    Then the first body names `Closes #38`, `Closes #40`, then `Refs #12`, and the second is the
+    outcome alone."""
+    run_ = with_command(made(tmp_path))
+    issues = rn_files.steering()
+    issues["state"]["issues"] = {"closes": [38, 40], "refs": [12]}
+    put_up(run_, issues, rn_files.COMMAND, host)
+    none = rn_files.steering()
+    none["state"]["issues"] = {"closes": [], "refs": []}
+    gh_double.keep(gh_state, {**gh_double.state(gh_state), "pull_request": None})
+    put_up(run_, none, rn_files.COMMAND, host)
+    bodies = [flag(each, "--body") for each in asked(gh_state, "pr", "create")]
+    assert bodies == [f"{rn_files.OUTCOME}\n\nCloses #38\nCloses #40\nRefs #12", rn_files.OUTCOME]
 
 
-def test_a_first_put_ups_body_of_a_run_with_no_issue_is_the_goal_alone(
+def test_a_put_up_whose_pull_request_is_open_opens_none(
     tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose tree's context names no issue, with no pull request
-    When put_up is given the command
-    Then gh was asked once to open a pull request whose body is the goal alone"""
-    run = with_command(made_run(str(tmp_path)))
-    put_up(run, rn_files.COMMAND, host)
-    assert [body(each) for each in created(gh_state)] == [rn_files.GOAL]
-
-
-def test_a_first_put_up_writes_the_pull_requests_url_into_the_tree_and_pushes_it(
-    tmp_path: Any, host: Any
-):
-    """Given a run whose tree's context holds no pull request, with none open
-    When put_up is given the command
-    Then the tree's context holds the pull request's URL, committed alone as
-    `rn: the pull request of <name>` and pushed to origin's rn-<name>, with nothing left
-    uncommitted"""
-    run = with_command(made_run(str(tmp_path)))
-    put_up(run, rn_files.COMMAND, host)
-    tree = rn_files.read_json(os.path.join(worktree(run), tree_file(run)))
-    assert tree["context"]["pr"] == URL
-    assert subject(worktree(run)) == f"rn: the pull request of {NAME}"
-    assert committed_files(worktree(run)) == [tree_file(run)]
-    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
-    assert git(worktree(run), "status", "--porcelain") == ""
-
-
-def test_a_put_up_whose_pull_request_is_open_writes_its_url_where_the_tree_has_none(
-    tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose pull request is open, and whose tree's context holds no pull request
-    When put_up is given the command
-    Then the tree's context holds the open pull request's URL, committed and pushed, and gh was
-    asked to open no pull request"""
-    run = with_command(made_run(str(tmp_path)))
-    gh_double.keep(gh_state, {**gh_double.state(gh_state), "pull_request": URL})
-    put_up(run, rn_files.COMMAND, host)
-    tree = rn_files.read_json(os.path.join(worktree(run), tree_file(run)))
-    assert tree["context"]["pr"] == URL
-    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
-    assert created(gh_state) == []
+) -> None:
+    """Given a run whose branch has its pull request open.
+    When put_up is given the command.
+    Then it opens no pull request, and gives the link on the open one's repository."""
+    run_ = with_command(made(tmp_path))
+    gh_double.opened(gh_state, URL)
+    assert put_up(run_, STEERING, rn_files.COMMAND, host)[0].startswith(f"{REPOSITORY}/blob/")
+    assert asked(gh_state, "pr", "create") == []
 
 
 def test_a_put_up_beside_an_earlier_pull_request_not_open_opens_its_own(
     tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose branch's name GitHub holds an earlier pull request of, closed, as an
-    earlier run of the same name leaves it, and none open, the tree's context naming that earlier
-    one
-    When put_up is given the command
-    Then gh was asked once to open a pull request, and the tree's context holds the new one's URL,
-    committed and pushed"""
-    earlier = "https://github.com/lovaizu/invoicer/pull/80"
-    design_tree = rn_files.walkthrough_tree(NAME)
-    design_tree["context"]["pr"] = earlier
-    run = with_command(made_run(str(tmp_path), design_tree=design_tree))
-    gh_double.earlier(gh_state, earlier, "CLOSED")
-    put_up(run, rn_files.COMMAND, host)
-    tree = rn_files.read_json(os.path.join(worktree(run), tree_file(run)))
-    assert len(created(gh_state)) == 1
-    assert tree["context"]["pr"] == URL
-    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
+) -> None:
+    """Given a run whose branch's name had a pull request that's closed.
+    When put_up is given the command.
+    Then it opens a pull request of its own."""
+    run_ = with_command(made(tmp_path))
+    gh_double.earlier(gh_state, "http://github.com/owner/repo/pull/0", "CLOSED")
+    put_up(run_, STEERING, rn_files.COMMAND, host)
+    assert len(asked(gh_state, "pr", "create")) == 1
 
 
-def test_a_put_up_with_no_change_makes_no_commit(tmp_path: Any, host: Any):
-    """Given a run with nothing changed since its last commit, the command among it, whose tree's
-    context holds its pull request
-    When put_up is given the command
-    Then it gives the command's file at the branch's head, which, pushed, is as it was"""
-    design_tree = rn_files.walkthrough_tree(NAME)
-    design_tree["context"] = rn_files.context(pr=URL)
-    run = with_command(made_run(str(tmp_path), design_tree=design_tree))
-    git(worktree(run), "add", "-A")
-    git(worktree(run), "commit", "-q", "-m", "The command.")
-    before = head(worktree(run))
-    assert put_up(run, rn_files.COMMAND, host) == [f"{REPOSITORY}/blob/{before}/{rn_files.COMMAND}"]
-    assert head(worktree(run)) == before == head(origin(tmp_path), f"rn-{NAME}")
+def test_a_put_up_of_a_folder_gives_its_link_as_a_tree(tmp_path: Any, host: Any) -> None:
+    """Given a run whose step names the folder invoice/, made.
+    When put_up is given invoice/.
+    Then the link names the folder as a tree, with no `/` closing it."""
+    run_ = with_command(made(tmp_path))
+    folder = rn_files.steering()
+    folder["state"]["steps"][0]["deliverables"][0]["path"] = "invoice/"
+    [link] = put_up(run_, folder, "invoice/", host)
+    assert link == f"{REPOSITORY}/tree/{head(run_.worktree)}/invoice"
 
 
-def test_a_put_up_of_a_deliverable_the_tree_lacks_is_refused(
+@pytest.mark.parametrize(
+    "case",
+    [
+        (rn_files.steering(target=None), rn_files.COMMAND, "no need is picked"),
+        (STEERING, "docs/other.md", "no step names the deliverable"),
+    ],
+    ids=["no-need-picked", "no-step-names-it"],
+)
+def test_a_put_up_that_can_not_be_is_wrong_before_any_commit_or_push(
+    tmp_path: Any, host: Any, gh_state: str, case: tuple[Any, str, str]
+) -> None:
+    """Given a run with no need picked, or a deliverable that no step names.
+    When put_up is given it.
+    Then Wrong is raised, and nothing is committed or pushed, and gh is asked its login alone."""
+    steering, deliverable, says = case
+    run_ = with_command(made(tmp_path))
+    before = head(run_.worktree)
+    with pytest.raises(Wrong, match=says):
+        put_up(run_, steering, deliverable, host)
+    assert head(run_.worktree) == before
+    assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]
+
+
+def test_a_put_up_with_gh_logged_out_is_missing_its_login(
     tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose tree holds the guide docs/guide.md and the command
-    When put_up is given docs/other.md, a path that no deliverable has
-    Then Wrong is raised, the branch's head is as it was and not pushed, and gh was asked to open
-    no pull request"""
-    run = made_run(str(tmp_path))
-    before = head(worktree(run))
-    with pytest.raises(Wrong):
-        put_up(run, "docs/other.md", host)
-    assert head(worktree(run)) == before
-    assert git(origin(tmp_path), "branch", "--list", f"rn-{NAME}").strip() == ""
-    assert created(gh_state) == []
-
-
-def test_a_put_up_gives_a_link_of_each_path_a_folder_as_a_tree_and_a_file_as_a_blob(
-    tmp_path: Any, host: Any
-):
-    """Given a run whose command lies at the folder invoicer, and at the more paths docs/, a
-    folder, and docs/user guide.md, a file whose name holds a space
-    When put_up is given the command
-    Then it gives a link of each at the commit pushed, in that order: <repository>/tree/<commit>/
-    for each folder, with no `/` closing it, and <repository>/blob/<commit>/ for the file, its
-    space percent-encoded"""
-    design_tree = rn_files.walkthrough_tree(NAME)
-    command = design_tree["deliverables"][1]
-    command["path"] = "invoicer"
-    command["more_paths"] = ["docs/", "docs/user guide.md"]
-    run = made_run(str(tmp_path), design_tree=design_tree)
-    changed(run, {"docs/user guide.md": "# Guide\n"})
-    links = put_up(run, "invoicer", host)
-    commit = head(origin(tmp_path), f"rn-{NAME}")
-    assert links == [
-        f"{REPOSITORY}/tree/{commit}/invoicer",
-        f"{REPOSITORY}/tree/{commit}/docs",
-        f"{REPOSITORY}/blob/{commit}/docs/user%20guide.md",
-    ]
-
-
-def test_a_put_up_of_a_node_of_no_file_gives_no_link(tmp_path: Any, host: Any):
-    """Given a run whose command is a node of no file, its `file` false, with no file at its path
-    When put_up is given the command
-    Then it gives no link, and origin's rn-<name> holds the branch's head"""
-    design_tree = rn_files.walkthrough_tree(NAME)
-    design_tree["deliverables"][1]["file"] = False
-    run = made_run(str(tmp_path), design_tree=design_tree)
-    assert put_up(run, rn_files.COMMAND, host) == []
-    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
-
-
-def test_a_put_up_of_a_path_the_commit_doesnt_hold_is_refused_naming_it(tmp_path: Any, host: Any):
-    """Given a run whose command's file isn't written, and whose guide is
-    When put_up is given the command
-    Then Wrong is raised naming the command's path, saying the commit pushed holds nothing there"""
-    run = made_run(str(tmp_path))
-    changed(run, {rn_files.GUIDE: "# Guide\n"})
-    match = f"{rn_files.COMMAND}: the work's pushed commit holds nothing there"
-    with pytest.raises(Wrong, match=match):
-        put_up(run, rn_files.COMMAND, host)
-
-
-def test_a_put_up_with_gh_logged_out_is_missing_its_login(tmp_path: Any, host: Any, gh_state: str):
-    """Given a run, and gh with no login
-    When put_up is given the command
-    Then Missing is raised with what gh said, that no GitHub host is logged into, before any
-    commit or push: the change of invoicer's lines stays uncommitted, the branch's head is as it
-    was, the remote holds no rn-<name>, and gh was asked `gh auth status` alone"""
-    run = made_run(str(tmp_path))
-    changed(run, {"invoicer/lines.py": "print()\n"})
-    before = head(worktree(run))
+) -> None:
+    """Given gh with no login.
+    When put_up is given the command.
+    Then Missing is raised, and nothing is committed."""
+    run_ = with_command(made(tmp_path))
     gh_double.logged_out(gh_state)
-    with pytest.raises(Missing, match="not logged into any GitHub hosts"):
-        put_up(run, rn_files.COMMAND, host)
-    assert head(worktree(run)) == before
-    assert git(worktree(run), "status", "--porcelain").split() == ["M", "invoicer/lines.py"]
-    assert git(origin(tmp_path), "branch", "--list", f"rn-{NAME}").strip() == ""
-    assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]
+    before = head(run_.worktree)
+    with pytest.raises(Missing, match="no login"):
+        put_up(run_, STEERING, rn_files.COMMAND, host)
+    assert head(run_.worktree) == before
 
 
-def test_a_put_up_while_the_goal_is_open_is_wrong_before_any_commit_or_push(
+def test_a_put_up_that_gh_may_not_open_is_missing_the_right(tmp_path: Any, host: Any) -> None:
+    """Given gh that refuses to open the pull request.
+    When put_up is given the command.
+    Then Missing is raised, with what gh said."""
+    run_ = with_command(made(tmp_path))
+
+    def refusing(argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None) -> Ran:
+        return (
+            Ran(1, "", "must be a collaborator\n")
+            if argv[1:3] == ["pr", "create"]
+            else host(argv, cwd, env)
+        )
+
+    with pytest.raises(Missing, match="may not open the pull request: must be a collaborator"):
+        put_up(run_, STEERING, rn_files.COMMAND, refusing)
+
+
+def test_a_put_up_of_a_path_the_commit_doesnt_hold_is_refused_naming_it(
+    tmp_path: Any, host: Any
+) -> None:
+    """Given a run whose guide its step names but no one made.
+    When put_up is given the guide.
+    Then Wrong is raised, naming the path."""
+    run_ = with_command(made(tmp_path))
+    with pytest.raises(Wrong, match="docs/guide.md: the work's pushed commit holds nothing there"):
+        put_up(run_, STEERING, rn_files.GUIDE, host)
+
+
+def test_a_put_up_whose_gh_cant_reach_github_opens_no_second_pull_request(
     tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose design tree's goal is open, its decided null, and whose guide is written
-    When put_up is given the plan
-    Then Wrong is raised saying the goal is open, before any commit or push: the guide stays
-    uncommitted, the branch's head is as it was, the remote holds no rn-<name>, and gh was asked
-    `gh auth status` alone"""
-    design_tree = rn_files.walkthrough_tree(NAME, plan_done=False)
-    design_tree["goal"] = {"decided": None}
-    run = made_run(str(tmp_path), design_tree=design_tree)
-    changed(run, {rn_files.GUIDE: "# Guide\n"})
-    before = head(worktree(run))
-    with pytest.raises(Wrong, match="goal is open"):
-        put_up(run, rn_files.plan_path(NAME), host)
-    assert head(worktree(run)) == before
-    assert git(worktree(run), "status", "--porcelain", "--", rn_files.GUIDE).split() == [
-        "??",
-        rn_files.GUIDE,
-    ]
-    assert git(origin(tmp_path), "branch", "--list", f"rn-{NAME}").strip() == ""
-    assert [each[:3] for each in gh_double.state(gh_state)["asked"]] == [["gh", "auth", "status"]]
+) -> None:
+    """Given a run whose branch has its pull request open, and gh that can't reach GitHub to view
+    it.
+    When put_up is given the command.
+    Then CantRun is raised with what gh said, and no pull request is opened."""
+    run_ = with_command(made(tmp_path))
+    gh_double.opened(gh_state, URL)
+    gh_double.unreached(gh_state)
+    with pytest.raises(CantRun, match="can't tell whether the branch has a pull request"):
+        put_up(run_, STEERING, rn_files.COMMAND, host)
+    assert asked(gh_state, "pr", "create") == []
 
 
 # diff
 
 
-def test_diff_commits_each_change_pushes_it_and_gives_the_whole_diff_against_the_default_branch(
+def test_diff_commits_each_change_pushes_it_and_gives_the_whole_diff(
     tmp_path: Any, host: Any
-):
-    """Given a run whose design tree is committed on its branch, beside a stray note that was then
-    removed from its worktree, and the guide written but not committed
-    When diff is given the run
-    Then it gives a diff that holds the guide and the design tree and no line of the note, the
-    guide and the note's removal are committed as `rn: the final check of <name>`, and origin's
-    rn-<name> holds that commit"""
-    run = made_run(str(tmp_path))
-    changed(run, {"notes.md": "# A note to self\n"})
-    git(worktree(run), "add", "-A")
-    git(worktree(run), "commit", "-q", "-m", "A note.")
-    os.remove(os.path.join(worktree(run), "notes.md"))
-    changed(run, {rn_files.GUIDE: "# Guide\n"})
-    given = diff(run, host)
-    assert f"+++ b/{rn_files.GUIDE}" in given
-    assert f"+++ b/{tree_file(run)}" in given
-    assert "notes.md" not in given
-    assert subject(worktree(run)) == f"rn: the final check of {NAME}"
-    assert head(origin(tmp_path), f"rn-{NAME}") == head(worktree(run))
-
-
-# ci
-
-
-def checks_asked(gh_state: str) -> list[list[str]]:
-    """Each `gh pr checks` that the double of gh was asked."""
-    return [each for each in gh_double.state(gh_state)["asked"] if each[1:3] == ["pr", "checks"]]
-
-
-# What ci says of the checks that failed, and of three that the CI cancelled.
-MEND = "; mend each in the deliverable whose file it concerns"
-AGAIN = (
-    "; these ended neither passing nor failing, for the user to run again: times-out cancelled,"
-    " cancels cancelled, cancelled cancelled"
-)
-
-
-def ended(found: str) -> list[dict[str, str]]:
-    """Each check of the record that the double of gh gives for what the CI's checks found, as
-    `gh pr checks --json name,state,bucket,link` gives them."""
-    return json.loads(gh_double._ends(found)["stdout"])
-
-
-def lines(checks: list[tuple[str, str]]) -> str:
-    """The lines that ci gives of the checks, each by its name and how it ended."""
-    return "".join(f"{name}\t{end}\n" for name, end in checks)
-
-
-def test_ci_where_each_check_passed_gives_them_having_waited_for_the_works_branch(
-    tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose plan was put up, and whose CI's checks each passed
-    When ci is given the run
-    Then it gives each check by its name, once each, in gh's order, as passed; and gh was asked,
-    in the run's worktree, to wait for rn-<name>'s checks, then to give each check's end"""
-    run = made_run(str(tmp_path))
-    put_up(run, rn_files.plan_path(NAME), host)
-    names = list(dict.fromkeys(each["name"] for each in ended("passed")))
-    assert ci(run, host) == lines([(name, "passed") for name in names])
-    branch = f"rn-{NAME}"
-    assert checks_asked(gh_state) == [
-        ["gh", "pr", "checks", branch, "--watch"],
-        ["gh", "pr", "checks", branch, "--json", "name,state,bucket,link"],
-    ]
-    assert host.ran[-1][1] == worktree(run)
-
-
-@pytest.mark.parametrize(
-    "case",
-    [("cancelled", "cancels", "cancelled"), ("timed-out", "deploy", "timed out")],
-    ids=["cancelled", "timed-out"],
-)
-def test_ci_where_a_check_ended_neither_passing_nor_failing_names_how_it_ended(
-    tmp_path: Any, host: Any, gh_state: str, case: tuple[str, str, str]
-):
-    """Given a run whose plan was put up, and whose CI's check was cancelled, as GitHub Actions ends
-    a job past its time limit too, or timed out, as another check's app may end it, each other
-    check passed, and gh's watch ending 0 or 1
-    When ci is given the run
-    Then it gives each check by its name in gh's order, that one as cancelled or timed out and
-    each other as passed, as neither passing nor failing, for the user to run again"""
-    found, other, end = case
-    run = made_run(str(tmp_path))
-    put_up(run, rn_files.plan_path(NAME), host)
-    gh_double.checks(gh_state, found)
-    names = list(dict.fromkeys(each["name"] for each in ended(found)))
-    assert other in names
-    assert ci(run, host) == lines([(name, end if name == other else "passed") for name in names])
-
-
-@pytest.mark.parametrize(
-    ("found", "expected"),
-    [
-        ("failed", f"the pull request's CI fails at tests{MEND}"),
-        ("ended", f"the pull request's CI fails at fails{MEND}{AGAIN}"),
-    ],
-    ids=["failed", "failed-and-cancelled"],
-)
-def test_ci_where_a_check_failed_is_wrong_naming_it_once(
-    tmp_path: Any, host: Any, gh_state: str, found: str, expected: str
-):
-    """Given a run whose plan was put up, and whose CI's check `tests` failed, which gh's lines
-    show twice as it waits, or whose check `fails` failed while three others were cancelled
-    When ci is given the run
-    Then Wrong is raised, naming each check that failed once, and no check that passed, then each
-    that was cancelled, for the user to run again"""
-    run = made_run(str(tmp_path))
-    put_up(run, rn_files.plan_path(NAME), host)
-    gh_double.checks(gh_state, found)
-    with pytest.raises(Wrong) as refused:
-        ci(run, host)
-    assert str(refused.value) == expected
-
-
-def test_ci_that_gh_cant_give_cant_run_with_what_gh_said(tmp_path: Any, host: Any, clock: Any):
-    """Given a run that has no pull request
-    When ci is given the run
-    Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said, with no
-    wait"""
-    run = made_run(str(tmp_path))
-    with pytest.raises(CantRun) as refused:
-        ci(run, host)
-    assert str(refused.value).startswith("gh can't give the pull request's CI: ")
-    assert 'no pull requests found for branch "rn-' in str(refused.value)
-    assert clock.slept == []
-
-
-def test_ci_whose_checks_gh_cant_read_once_they_started_cant_run_with_what_gh_said(
-    tmp_path: Any, host: Any, gh_state: str
-):
-    """Given a run whose plan was put up, whose pushed head's checks started, and whose gh then
-    can't reach GitHub
-    When ci is given the run
-    Then CantRun is raised, saying gh can't give the pull request's CI, with what gh said"""
-    run = made_run(str(tmp_path))
-    put_up(run, rn_files.plan_path(NAME), host)
-    gh_double.checks_unreached(gh_state)
-    said = gh_double.line(gh_double.PR_CHECKS, "gh pr checks --json can't reach GitHub")["stderr"]
-    with pytest.raises(CantRun) as refused:
-        ci(run, host)
-    assert str(refused.value) == f"gh can't give the pull request's CI: {said.strip()}"
-
-
-def views(gh_state: str) -> int:
-    """How many times the double of gh was asked for the pull request's head and its checks."""
-    asked = gh_double.state(gh_state)["asked"]
-    return sum(1 for each in asked if each[1:3] == ["pr", "view"] and "headRefOid" in each[-1])
-
-
-def test_ci_waits_until_the_pushed_heads_checks_start_then_reads_their_ends(
-    tmp_path: Any, host: Any, gh_state: str, clock: Any
-):
-    """Given a run whose plan was put up, whose CI's checks each passed, and whose pull request
-    gives the head before the push for one view, then the pushed head with no check started for
-    23 views, its checks starting 120 seconds after the first view, the most
-    When ci is given the run
-    Then it views the head every 5 seconds until the pushed head's checks show, then gives each
-    check as passed, as it gives with no wait"""
-    run = made_run(str(tmp_path))
-    put_up(run, rn_files.plan_path(NAME), host)
-    gh_double.started(gh_state, 1, 23)
-    names = list(dict.fromkeys(each["name"] for each in ended("passed")))
-    assert ci(run, host) == lines([(name, "passed") for name in names])
-    assert clock.slept == [5] * 24
-    assert views(gh_state) == 25
-
-
-def test_ci_whose_checks_dont_start_within_120_seconds_says_no_ci_started(
-    tmp_path: Any, host: Any, gh_state: str, clock: Any
-):
-    """Given a run whose plan was put up, and whose pushed head's checks start only past 120
-    seconds after the first view
-    When ci is given the run
-    Then it gives that no CI started within 120 seconds of the push, having viewed the head at
-    each 5 seconds up to 120, and asked gh for no check"""
-    run = made_run(str(tmp_path))
-    put_up(run, rn_files.plan_path(NAME), host)
-    gh_double.started(gh_state, 0, 25)
-    assert ci(run, host) == "no CI started within 120 seconds of the push\n"
-    assert clock.slept == [5] * 24
-    assert views(gh_state) == 25
-    assert checks_asked(gh_state) == []
+) -> None:
+    """Given a run whose command is written, not committed.
+    When diff is given the run.
+    Then it gives a diff that holds the command and the steering, commits as `rn: the final check
+    of <name>`, and origin's branch holds that commit."""
+    run_ = with_command(made(tmp_path))
+    given = diff(run_, host)
+    assert f"+++ b/{rn_files.COMMAND}" in given and f"+++ b/.rn/{NAME}/steering.json" in given
+    assert subject(run_.worktree) == f"rn: the final check of {NAME}"
+    assert head(str(tmp_path / "origin.git"), run_.branch) == head(run_.worktree)

@@ -126,7 +126,7 @@
        },
        {
         "at": "decide",
-        "text": "Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the design tree.`"
+        "text": "Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the steering.`"
        },
        {
         "at": "make",

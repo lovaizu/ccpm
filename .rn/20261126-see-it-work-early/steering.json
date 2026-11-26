@@ -1,0 +1,318 @@
+{
+  "ost": {
+    "outcome": "A user of rn sees what they asked for work on the real thing early in a run, and grows it from there.",
+    "opportunities": [
+      {
+        "id": "O1",
+        "opportunity": "I see what I asked for work on the real thing early.",
+        "by": "#86: 6,079 lines before the first real check in #85",
+        "opportunities": [
+          {
+            "id": "O1.1",
+            "opportunity": "I pick what to meet first, without spelling out every detail.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O1.2",
+            "opportunity": "What I first touch already holds the quality its kind needs.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O1.3",
+            "opportunity": "It works in a large existing app, aimed at what I'm after now.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solution": null
+          }
+        ],
+        "solution": {
+          "solution": "Rebuild rn as prompts and work scripts on one steering file per run, its opportunity solution tree for the moment's goal, making the least solution as one walking skeleton.",
+          "why": "It puts something that runs in the user's hands before most is made, and keeps no tree of the whole product to maintain.",
+          "assumption": {
+            "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
+            "test": "Run rn from this branch on #62 up to the first real check; count what was made by then.",
+            "result": "Failed on #62 (2026-11-26): the hearing and the pick held, and every named need stayed, but after 1h20m the run had made 7 of 10 deliverables, 834 lines, with nothing the user could try, as each put-up pushed through the repository's checks, which pulled in tests, coverage, check.sh, and trace.py before the hook that runs it; and its messages spoke of rn's insides while roles worked."
+          }
+        }
+      },
+      {
+        "id": "O2",
+        "opportunity": "From there, I grow it one addition at a time, and keep each thing I asked for.",
+        "by": "#86: requests 4 and 5 of #62 cut in #85",
+        "opportunities": [
+          {
+            "id": "O2.1",
+            "opportunity": "A mend I ask for lands at once.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O2.2",
+            "opportunity": "An addition keeps the quality of what's there.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O2.3",
+            "opportunity": "No need I named is dropped without my say.",
+            "by": "#86: requests 4 and 5 of #62 cut in #85",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O2.4",
+            "opportunity": "At the end, I decide what happens to what I didn't pick.",
+            "by": "the user on 2026-11-26",
+            "opportunities": [],
+            "solution": null
+          }
+        ],
+        "solution": null
+      }
+    ],
+    "target": "O1",
+    "decisions": [
+      {
+        "decision": "Talk with the user in Japanese and write each deliverable in English, as the user reads Japanese and the repository is in English.",
+        "by": "user"
+      },
+      {
+        "decision": "Pile up the vital few and cut the trivial many thoroughly, as rn's center.",
+        "by": "user"
+      },
+      {
+        "decision": "Make the least solution as one walking skeleton and check its riskiest assumption on the real thing first, so the run knows it reaches the goal before it builds much.",
+        "by": "user"
+      },
+      {
+        "decision": "Make the opportunity solution tree for one run, so rn aims at the moment's goal, in a large existing app too.",
+        "by": "user"
+      },
+      {
+        "decision": "Put each opportunity that people name on the tree for the user to pick, as the user decides what's dropped, not a role.",
+        "by": "user"
+      },
+      {
+        "decision": "Show the opportunities in the user's words, numbered, with rn's pick and its grounds, so the user judges only which one brings the outcome closest.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the user give feedback as one who uses it, and rn settle how it's made and explain the solution only when asked, so the user's time goes to what only they can judge.",
+        "by": "user"
+      },
+      {
+        "decision": "Make the least, and use the best practices in full on what's made, so less made costs no quality.",
+        "by": "user"
+      },
+      {
+        "decision": "Propose at the run's end what to do with each unpicked opportunity, so the user decides what stays.",
+        "by": "user"
+      },
+      {
+        "decision": "Keep the steering in one file with one writer to each part, so no part has two writers.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a unit case for each class that an interface's contract treats apart, with C0 and C1 at 100%, so each requirement has its case and no line lacks a requirement.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the user run the walking skeleton as the E2E check, so what works is judged by one who uses it.",
+        "by": "user"
+      },
+      {
+        "decision": "Add a test above the unit level only for a fault that the user's run found and that should have been caught before it, or for an operation that can't be undone, so tests grow from evidence, not from what the design draws.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a test design or a test implementation only when a key result needs what the user's run can't show, such as a measure over many runs, so no test machinery is built ahead of need.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a deliverable in Rounds only when it's first made or remade, against every condition of its best practice, so its first quality is built in before the user touches it.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a change that adds what the people can do in Rounds for the added part alone, with the evaluator judging only the conditions it touches, as only one who tries it as the people would sees whether it serves them.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the fixer make a change that brings back what was promised, such as a fault or the user's mend, at once, checking it by the kind's best practice and the unit tests itself, so a mend waits for no Round.",
+        "by": "user"
+      },
+      {
+        "decision": "Call an opportunity 「できるようにしたいこと」 to rn's users, as they don't know the opportunity solution tree.",
+        "by": "rn"
+      },
+      {
+        "decision": "Work one step at a time, in order, and remove the old before making the new, so the branch never holds two ways at once.",
+        "by": "user"
+      },
+      {
+        "decision": "Keep tests green and push on each commit, so each step stands on checked work.",
+        "by": "user"
+      },
+      {
+        "decision": "Do the work alone, with no subagents, so one judgment keeps documents, scripts, and prompts in step.",
+        "by": "user"
+      },
+      {
+        "decision": "Give work outside #86's purpose its own issue, herdr worktree, and pull request, so it reaches main without waiting.",
+        "by": "user"
+      },
+      {
+        "decision": "Speak to the user in plain words, never in rn's or the plan's own terms, so the user follows without learning them.",
+        "by": "user"
+      },
+      {
+        "decision": "Leave issue #86 as it was asked, as it's the request that started the work.",
+        "by": "user"
+      },
+      {
+        "decision": "Keep /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, so the user starts, stops, picks up, approves, and asks for a mend each by its own command.",
+        "by": "user"
+      },
+      {
+        "decision": "Check the pull request whole before the merge is proposed, as any careful team does.",
+        "by": "user"
+      },
+      {
+        "decision": "Leave the pull request's CI to the user, who sees it on the pull request before they merge, as waiting for it brings nothing in the user's hands earlier.",
+        "by": "user"
+      },
+      {
+        "decision": "Have /rn:up go on with the run of the branch the user is on, and ask which only elsewhere, so the user names the run by where they type.",
+        "by": "user"
+      },
+      {
+        "decision": "Write each prompt's steps by their purpose and intent, checked against every condition of the prompt best practice, so the AI judges a case the steps don't name.",
+        "by": "user"
+      },
+      {
+        "decision": "Write the user only what they act on, what they can try or the one thing they decide, with no line on where the run stands, as such a line is noise to them.",
+        "by": "user"
+      },
+      {
+        "decision": "Call a run off on the user's words, such as 中止して, once they confirm what goes, removing its worktree, branch, and pull request, as rn 0.11.0 did, and keep /rn:dn for a stop for now.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the orchestrator hear from the user whom the run is for and what for, one question at a time, and hand the hearing to a pruner only once it is whole, as rn 0.11.0 did, since a pruner can't talk with the user and a request needs no issue.",
+        "by": "user"
+      },
+      {
+        "decision": "Open the pick with which to make first, rn's recommendation and why, then each need in the user's words alone, with no restated outcome and no means, so the user decides from the first line.",
+        "by": "user"
+      }
+    ],
+    "questions": []
+  },
+  "state": {
+    "issues": {
+      "closes": [
+        86
+      ],
+      "refs": [
+        62
+      ]
+    },
+    "steps": [
+      {
+        "for": "O1",
+        "settles": "the product vision's Concept, as agreed",
+        "deliverables": [
+          {
+            "path": "dev/rn/product-vision.md",
+            "kind": "product-vision",
+            "status": "done"
+          }
+        ],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the README: what rn promises its users, and the walkthrough of the first mode",
+        "deliverables": [
+          {
+            "path": "plugins/rn/README.md",
+            "kind": "readme",
+            "status": "done"
+          }
+        ],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the steering's form, so the run's aim and standing have one shape from now on",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain/schemas/steering.schema.json",
+            "kind": "code",
+            "status": "done"
+          }
+        ],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the architecture of the least rn, by the architecture best practice, from the README; then every part it doesn't hold is removed",
+        "deliverables": [
+          {
+            "path": "dev/rn/architecture.md",
+            "kind": "architecture",
+            "status": "done"
+          }
+        ],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the scripts, by TDD at their least, each existing part taken only where the architecture gives it a role",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain/scripts",
+            "kind": "code",
+            "status": "done"
+          }
+        ],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the prompts, by the prompt best practice, taking the best of the existing ones",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain",
+            "kind": "prompt",
+            "status": "done"
+          }
+        ],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "a desk trace of the whole run in order, from the issue to the walking skeleton in the user's hands",
+        "deliverables": [],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the user's E2E run of rn from this branch on #62, up to the first real check, as the solution's assumption test",
+        "deliverables": [],
+        "status": "trying"
+      },
+      {
+        "for": "O2",
+        "settles": "the second mode: grow it",
+        "deliverables": [],
+        "status": "open"
+      }
+    ]
+  }
+}
