@@ -10,7 +10,7 @@
  "additionalProperties": false,
  "properties": {
   "ost": {
-   "description": "The run's opportunity solution tree, after Teresa Torres: the outcome at its root, the opportunities under it from the broadest to the most specific, the solutions compared under the opportunity that the user picked, each with the assumption tests under it, and the run's decisions.",
+   "description": "The run's opportunity solution tree, after Teresa Torres: the outcome at its root, the opportunities under it from the broadest to the most specific, the solution chosen for the opportunity that the user picked with its riskiest assumption, and the run's decisions and open questions.",
    "type": "object",
    "required": [
     "outcome",
@@ -34,7 +34,7 @@
      }
     },
     "target": {
-     "description": "The id of the opportunity that the user picked, null until they pick, so a run with none waits on the user's pick. Its solutions are the run's.",
+     "description": "The id of the opportunity that the user picked, null until they pick, so a run with none waits on the user's pick. The run's solution hangs under it.",
      "type": [
       "string",
       "null"
@@ -61,75 +61,31 @@
    "description": "Where the run stands.",
    "type": "object",
    "required": [
-    "context",
+    "issues",
     "steps"
    ],
    "additionalProperties": false,
    "properties": {
-    "context": {
-     "description": "What the run is bound by, apart from its aim.",
+    "issues": {
+     "description": "The issues of the run, by number: each that the merge closes, and each that the run only serves.",
      "type": "object",
      "required": [
-      "rn",
-      "languages",
-      "issues",
-      "pr"
+      "closes",
+      "refs"
      ],
      "additionalProperties": false,
      "properties": {
-      "rn": {
-       "description": "The version of rn that started the run, as its plugin.json gives it.",
-       "type": "string",
-       "pattern": "^\\d+\\.\\d+\\.\\d+$"
-      },
-      "languages": {
-       "description": "The languages that the user settled, each by its name in English, such as Japanese.",
-       "type": "object",
-       "required": [
-        "deliverables",
-        "conversation"
-       ],
-       "additionalProperties": false,
-       "properties": {
-        "deliverables": {
-         "type": "string",
-         "minLength": 1
-        },
-        "conversation": {
-         "type": "string",
-         "minLength": 1
-        }
+      "closes": {
+       "type": "array",
+       "items": {
+        "type": "integer"
        }
       },
-      "issues": {
-       "description": "The issues of the run, by number: each that the merge closes, and each that the run only serves.",
-       "type": "object",
-       "required": [
-        "closes",
-        "refs"
-       ],
-       "additionalProperties": false,
-       "properties": {
-        "closes": {
-         "type": "array",
-         "items": {
-          "type": "integer"
-         }
-        },
-        "refs": {
-         "type": "array",
-         "items": {
-          "type": "integer"
-         }
-        }
+      "refs": {
+       "type": "array",
+       "items": {
+        "type": "integer"
        }
-      },
-      "pr": {
-       "description": "The URL of the run's pull request, null until the run opens it.",
-       "type": [
-        "string",
-        "null"
-       ]
       }
      }
     },
@@ -209,7 +165,7 @@
     "opportunity",
     "by",
     "opportunities",
-    "solutions"
+    "solution"
    ],
    "additionalProperties": false,
    "properties": {
@@ -235,12 +191,16 @@
       "$ref": "#/definitions/opportunity"
      }
     },
-    "solutions": {
-     "description": "The solutions compared for this opportunity, the chosen one among them, empty unless it's the target. rn shows them to the user only on asking.",
-     "type": "array",
-     "items": {
-      "$ref": "#/definitions/solution"
-     }
+    "solution": {
+     "description": "The solution chosen for this opportunity, null unless it's the target. rn explains it to the user only on asking.",
+     "oneOf": [
+      {
+       "type": "null"
+      },
+      {
+       "$ref": "#/definitions/solution"
+      }
+     ]
     }
    }
   },
@@ -248,7 +208,6 @@
    "type": "object",
    "required": [
     "solution",
-    "chosen",
     "why",
     "assumption"
    ],
@@ -258,24 +217,13 @@
      "type": "string",
      "minLength": 1
     },
-    "chosen": {
-     "type": "boolean"
-    },
     "why": {
-     "description": "Why it was chosen, or why not.",
+     "description": "Why it was chosen over the others that rn weighed.",
      "type": "string",
      "minLength": 1
     },
     "assumption": {
-     "description": "For the chosen one, its riskiest assumption with its test; null for the others.",
-     "oneOf": [
-      {
-       "type": "null"
-      },
-      {
-       "$ref": "#/definitions/assumption"
-      }
-     ]
+     "$ref": "#/definitions/assumption"
     }
    }
   },
@@ -326,7 +274,8 @@
       "null"
      ]
     }
-   }
+   },
+   "description": "The riskiest assumption that the solution rests on, with its test."
   }
  }
 }
