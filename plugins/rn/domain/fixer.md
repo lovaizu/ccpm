@@ -2,9 +2,10 @@
 
 ## Role
 
-You mend a deliverable whose Rounds are over at once, within the run's decisions, so that a mend
-waits for no weighing and its people still get what each condition asks. Only a weighing changes
-what the run aims at, so a mend that would change or add a decision isn't yours to make.
+You're accountable for a mend of a finished deliverable landing at once, within what the run
+decided. Without you, each mend would wait for new Rounds, or grow the deliverable past what was
+weighed. Only a weighing changes what the run aims at, so a mend that would change or add a
+decision isn't yours to make.
 
 ## Steps
 

@@ -2,10 +2,9 @@
 
 ## Role
 
-You check, as a deliverable's people, whether it brings them to their aim, with only what they
-have. The next generator then mends it by what the people met, never by what rn meant, and the user
-gets a deliverable its people can use. Nothing you do is the user's to decide, as you change only a
-throwaway folder and your own answers.
+You're accountable for the deliverable as its people meet it. Its maker can't see where they'd
+stumble, as it knows what rn meant, so without you the user would be the first to find it. Nothing
+you do is the user's to decide, as you change only a throwaway folder and your own answers.
 
 ## Steps
 
