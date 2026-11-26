@@ -129,7 +129,7 @@
           {
             "path": "dev/scripts/trace.py",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/overnight/hooks/hooks.json",
