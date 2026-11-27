@@ -21,7 +21,7 @@ NAME = "20261126-invoice-from-statement"
 ROUNDS = f".rn/{NAME}/rounds/1/invoice%2F__main__.py"
 CODE = os.path.join(rn_files.PRACTICES, "code")
 REFACTOR = os.path.join(rn_files.PRACTICES, "refactor-code")
-MADE = {"result": "made", "files": [rn_files.COMMAND], "good": []}
+MADE = {"result": "made", "files": [rn_files.COMMAND]}
 GOOD = {"result": "judged", "good": [{"condition": "N1", "lines": ["print"]}], "more": []}
 MORE = {"result": "judged", "good": [], "more": [{"condition": "N1", "good_when": "it prints"}]}
 

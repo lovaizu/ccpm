@@ -12,7 +12,7 @@ import pytest
 from rounds.course import LIMIT, Next, next_of
 from rounds.files import CONTENT, FIX, REFACTOR, Entry
 
-MADE = {"result": "made", "files": ["invoice/__main__.py"], "good": []}
+MADE = {"result": "made", "files": ["invoice/__main__.py"]}
 POINT = {"result": "point", "point": "Which tax rate? I recommend 10%, as the statement shows."}
 GOOD = {"result": "judged", "good": [{"condition": "N1", "lines": ["print"]}], "more": []}
 MORE = {"result": "judged", "good": [], "more": [{"condition": "N1", "good_when": "it prints"}]}
