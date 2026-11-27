@@ -16,9 +16,12 @@ their decisions, handing back as a point only what they leave open.
 2. Make the deliverable, by what the Round starts from:
    - Made new, where the deliverable doesn't exist yet: make it from the steering's decisions and
      the deliverables it rests on.
+   - Made anew, where the steering holds no judged Round of it although an earlier Round of the
+     step holds an `evaluator.json`, as the solution it was made on changed: make it as one made new,
+     so that nothing made on the dropped solution holds.
    - Made again, in a Round after the first: the last Round's `evaluator.json` holds what its
-     people would meet short, and the steering the remedies that the orchestrator weighed. Change what
-     those name, and keep each other part, as the trial found it serving them.
+     people would meet short, and the steering the remedies that the orchestrator weighed. Change
+     what those name, and keep each other part, as the trial found it serving them.
    - Added to, where the deliverable already serves its people and the step adds to it: add what
      the step settles, and keep each part that they already use where it stands, as they rely on
      it.

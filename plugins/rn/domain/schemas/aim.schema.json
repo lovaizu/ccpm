@@ -21,7 +21,7 @@
    "$ref": "steering.schema.json#/properties/state/properties/issues"
   },
   "steps": {
-   "description": "The way to the target, first to last, the walking skeleton first. A step or a deliverable that the steering already holds keeps its status.",
+   "description": "The way to the target, first to last, each deliverable that the user sees once made in a step of its own before what rests on it, then the walking skeleton. A step or a deliverable that the steering already holds keeps its status.",
    "type": "array",
    "items": {
     "type": "object",

@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open the inputs of your cut, and note from the architecture each decision that the code carries out, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second."
+        "text": "Open the deliverables that the inputs name, and note from the architecture each decision that the code carries out, such as a component's job or the data that one part hands another, and the command that runs the tests, since the refactoring keeps the first and runs the second."
        },
        {
         "at": "decide",
@@ -228,7 +228,7 @@
        },
        {
         "at": "make",
-        "text": "For each mark, where a name of a few words can say the reason, extract the code into a function or a constant of that name, else find the reason in the commit that brought the line, such as by `git log -L 40,42:sync.py`, or in the inputs of your cut, and write it in a comment right there."
+        "text": "For each mark, where a name of a few words can say the reason, extract the code into a function or a constant of that name, else find the reason in the commit that brought the line, such as by `git log -L 40,42:sync.py`, or in the deliverables that the inputs name, and write it in a comment right there."
        },
        {
         "at": "make",

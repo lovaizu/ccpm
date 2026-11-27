@@ -19,7 +19,9 @@ answers.
 3. Try it once in the people's folder, as they'd use it toward their aim, so that you meet only
    what they'd meet: read what they read and run what they run, with input like their own. Take
    only the moves their use leads to, as a tester's probe sends the next generator to mend what no
-   one meets. Change nothing of the deliverable.
+   one meets. Change nothing of the deliverable. Where the people's folder can't run what they
+   run, such as a host that the trial can't start, take only what they'd read, and say in each
+   condition what you didn't run, so that no one takes it as tried.
 4. Answer each necessary condition, so that the next Round mends only what the people would meet.
 
 rn's rules for these steps:

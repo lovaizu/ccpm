@@ -68,7 +68,8 @@ rn reads your repository, then shows what it would make, in one message:
 ```text
 こう進めます。違うところだけ直してください。
 
-ゴール：経理チームが、Pythonを書かずに、明細から請求書を印刷できる（ご依頼の言葉のまま）
+ゴール：経理チームの方が、開発者に頼まずに、月末に自分で請求書を出せる
+  ご依頼の「経理チームが、Pythonを書かずに、明細から請求書を印刷できるコマンドがほしい」から読みました
 
 進め方：まず1を作ります（おすすめ）
   印刷できれば、経理チームの方が月末に自分で請求書を出せます
@@ -157,14 +158,21 @@ rn puts in your hands, early, the least that runs for the one need you pick.
 
 ### "I can't spell out every detail up front, so it builds the wrong thing."
 
-You don't spell it out. rn reads your words, your issue, and your repository, and proposes in one
-message the goal in your own words, the way to it, and what it makes, marking what it had to
-assume. You correct only what's off, then try what runs, and say what's off there.
+You don't spell it out. rn reads your words, your issue and its earlier work, and your
+repository, and proposes the goal it reads you're after, with the words of yours it rests on, the
+way to it, and what it makes, marking what it had to assume. You correct only what's off, then try
+what runs, and say what's off there.
 
 ### "Does it ask a lot of questions before anything starts?"
 
 No. rn asks nothing that your request, your issue, or your repository already says. Where your
-issue already says what you want, the proposal comes first, and once you agree, rn starts.
+issue already says what you want, one proposal comes first, and once you agree, rn starts. A
+request that leaves more open takes a few proposals, the goal first.
+
+### "A question to it turns into a change."
+
+No. rn answers a question with why, from what it planned and what it made, and changes nothing
+until you ask for a change.
 
 ### "I see the parts only at the end, and the rework piles up."
 

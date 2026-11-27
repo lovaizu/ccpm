@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Open your cut, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end."
+        "text": "Open the steering, and read the sections that `inputs` takes of each input it names: the product vision and the README, and, where the product builds on another's rules, the architecture it builds on, such as a guide to building a plugin of the host it runs in, to its end."
        },
        {
         "at": "decide",
@@ -116,7 +116,7 @@
        },
        {
         "at": "make",
-        "text": "Where your cut names an architecture that the product builds on, point to its principles, and write only what this product adds or changes."
+        "text": "Where the steering names an architecture that the product builds on, point to its principles, and write only what this product adds or changes."
        },
        {
         "at": "make",
@@ -240,7 +240,7 @@
       "items": [
        {
         "at": "make",
-        "text": "For each part, gather what every figure, list, and sentence says it does, and, where your cut names an architecture that the product builds on, what each of its rules asks of a part of that kind, such as a rule that every hook gives its result as JSON."
+        "text": "For each part, gather what every figure, list, and sentence says it does, and, where the steering names an architecture that the product builds on, what each of its rules asks of a part of that kind, such as a rule that every hook gives its result as JSON."
        },
        {
         "at": "make",

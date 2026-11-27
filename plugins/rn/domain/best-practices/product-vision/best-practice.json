@@ -14,7 +14,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Find the job that the product exists to do in the goal and the decisions of your cut, and, where the repository already holds the product, in its README. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom."
+        "text": "Find the job that the product exists to do in the steering's outcome and decisions, and, where the repository already holds the product, in its README. Write it in one sentence as what the product gets done for the people who come to it, such as `turns a request into a deliverable that the people it's for can use`. Where none of these says it, ask the user what the product gets done, and for whom."
        },
        {
         "at": "decide",
@@ -124,7 +124,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the decisions of your cut name. Where the repository already holds the product, add each of its open issues and each feature its README names."
+        "text": "Once each role has its objectives, and before you write any key result, list each piece of work the product plans that the steering's decisions name. Where the repository already holds the product, add each of its open issues and each feature its README names."
        },
        {
         "at": "decide",
@@ -158,7 +158,7 @@
       "items": [
        {
         "at": "decide",
-        "text": "To find the one way that the user means, read what they gave of the product's purpose and intent: the goal and the decisions of your cut, the user's words in the request and in their answers, and, where the repository already holds the product, its README, and its open issues. List each way these say or imply that the product brings the roles to their objectives, such as a rule the user gave for when rn asks them, since the one way comes from whoever conceived the product, and an analysis of what goes wrong today yields only a list of fixes with no center."
+        "text": "To find the one way that the user means, read what they gave of the product's purpose and intent: the steering's outcome and decisions, the user's words in the request and in their answers, and, where the repository already holds the product, its README, and its open issues. List each way these say or imply that the product brings the roles to their objectives, such as a rule the user gave for when rn asks them, since the one way comes from whoever conceived the product, and an analysis of what goes wrong today yields only a list of fixes with no center."
        },
        {
         "at": "decide",

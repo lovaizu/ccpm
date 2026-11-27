@@ -100,7 +100,7 @@
        },
        {
         "at": "decide",
-        "text": "Add each decision of your cut that the steps turn on and the architecture doesn't hold, such as a limit that the user set on what the prompt may change. Where a step needs a fact that neither the architecture, your cut, nor the repository gives, such as which branch the prompt may push to, end with `point`, naming the fact and your recommendation, since a fact only the user holds becomes a guess when the prompt leaves it out."
+        "text": "Add each decision of the steering that the steps turn on and the architecture doesn't hold, such as a limit that the user set on what the prompt may change. Where a step needs a fact that neither the architecture, the steering, nor the repository gives, such as which branch the prompt may push to, end with `point`, naming the fact and your recommendation, since a fact only the user holds becomes a guess when the prompt leaves it out."
        },
        {
         "at": "decide",

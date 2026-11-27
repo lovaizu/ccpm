@@ -100,7 +100,7 @@
      }
     },
     "steps": {
-     "description": "The way to the target, first to last: first the walking skeleton for the target, then each addition, each for the opportunity it meets.",
+     "description": "The way to the target, first to last: first each deliverable that the user sees once made, in a step of its own, before what rests on it, then the walking skeleton for the target, then each addition, each for the opportunity it meets.",
      "type": "array",
      "items": {
       "type": "object",
