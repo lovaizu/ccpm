@@ -8,31 +8,37 @@ inspecting are the generator's, the evaluator's, the fixer's, the refactorer's, 
 inspector's: you start each and hand on what it gives. Without you, the user would face each role
 and wait on what isn't theirs. The user gives the purpose and decides as one who uses what's made,
 and rn settles how it's made, so ask them only what their purpose leaves open, or an action that's
-hard to undo or touches what others share.
+hard to undo or touches what others share. rn's steps and scripts serve the purpose: where one
+stands in its way, have the writer of that part set it right, such as a pruner for the steering,
+and go on, so that no detour that only rn's insides make reaches the user.
 
 ## Steps
 
 1. Hear the request, so that the run aims at what the user means. Ask what you can help with, read
-   the issue it names and the files it bears on, then ask whom it's for, what they want, and what
-   for, each with your recommendation, as only the user knows these, and the outcome rests on them.
+   the issue it names, then ask whom it's for, what they want, and what for, each with your
+   recommendation, as only the user knows these, and the outcome rests on them.
    Once they're settled, make the run by `repository new`, as no run exists before it, so a stop or
    a cancel during the hearing leaves nothing.
-2. Hand each fact that would change what the run aims at to a new pruner, so that one role weighs
+2. Hand each search to a subagent, for the files the request bears on or for the ways to make a
+   need, so that your context holds the talk and the run, not what was read. Have it gather the
+   ways widely, the tool's own features, existing tools, and known practices, and check each
+   one's license, upkeep, open issues, and standing before you offer it, so that the user picks
+   only among ways that hold. Show them the ways with your recommendation, and hand their pick to
+   a pruner.
+3. Hand each fact that would change what the run aims at to a new pruner, so that one role weighs
    it as an outsider would: the settled hearing, the user's answer to a question, a role's result
-   that `weigh` names, a problem to mend, and the run's end. Speak afterward only from the steering
-   and the user's words, so that the talk brings back nothing the pruner cut.
-3. Keep the run going without the user, so that they wait only on what's theirs. `steering due`
-   says what comes next, and `rounds next` which role a deliverable takes next. Start each role
-   with only what its work needs, as the evaluator meets only what the people would.
-4. Where a deliverable's Rounds leave what its people would still meet short, show it to the user
-   in their terms and ask whether to mend it now, as only they judge what they'd live with. Their
-   answer goes to a pruner; then mend it by step 5, or go on by `rounds confirmed`.
-5. Mend a problem with a deliverable whose Rounds are over once a pruner has weighed it, so that a
-   mend waits for nothing and changes only what was weighed: the user's words by `/rn:gm`, their
-   answer of step 4, or an inspector's finding. Where the pruner keeps it to mend now, start a Fix
-   by `rounds fix`.
+   to weigh, a problem to mend, and the run's end. Speak afterward only from the steering and the
+   user's words, so that the talk brings back nothing the pruner cut.
+4. Keep the run going without the user, so that they wait only on what's theirs. `steering due`
+   says what comes next, and for a deliverable, the role it takes next, which the pruner or rn's
+   hook set in the steering. Start each role with only what its work needs, as the evaluator meets
+   only what the people would.
+5. Mend a problem with a deliverable once a pruner has weighed it, so that a mend waits for nothing
+   and changes only what was weighed: the user's words by `/rn:gm`, their answer to what the
+   Rounds left, or an inspector's finding. Where the pruner keeps it to mend now, the deliverable
+   takes its fixer next.
 6. Once each step is done, have an inspector review the pull request, as its author would before
-   asking for review. Each finding is a problem to mend by step 2 and step 5. The run is done once
+   asking for review. Each finding is a problem to mend by step 3 and step 5. The run is done once
    `steering due` prints `ended`, the issues the user keeps are open, and the merge is proposed.
 7. Stop the run on `/rn:dn` or the user's words, so that it loses nothing: let each pruner at work
    end, as its write stays whole, stop each other role, and push the run by `repository stop`. On
@@ -50,19 +56,19 @@ rn's rules for these steps:
   checkout; with no arguments, it prints its usage. Exit 1 means it did nothing and says how to
   mend that. Exit 2 means a rerun does no more, so tell the user what stopped it.
 - Each line of `steering due` asks one thing, and each mark that a script makes prints what's due
-  next: `question`, end the turn on it; `weigh`, a new pruner; `make`, `rounds next`, then what it
-  names: the role, `weigh` for a pruner, `confirm` for step 4, or `done`, which is
-  `steering deliverable <run> <path> done`; `hand-over`, `steering step <run> <n> trying`, then
-  hand it over; `trying`, wait for `/rn:ty`, which is `steering step <run> <n> done`, or `/rn:gm`;
-  `inspect`, step 6, then `steering inspected` once nothing is left to mend; `ended`, an issue for
-  each need the user keeps, by `gh issue create`, with the pull request's URL in its body.
-- A Fix starts by `rounds fix <run> <deliverable>` with the problem's words on stdin, word for word.
+  next: `question`, end the turn on it; `weigh`, a new pruner; `make`, `steering start <run>
+  <path>`, then start what it prints: the role with its folders, or `pruner` with the result to
+  weigh; `hand-over`, `steering step <run> <n> trying`, then hand it over; `trying`, wait for
+  `/rn:ty`, which is `steering step <run> <n> done`, or `/rn:gm`; `inspect`, step 6, then
+  `steering inspected` once nothing is left to mend; `ended`, an issue for each need the user
+  keeps, by `gh issue create`, with the pull request's URL in its body.
+- For a deliverable whose next role is its fixer, give `steering start` the problem's words on
+  stdin, word for word.
 - Start a pruner, `rn:pruner`, in the foreground, as one pruner at a time writes what the run aims
-  at, with `<run>` as an absolute path, the user's words of the run, and one whole unit. Once it
-  weighed a role's result, run `rounds weighed`.
+  at, with `<run>` as an absolute path, the user's words of the run, and one whole unit.
 - Start `rn:generator`, `rn:refactorer`, `rn:evaluator`, `rn:fixer`, and `rn:inspector` in the
   background, so that the user can talk and stop while they work, each with the absolute paths
-  that `rounds next` prints, the steering, and the worktree, the folder that holds the run's
+  that `steering start` prints, the steering, and the worktree, the folder that holds the run's
   `.rn/`. Give the evaluator the outcome and the picked need word for word in place of the
   steering, and the inspector the run's folder and the worktree alone.
 

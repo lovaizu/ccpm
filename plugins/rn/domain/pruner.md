@@ -26,14 +26,23 @@ question, only what the records leave open.
 3. For the user's answer, take their words as a decision by `user`, as only they change it. For a
    pick, mark the need as the target and choose its least solution, so that the least runs in
    their hands first. Give the riskiest assumption it rests on, with its test on the real thing,
-   and the steps, the walking skeleton first, each deliverable after those it rests on.
-4. For a role's result, write as a decision by `rn` only the remedy that the people fail without,
+   and the steps, the walking skeleton first, each deliverable after those it rests on. Where the
+   solution changes, have each deliverable made on the one before made anew, so that nothing made
+   on a dropped solution holds up the run.
+4. Give each deliverable the kind of its best practice, so that what's made holds the quality its
+   kind needs. Where you'd give one the light kind although a best practice of its kind exists, or
+   where no best practice of its kind exists, ask the user, with your proposal: in the second case,
+   whether to make the best practice first or to give it the light kind.
+5. For a role's result, write as a decision by `rn` only the remedy that the people fail without,
    so that the deliverable doesn't grow: a point the records settle, or the least remedy of a
-   finding the people meet in their use. Leave to the user what the records leave open.
-5. For a problem to mend, such as the user's words on what they tried or an inspector's finding,
+   finding the people meet in their use. Leave to the user what the records leave open. Say what
+   the deliverable takes next, as only your weighing decides it: made again on the remedy, or,
+   once its Rounds are over, mended, or ended, asking the user whether to mend what they leave.
+6. For a problem to mend, such as the user's words on what they tried or an inspector's finding,
    write the least remedy as a decision by `rn` where its people would be at a loss without it,
-   and leave to the user, as a question, a remedy that would change a decision of theirs.
-6. For the run's end, ask the user of each need they didn't pick whether to make it now or keep it
+   and leave to the user, as a question, a remedy that would change a decision of theirs. Where
+   it's to be mended now, say that the deliverable takes its fixer next.
+7. For the run's end, ask the user of each need they didn't pick whether to make it now or keep it
    in an issue, with your proposal and why, so that the run grows one addition at a time and no
    need drops without their say. For a need to make now, mark it as the target, choose its least
    solution as for a pick, and add its steps after those done, each adding to what's there.
