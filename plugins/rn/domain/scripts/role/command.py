@@ -16,8 +16,7 @@ import push
 from fault import Answer, CantRun, Missing, Wrong
 from host import Host
 from place import RunPlace, of_folder
-from rounds import files
-from steering import record
+from steering import record, rounds
 
 USAGE = "usage: role ended   (Claude Code's input of SubagentStop on stdin)\n"
 # The roles of rn, as Claude Code names a plugin's agent in `agent_type`.
@@ -94,7 +93,7 @@ def _faults(run: RunPlace, schemas: str) -> list[str]:
             found.append(str(why))
     for root in sorted(glob.glob(os.path.join(run.rounds, "*", "*"))):
         try:
-            files.entries(root, schemas)
+            rounds.entries(root, schemas)
         except Wrong as why:
             found.append(str(why))
     return found
