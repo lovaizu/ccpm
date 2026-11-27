@@ -28,6 +28,13 @@
             "by": "The user's answer to Q2 of the hearing on 2026-11-27",
             "opportunities": [],
             "solution": null
+          },
+          {
+            "id": "O1.3",
+            "opportunity": "I want the queue to take any instruction I give, such as ten simple research tasks, not only rn's works.",
+            "by": "The user's words at the hand-over of step 1 on 2026-11-27: 「１０個ぐらい簡単な調査タスクでCCでキューも動いたよね？」",
+            "opportunities": [],
+            "solution": null
           }
         ],
         "solution": null
@@ -90,6 +97,14 @@
       {
         "decision": "The talk is in Japanese, the language of the user's words, and the deliverables are in English, the language of the repository's documents, so each reader reads their own.",
         "by": "rn"
+      },
+      {
+        "decision": "Step 1 is good once its logic is shown working, by unit tests in which stand-ins take the place of `claude`, `sleep`, and the clock, with no run on the real Claude Code needed for it, as the user said 「ロジックが動いていればOKです」 and 「モックでロジックをすべてテストできるよね？」.",
+        "by": "user"
+      },
+      {
+        "decision": "`overnight` is written in Python, its command `bin/overnight` only starting it, with unit tests that run every line and branch of it, a README, and a CHANGELOG, since `.claude/rules/dev.md` asks every plugin of ccpm for \"the LICENSE, README, CHANGELOG, and unit tests that any plugin of ccpm carries\", and `dev/README.md` says CI checks \"each plugin's unit tests, and that they run every line and branch of the plugins' code\", which `pyproject.toml` measures on `*.py` files only.",
+        "by": "rn"
       }
     ],
     "questions": []
@@ -107,9 +122,19 @@
         "settles": "rnから夜に別プロセスのバッチを始め、キューの作業を指定した並行数で動かし、使用量の上限で止まった作業は間隔を伸ばしながら再開を試し、上限が解けたら止まったところから続き、朝には何が止まり何が再開したかが記録に残る。",
         "deliverables": [
           {
+            "path": "plugins/overnight/scripts/overnight.py",
+            "kind": "code",
+            "status": "open"
+          },
+          {
             "path": "plugins/overnight/bin/overnight",
             "kind": "light",
             "status": "done"
+          },
+          {
+            "path": "dev/overnight/tests/unit/test_overnight.py",
+            "kind": "test-implementation",
+            "status": "open"
           },
           {
             "path": "plugins/overnight/.claude-plugin/plugin.json",
@@ -120,6 +145,16 @@
             "path": ".claude-plugin/marketplace.json",
             "kind": "light",
             "status": "done"
+          },
+          {
+            "path": "plugins/overnight/README.md",
+            "kind": "readme",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/CHANGELOG.md",
+            "kind": "light",
+            "status": "open"
           }
         ],
         "status": "trying"
