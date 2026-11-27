@@ -2,8 +2,8 @@
 repository as `python3 dev/scripts/standalone.py check`.
 
 Claude Code copies only a plugin's folder when it installs the plugin, so a link, a path, or a file
-link that leads out of the folder finds nothing there, as dev/plugin-development-guide.md says of a
-folder that holds all the plugin needs. Only a symbolic link into a plugin that it depends on comes
+link that leads out of the folder finds nothing there, as .claude/rules/plugin-development.md says
+of a folder that holds all the plugin needs. Only a symbolic link into a plugin that it depends on comes
 with the install. A plugin may use another plugin only where its plugin.json names that plugin in
 `dependencies`, and two plugins never depend on each other, as neither could then change or install
 alone. Each plugin carries the repository's
@@ -79,7 +79,8 @@ def faults_of(plugin: str, uses: list[str]) -> list[str]:
 
 def link_faults(plugin: str, path: str, uses: list[str]) -> list[str]:
     """The fault of a symbolic link that leads out of the plugin, unless into a plugin it depends
-    on, which comes with the install, as Code kept once of dev/plugin-development-guide.md says."""
+    on, which comes with the install, as Code kept once of .claude/rules/plugin-development.md
+    says."""
     gone = outside(plugin, path, os.readlink(path))
     into = OTHER.match(gone + "/") if gone else None
     if gone and not (into and into.group(1) in uses):

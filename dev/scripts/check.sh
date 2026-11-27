@@ -1,6 +1,6 @@
 #!/bin/sh
-# The checks CI runs on every push, and the pre-push hook before it, run from the top of the repository with the tools of
-# pyproject.toml's dev group: the checks' own code, the best practices, the figures, and the
+# The checks CI runs on every push, and the pre-push hook before it, run from the top of the
+# repository with the tools of pyproject.toml's dev group: the checks' own code, the best practices, the figures, and the
 # manifests.
 set -e
 # Each check of how the code is laid out reports what it's for around its findings.
@@ -23,9 +23,9 @@ own_python=$(git ls-files '*.py' | while read -r file; do
   [ -L "$file" ] || echo "$file"
 done)
 
-# A fix to code copied between files lands in one and leaves the other wrong, so the repository keeps
-# code more than one file needs once, as Code kept once of dev/plugin-development-guide.md
-# says. Two modules that import each other can't change or be tested apart, so each architecture's
+# A fix to code copied between files lands in one and leaves the other wrong, so the repository
+# keeps code more than one file needs once, as Code kept once of
+# .claude/rules/plugin-development.md says. Two modules that import each other can't change or be tested apart, so each architecture's
 # Test strategy checks for import cycles too. The check reads every file at once, as a copy or a
 # cycle can lie in any two.
 if command -v pylint >/dev/null 2>&1; then

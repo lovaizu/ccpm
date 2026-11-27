@@ -1,3 +1,10 @@
+---
+paths:
+  - "plugins/**"
+  - "dev/**"
+  - ".claude-plugin/**"
+---
+
 # Plugin development guide
 
 This guide is for a Claude Code plugin whose roles work together to make a document, code, or
@@ -7,7 +14,7 @@ another work. A plugin takes from it what its requirements call for.
 
 ### Components
 
-![A plugin's components](images/components.svg)
+![A plugin's components](../../dev/images/components.svg)
 
 - **caller**: the person, or the orchestrator of another plugin, that calls the plugin. The caller
   decides what is theirs.
@@ -47,6 +54,7 @@ sequenceDiagram
 ```text
 <repository>/
 ├── .claude-plugin/marketplace.json     the marketplace: the plugins it lists <JSON>
+├── .claude/rules/plugin-development.md this document, which Claude Code loads on the plugins' files
 ├── README.md                           leads users to each plugin's README, and developers to dev/ <Markdown>
 ├── LICENSE                             the repository's license
 ├── plugins/                            what runs on users' machines, installed by Claude Code
@@ -63,7 +71,6 @@ sequenceDiagram
 │       └── CHANGELOG.md                what changed for users in each version <Markdown>
 └── dev/                                what only the developers need, never installed
     ├── README.md                       how to build and check the plugins <Markdown>
-    ├── plugin-development-guide.md     this document
     ├── images/                         the figures' style, and this document's figures <CSS, SVG>
     ├── scripts/                        the checks <Python 3>
     └── <plugin>/                       one for each folder in plugins/
@@ -130,7 +137,7 @@ Claude Code reads a hook that fails with no `onFailure` as no answer, which stop
 ### A rule that holds on every run
 
 A hook of the plugin's own `hooks/hooks.json` holds each rule that must hold on every run, such as
-a path that a role never writes, as [design.md](../.claude/rules/design.md) says. A permission rule or branch protection holds what is hard to undo.
+a path that a role never writes, as [design.md](design.md) says. A permission rule or branch protection holds what is hard to undo.
 The role's steps hold the rest.
 
 *Why*: a hook runs every time, while an instruction is only advice
@@ -248,7 +255,7 @@ and goes back to its own steps once the other hands its work back.
 
 ### One agent for each job
 
-Each job has its own role, as [design.md](../.claude/rules/design.md) says, and the role gets
+Each job has its own role, as [design.md](design.md) says, and the role gets
 only what the job needs.
 
 *When*: a work with jobs that need different context or tools.

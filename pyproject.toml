@@ -4,7 +4,7 @@
 name = "ccpm"
 version = "0"
 # The oldest Python that users run, as Python 3.9 and the standard library of
-# dev/plugin-development-guide.md says, which ruff takes as the version it checks for.
+# .claude/rules/plugin-development.md says, which ruff takes as the version it checks for.
 requires-python = ">=3.9"
 
 [dependency-groups]
