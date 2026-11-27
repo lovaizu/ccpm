@@ -113,7 +113,8 @@ def _read(argv: Sequence[str]) -> _Plan | None:
         at, argv = argv[1], argv[2:]
     if len(argv) < 2:
         return None
-    if not argv[0].isdigit() or int(argv[0]) < 1:
+    # isdigit() alone takes such digits as ², which int() can't read.
+    if not (argv[0].isascii() and argv[0].isdigit()) or int(argv[0]) < 1:
         raise _Wrong(f"<parallel> must be a whole number from 1, not {argv[0]!r}")
     return _Plan(at, int(argv[0]), [os.path.abspath(worktree) for worktree in argv[1:]])
 

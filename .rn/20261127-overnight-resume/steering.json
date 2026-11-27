@@ -124,7 +124,9 @@
           {
             "path": "plugins/overnight/scripts/overnight.py",
             "kind": "code",
-            "status": "open"
+            "status": "open",
+            "entry": "content-2",
+            "next": "evaluator"
           },
           {
             "path": "plugins/overnight/bin/overnight",
