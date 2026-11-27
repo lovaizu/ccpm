@@ -107,7 +107,7 @@
         "by": "rn"
       },
       {
-        "decision": "The specification of overnight.py, in its module opening and main's interface, states that every run of `claude` carries the night's prompt to stop at each point that is the user's and leave it as a question for the morning, that a resume asks the session to go on from where it stopped, and that an error a work meets stops the batch with its trace in batch.log and no end noted, since the solution asks for the first two and the third is how the morning shows why a batch stopped, and a maintainer who can't trace a behavior to a case can't tell whether to keep it.",
+        "decision": "The specification of overnight.py, in its module opening and main's interface, states that every run of `claude` carries the night's prompt to stop at each point that is the user's and leave it as a question for the morning, that a resume asks the session to go on from where it stopped, and that an error a work meets stops the batch: from that moment no work not yet started starts, each started work runs to its end, the record notes each work that never started, and the batch ends with the error's trace in batch.log and no end noted, and the code does just that, since the solution asks for the first two, the third is how the morning shows why a batch stopped and which queued works never ran, which the record now leaves out and timing now decides, and a maintainer who can't trace a behavior to a case can't tell whether to keep it.",
         "by": "rn"
       },
       {
@@ -115,7 +115,9 @@
         "by": "rn"
       }
     ],
-    "questions": []
+    "questions": [
+      "overnight.py は判定の2ラウンドを使い切りました。残る点は1つです。作業の1つがエラーになると、まだ始まっていない作業のうちどれが動かずに終わるかがタイミング次第で、動かなかった作業は記録に1行も残らず、仕様もそう書いていません。これをどうしますか。\n1. 今直す: エラーの時点から未開始の作業は始めず、始まった作業は最後まで動かし、始まらなかった作業を記録に残すよう、overnight.py とその仕様を fixer で直す\n2. このまま終える: overnight.py を完了とし、この点は残す\nおすすめは 1 です。朝に記録だけを見る使い方では、キューに入れた作業のどれが動かなかったかが記録から分からないと、結果を確かめられないためです。"
+    ]
   },
   "state": {
     "issues": {
