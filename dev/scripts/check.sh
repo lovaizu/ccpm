@@ -1,7 +1,7 @@
 #!/bin/sh
 # The checks CI runs on every push, and the pre-push hook before it, run from the top of the
-# repository with the tools of pyproject.toml's dev group: the checks' own code, the best practices, the figures, and the
-# manifests.
+# repository with the tools of pyproject.toml's dev group: the checks' own code, the best
+# practices, the figures, and the manifests.
 set -e
 # Each check of how the code is laid out reports what it's for around its findings.
 . dev/scripts/findings.sh
