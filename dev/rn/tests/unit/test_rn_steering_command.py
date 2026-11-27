@@ -43,7 +43,7 @@ def steering(run_: RunPlace, value: Any) -> None:
 def call(run_: RunPlace, *argv: str, host: Any = None, words: str = "") -> tuple[int, str, str]:
     """What `steering` gives with the arguments on the run, with git run for real and gh from its
     records, unless another host is given, and the words given on stdin."""
-    gh = host or gh_double.host(os.path.join(os.path.dirname(run_.repository), "gh"))
+    gh = host or gh_double.host(os.path.join(os.path.dirname(run_.worktree), "gh"))
     given = argv[:1] + (FOLDER,) + argv[1:]
     return main(given, run_.worktree, rn_files.RN, gh, lambda: words)
 

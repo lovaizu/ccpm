@@ -32,50 +32,35 @@ def test_a_slug_of_another_form_is_refused(slug: str) -> None:
 
 
 def test_each_path_of_a_run_follows_from_its_name() -> None:
-    """Given a run of the repository /work/accounting.
+    """Given a run in the worktree /work/invoices.
     When its paths are asked.
     Then each lies where the architecture's Directory structure names it."""
-    run = RunPlace("/work/accounting", NAME)
-    worktree = f"/work/accounting/.claude/worktrees/rn-{NAME}"
-    assert (run.branch, run.worktree, run.folder, run.steering, run.pruner, run.rounds) == (
-        f"rn-{NAME}",
-        worktree,
-        f"{worktree}/.rn/{NAME}",
-        f"{worktree}/.rn/{NAME}/steering.json",
-        f"{worktree}/.rn/{NAME}/pruner.json",
-        f"{worktree}/.rn/{NAME}/rounds",
+    run = RunPlace("/work/invoices", NAME)
+    folder = f"/work/invoices/.rn/{NAME}"
+    assert (run.folder, run.steering, run.pruner, run.rounds) == (
+        folder,
+        f"{folder}/steering.json",
+        f"{folder}/pruner.json",
+        f"{folder}/rounds",
     )
 
 
 def test_a_run_is_found_from_its_folder_by_a_path_from_the_folder_given(tmp_path: Any) -> None:
-    """Given a run's folder in a repository.
-    When it's given by its path from the worktree's top.
-    Then the run is found, with the repository and the name."""
+    """Given a run's folder in a worktree.
+    When it's given by its path from the worktree's top, and by its absolute path.
+    Then the run is found each time, with the worktree and the name."""
     run = RunPlace(str(tmp_path), NAME)
     os.makedirs(run.folder)
-    assert of_folder(run.worktree, f".rn/{NAME}") == run
-
-
-def test_a_run_on_the_users_checkout_is_found_from_its_folder(tmp_path: Any) -> None:
-    """Given a run's folder in the user's own checkout, on the run's branch.
-    When it's given by its path from the checkout's top.
-    Then the run is found, its worktree the checkout, and its paths from there."""
-    run = RunPlace(str(tmp_path), NAME, checkout=True)
-    os.makedirs(run.folder)
-    assert (of_folder(str(tmp_path), f".rn/{NAME}"), run.worktree, run.folder) == (
-        run,
-        str(tmp_path),
-        os.path.join(str(tmp_path), ".rn", NAME),
-    )
+    assert (of_folder(run.worktree, f".rn/{NAME}"), of_folder("/", run.folder)) == (run, run)
 
 
 @pytest.mark.parametrize(
     "folder",
-    ["/work/accounting/x", "/work/.rn/BAD NAME", f"/w/.claude/worktrees/rn-{NAME}/.rn/other"],
+    ["/work/accounting/x", "/work/.rn/BAD NAME", f"/w/.rn/{NAME}/rounds"],
 )
 def test_a_path_of_another_form_is_refused(folder: str) -> None:
-    """Given a path outside a run's folder, a folder in a checkout not named as a run, or a folder
-    whose name differs from its worktree's.
+    """Given a path outside a run's folder, a folder not named as a run, or a folder inside a
+    run's.
     When the run is found from it.
     Then Wrong is raised, naming the form a run's folder takes."""
     with pytest.raises(Wrong, match="isn't a run's folder"):

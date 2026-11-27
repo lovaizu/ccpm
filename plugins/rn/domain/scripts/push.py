@@ -60,7 +60,7 @@ def _pull_request(run: RunPlace, steering: dict[str, Any], host: Host) -> None:
         return
     what = "gh has no login to open the pull request"
     checked(host, ["gh", "auth", "status"], run.worktree, Missing, what)
-    shown = host(["gh", "pr", "view", run.branch, "--json", "url,state"], run.worktree)
+    shown = host(["gh", "pr", "view", branch(run, host), "--json", "url,state"], run.worktree)
     if shown.code != 0 and not shown.err.startswith("no pull requests found"):
         said = (shown.out + shown.err).strip()
         raise CantRun(f"gh can't tell whether the branch has a pull request: {said}")
@@ -83,7 +83,7 @@ def _picked(ost: dict[str, Any]) -> str | None:
 def _opened(run: RunPlace, steering: dict[str, Any], title: str, host: Host) -> str:
     """Opens the run's pull request as a draft, and gives its URL."""
     body = _body(steering["ost"]["outcome"], steering["state"]["issues"])
-    create = ["gh", "pr", "create", "--draft", "--head", run.branch, "--title", title]
+    create = ["gh", "pr", "create", "--draft", "--head", branch(run, host), "--title", title]
     made = checked(
         host, [*create, "--body", body], run.worktree, Missing, "gh may not open the pull request"
     )
@@ -116,7 +116,7 @@ def push(run: RunPlace, host: Host) -> str:
     """
     if host(["git", "remote", "get-url", "origin"], run.worktree).code != 0:
         raise Missing("the repository has no remote origin to push the run's work to; add one")
-    pushed = host(["git", "push", "-q", "-u", "origin", run.branch], run.worktree)
+    pushed = host(["git", "push", "-q", "-u", "origin", branch(run, host)], run.worktree)
     if pushed.code != 0 and any(each in pushed.err.lower() for each in _REFUSED):
         raise Missing(
             "origin refuses the push of the run's work, for want of a login or a permission:"
@@ -125,6 +125,17 @@ def push(run: RunPlace, host: Host) -> str:
     if pushed.code != 0:
         raise CantRun(f"git can't push the run's work: {pushed.err.strip()}")
     return _git(host, run, "rev-parse", "HEAD").out.strip()
+
+
+def branch(run: RunPlace, host: Host) -> str:
+    """The work's branch, the one that the run's worktree has checked out.
+
+    Takes: the run, and the host.
+    Gives: the branch's name.
+    Changes: nothing.
+    Refuses: CantRun where git can't name it, with what it said.
+    """
+    return _git(host, run, "branch", "--show-current").out.strip()
 
 
 def _git(host: Host, run: RunPlace, *words: str) -> Ran:

@@ -174,14 +174,20 @@ def with_origin(repo: str, origin: str) -> str:
     return origin
 
 
+def worktree_of(repo: str, folder: str, branch: str) -> str:
+    """Adds a worktree of the repository in the folder, on a new branch from its head, and gives
+    its real path."""
+    git(repo, "worktree", "add", "-q", "-b", branch, folder)
+    return os.path.realpath(folder)
+
+
 def run_with_origin(folder: str, name: str) -> RunPlace:
     """Makes the user's repository `accounting` in the folder, with a bare `origin.git` beside it
-    as its remote, and a run of the name in its own worktree on the work's branch, its folder
-    empty, and gives the run."""
+    as its remote, and a run of the name in a worktree `work` beside it on the branch `work`, its
+    folder empty, and gives the run."""
     repo = repository(os.path.join(folder, "accounting"))
     with_origin(repo, os.path.join(folder, "origin.git"))
-    held = RunPlace(repo, name)
-    git(repo, "worktree", "add", "-q", "-b", held.branch, held.worktree)
+    held = RunPlace(worktree_of(repo, os.path.join(folder, "work"), "work"), name)
     os.makedirs(held.folder)
     return held
 

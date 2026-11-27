@@ -1,6 +1,6 @@
 """The unit cases of repository/command.py, repository's command line as the orchestrator and each
-role run it: `new` printing the run's folder, `runs` printing each run with work left and what it
-couldn't check, `stop`, `cancel` printing what it removed on GitHub and saying
+role run it: `new` printing the run's folder in the worktree it's given, `runs` printing each run
+with work left, `stop`, `cancel` printing what it removed on GitHub and saying
 what it couldn't, `trial` printing what its module gives, a refusal given as its exit code, and
 arguments of another form."""
 
@@ -13,7 +13,7 @@ from typing import Any
 import pytest
 import rn_files
 from gh import gh_double
-from repo_files import git, write_files
+from repo_files import write_files
 from repository.command import USAGE, main
 
 SLUG = "invoice-from-statement"
@@ -27,40 +27,24 @@ def repo(tmp_path: Any) -> str:
     return made
 
 
-def folder() -> str:
-    """The run's folder from the repository's top, named by today and the slug."""
-    name = f"{date.today():%Y%m%d}-{SLUG}"
-    return f".claude/worktrees/rn-{name}/.rn/{name}"
-
-
 def started(repo: str, host: Any) -> str:
-    """Makes the run by `new`, commits its steering, writes the command, and gives its folder."""
-    assert main(["new", SLUG], repo, rn_files.RN, host) == (0, f"{folder()}\n", "")
-    worktree = os.path.join(repo, folder().split("/.rn/")[0])
-    rn_files.committed_steering(worktree, folder().rsplit("/", 1)[1], rn_files.steering())
-    write_files(worktree, {rn_files.COMMAND: "print('invoice')\n"})
-    return folder()
+    """Makes the run by `new` in a worktree beside the repository, commits its steering, writes the
+    command, and gives its folder."""
+    work = rn_files.worktree_of(repo, os.path.join(os.path.dirname(repo), "work"), "work")
+    name = f"{date.today():%Y%m%d}-{SLUG}"
+    folder = os.path.join(work, ".rn", name)
+    assert main(["new", SLUG, "../work"], repo, rn_files.RN, host) == (0, f"{folder}\n", "")
+    rn_files.committed_steering(work, name, rn_files.steering())
+    write_files(work, {rn_files.COMMAND: "print('invoice')\n"})
+    return folder
 
 
 def test_new_prints_the_runs_folder_and_runs_lists_it(repo: str, host: Any) -> None:
-    """Given the user's repository.
-    When a run is made by `new`, its steering committed, and `runs` runs.
-    Then `new` prints the folder, and `runs` prints it again with nothing unchecked."""
+    """Given the user's repository and a worktree of it.
+    When a run is made in the worktree by `new`, its steering committed, and `runs` runs.
+    Then `new` prints the folder, and `runs` prints it again."""
     run_folder = started(repo, host)
     assert main(["runs"], repo, rn_files.RN, host) == (0, f"{run_folder}\n", "")
-
-
-def test_runs_says_what_it_couldnt_check(repo: str, host: Any) -> None:
-    """Given a repository whose origin is gone, and no run.
-    When `runs` runs.
-    Then it prints no run, and says on stderr what it couldn't check."""
-    git(repo, "remote", "set-url", "origin", os.path.join(repo, "gone"))
-    code, out, err = main(["runs"], repo, rn_files.RN, host)
-    assert (code, out, err.startswith("repository: can't check the runs on GitHub")) == (
-        0,
-        "",
-        True,
-    )
 
 
 def test_each_subcommand_on_a_run_prints_what_its_module_gives(
@@ -70,7 +54,7 @@ def test_each_subcommand_on_a_run_prints_what_its_module_gives(
     When `trial` and `stop` run on it.
     Then each gives 0: the trial's folder, and the hash pushed."""
     run_folder = started(repo, host)
-    round_ = f"{run_folder}/rounds/1/invoice/content-1"
+    round_ = os.path.join(run_folder, "rounds", "1", "invoice", "content-1")
     trial = main(["trial", run_folder, round_], repo, rn_files.RN, host)
     assert trial[0] == 0 and trial[1].startswith(os.path.join(temp, "rn-trial-"))
     code, out, _ = main(["stop", run_folder], repo, rn_files.RN, host)
@@ -96,13 +80,12 @@ def test_cancel_prints_what_it_removed_and_says_what_it_couldnt(
     main(["stop", run_folder], repo, rn_files.RN, host)
     gh_double.unreached(gh_state)
     code, out, err = main(["cancel", run_folder], repo, rn_files.RN, host)
-    branch = run_folder.split("/")[2]
-    assert (code, out) == (0, f"origin/{branch}\n")
-    assert err.startswith(f"repository: can't remove the pull request of {branch} on GitHub")
-    assert not os.path.exists(os.path.join(repo, run_folder))
+    assert (code, out) == (0, "origin/work\n")
+    assert err.startswith("repository: can't remove the pull request of work on GitHub")
+    assert not os.path.exists(run_folder)
 
 
-@pytest.mark.parametrize("argv", [[], ["make"], ["new"], ["stop", "a", "b"]])
+@pytest.mark.parametrize("argv", [[], ["make"], ["new", SLUG], ["stop", "a", "b"]])
 def test_arguments_of_another_form_give_the_usage(argv: list[str], host: Any) -> None:
     """Given no subcommand, one that isn't repository's, or the wrong count of arguments.
     When repository runs.

@@ -16,7 +16,7 @@ from place import RunPlace, named, of_folder
 from repository import trial, worktree
 
 USAGE = """\
-usage: repository new <slug>
+usage: repository new <slug> <worktree>
        repository runs
        repository stop <run>
        repository cancel <run>
@@ -26,14 +26,14 @@ usage: repository new <slug>
 
 def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     """The exit code, stdout, and stderr of `repository` with the arguments, from the folder
-    `cwd`, the top of the user's repository, with rn's folder at `plugin_root`, and git and gh
+    `cwd`, a folder in the user's repository, with rn's folder at `plugin_root`, and git and gh
     reached through `host`.
 
-    - `new <slug>`, a short English slug of the work: 0 printing the new run's folder from `cwd`,
-      as `worktree.new` makes it, named by `place.named` from today and the slug.
-    - `runs`: 0 printing the folder from `cwd` of each run that `worktree.found` gives, a line
-      each, newest first, and nothing where there's none; and on stderr `repository: can't check
-      <what, and why>` where it couldn't ask GitHub for the runs it holds.
+    - `new <slug> <worktree>`, a short English slug of the work and the worktree the run works
+      in, from `cwd` or absolute: 0 printing the new run's folder, absolute, as `worktree.new`
+      makes it, named by `place.named` from today and the slug.
+    - `runs`: 0 printing the folder, absolute, of each run that `worktree.left` gives, a line
+      each, newest first, and nothing where there's none.
     - `stop <run>`: 0 printing the hash that `push.stop` gives, with the run's steering, read as
       its schema holds it, where it has one.
     - `cancel <run>`: 0 printing each thing of the run that `worktree.removed` removed on GitHub
@@ -54,15 +54,13 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _new(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    made = worktree.new(RunPlace(cwd, named(date.today(), given[0])), host)
-    return 0, f"{os.path.relpath(made.folder, cwd)}\n", ""
+    where = os.path.normpath(os.path.join(cwd, given[1]))
+    made = worktree.new(RunPlace(where, named(date.today(), given[0])), host)
+    return 0, f"{made.folder}\n", ""
 
 
 def _runs(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    found = worktree.found(cwd, host)
-    printed = "".join(f"{os.path.relpath(each.folder, cwd)}\n" for each in found.runs)
-    said = f"repository: can't check {found.unchecked}\n" if found.unchecked else ""
-    return 0, printed, said
+    return 0, "".join(f"{each.folder}\n" for each in worktree.left(cwd, host)), ""
 
 
 def _stop(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
@@ -88,7 +86,7 @@ def _trial(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 _Subcommand = Callable[[list[str], str, str, Host], Answer]
 # Each subcommand, with the count of arguments after its name.
 _SUBCOMMANDS: dict[str, tuple[_Subcommand, int]] = {
-    "new": (_new, 1),
+    "new": (_new, 2),
     "runs": (_runs, 0),
     "stop": (_stop, 1),
     "cancel": (_cancel, 1),

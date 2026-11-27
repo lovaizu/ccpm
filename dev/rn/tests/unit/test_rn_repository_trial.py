@@ -25,8 +25,7 @@ def made(tmp_path: Any) -> RunPlace:
     """A run whose worktree holds its steering and the command committed, as rn's hook commits
     each role's changes, and a draft written since, not committed."""
     repo = rn_files.repository(str(tmp_path / "accounting"))
-    held = RunPlace(repo, NAME)
-    git(repo, "worktree", "add", "-q", "-b", held.branch, held.worktree)
+    held = RunPlace(rn_files.worktree_of(repo, str(tmp_path / "work"), "work"), NAME)
     rn_files.committed_steering(held.worktree, NAME, rn_files.steering())
     write_files(held.worktree, {rn_files.COMMAND: "print('invoice')\n"})
     git(held.worktree, "add", "-A")
@@ -75,7 +74,7 @@ def test_git_that_cant_clone_cant_run(made: RunPlace) -> None:
     Then CantRun is raised, naming the folder."""
 
     def refusing(argv: Sequence[str], cwd: str, env: Mapping[str, str] | None = None) -> Ran:
-        return Ran(128, "", "fatal: no room\n")
+        return Ran(128, "", "fatal: no room\n") if argv[1] == "clone" else run(argv, cwd, env)
 
     with pytest.raises(CantRun, match="can't clone the work's branch into"):
         starting_state(made, round_of(made), refusing)

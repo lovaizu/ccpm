@@ -192,8 +192,7 @@ def _branch(argv: Sequence[str]) -> str:
 
 
 def host(folder: str) -> Any:
-    """A Host that runs git for real, in the folder it's given, and answers gh, and herdr by its
-    double, from the records,
+    """A Host that runs git for real, in the folder it's given, and answers gh from the records,
     with its state in `folder`; each command it ran is kept in `<folder>/gh-state.json`'s `asked`
     for gh, and in the Host's `ran` for both."""
     from host import Ran as HostRan
@@ -204,10 +203,6 @@ def host(folder: str) -> Any:
         ran.append((list(argv), cwd))
         if argv[0] == "gh":
             return HostRan(*answer(argv, folder, cwd))
-        if argv[0] == "herdr":
-            from herdr import herdr_double
-
-            return HostRan(*herdr_double.answer(argv, folder))
         whole = {**os.environ, **env} if env else None
         done = subprocess.run(
             list(argv), cwd=cwd, env=whole, capture_output=True, text=True, check=False

@@ -11,6 +11,7 @@ import tempfile
 from fault import CantRun, Wrong
 from host import Host, checked
 from place import RunPlace
+from push import branch
 
 
 def folder(run: RunPlace, round_: str) -> str:
@@ -41,7 +42,7 @@ def starting_state(run: RunPlace, round_: str, host: Host) -> str:
     made = folder(run, round_)
     if os.path.exists(made):
         shutil.rmtree(made)
-    clone = ["git", "clone", "-q", "--branch", run.branch, run.worktree, made]
+    clone = ["git", "clone", "-q", "--branch", branch(run, host), run.worktree, made]
     checked(host, clone, run.worktree, CantRun, f"git can't clone the work's branch into {made}")
     shutil.rmtree(os.path.join(made, ".rn"), ignore_errors=True)
     return made

@@ -24,6 +24,7 @@ from push import kept, stop
 from repo_files import git, write_files
 from repository.worktree import new
 
+BRANCH = "work"
 NAME = "20261126-invoice-from-statement"
 URL = "http://github.com/owner/repo/pull/1"
 STEERING = rn_files.steering()
@@ -39,7 +40,8 @@ def made(tmp_path: Any, origin: bool = True) -> RunPlace:
         git(repo, "update-ref", "refs/remotes/origin/HEAD", "HEAD")
         git(repo, "symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
         git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
-    run_ = new(RunPlace(repo, NAME), gh_double.host(str(tmp_path / "unused")))
+    work = rn_files.worktree_of(repo, str(tmp_path / "work"), BRANCH)
+    run_ = new(RunPlace(work, NAME), gh_double.host(str(tmp_path / "unused")))
     rn_files.committed_steering(run_.worktree, NAME, STEERING)
     return run_
 
@@ -84,12 +86,10 @@ def test_a_stop_commits_each_change_and_pushes_the_branch_with_its_upstream(
     upstream is origin's, with nothing left uncommitted."""
     run_ = with_command(made(tmp_path))
     given = stop(run_, None, host)
-    assert given == head(str(tmp_path / "origin.git"), run_.branch) == head(run_.worktree)
+    assert given == head(str(tmp_path / "origin.git"), BRANCH) == head(run_.worktree)
     assert subject(run_.worktree) == f"rn: stopped {NAME}"
-    upstream = git(
-        run_.worktree, "rev-parse", "--abbrev-ref", f"{run_.branch}@{{upstream}}"
-    ).strip()
-    assert (upstream, git(run_.worktree, "status", "--porcelain")) == (f"origin/{run_.branch}", "")
+    upstream = git(run_.worktree, "rev-parse", "--abbrev-ref", f"{BRANCH}@{{upstream}}").strip()
+    assert (upstream, git(run_.worktree, "status", "--porcelain")) == (f"origin/{BRANCH}", "")
 
 
 def test_a_stop_with_no_origin_is_missing_one(tmp_path: Any, host: Any) -> None:
@@ -124,7 +124,7 @@ def test_a_stop_to_a_remote_that_isnt_there_cant_run(tmp_path: Any, host: Any) -
     When stop is given the run.
     Then CantRun is raised, with what git said."""
     run_ = made(tmp_path, origin=False)
-    git(run_.repository, "remote", "add", "origin", str(tmp_path / "gone.git"))
+    git(run_.worktree, "remote", "add", "origin", str(tmp_path / "gone.git"))
     with pytest.raises(CantRun, match="push the run's work: .*does not appear to be a git repo"):
         stop(run_, None, host)
 
@@ -144,13 +144,13 @@ def test_a_first_kept_opens_the_pull_request_as_a_draft_titled_by_the_picked_nee
     `Closes #38`."""
     run_ = with_command(made(tmp_path))
     pushed = kept(run_, STEERING, MESSAGE, host)
-    assert pushed == head(str(tmp_path / "origin.git"), run_.branch) == head(run_.worktree)
+    assert pushed == head(str(tmp_path / "origin.git"), BRANCH) == head(run_.worktree)
     assert subject(run_.worktree) == MESSAGE
     assert gh_double.state(gh_state)["asked"][0][:3] == ["gh", "auth", "status"]
     [create] = asked(gh_state, "pr", "create")
     assert ("--draft" in create, flag(create, "--head"), flag(create, "--title")) == (
         True,
-        run_.branch,
+        BRANCH,
         rn_files.PRINT,
     )
     assert flag(create, "--body") == f"{rn_files.OUTCOME}\n\nCloses #38"
@@ -210,7 +210,7 @@ def test_a_kept_before_a_need_is_picked_pushes_and_asks_gh_nothing(
     Then the change is committed and pushed, and gh is asked nothing."""
     run_ = with_command(made(tmp_path))
     kept(run_, steering, MESSAGE, host)
-    assert head(str(tmp_path / "origin.git"), run_.branch) == head(run_.worktree)
+    assert head(str(tmp_path / "origin.git"), BRANCH) == head(run_.worktree)
     assert gh_double.state(gh_state)["asked"] == []
 
 
@@ -224,7 +224,7 @@ def test_a_kept_with_gh_logged_out_pushes_then_is_missing_its_login(
     gh_double.logged_out(gh_state)
     with pytest.raises(Missing, match="no login"):
         kept(run_, STEERING, MESSAGE, host)
-    assert head(str(tmp_path / "origin.git"), run_.branch) == head(run_.worktree)
+    assert head(str(tmp_path / "origin.git"), BRANCH) == head(run_.worktree)
 
 
 def test_a_kept_that_gh_may_not_open_is_missing_the_right(tmp_path: Any, host: Any) -> None:

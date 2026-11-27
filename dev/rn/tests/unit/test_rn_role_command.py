@@ -28,13 +28,18 @@ def made(tmp_path: Any) -> RunPlace:
     return rn_files.run_with_origin(str(tmp_path), NAME)
 
 
+def top(run_: RunPlace) -> str:
+    """The user's repository, beside the run's worktree."""
+    return os.path.join(os.path.dirname(run_.worktree), "accounting")
+
+
 def ended(run_: RunPlace, agent: str, cwd: str = "", host: Any = None) -> tuple[int, str, str]:
     """What the hook gives once the agent ends in the session's folder, the repository's top
     unless another is given."""
     given = json.dumps(
         {
             "session_id": "abc123",
-            "cwd": cwd or run_.repository,
+            "cwd": cwd or top(run_),
             "hook_event_name": "SubagentStop",
             "stop_hook_active": False,
             "agent_id": "a1",
@@ -43,7 +48,7 @@ def ended(run_: RunPlace, agent: str, cwd: str = "", host: Any = None) -> tuple[
             "last_assistant_message": "done",
         }
     )
-    gh = host or gh_double.host(os.path.join(os.path.dirname(run_.repository), "gh"))
+    gh = host or gh_double.host(os.path.join(os.path.dirname(top(run_)), "gh"))
     return main(["ended"], given, rn_files.RN, gh)
 
 
@@ -52,8 +57,8 @@ def subject(run_: RunPlace) -> str:
 
 
 def pushed(run_: RunPlace) -> bool:
-    origin = os.path.join(os.path.dirname(run_.repository), "origin.git")
-    remote = git(origin, "rev-parse", run_.branch).strip()
+    origin = os.path.join(os.path.dirname(top(run_)), "origin.git")
+    remote = git(origin, "rev-parse", "work").strip()
     return remote == git(run_.worktree, "rev-parse", "HEAD").strip()
 
 
@@ -103,9 +108,11 @@ def test_a_later_result_takes_in_the_steps_and_keeps_the_issues(made: RunPlace) 
 def test_a_roles_change_is_committed_and_pushed_from_inside_the_runs_worktree(
     made: RunPlace,
 ) -> None:
-    """Given a run whose generator wrote the command, and a session in the run's worktree.
+    """Given a run with its steering, whose generator wrote the command, and a session in the
+    run's worktree.
     When the generator ends.
     Then the change is committed as `rn: the generator ended`, and pushed."""
+    rn_files.write_json(made.steering, rn_files.steering())
     write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
     assert ended(made, "rn:generator", cwd=made.worktree) == (0, "", "")
     assert subject(made) == "rn: the generator ended"
@@ -147,13 +154,22 @@ def test_a_pruners_result_the_steering_refuses_keeps_it_going(made: RunPlace) ->
 
 
 def test_nothing_is_committed_where_nothing_changed(made: RunPlace) -> None:
-    """Given a run whose worktree holds no change, and a folder .rn/best-practices in the user's
-    checkout, which is no run's.
+    """Given a run whose steering is committed, and nothing changed since.
     When the evaluator ends.
     Then it gives 0, and commits nothing."""
-    os.makedirs(os.path.join(made.repository, ".rn", "best-practices"))
+    rn_files.committed_steering(made.worktree, made.name, rn_files.steering())
     before = git(made.worktree, "rev-parse", "HEAD")
     assert ended(made, "rn:evaluator") == (0, "", "")
+    assert git(made.worktree, "rev-parse", "HEAD") == before
+
+
+def test_a_run_before_its_first_weighing_keeps_nothing(made: RunPlace) -> None:
+    """Given a run with no steering yet, its folder holding a note of the hearing.
+    When a role ends.
+    Then it gives 0, and commits nothing, as the pruner's first result makes the steering."""
+    write_files(made.folder, {"hearing.md": "for the accountants\n"})
+    before = git(made.worktree, "rev-parse", "HEAD")
+    assert ended(made, "rn:generator") == (0, "", "")
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
@@ -200,13 +216,15 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
 def test_a_push_that_fails_is_said_after_the_commit(
     made: RunPlace, origin: str | None, code: int, says: str
 ) -> None:
-    """Given a run whose change can't be pushed, as it has no origin, or one that isn't there.
+    """Given a run with its steering whose change can't be pushed, as it has no origin, or one that
+    isn't there.
     When the generator ends.
     Then it gives 1 or 2 saying why, and the commit is kept."""
-    git(made.repository, "remote", "remove", "origin")
+    git(top(made), "remote", "remove", "origin")
     if origin:
-        gone = os.path.join(os.path.dirname(made.repository), origin)
-        git(made.repository, "remote", "add", "origin", gone)
+        gone = os.path.join(os.path.dirname(top(made)), origin)
+        git(top(made), "remote", "add", "origin", gone)
+    rn_files.write_json(made.steering, rn_files.steering())
     write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
     given, _, err = ended(made, "rn:generator")
     assert (given, says in err) == (code, True)

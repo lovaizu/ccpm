@@ -14,12 +14,10 @@ from gh import gh_double
 
 @pytest.fixture(autouse=True)
 def temp(tmp_path: Any, monkeypatch: pytest.MonkeyPatch) -> Iterator[str]:
-    """The system's temporary folder of the case, empty, in a session that herdr doesn't run, as
-    rn's developers may run the cases in herdr."""
+    """The system's temporary folder of the case, empty."""
     folder = os.path.join(str(tmp_path), "system-temp")
     os.makedirs(folder)
     monkeypatch.setattr(tempfile, "tempdir", folder)
-    monkeypatch.delenv("HERDR_ENV", raising=False)
     yield folder
 
 

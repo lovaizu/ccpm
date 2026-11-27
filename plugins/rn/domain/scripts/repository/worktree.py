@@ -1,14 +1,13 @@
-"""Decides how a run's worktree comes to be and is found again: made with its branch from the
-default branch that origin's HEAD names, with the run's folder empty for the pruner's first result;
-found from the runs' branches whose committed steering hasn't ended, its worktree made again where
-none lies; and removed, here and on GitHub, where the user cancels it. Where the user works in
-herdr, herdr makes each worktree in a workspace of its own, or opens one made again, as herdr shows
-only the worktrees it holds, and removes each it holds."""
+"""Decides how a run comes to be in the worktree it works in and is found again: made as an empty
+folder in a worktree that the orchestrator chose, never the repository's own checkout; found in
+each worktree whose branch or uncommitted changes hold its folder; and removed, here and on GitHub,
+where the user cancels it."""
 
 from __future__ import annotations
 
 import json
 import os
+import re
 from typing import NamedTuple
 
 from fault import CantRun, Missing, Wrong
@@ -16,182 +15,111 @@ from host import Host, checked
 from place import RunPlace
 from steering.due import due
 
-# The line of info/exclude that keeps the runs' worktrees out of the user's untracked files.
-_EXCLUDED = "/.claude/worktrees/"
-# The branches of the runs: the local ones, and origin's as the repository last fetched them.
-_LOCAL = "refs/heads/rn-*"
-_ORIGINS = "refs/remotes/origin/rn-*"
-# What a pick-up fetches of origin: the runs' branches, each ref of one that origin no longer
-# holds pruned, so that a run deleted on GitHub is never picked up.
-_FETCH = ["git", "fetch", "-q", "--prune", "origin", f"+refs/heads/rn-*:{_ORIGINS}"]
-# The variable that herdr sets in each of its panes, by which rn tells that the user works in herdr.
-_HERDR = "HERDR_ENV"
+# The default branch, as origin's HEAD names it, from which each run's branch grows.
+_DEFAULT = "refs/remotes/origin/HEAD"
+# A run's folder in a path that git gives from a worktree's top.
+_RUN = re.compile(r"\.rn/([0-9]{8}-[a-z0-9]+(?:-[a-z0-9]+){0,4})/")
 
 
 def new(run: RunPlace, host: Host) -> RunPlace:
-    """Makes a run's worktree and its folder.
+    """Makes a run's folder in the worktree it works in.
 
-    Takes: the run to make, named by `place.named` from the day and the slug of the work, and the
-    host.
+    Takes: the run to make, its worktree the one the orchestrator chose, and its name by
+    `place.named` from the day and the slug of the work, and the host.
     Gives: the run, made.
-    Changes: adds the branch `rn-<name>` from the head of the default branch that
-    `git symbolic-ref refs/remotes/origin/HEAD` names, tracking none, checks it out in the run's
-    worktree, makes the run's folder there, empty, and keeps the runs' worktrees out of the user's
-    untracked files; where the user works in herdr, herdr makes the worktree and opens it in a
-    workspace, without the focus, from the default branch's commit, so that the branch tracks
-    none; the user's own worktree and branch stay as they were.
-    Refuses: Missing where the run's repository isn't the top of a git repository, or
-    `refs/remotes/origin/HEAD` names no default branch; Wrong where a run of the name already lies
-    there; CantRun where git or herdr fails, with what it said.
+    Changes: makes the run's folder in its worktree, empty, for the pruner's first result.
+    Refuses: Missing where the worktree isn't the top of a git worktree; Wrong where it's the
+    repository's own checkout, as the user's own work stays as they left it, or where a run of
+    the name already lies there.
     """
-    top = host(["git", "rev-parse", "--show-toplevel"], run.repository)
-    if top.code != 0 or os.path.realpath(top.out.strip()) != os.path.realpath(run.repository):
-        raise Missing(f"{run.repository} isn't the top of a git repository; run /rn:on at its top")
-    if os.path.exists(run.worktree):
-        raise Wrong(f"a run {run.name} already lies at {run.worktree}; pick it up with /rn:up")
-    default = host(["git", "symbolic-ref", "refs/remotes/origin/HEAD"], run.repository)
-    if default.code != 0:
-        raise Missing(
-            "origin's HEAD names no default branch to start the run from; push the default branch"
-            " to origin, and run git remote set-head origin --auto"
+    top = host(["git", "rev-parse", "--show-toplevel"], run.worktree)
+    if top.code != 0 or os.path.realpath(top.out.strip()) != os.path.realpath(run.worktree):
+        raise Missing(f"{run.worktree} isn't the top of a git worktree; give the run's worktree")
+    if _own_checkout(run.worktree, host):
+        raise Wrong(
+            f"{run.worktree} is the repository's own checkout; give a worktree for the run, made"
+            " by the repository's rules or at the default place"
         )
-    if os.environ.get(_HERDR):
-        base = checked(
-            host,
-            ["git", "rev-parse", default.out.strip()],
-            run.repository,
-            CantRun,
-            "git can't name the default branch's commit",
-        ).out.strip()
-        create = ["herdr", "worktree", "create", "--cwd", run.repository, "--branch", run.branch]
-        made = [*create, "--base", base, "--path", run.worktree, "--no-focus"]
-        checked(host, made, run.repository, CantRun, "herdr can't make the run's worktree")
-    else:
-        add = ["git", "worktree", "add", "-q", "--no-track", "-b", run.branch, run.worktree]
-        what = "git can't make the run's worktree"
-        checked(host, [*add, default.out.strip()], run.repository, CantRun, what)
-    _exclude(run, host)
+    if os.path.exists(run.folder):
+        raise Wrong(f"a run {run.name} already lies at {run.folder}; pick it up with /rn:up")
     os.makedirs(run.folder)
     return run
 
 
-def _opened(run: RunPlace, host: Host) -> None:
-    """Has herdr open the run's worktree in a workspace, where the user works in herdr."""
-    if os.environ.get(_HERDR):
-        opened = ["herdr", "worktree", "open", "--cwd", run.repository, "--path", run.worktree]
-        what = "herdr can't open the run's worktree"
-        checked(host, [*opened, "--no-focus"], run.repository, CantRun, what)
+def _own_checkout(worktree: str, host: Host) -> bool:
+    """Whether the worktree is the repository's own checkout, whose git folder is the common one."""
+    asked = ["git", "rev-parse", "--path-format=absolute", "--git-dir", "--git-common-dir"]
+    own, common = checked(host, asked, worktree, CantRun, "git can't name its folder").out.split()
+    return os.path.realpath(own) == os.path.realpath(common)
 
 
-def _exclude(run: RunPlace, host: Host) -> None:
-    """Keeps the runs' worktrees out of what git shows untracked in the user's own worktree, by
-    the repository's info/exclude, which no commit holds, where its line isn't there yet."""
-    found = host(["git", "rev-parse", "--git-path", "info/exclude"], run.repository)
-    path = os.path.join(run.repository, found.out.strip())
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "a+", encoding="utf-8") as file:
-        file.seek(0)
-        if _EXCLUDED not in file.read().splitlines():
-            file.write(f"\n{_EXCLUDED}\n")
+def runs(cwd: str, host: Host) -> list[RunPlace]:
+    """Each run of the repository that the folder lies in.
 
-
-class Found(NamedTuple):
-    """The runs that a pick-up found, newest first, and, where it couldn't ask GitHub for the runs
-    it holds, `the runs on GitHub, as git can't ask origin: <what git said>`, as one line, else
-    None."""
-
-    runs: list[RunPlace]
-    unchecked: str | None
-
-
-def found(repository: str, host: Host) -> Found:
-    """The runs to pick up, the worktree of each made again where none lies.
-
-    Takes: the top of the user's repository, and the host.
-    Gives: the run of the branch that the user's checkout is on alone, in the checkout, where the
-    checkout holds that run's steering, as a session started on the branch names its run; else the
-    runs that `left` gives once origin's branches of the runs are fetched, each that
-    origin no longer holds pruned; where git can't fetch, such as with no network, those of the
-    local branches alone, with what it couldn't check.
-    Changes: fetches origin's branches `rn-*`, pruning the refs of those that origin no longer
-    holds; where a run's worktree is gone, prunes git's record of gone worktrees and adds the
-    worktree again, on the local branch `rn-<name>` where it lies, else on a new one from
-    origin's, so that a pick-up works in a fresh clone or on another machine.
-    Refuses: Wrong as `left` refuses; CantRun where git can't make a worktree, with what it said.
-    """
-    here = _checked_out(repository, host)
-    if here is not None:
-        return Found([here], None)
-    fetched = host(_FETCH, repository)
-    unchecked = None
-    if fetched.code != 0:
-        said = _line(fetched.out + fetched.err)
-        unchecked = f"the runs on GitHub, as git can't ask origin: {said}"
-    runs = left(repository, host, origins=unchecked is None)
-    for run in runs:
-        if not os.path.isdir(run.worktree):
-            _made_again(run, host)
-    return Found(runs, unchecked)
-
-
-def _checked_out(repository: str, host: Host) -> RunPlace | None:
-    """The run of the branch that the user's checkout is on, where the checkout holds its
-    steering, else None."""
-    branch = host(["git", "branch", "--show-current"], repository).out.strip()
-    if not branch.startswith("rn-"):
-        return None
-    run = RunPlace(repository, branch[len("rn-") :], checkout=True)
-    return run if os.path.isfile(run.steering) else None
-
-
-def left(repository: str, host: Host, origins: bool = True) -> list[RunPlace]:
-    """The runs with work left, from the runs' commits.
-
-    Takes: the top of the user's repository, the host, and whether origin's branches count.
-    Gives: the run of each branch among the local branches `rn-*` and, where `origins` says so,
-    origin's, as the repository last fetched them, newest first by its last commit, each run once,
-    by its newest branch, whose committed steering, `.rn/<name>/steering.json` on the branch,
-    has something due other than `ended`, as `steering.due` gives it; none where the folder isn't
-    a git repository.
+    Takes: a folder in the repository, and the host.
+    Gives: for each worktree of the repository, newest first by its last commit, each run whose
+    folder the worktree's branch changed since the default branch that origin's HEAD names, or
+    that the worktree holds uncommitted; none where the folder lies in no git repository.
     Changes: nothing.
-    Refuses: Wrong where a branch's steering isn't JSON, naming the branch and the path.
+    Refuses: nothing.
     """
-    refs = [_LOCAL, _ORIGINS] if origins else [_LOCAL]
-    listed = host(
-        ["git", "for-each-ref", "--sort=-committerdate", "--format=%(refname)", *refs], repository
+    listed = host(["git", "worktree", "list", "--porcelain"], cwd)
+    if listed.code != 0:
+        return []
+    found = []
+    for worktree in _newest_first(_worktrees(listed.out), host):
+        found += [RunPlace(worktree, name) for name in _names(worktree, host)]
+    return found
+
+
+def left(cwd: str, host: Host) -> list[RunPlace]:
+    """The runs with work left, as `runs` gives them, each whose steering has something due other
+    than its end, or that has no steering yet.
+
+    Refuses: Wrong where a run's steering isn't JSON, naming its path.
+    """
+    return [each for each in runs(cwd, host) if _open(each)]
+
+
+def _worktrees(porcelain: str) -> list[str]:
+    paths = [
+        line[len("worktree ") :] for line in porcelain.splitlines() if line.startswith("worktree ")
+    ]
+    return [each for each in paths if os.path.isdir(each)]
+
+
+def _newest_first(worktrees: list[str], host: Host) -> list[str]:
+    def when(worktree: str) -> int:
+        shown = host(["git", "log", "-1", "--format=%ct"], worktree).out.strip()
+        return int(shown or 0)
+
+    return sorted(worktrees, key=when, reverse=True)
+
+
+def _names(worktree: str, host: Host) -> list[str]:
+    """The names of the runs whose folder the worktree's branch changed or holds uncommitted."""
+    changed = host(
+        ["git", "log", "--format=", "--name-only", f"{_DEFAULT}..HEAD", "--", ".rn"], worktree
     )
-    seen: set[str] = set()
-    runs = []
-    for ref in listed.out.split() if listed.code == 0 else []:
-        name = ref.rpartition("/")[2][len("rn-") :]
-        if name in seen:
-            continue
-        seen.add(name)
-        if _open(repository, ref, f".rn/{name}/steering.json", host):
-            runs.append(RunPlace(repository, name))
-    return runs
+    held = host(["git", "status", "--porcelain", "--untracked-files=all", "--", ".rn"], worktree)
+    paths = (changed.out if changed.code == 0 else "") + held.out
+    names: list[str] = []
+    for found in _RUN.finditer(paths):
+        if found[1] not in names:
+            names.append(found[1])
+    return names
 
 
-def _open(repository: str, ref: str, path: str, host: Host) -> bool:
-    """Whether the steering that the branch commits has something due other than its end."""
-    shown = host(["git", "show", f"{ref}:{path}"], repository)
-    if shown.code != 0:
-        return False
-    try:
-        steering = json.loads(shown.out)
-    except ValueError as error:
-        raise Wrong(f"{ref}:{path}: isn't JSON: {error}") from None
+def _open(run: RunPlace) -> bool:
+    """Whether the run has work left: no steering yet, or one with something due but its end."""
+    if not os.path.isfile(run.steering):
+        return True
+    with open(run.steering, encoding="utf-8") as f:
+        try:
+            steering = json.load(f)
+        except ValueError as error:
+            raise Wrong(f"{run.steering}: isn't JSON: {error}") from None
     return due(steering) != ["ended"]
-
-
-def _made_again(run: RunPlace, host: Host) -> None:
-    """Makes the run's worktree again, on its local branch, else on one from origin's."""
-    host(["git", "worktree", "prune"], run.repository)
-    # git takes a branch that only origin holds as a new local branch from origin's, tracking it.
-    add = ["git", "worktree", "add", "-q", run.worktree, run.branch]
-    checked(host, add, run.repository, CantRun, "git can't make the run's worktree again")
-    _exclude(run, host)
-    _opened(run, host)
 
 
 class Gone(NamedTuple):
@@ -208,74 +136,61 @@ def removed(run: RunPlace, host: Host) -> Gone:
     Takes: the run, and the host.
     Gives: what it did of the run on GitHub, as GitHub itself answers, as a ref here may outlive
     the branch it records: in `removed`, the URL of the pull request that it closed, where
-    `gh pr view rn-<name>` gives one open, then `origin/rn-<name>`, where `git ls-remote` finds
+    `gh pr view <branch>` gives one open, then `origin/<branch>`, where `git ls-remote` finds
     origin holding the branch and it deleted it; in `kept`, for each that git or gh couldn't ask
-    or remove, such as with no network or no login, `the pull request of rn-<name> on GitHub, as
+    or remove, such as with no network or no login, `the pull request of <branch> on GitHub, as
     gh can't ask GitHub: <what gh said>`, `the pull request <URL> on GitHub, as gh can't close
-    it: <what gh said>`, `the branch rn-<name> on GitHub, as git can't ask origin: <what git
-    said>`, or `the branch rn-<name> on GitHub, as git can't delete it: <what git said>`, each
+    it: <what gh said>`, `the branch <branch> on GitHub, as git can't ask origin: <what git
+    said>`, or `the branch <branch> on GitHub, as git can't delete it: <what git said>`, each
     one line. A pull request that gh gives closed or merged, such as an earlier run's of the same
     branch's name, is left as it is.
-    Changes: removes the run's worktree, with each change in it that isn't committed, by herdr
-    where herdr holds it open in a workspace, else by git, and then its
-    local branch `rn-<name>`; then closes the branch's open pull request, before the branch goes,
-    as GitHub closes it by itself once its branch is deleted; then deletes origin's branch
-    `rn-<name>` and the repository's ref of it, or that ref alone where origin holds no such
-    branch, so that no later pick-up meets it; the user's own worktree and branch stay as they
-    were.
-    Refuses: Wrong where the user's checkout is on the run's branch, as rn never removes the
-    user's checkout, saying to switch it to another branch first; CantRun where git fails to
-    remove the worktree or the branch here, with what it said, the branch then kept where the
-    worktree stays.
+    Changes: removes the run's worktree, with each change in it that isn't committed, and then its
+    local branch; then closes the branch's open pull request, before the branch goes, as GitHub
+    closes it by itself once its branch is deleted; then deletes origin's branch and the
+    repository's ref of it, or that ref alone where origin holds no such branch.
+    Refuses: Wrong where the run's worktree is the repository's own checkout, as rn never removes
+    it; CantRun where git fails to name the branch, or to remove the worktree or the branch here,
+    with what it said, the branch then kept where the worktree stays.
     """
-    if run.checkout:
-        raise Wrong(
-            f"your checkout is on the run's branch {run.branch}; switch it to another branch, such"
-            " as by git switch main, and cancel the run again"
-        )
-    top = run.repository
-    workspace = _workspace(run, host)
-    if workspace:
-        remove = ["herdr", "worktree", "remove", "--workspace", workspace, "--force"]
-        checked(host, remove, top, CantRun, "herdr can't remove the run's worktree")
-    else:
-        remove = ["git", "worktree", "remove", "--force", run.worktree]
-        checked(host, remove, top, CantRun, "git can't remove the run's worktree")
-    checked(host, ["git", "branch", "-D", run.branch], top, CantRun, "git can't delete the branch")
+    if _own_checkout(run.worktree, host):
+        raise Wrong(f"{run.worktree} is the repository's own checkout, which rn never removes")
+    branch = _branch(run, host)
+    common = checked(
+        host,
+        ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+        run.worktree,
+        CantRun,
+        "git can't name the repository's folder",
+    ).out.strip()
+    top = os.path.dirname(common)
+    remove = ["git", "worktree", "remove", "--force", run.worktree]
+    checked(host, remove, top, CantRun, "git can't remove the run's worktree")
+    checked(host, ["git", "branch", "-D", branch], top, CantRun, "git can't delete the branch")
     gone = Gone([], [])
-    _pull_request_closed(run, host, gone)
-    _branch_deleted(run, host, gone)
+    _pull_request_closed(branch, top, host, gone)
+    _branch_deleted(branch, top, host, gone)
     return gone
 
 
-def _workspace(run: RunPlace, host: Host) -> str:
-    """The id of herdr's workspace that holds the run's worktree open, where the user works in
-    herdr and herdr lists one, else the empty string."""
-    if not os.environ.get(_HERDR):
-        return ""
-    listed = host(["herdr", "worktree", "list", "--cwd", run.repository], run.repository)
-    if listed.code != 0:
-        return ""
-    for each in json.loads(listed.out)["result"]["worktrees"]:
-        if os.path.realpath(each["path"]) == os.path.realpath(run.worktree):
-            return str(each["open_workspace_id"] or "")
-    return ""
+def _branch(run: RunPlace, host: Host) -> str:
+    asked = ["git", "branch", "--show-current"]
+    return checked(
+        host, asked, run.worktree, CantRun, "git can't name the work's branch"
+    ).out.strip()
 
 
-def _pull_request_closed(run: RunPlace, host: Host, gone: Gone) -> None:
-    """Closes the run's branch's open pull request, as `gh pr view` gives it, where there's one;
-    gh takes an open one of the branch before any closed or merged one."""
-    asked = host(["gh", "pr", "view", run.branch, "--json", "state,url"], run.repository)
+def _pull_request_closed(branch: str, top: str, host: Host, gone: Gone) -> None:
+    """Closes the branch's open pull request, as `gh pr view` gives it, where there's one; gh takes
+    an open one of the branch before any closed or merged one."""
+    asked = host(["gh", "pr", "view", branch, "--json", "state,url"], top)
     if asked.code != 0 and not asked.err.startswith("no pull requests found"):
         said = _line(asked.out + asked.err)
-        gone.kept.append(
-            f"the pull request of {run.branch} on GitHub, as gh can't ask GitHub: {said}"
-        )
+        gone.kept.append(f"the pull request of {branch} on GitHub, as gh can't ask GitHub: {said}")
         return
     shown = json.loads(asked.out) if asked.code == 0 else {"state": None}
     if shown["state"] != "OPEN":
         return
-    closed = host(["gh", "pr", "close", shown["url"]], run.repository)
+    closed = host(["gh", "pr", "close", shown["url"]], top)
     if closed.code == 0:
         gone.removed.append(shown["url"])
     else:
@@ -283,23 +198,22 @@ def _pull_request_closed(run: RunPlace, host: Host, gone: Gone) -> None:
         gone.kept.append(f"the pull request {shown['url']} on GitHub, as gh can't close it: {said}")
 
 
-def _branch_deleted(run: RunPlace, host: Host, gone: Gone) -> None:
-    """Deletes origin's branch of the run where `git ls-remote` finds it, and the repository's ref
-    of origin's branch where origin holds none."""
-    head = f"refs/heads/{run.branch}"
-    asked = host(["git", "ls-remote", "--heads", "origin", head], run.repository)
-    what = f"the branch {run.branch} on GitHub, as git can't"
+def _branch_deleted(branch: str, top: str, host: Host, gone: Gone) -> None:
+    """Deletes origin's branch where `git ls-remote` finds it, and the repository's ref of origin's
+    branch where origin holds none."""
+    head = f"refs/heads/{branch}"
+    asked = host(["git", "ls-remote", "--heads", "origin", head], top)
+    what = f"the branch {branch} on GitHub, as git can't"
     if asked.code != 0:
         gone.kept.append(f"{what} ask origin: {_line(asked.out + asked.err)}")
     elif head in [each.partition("\t")[2] for each in asked.out.splitlines()]:
-        deleted = host(["git", "push", "-q", "origin", "--delete", head], run.repository)
+        deleted = host(["git", "push", "-q", "origin", "--delete", head], top)
         if deleted.code == 0:
-            gone.removed.append(f"origin/{run.branch}")
+            gone.removed.append(f"origin/{branch}")
         else:
             gone.kept.append(f"{what} delete it: {_line(deleted.out + deleted.err)}")
     else:
-        ref = f"refs/remotes/origin/{run.branch}"
-        host(["git", "update-ref", "-d", ref], run.repository)
+        host(["git", "update-ref", "-d", f"refs/remotes/origin/{branch}"], top)
 
 
 def _line(said: str) -> str:

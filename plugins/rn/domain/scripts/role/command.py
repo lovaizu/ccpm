@@ -15,7 +15,8 @@ import form
 import push
 from fault import Answer, CantRun, Missing, Wrong
 from host import Host
-from place import RunPlace, of_folder
+from place import RunPlace
+from repository import worktree
 from steering import record, rounds
 
 USAGE = "usage: role ended   (Claude Code's input of SubagentStop on stdin)\n"
@@ -29,12 +30,13 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
 
     - For an agent that isn't one of rn's roles, as `agent_type` names it, `rn:<role>` or
       `<role>`: 0, doing nothing.
-    - For one of rn's roles, from the top of the repository that the input's `cwd` lies in, for
-      each run there, in a worktree of its own or in that checkout: 2 with each result that leaves
+    - For one of rn's roles, for each run of the repository that the input's `cwd` lies in, as
+      `worktree.runs` gives them: 2 with each result that leaves
       its schema, the pruner's or a Round's or a Fix's, a line each as `form.held` names it,
       changing nothing, so that Claude Code keeps the role going with those words until each
       holds. Otherwise it takes the pruner's result, where there's one, into the steering as
-      `record.taken_in` makes it and removes the result, then commits and pushes each run whose
+      `record.taken_in` makes it and removes the result, moves each deliverable on by its next
+      role's result as `record.moved` does, then commits and pushes each run whose
       worktree holds a change as `push.kept` does, as `rn: <the result's message>` for the
       pruner's and `rn: the <role> ended` for any other, and gives 0.
     - 1 with `role: <what's wrong>` where something `push.kept` needs is Missing, or 2 where it
@@ -48,7 +50,7 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
     if role not in _ROLES:
         return 0, "", ""
     schemas = os.path.join(plugin_root, "domain", "schemas")
-    runs = _runs(str(hook["cwd"]), host)
+    runs = worktree.runs(str(hook["cwd"]), host)
     faults = [fault for run in runs for fault in _faults(run, schemas)]
     if faults:
         return 2, "", "".join(f"role: {each}\n" for each in faults)
@@ -58,27 +60,6 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
     except (Missing, CantRun) as stopped:
         return (1 if isinstance(stopped, Missing) else 2), "", f"role: {stopped}\n"
     return 0, "", ""
-
-
-def _runs(cwd: str, host: Host) -> list[RunPlace]:
-    """Each run of the repository that the folder lies in: in a worktree of its own under the
-    repository's top, or in its checkout, as `place.of_folder` takes each folder."""
-    # The repository's own git folder, `<top>/.git`, which each of its worktrees shares.
-    common = host(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd)
-    if common.code != 0:
-        return []
-    repository = os.path.dirname(common.out.strip())
-    patterns = [
-        os.path.join(repository, ".claude", "worktrees", "rn-*", ".rn", "*"),
-        os.path.join(repository, ".rn", "*"),
-    ]
-    found = []
-    for folder in sorted(p for pattern in patterns for p in glob.glob(pattern)):
-        try:
-            found.append(of_folder(repository, folder))
-        except Wrong:
-            continue
-    return found
 
 
 def _faults(run: RunPlace, schemas: str) -> list[str]:
@@ -102,10 +83,11 @@ def _faults(run: RunPlace, schemas: str) -> list[str]:
 
 def _kept(run: RunPlace, role: str, schemas: str, host: Host) -> None:
     """Takes the pruner's result into the steering, where there's one, moves each deliverable on
-    by its next role's result, then commits and pushes the run where its worktree holds a
-    change."""
+    by its next role's result, then commits and pushes the run where its worktree holds a change;
+    a run with no steering yet, before its first weighing, has nothing to keep."""
     message = f"rn: the {role} ended"
-    steering = _steering(run, schemas)
+    held = _steering(run, schemas)
+    steering = held
     if os.path.isfile(run.pruner):
         result = form.held(
             run.pruner, os.path.join(schemas, "pruner.schema.json"), "the pruner's result"
@@ -113,8 +95,10 @@ def _kept(run: RunPlace, role: str, schemas: str, host: Host) -> None:
         steering = record.taken_in(steering, result)
         os.remove(run.pruner)
         message = f"rn: {result['message']}"
-    if steering is not None:
-        steering = record.moved(steering, _results(run, steering, schemas))
+    if steering is None:
+        return
+    steering = record.moved(steering, _results(run, steering, schemas))
+    if steering != held:
         with open(run.steering, "w", encoding="utf-8") as f:
             json.dump(steering, f, indent=2, ensure_ascii=False)
             f.write("\n")

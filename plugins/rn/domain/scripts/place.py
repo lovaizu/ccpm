@@ -1,5 +1,5 @@
-"""Decides where a run lies and what it's called: its name from the day and a slug of the work, its
-worktree and branch, its folder, and the paths of its steering, the pruner's result, and its
+"""Decides where a run lies and what it's called: its name from the day and a slug of the work, the
+worktree it works in, its folder there, and the paths of its steering, the pruner's result, and its
 Rounds and Fixes in that folder."""
 
 from __future__ import annotations
@@ -12,42 +12,23 @@ from datetime import date
 from fault import Wrong
 
 # A run's slug: one to five words of lower-case English letters and digits, joined by `-`, short
-# enough to read in a branch's name.
+# enough to read in a folder's name.
 _SLUG = re.compile(r"[a-z0-9]+(-[a-z0-9]+){0,4}")
-# A run's folder, `<repository>/.claude/worktrees/rn-<name>/.rn/<name>`, or `<checkout>/.rn/<name>`
-# where the user's checkout is on the run's branch.
-_FOLDER = re.compile(r"(.+)/\.claude/worktrees/rn-([^/]+)/\.rn/([^/]+)")
-_CHECKOUT = re.compile(r"(.+)/\.rn/([0-9]{8}-[a-z0-9]+(?:-[a-z0-9]+){0,4})")
-_FORM = "<repository>/.claude/worktrees/rn-<name>/.rn/<name>, or <checkout>/.rn/<name>"
+# A run's folder, `<worktree>/.rn/<name>`.
+_FOLDER = re.compile(r"(.+)/\.rn/([0-9]{8}-[a-z0-9]+(?:-[a-z0-9]+){0,4})")
 
 
 @dataclass(frozen=True)
 class RunPlace:
-    """One run of rn in the user's repository, by the repository's top and the run's name,
-    `<yyyymmdd>-<slug>`, from which each of its paths follows, and whether the user's own
-    checkout is on the run's branch, as where a session starts on it, so that the checkout is the
-    run's worktree."""
+    """One run of rn, by the worktree it works in and its name, `<yyyymmdd>-<slug>`, from which
+    each of its paths follows."""
 
-    repository: str
+    worktree: str
     name: str
-    checkout: bool = False
-
-    @property
-    def branch(self) -> str:
-        """The work's branch, which the worktree has checked out, `rn-<name>`."""
-        return f"rn-{self.name}"
-
-    @property
-    def worktree(self) -> str:
-        """The run's own worktree, `<repository>/.claude/worktrees/rn-<name>/`, or the user's
-        checkout where it's on the run's branch."""
-        if self.checkout:
-            return self.repository
-        return os.path.join(self.repository, ".claude", "worktrees", self.branch)
 
     @property
     def folder(self) -> str:
-        """The run's folder on the work's branch, `<worktree>/.rn/<name>/`."""
+        """The run's folder in its worktree, `<worktree>/.rn/<name>/`."""
         return os.path.join(self.worktree, ".rn", self.name)
 
     @property
@@ -87,21 +68,16 @@ def of_folder(cwd: str, folder: str) -> RunPlace:
     """The run whose folder a script is given.
 
     Takes: the folder that the command runs in, and the run's folder, from it or absolute, as
-    `<repository>/.claude/worktrees/rn-<name>/.rn/<name>`, or `<checkout>/.rn/<name>`.
-    Gives: the run, in the user's checkout for the second form.
+    `<worktree>/.rn/<name>`.
+    Gives: the run.
     Changes: nothing.
     Refuses: Wrong where the path isn't a run's folder of that form, or no such folder lies there,
     naming the path and the form it takes.
     """
     path = os.path.normpath(os.path.join(cwd, folder))
     found = _FOLDER.fullmatch(path)
-    checkout = _CHECKOUT.fullmatch(path) if not found else None
-    if found and found[2] == found[3]:
-        run = RunPlace(found[1], found[2])
-    elif checkout:
-        run = RunPlace(checkout[1], checkout[2], checkout=True)
-    else:
-        raise Wrong(f"{folder}: isn't a run's folder, which takes the form {_FORM}")
+    if not found:
+        raise Wrong(f"{folder}: isn't a run's folder, which takes the form <worktree>/.rn/<name>")
     if not os.path.isdir(path):
         raise Wrong(f"{folder}: no such folder; give the run's folder as made")
-    return run
+    return RunPlace(found[1], found[2])
