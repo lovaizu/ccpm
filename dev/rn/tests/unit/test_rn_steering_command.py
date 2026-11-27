@@ -1,8 +1,7 @@
-"""The unit cases of steering/command.py, steering's command line as the orchestrator runs it: the
-pruner's first result committed and pushed, a later one, each mark committed, the inspection's
-pass committed, what's due read, and each
-refusal: a result missing, not JSON, or out of its schema, a step's number that isn't one, a mark
-that the steering refuses, git refusing the commit, and arguments of another form."""
+"""The unit cases of steering/command.py, steering's command line as the orchestrator runs it: each
+mark committed and pushed, the inspection's pass committed, what's due read, and each refusal: a
+steering missing or out of its schema, a step's number that isn't one, a mark that the steering
+refuses, git refusing the commit, and arguments of another form."""
 
 from __future__ import annotations
 
@@ -55,61 +54,6 @@ def held(run_: RunPlace) -> Any:
         return json.load(f)
 
 
-def test_the_pruners_first_result_is_committed_as_the_steering(made: RunPlace) -> None:
-    """Given a run with no steering, and the pruner's result with the pick still asked.
-    When `steering commit` runs.
-    Then the steering holds the result's tree, is committed alone as `rn: <message>`, the result
-    is gone, and the hash and the question are printed."""
-    rn_files.write_json(
-        made.pruner,
-        {
-            "message": "the needs, with the pick asked",
-            "ost": rn_files.ost(target=None, questions=["Which need first?"]),
-        },
-    )
-    code, out, err = call(made, "commit")
-    assert (code, err) == (0, "")
-    assert out == f"{git(made.worktree, 'rev-parse', 'HEAD')}question\tWhich need first?\n"
-    assert git(made.worktree, "log", "-1", "--format=%s") == "rn: the needs, with the pick asked\n"
-    assert git(made.worktree, "show", "--name-only", "--format=") == f"{FOLDER}/steering.json\n"
-    assert not os.path.exists(made.pruner)
-    assert held(made)["ost"]["questions"] == ["Which need first?"]
-
-
-def test_a_later_result_takes_in_the_steps_and_keeps_the_issues(made: RunPlace) -> None:
-    """Given a steering with its issues and no step, and a result with the pick and the steps.
-    When `steering commit` runs.
-    Then the steering holds the steps open and the issues kept, and the first deliverable is due."""
-    steering(made, rn_files.steering([]))
-    rn_files.write_json(
-        made.pruner, {"message": "the user picked printing", "ost": rn_files.ost(), "steps": [STEP]}
-    )
-    code, out, _ = call(made, "commit")
-    assert (code, out.split("\n")[1]) == (0, f"make\t1\t{rn_files.COMMAND}\tcode")
-    assert held(made) == rn_files.steering()
-
-
-@pytest.mark.parametrize(
-    ("text", "says"),
-    [
-        (None, "no the pruner's result lies there"),
-        ("{", "isn't JSON"),
-        (json.dumps({"ost": {}}), "leaves its schema, pruner.schema.json: /message: is required"),
-    ],
-)
-def test_a_result_missing_not_json_or_out_of_its_schema_is_refused(
-    made: RunPlace, text: str | None, says: str
-) -> None:
-    """Given a run whose pruner's result is missing, isn't JSON, or lacks its message.
-    When `steering commit` runs.
-    Then it gives 1 saying what's wrong, and writes and commits nothing."""
-    if text is not None:
-        with open(made.pruner, "w", encoding="utf-8") as f:
-            f.write(text)
-    code, out, err = call(made, "commit")
-    assert (code, out, says in err, os.path.exists(made.steering)) == (1, "", True, False)
-
-
 def test_each_mark_is_committed_and_gives_whats_due(made: RunPlace) -> None:
     """Given a steering whose step is open.
     When the command and the guide are marked done, then step 1 trying.
@@ -160,6 +104,14 @@ def test_a_steering_out_of_its_schema_is_refused(made: RunPlace) -> None:
     steering(made, value)
     code, _, err = call(made, "due")
     assert (code, "/state: is required" in err) == (1, True)
+
+
+def test_a_mark_on_a_run_with_no_steering_is_refused(made: RunPlace) -> None:
+    """Given a run with no steering yet.
+    When a deliverable is marked done.
+    Then it gives 1 saying that no steering lies there."""
+    code, _, err = call(made, "deliverable", rn_files.COMMAND, "done")
+    assert (code, "no the steering lies there" in err) == (1, True)
 
 
 @pytest.mark.parametrize(

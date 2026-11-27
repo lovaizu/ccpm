@@ -7,7 +7,6 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from typing import Callable
 
 from fault import CantRun, Wrong
 from host import Host, checked
@@ -36,33 +35,13 @@ def starting_state(run: RunPlace, round_: str, host: Host) -> str:
     Takes: the run, the Round's folder, absolute, and the host.
     Gives: the folder's absolute path, as `folder` gives it.
     Changes: makes the folder anew, removing one left there, holding a clone of the work's branch
-    at the worktree's files as they stand, the uncommitted ones among them, without `.rn/`.
-    Refuses: CantRun where git can't clone or the folder can't be made, with what went wrong.
+    as committed, as rn's hook commits each role's changes once it ends, without `.rn/`.
+    Refuses: CantRun where git can't clone, with what it said.
     """
     made = folder(run, round_)
     if os.path.exists(made):
         shutil.rmtree(made)
     clone = ["git", "clone", "-q", "--branch", run.branch, run.worktree, made]
     checked(host, clone, run.worktree, CantRun, f"git can't clone the work's branch into {made}")
-    for name in os.listdir(made):
-        if name != ".git":
-            _remove(os.path.join(made, name))
-    shutil.copytree(run.worktree, made, ignore=_outside(run.worktree), dirs_exist_ok=True)
+    shutil.rmtree(os.path.join(made, ".rn"), ignore_errors=True)
     return made
-
-
-def _remove(path: str) -> None:
-    """Removes the file or the folder."""
-    if os.path.isdir(path):
-        shutil.rmtree(path)
-    else:
-        os.remove(path)
-
-
-def _outside(worktree: str) -> Callable[[str, list[str]], set[str]]:
-    """What copytree leaves out of the people's folder: the worktree's git and rn's own folder."""
-
-    def ignored(folder: str, names: list[str]) -> set[str]:
-        return {".git", ".rn"} & set(names) if folder == worktree else set()
-
-    return ignored

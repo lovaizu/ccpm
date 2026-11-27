@@ -1,6 +1,6 @@
 """The unit cases of repository/trial.py, the folder of the people's starting state in which an
 evaluator tries a deliverable: where it lies by its Round, a folder outside the run's Rounds
-refused, the worktree's files as they stand cloned there without rn's folder, one left there made
+refused, the work's branch as committed cloned there without rn's folder, one left there made
 anew, and git that can't clone."""
 
 from __future__ import annotations
@@ -22,12 +22,16 @@ NAME = "20261126-invoice-from-statement"
 
 @pytest.fixture
 def made(tmp_path: Any) -> RunPlace:
-    """A run whose worktree holds its steering committed and the command written, not committed."""
+    """A run whose worktree holds its steering and the command committed, as rn's hook commits
+    each role's changes, and a draft written since, not committed."""
     repo = rn_files.repository(str(tmp_path / "accounting"))
     held = RunPlace(repo, NAME)
     git(repo, "worktree", "add", "-q", "-b", held.branch, held.worktree)
     rn_files.committed_steering(held.worktree, NAME, rn_files.steering())
     write_files(held.worktree, {rn_files.COMMAND: "print('invoice')\n"})
+    git(held.worktree, "add", "-A")
+    git(held.worktree, "commit", "-q", "-m", "the command")
+    write_files(held.worktree, {"draft.md": "not yet\n"})
     return held
 
 
@@ -52,11 +56,11 @@ def test_a_folder_outside_the_runs_rounds_is_refused(made: RunPlace, where: str)
         folder(made, os.path.join(made.rounds, where))
 
 
-def test_the_starting_state_holds_the_work_as_it_stands_without_rns_folder(made: RunPlace) -> None:
+def test_the_starting_state_holds_the_work_as_committed_without_rns_folder(made: RunPlace) -> None:
     """Given a folder of the Round left there from before, holding a stray file.
     When the starting state is made.
-    Then it holds the README and the command written, a git clone of the work's branch, and
-    neither rn's folder nor the stray file."""
+    Then it holds the README and the command, a git clone of the work's branch, and neither rn's
+    folder, the draft not committed, nor the stray file."""
     stale = folder(made, round_of(made))
     write_files(stale, {"stray.txt": "old\n"})
     made_at = starting_state(made, round_of(made), run)

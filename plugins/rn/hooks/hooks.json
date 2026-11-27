@@ -1,0 +1,15 @@
+{
+  "description": "Once one of rn's roles ends, checks its result against its schema and keeps the role going until it holds, takes a pruner's result into the steering, and commits and pushes the run's changes.",
+  "hooks": {
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/role\" ended"
+          }
+        ]
+      }
+    ]
+  }
+}

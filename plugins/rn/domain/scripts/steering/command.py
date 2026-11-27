@@ -17,8 +17,7 @@ from place import RunPlace, of_folder
 from steering import due, record
 
 USAGE = """\
-usage: steering commit <run>
-       steering step <run> <number> open|trying|done
+usage: steering step <run> <number> open|trying|done
        steering deliverable <run> <path> open|done
        steering inspected <run>
        steering due <run>
@@ -29,11 +28,6 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     """The exit code, stdout, and stderr of `steering` with the arguments, from the folder `cwd`,
     with rn's folder at `plugin_root`, and git reached through `host`.
 
-    - `commit <run>`: takes the pruner's result, `<run>/pruner.json` in the form of
-      domain/schemas/pruner.schema.json, into the steering as `record.taken_in` makes it, writes
-      the steering, removes the result, which no commit holds, commits and pushes each change as
-      `rn: <the result's message>` as `push.kept` does, and gives 0 printing the commit's hash,
-      then what's due, as `due` prints it.
     - `step <run> <number> <status>`: marks the step as `record.step_marked` does, commits and
       pushes as `rn: <its words>: <status>`, and gives 0 printing what's due.
     - `deliverable <run> <path> <status>`: marks the deliverable as `record.deliverable_marked`
@@ -55,21 +49,6 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     return answered(
         "steering", lambda: subcommand(of_folder(cwd, argv[1]), list(argv[2:]), schemas, host)
     )
-
-
-def _commit(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
-    result = form.held(
-        run.pruner, os.path.join(schemas, "pruner.schema.json"), "the pruner's result"
-    )
-    before = (
-        form.held(run.steering, os.path.join(schemas, "steering.schema.json"), "the steering")
-        if os.path.isfile(run.steering)
-        else None
-    )
-    steering = record.taken_in(before, result)
-    os.remove(run.pruner)
-    hash_ = _committed(run, steering, result["message"], host)
-    return 0, f"{hash_}\n" + _lines(due.due(steering)), ""
 
 
 def _step(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
@@ -113,7 +92,6 @@ def _lines(lines: list[str]) -> str:
 
 # Each subcommand, by its name, with the number of arguments it takes, its name among them.
 _SUBCOMMANDS: dict[str, tuple[Callable[[RunPlace, list[str], str, Host], Answer], int]] = {
-    "commit": (_commit, 2),
     "step": (_step, 4),
     "deliverable": (_deliverable, 4),
     "inspected": (_inspected, 2),
