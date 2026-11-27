@@ -289,6 +289,18 @@
       {
         "decision": "Have the generator hand back only the files it wrote or a question, as the evaluator judges each condition with its lines, and no one is at a loss without the generator's copy of them.",
         "by": "user"
+      },
+      {
+        "decision": "Take out of the evaluator the step for a deliverable that adds to what's there, as trying it as its people use it toward their aim already takes the addition.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a deliverable by Rounds of the generator and the evaluator, have the fixer mend what the Rounds leave, and only once the deliverable is whole have the refactorer, a role of its own, refactor it before the user tries it, keeping what it does, by the kind's refactor best practice, as making and refactoring apart is the practice of red, green, refactor, and what the user first touches holds the quality its kind needs.",
+        "by": "user"
+      },
+      {
+        "decision": "Keep what is particular to a kind, such as running tests for code, in that kind's best practice, and out of a role's prompt.",
+        "by": "user"
       }
     ],
     "questions": []
