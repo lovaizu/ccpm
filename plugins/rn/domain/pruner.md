@@ -41,7 +41,7 @@ question, only what the records leave open.
 6. For a problem to mend, such as the user's words on what they tried or an inspector's finding,
    write the least remedy as a decision by `rn` where its people would be at a loss without it,
    and leave to the user, as a question, a remedy that would change a decision of theirs. Where
-   it's to be mended now, say that the deliverable takes its fixer next.
+   you keep the mend for now, say that the deliverable takes its fixer next.
 7. For the run's end, ask the user of each need they didn't pick whether to make it now or keep it
    in an issue, with your proposal and why, so that the run grows one addition at a time and no
    need drops without their say. For a need to make now, mark it as the target, choose its least

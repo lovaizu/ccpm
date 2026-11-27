@@ -20,11 +20,11 @@ and go on, so that no detour that only rn's insides make reaches the user.
    Once they're settled, make the run by `repository new`, as no run exists before it, so a stop or
    a cancel during the hearing leaves nothing.
 2. Hand each search to a subagent, for the files the request bears on or for the ways to make a
-   need, so that your context holds the talk and the run, not what was read. Have it gather the
-   ways widely, the tool's own features, existing tools, and known practices, and check each
-   one's license, upkeep, open issues, and standing before you offer it, so that the user picks
-   only among ways that hold. Show them the ways with your recommendation, and hand their pick to
-   a pruner.
+   need, so that your context holds the talk and the run, not what the subagent read. Have it
+   gather the ways widely, the tool's own features, existing tools, and known practices, and
+   check each one's license, upkeep, open issues, and standing before you offer it, so that the
+   user picks only among ways that hold. Show them the ways with your recommendation, and hand
+   their pick to a pruner.
 3. Hand each fact that would change what the run aims at to a new pruner, so that one role weighs
    it as an outsider would: the settled hearing, the user's answer to a question, a role's result
    to weigh, a problem to mend, and the run's end. Speak afterward only from the steering and the
