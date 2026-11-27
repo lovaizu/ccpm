@@ -1,48 +1,25 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "fixer's result",
- "description": "What the fixer writes as it ends, at <fix>/fixer.json: fixed, with each file it wrote, or decision, with the decision that its mend would change or add, having mended nothing.",
- "oneOf": [
-  {
-   "type": "object",
-   "required": [
-    "result",
-    "files"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "result": {
-     "description": "fixed: the deliverable is mended within its decisions, and the repository's checks and tests pass on it, for it to be put up again.",
-     "const": "fixed"
-    },
-    "files": {
-     "description": "Each file it wrote, from the run's worktree's top.",
-     "type": "array",
-     "items": {
-      "type": "string",
-      "minLength": 1
-     }
-    }
-   }
+ "description": "What the fixer writes as it ends, at <fix>/fixer.json: fixed, with each file it wrote, once a pruner weighed the problem and the fixer mended it.",
+ "type": "object",
+ "required": [
+  "result",
+  "files"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "result": {
+   "description": "fixed: the deliverable is mended to the problem, and what was already there still holds, confirmed the same way before the mend and after it.",
+   "const": "fixed"
   },
-  {
-   "type": "object",
-   "required": [
-    "result",
-    "decision"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "result": {
-     "description": "decision: the mend would change or add a decision of the deliverable, so the fixer mended nothing, for one pruner to weigh the decision.",
-     "const": "decision"
-    },
-    "decision": {
-     "description": "The decision its mend would change or add, and why, which the orchestrator hands to one pruner as given.",
-     "type": "string",
-     "minLength": 1
-    }
+  "files": {
+   "description": "Each file it wrote, from the run's worktree's top.",
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
    }
   }
- ]
+ }
 }

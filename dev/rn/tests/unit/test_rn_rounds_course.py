@@ -1,8 +1,7 @@
 """The unit cases of rounds/course.py, what comes next for a deliverable: its first Round, each
 role in turn, each result that asks a judgment weighed first, Rounds again below the limit, the
 user's confirming of the findings that the limit leaves, the refactoring once each condition is
-good or the findings are confirmed, the end, and a Fix that is fixed and then refactored, or that
-names a decision weighed and then takes Rounds again."""
+good or the findings are confirmed, the end, and a Fix that is fixed and then refactored."""
 
 from __future__ import annotations
 
@@ -40,15 +39,14 @@ def test_a_deliverable_with_no_round_starts_one_of_content() -> None:
         (entry(CONTENT, 1, generator=MADE, evaluator=MORE), "weigh"),
         (entry(REFACTOR, 2), "refactorer"),
         (entry(FIX, 3), "fixer"),
-        (entry(FIX, 3, fixer={"result": "decision", "decision": "d"}), "weigh"),
     ],
-    ids=["generator", "evaluator", "point", "findings", "refactorer", "fixer", "decision"],
+    ids=["generator", "evaluator", "point", "findings", "refactorer", "fixer"],
 )
 def test_each_role_and_each_judgment_comes_in_its_turn_in_the_last_entry(
     last: Entry, expected: str
 ) -> None:
     """Given a last entry waiting on its generator, its evaluator, a pruner for a point or
-    findings, its refactorer, its fixer, or a pruner for a fixer's decision.
+    findings, its refactorer, or its fixer.
     When what's next is asked.
     Then that role or that weighing, in the last entry."""
     assert next_of([last]) == Next(expected, last)
@@ -99,11 +97,3 @@ def test_a_fixed_deliverable_is_refactored_and_a_refactored_one_is_done() -> Non
     fixed = entry(FIX, 3, fixer={"result": "fixed", "files": []})
     assert next_of([fixed]) == Next("new", stage=REFACTOR)
     assert next_of([entry(REFACTOR, 4, refactorer=MADE)]) == Next("done")
-
-
-def test_a_fixers_decision_weighed_takes_rounds_again() -> None:
-    """Given a Fix whose fixer named a decision, weighed.
-    When what's next is asked.
-    Then a new Round of content."""
-    last = entry(FIX, 3, True, fixer={"result": "decision", "decision": "d"})
-    assert next_of([last]) == Next("new", stage=CONTENT)

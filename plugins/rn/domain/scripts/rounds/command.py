@@ -143,7 +143,7 @@ def _judges_by(run: RunPlace, plugin_root: str, kind: str, entry: files.Entry) -
 
 
 def _result(entry: files.Entry) -> str:
-    role = next(each for each in ("fixer", "evaluator", "generator") if each in entry.results)
+    role = next(each for each in ("evaluator", "generator") if each in entry.results)
     return os.path.join(entry.folder, files.RESULTS[role][0])
 
 

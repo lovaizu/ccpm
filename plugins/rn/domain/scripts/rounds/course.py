@@ -1,10 +1,10 @@
 """Decides what comes next for a deliverable from its Rounds and Fixes: content made and judged
 until each condition is good, at most LIMIT judged Rounds; then, where findings are left, the
 user's confirming of them; then a Fix of what the user would have mended; then a Round of
-refactoring of the whole, which no evaluator judges; then the deliverable is done. A Fix goes to
-its fixer, then to the refactoring, or, where its mend would change a decision, to a pruner and
-then to Rounds again. Each result that asks a judgment, a generator's point, an evaluator's
-findings, or a fixer's decision, goes to a pruner before the course goes on."""
+refactoring of the whole, which no evaluator judges; then the deliverable is done. A Fix, whose
+problem a pruner weighed first, goes to its fixer, then to the refactoring. Each result that asks a
+judgment, a generator's point or an evaluator's findings, goes to a pruner before the course goes
+on."""
 
 from __future__ import annotations
 
@@ -47,12 +47,7 @@ def next_of(made: list[Entry]) -> Next:
 
 
 def _fix(last: Entry) -> Next:
-    fixer = last.results.get("fixer")
-    if fixer is None:
-        return Next("fixer", last)
-    if fixer["result"] == "fixed":
-        return Next("new", stage=REFACTOR)
-    return Next("new", stage=CONTENT) if last.weighed else Next("weigh", last)
+    return Next("fixer", last) if "fixer" not in last.results else Next("new", stage=REFACTOR)
 
 
 def _content(made: list[Entry], last: Entry) -> Next:
