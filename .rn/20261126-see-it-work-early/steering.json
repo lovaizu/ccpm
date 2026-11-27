@@ -351,7 +351,7 @@
         "by": "user"
       },
       {
-        "decision": "Have the inspector review the pull request as its author would before asking for review, by a pull-request best practice of rn that it uses as domain/references/evaluating-with-best-practices.md says: that it agrees with every file already in the repository and the repository's rules, and its title and description with its diff and its issue; that it holds nothing its purpose doesn't need; and that it leaves nothing behind, such as a test, a document, or a commit not pushed, as reviewing one's own pull request first is the practice of GitHub's and Google's guides, and what the people get is the evaluator's.",
+        "decision": "Have the inspector review the pull request as its author would before asking for review, by the practice that its prompt holds, from GitHub's and Google's guides: that it agrees with every file already in the repository and the repository's rules, and its title and description with its diff and its issue; that it holds nothing its purpose doesn't need; and that it leaves nothing behind, such as a test, a document, or a commit not pushed. The practice stays in the prompt and out of rn's best practices, as the inspector checks the same for every pull request, and a best practice holds what differs by a deliverable's kind. What the people get is the evaluator's.",
         "by": "user"
       }
     ],
