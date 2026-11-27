@@ -159,6 +159,10 @@
         "by": "user"
       },
       {
+        "decision": "Give work outside #86's purpose its own issue, herdr worktree, and pull request, so it reaches main without waiting.",
+        "by": "user"
+      },
+      {
         "decision": "Speak to the user in plain words, never in rn's or the plan's own terms, so the user follows without learning them.",
         "by": "user"
       },
