@@ -60,7 +60,7 @@
           }
         ],
         "solution": {
-          "solution": "A command of a new overnight plugin, in Python 3 and its standard library alone, that runs a queue file of commands, any command such as `claude -p`, tries a failed one again after 1 minute, doubling the wait each try up to 15 minutes and then every 15 minutes, and writes how each one ended to a report file for the morning; the count of tries, the start time, and the number side by side come as additions, one step each.",
+          "solution": "A command of a new overnight plugin, in Python 3 and its standard library alone, that runs a queue file of commands, any command such as `claude -p`, tries a failed one again after 1 minute, doubling the wait each try up to a cap and then waiting the cap each try, and writes how each one ended to a report file for the morning; the count of tries, the start time, and the number side by side come as additions, one step each.",
           "why": "The user said needs 1 to 3 are logic apart from Claude Code and that the comeback is a retry, so a runner that knows only commands and exit statuses meets all three without reading when the limit lifts, and a queue file is what an AI can write and run, which is all the user asked of need 4.",
           "assumption": {
             "assumption": "A `claude -p` run that stops at the usage limit exits with a failure, so the runner sees it and the same command run again after the limit lifts finishes the work.",
@@ -93,11 +93,11 @@
         "by": "user"
       },
       {
-        "decision": "Hold the runner in a new plugin, overnight, under plugins/overnight, as the issue names it and the plugin guide puts what runs on users' machines there.",
-        "by": "rn"
+        "decision": "Lengthen the wait between tries, so that fewer tries span the usage limit's window, as the user said the interval is too short and that is why the count of tries is large.",
+        "by": "user"
       },
       {
-        "decision": "Try a failed command again after 1 minute, doubling the wait each try up to 15 minutes and then every 15 minutes, as the usage limit lifts within the 5 hours of its window that the user named, a doubling without a cap would wait hours past the lift and waste the night, and a try at the limit fails at once, so the work comes back within 15 minutes of the lift.",
+        "decision": "Hold the runner in a new plugin, overnight, under plugins/overnight, as the issue names it and the plugin guide puts what runs on users' machines there.",
         "by": "rn"
       },
       {
@@ -110,7 +110,7 @@
       }
     ],
     "questions": [
-      "回数を指定しないときの試行回数の既定はいくつにしますか？\n1. 25回（推奨）: 1, 2, 4, 8分、その後15分おきに試すと、25回目は最初に止まってから約5時間15分後になり、5時間制限の解除をまたいで待てます。ほかの理由で壊れたコマンドは、朝までに止まり、利用枠を使い続けません。\n2. 無制限: 成功するまで一晩中試します。壊れたコマンドが後ろの作業を止め続けます。\n3. 3回など少なく: 制限の解除より前にあきらめるので、制限で止まった作業が戻りません。",
+      "試行の間隔の上限を何分にしますか？回数を指定しないときの既定は、5時間制限の解除をまたぐ回数として、この上限から決まります。なお、制限中の試行はすぐ失敗するので利用枠を使いません。上限を伸ばすと回数は減り、その分、解除から再開までの待ちが最大で上限まで伸びます。\n1. 30分（推奨）: 1, 2, 4, 8, 16分、その後30分おき。既定は15回で、最初に止まってから約5時間1分後まで試します。解除から再開までの待ちは最大30分で、回数は今の案の25回から15回に減ります。\n2. 60分: 1, 2, 4, 8, 16, 32分、その後60分おき。既定は11回で、約5時間3分後まで試します。解除から最大60分、利用枠を使わない時間ができます。\n3. 15分のまま: 既定は25回で、約5時間15分後まで試します。解除から再開までの待ちは最大15分です。",
       "並行数を指定しないときの既定はいくつにしますか？\n1. 1（推奨）: リストに書いた順に一つずつ走ります。並べて走らせても利用枠は一つを分け合い、制限でそろって止まるので、一晩で終わる量は増えません。前の作業の結果に頼る作業も、順に走れば壊れません。\n2. 2以上: 利用枠より待ち時間が詰まる作業では早く終わりますが、書いた順は保たれません。",
       "plugins/overnight の LICENSE、.claude-plugin/plugin.json、CHANGELOG.md と、.claude-plugin/marketplace.json への overnight の項目は、どれもベストプラクティスの種類がない小さなファイルです。ベストプラクティスを作らずに軽い種類（light）で作ってよいですか？\n1. light で作る（推奨）: LICENSE は既にある MIT ライセンスの写し、plugin.json と marketplace の項目は plugins/rn と同じ数行の JSON で `claude plugin validate --strict` が確かめ、CHANGELOG は Keep a Changelog の形に一行ずつ書くだけです。\n2. 先にそれぞれのベストプラクティスを作る: 数行のファイルのために手間が増えます。"
     ]
