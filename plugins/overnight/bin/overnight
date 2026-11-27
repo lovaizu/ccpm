@@ -3,18 +3,33 @@
 # a run of rn in its worktree, and up to <parallel> of them run at once. A work
 # that exits non-zero, such as at the usage limit, resumes in the same session
 # after a wait that starts at 5 minutes and doubles to 60, and is given up after
-# 6 hours of waiting in all.
+# 6 hours of waiting in all. With --at, the batch waits until the next HH:MM,
+# such as when the usage window comes back, before it starts.
 #
-# Usage: overnight <parallel> <worktree>...
+# Usage: overnight [--at HH:MM] <parallel> <worktree>...
 #
 # The record, for the morning, lists for each work its session id, when it
 # failed, when and how often it resumed, and how it ended, next to the output of
 # each of its runs.
 set -euo pipefail
 
-if [ $# -lt 2 ]; then
-  echo "usage: overnight <parallel> <worktree>..." >&2
+usage() {
+  echo "usage: overnight [--at HH:MM] <parallel> <worktree>..." >&2
   exit 2
+}
+at=
+if [ "${1-}" = --at ]; then
+  [[ "${2-}" =~ ^([01]?[0-9]|2[0-3]):([0-5][0-9])$ ]] || usage
+  at=$2
+  # Seconds from now until the next $at, today or tomorrow.
+  read -r hour minute second < <(date '+%H %M %S')
+  delay=$(( (10#${BASH_REMATCH[1]} * 3600 + 10#${BASH_REMATCH[2]} * 60
+    - (10#$hour * 3600 + 10#$minute * 60 + 10#$second) + 86400) % 86400 ))
+  shift 2
+fi
+export at delay=${delay-0}
+if [ $# -lt 2 ]; then
+  usage
 fi
 parallel=$1
 shift
@@ -64,6 +79,10 @@ work() {
 }
 
 batch() {
+  if [ -n "$at" ]; then
+    note "the batch waits until $at to start"
+    sleep "$delay"
+  fi
   printf '%s\0' "$@" | xargs -0 -n 1 -P "$parallel" bash -c 'work "$1"' _
   note "the batch ended"
 }
