@@ -105,6 +105,14 @@
       {
         "decision": "`overnight` is written in Python, its command `bin/overnight` only starting it, with unit tests that run every line and branch of it, a README, and a CHANGELOG, since `.claude/rules/dev.md` asks every plugin of ccpm for \"the LICENSE, README, CHANGELOG, and unit tests that any plugin of ccpm carries\", and `dev/README.md` says CI checks \"each plugin's unit tests, and that they run every line and branch of the plugins' code\", which `pyproject.toml` measures on `*.py` files only.",
         "by": "rn"
+      },
+      {
+        "decision": "The specification of overnight.py, in its module opening and main's interface, states that every run of `claude` carries the night's prompt to stop at each point that is the user's and leave it as a question for the morning, that a resume asks the session to go on from where it stopped, and that an error a work meets stops the batch with its trace in batch.log and no end noted, since the solution asks for the first two and the third is how the morning shows why a batch stopped, and a maintainer who can't trace a behavior to a case can't tell whether to keep it.",
+        "by": "rn"
+      },
+      {
+        "decision": "The tests of overnight meet `claude` only as a stand-in executable on the PATH and start the batch only through `main`, as overnight's callers do, check the whole record and the whole session log of each case, and give each refusal its own named test, a digit that isn't ASCII, such as `²`, included, so that a change in how overnight runs `claude` keeps them passing where no behavior changed, and a dropped behavior or refusal fails them, within the user's stand-ins for `claude`, `sleep`, and the clock.",
+        "by": "rn"
       }
     ],
     "questions": []
@@ -125,19 +133,20 @@
             "path": "plugins/overnight/scripts/overnight.py",
             "kind": "code",
             "status": "open",
-            "entry": "content-2",
-            "next": "weigh",
-            "judged": 1
+            "judged": 1,
+            "next": "generator"
           },
           {
             "path": "plugins/overnight/bin/overnight",
             "kind": "light",
-            "status": "done"
+            "status": "open",
+            "next": "generator"
           },
           {
             "path": "dev/overnight/tests/unit/test_overnight.py",
             "kind": "test-implementation",
-            "status": "open"
+            "status": "open",
+            "next": "generator"
           },
           {
             "path": "plugins/overnight/.claude-plugin/plugin.json",
