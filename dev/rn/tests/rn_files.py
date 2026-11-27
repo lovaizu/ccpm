@@ -1,6 +1,5 @@
 """How rn's cases make the files that rn reads, each in the form that its use reads it: a best
-practice as its best-practice.json holds it, and the input that Claude Code gives rn's hook before a
-tool call.
+practice as its best-practice.json holds it.
 
 Each helper writes or gives what the documents name, and nothing of how rn's code reads it, so
 that a case calls rn's parts only through their interfaces."""
@@ -185,23 +184,3 @@ def committed_steering(
     subprocess.run(
         ["git", "-C", worktree, "commit", "-q", "-m", f"steering of {name}"], env=env, check=True
     )
-
-
-# The hook's input.
-
-
-def hook_input(cwd: str, tool: str, tool_input: Any, agent: Any = None) -> str:
-    """The JSON that Claude Code gives a PreToolUse hook on stdin for a call of the tool with its
-    input, made in the folder, by the agent, as `agent_type` names it, or by the main
-    conversation, which names none, where the agent is None."""
-    called: dict[str, Any] = {
-        "session_id": "abc123",
-        "cwd": cwd,
-        "hook_event_name": "PreToolUse",
-        "tool_name": tool,
-        "tool_input": tool_input,
-        "tool_use_id": "toolu_01",
-    }
-    if agent is not None:
-        called.update({"agent_id": "a1", "agent_type": agent})
-    return json.dumps(called)
