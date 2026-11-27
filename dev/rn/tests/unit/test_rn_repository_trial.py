@@ -22,7 +22,7 @@ NAME = "20261126-invoice-from-statement"
 
 @pytest.fixture
 def made(tmp_path: Any) -> WorkPlace:
-    """A work whose worktree holds its steering and the command committed, as rn's hook commits
+    """The work whose worktree holds its steering and the command committed, as rn's hook commits
     each role's changes, and a draft written since, not committed."""
     repo = rn_files.repository(str(tmp_path / "accounting"))
     held = WorkPlace(rn_files.worktree_of(repo, str(tmp_path / "invoices"), "invoices"), NAME)
@@ -47,7 +47,7 @@ def test_the_folder_lies_in_the_temporary_folder_by_its_round(made: WorkPlace, t
 
 
 @pytest.mark.parametrize("where", ["", "../steering.json"])
-def test_a_folder_outside_the_works_rounds_is_refused(made: WorkPlace, where: str) -> None:
+def test_a_folder_outside_the_rounds_of_the_work_is_refused(made: WorkPlace, where: str) -> None:
     """Given the Rounds' folder itself, or a path out of it.
     When its trial folder is asked.
     Then Wrong is raised, naming it."""

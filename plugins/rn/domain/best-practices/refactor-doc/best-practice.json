@@ -158,7 +158,7 @@
        },
        {
         "at": "make",
-        "text": "Within a sentence, start with what the reader already knows and end with what's new. For example, after `The plugin keeps its state in .rn/.`, write `.rn/ holds one folder for each work.` in place of `One folder for each work lies in .rn/.`"
+        "text": "Within a sentence, start with what the reader already knows and end with what's new. For example, after `The plugin keeps its state in .rn/.`, write `.rn/ holds one folder for each piece of work.` in place of `One folder for each piece of work lies in .rn/.`"
        },
        {
         "at": "make",

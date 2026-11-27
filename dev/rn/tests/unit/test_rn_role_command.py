@@ -1,7 +1,7 @@
 """The unit cases of role/command.py, rn's hook once a role ends: an agent that isn't rn's left
 alone, the pruner's first result taken into the steering, committed, and pushed, a later one
 keeping the issues, a role's change committed and pushed, nothing committed where nothing
-changed, a folder that is no work's passed over, a session outside git, each result out of its
+changed, a folder outside rn's work passed over, a session outside git, each result out of its
 schema keeping the role going, a push with no origin or to a remote that isn't there, and
 arguments of another form."""
 
@@ -23,7 +23,7 @@ NAME = "20261126-invoice-from-statement"
 
 @pytest.fixture
 def made(tmp_path: Any) -> WorkPlace:
-    """A work of the user's repository with origin, in its own worktree on the work's branch, its
+    """The work in the user's repository with origin, in its own worktree on the work's branch, its
     folder empty."""
     return rn_files.work_with_origin(str(tmp_path), NAME)
 
@@ -63,7 +63,7 @@ def pushed(work: WorkPlace) -> bool:
 
 
 def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace) -> None:
-    """Given a work whose worktree holds a change.
+    """Given the work whose worktree holds a change.
     When an agent that isn't one of rn's ends.
     Then it gives 0, and commits nothing."""
     write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
@@ -73,7 +73,7 @@ def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace) -> None:
 
 
 def test_the_pruners_first_result_is_taken_into_the_steering_and_pushed(made: WorkPlace) -> None:
-    """Given a work with no steering, and the pruner's result with the pick still asked.
+    """Given the work with no steering, and the pruner's result with the pick still asked.
     When the pruner ends.
     Then the steering holds the result's tree and its question, committed as `rn: <message>` and
     pushed, and the result is gone."""
@@ -105,10 +105,10 @@ def test_a_later_result_takes_in_the_steps_and_keeps_the_issues(made: WorkPlace)
         assert json.load(f) == rn_files.steering()
 
 
-def test_a_roles_change_is_committed_and_pushed_from_inside_the_works_worktree(
+def test_a_roles_change_is_committed_and_pushed_from_inside_the_worktree_of_the_work(
     made: WorkPlace,
 ) -> None:
-    """Given a work with its steering, whose generator wrote the command, and a session in the
+    """Given the work with its steering, whose generator wrote the command, and a session in the
     work's worktree.
     When the generator ends.
     Then the change is committed as `rn: the generator ended`, and pushed."""
@@ -154,7 +154,7 @@ def test_a_pruners_result_the_steering_refuses_keeps_it_going(made: WorkPlace) -
 
 
 def test_nothing_is_committed_where_nothing_changed(made: WorkPlace) -> None:
-    """Given a work whose steering is committed, and nothing changed since.
+    """Given the work whose steering is committed, and nothing changed since.
     When the evaluator ends.
     Then it gives 0, and commits nothing."""
     rn_files.committed_steering(made.worktree, made.name, rn_files.steering())
@@ -163,8 +163,8 @@ def test_nothing_is_committed_where_nothing_changed(made: WorkPlace) -> None:
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_a_work_before_its_first_weighing_keeps_nothing(made: WorkPlace) -> None:
-    """Given a work with no steering yet, its folder holding a note of the hearing.
+def test_the_work_before_its_first_weighing_keeps_nothing(made: WorkPlace) -> None:
+    """Given the work with no steering yet, its folder holding a note of the hearing.
     When a role ends.
     Then it gives 0, and commits nothing, as the pruner's first result makes the steering."""
     write_files(made.folder, {"hearing.md": "for the accountants\n"})
@@ -194,7 +194,7 @@ def test_a_session_outside_git_is_left_alone(made: WorkPlace, tmp_path: Any) -> 
 def test_a_result_out_of_its_schema_keeps_the_role_going(
     made: WorkPlace, path: str, text: str, says: str
 ) -> None:
-    """Given a work whose pruner's result leaves its schema or isn't JSON, or a Round's result
+    """Given the work whose pruner's result leaves its schema or isn't JSON, or a Round's result
     leaves its schema.
     When the role ends.
     Then it gives 2 naming the place, so that the role goes on, and commits nothing."""
@@ -216,8 +216,8 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
 def test_a_push_that_fails_is_said_after_the_commit(
     made: WorkPlace, origin: str | None, code: int, says: str
 ) -> None:
-    """Given a work with its steering whose change can't be pushed, as it has no origin, or one that
-    isn't there.
+    """Given the work with its steering whose change can't be pushed, as it has no origin, or one
+    that isn't there.
     When the generator ends.
     Then it gives 1 or 2 saying why, and the commit is kept."""
     git(top(made), "remote", "remove", "origin")

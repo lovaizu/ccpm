@@ -1,4 +1,4 @@
-"""Decides what each change makes of a work's steering: the pruner's result taken in, the tree
+"""Decides what each change makes of the work's steering: the pruner's result taken in, the tree
 whole and the way to the target, each step and deliverable that the steering already holds keeping
 its status and where it is on its way, unless the pruner says what it takes next; each deliverable
 moved on by the result of its next role, where nothing is to weigh; a step marked as the work moves
@@ -22,7 +22,7 @@ STEP = ("open", "trying", "done")
 LIMIT = 2
 # What a deliverable keeps of where it is on its way, as the steering's schema names it.
 _WAY = ("next", "judged", "entry")
-# The issues of a work that no pruner has named yet.
+# The work's issues while no pruner has named yet.
 _NO_ISSUES: dict[str, list[int]] = {"closes": [], "refs": []}
 
 

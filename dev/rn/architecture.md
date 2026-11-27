@@ -4,8 +4,9 @@
 
 - S1: the user wants what they asked for working for the one need they pick, early, asking in
   their own words, and to decide what happens to each need left.
-- S2: the user wants to stop a work and go on with it later, in any conversation, losing nothing.
-- S3: the user wants to call a work off and have nothing of it stay on their computer or on GitHub.
+- S2: the user wants to stop rn's work and go on with it later, in any conversation, losing nothing.
+- S3: the user wants to call rn's work off and have nothing of it stay on their computer or on
+  GitHub.
 
 ## Solution strategy
 
@@ -15,7 +16,7 @@ rn piles up the [vital few](https://en.wikipedia.org/wiki/Pareto_principle) that
 deliverable's people to their aim, and cuts the trivial many thoroughly.
 
 - P1: the goal reached earliest
-  - P1.1: each work aims at one need that the user picks.
+  - P1.1: each piece of work aims at one need that the user picks.
   - P1.2: the least that runs, through every kind of deliverable that the need takes, goes to the
     user before anything more is made.
   - P1.3: a mend of a problem that a pruner weighed starts at once, with no new Rounds.
@@ -49,7 +50,8 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P6.1: the work's state lives in files on its branch, so that it goes on from any conversation.
   - P6.2: a stop lets each record being written end whole before the work halts.
 - P7: the user's repository left as it was
-  - P7.1: each work lies in a worktree apart from the user's own changes, one they agree to.
+  - P7.1: each piece of work lies in a worktree apart from the user's own changes, one they agree
+    to.
   - P7.2: the ready mark and the merge stay the user's.
 
 ### Concept model
@@ -194,8 +196,8 @@ Strategies:
 - Each step that has one right result done by a script that the role runs. [P5.3]\
   Intent: each role spends its judgment and its context only where a step needs them.
 - A stop taken from /rn:dn or the user's words, and a pick-up from /rn:up. [S2]\
-  Intent: the user stops and goes on at the moment they choose, and a new work never asks about an
-  old one.
+  Intent: the user stops and goes on at the moment they choose, and new work never asks about
+  old work.
 - A cancel taken from the user's words once they confirm what goes, removing the work's worktree,
   branch, and pull request by a script. [S3]\
   Intent: a cancel can't be undone, so only the user starts it, and nothing of the work is left
@@ -209,7 +211,8 @@ Strategies:
   Intent: the role mends its own result, and the orchestrator starts no role again.
 - Each role's changes committed and pushed by the hook once it ends, and each commit of a script
   pushed at once. [P6.1]\
-  Intent: nothing a work makes lies only on the user's computer, and a trial clones what's committed.
+  Intent: nothing the work makes lies only on the user's computer, and a trial clones what's
+  committed.
 
 ### Sequences
 
@@ -324,7 +327,7 @@ sequenceDiagram
   U->>U: marks the pull request ready, and merges [P7.2]
 ```
 
-#### S2: a work stopped, and picked up later
+#### S2: the work stopped, and picked up later
 
 ```mermaid
 sequenceDiagram
@@ -339,9 +342,9 @@ sequenceDiagram
   O->>U: where it stopped, and what waits for the user [P2.3]
   Note over U,O: Later, in any conversation
   U->>O: /rn:up [S2]
-  O->>S: lists the works with something left to do, each in its worktree, and takes the one of the worktree the user is in (Steering) [P6.1]
-  opt more than one work [S2]
-    O->>U: asks which work to go on with [P2.1]
+  O->>S: lists each piece of work with something left to do, each in its worktree, and takes the one of the worktree the user is in (Steering) [P6.1]
+  opt more than one piece of work [S2]
+    O->>U: asks which piece of work to go on with [P2.1]
     U->>O: answers [S2]
   end
   O->>S: lists what's due from the work's files, an open question, a step trying, a Round, or a Fix (Steering, Round, Fix) [P6.1]
@@ -351,7 +354,7 @@ sequenceDiagram
   end
 ```
 
-#### S3: a work called off
+#### S3: the work called off
 
 ```mermaid
 sequenceDiagram
@@ -375,9 +378,9 @@ The user installs rn as [the README](../../plugins/rn/README.md#installation) sa
 
 Strategies:
 
-- A worktree for each work, judged by the orchestrator from where it was started and agreed by the
-  user, and made as the repository's rules or the user's tools ask, never the repository's own
-  checkout. [P7.1]\
+- A worktree for each piece of work, judged by the orchestrator from where it was started and
+  agreed by the user, and made as the repository's rules or the user's tools ask, never the
+  repository's own checkout. [P7.1]\
   Intent: the user goes on with their own changes, finds the work's worktree in the tools they use, and
   no case of it lies in a prompt or a script.
 - The pull request opened as a draft, which the user marks ready. [P7.2]\
@@ -408,7 +411,7 @@ dev/rn/                            what only rn's developers use
 └── tests/gh/                      the double of gh, with its records
 
 <worktree>/.rn/                    what rn writes on the work's branch, in the work's worktree
-└── <yyyymmdd>-<slug>/             one work's folder
+└── <yyyymmdd>-<slug>/             the folder of one piece of work
     ├── steering.json              the steering
     └── rounds/<step>/<deliverable>/  each Round and each Fix of the deliverable in the step, in the order made
 ```
@@ -416,7 +419,7 @@ dev/rn/                            what only rn's developers use
 ## Test strategy
 
 A real request that the user puts through rn is the end-to-end check. A test at a higher level than the unit tests is added
-only for a fault that such a work found and that a test should have caught before it, or for
+only for a fault that such a request found and that a test should have caught before it, or for
 an operation that can't be undone.
 
 | Check | Test target | Kind | When | Exit criteria or measure |

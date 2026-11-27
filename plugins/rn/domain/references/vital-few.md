@@ -9,7 +9,7 @@ Pile up the vital few, and cut the trivial many thoroughly.
 Whatever rn makes, someone uses: the people that the work's steering names in its outcome, with the
 need that the user picked. A part that they don't need still spends their time and attention, and
 the user's, and it draws in more, as each part that stays is one that others come to rest on. So
-rn keeps only what its people need, in what a work aims at and in each deliverable alike.
+rn keeps only what its people need, in what the work aims at and in each deliverable alike.
 
 ## The criterion
 

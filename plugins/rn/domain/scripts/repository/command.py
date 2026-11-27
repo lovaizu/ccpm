@@ -32,8 +32,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     - `new <slug> <worktree>`, a short English slug of what the work is for and the worktree it's
       made in, from `cwd` or absolute: 0 printing the new work's folder, absolute, as `worktree.new`
       makes it, named by `place.named` from today and the slug.
-    - `works`: 0 printing the folder, absolute, of each work that `worktree.left` gives, a line
-      each, newest first, and nothing where there's none.
+    - `works`: 0 printing the folder, absolute, of each piece of work that `worktree.left` gives,
+      a line each, newest first, and nothing where there's none.
     - `stop <work>`: 0 printing the hash that `push.stop` gives, with the work's steering, read as
       its schema holds it, where it has one.
     - `cancel <work>`: 0 printing each thing of the work that `worktree.removed` removed on GitHub

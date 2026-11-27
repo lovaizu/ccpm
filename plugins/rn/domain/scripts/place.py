@@ -1,4 +1,4 @@
-"""Decides where a work lies and what it's called: its name from the day and a slug of what it's
+"""Decides where the work lies and what it's called: its name from the day and a slug of what it's
 for, the worktree it's made in, its folder there, and the paths of its steering, the pruner's
 result, and its Rounds and Fixes in that folder."""
 
@@ -11,17 +11,17 @@ from datetime import date
 
 from fault import Wrong
 
-# A work's slug: one to five words of lower-case English letters and digits, joined by `-`, short
+# The work's slug: one to five words of lower-case English letters and digits, joined by `-`, short
 # enough to read in a folder's name.
 _SLUG = re.compile(r"[a-z0-9]+(-[a-z0-9]+){0,4}")
-# A work's folder, `<worktree>/.rn/<name>`.
+# The work's folder, `<worktree>/.rn/<name>`.
 _FOLDER = re.compile(r"(.+)/\.rn/([0-9]{8}-[a-z0-9]+(?:-[a-z0-9]+){0,4})")
 
 
 @dataclass(frozen=True)
 class WorkPlace:
-    """One work of rn, by the worktree it's made in and its name, `<yyyymmdd>-<slug>`, from which
-    each of its paths follows."""
+    """One piece of rn's work, by the worktree it's made in and its name, `<yyyymmdd>-<slug>`,
+    from which each of its paths follows."""
 
     worktree: str
     name: str
@@ -48,7 +48,7 @@ class WorkPlace:
 
 
 def named(today: date, slug: str) -> str:
-    """The name of a work started on the day.
+    """The name of the work started on the day.
 
     Takes: the day, and a short English slug of what it's for, such as `see-it-work-early`.
     Gives: `<yyyymmdd>-<slug>`.
@@ -58,8 +58,8 @@ def named(today: date, slug: str) -> str:
     """
     if not _SLUG.fullmatch(slug):
         raise Wrong(
-            f"the slug {slug!r} isn't a work's name; give one to five lower-case English words"
-            " joined by -, such as see-it-work-early"
+            f"the slug {slug!r} isn't the name of rn's work; give one to five lower-case English"
+            " words joined by -, such as see-it-work-early"
         )
     return f"{today:%Y%m%d}-{slug}"
 
@@ -71,13 +71,15 @@ def of_folder(cwd: str, folder: str) -> WorkPlace:
     `<worktree>/.rn/<name>`.
     Gives: the work.
     Changes: nothing.
-    Refuses: Wrong where the path isn't a work's folder of that form, or no such folder lies there,
-    naming the path and the form it takes.
+    Refuses: Wrong where the path isn't the work's folder of that form, or no such folder lies
+    there, naming the path and the form it takes.
     """
     path = os.path.normpath(os.path.join(cwd, folder))
     found = _FOLDER.fullmatch(path)
     if not found:
-        raise Wrong(f"{folder}: isn't a work's folder, which takes the form <worktree>/.rn/<name>")
+        raise Wrong(
+            f"{folder}: isn't the folder of rn's work, which takes the form <worktree>/.rn/<name>"
+        )
     if not os.path.isdir(path):
         raise Wrong(f"{folder}: no such folder; give the work's folder as made")
     return WorkPlace(found[1], found[2])

@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "steering",
- "description": "The steering of one work, at .rn/<work>/steering.json: ost, what the work aims at and why, which the pruner alone writes, and state, where the work stands, which rn's scripts alone write. It lives for the work alone, and git keeps the history of each point.",
+ "description": "The steering of one piece of work, at .rn/<work>/steering.json: ost, what the work aims at and why, which the pruner alone writes, and state, where the work stands, which rn's scripts alone write. It lives for the work alone, and git keeps the history of each point.",
  "type": "object",
  "required": [
   "ost",
@@ -34,7 +34,7 @@
      }
     },
     "target": {
-     "description": "The id of the opportunity that the user picked, null until they pick, so a work with none waits on the user's pick. The work's solution hangs under it.",
+     "description": "The id of the opportunity that the user picked, null until they pick, so that until then the work waits on the user's pick. The work's solution hangs under it.",
      "type": [
       "string",
       "null"

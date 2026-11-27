@@ -31,7 +31,7 @@ STEERING = rn_files.steering()
 
 
 def made(tmp_path: Any, origin: bool = True) -> WorkPlace:
-    """The user's repository with origin, unless not, and a work made in it, its steering
+    """The user's repository with origin, unless not, and the work made in it, its steering
     committed."""
     repo = rn_files.repository(str(tmp_path / "accounting"))
     if origin:
@@ -80,7 +80,7 @@ def flag(argv: list[str], name: str) -> str:
 def test_a_stop_commits_each_change_and_pushes_the_branch_with_its_upstream(
     tmp_path: Any, host: Any
 ) -> None:
-    """Given a work whose command is new, not committed.
+    """Given the work whose command is new, not committed.
     When stop is given the work.
     Then it gives the hash that origin's branch now holds, a commit `rn: stopped <name>`, whose
     upstream is origin's, with nothing left uncommitted."""
@@ -93,7 +93,7 @@ def test_a_stop_commits_each_change_and_pushes_the_branch_with_its_upstream(
 
 
 def test_a_stop_with_no_origin_is_missing_one(tmp_path: Any, host: Any) -> None:
-    """Given a work whose repository has no remote.
+    """Given the work whose repository has no remote.
     When stop is given the work.
     Then Missing is raised."""
     with pytest.raises(Missing, match="no remote origin"):
@@ -103,7 +103,7 @@ def test_a_stop_with_no_origin_is_missing_one(tmp_path: Any, host: Any) -> None:
 def test_a_stop_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
     tmp_path: Any, host: Any
 ) -> None:
-    """Given a work whose remote's files may not be written.
+    """Given the work whose remote's files may not be written.
     When stop is given the work.
     Then Missing is raised, with what git said of the permission."""
     work = with_command(made(tmp_path))
@@ -120,7 +120,7 @@ def test_a_stop_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
 
 
 def test_a_stop_to_a_remote_that_isnt_there_cant_run(tmp_path: Any, host: Any) -> None:
-    """Given a work whose remote origin names a folder that doesn't exist.
+    """Given the work whose remote origin names a folder that doesn't exist.
     When stop is given the work.
     Then CantRun is raised, with what git said."""
     work = made(tmp_path, origin=False)
@@ -137,7 +137,7 @@ MESSAGE = "rn: invoice/__main__.py: done"
 def test_a_first_kept_opens_the_pull_request_as_a_draft_titled_by_the_picked_need(
     tmp_path: Any, host: Any, gh_state: str
 ) -> None:
-    """Given a work whose command is made, with a need picked and no pull request.
+    """Given the work whose command is made, with a need picked and no pull request.
     When kept is given the work and a message.
     Then the command is committed with the message and pushed, gh's login is asked, and a draft
     pull request is opened of the branch titled by the picked need, its body the outcome and
@@ -159,7 +159,7 @@ def test_a_first_kept_opens_the_pull_request_as_a_draft_titled_by_the_picked_nee
 def test_a_kept_names_each_issue_it_closes_then_each_it_refers_to_or_none(
     tmp_path: Any, host: Any, gh_state: str
 ) -> None:
-    """Given a work that closes #38 and #40 and refers to #12, and another that names none.
+    """Given the work that closes #38 and #40 and refers to #12, and other work that names none.
     When each is kept first.
     Then the first body names `Closes #38`, `Closes #40`, then `Refs #12`, and the second is the
     outcome alone."""
@@ -178,7 +178,7 @@ def test_a_kept_names_each_issue_it_closes_then_each_it_refers_to_or_none(
 def test_a_kept_whose_pull_request_is_open_opens_none(
     tmp_path: Any, host: Any, gh_state: str
 ) -> None:
-    """Given a work whose branch has its pull request open.
+    """Given the work whose branch has its pull request open.
     When kept is given the work.
     Then it opens no pull request."""
     work = with_command(made(tmp_path))
@@ -190,7 +190,7 @@ def test_a_kept_whose_pull_request_is_open_opens_none(
 def test_a_kept_beside_an_earlier_pull_request_not_open_opens_its_own(
     tmp_path: Any, host: Any, gh_state: str
 ) -> None:
-    """Given a work whose branch's name had a pull request that's closed.
+    """Given the work whose branch's name had a pull request that's closed.
     When kept is given the work.
     Then it opens a pull request of its own."""
     work = with_command(made(tmp_path))
@@ -205,7 +205,7 @@ def test_a_kept_beside_an_earlier_pull_request_not_open_opens_its_own(
 def test_a_kept_before_a_need_is_picked_pushes_and_asks_gh_nothing(
     tmp_path: Any, host: Any, gh_state: str, steering: Any
 ) -> None:
-    """Given a work with no steering yet, or none whose need is picked.
+    """Given the work with no steering yet, or none whose need is picked.
     When kept is given it.
     Then the change is committed and pushed, and gh is asked nothing."""
     work = with_command(made(tmp_path))
@@ -247,7 +247,7 @@ def test_a_kept_that_gh_may_not_open_is_missing_the_right(tmp_path: Any, host: A
 def test_a_kept_whose_gh_cant_reach_github_opens_no_second_pull_request(
     tmp_path: Any, host: Any, gh_state: str
 ) -> None:
-    """Given a work whose branch has its pull request open, and gh that can't reach GitHub to view
+    """Given the work whose branch has its pull request open, and gh that can't reach GitHub to view
     it.
     When kept is given the work.
     Then CantRun is raised with what gh said, and no pull request is opened."""

@@ -1,5 +1,5 @@
 """The unit cases of practice.py, where each kind's best practice lies and what of it each role
-gets: `kinds` of rn's own best practices, of a work's own before them and beside them, and of a
+gets: `kinds` of rn's own best practices, of the work's own before them and beside them, and of a
 folder of neither; `read` of a best practice, one missing, and one that isn't JSON; `judged` without
 any practice; and `refactoring` of a kind of code, of light, and of another kind.
 dev/scripts/practices.py holds each of rn's best practices to its schema."""
@@ -32,7 +32,7 @@ def normalized(found: dict[str, str]) -> dict[str, str]:
 
 @pytest.fixture
 def worktree(tmp_path: Any) -> str:
-    """A work's worktree with no best practice of its own."""
+    """The work's worktree with no best practice of its own."""
     folder = os.path.join(str(tmp_path), "worktree")
     os.makedirs(folder)
     return folder
@@ -45,15 +45,15 @@ def own(worktree: str, kind: str, practice: Any) -> str:
     return folder
 
 
-def test_kinds_of_a_work_with_none_of_its_own_are_rns(worktree: str):
-    """Given a work's worktree with no .rn/best-practices/
+def test_kinds_of_the_work_with_none_of_its_own_are_rns(worktree: str):
+    """Given the work's worktree with no .rn/best-practices/
     When the kinds are asked
     Then each is rn's, by its folder's name"""
     assert normalized(kinds(rn_files.RN, worktree)) == normalized(rns_kinds())
 
 
-def test_kinds_take_a_works_own_best_practices_before_rns_and_beside_them(worktree: str):
-    """Given a work's worktree holding its own best practice of the kind light, and one of a kind
+def test_kinds_take_the_works_own_best_practices_before_rns_and_beside_them(worktree: str):
+    """Given the work's worktree holding its own best practice of the kind light, and one of a kind
     rn has none of, `invoice`, made by a meta deliverable
     When the kinds are asked
     Then light and invoice are the work's own folders, and each other kind rn's"""
@@ -64,7 +64,7 @@ def test_kinds_take_a_works_own_best_practices_before_rns_and_beside_them(worktr
 
 
 def test_kinds_leave_out_a_folder_with_no_best_practice_json(worktree: str):
-    """Given a work's worktree whose .rn/best-practices/readme/ holds a template alone
+    """Given the work's worktree whose .rn/best-practices/readme/ holds a template alone
     When the kinds are asked
     Then readme is rn's"""
     path = os.path.join(worktree, ".rn", "best-practices", "readme", "template.md")
@@ -114,7 +114,7 @@ def test_judged_gives_the_goal_and_each_condition_without_its_practice():
     [("test-design", "refactor-code"), ("light", None), ("invoice", "refactor-doc")],
 )
 def test_refactoring_of_a_kind(kind: str, by: str | None):
-    """Given a kind of code, light, or another kind, one that a work made among them
+    """Given a kind of code, light, or another kind, one that the work made among them
     When the kind it's refactored by is asked
     Then it gives refactor-code, None, or refactor-doc"""
     assert refactoring(kind) == by

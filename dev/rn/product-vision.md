@@ -24,9 +24,9 @@ rn piles up the [vital few](https://en.wikipedia.org/wiki/Pareto_principle) that
 deliverable's people to their aim, and cuts the trivial many thoroughly.
 
 - The goal reached earliest, for O1\
-  Each work aims at one opportunity that the user picks, and puts in the user's hands early the
-  least that runs, as a [walking skeleton](https://wiki.c2.com/?WalkingSkeleton), so what doesn't
-  serve shows before rn builds it.
+  Each piece of work aims at one opportunity that the user picks, and puts in the user's hands
+  early the least that runs, as a [walking skeleton](https://wiki.c2.com/?WalkingSkeleton), so
+  what doesn't serve shows before rn builds it.
 - The user as one who uses it, for O1\
   The user picks the opportunity and gives feedback on what runs, as its people would, and rn
   leads the way to the goal and settles how it's made.

@@ -1,11 +1,11 @@
-"""The unit cases of repository/worktree.py: `new`, which makes a work's folder in the worktree it's
-given, and each refusal: a folder that isn't a worktree's top, the repository's own checkout, and
-a work of the name already there; `works` with `left`, the works in each worktree whose branch or
-uncommitted changes hold their folder, newest first, a work merged into the default branch left
-out, a work ended left out, a work with no steering yet kept, no work in a folder that isn't a
-repository, and a steering that isn't JSON; and `removed`, a work cancelled here and on GitHub, one
-never pushed, one whose pull request is closed already, what it couldn't ask or remove on GitHub
-and why, the repository's own checkout refused, and a worktree git can't remove."""
+"""The unit cases of repository/worktree.py: `new`, which makes the work's folder in the worktree
+it's given, and each refusal: a folder that isn't a worktree's top, the repository's own checkout,
+and work of the name already there; `works` with `left`, the work in each worktree whose branch or
+uncommitted changes hold its folder, newest first, the work merged into the default branch left out,
+the work ended left out, the work with no steering yet kept, none in a folder that isn't a
+repository, and a steering that isn't JSON; and `removed`, the work cancelled here and on GitHub,
+the work never pushed, one whose pull request is closed already, what it couldn't ask or remove on
+GitHub and why, the repository's own checkout refused, and a worktree git can't remove."""
 
 from __future__ import annotations
 
@@ -39,9 +39,9 @@ def worktree(repo: str, branch: str = "invoices") -> str:
     return rn_files.worktree_of(repo, os.path.join(os.path.dirname(repo), branch), branch)
 
 
-def test_a_work_is_made_in_the_worktree_it_is_given(repo: str) -> None:
-    """Given a worktree of the user's repository.
-    When a work is made in it.
+def test_the_work_is_made_in_the_worktree_it_is_given(repo: str) -> None:
+    """Given the worktree of the user's repository.
+    When the work is made in it.
     Then its folder lies there empty, and the worktree's branch stays as it was."""
     made = new(WorkPlace(worktree(repo), NAME), run)
     assert os.listdir(made.folder) == []
@@ -50,7 +50,7 @@ def test_a_work_is_made_in_the_worktree_it_is_given(repo: str) -> None:
 
 def test_a_folder_that_is_not_a_worktrees_top_is_refused(repo: str) -> None:
     """Given a folder inside a worktree.
-    When a work is made in it.
+    When the work is made in it.
     Then Missing is raised, saying to give the work's worktree."""
     inner = os.path.join(worktree(repo), "docs")
     os.makedirs(inner)
@@ -60,15 +60,15 @@ def test_a_folder_that_is_not_a_worktrees_top_is_refused(repo: str) -> None:
 
 def test_the_repositorys_own_checkout_is_refused(repo: str) -> None:
     """Given the user's repository itself.
-    When a work is made in it.
+    When the work is made in it.
     Then Wrong is raised, saying to give a worktree, and no folder is made."""
     with pytest.raises(Wrong, match="the repository's own checkout"):
         new(WorkPlace(repo, NAME), run)
     assert not os.path.exists(os.path.join(repo, ".rn"))
 
 
-def test_a_work_of_the_same_name_is_refused(repo: str) -> None:
-    """Given a work made in a worktree.
+def test_work_of_a_name_already_taken_is_refused(repo: str) -> None:
+    """Given the work made in a worktree.
     When it's made again there.
     Then Wrong is raised, saying to pick it up."""
     made = new(WorkPlace(worktree(repo), NAME), run)
@@ -80,10 +80,10 @@ def committed(work: WorkPlace, steering: Any, when: str) -> None:
     rn_files.committed_steering(work.worktree, work.name, steering, when)
 
 
-def test_the_works_of_each_worktree_are_found_newest_first(repo: str) -> None:
-    """Given a work committed in one worktree, a later one committed in another, and one in a third
-    with no steering yet.
-    When the works and those with work left are asked.
+def test_the_work_of_each_worktree_is_found_newest_first(repo: str) -> None:
+    """Given a piece of work committed in one worktree, a later piece committed in another, and a
+    piece in a third with no steering yet.
+    When each piece of work, and each with something left to do, is asked.
     Then the later comes first, each once, and the one with no steering yet is kept."""
     first = new(WorkPlace(worktree(repo, "first"), NAME), run)
     committed(first, rn_files.steering(), "2026-11-26T09:00:00")
@@ -99,9 +99,9 @@ def test_the_works_of_each_worktree_are_found_newest_first(repo: str) -> None:
     assert set(left(repo, run)) == {later, first, fresh}
 
 
-def test_a_work_ended_or_merged_is_left_out(repo: str) -> None:
-    """Given a work whose steering has ended, and a work merged into the default branch.
-    When the works with work left are asked.
+def test_the_work_ended_or_merged_is_left_out(repo: str) -> None:
+    """Given the work whose steering has ended, and other work merged into the default branch.
+    When the work with something left to do is asked.
     Then neither is found."""
     ended = new(WorkPlace(worktree(repo, "ended"), NAME), run)
     done = rn_files.steering([rn_files.step("done")])
@@ -114,16 +114,16 @@ def test_a_work_ended_or_merged_is_left_out(repo: str) -> None:
     assert left(repo, run) == []
 
 
-def test_a_folder_that_is_not_a_repository_holds_no_work(tmp_path: Any) -> None:
+def test_a_folder_that_is_not_a_repository_holds_no_work_of_rn(tmp_path: Any) -> None:
     """Given a folder that lies in no git repository.
-    When the works are asked.
+    When the work is asked.
     Then there are none."""
     assert works(str(tmp_path), run) == []
 
 
 def test_a_steering_that_is_not_json_is_refused(repo: str) -> None:
-    """Given a work whose steering isn't JSON.
-    When the works with work left are asked.
+    """Given the work whose steering isn't JSON.
+    When the work with something left to do is asked.
     Then Wrong is raised, naming its path."""
     made = new(WorkPlace(worktree(repo), NAME), run)
     write_files(made.folder, {"steering.json": "{"})
@@ -132,16 +132,16 @@ def test_a_steering_that_is_not_json_is_refused(repo: str) -> None:
 
 
 def pushed(repo: str) -> WorkPlace:
-    """A work made in a worktree, with its branch pushed to origin."""
+    """The work made in a worktree, with its branch pushed to origin."""
     made = new(WorkPlace(worktree(repo), NAME), run)
     git(made.worktree, "push", "-q", "origin", "invoices")
     return made
 
 
-def test_a_cancelled_work_is_removed_here_and_on_github(
+def test_the_cancelled_work_is_removed_here_and_on_github(
     repo: str, host: Any, gh_state: str
 ) -> None:
-    """Given a work pushed with its pull request open, and a change in it not committed.
+    """Given the work pushed with its pull request open, and a change in it not committed.
     When it's removed.
     Then the pull request is closed and origin's branch deleted, each named, the worktree, the
     local branch, and origin's ref are gone, and the user's branch stays main."""
@@ -156,10 +156,10 @@ def test_a_cancelled_work_is_removed_here_and_on_github(
     assert git(repo, "branch", "--show-current") == "main\n"
 
 
-def test_a_work_never_pushed_is_removed_here_and_its_stale_ref_with_it(
+def test_the_work_never_pushed_is_removed_here_and_its_stale_ref_with_it(
     repo: str, host: Any
 ) -> None:
-    """Given a work with no pull request, which origin doesn't hold, but whose ref of origin's
+    """Given the work with no pull request, which origin doesn't hold, but whose ref of origin's
     branch is left here.
     When it's removed.
     Then nothing is named on GitHub, and the worktree, the branch, and the ref are gone."""
@@ -185,7 +185,7 @@ def test_a_pull_request_closed_already_is_left_as_it_is(
 def test_what_github_couldnt_be_asked_of_is_kept_with_why(
     repo: str, host: Any, gh_state: str
 ) -> None:
-    """Given a work, with gh unable to reach GitHub and origin gone.
+    """Given the work, with gh unable to reach GitHub and origin gone.
     When it's removed.
     Then it's removed here, and the pull request and the branch on GitHub are kept, each with
     what gh or git said."""
@@ -220,7 +220,7 @@ def test_what_github_refused_to_remove_is_kept_with_why(
 
 
 def test_the_repositorys_own_checkout_is_never_removed(repo: str, host: Any) -> None:
-    """Given a work whose folder lies in the user's repository itself.
+    """Given the work whose folder lies in the user's repository itself.
     When it's removed.
     Then Wrong is raised, and the checkout stays."""
     held = WorkPlace(repo, NAME)
@@ -231,7 +231,7 @@ def test_the_repositorys_own_checkout_is_never_removed(repo: str, host: Any) -> 
 
 
 def test_a_worktree_git_cant_remove_cant_run_and_keeps_the_branch(repo: str, host: Any) -> None:
-    """Given a work whose worktree is locked.
+    """Given the work whose worktree is locked.
     When it's removed.
     Then CantRun is raised with what git said, and the worktree and the branch stay."""
     made = new(WorkPlace(worktree(repo), NAME), run)

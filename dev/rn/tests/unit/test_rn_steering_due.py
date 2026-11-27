@@ -1,4 +1,4 @@
-"""The unit cases of steering/due.py, what waits now in a work: open questions, which hold up the
+"""The unit cases of steering/due.py, what waits now in the work: open questions, which hold up the
 rest; the pruner's weighing where no need is picked or no step is set; the next deliverable to
 make; the hand-over; the user's try; a later step once the first is done; the inspection; and
 the work's end once it passed."""

@@ -1,7 +1,7 @@
-"""Decides how a work comes to be in the worktree it's made in and is found again: made as an empty
-folder in a worktree that the orchestrator chose, never the repository's own checkout; found in
-each worktree whose branch or uncommitted changes hold its folder; and removed, here and on GitHub,
-where the user cancels it."""
+"""Decides how the work comes to be in the worktree it's made in and is found again: made as an
+empty folder in a worktree that the orchestrator chose, never the repository's own checkout; found
+in each worktree whose branch or uncommitted changes hold its folder; and removed, here and on
+GitHub, where the user cancels it."""
 
 from __future__ import annotations
 
@@ -15,21 +15,21 @@ from host import Host, checked
 from place import WorkPlace
 from steering.due import due
 
-# The default branch, as origin's HEAD names it, from which each work's branch grows.
+# The default branch, as origin's HEAD names it, from which the work's branch grows.
 _DEFAULT = "refs/remotes/origin/HEAD"
-# A work's folder in a path that git gives from a worktree's top.
+# The work's folder in a path that git gives from a worktree's top.
 _WORK = re.compile(r"\.rn/([0-9]{8}-[a-z0-9]+(?:-[a-z0-9]+){0,4})/")
 
 
 def new(work: WorkPlace, host: Host) -> WorkPlace:
-    """Makes a work's folder in the worktree it's made in.
+    """Makes the work's folder in the worktree it's made in.
 
     Takes: the work to make, its worktree the one the orchestrator chose, and its name by
     `place.named` from the day and the slug of what it's for, and the host.
     Gives: the work, made.
     Changes: makes the work's folder in its worktree, empty, for the pruner's first result.
     Refuses: Missing where the worktree isn't the top of a git worktree; Wrong where it's the
-    repository's own checkout, as the user's own work stays as they left it, or where a work of
+    repository's own checkout, as the user's own work stays as they left it, or where work of
     the name already lies there.
     """
     top = host(["git", "rev-parse", "--show-toplevel"], work.worktree)
@@ -41,7 +41,7 @@ def new(work: WorkPlace, host: Host) -> WorkPlace:
             " by the repository's rules or at the default place"
         )
     if os.path.exists(work.folder):
-        raise Wrong(f"a work {work.name} already lies at {work.folder}; pick it up with /rn:up")
+        raise Wrong(f"the work {work.name} already lies at {work.folder}; pick it up with /rn:up")
     os.makedirs(work.folder)
     return work
 
@@ -54,12 +54,12 @@ def _own_checkout(worktree: str, host: Host) -> bool:
 
 
 def works(cwd: str, host: Host) -> list[WorkPlace]:
-    """Each work of the repository that the folder lies in.
+    """rn's work in the repository that the folder lies in.
 
     Takes: a folder in the repository, and the host.
-    Gives: for each worktree of the repository, newest first by its last commit, each work whose
-    folder the worktree's branch changed since the default branch that origin's HEAD names, or
-    that the worktree holds uncommitted; none where the folder lies in no git repository.
+    Gives: for each worktree of the repository, newest first by its last commit, each piece of
+    work whose folder the worktree's branch changed since the default branch that origin's HEAD
+    names, or that the worktree holds uncommitted; none where the folder lies in no git repository.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -73,10 +73,10 @@ def works(cwd: str, host: Host) -> list[WorkPlace]:
 
 
 def left(cwd: str, host: Host) -> list[WorkPlace]:
-    """The works with something left to do, as `works` gives them, each whose steering has
+    """Each piece of work with something left to do, as `works` gives it, whose steering has
     something due other than its end, or that has no steering yet.
 
-    Refuses: Wrong where a work's steering isn't JSON, naming its path.
+    Refuses: Wrong where the work's steering isn't JSON, naming its path.
     """
     return [each for each in works(cwd, host) if _open(each)]
 
@@ -97,7 +97,8 @@ def _newest_first(worktrees: list[str], host: Host) -> list[str]:
 
 
 def _names(worktree: str, host: Host) -> list[str]:
-    """The names of the works whose folder the worktree's branch changed or holds uncommitted."""
+    """The name of each piece of work whose folder the worktree's branch changed or holds
+    uncommitted."""
     changed = host(
         ["git", "log", "--format=", "--name-only", f"{_DEFAULT}..HEAD", "--", ".rn"], worktree
     )
@@ -132,7 +133,7 @@ class Gone(NamedTuple):
 
 
 def removed(work: WorkPlace, host: Host) -> Gone:
-    """Removes a work that the user cancels, here and on GitHub.
+    """Removes the work that the user cancels, here and on GitHub.
 
     Takes: the work, and the host.
     Gives: what it did of the work on GitHub, as GitHub itself answers, as a ref here may outlive

@@ -202,13 +202,13 @@ asks whether to mend it now. Then you try it yourself.
 No. Each need that you or the issue named stays on the list. Once you've tried what runs, rn
 proposes for each one left whether to make it now or keep it in an issue.
 
-### "Can a work stop and go on later?"
+### "Can rn's work stop and go on later?"
 
 Yes. rn pushes its work to GitHub as it goes, so nothing stays only on your computer. `/rn:dn`
 stops the work once what it's writing is whole, and `/rn:up` picks it up where it stopped, in any
 conversation.
 
-### "Can a work be called off?"
+### "Can rn's work be called off?"
 
 Yes. Say so, such as `中止して`. Once you confirm, rn removes the work's worktree, its branch, and its
 pull request.

@@ -1,2 +1,2 @@
 """The code of role, which Claude Code runs as rn's hook once a role ends: `command` for what it
-checks and keeps of each work."""
+checks and keeps of the work."""

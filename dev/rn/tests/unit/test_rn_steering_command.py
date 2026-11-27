@@ -28,7 +28,7 @@ MADE = {"result": "made", "files": [rn_files.COMMAND]}
 
 @pytest.fixture
 def made(tmp_path: Any) -> WorkPlace:
-    """A work of the user's repository with origin, in its own worktree on the work's branch, its
+    """The work in the user's repository with origin, in its own worktree on the work's branch, its
     folder empty."""
     return rn_files.work_with_origin(str(tmp_path), NAME)
 
@@ -62,7 +62,7 @@ def test_each_mark_is_committed_and_gives_whats_due(made: WorkPlace) -> None:
     assert git(made.worktree, "log", "-1", "--format=%s") == f"rn: {rn_files.SETTLES}: trying\n"
 
 
-def test_the_final_checks_pass_is_committed_and_gives_the_works_end(made: WorkPlace) -> None:
+def test_the_final_checks_pass_is_committed_and_ends_the_work(made: WorkPlace) -> None:
     """Given a steering whose one step is done.
     When the inspection is marked passed.
     Then it's committed with its words, and the work's end is due."""
@@ -91,8 +91,8 @@ def test_a_steering_out_of_its_schema_is_refused(made: WorkPlace) -> None:
     assert (code, "/state: is required" in err) == (1, True)
 
 
-def test_a_mark_on_a_work_with_no_steering_is_refused(made: WorkPlace) -> None:
-    """Given a work with no steering yet.
+def test_a_mark_on_the_work_with_no_steering_is_refused(made: WorkPlace) -> None:
+    """Given the work with no steering yet.
     When a step is marked done.
     Then it gives 1 saying that no steering lies there."""
     code, _, err = call(made, "step", "1", "done")

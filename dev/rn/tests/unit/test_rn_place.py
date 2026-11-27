@@ -1,5 +1,5 @@
-"""The unit cases of place.py, where a work lies and what it's called: a name from the day and a
-slug, each path of a work that follows from its name, a work found from its folder, and each
+"""The unit cases of place.py, where the work lies and what it's called: a name from the day and a
+slug, each path of the work that follows from its name, the work found from its folder, and each
 refusal: a slug of another form, a path of another form, and a folder that isn't there."""
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ from place import WorkPlace, named, of_folder
 NAME = "20261126-invoice-from-statement"
 
 
-def test_a_work_is_named_by_its_day_and_slug() -> None:
+def test_the_work_is_named_by_its_day_and_slug() -> None:
     """Given the walkthrough's day and the slug invoice-from-statement.
     When the work is named.
     Then its name is the day as yyyymmdd, then the slug."""
@@ -31,8 +31,8 @@ def test_a_slug_of_another_form_is_refused(slug: str) -> None:
         named(date(2026, 11, 26), slug)
 
 
-def test_each_path_of_a_work_follows_from_its_name() -> None:
-    """Given a work in the worktree /home/ada/invoices.
+def test_each_path_of_the_work_follows_from_its_name() -> None:
+    """Given the work in the worktree /home/ada/invoices.
     When its paths are asked.
     Then each lies where the architecture's Directory structure names it."""
     work = WorkPlace("/home/ada/invoices", NAME)
@@ -45,8 +45,8 @@ def test_each_path_of_a_work_follows_from_its_name() -> None:
     )
 
 
-def test_a_work_is_found_from_its_folder_by_a_path_from_the_folder_given(tmp_path: Any) -> None:
-    """Given a work's folder in a worktree.
+def test_the_work_is_found_from_its_folder_by_a_path_from_the_folder_given(tmp_path: Any) -> None:
+    """Given the work's folder in a worktree.
     When it's given by its path from the worktree's top, and by its absolute path.
     Then the work is found each time, with the worktree and the name."""
     work = WorkPlace(str(tmp_path), NAME)
@@ -59,16 +59,16 @@ def test_a_work_is_found_from_its_folder_by_a_path_from_the_folder_given(tmp_pat
     ["/home/ada/accounting/x", "/home/ada/.rn/BAD NAME", f"/w/.rn/{NAME}/rounds"],
 )
 def test_a_path_of_another_form_is_refused(folder: str) -> None:
-    """Given a path outside a work's folder, a folder not named as a work, or a folder inside a
-    work's.
+    """Given a path outside the work's folder, a folder not named as rn's work, or a folder inside
+    the work's.
     When the work is found from it.
-    Then Wrong is raised, naming the form a work's folder takes."""
-    with pytest.raises(Wrong, match="isn't a work's folder"):
+    Then Wrong is raised, naming the form the work's folder takes."""
+    with pytest.raises(Wrong, match="isn't the folder of rn's work"):
         of_folder("/", folder)
 
 
 def test_a_folder_that_is_not_there_is_refused(tmp_path: Any) -> None:
-    """Given the path of a work's folder that no one made.
+    """Given the path of the work's folder that no one made.
     When the work is found from it.
     Then Wrong is raised, saying no such folder lies there."""
     with pytest.raises(Wrong, match="no such folder"):

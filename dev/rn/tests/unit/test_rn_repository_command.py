@@ -1,8 +1,8 @@
 """The unit cases of repository/command.py, repository's command line as the orchestrator and each
-role run it: `new` printing the work's folder in the worktree it's given, `works` printing each work
-with work left, `stop`, `cancel` printing what it removed on GitHub and saying
-what it couldn't, `trial` printing what its module gives, a refusal given as its exit code, and
-arguments of another form."""
+role run it: `new` printing the work's folder in the worktree it's given, `works` printing each
+piece of work with something left to do, `stop`, `cancel` printing what it removed on GitHub and
+saying what it couldn't, `trial` printing what its module gives, a refusal given as its exit code,
+and arguments of another form."""
 
 from __future__ import annotations
 
@@ -41,18 +41,18 @@ def started(repo: str, host: Any) -> str:
     return folder
 
 
-def test_new_prints_the_works_folder_and_works_lists_it(repo: str, host: Any) -> None:
+def test_new_prints_the_folder_of_the_work_and_works_lists_it(repo: str, host: Any) -> None:
     """Given the user's repository and a worktree of it.
-    When a work is made in the worktree by `new`, its steering committed, and `works` runs.
+    When the work is made in the worktree by `new`, its steering committed, and `works` runs.
     Then `new` prints the folder, and `works` prints it again."""
     work_folder = started(repo, host)
     assert main(["works"], repo, rn_files.RN, host) == (0, f"{work_folder}\n", "")
 
 
-def test_each_subcommand_on_a_work_prints_what_its_module_gives(
+def test_each_subcommand_on_the_work_prints_what_its_module_gives(
     repo: str, host: Any, temp: str
 ) -> None:
-    """Given a work with its command written.
+    """Given the work with its command written.
     When `trial` and `stop` run on it.
     Then each gives 0: the trial's folder, and the hash pushed."""
     work_folder = started(repo, host)
@@ -65,7 +65,7 @@ def test_each_subcommand_on_a_work_prints_what_its_module_gives(
 
 def test_a_refusal_gives_its_exit_code_with_what_is_wrong(repo: str, host: Any) -> None:
     """Given a repository.
-    When `stop` is given a folder that is no work's.
+    When `stop` is given a folder outside rn's work.
     Then it gives 1, saying what's wrong."""
     code, _, err = main(["stop", "docs"], repo, rn_files.RN, host)
     assert (code, err.startswith("repository: ")) == (1, True)
@@ -74,7 +74,7 @@ def test_a_refusal_gives_its_exit_code_with_what_is_wrong(repo: str, host: Any) 
 def test_cancel_prints_what_it_removed_and_says_what_it_couldnt(
     repo: str, host: Any, gh_state: str
 ) -> None:
-    """Given a work pushed by `stop`, and gh unable to reach GitHub.
+    """Given the work pushed by `stop`, and gh unable to reach GitHub.
     When `cancel` runs on it.
     Then it gives 0, printing origin's branch deleted, and saying on stderr that it can't remove
     the pull request, and the work's worktree is gone."""

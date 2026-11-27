@@ -1,7 +1,7 @@
-"""Decides what waits now in a work, from its steering alone: the first question for the user, which
-holds up the rest; the pruner, where the work has no target and asks nothing; else the first step
-not done, as the way goes in order: the user's try where it's trying, the next deliverable to make
-where it's open, with the role it takes next, or the hand-over once each of its deliverables is
+"""Decides what waits now in the work, from its steering alone: the first question for the user,
+which holds up the rest; the pruner, where the work has no target and asks nothing; else the first
+step not done, as the way goes in order: the user's try where it's trying, the next deliverable to
+make where it's open, with the role it takes next, or the hand-over once each of its deliverables is
 done; the inspection once each step is done; and the work's end once the inspection passed."""
 
 from __future__ import annotations
