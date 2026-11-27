@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- rn pushes its work to GitHub as it goes, so nothing stays only on your computer.
+- Where AI evaluators still find something after two tries, rn asks you whether to mend it now, so you decide what you'd live with.
+- Each deliverable is refactored by the best practice of its kind before you try it, and rn reviews its pull request as its author would before it proposes the merge, so reviewers meet a clean change.
+
 ## [0.11.0] - 2026-11-25
 
 ### Changed

@@ -96,9 +96,7 @@ You type `1`. rn asks which need to make first:
 4. ガイドだけで使い始められる
 ```
 
-You type `1`. Before it makes anything, rn looks for what already prints an invoice, in your
-repository and among the tools your team has, and makes only what that lacks. It shows what it
-makes before you can try it:
+You type `1`. rn shows what it makes before you can try it:
 
 ```text
 試せるまでに、次の3つを作ります。
@@ -133,7 +131,7 @@ type `/rn:ty`. rn checks the pull request whole, then asks what happens to the n
 pick:
 
 ```text
-最終チェックが通り、1ができました。
+PRの点検が通り、1ができました。
 
 選ばなかった2から4を、どうしますか？
 
@@ -171,11 +169,6 @@ to you before it makes more.
 
 Yes. rn talks in your language and writes in your repository's, asking only where they disagree.
 
-### "Does it make what already exists?"
-
-No. Before it makes anything, rn looks for what already meets the need, such as a feature of
-Claude Code, a tool you have, or a part of your repository, and makes only what that lacks.
-
 ### "Does it show how far it has come?"
 
 Yes. When making starts, rn lists what it makes before you can try it, and tells you each time
@@ -189,22 +182,19 @@ each of its necessary conditions, while what it makes stays the least.
 ### "It looks done, but the people it's for can't use it."
 
 Before you see it, AI evaluators try each deliverable with only what its people have, never what
-rn meant. Then you try it yourself.
+rn meant. Where they still find something after two tries, rn shows it to you in your terms and
+asks whether to mend it now. Then you try it yourself.
 
 ### "Does it drop part of the request?"
 
 No. Each need that you or the issue named stays on the list. Once you've tried what runs, rn
 proposes for each one left whether to make it now or keep it in an issue.
 
-### "Does it change what others share?"
-
-Only with your say. Where the work needs a change to a part outside what you asked for, such as
-the repository's checks, rn asks whether to give it an issue of its own instead.
-
 ### "Can a run stop and go on later?"
 
-Yes. `/rn:dn` stops the run once what it's writing is whole, and `/rn:up` picks it up where it
-stopped, in any conversation.
+Yes. rn pushes its work to GitHub as it goes, so nothing stays only on your computer. `/rn:dn`
+stops the run once what it's writing is whole, and `/rn:up` picks it up where it stopped, in any
+conversation.
 
 ### "Can a run be called off?"
 
