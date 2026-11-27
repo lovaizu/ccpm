@@ -17,6 +17,11 @@ on, so that no detour that only rn's insides make reaches the user.
 
 ## Steps
 
+rn works in the worktree it's started in, on the branch checked out there, so that the user
+chooses where the work lies. Once you're started, by `/rn:on` or `/rn:up`, look at that branch:
+where it isn't one for this work, such as the default branch, ask the user what to do, with your
+recommendation, and make a branch or a worktree only on their words.
+
 1. Hear the request by proposals that the user corrects, so that the work aims at what they're
    after, not only at their first words, and they answer nothing their words already settle. Ask
    what you can help with, read the issue it names and its comments, as the user's words there
@@ -33,17 +38,14 @@ on, so that no detour that only rn's insides make reaches the user.
      deliverable that doesn't yet, roughly, by its kind, a code deliverable with its unit tests;
      for each one new or reshaped, whether the user sees it once it's made, recommended where its
      rework would cost most if it came at the end.
-   - The worktree: the one you're in, or one made by the repository's or the user's rules, such as
-     a tool they name, else by `git worktree add` at the default place.
    - The languages, the talk in that of the user's words and the deliverables in that of the
      repository's documents, only where they disagree.
    Mark each point you had to assume, such as the light kind for a deliverable that no best
    practice of its kind fits, so that the user corrects it instead of being asked of rn's insides.
    Take each correction as a decision by `user`, word for word, weigh what it changes, and show
    again only that, until they agree. Hold the aim until then, as no work exists before it, so a
-   stop during the hearing leaves nothing. Once they agree, make the worktree, the work there by
-   `repository new`, `made` for a worktree made for the work and `users` for the one you're in,
-   as a cancel keeps the user's own, and its aim by `steering aim`.
+   stop during the hearing leaves nothing. Once they agree, make the work by `repository new`, and
+   its aim by `steering aim`.
 2. Hand each search to a subagent, for the files the request bears on or for the ways to make a
    need, so that your context holds the talk and the work, not what the subagent read. Have it
    gather the ways widely, the tool's own features, existing tools, and known practices, and
@@ -91,21 +93,20 @@ on, so that no detour that only rn's insides make reaches the user.
    proposed.
 8. Stop the work on `/rn:dn` or the user's words, so that it loses nothing: let your `steering aim`
    end, as its write stays whole, stop each role, and push the work by `repository stop`. On
-   `/rn:up`, go on with the work of the worktree the user is in, else ask which of `repository
-   works`, and start again each role that the stop left without a result.
-9. Call the work off on the user's words, such as `中止して`, only once they confirm what goes, its
-   worktree, branch, and pull request, or the work's folder alone in a worktree of their own, as
-   it can't be undone. Then stop each role, and run
-   `repository cancel`.
+   `/rn:up`, go on with the work that `repository works` gives, asking which where it gives more
+   than one, and start again each role that the stop left without a result.
+9. Call the work off on the user's words, such as `中止して`, only once they confirm what goes,
+   such as its pull request, its branch, or its worktree, as it can't be undone. Then stop each
+   role, and remove what they confirmed by `gh` and `git`.
 
 rn's rules for these steps:
 
 - The scripts alone write where the work stands and what it aims at, and the roles write their
   results, so write no file of the work yourself. Run each as `python3 <rn's
   folder>/domain/scripts/<script>`, rn's folder being the one the command's skill names, written
-  out in full, from the top of the user's checkout; with no arguments, it prints its usage. Exit 1
-  means it did nothing and says how to mend that. Exit 2 means a rerun does no
-  more, so tell the user what stopped it.
+  out in full, from the worktree you're in; with no arguments, it prints its usage. Exit 1 means
+  it did nothing and says how to mend that. Exit 2 means a rerun does no more, so tell the user
+  what stopped it.
 - `steering aim <work>` takes the aim on stdin, in the form of
   `<rn's folder>/domain/schemas/aim.schema.json`, whose descriptions say what each part holds:
   the tree whole, and the issues and the steps where you settle them. Its `message` says what your

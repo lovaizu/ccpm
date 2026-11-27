@@ -9,13 +9,13 @@
 - rn names each file it changes with what changes in it, and asks which new things you want to see as soon as they're made, waiting for your word on each before it makes what rests on it.
 - rn answers your question with why, and changes nothing until you ask for a change.
 - rn keeps your decisions in your own words.
+- rn works on the branch you start it on, and asks you what to do where that branch isn't one for the work, such as the default branch. It makes a branch or a worktree only when you ask for one.
+- On a cancel, rn asks what goes, and removes only what you confirm.
 - The need's tree is one flat list, and a solution no longer carries a riskiest assumption to test, as the least that runs in your hands tests it.
 
 ### Fixed
 
-- A role's end moves on only the work it was started for, so work beside it in another worktree never stops it or gets committed half written.
-- rn finds its work where your clone names no default branch for origin.
-- A cancel of work in a worktree of your own removes only the work's folder, and keeps the worktree, its branch, and your changes.
+- A role's end moves on only the work of its own worktree, so work in another worktree never stops it or gets committed half written.
 - rn removes the folders it tries a deliverable in once the try is over, and on a cancel.
 - A check of your repository that fails a push with the word "permission" no longer reads as a missing login.
 

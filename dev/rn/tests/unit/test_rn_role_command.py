@@ -32,20 +32,18 @@ def top(work: WorkPlace) -> str:
     return os.path.join(os.path.dirname(work.worktree), "accounting")
 
 
-def ended(
-    work: WorkPlace, agent: str, cwd: str = "", host: Any = None, transcript: str = "/t/a1.jsonl"
-) -> tuple[int, str, str]:
-    """What the hook gives once the agent ends in the session's folder, the repository's top
-    unless another is given, with the agent's transcript at the path given, none unless one is."""
+def ended(work: WorkPlace, agent: str, cwd: str = "", host: Any = None) -> tuple[int, str, str]:
+    """What the hook gives once the agent ends in the session's folder, the work's worktree, where
+    rn runs, unless another is given."""
     given = json.dumps(
         {
             "session_id": "abc123",
-            "cwd": cwd or top(work),
+            "cwd": cwd or work.worktree,
             "hook_event_name": "SubagentStop",
             "stop_hook_active": False,
             "agent_id": "a1",
             "agent_type": agent,
-            "agent_transcript_path": transcript,
+            "agent_transcript_path": "/t/a1.jsonl",
             "last_assistant_message": "done",
         }
     )
@@ -180,22 +178,10 @@ def test_a_push_that_fails_is_said_after_the_commit(
     assert subject(made) == "rn: the generator ended"
 
 
-def started_for(work: WorkPlace, folder: str) -> str:
-    """The transcript of a role whose first message names the work's Round, as the orchestrator
-    starts each role with its paths."""
-    path = os.path.join(folder, "a1.jsonl")
-    prompt = f"Make {os.path.join(work.rounds, '1', 'invoice%2F__main__.py', 'content-1')}."
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(json.dumps({"type": "user", "message": {"role": "user", "content": prompt}}) + "\n")
-    return path
-
-
-def test_the_hook_acts_on_the_work_the_role_was_started_for_alone(
-    made: WorkPlace, tmp_path: Any
-) -> None:
+def test_the_hook_leaves_work_in_another_worktree_alone(made: WorkPlace, tmp_path: Any) -> None:
     """Given the work with its steering and the command written, and other work in another
     worktree whose role is still writing its result.
-    When the generator started for the work ends.
+    When the generator ends in the work's worktree.
     Then it gives 0, committing the work alone, and leaves the other's result unchecked."""
     rn_files.write_json(made.steering, rn_files.steering())
     write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
@@ -203,8 +189,7 @@ def test_the_hook_acts_on_the_work_the_role_was_started_for_alone(
         rn_files.worktree_of(top(made), str(tmp_path / "rules"), "rules"), "20261127-invoice-rules"
     )
     write_files(other.folder, {"rounds/1/a/content-1/generator.json": "{"})
-    transcript = started_for(made, str(tmp_path))
-    assert ended(made, "rn:generator", transcript=transcript) == (0, "", "")
+    assert ended(made, "rn:generator") == (0, "", "")
     assert subject(made) == "rn: the generator ended"
     assert git(other.worktree, "status", "--porcelain").strip() != ""
 

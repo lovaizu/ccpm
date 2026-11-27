@@ -41,7 +41,7 @@ def made(tmp_path: Any, origin: bool = True) -> WorkPlace:
         git(repo, "symbolic-ref", "refs/remotes/origin/HEAD", "refs/remotes/origin/main")
         git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
     worktree = rn_files.worktree_of(repo, str(tmp_path / "invoices"), BRANCH)
-    work = new(WorkPlace(worktree, NAME), gh_double.host(str(tmp_path / "unused")))
+    work = new(WorkPlace(worktree, NAME))
     rn_files.committed_steering(work.worktree, NAME, STEERING)
     return work
 

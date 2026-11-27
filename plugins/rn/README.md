@@ -35,8 +35,8 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install rn@ccpm
 ```
 
-At your repository's root, or in a worktree of it, in Claude Code, `/rn:on` asks what it can help
-with.
+On the branch you want the work on, in Claude Code, `/rn:on` asks what it can help with. Where
+that branch isn't one for the work, such as the default branch, rn asks you what to do first.
 
 ## Walkthrough
 
@@ -86,9 +86,6 @@ rn reads your repository, then shows what it would make, in one message:
   1はできた時点でお見せします（おすすめ）
   請求書の見た目は経理チームの方が決めることなので、コマンドより先に見ると手戻りが少なくなります
 
-作業場所：.claude/worktrees/ に新しく作ります
-  いまの場所はあなたの作業場所なので、そのままにします
-
 ※仮に決めた点：使うのは経理チームの方（ご依頼の「経理チームが」から）
 
 これで進めてよければ「OK」、直すところがあればその内容を入力してください。
@@ -102,7 +99,7 @@ on it:
 
 見本の請求書で、見た目を確かめてください：
 
-  .claude/worktrees/rn-20261126-invoice-from-statement/見本の請求書.pdf
+  見本の請求書.pdf
 
 これで足りれば /rn:ty、変えたい点があれば /rn:gm に続けてその内容を入力してください。
 ```
@@ -121,7 +118,6 @@ Once AI evaluators have tried it as your accounting team would, rn hands it to y
 できること：明細ファイル1つから、請求書を1枚印刷する
 まだしないこと：2から4
 
-  cd .claude/worktrees/rn-20261126-invoice-from-statement
   invoice 見本の明細.csv
 
 これで足りれば /rn:ty、変えたい点があれば /rn:gm に続けてその内容を入力してください。
@@ -218,14 +214,13 @@ conversation.
 
 ### "Can rn's work be called off?"
 
-Yes. Say so, such as `中止して`. Once you confirm, rn removes the work's worktree, its branch, and its
-pull request. Where the work runs in a worktree of your own, rn removes only the work's folder
-there, and keeps the rest.
+Yes. Say so, such as `中止して`. rn asks what goes, such as its pull request and its branch, and
+removes only what you confirm.
 
 ### "Does it change the repository's files, or merge on its own?"
 
-No. rn works in a worktree apart from your own work, one you agree to, and leaves the ready mark
-and the merge to you.
+No. rn works on the branch you start it on, makes a branch or a worktree only when you ask for one,
+and leaves the ready mark and the merge to you.
 
 ## Documentation
 

@@ -60,8 +60,8 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P6.1: the work's state lives in files on its branch, so that it goes on from any conversation.
   - P6.2: a stop lets each record being written end whole before the work halts.
 - P7: the user's repository left as it was
-  - P7.1: each piece of work lies in a worktree apart from the user's own changes, one they agree
-    to.
+  - P7.1: each piece of work lies where the user starts it, on a branch for the work, and rn
+    makes a branch or a worktree only on their words.
   - P7.2: the ready mark and the merge stay the user's.
 
 ### Concept model
@@ -219,11 +219,9 @@ Strategies:
 - A stop taken from /rn:dn or the user's words, and a pick-up from /rn:up. [S2]\
   Intent: the user stops and goes on at the moment they choose, and new work never asks about
   old work.
-- A cancel taken from the user's words once they confirm what goes, removing the work's worktree,
-  branch, and pull request by a script, or the work's folder alone where the worktree is the
-  user's own, and the folders of its trials. [S3]\
-  Intent: a cancel can't be undone, so only the user starts it, nothing of the work is left for
-  a pick-up to meet, and nothing of the user's own goes with it.
+- A cancel taken from the user's words once they confirm what goes, such as the pull request, the
+  branch, or the worktree, removed by the orchestrator. [S3]\
+  Intent: a cancel can't be undone, so only the user starts it, and only what they confirm goes.
 - A stop that lets the orchestrator's write of the steering end, then stops each role and pushes
   the work's folder. [P6.2]\
   Intent: a pick-up reads a whole steering, and GitHub keeps the work so far as well as the
@@ -252,16 +250,19 @@ sequenceDiagram
   participant R as refactorer
   participant I as inspector
   U->>O: /rn:on [S1]
+  opt the branch it's started on isn't one for the work, such as the default branch [P7.1]
+    O->>U: what to do, with a recommendation [P2.1]
+    U->>O: answers, and rn makes a branch or a worktree only where they ask for one [P7.1]
+  end
   O->>U: asks what it can help with, an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
   O->>O: reads the issue it names, and has a subagent search the repository and the ways to make it [P5.1]
   O->>O: weighs the request by the measure of the vital few, the tree one need where the request settles the state wanted [P1.4]
   loop from the goal outward, until the user agrees [P2.5]
-    O->>U: a proposal of as much as the request settles: the goal they're after with their words it rests on, the way with the first need recommended where there are more, what changes, which deliverable they'd see once made, and the worktree, each assumption marked [P2.5]
+    O->>U: a proposal of as much as the request settles: the goal they're after with their words it rests on, the way with the first need recommended where there are more, what changes, which deliverable they'd see once made, each assumption marked [P2.5]
     U->>O: agrees, or corrects what's off [P2.5]
   end
-  O->>O: makes the worktree, where it's to be made, as the repository's rules or the user's tools ask [P7.1]
-  O->>S: makes the work's folder in it, and takes in the aim: the outcome, each need, the target, its solution, and the steps, the walking skeleton first, each deliverable the user would see ending a step before what rests on it (Steering, Opportunity, Solution, Step) [P5.2]
+  O->>S: makes the work's folder where it's started, and takes in the aim: the outcome, each need, the target, its solution, and the steps, the walking skeleton first, each deliverable the user would see ending a step before what rests on it (Steering, Opportunity, Solution, Step) [P5.2]
   S->>S: commits and pushes it, and opens the draft pull request [P6.1, P7.2]
   O->>U: what is made before the try, listed once [P2.3]
   opt the user asks a question, at any point [P2.7]
@@ -354,7 +355,7 @@ sequenceDiagram
   O->>U: where it stopped, and what waits for the user [P2.3]
   Note over U,O: Later, in any conversation
   U->>O: /rn:up [S2]
-  O->>S: lists each piece of work with something left to do, each in its worktree, and takes the one of the worktree the user is in (Steering) [P6.1]
+  O->>S: lists each piece of work with something left to do where it's started (Steering) [P6.1]
   opt more than one piece of work [S2]
     O->>U: asks which piece of work to go on with [P2.1]
     U->>O: answers [S2]
@@ -374,10 +375,10 @@ sequenceDiagram
   participant O as orchestrator
   participant S as scripts
   U->>O: asks to call the work off [S3]
-  O->>U: what goes, the worktree, the branch, and the pull request, to confirm [P2.1]
+  O->>U: what goes, such as the pull request, the branch, or the worktree, to confirm [P2.1]
   U->>O: confirms [S3]
   O->>O: stops each role at work [S3]
-  O->>S: removes the work's worktree and branch, closes its pull request, and deletes its branch on GitHub, or the work's folder alone in the user's own worktree (Steering) [S3]
+  O->>O: removes what the user confirmed, by gh and git [S3]
   O->>U: what went, and what couldn't, with why [P2.3]
 ```
 
@@ -386,15 +387,14 @@ sequenceDiagram
 ![rn's deployment](images/deployment.svg)
 
 The user installs rn as [the README](../../plugins/rn/README.md#installation) says, and types
-`/rn:on` at their repository's root or in a worktree of it.
+`/rn:on` on the branch they want the work on.
 
 Strategies:
 
-- A worktree for each piece of work, judged by the orchestrator from where it was started and
-  agreed by the user, and made as the repository's rules or the user's tools ask, never the
-  repository's own checkout. [P7.1]\
-  Intent: the user goes on with their own changes, finds the work's worktree in the tools they use, and
-  no case of it lies in a prompt or a script.
+- The work where rn is started, the orchestrator asking the user what to do where the branch
+  isn't one for the work. [P7.1]\
+  Intent: the user chooses where the work lies with the tools they use, and no case of it lies in
+  a prompt or a script.
 - The pull request opened as a draft, which the user marks ready. [P7.2]\
   Intent: nobody reviews or merges the work before the user has seen it checked whole.
 
