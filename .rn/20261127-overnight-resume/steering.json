@@ -103,12 +103,16 @@
       {
         "decision": "Ship plugins/overnight/LICENSE as a copy of the repository's MIT license, as the README links it, an installed plugin holds only its own folder, and plugins/rn ships its own copy the same way.",
         "by": "rn"
+      },
+      {
+        "decision": "Ship plugins/overnight/.claude-plugin/plugin.json at version 0.1.0, plugins/overnight/CHANGELOG.md in Keep a Changelog form, and an overnight entry in .claude-plugin/marketplace.json in step 1, as the README's install command finds no plugin without the manifest and the marketplace entry, and the repository's rules say each plugin of ccpm carries its own LICENSE, README, CHANGELOG, and manifest.",
+        "by": "rn"
       }
     ],
     "questions": [
       "回数を指定しないときの試行回数の既定はいくつにしますか？\n1. 25回（推奨）: 1, 2, 4, 8分、その後15分おきに試すと、25回目は最初に止まってから約5時間15分後になり、5時間制限の解除をまたいで待てます。ほかの理由で壊れたコマンドは、朝までに止まり、利用枠を使い続けません。\n2. 無制限: 成功するまで一晩中試します。壊れたコマンドが後ろの作業を止め続けます。\n3. 3回など少なく: 制限の解除より前にあきらめるので、制限で止まった作業が戻りません。",
       "並行数を指定しないときの既定はいくつにしますか？\n1. 1（推奨）: リストに書いた順に一つずつ走ります。並べて走らせても利用枠は一つを分け合い、制限でそろって止まるので、一晩で終わる量は増えません。前の作業の結果に頼る作業も、順に走れば壊れません。\n2. 2以上: 利用枠より待ち時間が詰まる作業では早く終わりますが、書いた順は保たれません。",
-      "plugins/overnight/LICENSE はリポジトリの MIT ライセンスをそのまま写すだけなので、ライセンス文書のベストプラクティスを作らずに軽い種類（light）で作ってよいですか？\n1. light で作る（推奨）: 中身は既にある LICENSE の写しで、plugins/rn/LICENSE と同じ形です。新しく書く文はありません。\n2. 先にライセンス文書のベストプラクティスを作る: 写すだけのファイルのために手間が増えます。"
+      "plugins/overnight の LICENSE、.claude-plugin/plugin.json、CHANGELOG.md と、.claude-plugin/marketplace.json への overnight の項目は、どれもベストプラクティスの種類がない小さなファイルです。ベストプラクティスを作らずに軽い種類（light）で作ってよいですか？\n1. light で作る（推奨）: LICENSE は既にある MIT ライセンスの写し、plugin.json と marketplace の項目は plugins/rn と同じ数行の JSON で `claude plugin validate --strict` が確かめ、CHANGELOG は Keep a Changelog の形に一行ずつ書くだけです。\n2. 先にそれぞれのベストプラクティスを作る: 数行のファイルのために手間が増えます。"
     ]
   },
   "state": {
@@ -124,11 +128,14 @@
         "settles": "the least that runs: work I queue runs in turn, a piece that fails is tried again at a growing interval until it ends, and in the morning a report says how each ended",
         "deliverables": [
           {
-            "path": "plugins/overnight/README.md",
-            "kind": "readme",
-            "status": "open",
-            "next": "evaluator",
-            "entry": "content-1"
+            "path": "plugins/overnight/.claude-plugin/plugin.json",
+            "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": ".claude-plugin/marketplace.json",
+            "kind": "light",
+            "status": "open"
           },
           {
             "path": "plugins/overnight/domain/scripts/overnight",
@@ -139,6 +146,17 @@
             "path": "plugins/overnight/LICENSE",
             "kind": "light",
             "status": "open"
+          },
+          {
+            "path": "plugins/overnight/CHANGELOG.md",
+            "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/README.md",
+            "kind": "readme",
+            "status": "open",
+            "next": "generator"
           }
         ],
         "status": "open"
