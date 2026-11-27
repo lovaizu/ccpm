@@ -130,7 +130,7 @@ Claude Code reads a hook that fails with no `onFailure` as no answer, which stop
 ### A rule that holds on every run
 
 A hook of the plugin's own `hooks/hooks.json` holds each rule that must hold on every run, such as
-a path that a role never writes. A permission rule or branch protection holds what is hard to undo.
+a path that a role never writes, as [design.md](../.claude/rules/design.md) says. A permission rule or branch protection holds what is hard to undo.
 The role's steps hold the rest.
 
 *Why*: a hook runs every time, while an instruction is only advice
@@ -248,7 +248,8 @@ and goes back to its own steps once the other hands its work back.
 
 ### One agent for each job
 
-Each job has its own role, and the role gets only what the job needs.
+Each job has its own role, as [design.md](../.claude/rules/design.md) says, and the role gets
+only what the job needs.
 
 *When*: a work with jobs that need different context or tools.
 
