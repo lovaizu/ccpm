@@ -349,6 +349,10 @@
       {
         "decision": "Have ccpm's pre-push hook run check.sh once in the working tree, as its duty is to keep a broken commit off the shared branch, CI's being to check the commits pushed in a clean environment; hold each best practice to its schema alone, and drop trace.py, as no one is at a loss without it.",
         "by": "user"
+      },
+      {
+        "decision": "Have the inspector review the pull request as its author would before asking for review, by a pull-request best practice of rn that it uses as domain/references/evaluating-with-best-practices.md says: that it agrees with every file already in the repository and the repository's rules, and its title and description with its diff and its issue; that it holds nothing its purpose doesn't need; and that it leaves nothing behind, such as a test, a document, or a commit not pushed, as reviewing one's own pull request first is the practice of GitHub's and Google's guides, and what the people get is the evaluator's.",
+        "by": "user"
       }
     ],
     "questions": []
