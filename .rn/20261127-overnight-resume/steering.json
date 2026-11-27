@@ -13,11 +13,11 @@
             "by": "Issue #62 Desired State, and the user's answer to Q2 of the hearing on 2026-11-27",
             "opportunities": [],
             "solution": {
-              "solution": "Claude Code's own automatic continue at a claude.ai usage limit, on by default since v2.1.234 (`autoContinueAtUsageLimit`), which waits in the open session, picks the task up where it stopped once the limit resets, and writes `Usage limit reset · Continuing automatically` into the conversation, so the morning shows what stopped and what resumed.",
-              "why": "It already exists, from Claude Code itself, at no cost, and meets both needs at once, as the user expects of 1, so rn makes nothing beside it until a night on the user's machine shows a gap.",
+              "solution": "An overnight plugin, which rn uses, that starts a run of rn at night as a batch in its own process, `claude -p`, under claude-ac (https://github.com/blackstardigitalstudio/claude-auto-continue, MIT), which watches the output for the usage-limit message, waits until the stated reset, and resumes the same session with `--continue`, so the stop and the resume stay in the conversation's history for the morning; where the run comes to a point that is the user's to decide, it stops there and leaves the point as a question for the morning.",
+              "why": "The user rejected Claude Code's own `autoContinueAtUsageLimit` as unreliable, and it is never offered in `-p` runs, so it can't serve a separate-process batch at all; claude-ac already does the watching, waiting, and resuming in `-p` runs on macOS and Linux under the MIT license, so rn makes only the thin start that runs rn under it, rather than a watcher of its own or Codeman, which does more than this need.",
               "assumption": {
-                "assumption": "On the user's machine at night, a run that stops at the usage limit goes on to its end by morning: the machine doesn't sleep more than about 30 minutes, no permission prompt stops it, and it hits the limit no more than three times.",
-                "test": "Leave a real run going at night until it meets the usage limit, and in the morning check whether it ended, and whether the conversation shows when it stopped and when it resumed.",
+                "assumption": "A run of rn started at night by the overnight plugin goes on in its own process with no one there: no permission prompt stops it, claude-ac recognizes the current Claude Code's usage-limit message and resumes the same session after the reset, and by morning the run has reached its end or a question for the user.",
+                "test": "On the user's machine, start a real run of rn with the overnight plugin at night and leave it until it meets the usage limit; in the morning, check that it reached its end or a question, and that the session's history shows when it stopped and when it resumed.",
                 "result": null
               }
             }
@@ -52,6 +52,22 @@
         "by": "user"
       },
       {
+        "decision": "rn stays a tool the user works with in conversation, and the night's work is a batch in a separate process that rn starts, as the user said 「rnは対話で作業する前提だよね」, 「rnからオーバーナイトを使うようなイメージ」, and 「別プロセスで夜に作業するバッチのようなイメージ」.",
+        "by": "user"
+      },
+      {
+        "decision": "The resume relies on an outside watcher, not on Claude Code's `autoContinueAtUsageLimit`, as the user answered 「autoContinueAtUsageLimitはあてにならない」 and 「２かな」.",
+        "by": "user"
+      },
+      {
+        "decision": "A night's batch stops at each point that is the user's to decide and leaves it as a question for the morning, since rn asks the user what is theirs and fills no gap by guessing, and no one answers at night.",
+        "by": "rn"
+      },
+      {
+        "decision": "Before the overnight plugin runs claude-ac, the maker reads every file of claude-ac that runs and shows the user what it reads, writes, runs, and sends out, as the user's rules ask of another author's tool.",
+        "by": "rn"
+      },
+      {
         "decision": "The talk is in Japanese, the language of the user's words, and the deliverables are in English, the language of the repository's documents, so each reader reads their own.",
         "by": "rn"
       }
@@ -65,6 +81,29 @@
       ],
       "refs": []
     },
-    "steps": []
+    "steps": [
+      {
+        "for": "O1.1",
+        "settles": "rnから夜に別プロセスのバッチを始め、使用量の上限で止まっても、上限が解けたら止まったところから続く。",
+        "deliverables": [
+          {
+            "path": "plugins/overnight/bin/overnight",
+            "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/.claude-plugin/plugin.json",
+            "kind": "light",
+            "status": "open"
+          },
+          {
+            "path": ".claude-plugin/marketplace.json",
+            "kind": "light",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      }
+    ]
   }
 }
