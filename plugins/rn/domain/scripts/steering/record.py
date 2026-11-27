@@ -33,32 +33,25 @@ def taken_in(steering: Steering | None, aim: dict[str, Any]) -> Steering:
     in its schema's form.
     Gives: a new steering: the aim's tree whole; its issues, else the steering's, else none;
     and its steps, else the steering's, each step that the steering holds for the same need with
-    the same words, else at the same place for the same need, keeping its status, and each of its
-    deliverables at the same path keeping its own and where it is on its way, every other step
-    and deliverable open; each deliverable whose
+    the same words keeping its status, and each of its deliverables at the same path keeping its
+    own and where it is on its way, every other step and deliverable open; each deliverable whose
     next the aim says taking it with no entry, as its next role starts its own: generator and
     the judged Rounds kept, anew as generator from its first Round, fixer, refactorer, or done,
     and its step open again where it opens; and the inspection passed where the steering holds it
     so and the aim adds no step, as a step added grows the pull request.
     Changes: nothing.
-    Refuses: Wrong where it would drop or change a decision by the user, as only they change it;
-    where its target or a step's need names no opportunity of its tree; where it would make a
-    deliverable again past LIMIT judged Rounds, as the user confirms what they leave; where it
-    would mend one by a fixer before its Rounds are over and it isn't done, as a Fix mends only
-    what the Rounds left or what was tried; or where it would leave one waiting on a weighing with
-    no question asked; naming each.
+    Refuses: Wrong where it would make a deliverable again past LIMIT judged Rounds, as the user
+    confirms what they leave, or would leave one waiting on a weighing with no question asked,
+    naming it.
     """
     state = steering["state"] if steering else {"issues": _NO_ISSUES, "steps": []}
-    _decisions_kept(steering["ost"]["decisions"] if steering else [], aim["ost"]["decisions"])
-    _named(aim)
     steps = state["steps"]
-    added = False
     if "steps" in aim:
-        found = [_same(each, place, state["steps"]) for place, each in enumerate(aim["steps"])]
-        steps = [_kept(each, same) for each, same in zip(aim["steps"], found)]
-        added = None in found
+        steps = [_kept(each, state["steps"]) for each in aim["steps"]]
     _settled(steps, aim["ost"]["questions"])
     issues = copy.deepcopy(aim.get("issues", state["issues"]))
+    held = [(each["for"], each["settles"]) for each in state["steps"]]
+    added = any((each["for"], each["settles"]) not in held for each in steps)
     inspected = {"inspected": True} if state.get("inspected") and not added else {}
     return {
         "ost": copy.deepcopy(aim["ost"]),
@@ -66,42 +59,11 @@ def taken_in(steering: Steering | None, aim: dict[str, Any]) -> Steering:
     }
 
 
-def _decisions_kept(held: list[dict[str, Any]], told: list[dict[str, Any]]) -> None:
-    """Refuses an aim that drops or changes a decision by the user."""
-    for each in held:
-        if each["by"] == "user" and each not in told:
-            raise Wrong(
-                f"the aim drops or changes the user's decision {each['decision']!r}; keep it word"
-                " for word, as only the user changes it"
-            )
-
-
-def _named(aim: dict[str, Any]) -> None:
-    """Refuses a target or a step's need that names no opportunity of the aim's tree."""
-    ids, stack = set(), list(aim["ost"]["opportunities"])
-    while stack:
-        each = stack.pop()
-        ids.add(each["id"])
-        stack += each["opportunities"]
-    target = aim["ost"]["target"]
-    named = ([target] if target is not None else []) + [s["for"] for s in aim.get("steps", [])]
-    for each in named:
-        if each not in ids:
-            raise Wrong(f"{each} names no opportunity of the tree; give one of its ids")
-
-
-def _same(step: dict[str, Any], place: int, held: list[dict[str, Any]]) -> dict[str, Any] | None:
-    """The step that the steering holds for the same need with the same words, else the one at
-    the same place for the same need, as a step reworded is still the same step."""
-    for each in held:
-        if (each["for"], each["settles"]) == (step["for"], step["settles"]):
-            return each
-    if place < len(held) and held[place]["for"] == step["for"]:
-        return held[place]
-    return None
-
-
-def _kept(step: dict[str, Any], same: dict[str, Any] | None) -> dict[str, Any]:
+def _kept(step: dict[str, Any], held: list[dict[str, Any]]) -> dict[str, Any]:
+    same = next(
+        (each for each in held if (each["for"], each["settles"]) == (step["for"], step["settles"])),
+        None,
+    )
     had = {each["path"]: each for each in same["deliverables"]} if same else {}
     deliverables = [_deliverable(each, had.get(each["path"])) for each in step["deliverables"]]
     status = same["status"] if same else "open"
@@ -132,11 +94,6 @@ def _deliverable(told: dict[str, Any], had: dict[str, Any] | None) -> dict[str, 
         kept.pop(key, None)
     if said == "done":
         return {**kept, "status": "done"}
-    if said == "fixer" and kept["status"] != "done" and kept.get("judged", 0) < LIMIT:
-        raise Wrong(
-            f"{told['path']} isn't through its Rounds; make it again by its generator, as a Fix"
-            " mends only what the Rounds left or what was tried"
-        )
     if said == "generator" and kept.get("judged", 0) >= LIMIT:
         raise Wrong(
             f"{told['path']} has had its {LIMIT} judged Rounds; ask the user whether to mend what"

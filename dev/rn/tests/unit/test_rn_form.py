@@ -21,7 +21,7 @@ def schema(tmp_path: Any, value: dict[str, Any], name: str = "s.schema.json") ->
 
 
 def test_a_steering_that_holds_to_its_schema_has_no_fault() -> None:
-    """Given a steering in the schema's form, with an opportunity under another and a solution.
+    """Given a steering in the schema's form, with two opportunities and a solution.
     When it's checked against steering.schema.json.
     Then no fault is named."""
     assert faults(rn_files.steering(), STEERING) == []
@@ -43,7 +43,7 @@ def test_each_keyword_names_its_fault_by_where_it_lies() -> None:
     assert faults(value, STEERING) == [
         "/ost/questions: is required",
         "/ost/outcome: takes at least 1 character",
-        "/ost/opportunities/0/id: takes the form ^O\\d+(\\.\\d+)*$",
+        "/ost/opportunities/0/id: takes the form ^O\\d+$",
         "/ost/opportunities/0/solution: takes exactly one of its 2 forms, and holds 0",
         "/ost/target: takes string or null",
         "/ost/extra: isn't a field of this form",

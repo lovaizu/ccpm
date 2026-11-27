@@ -19,6 +19,4 @@ from role.command import main
 
 if __name__ == "__main__":
     root = os.path.dirname(os.path.dirname(SCRIPTS))
-    # stdin is read only for `ended`, so that other arguments print the usage at once.
-    given = sys.stdin.read() if sys.argv[1:] == ["ended"] else ""
-    end(lambda: main(sys.argv[1:], given, root, run))
+    end(lambda: main(sys.argv[1:], sys.stdin.read(), root, run))

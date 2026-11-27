@@ -19,12 +19,10 @@ on, so that no detour that only rn's insides make reaches the user.
 
 1. Hear the request by proposals that the user corrects, so that the work aims at what they're
    after, not only at their first words, and they answer nothing their words already settle. Ask
-   what you can help with, read the issue it names, its comments, and each pull request and piece
-   of rn's work of it, open or closed, by `gh` and `repository works`, as the user's words
-   there count as said, and have the rest searched by step 2. Where open work already serves the
-   request, propose to go on with it instead. Then propose, from the outside in, as much at once as
-   the request settles, so that a settled request takes one proposal and an open one a few, each
-   with your recommendation:
+   what you can help with, read the issue it names and its comments, as the user's words there
+   count as said, and have the rest searched by step 2. Then propose, from the outside in, as much
+   at once as the request settles, so that a settled request takes one proposal and an open one a
+   few, each with your recommendation:
    - The goal: what you read they're after, behind their words and why they want it, with each of
      their words it rests on, quoted with where they said it, in no fixed form, as a form such as a
      user story can turn around who acts.
@@ -44,15 +42,12 @@ on, so that no detour that only rn's insides make reaches the user.
    Take each correction as a decision by `user`, word for word, weigh what it changes, and show
    again only that, until they agree. Hold the aim until then, as no work exists before it, so a
    stop during the hearing leaves nothing. Once they agree, make the worktree, the work there by
-   `repository new`, and its aim by `steering aim`, then open the draft pull request by
-   `gh pr create --draft`, its title and body in the repository's language and in the shape of its
-   recent ones, naming the issues it closes and refers to, as the user marks it ready.
+   `repository new`, and its aim by `steering aim`.
 2. Hand each search to a subagent, for the files the request bears on or for the ways to make a
    need, so that your context holds the talk and the work, not what the subagent read. Have it
    gather the ways widely, the tool's own features, existing tools, and known practices, and
    check each one's license, upkeep, open issues, and standing before you offer it, so that the
-   user picks only among ways that hold, sending out only what the repository's and the user's
-   rules let it.
+   user picks only among ways that hold.
 3. Weigh yourself each fact that would change what the work aims at, against the user's words and
    the deliverables as they stand, reading what was made, so that what the aim keeps is in them and
    what it cuts isn't: the request, the user's correction, a role's result, a problem to mend, and
@@ -60,11 +55,9 @@ on, so that no detour that only rn's insides make reaches the user.
    - The request: the outcome as the user agreed to it, the words it rests on, each need that the
      user or the issue named or that a use showed, as what they can do, never a means, and the
      issues the work closes and refers to. For the need agreed to, the target, its least solution,
-     the riskiest assumption it rests on with its test on the real thing, and the steps: each
-     deliverable that the user sees once made ending a step of its own, before what rests on it,
-     then the walking skeleton, the first step that runs, each deliverable after those it rests
-     on. Give each deliverable the kind of its best practice, and a deliverable of the light kind
-     a decision by `rn` on `The check`, what shows it right, such as a validator that passes.
+     and the steps: each deliverable that the user sees once made ending a step of its own, before
+     what rests on it, then the walking skeleton, the first step that runs, each deliverable after
+     those it rests on. Give each deliverable the kind of its best practice.
    - A role's result: as a decision by `rn`, only the remedy that the people fail without, a point
      the records settle, or the least remedy of a finding the people meet in their use, so that
      the deliverable doesn't grow, and what the deliverable takes next: made again on the remedy,
@@ -83,24 +76,18 @@ on, so that no detour that only rn's insides make reaches the user.
 4. Answer each question that the user asks or wonders aloud, such as why the work does something,
    at once and with why, from what you read: the steering, the deliverables, and the Rounds, and
    facts found by step 2 where those don't hold it. Change nothing for it, as a question isn't a
-   correction, and only once their words ask for a change, weigh it by step 3. Where your answer
-   shows that what a role is making would change, let the role end, keep its result, and weigh the
-   change with it.
+   correction, and only once their words ask for a change, weigh it by step 3.
 5. Keep the work going without the user, so that they wait only on what's theirs. `steering due`
    says what comes next, and for a deliverable, the role it takes next, which your aim or rn's
    hook set in the steering. Start each role with only what its task needs, as the evaluator meets
-   only what the people would. Before a hand-over, run the riskiest assumption's test where you
-   can, or hand it to the user as part of the try, and give its result in the aim.
+   only what the people would.
 6. Mend a problem with a deliverable once you've weighed it, so that a mend waits for nothing and
-   changes only what was weighed. Give the fixer the problem in words it can act on: the user's
-   words, the inspector's finding, or what the Rounds left as the evaluator found it with the
-   user's answer to it.
+   changes only what was weighed: the user's words by `/rn:gm`, their answer to what the Rounds
+   left, or an inspector's finding.
 7. Once each step is done, have an inspector review the pull request, as its author would before
-   asking for review, and a new one again once its findings are mended. Each finding is a problem
-   to mend by step 3 and step 6, and one in the pull request's title or body, yours to mend by
-   `gh pr edit`. Where a mend changes nothing the user tried, mark its step done again, as there's
-   nothing new to try. The work is done once `steering due` prints `ended`, the issues the user
-   keeps are open, and the merge is proposed.
+   asking for review. Each finding is a problem to mend by step 3 and step 6. The work is done
+   once `steering due` prints `ended`, the issues the user keeps are open, and the merge is
+   proposed.
 8. Stop the work on `/rn:dn` or the user's words, so that it loses nothing: let your `steering aim`
    end, as its write stays whole, stop each role, and push the work by `repository stop`. On
    `/rn:up`, go on with the work of the worktree the user is in, else ask which of `repository
@@ -115,7 +102,7 @@ rn's rules for these steps:
   results, so write no file of the work yourself. Run each as `python3 <rn's
   folder>/domain/scripts/<script>`, rn's folder being the one the command's skill names, written
   out in full, from the top of the user's checkout; with no arguments, it prints its usage. Exit 1
-  means it did nothing more than it says, and says how to mend that. Exit 2 means a rerun does no
+  means it did nothing and says how to mend that. Exit 2 means a rerun does no
   more, so tell the user what stopped it.
 - `steering aim <work>` takes the aim on stdin, in the form of
   `<rn's folder>/domain/schemas/aim.schema.json`, whose descriptions say what each part holds:
@@ -129,11 +116,8 @@ rn's rules for these steps:
   `steering inspected` once nothing is left to mend; `ended`, the work's end by step 3 where a
   need is left, then an issue for each need the user keeps, by `gh issue create`, with the pull
   request's URL in its body.
-- `unpushed` before what's due means git couldn't push, such as a check of the repository's that
-  refuses code before its tests, and the commit waits for the next push; go on, and tell the user
-  what git said only where it's still unpushed at a hand-over or a stop.
 - For a deliverable whose next role is its fixer, give `steering start` the problem's words on
-  stdin, as step 6 says.
+  stdin, word for word.
 - Start `rn:generator`, `rn:refactorer`, `rn:evaluator`, `rn:fixer`, and `rn:inspector` in the
   background, so that the user can talk and stop while they work, each with the absolute paths
   that `steering start` prints, the steering, and the worktree, the folder that holds the work's

@@ -74,8 +74,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
 - Opportunity\
   A need in the words of those who have it, which the user picks or leaves.
 - Solution\
-  How the picked need is met, with the riskiest assumption it rests on and that assumption's test
-  on the real thing.
+  How the picked need is met.
 - Step\
   One stretch of the way to the picked need, which ends once the user says it's enough.
 - Deliverable\
@@ -163,8 +162,7 @@ Strategies:
 - One reference of the measure, which the orchestrator reads. [P4.1]\
   Intent: what the work aims at is weighed by one measure, which changes in one place.
 - The outcome kept as the user agreed to it, in no fixed form, with each of their words it rests
-  on, word for word, and each decision of theirs in their words, which the scripts refuse to
-  drop or change. [P2.5]\
+  on, word for word, and each decision of theirs in their words. [P2.5]\
   Intent: the work aims at what the user is after, which their first words seldom say in full,
   and no form or rewording turns their meaning around, such as a story that makes the user the
   one who acts where they meant rn to.
@@ -172,8 +170,8 @@ Strategies:
   a new fixer. [P1.3]\
   Intent: the mend changes only what was weighed, and starts without new Rounds.
 - The hearing held as proposals from the outside in, the goal first, each as much as the request
-  settles, which the orchestrator fills from the request, the issue with each earlier work and
-  pull request of it, and the repository, marking what it had to assume. [P2.5, P1.4]\
+  settles, which the orchestrator fills from the request, the issue, and the repository, marking
+  what it had to assume. [P2.5, P1.4]\
   Intent: the user corrects what's off instead of answering what they already said, a settled
   request reaches the agreement in one proposal, and an open one in a few.
 - Each question of the user's answered by the orchestrator from the steering, the deliverables,
@@ -232,12 +230,10 @@ Strategies:
 - Each role's result checked against its schema by the hook before the role ends, the role kept
   going until it holds. [P5.3]\
   Intent: the role mends its own result, and the orchestrator starts no role again.
-- Each role's changes committed and pushed by the hook once its result moves its deliverable on,
-  and each commit of a script, of the steering alone, pushed at once, a push that git refuses
-  kept for the next. [P6.1]\
-  Intent: nothing the work makes lies only on the user's computer, a trial clones what's
-  committed, no role's work still being written is committed, and a check of the repository's
-  that refuses code before its tests doesn't stop the work.
+- Each role's changes committed and pushed by the hook once it ends, and each commit of a script
+  pushed at once. [P6.1]\
+  Intent: nothing the work makes lies only on the user's computer, and a trial clones what's
+  committed.
 
 ### Sequences
 
@@ -257,15 +253,15 @@ sequenceDiagram
   U->>O: /rn:on [S1]
   O->>U: asks what it can help with, an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
-  O->>O: reads the issue it names with each earlier work and pull request of it, and has a subagent search the repository and the ways to make it [P5.1]
+  O->>O: reads the issue it names, and has a subagent search the repository and the ways to make it [P5.1]
   O->>O: weighs the request by the measure of the vital few, the tree one need where the request settles the state wanted [P1.4]
   loop from the goal outward, until the user agrees [P2.5]
     O->>U: a proposal of as much as the request settles: the goal they're after with their words it rests on, the way with the first need recommended where there are more, what changes, which deliverable they'd see once made, and the worktree, each assumption marked [P2.5]
     U->>O: agrees, or corrects what's off [P2.5]
   end
   O->>O: makes the worktree, where it's to be made, as the repository's rules or the user's tools ask [P7.1]
-  O->>S: makes the work's folder in it, and takes in the aim: the outcome, each need, the target, its solution with its riskiest assumption, and the steps, the walking skeleton first, each deliverable the user would see ending a step before what rests on it (Steering, Opportunity, Solution, Step) [P5.2]
-  O->>O: opens the draft pull request, in the repository's language and the shape of its recent ones [P7.2]
+  O->>S: makes the work's folder in it, and takes in the aim: the outcome, each need, the target, its solution, and the steps, the walking skeleton first, each deliverable the user would see ending a step before what rests on it (Steering, Opportunity, Solution, Step) [P5.2]
+  S->>S: commits and pushes it, and opens the draft pull request [P6.1, P7.2]
   O->>U: what is made before the try, listed once [P2.3]
   opt the user asks a question, at any point [P2.7]
     U->>O: the question, in their own words [P2.7]
@@ -398,10 +394,8 @@ Strategies:
   repository's own checkout. [P7.1]\
   Intent: the user goes on with their own changes, finds the work's worktree in the tools they use, and
   no case of it lies in a prompt or a script.
-- The pull request opened as a draft by the orchestrator, in the repository's language and the
-  shape of its recent ones, which the user marks ready. [P7.2]\
-  Intent: nobody reviews or merges the work before the user has seen it checked whole, and its
-  reviewers read it as they read the repository's other pull requests.
+- The pull request opened as a draft, which the user marks ready. [P7.2]\
+  Intent: nobody reviews or merges the work before the user has seen it checked whole.
 
 ### Directory structure
 

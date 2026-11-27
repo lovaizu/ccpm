@@ -7,6 +7,7 @@ import os
 from collections.abc import Callable, Sequence
 from datetime import date
 
+import form
 import push
 from fault import Answer, answered
 from host import Host
@@ -33,7 +34,8 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
       makes it, named by `place.named` from today and the slug.
     - `works`: 0 printing the folder, absolute, of each piece of work that `worktree.left` gives,
       a line each, newest first, and nothing where there's none.
-    - `stop <work>`: 0 printing the hash that `push.stop` gives.
+    - `stop <work>`: 0 printing the hash that `push.stop` gives, with the work's steering, read as
+      its schema holds it, where it has one.
     - `cancel <work>`: 0 printing each thing of the work that `worktree.removed` removed on GitHub
       once it removes the work here, a line each, and nothing where there's none; and on stderr
       `repository: can't remove <what, and why>` for each thing that it couldn't ask GitHub of
@@ -62,7 +64,12 @@ def _works(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
 
 def _stop(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:
-    return 0, f"{push.stop(of_folder(cwd, given[0]), host)}\n", ""
+    work = of_folder(cwd, given[0])
+    schema = os.path.join(plugin_root, "domain", "schemas", "steering.schema.json")
+    steering = (
+        form.held(work.steering, schema, "the steering") if os.path.isfile(work.steering) else None
+    )
+    return 0, f"{push.stop(work, steering, host)}\n", ""
 
 
 def _cancel(given: list[str], cwd: str, plugin_root: str, host: Host) -> Answer:

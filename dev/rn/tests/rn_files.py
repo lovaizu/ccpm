@@ -52,36 +52,25 @@ def schema(name: str = "steering") -> dict[str, Any]:
         return json.load(f)
 
 
-def opportunity(id_: str, words: str, under: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+def opportunity(id_: str, words: str) -> dict[str, Any]:
     """An opportunity of the steering, named by the user on the walkthrough's day, with no
     solution."""
-    return {
-        "id": id_,
-        "opportunity": words,
-        "by": "the user on 2026-11-26",
-        "opportunities": under or [],
-        "solution": None,
-    }
+    return {"id": id_, "opportunity": words, "by": "the user on 2026-11-26", "solution": None}
 
 
 def ost(target: str | None = "O1", questions: list[str] | None = None) -> dict[str, Any]:
-    """The walkthrough's opportunity solution tree: printing an invoice, with the rules under it,
-    and its solution where it's the target."""
-    picked = opportunity("O1", PRINT, [opportunity("O1.1", RULES)])
+    """The walkthrough's opportunity solution tree: printing an invoice, and meeting the rules,
+    with its solution where it's the target."""
+    picked = opportunity("O1", PRINT)
     if target == "O1":
         picked["solution"] = {
             "solution": "A command that reads a statement file and prints one invoice.",
             "why": "It's the least that prints.",
-            "assumption": {
-                "assumption": "The accountant can name the statement file.",
-                "test": "The user prints the sample statement.",
-                "result": None,
-            },
         }
     return {
         "outcome": OUTCOME,
         "words": [WORDS],
-        "opportunities": [picked],
+        "opportunities": [picked, opportunity("O2", RULES)],
         "target": target,
         "decisions": [{"decision": "Talk in Japanese, and write in English.", "by": "user"}],
         "questions": questions or [],

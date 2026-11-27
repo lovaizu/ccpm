@@ -5,12 +5,11 @@
 ### Changed
 
 - rn proposes the goal it reads you're after, with the words of yours it rests on, the way to it, and what it makes, marking what it assumed, so you correct only what's off instead of answering one question at a time.
-- rn asks nothing that your request, your issue, its earlier work, or your repository already says: a request whose result is settled takes one proposal, and one that leaves more open takes a few, the goal first.
+- rn asks nothing that your request, your issue, or your repository already says: a request whose result is settled takes one proposal, and one that leaves more open takes a few, the goal first.
 - rn names each file it changes with what changes in it, and asks which new things you want to see as soon as they're made, waiting for your word on each before it makes what rests on it.
 - rn answers your question with why, and changes nothing until you ask for a change.
-- rn keeps your decisions in your own words, and refuses to drop or change them.
-- rn opens its draft pull request in your repository's language and the shape of its recent ones.
-- Where a check of your repository refuses a push, rn keeps the commit for the next push and goes on.
+- rn keeps your decisions in your own words.
+- The need's tree is one flat list, and a solution no longer carries a riskiest assumption to test, as the least that runs in your hands tests it.
 
 ## [0.12.0] - 2026-11-27
 

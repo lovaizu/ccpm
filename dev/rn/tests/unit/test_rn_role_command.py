@@ -13,7 +13,6 @@ from typing import Any
 import pytest
 import rn_files
 from gh import gh_double
-from host import Ran, run
 from place import WorkPlace
 from repo_files import git, write_files
 from role.command import USAGE, main
@@ -62,63 +61,45 @@ def pushed(work: WorkPlace) -> bool:
     return remote == git(work.worktree, "rev-parse", "HEAD").strip()
 
 
-@pytest.mark.parametrize("agent", ["Explore", "generator", "other:generator"])
-def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace, agent: str) -> None:
-    """Given the work whose command's generator result is made.
-    When an agent that isn't one of rn's ends: another, one named as a role with no plugin, or
-    another plugin's of a role's name.
+def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace) -> None:
+    """Given the work whose worktree holds a change.
+    When an agent that isn't one of rn's ends.
     Then it gives 0, and commits nothing."""
-    made_round(made)
+    write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
     before = git(made.worktree, "rev-parse", "HEAD")
-    assert ended(made, agent) == (0, "", "")
+    assert ended(made, "Explore") == (0, "", "")
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def made_round(work: WorkPlace) -> None:
-    """Writes a steering whose command works in content-1, and the command with the generator's
-    result made there."""
+def test_a_roles_change_is_committed_and_pushed_from_inside_the_worktree_of_the_work(
+    made: WorkPlace,
+) -> None:
+    """Given the work with its steering, whose generator wrote the command, and a session in the
+    work's worktree.
+    When the generator ends.
+    Then the change is committed as `rn: the generator ended`, and pushed."""
+    rn_files.write_json(made.steering, rn_files.steering())
+    write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
+    assert ended(made, "rn:generator", cwd=made.worktree) == (0, "", "")
+    assert subject(made) == "rn: the generator ended"
+    assert pushed(made)
+
+
+def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: WorkPlace) -> None:
+    """Given a steering whose command works in content-1, and the generator's result made there.
+    When the generator ends.
+    Then the steering has the command's evaluator next, committed and pushed."""
     value = rn_files.steering()
     value["state"]["steps"][0]["deliverables"][0]["entry"] = "content-1"
-    rn_files.write_json(work.steering, value)
-    write_files(work.worktree, {rn_files.COMMAND: "print('invoice')\n"})
+    rn_files.write_json(made.steering, value)
+    folder = os.path.join(made.rounds, "1", "invoice%2F__main__.py", "content-1")
     rn_files.write_json(
-        os.path.join(round_of(work), "generator.json"),
-        {"result": "made", "files": [rn_files.COMMAND]},
+        os.path.join(folder, "generator.json"), {"result": "made", "files": [rn_files.COMMAND]}
     )
-
-
-def round_of(work: WorkPlace) -> str:
-    """The command's content-1 in step 1."""
-    return os.path.join(work.rounds, "1", "invoice%2F__main__.py", "content-1")
-
-
-def test_a_roles_result_moves_its_deliverable_on_and_is_pushed_from_inside_the_worktree(
-    made: WorkPlace,
-) -> None:
-    """Given a steering whose command works in content-1, the command and the generator's result
-    made there, and a session in the work's worktree.
-    When the generator ends.
-    Then the steering has the command's evaluator next, and each change is committed as `rn: the
-    generator ended`, and pushed."""
-    made_round(made)
-    assert ended(made, "rn:generator", cwd=made.worktree) == (0, "", "")
+    assert ended(made, "rn:generator") == (0, "", "")
     with open(made.steering, encoding="utf-8") as f:
         assert json.load(f)["state"]["steps"][0]["deliverables"][0]["next"] == "evaluator"
-    assert subject(made) == "rn: the generator ended"
-    assert pushed(made) and git(made.worktree, "status", "--porcelain") == ""
-
-
-def test_a_change_that_no_result_of_the_role_moved_is_left_for_its_own_role(
-    made: WorkPlace,
-) -> None:
-    """Given the work whose command a generator is still writing, with no result yet.
-    When another role ends, the evaluator, and then a generator.
-    Then each gives 0, and commits nothing, as the command's own generator has yet to end."""
-    rn_files.write_json(made.steering, rn_files.steering())
-    write_files(made.worktree, {rn_files.COMMAND: "print('invo"})
-    before = git(made.worktree, "rev-parse", "HEAD")
-    assert (ended(made, "rn:evaluator"), ended(made, "rn:generator")) == ((0, "", ""),) * 2
-    assert git(made.worktree, "rev-parse", "HEAD") == before
+    assert pushed(made)
 
 
 def test_nothing_is_committed_where_nothing_changed(made: WorkPlace) -> None:
@@ -161,12 +142,12 @@ def test_a_session_outside_git_is_left_alone(made: WorkPlace, tmp_path: Any) -> 
 def test_a_result_out_of_its_schema_keeps_the_role_going(
     made: WorkPlace, text: str, says: str
 ) -> None:
-    """Given a steering whose command works in content-1, its generator's result there out of its
-    schema or not JSON.
-    When the generator ends.
+    """Given the work whose Round's result leaves its schema or isn't JSON.
+    When the role ends.
     Then it gives 2 naming the place, so that the role goes on, and commits nothing."""
-    made_round(made)
-    with open(os.path.join(round_of(made), "generator.json"), "w", encoding="utf-8") as f:
+    target = os.path.join(made.folder, "rounds", "1", "a", "content-1", "generator.json")
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+    with open(target, "w", encoding="utf-8") as f:
         f.write(text)
     before = git(made.worktree, "rev-parse", "HEAD")
     code, _, err = ended(made, "rn:generator")
@@ -174,38 +155,27 @@ def test_a_result_out_of_its_schema_keeps_the_role_going(
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_a_push_with_no_origin_is_said_after_the_commit(made: WorkPlace) -> None:
-    """Given the work whose generator's result is made, and a repository with no origin.
+@pytest.mark.parametrize(
+    ("origin", "code", "says"),
+    [(None, 1, "no remote origin"), ("gone.git", 2, "can't push the work")],
+    ids=["no-origin", "gone"],
+)
+def test_a_push_that_fails_is_said_after_the_commit(
+    made: WorkPlace, origin: str | None, code: int, says: str
+) -> None:
+    """Given the work with its steering whose change can't be pushed, as it has no origin, or one
+    that isn't there.
     When the generator ends.
-    Then it gives 1 saying so, so that the role ends, and the commit is kept."""
+    Then it gives 1 or 2 saying why, and the commit is kept."""
     git(top(made), "remote", "remove", "origin")
-    made_round(made)
-    code, _, err = ended(made, "rn:generator")
-    assert (code, "no remote origin" in err) == (1, True)
+    if origin:
+        gone = os.path.join(os.path.dirname(top(made)), origin)
+        git(top(made), "remote", "add", "origin", gone)
+    rn_files.write_json(made.steering, rn_files.steering())
+    write_files(made.worktree, {rn_files.COMMAND: "print('invoice')\n"})
+    given, _, err = ended(made, "rn:generator")
+    assert (given, says in err) == (code, True)
     assert subject(made) == "rn: the generator ended"
-
-
-def test_a_push_that_git_refuses_waits_for_the_next(made: WorkPlace) -> None:
-    """Given the work whose generator's result is made, and origin a folder that isn't there.
-    When the generator ends.
-    Then it gives 0, and the commit is kept for the next push."""
-    git(top(made), "remote", "set-url", "origin", os.path.join(os.path.dirname(top(made)), "x"))
-    made_round(made)
-    assert ended(made, "rn:generator") == (0, "", "")
-    assert subject(made) == "rn: the generator ended"
-
-
-def test_a_commit_that_git_refuses_is_said(made: WorkPlace) -> None:
-    """Given the work whose generator's result is made, and git that refuses each commit.
-    When the generator ends.
-    Then it gives 1 with what git said, so that the role ends."""
-    made_round(made)
-
-    def refusing(argv: Any, cwd: str, env: Any = None) -> Any:
-        return Ran(1, "", "hook refused\n") if argv[1:2] == ["commit"] else run(argv, cwd, env)
-
-    code, _, err = ended(made, "rn:generator", host=refusing)
-    assert (code, "git commit fails: hook refused" in err) == (1, True)
 
 
 def test_arguments_of_another_form_give_the_usage() -> None:

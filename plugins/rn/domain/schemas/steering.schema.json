@@ -10,7 +10,7 @@
  "additionalProperties": false,
  "properties": {
   "ost": {
-   "description": "The work's opportunity solution tree, after Teresa Torres: the outcome at its root, as the user agreed to it, with the words of theirs it rests on, the opportunities under it from the broadest to the most specific, the solution chosen for the opportunity that the user agreed to with its riskiest assumption, and the work's decisions and open questions.",
+   "description": "The work's opportunity solution tree, after Teresa Torres: the outcome at its root, as the user agreed to it, with the words of theirs it rests on, the opportunities that serve it, the solution chosen for the opportunity that the user agreed to, and the work's decisions and open questions.",
    "type": "object",
    "required": [
     "outcome",
@@ -37,7 +37,7 @@
      }
     },
     "opportunities": {
-     "description": "The needs that the people named or that a use showed, broadest first, each more specific one under the one it serves. None is cut: the user decides.",
+     "description": "The needs that the people named or that a use showed, each one that serves the outcome. None is cut: the user decides.",
      "type": "array",
      "items": {
       "$ref": "#/definitions/opportunity"
@@ -197,15 +197,14 @@
     "id",
     "opportunity",
     "by",
-    "opportunities",
     "solution"
    ],
    "additionalProperties": false,
    "properties": {
     "id": {
-     "description": "O and its place in the tree, such as O1 or O1.2.",
+     "description": "O and its place in the list, such as O1.",
      "type": "string",
-     "pattern": "^O\\d+(\\.\\d+)*$"
+     "pattern": "^O\\d+$"
     },
     "opportunity": {
      "description": "The need, in the words of those who have it.",
@@ -216,13 +215,6 @@
      "description": "Who named it and where, such as an issue, a comment, or the user's words on a day.",
      "type": "string",
      "minLength": 1
-    },
-    "opportunities": {
-     "description": "The more specific needs under it.",
-     "type": "array",
-     "items": {
-      "$ref": "#/definitions/opportunity"
-     }
     },
     "solution": {
      "description": "The solution chosen for this opportunity, null unless it's the target. rn explains it to the user only on asking.",
@@ -241,8 +233,7 @@
    "type": "object",
    "required": [
     "solution",
-    "why",
-    "assumption"
+    "why"
    ],
    "additionalProperties": false,
    "properties": {
@@ -254,9 +245,6 @@
      "description": "Why it was chosen over the others that rn weighed.",
      "type": "string",
      "minLength": 1
-    },
-    "assumption": {
-     "$ref": "#/definitions/assumption"
     }
    }
   },
@@ -281,34 +269,6 @@
      ]
     }
    }
-  },
-  "assumption": {
-   "type": "object",
-   "required": [
-    "assumption",
-    "test",
-    "result"
-   ],
-   "additionalProperties": false,
-   "properties": {
-    "assumption": {
-     "type": "string",
-     "minLength": 1
-    },
-    "test": {
-     "description": "How the assumption is tested on the real thing.",
-     "type": "string",
-     "minLength": 1
-    },
-    "result": {
-     "description": "What the test showed, null until it runs.",
-     "type": [
-      "string",
-      "null"
-     ]
-    }
-   },
-   "description": "The riskiest assumption that the solution rests on, with its test."
   }
  }
 }
