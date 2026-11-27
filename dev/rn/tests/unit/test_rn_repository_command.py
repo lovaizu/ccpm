@@ -35,7 +35,11 @@ def started(repo: str, host: Any) -> str:
     )
     name = f"{date.today():%Y%m%d}-{SLUG}"
     folder = os.path.join(worktree, ".rn", name)
-    assert main(["new", SLUG, "../invoices"], repo, rn_files.RN, host) == (0, f"{folder}\n", "")
+    assert main(["new", SLUG, "../invoices", "made"], repo, rn_files.RN, host) == (
+        0,
+        f"{folder}\n",
+        "",
+    )
     rn_files.committed_steering(worktree, name, rn_files.steering())
     write_files(worktree, {rn_files.COMMAND: "print('invoice')\n"})
     return folder
@@ -69,6 +73,8 @@ def test_a_refusal_gives_its_exit_code_with_what_is_wrong(repo: str, host: Any) 
     Then it gives 1, saying what's wrong."""
     code, _, err = main(["stop", "docs"], repo, rn_files.RN, host)
     assert (code, err.startswith("repository: ")) == (1, True)
+    code, _, err = main(["new", SLUG, "../invoices", "mine"], repo, rn_files.RN, host)
+    assert (code, "give made or users" in err) == (1, True)
 
 
 def test_cancel_prints_what_it_removed_and_says_what_it_couldnt(

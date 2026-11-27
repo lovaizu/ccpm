@@ -220,9 +220,10 @@ Strategies:
   Intent: the user stops and goes on at the moment they choose, and new work never asks about
   old work.
 - A cancel taken from the user's words once they confirm what goes, removing the work's worktree,
-  branch, and pull request by a script. [S3]\
-  Intent: a cancel can't be undone, so only the user starts it, and nothing of the work is left
-  for a pick-up to meet.
+  branch, and pull request by a script, or the work's folder alone where the worktree is the
+  user's own, and the folders of its trials. [S3]\
+  Intent: a cancel can't be undone, so only the user starts it, nothing of the work is left for
+  a pick-up to meet, and nothing of the user's own goes with it.
 - A stop that lets the orchestrator's write of the steering end, then stops each role and pushes
   the work's folder. [P6.2]\
   Intent: a pick-up reads a whole steering, and GitHub keeps the work so far as well as the
@@ -376,7 +377,7 @@ sequenceDiagram
   O->>U: what goes, the worktree, the branch, and the pull request, to confirm [P2.1]
   U->>O: confirms [S3]
   O->>O: stops each role at work [S3]
-  O->>S: removes the work's worktree and branch, closes its pull request, and deletes its branch on GitHub (Steering) [S3]
+  O->>S: removes the work's worktree and branch, closes its pull request, and deletes its branch on GitHub, or the work's folder alone in the user's own worktree (Steering) [S3]
   O->>U: what went, and what couldn't, with why [P2.3]
 ```
 

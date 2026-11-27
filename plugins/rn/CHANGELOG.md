@@ -11,6 +11,18 @@
 - rn keeps your decisions in your own words.
 - The need's tree is one flat list, and a solution no longer carries a riskiest assumption to test, as the least that runs in your hands tests it.
 
+### Fixed
+
+- A role's end moves on only the work it was started for, so work beside it in another worktree never stops it or gets committed half written.
+- rn finds its work where your clone names no default branch for origin.
+- A cancel of work in a worktree of your own removes only the work's folder, and keeps the worktree, its branch, and your changes.
+- rn removes the folders it tries a deliverable in once the try is over, and on a cancel.
+- A check of your repository that fails a push with the word "permission" no longer reads as a missing login.
+
+### Removed
+
+- The work's own best practices in `.rn/best-practices/`, which nothing let you reach.
+
 ## [0.12.0] - 2026-11-27
 
 ### Changed

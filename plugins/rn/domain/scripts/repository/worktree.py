@@ -1,33 +1,40 @@
 """Decides how the work comes to be in the worktree it's made in and is found again: made as an
 empty folder in a worktree that the orchestrator chose, never the repository's own checkout; found
 in each worktree whose branch or uncommitted changes hold its folder; and removed, here and on
-GitHub, where the user cancels it."""
+GitHub, where the user cancels it, a worktree of the user's own kept with its branch."""
 
 from __future__ import annotations
 
 import json
 import os
 import re
+import shutil
 from typing import NamedTuple
 
+import push
 from fault import CantRun, Missing, Wrong
 from host import Host, checked
 from place import WorkPlace
 from steering.due import due
 
-# The default branch, as origin's HEAD names it, from which the work's branch grows.
-_DEFAULT = "refs/remotes/origin/HEAD"
+# The default branch from which the work's branch grows: as origin's HEAD names it, else the
+# usual names of a default branch, as a clone made otherwise than by `git clone` sets no HEAD.
+_DEFAULTS = ("refs/remotes/origin/HEAD", "refs/remotes/origin/main", "refs/remotes/origin/master")
+# The file in the work's folder that marks its worktree as the user's own, which a cancel keeps.
+USERS = "users-worktree"
 # The work's folder in a path that git gives from a worktree's top.
 _WORK = re.compile(r"\.rn/([0-9]{8}-[a-z0-9]+(?:-[a-z0-9]+){0,4})/")
 
 
-def new(work: WorkPlace, host: Host) -> WorkPlace:
+def new(work: WorkPlace, host: Host, users: bool = False) -> WorkPlace:
     """Makes the work's folder in the worktree it's made in.
 
     Takes: the work to make, its worktree the one the orchestrator chose, and its name by
-    `place.named` from the day and the slug of what it's for, and the host.
+    `place.named` from the day and the slug of what it's for; the host; and whether the worktree
+    is the user's own, not one made for the work.
     Gives: the work, made.
-    Changes: makes the work's folder in its worktree, empty, for the work's first aim.
+    Changes: makes the work's folder in its worktree for the work's first aim, empty but for
+    `USERS` where the worktree is the user's own.
     Refuses: Missing where the worktree isn't the top of a git worktree; Wrong where it's the
     repository's own checkout, as the user's own work stays as they left it, or where work of
     the name already lies there.
@@ -43,6 +50,9 @@ def new(work: WorkPlace, host: Host) -> WorkPlace:
     if os.path.exists(work.folder):
         raise Wrong(f"the work {work.name} already lies at {work.folder}; pick it up with /rn:up")
     os.makedirs(work.folder)
+    if users:
+        with open(os.path.join(work.folder, USERS), "w", encoding="utf-8") as f:
+            f.write("The user's own worktree, which a cancel of the work keeps.\n")
     return work
 
 
@@ -58,8 +68,9 @@ def works(cwd: str, host: Host) -> list[WorkPlace]:
 
     Takes: a folder in the repository, and the host.
     Gives: for each worktree of the repository, newest first by its last commit, each piece of
-    work whose folder the worktree's branch changed since the default branch that origin's HEAD
-    names, or that the worktree holds uncommitted; none where the folder lies in no git repository.
+    work whose folder the worktree's branch changed since the default branch, the first of
+    `_DEFAULTS` that git holds, or, where git holds none, each that the branch holds, and each
+    that the worktree holds uncommitted; none where the folder lies in no git repository.
     Changes: nothing.
     Refuses: nothing.
     """
@@ -99,9 +110,11 @@ def _newest_first(worktrees: list[str], host: Host) -> list[str]:
 def _names(worktree: str, host: Host) -> list[str]:
     """The name of each piece of work whose folder the worktree's branch changed or holds
     uncommitted."""
-    changed = host(
-        ["git", "log", "--format=", "--name-only", f"{_DEFAULT}..HEAD", "--", ".rn"], worktree
-    )
+    base = _default(worktree, host)
+    asked = ["git", "log", "--format=", "--name-only", f"{base}..HEAD", "--", ".rn"]
+    if base is None:
+        asked = ["git", "ls-tree", "-r", "--name-only", "HEAD", "--", ".rn"]
+    changed = host(asked, worktree)
     held = host(["git", "status", "--porcelain", "--untracked-files=all", "--", ".rn"], worktree)
     paths = (changed.out if changed.code == 0 else "") + held.out
     names: list[str] = []
@@ -109,6 +122,14 @@ def _names(worktree: str, host: Host) -> list[str]:
         if found[1] not in names:
             names.append(found[1])
     return names
+
+
+def _default(worktree: str, host: Host) -> str | None:
+    """The first of `_DEFAULTS` that git holds in the worktree, or None where it holds none."""
+    for each in _DEFAULTS:
+        if host(["git", "rev-parse", "-q", "--verify", each], worktree).code == 0:
+            return each
+    return None
 
 
 def _open(work: WorkPlace) -> bool:
@@ -146,6 +167,11 @@ def removed(work: WorkPlace, host: Host) -> Gone:
     said>`, or `the branch <branch> on GitHub, as git can't delete it: <what git said>`, each
     one line. A pull request that gh gives closed or merged, such as an earlier work's of the same
     branch's name, is left as it is.
+    Where the work's folder holds `USERS`, the worktree is the user's own: it removes the work's
+    folder alone, commits that alone as `rn: cancelled <name>`, and pushes it as `push.push` does,
+    and
+    gives in `kept` `the branch <branch>, its commits, and its pull request, as the worktree is the
+    user's`, and what git said where it couldn't push.
     Changes: removes the work's worktree, with each change in it that isn't committed, and then its
     local branch; then closes the branch's open pull request, before the branch goes, as GitHub
     closes it by itself once its branch is deleted; then deletes origin's branch and the
@@ -157,6 +183,8 @@ def removed(work: WorkPlace, host: Host) -> Gone:
     if _own_checkout(work.worktree, host):
         raise Wrong(f"{work.worktree} is the repository's own checkout, which rn never removes")
     branch = _branch(work, host)
+    if os.path.isfile(os.path.join(work.folder, USERS)):
+        return _folder_removed(work, branch, host)
     common = checked(
         host,
         ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
@@ -171,6 +199,23 @@ def removed(work: WorkPlace, host: Host) -> Gone:
     gone = Gone([], [])
     _pull_request_closed(branch, top, host, gone)
     _branch_deleted(branch, top, host, gone)
+    return gone
+
+
+def _folder_removed(work: WorkPlace, branch: str, host: Host) -> Gone:
+    """Removes the work's folder alone from the user's own worktree, as `removed` says."""
+    shutil.rmtree(work.folder)
+    add = ["git", "add", "-A", "--", work.folder]
+    checked(host, add, work.worktree, CantRun, "git can't take in the work's folder removed")
+    message = f"rn: cancelled {work.name}"
+    commit = ["git", "commit", "-q", "-m", message, "--", work.folder]
+    checked(host, commit, work.worktree, CantRun, "git can't commit the work's folder removed")
+    what = f"the branch {branch}, its commits, and its pull request, as the worktree is the user's"
+    gone = Gone([], [what])
+    try:
+        push.push(work, host)
+    except (Missing, CantRun) as why:
+        gone.kept.append(f"the cancel's commit on GitHub, as git can't push it: {_line(str(why))}")
     return gone
 
 

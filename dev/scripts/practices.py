@@ -1,5 +1,5 @@
 """Checks each of rn's best practices against its schema,
-`plugins/rn/domain/schemas/best-practice.schema.json`. Run it from the top of the repository as
+`dev/rn/best-practice.schema.json`. Run it from the top of the repository as
 `python3 dev/scripts/practices.py <best practice json>...`. It gives 0, or 1 where it names a fault,
 and 2 with its usage where it gets no file. It's ccpm's own tooling, kept out of rn's folder, as no
 run of rn checks the form of rn's own best practices."""
@@ -9,19 +9,16 @@ from __future__ import annotations
 import os
 import sys
 
+# The top of the repository.
+TOP = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # rn's form check, which reads a value against one of rn's schemas.
-RN = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "plugins",
-    "rn",
-    "domain",
-)
+RN = os.path.join(TOP, "plugins", "rn", "domain")
 sys.path.insert(0, os.path.join(RN, "scripts"))
 
 from fault import Wrong
 from form import held
 
-SCHEMA = os.path.join(RN, "schemas", "best-practice.schema.json")
+SCHEMA = os.path.join(TOP, "dev", "rn", "best-practice.schema.json")
 USAGE = "usage: python3 dev/scripts/practices.py <best practice json>..."
 
 

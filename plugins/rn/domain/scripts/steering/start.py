@@ -92,7 +92,7 @@ def _entry(root: str, role: str, each: dict[str, Any], schemas: str) -> str:
 
 
 def _practice(work: WorkPlace, plugin_root: str, kind: str | None) -> str:
-    found = practice.kinds(plugin_root, work.worktree)
+    found = practice.kinds(plugin_root)
     if kind not in found:
         raise Wrong(
             f"rn has no best practice of the kind {kind!r}; give the deliverable a kind it has"

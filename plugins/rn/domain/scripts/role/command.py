@@ -1,7 +1,8 @@
 """Decides what rn's hook does once one of rn's roles ends, so that no instruction to a role or
 restart of it holds what must happen every time: it checks each result of the work against its
 schema and keeps the role going until each holds, moves each deliverable on by its role's result,
-and commits and pushes the work's changes at once."""
+commits and pushes the work's changes at once, and removes the trials' folders that the role
+leaves."""
 
 from __future__ import annotations
 
@@ -16,26 +17,28 @@ import push
 from fault import Answer, CantRun, Missing, Wrong
 from host import Host
 from place import WorkPlace
-from repository import worktree
+from repository import trial, worktree
 from steering import record, rounds
 
 USAGE = "usage: role ended   (Claude Code's input of SubagentStop on stdin)\n"
-# The roles of rn, as Claude Code names a plugin's agent in `agent_type`.
-_ROLES = {"generator", "refactorer", "evaluator", "fixer", "inspector"}
+# The roles of rn that write a result, as Claude Code names a plugin's agent in `agent_type`.
+_ROLES = {"generator", "refactorer", "evaluator", "fixer"}
 
 
 def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answer:
     """The exit code, stdout, and stderr of `role ended`, with Claude Code's input of the
     SubagentStop event, with rn's folder at `plugin_root`, and git and gh reached through `host`.
 
-    - For an agent that isn't one of rn's roles, as `agent_type` names it, `rn:<role>` or
-      `<role>`: 0, doing nothing.
-    - For one of rn's roles, for each piece of work in the repository that the input's `cwd` lies
-      in, as `worktree.works` gives them: 2 with each result that leaves its schema, a Round's or a
+    - For an agent that isn't one of rn's roles that write a result, as `agent_type` names it,
+      `rn:<role>` or `<role>`: 0, doing nothing.
+    - For one of those roles, for the work it was started for, as `_started_for` finds it among
+      the work of the repository that the input's `cwd` lies in, as `worktree.works` gives it:
+      2 with each result that leaves its schema, a Round's or a
       Fix's, a line each as `form.held` names it, changing nothing, so that Claude Code keeps the
       role going with those words until each holds. Otherwise it moves each deliverable on by its
       next role's result as `record.moved` does, then commits and pushes each piece of work whose
-      worktree holds a change as `push.kept` does, as `rn: the <role> ended`, and gives 0.
+      worktree holds a change as `push.kept` does, as `rn: the <role> ended`, removes each of
+      its trials' folders as `trial.removed` does, and gives 0.
     - 1 with `role: <what's wrong>` where something `push.kept` needs is Missing, or 2 where it
       CantRun, the commit kept where only the push failed, as the role can't mend either.
     - 2 with the usage where the arguments are other than `ended`.
@@ -47,16 +50,32 @@ def main(argv: Sequence[str], given: str, plugin_root: str, host: Host) -> Answe
     if role not in _ROLES:
         return 0, "", ""
     schemas = os.path.join(plugin_root, "domain", "schemas")
-    works = worktree.works(str(hook["cwd"]), host)
+    works = _started_for(
+        worktree.works(str(hook["cwd"]), host), str(hook.get("agent_transcript_path") or "")
+    )
     faults = [fault for work in works for fault in _faults(work, schemas)]
     if faults:
         return 2, "", "".join(f"role: {each}\n" for each in faults)
     try:
         for work in works:
             _kept(work, role, schemas, host)
+            trial.removed(work)
     except (Missing, CantRun) as stopped:
         return (1 if isinstance(stopped, Missing) else 2), "", f"role: {stopped}\n"
     return 0, "", ""
+
+
+def _started_for(works: list[WorkPlace], transcript: str) -> list[WorkPlace]:
+    """The work whose folder the role's first message names, as the orchestrator starts each role
+    with the paths of its work, so that no other work's role, still writing, is checked or
+    committed; each work where the transcript can't be read or names none of them."""
+    try:
+        with open(transcript, encoding="utf-8") as f:
+            first = f.readline()
+    except OSError:
+        return works
+    named = [each for each in works if each.folder + os.sep in first]
+    return named or works
 
 
 def _faults(work: WorkPlace, schemas: str) -> list[str]:

@@ -42,7 +42,8 @@ on, so that no detour that only rn's insides make reaches the user.
    Take each correction as a decision by `user`, word for word, weigh what it changes, and show
    again only that, until they agree. Hold the aim until then, as no work exists before it, so a
    stop during the hearing leaves nothing. Once they agree, make the worktree, the work there by
-   `repository new`, and its aim by `steering aim`.
+   `repository new`, `made` for a worktree made for the work and `users` for the one you're in,
+   as a cancel keeps the user's own, and its aim by `steering aim`.
 2. Hand each search to a subagent, for the files the request bears on or for the ways to make a
    need, so that your context holds the talk and the work, not what the subagent read. Have it
    gather the ways widely, the tool's own features, existing tools, and known practices, and
@@ -93,7 +94,8 @@ on, so that no detour that only rn's insides make reaches the user.
    `/rn:up`, go on with the work of the worktree the user is in, else ask which of `repository
    works`, and start again each role that the stop left without a result.
 9. Call the work off on the user's words, such as `中止して`, only once they confirm what goes, its
-   worktree, branch, and pull request, as it can't be undone. Then stop each role, and run
+   worktree, branch, and pull request, or the work's folder alone in a worktree of their own, as
+   it can't be undone. Then stop each role, and run
    `repository cancel`.
 
 rn's rules for these steps:

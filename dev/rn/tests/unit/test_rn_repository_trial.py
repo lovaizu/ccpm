@@ -15,7 +15,7 @@ from fault import CantRun, Wrong
 from host import Ran, run
 from place import WorkPlace
 from repo_files import git, write_files
-from repository.trial import folder, starting_state
+from repository.trial import folder, removed, starting_state
 
 NAME = "20261126-invoice-from-statement"
 
@@ -42,7 +42,7 @@ def test_the_folder_lies_in_the_temporary_folder_by_its_round(made: WorkPlace, t
     """Given a Round of the command.
     When its folder is asked.
     Then it lies in the system's temporary folder, named by the work and the Round."""
-    expected = os.path.join(temp, f"rn-trial-{NAME}-invoice%2F__main__.py-content-1") + os.sep
+    expected = os.path.join(temp, f"rn-trial-{NAME}", "invoice%2F__main__.py-content-1") + os.sep
     assert folder(made, round_of(made)) == expected
 
 
@@ -66,6 +66,19 @@ def test_the_starting_state_holds_the_work_as_committed_without_rns_folder(made:
     assert sorted(os.listdir(made_at)) == [".git", "README.md", "invoice"]
     with open(os.path.join(made_at, rn_files.COMMAND), encoding="utf-8") as f:
         assert f.read() == "print('invoice')\n"
+
+
+def test_the_trials_of_the_work_are_removed_and_no_others(made: WorkPlace, temp: str) -> None:
+    """Given the work's trial made, and another work's whose name starts with the work's.
+    When the work's trials are removed.
+    Then the work's folder of trials is gone, and the other's stays."""
+    starting_state(made, round_of(made), run)
+    other = WorkPlace(made.worktree, f"{NAME}-2")
+    write_files(folder(other, round_of(other)), {"kept.txt": "kept\n"})
+    removed(made)
+    assert not os.path.exists(os.path.join(temp, f"rn-trial-{NAME}"))
+    assert os.path.isfile(os.path.join(folder(other, round_of(other)), "kept.txt"))
+    removed(other)
 
 
 def test_git_that_cant_clone_cant_run(made: WorkPlace) -> None:

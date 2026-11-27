@@ -219,7 +219,8 @@ conversation.
 ### "Can rn's work be called off?"
 
 Yes. Say so, such as `中止して`. Once you confirm, rn removes the work's worktree, its branch, and its
-pull request.
+pull request. Where the work runs in a worktree of your own, rn removes only the work's folder
+there, and keeps the rest.
 
 ### "Does it change the repository's files, or merge on its own?"
 

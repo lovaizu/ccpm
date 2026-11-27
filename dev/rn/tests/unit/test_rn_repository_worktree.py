@@ -114,6 +114,28 @@ def test_the_work_ended_or_merged_is_left_out(repo: str) -> None:
     assert left(repo, run) == []
 
 
+def test_the_work_is_found_where_origin_names_no_head(repo: str) -> None:
+    """Given the work committed in a worktree, and origin's HEAD unset, as a clone made otherwise
+    than by `git clone` leaves it.
+    When the work with something left to do is asked.
+    Then it's found, by origin's main."""
+    made = new(WorkPlace(worktree(repo), NAME), run)
+    committed(made, rn_files.steering(), "2026-11-26T09:00:00")
+    git(repo, "remote", "set-head", "origin", "-d")
+    assert left(repo, run) == [made]
+
+
+def test_the_work_is_found_where_git_holds_no_default_branch(repo: str) -> None:
+    """Given the work committed in a worktree, and no ref of origin's default branch.
+    When the work with something left to do is asked.
+    Then it's found, by the branch's own tree."""
+    made = new(WorkPlace(worktree(repo), NAME), run)
+    committed(made, rn_files.steering(), "2026-11-26T09:00:00")
+    git(repo, "remote", "set-head", "origin", "-d")
+    git(repo, "update-ref", "-d", "refs/remotes/origin/main")
+    assert left(repo, run) == [made]
+
+
 def test_a_folder_that_is_not_a_repository_holds_no_work_of_rn(tmp_path: Any) -> None:
     """Given a folder that lies in no git repository.
     When the work is asked.
@@ -154,6 +176,40 @@ def test_the_cancelled_work_is_removed_here_and_on_github(
     assert git(repo, "branch", "-r", "--list", "origin/invoices") == ""
     assert gh_double.state(gh_state)["pull_request"] is None
     assert git(repo, "branch", "--show-current") == "main\n"
+
+
+def test_the_work_in_the_users_own_worktree_leaves_the_worktree_and_its_branch(
+    repo: str, host: Any
+) -> None:
+    """Given the work made in the user's own worktree, pushed, and a change of theirs not
+    committed.
+    When it's removed.
+    Then the work's folder alone is gone, committed and pushed as `rn: cancelled <name>`, the
+    worktree, its branch, and the user's change stay, and what's kept is named."""
+    made = new(WorkPlace(worktree(repo), NAME), run, users=True)
+    rn_files.committed_steering(made.worktree, NAME, rn_files.steering())
+    git(made.worktree, "push", "-q", "origin", "invoices")
+    write_files(made.worktree, {"draft.md": "draft\n"})
+    kept = "the branch invoices, its commits, and its pull request, as the worktree is the user's"
+    assert removed(made, host) == Gone([], [kept])
+    assert not os.path.exists(made.folder)
+    assert os.path.isfile(os.path.join(made.worktree, "draft.md"))
+    assert git(made.worktree, "log", "-1", "--format=%s") == f"rn: cancelled {NAME}\n"
+    assert git(repo, "rev-parse", "origin/invoices") == git(made.worktree, "rev-parse", "HEAD")
+
+
+def test_the_cancel_in_the_users_own_worktree_says_what_git_couldnt_push(
+    repo: str, host: Any
+) -> None:
+    """Given the work made in the user's own worktree, and a repository with no origin.
+    When it's removed.
+    Then the work's folder is gone and committed, and the push it couldn't make is named."""
+    made = new(WorkPlace(worktree(repo), NAME), run, users=True)
+    rn_files.committed_steering(made.worktree, NAME, rn_files.steering())
+    git(repo, "remote", "remove", "origin")
+    gone = removed(made, host)
+    assert gone.kept[1].startswith("the cancel's commit on GitHub, as git can't push it: ")
+    assert not os.path.exists(made.folder)
 
 
 def test_the_work_never_pushed_is_removed_here_and_its_stale_ref_with_it(

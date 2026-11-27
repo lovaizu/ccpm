@@ -119,6 +119,23 @@ def test_a_stop_whose_push_is_refused_for_want_of_a_permission_is_missing_one(
             os.chmod(folder, os.stat(folder).st_mode | stat.S_IWUSR)
 
 
+def test_a_stop_whose_check_of_the_repository_says_permission_cant_run(
+    tmp_path: Any, host: Any
+) -> None:
+    """Given the work whose repository's pre-push check fails, saying `permission` of a file.
+    When stop is given the work.
+    Then CantRun is raised, as no login or permission of origin's refused it."""
+    work = with_command(made(tmp_path))
+    hook = os.path.join(git(work.worktree, "rev-parse", "--git-common-dir").strip(), "hooks")
+    os.makedirs(os.path.join(work.worktree, hook), exist_ok=True)
+    script = os.path.join(work.worktree, hook, "pre-push")
+    with open(script, "w", encoding="utf-8") as f:
+        f.write("#!/bin/sh\necho 'test_permission_of_the_file failed' >&2\nexit 1\n")
+    os.chmod(script, 0o755)
+    with pytest.raises(CantRun, match="test_permission_of_the_file failed"):
+        stop(work, None, host)
+
+
 def test_a_stop_to_a_remote_that_isnt_there_cant_run(tmp_path: Any, host: Any) -> None:
     """Given the work whose remote origin names a folder that doesn't exist.
     When stop is given the work.

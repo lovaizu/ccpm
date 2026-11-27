@@ -13,7 +13,13 @@ from place import WorkPlace
 
 # What git says where origin refuses a push for want of a login or a permission, in lower case:
 # a remote that rejects the refs, as a folder that may not be written does, among them.
-_REFUSED = ("permission", "could not read username", "authentication failed", "remote rejected")
+_REFUSED = (
+    "permission to ",
+    "permission denied (publickey",
+    "could not read username",
+    "authentication failed",
+    "remote rejected",
+)
 
 
 def stop(work: WorkPlace, steering: dict[str, Any] | None, host: Host) -> str:
