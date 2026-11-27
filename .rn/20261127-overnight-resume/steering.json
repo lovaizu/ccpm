@@ -115,7 +115,7 @@
           {
             "path": ".claude-plugin/marketplace.json",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           }
         ],
         "status": "open"
