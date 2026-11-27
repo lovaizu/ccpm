@@ -3,8 +3,8 @@
 rn is a Claude Code plugin that makes what you ask for, ready for the people you make it for.
 
 rn is for you when you have Claude Code make something in a GitHub repository for other people to
-use. With it, you see what you asked for work early, and you decide only what's yours: which
-need to meet first, and how it works for you once you try it.
+use. With it, you see what you asked for work early, and you decide only what's yours: you
+correct one proposal of what it makes, and say how it works for you once you try it.
 
 rn makes the first working slice of a request, and once you've tried it, grows it one addition
 at a time, for each need you choose to make now.
@@ -63,65 +63,53 @@ You type:
 経理チームが、Pythonを書かずに、明細から請求書を印刷できるコマンドがほしい
 ```
 
-rn reads your repository, then asks whom it's for, and then what for, one at a time:
+rn reads your repository, then shows what it would make, in one message:
 
 ```text
-誰が使いますか？
+こう進めます。違うところだけ直してください。
 
-1. 経理チームの方（おすすめ）
-   依頼の「経理チームが」から読みました
-2. ほかの人
-   誰かを書いてください
+ゴール：経理チームが、Pythonを書かずに、明細から請求書を印刷できる（ご依頼の言葉のまま）
+
+進め方：まず1を作ります（おすすめ）
+  印刷できれば、経理チームの方が月末に自分で請求書を出せます
+  1. 明細ファイルから、請求書を1枚印刷できる
+  2. インボイス制度の記載事項を満たしている
+  3. 発行者の情報を毎回入れなくて済む
+  4. ガイドだけで使い始められる
+  2から4は、1を試したあとに、今作るかissueに残すかをご相談します
+
+作るもの：新しく作るので、おおまかに次の3つです
+  1. 請求書の型
+  2. invoice コマンド
+  3. 使い方の説明
+  1はできた時点でお見せします（おすすめ）
+  請求書の見た目は経理チームの方が決めることなので、コマンドより先に見ると手戻りが少なくなります
+
+作業場所：.claude/worktrees/ に新しく作ります
+  いまの場所はあなたの作業場所なので、そのままにします
+
+※仮に決めた点：使うのは経理チームの方（ご依頼の「経理チームが」から）
+
+これで進めてよければ「OK」、直すところがあればその内容を入力してください。
 ```
 
-You type `1`. rn asks:
+You type `OK`. rn makes the invoice's template first, and shows it to you before anything rests
+on it:
 
 ```text
-経理チームの方は、それで何をしたいですか？
+請求書の型ができました（1/3）
 
-1. 月末に、開発者の手を借りずに請求書を出したい（おすすめ）
-   依頼の「Pythonを書かずに」から読みました
-2. ほかのこと
-   その点を書いてください
+見本の請求書で、見た目を確かめてください：
+
+  .claude/worktrees/rn-20261126-invoice-from-statement/見本の請求書.pdf
+
+これで足りれば /rn:ty、変えたい点があれば /rn:gm に続けてその内容を入力してください。
 ```
 
-You type `1`. rn asks where it works, apart from your own work:
+You type `/rn:ty`. Each time one more is done, rn tells you, so you can say at once what's off:
 
 ```text
-どこで作業しますか？
-
-1. 新しい作業場所を .claude/worktrees/ に作る（おすすめ）
-   いまの場所はあなたの作業場所なので、そのままにします
-2. ほかの場所
-   使う作業場所を書いてください
-```
-
-You type `1`. rn asks which need to make first:
-
-```text
-どれから作りますか？
-
-1. 明細ファイルから、請求書を1枚印刷できる（おすすめ）
-   印刷できれば、経理チームの方が月末に自分で請求書を出せます
-2. インボイス制度の記載事項を満たしている
-3. 発行者の情報を毎回入れなくて済む
-4. ガイドだけで使い始められる
-```
-
-You type `1`. rn shows what it makes before you can try it:
-
-```text
-試せるまでに、次の3つを作ります。
-
-1. invoice コマンド
-2. 請求書の型
-3. 使い方の説明
-```
-
-Each time one is done, rn tells you, so you can say at once what's off:
-
-```text
-invoice コマンドができました（1/3）
+invoice コマンドができました（2/3）
 ```
 
 Once AI evaluators have tried it as your accounting team would, rn hands it to you:
@@ -139,8 +127,8 @@ Once AI evaluators have tried it as your accounting team would, rn hands it to y
 ```
 
 You run it, and the printer gives one invoice with the customer, the lines, and the total. You
-type `/rn:ty`. rn checks the pull request whole, then asks what happens to the needs you didn't
-pick:
+type `/rn:ty`. rn checks the pull request whole, then asks what happens to the needs not made
+yet:
 
 ```text
 PRの点検が通り、1ができました。
@@ -169,8 +157,20 @@ rn puts in your hands, early, the least that runs for the one need you pick.
 
 ### "I can't spell out every detail up front, so it builds the wrong thing."
 
-You don't spell it out. rn lists the needs it found in your words and picks one with why, and
-you pick. You then try what runs, and say what's off.
+You don't spell it out. rn reads your words, your issue, and your repository, and proposes in one
+message the goal in your own words, the way to it, and what it makes, marking what it had to
+assume. You correct only what's off, then try what runs, and say what's off there.
+
+### "Does it ask a lot of questions before anything starts?"
+
+No. rn asks nothing that your request, your issue, or your repository already says. Where your
+issue already says what you want, the proposal comes first, and once you agree, rn starts.
+
+### "I see the parts only at the end, and the rework piles up."
+
+No. rn names each thing it makes, the files where they exist, and asks which ones you want to see
+as soon as they're made, recommending those whose rework would cost most later. rn waits for your
+word on each before it makes what rests on it.
 
 ### "It builds the whole request before anything runs."
 
@@ -183,8 +183,8 @@ Yes. rn talks in your language and writes in your repository's, asking only wher
 
 ### "Does it show how far it has come?"
 
-Yes. When making starts, rn lists what it makes before you can try it, and tells you each time
-one is done, such as `（1/3）`.
+Yes. The proposal lists what rn makes before you can try it, and rn tells you each time one is
+done, such as `（1/3）`.
 
 ### "Its output misses what this kind of work needs."
 

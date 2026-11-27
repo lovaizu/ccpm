@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.13.0] - 2026-11-27
+
+### Changed
+
+- rn shows in one message the goal in your own words, the way to it, and what it makes, marking what it assumed, so you correct only what's off instead of answering one question at a time.
+- rn asks nothing that your request, your issue, or your repository already says, so a request whose result is settled goes to the proposal at once.
+- rn keeps your words as you said them, so what it aims at doesn't turn your meaning around.
+- rn asks which things it makes you want to see as soon as they're made, and waits for your word on each before it makes what rests on it.
+- The one you talk with weighs each point and answers why at once, so nothing waits on another role.
+
 ## [0.12.0] - 2026-11-27
 
 ### Changed
