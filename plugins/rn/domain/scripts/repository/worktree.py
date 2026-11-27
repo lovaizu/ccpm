@@ -1,9 +1,9 @@
 """Decides how a run's worktree comes to be and is found again: made with its branch from the
-default branch that origin's HEAD names, with the run's folder empty for the pruner's first
-result; found from the runs' branches whose committed steering hasn't ended, its worktree made
-again where none lies; and removed, here and on GitHub, where the user cancels it. Where the user
-works in herdr, herdr makes each worktree in a workspace of its own, or opens one made again, as herdr shows only the
-worktrees it holds, and removes each it holds."""
+default branch that origin's HEAD names, with the run's folder empty for the pruner's first result;
+found from the runs' branches whose committed steering hasn't ended, its worktree made again where
+none lies; and removed, here and on GitHub, where the user cancels it. Where the user works in
+herdr, herdr makes each worktree in a workspace of its own, or opens one made again, as herdr shows
+only the worktrees it holds, and removes each it holds."""
 
 from __future__ import annotations
 
