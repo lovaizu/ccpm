@@ -133,8 +133,8 @@
             "path": "plugins/overnight/scripts/overnight.py",
             "kind": "code",
             "status": "open",
-            "judged": 1,
-            "next": "evaluator",
+            "judged": 2,
+            "next": "weigh",
             "entry": "content-3"
           },
           {

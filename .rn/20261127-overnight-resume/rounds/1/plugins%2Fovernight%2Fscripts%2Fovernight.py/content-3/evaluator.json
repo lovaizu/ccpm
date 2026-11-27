@@ -1,0 +1,55 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "\"\"\"Decides how a night's batch runs rn's works in its own process, how it resumes each work that",
+        "exits non-zero, such as at the usage limit, and what it records of each for the morning."
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "\"\"\"Runs overnight with `argv`, the arguments after the command's name, and gives its exit code.",
+        "With `--batch <folder>` before those arguments, as that process is started, it runs the batch",
+        "Raises an error that a work meets, such as a worktree removed after the start, once the",
+        "Refuses, giving 2 and the usage on stderr, where the arguments lack <parallel> or a worktree,",
+        "or --at lacks its time. Refuses, giving 1 with `overnight: <what's wrong>` on stderr and having",
+        "started nothing, where the time isn't HH:MM of a 24-hour day, <parallel> isn't a whole number",
+        "from 1, a worktree isn't a folder, or `claude` isn't on the PATH of `environ`.\"\"\""
+      ]
+    },
+    {
+      "condition": "N8",
+      "lines": [
+        "raise _Wrong(f\"<parallel> must be a whole number from 1, not {argv[0]!r}\")",
+        "f\"--at takes the time to start as HH:MM of a 24-hour day, such as 23:00, not\"",
+        "raise _Wrong(f\"{worktree} isn't a folder; give each worktree as a folder that exists\")",
+        "raise _Wrong(\"claude isn't on the PATH; install Claude Code, or put its folder on the PATH\")"
+      ]
+    }
+  ],
+  "more": [
+    {
+      "condition": "N3",
+      "good_when": "A maintainer who reads the specification knows what happens to each other work when one work meets an error, and the code does just that. Now the specification says the batch ends \"once the batch's other works have ended\", but a work not yet started when the error comes out never runs and leaves no line in the record: with <parallel> 1 and worktrees a, b, c, where a meets an error and b runs a while, b runs and c never starts, and which works are dropped depends on timing."
+    },
+    {
+      "condition": "N4",
+      "good_when": "The tests pass on every run. Now test_it_runs_up_to_the_given_number_of_works_at_once fails now and then, about 1 run in 7 under `pytest -n auto dev/overnight`, with threading.BrokenBarrierError after its 10-second wait, so a maintainer sees a failure that no change of theirs caused."
+    },
+    {
+      "condition": "N5",
+      "good_when": "Each case of the specification has a test whose name says it, so that a maintainer who breaks one sees which. Now no test gives <parallel> as a digit such as `²`, which the code refuses on purpose, and no test has a work meet an error while other works of the batch are still to run, which the specification says end first."
+    },
+    {
+      "condition": "N6",
+      "good_when": "A maintainer can change how overnight.py runs `claude` and starts its own process, such as calling subprocess.run in place of subprocess.call, and the tests still pass where the behavior holds. Now every test of the batch replaces overnight.subprocess.call, and the tests of the start replace overnight.subprocess.Popen, so such a change fails them though callers see no difference; only test_the_started_process_runs_the_batch_to_its_end meets `claude` as a program on the PATH."
+    },
+    {
+      "condition": "N7",
+      "good_when": "Each test fails where any part of its case's result changes. Now a test passes with the night's appended prompt reworded, as it checks two phrases of it; with a run of `claude` that reads stdin, as no test checks it; with the refusal messages changed past their checked substring; with lines of the record before the last three, or besides the ones looked for, changed in the tests of giving up, of each work's own session, and of an error; and with the record's lines after the first changed in the test of --at."
+    }
+  ]
+}
