@@ -126,7 +126,8 @@
             "kind": "code",
             "status": "open",
             "entry": "content-2",
-            "next": "evaluator"
+            "next": "weigh",
+            "judged": 1
           },
           {
             "path": "plugins/overnight/bin/overnight",

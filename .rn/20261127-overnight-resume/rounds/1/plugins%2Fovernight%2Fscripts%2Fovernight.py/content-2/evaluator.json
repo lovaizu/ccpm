@@ -1,0 +1,56 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N2",
+   "lines": [
+    "    \"\"\"Runs overnight with `argv`, the arguments after the command's name, and gives its exit code.",
+    "    With `[--at HH:MM] <parallel> <worktree>...`, it makes the batch's folder",
+    "    With `--batch <folder>` before those arguments, as that process is started, it runs the batch",
+    "    Refuses, giving 2 and the usage on stderr, where the arguments lack <parallel> or a worktree,",
+    "    from 1, a worktree isn't a folder, or `claude` isn't on the PATH of `environ`.\"\"\""
+   ]
+  },
+  {
+   "condition": "N4",
+   "lines": [
+    "    def run(self, plan: _Plan) -> None:",
+    "            list(pool.map(self._work, plan.worktrees))",
+    "    def _note(self, what: str) -> None:",
+    "            self._lock,"
+   ]
+  },
+  {
+   "condition": "N8",
+   "lines": [
+    "        raise _Wrong(f\"<parallel> must be a whole number from 1, not {argv[0]!r}\")",
+    "            f\"--at takes the time to start as HH:MM of a 24-hour day, such as 23:00, not\"",
+    "            raise _Wrong(f\"{worktree} isn't a folder; give each worktree as a folder that exists\")",
+    "        raise _Wrong(\"claude isn't on the PATH; install Claude Code, or put its folder on the PATH\")",
+    "        sys.stderr.write(f\"overnight: {wrong}\\n\")"
+   ]
+  }
+ ],
+ "more": [
+  {
+   "condition": "N1",
+   "good_when": "A maintainer who changes how a night's batch starts, waits, resumes, or records in overnight.py sees that change in what the user's `overnight` command does, so that the module opening's claim that `bin/overnight` runs `main` holds and overnight.py is the one place that decides it. Now plugins/overnight/bin/overnight runs its own copy of the batch in bash and never calls overnight.py, so a change made where the opening points reaches no user."
+  },
+  {
+   "condition": "N3",
+   "good_when": "A maintainer who reads the module opening and main's interface learns every behavior the batch has, so that each one traces to a stated case: that every run of `claude` carries the night's prompt telling rn to leave the user's points as questions for the morning, that a resume asks the session to go on from where it stopped, and that an error a work meets stops the batch with its trace in batch.log and no end noted. Now these hold in the body and the tests but in no case of the specification, so the maintainer can't tell whether they are asked for or left over."
+  },
+  {
+   "condition": "N5",
+   "good_when": "A maintainer who changes the check of <parallel> learns from a named test whether a digit that isn't ASCII, such as `2` written as `²`, is still refused with the message. Now dropping that edge's check passes every test and leaves coverage at 100%, and the user who types it gets a traceback instead."
+  },
+  {
+   "condition": "N6",
+   "good_when": "A maintainer who changes how overnight runs `claude` or starts its own process, without changing what the user sees, keeps every test passing, as the tests meet `claude` only as an executable on the PATH, as overnight's callers set it up. Now the batch and start tests replace `overnight.subprocess.call` and `overnight.subprocess.Popen` inside the module, so moving to another call of the standard library fails them although no behavior changed."
+  },
+  {
+   "condition": "N7",
+   "good_when": "A maintainer who breaks what a run of a work gets learns it from the tests: dropping the error output of `claude` from the session's log, or its input from nothing, now passes every test, so the morning's log could lose why a run stopped unseen. Each test of the batch checks the whole record of its case, not only some of its lines, as test_each_work_has_its_own_session_and_waits and test_the_started_process_runs_the_batch_to_its_end now do."
+  }
+ ]
+}
