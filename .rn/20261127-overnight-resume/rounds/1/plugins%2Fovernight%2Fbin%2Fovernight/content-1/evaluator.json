@@ -1,0 +1,38 @@
+{
+ "result": "judged",
+ "good": [
+  {
+   "condition": "N1",
+   "lines": [
+    "# Usage: overnight <parallel> <worktree>...",
+    "  claude -p --session-id \"$session\" --append-system-prompt \"$OVERNIGHT_NIGHT\" \\",
+    "  while [ \"$code\" -ne 0 ]; do",
+    "    claude -p --resume \"$session\" --append-system-prompt \"$OVERNIGHT_NIGHT\" \\",
+    "      \"Go on from where you stopped.\" >>\"$output\" 2>&1 </dev/null || code=$?",
+    "  printf '%s\\0' \"$@\" | xargs -0 -n 1 -P \"$parallel\" bash -c 'work \"$1\"' _",
+    "echo \"overnight: started the batch as process $!, writing its record to $OVERNIGHT_DIR/record\""
+   ]
+  },
+  {
+   "condition": "N2",
+   "lines": [
+    "# Usage: overnight <parallel> <worktree>...",
+    "export OVERNIGHT_NIGHT=\"This run is a night's batch, and no one is at hand to answer. Where the run comes to a point that is the user's to decide, stop there and leave the point as the question for the morning.\"",
+    "note() {",
+    "  session=$(uuidgen 2>/dev/null || cat /proc/sys/kernel/random/uuid)",
+    "    if [ \"$waited\" -ge 21600 ]; then",
+    "    wait=$((wait * 2 > 3600 ? 3600 : wait * 2))",
+    "# A Mac that sleeps would pause the batch with it.",
+    "nohup ${keep_awake[@]+\"${keep_awake[@]}\"} bash -c 'batch \"$@\"' _ \"${worktrees[@]}\" \\"
+   ]
+  },
+  {
+   "condition": "N3",
+   "lines": [
+    "# a run of rn in its worktree, and up to <parallel> of them run at once. A work",
+    "    \"/rn:up\" >>\"$output\" 2>&1 </dev/null || code=$?"
+   ]
+  }
+ ],
+ "more": []
+}
