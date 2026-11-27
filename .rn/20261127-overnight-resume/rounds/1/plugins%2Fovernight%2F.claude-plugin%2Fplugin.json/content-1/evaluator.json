@@ -1,0 +1,30 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "  \"name\": \"overnight\",",
+        "  \"description\": \"overnight runs rn's works as a night's batch in its own process, resumes each work that stops at the usage limit from where it stopped, and keeps a record of what stopped and what resumed for the morning.\",",
+        "  \"version\": \"0.1.0\","
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "  \"name\": \"overnight\",",
+        "  \"description\": \"overnight runs rn's works as a night's batch in its own process, resumes each work that stops at the usage limit from where it stopped, and keeps a record of what stopped and what resumed for the morning.\",",
+        "  \"version\": \"0.1.0\",",
+        "    \"name\": \"lovaizu\"",
+        "  \"repository\": \"https://github.com/lovaizu/ccpm\""
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "  \"description\": \"overnight runs rn's works as a night's batch in its own process, resumes each work that stops at the usage limit from where it stopped, and keeps a record of what stopped and what resumed for the morning.\","
+      ]
+    }
+  ],
+  "more": []
+}
