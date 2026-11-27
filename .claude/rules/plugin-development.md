@@ -95,6 +95,54 @@ repository of one plugin keeps the same tree with one folder in `plugins/`.
 A plugin takes the principles its requirements call for. Each principle gives its rule, then why.
 *When* marks a principle that a plugin takes only in the case it names.
 
+### Only what someone needs
+
+A part of a plugin, such as a role, a script, a skill, or a best practice, stays only where someone
+would be at a loss without it. The developer asks that of the part's responsibility. Its speed and
+its size don't decide it.
+
+*Why*: a part that no one needs spends the time and attention of whoever uses it or changes it, and
+draws in more parts.
+
+### A known practice first
+
+The developer searches for a best practice or a common practice before designing a part, and takes
+it where it fits. A practice that is the same every time lies in the prompt of the role that uses
+it. A plugin's knowledge chosen by case, such as rn's best practices by a deliverable's kind, holds
+only what differs by the case.
+
+*Why*: many have tried a known practice, and no one has tried a part of one's own. A practice that
+never changes needs no choosing.
+
+### Nothing that goes without saying
+
+A role's steps hold nothing that goes without saying, such as following the repository's rules.
+They name none of the repository's means either: its hooks, its check commands, or its other tools.
+
+*Why*: the repository holds its own rules and means, and a prompt that repeats them grows and drifts
+from them.
+
+### Purpose and intent, not steps of work
+
+A prompt tells its role the purpose and the intent of the work, not steps of work. It points to a
+file that the role must read by its path alone, with no word of its contents.
+
+*Why*: a role that knows why can meet a case that no step names. An AI that reads a summary works
+from it without opening the file.
+
+### No exception
+
+A rule or a limit has no exception. Where one seems needed, the developer finds the missing step.
+
+*Why*: an exception makes the reader hold two rules in mind, and it hides the missing step that would
+make the rule hold.
+
+### The terms in use
+
+A plugin keeps the terms already in use, such as generate and evaluate, and renames none.
+
+*Why*: a reader who meets a new name for a known thing takes it for a different thing.
+
 ### The domain apart from Claude Code
 
 An entry holds only the form Claude Code fixes. It hands the rest of the job to its part in
@@ -137,8 +185,8 @@ Claude Code reads a hook that fails with no `onFailure` as no answer, which stop
 ### A rule that holds on every run
 
 A hook of the plugin's own `hooks/hooks.json` holds each rule that must hold on every run, such as
-a path that a role never writes, as [design.md](design.md) says. A permission rule or branch protection holds what is hard to undo.
-The role's steps hold the rest.
+a path that a role never writes, in place of an instruction to a role or a restart of it. A
+permission rule or branch protection holds what is hard to undo. The role's steps hold the rest.
 
 *Why*: a hook runs every time, while an instruction is only advice
 ([best practices](https://code.claude.com/docs/en/best-practices)). A plugin's agent ignores
@@ -255,13 +303,14 @@ and goes back to its own steps once the other hands its work back.
 
 ### One agent for each job
 
-Each job has its own role, as [design.md](design.md) says, and the role gets
-only what the job needs.
+Each job has its own role, and the role gets only what the job needs. A role, a script, or a check
+holds one responsibility, and a part that holds two splits, as rn's generator and refactorer do.
 
 *When*: a work with jobs that need different context or tools.
 
 *Why*: a role starts in a fresh context, so nothing from other work leads it astray
-([subagents](https://code.claude.com/docs/en/sub-agents)).
+([subagents](https://code.claude.com/docs/en/sub-agents)). A reader understands and changes a part
+of one responsibility alone, and its result says what went wrong.
 
 ### Messages
 
