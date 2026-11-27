@@ -1,0 +1,32 @@
+{
+  "result": "judged",
+  "good": [
+    {
+      "condition": "N1",
+      "lines": [
+        "  \"name\": \"ccpm\",",
+        "      \"name\": \"overnight\",",
+        "      \"source\": \"./plugins/overnight\","
+      ]
+    },
+    {
+      "condition": "N2",
+      "lines": [
+        "  \"description\": \"Claude Code plugin marketplace for lovaizu projects\",",
+        "      \"name\": \"rn\",",
+        "      \"source\": \"./plugins/rn\",",
+        "      \"name\": \"overnight\",",
+        "      \"source\": \"./plugins/overnight\",",
+        "      \"category\": \"development\""
+      ]
+    },
+    {
+      "condition": "N3",
+      "lines": [
+        "      \"description\": \"rn makes what you ask for, such as a document, code, or a plugin, so that the people it's for can use it for what they're after, and asks you only the points that are yours.\",",
+        "      \"description\": \"overnight runs rn's works as a night's batch in its own process, resumes each work that stops at the usage limit from where it stopped, and keeps a record of what stopped and what resumed for the morning.\","
+      ]
+    }
+  ],
+  "more": []
+}
