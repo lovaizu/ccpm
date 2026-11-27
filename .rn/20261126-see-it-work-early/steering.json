@@ -544,15 +544,15 @@
           {
             "path": "plugins/rn/domain",
             "kind": "prompt",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/rn/agents",
             "kind": "prompt",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",
