@@ -9,8 +9,9 @@ from collections.abc import Callable, Sequence
 from typing import Any
 
 import form
-from fault import Answer, CantRun, Wrong, answered
-from host import Host, checked
+import push
+from fault import Answer, Wrong, answered
+from host import Host
 from place import RunPlace, of_folder
 
 from steering import due, record
@@ -19,7 +20,7 @@ USAGE = """\
 usage: steering commit <run>
        steering step <run> <number> open|trying|done
        steering deliverable <run> <path> open|done
-       steering checked <run>
+       steering inspected <run>
        steering due <run>
 """
 
@@ -30,21 +31,22 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
 
     - `commit <run>`: takes the pruner's result, `<run>/pruner.json` in the form of
       domain/schemas/pruner.schema.json, into the steering as `record.taken_in` makes it, writes
-      and commits the steering alone as `rn: <the result's message>`, removes the result, which no
-      commit holds, and gives 0 printing the commit's hash, then what's due, as `due` prints it.
-    - `step <run> <number> <status>`: marks the step as `record.step_marked` does, commits the
-      steering alone as `rn: <its words>: <status>`, and gives 0 printing what's due.
+      the steering, removes the result, which no commit holds, commits and pushes each change as
+      `rn: <the result's message>` as `push.kept` does, and gives 0 printing the commit's hash,
+      then what's due, as `due` prints it.
+    - `step <run> <number> <status>`: marks the step as `record.step_marked` does, commits and
+      pushes as `rn: <its words>: <status>`, and gives 0 printing what's due.
     - `deliverable <run> <path> <status>`: marks the deliverable as `record.deliverable_marked`
-      does, commits the steering alone as `rn: <path>: <status>`, and gives 0 printing what's due.
-    - `checked <run>`: marks the final check passed as `record.checked_marked` does, commits the
-      steering alone as `rn: the final check passed`, and gives 0 printing what's due.
+      does, commits and pushes as `rn: <path>: <status>`, and gives 0 printing what's due.
+    - `inspected <run>`: marks the inspection passed as `record.inspected_marked` does, commits
+      and pushes as `rn: the inspection passed`, and gives 0 printing what's due.
     - `due <run>`: gives 0 printing each line that `due.due` gives, a line each.
 
     `<run>` is the run's folder, as `place.of_folder` takes it. 1 with `steering: <what's wrong>`,
     changing nothing, where the input is Wrong: a result or a steering that's missing, isn't JSON,
-    or leaves its schema, naming each place, or a mark that `record` refuses. 2 with what stopped
-    it where it CantRun, such as git refusing the commit, with what git said; 2 with the usage where
-    the arguments are other than these.
+    or leaves its schema, naming each place, or a mark that `record` refuses; 1 where something
+    `push.kept` needs is Missing. 2 with what stopped it where it CantRun, such as git refusing the
+    commit, with what git said; 2 with the usage where the arguments are other than these.
     """
     if not argv or argv[0] not in _SUBCOMMANDS or len(argv) != _SUBCOMMANDS[argv[0]][1]:
         return 2, "", USAGE
@@ -65,8 +67,8 @@ def _commit(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer
         else None
     )
     steering = record.taken_in(before, result)
-    hash_ = _committed(run, steering, result["message"], host)
     os.remove(run.pruner)
+    hash_ = _committed(run, steering, result["message"], host)
     return 0, f"{hash_}\n" + _lines(due.due(steering)), ""
 
 
@@ -84,9 +86,9 @@ def _deliverable(run: RunPlace, given: list[str], schemas: str, host: Host) -> A
     return 0, _lines(due.due(steering)), ""
 
 
-def _checked(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
-    steering = record.checked_marked(_steering(run, schemas))
-    _committed(run, steering, "the final check passed", host)
+def _inspected(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
+    steering = record.inspected_marked(_steering(run, schemas))
+    _committed(run, steering, "the inspection passed", host)
     return 0, _lines(due.due(steering)), ""
 
 
@@ -102,18 +104,7 @@ def _committed(run: RunPlace, steering: dict[str, Any], message: str, host: Host
     with open(run.steering, "w", encoding="utf-8") as f:
         json.dump(steering, f, indent=2, ensure_ascii=False)
         f.write("\n")
-    path = os.path.relpath(run.steering, run.worktree)
-    checked(host, ["git", "add", "--", path], run.worktree, CantRun, "git can't stage the steering")
-    checked(
-        host,
-        ["git", "commit", "-q", "-m", f"rn: {message}", "--", path],
-        run.worktree,
-        CantRun,
-        "git can't commit the steering",
-    )
-    return checked(
-        host, ["git", "rev-parse", "HEAD"], run.worktree, CantRun, "git can't name the commit"
-    ).out.strip()
+    return push.kept(run, steering, f"rn: {message}", host)
 
 
 def _lines(lines: list[str]) -> str:
@@ -125,6 +116,6 @@ _SUBCOMMANDS: dict[str, tuple[Callable[[RunPlace, list[str], str, Host], Answer]
     "commit": (_commit, 2),
     "step": (_step, 4),
     "deliverable": (_deliverable, 4),
-    "checked": (_checked, 2),
+    "inspected": (_inspected, 2),
     "due": (_due, 2),
 }

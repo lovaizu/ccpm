@@ -154,8 +154,8 @@
       }
      }
     },
-    "checked": {
-     "description": "true once the pull request passed its final check whole, so the run ends once nothing is asked; absent before.",
+    "inspected": {
+     "description": "true once the inspector passed the pull request whole, so the run ends once nothing is asked; absent before.",
      "const": true
     }
    }

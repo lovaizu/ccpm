@@ -1,8 +1,8 @@
 """The unit cases of repository/command.py, repository's command line as the orchestrator and each
 role run it: `new` printing the run's folder, `runs` printing each run with work left and what it
 couldn't check, `stop`, `cancel` printing what it removed on GitHub and saying
-what it couldn't, `put-up`, `trial`, `diff`, and `ci` each printing what its module gives, a
-refusal given as its exit code, and arguments of another form."""
+what it couldn't, `trial` printing what its module gives, a refusal given as its exit code, and
+arguments of another form."""
 
 from __future__ import annotations
 
@@ -67,26 +67,22 @@ def test_each_subcommand_on_a_run_prints_what_its_module_gives(
     repo: str, host: Any, temp: str
 ) -> None:
     """Given a run with its command written.
-    When `put-up`, `trial`, `diff`, and `stop` run on it.
-    Then each gives 0: the command's link, the trial's folder, the diff, and the hash pushed."""
+    When `trial` and `stop` run on it.
+    Then each gives 0: the trial's folder, and the hash pushed."""
     run_folder = started(repo, host)
-    code, out, _ = main(["put-up", run_folder, rn_files.COMMAND], repo, rn_files.RN, host)
-    assert (code, out.startswith("http://github.com/owner/repo/blob/")) == (0, True)
     round_ = f"{run_folder}/rounds/1/invoice/content-1"
     trial = main(["trial", run_folder, round_], repo, rn_files.RN, host)
     assert trial[0] == 0 and trial[1].startswith(os.path.join(temp, "rn-trial-"))
-    assert f"+++ b/{rn_files.COMMAND}" in main(["diff", run_folder], repo, rn_files.RN, host)[1]
     code, out, _ = main(["stop", run_folder], repo, rn_files.RN, host)
     assert (code, len(out.strip())) == (0, 40)
 
 
 def test_a_refusal_gives_its_exit_code_with_what_is_wrong(repo: str, host: Any) -> None:
-    """Given a run with its command written.
-    When `put-up` is given a path that no step names.
+    """Given a repository.
+    When `stop` is given a folder that is no run's.
     Then it gives 1, saying what's wrong."""
-    run_folder = started(repo, host)
-    code, _, err = main(["put-up", run_folder, "docs/other.md"], repo, rn_files.RN, host)
-    assert (code, err.startswith("repository: no step names the deliverable")) == (1, True)
+    code, _, err = main(["stop", "docs"], repo, rn_files.RN, host)
+    assert (code, err.startswith("repository: ")) == (1, True)
 
 
 def test_cancel_prints_what_it_removed_and_says_what_it_couldnt(

@@ -117,7 +117,7 @@ def test_the_runs_with_work_left_are_found_newest_first(repo: str) -> None:
     newer = made_with(repo, OTHER, [], "2026-11-27T09:00:00")
     checking = made_with(repo, "20261125-done", [rn_files.step("done")], "2026-11-28T09:00:00")
     ended = rn_files.steering([rn_files.step("done")])
-    ended["state"]["checked"] = True
+    ended["state"]["inspected"] = True
     gone = new(RunPlace(repo, "20261123-ended"), run)
     rn_files.committed_steering(gone.worktree, gone.name, ended, "2026-11-29T09:00:00")
     made_with(repo, "20261124-bare", None, "")

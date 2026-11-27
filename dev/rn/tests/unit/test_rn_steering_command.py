@@ -1,6 +1,6 @@
 """The unit cases of steering/command.py, steering's command line as the orchestrator runs it: the
-pruner's first result committed, a later one, each mark committed, the final check's pass
-committed, what's due read, and each
+pruner's first result committed and pushed, a later one, each mark committed, the inspection's
+pass committed, what's due read, and each
 refusal: a result missing, not JSON, or out of its schema, a step's number that isn't one, a mark
 that the steering refuses, git refusing the commit, and arguments of another form."""
 
@@ -13,6 +13,7 @@ from typing import Any
 
 import pytest
 import rn_files
+from gh import gh_double
 from host import Ran, run
 from place import RunPlace
 from repo_files import git
@@ -25,8 +26,10 @@ STEP = rn_files.WAY
 
 @pytest.fixture
 def made(tmp_path: Any) -> RunPlace:
-    """A run of the user's repository, its worktree on the work's branch, its folder empty."""
+    """A run of the user's repository with origin, its worktree on the work's branch, its folder
+    empty."""
     repo = rn_files.repository(str(tmp_path / "accounting"))
+    rn_files.with_origin(repo, str(tmp_path / "origin.git"))
     held = RunPlace(repo, NAME)
     git(repo, "worktree", "add", "-q", "-b", held.branch, held.worktree)
     os.makedirs(held.folder)
@@ -40,8 +43,11 @@ def steering(run_: RunPlace, value: Any) -> None:
     git(run_.worktree, "commit", "-q", "-m", "steering")
 
 
-def call(run_: RunPlace, *argv: str, host: Any = run) -> tuple[int, str, str]:
-    return main(argv[:1] + (FOLDER,) + argv[1:], run_.worktree, rn_files.RN, host)
+def call(run_: RunPlace, *argv: str, host: Any = None) -> tuple[int, str, str]:
+    """What `steering` gives with the arguments on the run, with git run for real and gh from its
+    records, unless another host is given."""
+    gh = host or gh_double.host(os.path.join(os.path.dirname(run_.repository), "gh"))
+    return main(argv[:1] + (FOLDER,) + argv[1:], run_.worktree, rn_files.RN, gh)
 
 
 def held(run_: RunPlace) -> Any:
@@ -129,12 +135,12 @@ def test_each_mark_is_committed_and_gives_whats_due(made: RunPlace) -> None:
 
 def test_the_final_checks_pass_is_committed_and_gives_the_runs_end(made: RunPlace) -> None:
     """Given a steering whose one step is done.
-    When the final check is marked passed.
+    When the inspection is marked passed.
     Then it's committed with its words, and the run's end is due."""
     steering(made, rn_files.steering([rn_files.step("done")]))
-    assert call(made, "checked") == (0, "ended\n", "")
-    assert git(made.worktree, "log", "-1", "--format=%s") == "rn: the final check passed\n"
-    assert held(made)["state"]["checked"] is True
+    assert call(made, "inspected") == (0, "ended\n", "")
+    assert git(made.worktree, "log", "-1", "--format=%s") == "rn: the inspection passed\n"
+    assert held(made)["state"]["inspected"] is True
 
 
 def test_whats_due_is_read_from_the_steering(made: RunPlace) -> None:
@@ -187,7 +193,7 @@ def test_git_refusing_the_commit_cant_run(made: RunPlace) -> None:
     assert call(made, "deliverable", rn_files.COMMAND, "done", host=refusing) == (
         2,
         "",
-        "steering: git can't commit the steering: hook refused\n",
+        "steering: git commit fails: hook refused\n",
     )
 
 

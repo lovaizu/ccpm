@@ -1,6 +1,6 @@
 """The unit cases of steering/due.py, what waits now in a run: open questions, which hold up the
 rest; the pruner's weighing where no need is picked or no step is set; the next deliverable to
-make; the hand-over; the user's try; a later step once the first is done; the final check; and
+make; the hand-over; the user's try; a later step once the first is done; the inspection; and
 the run's end once it passed."""
 
 from __future__ import annotations
@@ -14,9 +14,9 @@ BOTH = (rn_files.COMMAND, rn_files.GUIDE)
 def test_open_questions_hold_up_the_rest() -> None:
     """Given a steering with two open questions and an open step.
     When what's due is asked.
-    Then each question is due, and nothing else."""
+    Then the first question alone is due, as the user talks over one at a time."""
     held = rn_files.steering(questions=["Which need first?", "Which printer?"])
-    assert due(held) == ["question\tWhich need first?", "question\tWhich printer?"]
+    assert due(held) == ["question\tWhich need first?"]
 
 
 def test_the_pruner_is_due_where_no_need_is_picked_or_no_step_is_set() -> None:
@@ -66,14 +66,14 @@ def test_the_way_goes_on_to_the_next_step_once_one_is_done() -> None:
 def test_the_final_check_is_due_once_each_step_is_done() -> None:
     """Given a steering whose one step is done.
     When what's due is asked.
-    Then the final check is due."""
-    assert due(rn_files.steering([rn_files.step("done", done=BOTH)])) == ["final-check"]
+    Then the inspection is due."""
+    assert due(rn_files.steering([rn_files.step("done", done=BOTH)])) == ["inspect"]
 
 
 def test_the_run_ends_once_the_final_check_passed() -> None:
-    """Given a steering whose one step is done, the final check passed.
+    """Given a steering whose one step is done, the inspection passed.
     When what's due is asked.
-    Then the run's end is due, and the final check is not."""
+    Then the run's end is due, and the inspection is not."""
     held = rn_files.steering([rn_files.step("done", done=BOTH)])
-    held["state"]["checked"] = True
+    held["state"]["inspected"] = True
     assert due(held) == ["ended"]
