@@ -357,6 +357,10 @@
       {
         "decision": "Have one command of the steering script mark a deliverable done in place of `repository put-up` and `steering deliverable done`, as a put-up no longer pushes; and rename `checked` to name the inspection passed, as the inspector holds that check.",
         "by": "user"
+      },
+      {
+        "decision": "Have a deliverable take at most LIMIT judged Rounds with no exception for a decision made since, and leave the more that remains to the user's confirming, so that no Round records how many decisions the run held when it started.",
+        "by": "user"
       }
     ],
     "questions": []
