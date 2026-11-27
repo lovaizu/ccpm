@@ -56,8 +56,8 @@
   <text class="name" x="730.0" y="71.0">pruner</text>
   <text class="kind" x="730.0" y="91.0">[prompt]</text>
   <rect class="box" x="900" y="40" width="160" height="70" rx="6"/>
-  <text class="name" x="980.0" y="71.0">vital few</text>
-  <text class="kind" x="980.0" y="91.0">[prompt]</text>
+  <text class="name" x="980.0" y="71.0">references</text>
+  <text class="kind" x="980.0" y="91.0">[document]</text>
   <rect class="box" x="40" y="220" width="160" height="70" rx="6"/>
   <text class="name" x="120.0" y="251.0">hook</text>
   <text class="kind" x="120.0" y="271.0">[hook]</text>
@@ -66,17 +66,23 @@
   <text class="kind" x="425.0" y="271.0">[script]</text>
   <rect class="store" x="640" y="220" width="180" height="70" rx="6"/>
   <text class="name" x="730.0" y="260.0">steering</text>
-  <rect class="frame" x="20" y="380" width="780" height="140" rx="10"/>
-  <text class="frame-name" x="36" y="402">roles started for one deliverable</text>
-  <rect class="box" x="40" y="420" width="200" height="70" rx="6"/>
-  <text class="name" x="140.0" y="451.0">generator</text>
-  <text class="kind" x="140.0" y="471.0">[prompt]</text>
-  <rect class="box" x="290" y="420" width="200" height="70" rx="6"/>
-  <text class="name" x="390.0" y="451.0">evaluator</text>
-  <text class="kind" x="390.0" y="471.0">[prompt]</text>
-  <rect class="box" x="540" y="420" width="200" height="70" rx="6"/>
-  <text class="name" x="640.0" y="451.0">fixer</text>
-  <text class="kind" x="640.0" y="471.0">[prompt]</text>
+  <rect class="frame" x="20" y="380" width="800" height="140" rx="10"/>
+  <text class="frame-name" x="36" y="402">roles started for the work</text>
+  <rect class="box" x="40" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="110.0" y="451.0">generator</text>
+  <text class="kind" x="110.0" y="471.0">[prompt]</text>
+  <rect class="box" x="195" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="265.0" y="451.0">evaluator</text>
+  <text class="kind" x="265.0" y="471.0">[prompt]</text>
+  <rect class="box" x="350" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="420.0" y="451.0">fixer</text>
+  <text class="kind" x="420.0" y="471.0">[prompt]</text>
+  <rect class="box" x="505" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="575.0" y="451.0">refactorer</text>
+  <text class="kind" x="575.0" y="471.0">[prompt]</text>
+  <rect class="box" x="660" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="730.0" y="451.0">inspector</text>
+  <text class="kind" x="730.0" y="471.0">[prompt]</text>
   <rect class="store" x="860" y="420" width="200" height="70" rx="6"/>
   <text class="name" x="960.0" y="460.0">Rounds and Fixes</text>
   <rect class="store" x="290" y="600" width="200" height="60" rx="6"/>
@@ -91,8 +97,6 @@
   <text class="data halo mid" x="580" y="114">done, with the steps</text>
   <path class="line" d="M820,75 L900,75" marker-end="url(#arrow)"/>
   <text class="data halo mid" x="860" y="66">weighs by</text>
-  <path class="line" d="M410,40 L410,20 L980,20 L980,40" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="700" y="16">weighs by</text>
   <path class="line" d="M730,110 L730,220" marker-end="url(#arrow)"/>
   <text class="data halo start" x="738" y="170">writes what the run aims at</text>
   <path class="line" d="M520,255 L640,255" marker-end="url(#arrow)"/>
@@ -102,21 +106,23 @@
   <path class="line dashed" d="M380,220 L380,110" marker-end="url(#arrow)"/>
   <text class="data halo end" x="372" y="170">what&#x27;s due</text>
   <path class="line" d="M200,255 L330,255" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="265" y="246">sends deletes</text>
+  <text class="data halo mid" x="265" y="246">runs as a role ends</text>
   <path class="line" d="M310,110 L310,380" marker-end="url(#arrow)"/>
   <text class="data halo end" x="302" y="350">starts each</text>
   <path class="line dashed" d="M560,380 L560,320 L500,320 L500,110" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="568" y="340">done, with the Round or the Fix</text>
+  <text class="data halo start" x="568" y="340">done, with each result</text>
   <path class="line" d="M430,380 L430,290" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="438" y="350">runs checks</text>
-  <path class="line" d="M800,455 L860,455" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="830" y="446">writes</text>
-  <path class="line" d="M140,490 L330,600" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="222" y="560">makes by</text>
-  <path class="line" d="M390,490 L390,600" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="398" y="560">judges by</text>
-  <path class="line" d="M640,490 L450,600" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="556" y="560">checks by</text>
+  <text class="data halo start" x="438" y="350">runs a trial</text>
+  <path class="line" d="M820,455 L860,455" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="840" y="446">writes</text>
+  <path class="line" d="M110,490 L300,600" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="196" y="560">makes by</text>
+  <path class="line" d="M265,490 L350,600" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="300" y="545">judges by</text>
+  <path class="line" d="M420,490 L410,600" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="420" y="560">mends by</text>
+  <path class="line" d="M575,490 L480,600" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="540" y="545">refactors by</text>
   <text class="label" x="860" y="560">Legend</text>
   <rect class="box" x="860" y="572" width="22" height="16" rx="3"/>
   <text class="label small" x="892" y="585">a role</text>
