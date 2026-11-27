@@ -35,7 +35,7 @@
           "assumption": {
             "assumption": "Given the opportunities on the ost, the pruner keeps every named one, the user can pick, and the run reaches a real check before most deliverables are made.",
             "test": "Run rn from this branch on #62 up to the first real check; count what was made by then.",
-            "result": "Failed on #62 (2026-11-26): the hearing and the pick held, and every named need stayed, but after 1h20m the run had made 7 of 10 deliverables, 834 lines, with nothing the user could try, as each put-up pushed through the repository's checks, which pulled in tests, coverage, check.sh, and trace.py before the hook that runs it; and its messages spoke of rn's insides while roles worked."
+            "result": "Failed on #62 (2026-11-26): the hearing and the pick held, and every named need stayed, but after 1h20m the run had made 7 of 10 deliverables, 834 lines, with nothing the user could try, as each put-up pushed through the repository's checks, which pulled in tests, coverage, check.sh, and trace.py before the hook that runs it; and its messages spoke of rn's insides while roles worked. Failed again on #62 (2026-11-27): after 20 minutes, 0 of 8 deliverables were done, as the repository's checks on each put-up drew in a LICENSE twice, a passed deliverable was made again, the riskiest assumption waited for all 8, the search for what exists read one page and showed the user nothing, and messages fell back into English after a pruner."
           }
         }
       },
@@ -240,6 +240,38 @@
       },
       {
         "decision": "Grow the run in this pull request: after the walking skeleton, ask at the run's end of each need left whether to make it now or keep it in an issue, and make each one picked as the walking skeleton was, one addition at a time, as the second mode is only that.",
+        "by": "user"
+      },
+      {
+        "decision": "Write the outcome in the steering as a user story, who, what they want, and what for, as it's the form the hearing already asks.",
+        "by": "user"
+      },
+      {
+        "decision": "Leave the repository's checks to the roles' judgment, with no step for them, as following a repository's rules goes without saying.",
+        "by": "user"
+      },
+      {
+        "decision": "Have a SubagentStop hook check each role's result before the role ends, so that the role mends it itself and the orchestrator starts no role again.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the inspector, a role of its own, read the pull request whole before the merge is proposed, and take the final check out of the evaluator, as reading the whole as a newcomer isn't trying it as its people would.",
+        "by": "user"
+      },
+      {
+        "decision": "Ask the user one question at a time, and have the script give only one, so that each can be talked over.",
+        "by": "user"
+      },
+      {
+        "decision": "Give the pruner no step of its own to look for what exists, as the measure's question of the least holds it.",
+        "by": "user"
+      },
+      {
+        "decision": "Have a SubagentStop hook take the pruner's result into the steering, so that the steering keeps one writer, by the single-writer principle, and the orchestrator has no step for it.",
+        "by": "user"
+      },
+      {
+        "decision": "Write vital-few.md from zero as its purpose, to pile up the vital few and cut the trivial many thoroughly, its intent, and one criterion: without it, would its people be at a loss, answered from the user's words or a use's result, resting on the steering alone.",
         "by": "user"
       }
     ],
