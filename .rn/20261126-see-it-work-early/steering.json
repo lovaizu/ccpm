@@ -333,6 +333,22 @@
       {
         "decision": "Have the fixer remove no file a check leaves and report no check that fails elsewhere, as a file a check leaves is git-ignored or committed, and the confirming before the mend finds what fails elsewhere.",
         "by": "user"
+      },
+      {
+        "decision": "Push each commit of a run as it is made, and drop the link of the put-up to the push, as a commit kept only on the user's computer is lost with it.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a run's worktree by `herdr worktree create` where HERDR_ENV is set, else by git, as herdr shows only the worktrees it makes and rn needs no herdr.",
+        "by": "user"
+      },
+      {
+        "decision": "Keep the fixer and the refactorer outside the Rounds, in this order: the Rounds make the deliverable, the user confirms what more they leave, the fixer mends it, the refactorer refactors the whole, and then the user tries it.",
+        "by": "user"
+      },
+      {
+        "decision": "Have ccpm's pre-push hook run check.sh once in the working tree, as its duty is to keep a broken commit off the shared branch, CI's being to check the commits pushed in a clean environment; hold each best practice to its schema alone, and drop trace.py, as no one is at a loss without it.",
+        "by": "user"
       }
     ],
     "questions": []
