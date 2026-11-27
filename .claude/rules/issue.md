@@ -16,10 +16,11 @@ stays as it was asked, and nothing piles up in it or beside it.
   - Rationale: the issue is the request that started the work, and the reader finds what the work
     aims at now in one place beside the work.
 - **Give work that a pull request's purpose doesn't need its own issue, and do it in a worktree
-  of its own from main.** Open the issue when the work comes up during development, and take its
-  own pull request to main.
+  of its own from main.** When the work comes up during development, propose its issue to the
+  user, open it once they agree, and take its own pull request to main.
   - Rationale: the change reaches main without waiting for the other pull request, so several
-    improvements go on at once, and each pull request holds only what its purpose needs.
+    improvements go on at once, and each pull request holds only what its purpose needs. The user
+    decides what work the repository takes on, and a talk with them goes on unbroken.
 - **Close an issue opened by mistake with a line saying where its content went.**
   - Rationale: whoever finds it through a link reaches the place that holds its content.
 

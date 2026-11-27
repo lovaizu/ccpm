@@ -634,10 +634,10 @@
           {
             "path": ".claude/rules/issue.md",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",
