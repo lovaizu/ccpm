@@ -111,7 +111,7 @@ def test_the_runs_with_work_left_are_found_newest_first(repo: str) -> None:
     """Given a run with a step open, a newer one with no step yet, one with each step done, one that
     ended, and one with no steering.
     When the runs are found.
-    Then the three with work left are given, the final check of the one all done among them,
+    Then the three with work left are given, the inspection of the one all done among them,
     newest first, and nothing is unchecked."""
     older = made_with(repo, NAME, [rn_files.step()], "2026-11-26T09:00:00")
     newer = made_with(repo, OTHER, [], "2026-11-27T09:00:00")

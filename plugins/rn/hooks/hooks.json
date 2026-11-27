@@ -6,7 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/role\" ended"
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/role\" ended",
+            "onFailure": "block"
           }
         ]
       }
