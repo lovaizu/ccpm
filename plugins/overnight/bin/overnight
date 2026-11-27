@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# overnight: starts rn's run in <worktree> as a batch in its own process, under
+# claude-ac, which waits out the usage limit and resumes the same session.
+#
+# Usage: overnight [<worktree>]
+#   <worktree>  the folder of rn's run, the current folder where left out
+set -euo pipefail
+
+# claude-ac runs at the commit whose files were read before it ran here, so a
+# later change of theirs runs only once it's read too.
+claude_ac_repo=https://github.com/blackstardigitalstudio/claude-auto-continue
+claude_ac_commit=b50d1daaf74dc2d646026610cc3576b252b2ed95
+
+worktree=$(cd "${1:-.}" && pwd)
+claude_ac="${XDG_CACHE_HOME:-$HOME/.cache}/overnight/claude-ac-$claude_ac_commit"
+logs="${XDG_STATE_HOME:-$HOME/.local/state}/overnight"
+
+# Fetch claude-ac without its install.sh, which adds a Stop hook to every
+# session of the user's.
+if [ ! -f "$claude_ac/bin/claude-ac" ]; then
+  fetching="$claude_ac.fetching"
+  rm -rf "$fetching"
+  trap 'rm -rf "$fetching"' EXIT
+  git init -q "$fetching"
+  git -C "$fetching" fetch -q --depth 1 "$claude_ac_repo" "$claude_ac_commit"
+  git -C "$fetching" checkout -q FETCH_HEAD
+  mv "$fetching" "$claude_ac"
+fi
+
+# A Mac that sleeps would pause the batch with it.
+keep_awake=()
+if command -v caffeinate >/dev/null; then
+  keep_awake=(caffeinate -i)
+fi
+
+mkdir -p "$logs"
+log="$logs/$(date +%Y%m%d-%H%M%S).log"
+cd "$worktree"
+# claude-ac counts each try against one limit for the whole night, and waits
+# its interval where it can't read the reset time, so 72 tries 10 minutes apart
+# last 12 hours.
+# claude-ac keeps its script without the mode to run it, so bash runs it.
+nohup ${keep_awake[@]+"${keep_awake[@]}"} bash "$claude_ac/bin/claude-ac" \
+  --ac-interval 600 --ac-retries 72 \
+  -p "/rn:up" \
+  --append-system-prompt "This run is a night's batch, and no one is at hand to answer. Where the run comes to a point that is the user's to decide, stop there and leave the point as the question for the morning." \
+  >"$log" 2>&1 </dev/null &
+echo "overnight: started rn's run in $worktree as process $!, writing its output to $log"
