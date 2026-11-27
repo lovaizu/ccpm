@@ -85,20 +85,12 @@ sh dev/scripts/mermaid.sh
 
 # Each plugin's unit tests run on each push, as pytest finds them where pyproject.toml points it. A
 # behavior that no test checks can break unseen, so the tests run every line and branch of what
-# pyproject.toml has coverage count, as the code best practice's N7 asks.
-if command -v coverage >/dev/null 2>&1; then
-  # The tests run once, on each core, as coverage's own .pth starts it in each worker where
-  # COVERAGE_PROCESS_START names its settings.
-  COVERAGE_FILE="$scratch/.coverage" COVERAGE_PROCESS_START="$PWD/pyproject.toml" \
-    coverage run --rcfile=pyproject.toml -m pytest -q -n auto -p no:cacheprovider
-  COVERAGE_FILE="$scratch/.coverage" coverage combine -q
-  COVERAGE_FILE="$scratch/.coverage" held tests coverage report
-else
-  pytest -q -n auto
-  echo "check.sh: which lines of the plugins' code the tests run goes unchecked, as"\
-    "coverage isn't installed. It comes with pyproject.toml's test-quality group, on Python 3.11"\
-    "or later"
-fi
+# pyproject.toml has coverage count, as the code best practice's N7 asks. The tests run once, on
+# each core, as pyproject.toml has coverage start itself in each worker.
+COVERAGE_FILE="$scratch/.coverage" coverage run --rcfile=pyproject.toml -m pytest -q -n auto \
+  -p no:cacheprovider
+COVERAGE_FILE="$scratch/.coverage" coverage combine -q
+COVERAGE_FILE="$scratch/.coverage" held tests coverage report
 
 for manifest in plugins/*/.claude-plugin/plugin.json; do
   claude plugin validate "${manifest%/.claude-plugin/plugin.json}" --strict

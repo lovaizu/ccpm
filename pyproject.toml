@@ -10,17 +10,20 @@ requires-python = ">=3.9"
 [dependency-groups]
 # The checks of dev/scripts/check.sh, on every Python users run.
 dev = [
+  # coverage counts which lines the tests run on each machine that pushes, on every Python, so its
+  # last release for each Python older than 3.11 serves there.
+  "coverage>=7.10.7; python_full_version < '3.11'",
+  "coverage>=7.17.2; python_full_version >= '3.11'",
   "pyrefly>=1.4.0",
   "pytest>=8.4",
   "pytest-xdist>=3.8.0",
   "ruff>=0.17.2",
   "vulture>=2.14",
 ]
-# The checks that need a newer Python only to check, not to run: copied code, how deep each function
-# nests, and which lines the tests run.
+# The checks that need a newer Python only to check, not to run: copied code, and how deep each
+# function nests.
 test-quality = [
   "complexipy>=9.0.0",
-  "coverage>=7.17.2",
   "pylint>=4.1.3",
 ]
 
@@ -85,12 +88,15 @@ addopts = ["-p", "no:cacheprovider"]
 [tool.coverage.run]
 branch = true
 parallel = true
-include = [
-  "*/plugins/*/*.py",
-  "*/plugins/**/*.py",
-  ]
+# Every file of the plugins' code, so that a file no test imports counts as one that no test runs.
+source = ["plugins"]
+# Each process that the tests start, such as pytest-xdist's workers and a script that a test runs as
+# python3 runs it.
+patch = ["subprocess"]
 
 [tool.coverage.report]
+# The folders of the plugins' code hold no __init__.py, so coverage looks in each folder of source.
+include_namespace_packages = true
 fail_under = 100
 show_missing = true
 # A script runs only as `__main__`, so its other branch never runs.
