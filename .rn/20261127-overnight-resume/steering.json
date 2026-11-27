@@ -134,7 +134,8 @@
             "kind": "code",
             "status": "open",
             "judged": 1,
-            "next": "generator"
+            "next": "evaluator",
+            "entry": "content-3"
           },
           {
             "path": "plugins/overnight/bin/overnight",

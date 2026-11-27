@@ -2,10 +2,14 @@
 exits non-zero, such as at the usage limit, and what it records of each for the morning.
 
 `bin/overnight [--at HH:MM] <parallel> <worktree>...` runs `main`. Each work is a run of rn in
-its worktree, by `claude -p`, and up to <parallel> of them run at once. A work that exits
-non-zero resumes in the same session, on the model it started on, after a wait that starts at 5
-minutes and doubles to 60, and is given up after 6 hours of waiting in all. With --at, the batch
-waits until the next HH:MM, today or tomorrow, before it starts."""
+its worktree, by `claude -p`, and up to <parallel> of them run at once. Every run of `claude`
+tells the session that no one is at hand, so that it stops at each point that is the user's to
+decide and leaves the point as a question for the morning. A work that exits non-zero resumes in
+the same session, asked to go on from where it stopped, on the model it started on, after a wait
+that starts at 5 minutes and doubles to 60, and is given up after 6 hours of waiting in all. An
+error that a work meets ends the batch, once its other works end, with its trace in batch.log
+and no end noted. With --at, the batch waits until the next HH:MM, today or tomorrow, before it
+starts."""
 
 from __future__ import annotations
 
@@ -67,8 +71,17 @@ def main(
     itself and gives 0 once every work has ended or been given up: it notes in `<folder>/record`,
     one line each, `<YYYY-mm-dd HH:MM:SS> <what>`, when the batch waits for --at, each start,
     failure with its exit code, resume with its count, end, or giving up of each work with its
-    worktree and session id, and the batch's end. Each work's runs append their output to
-    `<folder>/<session id>.log`. `sleep` waits the seconds given, and `now` gives the local time.
+    worktree and session id, and the batch's end. Each work runs `claude -p --session-id <session
+    id> /rn:up` in its worktree, and each resume `claude -p --resume <session id> "Go on from where
+    you stopped."`, every run with the system prompt appended: "This run is a night's batch, and
+    no one is at hand to answer. Where the run comes to a point that is the user's to decide, stop
+    there and leave the point as the question for the morning." Each run reads nothing on stdin
+    and appends its stdout and stderr to `<folder>/<session id>.log`. `sleep` waits the seconds
+    given, and `now` gives the local time.
+
+    Raises an error that a work meets, such as a worktree removed after the start, once the
+    batch's other works have ended, so that the started process writes its trace to
+    `<folder>/batch.log`, and notes no end of the batch.
 
     Refuses, giving 2 and the usage on stderr, where the arguments lack <parallel> or a worktree,
     or --at lacks its time. Refuses, giving 1 with `overnight: <what's wrong>` on stderr and having
