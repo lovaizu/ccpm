@@ -13,11 +13,11 @@
             "by": "Issue #62 Desired State, and the user's answer to Q2 of the hearing on 2026-11-27",
             "opportunities": [],
             "solution": {
-              "solution": "An overnight plugin, which rn uses, that starts a run of rn at night as a batch in its own process, `claude -p`, under claude-ac (https://github.com/blackstardigitalstudio/claude-auto-continue, MIT), which watches the output for the usage-limit message, waits until the stated reset, and resumes the same session with `--continue`, so the stop and the resume stay in the conversation's history for the morning; where the run comes to a point that is the user's to decide, it stops there and leaves the point as a question for the morning.",
-              "why": "The user rejected Claude Code's own `autoContinueAtUsageLimit` as unreliable, and it is never offered in `-p` runs, so it can't serve a separate-process batch at all; claude-ac already does the watching, waiting, and resuming in `-p` runs on macOS and Linux under the MIT license, so rn makes only the thin start that runs rn under it, rather than a watcher of its own or Codeman, which does more than this need.",
+              "solution": "An overnight plugin, which rn uses, that starts a night's batch in its own process: it takes rn's works from a queue, each a run of rn in its worktree, and runs up to the given number at once, each by `claude -p --session-id <uuid>`; on success it starts the next; on a non-zero exit it waits and resumes the same session by `claude -p --resume <uuid>` with a prompt to go on, on the work's own model, the wait starting at 5 minutes and doubling to a cap of 60 minutes, and it gives the work up after 6 hours of waiting in all; a record keeps, for each work, its session id, when it failed, when and how often it resumed, and its last result, for the morning; where a run comes to a point that is the user's to decide, it stops there and leaves the point as a question for the morning.",
+              "why": "A plain retry from outside rests on no wording or output form of Claude Code's, which claude-ac's parse of `resets at HH:MM` already failed to keep up with, and the resume itself shows whether the limit has lifted, so no separate check or watcher is needed; it is a few lines of the plugin's own, so no other author's code with an unclear license runs, and unsnooze and the others do more than this need.",
               "assumption": {
-                "assumption": "A run of rn started at night by the overnight plugin goes on in its own process with no one there: no permission prompt stops it, claude-ac recognizes the current Claude Code's usage-limit message and resumes the same session after the reset, and by morning the run has reached its end or a question for the user.",
-                "test": "On the user's machine, start a real run of rn with the overnight plugin at night and leave it until it meets the usage limit; in the morning, check that it reached its end or a question, and that the session's history shows when it stopped and when it resumed.",
+                "assumption": "A run of rn in `claude -p` that meets the usage limit exits non-zero, and `claude -p --resume <uuid>` after the limit lifts goes on in the same session from where it stopped, with no permission prompt stopping it and no one there, so that by morning each work has reached its end or a question for the user.",
+                "test": "On the user's machine, queue a real run of rn with the overnight plugin at night and leave it until it meets the usage limit; in the morning, check in the record that the work failed, resumed after the limit lifted, and reached its end or a question, and that the session's history goes on from where it stopped.",
                 "result": null
               }
             }
@@ -60,11 +60,27 @@
         "by": "user"
       },
       {
-        "decision": "A night's batch stops at each point that is the user's to decide and leaves it as a question for the morning, since rn asks the user what is theirs and fills no gap by guessing, and no one answers at night.",
+        "decision": "Whether the limit has lifted is found by trying from outside, not by reading Claude Code's messages or output, as the user said 「ごく小さな問い合わせで確かめる これが一番確実でお手軽では？」 and 「人が外からやるならこうなるよね？時間見えてなければ」.",
+        "by": "user"
+      },
+      {
+        "decision": "The batch starts works from a queue up to a given parallel count, and on an error it starts the resume again at a growing interval up to a set number of times, as a plain retry, as the user said 「キューから指定された並行数起動 エラーコードが帰ってきたら一定間隔で、再開してを起動するだけでいいのでは？ つまり普通のリトライだよね？その間隔を指数関数じゃないけど、伸ばして何回までとか？」.",
+        "by": "user"
+      },
+      {
+        "decision": "The retry runs on the work's own model, not on Haiku, since limits are kept per model too, as the user answered 「１で」.",
+        "by": "user"
+      },
+      {
+        "decision": "The wait before each resume starts at 5 minutes and doubles to a cap of 60 minutes, and a work is given up after 6 hours of waiting in all, as the user answered 「1で」.",
+        "by": "user"
+      },
+      {
+        "decision": "Each work in the queue is a run of rn in its own worktree, since the night's batch is one that rn starts and rn's work lives one run to a worktree.",
         "by": "rn"
       },
       {
-        "decision": "Before the overnight plugin runs claude-ac, the maker reads every file of claude-ac that runs and shows the user what it reads, writes, runs, and sends out, as the user's rules ask of another author's tool.",
+        "decision": "A night's batch stops at each point that is the user's to decide and leaves it as a question for the morning, since rn asks the user what is theirs and fills no gap by guessing, and no one answers at night.",
         "by": "rn"
       },
       {
@@ -84,7 +100,7 @@
     "steps": [
       {
         "for": "O1.1",
-        "settles": "rnから夜に別プロセスのバッチを始め、使用量の上限で止まっても、上限が解けたら止まったところから続く。",
+        "settles": "rnから夜に別プロセスのバッチを始め、キューの作業を指定した並行数で動かし、使用量の上限で止まった作業は間隔を伸ばしながら再開を試し、上限が解けたら止まったところから続き、朝には何が止まり何が再開したかが記録に残る。",
         "deliverables": [
           {
             "path": "plugins/overnight/bin/overnight",
