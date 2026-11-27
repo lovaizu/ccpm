@@ -32,7 +32,8 @@ COMMAND = "invoice/__main__.py"
 GUIDE = "docs/guide.md"
 
 
-# The walkthrough's walking skeleton as the pruner gives it: the command, then its guide.
+# The walkthrough's walking skeleton as the orchestrator's aim gives it: the command, then the
+# guide.
 WAY = {
     "for": "O1",
     "settles": SETTLES,

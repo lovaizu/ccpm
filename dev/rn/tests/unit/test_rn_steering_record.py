@@ -1,7 +1,7 @@
-"""The unit cases of steering/record.py, what each change makes of the work's steering: the pruner's
-first result, a later one that keeps each status the steering holds, one with no steps or issues,
-what the pruner says comes next, each result moving a deliverable on, each mark of a step, and
-the inspection's pass, with each refusal."""
+"""The unit cases of steering/record.py, what each change makes of the work's steering: the
+orchestrator's first aim, a later one that keeps each status the steering holds, one with no steps
+or issues, what the aim says comes next, each result moving a deliverable on, each mark of a step,
+and the inspection's pass, with each refusal."""
 
 from __future__ import annotations
 
@@ -16,12 +16,12 @@ STEP = rn_files.WAY
 
 
 def result(**fields: Any) -> dict[str, Any]:
-    """A pruner's result of the walkthrough, with the fields given."""
+    """An aim of the walkthrough, with the fields given."""
     return {"message": "the user picked printing", "ost": rn_files.ost(), **fields}
 
 
 def test_a_first_result_makes_the_steering_with_each_step_open() -> None:
-    """Given the work with no steering, and the pruner's result with its tree, issues, and steps.
+    """Given the work with no steering, and an aim with its tree, issues, and steps.
     When the result is taken in.
     Then the steering holds the tree, the issues, and each step and deliverable open."""
     made = taken_in(None, result(issues={"closes": [38], "refs": []}, steps=[STEP]))
@@ -127,7 +127,7 @@ def holding(step_status: str = "open", **fields: Any) -> dict[str, Any]:
 
 
 def told(next_: str, **fields: Any) -> dict[str, Any]:
-    """A pruner's result that says what the command takes next."""
+    """An aim that says what the command takes next."""
     way = {
         **STEP,
         "deliverables": [{**STEP["deliverables"][0], "next": next_}, STEP["deliverables"][1]],
@@ -154,10 +154,10 @@ def test_a_later_result_keeps_where_each_deliverable_is_on_its_way() -> None:
     ],
     ids=["generator", "anew", "fixer", "refactorer", "done"],
 )
-def test_what_the_pruner_says_comes_next_is_taken_in(
+def test_what_the_aim_says_comes_next_is_taken_in(
     next_: str, fields: dict[str, Any], kept: dict[str, Any]
 ) -> None:
-    """Given a steering whose command waits on a pruner's weighing of content-2.
+    """Given a steering whose command waits on the orchestrator's weighing of content-2.
     When a result that says what the command takes next is taken in.
     Then the command holds it, with no entry, as its next role starts its own; anew makes it
     again from its first Round, and done ends it."""
@@ -187,7 +187,7 @@ def test_a_round_past_the_limit_is_refused() -> None:
 
 
 def test_a_weighing_that_leaves_its_deliverable_waiting_is_refused() -> None:
-    """Given a steering whose command waits on a pruner's weighing.
+    """Given a steering whose command waits on the orchestrator's weighing.
     When a result that neither says what it takes next nor asks the user is taken in.
     Then Wrong is raised, naming the command."""
     held = holding(next="weigh", entry="content-1")
@@ -196,7 +196,7 @@ def test_a_weighing_that_leaves_its_deliverable_waiting_is_refused() -> None:
 
 
 def test_a_weighing_that_asks_the_user_leaves_its_deliverable_waiting() -> None:
-    """Given a steering whose command waits on a pruner's weighing.
+    """Given a steering whose command waits on the orchestrator's weighing.
     When a result that asks the user a question is taken in.
     Then the command still waits on the weighing of the user's answer."""
     held = holding(next="weigh", entry="content-1")

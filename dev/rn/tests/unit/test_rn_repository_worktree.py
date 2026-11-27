@@ -90,7 +90,7 @@ def test_the_work_of_each_worktree_is_found_newest_first(repo: str) -> None:
     later = new(WorkPlace(worktree(repo, "later"), OTHER), run)
     committed(later, rn_files.steering(), "2026-11-27T09:00:00")
     fresh = new(WorkPlace(worktree(repo, "fresh"), "20261128-print"), run)
-    write_files(fresh.folder, {"pruner.json": "{}\n"})
+    write_files(fresh.folder, {"notes.md": "for the accountants\n"})
     found = works(repo, run)
     assert (found.index(later) < found.index(first), sorted(found, key=str)) == (
         True,

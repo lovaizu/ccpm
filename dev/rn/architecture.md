@@ -2,8 +2,8 @@
 
 ## User stories
 
-- S1: the user wants what they asked for working for the one need they pick, early, asking in
-  their own words, and to decide what happens to each need left.
+- S1: the user wants what they asked for, as they mean it, working for the one need they agree to
+  first, early, asking in their own words, and to decide what happens to each need left.
 - S2: the user wants to stop rn's work and go on with it later, in any conversation, losing nothing.
 - S3: the user wants to call rn's work off and have nothing of it stay on their computer or on
   GitHub.
@@ -16,13 +16,15 @@ rn piles up the [vital few](https://en.wikipedia.org/wiki/Pareto_principle) that
 deliverable's people to their aim, and cuts the trivial many thoroughly.
 
 - P1: the goal reached earliest
-  - P1.1: each piece of work aims at one need that the user picks.
+  - P1.1: each piece of work aims at one need, the one the user agrees to first.
   - P1.2: the least that runs, through every kind of deliverable that the need takes, goes to the
     user before anything more is made.
-  - P1.3: a mend of a problem that a pruner weighed starts at once, with no new Rounds.
+  - P1.3: a mend of a problem, once weighed, starts at once, with no new Rounds.
+  - P1.4: the steps and the questions grow with what the request leaves open: a request whose
+    state wanted is settled goes to the proposal at once, and its tree is one need.
 - P2: the user as one who uses it
-  - P2.1: the user is asked only what only they can decide, one point at a time, in plain words
-    with a recommendation and why.
+  - P2.1: the user is asked only what the request and their words leave open, in plain words with
+    a recommendation and why.
   - P2.2: each need that the user or the issue named stays on the list, and only the user decides
     what happens to it.
   - P2.3: each message to the user has one shape: what was done, with how far the work is to the
@@ -30,6 +32,11 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
     rn's insides, so that they see where the work is and give feedback at once.
   - P2.4: rn talks in the user's language and writes in the repository's, asking only where they
     disagree.
+  - P2.5: the user agrees to the work from one proposal, and corrects only what's off. It holds
+    the goal in their own words, the way to it, and what changes: each file that exists, and each
+    deliverable roughly where none exists yet.
+  - P2.6: the user sees each deliverable they choose as soon as it's made, before more rests on
+    it.
 - P3: best practices in full
   - P3.1: each deliverable meets every necessary condition of its kind's best practice, and once
     whole, of its kind's refactor best practice, before the user touches it.
@@ -38,11 +45,12 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P3.3: remaking has a limit, and what it leaves goes to the user to confirm.
   - P3.4: a mend confirms, the same way before it and after it, that what was there still holds.
 - P4: one measure of the vital few
-  - P4.1: each fact that would change what the work aims at is weighed by one shared measure, by
-    one role alone, before it does.
+  - P4.1: each fact that would change what the work aims at is weighed by one shared measure,
+    before it does, by the one who holds the talk and reads what was made.
 - P5: each role on its own work
-  - P5.1: leading, weighing, making, judging, mending, refactoring, and inspecting are separate
-    roles, each started with only what its work needs.
+  - P5.1: leading, making, judging, mending, refactoring, and inspecting are separate roles,
+    each started with only what its work needs, and the one who leads weighs what the work aims
+    at.
   - P5.2: each part of the work's record has one writer.
   - P5.3: a step that has one right result is done the same way each time, without a role's
     judgment, and what must hold every time is held by a hook.
@@ -76,20 +84,23 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
 - Round\
   One making of a deliverable, judged by one who didn't make it, or one refactoring of the whole.
 - Fix\
-  One mend of a deliverable whose Rounds are over, to a problem that a pruner weighed. It holds
+  One mend of a deliverable whose Rounds are over, to a problem once weighed. It holds
   the problem in the words that raised it, and what the mend gave.
 
 Strategies:
 
-- The steering split into what the work aims at, written by one role alone, and where it stands,
-  written by scripts alone. [P5.2]\
+- The steering split into what the work aims at, as the orchestrator weighed it, and where it
+  stands, each written by scripts alone. [P5.2]\
   Intent: no part of the record has two writers, and the work's standing moves the same way at
   each event.
-- Each need kept on the tree, the one the user picked marked as the work's target. [P2.2]\
+- Each need kept on the tree, the one the user agreed to first marked as the work's target, the
+  tree one need where the request settles the state wanted. [P2.2, P1.4]\
   Intent: no need is dropped without the user's say, and the work knows which one it serves.
 - The steps listed in order, the walking skeleton first, each naming the need it meets.
   [P1.2]\
   Intent: the work puts the least that runs in the user's hands before it makes more.
+- Each deliverable that the user wants to see once it's made ending a step of its own. [P2.6]\
+  Intent: the user tries it as they try any step, and what rests on it waits for their word.
 - Each step marked open while rn makes it, trying while it's in the user's hands, and done once
   the user says it's enough. [P6.1]\
   Intent: the work's files alone say what waits for the user.
@@ -98,13 +109,13 @@ Strategies:
   Intent: a point and the user's own words outlive the conversation that asked them.
 - Each remedy that a Round's judgment brings kept as a decision of the work. [P3.3]\
   Intent: the next Round and each later mend rest on what was weighed.
-- Each deliverable's next role kept in the steering, said by the pruner where its weighing decides
-  it, and by the hook where nothing is to weigh, anew from the first Round where its solution
+- Each deliverable's next role kept in the steering, said by the orchestrator where its weighing
+  decides it, and by the hook where nothing is to weigh, anew from the first Round where its solution
   changed. [P5.2]\
   Intent: the steering alone says what comes next, and nothing outside it keeps a deliverable on a
   dropped solution.
-- What the Rounds leave at the limit asked of the user as the pruner's open question, the hook
-  refusing a Round past it. [P3.3]\
+- What the Rounds leave at the limit asked of the user as an open question, the hook refusing a
+  Round past it. [P3.3]\
   Intent: the user decides what they'd live with, and a pick-up finds it waiting.
 - Each Fix kept beside the deliverable's Rounds, with the problem in the words that raised it.
   [P6.1]\
@@ -115,18 +126,17 @@ Strategies:
 ![rn's components](images/components.svg)
 
 - orchestrator (prompt)\
-  Leads the work to the user's picked need, as the user's one contact.
+  Leads the work to the need the user agreed to, as the user's one contact, and keeps what the
+  work aims at to the vital few, with every need named kept for the user to decide.
 - references (document)\
   Hold the one measure by which rn tells the vital few from the trivial many, and how a maker and
   an evaluator use a best practice.
-- pruner (prompt)\
-  Keeps what the work aims at to the vital few, with every need named kept for the user to pick.
 - generator (prompt)\
   Makes a deliverable with which its people reach their aim, by its kind's best practice.
 - evaluator (prompt)\
   Checks, as the people, whether a deliverable reaches their aim.
 - fixer (prompt)\
-  Mends a deliverable whose Rounds are over, to a problem that a pruner weighed.
+  Mends a deliverable whose Rounds are over, to a problem once weighed.
 - refactorer (prompt)\
   Refactors a whole deliverable by its kind's refactor best practice, keeping what it does.
 - inspector (prompt)\
@@ -134,8 +144,8 @@ Strategies:
 - scripts (script)\
   Does each step that has one right result, and alone writes where the work stands.
 - hook (hook)\
-  Once a role ends, checks its result, takes the pruner's into the steering, moves each
-  deliverable on by its role's result, and commits and pushes the work, every time.
+  Once a role ends, checks its result, moves each deliverable on by its role's result, and
+  commits and pushes the work, every time.
 
 Strategies:
 
@@ -143,25 +153,28 @@ Strategies:
   Intent: every event reaches the one role that hands it on.
 - The main conversation as the orchestrator, which starts and stops each other role. [P5.1]\
   Intent: the user talks with one role through the work.
-- Each fact that would change what the work aims at handed to a new pruner, with the work's folder,
-  the user's words, and the fact. [P4.1]\
-  Intent: one role holding the measure weighs all that the work aims at takes in, as an outsider
-  would.
-- One reference of the measure, which the pruner reads. [P4.1]\
+- Each fact that would change what the work aims at weighed by the orchestrator itself, against
+  the user's words and the deliverables as they stand, and given to a script that takes it into
+  the steering. [P4.1, P5.2]\
+  Intent: the one who heard the user and can answer why decides, so the user's meaning isn't
+  passed through another's summary, and the steering keeps one writer.
+- One reference of the measure, which the orchestrator reads. [P4.1]\
   Intent: what the work aims at is weighed by one measure, which changes in one place.
-- The pruner's result taken into the steering by the hook once the pruner ends. [P5.2]\
-  Intent: the pruner decides the way, the steering keeps one writer, and no step of the
-  orchestrator's holds it.
-- Each problem with a deliverable whose Rounds are over weighed by a new pruner, then handed to a
-  new fixer. [P1.3]\
+- The outcome kept in the user's own words, as they said it or agreed to it, in no fixed form.
+  [P2.5]\
+  Intent: no form turns the user's meaning around, such as a story that makes the user the one who
+  acts where they meant rn to.
+- Each problem with a deliverable whose Rounds are over weighed by the orchestrator, then handed to
+  a new fixer. [P1.3]\
   Intent: the mend changes only what was weighed, and starts without new Rounds.
-- The hearing of whom the work is for and what for held by the orchestrator, one question at a
-  time, before any weighing, and handed whole to one pruner. [P2.1]\
-  Intent: the outcome rests on what only the user knows, and the pruner weighs once with it
-  whole.
-- The orchestrator speaking, after the hearing, only from the steering and the user's words.
-  [P2.1]\
-  Intent: the talk brings back nothing the pruner cut, such as an issue's means.
+- The hearing held as one proposal, which the orchestrator fills from the request, the issue, and
+  the repository, marking what it had to assume, before the user is asked anything. [P2.5, P1.4]\
+  Intent: the user corrects what's off instead of answering what the request already says, and a
+  settled request reaches the agreement at once.
+- What changes named as the files where they exist, and as the rough deliverables where they don't
+  yet, each with whether the user wants to see it once it's made. [P2.5, P2.6]\
+  Intent: the user knows what the work touches, and sees early each deliverable whose rework
+  would cost most if it came all at the end.
 - Each search, for the files a request bears on or the ways to make a need, handed by the
   orchestrator to a subagent that checks each way's license, upkeep, open issues, and standing
   before it's offered. [P5.1]\
@@ -173,7 +186,8 @@ Strategies:
 - Each deliverable given the kind of its best practice, the user asked before the light kind
   where a best practice of its kind exists, or where none does. [P3.1]\
   Intent: what's made holds the quality its kind needs unless the user says otherwise.
-- Each need shown numbered in the user's words, and one of them recommended with its grounds. [P2.1]\
+- Each need shown numbered in the user's words, and the first recommended with its grounds, where
+  the tree has more than one. [P2.1]\
   Intent: the user judges only which need brings them closest to what they're after.
 - The languages proposed once at the start and kept as the user's decisions. [P2.4]\
   Intent: the user reads rn in their own language, and others read the repository in its own.
@@ -202,8 +216,8 @@ Strategies:
   branch, and pull request by a script. [S3]\
   Intent: a cancel can't be undone, so only the user starts it, and nothing of the work is left
   for a pick-up to meet.
-- A stop waiting for each pruner at work to end, then stopping the other roles and pushing the
-  work's folder. [P6.2]\
+- A stop that lets the orchestrator's write of the steering end, then stops each role and pushes
+  the work's folder. [P6.2]\
   Intent: a pick-up reads a whole steering, and GitHub keeps the work so far as well as the
   user's computer.
 - Each role's result checked against its schema by the hook before the role ends, the role kept
@@ -222,7 +236,6 @@ Strategies:
 sequenceDiagram
   actor U as user
   participant O as orchestrator
-  participant P as pruner
   participant H as hook
   participant S as scripts
   participant G as generator
@@ -233,33 +246,21 @@ sequenceDiagram
   U->>O: /rn:on [S1]
   O->>U: asks what it can help with, an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
-  O->>O: reads the issue it names, and has a subagent search the repository [P5.1]
-  loop whom it's for, what they want, and what for [P2.1]
-    O->>U: asks it, with a recommendation and why [P2.1]
-    U->>O: answers [P2.1]
+  O->>O: reads the issue it names, and has a subagent search the repository and the ways to make it [P5.1]
+  O->>O: weighs the request by the measure of the vital few, the tree one need where the request settles the state wanted [P1.4]
+  loop until the user agrees [P2.5]
+    O->>U: one proposal: the goal in their words, the way with the first need recommended where there are more, what changes, which deliverable they'd see once made, and the worktree, each assumption marked [P2.5]
+    U->>O: agrees, or corrects what's off [P2.5]
   end
-  O->>U: proposes the worktree to work in, from where it was started: that one, one by the repository's rules, or one at the default place [P7.1]
-  U->>O: agrees, or names another [P7.1]
-  O->>O: makes it, where it's to be made, as the repository's rules or the user's tools ask [P7.1]
-  O->>S: makes the work's folder in it (Steering) [P7.1]
-  O->>P: starts one with the work's folder, the user's words, the request, and the hearing (Steering) [P4.1]
-  P->>P: weighs the request by the measure of the vital few [P4.1]
-  P-->>O: ends, with the outcome as a user story, each need named or found in its own words, and the pick as an open question (Steering, Opportunity) [P2.2]
-  H->>S: takes the result into the steering, and commits and pushes it (Steering) [P5.2]
-  loop until no question is open, one at a time [P2.1]
-    O->>U: the open question, the needs numbered, with a recommendation and why [P2.3]
-    U->>O: answers [P2.1]
-    O->>P: starts one with the answer, word for word (Steering) [P4.1]
-    P-->>O: ends, with the answer as the user's decision, and for a pick, the target, its solution with its riskiest assumption, and the steps, the walking skeleton first (Steering, Solution, Step) [P1.2]
-    H->>S: takes the result into the steering, and commits and pushes it (Steering) [P5.2]
-  end
+  O->>O: makes the worktree, where it's to be made, as the repository's rules or the user's tools ask [P7.1]
+  O->>S: makes the work's folder in it, and takes in the aim: the outcome, each need, the target, its solution with its riskiest assumption, and the steps, the walking skeleton first, each deliverable the user would see ending a step (Steering, Opportunity, Solution, Step) [P5.2]
   O->>U: what is made before the try, listed once [P2.3]
   loop each deliverable of the step, each after those it rests on [P1.2]
     loop each Round, until each condition is good or the limit is reached [P3.1]
       O->>S: starts the deliverable's next role, as the steering names it, in a new Round (Deliverable, Round) [P5.3]
       O->>G: starts one with the steering, the deliverable, and its best practice (Deliverable, Best practice) [P5.1]
       alt a point the decisions leave open [P2.1]
-        G-->>O: the point, for a pruner to weigh or leave to the user (Round) [P4.1]
+        G-->>O: the point, for the orchestrator to weigh or leave to the user (Round) [P4.1]
       else
         G->>G: makes it by every necessary condition of its kind's best practice, by the work's decisions [P3.1]
         G-->>O: ends, with the Round written (Round) [P5.2]
@@ -268,15 +269,14 @@ sequenceDiagram
         E->>S: makes a folder of the people's starting state, a clone of what's committed [P3.2]
         E->>E: tries it there as its people would, and names for each condition what's good or what would make it good [P3.2]
         E-->>O: ends, with the Round judged (Round) [P5.2]
-        H->>S: moves the deliverable on, to a pruner's weighing of what was found, else to its refactoring (Steering) [P5.3]
-        O->>P: starts one with the judged Round (Round) [P4.1]
-        P-->>O: ends, with each remedy that the measure keeps as a decision, and what the deliverable takes next (Steering) [P3.3]
+        H->>S: moves the deliverable on, to the orchestrator's weighing of what was found, else to its refactoring (Steering) [P5.3]
+        O->>S: weighs the judged Round, and takes in each remedy that the measure keeps as a decision, and what the deliverable takes next (Round, Steering) [P3.3]
       end
     end
     opt what the Rounds leave at the limit [P3.3]
-      O->>U: the pruner's question: what the people would still meet, in their terms, and whether to mend it now [P2.1]
+      O->>U: what the people would still meet, in their terms, and whether to mend it now [P2.1]
       U->>O: answers [P2.1]
-      O->>P: starts one with the answer, word for word (Steering) [P4.1]
+      O->>S: takes in the answer as the user's decision, word for word (Steering) [P4.1]
       opt a mend now [P1.3]
         O->>S: starts the Fix, with the problem in the user's words (Fix) [P6.1]
         O->>F: starts one with the Fix, the deliverable, its best practice, and the work's decisions (Fix) [P5.1]
@@ -295,7 +295,7 @@ sequenceDiagram
     O->>U: what it does, what it doesn't do yet, and how to try it [P1.2]
     U->>O: /rn:ty, or /rn:gm with what to change [P2.1]
     alt /rn:gm with what to change [P1.3]
-      O->>P: starts one with the problem, word for word (Steering) [P4.1]
+      O->>S: weighs the problem against the deliverable, and takes in the remedy (Steering) [P4.1]
       opt a mend now [P1.3]
         O->>S: starts the Fix, with the problem in the user's words (Fix) [P6.1]
         O->>F: starts one with the Fix (Fix) [P5.1]
@@ -313,13 +313,12 @@ sequenceDiagram
     O->>O: takes it as a problem with the deliverable whose file it is, weighed and mended as /rn:gm's [P1.3]
   end
   O->>S: marks the inspection passed (Steering) [P6.1]
-  O->>P: starts one with the work's end (Steering) [P4.1]
-  P-->>O: ends, with a proposal for each need left, to make it now or to keep it in an issue [P2.2]
-  O->>U: the need reached, and which needs left to make now or keep in an issue, with a proposal for each [P2.2]
-  U->>O: answers [P2.2]
-  O->>P: starts one with the answer, word for word (Steering) [P4.1]
+  opt a need left [P2.2]
+    O->>U: the need reached, and which needs left to make now or keep in an issue, with a proposal for each [P2.2]
+    U->>O: answers [P2.2]
+  end
   opt a need to make now [P1.1]
-    P-->>O: ends, with it marked the target, its least solution, and its steps after those done, which take the inspection again (Steering, Step) [P1.2]
+    O->>S: takes it in as the target, with its least solution and its steps after those done, which take the inspection again (Steering, Step) [P1.2]
     Note over O,I: the steps go as the walking skeleton's did, each Round on the added part [P3.1]
   end
   O->>S: opens an issue for each need kept, in its own words [P2.2]
@@ -336,7 +335,7 @@ sequenceDiagram
   participant S as scripts
   participant W as each other role at work
   U->>O: /rn:dn, or asks to stop for now [S2]
-  O->>O: waits for each pruner at work to end, as its write stays whole [P6.2]
+  O->>O: lets its write of the steering end, as it stays whole [P6.2]
   O->>W: stops it [S2]
   O->>S: commits and pushes what the work has made (Steering, Round, Fix) [P6.2]
   O->>U: where it stopped, and what waits for the user [P2.3]
@@ -392,10 +391,9 @@ Strategies:
 plugins/rn/                        what Claude Code installs for the user
 ├── skills/                        /rn:on, /rn:up, /rn:dn, /rn:ty, and /rn:gm, each pointing to the orchestrator
 ├── agents/                        each role's start
-├── hooks/                         the hook that checks, takes in, and pushes each role's result once it ends
+├── hooks/                         the hook that checks and pushes each role's result once it ends
 └── domain/
     ├── orchestrator.md            each event's own steps, then those that every event shares
-    ├── pruner.md                  what the pruner does
     ├── generator.md               what the generator does
     ├── evaluator.md               what the evaluator does
     ├── fixer.md                   what the fixer does

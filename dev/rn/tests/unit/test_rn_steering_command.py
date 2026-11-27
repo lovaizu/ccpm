@@ -1,8 +1,9 @@
 """The unit cases of steering/command.py, steering's command line as the orchestrator runs it: each
-mark committed and pushed, the inspection's pass committed, what's due read, each start of a
-deliverable's next role with what it's given, and each refusal: a steering missing or out of its
-schema, a step's number that isn't one, a mark that the steering refuses, a start that can't be,
-git refusing the commit, and arguments of another form."""
+aim taken in, committed, and pushed, each mark committed and pushed, the inspection's pass
+committed, what's due read, each start of a deliverable's next role with what it's given, and each
+refusal: a steering missing or out of its schema, an aim that isn't JSON, leaves its schema, or that
+the steering refuses, a step's number that isn't one, a mark that the steering refuses, a start that
+can't be, git refusing the commit, and arguments of another form."""
 
 from __future__ import annotations
 
@@ -51,6 +52,61 @@ def call(work: WorkPlace, *argv: str, host: Any = None, words: str = "") -> tupl
 def held(work: WorkPlace) -> Any:
     with open(work.steering, encoding="utf-8") as f:
         return json.load(f)
+
+
+def test_the_first_aim_makes_the_steering_and_is_pushed(made: WorkPlace) -> None:
+    """Given the work with no steering, and an aim with the pick still asked.
+    When it's given to `steering aim`.
+    Then the steering holds its tree and its question, committed as `rn: <message>` and pushed,
+    and the question is due."""
+    aim = {
+        "message": "the needs, with the pick asked",
+        "ost": rn_files.ost(target=None, questions=["Which need first?"]),
+    }
+    assert call(made, "aim", words=json.dumps(aim)) == (0, "question\tWhich need first?\n", "")
+    assert git(made.worktree, "log", "-1", "--format=%s") == "rn: the needs, with the pick asked\n"
+    origin = os.path.join(os.path.dirname(made.worktree), "origin.git")
+    assert git(origin, "rev-parse", "invoices") == git(made.worktree, "rev-parse", "HEAD")
+    assert held(made)["ost"]["questions"] == ["Which need first?"]
+
+
+def test_a_later_aim_takes_in_the_steps_and_keeps_the_issues(made: WorkPlace) -> None:
+    """Given a steering with its issues and no step, and an aim with the target and the steps.
+    When it's given to `steering aim`.
+    Then the steering holds the steps open and the issues kept, and the command is due to make."""
+    steering(made, rn_files.steering([]))
+    aim = {"message": "printing first", "ost": rn_files.ost(), "steps": [rn_files.WAY]}
+    assert call(made, "aim", words=json.dumps(aim)) == (
+        0,
+        f"make\t1\t{rn_files.COMMAND}\tcode\tgenerator\n",
+        "",
+    )
+    assert held(made) == rn_files.steering()
+
+
+@pytest.mark.parametrize(
+    ("words", "says"),
+    [
+        ("{", "the aim isn't JSON"),
+        (json.dumps({"ost": {}}), "aim.schema.json: /message: is required"),
+        (
+            json.dumps({"message": "m", "ost": rn_files.ost(), "steps": [rn_files.WAY]}),
+            rn_files.COMMAND,
+        ),
+    ],
+    ids=["not-json", "schema", "refused"],
+)
+def test_an_aim_that_can_not_be_taken_in_is_refused_and_commits_nothing(
+    made: WorkPlace, words: str, says: str
+) -> None:
+    """Given a steering whose command waits on a weighing, and an aim that isn't JSON, leaves its
+    schema, or neither says what the command takes next nor asks the user.
+    When it's given to `steering aim`.
+    Then it gives 1 saying why, and commits nothing."""
+    at(made, next="weigh", entry="content-1")
+    before = git(made.worktree, "rev-parse", "HEAD")
+    code, _, err = call(made, "aim", words=words)
+    assert (code, says in err, git(made.worktree, "rev-parse", "HEAD")) == (1, True, before)
 
 
 def test_each_mark_is_committed_and_gives_whats_due(made: WorkPlace) -> None:
@@ -134,7 +190,7 @@ def test_git_refusing_the_commit_cant_run(made: WorkPlace) -> None:
     )
 
 
-@pytest.mark.parametrize("argv", [(), ("push", FOLDER), ("due",), ("step", FOLDER, "1")])
+@pytest.mark.parametrize("argv", [(), ("push", FOLDER), ("due",), ("aim",), ("step", FOLDER, "1")])
 def test_arguments_of_another_form_give_the_usage(argv: Sequence[str]) -> None:
     """Given no subcommand, one that isn't steering's, or too few arguments.
     When steering runs.
@@ -178,7 +234,7 @@ def test_a_round_of_content_starts_in_a_new_folder_and_again_in_the_same(made: W
 
 
 def test_a_round_made_again_starts_past_the_last(made: WorkPlace) -> None:
-    """Given a command whose content-1 and fix-2 are made, and that a pruner has made again.
+    """Given a command whose content-1 and fix-2 are made, and that the orchestrator has made again.
     When its next role is started.
     Then it's content-3."""
     at(made, next="generator", judged=1)
@@ -209,10 +265,10 @@ def test_the_evaluator_judges_its_round_by_the_conditions_alone(made: WorkPlace)
 def test_a_weighing_takes_the_result_to_weigh(
     made: WorkPlace, results: Sequence[str], weighed: str
 ) -> None:
-    """Given a command waiting on a pruner's weighing of content-1, which holds an evaluator's
-    findings, or a generator's point alone.
+    """Given a command waiting on the orchestrator's weighing of content-1, which holds an
+    evaluator's findings, or a generator's point alone.
     When its next role is started.
-    Then it gives the pruner, with the result to weigh, and changes nothing."""
+    Then it gives the weighing, with the result to weigh, and changes nothing."""
     at(made, next="weigh", entry="content-1")
     folder = os.path.join(rounds_of(made), "content-1")
     for role in results:
@@ -220,14 +276,14 @@ def test_a_weighing_takes_the_result_to_weigh(
     before = held(made)
     assert call(made, "start", rn_files.COMMAND) == (
         0,
-        f"pruner\t{os.path.join(folder, weighed + '.json')}\n",
+        f"weigh\t{os.path.join(folder, weighed + '.json')}\n",
         "",
     )
     assert held(made) == before
 
 
 def test_a_fix_starts_with_the_problem_in_its_words(made: WorkPlace) -> None:
-    """Given a command that a pruner has mended, its content-1 made.
+    """Given a command that the orchestrator keeps to mend, its content-1 made.
     When its next role is started with the problem's words on stdin.
     Then it gives the fixer, fix-2, and the code best practice, with problem.md holding them."""
     at(made, next="fixer")

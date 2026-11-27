@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "fixer's result",
- "description": "What the fixer writes as it ends, at <fix>/fixer.json: fixed, with each file it wrote, once a pruner weighed the problem and the fixer mended it.",
+ "description": "What the fixer writes as it ends, at <fix>/fixer.json: fixed, with each file it wrote, once the orchestrator weighed the problem and the fixer mended it.",
  "type": "object",
  "required": [
   "result",

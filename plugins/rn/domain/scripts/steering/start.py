@@ -17,7 +17,7 @@ from steering.record import Steering
 
 # The stage of the Round or Fix that each role starts, as its folder's name begins.
 _STAGE = {"generator": rounds.CONTENT, "refactorer": rounds.REFACTOR, "fixer": rounds.FIX}
-# The result a pruner weighs, by the role that gave it, the evaluator's findings first.
+# The result the orchestrator weighs, by the role that gave it, the evaluator's findings first.
 _WEIGHED = ("evaluator", "refactorer", "generator")
 
 
@@ -28,7 +28,7 @@ def started(
 
     Takes: the work, its steering, the deliverable's path as its step names it, the problem's
     words for a Fix, and rn's folder.
-    Gives: the steering as it is, and for a weighing, `pruner\\t<result>`, the evaluator's result
+    Gives: the steering as it is, and for a weighing, `weigh\\t<result>`, the evaluator's result
     of its entry where it holds one, else the refactorer's or the generator's point; for its
     evaluator, `evaluator\\t<folder>\\t<judges-by>`, `judges-by.json` written in its entry with
     what `practice.judged` gives; for each other role, the steering with its entry, and
@@ -43,7 +43,7 @@ def started(
     root = rounds.folder_of(work, number, path)
     role = each.get("next", "generator")
     if role == "weigh":
-        return steering, f"pruner\t{_weighed(os.path.join(root, each['entry']))}\n"
+        return steering, f"weigh\t{_weighed(os.path.join(root, each['entry']))}\n"
     if role == "evaluator":
         if "entry" not in each:
             raise Wrong(f"{path} has no Round to judge; start its generator first")

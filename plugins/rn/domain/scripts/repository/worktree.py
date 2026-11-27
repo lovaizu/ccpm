@@ -27,7 +27,7 @@ def new(work: WorkPlace, host: Host) -> WorkPlace:
     Takes: the work to make, its worktree the one the orchestrator chose, and its name by
     `place.named` from the day and the slug of what it's for, and the host.
     Gives: the work, made.
-    Changes: makes the work's folder in its worktree, empty, for the pruner's first result.
+    Changes: makes the work's folder in its worktree, empty, for the work's first aim.
     Refuses: Missing where the worktree isn't the top of a git worktree; Wrong where it's the
     repository's own checkout, as the user's own work stays as they left it, or where work of
     the name already lies there.

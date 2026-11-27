@@ -1,9 +1,8 @@
 """The unit cases of role/command.py, rn's hook once a role ends: an agent that isn't rn's left
-alone, the pruner's first result taken into the steering, committed, and pushed, a later one
-keeping the issues, a role's change committed and pushed, nothing committed where nothing
-changed, a folder outside rn's work passed over, a session outside git, each result out of its
-schema keeping the role going, a push with no origin or to a remote that isn't there, and
-arguments of another form."""
+alone, a role's change committed and pushed, a role's result moving its deliverable on, nothing
+committed where nothing changed, a folder outside rn's work passed over, a session outside git, each
+result out of its schema keeping the role going, a push with no origin or to a remote that isn't
+there, and arguments of another form."""
 
 from __future__ import annotations
 
@@ -72,39 +71,6 @@ def test_an_agent_that_isnt_rns_is_left_alone(made: WorkPlace) -> None:
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_the_pruners_first_result_is_taken_into_the_steering_and_pushed(made: WorkPlace) -> None:
-    """Given the work with no steering, and the pruner's result with the pick still asked.
-    When the pruner ends.
-    Then the steering holds the result's tree and its question, committed as `rn: <message>` and
-    pushed, and the result is gone."""
-    rn_files.write_json(
-        made.pruner,
-        {
-            "message": "the needs, with the pick asked",
-            "ost": rn_files.ost(target=None, questions=["Which need first?"]),
-        },
-    )
-    assert ended(made, "rn:pruner") == (0, "", "")
-    assert subject(made) == "rn: the needs, with the pick asked"
-    assert pushed(made) and not os.path.exists(made.pruner)
-    with open(made.steering, encoding="utf-8") as f:
-        assert json.load(f)["ost"]["questions"] == ["Which need first?"]
-
-
-def test_a_later_result_takes_in_the_steps_and_keeps_the_issues(made: WorkPlace) -> None:
-    """Given a steering with its issues and no step, and a result with the pick and the steps.
-    When the pruner ends.
-    Then the steering holds the steps open and the issues kept."""
-    rn_files.write_json(made.steering, rn_files.steering([]))
-    rn_files.write_json(
-        made.pruner,
-        {"message": "the user picked printing", "ost": rn_files.ost(), "steps": [rn_files.WAY]},
-    )
-    assert ended(made, "pruner")[0] == 0
-    with open(made.steering, encoding="utf-8") as f:
-        assert json.load(f) == rn_files.steering()
-
-
 def test_a_roles_change_is_committed_and_pushed_from_inside_the_worktree_of_the_work(
     made: WorkPlace,
 ) -> None:
@@ -136,23 +102,6 @@ def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: WorkPlace
     assert pushed(made)
 
 
-def test_a_pruners_result_the_steering_refuses_keeps_it_going(made: WorkPlace) -> None:
-    """Given a steering whose command waits on a weighing, and a pruner's result that neither says
-    what it takes next nor asks the user.
-    When the pruner ends.
-    Then it gives 2 naming the command, and commits nothing."""
-    value = rn_files.steering()
-    value["state"]["steps"][0]["deliverables"][0].update(next="weigh", entry="content-1")
-    rn_files.write_json(made.steering, value)
-    rn_files.write_json(
-        made.pruner, {"message": "m", "ost": rn_files.ost(), "steps": [rn_files.WAY]}
-    )
-    before = git(made.worktree, "rev-parse", "HEAD")
-    code, _, err = ended(made, "rn:pruner")
-    assert (code, rn_files.COMMAND in err) == (2, True)
-    assert git(made.worktree, "rev-parse", "HEAD") == before
-
-
 def test_nothing_is_committed_where_nothing_changed(made: WorkPlace) -> None:
     """Given the work whose steering is committed, and nothing changed since.
     When the evaluator ends.
@@ -163,10 +112,10 @@ def test_nothing_is_committed_where_nothing_changed(made: WorkPlace) -> None:
     assert git(made.worktree, "rev-parse", "HEAD") == before
 
 
-def test_the_work_before_its_first_weighing_keeps_nothing(made: WorkPlace) -> None:
+def test_the_work_before_its_first_aim_keeps_nothing(made: WorkPlace) -> None:
     """Given the work with no steering yet, its folder holding a note of the hearing.
     When a role ends.
-    Then it gives 0, and commits nothing, as the pruner's first result makes the steering."""
+    Then it gives 0, and commits nothing, as the orchestrator's first aim makes the steering."""
     write_files(made.folder, {"hearing.md": "for the accountants\n"})
     before = git(made.worktree, "rev-parse", "HEAD")
     assert ended(made, "rn:generator") == (0, "", "")
@@ -183,27 +132,25 @@ def test_a_session_outside_git_is_left_alone(made: WorkPlace, tmp_path: Any) -> 
 
 
 @pytest.mark.parametrize(
-    ("path", "text", "says"),
+    ("text", "says"),
     [
-        ("pruner.json", json.dumps({"ost": {}}), "pruner.schema.json: /message: is required"),
-        ("pruner.json", "{", "the pruner's result isn't JSON"),
-        ("rounds/1/a/content-1/generator.json", '{"result": "x"}', "generator-round.schema.json"),
+        ('{"result": "x"}', "generator-round.schema.json"),
+        ("{", "the generator's result isn't JSON"),
     ],
-    ids=["pruner", "pruner-not-json", "round"],
+    ids=["schema", "not-json"],
 )
 def test_a_result_out_of_its_schema_keeps_the_role_going(
-    made: WorkPlace, path: str, text: str, says: str
+    made: WorkPlace, text: str, says: str
 ) -> None:
-    """Given the work whose pruner's result leaves its schema or isn't JSON, or a Round's result
-    leaves its schema.
+    """Given the work whose Round's result leaves its schema or isn't JSON.
     When the role ends.
     Then it gives 2 naming the place, so that the role goes on, and commits nothing."""
-    target = os.path.join(made.folder, path)
+    target = os.path.join(made.folder, "rounds", "1", "a", "content-1", "generator.json")
     os.makedirs(os.path.dirname(target), exist_ok=True)
     with open(target, "w", encoding="utf-8") as f:
         f.write(text)
     before = git(made.worktree, "rev-parse", "HEAD")
-    code, _, err = ended(made, "rn:pruner")
+    code, _, err = ended(made, "rn:generator")
     assert (code, says in err, err.startswith("role: ")) == (2, True, True)
     assert git(made.worktree, "rev-parse", "HEAD") == before
 

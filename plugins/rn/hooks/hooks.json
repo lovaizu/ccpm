@@ -1,5 +1,5 @@
 {
-  "description": "Once one of rn's roles ends, checks its result against its schema and keeps the role going until it holds, takes a pruner's result into the steering, and commits and pushes the work's changes.",
+  "description": "Once one of rn's roles ends, checks its result against its schema and keeps the role going until it holds, and commits and pushes the work's changes.",
   "hooks": {
     "SubagentStop": [
       {

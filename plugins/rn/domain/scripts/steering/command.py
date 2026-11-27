@@ -17,7 +17,8 @@ from place import WorkPlace, of_folder
 from steering import due, record, start
 
 USAGE = """\
-usage: steering step <work> <number> open|trying|done
+usage: steering aim <work>   (the aim on stdin)
+       steering step <work> <number> open|trying|done
        steering start <work> <path>   (a Fix's problem in words on stdin)
        steering inspected <work>
        steering due <work>
@@ -29,8 +30,11 @@ def main(
 ) -> Answer:
     """The exit code, stdout, and stderr of `steering` with the arguments, from the folder `cwd`,
     with rn's folder at `plugin_root`, git reached through `host`, and what it's given on stdin
-    read by `stdin`, which only `start` of a Fix reads.
+    read by `stdin`, which `aim` and `start` of a Fix read.
 
+    - `aim <work>`: takes the aim on stdin, in the form of `aim.schema.json`, into the steering
+      as `record.taken_in` makes it, the steering made where the work has none yet, commits and
+      pushes as `rn: <the aim's message>`, and gives 0 printing what's due.
     - `step <work> <number> <status>`: marks the step as `record.step_marked` does, commits and
       pushes as `rn: <its words>: <status>`, and gives 0 printing what's due.
     - `start <work> <path>`: starts the deliverable's next role as `start.started` does, writing
@@ -42,7 +46,8 @@ def main(
 
     `<work>` is the work's folder, as `place.of_folder` takes it. 1 with `steering: <what's wrong>`,
     changing nothing, where the input is Wrong: a result or a steering that's missing, isn't JSON,
-    or leaves its schema, naming each place, or a mark that `record` refuses; 1 where something
+    or leaves its schema, naming each place, an aim that isn't JSON or leaves its schema, or an aim
+    or a mark that `record` refuses; 1 where something
     `push.kept` needs is Missing. 2 with what stopped it where it CantRun, such as git refusing the
     commit, with what git said; 2 with the usage where the arguments are other than these.
     """
@@ -52,11 +57,28 @@ def main(
         return answered(
             "steering", lambda: _start(of_folder(cwd, argv[1]), argv[2], plugin_root, stdin)
         )
+    if argv[0] == "aim":
+        return answered("steering", lambda: _aim(of_folder(cwd, argv[1]), plugin_root, stdin, host))
     subcommand = _SUBCOMMANDS[argv[0]][0]
     schemas = os.path.join(plugin_root, "domain", "schemas")
     return answered(
         "steering", lambda: subcommand(of_folder(cwd, argv[1]), list(argv[2:]), schemas, host)
     )
+
+
+def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str], host: Host) -> Answer:
+    schemas = os.path.join(plugin_root, "domain", "schemas")
+    try:
+        aim = json.loads(stdin())
+    except json.JSONDecodeError as error:
+        raise Wrong(f"the aim isn't JSON: {error}") from None
+    found = form.faults(aim, os.path.join(schemas, "aim.schema.json"))
+    if found:
+        raise Wrong("the aim leaves its schema, aim.schema.json: " + "; ".join(found))
+    held = _steering(work, schemas) if os.path.isfile(work.steering) else None
+    steering = record.taken_in(held, aim)
+    _committed(work, steering, aim["message"], host)
+    return 0, _lines(due.due(steering)), ""
 
 
 def _step(work: WorkPlace, given: list[str], schemas: str, host: Host) -> Answer:
@@ -116,6 +138,7 @@ def _lines(lines: list[str]) -> str:
 
 # Each subcommand, by its name, with the number of arguments it takes, its name among them.
 _SUBCOMMANDS: dict[str, tuple[Callable[[WorkPlace, list[str], str, Host], Answer], int]] = {
+    "aim": (_due, 2),
     "step": (_step, 4),
     "start": (_due, 3),
     "inspected": (_inspected, 2),

@@ -27,7 +27,7 @@ rn's rules for these steps:
 
 - Your start gives the work's folder, `<work>`, and the worktree. Read the pull request with git and
   gh from the worktree.
-- Write nothing, as each finding goes to a pruner and then to the fixer.
+- Write nothing, as the orchestrator weighs each finding and then hands it to the fixer.
 
 ## Output
 

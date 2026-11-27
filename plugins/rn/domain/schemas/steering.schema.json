@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
  "title": "steering",
- "description": "The steering of one piece of work, at .rn/<work>/steering.json: ost, what the work aims at and why, which the pruner alone writes, and state, where the work stands, which rn's scripts alone write. It lives for the work alone, and git keeps the history of each point.",
+ "description": "The steering of one piece of work, at .rn/<work>/steering.json: ost, what the work aims at and why, and state, where the work stands, both of which rn's scripts alone write, the ost as the orchestrator gives it to `steering aim`. It lives for the work alone, and git keeps the history of each point.",
  "type": "object",
  "required": [
   "ost",
@@ -22,7 +22,7 @@
    "additionalProperties": false,
    "properties": {
     "outcome": {
-     "description": "Whom the work is for, and what they do once it's reached, in one sentence.",
+     "description": "What the user wants the work to reach, in the user's own words, as they said it or as they agreed to it, so that its meaning stays theirs.",
      "type": "string",
      "minLength": 1
     },
@@ -141,7 +141,7 @@
            ]
           },
           "next": {
-           "description": "While it's open, who takes it next: generator, for a Round of content, as at its start where it's absent; evaluator, to judge that Round; weigh, for a pruner to weigh the result of its entry; fixer, for a Fix; refactorer, for a Round of refactoring. A pruner says it where its weighing decides it, and rn's hook where nothing is to weigh.",
+           "description": "While it's open, who takes it next: generator, for a Round of content, as at its start where it's absent; evaluator, to judge that Round; weigh, for the orchestrator to weigh the result of its entry; fixer, for a Fix; refactorer, for a Round of refactoring. The orchestrator says it where its weighing decides it, and rn's hook where nothing is to weigh.",
            "enum": [
             "generator",
             "evaluator",

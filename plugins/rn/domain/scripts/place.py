@@ -1,6 +1,6 @@
 """Decides where the work lies and what it's called: its name from the day and a slug of what it's
-for, the worktree it's made in, its folder there, and the paths of its steering, the pruner's
-result, and its Rounds and Fixes in that folder."""
+for, the worktree it's made in, its folder there, and the paths of its steering and its
+Rounds and Fixes in that folder."""
 
 from __future__ import annotations
 
@@ -35,11 +35,6 @@ class WorkPlace:
     def steering(self) -> str:
         """The work's steering, `<folder>/steering.json`."""
         return os.path.join(self.folder, "steering.json")
-
-    @property
-    def pruner(self) -> str:
-        """The pruner's result, `<folder>/pruner.json`, which no commit holds."""
-        return os.path.join(self.folder, "pruner.json")
 
     @property
     def rounds(self) -> str:

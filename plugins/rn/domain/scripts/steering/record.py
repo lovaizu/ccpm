@@ -1,6 +1,6 @@
-"""Decides what each change makes of the work's steering: the pruner's result taken in, the tree
+"""Decides what each change makes of the work's steering: the orchestrator's aim taken in, the tree
 whole and the way to the target, each step and deliverable that the steering already holds keeping
-its status and where it is on its way, unless the pruner says what it takes next; each deliverable
+its status and where it is on its way, unless the aim says what it takes next; each deliverable
 moved on by the result of its next role, where nothing is to weigh; a step marked as the work moves
 on; and the inspection's pass."""
 
@@ -12,7 +12,7 @@ from typing import Any
 import practice
 from fault import Wrong
 
-# A steering, and the pruner's result, as `json.load` gives them, each in its schema's form.
+# A steering, and the orchestrator's aim, as `json.load` gives them, each in its schema's form.
 Steering = dict[str, Any]
 # Each status of a step, as the steering's schema names them.
 STEP = ("open", "trying", "done")
@@ -22,23 +22,23 @@ STEP = ("open", "trying", "done")
 LIMIT = 2
 # What a deliverable keeps of where it is on its way, as the steering's schema names it.
 _WAY = ("next", "judged", "entry")
-# The work's issues while no pruner has named yet.
+# The work's issues while no aim has named them yet.
 _NO_ISSUES: dict[str, list[int]] = {"closes": [], "refs": []}
 
 
-def taken_in(steering: Steering | None, result: dict[str, Any]) -> Steering:
-    """The steering with the pruner's result taken in.
+def taken_in(steering: Steering | None, aim: dict[str, Any]) -> Steering:
+    """The steering with the orchestrator's aim taken in.
 
-    Takes: the steering as it stands, or None where the work has none yet, and the pruner's result
+    Takes: the steering as it stands, or None where the work has none yet, and the aim
     in its schema's form.
-    Gives: a new steering: the result's tree whole; its issues, else the steering's, else none;
+    Gives: a new steering: the aim's tree whole; its issues, else the steering's, else none;
     and its steps, else the steering's, each step that the steering holds for the same need with
     the same words keeping its status, and each of its deliverables at the same path keeping its
     own and where it is on its way, every other step and deliverable open; each deliverable whose
-    next the result says taking it with no entry, as its next role starts its own: generator and
+    next the aim says taking it with no entry, as its next role starts its own: generator and
     the judged Rounds kept, anew as generator from its first Round, fixer, refactorer, or done,
     and its step open again where it opens; and the inspection passed where the steering holds it
-    so and the result adds no step, as a step added grows the pull request.
+    so and the aim adds no step, as a step added grows the pull request.
     Changes: nothing.
     Refuses: Wrong where it would make a deliverable again past LIMIT judged Rounds, as the user
     confirms what they leave, or would leave one waiting on a weighing with no question asked,
@@ -46,15 +46,15 @@ def taken_in(steering: Steering | None, result: dict[str, Any]) -> Steering:
     """
     state = steering["state"] if steering else {"issues": _NO_ISSUES, "steps": []}
     steps = state["steps"]
-    if "steps" in result:
-        steps = [_kept(each, state["steps"]) for each in result["steps"]]
-    _settled(steps, result["ost"]["questions"])
-    issues = copy.deepcopy(result.get("issues", state["issues"]))
+    if "steps" in aim:
+        steps = [_kept(each, state["steps"]) for each in aim["steps"]]
+    _settled(steps, aim["ost"]["questions"])
+    issues = copy.deepcopy(aim.get("issues", state["issues"]))
     held = [(each["for"], each["settles"]) for each in state["steps"]]
     added = any((each["for"], each["settles"]) not in held for each in steps)
     inspected = {"inspected": True} if state.get("inspected") and not added else {}
     return {
-        "ost": copy.deepcopy(result["ost"]),
+        "ost": copy.deepcopy(aim["ost"]),
         "state": {"issues": issues, "steps": steps, **inspected},
     }
 
@@ -77,13 +77,13 @@ def _kept(step: dict[str, Any], held: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _told(step: dict[str, Any]) -> bool:
-    """Whether the pruner says what a deliverable of the step takes next, other than its end."""
+    """Whether the aim says what a deliverable of the step takes next, other than its end."""
     return any(each.get("next", "done") != "done" for each in step["deliverables"])
 
 
 def _deliverable(told: dict[str, Any], had: dict[str, Any] | None) -> dict[str, Any]:
-    """The deliverable as the pruner names it, keeping what the steering holds of it, and taking
-    what the pruner says it takes next."""
+    """The deliverable as the aim names it, keeping what the steering holds of it, and taking
+    what the aim says it takes next."""
     kept: dict[str, Any] = {"path": told["path"], "kind": told["kind"], "status": "open"}
     if had:
         kept.update({key: had[key] for key in ("status", *_WAY) if key in had})
@@ -148,7 +148,7 @@ def moved(steering: Steering, results: dict[str, dict[str, dict[str, Any]]]) -> 
     by role.
     Gives: a new steering in which each open deliverable whose next role's result is there takes
     what follows it: a generator's made, its evaluator; a point, a generator's or a refactorer's,
-    a pruner's weighing; an evaluator's result, one more judged Round, then a pruner's weighing of
+    the orchestrator's weighing; an evaluator's result, one more judged Round, then its weighing of
     what it found, else what follows a deliverable made; a fixer's, what follows a deliverable
     made; a refactorer's made, its end. What follows a deliverable made is its refactorer, where
     its kind is refactored, else its end. Each other deliverable stays as it is.

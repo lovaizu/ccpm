@@ -1,5 +1,5 @@
 """The unit cases of steering/due.py, what waits now in the work: open questions, which hold up the
-rest; the pruner's weighing where no need is picked or no step is set; the next deliverable to
+rest; the orchestrator's weighing where no need is picked or no step is set; the next deliverable to
 make; the hand-over; the user's try; a later step once the first is done; the inspection; and
 the work's end once it passed."""
 
@@ -19,10 +19,10 @@ def test_open_questions_hold_up_the_rest() -> None:
     assert due(held) == ["question\tWhich need first?"]
 
 
-def test_the_pruner_is_due_where_no_need_is_picked_or_no_step_is_set() -> None:
+def test_a_weighing_is_due_where_no_need_is_picked_or_no_step_is_set() -> None:
     """Given a steering with no target, and one with a target and no step.
     When what's due is asked of each.
-    Then the pruner's weighing is due."""
+    Then the orchestrator's weighing is due."""
     assert (due(rn_files.steering(target=None)), due(rn_files.steering([]))) == (
         ["weigh"],
         ["weigh"],
@@ -39,7 +39,7 @@ def test_the_first_deliverable_not_done_is_due_to_make() -> None:
 
 
 def test_a_deliverable_on_its_way_is_due_to_its_next_role() -> None:
-    """Given a steering whose command waits on a pruner's weighing.
+    """Given a steering whose command waits on the orchestrator's weighing.
     When what's due is asked.
     Then the command is due to its weighing."""
     held = rn_files.steering()
