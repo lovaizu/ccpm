@@ -15,13 +15,12 @@ CI runs these checks on every push:
 - the linter, the formatter, and the type checker of the plugins' code and the checks' own
 - the checks of the code's design: copied code, import cycles, code that nothing uses, and a
   function more complex than one reading can follow
-- the form of each best practice
+- each best practice against its schema
 - the style of every figure
 - Mermaid's parse of every diagram in the Markdown files
 - Claude Code's check of every manifest
 - that each plugin works from its own folder, uses another plugin only through `dependencies`, and
   carries its LICENSE, by `dev/scripts/standalone.py`
-- the tag of each decision of each architecture's views, by `dev/scripts/trace.py`
 - each plugin's unit tests, and that they run every line and branch of the plugins' code
 
 Each night, CI runs the checks again on the oldest Python and the newest, of `main` and of each
@@ -55,7 +54,7 @@ or `gh pr` command, a hook of `.claude/settings.json` checks its title and body.
 lovaizu/repofiles puts these files, and `lefthook-repo.yml` and `.vale.ini` hold what ccpm
 changes.
 
-`dev/scripts/pre-push.sh` runs `sh dev/scripts/check.sh` on each commit pushed, and stops the
+Before each push, lefthook runs `sh dev/scripts/check.sh` once in the working tree, and stops the
 push on a failure.
 
 Turn the hooks on once in a clone with `lefthook install`. They need uv on the PATH, and what

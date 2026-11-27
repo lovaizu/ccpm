@@ -39,7 +39,7 @@ _CHECKED = {
     "oneOf",
     "$ref",
 }
-_TOLD = {"$schema", "title", "description", "definitions"}
+_TOLD = {"$schema", "title", "description", "definitions", "$defs"}
 
 
 def held(path: str, schema_path: str, what: str) -> dict[str, Any]:

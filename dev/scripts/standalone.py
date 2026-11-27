@@ -16,12 +16,28 @@ import os
 import re
 import subprocess
 import sys
-
-from practices import FENCE, KEPT, LINK, texts
+from typing import Any
 
 PLUGINS = "plugins"
+# A link or a figure in Markdown, a fenced code block, whose text links nothing, and a link's target
+# that names no file: another site, or a place in the same page.
+LINK = re.compile(r"(!?)(\[[^\]]*\]\()([^)\s]+)(\))")
+# `FENCE`'s flags stand in the pattern, which reads as one string.
+FENCE = re.compile(r"(?ms)(^```.*?^```)")
+KEPT = re.compile(r"^(?:[a-z][a-z0-9+.-]*:|#)")
 # A path to a plugin's folder, as a link or a URL names it.
 OTHER = re.compile(r"(?:^|/)plugins/([a-z0-9-]+)/")
+
+
+def texts(value: Any) -> list[str]:
+    """Each string in the value at any depth."""
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, list):
+        return [t for item in value for t in texts(item)]
+    if isinstance(value, dict):
+        return [t for v in value.values() for t in texts(v)]
+    return []
 
 
 def held(folder: str) -> list[str]:

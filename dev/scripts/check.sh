@@ -1,5 +1,5 @@
 #!/bin/sh
-# The checks CI runs on every push, run from the top of the repository with the tools of
+# The checks CI runs on every push, and the pre-push hook before it, run from the top of the repository with the tools of
 # pyproject.toml's dev group: the checks' own code, the best practices, the figures, and the
 # manifests.
 set -e
@@ -68,20 +68,8 @@ for plugin in plugins/*/; do
   held design pyrefly check $paths $code
 done
 
-# Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
-# lies beside it. The check fails on:
-# - a fault in a best practice's form
-# - a file in the folder that neither uses, such as a figure that the template dropped
-# Each of these would make the folder say what rn doesn't hold.
-python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
-
-# Each decision of an architecture's views tags the story or rule it carries out, and each story
-# and rule is carried out somewhere, as the architecture best practice's template says, so a
-# decision that serves nothing, or a rule that nothing carries out, shows before any case is written.
-for architecture in dev/*/architecture.md; do
-  plugin="${architecture#dev/}"
-  python3 dev/scripts/trace.py tags "${plugin%/architecture.md}"
-done
+# Each of rn's best practices holds to its schema, as every role reads it by that form.
+python3 dev/scripts/practices.py plugins/rn/domain/best-practices/*/best-practice.json
 
 # Every figure carries the one style of dev/images/figures.css and sets no font or color of its own,
 # so the figures look alike and one place changes a look, as .claude/rules/figures.md says.

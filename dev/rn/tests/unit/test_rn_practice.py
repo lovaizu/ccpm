@@ -2,7 +2,7 @@
 gets: `kinds` of rn's own best practices, of a run's own before them and beside them, and of a
 folder of neither; `read` of a best practice, one missing, and one that isn't JSON; `judged` without
 any practice; and `refactoring` of a kind of code, of light, and of another kind.
-dev/scripts/practices.py holds each of rn's best practices to its form."""
+dev/scripts/practices.py holds each of rn's best practices to its schema."""
 
 from __future__ import annotations
 

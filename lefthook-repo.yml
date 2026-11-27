@@ -11,10 +11,10 @@ pre-commit:
       exclude:
         - "plugins/rn/domain/best-practices/*/template.md"
 
-# The checks of what a push changes, on the commits pushed, which git gives
-# the hook on its standard input. dev/README.md describes them.
+# The checks of dev/scripts/check.sh, once before each push, in the working tree. git gives a hook
+# the repository it runs for, such as GIT_DIR, which the git repositories the tests make would take
+# as theirs, so the hook unsets it. dev/README.md describes the checks.
 pre-push:
   jobs:
     - name: check
-      run: sh dev/scripts/pre-push.sh
-      use_stdin: true
+      run: unset $(git rev-parse --local-env-vars); uv run --locked --group test-quality sh dev/scripts/check.sh
