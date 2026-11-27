@@ -365,6 +365,10 @@
       {
         "decision": "Have each run work in a worktree, and have the orchestrator judge from where it was started which: the worktree it was started in, one made by the repository's rules, or one at the default place, so that the user's own work stays as they left it, with no case of it written in a prompt or a script.",
         "by": "user"
+      },
+      {
+        "decision": "Call one piece of rn's work from the request to the merge proposed a work, in place of the noun run, everywhere, in users' words and in rn's insides, as run reads too close to rn; the verb run stays.",
+        "by": "user"
       }
     ],
     "questions": []
@@ -638,7 +642,24 @@
       },
       {
         "for": "O1",
-        "settles": "the architecture and the CHANGELOG, for what these change, and the release",
+        "settles": "the noun run renamed work in the README, the CHANGELOG, the architecture, the prompts, the skills, the scripts, and the tests",
+        "deliverables": [
+          {
+            "path": "plugins/rn",
+            "kind": "code",
+            "status": "open"
+          },
+          {
+            "path": "dev/rn",
+            "kind": "architecture",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "the architecture and the CHANGELOG, for what these change, and the release: rn 0.12.0 merged once the user approves PR #91, tagged rn--v0.12.0 on main, then #98 from main in the worktree checks-coverage",
         "deliverables": [
           {
             "path": "dev/rn/architecture.md",
