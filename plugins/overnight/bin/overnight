@@ -1,31 +1,76 @@
 #!/usr/bin/env bash
-# overnight: starts rn's run in <worktree> as a batch in its own process, under
-# claude-ac, which waits out the usage limit and resumes the same session.
+# overnight: runs rn's works as a night's batch in its own process. Each work is
+# a run of rn in its worktree, and up to <parallel> of them run at once. A work
+# that exits non-zero, such as at the usage limit, resumes in the same session
+# after a wait that starts at 5 minutes and doubles to 60, and is given up after
+# 6 hours of waiting in all.
 #
-# Usage: overnight [<worktree>]
-#   <worktree>  the folder of rn's run, the current folder where left out
+# Usage: overnight <parallel> <worktree>...
+#
+# The record, for the morning, lists for each work its session id, when it
+# failed, when and how often it resumed, and how it ended, next to the output of
+# each of its runs.
 set -euo pipefail
 
-# claude-ac runs at the commit whose files were read before it ran here, so a
-# later change of theirs runs only once it's read too.
-claude_ac_repo=https://github.com/blackstardigitalstudio/claude-auto-continue
-claude_ac_commit=b50d1daaf74dc2d646026610cc3576b252b2ed95
-
-worktree=$(cd "${1:-.}" && pwd)
-claude_ac="${XDG_CACHE_HOME:-$HOME/.cache}/overnight/claude-ac-$claude_ac_commit"
-logs="${XDG_STATE_HOME:-$HOME/.local/state}/overnight"
-
-# Fetch claude-ac without its install.sh, which adds a Stop hook to every
-# session of the user's.
-if [ ! -f "$claude_ac/bin/claude-ac" ]; then
-  fetching="$claude_ac.fetching"
-  rm -rf "$fetching"
-  trap 'rm -rf "$fetching"' EXIT
-  git init -q "$fetching"
-  git -C "$fetching" fetch -q --depth 1 "$claude_ac_repo" "$claude_ac_commit"
-  git -C "$fetching" checkout -q FETCH_HEAD
-  mv "$fetching" "$claude_ac"
+if [ $# -lt 2 ]; then
+  echo "usage: overnight <parallel> <worktree>..." >&2
+  exit 2
 fi
+parallel=$1
+shift
+
+# Where a run comes to a point that is the user's to decide, no one is at hand
+# to answer it until the morning.
+export OVERNIGHT_NIGHT="This run is a night's batch, and no one is at hand to answer. Where the run comes to a point that is the user's to decide, stop there and leave the point as the question for the morning."
+OVERNIGHT_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/overnight/$(date +%Y%m%d-%H%M%S)"
+export OVERNIGHT_DIR
+mkdir -p "$OVERNIGHT_DIR"
+
+note() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S') $*" >>"$OVERNIGHT_DIR/record"
+}
+
+# Runs one work, in the worktree $1, to its end or until it's given up.
+work() {
+  local worktree session output waited=0 wait=300 resumes=0 code=0
+  worktree=$1
+  session=$(uuidgen 2>/dev/null || cat /proc/sys/kernel/random/uuid)
+  session=$(echo "$session" | tr 'A-Z' 'a-z')
+  output="$OVERNIGHT_DIR/$session.log"
+  cd "$worktree" || { note "$worktree: no such folder"; return 0; }
+  note "$worktree: started in session $session, writing its output to $output"
+  # No --model, so a resume runs on the model the work started on.
+  claude -p --session-id "$session" --append-system-prompt "$OVERNIGHT_NIGHT" \
+    "/rn:up" >>"$output" 2>&1 </dev/null || code=$?
+  while [ "$code" -ne 0 ]; do
+    note "$worktree: failed with exit $code in session $session"
+    if [ "$waited" -ge 21600 ]; then
+      note "$worktree: given up after $((waited / 60)) minutes of waiting in all, $resumes resumes, in session $session"
+      return 0
+    fi
+    if [ $((waited + wait)) -gt 21600 ]; then
+      wait=$((21600 - waited))
+    fi
+    sleep "$wait"
+    waited=$((waited + wait))
+    wait=$((wait * 2 > 3600 ? 3600 : wait * 2))
+    resumes=$((resumes + 1))
+    note "$worktree: resume $resumes in session $session"
+    code=0
+    claude -p --resume "$session" --append-system-prompt "$OVERNIGHT_NIGHT" \
+      "Go on from where you stopped." >>"$output" 2>&1 </dev/null || code=$?
+  done
+  note "$worktree: ended after $resumes resumes in session $session"
+}
+
+batch() {
+  printf '%s\0' "$@" | xargs -0 -n 1 -P "$parallel" bash -c 'work "$1"' _
+  note "the batch ended"
+}
+
+export -f note work
+export parallel
+export -f batch
 
 # A Mac that sleeps would pause the batch with it.
 keep_awake=()
@@ -33,16 +78,11 @@ if command -v caffeinate >/dev/null; then
   keep_awake=(caffeinate -i)
 fi
 
-mkdir -p "$logs"
-log="$logs/$(date +%Y%m%d-%H%M%S).log"
-cd "$worktree"
-# claude-ac counts each try against one limit for the whole night, and waits
-# its interval where it can't read the reset time, so 72 tries 10 minutes apart
-# last 12 hours.
-# claude-ac keeps its script without the mode to run it, so bash runs it.
-nohup ${keep_awake[@]+"${keep_awake[@]}"} bash "$claude_ac/bin/claude-ac" \
-  --ac-interval 600 --ac-retries 72 \
-  -p "/rn:up" \
-  --append-system-prompt "This run is a night's batch, and no one is at hand to answer. Where the run comes to a point that is the user's to decide, stop there and leave the point as the question for the morning." \
-  >"$log" 2>&1 </dev/null &
-echo "overnight: started rn's run in $worktree as process $!, writing its output to $log"
+worktrees=()
+for worktree in "$@"; do
+  worktrees+=("$(cd "$worktree" && pwd)")
+done
+
+nohup ${keep_awake[@]+"${keep_awake[@]}"} bash -c 'batch "$@"' _ "${worktrees[@]}" \
+  >"$OVERNIGHT_DIR/batch.log" 2>&1 </dev/null &
+echo "overnight: started the batch as process $!, writing its record to $OVERNIGHT_DIR/record"
