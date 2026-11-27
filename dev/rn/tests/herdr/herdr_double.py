@@ -1,12 +1,14 @@
 """The double of herdr that rn's unit cases run in its place. It answers each command of herdr
-that rn's code runs from one line of herdr 0.9.5's record in recorded/: `herdr worktree open`,
-which opens a worktree in a workspace; `herdr worktree list`, which lists the repository's
+that rn's code runs from one line of herdr 0.9.5's record in recorded/: `herdr worktree create`,
+which makes a worktree and opens it in a workspace; `herdr worktree open`, which opens a worktree
+in a workspace; `herdr worktree list`, which lists the repository's
 worktrees, or can't; and `herdr worktree remove`, which removes a workspace's worktree, or finds no
 such workspace, as the plugin guide's Each result of a double from a record says. A command that
 no record holds fails with exit 1, naming itself.
 
 It keeps its state, each worktree open in a workspace, by its path, in a JSON file of the folder
-it's given, and it removes a worktree by git, as herdr does, so that the case sees it gone."""
+it's given, and it makes and removes a worktree by git, as herdr does, so that the case sees it
+made or gone."""
 
 from __future__ import annotations
 
@@ -97,6 +99,16 @@ def _opened(kept: dict[str, Any], words: list[str]) -> dict[str, Any]:
     return given
 
 
+def _created(kept: dict[str, Any], words: list[str]) -> dict[str, Any]:
+    path = _option(words, "--path")
+    add = ["git", "worktree", "add", "-q", "-b", _option(words, "--branch"), path]
+    subprocess.run([*add, _option(words, "--base")], cwd=_option(words, "--cwd"), check=True)
+    workspace = kept["open"].setdefault(path, f"w{len(kept['open']) + 2}")
+    given = _line("herdr worktree create makes the worktree and opens it in a workspace")
+    given["stdout"] = _filled(given["stdout"], path, workspace)
+    return given
+
+
 def _listed(kept: dict[str, Any], words: list[str]) -> dict[str, Any]:
     if not kept["lists"]:
         return _line("herdr worktree list can't list the worktrees")
@@ -130,4 +142,9 @@ def _removed(kept: dict[str, Any], words: list[str]) -> dict[str, Any]:
 
 
 # What the double gives for each command of herdr, by its two words after `herdr`.
-_ANSWERS = {"worktree open": _opened, "worktree list": _listed, "worktree remove": _removed}
+_ANSWERS = {
+    "worktree create": _created,
+    "worktree open": _opened,
+    "worktree list": _listed,
+    "worktree remove": _removed,
+}

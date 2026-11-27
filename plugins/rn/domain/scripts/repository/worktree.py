@@ -2,7 +2,7 @@
 default branch that origin's HEAD names, with the run's folder empty for the pruner's first
 result; found from the runs' branches whose committed steering hasn't ended, its worktree made
 again where none lies; and removed, here and on GitHub, where the user cancels it. Where the user
-works in herdr, herdr opens each worktree made in a workspace of its own, as herdr shows only the
+works in herdr, herdr makes each worktree in a workspace of its own, or opens one made again, as herdr shows only the
 worktrees it holds, and removes each it holds."""
 
 from __future__ import annotations
@@ -37,8 +37,9 @@ def new(run: RunPlace, host: Host) -> RunPlace:
     Changes: adds the branch `rn-<name>` from the head of the default branch that
     `git symbolic-ref refs/remotes/origin/HEAD` names, tracking none, checks it out in the run's
     worktree, makes the run's folder there, empty, and keeps the runs' worktrees out of the user's
-    untracked files; where the user works in herdr, has herdr open the worktree in a workspace,
-    without the focus; the user's own worktree and branch stay as they were.
+    untracked files; where the user works in herdr, herdr makes the worktree and opens it in a
+    workspace, without the focus, from the default branch's commit, so that the branch tracks
+    none; the user's own worktree and branch stay as they were.
     Refuses: Missing where the run's repository isn't the top of a git repository, or
     `refs/remotes/origin/HEAD` names no default branch; Wrong where a run of the name already lies
     there; CantRun where git or herdr fails, with what it said.
@@ -54,12 +55,23 @@ def new(run: RunPlace, host: Host) -> RunPlace:
             "origin's HEAD names no default branch to start the run from; push the default branch"
             " to origin, and run git remote set-head origin --auto"
         )
-    add = ["git", "worktree", "add", "-q", "--no-track", "-b", run.branch, run.worktree]
-    what = "git can't make the run's worktree"
-    checked(host, [*add, default.out.strip()], run.repository, CantRun, what)
+    if os.environ.get(_HERDR):
+        base = checked(
+            host,
+            ["git", "rev-parse", default.out.strip()],
+            run.repository,
+            CantRun,
+            "git can't name the default branch's commit",
+        ).out.strip()
+        create = ["herdr", "worktree", "create", "--cwd", run.repository, "--branch", run.branch]
+        made = [*create, "--base", base, "--path", run.worktree, "--no-focus"]
+        checked(host, made, run.repository, CantRun, "herdr can't make the run's worktree")
+    else:
+        add = ["git", "worktree", "add", "-q", "--no-track", "-b", run.branch, run.worktree]
+        what = "git can't make the run's worktree"
+        checked(host, [*add, default.out.strip()], run.repository, CantRun, what)
     _exclude(run, host)
     os.makedirs(run.folder)
-    _opened(run, host)
     return run
 
 

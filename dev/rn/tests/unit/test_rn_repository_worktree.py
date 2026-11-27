@@ -315,17 +315,20 @@ def herdr_asked(gh_state: str) -> list[list[str]]:
     return herdr_double.state(gh_state)["asked"]
 
 
-def test_a_run_made_in_herdr_is_opened_in_a_workspace_of_herdr(
+def test_a_run_made_in_herdr_is_made_by_herdr_in_a_workspace(
     repo: str, host: Any, gh_state: str, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Given a session that herdr runs.
     When a run is made.
-    Then herdr opens its worktree in a workspace, without the focus, and the worktree holds its
-    branch, tracking none."""
+    Then herdr makes its worktree from the default branch's commit and opens it in a workspace,
+    without the focus, and the worktree holds its branch, tracking none."""
     in_herdr(monkeypatch)
     made = new(RunPlace(repo, NAME), host)
-    opened = ["herdr", "worktree", "open", "--cwd", repo, "--path", made.worktree, "--no-focus"]
-    assert herdr_asked(gh_state) == [opened]
+    base = git(repo, "rev-parse", "refs/remotes/origin/main").strip()
+    create = ["herdr", "worktree", "create", "--cwd", repo, "--branch", made.branch]
+    assert herdr_asked(gh_state) == [
+        [*create, "--base", base, "--path", made.worktree, "--no-focus"]
+    ]
     assert git(made.worktree, "branch", "--show-current") == f"{made.branch}\n"
     ref = f"refs/heads/{made.branch}"
     assert git(made.worktree, "for-each-ref", "--format=%(upstream)", ref) == "\n"
