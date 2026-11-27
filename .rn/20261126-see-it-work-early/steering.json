@@ -243,10 +243,6 @@
         "by": "user"
       },
       {
-        "decision": "Give the pruner no step of its own to look for what exists, as the measure's question of the least holds it.",
-        "by": "user"
-      },
-      {
         "decision": "Have a SubagentStop hook take the pruner's result into the steering, so that the steering keeps one writer, by the single-writer principle, and the orchestrator has no step for it.",
         "by": "user"
       },
@@ -353,6 +349,26 @@
       {
         "decision": "Keep `repository new`, `runs`, `stop`, and `cancel`, and the shared modules form, practice, place, host, and fault, as each holds one responsibility that a run needs.",
         "by": "rn"
+      },
+      {
+        "decision": "Have the pruner say what a deliverable takes next where its weighing decides it, to remake it, to ask the user, or to end it, and the hook say it where nothing is to weigh, both in the steering, and remove the rounds script, so that `steering due` alone tells the orchestrator what comes next and nothing outside the steering keeps a deliverable on a dropped solution.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the orchestrator put its purpose before rn's steps and scripts, and have the writer of a part, such as the pruner for the steering, set right what stands in the purpose's way, so that no detour that only rn's insides make reaches the user.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the orchestrator hand each search, for a way to make a need or within the repository, to a subagent that gathers widely and checks each way's license, upkeep, issues, and standing before it's offered, so that its context stays small and the user picks among checked ways, the pick then going to a pruner.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the pruner ask the user, with its proposal, where it would give a deliverable the light kind although a best practice of its kind exists, and where no best practice of its kind exists, whether to make one or give it the light kind, so that what is made holds the quality its kind needs unless the user says otherwise.",
+        "by": "user"
+      },
+      {
+        "decision": "Have ccpm's issue rules open an issue only once the user agrees to it, in this pull request, so that the user decides what work the repository takes on, and a talk with them goes on unbroken.",
+        "by": "user"
       }
     ],
     "questions": []
@@ -580,6 +596,64 @@
         "for": "O1",
         "settles": "the user's E2E run of rn from this branch on #62, up to the first real check, as the solution's assumption test",
         "deliverables": [],
+        "status": "done"
+      },
+      {
+        "for": "O1",
+        "settles": "the pruner and the hook say what comes next in the steering, and the rounds script goes",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain/scripts",
+            "kind": "code",
+            "status": "open"
+          },
+          {
+            "path": "plugins/rn/domain/schemas",
+            "kind": "code",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "the orchestrator's and the pruner's prompts, for what comes next, the purpose before the steps, searches handed to a subagent, and the kind's best practice",
+        "deliverables": [
+          {
+            "path": "plugins/rn/domain",
+            "kind": "prompt",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "ccpm's issue rules open an issue once the user agrees",
+        "deliverables": [
+          {
+            "path": ".claude/rules/issue.md",
+            "kind": "light",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1",
+        "settles": "the architecture and the CHANGELOG, for what these change, and the release",
+        "deliverables": [
+          {
+            "path": "dev/rn/architecture.md",
+            "kind": "architecture",
+            "status": "open"
+          },
+          {
+            "path": "plugins/rn/CHANGELOG.md",
+            "kind": "light",
+            "status": "open"
+          }
+        ],
         "status": "open"
       }
     ]
