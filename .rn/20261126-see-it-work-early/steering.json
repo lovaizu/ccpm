@@ -143,10 +143,6 @@
         "by": "user"
       },
       {
-        "decision": "Have the fixer make a change that brings back what was promised, such as a fault or the user's mend, at once, checking it by the kind's best practice and the unit tests itself, so a mend waits for no Round.",
-        "by": "user"
-      },
-      {
         "decision": "Call an opportunity 「できるようにしたいこと」 to rn's users, as they don't know the opportunity solution tree.",
         "by": "rn"
       },
@@ -211,23 +207,11 @@
         "by": "user"
       },
       {
-        "decision": "Before choosing how to meet the picked need, look for what already meets it, such as Claude Code's own features, a tool its people have, or a part of the repository, reading public documents too, and make only what it lacks, as #62 found Claude Code's built-in auto-continue only after 8 of 10 deliverables.",
-        "by": "user"
-      },
-      {
-        "decision": "Send a change to a part that others share outside what the run delivers, such as the repository's checks, out of the run, asking the user once whether to give it its own issue, so the run holds only its purpose.",
-        "by": "user"
-      },
-      {
         "decision": "Write each role's prompt in domain/ in three sections, Role, what the role is expected to achieve, Steps, each step's purpose and intent with only the plugin's own rules, and Output, what it hands back, as the entries hold the form that Claude Code fixes, so each line changes what the AI does.",
         "by": "user"
       },
       {
         "decision": "Rewrite every prompt at once, with no reading through with the user, as the user asked for all of them fixed.",
-        "by": "user"
-      },
-      {
-        "decision": "Write vital-few.md as rn's measure, a document of the goal, the questions, what doesn't count, and a judgment's form, not as a prompt, as it's the standard that each role judges by.",
         "by": "user"
       },
       {
@@ -252,10 +236,6 @@
       },
       {
         "decision": "Have a SubagentStop hook check each role's result before the role ends, so that the role mends it itself and the orchestrator starts no role again.",
-        "by": "user"
-      },
-      {
-        "decision": "Have the inspector, a role of its own, read the pull request whole before the merge is proposed, and take the final check out of the evaluator, as reading the whole as a newcomer isn't trying it as its people would.",
         "by": "user"
       },
       {
@@ -295,15 +275,7 @@
         "by": "user"
       },
       {
-        "decision": "Make a deliverable by Rounds of the generator and the evaluator, have the fixer mend what the Rounds leave, and only once the deliverable is whole have the refactorer, a role of its own, refactor it before the user tries it, keeping what it does, by the kind's refactor best practice, as making and refactoring apart is the practice of red, green, refactor, and what the user first touches holds the quality its kind needs.",
-        "by": "user"
-      },
-      {
         "decision": "Keep what is particular to a kind, such as running tests for code, in that kind's best practice, and out of a role's prompt.",
-        "by": "user"
-      },
-      {
-        "decision": "Take out of the evaluator the step for a deliverable that adds to what's there, as trying it as its people use it toward their aim already takes the addition.",
         "by": "user"
       },
       {
