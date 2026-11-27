@@ -18,10 +18,11 @@ from rounds import course, files
 USAGE = """\
 usage: rounds next <run> <deliverable>
        rounds fix <run> <deliverable>   (the problem's words on stdin)
+       rounds confirmed <run> <deliverable>
        rounds weighed <run> <folder>
 """
 # What `next` prints for each role, by the stage of the entry it starts in.
-_ROLE = {files.CONTENT: "generator", files.REFACTOR: "refactor"}
+_ROLE = {files.CONTENT: "generator", files.REFACTOR: "refactorer"}
 
 
 def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], str] = str) -> Answer:
@@ -31,18 +32,21 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, stdin: Callable[[], st
 
     - `next <run> <deliverable>`: 0 printing what `course.next_of` gives for the deliverable, as
       one line, its words apart by a tab, each folder and file absolute: `generator`, for a Round
-      of content, or `refactor`, for a Round of refactoring, each a new one made by
+      of content, or `refactorer`, for a Round of refactoring, each a new one made by
       `files.started` where the course takes one, with its folder and the folder of the best
       practice it's made by, as `practice.kinds` finds the deliverable's kind or the kind that
       `practice.refactoring` gives; `evaluator` with its folder and the file `judges-by.json` there,
       written with what `practice.judged` gives of the kind's best practice; `fixer` with its
-      folder and the kind's best practice; `weigh` with the result to weigh; or `put-up`, also where
-      the course takes a Round of refactoring of a kind that `practice.refactoring` refactors by
-      none.
+      folder and the kind's best practice; `weigh` with the result to weigh; `confirm` with the
+      evaluator's result whose findings the user confirms; or `done`, also where the course takes
+      a Round of refactoring of a kind that `practice.refactoring` refactors by none.
     - `fix <run> <deliverable>`, with the problem's words on stdin, as they were printed or said:
       0 printing the new Fix's folder, absolute, its problem in `problem.md`; 1 writing nothing
-      where the words are empty, or where the deliverable's course isn't at its put-up, as a Fix
-      mends only what its Rounds made.
+      where the words are empty, or where the deliverable's course is at neither its confirming nor
+      its end, as a Fix mends only what its Rounds made.
+    - `confirmed <run> <deliverable>`: marks the findings left confirmed by the user with no mend,
+      as `files.confirm` does, and gives 0 printing what's next, as `next` prints it; 1 writing
+      nothing where the course isn't at its confirming.
     - `weighed <run> <folder>`: marks the Round or Fix weighed, as `files.weigh` does, and gives
       0 printing what's next for its deliverable, as `next` prints it.
 
@@ -66,18 +70,19 @@ def _line(run: RunPlace, deliverable: str, plugin_root: str) -> str:
     schemas = os.path.join(plugin_root, "domain", "schemas")
     steering = _steering(run, schemas)
     step, kind = _named(steering, deliverable)
-    decisions = len(steering["ost"]["decisions"])
     root = files.folder_of(run, step, deliverable)
     made = files.entries(root, schemas)
-    found = _course(made, decisions, kind)
+    found = _course(made, kind)
     if found.what == "new":
         stage = found.stage or files.CONTENT
-        folder = files.started(root, stage, decisions, made)
+        folder = files.started(root, stage, made)
         return f"{_ROLE[stage]}\t{folder}\t{_practice(run, plugin_root, kind, stage)}\n"
     if found.entry is None:
         return f"{found.what}\n"
     if found.what == "weigh":
         return f"weigh\t{_result(found.entry)}\n"
+    if found.what == "confirm":
+        return f"confirm\t{_result(found.entry)}\n"
     if found.what == "evaluator":
         return (
             f"evaluator\t{found.entry.folder}\t{_judges_by(run, plugin_root, kind, found.entry)}\n"
@@ -87,12 +92,12 @@ def _line(run: RunPlace, deliverable: str, plugin_root: str) -> str:
     return f"{role}\t{found.entry.folder}\t{_practice(run, plugin_root, kind, stage)}\n"
 
 
-def _course(made: list[files.Entry], decisions: int, kind: str) -> course.Next:
-    """What comes next for the deliverable, as `course.next_of` gives it, its put-up in place of
-    a Round of refactoring where the kind takes none."""
-    found = course.next_of(made, decisions)
+def _course(made: list[files.Entry], kind: str) -> course.Next:
+    """What comes next for the deliverable, as `course.next_of` gives it, its end in place of a
+    Round of refactoring where the kind takes none."""
+    found = course.next_of(made)
     if found.what == "new" and found.stage == files.REFACTOR and not practice.refactoring(kind):
-        return course.Next("put-up")
+        return course.Next("done")
     return found
 
 
@@ -158,16 +163,28 @@ def _fix(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer:
     step, kind = _named(steering, deliverable)
     root = files.folder_of(run, step, deliverable)
     made = files.entries(root, schemas)
-    decisions = len(steering["ost"]["decisions"])
-    if _course(made, decisions, kind).what != "put-up":
+    if _course(made, kind).what not in ("confirm", "done"):
         raise Wrong(
             f"{deliverable}: its Rounds aren't over, or a Fix of it is under way; take its next"
             " step from rounds next first"
         )
-    folder = files.started(root, files.FIX, decisions, made)
+    folder = files.started(root, files.FIX, made)
     with open(os.path.join(folder, "problem.md"), "w", encoding="utf-8") as f:
         f.write(words if words.endswith("\n") else words + "\n")
     return 0, f"{folder}\n", ""
+
+
+def _confirmed(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer:
+    schemas = os.path.join(plugin_root, "domain", "schemas")
+    step, kind = _named(_steering(run, schemas), given[0])
+    found = _course(files.entries(files.folder_of(run, step, given[0]), schemas), kind)
+    if found.what != "confirm" or found.entry is None:
+        raise Wrong(
+            f"{given[0]}: no findings wait on the user's confirming; take its next step from"
+            " rounds next"
+        )
+    files.confirm(found.entry.folder)
+    return 0, _line(run, given[0], plugin_root), ""
 
 
 def _weighed(run: RunPlace, given: list[str], cwd: str, plugin_root: str) -> Answer:
@@ -184,5 +201,6 @@ def _deliverable_of(folder: str) -> str:
 _SUBCOMMANDS: dict[str, Callable[[RunPlace, list[str], str, str], Answer]] = {
     "next": _next,
     "fix": _fix,
+    "confirmed": _confirmed,
     "weighed": _weighed,
 }

@@ -1,9 +1,10 @@
 """The unit cases of rounds/command.py and rounds/files.py, rounds' command line as the orchestrator
-runs it: a deliverable's course from its first Round to its put-up, each Round's folder by its
-step, its stage, and its number with the decisions' count it started with, a deliverable that a
-later step names again starting its own Rounds in that step, a point weighed, a Fix made from the
-problem's words and fixed, and each refusal: a result out of its schema, a Fix before the Rounds
-are over or with no words, a folder that's no Round's, and arguments of another form."""
+runs it: a deliverable's course from its first Round to its end, each Round's folder by its step,
+its stage, and its number, a deliverable that a later step names again starting its own Rounds in
+that step, a point weighed, findings left confirmed by the user, a Fix made from the problem's
+words, fixed, and refactored, and each refusal: a result out of its schema, a Fix before the
+Rounds are over or with no words, a confirming with nothing to confirm, a folder that's no Round's,
+and arguments of another form."""
 
 from __future__ import annotations
 
@@ -22,6 +23,7 @@ CODE = os.path.join(rn_files.PRACTICES, "code")
 REFACTOR = os.path.join(rn_files.PRACTICES, "refactor-code")
 MADE = {"result": "made", "files": [rn_files.COMMAND], "good": []}
 GOOD = {"result": "judged", "good": [{"condition": "N1", "lines": ["print"]}], "more": []}
+MORE = {"result": "judged", "good": [], "more": [{"condition": "N1", "good_when": "it prints"}]}
 
 
 @pytest.fixture
@@ -40,15 +42,13 @@ def wrote(run_: RunPlace, folder: str, file: str, value: Any) -> None:
     rn_files.write_json(os.path.join(run_.worktree, folder, file), value)
 
 
-def test_a_deliverable_goes_from_its_first_round_to_its_put_up(made: RunPlace) -> None:
+def test_a_deliverable_goes_from_its_first_round_to_its_end(made: RunPlace) -> None:
     """Given a deliverable with no Round.
     When `next` runs after each role writes its result.
-    Then it starts content-1 with the decisions' count, gives its evaluator, then refactor-2 once
-    each condition is good, then the put-up."""
+    Then it starts content-1, gives its evaluator, then refactor-2 to the refactorer once each
+    condition is good, then the end."""
     first = os.path.join(made.worktree, ROUNDS, "content-1")
     assert call(made, "next", rn_files.COMMAND) == (0, f"generator\t{first}\t{CODE}\n", "")
-    with open(os.path.join(first, "start.json"), encoding="utf-8") as f:
-        assert json.load(f) == {"decisions": 1}
     wrote(made, first, "generator.json", MADE)
     judges = os.path.join(first, "judges-by.json")
     assert call(made, "next", rn_files.COMMAND) == (0, f"evaluator\t{first}\t{judges}\n", "")
@@ -56,10 +56,11 @@ def test_a_deliverable_goes_from_its_first_round_to_its_put_up(made: RunPlace) -
         assert json.load(f) == rn_files.judged_by("code")
     wrote(made, first, "evaluator.json", GOOD)
     second = os.path.join(made.worktree, ROUNDS, "refactor-2")
-    assert call(made, "next", rn_files.COMMAND) == (0, f"refactor\t{second}\t{REFACTOR}\n", "")
-    assert call(made, "next", rn_files.COMMAND) == (0, f"refactor\t{second}\t{REFACTOR}\n", "")
-    wrote(made, second, "generator.json", MADE)
-    assert call(made, "next", rn_files.COMMAND) == (0, "put-up\n", "")
+    refactorer = (0, f"refactorer\t{second}\t{REFACTOR}\n", "")
+    assert call(made, "next", rn_files.COMMAND) == refactorer
+    assert call(made, "next", rn_files.COMMAND) == refactorer
+    wrote(made, second, "refactorer.json", MADE)
+    assert call(made, "next", rn_files.COMMAND) == (0, "done\n", "")
 
 
 def test_a_point_goes_to_a_pruner_then_to_a_new_round(made: RunPlace) -> None:
@@ -77,19 +78,48 @@ def test_a_point_goes_to_a_pruner_then_to_a_new_round(made: RunPlace) -> None:
 def test_a_fix_is_made_from_the_problems_words_and_fixed(made: RunPlace) -> None:
     """Given a deliverable whose Rounds are over.
     When `fix` runs with the user's words, then `next`, then `next` once the fixer fixed it.
-    Then fix-3 holds the words, its fixer is due, then the put-up."""
+    Then fix-3 holds the words, its fixer is due, then refactor-4."""
     call(made, "next", rn_files.COMMAND)
     wrote(made, f"{ROUNDS}/content-1", "generator.json", MADE)
     wrote(made, f"{ROUNDS}/content-1", "evaluator.json", GOOD)
     call(made, "next", rn_files.COMMAND)
-    wrote(made, f"{ROUNDS}/refactor-2", "generator.json", MADE)
+    wrote(made, f"{ROUNDS}/refactor-2", "refactorer.json", MADE)
     fix = os.path.join(made.worktree, ROUNDS, "fix-3")
     assert call(made, "fix", rn_files.COMMAND, words="合計が出ない") == (0, f"{fix}\n", "")
     with open(os.path.join(fix, "problem.md"), encoding="utf-8") as f:
         assert f.read() == "合計が出ない\n"
     assert call(made, "next", rn_files.COMMAND) == (0, f"fixer\t{fix}\t{CODE}\n", "")
     wrote(made, fix, "fixer.json", {"result": "fixed", "files": [rn_files.COMMAND]})
-    assert call(made, "next", rn_files.COMMAND) == (0, "put-up\n", "")
+    again = os.path.join(made.worktree, ROUNDS, "refactor-4")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"refactorer\t{again}\t{REFACTOR}\n", "")
+
+
+def test_findings_left_at_the_limit_go_to_the_user_who_confirms_them(made: RunPlace) -> None:
+    """Given two Rounds judged with findings, each weighed.
+    When `next` runs, then `confirmed`.
+    Then the last evaluator's result is due to confirm, then refactor-3 to the refactorer."""
+    for number in (1, 2):
+        call(made, "next", rn_files.COMMAND)
+        folder = f"{ROUNDS}/content-{number}"
+        wrote(made, folder, "generator.json", MADE)
+        wrote(made, folder, "evaluator.json", MORE)
+        call(made, "weighed", folder)
+    last = os.path.join(made.worktree, ROUNDS, "content-2")
+    assert call(made, "next", rn_files.COMMAND) == (0, f"confirm\t{last}/evaluator.json\n", "")
+    third = os.path.join(made.worktree, ROUNDS, "refactor-3")
+    assert call(made, "confirmed", rn_files.COMMAND) == (
+        0,
+        f"refactorer\t{third}\t{REFACTOR}\n",
+        "",
+    )
+
+
+def test_a_confirming_with_nothing_to_confirm_is_refused(made: RunPlace) -> None:
+    """Given a deliverable with no Round.
+    When `confirmed` runs.
+    Then it gives 1 saying why."""
+    code, _, err = call(made, "confirmed", rn_files.COMMAND)
+    assert (code, "no findings wait on the user's confirming" in err) == (1, True)
 
 
 @pytest.mark.parametrize(
@@ -147,18 +177,17 @@ def kind_of(run_: RunPlace, kind: str) -> None:
     rn_files.write_json(run_.steering, held)
 
 
-def test_a_kind_that_no_refactoring_takes_goes_to_its_put_up_and_takes_a_fix(
+def test_a_kind_that_no_refactoring_takes_goes_to_its_end_and_takes_a_fix(
     made: RunPlace,
 ) -> None:
     """Given a deliverable of the kind light, judged with each condition good.
-    When `next` runs, then `fix` with the words of a put-up that the checks refused.
-    Then the put-up, with no Round of refactoring made, and then the Fix fix-2 with its fixer
-    due."""
+    When `next` runs, then `fix` with the user's words.
+    Then the end, with no Round of refactoring made, and then the Fix fix-2 with its fixer due."""
     kind_of(made, "light")
     call(made, "next", rn_files.COMMAND)
     wrote(made, f"{ROUNDS}/content-1", "generator.json", MADE)
     wrote(made, f"{ROUNDS}/content-1", "evaluator.json", GOOD)
-    assert call(made, "next", rn_files.COMMAND) == (0, "put-up\n", "")
+    assert call(made, "next", rn_files.COMMAND) == (0, "done\n", "")
     assert sorted(os.listdir(os.path.join(made.worktree, ROUNDS))) == ["content-1"]
     fix = os.path.join(made.worktree, ROUNDS, "fix-2")
     assert call(made, "fix", rn_files.COMMAND, words="LICENSE: missing") == (0, f"{fix}\n", "")
@@ -197,7 +226,7 @@ def test_a_deliverable_that_a_later_step_names_again_starts_its_rounds_in_that_s
     call(made, "next", rn_files.COMMAND)
     wrote(made, first, "evaluator.json", GOOD)
     call(made, "next", rn_files.COMMAND)
-    wrote(made, os.path.join(ROUNDS, "refactor-2"), "generator.json", MADE)
+    wrote(made, os.path.join(ROUNDS, "refactor-2"), "refactorer.json", MADE)
     added = dict(rn_files.step(), settles="print a second page")
     rn_files.write_json(
         made.steering,
@@ -217,7 +246,7 @@ def test_a_fix_of_a_deliverable_whose_step_is_done_lies_in_that_step(made: RunPl
     call(made, "next", rn_files.COMMAND)
     wrote(made, first, "evaluator.json", GOOD)
     call(made, "next", rn_files.COMMAND)
-    wrote(made, os.path.join(ROUNDS, "refactor-2"), "generator.json", MADE)
+    wrote(made, os.path.join(ROUNDS, "refactor-2"), "refactorer.json", MADE)
     rn_files.write_json(
         made.steering,
         rn_files.steering([rn_files.step("done", done=(rn_files.COMMAND, rn_files.GUIDE))]),

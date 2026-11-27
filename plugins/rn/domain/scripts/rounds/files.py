@@ -4,12 +4,11 @@ adds to the deliverable, so that a later step that adds to it starts its own Rou
 deliverable's path percent-encoded whole, so that no two paths share a folder, `<stage>`
 `content` or `refactor` for a Round and `fix` for a Fix, and
 `<n>` its number among the deliverable's Rounds and Fixes, from 1 in the order made; each holding
-`start.json`, how many decisions the run held when it started, then the role's result, and
-`weighed.json` once a pruner weighed it, and a Fix its problem in `problem.md`."""
+the role's result, `weighed.json` once a pruner weighed it, and `confirmed.json` once the user
+confirmed the findings it left, and a Fix its problem in `problem.md`."""
 
 from __future__ import annotations
 
-import json
 import os
 import re
 from typing import Any, NamedTuple
@@ -27,22 +26,23 @@ FIX = "fix"
 RESULTS = {
     "generator": ("generator.json", "generator-round.schema.json"),
     "evaluator": ("evaluator.json", "evaluator-round.schema.json"),
+    "refactorer": ("refactorer.json", "generator-round.schema.json"),
     "fixer": ("fixer.json", "fixer-fix.schema.json"),
 }
 _NAMED = re.compile(rf"({CONTENT}|{REFACTOR}|{FIX})-([1-9][0-9]*)")
 
 
 class Entry(NamedTuple):
-    """One Round or Fix of a deliverable: its stage, its number, its folder, how many decisions the
-    run held when it started, each role's result that it holds, by the role, and whether a pruner
-    weighed it."""
+    """One Round or Fix of a deliverable: its stage, its number, its folder, each role's result
+    that it holds, by the role, whether a pruner weighed it, and whether the user confirmed the
+    findings it left."""
 
     stage: str
     number: int
     folder: str
-    decisions: int
     results: dict[str, dict[str, Any]]
     weighed: bool
+    confirmed: bool = False
 
 
 def folder_of(run: RunPlace, step: int, deliverable: str) -> str:
@@ -58,7 +58,7 @@ def entries(root: str, schemas: str) -> list[Entry]:
     Gives: each, read from its folder, each result checked against its schema; none where the
     deliverable has none yet.
     Changes: nothing.
-    Refuses: Wrong where a result or `start.json` leaves its form, as `form.held` names it.
+    Refuses: Wrong where a result leaves its form, as `form.held` names it.
     """
     names = os.listdir(root) if os.path.isdir(root) else []
     found = sorted((int(m[2]), m[1], name) for name in names if (m := _NAMED.fullmatch(name)))
@@ -73,28 +73,36 @@ def _read(folder: str, stage: str, number: int, schemas: str) -> Entry:
         path = os.path.join(folder, file)
         if os.path.isfile(path):
             results[role] = form.held(path, os.path.join(schemas, schema), f"the {role}'s result")
-    with open(os.path.join(folder, "start.json"), encoding="utf-8") as f:
-        decisions = json.load(f)["decisions"]
     weighed = os.path.isfile(os.path.join(folder, "weighed.json"))
-    return Entry(stage, number, folder, decisions, results, weighed)
+    confirmed = os.path.isfile(os.path.join(folder, "confirmed.json"))
+    return Entry(stage, number, folder, results, weighed, confirmed)
 
 
-def started(root: str, stage: str, decisions: int, made: list[Entry]) -> str:
+def started(root: str, stage: str, made: list[Entry]) -> str:
     """Makes the deliverable's next Round or Fix of the stage in the step, and gives its folder.
 
     Takes: the folder of the deliverable's Rounds and Fixes in the step, as `folder_of` gives it,
-    the stage, how many decisions the run holds now, and its Rounds and Fixes there so far.
+    the stage, and its Rounds and Fixes there so far.
     Gives: the new folder, numbered one past the last.
-    Changes: makes the folder, holding `start.json` with the decisions' count.
+    Changes: makes the folder, empty.
     Refuses: nothing.
     """
     number = made[-1].number + 1 if made else 1
     folder = os.path.join(root, f"{stage}-{number}")
     os.makedirs(folder)
-    with open(os.path.join(folder, "start.json"), "w", encoding="utf-8") as f:
-        json.dump({"decisions": decisions}, f)
-        f.write("\n")
     return folder
+
+
+def confirm(folder: str) -> None:
+    """Marks the findings that a Round left as confirmed by the user.
+
+    Takes: the folder of the Round.
+    Gives: nothing.
+    Changes: writes `confirmed.json` in it.
+    Refuses: nothing.
+    """
+    with open(os.path.join(folder, "confirmed.json"), "w", encoding="utf-8") as f:
+        f.write("{}\n")
 
 
 def weigh(run: RunPlace, folder: str) -> None:
