@@ -59,10 +59,18 @@
             "solution": null
           }
         ],
-        "solution": null
+        "solution": {
+          "solution": "A command of a new overnight plugin, in Python 3 and its standard library alone, that runs a queue file of commands, any command such as `claude -p`, tries a failed one again at an interval that doubles each try, and writes how each one ended to a report file for the morning; the count of tries, the start time, and the number side by side come as additions, one step each.",
+          "why": "The user said needs 1 to 3 are logic apart from Claude Code and that the comeback is a retry, so a runner that knows only commands and exit statuses meets all three without reading when the limit lifts, and a queue file is what an AI can write and run, which is all the user asked of need 4.",
+          "assumption": {
+            "assumption": "A `claude -p` run that stops at the usage limit exits with a failure, so the runner sees it and the same command run again after the limit lifts finishes the work.",
+            "test": "Leave a queue of real `claude -p` work running through a night that goes past the usage limit, and see in the morning report that each piece that hit the limit failed, was tried again, and finished after the limit lifted.",
+            "result": null
+          }
+        }
       }
     ],
-    "target": null,
+    "target": "O1",
     "decisions": [
       {
         "decision": "Talk with the user in Japanese and write each deliverable in English, as the user's words are Japanese, the repository is in English, and the user's own instructions say to converse in Japanese and write in the repository's language.",
@@ -71,11 +79,25 @@
       {
         "decision": "Hold the start time, parallelism, queue, and retries the user described as needs of what they can do, not as the design, as the user said those are detail and the essence should be drawn out of them.",
         "by": "user"
+      },
+      {
+        "decision": "Make needs 1 to 3 first, as logic apart from Claude Code, as the user picked them and said so.",
+        "by": "user"
+      },
+      {
+        "decision": "Leave need 4 out of this work, it being enough that an AI can use what is made, as the user said.",
+        "by": "user"
+      },
+      {
+        "decision": "Bring work stopped at the limit back by trying it again at a growing interval, not by waiting for the time the limit lifts, as the user said.",
+        "by": "user"
+      },
+      {
+        "decision": "Hold the runner in a new plugin, overnight, under plugins/overnight, as the issue names it and the plugin guide puts what runs on users' machines there.",
+        "by": "rn"
       }
     ],
-    "questions": [
-      "まずどれを手元で動かしますか。1. 上限で止まった作業が、上限解除後にひとりでに再開される（おすすめ: #62 が求めているのはこれで、寝ている間の利用枠を無駄にしない本質そのものであり、`claude` が上限でどう止まり再開できるかという一番危うい前提もここで実物で確かめられるため） 2. 朝に、任せた各作業がどう終わったか分かる 3. 複数の作業をまとめて渡すと、自分なしで流れる（開始時刻・並行数を含む） 4. AI が自分の頼みから夜の作業を段取り、実行する"
-    ]
+    "questions": []
   },
   "state": {
     "issues": {
@@ -84,6 +106,75 @@
       ],
       "refs": []
     },
-    "steps": []
+    "steps": [
+      {
+        "for": "O1",
+        "settles": "the least that runs: work I queue runs in turn, a piece that fails is tried again at a growing interval until it ends, and in the morning a report says how each ended",
+        "deliverables": [
+          {
+            "path": "plugins/overnight/README.md",
+            "kind": "readme",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/domain/scripts/overnight",
+            "kind": "code",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1.1.1",
+        "settles": "work that does not come back stops after as many tries as I set",
+        "deliverables": [
+          {
+            "path": "plugins/overnight/README.md",
+            "kind": "readme",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/domain/scripts/overnight",
+            "kind": "code",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1.3.1",
+        "settles": "the work starts at the time I set",
+        "deliverables": [
+          {
+            "path": "plugins/overnight/README.md",
+            "kind": "readme",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/domain/scripts/overnight",
+            "kind": "code",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      },
+      {
+        "for": "O1.3.2",
+        "settles": "as many pieces as I set run side by side",
+        "deliverables": [
+          {
+            "path": "plugins/overnight/README.md",
+            "kind": "readme",
+            "status": "open"
+          },
+          {
+            "path": "plugins/overnight/domain/scripts/overnight",
+            "kind": "code",
+            "status": "open"
+          }
+        ],
+        "status": "open"
+      }
+    ]
   }
 }
