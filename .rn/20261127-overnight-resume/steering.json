@@ -13,7 +13,7 @@
             "by": "Issue #62 Desired State, and the user's answer to Q2 of the hearing on 2026-11-27",
             "opportunities": [],
             "solution": {
-              "solution": "An overnight plugin, which rn uses, that starts a night's batch in its own process: it takes rn's works from a queue, each a run of rn in its worktree, and runs up to the given number at once, each by `claude -p --session-id <uuid>`; on success it starts the next; on a non-zero exit it waits and resumes the same session by `claude -p --resume <uuid>` with a prompt to go on, on the work's own model, the wait starting at 5 minutes and doubling to a cap of 60 minutes, and it gives the work up after 6 hours of waiting in all; a record keeps, for each work, its session id, when it failed, when and how often it resumed, and its last result, for the morning; where a run comes to a point that is the user's to decide, it stops there and leaves the point as a question for the morning.",
+              "solution": "An overnight plugin, which rn uses, that starts a night's batch in its own process, at once or, where given a time such as `overnight --at 23:00 2 <worktree>...`, after waiting until that time: it takes rn's works from a queue, each a run of rn in its worktree, and runs up to the given number at once, each by `claude -p --session-id <uuid>`; on success it starts the next; on a non-zero exit it waits and resumes the same session by `claude -p --resume <uuid>` with a prompt to go on, on the work's own model, the wait starting at 5 minutes and doubling to a cap of 60 minutes, and it gives the work up after 6 hours of waiting in all; a record keeps, for each work, its session id, when it failed, when and how often it resumed, and its last result, for the morning; where a run comes to a point that is the user's to decide, it stops there and leaves the point as a question for the morning.",
               "why": "A plain retry from outside rests on no wording or output form of Claude Code's, which claude-ac's parse of `resets at HH:MM` already failed to keep up with, and the resume itself shows whether the limit has lifted, so no separate check or watcher is needed; it is a few lines of the plugin's own, so no other author's code with an unclear license runs, and unsnooze and the others do more than this need.",
               "assumption": {
                 "assumption": "A run of rn in `claude -p` that meets the usage limit exits non-zero, and `claude -p --resume <uuid>` after the limit lifts goes on in the same session from where it stopped, with no permission prompt stopping it and no one there, so that by morning each work has reached its end or a question for the user.",
@@ -73,6 +73,10 @@
       },
       {
         "decision": "The wait before each resume starts at 5 minutes and doubles to a cap of 60 minutes, and a work is given up after 6 hours of waiting in all, as the user answered 「1で」.",
+        "by": "user"
+      },
+      {
+        "decision": "`overnight` can take a start time, such as `overnight --at 23:00 2 <worktree>...`, so that the AI asked before bed starts the batch at that time, such as when the usage window comes back, with only a wait until that time added before the start, as the user asked 「開始時刻は指定できるの？」 and answered 「１」.",
         "by": "user"
       },
       {
