@@ -561,20 +561,20 @@
           {
             "path": "dev/rn/architecture.md",
             "kind": "architecture",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/rn/README.md",
             "kind": "readme",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/rn/CHANGELOG.md",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",
