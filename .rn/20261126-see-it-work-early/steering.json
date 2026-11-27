@@ -273,6 +273,22 @@
       {
         "decision": "Write vital-few.md from zero as its purpose, to pile up the vital few and cut the trivial many thoroughly, its intent, and one criterion: without it, would its people be at a loss, answered from the user's words or a use's result, resting on the steering alone.",
         "by": "user"
+      },
+      {
+        "decision": "Have the refactorer, a role of its own, make the Round of refactoring, apart from the generator.",
+        "by": "user"
+      },
+      {
+        "decision": "Write the generator's steps apart for a deliverable made new, one made again on the evaluator's findings, and one added to what's there, as each asks a different thing.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the generator mend where its people would be at a loss, and ask the user only where the mend needs a decision of theirs changed.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the generator hand back only the files it wrote or a question, as the evaluator judges each condition with its lines, and no one is at a loss without the generator's copy of them.",
+        "by": "user"
       }
     ],
     "questions": []
