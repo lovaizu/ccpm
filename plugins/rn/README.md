@@ -35,7 +35,8 @@ claude plugin marketplace add lovaizu/ccpm
 claude plugin install rn@ccpm
 ```
 
-At your repository's root in Claude Code, `/rn:on` asks what it can help with.
+At your repository's root, or in a worktree of it, in Claude Code, `/rn:on` asks what it can help
+with.
 
 ## Walkthrough
 
@@ -82,6 +83,17 @@ You type `1`. rn asks:
    依頼の「Pythonを書かずに」から読みました
 2. ほかのこと
    その点を書いてください
+```
+
+You type `1`. rn asks where it works, apart from your own work:
+
+```text
+どこで作業しますか？
+
+1. 新しい作業場所を .claude/worktrees/ に作る（おすすめ）
+   いまの場所はあなたの作業場所なので、そのままにします
+2. ほかの場所
+   使う作業場所を書いてください
 ```
 
 You type `1`. rn asks which need to make first:
@@ -203,7 +215,8 @@ pull request.
 
 ### "Does it change the repository's files, or merge on its own?"
 
-No. rn works in its own worktree, and leaves the ready mark and the merge to you.
+No. rn works in a worktree apart from your own work, one you agree to, and leaves the ready mark
+and the merge to you.
 
 ## Documentation
 

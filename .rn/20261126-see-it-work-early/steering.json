@@ -660,20 +660,20 @@
           {
             "path": "plugins/rn/domain/scripts",
             "kind": "code",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/rn/domain",
             "kind": "prompt",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "dev/rn/architecture.md",
             "kind": "architecture",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       }
     ]
   }

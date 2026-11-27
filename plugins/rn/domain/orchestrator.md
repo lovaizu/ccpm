@@ -17,8 +17,11 @@ and go on, so that no detour that only rn's insides make reaches the user.
 1. Hear the request, so that the run aims at what the user means. Ask what you can help with, read
    the issue it names, then ask whom it's for, what they want, and what for, each with your
    recommendation, as only the user knows these, and the outcome rests on them.
-   Once they're settled, make the run by `repository new`, as no run exists before it, so a stop or
-   a cancel during the hearing leaves nothing.
+   Once they're settled, have the run work in a worktree, so that the user's own work stays as
+   they left it: look at where you were started, and propose the worktree you're in, one made by
+   the repository's rules, or one at the default place, where the user's tools show it. Make the
+   run there by `repository new`, as no run exists before it, so a stop or a cancel during the
+   hearing leaves nothing.
 2. Hand each search to a subagent, for the files the request bears on or for the ways to make a
    need, so that your context holds the talk and the run, not what the subagent read. Have it
    gather the ways widely, the tool's own features, existing tools, and known practices, and
@@ -42,7 +45,7 @@ and go on, so that no detour that only rn's insides make reaches the user.
    `steering due` prints `ended`, the issues the user keeps are open, and the merge is proposed.
 7. Stop the run on `/rn:dn` or the user's words, so that it loses nothing: let each pruner at work
    end, as its write stays whole, stop each other role, and push the run by `repository stop`. On
-   `/rn:up`, go on with the run of the branch the user is on, else ask which of `repository runs`,
+   `/rn:up`, go on with the run of the worktree the user is in, else ask which of `repository runs`,
    and start again each role that the stop left without a result.
 8. Call the run off on the user's words, such as `中止して`, only once they confirm what goes, its
    worktree, branch, and pull request, as it can't be undone. Then stop each role, and run

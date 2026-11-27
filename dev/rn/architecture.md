@@ -49,7 +49,7 @@ deliverable's people to their aim, and cuts the trivial many thoroughly.
   - P6.1: the run's state lives in files on its branch, so that it goes on from any conversation.
   - P6.2: a stop lets each record being written end whole before the run halts.
 - P7: the user's repository left as it was
-  - P7.1: rn works on its own copy of the repository and its own branch.
+  - P7.1: each run works in a worktree apart from the user's own work, one they agree to.
   - P7.2: the ready mark and the merge stay the user's.
 
 ### Concept model
@@ -235,7 +235,10 @@ sequenceDiagram
     O->>U: asks it, with a recommendation and why [P2.1]
     U->>O: answers [P2.1]
   end
-  O->>S: makes the run's worktree, its branch, and its folder (Steering) [P7.1]
+  O->>U: proposes the worktree to work in, from where it was started: that one, one by the repository's rules, or one at the default place [P7.1]
+  U->>O: agrees, or names another [P7.1]
+  O->>O: makes it, where it's to be made, as the repository's rules or the user's tools ask [P7.1]
+  O->>S: makes the run's folder in it (Steering) [P7.1]
   O->>P: starts one with the run's folder, the user's words, the request, and the hearing (Steering) [P4.1]
   P->>P: weighs the request by the measure of the vital few [P4.1]
   P-->>O: ends, with the outcome as a user story, each need named or found in its own words, and the pick as an open question (Steering, Opportunity) [P2.2]
@@ -336,7 +339,7 @@ sequenceDiagram
   O->>U: where it stopped, and what waits for the user [P2.3]
   Note over U,O: Later, in any conversation
   U->>O: /rn:up [S2]
-  O->>S: names the run of the branch the user is on, else lists the runs with work left (Steering) [P6.1]
+  O->>S: lists the runs with work left, each in its worktree, and takes the one of the worktree the user is in (Steering) [P6.1]
   opt more than one run [S2]
     O->>U: asks which run to go on with [P2.1]
     U->>O: answers [S2]
@@ -368,15 +371,15 @@ sequenceDiagram
 ![rn's deployment](images/deployment.svg)
 
 The user installs rn as [the README](../../plugins/rn/README.md#installation) says, and types
-`/rn:on` at their repository's root.
+`/rn:on` at their repository's root or in a worktree of it.
 
 Strategies:
 
-- rn's own git worktree and branch for each run. [P7.1]\
-  Intent: the user goes on with their own work, and their side stays as it was.
-- Each run's worktree opened in a workspace of herdr where the user works in herdr, and removed by
-  herdr where it holds it. [P7.1]\
-  Intent: the user finds the run's worktree among herdr's, as herdr shows only those it holds.
+- A worktree for each run, judged by the orchestrator from where it was started and agreed by the
+  user, and made as the repository's rules or the user's tools ask, never the repository's own
+  checkout. [P7.1]\
+  Intent: the user goes on with their own work, finds the run's worktree where they work, and
+  no case of it lies in a prompt or a script.
 - The pull request opened as a draft, which the user marks ready. [P7.2]\
   Intent: nobody reviews or merges the work before the user has seen it checked whole.
 
@@ -402,13 +405,9 @@ plugins/rn/                        what Claude Code installs for the user
 
 dev/rn/                            what only rn's developers use
 ├── tests/unit/                    the unit tests of rn's code
-├── tests/gh/                      the double of gh, with its records
-└── tests/herdr/                   the double of herdr, with its records
+└── tests/gh/                      the double of gh, with its records
 
-.claude/worktrees/                 rn's worktree of each run
-└── rn-<yyyymmdd>-<slug>/          one run's worktree, on the work's branch
-
-.rn/                               what rn writes on the work's branch
+<worktree>/.rn/                    what rn writes on the work's branch, in the run's worktree
 └── <yyyymmdd>-<slug>/             one run's folder
     ├── steering.json              the steering
     └── rounds/<step>/<deliverable>/  each Round and each Fix of the deliverable in the step, in the order made

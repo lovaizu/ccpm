@@ -12,6 +12,7 @@
 - Where the way to make what you asked for changes, rn makes each thing again from its start, so nothing made the old way holds up your run.
 - rn checks each way to make what you asked for, its license, upkeep, open issues, and standing, before it offers it, so you pick only among ways that hold.
 - rn asks you before it makes something without the best practice of its kind, so what you try holds the quality its kind needs.
+- rn works in a worktree you agree to, the one you started it in or one it makes as your repository's rules or your tools ask, so your own work stays as you left it.
 
 ## [0.11.0] - 2026-11-25
 
