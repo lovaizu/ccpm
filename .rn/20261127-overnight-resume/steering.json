@@ -12,7 +12,15 @@
             "opportunity": "Once the usage limit lifts, I want the work that stopped at it to go on from where it stopped, without me.",
             "by": "Issue #62 Desired State, and the user's answer to Q2 of the hearing on 2026-11-27",
             "opportunities": [],
-            "solution": null
+            "solution": {
+              "solution": "Claude Code's own automatic continue at a claude.ai usage limit, on by default since v2.1.234 (`autoContinueAtUsageLimit`), which waits in the open session, picks the task up where it stopped once the limit resets, and writes `Usage limit reset · Continuing automatically` into the conversation, so the morning shows what stopped and what resumed.",
+              "why": "It already exists, from Claude Code itself, at no cost, and meets both needs at once, as the user expects of 1, so rn makes nothing beside it until a night on the user's machine shows a gap.",
+              "assumption": {
+                "assumption": "On the user's machine at night, a run that stops at the usage limit goes on to its end by morning: the machine doesn't sleep more than about 30 minutes, no permission prompt stops it, and it hits the limit no more than three times.",
+                "test": "Leave a real run going at night until it meets the usage limit, and in the morning check whether it ended, and whether the conversation shows when it stopped and when it resumed.",
+                "result": null
+              }
+            }
           },
           {
             "id": "O1.2",
@@ -25,7 +33,7 @@
         "solution": null
       }
     ],
-    "target": null,
+    "target": "O1.1",
     "decisions": [
       {
         "decision": "The run is for a user who instructs an AI and leaves the AI to arrange the work, as the user answered 「ユーザーがAIに指示してAIが段取る」.",
@@ -40,13 +48,15 @@
         "by": "user"
       },
       {
+        "decision": "Making the stopped work go on from where it stopped is also to show in the morning what stopped and what resumed, as the user asked 「１やったら２やることにならないの？」 and called the opposite 「そんなおかしな話ある？」.",
+        "by": "user"
+      },
+      {
         "decision": "The talk is in Japanese, the language of the user's words, and the deliverables are in English, the language of the repository's documents, so each reader reads their own.",
         "by": "rn"
       }
     ],
-    "questions": [
-      "最初に作るものはどれにしますか。1: 上限が解けたら、止まった作業が止まったところから自動で続く (推奨。issue #62 の望む状態そのもので、2 の記録も再開があってはじめて意味を持つため) 2: 朝、上限で止まったものと再開したものの記録が見られる"
-    ]
+    "questions": []
   },
   "state": {
     "issues": {
