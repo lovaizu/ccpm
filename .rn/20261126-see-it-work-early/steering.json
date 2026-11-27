@@ -605,15 +605,15 @@
           {
             "path": "plugins/rn/domain/scripts",
             "kind": "code",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/rn/domain/schemas",
             "kind": "code",
-            "status": "open"
+            "status": "done"
           }
         ],
-        "status": "open"
+        "status": "done"
       },
       {
         "for": "O1",

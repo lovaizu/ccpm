@@ -1,6 +1,7 @@
 """The unit cases of steering/record.py, what each change makes of a run's steering: the pruner's
 first result, a later one that keeps each status the steering holds, one with no steps or issues,
-each mark of a step or a deliverable, and the inspection's pass, with each refusal."""
+what the pruner says comes next, each result moving a deliverable on, each mark of a step, and
+the inspection's pass, with each refusal."""
 
 from __future__ import annotations
 
@@ -9,7 +10,7 @@ from typing import Any
 import pytest
 import rn_files
 from fault import Wrong
-from steering.record import deliverable_marked, inspected_marked, step_marked, taken_in
+from steering.record import LIMIT, inspected_marked, moved, step_marked, taken_in
 
 STEP = rn_files.WAY
 
@@ -112,42 +113,156 @@ def test_a_mark_of_a_step_that_can_not_be_is_refused(number: int, status: str, s
         step_marked(held, number, status)
 
 
-def test_a_deliverable_is_marked_done() -> None:
-    """Given a steering whose step is open.
-    When the command is marked done.
-    Then it's done, and the step stays open."""
-    marked = deliverable_marked(rn_files.steering(), rn_files.COMMAND, "done")
-    step = marked["state"]["steps"][0]
-    assert (step["deliverables"][0]["status"], step["status"]) == ("done", "open")
+def command(steering: dict[str, Any]) -> dict[str, Any]:
+    """The command, the first deliverable of the steering's first step."""
+    return steering["state"]["steps"][0]["deliverables"][0]
 
 
-def test_a_deliverable_marked_open_opens_its_step_again() -> None:
-    """Given a steering whose step is trying with each deliverable done.
-    When the command is marked open, as it's made again.
-    Then the command and its step are open, and the guide stays done."""
-    held = rn_files.steering([rn_files.step("trying", done=(rn_files.COMMAND, rn_files.GUIDE))])
-    step = deliverable_marked(held, rn_files.COMMAND, "open")["state"]["steps"][0]
-    assert (step["status"], [each["status"] for each in step["deliverables"]]) == (
-        "open",
-        ["open", "done"],
-    )
+def holding(step_status: str = "open", **fields: Any) -> dict[str, Any]:
+    """The walkthrough's steering, its step at the status given, the guide done, and the command
+    with the fields given."""
+    held = rn_files.steering([rn_files.step(step_status, done=(rn_files.GUIDE,))])
+    command(held).update(fields)
+    return held
+
+
+def told(next_: str, **fields: Any) -> dict[str, Any]:
+    """A pruner's result that says what the command takes next."""
+    way = {
+        **STEP,
+        "deliverables": [{**STEP["deliverables"][0], "next": next_}, STEP["deliverables"][1]],
+    }
+    return result(steps=[way], **fields)
+
+
+def test_a_later_result_keeps_where_each_deliverable_is_on_its_way() -> None:
+    """Given a steering whose command is at its evaluator, once judged, in content-2.
+    When a result that says nothing of what it takes next is taken in.
+    Then the command keeps its next role, its judged Rounds, and its entry."""
+    held = holding(next="evaluator", judged=1, entry="content-2")
+    assert command(taken_in(held, result(steps=[STEP]))) == command(held)
 
 
 @pytest.mark.parametrize(
-    ("path", "status", "says"),
+    ("next_", "fields", "kept"),
     [
-        ("x.md", "done", "no step names"),
-        (rn_files.COMMAND, "trying", "isn't a deliverable's status"),
+        ("generator", {"judged": 1}, {"next": "generator", "judged": 1, "status": "open"}),
+        ("anew", {"judged": 2}, {"next": "generator", "status": "open"}),
+        ("fixer", {"judged": 2}, {"next": "fixer", "judged": 2, "status": "open"}),
+        ("refactorer", {}, {"next": "refactorer", "status": "open"}),
+        ("done", {"judged": 1}, {"judged": 1, "status": "done"}),
     ],
+    ids=["generator", "anew", "fixer", "refactorer", "done"],
 )
-def test_a_mark_of_a_deliverable_that_can_not_be_is_refused(
-    path: str, status: str, says: str
+def test_what_the_pruner_says_comes_next_is_taken_in(
+    next_: str, fields: dict[str, Any], kept: dict[str, Any]
 ) -> None:
-    """Given the walkthrough's steering.
-    When a path that no step names, or a status that isn't a deliverable's, is marked.
-    Then Wrong is raised, saying why."""
-    with pytest.raises(Wrong, match=says):
-        deliverable_marked(rn_files.steering(), path, status)
+    """Given a steering whose command waits on a pruner's weighing of content-2.
+    When a result that says what the command takes next is taken in.
+    Then the command holds it, with no entry, as its next role starts its own; anew makes it
+    again from its first Round, and done ends it."""
+    held = holding(next="weigh", entry="content-2", **fields)
+    assert command(taken_in(held, told(next_))) == {
+        "path": rn_files.COMMAND,
+        "kind": "code",
+        **kept,
+    }
+
+
+def test_a_deliverable_to_mend_opens_its_step_again() -> None:
+    """Given a steering whose step is trying with each deliverable done.
+    When a result that has the command mended is taken in.
+    Then the step is open again, as the user tries it once it's mended."""
+    held = rn_files.steering([rn_files.step("trying", done=(rn_files.COMMAND, rn_files.GUIDE))])
+    assert taken_in(held, told("fixer"))["state"]["steps"][0]["status"] == "open"
+
+
+def test_a_round_past_the_limit_is_refused() -> None:
+    """Given a steering whose command has its LIMIT Rounds judged.
+    When a result that has it made again on what was weighed is taken in.
+    Then Wrong is raised, saying that the user confirms what's left."""
+    held = holding(next="weigh", judged=LIMIT, entry="content-2")
+    with pytest.raises(Wrong, match="ask the user"):
+        taken_in(held, told("generator"))
+
+
+def test_a_weighing_that_leaves_its_deliverable_waiting_is_refused() -> None:
+    """Given a steering whose command waits on a pruner's weighing.
+    When a result that neither says what it takes next nor asks the user is taken in.
+    Then Wrong is raised, naming the command."""
+    held = holding(next="weigh", entry="content-1")
+    with pytest.raises(Wrong, match=rn_files.COMMAND):
+        taken_in(held, result(steps=[STEP]))
+
+
+def test_a_weighing_that_asks_the_user_leaves_its_deliverable_waiting() -> None:
+    """Given a steering whose command waits on a pruner's weighing.
+    When a result that asks the user a question is taken in.
+    Then the command still waits on the weighing of the user's answer."""
+    held = holding(next="weigh", entry="content-1")
+    answered = result(ost=rn_files.ost(questions=["Mend the totals now?"]))
+    assert command(taken_in(held, answered))["next"] == "weigh"
+
+
+def results(**by_role: Any) -> dict[str, dict[str, Any]]:
+    """The results of the command's entry, by role."""
+    return {rn_files.COMMAND: by_role}
+
+
+MADE = {"result": "made", "files": [rn_files.COMMAND]}
+POINT = {"result": "point", "point": "Which printer?"}
+GOOD = {"result": "judged", "good": [], "more": []}
+MORE = {"result": "judged", "good": [], "more": [{"condition": "N1", "good_when": "x"}]}
+
+
+@pytest.mark.parametrize(
+    ("fields", "by_role", "kept"),
+    [
+        ({}, {"generator": MADE}, {"next": "evaluator"}),
+        ({"next": "generator"}, {"generator": POINT}, {"next": "weigh"}),
+        (
+            {"next": "evaluator"},
+            {"generator": MADE, "evaluator": MORE},
+            {"next": "weigh", "judged": 1},
+        ),
+        (
+            {"next": "evaluator", "judged": 1},
+            {"generator": MADE, "evaluator": GOOD},
+            {"next": "refactorer", "judged": 2, "entry": None},
+        ),
+        (
+            {"next": "fixer"},
+            {"fixer": {"result": "fixed", "files": []}},
+            {"next": "refactorer", "entry": None},
+        ),
+        ({"next": "refactorer"}, {"refactorer": MADE}, {"status": "done", "entry": None}),
+        ({"next": "refactorer"}, {"refactorer": POINT}, {"next": "weigh"}),
+        ({"next": "evaluator"}, {"generator": MADE}, {}),
+    ],
+    ids=["made", "point", "more", "good", "fixed", "refactored", "refactor-point", "no-result"],
+)
+def test_each_result_moves_its_deliverable_on(
+    fields: dict[str, Any], by_role: dict[str, Any], kept: dict[str, Any]
+) -> None:
+    """Given a steering whose command works in content-1, and the results its entry holds.
+    When the steering is moved on by them.
+    Then the command takes what follows its next role's result, and stays where that role has
+    none yet."""
+    held = holding(entry="content-1", **fields)
+    want = {**command(held), **kept}
+    want = {key: value for key, value in want.items() if value is not None}
+    if want.get("status") == "done":
+        want.pop("next", None)
+    assert command(moved(held, results(**by_role))) == want
+
+
+def test_a_kind_with_no_refactoring_ends_once_it_is_good() -> None:
+    """Given a steering whose light deliverable's evaluator found each condition good.
+    When the steering is moved on.
+    Then the deliverable is done, as no refactoring of its kind exists."""
+    held = holding(next="evaluator", entry="content-1")
+    command(held)["kind"] = "light"
+    assert command(moved(held, results(generator=MADE, evaluator=GOOD)))["status"] == "done"
 
 
 def test_the_final_check_is_marked_passed_once_each_step_is_done() -> None:

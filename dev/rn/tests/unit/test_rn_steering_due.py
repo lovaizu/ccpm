@@ -32,9 +32,19 @@ def test_the_pruner_is_due_where_no_need_is_picked_or_no_step_is_set() -> None:
 def test_the_first_deliverable_not_done_is_due_to_make() -> None:
     """Given a steering whose step has its command done and its guide open.
     When what's due is asked.
-    Then the guide is due to make, with its step's number and its kind."""
+    Then the guide is due to make, with its step's number, its kind, and its generator, as it
+    starts with a Round of content."""
     held = rn_files.steering([rn_files.step(done=(rn_files.COMMAND,))])
-    assert due(held) == [f"make\t1\t{rn_files.GUIDE}\treadme"]
+    assert due(held) == [f"make\t1\t{rn_files.GUIDE}\treadme\tgenerator"]
+
+
+def test_a_deliverable_on_its_way_is_due_to_its_next_role() -> None:
+    """Given a steering whose command waits on a pruner's weighing.
+    When what's due is asked.
+    Then the command is due to its weighing."""
+    held = rn_files.steering()
+    held["state"]["steps"][0]["deliverables"][0]["next"] = "weigh"
+    assert due(held) == [f"make\t1\t{rn_files.COMMAND}\tcode\tweigh"]
 
 
 def test_a_step_made_whole_is_due_to_hand_over() -> None:
@@ -60,7 +70,7 @@ def test_the_way_goes_on_to_the_next_step_once_one_is_done() -> None:
     When what's due is asked.
     Then the second step's first deliverable is due to make."""
     held = rn_files.steering([rn_files.step("done", done=BOTH), rn_files.step()])
-    assert due(held) == [f"make\t2\t{rn_files.COMMAND}\tcode"]
+    assert due(held) == [f"make\t2\t{rn_files.COMMAND}\tcode\tgenerator"]
 
 
 def test_the_final_check_is_due_once_each_step_is_done() -> None:

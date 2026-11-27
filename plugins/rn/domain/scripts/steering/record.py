@@ -1,19 +1,27 @@
 """Decides what each change makes of a run's steering: the pruner's result taken in, the tree
 whole and the way to the target, each step and deliverable that the steering already holds keeping
-its status; a step or a deliverable marked as the run moves on; and the inspection's pass."""
+its status and where it is on its way, unless the pruner says what it takes next; each deliverable
+moved on by the result of its next role, where nothing is to weigh; a step marked as the run moves
+on; and the inspection's pass."""
 
 from __future__ import annotations
 
 import copy
 from typing import Any
 
+import practice
 from fault import Wrong
 
 # A steering, and the pruner's result, as `json.load` gives them, each in its schema's form.
 Steering = dict[str, Any]
-# Each status of a step, and of a deliverable, as the steering's schema names them.
+# Each status of a step, as the steering's schema names them.
 STEP = ("open", "trying", "done")
-DELIVERABLE = ("open", "done")
+# How many judged Rounds of content a deliverable takes at most, as remaking that brings no remedy
+# has a limit (the architecture's P3.3). What they leave goes to the user, with no exception for a
+# decision made since, so that no Round records how many decisions the run held.
+LIMIT = 2
+# What a deliverable keeps of where it is on its way, as the steering's schema names it.
+_WAY = ("next", "judged", "entry")
 # The issues of a run that no pruner has named yet.
 _NO_ISSUES: dict[str, list[int]] = {"closes": [], "refs": []}
 
@@ -26,15 +34,21 @@ def taken_in(steering: Steering | None, result: dict[str, Any]) -> Steering:
     Gives: a new steering: the result's tree whole; its issues, else the steering's, else none;
     and its steps, else the steering's, each step that the steering holds for the same need with
     the same words keeping its status, and each of its deliverables at the same path keeping its
-    own, every other step and deliverable open; and the inspection passed where the steering
-    holds it so and the result adds no step, as a step added grows the pull request.
+    own and where it is on its way, every other step and deliverable open; each deliverable whose
+    next the result says taking it with no entry, as its next role starts its own: generator and
+    the judged Rounds kept, anew as generator from its first Round, fixer, refactorer, or done,
+    and its step open again where it opens; and the inspection passed where the steering holds it
+    so and the result adds no step, as a step added grows the pull request.
     Changes: nothing.
-    Refuses: nothing.
+    Refuses: Wrong where it would make a deliverable again past LIMIT judged Rounds, as the user
+    confirms what they leave, or would leave one waiting on a weighing with no question asked,
+    naming it.
     """
     state = steering["state"] if steering else {"issues": _NO_ISSUES, "steps": []}
     steps = state["steps"]
     if "steps" in result:
         steps = [_kept(each, state["steps"]) for each in result["steps"]]
+    _settled(steps, result["ost"]["questions"])
     issues = copy.deepcopy(result.get("issues", state["issues"]))
     held = [(each["for"], each["settles"]) for each in state["steps"]]
     added = any((each["for"], each["settles"]) not in held for each in steps)
@@ -50,16 +64,58 @@ def _kept(step: dict[str, Any], held: list[dict[str, Any]]) -> dict[str, Any]:
         (each for each in held if (each["for"], each["settles"]) == (step["for"], step["settles"])),
         None,
     )
-    had = {each["path"]: each["status"] for each in same["deliverables"]} if same else {}
+    had = {each["path"]: each for each in same["deliverables"]} if same else {}
+    deliverables = [_deliverable(each, had.get(each["path"])) for each in step["deliverables"]]
+    status = same["status"] if same else "open"
+    reopened = any(each["status"] == "open" for each in deliverables) and status != "open"
     return {
         "for": step["for"],
         "settles": step["settles"],
-        "deliverables": [
-            {"path": each["path"], "kind": each["kind"], "status": had.get(each["path"], "open")}
-            for each in step["deliverables"]
-        ],
-        "status": same["status"] if same else "open",
+        "deliverables": deliverables,
+        "status": "open" if reopened and _told(step) else status,
     }
+
+
+def _told(step: dict[str, Any]) -> bool:
+    """Whether the pruner says what a deliverable of the step takes next, other than its end."""
+    return any(each.get("next", "done") != "done" for each in step["deliverables"])
+
+
+def _deliverable(told: dict[str, Any], had: dict[str, Any] | None) -> dict[str, Any]:
+    """The deliverable as the pruner names it, keeping what the steering holds of it, and taking
+    what the pruner says it takes next."""
+    kept: dict[str, Any] = {"path": told["path"], "kind": told["kind"], "status": "open"}
+    if had:
+        kept.update({key: had[key] for key in ("status", *_WAY) if key in had})
+    said = told.get("next")
+    if said is None:
+        return kept
+    for key in ("next", "entry"):
+        kept.pop(key, None)
+    if said == "done":
+        return {**kept, "status": "done"}
+    if said == "generator" and kept.get("judged", 0) >= LIMIT:
+        raise Wrong(
+            f"{told['path']} has had its {LIMIT} judged Rounds; ask the user whether to mend what"
+            " they left, then say fixer or done"
+        )
+    if said == "anew":
+        kept.pop("judged", None)
+        said = "generator"
+    return {**kept, "status": "open", "next": said}
+
+
+def _settled(steps: list[dict[str, Any]], questions: list[str]) -> None:
+    """Refuses a weighing that leaves a deliverable waiting on it with no question asked."""
+    if questions:
+        return
+    for step in steps:
+        for each in step["deliverables"]:
+            if each["status"] == "open" and each.get("next") == "weigh":
+                raise Wrong(
+                    f"{each['path']} waits on this weighing; say what it takes next, or ask the"
+                    " user"
+                )
 
 
 def step_marked(steering: Steering, number: int, status: str) -> tuple[Steering, str]:
@@ -85,30 +141,61 @@ def step_marked(steering: Steering, number: int, status: str) -> tuple[Steering,
     return marked, step["settles"]
 
 
-def deliverable_marked(steering: Steering, path: str, status: str) -> Steering:
-    """The steering with a deliverable marked.
+def moved(steering: Steering, results: dict[str, dict[str, dict[str, Any]]]) -> Steering:
+    """The steering with each deliverable moved on by the result of its next role.
 
-    Takes: the steering, the deliverable's path as its step names it, and its new status.
-    Gives: a new steering with the deliverable at that status in each step that names it, and
-    each such step open again where the deliverable goes back to open, as it's made again.
+    Takes: the steering, and for each open deliverable's path, the results that its entry holds,
+    by role.
+    Gives: a new steering in which each open deliverable whose next role's result is there takes
+    what follows it: a generator's made, its evaluator; a point, a generator's or a refactorer's,
+    a pruner's weighing; an evaluator's result, one more judged Round, then a pruner's weighing of
+    what it found, else what follows a deliverable made; a fixer's, what follows a deliverable
+    made; a refactorer's made, its end. What follows a deliverable made is its refactorer, where
+    its kind is refactored, else its end. Each other deliverable stays as it is.
     Changes: nothing.
-    Refuses: Wrong where no step names the path, or the status is none of a deliverable's.
+    Refuses: nothing.
     """
-    if status not in DELIVERABLE:
-        raise Wrong(
-            f"{status!r} isn't a deliverable's status; give one of {', '.join(DELIVERABLE)}"
-        )
     marked = copy.deepcopy(steering)
-    found = False
     for step in marked["state"]["steps"]:
         for each in step["deliverables"]:
-            if each["path"] == path:
-                each["status"] = status
-                found = True
-                step["status"] = "open" if status == "open" else step["status"]
-    if not found:
-        raise Wrong(f"no step names the deliverable {path!r}; give its path as its step names it")
+            role = each.get("next", "generator")
+            found = results.get(each["path"], {}).get(role)
+            if each["status"] == "open" and found is not None:
+                _on(each, role, found)
     return marked
+
+
+def _on(each: dict[str, Any], role: str, found: dict[str, Any]) -> None:
+    """Moves the deliverable on by its next role's result."""
+    if found["result"] == "point":
+        each["next"] = "weigh"
+    elif role == "generator":
+        each["next"] = "evaluator"
+    elif role == "evaluator":
+        each["judged"] = each.get("judged", 0) + 1
+        if found["more"]:
+            each["next"] = "weigh"
+        else:
+            _made(each)
+    elif role == "fixer":
+        _made(each)
+    else:
+        _ended(each)
+
+
+def _made(each: dict[str, Any]) -> None:
+    """Takes a deliverable made on to its refactoring, where its kind has one, else to its end."""
+    if practice.refactoring(each["kind"]):
+        each["next"] = "refactorer"
+        each.pop("entry", None)
+    else:
+        _ended(each)
+
+
+def _ended(each: dict[str, Any]) -> None:
+    each["status"] = "done"
+    for key in ("next", "entry"):
+        each.pop(key, None)
 
 
 def inspected_marked(steering: Steering) -> Steering:

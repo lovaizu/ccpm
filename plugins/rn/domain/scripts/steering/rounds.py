@@ -11,8 +11,10 @@ from __future__ import annotations
 import os
 import re
 from typing import Any, NamedTuple
+from urllib.parse import quote
 
 import form
+from place import RunPlace
 
 # The stages of a deliverable's course, as each folder's name begins.
 CONTENT = "content"
@@ -38,6 +40,11 @@ class Entry(NamedTuple):
     results: dict[str, dict[str, Any]]
 
 
+def folder_of(run: RunPlace, step: int, deliverable: str) -> str:
+    """The folder of the deliverable's Rounds and Fixes in the step."""
+    return os.path.join(run.rounds, str(step), quote(deliverable, safe=""))
+
+
 def entries(root: str, schemas: str) -> list[Entry]:
     """Each Round and Fix of the deliverable in the step, in the order made.
 
@@ -56,9 +63,20 @@ def entries(root: str, schemas: str) -> list[Entry]:
 
 
 def _read(folder: str, stage: str, number: int, schemas: str) -> Entry:
-    results = {}
+    return Entry(stage, number, folder, results(folder, schemas))
+
+
+def results(folder: str, schemas: str) -> dict[str, dict[str, Any]]:
+    """Each role's result that a Round or Fix holds, by the role.
+
+    Takes: the folder of the Round or Fix, and the folder of rn's schemas.
+    Gives: each result there, checked against its schema; none where the folder holds none.
+    Changes: nothing.
+    Refuses: Wrong where a result leaves its form, as `form.held` names it.
+    """
+    found = {}
     for role, (file, schema) in RESULTS.items():
         path = os.path.join(folder, file)
         if os.path.isfile(path):
-            results[role] = form.held(path, os.path.join(schemas, schema), f"the {role}'s result")
-    return Entry(stage, number, folder, results)
+            found[role] = form.held(path, os.path.join(schemas, schema), f"the {role}'s result")
+    return found

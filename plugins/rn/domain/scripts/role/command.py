@@ -82,13 +82,14 @@ def _runs(cwd: str, host: Host) -> list[RunPlace]:
 
 
 def _faults(run: RunPlace, schemas: str) -> list[str]:
-    """Each result of the run that leaves its schema, in words."""
+    """Each result of the run that leaves its schema, or that the steering refuses, in words."""
     found = []
     if os.path.isfile(run.pruner):
         try:
-            form.held(
+            result = form.held(
                 run.pruner, os.path.join(schemas, "pruner.schema.json"), "the pruner's result"
             )
+            record.taken_in(_steering(run, schemas), result)
         except Wrong as why:
             found.append(str(why))
     for root in sorted(glob.glob(os.path.join(run.rounds, "*", "*"))):
@@ -100,8 +101,9 @@ def _faults(run: RunPlace, schemas: str) -> list[str]:
 
 
 def _kept(run: RunPlace, role: str, schemas: str, host: Host) -> None:
-    """Takes the pruner's result into the steering, where there's one, then commits and pushes the
-    run where its worktree holds a change."""
+    """Takes the pruner's result into the steering, where there's one, moves each deliverable on
+    by its next role's result, then commits and pushes the run where its worktree holds a
+    change."""
     message = f"rn: the {role} ended"
     steering = _steering(run, schemas)
     if os.path.isfile(run.pruner):
@@ -109,13 +111,27 @@ def _kept(run: RunPlace, role: str, schemas: str, host: Host) -> None:
             run.pruner, os.path.join(schemas, "pruner.schema.json"), "the pruner's result"
         )
         steering = record.taken_in(steering, result)
+        os.remove(run.pruner)
+        message = f"rn: {result['message']}"
+    if steering is not None:
+        steering = record.moved(steering, _results(run, steering, schemas))
         with open(run.steering, "w", encoding="utf-8") as f:
             json.dump(steering, f, indent=2, ensure_ascii=False)
             f.write("\n")
-        os.remove(run.pruner)
-        message = f"rn: {result['message']}"
     if host(["git", "status", "--porcelain"], run.worktree).out.strip():
         push.kept(run, steering, message, host)
+
+
+def _results(run: RunPlace, steering: dict[str, Any], schemas: str) -> dict[str, Any]:
+    """For each open deliverable with an entry, the results that its entry holds, by role."""
+    found = {}
+    for number, step in enumerate(steering["state"]["steps"], 1):
+        for each in step["deliverables"]:
+            if each["status"] != "open" or "entry" not in each:
+                continue
+            folder = os.path.join(rounds.folder_of(run, number, each["path"]), each["entry"])
+            found[each["path"]] = rounds.results(folder, schemas)
+    return found
 
 
 def _steering(run: RunPlace, schemas: str) -> dict[str, Any] | None:

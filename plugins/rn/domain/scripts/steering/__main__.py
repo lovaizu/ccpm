@@ -18,4 +18,5 @@ from host import run
 from steering.command import main
 
 if __name__ == "__main__":
-    end(lambda: main(sys.argv[1:], os.getcwd(), os.path.dirname(os.path.dirname(SCRIPTS)), run))
+    root = os.path.dirname(os.path.dirname(SCRIPTS))
+    end(lambda: main(sys.argv[1:], os.getcwd(), root, run, sys.stdin.read))

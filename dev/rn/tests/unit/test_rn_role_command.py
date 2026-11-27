@@ -112,6 +112,40 @@ def test_a_roles_change_is_committed_and_pushed_from_inside_the_runs_worktree(
     assert pushed(made)
 
 
+def test_a_roles_result_moves_its_deliverable_on_in_the_steering(made: RunPlace) -> None:
+    """Given a steering whose command works in content-1, and the generator's result made there.
+    When the generator ends.
+    Then the steering has the command's evaluator next, committed and pushed."""
+    value = rn_files.steering()
+    value["state"]["steps"][0]["deliverables"][0]["entry"] = "content-1"
+    rn_files.write_json(made.steering, value)
+    folder = os.path.join(made.rounds, "1", "invoice%2F__main__.py", "content-1")
+    rn_files.write_json(
+        os.path.join(folder, "generator.json"), {"result": "made", "files": [rn_files.COMMAND]}
+    )
+    assert ended(made, "rn:generator") == (0, "", "")
+    with open(made.steering, encoding="utf-8") as f:
+        assert json.load(f)["state"]["steps"][0]["deliverables"][0]["next"] == "evaluator"
+    assert pushed(made)
+
+
+def test_a_pruners_result_the_steering_refuses_keeps_it_going(made: RunPlace) -> None:
+    """Given a steering whose command waits on a weighing, and a pruner's result that neither says
+    what it takes next nor asks the user.
+    When the pruner ends.
+    Then it gives 2 naming the command, and commits nothing."""
+    value = rn_files.steering()
+    value["state"]["steps"][0]["deliverables"][0].update(next="weigh", entry="content-1")
+    rn_files.write_json(made.steering, value)
+    rn_files.write_json(
+        made.pruner, {"message": "m", "ost": rn_files.ost(), "steps": [rn_files.WAY]}
+    )
+    before = git(made.worktree, "rev-parse", "HEAD")
+    code, _, err = ended(made, "rn:pruner")
+    assert (code, rn_files.COMMAND in err) == (2, True)
+    assert git(made.worktree, "rev-parse", "HEAD") == before
+
+
 def test_nothing_is_committed_where_nothing_changed(made: RunPlace) -> None:
     """Given a run whose worktree holds no change, and a folder .rn/best-practices in the user's
     checkout, which is no run's.

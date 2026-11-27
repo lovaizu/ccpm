@@ -139,6 +139,25 @@
             "open",
             "done"
            ]
+          },
+          "next": {
+           "description": "While it's open, who takes it next: generator, for a Round of content, as at its start where it's absent; evaluator, to judge that Round; weigh, for a pruner to weigh the result of its entry; fixer, for a Fix; refactorer, for a Round of refactoring. A pruner says it where its weighing decides it, and rn's hook where nothing is to weigh.",
+           "enum": [
+            "generator",
+            "evaluator",
+            "weigh",
+            "fixer",
+            "refactorer"
+           ]
+          },
+          "judged": {
+           "description": "How many of its Rounds of content an evaluator judged, none where it's absent, as a deliverable takes at most LIMIT of them.",
+           "type": "integer"
+          },
+          "entry": {
+           "description": "The folder in rounds/<step>/<deliverable>/ of the Round or Fix that its next role works in, such as content-2, once `steering start` made it.",
+           "type": "string",
+           "pattern": "^(content|refactor|fix)-[1-9][0-9]*$"
           }
          }
         }

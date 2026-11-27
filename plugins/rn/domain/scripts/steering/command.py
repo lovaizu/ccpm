@@ -14,24 +14,28 @@ from fault import Answer, Wrong, answered
 from host import Host
 from place import RunPlace, of_folder
 
-from steering import due, record
+from steering import due, record, start
 
 USAGE = """\
 usage: steering step <run> <number> open|trying|done
-       steering deliverable <run> <path> open|done
+       steering start <run> <path>   (a Fix's problem in words on stdin)
        steering inspected <run>
        steering due <run>
 """
 
 
-def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
+def main(
+    argv: Sequence[str], cwd: str, plugin_root: str, host: Host, stdin: Callable[[], str]
+) -> Answer:
     """The exit code, stdout, and stderr of `steering` with the arguments, from the folder `cwd`,
-    with rn's folder at `plugin_root`, and git reached through `host`.
+    with rn's folder at `plugin_root`, git reached through `host`, and what it's given on stdin
+    read by `stdin`, which only `start` of a Fix reads.
 
     - `step <run> <number> <status>`: marks the step as `record.step_marked` does, commits and
       pushes as `rn: <its words>: <status>`, and gives 0 printing what's due.
-    - `deliverable <run> <path> <status>`: marks the deliverable as `record.deliverable_marked`
-      does, commits and pushes as `rn: <path>: <status>`, and gives 0 printing what's due.
+    - `start <run> <path>`: starts the deliverable's next role as `start.started` does, writing
+      the steering where it changes, which rn's hook commits once the role ends, and gives 0
+      printing the line that gives the role.
     - `inspected <run>`: marks the inspection passed as `record.inspected_marked` does, commits
       and pushes as `rn: the inspection passed`, and gives 0 printing what's due.
     - `due <run>`: gives 0 printing each line that `due.due` gives, a line each.
@@ -44,6 +48,10 @@ def main(argv: Sequence[str], cwd: str, plugin_root: str, host: Host) -> Answer:
     """
     if not argv or argv[0] not in _SUBCOMMANDS or len(argv) != _SUBCOMMANDS[argv[0]][1]:
         return 2, "", USAGE
+    if argv[0] == "start":
+        return answered(
+            "steering", lambda: _start(of_folder(cwd, argv[1]), argv[2], plugin_root, stdin)
+        )
     subcommand = _SUBCOMMANDS[argv[0]][0]
     schemas = os.path.join(plugin_root, "domain", "schemas")
     return answered(
@@ -59,10 +67,22 @@ def _step(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
     return 0, _lines(due.due(steering)), ""
 
 
-def _deliverable(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
-    steering = record.deliverable_marked(_steering(run, schemas), given[0], given[1])
-    _committed(run, steering, f"{given[0]}: {given[1]}", host)
-    return 0, _lines(due.due(steering)), ""
+def _start(run: RunPlace, path: str, plugin_root: str, stdin: Callable[[], str]) -> Answer:
+    schemas = os.path.join(plugin_root, "domain", "schemas")
+    held = _steering(run, schemas)
+    words = stdin() if _next(held, path) == "fixer" else ""
+    marked, line = start.started(run, held, path, words, plugin_root)
+    if marked != held:
+        _written(run, marked)
+    return 0, line, ""
+
+
+def _next(steering: dict[str, Any], path: str) -> str:
+    for step in steering["state"]["steps"]:
+        for each in step["deliverables"]:
+            if each["path"] == path and each["status"] == "open":
+                return str(each.get("next", "generator"))
+    return ""
 
 
 def _inspected(run: RunPlace, given: list[str], schemas: str, host: Host) -> Answer:
@@ -80,10 +100,14 @@ def _steering(run: RunPlace, schemas: str) -> dict[str, Any]:
 
 
 def _committed(run: RunPlace, steering: dict[str, Any], message: str, host: Host) -> str:
+    _written(run, steering)
+    return push.kept(run, steering, f"rn: {message}", host)
+
+
+def _written(run: RunPlace, steering: dict[str, Any]) -> None:
     with open(run.steering, "w", encoding="utf-8") as f:
         json.dump(steering, f, indent=2, ensure_ascii=False)
         f.write("\n")
-    return push.kept(run, steering, f"rn: {message}", host)
 
 
 def _lines(lines: list[str]) -> str:
@@ -93,7 +117,7 @@ def _lines(lines: list[str]) -> str:
 # Each subcommand, by its name, with the number of arguments it takes, its name among them.
 _SUBCOMMANDS: dict[str, tuple[Callable[[RunPlace, list[str], str, Host], Answer], int]] = {
     "step": (_step, 4),
-    "deliverable": (_deliverable, 4),
+    "start": (_due, 3),
     "inspected": (_inspected, 2),
     "due": (_due, 2),
 }
