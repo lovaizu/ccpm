@@ -353,6 +353,10 @@
       {
         "decision": "Have the inspector review the pull request as its author would before asking for review, by the practice that its prompt holds, from GitHub's and Google's guides: that it agrees with every file already in the repository and the repository's rules, and its title and description with its diff and its issue; that it holds nothing its purpose doesn't need; and that it leaves nothing behind, such as a test, a document, or a commit not pushed. The practice stays in the prompt and out of rn's best practices, as the inspector checks the same for every pull request, and a best practice holds what differs by a deliverable's kind. What the people get is the evaluator's.",
         "by": "user"
+      },
+      {
+        "decision": "Have one command of the steering script mark a deliverable done in place of `repository put-up` and `steering deliverable done`, as a put-up no longer pushes; and rename `checked` to name the inspection passed, as the inspector holds that check.",
+        "by": "user"
       }
     ],
     "questions": []
