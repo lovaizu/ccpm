@@ -361,6 +361,26 @@
       {
         "decision": "Have a deliverable take at most LIMIT judged Rounds with no exception for a decision made since, and leave the more that remains to the user's confirming, so that no Round records how many decisions the run held when it started.",
         "by": "user"
+      },
+      {
+        "decision": "Have each commit that rn's scripts make push at once, and open the run's draft pull request on the first push where none is open, so that `repository put-up` goes, as the steering script's mark of a deliverable done commits it.",
+        "by": "rn"
+      },
+      {
+        "decision": "Commit a role's changes once it ends, so that the people's folder for a try is a clone of the run's branch alone, with no copy of uncommitted files over it.",
+        "by": "rn"
+      },
+      {
+        "decision": "Remove `repository diff`, as the inspector reads the pull request with git itself, and remove the remove script and rn's hook that sends deletes to it, as a role deletes nothing now: a try lies in the system's temporary folder, and a check's file is git-ignored or committed.",
+        "by": "rn"
+      },
+      {
+        "decision": "Add a SubagentStop hook that checks a role's result against its schema and keeps the role going until it holds, and that takes a pruner's result into the steering and commits it, in place of the orchestrator restarting a role or running `steering commit`.",
+        "by": "rn"
+      },
+      {
+        "decision": "Keep `repository new`, `runs`, `stop`, and `cancel`, and the shared modules form, practice, place, host, and fault, as each holds one responsibility that a run needs.",
+        "by": "rn"
       }
     ],
     "questions": []
