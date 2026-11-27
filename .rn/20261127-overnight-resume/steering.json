@@ -1,0 +1,89 @@
+{
+  "ost": {
+    "outcome": "A user who has their AI arrange work to run while they sleep, and the AI that runs it, waste none of the night's usage allowance, so that in the morning the user finds all the work they left finished and knows how each piece ended.",
+    "opportunities": [
+      {
+        "id": "O1",
+        "opportunity": "I leave work with my AI at night, and in the morning it's all finished, with none of the night's usage allowance wasted.",
+        "by": "#62 Desired State; the user on 2026-11-27: 「寝ている間の利用枠を無駄にせず、朝には任せた作業が終わっているため」",
+        "opportunities": [
+          {
+            "id": "O1.1",
+            "opportunity": "Work that stops at the usage limit goes on by itself once the limit lifts.",
+            "by": "#62 Desired State: \"Once the usage limit lifts, the work resumes on its own.\"; the user on 2026-11-27: 「上限で止まることあるので止まったらリトライ、リトライ間隔を伸ばして上限解除されたら再開され」",
+            "opportunities": [
+              {
+                "id": "O1.1.1",
+                "opportunity": "Work that doesn't come back stops trying after as many tries as I set, rather than trying all night.",
+                "by": "the user on 2026-11-27: 「リトライ回数を制定して」",
+                "opportunities": [],
+                "solution": null
+              }
+            ],
+            "solution": null
+          },
+          {
+            "id": "O1.2",
+            "opportunity": "In the morning I know how each piece of work I left ended.",
+            "by": "the user on 2026-11-27: 「朝に結果がすべて分かる」",
+            "opportunities": [],
+            "solution": null
+          },
+          {
+            "id": "O1.3",
+            "opportunity": "I hand over several pieces of work at once, and they run without me.",
+            "by": "the user on 2026-11-27: 「作業をキューに入れて」",
+            "opportunities": [
+              {
+                "id": "O1.3.1",
+                "opportunity": "The work starts at the time I set.",
+                "by": "the user on 2026-11-27: 「開始時刻…を制定して…時間になったら実行」",
+                "opportunities": [],
+                "solution": null
+              },
+              {
+                "id": "O1.3.2",
+                "opportunity": "As many pieces as I set run side by side.",
+                "by": "the user on 2026-11-27: 「並行数…を制定して」",
+                "opportunities": [],
+                "solution": null
+              }
+            ],
+            "solution": null
+          },
+          {
+            "id": "O1.4",
+            "opportunity": "My AI sets up the night's work for me from what I ask, and runs it.",
+            "by": "the user on 2026-11-27: 「ユーザーがAIに段取らせる、AIが使う」",
+            "opportunities": [],
+            "solution": null
+          }
+        ],
+        "solution": null
+      }
+    ],
+    "target": null,
+    "decisions": [
+      {
+        "decision": "Talk with the user in Japanese and write each deliverable in English, as the user's words are Japanese, the repository is in English, and the user's own instructions say to converse in Japanese and write in the repository's language.",
+        "by": "rn"
+      },
+      {
+        "decision": "Hold the start time, parallelism, queue, and retries the user described as needs of what they can do, not as the design, as the user said those are detail and the essence should be drawn out of them.",
+        "by": "user"
+      }
+    ],
+    "questions": [
+      "まずどれを手元で動かしますか。1. 上限で止まった作業が、上限解除後にひとりでに再開される（おすすめ: #62 が求めているのはこれで、寝ている間の利用枠を無駄にしない本質そのものであり、`claude` が上限でどう止まり再開できるかという一番危うい前提もここで実物で確かめられるため） 2. 朝に、任せた各作業がどう終わったか分かる 3. 複数の作業をまとめて渡すと、自分なしで流れる（開始時刻・並行数を含む） 4. AI が自分の頼みから夜の作業を段取り、実行する"
+    ]
+  },
+  "state": {
+    "issues": {
+      "closes": [
+        62
+      ],
+      "refs": []
+    },
+    "steps": []
+  }
+}
