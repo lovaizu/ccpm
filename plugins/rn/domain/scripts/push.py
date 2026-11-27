@@ -1,11 +1,9 @@
-"""Decides how the work reaches GitHub: each commit pushed at once, the work's one pull
-request, a draft until the user marks it ready, opened once a need is picked, and the work
-kept on a stop."""
+"""Decides how the work reaches GitHub: each commit pushed at once, a commit kept for the next
+push where the push is refused, and the work kept on a stop."""
 
 from __future__ import annotations
 
-import json
-from typing import Any
+from collections.abc import Sequence
 
 from fault import CantRun, Missing
 from host import Host, Ran, checked
@@ -16,91 +14,45 @@ from place import WorkPlace
 _REFUSED = ("permission", "could not read username", "authentication failed", "remote rejected")
 
 
-def stop(work: WorkPlace, steering: dict[str, Any] | None, host: Host) -> str:
+def stop(work: WorkPlace, host: Host) -> str:
     """Keeps the work where any conversation picks it up.
 
-    Takes: the work, its steering, or None where it has none yet, and the host.
+    Takes: the work, and the host.
     Gives: the hash of the commit that the branch's remote now holds.
-    Changes: commits and pushes as `kept` does, as `rn: stopped <name>`.
-    Refuses: as `kept` refuses.
+    Changes: commits each change in the work's worktree as `rn: stopped <name>`, where there's
+    one, and pushes the work's branch, as `push` does.
+    Refuses: as `push` refuses, as a stop that GitHub doesn't hold loses the work to any other
+    conversation; CantRun where git fails otherwise.
     """
-    return kept(work, steering, f"rn: stopped {work.name}", host)
+    _commit(work, f"rn: stopped {work.name}", None, host)
+    return push(work, host)
 
 
-def kept(work: WorkPlace, steering: dict[str, Any] | None, message: str, host: Host) -> str:
-    """Commits each change of the work and pushes it at once, so that nothing it makes lies only
-    on the user's computer.
+def kept(work: WorkPlace, message: str, paths: Sequence[str] | None, host: Host) -> str:
+    """Commits the work's changes and pushes them at once, so that nothing it makes lies only on
+    the user's computer.
 
-    Takes: the work, its steering, or None where it has none yet, the commit's message, and the
-    host.
-    Gives: the hash of the commit that the branch's remote now holds.
-    Changes: commits each change in the work's worktree with the message, where there's one, and
-    pushes the work's branch, as `push` does; then, where the steering names a picked need and
-    the branch has no pull request open, opens one into the default branch as a draft, as `gh pr
-    view` gives a closed or merged one of an earlier work of the same branch's name too: titled by
-    the words of the picked need, its body the work's outcome, then a line `Closes #N` for each
-    issue that the work closes and a line `Refs #N` for each it refers to, in their order.
-    Refuses: as `push` refuses; Missing, after the push, where `gh auth status` finds no login,
-    or gh may not open the pull request, with what gh said; CantRun where gh can't tell whether
-    the branch has a pull request, so that it never opens a second, or where git or gh fails
-    otherwise.
+    Takes: the work, the commit's message, the paths to commit, or None for each change in the
+    work's worktree, and the host.
+    Gives: "" where the branch's remote now holds the commit; else what git said where it couldn't
+    push, the commit kept, so that the next push carries it, as a check of the repository's may
+    refuse a push until a later Round mends what it found.
+    Changes: commits the changes with the message, where there's one, and pushes the work's branch,
+    as `push` does.
+    Refuses: Missing as `push` refuses; CantRun where git fails otherwise than on the push.
     """
-    _commit_all(work, message, host)
-    pushed = push(work, host)
-    if steering is not None:
-        _pull_request(work, steering, host)
-    return pushed
+    _commit(work, message, paths, host)
+    try:
+        push(work, host)
+    except CantRun as why:
+        return str(why)
+    return ""
 
 
-def _pull_request(work: WorkPlace, steering: dict[str, Any], host: Host) -> None:
-    """Opens the work's pull request as `kept` says, where the steering names a picked need and
-    none is open."""
-    title = _picked(steering["ost"])
-    if title is None:
-        return
-    what = "gh has no login to open the pull request"
-    checked(host, ["gh", "auth", "status"], work.worktree, Missing, what)
-    shown = host(["gh", "pr", "view", branch(work, host), "--json", "url,state"], work.worktree)
-    if shown.code != 0 and not shown.err.startswith("no pull requests found"):
-        said = (shown.out + shown.err).strip()
-        raise CantRun(f"gh can't tell whether the branch has a pull request: {said}")
-    held = json.loads(shown.out) if shown.code == 0 else {"state": None}
-    if held["state"] != "OPEN":
-        _opened(work, steering, title, host)
-
-
-def _picked(ost: dict[str, Any]) -> str | None:
-    """The words of the need that the user picked, or None where none is picked yet."""
-    stack = list(ost["opportunities"])
-    while stack:
-        each = stack.pop()
-        if each["id"] == ost["target"]:
-            return each["opportunity"]
-        stack += each["opportunities"]
-    return None
-
-
-def _opened(work: WorkPlace, steering: dict[str, Any], title: str, host: Host) -> str:
-    """Opens the work's pull request as a draft, and gives its URL."""
-    body = _body(steering["ost"]["outcome"], steering["state"]["issues"])
-    create = ["gh", "pr", "create", "--draft", "--head", branch(work, host), "--title", title]
-    made = checked(
-        host, [*create, "--body", body], work.worktree, Missing, "gh may not open the pull request"
-    )
-    return made.out.strip()
-
-
-def _body(goal: str, issues: dict[str, list[int]]) -> str:
-    """The pull request's body: the work's outcome, then a line naming each issue that the work
-    closes and each that it refers to."""
-    lines = [f"Closes #{each}" for each in issues["closes"]]
-    lines += [f"Refs #{each}" for each in issues["refs"]]
-    return "\n\n".join([goal, "\n".join(lines)]) if lines else goal
-
-
-def _commit_all(work: WorkPlace, message: str, host: Host) -> None:
-    """Commits each change in the work's worktree with the message, where there's one."""
-    _git(host, work, "add", "-A")
+def _commit(work: WorkPlace, message: str, paths: Sequence[str] | None, host: Host) -> None:
+    """Commits the changes of the paths, or each change in the work's worktree, with the message,
+    where there's one."""
+    _git(host, work, "add", "-A", *(["--", *paths] if paths is not None else []))
     if host(["git", "diff", "--cached", "--quiet"], work.worktree).code != 0:
         _git(host, work, "commit", "-q", "-m", message)
 

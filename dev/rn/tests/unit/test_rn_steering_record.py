@@ -1,7 +1,9 @@
 """The unit cases of steering/record.py, what each change makes of the work's steering: the
-orchestrator's first aim, a later one that keeps each status the steering holds, one with no steps
-or issues, what the aim says comes next, each result moving a deliverable on, each mark of a step,
-and the inspection's pass, with each refusal."""
+orchestrator's first aim, a later one that keeps each status the steering holds, a step reworded
+kept, one with no steps or issues, what the aim says comes next, each result moving a deliverable
+on, each mark of a step, and the inspection's pass, with each refusal: a decision of the user's
+dropped or changed, an id that names no opportunity, a Fix before the Rounds are over, a Round past
+the limit, and a weighing left waiting."""
 
 from __future__ import annotations
 
@@ -175,6 +177,54 @@ def test_a_deliverable_to_mend_opens_its_step_again() -> None:
     Then the step is open again, as the user tries it once it's mended."""
     held = rn_files.steering([rn_files.step("trying", done=(rn_files.COMMAND, rn_files.GUIDE))])
     assert taken_in(held, told("fixer"))["state"]["steps"][0]["status"] == "open"
+
+
+def test_a_step_reworded_keeps_its_status() -> None:
+    """Given a steering whose step is trying with each deliverable done.
+    When an aim that rewords the step's words, for the same need at the same place, is taken in.
+    Then the step keeps trying, and each deliverable its done."""
+    held = rn_files.steering([rn_files.step("trying", done=(rn_files.COMMAND, rn_files.GUIDE))])
+    step = taken_in(held, result(steps=[{**STEP, "settles": "one invoice printed"}]))
+    assert step["state"]["steps"][0] == {
+        **rn_files.step("trying", done=(rn_files.COMMAND, rn_files.GUIDE)),
+        "settles": "one invoice printed",
+    }
+
+
+def test_a_decision_of_the_users_dropped_or_changed_is_refused() -> None:
+    """Given a steering that holds the user's decision on the languages.
+    When an aim that rewords it is taken in.
+    Then Wrong is raised, naming it, as only the user changes it."""
+    aim = result(steps=[STEP])
+    aim["ost"]["decisions"] = [{"decision": "Talk and write in English.", "by": "user"}]
+    with pytest.raises(Wrong, match="Talk in Japanese"):
+        taken_in(rn_files.steering(), aim)
+
+
+@pytest.mark.parametrize(
+    ("fields", "steps"),
+    [({"target": "O9"}, [STEP]), ({}, [{**STEP, "for": "O9"}])],
+    ids=["target", "step"],
+)
+def test_an_id_that_names_no_opportunity_is_refused(
+    fields: dict[str, Any], steps: list[dict[str, Any]]
+) -> None:
+    """Given the work with no steering.
+    When an aim whose target, or a step's need, is O9, which its tree doesn't hold, is taken in.
+    Then Wrong is raised, naming O9."""
+    aim = result(steps=steps)
+    aim["ost"].update(fields)
+    with pytest.raises(Wrong, match="O9 names no opportunity"):
+        taken_in(None, aim)
+
+
+def test_a_fix_before_the_rounds_are_over_is_refused() -> None:
+    """Given a steering whose command waits on the weighing of its first judged Round.
+    When an aim that has it mended by a fixer is taken in.
+    Then Wrong is raised, saying to make it again, as a Fix mends only what the Rounds left."""
+    held = holding(next="weigh", judged=1, entry="content-1")
+    with pytest.raises(Wrong, match="isn't through its Rounds"):
+        taken_in(held, told("fixer"))
 
 
 def test_a_round_past_the_limit_is_refused() -> None:

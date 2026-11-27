@@ -1,14 +1,13 @@
 """The double of gh that rn's unit cases run in its place. It answers each command of gh that rn's
-code runs from one line of a record in recorded/: gh 2.102.1's runs for `gh auth status`,
-`gh pr view`, with the state of a pull request that is open or closed, and where gh can't
-reach GitHub, and `gh pr close`; and, of gh's manual and code, `gh pr create`, as the plugin
-guide's Each result of a double from a record says. A command that no record holds fails with
+code runs from one line of a record in recorded/: gh 2.102.1's runs for `gh pr view`, with the state
+of a pull request that is open or closed, and where gh can't reach GitHub, and `gh pr close`, as the
+plugin guide's Each result of a double from a record says. A command that no record holds fails with
 exit 1, naming itself, so that a body that runs it shows the gap.
 
-It serves the unit cases by `host`, a Host of host.py, which runs git for real and gh from
-the records. It keeps its state, whether the person is logged in and GitHub is reached, the pull
-request it opened, and an earlier one of the branch that isn't open, in a JSON file of the folder
-it's given, and each command it was asked in the same file."""
+It serves the unit cases by `host`, a Host of host.py, which runs git for real and gh from the
+records. It keeps its state, whether GitHub is reached, the pull request that's open, and an earlier
+one of the branch that isn't open, in a JSON file of the folder it's given, and each command it was
+asked in the same file."""
 
 from __future__ import annotations
 
@@ -21,10 +20,8 @@ from collections.abc import Sequence
 from typing import Any
 
 RECORDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "recorded")
-AUTH = "gh-2.102.1-auth.jsonl"
 PR_VIEW = "gh-2.102.1-pr-view.jsonl"
 PR_CLOSE = "gh-2.102.1-pr-close.jsonl"
-MANUAL = "gh-manual.jsonl"
 # The file of the double's state in the folder it's given.
 STATE = "gh-state.json"
 
@@ -41,7 +38,7 @@ def line(record: str, event: str) -> dict[str, Any]:
 
 
 def state(folder: str) -> dict[str, Any]:
-    """The double's state in the folder: `logged_in`, `reached`, whether gh reaches GitHub,
+    """The double's state in the folder: `reached`, whether gh reaches GitHub,
     `closes`, whether it reaches GitHub to close a pull request once it read it,
     `pull_request` (the URL of the open one, or None), `earlier`, an earlier pull request of the
     branch that isn't open, as its `url` and `state`, `CLOSED`, or None, and `asked`, each gh
@@ -49,7 +46,6 @@ def state(folder: str) -> dict[str, Any]:
     path = os.path.join(folder, STATE)
     if not os.path.exists(path):
         return {
-            "logged_in": True,
             "reached": True,
             "closes": True,
             "pull_request": None,
@@ -65,13 +61,6 @@ def keep(folder: str, kept: dict[str, Any]) -> None:
     os.makedirs(folder, exist_ok=True)
     with open(os.path.join(folder, STATE), "w", encoding="utf-8") as f:
         json.dump(kept, f)
-
-
-def logged_out(folder: str) -> None:
-    """Sets the double's state to no login, as `gh auth status` finds none."""
-    kept = state(folder)
-    kept["logged_in"] = False
-    keep(folder, kept)
 
 
 def unreached(folder: str) -> None:
@@ -111,12 +100,7 @@ def answer(argv: Sequence[str], folder: str, cwd: str = ".") -> tuple[int, str, 
     kept["cwd"] = cwd
     kept["asked"].append(list(argv))
     words = list(argv[1:3])
-    if not kept["logged_in"]:
-        given = line(AUTH, "gh auth status finds no login")
-    elif words == ["auth", "status"]:
-        given = line(AUTH, "gh auth status finds the login")
-    else:
-        given = _ANSWERS.get(" ".join(words), _unrecorded)(kept, argv)
+    given = _ANSWERS.get(" ".join(words), _unrecorded)(kept, argv)
     del kept["cwd"]
     keep(folder, kept)
     return int(given["exit"]), str(given.get("stdout", "")), str(given.get("stderr", ""))
@@ -147,15 +131,6 @@ def _closed(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
     kept["earlier"] = {"url": kept["pull_request"], "state": "CLOSED"}
     kept["pull_request"] = None
     return line(PR_CLOSE, "gh pr close closes the open pull request")
-
-
-def _created(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
-    """What `gh pr create` gives, opening the pull request where none is open."""
-    if kept["pull_request"] is not None:
-        return _unrecorded(kept, argv)
-    given = line(MANUAL, "gh pr create prints the URL of the pull request")
-    kept["pull_request"] = given["stdout"].strip()
-    return given
 
 
 def _state(kept: dict[str, Any], argv: Sequence[str]) -> dict[str, Any]:
@@ -214,4 +189,4 @@ def host(folder: str) -> Any:
 
 
 # What the double gives for each command of gh but `gh auth status`, by its two words after `gh`.
-_ANSWERS = {"pr view": _viewed, "pr close": _closed, "pr create": _created}
+_ANSWERS = {"pr view": _viewed, "pr close": _closed}

@@ -25,6 +25,11 @@ OUTCOME = (
     "An accountant who sends invoices at the month's end prints one from a statement file,"
     " without a developer's help."
 )
+# The user's words that the outcome rests on, as the walkthrough has them.
+WORDS = (
+    "the user on 2026-11-26:"
+    " 経理チームが、Pythonを書かずに、明細から請求書を印刷できるコマンドがほしい"
+)
 PRINT = "I print one invoice from a statement file."
 RULES = "It meets the invoice rules."
 SETTLES = "the least that prints one invoice"
@@ -75,6 +80,7 @@ def ost(target: str | None = "O1", questions: list[str] | None = None) -> dict[s
         }
     return {
         "outcome": OUTCOME,
+        "words": [WORDS],
         "opportunities": [picked],
         "target": target,
         "decisions": [{"decision": "Talk in Japanese, and write in English.", "by": "user"}],

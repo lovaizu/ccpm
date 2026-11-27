@@ -9,6 +9,7 @@ from collections.abc import Callable, Sequence
 from typing import Any
 
 import form
+import practice
 import push
 from fault import Answer, Wrong, answered
 from host import Host
@@ -32,24 +33,30 @@ def main(
     with rn's folder at `plugin_root`, git reached through `host`, and what it's given on stdin
     read by `stdin`, which `aim` and `start` of a Fix read.
 
-    - `aim <work>`: takes the aim on stdin, in the form of `aim.schema.json`, into the steering
-      as `record.taken_in` makes it, the steering made where the work has none yet, commits and
-      pushes as `rn: <the aim's message>`, and gives 0 printing what's due.
-    - `step <work> <number> <status>`: marks the step as `record.step_marked` does, commits and
-      pushes as `rn: <its words>: <status>`, and gives 0 printing what's due.
+    - `aim <work>`: takes the aim on stdin, in the form of `aim.schema.json`, each deliverable of a
+      kind of `practice.kinds` that isn't a refactoring's, into the steering as `record.taken_in`
+      makes it, the steering made where the work has none yet, commits it as `rn: <the aim's
+      message>`, and gives 0 printing what's due.
+    - `step <work> <number> <status>`: marks the step as `record.step_marked` does, commits it as
+      `rn: <its words>: <status>`, and gives 0 printing what's due.
     - `start <work> <path>`: starts the deliverable's next role as `start.started` does, writing
       the steering where it changes, which rn's hook commits once the role ends, and gives 0
       printing the line that gives the role.
     - `inspected <work>`: marks the inspection passed as `record.inspected_marked` does, commits
-      and pushes as `rn: the inspection passed`, and gives 0 printing what's due.
+      it as `rn: the inspection passed`, and gives 0 printing what's due.
     - `due <work>`: gives 0 printing each line that `due.due` gives, a line each.
+
+    Each commit holds the steering alone, as a role at work may be writing its files, and is pushed
+    at once; where git can't push it, `unpushed\t<what git said>` comes before what's due, and the
+    next push carries the commit.
 
     `<work>` is the work's folder, as `place.of_folder` takes it. 1 with `steering: <what's wrong>`,
     changing nothing, where the input is Wrong: a result or a steering that's missing, isn't JSON,
-    or leaves its schema, naming each place, an aim that isn't JSON or leaves its schema, or an aim
-    or a mark that `record` refuses; 1 where something
-    `push.kept` needs is Missing. 2 with what stopped it where it CantRun, such as git refusing the
-    commit, with what git said; 2 with the usage where the arguments are other than these.
+    or leaves its schema, naming each place, an aim that isn't JSON or leaves its schema, names a
+    kind that isn't one, or that `record` refuses, or a mark that `record` refuses; 1 where
+    something `push.kept` needs is Missing. 2 with what stopped it where it CantRun, such as git
+    refusing the commit, with what git said; 2 with the usage where the arguments are other than
+    these.
     """
     if not argv or argv[0] not in _SUBCOMMANDS or len(argv) != _SUBCOMMANDS[argv[0]][1]:
         return 2, "", USAGE
@@ -75,18 +82,32 @@ def _aim(work: WorkPlace, plugin_root: str, stdin: Callable[[], str], host: Host
     found = form.faults(aim, os.path.join(schemas, "aim.schema.json"))
     if found:
         raise Wrong("the aim leaves its schema, aim.schema.json: " + "; ".join(found))
+    _kinds_held(aim, practice.kinds(plugin_root, work.worktree))
     held = _steering(work, schemas) if os.path.isfile(work.steering) else None
     steering = record.taken_in(held, aim)
-    _committed(work, steering, aim["message"], host)
-    return 0, _lines(due.due(steering)), ""
+    unpushed = _committed(work, steering, aim["message"], host)
+    return 0, unpushed + _lines(due.due(steering)), ""
+
+
+def _kinds_held(aim: dict[str, Any], kinds: dict[str, str]) -> None:
+    """Refuses a deliverable of a kind that rn has no best practice of, or of a refactoring's,
+    as a refactoring follows a deliverable made by its own kind."""
+    made = sorted(set(kinds) - {practice.refactoring(each) for each in kinds})
+    for step in aim.get("steps", []):
+        for each in step["deliverables"]:
+            if each["kind"] not in made:
+                raise Wrong(
+                    f"{each['path']}: {each['kind']!r} isn't a kind to make; give one of"
+                    f" {', '.join(made)}"
+                )
 
 
 def _step(work: WorkPlace, given: list[str], schemas: str, host: Host) -> Answer:
     if not given[0].isdigit():
         raise Wrong(f"{given[0]!r} isn't a step's number; give its number from 1")
     steering, words = record.step_marked(_steering(work, schemas), int(given[0]), given[1])
-    _committed(work, steering, f"{words}: {given[1]}", host)
-    return 0, _lines(due.due(steering)), ""
+    unpushed = _committed(work, steering, f"{words}: {given[1]}", host)
+    return 0, unpushed + _lines(due.due(steering)), ""
 
 
 def _start(work: WorkPlace, path: str, plugin_root: str, stdin: Callable[[], str]) -> Answer:
@@ -109,8 +130,8 @@ def _next(steering: dict[str, Any], path: str) -> str:
 
 def _inspected(work: WorkPlace, given: list[str], schemas: str, host: Host) -> Answer:
     steering = record.inspected_marked(_steering(work, schemas))
-    _committed(work, steering, "the inspection passed", host)
-    return 0, _lines(due.due(steering)), ""
+    unpushed = _committed(work, steering, "the inspection passed", host)
+    return 0, unpushed + _lines(due.due(steering)), ""
 
 
 def _due(work: WorkPlace, given: list[str], schemas: str, host: Host) -> Answer:
@@ -122,8 +143,11 @@ def _steering(work: WorkPlace, schemas: str) -> dict[str, Any]:
 
 
 def _committed(work: WorkPlace, steering: dict[str, Any], message: str, host: Host) -> str:
+    """Writes the steering, commits it alone, as a role at work may be writing its files, and
+    pushes it; gives the line `unpushed\\t<what git said>` where git couldn't push, else none."""
     _written(work, steering)
-    return push.kept(work, steering, f"rn: {message}", host)
+    why = push.kept(work, f"rn: {message}", [work.steering], host)
+    return f"unpushed\t{' '.join(why.split())}\n" if why else ""
 
 
 def _written(work: WorkPlace, steering: dict[str, Any]) -> None:

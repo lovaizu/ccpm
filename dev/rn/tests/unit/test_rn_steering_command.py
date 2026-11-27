@@ -109,6 +109,34 @@ def test_an_aim_that_can_not_be_taken_in_is_refused_and_commits_nothing(
     assert (code, says in err, git(made.worktree, "rev-parse", "HEAD")) == (1, True, before)
 
 
+def test_an_aim_of_a_kind_that_isnt_one_to_make_is_refused(made: WorkPlace) -> None:
+    """Given the work with no steering, and an aim whose command is of the kind refactor-code.
+    When it's given to `steering aim`.
+    Then it gives 1 naming the command and the kinds to make, and writes no steering."""
+    way = {**STEP, "deliverables": [{"path": rn_files.COMMAND, "kind": "refactor-code"}]}
+    aim = {"message": "m", "ost": rn_files.ost(), "steps": [way]}
+    code, _, err = call(made, "aim", words=json.dumps(aim))
+    assert (code, rn_files.COMMAND in err, "code, " in err) == (1, True, True)
+    assert not os.path.exists(made.steering)
+
+
+def test_a_mark_whose_push_git_refuses_says_so_before_whats_due(made: WorkPlace) -> None:
+    """Given the walkthrough's steering, its step made, and origin a folder that isn't there.
+    When step 1 is marked trying.
+    Then it gives 0, `unpushed` with what git said first, then the user's try, the commit kept."""
+    steering(made, rn_files.steering([rn_files.step(done=(rn_files.COMMAND, rn_files.GUIDE))]))
+    gone = os.path.join(os.path.dirname(made.worktree), "gone.git")
+    git(made.worktree, "remote", "set-url", "origin", gone)
+    code, out, _ = call(made, "step", "1", "trying")
+    first, then = out.splitlines()
+    assert (code, first.startswith("unpushed\t"), then) == (
+        0,
+        True,
+        f"trying\t1\t{rn_files.SETTLES}",
+    )
+    assert git(made.worktree, "log", "-1", "--format=%s") == f"rn: {rn_files.SETTLES}: trying\n"
+
+
 def test_each_mark_is_committed_and_gives_whats_due(made: WorkPlace) -> None:
     """Given a steering whose step has each deliverable done.
     When step 1 is marked trying.

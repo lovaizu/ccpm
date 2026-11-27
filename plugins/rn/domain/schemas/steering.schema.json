@@ -10,10 +10,11 @@
  "additionalProperties": false,
  "properties": {
   "ost": {
-   "description": "The work's opportunity solution tree, after Teresa Torres: the outcome at its root, the opportunities under it from the broadest to the most specific, the solution chosen for the opportunity that the user picked with its riskiest assumption, and the work's decisions and open questions.",
+   "description": "The work's opportunity solution tree, after Teresa Torres: the outcome at its root, as the user agreed to it, with the words of theirs it rests on, the opportunities under it from the broadest to the most specific, the solution chosen for the opportunity that the user agreed to with its riskiest assumption, and the work's decisions and open questions.",
    "type": "object",
    "required": [
     "outcome",
+    "words",
     "opportunities",
     "target",
     "decisions",
@@ -22,33 +23,42 @@
    "additionalProperties": false,
    "properties": {
     "outcome": {
-     "description": "What the user wants the work to reach, in the user's own words, as they said it or as they agreed to it, so that its meaning stays theirs.",
+     "description": "What the user is after, behind their first words, as the orchestrator read it and the user agreed to it, so that the work aims at what they mean, which they seldom say in full at first.",
      "type": "string",
      "minLength": 1
     },
+    "words": {
+     "description": "Each of the user's own words that the outcome rests on, word for word, with where they said it, such as an issue or the talk on a day, so that a reader checks the outcome against them.",
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
     "opportunities": {
-     "description": "The needs that the people named or the work found, broadest first, each more specific one under the one it serves. None is cut: the user picks.",
+     "description": "The needs that the people named or that a use showed, broadest first, each more specific one under the one it serves. None is cut: the user decides.",
      "type": "array",
      "items": {
       "$ref": "#/definitions/opportunity"
      }
     },
     "target": {
-     "description": "The id of the opportunity that the user picked, null until they pick, so that until then the work waits on the user's pick. The work's solution hangs under it.",
+     "description": "The id of the opportunity that the user agreed to make, null until they agree, so that until then the work waits on them. The work's solution hangs under it.",
      "type": [
       "string",
       "null"
      ]
     },
     "decisions": {
-     "description": "Each decision of the work, as its aim and intent in one sentence.",
+     "description": "Each decision of the work: the user's own words where they decided, and rn's in one sentence.",
      "type": "array",
      "items": {
       "$ref": "#/definitions/decision"
      }
     },
     "questions": {
-     "description": "Each question that waits on the user, in the user's words. Once answered, it goes, and its answer is a decision by user.",
+     "description": "Each question that waits on the user, in the language of the user's words. Once answered, it goes, and its answer is a decision by user.",
      "type": "array",
      "items": {
       "type": "string",
@@ -259,7 +269,7 @@
    "additionalProperties": false,
    "properties": {
     "decision": {
-     "description": "The decision, as its aim and intent in one sentence.",
+     "description": "By user, the user's words, word for word, so that their meaning stays theirs; by rn, the decision as its aim and intent in one sentence.",
      "type": "string",
      "minLength": 1
     },
