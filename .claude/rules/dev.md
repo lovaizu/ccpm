@@ -8,9 +8,9 @@ paths:
 # Plugin development in ccpm
 
 **Build a plugin whose roles work together to make a work, such as rn, by [the plugin
-guide](../../dev/plugin-development-guide.md). Build any other plugin, such as one of a hook and a
-script, as simply as Claude Code's [plugin documentation](https://code.claude.com/docs/en/plugins)
-lets its kind be built, with the LICENSE, README, CHANGELOG, and unit tests that any plugin of ccpm
+guide](plugin-development.md). Build any other plugin, such as one of a hook and a script, as
+simply as Claude Code's [plugin documentation](https://code.claude.com/docs/en/plugins) lets its
+kind be built, with the LICENSE, README, CHANGELOG, and unit tests that any plugin of ccpm
 carries.**
 
 - Rationale: the guide is for plugins of roles, as it says at its start, so a plugin of another

@@ -1,7 +1,7 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
- "title": "generator's result",
- "description": "What the generator writes as it ends, at <round>/generator.json: its result, the files it wrote, and what it found good as it tried the deliverable as its people would.",
+ "title": "generator's or refactorer's result",
+ "description": "What the generator writes as it ends, at <round>/generator.json, or the refactorer at <round>/refactorer.json: the files it wrote, or a point that only the user can settle.",
  "type": "object",
  "required": [
   "result"
@@ -9,7 +9,7 @@
  "additionalProperties": false,
  "properties": {
   "result": {
-   "description": "The word it gives as it ends: made, once the deliverable is made and tried; point, where a point that only the user can settle stops it.",
+   "description": "The word it gives as it ends: made, once the deliverable is made; point, where a point that only the user can settle stops it.",
    "enum": [
     "made",
     "point"
@@ -21,39 +21,11 @@
    "minLength": 1
   },
   "files": {
-   "description": "With made: each file it wrote, from the run's worktree.",
+   "description": "With made: each file it wrote, from the work's worktree.",
    "type": "array",
    "items": {
     "type": "string",
     "minLength": 1
-   }
-  },
-  "good": {
-   "description": "With made: each condition that it saw the deliverable meet as it tried it as its people would, with the lines that meet it.",
-   "type": "array",
-   "items": {
-    "type": "object",
-    "required": [
-     "condition",
-     "lines"
-    ],
-    "additionalProperties": false,
-    "properties": {
-     "condition": {
-      "description": "The condition's ID in the best practice, such as N2.",
-      "type": "string",
-      "minLength": 1
-     },
-     "lines": {
-      "description": "Each line of the deliverable that meets it, word for word as it stands, so that a reader checks the answer by reading them.",
-      "type": "array",
-      "minItems": 1,
-      "items": {
-       "type": "string",
-       "minLength": 1
-      }
-     }
-    }
    }
   }
  }

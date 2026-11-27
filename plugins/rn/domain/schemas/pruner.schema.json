@@ -1,92 +1,75 @@
 {
  "$schema": "http://json-schema.org/draft-07/schema#",
- "title": "pruner's result",
- "description": "What the pruner writes as it ends, at <run>/pruner.json, its weighing of one unit alone: each unit it weighed, what it cut, what it kept, each point to ask the user, each stray file, and each step of its own that it changed. tree commit acts on it and removes it, so that no commit holds it. Each string is one line, as tree commit prints each of ask and changed on a line of its own.",
+ "title": "pruner",
+ "description": "What the pruner writes as it ends, at .rn/<work>/pruner.json, for rn's hook to take into the steering once the pruner ends: the work's opportunity solution tree whole as it weighed it, and, where it settled them, the issues of the work and the steps to the target. No commit holds it.",
  "type": "object",
  "required": [
-  "units",
-  "cut",
-  "kept",
-  "ask",
-  "stray",
-  "changed"
+  "message",
+  "ost"
  ],
  "additionalProperties": false,
  "properties": {
-  "units": {
-   "description": "The absolute path of each unit file it weighed, as tree next printed it on a pruner line: a generator's point, an evaluator's result, or a fixer's decision; none for the hearing, a point that the user settled, the final check's findings, or a script's refusal. tree commit marks weighed only these.",
-   "type": "array",
-   "items": {
-    "$ref": "#/$defs/line"
-   }
+  "message": {
+   "description": "What the weighing changed and why, in one sentence, for the commit's message.",
+   "type": "string",
+   "minLength": 1
   },
-  "cut": {
-   "description": "Each element it cut, with the question of vital-few.md that cuts it.",
-   "type": "array",
-   "items": {
-    "$ref": "#/$defs/line"
-   }
+  "ost": {
+   "$ref": "steering.schema.json#/properties/ost"
   },
-  "kept": {
-   "description": "Each node it wrote or changed, by its deliverable's path and condition, which tree commit makes the ground of the tree's commit.",
-   "type": "array",
-   "items": {
-    "$ref": "#/$defs/line"
-   }
+  "issues": {
+   "$ref": "steering.schema.json#/properties/state/properties/issues"
   },
-  "ask": {
-   "description": "Each open decision for the user, in the order they should answer it, the goal's own first. tree commit signs off the plan only where this is empty.",
+  "steps": {
+   "description": "The way to the target, first to last, the walking skeleton first. A step or a deliverable that the steering already holds keeps its status.",
    "type": "array",
    "items": {
     "type": "object",
     "required": [
-     "deliverable",
-     "condition",
-     "about",
-     "question"
+     "for",
+     "settles",
+     "deliverables"
     ],
     "additionalProperties": false,
     "properties": {
-     "deliverable": {
-      "description": "The path of the deliverable that holds the open decision.",
-      "$ref": "#/$defs/line"
+     "for": {
+      "$ref": "steering.schema.json#/properties/state/properties/steps/items/properties/for"
      },
-     "condition": {
-      "description": "The ID of the necessary condition that holds it, such as N3.",
-      "$ref": "#/$defs/line"
+     "settles": {
+      "$ref": "steering.schema.json#/properties/state/properties/steps/items/properties/settles"
      },
-     "about": {
-      "description": "The open decision's about, as the deliverable holds it.",
-      "$ref": "#/$defs/line"
-     },
-     "question": {
-      "description": "One question in the people's terms, closing with the recommendation and its ground.",
-      "type": "string",
-      "pattern": "^[^\\t\\n]*I recommend [^\\t\\n]+, as [^\\t\\n]+\\.$"
+     "deliverables": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "path",
+        "kind"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "path": {
+         "type": "string",
+         "minLength": 1
+        },
+        "kind": {
+         "$ref": "steering.schema.json#/properties/state/properties/steps/items/properties/deliverables/items/properties/kind"
+        },
+        "next": {
+         "description": "Where the weighing decides what the deliverable takes next: generator, to make it again on what was weighed, within LIMIT judged Rounds; anew, to make it again from its first Round, as the solution it was made on changed; fixer, to mend it; refactorer, to refactor it; done, to end it. Absent, it goes on as the steering holds it.",
+         "enum": [
+          "generator",
+          "anew",
+          "fixer",
+          "refactorer",
+          "done"
+         ]
+        }
+       }
+      }
      }
     }
    }
-  },
-  "stray": {
-   "description": "Each file that the final check found and the goal doesn't need, by its path from the run's worktree's top, which tree commit removes by git rm.",
-   "type": "array",
-   "items": {
-    "$ref": "#/$defs/line"
-   }
-  },
-  "changed": {
-   "description": "Each step of its own that it changed, how, and why, which the orchestrator tells the user.",
-   "type": "array",
-   "items": {
-    "$ref": "#/$defs/line"
-   }
-  }
- },
- "$defs": {
-  "line": {
-   "description": "One line of text, with no tab or line break.",
-   "type": "string",
-   "pattern": "^[^\\t\\n]+$"
   }
  }
 }

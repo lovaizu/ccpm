@@ -1,7 +1,7 @@
 #!/bin/sh
-# The checks CI runs on every push, run from the top of the repository with the tools of
-# pyproject.toml's dev group: the checks' own code, the best practices, the figures, and the
-# manifests.
+# The checks CI runs on every push, and the pre-push hook before it, run from the top of the
+# repository with the tools of pyproject.toml's dev group: the checks' own code, the best
+# practices, the figures, and the manifests.
 set -e
 # Each check of how the code is laid out reports what it's for around its findings.
 . dev/scripts/findings.sh
@@ -23,9 +23,9 @@ own_python=$(git ls-files '*.py' | while read -r file; do
   [ -L "$file" ] || echo "$file"
 done)
 
-# A fix to code copied between files lands in one and leaves the other wrong, so the repository keeps
-# code more than one file needs once, as Code kept once of dev/plugin-development-guide.md
-# says. Two modules that import each other can't change or be tested apart, so each architecture's
+# A fix to code copied between files lands in one and leaves the other wrong, so the repository
+# keeps code more than one file needs once, as Code kept once of
+# .claude/rules/plugin-development.md says. Two modules that import each other can't change or be tested apart, so each architecture's
 # Test strategy checks for import cycles too. The check reads every file at once, as a copy or a
 # cycle can lie in any two.
 if command -v pylint >/dev/null 2>&1; then
@@ -68,33 +68,8 @@ for plugin in plugins/*/; do
   held design pyrefly check $paths $code
 done
 
-# Each kind's best practice lies in a folder of its own in rn, as `best-practice.json`. Its template
-# lies beside it. The check fails on:
-# - a fault in a best practice's form
-# - a template that is a JSON Schema using a keyword that rn's check of a form doesn't hold
-# - a file in the folder that neither uses, such as a figure that the template dropped
-# Each of these would make the folder say what rn doesn't hold.
-python3 dev/scripts/practices.py form plugins/rn/domain/best-practices/*/best-practice.json
-
-# Each plugin's product vision, README, and architecture holds its kind's template and nothing
-# beside it, so a section or sentence that drifts from the template shows on the push that adds it.
-for vision in dev/*/product-vision.md; do
-  python3 plugins/rn/domain/scripts/template product-vision "$vision"
-done
-for readme in plugins/*/README.md; do
-  python3 plugins/rn/domain/scripts/template readme "$readme"
-done
-for architecture in dev/*/architecture.md; do
-  python3 plugins/rn/domain/scripts/template architecture "$architecture"
-done
-
-# Each decision of an architecture's views tags the story or rule it carries out, and each story
-# and rule is carried out somewhere, as the architecture best practice's template says, so a
-# decision that serves nothing, or a rule that nothing carries out, shows before any case is written.
-for architecture in dev/*/architecture.md; do
-  plugin="${architecture#dev/}"
-  python3 dev/scripts/trace.py tags "${plugin%/architecture.md}"
-done
+# Each of rn's best practices holds to its schema, as every role reads it by that form.
+python3 dev/scripts/practices.py plugins/rn/domain/best-practices/*/best-practice.json
 
 # Every figure carries the one style of dev/images/figures.css and sets no font or color of its own,
 # so the figures look alike and one place changes a look, as .claude/rules/figures.md says.

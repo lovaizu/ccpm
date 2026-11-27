@@ -1,5 +1,5 @@
 """Decides how each of rn's commands says what stopped it: a fault of the input that whoever ran it
-can mend, a thing outside the work that's missing, or a check that couldn't run; and how each ends,
+can mend, a thing outside the work that's missing, or a step that couldn't run; and how each ends,
 with what it prints and the exit code it gives."""
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ Answer = tuple[int, str, str]
 
 
 class Wrong(Exception):
-    """An input from outside that a command refuses, such as a file out of its form, said so that
+    """An input from outside that a command refuses, such as a file that isn't JSON, said so that
     whoever ran the command can mend it: which file or argument, what's wrong, and what it takes.
     The command gives 1."""
 
@@ -24,8 +24,8 @@ class Missing(Exception):
 
 
 class CantRun(Exception):
-    """What kept a command from doing what it names, such as a file it couldn't read, so that it
-    passes nothing it didn't check. The command gives 2."""
+    """What kept a command from doing what it names, such as git failing, so that it claims nothing
+    it didn't do. The command gives 2."""
 
 
 def answered(script: str, call: Callable[[], Answer]) -> Answer:
@@ -44,7 +44,7 @@ def end(main: Callable[[], Answer]) -> NoReturn:
     """Ends the command with what its `main` gave: the exit code, what goes to stdout, and what
     goes to stderr. Where `main` raises an error that no fault names, it ends with 2 and the
     error's traceback on stderr, as the role that ran it reads 1 as a fault of its input to mend
-    and 2 as a check that couldn't check, which a rerun checks no more."""
+    and 2 as a step that couldn't run, which a rerun runs no better."""
     try:
         code, printed, said = main()
     except Exception:  # noqa: BLE001 - the entry of each command, where any error ends it.

@@ -1,8 +1,8 @@
 """The unit cases of practice.py, where each kind's best practice lies and what of it each role
-gets: `kinds` of rn's own best practices, of a run's own before them and beside them, and of a
-folder of neither; `read` of a best practice, one missing, one that isn't JSON, and one out of its
-form; `judged` without any practice; and `refactoring` of a kind of code, of light, and of another
-kind. dev/scripts/practices.py holds each of rn's best practices to its form."""
+gets: `kinds` of rn's own best practices, of the work's own before them and beside them, and of a
+folder of neither; `read` of a best practice, one missing, and one that isn't JSON; `judged` without
+any practice; and `refactoring` of a kind of code, of light, and of another kind.
+dev/scripts/practices.py holds each of rn's best practices to its schema."""
 
 from __future__ import annotations
 
@@ -32,31 +32,31 @@ def normalized(found: dict[str, str]) -> dict[str, str]:
 
 @pytest.fixture
 def worktree(tmp_path: Any) -> str:
-    """A run's worktree with no best practice of its own."""
+    """The work's worktree with no best practice of its own."""
     folder = os.path.join(str(tmp_path), "worktree")
     os.makedirs(folder)
     return folder
 
 
 def own(worktree: str, kind: str, practice: Any) -> str:
-    """Writes the run's own best practice of the kind, and gives its folder."""
+    """Writes the work's own best practice of the kind, and gives its folder."""
     folder = os.path.join(worktree, ".rn", "best-practices", kind)
     rn_files.write_json(os.path.join(folder, "best-practice.json"), practice)
     return folder
 
 
-def test_kinds_of_a_run_with_none_of_its_own_are_rns(worktree: str):
-    """Given a run's worktree with no .rn/best-practices/
+def test_kinds_of_the_work_with_none_of_its_own_are_rns(worktree: str):
+    """Given the work's worktree with no .rn/best-practices/
     When the kinds are asked
     Then each is rn's, by its folder's name"""
     assert normalized(kinds(rn_files.RN, worktree)) == normalized(rns_kinds())
 
 
-def test_kinds_take_a_runs_own_best_practices_before_rns_and_beside_them(worktree: str):
-    """Given a run's worktree holding its own best practice of the kind light, and one of a kind
+def test_kinds_take_the_works_own_best_practices_before_rns_and_beside_them(worktree: str):
+    """Given the work's worktree holding its own best practice of the kind light, and one of a kind
     rn has none of, `invoice`, made by a meta deliverable
     When the kinds are asked
-    Then light and invoice are the run's own folders, and each other kind rn's"""
+    Then light and invoice are the work's own folders, and each other kind rn's"""
     expected = rns_kinds()
     for kind in ("light", "invoice"):
         expected[kind] = own(worktree, kind, rn_files.practice("light"))
@@ -64,7 +64,7 @@ def test_kinds_take_a_runs_own_best_practices_before_rns_and_beside_them(worktre
 
 
 def test_kinds_leave_out_a_folder_with_no_best_practice_json(worktree: str):
-    """Given a run's worktree whose .rn/best-practices/readme/ holds a template alone
+    """Given the work's worktree whose .rn/best-practices/readme/ holds a template alone
     When the kinds are asked
     Then readme is rn's"""
     path = os.path.join(worktree, ".rn", "best-practices", "readme", "template.md")
@@ -99,19 +99,6 @@ def test_read_of_a_best_practice_that_isnt_json_is_refused_naming_the_file(tmp_p
         read(str(tmp_path))
 
 
-def test_read_of_a_best_practice_out_of_its_form_is_refused_naming_its_first_fault(tmp_path: Any):
-    """Given a folder whose best-practice.json is light's without its inputs, which its form
-    requires
-    When it is read
-    Then it raises Wrong naming best-practice.json and inputs"""
-    practice = rn_files.practice("light")
-    del practice["inputs"]
-    rn_files.write_json(os.path.join(str(tmp_path), "best-practice.json"), practice)
-    with pytest.raises(Wrong, match="best-practice.json") as raised:
-        read(str(tmp_path))
-    assert "inputs" in str(raised.value)
-
-
 def test_judged_gives_the_goal_and_each_condition_without_its_practice():
     """Given rn's best practice of the kind readme, read from JSON
     When what an evaluator judges by is asked
@@ -127,7 +114,7 @@ def test_judged_gives_the_goal_and_each_condition_without_its_practice():
     [("test-design", "refactor-code"), ("light", None), ("invoice", "refactor-doc")],
 )
 def test_refactoring_of_a_kind(kind: str, by: str | None):
-    """Given a kind of code, light, or another kind, one that a run made among them
+    """Given a kind of code, light, or another kind, one that the work made among them
     When the kind it's refactored by is asked
     Then it gives refactor-code, None, or refactor-doc"""
     assert refactoring(kind) == by

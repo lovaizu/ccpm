@@ -1,40 +1,17 @@
-# Prompt
+# `<name>`
 
-## Description
+## Role
 
-`<description>`
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT:
-> - `<description>`: what the host reads to choose the prompt for a request: a name that says what
->   the prompt does, and a description of what it does and the requests to use it for.
-
-## Tools
-
-`<tools>`
+`<role>`
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<tools>`: the tools the AI may use. The prompt lists them where the host reads them, when the
->   host allows such a list. The host refuses any tool not on it.
-
-## Goal
-
-`<goal>`
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT:
-> - `<goal>`: what the AI reads first in the body: what it's to achieve, for whom, how it knows it
->   has finished, and what the user decides and the AI judges, as N7 says.
-
-## Context
-
-`<context>`
-
-> [!NOTE]
-> DELETE_TEMPLATE_COMMENT:
-> - `<context>`: only what the AI needs and can't find or know on its own, such as its inputs and
->   where they lie, or a rule of this place, as N4 says.
+> - `<name>`: the role's name, such as `Generator`.
+> - `<role>`: what the AI reads first: who it is and the one job it's accountable for, in one
+>   sentence, where its job ends and another role's begins, and why the role exists, as N3 says,
+>   with what the user decides and the AI judges, as N7 says. The entry that starts
+>   the prompt, such as `agents/<role>.md`, holds its name, description, and tools, in the form
+>   Claude Code fixes.
 
 ## Steps
 
@@ -42,10 +19,11 @@
 
 > [!NOTE]
 > DELETE_TEMPLATE_COMMENT:
-> - `<steps>`: the steps, in the order the AI takes them. Each step names the result that holds when
->   it ends, what it's for, and the question the AI thinks through there. A step with one right
->   result names the script that does it and how to run it. A rule stands only where that intent
->   can't hold it, with its reason, as N6 says.
+> - `<steps>`: the steps, in the order the AI takes them. Each step gives its purpose and intent:
+>   the result that holds when it ends, what it's for, and the question the AI thinks through
+>   there. Beside them, a step holds only the plugin's own rules, each with its reason, such as the
+>   script that does a step with one right result, and the facts the AI can't find on its own, such
+>   as where its inputs lie, as N4, N6, and N9 say.
 > - Where some runs take steps that others don't, one step names each kind of run and gives each
 >   its own steps, as N5 says.
 
@@ -57,4 +35,3 @@
 > DELETE_TEMPLATE_COMMENT:
 > - `<output>`: what the AI hands back, in what form, and to whom, with the intent from which the AI
 >   writes each message and each claim, which N14 gives for messages and N15 for claims.
-

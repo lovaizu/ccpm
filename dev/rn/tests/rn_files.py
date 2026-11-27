@@ -1,59 +1,109 @@
 """How rn's cases make the files that rn reads, each in the form that its use reads it: a best
-practice as its best-practice.json holds it, a design tree of design-tree.schema.json, a run's
-folder at the place that the architecture's Directory structure names, a Round's folder with its
-Cuts and results, a git repository with a commit, as the user's repository is, and the input that
-Claude Code gives rn's hook before a tool call.
+practice as its best-practice.json holds it.
 
 Each helper writes or gives what the documents name, and nothing of how rn's code reads it, so
 that a case calls rn's parts only through their interfaces."""
 
 from __future__ import annotations
 
-import copy
 import functools
 import json
 import os
-import shutil
-from collections.abc import Iterable, Mapping, Sequence
+import subprocess
 from typing import Any
-from urllib.parse import quote
 
-from repo_files import git
+from place import WorkPlace
+from repo_files import git, write_files
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
 RN = os.path.join(TOP, "plugins", "rn")
 PRACTICES = os.path.join(RN, "domain", "best-practices")
-INVOICER = os.path.join(TOP, "dev", "rn", "tests", "invoicer")
+SCHEMAS = os.path.join(RN, "domain", "schemas")
 
-# The bench's own request, in English, apart from the Japanese run that rn's README walkthrough
-# shows: the user's words in reply to /rn:on, the goal as the orchestrator puts it with what its
-# people do then, and the two deliverables of the plan, the command and its guide, the guide resting
-# on the command.
-WORDS = (
-    "a command with which the accounting team prints an invoice from its lines, without writing"
-    " Python"
+# The outcome and the needs of the README's walkthrough, in English.
+OUTCOME = (
+    "An accountant who sends invoices at the month's end prints one from a statement file,"
+    " without a developer's help."
 )
-GOAL = (
-    "The accounting team prints each invoice themselves from the lines they keep in a"
-    " spreadsheet, without asking a developer. A colleague from accounting prints an invoice from"
-    " the guide alone."
-)
-# The run's slug that the orchestrator writes from WORDS, as the cases that make the run give it:
-# one to five lower-case English words joined by `-`.
-NAMED = "a-command-with-which-the"
-COMMAND = "invoicer/__main__.py"
-COMMAND_NAME = "A command that prints an invoice from a file of its lines"
+PRINT = "I print one invoice from a statement file."
+RULES = "It meets the invoice rules."
+SETTLES = "the least that prints one invoice"
+COMMAND = "invoice/__main__.py"
 GUIDE = "docs/guide.md"
-GUIDE_NAME = "A guide from which the accounting team prints an invoice on its own"
-# The languages that the walkthrough's user settles: of the deliverables, and of the talk.
-DELIVERABLES_LANGUAGE = "English"
-CONVERSATION_LANGUAGE = "English"
-# The languages as `repository new` takes them, after the words and the goal.
-LANGUAGES = (DELIVERABLES_LANGUAGE, CONVERSATION_LANGUAGE)
-# The point that the walkthrough puts to the user, and their answer.
-TAX_POINT = "Should the tax rate be given with each invoice, or set once?"
-TAX_ABOUT = "the tax rate"
-TAX_ANSWER = "with each invoice"
+
+
+# The walkthrough's walking skeleton as the pruner gives it: the command, then its guide.
+WAY = {
+    "for": "O1",
+    "settles": SETTLES,
+    "deliverables": [{"path": COMMAND, "kind": "code"}, {"path": GUIDE, "kind": "readme"}],
+}
+
+
+def schema(name: str = "steering") -> dict[str, Any]:
+    """rn's schema of the name, read from domain/schemas/."""
+    with open(os.path.join(SCHEMAS, f"{name}.schema.json"), encoding="utf-8") as f:
+        return json.load(f)
+
+
+def opportunity(id_: str, words: str, under: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """An opportunity of the steering, named by the user on the walkthrough's day, with no
+    solution."""
+    return {
+        "id": id_,
+        "opportunity": words,
+        "by": "the user on 2026-11-26",
+        "opportunities": under or [],
+        "solution": None,
+    }
+
+
+def ost(target: str | None = "O1", questions: list[str] | None = None) -> dict[str, Any]:
+    """The walkthrough's opportunity solution tree: printing an invoice, with the rules under it,
+    and its solution where it's the target."""
+    picked = opportunity("O1", PRINT, [opportunity("O1.1", RULES)])
+    if target == "O1":
+        picked["solution"] = {
+            "solution": "A command that reads a statement file and prints one invoice.",
+            "why": "It's the least that prints.",
+            "assumption": {
+                "assumption": "The accountant can name the statement file.",
+                "test": "The user prints the sample statement.",
+                "result": None,
+            },
+        }
+    return {
+        "outcome": OUTCOME,
+        "opportunities": [picked],
+        "target": target,
+        "decisions": [{"decision": "Talk in Japanese, and write in English.", "by": "user"}],
+        "questions": questions or [],
+    }
+
+
+def step(status: str = "open", done: tuple[str, ...] = ()) -> dict[str, Any]:
+    """The walkthrough's walking skeleton: the command, then its guide, each done where named."""
+    return {
+        "for": "O1",
+        "settles": SETTLES,
+        "deliverables": [
+            {"path": path, "kind": kind, "status": "done" if path in done else "open"}
+            for path, kind in ((COMMAND, "code"), (GUIDE, "readme"))
+        ],
+        "status": status,
+    }
+
+
+def steering(steps: list[dict[str, Any]] | None = None, **fields: Any) -> dict[str, Any]:
+    """A steering in its schema's form: the walkthrough's tree, with its fields as given, and the
+    steps as given, or its walking skeleton, open."""
+    return {
+        "ost": ost(**fields),
+        "state": {
+            "issues": {"closes": [38], "refs": []},
+            "steps": [step()] if steps is None else steps,
+        },
+    }
 
 
 @functools.cache
@@ -65,15 +115,6 @@ def _practice(kind: str) -> str:
 def practice(kind: str) -> dict[str, Any]:
     """rn's best practice of the kind, read from the JSON of its best-practice.json."""
     return json.loads(_practice(kind))
-
-
-def conditions(kind: str) -> list[str]:
-    """The ID of each necessary condition of rn's best practice of the kind, in its order."""
-    return [
-        each["id"]
-        for factor in practice(kind)["goal"]["critical_success_factors"]
-        for each in factor["necessary_conditions"]
-    ]
 
 
 def judged_by(kind: str) -> dict[str, Any]:
@@ -97,184 +138,6 @@ def judged_by(kind: str) -> dict[str, Any]:
     }
 
 
-def condition(
-    id: str, good: bool = False, decisions: Sequence[Mapping[str, Any]] = ()
-) -> dict[str, Any]:
-    """A necessary condition of a deliverable, with whether it's good and its decisions."""
-    return {"id": id, "good": good, "decisions": [dict(each) for each in decisions]}
-
-
-def decision(about: str, decided: str | None, by: str | None = "reasoning") -> dict[str, Any]:
-    """A decision: settled where `decided` is a string, by `by`, or open where it's None."""
-    if decided is None:
-        return {"about": about, "decided": None}
-    return {"about": about, "decided": decided, "by": by}
-
-
-def open_node(
-    name: str,
-    path: str,
-    kind: str,
-    inputs: Sequence[str] = (),
-    good: bool | Iterable[str] = False,
-) -> dict[str, Any]:
-    """An open deliverable of the kind, with each necessary condition of its best practice in
-    order, good where `good` is True or names it, each with no decision."""
-    held = set(conditions(kind)) if good is True else set(good or ())
-    return {
-        "name": name,
-        "path": path,
-        "kind": kind,
-        "inputs": list(inputs),
-        "status": "open",
-        "necessary_conditions": [condition(each, each in held) for each in conditions(kind)],
-    }
-
-
-def decided(
-    node: Mapping[str, Any], decisions: Mapping[str, Sequence[Mapping[str, Any]]]
-) -> dict[str, Any]:
-    """A copy of the deliverable with each decision given added to its condition, by its ID."""
-    given = copy.deepcopy(dict(node))
-    for each in given["necessary_conditions"]:
-        each["decisions"] += [dict(d) for d in decisions.get(each["id"], ())]
-    return given
-
-
-def done_node(
-    name: str,
-    path: str,
-    kind: str,
-    good: bool | Iterable[str] = True,
-    decisions: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
-) -> dict[str, Any]:
-    """A deliverable that's done, keeping each necessary condition of its best practice in order,
-    good where `good` is True or names it, with each decision given added to its condition by its
-    ID."""
-    held = decided(open_node(name, path, kind, good=good), decisions or {})
-    return {
-        "name": name,
-        "path": path,
-        "kind": kind,
-        "status": "done",
-        "necessary_conditions": held["necessary_conditions"],
-    }
-
-
-def version() -> str:
-    """rn's version, as its plugin.json gives it."""
-    return read_json(os.path.join(RN, ".claude-plugin", "plugin.json"))["version"]
-
-
-def context(
-    closes: Sequence[int] = (), refs: Sequence[int] = (), pr: str | None = None
-) -> dict[str, Any]:
-    """A design tree's context: rn's version, the walkthrough's languages, the issues, the pull
-    request."""
-    return {
-        "rn": version(),
-        "languages": {"deliverables": DELIVERABLES_LANGUAGE, "conversation": CONVERSATION_LANGUAGE},
-        "issues": {"closes": list(closes), "refs": list(refs)},
-        "pr": pr,
-    }
-
-
-def tree(
-    deliverables: Sequence[Mapping[str, Any]],
-    goal: str = GOAL,
-    by: str = "user",
-    steps: Sequence[Mapping[str, Any]] = (),
-) -> dict[str, Any]:
-    """A design tree with the context as a run starts it, the goal, the deliverables, and the
-    steps of the way to the goal, none where none is given, as before the plan holds them."""
-    return {
-        "context": context(),
-        "goal": {"decided": goal, "by": by},
-        "deliverables": [copy.deepcopy(dict(each)) for each in deliverables],
-        "steps": [copy.deepcopy(dict(each)) for each in steps],
-    }
-
-
-def step(settles: str, deliverables: Sequence[str], signoff: bool) -> dict[str, Any]:
-    """A step of the way to the goal: what it settles, the path of each of its deliverables, and
-    whether the user signs each off."""
-    return {"settles": settles, "deliverables": list(deliverables), "signoff": signoff}
-
-
-def plan_path(name: str) -> str:
-    """The plan's path from the run's worktree, the tree's own."""
-    return f".rn/{name}/design-tree.json"
-
-
-def plan(name: str, good: bool | Iterable[str] = True, goal: str = GOAL) -> dict[str, Any]:
-    """The plan, the tree's own deliverable of the kind `design-tree`, named by the goal."""
-    return open_node(goal, plan_path(name), "design-tree", good=good)
-
-
-def started(name: str) -> dict[str, Any]:
-    """The design tree that a run starts from, before the pruner writes the goal: the context, the
-    goal open as an open decision is, `decided` null, and the plan as its one deliverable, its name
-    empty until the pruner names it by the goal, each condition not good, with no work or steps."""
-    design_tree = tree([plan(name, good=False, goal="")])
-    design_tree["goal"] = {"decided": None}
-    return design_tree
-
-
-# The figure that the readme template has the guide keep of its own, from the worktree's top.
-GUIDE_FIGURE = "docs/images/how-it-works.svg"
-
-
-def guide_node(good: bool | Iterable[str] = False) -> dict[str, Any]:
-    """The walkthrough's guide, open, of the kind `readme`, resting on the command, with the figure
-    that its template has it keep as its more path."""
-    node = open_node(GUIDE_NAME, GUIDE, "readme", [COMMAND], good)
-    node["more_paths"] = [GUIDE_FIGURE]
-    return node
-
-
-def walkthrough_tree(
-    name: str,
-    plan_done: bool = True,
-    command_good: bool | Iterable[str] = False,
-    guide_good: bool | Iterable[str] = False,
-    command_decisions: Mapping[str, Sequence[Mapping[str, Any]]] | None = None,
-) -> dict[str, Any]:
-    """The design tree of the walkthrough's run: the plan, done or open with each condition good,
-    the command, of the kind `light`, resting on invoicer's lines, and the guide, of the kind
-    `readme`, resting on the command, with its figure."""
-    head = done_node(GOAL, plan_path(name), "design-tree") if plan_done else plan(name, good=True)
-    return tree(
-        [
-            head,
-            decided(
-                open_node(COMMAND_NAME, COMMAND, "light", ["invoicer/lines.py"], command_good),
-                command_decisions or {},
-            ),
-            guide_node(guide_good),
-        ]
-    )
-
-
-# Where a run lies, as the architecture's Directory structure and repository.place's contract
-# name each path.
-
-
-def worktree_of(repository: str, name: str) -> str:
-    """The run's worktree, `<repository>/.claude/worktrees/rn-<name>`."""
-    return os.path.join(repository, ".claude", "worktrees", f"rn-{name}")
-
-
-def folder_of(repository: str, name: str) -> str:
-    """The run's folder, `<worktree>/.rn/<name>`."""
-    return os.path.join(worktree_of(repository, name), ".rn", name)
-
-
-def round_of(run_folder: str, deliverable: str, stage: str, number: int) -> str:
-    """A Round's folder, `<run's folder>/rounds/<deliverable, percent-encoded whole>/<stage>-<n>`,
-    as rounds.files names it."""
-    return os.path.join(run_folder, "rounds", quote(deliverable, safe=""), f"{stage}-{number}")
-
-
 def write_json(path: str, value: Any) -> None:
     """Writes the value as JSON at the path, its folder made."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -283,95 +146,19 @@ def write_json(path: str, value: Any) -> None:
         f.write("\n")
 
 
-def read_json(path: str) -> Any:
-    """The JSON of the file."""
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
-
-
-def run_folder(repository: str, name: str, design_tree: Mapping[str, Any]) -> str:
-    """Writes the run's design tree in its folder, under its worktree, as files alone, with no git,
-    and gives the run's folder."""
-    folder = folder_of(repository, name)
-    write_json(os.path.join(folder, "design-tree.json"), design_tree)
-    return folder
-
-
-def a_round(
-    run: str, deliverable: str, stage: str, number: int, results: Mapping[str, Any] | None = None
-) -> str:
-    """Writes a Round's folder with each file given by its name, `<name>.json`: each role's
-    result, by `generator` and `evaluator`, and the mark of the tree's commit that weighed its last
-    result, by `weighed`, as `WEIGHED` gives it; gives the folder."""
-    folder = round_of(run, deliverable, stage, number)
-    os.makedirs(folder, exist_ok=True)
-    for role, result in (results or {}).items():
-        write_json(os.path.join(folder, f"{role}.json"), result)
-    return folder
-
-
-# The mark of a Round whose last result a commit of the tree weighed, as `a_round` takes it.
-WEIGHED = {"weighed": {"commit": "a1b2c3"}}
-
-
-def pruner_result(**fields: Sequence[Any]) -> dict[str, Any]:
-    """A pruner's result, in the form of pruner.schema.json, each of its fields as given, by its
-    name, and else empty, but `kept`, which keeps one node."""
-    result: dict[str, Any] = {
-        "units": [],
-        "cut": [],
-        "kept": ["/deliverables/1 N1: the tax rate"],
-        "ask": [],
-        "stray": [],
-        "changed": [],
-    }
-    result.update(
-        {
-            name: [dict(each) if isinstance(each, Mapping) else each for each in value]
-            for name, value in fields.items()
-        }
-    )
-    return result
-
-
-def made(good: Sequence[tuple[str, Sequence[str]]] = (), files: Sequence[str] = ()) -> dict:
-    """A generator's result `made`, with the files it wrote and each condition it saw good."""
-    return {
-        "result": "made",
-        "files": list(files),
-        "good": [{"condition": c, "lines": list(lines)} for c, lines in good],
-    }
-
-
-def point(words: str = TAX_POINT) -> dict[str, Any]:
-    """A generator's result `point`, with the point."""
-    return {"result": "point", "point": words}
-
-
-def judged(
-    good: Sequence[tuple[str, Sequence[str]]] = (), more: Sequence[tuple[str, str]] = ()
-) -> dict[str, Any]:
-    """An evaluator's result `judged`, with each condition good and each with more."""
-    return {
-        "result": "judged",
-        "good": [{"condition": c, "lines": list(lines)} for c, lines in good],
-        "more": [{"condition": c, "good_when": when} for c, when in more],
-    }
-
-
 # The user's repository.
 
 
 def repository(folder: str, branch: str = "main") -> str:
-    """Makes a git repository in the folder with invoicer's files committed on the branch, and
-    gives its real path."""
+    """Makes a git repository in the folder with a README committed on the branch, and gives its
+    real path."""
     os.makedirs(folder, exist_ok=True)
     git(folder, "init", "-q", "-b", branch)
     git(folder, "config", "user.email", "rn@example.com")
     git(folder, "config", "user.name", "rn")
-    shutil.copytree(INVOICER, folder, dirs_exist_ok=True)
+    write_files(folder, {"README.md": "# Accounting\n"})
     git(folder, "add", "-A")
-    git(folder, "commit", "-q", "-m", "invoicer")
+    git(folder, "commit", "-q", "-m", "accounting")
     return os.path.realpath(folder)
 
 
@@ -387,21 +174,32 @@ def with_origin(repo: str, origin: str) -> str:
     return origin
 
 
-# The hook's input.
+def worktree_of(repo: str, folder: str, branch: str) -> str:
+    """Adds a worktree of the repository in the folder, on a new branch from its head, and gives
+    its real path."""
+    git(repo, "worktree", "add", "-q", "-b", branch, folder)
+    return os.path.realpath(folder)
 
 
-def hook_input(cwd: str, tool: str, tool_input: Any, agent: Any = None) -> str:
-    """The JSON that Claude Code gives a PreToolUse hook on stdin for a call of the tool with its
-    input, made in the folder, by the agent, as `agent_type` names it, or by the main
-    conversation, which names none, where the agent is None."""
-    called: dict[str, Any] = {
-        "session_id": "abc123",
-        "cwd": cwd,
-        "hook_event_name": "PreToolUse",
-        "tool_name": tool,
-        "tool_input": tool_input,
-        "tool_use_id": "toolu_01",
-    }
-    if agent is not None:
-        called.update({"agent_id": "a1", "agent_type": agent})
-    return json.dumps(called)
+def work_with_origin(folder: str, name: str) -> WorkPlace:
+    """Makes the user's repository `accounting` in the folder, with a bare `origin.git` beside it
+    as its remote, and the work of the name in a worktree `invoices` beside it on the branch
+    `invoices`, its folder empty, and gives the work."""
+    repo = repository(os.path.join(folder, "accounting"))
+    with_origin(repo, os.path.join(folder, "origin.git"))
+    held = WorkPlace(worktree_of(repo, os.path.join(folder, "invoices"), "invoices"), name)
+    os.makedirs(held.folder)
+    return held
+
+
+def committed_steering(
+    worktree: str, name: str, value: Any, when: str = "2026-11-26T09:00:00"
+) -> None:
+    """Writes the work's steering in its worktree, and commits it as made at the time given, as each
+    piece of work's branch is ordered by their last commit's time."""
+    write_json(os.path.join(worktree, ".rn", name, "steering.json"), value)
+    git(worktree, "add", "-A")
+    env = {**os.environ, "GIT_COMMITTER_DATE": when, "GIT_AUTHOR_DATE": when}
+    subprocess.run(
+        ["git", "-C", worktree, "commit", "-q", "-m", f"steering of {name}"], env=env, check=True
+    )

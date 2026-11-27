@@ -13,9 +13,9 @@ SCRIPTS = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path[0] = SCRIPTS
 
 from fault import end
+from host import run
 
 from repository.command import main
-from repository.host import run
 
 if __name__ == "__main__":
     end(lambda: main(sys.argv[1:], os.getcwd(), os.path.dirname(os.path.dirname(SCRIPTS)), run))

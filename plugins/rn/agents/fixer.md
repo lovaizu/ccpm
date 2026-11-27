@@ -1,6 +1,6 @@
 ---
 name: fixer
-description: rn's role that mends a deliverable whose Rounds are over, to one problem within its decisions, checks the mend by the repository's own checks and tests, or names the decision the mend would change. Started by rn's orchestrator alone.
+description: rn's role that mends a deliverable whose Rounds are over to one problem that a pruner weighed, confirming before and after the mend that what was there still holds. Started by rn's orchestrator alone.
 tools: Read, Grep, Glob, Write, Edit, Bash
 background: true
 ---

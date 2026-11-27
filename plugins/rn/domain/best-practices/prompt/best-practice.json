@@ -8,8 +8,8 @@
     "necessary_conditions": [
      {
       "id": "N1",
-      "about": "Description",
-      "what": "Do the name and the description let the host choose the prompt for each request it's for, and pass it over for a near request it isn't for?",
+      "about": "the whole",
+      "what": "Do the name and the description in the prompt's entry let the host choose the prompt for each request it's for, and pass it over for a near request it isn't for?",
       "why": "To pick a prompt for a request, the host reads only the name and the description of each of many prompts, so the prompt runs only where those two lead the host. Prompt writers write such a description as the [skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) do: what the prompt does, then when to use it, in the third person and in the words users ask in.",
       "items": [
        {
@@ -44,8 +44,8 @@
      },
      {
       "id": "N2",
-      "about": "Description, Goal",
-      "what": "Does the body do exactly the task that the description says, which the architecture gives the prompt's component?",
+      "about": "the whole",
+      "what": "Does the body do exactly the task that the entry's description says, which the architecture gives the prompt's component?",
       "why": "The caller gets what the description promised, and the product gets what the architecture gives the prompt's component, only if the body does that same task.",
       "items": [
        {
@@ -66,31 +66,31 @@
     "necessary_conditions": [
      {
       "id": "N3",
-      "about": "Goal",
-      "what": "Does the goal say what the task is for, as the people it serves reach their aim, and how the AI checks that it has reached it?",
-      "why": "The AI stops when its work looks done, so the prompt must say what the result is for, and give a check that separates done from looking done, as Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run) give the AI something to run that comes back pass or fail.",
+      "about": "Role",
+      "what": "Does the role say in one sentence who the AI is, the one job it's accountable for, where its job ends and another role's begins, and why the role exists?",
+      "why": "A single sentence of role focuses the AI's behavior, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#give-claude-a-role) say, and a role focused on one task does it well, as Claude Code's [subagents](https://code.claude.com/docs/en/sub-agents) guide says. Roles without clear boundaries duplicate work and leave gaps, as Anthropic's [multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) found, and the reason for the role lets the AI generalize to a case that the steps don't name.",
       "items": [
        {
         "at": "decide",
-        "text": "Write what the task is for in one sentence: whom the result serves, the story's role of each user story whose sequence the prompt's component takes part in, what they gain by it, the story's benefit, and the few things of the task that bring them there, from the line of the prompt's component in the architecture, such as `so that the developer gets a plan they can approve in one reading, holding only the deliverables their request needs`."
+        "text": "Take the line of the prompt's component in the architecture's Components, and write who the AI is and the one job it's accountable for in one sentence, such as `You're rn's evaluator, accountable for the deliverable as its people meet it.`"
        },
        {
         "at": "decide",
-        "text": "List what holds once the AI has done the task: each thing it hands on at its last arrow in Sequences, and each file or state it leaves, such as a plan written in its form."
+        "text": "Take the components whose arrows meet the prompt's component in the architecture's Sequences, and write what lies on their side, so that the AI neither does their work nor leaves a gap, such as `Making or mending it is the generator's.`"
        },
        {
         "at": "decide",
-        "text": "For each thing on the list that could look done while it isn't, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request."
+        "text": "Take the intent of the strategy that gives the component its job in the architecture, and write what breaks without the role, so that the AI judges by it where a step doesn't fit, such as `Its maker can't see where the people would stumble, as it knows what was meant.`"
        },
        {
-        "at": "decide",
-        "text": "Decide when the AI stops: once every check passes, or at a blocker it can't pass, which it hands back with what it found."
+        "at": "make",
+        "text": "Keep the role to these and to the intent of N7, and give each detail of the work to the steps."
        }
       ]
      },
      {
       "id": "N4",
-      "about": "Context",
+      "about": "Steps",
       "what": "Does the prompt give every fact that the AI can't find or know on its own, and say where the rest lies?",
       "why": "The AI is able but new to this place, and gets nothing of the conversation that started it, so a fact the prompt leaves out becomes a guess, and a fact the AI would find anyway takes its attention from the rest.",
       "items": [
@@ -116,17 +116,29 @@
     "necessary_conditions": [
      {
       "id": "N5",
-      "about": "Goal, Steps",
-      "what": "Does each step lead toward what the goal says the task is for, with the question the AI thinks through there from the facts at hand, and the last step reaching it?",
-      "why": "An AI that knows what each step's result is for, and thinks there from the facts in front of it, chooses how to reach it, puts its effort where the people gain most, and follows the purpose where a step doesn't fit the case.",
+      "about": "Role, Steps",
+      "what": "Does each step lead toward the job that the role names, with the question the AI thinks through there from the facts at hand, and the last step reaching a result that a check shows done?",
+      "why": "An AI that knows what each step's result is for, and thinks there from the facts in front of it, chooses how to reach it, puts its effort where the people gain most, and follows the purpose where a step doesn't fit the case. The AI stops when its work looks done, so the last step gives a check that separates done from looking done, as Claude Code's [best practices](https://code.claude.com/docs/en/best-practices#give-claude-a-check-to-run) give the AI something to run that comes back pass or fail.",
       "items": [
        {
         "at": "decide",
-        "text": "Go through the steps that the arrows of the prompt's component in the architecture's Sequences give it, and ask of each whether an AI that holds the goal, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI."
+        "text": "Go through the steps that the arrows of the prompt's component in the architecture's Sequences give it, and ask of each whether an AI that holds the job that the role names, as N3.1 wrote it, would know how to reach the step's result. Write a step only where it wouldn't, such as a check to run or a form to keep, and leave the rest to the AI."
        },
        {
         "at": "decide",
-        "text": "Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the design tree.`"
+        "text": "Give each step the result it leaves, what that result is for, and the question the AI thinks through there from the facts at hand, such as `Read what the round shows, and ask which of it brings the people closer. Take that into the steering.`"
+       },
+       {
+        "at": "decide",
+        "text": "List what holds once the AI has done the task: each thing it hands on at its last arrow in Sequences, and each file or state it leaves, such as a plan written in its form."
+       },
+       {
+        "at": "decide",
+        "text": "For each thing on the list that could look done while it isn't, decide the check that shows it holds: a command that comes back pass or fail where the product has one, such as a schema check or a test, since its result doesn't rest on the AI's reading, or else what to open and what to compare it with, such as the plan against the request."
+       },
+       {
+        "at": "decide",
+        "text": "Decide when the AI stops: once every check passes, or at a blocker it can't pass, which it hands back with what it found."
        },
        {
         "at": "make",
@@ -138,7 +150,7 @@
        },
        {
         "at": "make",
-        "text": "Check that a later step or the goal uses each step's result, and cut a step whose result nothing uses."
+        "text": "Check that a later step or the role uses each step's result, and cut a step whose result nothing uses."
        }
       ]
      },
@@ -180,7 +192,7 @@
      },
      {
       "id": "N7",
-      "about": "Goal",
+      "about": "Role",
       "what": "Does the prompt convey that the user gives the purpose and intent and decides, that the AI judges all that follows from them, and how the AI hands back what's the user's?",
       "why": "The user's purpose and intent stay the user's only if the AI hands them what's theirs, and the user isn't asked what their purpose already settles only if the AI judges the rest. A list of the user's choices makes the AI ask at each branch on the list and decide at each other, so the prompt conveys the intent, from which the AI tells a choice of the user's at a branch that the writer didn't foresee, as Anthropic's [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#balancing-autonomy-and-safety) have the AI act on its own and stop before an action that's hard to undo or touches what others share.",
       "items": [
@@ -194,7 +206,7 @@
        },
        {
         "at": "make",
-        "text": "Write in the Goal that intent with its reason, in place of a list of the user's choices, such as `The developer gives what the work is for, and decides it. Judge what follows from that yourself, and hand back only what it leaves open, or an action that's hard to undo or touches what others share, since the developer wants the work done without being asked what their purpose already says.`"
+        "text": "Write in the Role that intent with its reason, in place of a list of the user's choices, such as `The developer gives what the work is for, and decides it. Judge what follows from that yourself, and hand back only what it leaves open, or an action that's hard to undo or touches what others share, since the developer wants the work done without being asked what their purpose already says.`"
        },
        {
         "at": "make",
@@ -242,7 +254,7 @@
      },
      {
       "id": "N10",
-      "about": "Tools, Steps",
+      "about": "Steps",
       "what": "Can the AI take every action that the steps call for with the tools it may use?",
       "why": "Without the tool that an action needs, the AI can't take the step, however well the writer writes it.",
       "items": [
@@ -258,8 +270,8 @@
      },
      {
       "id": "N11",
-      "about": "Tools",
-      "what": "Does the host refuse each tool that the task doesn't need?",
+      "about": "the whole",
+      "what": "Does the host refuse each tool that the task doesn't need, by the entry's list of tools?",
       "why": "A rule in words holds only while the AI follows it, so a slip of the AI can harm what lies outside the task unless the host refuses the tool. N12 holds each rule that a tool the task needs must keep.",
       "items": [
        {

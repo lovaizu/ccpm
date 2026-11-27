@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 790">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700">
   <title>rn&#x27;s components</title>
   <style>
     svg { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, 'Hiragino Sans', 'Noto Sans CJK JP', 'Noto Sans JP', 'Yu Gothic', Meiryo, sans-serif; }
@@ -46,92 +46,90 @@
       <path class="head" d="M0,0 L10,5 L0,10 z"/>
     </marker>
   </defs>
-  <rect class="bg" width="1020" height="790"/>
-  <rect class="box" x="600" y="20" width="180" height="70" rx="6"/>
-  <text class="name" x="690.0" y="51.0">vital few</text>
-  <text class="kind" x="690.0" y="71.0">[prompt]</text>
-  <path class="line" d="M560,150 L620,90" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="584" y="112">weighs by</text>
-  <path class="line" d="M820,150 L760,90" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="796" y="112">weighs by</text>
-  <g transform="translate(0,110)">
-  <rect class="frame" x="40" y="340" width="560" height="170" rx="10"/>
-  <text class="frame-name" x="56" y="362">round: one making and judging of a deliverable</text>
-  <rect class="frame" x="40" y="170" width="190" height="140" rx="10"/>
-  <text class="frame-name" x="56" y="192">fix: one mend</text>
-  <rect class="box" x="60" y="210" width="150" height="80" rx="6"/>
-  <text class="name" x="135.0" y="246.0">fixer</text>
-  <text class="kind" x="135.0" y="266.0">[prompt]</text>
-  <path class="line" d="M345,120 L230,200" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="290" y="150">starts it, with its Cut and the Fix</text>
-  <path class="line dashed" d="M230,280 L370,120" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="284" y="236">done, with the Fix</text>
-  <path class="line" d="M200,310 L200,318 L700,318 L700,300" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="520" y="312">runs</text>
-  <rect class="box" x="40" y="40" width="180" height="80" rx="6"/>
-  <text class="name" x="130.0" y="85.0">user</text>
-  <rect class="box" x="340" y="40" width="240" height="80" rx="6"/>
-  <text class="name" x="460.0" y="76.0">orchestrator</text>
-  <text class="kind" x="460.0" y="96.0">[prompt]</text>
-  <rect class="box" x="800" y="40" width="180" height="80" rx="6"/>
-  <text class="name" x="890.0" y="76.0">pruner</text>
-  <text class="kind" x="890.0" y="96.0">[prompt]</text>
-  <rect class="store" x="800" y="220" width="180" height="80" rx="6"/>
-  <text class="name" x="890.0" y="265.0">design tree</text>
-  <rect class="box" x="590" y="220" width="150" height="80" rx="6"/>
-  <text class="name" x="665.0" y="256.0">scripts</text>
-  <text class="kind" x="665.0" y="276.0">[script]</text>
-  <rect class="box" x="800" y="400" width="180" height="80" rx="6"/>
-  <text class="name" x="890.0" y="436.0">hook</text>
-  <text class="kind" x="890.0" y="456.0">[hook]</text>
-  <rect class="box" x="80" y="400" width="200" height="80" rx="6"/>
-  <text class="name" x="180.0" y="436.0">generator</text>
-  <text class="kind" x="180.0" y="456.0">[prompt]</text>
-  <rect class="box" x="340" y="400" width="200" height="80" rx="6"/>
-  <text class="name" x="440.0" y="436.0">evaluator</text>
-  <text class="kind" x="440.0" y="456.0">[prompt]</text>
-  <rect class="store" x="210" y="570" width="200" height="60" rx="6"/>
-  <text class="name" x="310.0" y="605.0">best practice</text>
-  <path class="line" d="M220,65 L340,65" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="280" y="56">request, answers, /rn:ty</text>
-  <path class="line" d="M340,95 L220,95" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="280" y="114">points, sign-offs</text>
-  <path class="line" d="M580,60 L800,60" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="690" y="51">starts, with each unit settled</text>
-  <path class="line dashed" d="M800,90 L580,90" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="690" y="109">done, with points to ask</text>
-  <path class="line" d="M890,120 L890,220" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="898" y="174">writes the vital few</text>
-  <path class="line" d="M815,120 L728,220" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="781" y="152">runs</text>
-  <path class="line" d="M580,112 L800,232" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="716" y="168">reads</text>
-  <path class="line" d="M560,120 L630,220" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="604" y="165">runs</text>
-  <path class="line" d="M740,260 L800,260" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="770" y="251">commits</text>
-  <path class="line" d="M890,400 L890,300" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="882" y="356">refuses other writes</text>
-  <path class="line" d="M800,440 L600,440" marker-end="url(#arrow)"/>
-  <text class="data halo mid" x="700" y="431">sends deletes to a script</text>
-  <path class="line" d="M400,120 L400,340" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="392" y="296">starts each, with its Cut</text>
-  <path class="line dashed" d="M470,340 L470,120" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="478" y="200">done, with the Round</text>
-  <path class="line" d="M580,340 L630,300" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="612" y="332">run</text>
-  <path class="line" d="M180,480 L280,570" marker-end="url(#arrow)"/>
-  <text class="data halo end" x="222" y="535">makes by</text>
-  <path class="line" d="M440,480 L340,570" marker-end="url(#arrow)"/>
-  <text class="data halo start" x="402" y="535">judges by</text>
-  <text class="label" x="660" y="548">Legend</text>
-  <rect class="box" x="660" y="560" width="22" height="16" rx="3"/>
-  <text class="label small" x="692" y="573">a role</text>
-  <rect class="store" x="660" y="586" width="22" height="16" rx="3"/>
-  <text class="label small" x="692" y="599">a store of data</text>
-  <rect class="frame" x="660" y="612" width="22" height="16" rx="3"/>
-  <text class="label small" x="692" y="625">a round or a fix</text>
-  <path class="line dashed" d="M660,646 L682,646" marker-end="url(#arrow)"/>
-  <text class="label small" x="692" y="650">a result handed back</text>
-  </g>
+  <rect class="bg" width="1100" height="700"/>
+  <rect class="box" x="40" y="40" width="160" height="70" rx="6"/>
+  <text class="name" x="120.0" y="80.0">user</text>
+  <rect class="box" x="300" y="40" width="220" height="70" rx="6"/>
+  <text class="name" x="410.0" y="71.0">orchestrator</text>
+  <text class="kind" x="410.0" y="91.0">[prompt]</text>
+  <rect class="box" x="640" y="40" width="180" height="70" rx="6"/>
+  <text class="name" x="730.0" y="71.0">pruner</text>
+  <text class="kind" x="730.0" y="91.0">[prompt]</text>
+  <rect class="box" x="900" y="40" width="160" height="70" rx="6"/>
+  <text class="name" x="980.0" y="71.0">references</text>
+  <text class="kind" x="980.0" y="91.0">[document]</text>
+  <rect class="box" x="40" y="220" width="160" height="70" rx="6"/>
+  <text class="name" x="120.0" y="251.0">hook</text>
+  <text class="kind" x="120.0" y="271.0">[hook]</text>
+  <rect class="box" x="330" y="220" width="190" height="70" rx="6"/>
+  <text class="name" x="425.0" y="251.0">scripts</text>
+  <text class="kind" x="425.0" y="271.0">[script]</text>
+  <rect class="store" x="640" y="220" width="180" height="70" rx="6"/>
+  <text class="name" x="730.0" y="260.0">steering</text>
+  <rect class="frame" x="20" y="380" width="800" height="140" rx="10"/>
+  <text class="frame-name" x="36" y="402">roles started for the work</text>
+  <rect class="box" x="40" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="110.0" y="451.0">generator</text>
+  <text class="kind" x="110.0" y="471.0">[prompt]</text>
+  <rect class="box" x="195" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="265.0" y="451.0">evaluator</text>
+  <text class="kind" x="265.0" y="471.0">[prompt]</text>
+  <rect class="box" x="350" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="420.0" y="451.0">fixer</text>
+  <text class="kind" x="420.0" y="471.0">[prompt]</text>
+  <rect class="box" x="505" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="575.0" y="451.0">refactorer</text>
+  <text class="kind" x="575.0" y="471.0">[prompt]</text>
+  <rect class="box" x="660" y="420" width="140" height="70" rx="6"/>
+  <text class="name" x="730.0" y="451.0">inspector</text>
+  <text class="kind" x="730.0" y="471.0">[prompt]</text>
+  <rect class="store" x="860" y="420" width="200" height="70" rx="6"/>
+  <text class="name" x="960.0" y="460.0">Rounds and Fixes</text>
+  <rect class="store" x="290" y="600" width="200" height="60" rx="6"/>
+  <text class="name" x="390.0" y="635.0">best practice</text>
+  <path class="line" d="M200,65 L300,65" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="250" y="56">request, answers</text>
+  <path class="line" d="M300,95 L200,95" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="250" y="114">points, what to try</text>
+  <path class="line" d="M520,60 L640,60" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="580" y="51">starts, with a fact</text>
+  <path class="line dashed" d="M640,95 L520,95" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="580" y="114">done, with the steps</text>
+  <path class="line" d="M820,75 L900,75" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="860" y="66">weighs by</text>
+  <path class="line" d="M730,110 L730,220" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="738" y="170">writes what the work aims at</text>
+  <path class="line" d="M520,255 L640,255" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="580" y="246">writes where it stands</text>
+  <path class="line" d="M440,110 L440,220" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="448" y="170">runs</text>
+  <path class="line dashed" d="M380,220 L380,110" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="372" y="170">what&#x27;s due</text>
+  <path class="line" d="M200,255 L330,255" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="265" y="246">runs as a role ends</text>
+  <path class="line" d="M310,110 L310,380" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="302" y="350">starts each</text>
+  <path class="line dashed" d="M560,380 L560,320 L500,320 L500,110" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="568" y="340">done, with each result</text>
+  <path class="line" d="M430,380 L430,290" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="438" y="350">runs a trial</text>
+  <path class="line" d="M820,455 L860,455" marker-end="url(#arrow)"/>
+  <text class="data halo mid" x="840" y="446">writes</text>
+  <path class="line" d="M110,490 L300,600" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="196" y="560">makes by</text>
+  <path class="line" d="M265,490 L350,600" marker-end="url(#arrow)"/>
+  <text class="data halo end" x="300" y="545">judges by</text>
+  <path class="line" d="M420,490 L410,600" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="420" y="560">mends by</text>
+  <path class="line" d="M575,490 L480,600" marker-end="url(#arrow)"/>
+  <text class="data halo start" x="540" y="545">refactors by</text>
+  <text class="label" x="860" y="560">Legend</text>
+  <rect class="box" x="860" y="572" width="22" height="16" rx="3"/>
+  <text class="label small" x="892" y="585">a role</text>
+  <rect class="store" x="860" y="598" width="22" height="16" rx="3"/>
+  <text class="label small" x="892" y="611">a store of data</text>
+  <rect class="frame" x="860" y="624" width="22" height="16" rx="3"/>
+  <text class="label small" x="892" y="637">roles started together</text>
+  <path class="line dashed" d="M860,658 L882,658" marker-end="url(#arrow)"/>
+  <text class="label small" x="892" y="662">a result handed back</text>
 </svg>

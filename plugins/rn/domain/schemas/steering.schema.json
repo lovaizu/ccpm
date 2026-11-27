@@ -1,0 +1,304 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "steering",
+ "description": "The steering of one piece of work, at .rn/<work>/steering.json: ost, what the work aims at and why, which the pruner alone writes, and state, where the work stands, which rn's scripts alone write. It lives for the work alone, and git keeps the history of each point.",
+ "type": "object",
+ "required": [
+  "ost",
+  "state"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "ost": {
+   "description": "The work's opportunity solution tree, after Teresa Torres: the outcome at its root, the opportunities under it from the broadest to the most specific, the solution chosen for the opportunity that the user picked with its riskiest assumption, and the work's decisions and open questions.",
+   "type": "object",
+   "required": [
+    "outcome",
+    "opportunities",
+    "target",
+    "decisions",
+    "questions"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "outcome": {
+     "description": "Whom the work is for, and what they do once it's reached, in one sentence.",
+     "type": "string",
+     "minLength": 1
+    },
+    "opportunities": {
+     "description": "The needs that the people named or the work found, broadest first, each more specific one under the one it serves. None is cut: the user picks.",
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/opportunity"
+     }
+    },
+    "target": {
+     "description": "The id of the opportunity that the user picked, null until they pick, so that until then the work waits on the user's pick. The work's solution hangs under it.",
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "decisions": {
+     "description": "Each decision of the work, as its aim and intent in one sentence.",
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/decision"
+     }
+    },
+    "questions": {
+     "description": "Each question that waits on the user, in the user's words. Once answered, it goes, and its answer is a decision by user.",
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     }
+    }
+   }
+  },
+  "state": {
+   "description": "Where the work stands.",
+   "type": "object",
+   "required": [
+    "issues",
+    "steps"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "issues": {
+     "description": "The issues of the work, by number: each that the merge closes, and each that the work only serves.",
+     "type": "object",
+     "required": [
+      "closes",
+      "refs"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "closes": {
+       "type": "array",
+       "items": {
+        "type": "integer"
+       }
+      },
+      "refs": {
+       "type": "array",
+       "items": {
+        "type": "integer"
+       }
+      }
+     }
+    },
+    "steps": {
+     "description": "The way to the target, first to last: first the walking skeleton for the target, then each addition, each for the opportunity it meets.",
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "for",
+       "settles",
+       "deliverables",
+       "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "for": {
+        "description": "The id of the opportunity that the step meets.",
+        "type": "string",
+        "pattern": "^O\\d+(\\.\\d+)*$"
+       },
+       "settles": {
+        "description": "What the step settles, in the user's words.",
+        "type": "string",
+        "minLength": 1
+       },
+       "deliverables": {
+        "description": "Each deliverable that the step makes or changes, in the order they're made, each after those it rests on.",
+        "type": "array",
+        "items": {
+         "type": "object",
+         "required": [
+          "path",
+          "kind",
+          "status"
+         ],
+         "additionalProperties": false,
+         "properties": {
+          "path": {
+           "type": "string",
+           "minLength": 1
+          },
+          "kind": {
+           "description": "The kind of the deliverable, by its best practice's folder name, such as readme.",
+           "type": "string",
+           "minLength": 1
+          },
+          "status": {
+           "description": "done once it meets every necessary condition of its kind's best practice.",
+           "enum": [
+            "open",
+            "done"
+           ]
+          },
+          "next": {
+           "description": "While it's open, who takes it next: generator, for a Round of content, as at its start where it's absent; evaluator, to judge that Round; weigh, for a pruner to weigh the result of its entry; fixer, for a Fix; refactorer, for a Round of refactoring. A pruner says it where its weighing decides it, and rn's hook where nothing is to weigh.",
+           "enum": [
+            "generator",
+            "evaluator",
+            "weigh",
+            "fixer",
+            "refactorer"
+           ]
+          },
+          "judged": {
+           "description": "How many of its Rounds of content an evaluator judged, none where it's absent, as a deliverable takes at most LIMIT of them.",
+           "type": "integer"
+          },
+          "entry": {
+           "description": "The folder in rounds/<step>/<deliverable>/ of the Round or Fix that its next role works in, such as content-2, once `steering start` made it.",
+           "type": "string",
+           "pattern": "^(content|refactor|fix)-[1-9][0-9]*$"
+          }
+         }
+        }
+       },
+       "status": {
+        "description": "open while rn makes it; trying once it's in the user's hands, waiting on their feedback; done once the user says it's enough.",
+        "enum": [
+         "open",
+         "trying",
+         "done"
+        ]
+       }
+      }
+     }
+    },
+    "inspected": {
+     "description": "true once the inspector passed the pull request whole, so the work ends once nothing is asked; absent before.",
+     "const": true
+    }
+   }
+  }
+ },
+ "definitions": {
+  "opportunity": {
+   "type": "object",
+   "required": [
+    "id",
+    "opportunity",
+    "by",
+    "opportunities",
+    "solution"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "description": "O and its place in the tree, such as O1 or O1.2.",
+     "type": "string",
+     "pattern": "^O\\d+(\\.\\d+)*$"
+    },
+    "opportunity": {
+     "description": "The need, in the words of those who have it.",
+     "type": "string",
+     "minLength": 1
+    },
+    "by": {
+     "description": "Who named it and where, such as an issue, a comment, or the user's words on a day.",
+     "type": "string",
+     "minLength": 1
+    },
+    "opportunities": {
+     "description": "The more specific needs under it.",
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/opportunity"
+     }
+    },
+    "solution": {
+     "description": "The solution chosen for this opportunity, null unless it's the target. rn explains it to the user only on asking.",
+     "oneOf": [
+      {
+       "type": "null"
+      },
+      {
+       "$ref": "#/definitions/solution"
+      }
+     ]
+    }
+   }
+  },
+  "solution": {
+   "type": "object",
+   "required": [
+    "solution",
+    "why",
+    "assumption"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "solution": {
+     "type": "string",
+     "minLength": 1
+    },
+    "why": {
+     "description": "Why it was chosen over the others that rn weighed.",
+     "type": "string",
+     "minLength": 1
+    },
+    "assumption": {
+     "$ref": "#/definitions/assumption"
+    }
+   }
+  },
+  "decision": {
+   "type": "object",
+   "required": [
+    "decision",
+    "by"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "decision": {
+     "description": "The decision, as its aim and intent in one sentence.",
+     "type": "string",
+     "minLength": 1
+    },
+    "by": {
+     "description": "user where it's the user's own answer, which only the user changes; rn where rn settled it.",
+     "enum": [
+      "user",
+      "rn"
+     ]
+    }
+   }
+  },
+  "assumption": {
+   "type": "object",
+   "required": [
+    "assumption",
+    "test",
+    "result"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "assumption": {
+     "type": "string",
+     "minLength": 1
+    },
+    "test": {
+     "description": "How the assumption is tested on the real thing.",
+     "type": "string",
+     "minLength": 1
+    },
+    "result": {
+     "description": "What the test showed, null until it runs.",
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   },
+   "description": "The riskiest assumption that the solution rests on, with its test."
+  }
+ }
+}

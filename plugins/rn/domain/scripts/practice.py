@@ -1,15 +1,15 @@
-"""Decides where the best practice of each kind lies and what of it each role gets: the run's own
+"""Decides where the best practice of each kind lies and what of it each role gets: the work's own
 best practices in `.rn/best-practices/<kind>/` before rn's, each read from its
-`best-practice.json`, and the goal and conditions alone that an evaluator judges by."""
+`best-practice.json`, the goal and conditions alone that an evaluator judges by, and the kind by
+which a deliverable is refactored."""
 
 from __future__ import annotations
 
 import copy
 import json
 import os
-from typing import Any, NamedTuple
+from typing import Any
 
-from check.form import faults, schema
 from fault import Wrong
 
 _FILE = "best-practice.json"
@@ -21,17 +21,10 @@ _CODE = {"code", "software-design", "test-design", "test-implementation"}
 Practice = dict[str, Any]
 
 
-class Found(NamedTuple):
-    """A kind's best practice with the folder it lies in, which a Cut names."""
-
-    folder: str
-    practice: Practice
-
-
 def kinds(plugin_root: str, worktree: str) -> dict[str, str]:
     """The folder of each kind's best practice.
 
-    Takes: rn's folder, and the run's worktree.
+    Takes: rn's folder, and the work's worktree.
     Gives: each kind by its folder's name, to the folder of its best practice: the worktree's
     `.rn/best-practices/<kind>/` where it holds one, else rn's `domain/best-practices/<kind>/`.
     Changes: nothing.
@@ -57,9 +50,7 @@ def read(folder: str) -> Practice:
     Takes: the folder of a kind's best practice.
     Gives: its `best-practice.json`.
     Changes: nothing.
-    Refuses: Wrong where the file is missing, isn't JSON, or leaves rn's form of a best practice,
-    `domain/schemas/best-practice.schema.json`, as `check.form.faults` holds it, naming the file
-    and the first fault.
+    Refuses: Wrong where the file is missing or isn't JSON, naming the file.
     """
     path = os.path.join(folder, _FILE)
     try:
@@ -69,9 +60,6 @@ def read(folder: str) -> Practice:
         raise Wrong(f"{path}: no best practice lies there") from None
     except ValueError as error:
         raise Wrong(f"{path}: isn't JSON: {error}") from None
-    found = faults(practice, schema("best-practice"))
-    if found:
-        raise Wrong(f"{path}: leaves rn's form of a best practice at {found[0]}")
     return practice
 
 

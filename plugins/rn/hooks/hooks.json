@@ -1,22 +1,13 @@
 {
-  "description": "Denies each delete by rn's makers in Bash, pointing them to remove, which removes without a permission prompt, and each write to a run's design tree but the pruner's and rn's scripts', by Write, Edit, or Bash, pointing its writer to the pruner.",
+  "description": "Once one of rn's roles ends, checks its result against its schema and keeps the role going until it holds, takes a pruner's result into the steering, and commits and pushes the work's changes.",
   "hooks": {
-    "PreToolUse": [
+    "SubagentStop": [
       {
-        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/hook\""
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/hook\""
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/domain/scripts/role\" ended",
+            "onFailure": "block"
           }
         ]
       }

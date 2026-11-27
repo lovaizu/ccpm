@@ -158,7 +158,7 @@
        },
        {
         "at": "make",
-        "text": "Within a sentence, start with what the reader already knows and end with what's new. For example, after `The plugin keeps its state in .rn/.`, write `.rn/ holds one folder for each run.` in place of `One folder for each run lies in .rn/.`"
+        "text": "Within a sentence, start with what the reader already knows and end with what's new. For example, after `The plugin keeps its state in .rn/.`, write `.rn/ holds one folder for each piece of work.` in place of `One folder for each piece of work lies in .rn/.`"
        },
        {
         "at": "make",
@@ -304,7 +304,7 @@
        },
        {
         "at": "decide",
-        "text": "For each name that refers to two things, keep it for the thing the readers' words use it for, and give the other thing the word its readers use for it, or a term to define where the reader first meets it, such as `run` for one start of the workflow and `try` for one run of a command of the deliverable."
+        "text": "For each name that refers to two things, keep it for the thing the readers' words use it for, and give the other thing the word its readers use for it, or a term to define where the reader first meets it, such as `work` for one start of the workflow and `try` for one run of a command of the deliverable."
        },
        {
         "at": "make",
