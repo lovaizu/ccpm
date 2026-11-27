@@ -301,6 +301,26 @@
       {
         "decision": "Keep what is particular to a kind, such as running tests for code, in that kind's best practice, and out of a role's prompt.",
         "by": "user"
+      },
+      {
+        "decision": "Take out of the evaluator the step for a deliverable that adds to what's there, as trying it as its people use it toward their aim already takes the addition.",
+        "by": "user"
+      },
+      {
+        "decision": "Make a deliverable by Rounds of the generator and the evaluator, have the fixer mend what the Rounds leave, and once the deliverable is whole, have the refactorer, a role of its own, refactor it by the kind's refactor best practice before the user tries it, as making and refactoring apart is the practice, and the user tries what it does for its people, which a refactoring keeps.",
+        "by": "user"
+      },
+      {
+        "decision": "Tell the roles how to use a best practice, the purpose and the intent of each of its parts, in domain/references/generating-with-best-practices.md for the generator and the refactorer and domain/references/evaluating-with-best-practices.md for the evaluator, and move vital-few.md to domain/references/, as a role uses a best practice in full only once it knows why each part is there.",
+        "by": "user"
+      },
+      {
+        "decision": "Have a role's prompt point to each reference by its path alone, never a word of its contents, as an AI that reads a summary works from it without opening the file.",
+        "by": "user"
+      },
+      {
+        "decision": "Have the generator's and the refactorer's prompts differ only in their purpose, what they start from, and the best practice they use.",
+        "by": "user"
       }
     ],
     "questions": []
