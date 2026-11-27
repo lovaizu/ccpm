@@ -25,14 +25,9 @@ STEP = rn_files.WAY
 
 @pytest.fixture
 def made(tmp_path: Any) -> RunPlace:
-    """A run of the user's repository with origin, its worktree on the work's branch, its folder
-    empty."""
-    repo = rn_files.repository(str(tmp_path / "accounting"))
-    rn_files.with_origin(repo, str(tmp_path / "origin.git"))
-    held = RunPlace(repo, NAME)
-    git(repo, "worktree", "add", "-q", "-b", held.branch, held.worktree)
-    os.makedirs(held.folder)
-    return held
+    """A run of the user's repository with origin, in its own worktree on the work's branch, its
+    folder empty."""
+    return rn_files.run_with_origin(str(tmp_path), NAME)
 
 
 def steering(run_: RunPlace, value: Any) -> None:

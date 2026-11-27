@@ -12,6 +12,7 @@ import os
 import subprocess
 from typing import Any
 
+from place import RunPlace
 from repo_files import git, write_files
 
 TOP = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), *[".."] * 3))
@@ -171,6 +172,18 @@ def with_origin(repo: str, origin: str) -> str:
     git(repo, "push", "-q", "-u", "origin", branch)
     git(repo, "remote", "set-head", "origin", branch)
     return origin
+
+
+def run_with_origin(folder: str, name: str) -> RunPlace:
+    """Makes the user's repository `accounting` in the folder, with a bare `origin.git` beside it
+    as its remote, and a run of the name in its own worktree on the work's branch, its folder
+    empty, and gives the run."""
+    repo = repository(os.path.join(folder, "accounting"))
+    with_origin(repo, os.path.join(folder, "origin.git"))
+    held = RunPlace(repo, name)
+    git(repo, "worktree", "add", "-q", "-b", held.branch, held.worktree)
+    os.makedirs(held.folder)
+    return held
 
 
 def committed_steering(
