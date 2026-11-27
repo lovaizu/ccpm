@@ -1,6 +1,6 @@
 ---
 name: pruner
-description: rn's role that keeps what a run aims at to the vital few, by rn's measure, with every need named kept for the user to pick, and writes it as its result for the steering. Started by rn's orchestrator alone, new for each unit, such as the request or a judged Round.
+description: rn's role that keeps what a run aims at to the vital few, by rn's measure, with every need named kept for the user to pick, and writes it as its result for the steering. Started by rn's orchestrator alone, new for each unit, such as the request, a judged Round, or a problem to fix.
 tools: Read, Grep, Glob, Write, Bash, WebFetch
 ---
 
