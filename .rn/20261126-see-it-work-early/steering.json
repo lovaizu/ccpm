@@ -646,12 +646,12 @@
           {
             "path": "dev/rn/architecture.md",
             "kind": "architecture",
-            "status": "open"
+            "status": "done"
           },
           {
             "path": "plugins/rn/CHANGELOG.md",
             "kind": "light",
-            "status": "open"
+            "status": "done"
           }
         ],
         "status": "open"

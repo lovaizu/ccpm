@@ -96,7 +96,13 @@ Strategies:
   Intent: a point and the user's own words outlive the conversation that asked them.
 - Each remedy that a Round's judgment brings kept as a decision of the run. [P3.3]\
   Intent: the next Round and each later mend rest on what was weighed.
-- What the Rounds leave at the limit kept in the last Round until the user confirms it. [P3.3]\
+- Each deliverable's next role kept in the steering, said by the pruner where its weighing decides
+  it, and by the hook where nothing is to weigh, anew from the first Round where its solution
+  changed. [P5.2]\
+  Intent: the steering alone says what comes next, and nothing outside it keeps a deliverable on a
+  dropped solution.
+- What the Rounds leave at the limit asked of the user as the pruner's open question, the hook
+  refusing a Round past it. [P3.3]\
   Intent: the user decides what they'd live with, and a pick-up finds it waiting.
 - Each Fix kept beside the deliverable's Rounds, with the problem in the words that raised it.
   [P6.1]\
@@ -126,8 +132,8 @@ Strategies:
 - scripts (script)\
   Does each step that has one right result, and alone writes where the run stands.
 - hook (hook)\
-  Once a role ends, checks its result, takes the pruner's into the steering, and commits and
-  pushes the run, on every run.
+  Once a role ends, checks its result, takes the pruner's into the steering, moves each
+  deliverable on by its role's result, and commits and pushes the run, on every run.
 
 Strategies:
 
@@ -154,6 +160,17 @@ Strategies:
 - The orchestrator speaking, after the hearing, only from the steering and the user's words.
   [P2.1]\
   Intent: the talk brings back nothing the pruner cut, such as an issue's means.
+- Each search, for the files a request bears on or the ways to make a need, handed by the
+  orchestrator to a subagent that checks each way's license, upkeep, open issues, and standing
+  before it's offered. [P5.1]\
+  Intent: the orchestrator's context holds the talk and the run, and the user picks only among
+  ways that hold.
+- The orchestrator putting the purpose before rn's steps and scripts, and having the writer of a
+  part set right what stands in its way. [P2.1]\
+  Intent: no detour that only rn's insides make reaches the user.
+- Each deliverable given the kind of its best practice, the user asked before the light kind
+  where a best practice of its kind exists, or where none does. [P3.1]\
+  Intent: what's made holds the quality its kind needs unless the user says otherwise.
 - Each need shown numbered in the user's words, and one of them recommended with its grounds. [P2.1]\
   Intent: the user judges only which need brings them closest to what they're after.
 - The languages proposed once at the start and kept as the user's decisions. [P2.4]\
@@ -213,7 +230,7 @@ sequenceDiagram
   U->>O: /rn:on [S1]
   O->>U: asks what it can help with, an issue's number or a few words [S1]
   U->>O: what they want, in their own words [S1]
-  O->>O: reads the issue it names and the repository [P2.1]
+  O->>O: reads the issue it names, and has a subagent search the repository [P5.1]
   loop whom it's for, what they want, and what for [P2.1]
     O->>U: asks it, with a recommendation and why [P2.1]
     U->>O: answers [P2.1]
@@ -233,27 +250,29 @@ sequenceDiagram
   O->>U: what is made before the try, listed once [P2.3]
   loop each deliverable of the step, each after those it rests on [P1.2]
     loop each Round, until each condition is good or the limit is reached [P3.1]
+      O->>S: starts the deliverable's next role, as the steering names it, in a new Round (Deliverable, Round) [P5.3]
       O->>G: starts one with the steering, the deliverable, and its best practice (Deliverable, Best practice) [P5.1]
       alt a point the decisions leave open [P2.1]
         G-->>O: the point, for a pruner to weigh or leave to the user (Round) [P4.1]
       else
         G->>G: makes it by every necessary condition of its kind's best practice, by the run's decisions [P3.1]
         G-->>O: ends, with the Round written (Round) [P5.2]
-        H->>S: checks the result against its schema, and commits and pushes the work (Round) [P5.3]
+        H->>S: checks the result against its schema, moves the deliverable on to its evaluator, and commits and pushes the work (Round, Steering) [P5.3]
         O->>E: starts one with the deliverable and what it judges by (Round, Best practice) [P3.2]
         E->>S: makes a folder of the people's starting state, a clone of what's committed [P3.2]
         E->>E: tries it there as its people would, and names for each condition what's good or what would make it good [P3.2]
         E-->>O: ends, with the Round judged (Round) [P5.2]
+        H->>S: moves the deliverable on, to a pruner's weighing of what was found, else to its refactoring (Steering) [P5.3]
         O->>P: starts one with the judged Round (Round) [P4.1]
-        P-->>O: ends, with each remedy that the measure keeps as a decision (Steering) [P3.3]
+        P-->>O: ends, with each remedy that the measure keeps as a decision, and what the deliverable takes next (Steering) [P3.3]
       end
     end
     opt what the Rounds leave at the limit [P3.3]
-      O->>U: what the people would still meet, in their terms, and whether to mend it now [P2.1]
+      O->>U: the pruner's question: what the people would still meet, in their terms, and whether to mend it now [P2.1]
       U->>O: answers [P2.1]
       O->>P: starts one with the answer, word for word (Steering) [P4.1]
       opt a mend now [P1.3]
-        O->>S: writes the Fix, with the problem in the user's words (Fix) [P6.1]
+        O->>S: starts the Fix, with the problem in the user's words (Fix) [P6.1]
         O->>F: starts one with the Fix, the deliverable, its best practice, and the run's decisions (Fix) [P5.1]
         F->>F: confirms that what's there holds, mends the least, and confirms again the same way [P3.4]
         F-->>O: ends, fixed (Fix) [P5.2]
@@ -262,7 +281,7 @@ sequenceDiagram
     O->>R: starts one with the refactor best practice of its kind (Best practice) [P3.1]
     R->>R: refactors the whole, keeping what it does for its people [P3.1]
     R-->>O: ends, which ends the deliverable's Rounds (Round) [P5.2]
-    O->>S: marks it done, committed and pushed in the draft pull request (Steering, Deliverable) [P6.1]
+    H->>S: marks it done, committed and pushed in the draft pull request (Steering, Deliverable) [P6.1]
     O->>U: what was done, with how far the run is to the try [P2.3]
   end
   O->>S: marks the step trying (Step) [P6.1]
@@ -272,7 +291,7 @@ sequenceDiagram
     alt /rn:gm with what to change [P1.3]
       O->>P: starts one with the problem, word for word (Steering) [P4.1]
       opt a mend now [P1.3]
-        O->>S: writes the Fix, with the problem in the user's words (Fix) [P6.1]
+        O->>S: starts the Fix, with the problem in the user's words (Fix) [P6.1]
         O->>F: starts one with the Fix (Fix) [P5.1]
         F-->>O: ends, fixed (Fix) [P5.2]
         O->>R: starts one, as the mend ends in a refactoring of the whole (Best practice) [P3.1]
